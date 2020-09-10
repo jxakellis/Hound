@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<!-- saved from url=(0153)https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html#//apple_ref/doc/uid/TP40015214-CH5-SW1 -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>Start Developing iOS Apps (Swift): Build a Basic UI</title>
+  <link rel="stylesheet" type="text/css" href="./Start Developing iOS Apps (Swift) - Building UI_files/style-1.6.3.css">
+  <link rel="stylesheet" type="text/css" href="./Start Developing iOS Apps (Swift) - Building UI_files/feedback-1.6.3.css">
+   
+<meta id="j-version" name="j-version" content="">
+<meta id="build" name="build" content="c1e4c7a89af8f899a21cfa81fc33ba42">
+<meta id="document-version" name="document-version" content="1.5.3">
+<meta id="book-assignments" name="book-assignments" content="{Type/Guide}, {Topic/General}">
+<meta scheme="apple_ref" id="identifier" name="identifier" content="//apple_ref/doc/uid/TP40015214">
+<meta id="chapterId" name="chapterId" content="TP40015214-CH5">
+<meta id="book-title" name="book-title" content="Start Developing iOS Apps (Swift)">
+<meta id="book-resource-type" name="book-resource-type" content="Guide">
+<meta id="book-root" name="book-root" content="./">
+<meta id="book-json" name="book-json" content="book.json">
+<meta id="date" name="date" content="2016-12-08">
+<meta id="description" name="description" content="A hands-on introduction to iOS app development using Swift.">
+<meta id="IndexTitle" name="IndexTitle" content="">
+<meta id="resources-uri" name="resources-uri" content="../../../Resources/1282">
+<link id="book-index-page" rel="Start" title="" type="text/html" href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/index.html">
+<!-- , next_chapter: next_chapter, previous_chapter: previous_chapter -->
+<link id="next-page" rel="Next" type="text/html" href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html">
+<link id="previous-page" rel="Prev" type="text/html" href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html">
+<meta id="devcenter" name="devcenter" content="&lt;!-- DEVCENTER_NAME --&gt;">
+<meta id="devcenter-url" name="devcenter-url" content="&lt;!-- DEVCENTER_URL --&gt;">
+<meta id="reflib" name="reflib" content="&lt;!-- REFLIB_NAME --&gt;">
+
+<meta id="xcode-display" name="xcode-display" content="render">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta id="platforms" name="platforms" content="iOS">
+</head>
+
+  <body id="roadmap" class="jazz">
+    
+    <header id="ios_header" class="hideOnPrint hideInXcode">
+  <div class="content-wrapper">
+    <p class="header-text">
+    	<a href="https://developer.apple.com/library/archive/navigation/" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/navigation/_1&quot;;return this.s_oc?this.s_oc(e):true">Documentation Archive
+ 		</a>
+ </p>
+    <p id="wwdr"><img id="apple_logo" src="./Start Developing iOS Apps (Swift) - Building UI_files/apple2.png" height="14px" width="12px" aria-hidden="true"><a href="https://developer.apple.com/" onclick="s_objectID=&quot;https://developer.apple.com/_1&quot;;return this.s_oc?this.s_oc(e):true">Developer</a></p>
+  </div>
+</header>
+
+    <section id="valence">
+  <div class="content-wrapper">
+	<p id="hierarchial_navigation">
+		<span id="book_title">Start Developing iOS Apps (Swift)</span>
+	</p>
+	<form id="search" class="hideInXcode" method="get" action="https://developer.apple.com/search/index.php" accept-charset="utf-8" autocomplete="off">
+  <input type="search" id="ssi_SearchField" placeholder="Search Documentation Archive" name="q" autocomplete="off" tabindex="2">
+</form>
+
+	  
+   
+   
+
+
+
+    <img id="shortstack" src="./Start Developing iOS Apps (Swift) - Building UI_files/shortstack_2x.png">
+  </div>
+</section>
+    <div class="content-wrapper">
+      <nav id="navigator" class="book-parts hideInXcode" role="navigation">
+    <ul class="nav-parts">
+        <li class="part-name">
+            <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/index.html#//apple_ref/doc/uid/TP40015214-CH2-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH2-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/i_1&quot;;return this.s_oc?this.s_oc(e):true">Getting Started</a>
+          <ul class="nav-chapters">
+              <li class="conceptual-with-tasks nav-chapter">
+              	<a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/index.html#//apple_ref/doc/uid/TP40015214-CH2-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH2-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/i_2&quot;;return this.s_oc?this.s_oc(e):true">Jump Right In<div class="pipe"></div></a>
+              </li>
+          </ul>
+        </li>
+        <li class="part-name nav-part-active open-part">
+            <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html#//apple_ref/doc/uid/TP40015214-CH5-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH5-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/B_1&quot;;return this.s_oc?this.s_oc(e):true">Building the UI</a>
+          <ul class="nav-chapters">
+              <li class="conceptual-with-tasks nav-chapter nav-current-chapter">
+              	<a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html#//apple_ref/doc/uid/TP40015214-CH5-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH5-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/B_2&quot;;return this.s_oc?this.s_oc(e):true">Build a Basic UI<div class="pipe"></div></a>
+              </li>
+              <li class="conceptual-with-tasks nav-chapter">
+              	<a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/ConnectTheUIToCode.html#//apple_ref/doc/uid/TP40015214-CH22-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH22-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/C_1&quot;;return this.s_oc?this.s_oc(e):true">Connect the UI to Code<div class="pipe"></div></a>
+              </li>
+              <li class="conceptual-with-tasks nav-chapter">
+              	<a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/WorkWithViewControllers.html#//apple_ref/doc/uid/TP40015214-CH6-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH6-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/W_1&quot;;return this.s_oc?this.s_oc(e):true">Work with View Controllers<div class="pipe"></div></a>
+              </li>
+              <li class="conceptual-with-tasks nav-chapter">
+              	<a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/ImplementingACustomControl.html#//apple_ref/doc/uid/TP40015214-CH19-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH19-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/I_1&quot;;return this.s_oc?this.s_oc(e):true">Implement a Custom Control<div class="pipe"></div></a>
+              </li>
+              <li class="conceptual-with-tasks nav-chapter">
+              	<a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/DefineYourDataModel.html#//apple_ref/doc/uid/TP40015214-CH20-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH20-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/D_1&quot;;return this.s_oc?this.s_oc(e):true">Define Your Data Model<div class="pipe"></div></a>
+              </li>
+          </ul>
+        </li>
+        <li class="part-name">
+            <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/CreateATableView.html#//apple_ref/doc/uid/TP40015214-CH8-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH8-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/C_2&quot;;return this.s_oc?this.s_oc(e):true">Working with Table Views</a>
+          <ul class="nav-chapters">
+              <li class="conceptual-with-tasks nav-chapter">
+              	<a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/CreateATableView.html#//apple_ref/doc/uid/TP40015214-CH8-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH8-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/C_3&quot;;return this.s_oc?this.s_oc(e):true">Create a Table View<div class="pipe"></div></a>
+              </li>
+              <li class="conceptual-with-tasks nav-chapter">
+              	<a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/ImplementNavigation.html#//apple_ref/doc/uid/TP40015214-CH16-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH16-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/I_2&quot;;return this.s_oc?this.s_oc(e):true">Implement Navigation<div class="pipe"></div></a>
+              </li>
+              <li class="conceptual-with-tasks nav-chapter">
+              	<a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/ImplementEditAndDeleteBehavior.html#//apple_ref/doc/uid/TP40015214-CH9-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH9-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/I_3&quot;;return this.s_oc?this.s_oc(e):true">Implement Edit and Delete Behavior<div class="pipe"></div></a>
+              </li>
+              <li class="conceptual-with-tasks nav-chapter">
+              	<a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/PersistData.html#//apple_ref/doc/uid/TP40015214-CH14-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH14-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/P_1&quot;;return this.s_oc?this.s_oc(e):true">Persist Data<div class="pipe"></div></a>
+              </li>
+          </ul>
+        </li>
+        <li class="part-name">
+            <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/Resources.html#//apple_ref/doc/uid/TP40015214-CH15-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH15-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/R_1&quot;;return this.s_oc?this.s_oc(e):true">What’s Next?</a>
+          <ul class="nav-chapters">
+              <li class="conceptual-with-tasks nav-chapter">
+              	<a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/Resources.html#//apple_ref/doc/uid/TP40015214-CH15-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH15-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/R_2&quot;;return this.s_oc?this.s_oc(e):true">Where to Go from Here<div class="pipe"></div></a>
+              </li>
+          </ul>
+        </li>
+        <li class="part-name">
+            <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_1&quot;;return this.s_oc?this.s_oc(e):true">iOS and Swift Terminology</a>
+          <ul class="nav-chapters">
+              <li class="glossary nav-chapter">
+              	<a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_2&quot;;return this.s_oc?this.s_oc(e):true">Glossary<div class="pipe"></div></a>
+              </li>
+          </ul>
+        </li>
+        <li data-id="revision-history" class="part-name">
+          <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/RevisionHistory.html#//apple_ref/doc/uid/TP40015214-CH99-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH99-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/R_3&quot;;return this.s_oc?this.s_oc(e):true">Revision History</a>
+          <ul class="nav-chapters">
+            <li class="nav-chapter">
+              <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/RevisionHistory.html#//apple_ref/doc/uid/TP40015214-CH99-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH99-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/R_4&quot;;return this.s_oc?this.s_oc(e):true">Document Revision History</a>
+            </li>
+          </ul>
+        </li>
+    </ul>
+</nav>
+
+      <menu id="bashful" type="toolbar">
+  <div class="shield"></div>
+  <menuitem id="jump_to" class="menu-bar-item closed">
+  <span>On This Page</span>
+  <div class="chevron">
+    <div class="chevy chevron-left"></div>
+    <div class="chevy chevron-right"></div>
+  </div>
+  <menu type="list" class="details">
+      <ul class="list-bullet">
+          <li class="item">
+            <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html#//apple_ref/doc/uid/TP40015214-CH5-SW8" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/B_3&quot;;return this.s_oc?this.s_oc(e):true">Learning Objectives</a>
+          </li>
+          <li class="item">
+            <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html#//apple_ref/doc/uid/TP40015214-CH5-SW3" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/B_4&quot;;return this.s_oc?this.s_oc(e):true">Create a New Project</a>
+          </li>
+          <li class="item">
+            <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html#//apple_ref/doc/uid/TP40015214-CH5-SW4" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/B_5&quot;;return this.s_oc?this.s_oc(e):true">Get Familiar with Xcode</a>
+          </li>
+          <li class="item">
+            <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html#//apple_ref/doc/uid/TP40015214-CH5-SW12" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/B_6&quot;;return this.s_oc?this.s_oc(e):true">Run iOS Simulator</a>
+          </li>
+          <li class="item">
+            <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html#//apple_ref/doc/uid/TP40015214-CH5-SW5" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/B_7&quot;;return this.s_oc?this.s_oc(e):true">Review the Source Code</a>
+          </li>
+          <li class="item">
+            <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html#//apple_ref/doc/uid/TP40015214-CH5-SW10" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/B_8&quot;;return this.s_oc?this.s_oc(e):true">Open Your Storyboard</a>
+          </li>
+          <li class="item">
+            <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html#//apple_ref/doc/uid/TP40015214-CH5-SW9" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/B_9&quot;;return this.s_oc?this.s_oc(e):true">Build the Basic UI</a>
+          </li>
+          <li class="item">
+            <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html#//apple_ref/doc/uid/TP40015214-CH5-SW6" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/B_10&quot;;return this.s_oc?this.s_oc(e):true">Preview Your Interface</a>
+          </li>
+          <li class="item">
+            <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html#//apple_ref/doc/uid/TP40015214-CH5-SW2" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/B_11&quot;;return this.s_oc?this.s_oc(e):true">Adopt Auto Layout</a>
+          </li>
+          <li class="item">
+            <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html#//apple_ref/doc/uid/TP40015214-CH5-DontLinkElementID_1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/B_12&quot;;return this.s_oc?this.s_oc(e):true">Debugging Auto layout</a>
+          </li>
+          <li class="item">
+            <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html#//apple_ref/doc/uid/TP40015214-CH5-DontLinkElementID_2" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/B_13&quot;;return this.s_oc?this.s_oc(e):true">Wrapping Up</a>
+          </li>
+      </ul>
+  </menu>
+</menuitem>
+
+</menu>
+<div class="pixel-line"></div>
+<div class="rubber-band-gap"></div>
+<article class="chapter">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5"></a><a name="//apple_ref/doc/uid/TP40015214-CH5-SW1"></a>
+  <h2 class="chapter-name chapter-name-short">Build a Basic UI</h2>
+  
+  	<section class="section">
+  		<p class="para">
+  This lesson gets you familiar with Xcode, the tool you use to write apps. You’ll become familiar with the structure of a project in Xcode and learn how to navigate between and use basic project components. In the lesson, you’ll start making a simple <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW18" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW18" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_3&quot;;return this.s_oc?this.s_oc(e):true">user interface (UI)</a></span> for the FoodTracker app and view it in the simulator. When you’re finished, your app will have a label for the meal’s name, a text field to change the meal’s name, and a button for resetting the name.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_sim_finalUI_2x.png" alt="image: ../Art/BBUI_sim_finalUI_2x.png" width="387" height="679">
+</figure>
+
+		</section> 
+  <section class="section">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW8"></a>
+  <h3 class="section-name" tabindex="0">Learning Objectives</h3>
+  <p class="para">
+  At the end of the lesson, you’ll be able to:
+</p><ul class="list-bullet">
+  <li class="item"><p class="para">
+  Create a project in&nbsp;Xcode
+</p>
+</li><li class="item"><p class="para">
+  Identify the purpose of key files that are created with an Xcode project template
+</p>
+</li><li class="item"><p class="para">
+  Open and switch between files in a project
+</p>
+</li><li class="item"><p class="para">
+  Run an app in iOS Simulator
+</p>
+</li><li class="item"><p class="para">
+  Add, move, and resize&nbsp;UI elements in a storyboard
+</p>
+</li><li class="item"><p class="para">
+  Edit the attributes of UI elements in a storyboard using the&nbsp;Attributes inspector
+</p>
+</li><li class="item"><p class="para">
+  View and rearrange UI elements using the outline view
+</p>
+</li><li class="item"><p class="para">
+  Preview a storyboard UI using the&nbsp;Assistant editor’s Preview mode
+</p>
+</li><li class="item"><p class="para">
+  Use Auto Layout to lay out a UI that automatically adapts to the user’s device size
+</p>
+</li>
+</ul>
+  
+</section>
+<section class="section">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW3"></a>
+  <h3 class="section-name" tabindex="0">Create a New Project</h3>
+  <p class="para">
+  Xcode includes several built-in app templates for developing common types of iOS apps, such as games, apps with tab-based navigation, and table view-based apps. Most of these templates have preconfigured interface and source code files. For this lesson, you’ll start with the most basic template: Single View Application.
+</p><p class="para">
+  <strong class="inline-head">To create a new project</strong>
+</p><ol class="list-number">
+  <li class="item"><p class="para">
+  Open Xcode from the <code class="code-voice">/Applications</code> directory.
+</p>
+<p class="para">
+  If this is the first time you’ve launched Xcode, it may ask you to agree to the user agreement and to download additional components. Follow the prompts through these screens until Xcode is completely set up and ready to launch.
+</p>
+<p class="para">
+  As soon as Xcode launches, the welcome window appears.
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW11"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_welcomewindow_2x.png" alt="image: ../Art/BBUI_welcomewindow_2x.png" width="680" height="413">
+</figure>
+<p class="para">
+  If a project window appears instead of the welcome window, don’t worry—you probably created or opened a project in Xcode previously. Just use the menu item in the next step to create the project.
+</p>
+</li><li class="item"><p class="para">
+  In the welcome window, click “Create a new Xcode project” (or choose File &gt; New &gt; Project).
+</p>
+<p class="para">
+  Xcode opens a new window and displays a dialog in which you choose a template. 
+</p>
+</li><li class="item"><p class="para">
+  Select iOS at the top of the dialog.
+</p>
+</li><li class="item"><p class="para">
+  In the Application section, select Single View Application and then click Next.
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW13"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_singleviewapp_template_2x.png" alt="image: ../Art/BBUI_singleviewapp_template_2x.png" width="680" height="486">
+</figure>
+</li><li class="item"><p class="para">
+  In the dialog that appears, use the following values to name your app and choose additional options for your project:
+</p>
+<ul class="list-bullet">
+  <li class="item"><p class="para">
+  Product Name: <code class="code-voice">FoodTracker</code>
+</p>
+<p class="para">
+  Xcode uses the product name you entered to name your project and the app.
+</p>
+</li><li class="item"><p class="para">
+  Team: If this is not automatically filled in, set the team to None.
+</p>
+</li><li class="item"><p class="para">
+  Organization Name: The name of your organization or your own name. You can leave this blank.
+</p>
+</li><li class="item"><p class="para">
+  Organization Identifier: Your organization identifier, if you have one. If you don’t, use <code class="code-voice">com.example</code>.
+</p>
+</li><li class="item"><p class="para">
+  Bundle Identifier: This value is automatically generated based on your product name and organization identifier.
+</p>
+</li><li class="item"><p class="para">
+  Language: Swift
+</p>
+</li><li class="item"><p class="para">
+  Devices: Universal
+</p>
+<p class="para">
+  A Universal app is one that runs on both iPhone and iPad.
+</p>
+</li><li class="item"><p class="para">
+  Use Core Data: Unselected.
+</p>
+</li><li class="item"><p class="para">
+  Include Unit Tests: Selected.
+</p>
+</li><li class="item"><p class="para">
+  Include UI Tests: Unselected.
+</p>
+</li>
+</ul>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW14"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_newproject_2x.png" alt="image: ../Art/BBUI_newproject_2x.png" width="680" height="486">
+</figure>
+</li><li class="item"><p class="para">
+  Click Next.
+</p>
+</li><li class="item"><p class="para">
+  In the dialog that appears, select a location to save your project and click Create.
+</p>
+<p class="para">
+  Xcode opens your new project in the <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW9" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW9" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_4&quot;;return this.s_oc?this.s_oc(e):true">workspace window</a></span>.
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW15"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_workspacewindow_2x.png" alt="image: ../Art/BBUI_workspacewindow_2x.png" width="680" height="388">
+</figure>
+</li>
+</ol><p class="para">
+  The workspace window may have an error icon with a message that says “Signing for FoodTracker requires a development team.” This warning means you haven’t set up Xcode for iOS development yet, but don’t worry, you can complete these lessons without doing that. You do not need a development team to run the app in the simulator.
+</p><div class="note">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-DontLinkElementID_14"></a>
+  <aside class="aside">
+    <p class="aside-title">Explore Further
+    </p>
+    	<p class="para">Before you can run the app on an iOS device, you need to set a valid team so that the app can be signed. If you are an individual or part of an organization that is a member of the Apple Developer Program, you can select that team here. Otherwise, your Apple ID is assigned to a personal team that you can use to launch apps on devices. However, you will need to join the Apple Developer Program before you can submit your app to the App store.
+    	</p>
+    <p class="para">
+  For more information, select Help &gt; Xcode Help and search for “Signing workflow.”
+</p>
+
+  </aside>
+</div>
+  
+</section>
+<section class="section">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW4"></a>
+  <h3 class="section-name" tabindex="0">Get Familiar with Xcode</h3>
+  <p class="para">
+  Xcode includes everything you need to create an app. It organizes all the files and resources that go into creating an app. It provides editors for both your code and your user interfaces. Also, Xcode lets you build, run, and debug your app—providing simulators for iOS devices and a powerful integrated debugger.
+</p><p class="para">
+  Take a few moments to familiarize yourself with the main sections of the Xcode workspace:
+</p><ul class="list-bullet">
+  <li class="item"><p class="para">
+  <strong class="inline-head">Navigator area.</strong> Provides quick access to the various parts of your project.
+</p>
+</li><li class="item"><p class="para">
+  <strong class="inline-head">Editor area.</strong> Allows you to edit source code, user interfaces, and other resources.
+</p>
+</li><li class="item"><p class="para">
+  <strong class="inline-head">Utility area.</strong> Provides information about selected items and access to ready-made resources. The Utility area is divided into two parts. The top is the <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW46" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW46" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_5&quot;;return this.s_oc?this.s_oc(e):true">inspector pane</a></span>, where you view and edit information about items selected in the navigator or edit areas. The bottom is the <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW126" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW126" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_6&quot;;return this.s_oc?this.s_oc(e):true">library pane</a></span>, where you access user interface elements, code snippets, and other resources.
+</p>
+</li><li class="item"><p class="para">
+  <strong class="inline-head">Toolbar.</strong> Used to build and run your apps, view the progress of running tasks, and configure your work environment.
+</p>
+</li>
+</ul><figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_workspacewindow_callouts_2x.png" alt="image: ../Art/BBUI_workspacewindow_callouts_2x.png" width="680" height="418">
+</figure><p class="para">
+  Don’t be overwhelmed by all of the pieces; each area is described in more detail when you need to use it.
+</p>
+  
+</section>
+<section class="section">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW12"></a>
+  <h3 class="section-name" tabindex="0">Run iOS Simulator</h3>
+  <p class="para">
+  Because you based your project on an Xcode template, the basic app environment is automatically set up for you. Even though you haven’t written any code, you can build and run the Single View Application template without any additional configuration.
+</p><p class="para">
+  To build and run your app, use the iOS <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW48" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW48" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_7&quot;;return this.s_oc?this.s_oc(e):true">Simulator</a></span> app that’s included in Xcode. The simulator gives you an idea of how your app would look and behave if it were running on a device.
+</p><p class="para">
+  The simulator can model a number of different types of hardware—All the screen sizes and resolutions for both iPad and iPhone—so you can simulate your app on every device you’re developing for. In this lesson, use the iPhone 7 option.
+</p><p class="para">
+  <strong class="inline-head">To run your app in the simulator</strong>
+</p><ol class="list-number">
+  <li class="item"><p class="para">
+  In the Scheme pop-up menu in the Xcode toolbar, choose iPhone 7.
+</p>
+<p class="para">
+  The Scheme pop-up menu lets you choose which simulator or device you’d like to run your app on. Make sure you select the iPhone 7 Simulator, not an iOS device.
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW17"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_schememenu_2x.png" alt="image: ../Art/BBUI_schememenu_2x.png" width="421" height="354">
+</figure>
+</li><li class="item"><p class="para">
+  Click the Run button, located in the top-left corner of the Xcode toolbar.
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW18"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_toolbar_2x.png" alt="image: ../Art/BBUI_toolbar_2x.png" width="680" height="93">
+</figure>
+<p class="para">
+  Alternatively, choose Product &gt; Run (or press Command-R).
+</p>
+<p class="para">
+  If you’re running an app for the first time, Xcode asks whether you’d like to enable developer mode on your Mac. Developer mode allows Xcode access to certain debugging features without requiring you to enter your password each time. Decide whether you’d like to enable developer mode and follow the prompts.
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW19"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_developermode_2x.png" alt="image: ../Art/BBUI_developermode_2x.png" width="464" height="161">
+</figure>
+<p class="para">
+  If you choose not to enable developer mode, you may be asked for your password later on. These lessons assume developer mode is enabled.
+</p>
+</li><li class="item"><p class="para">
+  Watch the Xcode toolbar as the build process completes.
+</p>
+<p class="para">
+  Xcode displays messages about the build process in the <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW24" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW24" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_8&quot;;return this.s_oc?this.s_oc(e):true">activity viewer</a></span>, which is in the middle of the toolbar.
+</p>
+</li>
+</ol><p class="para">
+  After Xcode finishes building your project, the simulator starts automatically. It may take a few moments to start up the first time.
+</p><p class="para">
+  The simulator opens in the iPhone mode you specified and then launches your app. Initially, the simulator displays your app’s launch screen, and then it transitions to your app’s main interface. In an unmodified Single View Application template, the launch screen and the main interface are identical.
+</p><figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW21"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_sim_blank_2x.png" alt="image: ../Art/BBUI_sim_blank_2x.png" width="387" height="679">
+</figure><p class="para">
+  Right now, the Single View Application template doesn’t do much—it just displays a white screen. Other templates have more complex behavior. It’s important to understand a template’s uses before you extend it to make your own app. Running your app in the simulator with no modifications is a good way to start developing that understanding.
+</p><p class="para">
+  Quit the simulator by choosing Simulator &gt; Quit Simulator (or pressing Command-Q).
+</p>
+  
+</section>
+<section class="section">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW5"></a>
+  <h3 class="section-name" tabindex="0">Review the Source Code</h3>
+  <p class="para">
+  The Single View Application template comes with a few source code files that set up the app environment. First, take a look at the <code class="code-voice">AppDelegate.swift</code> file.
+</p><p class="para">
+  <strong class="inline-head">To look at the AppDelegate.swift source file</strong>
+</p><ol class="list-number">
+  <li class="item"><p class="para">
+  Make sure the project navigator is open in the navigator area.
+</p>
+<p class="para">
+  The <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW57" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW57" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_9&quot;;return this.s_oc?this.s_oc(e):true">project navigator</a></span> displays all the files in your project. If the project navigator isn’t open, click the leftmost button in the navigator selector bar. (Alternatively, choose View &gt; Navigators &gt; Show Project Navigator.)
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW22"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_projectnavigator_2x.png" alt="image: ../Art/BBUI_projectnavigator_2x.png" width="478" height="347">
+</figure>
+</li><li class="item"><p class="para">
+  If necessary, open the FoodTracker folder in the project navigator by clicking the disclosure triangle next to it.
+</p>
+</li><li class="item"><p class="para">
+  Select <code class="code-voice">AppDelegate.swift</code>.
+</p>
+<p class="para">
+  Xcode opens the source file in the main editor area of the window.
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW23"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_appdelegate_file_2x.png" alt="image: ../Art/BBUI_appdelegate_file_2x.png" width="680" height="388">
+</figure>
+<p class="para">
+  Alternatively, double-click the <code class="code-voice">AppDelegate.swift</code> file to open it in a separate window.
+</p>
+</li>
+</ol>
+  <section class="section">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW24"></a>
+  <h3 class="section-name" tabindex="0">The App Delegate Source File</h3>
+  <p class="para">
+  The <code class="code-voice">AppDelegate.swift</code> source file has two primary functions:
+</p><ul class="list-bullet">
+  <li class="item"><p class="para">
+  It defines your <code class="code-voice">AppDelegate</code> class. The <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW27" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW27" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_10&quot;;return this.s_oc?this.s_oc(e):true">app delegate</a></span> creates the window where your app’s content is drawn and provides a place to respond to state transitions within the app. 
+</p>
+</li><li class="item"><p class="para">
+  It creates the <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW37" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW37" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_11&quot;;return this.s_oc?this.s_oc(e):true">entry point</a></span> to your app and a <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW61" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW61" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_12&quot;;return this.s_oc?this.s_oc(e):true">run loop</a></span> that delivers input events to your app. This work is done by the <code class="code-voice">UIApplicationMain</code> attribute  (<code class="code-voice">@UIApplicationMain</code>), which appears toward the top of the file. 
+</p>
+<p class="para">
+  Using the <code class="code-voice">UIApplicationMain</code> attribute is equivalent to calling the <code class="code-voice">UIApplicationMain</code> function and passing your <code class="code-voice">AppDelegate</code> class’s name as the name of the delegate class. In response, the system creates an <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW75" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW75" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_13&quot;;return this.s_oc?this.s_oc(e):true">application object</a></span>. The application object is responsible for managing the life cycle of the app. The system also creates an instance of your <code class="code-voice">AppDelegate</code> class, and assigns it to the application object. Finally, the system launches your app.
+</p>
+</li>
+</ul><p class="para">
+  The <code class="code-voice">AppDelegate</code> class is automatically created whenever you create a new project. Unless you are doing something highly unusual, you should use this class provided by Xcode to initialize your app and respond to app-level events. The <code class="code-voice">AppDelegate</code> class adopts the <code class="code-voice">UIApplicationDelegate</code> protocol. This protocol defines a number of methods you use to set up your app, to respond to the app’s state changes, and to handle other app-level events.
+</p><p class="para">
+  The <code class="code-voice">AppDelegate</code> class contains a single property: <code class="code-voice">window</code>. 
+</p><section class="code-listing">
+  
+  <div class="code-sample">
+      <div class="Swift">
+        <ol class="code-lines">
+            <li><code class="code-voice"><span class="kt">var</span> <span class="vc">window</span>: <span class="n"><!-- a href="" -->UIWindow<!-- /a --></span>?</code></li>
+        </ol>
+      </div>
+  </div>
+</section><p class="para">
+  This property stores a reference to the app’s window. This window represents the root of your app’s view hierarchy. It is where all of your app content is drawn. Note that the window property is an <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW11" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW11" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_14&quot;;return this.s_oc?this.s_oc(e):true">optional</a></span>, which means it may have no value (be <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW5" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW5" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_15&quot;;return this.s_oc?this.s_oc(e):true">nil</a></span>) at some point.
+</p><p class="para">
+  The <code class="code-voice">AppDelegate</code> class also contains stub implementations of the following delegate <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW12" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW12" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_16&quot;;return this.s_oc?this.s_oc(e):true">methods</a></span>: 
+</p><section class="code-listing">
+  
+  <div class="code-sample">
+      <div class="Swift">
+        <ol class="code-lines">
+            <li><code class="code-voice"><span class="kt">func</span> <span class="vc">application</span>(<span class="kt">_</span> <span class="vc">application</span>: <span class="n"><!-- a href="" -->UIApplication<!-- /a --></span>, <span class="vc">didFinishLaunchingWithOptions</span> <span class="vc">launchOptions</span>: [<span class="n"><!-- a href="" -->UIApplicationLaunchOptionsKey<!-- /a --></span>: <span class="kt">Any</span>]?) -&gt; <span class="n"><!-- a href="" -->Bool<!-- /a --></span></code></li>
+            <li><code class="code-voice"><span class="kt">func</span> <span class="vc">applicationWillResignActive</span>(<span class="kt">_</span> <span class="vc">application</span>: <span class="n"><!-- a href="" -->UIApplication<!-- /a --></span>)</code></li>
+            <li><code class="code-voice"><span class="kt">func</span> <span class="vc">applicationDidEnterBackground</span>(<span class="kt">_</span> <span class="vc">application</span>: <span class="n"><!-- a href="" -->UIApplication<!-- /a --></span>)</code></li>
+            <li><code class="code-voice"><span class="kt">func</span> <span class="vc">applicationWillEnterForeground</span>(<span class="kt">_</span> <span class="vc">application</span>: <span class="n"><!-- a href="" -->UIApplication<!-- /a --></span>)</code></li>
+            <li><code class="code-voice"><span class="kt">func</span> <span class="vc">applicationDidBecomeActive</span>(<span class="kt">_</span> <span class="vc">application</span>: <span class="n"><!-- a href="" -->UIApplication<!-- /a --></span>)</code></li>
+            <li><code class="code-voice"><span class="kt">func</span> <span class="vc">applicationWillTerminate</span>(<span class="kt">_</span> <span class="vc">application</span>: <span class="n"><!-- a href="" -->UIApplication<!-- /a --></span>)</code></li>
+        </ol>
+      </div>
+  </div>
+</section><p class="para">
+  These methods let the application object communicate with the app delegate. During an app state transition—for example, app launch, transitioning to the background, and app termination—the application object calls the corresponding delegate method, giving your app an opportunity to respond. You don’t need to do anything special to make sure these methods get called at the correct time—the application object handles that job for you.
+</p><p class="para">
+  Each of the delegate methods has a default behavior. If you leave the template implementation empty or delete it from your <code class="code-voice">AppDelegate</code> class, you get the default behavior whenever that method is called. Alternatively, you can add your own code to the stub methods, defining custom behaviors that are executed when the methods are called.
+</p><p class="para">
+  The template also provides comments for each of the stub methods. These comments describe how these methods can be used by your app. You can use the stub methods and comments as a blueprint for designing many common app-level behaviors.
+</p><p class="para">
+  In this lesson, you won’t be using any custom app delegate code, so you don’t have to make any changes to the <code class="code-voice">AppDelegate.swift</code> file.
+</p>
+  
+</section>
+<section class="section">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW25"></a>
+  <h3 class="section-name" tabindex="0">The View Controller Source File</h3>
+  <p class="para">
+  The Single View Application template has another source code file: <code class="code-voice">ViewController.swift</code>. Select <code class="code-voice">ViewController.swift</code> in the project navigator to view it.
+</p><figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW26"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_viewcontroller_file_2x.png" alt="image: ../Art/BBUI_viewcontroller_file_2x.png" width="680" height="465">
+</figure><p class="para">
+  This file defines a custom <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW14" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW14" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_17&quot;;return this.s_oc?this.s_oc(e):true">subclass</a></span> of <code class="code-voice">UIViewController</code> named <code class="code-voice">ViewController</code>. Right now, this class simply inherits all the behavior defined by <code class="code-voice">UIViewController</code>. To override or extend that behavior, you override the methods defined on <code class="code-voice">UIViewController</code>.
+</p><p class="para">
+  As you can see in the <code class="code-voice">ViewController.swift</code> file, the template’s implementation overrides both the <code class="code-voice">viewDidLoad()</code> and <code class="code-voice">didReceiveMemoryWarning()</code> methods; however, the template’s stub implementation doesn’t do anything yet, except call the <code class="code-voice">UIViewController</code> version of these methods. You can add your own code to customize the view controller’s response to these events.
+</p><p class="para">
+  Although the template comes with the <code class="code-voice">didReceiveMemoryWarning()</code> method, you won’t need to implement it in these lessons, so go ahead and delete it.
+</p><p class="para">
+  At this point, your <code class="code-voice">ViewController.swift</code> code should look something like this:
+</p><section class="code-listing">
+  
+  <div class="code-sample">
+      <div class="Swift">
+        <ol class="code-lines">
+            <li><code class="code-voice"><span class="kt">import</span> <span class="vc">UIKit</span></code></li>
+            <li><code class="code-voice"> </code></li>
+            <li><code class="code-voice"><span class="kt">class</span> <span class="vc">ViewController</span>: <span class="n"><!-- a href="" -->UIViewController<!-- /a --></span> {</code></li>
+            <li><code class="code-voice">    </code></li>
+            <li><code class="code-voice">    <span class="kt">override</span> <span class="kt">func</span> <span class="vc">viewDidLoad</span>() {</code></li>
+            <li><code class="code-voice">        <span class="kt">super</span>.<span class="vc">viewDidLoad</span>()</code></li>
+            <li><code class="code-voice">        <span class="c">// Do any additional setup after loading the view, typically from a nib.</span></code></li>
+            <li><code class="code-voice">    }</code></li>
+            <li><code class="code-voice">    </code></li>
+            <li><code class="code-voice">}</code></li>
+        </ol>
+      </div>
+  </div>
+</section><p class="para">
+  You’ll start writing code in this source code file later in this lesson.
+</p>
+  
+</section>
+
+</section>
+<section class="section">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW10"></a>
+  <h3 class="section-name" tabindex="0">Open Your Storyboard</h3>
+  <p class="para">
+  You’re ready to start working on a storyboard for your app. A <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW8" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW8" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_18&quot;;return this.s_oc?this.s_oc(e):true">storyboard</a></span> is a visual representation of the app’s user interface, showing screens of content and the transitions between them. You use storyboards to lay out the flow—or story—that drives your app. You see exactly what you're building while you’re building it, get immediate feedback about what’s working and what’s not, and make instantly visible changes to your user interface.
+</p><p class="para">
+  <strong class="inline-head">To open your storyboard</strong>
+</p><ul class="list-bullet">
+  <li class="item"><p class="para">
+  In the project navigator, select <code class="code-voice">Main.storyboard</code>.
+</p>
+<p class="para">
+  Xcode opens the storyboard in <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW47" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW47" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_19&quot;;return this.s_oc?this.s_oc(e):true">Interface Builder</a></span>—its visual interface editor—in the editor area. The background of the storyboard is the <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW6" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW6" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_20&quot;;return this.s_oc?this.s_oc(e):true">canvas</a></span>. You use the canvas to add and arrange user interface elements.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_storyboard_empty_2x.png" alt="image: ../Art/BBUI_storyboard_empty_2x.png" width="680" height="449">
+</figure>
+</li>
+</ul><p class="para">
+  At this point, the storyboard in your app contains one <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW62" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW62" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_21&quot;;return this.s_oc?this.s_oc(e):true">scene</a></span>, which represents a screen of content in your app. The arrow that points to the left side of the scene on the canvas is the <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW66" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW66" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_22&quot;;return this.s_oc?this.s_oc(e):true">storyboard entry point</a></span>, which means that this scene is loaded first when the app starts. This scene contains a single view that’s managed by a view controller. You’ll learn more about the roles of views and view controllers soon.
+</p><p class="para">
+  When you ran your app in the iPhone 7 Simulator app, the view in this scene is what you saw on the device screen. However, the scene on the canvas may not have the same dimensions as the simulator’s screen. You can select the screen size and orientation at the bottom of the canvas. In this case, it’s set to iPhone 7 in a portrait orientation, so the canvas and the simulator are the same.
+</p><p class="para">
+  Even though the canvas shows a specific device and orientation, it is important to create an <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW25" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW25" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_23&quot;;return this.s_oc?this.s_oc(e):true">adaptive interface</a></span>—an interface that automatically adjusts so that it looks good on any device and in any orientation. As you develop your interface, you can change the canvas’s view, letting you see how your interface adapts to different size screens.
+</p>
+  
+</section>
+<section class="section">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW9"></a>
+  <h3 class="section-name" tabindex="0">Build the Basic UI</h3>
+  <p class="para">
+  It’s time to build a basic interface. You’ll start by working on a user interface for the scene that lets you add a new meal to your meal tracking app, FoodTracker.
+</p><p class="para">
+  Xcode provides a library of objects that you can add to a storyboard file. Some of these are elements that appear in the user interface, such as buttons and text fields. Others, such as view controllers and gesture recognizers, define the behavior of your app but don’t appear onscreen.
+</p><p class="para">
+  The elements that appear in the user interface are known as views. <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW16" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW16" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_24&quot;;return this.s_oc?this.s_oc(e):true">Views</a></span> display content to the user. They are the building blocks for constructing your user interface and presenting your content in a clear, elegant, and useful way. Views have a variety of useful built-in behaviors, including displaying themselves onscreen and reacting to user input. 
+</p><p class="para">
+  All view objects in iOS are of type <code class="code-voice">UIView</code> or one of its subclasses. Many <code class="code-voice">UIView</code> subclasses are highly specialized in appearance and behavior. Start by adding a text field (<code class="code-voice">UITextField</code>), one such subclass of <code class="code-voice">UIView</code>, to your scene. A text field lets a user type in a single line of text, which you’ll use as the name of a meal.
+</p><p class="para">
+  <strong class="inline-head">To add a text field to your scene</strong>
+</p><ol class="list-number">
+  <li class="item"><p class="para">
+  Choose Editor &gt; Canvas, and make sure Show Bounds Rectangles is selected.
+</p>
+<p class="para">
+  This setting causes Interface Builder to draw a blue bounding box around all the views in the canvas. Many views and controls have transparent backgrounds, making it difficult to see their actual size. Layout bugs occur when the system resizes a view so that it’s either larger or smaller than you anticipate. Enabling this setting helps you understand exactly what’s going on in your view hierarchy.
+</p>
+</li><li class="item"><p class="para">
+  Open the Object library.
+</p>
+<p class="para">
+  The <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW54" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW54" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_25&quot;;return this.s_oc?this.s_oc(e):true">Object library</a></span> appears at the bottom of the <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW72" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW72" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_26&quot;;return this.s_oc?this.s_oc(e):true">utility area</a></span> on the right side of Xcode. If you don’t see the Object library, click its button, which is the third button from the left in the library selector bar. (Alternatively, choose View &gt; Utilities &gt; Show Object Library.)
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW28"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/object_library_2x.png" alt="image: ../Art/object_library_2x.png" width="438" height="301">
+</figure>
+<p class="para">
+  A list appears showing each object’s name, description, and visual representation.
+</p>
+</li><li class="item"><p class="para">
+  In the Object library, type <code class="code-voice">text field</code> in the filter field to find the Text Field object quickly.
+</p>
+</li><li class="item"><p class="para">
+  Drag a Text Field object from the Object library to your scene.
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW29"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_textfield_drag_2x.png" alt="image: ../Art/BBUI_textfield_drag_2x.png" width="446" height="732">
+</figure>
+<p class="para">
+  If necessary, zoom in by choosing Editor &gt; Canvas &gt; Zoom.
+</p>
+</li><li class="item"><p class="para">
+  Drag the text field so that it’s positioned in the top half of the scene and aligned with the left margin in the scene.
+</p>
+<p class="para">
+  Stop dragging the text field when it snaps to the left margin.
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW34"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_textfield_place_2x.png" alt="image: ../Art/BBUI_textfield_place_2x.png" width="418" height="620">
+</figure>
+<p class="para">
+  The blue layout guides help you place the text field. Layout guides are visible only when you drag or resize objects next to them; they disappear when you let go of the text field.
+</p>
+</li><li class="item"><p class="para">
+  If necessary, click the text field to reveal the resize handles.
+</p>
+<p class="para">
+  You resize a user interface element by dragging its <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW60" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW60" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_27&quot;;return this.s_oc?this.s_oc(e):true">resize handles</a></span>, which are small white squares that appear on the element’s borders. You reveal an element’s resize handles by selecting it. In this case, the text field should already be selected because you just stopped dragging it. If your text field looks like the one below, you’re ready to resize it; if it doesn’t, select it on the canvas.
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW37"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_textfield_resizehandles_2x.png" alt="image: ../Art/BBUI_textfield_resizehandles_2x.png" width="415" height="620">
+</figure>
+</li><li class="item"><p class="para">
+  Resize the left and right edges of the text field until you see three vertical layout guides: the left margin alignment, the horizontal center alignment, and the right margin alignment.
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW38"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_textfield_finalsize_2x.png" alt="image: ../Art/BBUI_textfield_finalsize_2x.png" width="414" height="614">
+</figure>
+</li>
+</ol><p class="para">
+  Although you have the text field in your scene, there’s no instruction to the user about what to enter in the field. Use the text field’s placeholder text to prompt the user to enter the name of a new meal.
+</p><p class="para">
+  <strong class="inline-head">To configure the text field’s placeholder text</strong>
+</p><ol class="list-number">
+  <li class="item"><p class="para">
+  With the text field selected, open the Attributes inspector <img class="inline-graphic" src="./Start Developing iOS Apps (Swift) - Building UI_files/inspector_attributes_2x.png" alt="image: ../Art/inspector_attributes_2x.png" width="16" height="16"> in the utility area.
+</p>
+<p class="para">
+  The <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW19" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW19" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_28&quot;;return this.s_oc?this.s_oc(e):true">Attributes inspector</a></span> appears when you click the fourth button from the left in the inspector selector bar. It lets you edit the properties of an object in your storyboard.
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW44"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_inspector_attributes_2x.png" alt="image: ../Art/BBUI_inspector_attributes_2x.png" width="419" height="542">
+</figure>
+</li><li class="item"><p class="para">
+  In the Attributes inspector, find the field labeled Placeholder and type <code class="code-voice">Enter meal name</code>.
+</p>
+<div class="note">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-DontLinkElementID_15"></a>
+  <aside class="aside">
+    <p class="aside-title">Explore Further
+    </p>
+    	<p class="para">In a production app, any String that can be seen by the user (such as the text field’s placeholder text) should be localized. For more information, see <a href="https://developer.apple.com/internationalization/" onclick="s_objectID=&quot;https://developer.apple.com/internationalization/_1&quot;;return this.s_oc?this.s_oc(e):true">Build Apps for the World</a>.
+    	</p>
+    
+  </aside>
+</div>
+</li><li class="item"><p class="para">
+  Press Return to display the new placeholder text in the text field.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_textfield_withplaceholder_2x.png" alt="image: ../Art/BBUI_textfield_withplaceholder_2x.png" width="680" height="449">
+</figure>
+</li>
+</ol><p class="para">
+  While you’re editing the text field’s attributes, you can also edit the attributes of the system keyboard that’s displayed when a user selects the text field.
+</p><p class="para">
+  <strong class="inline-head">To configure the text field’s keyboard</strong>
+</p><ol class="list-number">
+  <li class="item"><p class="para">
+  Make sure the text field is still selected.
+</p>
+</li><li class="item"><p class="para">
+  In the Attributes inspector, find the field labeled Return Key and select Done (scroll down if necessary).
+</p>
+<p class="para">
+  This change will make the default Return key on the keyboard more pronounced to the user by changing it into a Done key.
+</p>
+</li><li class="item"><p class="para">
+  In the Attributes inspector, select the Auto-enable Return Key checkbox (again, scroll down if necessary).
+</p>
+<p class="para">
+  This change makes it impossible for the user to tap the Done key before typing text into the text field, ensuring that users can never enter an empty string as a meal name.
+</p>
+</li>
+</ol><figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_keyboardattributes_2x.png" alt="image: ../Art/BBUI_keyboardattributes_2x.png" width="272" height="540">
+</figure><p class="para">
+  Next, add a label (<code class="code-voice">UILabel</code>) at the top of the scene. A label isn’t interactive; it just displays static text in the user interface. To help you understand how to define interaction between elements in the user interface, you’ll configure this label to display the text the user enters into the text field. It’ll be a good way to test that the text field is taking the user input and processing it appropriately.
+</p><p class="para">
+  <strong class="inline-head">To add a label to your scene</strong>
+</p><ol class="list-number">
+  <li class="item"><p class="para">
+  In the Object library, type <code class="code-voice">label</code> in the filter field to find the Label object quickly.
+</p>
+</li><li class="item"><p class="para">
+  Drag a Label object from the Object library to your scene.
+</p>
+</li><li class="item"><p class="para">
+  Drag the label so that it’s right above the text field and aligned with the left margin in the scene.
+</p>
+<p class="para">
+  Stop dragging the label when it snaps to the guidelines.
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW45"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_label_place_2x.png" alt="image: ../Art/BBUI_label_place_2x.png" width="420" height="613">
+</figure>
+</li><li class="item"><p class="para">
+  Double-click the label and type <code class="code-voice">Meal Name</code>.
+</p>
+</li><li class="item"><p class="para">
+  Press Return to display the new text in the label.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_label_rename_2x.png" alt="image: ../Art/BBUI_label_rename_2x.png" width="416" height="617">
+</figure>
+</li>
+</ol><p class="para">
+  Now, add a button (<code class="code-voice">UIButton</code>) to the scene. A button is interactive, so users can tap it to trigger an action that you define. Later, you’ll create an action to reset the label text to a default value.
+</p><p class="para">
+  <strong class="inline-head">To add a button to your scene</strong>
+</p><ol class="list-number">
+  <li class="item"><p class="para">
+  In the Object library, type <code class="code-voice">button</code> in the filter field to find the Button object quickly.
+</p>
+</li><li class="item"><p class="para">
+  Drag a Button object from the Object library to your scene.
+</p>
+</li><li class="item"><p class="para">
+  Drag the button so that it’s right below the text field and aligned with the left margin in the scene.
+</p>
+<p class="para">
+  Stop dragging the button when it snaps to the guidelines.
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW46"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_button_place_2x.png" alt="image: ../Art/BBUI_button_place_2x.png" width="422" height="632">
+</figure>
+</li><li class="item"><p class="para">
+  Double-click the button and type <code class="code-voice">Set Default Label Text</code>.
+</p>
+</li><li class="item"><p class="para">
+  Press Return to display the new text in the button.
+</p>
+</li><li class="item"><p class="para">
+  Reposition the button, if necessary.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_button_rename_2x.png" alt="image: ../Art/BBUI_button_rename_2x.png" width="417" height="637">
+</figure>
+</li>
+</ol><p class="para">
+  It’s good to understand how the elements you’ve added are actually arranged in the scene. Look at the outline view to see which user interface elements have been added to your scene.
+</p><p class="para">
+  <strong class="inline-head">To view the outline view</strong>
+</p><ol class="list-number">
+  <li class="item"><p class="para">
+  In your storyboard, find the outline view toggle.
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW33"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_outlineview_toggle_2x.png" alt="image: ../Art/BBUI_outlineview_toggle_2x.png" width="680" height="456">
+</figure>
+</li><li class="item"><p class="para">
+  If the outline view is collapsed, click the toggle to expand the outline view.
+</p>
+<p class="para">
+  You can use the outline view toggle to collapse and expand the outline view as needed.
+</p>
+</li>
+</ol><p class="para">
+  The <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW56" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW56" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_29&quot;;return this.s_oc?this.s_oc(e):true">outline view</a></span>, which appears on the left side of the canvas, provides a hierarchical representation of the objects in your storyboard. You should be able to see the text field, label, and button you just added listed in the hierarchy. But why are the user interface elements you added nested under View?
+</p><p class="para">
+  Views not only display themselves onscreen and react to user input, they can serve as containers for other views. Views are arranged in a hierarchical structure called the view hierarchy. The <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW21" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW21" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_30&quot;;return this.s_oc?this.s_oc(e):true">view hierarchy</a></span> defines the layout of views relative to other views. Within that hierarchy, views enclosed within a view are called <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW22" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW22" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_31&quot;;return this.s_oc?this.s_oc(e):true">subviews</a></span>, and the parent view that encloses a view is called its <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW67" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW67" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_32&quot;;return this.s_oc?this.s_oc(e):true">superview</a></span>. A view can have multiple subviews and only one superview.
+</p><figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW35"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_outlineview_2x.png" alt="image: ../Art/BBUI_outlineview_2x.png" width="243" height="255">
+</figure><p class="para">
+  In general, each scene has its own view hierarchy. At the top of each view hierarchy is a <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW34" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW34" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_33&quot;;return this.s_oc?this.s_oc(e):true">content view</a></span>. In the current scene, the content view is named View, the top level view inside the View Controller. The text field, label, and button are subviews of the content view. All other views that you place in this scene will be subviews of this content view (although they themselves can have nested subviews).
+</p>
+  
+</section>
+<section class="section">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW6"></a>
+  <h3 class="section-name" tabindex="0">Preview Your Interface</h3>
+  <p class="para">
+  Preview your app periodically to check that everything is looking the way you expect. You can preview your app interface using the <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW76" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW76" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_34&quot;;return this.s_oc?this.s_oc(e):true">assistant editor</a></span>, which displays a secondary editor side-by-side with your main one.
+</p><p class="para">
+  <strong class="inline-head">To preview your interface</strong>
+</p><ol class="list-number">
+  <li class="item"><p class="para">
+  Click the Assistant button in the Xcode toolbar near the top right corner of Xcode to open the assistant editor. 
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW47"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/assistant_editor_toggle_2x.png" alt="image: ../Art/assistant_editor_toggle_2x.png" width="307" height="101">
+</figure>
+</li><li class="item"><p class="para">
+  If you want more space to work, collapse the project navigator and utility area by clicking the Navigator and Utilities buttons in the Xcode toolbar.
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW48"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/navigator_utilities_toggle_on_2x.png" alt="image: ../Art/navigator_utilities_toggle_on_2x.png" width="372" height="100">
+</figure>
+<p class="para">
+  You can also collapse the outline view.
+</p>
+</li><li class="item"><p class="para">
+  In the editor selector bar, which appears at the top of the assistant editor, switch the assistant editor from Automatic to Preview &gt; Main.storyboard (Preview).
+</p>
+<figure class="figure">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW49"></a>
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_assistant_editorselectorbar_2x.png" alt="image: ../Art/BBUI_assistant_editorselectorbar_2x.png" width="680" height="266">
+</figure>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_assistant_editorselectorbarpreview_2x.png" alt="image: ../Art/BBUI_assistant_editorselectorbarpreview_2x.png" width="680" height="227">
+</figure>
+<p class="para">
+  As you see in the assistant editor, the preview looks almost identical to the canvas. However, this does not really tell you anything new. Both the canvas and the preview are showing the same size screen (iPhone 7) and the same orientation (portrait). If you want to check and see if your interface is adaptive, you need to preview different size screens and different orientations.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_preview_same_2x.png" alt="image: ../Art/BBUI_preview_same_2x.png" width="680" height="462">
+</figure>
+</li><li class="item"><p class="para">
+  To preview the landscape orientation, click the Rotate button at the bottom of the preview.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_preview_rotatebutton_2x.png" alt="image: ../Art/BBUI_preview_rotatebutton_2x.png" width="389" height="713">
+</figure>
+<p class="para">
+  Unfortunately, things no longer look quite right. The text field, label, and button keep the same size and position relative to the screen’s upper left corner. This means that the text field no longer fills the screen from margin to margin.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_preview_rotated_2x.png" alt="image: ../Art/BBUI_preview_rotated_2x.png" width="680" height="409">
+</figure>
+</li><li class="item"><p class="para">
+  To preview a different screen size, click the Add button at the bottom of the assistant editor, and select iPhone SE.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_preview_addSE_2x.png" alt="image: ../Art/BBUI_preview_addSE_2x.png" width="680" height="466">
+</figure>
+<p class="para">
+  Again, the text field, label, and button keep the same size and position relative to the screen’s upper left corner. This time, however, the text field extends past the screen’s right edge.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_preview_small_2x.png" alt="image: ../Art/BBUI_preview_small_2x.png" width="334" height="599">
+</figure>
+</li>
+</ol><p class="para">
+  To create an adaptive interface, you’ll need to specify how the interface should adjust to different screen sizes. For example, when the interface is rotated into a landscape orientation, the text field should grow. When the interface is displayed on an iPhone SE, the text field should shrink. You can specify these kinds of interface rules easily using Auto Layout.
+</p>
+  
+</section>
+<section class="section">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-SW2"></a>
+  <h3 class="section-name" tabindex="0">Adopt Auto Layout</h3>
+  <p class="para">
+  <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW77" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW77" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_35&quot;;return this.s_oc?this.s_oc(e):true">Auto Layout</a></span> is a powerful layout engine that helps you design adaptive layouts that dynamically respond to any changes to the scene’s size. You describe your layout using <span class="x-name"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/GlossaryDefinitions.html#//apple_ref/doc/uid/TP40015214-CH12-SW78" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH12-SW78" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/G_36&quot;;return this.s_oc?this.s_oc(e):true">constraints</a></span>—rules that explain where one element should be located relative to another, or what size the element should be. Auto Layout dynamically calculates the size and position of each element based on these constraints.
+</p><p class="para">
+  One of the easiest ways to define your layout is using a stack view (<code class="code-voice">UIStackView</code>). A stack view provides a streamlined interface for laying out a collection of views in either a column or a row. The stack view uses Auto Layout under the hood to calculate the size and position of all the views that it manages. This lets you easily access the full power of Auto Layout, while greatly reducing the complexity of your layout. 
+</p><p class="para">
+  To adopt Auto Layout, wrap your existing interface elements in a stack view, and then add the constraints needed to position the stack view in the scene.
+</p><p class="para">
+  <strong class="inline-head">To add Auto Layout constraints to the meal scene</strong>
+</p><ol class="list-number">
+  <li class="item"><p class="para">
+  Return to the standard editor by clicking the Standard button.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/standard_toggle_2x.png" alt="image: ../Art/standard_toggle_2x.png" width="371" height="86">
+</figure>
+<p class="para">
+  Expand the project navigator and utility area by clicking the Navigator and Utilities buttons in the Xcode toolbar.
+</p>
+</li><li class="item"><p class="para">
+  While pressing the Shift key on your keyboard, select the text field, label, and button.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_AL_shift_select_2x.png" alt="image: ../Art/BBUI_AL_shift_select_2x.png" width="680" height="468">
+</figure>
+</li><li class="item"><p class="para">
+  On the bottom right of the canvas, click the Embed In Stack button. (Alternatively, choose Editor &gt; Embed In &gt; Stack View.)
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_AL_stackmenu_2x.png" alt="image: ../Art/BBUI_AL_stackmenu_2x.png" width="680" height="476">
+</figure>
+<p class="para">
+  Xcode wraps the user interface elements in a stack view, stacking them together. Xcode analyzes your existing layout to figure out that the items should stack vertically, not horizontally.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_AL_stack_2x.png" alt="image: ../Art/BBUI_AL_stack_2x.png" width="680" height="465">
+</figure>
+</li><li class="item"><p class="para">
+  If necessary, open the outline view. Select the Stack View object.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_AL_outlineview_2x.png" alt="image: ../Art/BBUI_AL_outlineview_2x.png" width="243" height="278">
+</figure>
+</li><li class="item"><p class="para">
+  In the Attributes inspector, type <code class="code-voice">8</code> in the Spacing field. Press Return.
+</p>
+<p class="para">
+  You’ll notice the user interface elements space out vertically, and the stack view grows with them.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_AL_stackspaced_2x.png" alt="image: ../Art/BBUI_AL_stackspaced_2x.png" width="418" height="630">
+</figure>
+</li><li class="item"><p class="para">
+  On the bottom right of the canvas, open the Add New Constraints menu.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_AL_pinmenu_2x.png" alt="image: ../Art/BBUI_AL_pinmenu_2x.png" width="680" height="482">
+</figure>
+</li><li class="item"><p class="para">
+  Above “Spacing to nearest neighbor,” click the two horizontal constraints and the top vertical constraint to select them. They become red when they are selected.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_AL_pinconstraints_2x.png" alt="image: ../Art/BBUI_AL_pinconstraints_2x.png" width="284" height="422">
+</figure>
+<p class="para">
+  These constraints indicate spacing to the nearest leading, trailing, and top neighbors. In this context, the term nearest neighbor means the boundary of the closest user interface element, which can be the superview, another user interface element, or a margin. Because the “Constrain to margins” checkbox is selected, the stack view in this case will be constrained to the superview’s left and right margins. This provides space between the stack view and the edge of the scene. 
+</p>
+<p class="para">
+  On the other hand, the top of the stack is constrained relative to the scene’s top layout guide. The top layout guide is positioned at the bottom of the status bar, if the status bar is visible. If not, it is positioned at the top of the scene. Therefore, you need to add a little space between the stack view and the layout guide.
+</p>
+</li><li class="item"><p class="para">
+  Type <code class="code-voice">0</code> in the left and right boxes, and type <code class="code-voice">20</code> spacing in the top box.
+</p>
+</li><li class="item"><p class="para">
+  In the pop-up menu next to Update Frames, choose Items of New Constraints. This causes Interface Builder to automatically update the frames of the affected views when you create the constraints.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_AL_stackconstraints_2x.png" alt="image: ../Art/BBUI_AL_stackconstraints_2x.png" width="533" height="486">
+</figure>
+</li><li class="item"><p class="para">
+  In the Add New Constraints menu, click the Add 3 Constraints button.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_AL_stackfinal_2x.png" alt="image: ../Art/BBUI_AL_stackfinal_2x.png" width="392" height="505">
+</figure>
+</li>
+</ol><p class="para">
+  The label, text field, and button are now left aligned and laid out with appropriate spacing, but the text field still isn’t stretching to fill the screen’s width. To fix that, you’ll need to add an additional constraint.
+</p><p class="para">
+  <strong class="inline-head">To adjust the text field width within the stack</strong>
+</p><ol class="list-number">
+  <li class="item"><p class="para">
+  In your storyboard, select the text field in the meal scene.
+</p>
+</li><li class="item"><p class="para">
+  On the bottom right of the canvas, open the Add New Constraints menu again.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/AL_pinmenu_2x.png" alt="image: ../Art/AL_pinmenu_2x.png" width="129" height="64">
+</figure>
+</li><li class="item"><p class="para">
+  Above “Spacing to nearest neighbor,” click the right horizontal constraint to select it. It becomes red when it is selected.
+</p>
+</li><li class="item"><p class="para">
+  Type <code class="code-voice">0</code> in the right box.
+</p>
+</li><li class="item"><p class="para">
+  In the pop-up menu next to Update Frames, choose Items of New Constraints.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_AL_textfieldconstraint_2x.png" alt="image: ../Art/BBUI_AL_textfieldconstraint_2x.png" width="680" height="465">
+</figure>
+</li><li class="item"><p class="para">
+  In the Add New Constraints menu, click the Add 1 Constraint button.
+</p>
+<figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_AL_textfieldfinal_2x.png" alt="image: ../Art/BBUI_AL_textfieldfinal_2x.png" width="679" height="458">
+</figure>
+</li>
+</ol><p class="para">
+  <em>Checkpoint:</em> Run your app in iOS Simulator. Rotate the simulator by choosing Hardware &gt; Rotate Left and Hardware &gt; Rotate Right (or Command-Left Arrow and Command-Right Arrow). Notice how the text field grows and shrinks to the appropriate size depending on the device’s orientation and screen size. Also notice that the status bar disappears in landscape orientation. 
+</p><p class="para">
+  Click inside the text field and enter text using the onscreen keyboard (if you’d like, you can use your computer’s keyboard by choosing Hardware &gt; Keyboard &gt; Connect Hardware Keyboard). 
+</p><figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_sim_finalUI_2x.png" alt="image: ../Art/BBUI_sim_finalUI_2x.png" width="387" height="679">
+</figure>
+  
+</section>
+<section class="section">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-DontLinkElementID_1"></a>
+  <h3 class="section-name" tabindex="0">Debugging Auto layout</h3>
+  <p class="para">
+  If you don’t get the behavior you expect, use the Auto Layout debugging features to help you. These features can be accessed using the Update Frames button and Resolve Auto Layout Issues menu.
+</p><figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_AL_resolvemenu_2x.png" alt="image: ../Art/BBUI_AL_resolvemenu_2x.png" width="680" height="489">
+</figure><p class="para">
+  If you are getting warnings about misplaced views, use the Update Frames button. This button updates the frames of the selected view and all of its subviews. Select the scene’s view controller to update all the views in the scene. You can also Option-click the Update Frames button to update only the selected view.
+</p><p class="para">
+  If the layout does not behave as you expect, click the Resolve Auto Layout Issues button to bring up a menu of debug commands. All the commands in this menu have two forms. One affects the currently selected view. The other affects all views in the current view controller. If all of the commands are grayed out, select the scene’s view controller or one of the views and open the menu again.
+</p><p class="para">
+  Choose Reset to Suggested Constraints to have Xcode update your interface with a valid set of constraints. Choose Clear Constraints to remove all constraints on the user interface elements, and then try following the previous instructions to set up the constraints again.
+</p><figure class="figure">
+  
+  <span class="caption"></span>
+  <img src="./Start Developing iOS Apps (Swift) - Building UI_files/BBUI_AL_resolvemenu_small_2x.png" alt="image: ../Art/BBUI_AL_resolvemenu_small_2x.png" width="257" height="213">
+</figure>
+  
+</section>
+<section class="section">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-DontLinkElementID_2"></a>
+  <h3 class="section-name" tabindex="0">Wrapping Up</h3>
+  <p class="para">
+  In this lesson, you’ve familiarized yourself with the contents of an Xcode project, and with many of the tools used to design and run an iOS app. You’ve also built a simple user interface.
+</p><p class="para">
+  Although the project’s scene doesn’t do much yet, the basic user interface is there and functional. Making sure your layout is robust and extensible from the start ensures that you have a solid foundation to build upon.
+</p><div class="note">
+  <a name="//apple_ref/doc/uid/TP40015214-CH5-DontLinkElementID_16"></a>
+  <aside class="aside">
+    <p class="aside-title">Note
+    </p>
+    	<p class="para">To see the completed sample project for this lesson, download the file and view it in Xcode.
+    	</p>
+    <p class="para">
+  <img class="inline-graphic" src="./Start Developing iOS Apps (Swift) - Building UI_files/WWDR_download_icon_withPadding_2x.png" alt="image: ../Art/WWDR_download_icon_withPadding_2x.png" width="15" height="17"><a href="https://developer.apple.com/sample-code/swift/downloads/01_BuildABasicUI.zip" onclick="s_objectID=&quot;https://developer.apple.com/sample-code/swift/downloads/01_BuildABasicUI.zip_1&quot;;return this.s_oc?this.s_oc(e):true">Download File</a>
+</p>
+
+  </aside>
+</div>
+  
+</section>
+
+
+ 	<section id="next_previous" class="">
+    		<p class="previous-link"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/index.html#//apple_ref/doc/uid/TP40015214-CH2-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH2-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/i_3&quot;;return this.s_oc?this.s_oc(e):true">Jump Right In</a></p>
+  			<p class="next-link"><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/ConnectTheUIToCode.html#//apple_ref/doc/uid/TP40015214-CH22-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH22-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/C_4&quot;;return this.s_oc?this.s_oc(e):true">Connect the UI to Code</a></p>
+
+    <p class="copyright">Copyright © 2018 Apple Inc. All rights reserved. 
+  <a class="link" href="http://www.apple.com/legal/terms/site.html" target="_blank" rel="external" onclick="s_objectID=&quot;http://www.apple.com/legal/terms/site.html_1&quot;;return this.s_oc?this.s_oc(e):true">Terms of Use</a> | 
+  <a class="link" href="http://www.apple.com/privacy/" target="_blank" rel="external" onclick="s_objectID=&quot;http://www.apple.com/privacy/_1&quot;;return this.s_oc?this.s_oc(e):true">Privacy Policy</a> | 
+  <a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/RevisionHistory.html#//apple_ref/doc/uid/TP40015214-CH99-SW1" data-renderer-version="2" data-id="//apple_ref/doc/uid/TP40015214-CH99-SW1" onclick="s_objectID=&quot;https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/R_5&quot;;return this.s_oc?this.s_oc(e):true">Updated: 2016-12-08</a>
+</p>
+  </section>
+</article>
+
+    </div>
+    <div id="big_button"></div>
+    <footer id="footer">
+  <script src="./Start Developing iOS Apps (Swift) - Building UI_files/devpubs-1.6.3.js" type="text/javascript" charset="utf-8"></script>
+  <div id="_omniture_top">
+<!-- SiteCatalyst code version: H.8. Copyright 1997-2006 Omniture, Inc. -->
+<script type="text/javascript">
+/* RSID: */
+var s_account="appleglobal,appleusdeveloper,dappdeveloperlib"
+</script>
+
+<script type="text/javascript" src="./Start Developing iOS Apps (Swift) - Building UI_files/s_code_h.js"></script>
+<script type="text/javascript">
+s.pageName=AC.Tracking.pageName();
+s.channel="www.us.developer"
+
+/************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/
+var s_code=s.t();if(s_code)document.write(s_code)</script>
+<!-- End SiteCatalyst code version: H.8. -->
+</div>
+
+</footer>
+
+    
+  
+    <div id="blackout">
+    <div id="preload"></div>
+</div>
+<div id="modal" aria-hidden="true">
+    <div id="closebox" tabindex="0" aria-label="Close feedback form" role="button"></div>
+    <div id="sending" class="hidden">
+        <h2 tabindex="0">Sending feedback…</h2>
+        <div id="sending_img"></div>
+    </div>
+    <div id="error" class="hidden">
+        <h2 tabindex="0">We’re sorry, an error has occurred.</h2>
+        <p>Please try submitting your feedback later.</p>
+        <div id="error_icon"></div>
+    </div>
+    <div id="success" class="hidden">
+        <h2 tabindex="0">Thank you for providing feedback!</h2>
+        <p>Your input helps improve our developer documentation.</p>
+        <div id="thank_you_icon"></div>
+    </div>
+    
+    <form id="feedback" action="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/BuildABasicUI.html#" method="post">
+        <div class="left-leaf">
+            <h2 id="helpful_title" data-asterisk="a1" tabindex="0">How helpful is this document?</h2>     
+            <sup id="a1" class="asterisk" aria-hidden="true">*</sup>
+
+            <div id="star_group" role="radiogroup" aria-required="true">
+                <label> 
+                    <input class="radio" type="radio" name="helped" value="1"> 
+                    Very helpful
+                </label>
+                <label> 
+                    <input class="radio" type="radio" name="helped" value="2"> 
+                    Somewhat helpful
+                </label>
+                <label>
+                    <input class="radio" type="radio" name="helped" value="3"> 
+                    Not helpful
+                </label>
+            </div>
+        </div>
+        <div class="right-leaf">
+            <h2>How can we improve this document?</h2>
+            <div id="improve" class="checkboxes">
+                <label>
+                    <input type="checkbox" name="typo"> 
+                    Fix typos or links
+                </label>
+                <label>
+                    <input type="checkbox" name="infoIncorrect"> 
+                    Fix incorrect information
+                </label>
+                <label>
+                    <input type="checkbox" name="needs_examples"> 
+                    Add or update code samples
+                </label>
+                <label>
+                    <input type="checkbox" name="needs_art"> 
+                    Add or update illustrations
+                </label>
+                <label>
+                    <input type="checkbox" name="missingInfo"> 
+                    Add information about...
+                </label>
+            </div>
+        </div>
+
+        <textarea id="comment" name="problem" cols="70" rows="8" placeholder="Please tell us more about your experience with this document" data-asterisk="a2" required=""></textarea>
+        <sup id="a2" class="asterisk" aria-hidden="true">*</sup>
+
+        <p class="fineprint">
+            <em aria-hidden="true"><span>*</span> Required information</em>
+        </p> 
+
+        <input id="submit" type="button" value="Send">
+
+        <section id="legal">
+            <p>
+                To submit a product bug or enhancement request, please visit the 
+                <a href="https://developer.apple.com/bugreporter/" target="_blank" onclick="s_objectID=&quot;https://developer.apple.com/bugreporter/_1&quot;;return this.s_oc?this.s_oc(e):true">Bug Reporter</a> 
+                page.
+            </p>
+            <p>
+                Please read <a href="http://www.apple.com/legal/policies/ideas.html" target="_blank" onclick="s_objectID=&quot;http://www.apple.com/legal/policies/ideas.html_1&quot;;return this.s_oc?this.s_oc(e):true">Apple's Unsolicited Idea Submission Policy</a> 
+                before you send us your feedback.
+            </p> 
+        </section>
+    </form>
+</div>
+
+
+
+</body></html>
