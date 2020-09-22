@@ -14,6 +14,7 @@
 		A20476D2250A8082004D1C8F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20476D1250A8082004D1C8F /* Assets.xcassets */; };
 		A20476D5250A8082004D1C8F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A20476D3250A8082004D1C8F /* LaunchScreen.storyboard */; };
 		A20476E0250A8082004D1C8F /* Food_TrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20476DF250A8082004D1C8F /* Food_TrackerTests.swift */; };
+		A20688642513189C002927A5 /* RatingControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20688632513189C002927A5 /* RatingControl.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +39,7 @@
 		A20476DB250A8082004D1C8F /* Food TrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Food TrackerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20476DF250A8082004D1C8F /* Food_TrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Food_TrackerTests.swift; sourceTree = "<group>"; };
 		A20476E1250A8082004D1C8F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A20688632513189C002927A5 /* RatingControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingControl.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +86,7 @@
 				A20476CC250A8082004D1C8F /* ViewController.swift */,
 				A20476CE250A8082004D1C8F /* Main.storyboard */,
 				A20476D1250A8082004D1C8F /* Assets.xcassets */,
+				A20688632513189C002927A5 /* RatingControl.swift */,
 				A20476D3250A8082004D1C8F /* LaunchScreen.storyboard */,
 				A20476D6250A8082004D1C8F /* Info.plist */,
 			);
@@ -200,6 +203,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A20688642513189C002927A5 /* RatingControl.swift in Sources */,
 				A20476CD250A8082004D1C8F /* ViewController.swift in Sources */,
 				A20476C9250A8082004D1C8F /* AppDelegate.swift in Sources */,
 				A20476CB250A8082004D1C8F /* SceneDelegate.swift in Sources */,
