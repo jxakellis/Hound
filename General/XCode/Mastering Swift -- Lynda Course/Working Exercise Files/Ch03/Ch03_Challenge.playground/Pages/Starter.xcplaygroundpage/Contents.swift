@@ -15,18 +15,27 @@
  
  */
 // 1
+var shopItemsArray: [String] = ["Sword", "Shield", "Bow"]
+var shopItemsDictionary: [String: Int] = ["Sword": 15, "Shield": 25, "Bow":20]
 
 // 2
+shopItemsArray.contains("Potion")
 
 // 3
+shopItemsArray.insert("Potion", at: 3)
 
 // 4
+var selectedItem = shopItemsArray[2]
 
 // 5
-
+var selectedItemPrice = shopItemsDictionary[selectedItem]
 // 6
+var fullArmorSet: Set = ["Helmet", "Chest Plate", "Leggings", "Boots"]
+var currentArmorSet: Set = ["Helmet", "Boots"]
 
 // 7
-
+var missingItems = fullArmorSet.subtracting(currentArmorSet)
 // 8
+var armorPieceTuple: (name: String, cost: Int, canEquip: Bool) = ("Chest Plate", 20, true)
+armorPieceTuple.canEquip
 

@@ -14,10 +14,15 @@
 
  */
 // Creating sets
-
+var activeQuests: Set = ["Fetch Gemstones", "Big Boss", "The Undertaker", "Granny needs Firewood"]
 
 // Inserting and removing elements
 
+activeQuests.insert("Only the Strong")
+activeQuests.remove("The Undertaker")
+
+print(activeQuests)
 
 // More common methods
-
+activeQuests.contains("All-4-One")
+activeQuests.sorted()

@@ -14,7 +14,14 @@
 
  */
 // Test variables
-
+var activeQuests: Set = ["Fetch Gemstones", "Big Boss", "The Undertaker", "Granny needs Firewood"]
+var completedQuests: Set = ["Big Boss", "All-4-One", "The Hereafter"]
 
 // Set operations
+var commonQuests = activeQuests.intersection(completedQuests)
+var differentQuests = activeQuests.symmetricDifference(completedQuests)
+var allQuests = activeQuests.union(completedQuests)
+var clippedQuests = activeQuests.subtracting(completedQuests)
 
+//activeQuests.formUnion(completedQuests)
+//using the form version of the method performs operation on the set instead of returning a set
