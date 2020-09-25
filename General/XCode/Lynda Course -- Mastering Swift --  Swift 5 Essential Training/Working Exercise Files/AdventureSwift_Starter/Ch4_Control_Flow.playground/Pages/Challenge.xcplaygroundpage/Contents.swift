@@ -16,13 +16,46 @@
  
  */
 // 1
+var lefthandWeapon: String? = "Dagger"
+var righthandWeapon: String? = "Knife"
 
 // 2
+if let lhW = lefthandWeapon, let rhW = righthandWeapon{
+    print("In left hand: \(lhW) and in right hand: \(rhW)")
+}
+else if let lhW = lefthandWeapon{
+    print("In left hand: \(lhW)")
+}
+else if let rhW = righthandWeapon{
+    print("In right hand: \(rhW)")
+}
+else{
+    print("No weapons in hand")
+}
 
 // 3
+var playerExp: [String : Int] = ["Harrison": 233, "Steven": 489, "Bob": 0]
 
 // 4
+for (name, exp) in playerExp {
+    //5
+    guard exp > 0 else{
+        print("\(name), you need some help")
+        continue
+    }
+    
+    //6
+    
+    switch exp {
+    case 32:
+        print("Looking good")
+    case 201...500:
+        print("Getting better every day...")
+    case (let localExp) where localExp > 500:
+        print("Time to level up!")
+    default:
+        print("Corrupted data found...")
+    }
+    
+}
 
-// 5
-
-// 6
