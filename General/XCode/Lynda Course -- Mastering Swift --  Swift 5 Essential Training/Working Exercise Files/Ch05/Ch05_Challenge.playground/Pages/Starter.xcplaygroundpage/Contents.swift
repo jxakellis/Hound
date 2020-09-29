@@ -15,16 +15,35 @@
  
  */
 // 1
+typealias Attack = (name: String, damage: Int)
 
 // 2
+func attackEnemy(int: Int){
+    print("Attacked enemy for \(int) damage!\n")
+}
 
 // 3
+func attackEnemy(attack: Attack) -> String{
+    return "Attacked with \(attack.name) for \(attack.damage) damage!\n"
+}
 
 // 4
+attackEnemy(int: 15)
+var message = attackEnemy(attack: ("Power Slam", 25))
+print(message)
 
 // 5
+typealias AttackClosure = ([Attack]) -> Void
+let playerActions = [("Mist Bomb", 45), ("Arrow Storm", 75), ("Fists of Fury", 10)]
 
 // 6
+func fetchPlayerAttacks(closure: AttackClosure) {
+    closure(playerActions)
+}
 
 // 7
-
+fetchPlayerAttacks { (attackOptions) in
+    for (name, damage) in attackOptions {
+        print("\(name) will hit for \(damage) if cast")
+    }
+}

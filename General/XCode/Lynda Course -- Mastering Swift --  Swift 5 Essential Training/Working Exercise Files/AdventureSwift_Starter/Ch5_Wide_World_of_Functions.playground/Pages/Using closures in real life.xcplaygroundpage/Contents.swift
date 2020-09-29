@@ -20,7 +20,33 @@ var highScores = [3412, 0, 1988, 722]
 var partyMembers = ["Harrison", "Steven", "Bob the Noob"]
 
 // Existing functions with closures
+var ascendingSort = highScores.sorted { (firstValue, secondValue) -> Bool in
+    return firstValue < secondValue
+}
 
+print(ascendingSort)
 
 // Using custom closures with functions
 
+func activeMembers(completion: ([String]) -> Void) {
+    completion(partyMembers)
+}
+
+activeMembers { (members) in
+    for name in members{
+        print("\(name) is active!")
+    }
+}
+
+func activeMembers(members: [String]) -> () -> Void {
+    let completion: () -> Void = {
+        for name in members{
+            print("\(name) is present!")
+        }
+    }
+    
+    return completion
+}
+
+var closureReturn = activeMembers(members: partyMembers)
+closureReturn()
