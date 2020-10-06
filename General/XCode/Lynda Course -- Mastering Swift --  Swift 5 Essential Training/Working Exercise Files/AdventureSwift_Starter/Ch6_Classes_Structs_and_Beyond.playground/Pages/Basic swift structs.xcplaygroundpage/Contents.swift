@@ -15,6 +15,32 @@
 
  */
 // Declaring a new struct
+struct Level {
+    let levelID: Int
+    var levelObjectives: [String]
+    
+    var levelDescription: String {
+        return "Level ID: \(self.levelID)"
+    }
+    
+    func queryObjectives() {
+        for objective in levelObjectives {
+            print("\(objective)")
+        }
+    }
+    
+    mutating func completeObjective(index: Int) {
+        levelObjectives.remove(at: index)
+    }
+}
 
+var objectives = ["Find the lost cat", "Collect the gemstones", "Defeat the Big Boss"]
+var level1 = Level(levelID: 1, levelObjectives: objectives)
 
 // Value types again
+var defaultLevel = level1
+
+level1.completeObjective(index: 0)
+level1.queryObjectives()
+
+defaultLevel.queryObjectives()

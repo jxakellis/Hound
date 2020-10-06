@@ -53,8 +53,27 @@ class Adventurer {
 }
 
 // Subclass
-
+class Ranger: Adventurer{
+    var classAdvantage: String
+    
+    override class var credo: String {
+        return "To the King!"
+    }
+    
+    init(name: String, advantage: String){
+        self.classAdvantage = advantage
+        super.init(name: name, maxHP: 150)
+    }
+    
+    override func printStats() {
+        print("\(self.name): Ranger, Advantage: \(self.classAdvantage)")
+    }
+}
 
 var player1 = Adventurer(name: "Harrison", maxHP: 99)
 player1.printStats()
 Adventurer.credo
+Ranger.credo
+
+var aragorn = Ranger(name: "Aragorn", advantage: "Stealth")
+aragorn.printStats()
