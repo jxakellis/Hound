@@ -43,6 +43,11 @@ class MainViewController: UIViewController,BeverageViewControllerDelegate, Pizza
     
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "desserts"{
+            let vc = segue.destination as! DessertViewController
+            vc.lastSelection = orderedItems.lastSelection
+        }
+        
         if segue.identifier == "beverage"{
             let beverageViewController = segue.destination as! BeverageViewController
             beverageViewController.delegate = self

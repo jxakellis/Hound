@@ -31,6 +31,7 @@ class DessertViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        dessertSelection.text = lastSelection
     }
 
     

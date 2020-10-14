@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MainViewController: UIViewController,BeverageViewControllerDelegate, PizzaViewControllerDelegate {
+class MainViewController: UIViewController,BeverageViewControllerDelegate, PizzaViewControllerDelegate, DessertViewControllerDelegate {
     
     
     @IBOutlet weak var orderView: UIView!
@@ -26,7 +26,10 @@ class MainViewController: UIViewController,BeverageViewControllerDelegate, Pizza
 
     //MARK: - Delegates and Data Sources
     
-    
+    func didChooseDessert(dessert: OrderItem) {
+        orderedItems.add(orderItem: dessert)
+        orderTableVC.updateTable(orderList: orderedItems)
+    }
     
     func didChooseBeverage(beverage: OrderItem) {
         orderedItems.add(orderItem: beverage)
@@ -46,6 +49,7 @@ class MainViewController: UIViewController,BeverageViewControllerDelegate, Pizza
         if segue.identifier == "desserts"{
             let vc = segue.destination as! DessertViewController
             vc.lastSelection = orderedItems.lastSelection
+            vc.delegate = self
         }
         
         if segue.identifier == "beverage"{

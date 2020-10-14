@@ -1,6 +1,10 @@
 import UIKit
 import PlaygroundSupport
 
+protocol ColorChooserDelegate{
+    func selectedColor(color: Int)
+}
+
 class Colors{
     var colorIndex = 0
     let colorName = ["red","green","blue","purple"]
@@ -15,9 +19,11 @@ class Colors{
 class ColorChooserVC:UIViewController{
     var colors = Colors()
     var currentColor = 0
+    var delegate: ColorChooserDelegate! = nil
     @IBAction func chooser(sender:UISegmentedControl){
         currentColor = sender.selectedSegmentIndex
         view.backgroundColor = colors.color(currentColor)
+        delegate.selectedColor(color: currentColor)
         dismiss(animated: true, completion: nil)
     }
     override func viewDidLoad() {
@@ -31,7 +37,13 @@ class ColorChooserVC:UIViewController{
 }
 
 
-class ViewController:UIViewController{
+class ViewController:UIViewController, ColorChooserDelegate{
+    
+    func selectedColor(color: Int) {
+        count = color
+        view.backgroundColor = colors.color(color)
+    }
+    
     var count = 0
     var colors = Colors()
     let button = UIButton(frame: CGRect(x: 0, y: 0, width: 200, height: 400))
@@ -40,6 +52,7 @@ class ViewController:UIViewController{
         //view.backgroundColor = colors.color(count % colors.colorName.count)
         let vc = ColorChooserVC()
         vc.currentColor = count
+        vc.delegate = self
         present(vc, animated: true, completion: nil)
         
     }
