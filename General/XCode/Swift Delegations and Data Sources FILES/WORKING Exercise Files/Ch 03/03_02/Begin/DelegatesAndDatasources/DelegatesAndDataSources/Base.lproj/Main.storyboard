@@ -30,7 +30,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Current Order" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dC6-Ag-aAJ">
-                                <rect key="frame" x="19" y="54.5" width="340" height="20.5"/>
+                                <rect key="frame" x="19" y="54.5" width="112" height="20.5"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -98,7 +98,6 @@
                             <constraint firstItem="dC6-Ag-aAJ" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="3" id="OXo-GN-C56"/>
                             <constraint firstItem="slc-uW-oiF" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="-20" id="Pk1-CE-kyz"/>
                             <constraint firstAttribute="trailing" secondItem="slc-uW-oiF" secondAttribute="trailing" id="Qc8-gp-CU7"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="dC6-Ag-aAJ" secondAttribute="trailing" id="THA-cF-MX0"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="R3p-pa-e8d" secondAttribute="bottom" constant="10" id="Usf-Ty-ya9"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="slc-uW-oiF" secondAttribute="bottom" id="ZPN-Pe-sZd"/>
                             <constraint firstItem="R3p-pa-e8d" firstAttribute="top" secondItem="dC6-Ag-aAJ" secondAttribute="bottom" constant="8" id="kAt-Mm-Por"/>
@@ -132,7 +131,7 @@
                                 <rect key="frame" x="0.0" y="-20" width="375" height="687"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Huli Pizza Co." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tmi-57-Rej">
-                                <rect key="frame" x="16" y="5" width="343" height="44.5"/>
+                                <rect key="frame" x="16" y="5" width="251.5" height="44.5"/>
                                 <fontDescription key="fontDescription" name="AmericanTypewriter-Bold" family="American Typewriter" pointSize="36"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -184,7 +183,6 @@
                             <constraint firstAttribute="trailingMargin" secondItem="6Ti-Kj-6ml" secondAttribute="trailing" constant="10" id="7Rw-H6-aXm"/>
                             <constraint firstItem="RnU-ds-ATU" firstAttribute="leading" secondItem="rx3-a2-yhz" secondAttribute="leadingMargin" id="AXG-Ua-nVd"/>
                             <constraint firstItem="HXs-jN-CyS" firstAttribute="top" secondItem="rx3-a2-yhz" secondAttribute="top" constant="-20" id="CAh-pw-aus"/>
-                            <constraint firstItem="Tmi-57-Rej" firstAttribute="trailing" secondItem="rx3-a2-yhz" secondAttribute="trailingMargin" id="DH1-Rx-zse"/>
                             <constraint firstItem="Tmi-57-Rej" firstAttribute="top" secondItem="rx3-a2-yhz" secondAttribute="topMargin" constant="5" id="DI8-gT-OId"/>
                             <constraint firstItem="RnU-ds-ATU" firstAttribute="top" secondItem="Tmi-57-Rej" secondAttribute="bottom" constant="3" id="FXM-BI-msj"/>
                             <constraint firstItem="Riy-RK-RPt" firstAttribute="height" secondItem="rx3-a2-yhz" secondAttribute="height" multiplier="1:12" id="MwH-U2-EOo"/>
@@ -312,7 +310,7 @@
                                 <rect key="frame" x="0.0" y="-20" width="375" height="687"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Huli Pizza Co." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yZq-AL-cb1">
-                                <rect key="frame" x="16" y="5" width="343" height="44.5"/>
+                                <rect key="frame" x="16" y="5" width="251.5" height="44.5"/>
                                 <fontDescription key="fontDescription" name="AmericanTypewriter-Bold" family="American Typewriter" pointSize="36"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -361,7 +359,6 @@
                             <constraint firstAttribute="trailing" secondItem="AjP-cu-2hu" secondAttribute="trailing" id="2Lb-hw-Sg6"/>
                             <constraint firstItem="AjP-cu-2hu" firstAttribute="top" secondItem="BKn-pR-kbb" secondAttribute="bottom" constant="10" id="9nO-HH-xUH"/>
                             <constraint firstItem="AjP-cu-2hu" firstAttribute="height" secondItem="mGc-ce-oLP" secondAttribute="height" multiplier="1:12" id="Cm6-ia-LFC"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="yZq-AL-cb1" secondAttribute="trailing" id="DI6-uU-Wqu"/>
                             <constraint firstAttribute="trailing" secondItem="MGi-CI-BLi" secondAttribute="trailing" id="HGZ-4a-0vC"/>
                             <constraint firstItem="FaW-gF-Utp" firstAttribute="top" secondItem="yZq-AL-cb1" secondAttribute="bottom" constant="3" id="IBu-zy-Sy3"/>
                             <constraint firstItem="yZq-AL-cb1" firstAttribute="leading" secondItem="mGc-ce-oLP" secondAttribute="leadingMargin" id="IhJ-qw-8Cl"/>
@@ -419,7 +416,7 @@
                                 <rect key="frame" x="0.0" y="-20" width="375" height="687"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Huli Pizza Co." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QA5-PR-2Nw">
-                                <rect key="frame" x="16" y="3" width="343" height="44.5"/>
+                                <rect key="frame" x="16" y="3" width="251.5" height="44.5"/>
                                 <fontDescription key="fontDescription" name="AmericanTypewriter-Bold" family="American Typewriter" pointSize="36"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -512,7 +509,6 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailingMargin" secondItem="QA5-PR-2Nw" secondAttribute="trailing" id="7rE-nI-erK"/>
                             <constraint firstAttribute="trailingMargin" secondItem="AZR-jW-hiJ" secondAttribute="trailing" id="9Oa-Vt-ByB"/>
                             <constraint firstItem="AZR-jW-hiJ" firstAttribute="top" secondItem="QA5-PR-2Nw" secondAttribute="bottom" constant="5" id="Cuv-fj-Wn4"/>
                             <constraint firstItem="AZR-jW-hiJ" firstAttribute="leading" secondItem="lHu-fH-LLL" secondAttribute="leadingMargin" id="JTl-WB-OSV"/>
