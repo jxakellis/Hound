@@ -9,7 +9,7 @@
 import UIKit
 
 protocol ShopViewControllerDelegate {
-    func didChooseItem (items: [Item]?)
+    func didChooseItem (items: [Item])
 }
 
 class ShopViewController: UIViewController{
@@ -26,6 +26,7 @@ class ShopViewController: UIViewController{
     }
     
     @IBAction func doneButton(_ sender: UIButton) {
+        purchaseList.add(name: "test", description: "test", value: 10)
         delegate.didChooseItem(items: purchaseList.list)
         self.navigationController?.popViewController(animated: true)
     }

@@ -47,19 +47,12 @@ class ItemList{
         }
     }
     
-    func add(item: Item?){
-        if item != nil{
-        list += [item!]
-        }
+    func add(item: Item){
+        list += [item]
     }
     
-    func add(itemsList: [Item]?){
-        if itemsList != nil{
-            for item in itemsList!{
-                list += [item]
-            }
-       
-        }
+    func add(itemsList: [Item]){
+        list += itemsList
     }
     func add(name:String, description: String, value: Int){
         let item = Item(name: name, description: description, value: value)

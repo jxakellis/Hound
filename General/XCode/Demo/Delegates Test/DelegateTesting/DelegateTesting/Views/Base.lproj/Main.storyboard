@@ -10,7 +10,7 @@
         <!--Main View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController storyboardIdentifier="main" title="Main View Controller" id="BYZ-38-t0r" sceneMemberID="viewController">
+                <viewController title="Main View Controller" id="BYZ-38-t0r" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -26,13 +26,25 @@
                                     <color key="titleShadowColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <connections>
-                                    <segue destination="8T3-j7-3vR" kind="show" identifier="shop" id="CTc-KK-Zc4"/>
+                                    <segue destination="8T3-j7-3vR" kind="show" identifier="shop" id="Vs9-M2-yTe"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eWY-xi-Sv2">
+                                <rect key="frame" x="0.0" y="244" width="414" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="KJd-1i-YbD"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="eWY-xi-Sv2" secondAttribute="trailing" id="5h9-1o-yZW"/>
                             <constraint firstItem="Mvw-jF-bb3" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="400" id="5pW-d7-dQ1"/>
+                            <constraint firstItem="eWY-xi-Sv2" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="7v3-Bj-7j2"/>
+                            <constraint firstItem="eWY-xi-Sv2" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="200" id="JON-ox-zGb"/>
                             <constraint firstItem="Mvw-jF-bb3" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="LbE-Nk-vt3"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Mvw-jF-bb3" secondAttribute="trailing" id="egb-Zr-w3H"/>
                         </constraints>
@@ -66,7 +78,7 @@
                                             <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                         </state>
                                         <connections>
-                                            <action selector="backButton:" destination="0FT-rx-d5d" eventType="touchUpInside" id="hjm-nB-7Wv"/>
+                                            <action selector="backButton:" destination="8T3-j7-3vR" eventType="touchUpInside" id="Y6w-Zp-tRQ"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qz3-4g-F9t">
@@ -80,7 +92,7 @@
                                             <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                         </state>
                                         <connections>
-                                            <action selector="doneButton:" destination="0FT-rx-d5d" eventType="touchUpInside" id="9qW-8f-gxq"/>
+                                            <action selector="doneButton:" destination="8T3-j7-3vR" eventType="touchUpInside" id="egj-Qi-EgF"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -97,7 +109,6 @@
                     <navigationItem key="navigationItem" id="LGL-Ln-aTQ"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JQy-rb-gxY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-                <exit id="0FT-rx-d5d" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1114" y="-355"/>
         </scene>

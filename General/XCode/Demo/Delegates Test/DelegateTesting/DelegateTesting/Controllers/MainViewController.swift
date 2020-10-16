@@ -11,6 +11,12 @@ import UIKit
 class MainViewController: UIViewController, ShopViewControllerDelegate {
     
     var itemList = ItemList()
+    
+
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,13 +24,15 @@ class MainViewController: UIViewController, ShopViewControllerDelegate {
     
     //MARK: - Delegates and Data Sources
     
-    func didChooseItem(items: [Item]?) {
+    func didChooseItem(items: [Item]) {
         itemList.add(itemsList: items)
     }
     
     // MARK: - Navigation
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?){
-        if segue.identifier == "shop"{
+        if segue.identifier == "shop"
+        {
             let shopViewController = segue.destination as! ShopViewController
             shopViewController.delegate = self
         }
