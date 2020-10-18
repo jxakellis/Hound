@@ -12,7 +12,8 @@ class MainViewController: UIViewController, ShopViewControllerDelegate {
     
     var itemList = ItemList()
     
-
+    @IBOutlet weak var mainLabel: UILabel!
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -20,12 +21,15 @@ class MainViewController: UIViewController, ShopViewControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        itemList.add(name: "default", description: "default", value: 15)
+        mainLabel.text = itemList.list[0].stringReadout()
     }
     
     //MARK: - Delegates and Data Sources
     
     func didChooseItem(items: [Item]) {
         itemList.add(itemsList: items)
+        mainLabel.text! += "\n" + itemList.list[itemList.list.count-1].stringReadout()
     }
     
     // MARK: - Navigation
