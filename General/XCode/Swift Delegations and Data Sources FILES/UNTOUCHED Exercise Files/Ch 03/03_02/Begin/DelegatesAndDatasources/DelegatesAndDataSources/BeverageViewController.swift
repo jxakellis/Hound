@@ -12,7 +12,8 @@ protocol BeverageViewControllerDelegate{
     func didChooseBeverage(beverage:OrderItem)
 }
 
-class BeverageViewController: UIViewController,UIPickerViewDelegate {
+class BeverageViewController: UIViewController,UIPickerViewDelegate, UIPickerViewDataSource {
+    
     
     private var pickerComponents:[[String]] = []
     var delegate:BeverageViewControllerDelegate! = nil
@@ -33,6 +34,16 @@ class BeverageViewController: UIViewController,UIPickerViewDelegate {
     }
     //MARK: - Picker View Data Sources
     
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return pickerComponents.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return pickerComponents[component].count
+    }
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return pickerComponents[component][row]
+    }
     
     //MARK: - Picker View Delegates
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
@@ -53,6 +64,7 @@ class BeverageViewController: UIViewController,UIPickerViewDelegate {
         super.viewDidLoad()
         //Picker delegates and data sources
         beveragePicker.delegate = self
+        beveragePicker.dataSource = self
         pickerComponents = [beverageSizes,beverageNames]
     }
 }

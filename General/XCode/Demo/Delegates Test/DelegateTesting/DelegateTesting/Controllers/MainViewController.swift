@@ -14,6 +14,7 @@ class MainViewController: UIViewController, ShopViewControllerDelegate {
     
     @IBOutlet weak var mainLabel: UILabel!
     
+    @IBOutlet weak var selectedItemsView: UIView!
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
