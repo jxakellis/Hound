@@ -10,11 +10,10 @@ import UIKit
 
 class MainViewController: UIViewController, ShopViewControllerDelegate {
     
-    var itemList = ItemList()
+    @IBOutlet weak var shoppedItemsView: UIView!
     
-    @IBOutlet weak var mainLabel: UILabel!
-    
-    @IBOutlet weak var selectedItemsView: UIView!
+    var shoppedItemsList = ItemList()
+    var shoppedItemsViewController = TableViewController()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -22,15 +21,15 @@ class MainViewController: UIViewController, ShopViewControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        itemList.add(name: "default", description: "default", value: 15)
-        mainLabel.text = itemList.list[0].stringReadout()
+        shoppedItemsList.add(name: "default", description: "def", value: 10)
+        shoppedItemsViewController.updateTable(newItemList: shoppedItemsList)
     }
     
     //MARK: - Delegates and Data Sources
     
     func didChooseItem(items: [Item]) {
-        itemList.add(itemsList: items)
-        mainLabel.text! += "\n" + itemList.list[itemList.list.count-1].stringReadout()
+        shoppedItemsList.add(itemsList: items)
+        shoppedItemsViewController.updateTable(newItemList: shoppedItemsList)
     }
     
     // MARK: - Navigation
@@ -40,6 +39,9 @@ class MainViewController: UIViewController, ShopViewControllerDelegate {
         {
             let shopViewController = segue.destination as! ShopViewController
             shopViewController.delegate = self
+        }
+        if segue.identifier == "shoppedItems"{
+            shoppedItemsViewController = segue.destination as! TableViewController
         }
     }
 

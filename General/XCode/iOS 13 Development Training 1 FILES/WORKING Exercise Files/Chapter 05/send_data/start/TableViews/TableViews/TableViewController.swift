@@ -11,6 +11,8 @@ import UIKit
 class TableViewController: UITableViewController {
     
     let data: [String] = ["Item 1", "Item 2", "Item 3", "Item 4"]
+    
+    var currentItem: String = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,13 +85,18 @@ class TableViewController: UITableViewController {
     // MARK: - Navigation
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        currentItem = data[indexPath.row]
         performSegue(withIdentifier: "showDetail", sender: nil)
     }
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
+        if let viewController = segue.destination as? ViewController{
+            viewController.text = currentItem
+        }
     }
     
 

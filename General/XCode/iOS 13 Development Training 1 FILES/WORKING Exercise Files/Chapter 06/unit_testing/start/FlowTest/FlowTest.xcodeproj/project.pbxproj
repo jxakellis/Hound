@@ -14,7 +14,19 @@
 		52324B9323397CAE00F09BFB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 52324B9223397CAE00F09BFB /* Assets.xcassets */; };
 		52324B9623397CAE00F09BFB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52324B9423397CAE00F09BFB /* LaunchScreen.storyboard */; };
 		52324B9E23397CBB00F09BFB /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52324B9D23397CBB00F09BFB /* Book.swift */; };
+		A231C40925487AD500738AE3 /* FlowTestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A231C40825487AD500738AE3 /* FlowTestTests.swift */; };
+		A231C41025487B1A00738AE3 /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52324B9D23397CBB00F09BFB /* Book.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A231C40B25487AD500738AE3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 52324B7E23397CAD00F09BFB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 52324B8523397CAD00F09BFB;
+			remoteInfo = FlowTest;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		52324B8623397CAD00F09BFB /* FlowTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FlowTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -26,10 +38,20 @@
 		52324B9523397CAE00F09BFB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		52324B9723397CAE00F09BFB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		52324B9D23397CBB00F09BFB /* Book.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
+		A231C40625487AD500738AE3 /* FlowTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlowTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A231C40825487AD500738AE3 /* FlowTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowTestTests.swift; sourceTree = "<group>"; };
+		A231C40A25487AD500738AE3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		52324B8323397CAD00F09BFB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A231C40325487AD500738AE3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -43,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				52324B8823397CAD00F09BFB /* FlowTest */,
+				A231C40725487AD500738AE3 /* FlowTestTests */,
 				52324B8723397CAD00F09BFB /* Products */,
 			);
 			sourceTree = "<group>";
@@ -51,6 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				52324B8623397CAD00F09BFB /* FlowTest.app */,
+				A231C40625487AD500738AE3 /* FlowTestTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -68,6 +92,15 @@
 				52324B9723397CAE00F09BFB /* Info.plist */,
 			);
 			path = FlowTest;
+			sourceTree = "<group>";
+		};
+		A231C40725487AD500738AE3 /* FlowTestTests */ = {
+			isa = PBXGroup;
+			children = (
+				A231C40825487AD500738AE3 /* FlowTestTests.swift */,
+				A231C40A25487AD500738AE3 /* Info.plist */,
+			);
+			path = FlowTestTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -90,18 +123,40 @@
 			productReference = 52324B8623397CAD00F09BFB /* FlowTest.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A231C40525487AD500738AE3 /* FlowTestTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A231C40F25487AD500738AE3 /* Build configuration list for PBXNativeTarget "FlowTestTests" */;
+			buildPhases = (
+				A231C40225487AD500738AE3 /* Sources */,
+				A231C40325487AD500738AE3 /* Frameworks */,
+				A231C40425487AD500738AE3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A231C40C25487AD500738AE3 /* PBXTargetDependency */,
+			);
+			name = FlowTestTests;
+			productName = FlowTestTests;
+			productReference = A231C40625487AD500738AE3 /* FlowTestTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		52324B7E23397CAD00F09BFB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1100;
+				LastSwiftUpdateCheck = 1170;
 				LastUpgradeCheck = 1100;
 				ORGANIZATIONNAME = "Todd Perkins";
 				TargetAttributes = {
 					52324B8523397CAD00F09BFB = {
 						CreatedOnToolsVersion = 11.0;
+					};
+					A231C40525487AD500738AE3 = {
+						CreatedOnToolsVersion = 11.7;
+						TestTargetID = 52324B8523397CAD00F09BFB;
 					};
 				};
 			};
@@ -119,6 +174,7 @@
 			projectRoot = "";
 			targets = (
 				52324B8523397CAD00F09BFB /* FlowTest */,
+				A231C40525487AD500738AE3 /* FlowTestTests */,
 			);
 		};
 /* End PBXProject section */
@@ -131,6 +187,13 @@
 				52324B9623397CAE00F09BFB /* LaunchScreen.storyboard in Resources */,
 				52324B9323397CAE00F09BFB /* Assets.xcassets in Resources */,
 				52324B9123397CAD00F09BFB /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A231C40425487AD500738AE3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -148,7 +211,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A231C40225487AD500738AE3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A231C41025487B1A00738AE3 /* Book.swift in Sources */,
+				A231C40925487AD500738AE3 /* FlowTestTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A231C40C25487AD500738AE3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 52324B8523397CAD00F09BFB /* FlowTest */;
+			targetProxy = A231C40B25487AD500738AE3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		52324B8F23397CAD00F09BFB /* Main.storyboard */ = {
@@ -320,6 +400,46 @@
 			};
 			name = Release;
 		};
+		A231C40D25487AD500738AE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = FlowTestTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.7;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.FlowTestTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FlowTest.app/FlowTest";
+			};
+			name = Debug;
+		};
+		A231C40E25487AD500738AE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = FlowTestTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.7;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.FlowTestTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FlowTest.app/FlowTest";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -337,6 +457,15 @@
 			buildConfigurations = (
 				52324B9B23397CAE00F09BFB /* Debug */,
 				52324B9C23397CAE00F09BFB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A231C40F25487AD500738AE3 /* Build configuration list for PBXNativeTarget "FlowTestTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A231C40D25487AD500738AE3 /* Debug */,
+				A231C40E25487AD500738AE3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

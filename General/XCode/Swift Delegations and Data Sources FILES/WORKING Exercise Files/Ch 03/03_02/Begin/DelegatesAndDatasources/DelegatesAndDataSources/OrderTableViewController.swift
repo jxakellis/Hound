@@ -17,6 +17,7 @@ class OrderTableViewController: UITableViewController {
         orderedItems = orderList
         tableView.reloadData()
     }
+    
     //MARK: - Table Data Sources
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
