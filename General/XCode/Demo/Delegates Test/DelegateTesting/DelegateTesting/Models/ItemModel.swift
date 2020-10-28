@@ -32,6 +32,10 @@ class Item: GenericItem{
     func stringReadout() -> String {
         return "Name: \(itemName)   Description: \(itemDescription)   Value: \(itemValue)"
     }
+    
+    func shortStringReadout() -> String{
+        return itemName + " " + itemDescription + " " + String(itemValue)
+    }
 }
 
 class ItemList{
@@ -65,8 +69,8 @@ class Shop{
     
     var inventory: [Item]
     
-    init(){
-        inventory = [Item(name: "sword", description: "stabby stabby", value: 15), Item(name: "mace", description: "smashy smashy", value: 25), Item(name: "shield", description: "blocky blocky", value: 40), Item(name: "dagger", description: "slashy slashy", value: 10)]
+    required init(){
+        inventory = [Item(name: "Sword", description: "Stabby stabby", value: 15), Item(name: "Mace", description: "Smashy smashy", value: 25), Item(name: "Shield", description: "Blocky blocky", value: 40), Item(name: "Dagger", description: "Slashy slashy", value: 10)]
     }
 }
 

@@ -91,53 +91,54 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CXq-EX-H5d">
-                                <rect key="frame" x="25" y="787" width="364" height="50"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JBg-gf-XRr">
-                                        <rect key="frame" x="0.0" y="0.0" width="182" height="50"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="182" id="7Gv-Px-hO1"/>
-                                            <constraint firstAttribute="height" constant="50" id="FI0-5t-26E"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="25"/>
-                                        <state key="normal" title="BACK">
-                                            <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="backButton:" destination="8T3-j7-3vR" eventType="touchUpInside" id="Y6w-Zp-tRQ"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qz3-4g-F9t">
-                                        <rect key="frame" x="182" y="0.0" width="182" height="50"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="50" id="bDu-Rh-LbT"/>
-                                            <constraint firstAttribute="width" constant="182" id="hVe-hj-s4p"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="25"/>
-                                        <state key="normal" title="DONE">
-                                            <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="doneButton:" destination="8T3-j7-3vR" eventType="touchUpInside" id="egj-Qi-EgF"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                            </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qz3-4g-F9t">
+                                <rect key="frame" x="207" y="800" width="187" height="42"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="25"/>
+                                <state key="normal" title="DONE">
+                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                </state>
+                                <connections>
+                                    <action selector="doneButton:" destination="8T3-j7-3vR" eventType="touchUpInside" id="egj-Qi-EgF"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JBg-gf-XRr">
+                                <rect key="frame" x="20" y="800" width="187" height="42"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="25"/>
+                                <state key="normal" title="BACK">
+                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                </state>
+                                <connections>
+                                    <action selector="backButton:" destination="8T3-j7-3vR" eventType="touchUpInside" id="Y6w-Zp-tRQ"/>
+                                </connections>
+                            </button>
+                            <pickerView contentMode="scaleToFill" verticalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="Qxd-Hk-o1K">
+                                <rect key="frame" x="20" y="44" width="374" height="748"/>
+                            </pickerView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="CXq-EX-H5d" firstAttribute="leading" secondItem="vLR-bh-lf9" secondAttribute="leading" constant="25" id="0Om-YW-mzr"/>
-                            <constraint firstItem="vLR-bh-lf9" firstAttribute="trailing" secondItem="CXq-EX-H5d" secondAttribute="trailing" constant="25" id="QYY-fr-b7z"/>
-                            <constraint firstItem="vLR-bh-lf9" firstAttribute="bottom" secondItem="CXq-EX-H5d" secondAttribute="bottom" constant="25" id="VLz-rO-UxJ"/>
+                            <constraint firstItem="vLR-bh-lf9" firstAttribute="bottom" secondItem="Qz3-4g-F9t" secondAttribute="bottom" constant="20" id="5L5-VM-Adh"/>
+                            <constraint firstItem="Qz3-4g-F9t" firstAttribute="top" secondItem="Qxd-Hk-o1K" secondAttribute="bottom" constant="8" id="8of-wg-dmr"/>
+                            <constraint firstItem="vLR-bh-lf9" firstAttribute="trailing" secondItem="Qxd-Hk-o1K" secondAttribute="trailing" constant="20" id="DAp-CM-geD"/>
+                            <constraint firstItem="Qxd-Hk-o1K" firstAttribute="centerX" secondItem="Qln-sk-zBu" secondAttribute="centerX" id="O34-em-Jve"/>
+                            <constraint firstItem="Qxd-Hk-o1K" firstAttribute="top" secondItem="vLR-bh-lf9" secondAttribute="top" id="R1U-tY-9tT"/>
+                            <constraint firstItem="Qxd-Hk-o1K" firstAttribute="leading" secondItem="vLR-bh-lf9" secondAttribute="leading" constant="20" id="UTd-6l-H74"/>
+                            <constraint firstItem="Qz3-4g-F9t" firstAttribute="leading" secondItem="JBg-gf-XRr" secondAttribute="trailing" id="buQ-Sa-Rtl"/>
+                            <constraint firstItem="Qz3-4g-F9t" firstAttribute="width" secondItem="JBg-gf-XRr" secondAttribute="width" id="c0z-Iq-XD7"/>
+                            <constraint firstItem="vLR-bh-lf9" firstAttribute="trailing" secondItem="Qz3-4g-F9t" secondAttribute="trailing" constant="20" id="ulZ-lN-kyJ"/>
+                            <constraint firstItem="vLR-bh-lf9" firstAttribute="bottom" secondItem="JBg-gf-XRr" secondAttribute="bottom" constant="20" id="v00-NQ-6AK"/>
+                            <constraint firstItem="JBg-gf-XRr" firstAttribute="leading" secondItem="vLR-bh-lf9" secondAttribute="leading" constant="20" id="wz1-6f-6rb"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="vLR-bh-lf9"/>
                     </view>
                     <navigationItem key="navigationItem" id="LGL-Ln-aTQ"/>
+                    <connections>
+                        <outlet property="shopItemPicker" destination="Qxd-Hk-o1K" id="HXU-Lp-LiU"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JQy-rb-gxY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1114" y="-355"/>
+            <point key="canvasLocation" x="1113.0434782608697" y="-355.58035714285711"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="L95-q1-SZk">
