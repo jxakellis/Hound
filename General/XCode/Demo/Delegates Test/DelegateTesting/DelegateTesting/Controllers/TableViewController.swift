@@ -8,7 +8,13 @@
 
 import UIKit
 
+protocol TableViewControllerDelegate {
+    func didSelectTableRow(rowSelected: Int, rowSelectedItem: Item)
+}
+
 class TableViewController: UITableViewController {
+    
+   var delegate:TableViewControllerDelegate! = nil
     
     var shoppedItems = ItemList()
 
@@ -50,6 +56,10 @@ class TableViewController: UITableViewController {
     func updateTable(newItemList: ItemList){
         shoppedItems = newItemList
         self.tableView.reloadData()
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        delegate.didSelectTableRow(rowSelected: indexPath.row, rowSelectedItem: shoppedItems.list[indexPath.row])
     }
     
 

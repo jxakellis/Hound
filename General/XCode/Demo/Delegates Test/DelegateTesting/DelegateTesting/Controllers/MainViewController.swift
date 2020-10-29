@@ -8,11 +8,13 @@
 
 import UIKit
 
-class MainViewController: UIViewController, ShopViewControllerDelegate {
+class MainViewController: UIViewController, ShopViewControllerDelegate, TableViewControllerDelegate {
+    
+    
     
     @IBOutlet weak var shoppedItemsView: UIView!
     
-    
+    var mainViewTableSelectedItemViewController = MainViewTableSelectedItemViewController()
     
     var shoppedItemsList = ItemList()
     var shoppedItemsViewController = TableViewController()
@@ -23,7 +25,6 @@ class MainViewController: UIViewController, ShopViewControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        shoppedItemsList.add(name: "default", description: "def", value: 10)
         shoppedItemsViewController.updateTable(newItemList: shoppedItemsList)
     }
     
@@ -32,6 +33,12 @@ class MainViewController: UIViewController, ShopViewControllerDelegate {
     func didChooseItem(item: Item, amountOfItem: Int) {
         shoppedItemsList.add(item: item, amountTimesAdded: amountOfItem)
         shoppedItemsViewController.updateTable(newItemList: shoppedItemsList)
+    }
+    
+    func didSelectTableRow(rowSelected: Int, rowSelectedItem: Item) {
+        performSegue(withIdentifier: "tableSelectedItem", sender: self)
+        mainViewTableSelectedItemViewController.sentTableRowItem = rowSelectedItem
+        mainViewTableSelectedItemViewController.sentTableRow = rowSelected
     }
     
     // MARK: - Navigation
@@ -44,6 +51,10 @@ class MainViewController: UIViewController, ShopViewControllerDelegate {
         }
         if segue.identifier == "shoppedItems"{
             shoppedItemsViewController = segue.destination as! TableViewController
+            shoppedItemsViewController.delegate = self
+        }
+        if segue.identifier == "tableSelectedItem"{
+            mainViewTableSelectedItemViewController = segue.destination as! MainViewTableSelectedItemViewController
         }
     }
     

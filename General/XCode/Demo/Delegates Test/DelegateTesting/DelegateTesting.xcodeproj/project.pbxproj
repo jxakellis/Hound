@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A218CAA6254B79B300EF4EF7 /* MainViewTableSelectedItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A218CAA5254B79B300EF4EF7 /* MainViewTableSelectedItemViewController.swift */; };
 		A231C4122548803A00738AE3 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A231C4112548803A00738AE3 /* TableViewController.swift */; };
 		A265E938253683CF000CB7C0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A265E937253683CF000CB7C0 /* AppDelegate.swift */; };
 		A265E93A253683CF000CB7C0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A265E939253683CF000CB7C0 /* SceneDelegate.swift */; };
@@ -30,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A218CAA5254B79B300EF4EF7 /* MainViewTableSelectedItemViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewTableSelectedItemViewController.swift; sourceTree = "<group>"; };
 		A231C4112548803A00738AE3 /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		A265E934253683CF000CB7C0 /* DelegateTesting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DelegateTesting.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A265E937253683CF000CB7C0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 				A265E939253683CF000CB7C0 /* SceneDelegate.swift */,
 				A265E93B253683CF000CB7C0 /* MainViewController.swift */,
 				A265E937253683CF000CB7C0 /* AppDelegate.swift */,
+				A218CAA5254B79B300EF4EF7 /* MainViewTableSelectedItemViewController.swift */,
 				A265E96225368BBE000CB7C0 /* ShopViewController.swift */,
 				A231C4112548803A00738AE3 /* TableViewController.swift */,
 			);
@@ -238,6 +241,7 @@
 				A265E96325368BBE000CB7C0 /* ShopViewController.swift in Sources */,
 				A265E93C253683CF000CB7C0 /* MainViewController.swift in Sources */,
 				A265E938253683CF000CB7C0 /* AppDelegate.swift in Sources */,
+				A218CAA6254B79B300EF4EF7 /* MainViewTableSelectedItemViewController.swift in Sources */,
 				A265E93A253683CF000CB7C0 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
