@@ -51,16 +51,28 @@ class ItemList{
         }
     }
     
-    func add(item: Item){
-        list += [item]
+    func add(item: Item, amountTimesAdded: Int = 1){
+        if amountTimesAdded >= 1{
+            for _ in 1...amountTimesAdded{
+                list.append(item)
+            }
+        }
     }
     
     func add(itemsList: [Item]){
         list += itemsList
     }
-    func add(name:String, description: String, value: Int){
+    func add(name:String, description: String, value: Int, amountTimesAdded: Int = 1){
         let item = Item(name: name, description: description, value: value)
-        list += [item]
+        if amountTimesAdded >= 1{
+            for _ in 1...amountTimesAdded{
+                list.append(item)
+            }
+        }
+    }
+    
+    func clearList(){
+        list = []
     }
     
 }
@@ -70,7 +82,7 @@ class Shop{
     var inventory: [Item]
     
     required init(){
-        inventory = [Item(name: "Sword", description: "Stabby stabby", value: 15), Item(name: "Mace", description: "Smashy smashy", value: 25), Item(name: "Shield", description: "Blocky blocky", value: 40), Item(name: "Dagger", description: "Slashy slashy", value: 10)]
+        inventory = [Item(name: "Sword", description: "Stabby Stabby", value: 15), Item(name: "Mace", description: "Smashy Smashy", value: 25), Item(name: "Shield", description: "Blocky Blocky", value: 40), Item(name: "Dagger", description: "Slashy Slashy", value: 10)]
     }
 }
 

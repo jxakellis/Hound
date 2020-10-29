@@ -12,6 +12,8 @@ class MainViewController: UIViewController, ShopViewControllerDelegate {
     
     @IBOutlet weak var shoppedItemsView: UIView!
     
+    
+    
     var shoppedItemsList = ItemList()
     var shoppedItemsViewController = TableViewController()
     
@@ -27,8 +29,8 @@ class MainViewController: UIViewController, ShopViewControllerDelegate {
     
     //MARK: - Delegates and Data Sources
     
-    func didChooseItem(items: [Item]) {
-        shoppedItemsList.add(itemsList: items)
+    func didChooseItem(item: Item, amountOfItem: Int) {
+        shoppedItemsList.add(item: item, amountTimesAdded: amountOfItem)
         shoppedItemsViewController.updateTable(newItemList: shoppedItemsList)
     }
     
@@ -44,7 +46,13 @@ class MainViewController: UIViewController, ShopViewControllerDelegate {
             shoppedItemsViewController = segue.destination as! TableViewController
         }
     }
+    
+    // MARK: - Other Buttons
 
+    @IBAction func clearShoppedItems(_ sender: Any) {
+        shoppedItemsList.clearList()
+        shoppedItemsViewController.updateTable(newItemList: shoppedItemsList)
+    }
 
 }
 

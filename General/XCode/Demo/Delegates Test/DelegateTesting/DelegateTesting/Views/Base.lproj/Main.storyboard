@@ -16,7 +16,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mvw-jF-bb3">
-                                <rect key="frame" x="0.0" y="813" width="414" height="41"/>
+                                <rect key="frame" x="0.0" y="811" width="414" height="41"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="24"/>
                                 <state key="normal" title="Open Shop View">
                                     <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -27,21 +27,37 @@
                                 </connections>
                             </button>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aK4-xi-2pc">
-                                <rect key="frame" x="0.0" y="52" width="414" height="753"/>
+                                <rect key="frame" x="0.0" y="52" width="414" height="709"/>
                                 <connections>
                                     <segue destination="IzA-Hf-mfI" kind="embed" identifier="shoppedItems" id="FGf-9U-FgF"/>
                                 </connections>
                             </containerView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="drC-rm-Q7z">
+                                <rect key="frame" x="0.0" y="771.5" width="414" height="29.5"/>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="18"/>
+                                <state key="normal" title="Clear Item List">
+                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <color key="titleShadowColor" systemColor="systemPinkColor" red="1" green="0.1764705882" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="clearShoppedItems:" destination="BYZ-38-t0r" eventType="touchUpInside" id="sHW-QI-vsR"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="Mvw-jF-bb3" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="LfC-OI-sWE"/>
-                            <constraint firstItem="aK4-xi-2pc" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="8" id="Ovf-QP-v6r"/>
-                            <constraint firstItem="aK4-xi-2pc" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Rrp-7d-qUX"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Mvw-jF-bb3" secondAttribute="bottom" constant="8" id="Zvn-w6-Qam"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="aK4-xi-2pc" secondAttribute="trailing" id="hfy-WP-O2z"/>
-                            <constraint firstItem="Mvw-jF-bb3" firstAttribute="top" secondItem="aK4-xi-2pc" secondAttribute="bottom" constant="8" id="lrt-qZ-yvJ"/>
-                            <constraint firstItem="Mvw-jF-bb3" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="tOj-WE-VbO"/>
+                            <constraint firstItem="Mvw-jF-bb3" firstAttribute="top" secondItem="drC-rm-Q7z" secondAttribute="bottom" constant="8" id="84b-5M-2K0"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Mvw-jF-bb3" secondAttribute="bottom" constant="10" id="97z-gH-dro"/>
+                            <constraint firstItem="Mvw-jF-bb3" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="BQc-Oh-Glp"/>
+                            <constraint firstItem="drC-rm-Q7z" firstAttribute="top" secondItem="aK4-xi-2pc" secondAttribute="bottom" constant="8" id="DD7-Lv-3HY"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="drC-rm-Q7z" secondAttribute="trailing" id="ESL-L6-NGc"/>
+                            <constraint firstItem="aK4-xi-2pc" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="Jpd-Ad-yCV"/>
+                            <constraint firstItem="aK4-xi-2pc" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="8" id="MIh-ii-zCr"/>
+                            <constraint firstItem="aK4-xi-2pc" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="MYm-pO-9dk"/>
+                            <constraint firstItem="drC-rm-Q7z" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="SnE-Ux-AJU"/>
+                            <constraint firstItem="drC-rm-Q7z" firstAttribute="top" secondItem="aK4-xi-2pc" secondAttribute="bottom" constant="8" id="U68-is-YtY"/>
+                            <constraint firstItem="Mvw-jF-bb3" firstAttribute="top" secondItem="drC-rm-Q7z" secondAttribute="bottom" constant="8" id="Zzw-53-Psu"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Mvw-jF-bb3" secondAttribute="trailing" id="y73-tp-hl7"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
@@ -59,7 +75,7 @@
             <objects>
                 <tableViewController id="IzA-Hf-mfI" customClass="TableViewController" customModule="DelegateTesting" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="ZzI-4b-fEw">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="753"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="709"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <prototypes>
@@ -103,7 +119,7 @@
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JBg-gf-XRr">
                                 <rect key="frame" x="20" y="800" width="187" height="42"/>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="25"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <state key="normal" title="BACK">
                                     <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>

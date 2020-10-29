@@ -9,21 +9,21 @@
 import UIKit
 
 protocol ShopViewControllerDelegate {
-    func didChooseItem (items: [Item])
+    func didChooseItem (item: Item, amountOfItem: Int)
 }
 
 class ShopViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
     
     
     var delegate:ShopViewControllerDelegate! = nil
-    var purchaseList = ItemList()
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         shopItemPicker.delegate = self
         shopItemPicker.dataSource = self
-        pickerComponents = shopList.inventory
+        pickerItemComponents = shopAvailableItemList.inventory
+        //set default shop item
+        pickedShopTuple = (shopAvailableItemList.inventory[0], 1)
     }
     
     //MARK: Navigation
@@ -33,46 +33,74 @@ class ShopViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     }
     
     @IBAction func doneButton(_ sender: UIButton) {
-        purchaseList.add(name: "test", description: "test", value: 10)
-        delegate.didChooseItem(items: purchaseList.list)
+        delegate.didChooseItem(item: pickedShopTuple.0!, amountOfItem: pickedShopTuple.1)
         self.navigationController?.popViewController(animated: true)
     }
     
     //MARK: Picker Components
     
     @IBOutlet weak var shopItemPicker: UIPickerView!
-    var pickerComponents:[Item] = []
-    var shopList = Shop()
+    var pickerItemComponents:[Item] = []
+    var shopAvailableItemList = Shop()
+    var pickedShopTuple: (Item?, Int) = (nil, 0) //itemSelected: Item?
+    let numItemsAvailable = 7 //If it is <1 then picker for amount of items will not appear
     
     //MARK: - Picker View Data Sources
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
+        if numItemsAvailable > 1 {
+            return 2
+        }
+        else{
+            return 1
+        }
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return pickerComponents.count
+        switch numItemsAvailable {
+        case (Int.min...1):
+            return pickerItemComponents.count
+        default:
+            if component == 0{
+                return numItemsAvailable
+            }
+            else if component == 1{
+                return pickerItemComponents.count
+            }
+            else{
+                return 0
+            }
+        }
+        
     }
+    
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return pickerComponents[row].shortStringReadout()
+        switch numItemsAvailable {
+        case (Int.min...1):
+            return pickerItemComponents[row].shortStringReadout()
+        default:
+            if component == 0{
+                return String(row+1)
+            }
+            else if component == 1{
+                return pickerItemComponents[row].shortStringReadout()
+            }
+            else{
+                return "Error in pickerView(titleForRow)"
+            }
+        }
     }
     
      //MARK: - Picker View Delegates
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        /*
         //using row and componenet data
-        if component == 0 { //size
-            beverage.itemSize = pickerComponents[component][row]
+        if component == 0 { //amount
+            pickedShopTuple.1 = row+1
         }
-        if component == 1 { //Beverage name
-            beverage.itemName = pickerComponents[component][row]
+        if component == 1 { //item
+            pickedShopTuple.0 = pickerItemComponents[row]
         }
-        
-        //for a complete string each time
-         beverage.itemSize = pickerComponents[0][pickerView.selectedRow(inComponent: 0)]
-        beverage.itemName = pickerComponents[1][pickerView.selectedRow(inComponent: 1)]
-        */
     }
     
 }
