@@ -67,7 +67,10 @@ class MasterViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         let object = objects[indexPath.row] as! NSDate
-        cell.textLabel!.text = object.description
+        if let c = cell as? TableViewCell {
+            c.label!.text = object.description
+        }
+        
         return cell
     }
 

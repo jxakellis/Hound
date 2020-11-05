@@ -14,6 +14,7 @@
 		5249E47E234558CB00063A16 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5249E47C234558CB00063A16 /* Main.storyboard */; };
 		5249E480234558CC00063A16 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5249E47F234558CC00063A16 /* Assets.xcassets */; };
 		5249E483234558CC00063A16 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5249E481234558CC00063A16 /* LaunchScreen.storyboard */; };
+		A2E66C8D255320D70068CCA6 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E66C8C255320D70068CCA6 /* TableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		5249E47F234558CC00063A16 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5249E482234558CC00063A16 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5249E484234558CC00063A16 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A2E66C8C255320D70068CCA6 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +64,7 @@
 				5249E476234558CB00063A16 /* SceneDelegate.swift */,
 				5249E478234558CB00063A16 /* MasterViewController.swift */,
 				5249E47A234558CB00063A16 /* DetailViewController.swift */,
+				A2E66C8C255320D70068CCA6 /* TableViewCell.swift */,
 				5249E47C234558CB00063A16 /* Main.storyboard */,
 				5249E47F234558CC00063A16 /* Assets.xcassets */,
 				5249E481234558CC00063A16 /* LaunchScreen.storyboard */,
@@ -141,6 +144,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A2E66C8D255320D70068CCA6 /* TableViewCell.swift in Sources */,
 				5249E475234558CB00063A16 /* AppDelegate.swift in Sources */,
 				5249E477234558CB00063A16 /* SceneDelegate.swift in Sources */,
 				5249E479234558CB00063A16 /* MasterViewController.swift in Sources */,

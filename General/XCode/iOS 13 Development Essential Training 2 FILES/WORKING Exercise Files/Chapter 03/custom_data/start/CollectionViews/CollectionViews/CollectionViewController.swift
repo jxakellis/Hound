@@ -10,9 +10,15 @@ import UIKit
 
 private let reuseIdentifier = "Cell"
 
+struct Item {
+    var title: String
+    var description: String
+}
+
 class CollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
     var itemSize: CGSize = CGSize(width: 0, height: 0)
+    var items: [Item] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +34,11 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
             layout.estimatedItemSize = itemSize
             itemSize = CGSize(width: width, height: height)
         }
+        items.append(Item(title: "Item 1", description: "Item 1 Description"))
+        items.append(Item(title: "Item 2", description: "Item 2 Description"))
+        items.append(Item(title: "Item 3", description: "Item 3 Description"))
+        items.append(Item(title: "Item 4", description: "Item 4 Description"))
+        items.append(Item(title: "Item 5", description: "Item 5 Description"))
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -52,14 +63,14 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+        return items.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
     
         if let c = cell as? CollectionViewCell {
-            c.label.text = "\(indexPath.row + 1)"
+            c.label.text = items[indexPath.row].title
         }
     
         return cell

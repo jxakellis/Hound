@@ -18,9 +18,12 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         super.viewDidLoad()
         if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             let itemsPerRow: CGFloat = 4
-            let width = collectionView.frame.width / itemsPerRow
+            let padding: CGFloat = 5
+            let totalPadding: CGFloat = padding * (itemsPerRow - 1)
+            let individualPadding: CGFloat =  totalPadding / itemsPerRow
+            let width = (collectionView.frame.width / itemsPerRow) - individualPadding
             let height = width
-            layout.minimumLineSpacing = 0
+            layout.minimumLineSpacing = padding
             layout.minimumInteritemSpacing = 0
             layout.estimatedItemSize = itemSize
             itemSize = CGSize(width: width, height: height)

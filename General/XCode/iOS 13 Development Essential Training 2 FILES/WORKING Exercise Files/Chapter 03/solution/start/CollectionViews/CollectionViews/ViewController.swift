@@ -12,14 +12,21 @@ class ViewController: UIViewController {
     
     var item: Item?
 
+    
+    @IBOutlet weak var textView: UITextView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        if let i = item {
+            textView.text = i.title
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("\(item?.title)")
+        if let i = item {
+            textView.text = "\(i.title)\n\n\(i.description)"
+        }
     }
 
 }
