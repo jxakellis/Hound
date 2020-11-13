@@ -8,6 +8,34 @@
 
 import UIKit
 
+enum AppState {
+    case notrunning
+    case launching
+    case initalized
+    case active
+    case inactive
+    case wakingup
+    case background
+    case terminating
+}
+
+extension AppState: CustomStringConvertible{
+    var description: String {
+        switch self{
+        case .notrunning: return "NotRunning"
+        case .launching: return "Launching"
+        case .initalized: return "Initalized"
+        case .active: return "ACtive"
+        case .inactive: return "Inactive"
+        case .wakingup: return "WakingUp"
+        case .background: return "Background"
+        case .terminating: return "Terminating"
+        }
+    }
+    
+    
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 

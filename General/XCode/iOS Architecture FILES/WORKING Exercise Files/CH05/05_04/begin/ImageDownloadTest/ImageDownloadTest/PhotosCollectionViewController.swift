@@ -18,6 +18,8 @@ class PhotosCollectionViewController: UICollectionViewController {
     
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     
+    let concurrentQueue = DispatchQueue(label: "concurrentQ", attributes: .concurrent)
+    
     lazy var photoLinks: [URL] = {
         var result = [URL]()
         // generate image URLs
@@ -62,7 +64,8 @@ class PhotosCollectionViewController: UICollectionViewController {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotosCollectionViewCell.reuseIdentifier, for: indexPath) as! PhotosCollectionViewCell
     
         // Configure the cell
-        DispatchQueue.global().async {
+        concurrentQueue.async {
+        //DispatchQueue.global().async {
             if let imageData = try? Data.init(contentsOf: self.photoLinks[indexPath.row]),
                 let image = UIImage(data: imageData) {
                 DispatchQueue.main.async {

@@ -62,9 +62,13 @@ class PhotosCollectionViewController: UICollectionViewController {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotosCollectionViewCell.reuseIdentifier, for: indexPath) as! PhotosCollectionViewCell
     
         // Configure the cell
-        if let imageData = try? Data.init(contentsOf: photoLinks[indexPath.row]),
-            let image = UIImage(data: imageData) {
-            cell.imageView.image = image
+        DispatchQueue.global().async {
+            if let imageData = try? Data.init(contentsOf: self.photoLinks[indexPath.row]),
+                      let image = UIImage(data: imageData) {
+                DispatchQueue.main.async {
+                    cell.imageView.image = image
+                }
+            }
         }
         
         return cell
