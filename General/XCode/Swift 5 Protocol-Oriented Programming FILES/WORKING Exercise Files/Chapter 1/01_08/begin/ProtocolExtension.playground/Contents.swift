@@ -6,17 +6,12 @@ protocol Taggable {
     init(tag: String, data: Data)
 }
 
-protocol TaggedPersistable: Taggable /*, CustomStringConvertible, Equatable*/{
+protocol TaggedPersistable: Taggable {
     init(tag: String, contentsOf url: URL) throws
     func persist(to url: URL) throws
 }
 
-protocol TaggedEncodable: Taggable {
-    var base64: String { get }
-}
-
-struct MyData: Taggable/*TaggedPersistable, TaggedEncodable, CustomStringConvertible*/ {
-    /*
+extension TaggedPersistable {
     init(tag: String, contentsOf url: URL) throws {
         let data = try Data.init(contentsOf: url)
         self.init(tag: tag, data: data)
@@ -25,11 +20,19 @@ struct MyData: Taggable/*TaggedPersistable, TaggedEncodable, CustomStringConvert
     func persist(to url: URL) throws {
         try self.data.write(to: url)
     }
-    
+}
+
+protocol TaggedEncodable: Taggable {
+    var base64: String { get }
+}
+
+extension TaggedEncodable {
     var base64: String {
         return self.data.base64EncodedString()
-    }*/
-    
+    }
+}
+
+struct MyData: TaggedPersistable, TaggedEncodable {
     var tag: String
     
     var data: Data
@@ -38,11 +41,8 @@ struct MyData: Taggable/*TaggedPersistable, TaggedEncodable, CustomStringConvert
         self.tag = tag
         self.data = data
     }
-    /*
-    var description: String {
-        return "MyData(\(tag))"
-    }*/
 }
+
 
 extension MyData: CustomStringConvertible {
     var description: String {
@@ -50,6 +50,7 @@ extension MyData: CustomStringConvertible {
     }
 }
 
+/*
 extension MyData: TaggedEncodable {
     var base64: String {
         return self.data.base64EncodedString()
@@ -66,3 +67,12 @@ extension MyData: TaggedPersistable {
         try self.data.write(to: url)
     }
 }
+*/
+
+struct PersistableData: TaggedPersistable {
+    var tag: String
+    var data: Data
+}
+
+let p = PersistableData(tag: "42", data: Data(repeating: 1, count: 10))
+try? p.persist(to: <#T##URL#>)

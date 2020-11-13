@@ -1,29 +1,68 @@
 import Foundation
 
-public class AmazonService {
+public protocol Service {
+    var total: Float { get }
+    mutating func add(payment: Float)
+}
+
+private class AmazonService {
     private var balance: Float = 0
     
-    public init() {}
+    fileprivate init() {}
     
-    public func orderPlaced(payment: Float) {
+    private func orderPlaced(payment: Float) {
         balance += payment
     }
     
-    public var earnings: Float {
+    private var earnings: Float {
         return balance
     }
 }
 
-public class EtsyService {
+extension AmazonService: Service {
+    public var total: Float {
+        return earnings
+    }
+    
+    public func add(payment: Float) {
+        orderPlaced(payment: payment)
+    }
+}
+
+private class EtsyService {
     private var earnings: Float = 0
     
-    public init() {}
+    fileprivate init() {}
     
-    public func itemSold(profit: Float) {
+    private func itemSold(profit: Float) {
         earnings += profit
     }
     
-    public var totalSold: Float {
+    private var totalSold: Float {
         return earnings
+    }
+}
+
+extension EtsyService: Service {
+    public var total: Float {
+        return totalSold
+    }
+    
+    public func add(payment: Float){
+        itemSold(profit: payment)
+    }
+}
+
+public enum ServiceType {
+    case amazon
+    case etsy
+}
+
+public func make(service: ServiceType) -> Service {
+    switch service {
+    case .amazon:
+        return AmazonService()
+    case .etsy:
+        return EtsyService()
     }
 }
