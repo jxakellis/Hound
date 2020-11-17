@@ -1,13 +1,16 @@
 import Foundation
 
-struct StringWrapper {
-    var storage: String
+struct Wrapper<T: Equatable> {
+    var storage: T
+    
+    init(_ value: T) {
+        storage = value
+    }
 }
 
-struct IntWrapper {
-    var storage: Int
-}
+//let piWrapped = Wrapper<Double>(Double.pi)
+let piWrapped = Wrapper(Double.pi)
 
-struct DateWrapper {
-    var storage: Date
-}
+let stringWrapped = Wrapper("POP")
+
+let dateWrapped = Wrapper(Date())

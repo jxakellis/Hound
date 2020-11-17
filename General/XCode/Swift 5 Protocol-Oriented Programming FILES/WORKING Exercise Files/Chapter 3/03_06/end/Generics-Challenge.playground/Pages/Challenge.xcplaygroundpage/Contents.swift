@@ -23,4 +23,65 @@ import Foundation
  - You can use an array as underlying storage.
  */
 
+protocol StackProtocol {
+    associatedtype T
+    
+    var stack: [T] { get set }
+    
+    var count: Int { get }
+    var isEmpty: Bool { get }
+}
+
+extension StackProtocol{
+    var count: Int {
+        return stack.count
+    }
+    var isEmpty: Bool {
+        if stack.count == 0{
+        return true
+        }
+        else{
+        return false
+        }
+    }
+}
+
+protocol StackManagement: StackProtocol {
+    mutating func push(element: T)
+    mutating func pop() -> T?
+    func peek() -> T?
+}
+
+extension StackManagement{
+    
+    mutating func push(element: T){
+        stack.append(element)
+    }
+    
+    mutating func pop() -> T?{
+        stack.popLast()
+    }
+    
+    func peek() -> T?{
+        stack.last
+    }
+}
+
+struct Stack<TY>: StackManagement{
+    typealias T = TY
+    
+    var stack: [T] = []
+}
+
+var stringStack = Stack<String>()
+
+stringStack.push(element: "Hello")
+stringStack.push(element: "Hi")
+
+print(stringStack.pop() ?? "empty")
+print(stringStack.pop() ?? "empty")
+print(stringStack.pop() ?? "empty")
+print(stringStack.count)
+
+
 

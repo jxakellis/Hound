@@ -1,7 +1,7 @@
 import Foundation
 
 protocol Taggable {
-    associatedtype Content
+    associatedtype Content: Equatable
     var tag: String {get}
     var data: Content { get }
     init(tag: String, data: Content)
@@ -16,3 +16,11 @@ struct TaggedDate: Taggable {
     var tag: String
     var data: Date
 }
+
+struct GenericTagged<T: Equatable>: Taggable {
+    var tag: String
+    var data: T
+}
+
+//let taggedDouble = GenericTagged<Double>(tag: "pi", data: Double.pi)
+let taggedDouble = GenericTagged(tag: "pi", data: Double.pi)
