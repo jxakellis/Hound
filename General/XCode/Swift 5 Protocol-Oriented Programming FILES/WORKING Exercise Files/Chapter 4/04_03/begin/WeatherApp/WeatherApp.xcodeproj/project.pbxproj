@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A2807AA92565A39F00FA8B4A /* WebServiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2807AA82565A39F00FA8B4A /* WebServiceController.swift */; };
 		D200026823788CBE002658A6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D200026723788CBE002658A6 /* AppDelegate.swift */; };
 		D200026A23788CBE002658A6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D200026923788CBE002658A6 /* SceneDelegate.swift */; };
 		D200026C23788CBE002658A6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D200026B23788CBE002658A6 /* ContentView.swift */; };
@@ -27,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A2807AA82565A39F00FA8B4A /* WebServiceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebServiceController.swift; sourceTree = "<group>"; };
 		D200026423788CBE002658A6 /* WeatherApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D200026723788CBE002658A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D200026923788CBE002658A6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -58,6 +60,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A2807AA72565A38600FA8B4A /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				A2807AA82565A39F00FA8B4A /* WebServiceController.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		D200025B23788CBE002658A6 = {
 			isa = PBXGroup;
 			children = (
@@ -79,6 +89,7 @@
 		D200026623788CBE002658A6 /* WeatherApp */ = {
 			isa = PBXGroup;
 			children = (
+				A2807AA72565A38600FA8B4A /* Model */,
 				D200026723788CBE002658A6 /* AppDelegate.swift */,
 				D200026923788CBE002658A6 /* SceneDelegate.swift */,
 				D200026B23788CBE002658A6 /* ContentView.swift */,
@@ -208,6 +219,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A2807AA92565A39F00FA8B4A /* WebServiceController.swift in Sources */,
 				D200026823788CBE002658A6 /* AppDelegate.swift in Sources */,
 				D200026A23788CBE002658A6 /* SceneDelegate.swift in Sources */,
 				D200026C23788CBE002658A6 /* ContentView.swift in Sources */,
