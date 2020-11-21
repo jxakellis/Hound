@@ -10,16 +10,18 @@ import UIKit
 
 class Dog: DogSpecificationManagerProtocol {
     
+    
     //MARK: DogSpecificationManagerProtocol implementation
-    required init(dogName: String?, dogDescription: String?, dogBreed: String?) {
-        var tempDogSpecification = Dictionary<String,String?>()
-        tempDogSpecification["name"] = dogName
-        tempDogSpecification["description"] = dogDescription
-        tempDogSpecification["breed"] = dogBreed
-        dogSpecification = tempDogSpecification
+    
+    required init() {
+        //initalizeds dogSpecifications to default nil values, use func later to change
+        dogSpecifications = Dictionary<String,String?>()
+        dogSpecifications["name"] = ""
+        dogSpecifications ["description"] = ""
+        dogSpecifications ["breed"] = ""
     }
     
-    var dogSpecification: Dictionary<String, String?>
+    var dogSpecifications: Dictionary<String, String?>
     
     //attributes
         //naming and description, use seperate class

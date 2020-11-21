@@ -7,11 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A20C99952568666300E2C9C8 /* DogRequirementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C99942568666300E2C9C8 /* DogRequirementManager.swift */; };
+		A20C99972568671F00E2C9C8 /* Requirement.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C99962568671F00E2C9C8 /* Requirement.swift */; };
+		A20C999925686B7600E2C9C8 /* Timing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C999825686B7600E2C9C8 /* Timing.swift */; };
+		A20C999B25686B9100E2C9C8 /* DogTimingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C999A25686B9100E2C9C8 /* DogTimingManager.swift */; };
 		A258AEEF25661580005242E4 /* Dog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A258AEEE25661580005242E4 /* Dog.swift */; };
 		A258AEF125661689005242E4 /* DogSpecificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A258AEF025661689005242E4 /* DogSpecificationManager.swift */; };
+		A2AFA2022568E0100051A307 /* DogDisplayTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AFA2012568E0100051A307 /* DogDisplayTableViewController.swift */; };
+		A2AFA2042568E0420051A307 /* DogDisplayTableViewCellDefault.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AFA2032568E0420051A307 /* DogDisplayTableViewCellDefault.swift */; };
 		A2E66C9B25534A880068CCA6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E66C9A25534A880068CCA6 /* AppDelegate.swift */; };
 		A2E66C9D25534A880068CCA6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E66C9C25534A880068CCA6 /* SceneDelegate.swift */; };
-		A2E66C9F25534A880068CCA6 /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E66C9E25534A880068CCA6 /* FirstViewController.swift */; };
+		A2E66C9F25534A880068CCA6 /* DogDisplayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E66C9E25534A880068CCA6 /* DogDisplayViewController.swift */; };
 		A2E66CA125534A880068CCA6 /* SecondViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E66CA025534A880068CCA6 /* SecondViewController.swift */; };
 		A2E66CA425534A880068CCA6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A2E66CA225534A880068CCA6 /* Main.storyboard */; };
 		A2E66CA625534A8A0068CCA6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2E66CA525534A8A0068CCA6 /* Assets.xcassets */; };
@@ -30,12 +36,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A20C99942568666300E2C9C8 /* DogRequirementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogRequirementManager.swift; sourceTree = "<group>"; };
+		A20C99962568671F00E2C9C8 /* Requirement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Requirement.swift; sourceTree = "<group>"; };
+		A20C999825686B7600E2C9C8 /* Timing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timing.swift; sourceTree = "<group>"; };
+		A20C999A25686B9100E2C9C8 /* DogTimingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogTimingManager.swift; sourceTree = "<group>"; };
 		A258AEEE25661580005242E4 /* Dog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dog.swift; sourceTree = "<group>"; };
 		A258AEF025661689005242E4 /* DogSpecificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogSpecificationManager.swift; sourceTree = "<group>"; };
+		A2AFA2012568E0100051A307 /* DogDisplayTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogDisplayTableViewController.swift; sourceTree = "<group>"; };
+		A2AFA2032568E0420051A307 /* DogDisplayTableViewCellDefault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogDisplayTableViewCellDefault.swift; sourceTree = "<group>"; };
 		A2E66C9725534A880068CCA6 /* Who Let The Dogs Out.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Who Let The Dogs Out.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2E66C9A25534A880068CCA6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A2E66C9C25534A880068CCA6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		A2E66C9E25534A880068CCA6 /* FirstViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
+		A2E66C9E25534A880068CCA6 /* DogDisplayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogDisplayViewController.swift; sourceTree = "<group>"; };
 		A2E66CA025534A880068CCA6 /* SecondViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondViewController.swift; sourceTree = "<group>"; };
 		A2E66CA325534A880068CCA6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A2E66CA525534A8A0068CCA6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -68,7 +80,9 @@
 			isa = PBXGroup;
 			children = (
 				A2E66CA025534A880068CCA6 /* SecondViewController.swift */,
-				A2E66C9E25534A880068CCA6 /* FirstViewController.swift */,
+				A2E66C9E25534A880068CCA6 /* DogDisplayViewController.swift */,
+				A2AFA2012568E0100051A307 /* DogDisplayTableViewController.swift */,
+				A2AFA2032568E0420051A307 /* DogDisplayTableViewCellDefault.swift */,
 			);
 			path = "View Controller";
 			sourceTree = "<group>";
@@ -95,6 +109,8 @@
 			isa = PBXGroup;
 			children = (
 				A258AEF025661689005242E4 /* DogSpecificationManager.swift */,
+				A20C99942568666300E2C9C8 /* DogRequirementManager.swift */,
+				A20C999A25686B9100E2C9C8 /* DogTimingManager.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -103,6 +119,8 @@
 			isa = PBXGroup;
 			children = (
 				A258AEEE25661580005242E4 /* Dog.swift */,
+				A20C99962568671F00E2C9C8 /* Requirement.swift */,
+				A20C999825686B7600E2C9C8 /* Timing.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -251,10 +269,16 @@
 			files = (
 				A258AEF125661689005242E4 /* DogSpecificationManager.swift in Sources */,
 				A2E66CA125534A880068CCA6 /* SecondViewController.swift in Sources */,
-				A2E66C9F25534A880068CCA6 /* FirstViewController.swift in Sources */,
+				A2E66C9F25534A880068CCA6 /* DogDisplayViewController.swift in Sources */,
 				A2E66C9B25534A880068CCA6 /* AppDelegate.swift in Sources */,
+				A20C999B25686B9100E2C9C8 /* DogTimingManager.swift in Sources */,
+				A20C999925686B7600E2C9C8 /* Timing.swift in Sources */,
 				A258AEEF25661580005242E4 /* Dog.swift in Sources */,
+				A2AFA2022568E0100051A307 /* DogDisplayTableViewController.swift in Sources */,
+				A20C99972568671F00E2C9C8 /* Requirement.swift in Sources */,
 				A2E66C9D25534A880068CCA6 /* SceneDelegate.swift in Sources */,
+				A20C99952568666300E2C9C8 /* DogRequirementManager.swift in Sources */,
+				A2AFA2042568E0420051A307 /* DogDisplayTableViewCellDefault.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
