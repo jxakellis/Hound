@@ -17,8 +17,12 @@ protocol DogSpecificationManagerProtocol {
     
     init()
     
+   
+    
     //dogSpecifications
     var dogSpecifications: Dictionary<String,String?> { get set }
+    
+    func initalizeDogSpecificationDictionary()
     
     //Management of dogSpecifcations dictionary
     mutating func changeDogSpecifications(key: String?, newValue: String?) throws

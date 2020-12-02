@@ -1,0 +1,12 @@
+
+Future Implementation Needed
+
+DogRequirementManager
+    extension DogRequirementProtocol
+        mutating func resetLabel()
+            Goes hand in hand with future error about two dogs being set to same name of "", build system
+            
+DogSpecificationManager
+    extension DogSpecificationManagerProtocol
+        func checkDogSpecificationValueValid(key: String?, value: String?) -> Bool
+            Build system to check if a value is valid, e.g. if the key is "name" check if the value provided for name is valid, if its "description" check if the description is valid. Build a flexible system to adapt to changing keys, possibly implement constants for the keys too so they are constant and known.

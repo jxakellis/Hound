@@ -15,16 +15,19 @@ enum DogRequirementError: Error {
 }
 
 protocol DogRequirementProtocol {
-    
+    //name of requirement, can't be repeated, will throw error if try to add two requirments to same requirement manager with same label
     var label: String { get set }
     
+    //descripton of reqirement
     var description: String { get set }
     
+    //time at which requirement was initalized
     var initalizationDate: Date { get set }
     
+    //interval at which a timer should be triggered for requirement
     var interval: TimeInterval { get set }
     
-    init(initDate: Date, initInterval: TimeInterval) throws
+    init(initDate: Date) throws
     
     mutating func changeLabel(newLabel: String) throws
     
@@ -61,19 +64,19 @@ extension DogRequirementProtocol {
     //resets value of label to constant/default value
     mutating func resetLabel(){
         //replace with constant eventually
-        label = ""
+        label = DogConstant.defaultLabel
     }
     
     //resets value of description to constant/default value
     mutating func resetDescription(){
         //replace with constant eventually
-        description = ""
+        description = DogConstant.defaultDescription
     }
     
     //resets value of time interval to constant/default value
     mutating func resetInterval(){
         //replace with constant eventually
-        interval = TimeInterval(3600)
+        interval = TimeInterval(DogConstant.timeIntervalConstant)
     }
       
 }
@@ -87,6 +90,7 @@ enum DogRequirementManagerError: Error {
 
 protocol DogRequirementManagerProtocol {
     
+    //array of requirments, a dog should contain one of these to specify all of its requirements
     var requirements: [Requirement] { get set }
     
     init(initRequirements: [Requirement])
@@ -110,13 +114,13 @@ extension DogRequirementManagerProtocol {
             }
         }
         
-        //ADD MORE CODE NOT COMPLETE
-        //ADD MORE CODE NOT COMPLETE
-        //ADD MORE CODE NOT COMPLETE
-        //ADD MORE CODE NOT COMPLETE
-        //ADD MORE CODE NOT COMPLETE
+        if requirementAlreadyPresent == true{
+            throw DogRequirementManagerError.RequirementAlreadyPresent
+        }
+        else {
+            requirements.append(newRequirement)
+        }
         
-        requirements.append(newRequirement)
     }
     
     //removes trys to find a requirement whos label (capitals don't matter) matches requirement name given, if found removes requirement, if not found throws error
@@ -127,6 +131,7 @@ extension DogRequirementManagerProtocol {
         requirements.forEach { (req) in
             if (req.label.lowercased()) == (requirementName.lowercased()){
                 requirementNotPresent = false
+                
             }
         }
         

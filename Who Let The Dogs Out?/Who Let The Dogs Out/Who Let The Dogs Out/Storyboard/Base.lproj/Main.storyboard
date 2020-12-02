@@ -146,6 +146,22 @@
             </objects>
             <point key="canvasLocation" x="750" y="360"/>
         </scene>
+        <!--Add-->
+        <scene sceneID="zBu-kK-ACc">
+            <objects>
+                <viewController title="Add" id="Md0-lI-8ay" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="oEA-zm-hX1">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="yVN-7q-eO0"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Add" image="plus" catalog="system" id="kYO-ht-sPQ"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7qR-cs-4P5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="747.82608695652175" y="1037.2767857142858"/>
+        </scene>
         <!--Settings-->
         <scene sceneID="qP4-o3-xl2">
             <objects>
@@ -160,7 +176,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="87A-cg-Vec" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="0.0" y="824"/>
+            <point key="canvasLocation" x="749" y="1714"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">
@@ -174,6 +190,7 @@
                     <connections>
                         <segue destination="9pv-A4-QxB" kind="relationship" relationship="viewControllers" id="u7Y-xg-7CH"/>
                         <segue destination="8rJ-Kc-sve" kind="relationship" relationship="viewControllers" id="lzU-1b-eKA"/>
+                        <segue destination="Md0-lI-8ay" kind="relationship" relationship="viewControllers" id="tBd-mO-04o"/>
                         <segue destination="6ov-Cv-Z6e" kind="relationship" relationship="viewControllers" id="lDO-h0-7C7"/>
                     </connections>
                 </tabBarController>
@@ -186,5 +203,6 @@
         <image name="gear" catalog="system" width="128" height="119"/>
         <image name="house.fill" catalog="system" width="128" height="106"/>
         <image name="pencil" catalog="system" width="128" height="113"/>
+        <image name="plus" catalog="system" width="128" height="113"/>
     </resources>
 </document>

@@ -1,0 +1,8 @@
+
+Future Errors
+
+Constants.swift
+    DogConstant.defaultLabel
+        When using DogConstant.defaultLabel, the default is "", if two dogs are set to this then there will be an error as a dog is accesses through its label. Setup system to iterate their names, e.g. you have three dogs, "Dog 1", "Dog 2", and "Fido", if fido's name is reset then go through loop until the name is unique i.e. his name will be Dog 3 if reset to a default value. 
+
+

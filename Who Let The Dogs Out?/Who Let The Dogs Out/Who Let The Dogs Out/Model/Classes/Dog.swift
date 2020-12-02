@@ -14,17 +14,19 @@ class Dog: DogSpecificationManagerProtocol {
     //MARK: DogSpecificationManagerProtocol implementation
     
     required init() {
-        //initalizeds dogSpecifications to default nil values, use func later to change
-        dogSpecifications = Dictionary<String,String?>()
-        dogSpecifications["name"] = ""
-        dogSpecifications ["description"] = ""
+        initalizeDogSpecificationDictionary()
+    }
+    
+    var dogSpecifications: Dictionary<String, String?> = Dictionary<String,String?>()
+    var dogRequirments: RequirementManager = RequirementManager()
+    
+    //initalizes dictionary default values
+    func initalizeDogSpecificationDictionary(){
+        dogSpecifications["name"] = DogConstant.defaultLabel
+        dogSpecifications ["description"] = DogConstant.defaultDescription
         dogSpecifications ["breed"] = ""
     }
     
-    var dogSpecifications: Dictionary<String, String?>
-    
-    //attributes
-        //naming and description, use seperate class
-        //requirements, pull from requirement manager
     //functions
+    
 }
