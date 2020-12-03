@@ -10,10 +10,21 @@ import UIKit
 
 class SecondViewController: UIViewController {
 
+    @IBOutlet weak var addDog: UIButton!
+    
+    @IBAction func addDog(_ sender: Any) {
+        
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        addDogButtonConfig()
     }
+    
+    func addDogButtonConfig(){
+        addDog.layer.cornerRadius = 8.0
+    }
+    
 
 
 }

@@ -24,7 +24,7 @@ class Dog: DogSpecificationManagerProtocol {
     func initalizeDogSpecificationDictionary(){
         dogSpecifications["name"] = DogConstant.defaultLabel
         dogSpecifications ["description"] = DogConstant.defaultDescription
-        dogSpecifications ["breed"] = ""
+        dogSpecifications ["breed"] = DogConstant.defaultBreed
     }
     
     //functions
