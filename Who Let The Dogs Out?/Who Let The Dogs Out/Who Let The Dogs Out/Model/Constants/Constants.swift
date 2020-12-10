@@ -9,9 +9,13 @@
 import Foundation
 
 enum DogConstant {
-    static let timeIntervalConstant = 3600
+    
     static let defaultLabel = ""
     static let defaultDescription = ""
     static let defaultBreed = ""
     static let defaultDogSpecificationKeys = ["name", "description", "breed"]
+    
+    static let defaultRequirementLabel = ""
+    static let defaultRequirementDescription = ""
+    static let defaultRequirementTimeInterval = 3600
 }

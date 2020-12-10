@@ -28,6 +28,7 @@ protocol DogSpecificationManagerProtocol {
     mutating func changeDogSpecifications(key: String?, newValue: String?) throws
     
     func checkDogSpecificationValueValid(key: String?, value: String?) -> Bool
+    
     func checkDogSpecificationKeyValid(key: String?) -> Bool
     
     mutating func clearDogSpecificationsValues()

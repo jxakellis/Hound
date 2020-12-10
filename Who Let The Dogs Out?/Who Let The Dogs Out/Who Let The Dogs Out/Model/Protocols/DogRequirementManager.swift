@@ -9,9 +9,9 @@
 import UIKit
 
 enum DogRequirementError: Error {
-    case LabelInvalid
-    case DescriptionInvalid
-    case IntervalInvalid
+    case labelInvalid
+    case lescriptionInvalid
+    case intervalInvalid
 }
 
 protocol DogRequirementProtocol {
@@ -35,7 +35,9 @@ protocol DogRequirementProtocol {
     
     mutating func changeInterval(newInterval: TimeInterval) throws
     
-    mutating func resetLabel()
+    
+    //TEMPORARILY DISABLED DUE TO CONFLICT OF MATCHING NAMES WITH DIFFERENT DOG OBJECT
+    // mutating func resetLabel()
     
     mutating func resetDescription()
     
@@ -61,31 +63,31 @@ extension DogRequirementProtocol {
         interval = newInterval
     }
     
-    //resets value of label to constant/default value
+    /*
+     TEMPORARILY DISABLED DUE TO CONFLICT OF MATCHING NAMES WITH DIFFERENT DOG OBJECT
+     //resets value of label to constant/default value
     mutating func resetLabel(){
-        //replace with constant eventually
-        label = DogConstant.defaultLabel
+        label = DogConstant.defaultRequirementLabel
     }
+     */
     
     //resets value of description to constant/default value
     mutating func resetDescription(){
-        //replace with constant eventually
-        description = DogConstant.defaultDescription
+        description = DogConstant.defaultRequirementDescription
     }
     
     //resets value of time interval to constant/default value
     mutating func resetInterval(){
-        //replace with constant eventually
-        interval = TimeInterval(DogConstant.timeIntervalConstant)
+        interval = TimeInterval(DogConstant.defaultRequirementTimeInterval)
     }
       
 }
 
 enum DogRequirementManagerError: Error {
-    case RequirementAlreadyPresent
-    case RequirementNotPresent
-    case RequirementInvalid
-    case Error
+    case requirementAlreadyPresent
+    case requirementNotPresent
+    case requirementInvalid
+    case error
 }
 
 protocol DogRequirementManagerProtocol {
@@ -115,7 +117,7 @@ extension DogRequirementManagerProtocol {
         }
         
         if requirementAlreadyPresent == true{
-            throw DogRequirementManagerError.RequirementAlreadyPresent
+            throw DogRequirementManagerError.requirementAlreadyPresent
         }
         else {
             requirements.append(newRequirement)
@@ -138,7 +140,7 @@ extension DogRequirementManagerProtocol {
         //if provided requirement is not present, throws error
         
         if requirementNotPresent == true{
-            throw DogRequirementManagerError.RequirementNotPresent
+            throw DogRequirementManagerError.requirementNotPresent
         }
         //if provided requirement is present, proceeds
         else {
@@ -156,7 +158,7 @@ extension DogRequirementManagerProtocol {
         }
     }
     
-        //clears all requirements, should make requirements an empty string
+        //clears all requirements, should make requirements an empty array
     mutating func clearRequirements() {
         requirements.removeAll()
     }
