@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -17,7 +19,7 @@
                         <subviews>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="Dogs" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KQZ-1w-vlD">
                                 <rect key="frame" x="0.0" y="44" width="414" height="43"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="36"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -28,7 +30,8 @@
                                 </connections>
                             </containerView>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="PQr-Ze-W5v"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="KQZ-1w-vlD" firstAttribute="leading" secondItem="PQr-Ze-W5v" secondAttribute="leading" id="55e-GW-eDy"/>
                             <constraint firstItem="USa-GB-KYk" firstAttribute="leading" secondItem="PQr-Ze-W5v" secondAttribute="leading" id="AEa-UB-kCM"/>
@@ -39,7 +42,6 @@
                             <constraint firstItem="USa-GB-KYk" firstAttribute="top" secondItem="KQZ-1w-vlD" secondAttribute="bottom" id="k28-VO-jlW"/>
                             <constraint firstItem="KQZ-1w-vlD" firstAttribute="top" secondItem="PQr-Ze-W5v" secondAttribute="top" id="pXs-Ri-ICT"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="PQr-Ze-W5v"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Home" image="house.fill" catalog="system" id="acW-dT-cKf"/>
                 </viewController>
@@ -54,7 +56,7 @@
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="57d-zI-FBT">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="726"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="defaultCell" rowHeight="116" id="C2j-L1-ESl" customClass="DogDisplayTableViewCellDefault" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="414" height="116"/>
@@ -103,15 +105,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="394" height="583"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="APh-If-rUG">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="APh-If-rUG">
                                 <rect key="frame" x="10" y="528" width="374" height="45"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="backgroundColor" systemColor="darkTextColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="9Cx-UZ-ZLb"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
                                 <state key="normal" title="Add To List">
-                                    <color key="titleColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
                                 </state>
                                 <connections>
                                     <action selector="addDog:" destination="8rJ-Kc-sve" eventType="touchUpInside" id="FFe-il-oUq"/>
@@ -130,10 +132,10 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="keV-kK-WRt">
-                                <rect key="frame" x="10" y="98" width="115.5" height="90"/>
+                                <rect key="frame" x="10" y="98" width="115" height="90"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dcv-0K-gmj">
-                                        <rect key="frame" x="0.0" y="0.0" width="115.5" height="40"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="115" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="8CJ-6s-FAs"/>
                                         </constraints>
@@ -142,7 +144,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uHS-mH-36w">
-                                        <rect key="frame" x="0.0" y="50" width="115.5" height="40"/>
+                                        <rect key="frame" x="0.0" y="50" width="115" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="cSv-fW-YZ6"/>
                                         </constraints>
@@ -153,10 +155,10 @@
                                 </subviews>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="cCe-OF-f25">
-                                <rect key="frame" x="135.5" y="98" width="248.5" height="90"/>
+                                <rect key="frame" x="135" y="98" width="249" height="90"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bhU-gI-wSc">
-                                        <rect key="frame" x="0.0" y="0.0" width="248.5" height="40"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="249" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="mg2-hf-j9Z"/>
                                         </constraints>
@@ -164,7 +166,7 @@
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="pzt-Dy-9b9">
-                                        <rect key="frame" x="0.0" y="50" width="248.5" height="40"/>
+                                        <rect key="frame" x="0.0" y="50" width="249" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="8PK-Gg-S6B"/>
                                         </constraints>
@@ -174,7 +176,8 @@
                                 </subviews>
                             </stackView>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="SKx-zj-U97"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="SKx-zj-U97" firstAttribute="trailing" secondItem="K2d-xg-IFv" secondAttribute="trailing" constant="10" id="1yB-hi-VPj"/>
                             <constraint firstItem="cCe-OF-f25" firstAttribute="leading" secondItem="keV-kK-WRt" secondAttribute="trailing" constant="10" id="2Vb-Jg-VBp"/>
@@ -194,7 +197,6 @@
                             <constraint firstItem="SKx-zj-U97" firstAttribute="trailing" secondItem="cCe-OF-f25" secondAttribute="trailing" constant="10" id="vos-i7-QRY"/>
                             <constraint firstItem="SKx-zj-U97" firstAttribute="trailing" secondItem="lgW-Lf-9Fq" secondAttribute="trailing" constant="10" id="y6b-Us-XgV"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="SKx-zj-U97"/>
                     </view>
                     <navigationItem key="navigationItem" title="Add A Requirement" id="8G7-vl-UY2"/>
                 </viewController>
@@ -209,7 +211,7 @@
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="lYX-m1-L14">
                         <rect key="frame" x="0.0" y="0.0" width="394" height="583"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="79O-Ma-zM6">
                                 <rect key="frame" x="0.0" y="28" width="394" height="82.5"/>
@@ -348,15 +350,15 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lu2-Bs-kCu">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lu2-Bs-kCu">
                                 <rect key="frame" x="10" y="753" width="394" height="45"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="backgroundColor" systemColor="darkTextColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="HHs-eB-OxX"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
                                 <state key="normal" title="Add">
-                                    <color key="titleColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
                                 </state>
                                 <connections>
                                     <action selector="addDog:" destination="8rJ-Kc-sve" eventType="touchUpInside" id="mQb-gV-acL"/>
@@ -369,7 +371,8 @@
                                 </connections>
                             </containerView>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="xg8-HR-nc3"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="E9z-49-nYa" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" constant="10" id="2xR-JQ-bLM"/>
                             <constraint firstItem="27o-HD-GIn" firstAttribute="top" secondItem="7nG-bv-0ex" secondAttribute="bottom" constant="10" id="Dul-pn-zc5"/>
@@ -398,7 +401,6 @@
                             <constraint firstItem="xnr-3B-PYB" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" constant="10" id="uFU-i9-04k"/>
                             <constraint firstItem="xg8-HR-nc3" firstAttribute="trailing" secondItem="27o-HD-GIn" secondAttribute="trailing" constant="10" id="ylS-FQ-UJd"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="xg8-HR-nc3"/>
                     </view>
                     <navigationItem key="navigationItem" id="ktE-ob-ceW"/>
                 </viewController>
@@ -409,20 +411,20 @@
         <!--Dogs Main Screen-->
         <scene sceneID="wg7-f3-ORb">
             <objects>
-                <viewController title="Dogs Main Screen" id="8rJ-Kc-sve" customClass="SecondViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Dogs Main Screen" id="8rJ-Kc-sve" customClass="DogsViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="QS5-Rx-YEW">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8b5-pw-vvl">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8b5-pw-vvl">
                                 <rect key="frame" x="10" y="54" width="394" height="45"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="backgroundColor" systemColor="darkTextColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="e8S-D8-5fu"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
                                 <state key="normal" title="Add Dog">
-                                    <color key="titleColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
                                 </state>
                                 <connections>
                                     <action selector="addDog:" destination="8rJ-Kc-sve" eventType="touchUpInside" id="Kx8-iG-4Sg"/>
@@ -436,7 +438,8 @@
                                 </connections>
                             </containerView>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="O1u-W8-tvY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="yIK-7w-b7P" firstAttribute="leading" secondItem="O1u-W8-tvY" secondAttribute="leading" constant="10" id="87w-t8-uIw"/>
                             <constraint firstItem="8b5-pw-vvl" firstAttribute="top" secondItem="O1u-W8-tvY" secondAttribute="top" constant="10" id="8xN-Nb-EUh"/>
@@ -447,7 +450,6 @@
                             <constraint firstItem="8b5-pw-vvl" firstAttribute="centerX" secondItem="QS5-Rx-YEW" secondAttribute="centerX" id="udL-lr-OMx"/>
                             <constraint firstItem="O1u-W8-tvY" firstAttribute="trailing" secondItem="yIK-7w-b7P" secondAttribute="trailing" constant="10" id="yHx-IJ-8RA"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="O1u-W8-tvY"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Dogs" image="pencil" catalog="system" id="cPa-gy-q4n"/>
                     <connections>
@@ -461,13 +463,13 @@
         <!--Dogs Main Screen Table View-->
         <scene sceneID="bAW-wY-m9w">
             <objects>
-                <tableViewController title="Dogs Main Screen Table View" id="AEi-KZ-cSf" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="Dogs Main Screen Embedded Table View" title="Dogs Main Screen Table View" id="AEi-KZ-cSf" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="DkK-Io-vlc">
                         <rect key="frame" x="0.0" y="0.0" width="394" height="694"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="145" id="tHZ-ho-5tn">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="145" id="tHZ-ho-5tn" customClass="DogsMainScreenTableViewCellDogDescription" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="394" height="145"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="tHZ-ho-5tn" id="G9A-nQ-CAR">
@@ -479,6 +481,9 @@
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="31" id="73a-0V-qDA"/>
                                             </constraints>
+                                            <connections>
+                                                <action selector="dogSwitchToggled:" destination="tHZ-ho-5tn" eventType="valueChanged" id="hbL-dj-rmA"/>
+                                            </connections>
                                         </switch>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="NAME" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8pH-6H-VGW">
                                             <rect key="frame" x="30" y="16" width="72.5" height="43"/>
@@ -523,6 +528,12 @@
                                         <constraint firstItem="ULV-hb-Xgp" firstAttribute="leading" secondItem="td6-5R-mpa" secondAttribute="trailing" constant="10" id="mdy-1o-N9h"/>
                                     </constraints>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="dogDescription" destination="td6-5R-mpa" id="KzD-5J-16c"/>
+                                    <outlet property="dogName" destination="8pH-6H-VGW" id="Mci-aa-oSh"/>
+                                    <outlet property="dogTimeInterval" destination="gEn-AD-yFB" id="SBp-qX-5Su"/>
+                                    <outlet property="dogToggleSwitch" destination="ULV-hb-Xgp" id="v6N-ug-d5v"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -542,8 +553,8 @@
                     <view key="view" contentMode="scaleToFill" id="tOq-zv-aC6">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <viewLayoutGuide key="safeArea" id="riO-2q-eJ3"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Settings" image="gear" catalog="system" id="2XN-vw-DXn"/>
                 </viewController>
@@ -576,5 +587,11 @@
         <image name="house.fill" catalog="system" width="128" height="106"/>
         <image name="pencil" catalog="system" width="128" height="113"/>
         <image name="plus" catalog="system" width="128" height="113"/>
+        <systemColor name="darkTextColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>

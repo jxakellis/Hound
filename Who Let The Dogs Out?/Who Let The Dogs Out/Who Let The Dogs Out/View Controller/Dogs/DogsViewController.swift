@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SecondViewController: UIViewController {
+class DogsViewController: UIViewController {
 
     @IBOutlet weak var addDog: UIButton!
     

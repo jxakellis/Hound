@@ -24,6 +24,9 @@ protocol DogRequirementProtocol {
     //time at which requirement was initalized
     var initalizationDate: Date { get set }
     
+    //last time the requirement was fired
+    var lastDate: Date { get set }
+    
     //interval at which a timer should be triggered for requirement
     var interval: TimeInterval { get set }
     
