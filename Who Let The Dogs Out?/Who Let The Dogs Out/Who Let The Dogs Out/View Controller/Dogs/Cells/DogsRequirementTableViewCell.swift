@@ -7,9 +7,30 @@
 //
 
 import UIKit
+protocol DogsRequirementTableViewCellDelegate {
+    func trashClicked(dogName: String)
+}
+
 
 class DogsRequirementTableViewCell: UITableViewCell {
 
+    var delegate: DogsRequirementTableViewCellDelegate! = nil
+    
+    @IBOutlet weak var timeInterval: UILabel!
+    @IBOutlet weak var label: UILabel!
+    
+    @IBAction func trashClicked(_ sender: Any) {
+        delegate.trashClicked(dogName: label.text!)
+    }
+    
+    func setLabel(initLabel: String){
+        label.text = initLabel
+    }
+    
+    func setTimeInterval(initTimeInterval: TimeInterval){
+        timeInterval.text = initTimeInterval.description
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

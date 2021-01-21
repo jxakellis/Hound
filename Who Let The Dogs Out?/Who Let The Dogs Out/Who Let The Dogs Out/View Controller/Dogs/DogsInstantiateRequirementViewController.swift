@@ -28,10 +28,13 @@ class DogsInstantiateRequirementViewController: UIViewController {
             try tempRequirement.changeLabel(newLabel: requirementName.text)
             try tempRequirement.changeDescription(newDescription: requirementDescription.text)
             try tempRequirement.changeInterval(newInterval: requirementInterval.countDownDuration)
-            print("Successfully passed requirement tests")
             delegate.didAddToList(requirement: tempRequirement)
+            navigationController?.popViewController(animated: true)
         }
         catch DogRequirementError.labelInvalid{
+            
+            alertForError(message: "Invalid Dog Name")
+            
             print("Invalid Requirement Label")
         }
         catch DogRequirementError.descriptionInvalid{
@@ -47,6 +50,13 @@ class DogsInstantiateRequirementViewController: UIViewController {
         
     }
     
+    
+    func alertForError(message: String){
+        let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        let alertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alertController.addAction(alertAction)
+        present(alertController, animated: true, completion: nil)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

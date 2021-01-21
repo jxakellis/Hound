@@ -61,7 +61,7 @@ extension DogRequirementProtocol {
     
     //if newDescription passes all tests, changes value, if not throws error
     mutating func changeDescription(newDescription: String?) throws{
-        if newDescription == nil || newDescription == "test123" {
+        if newDescription == nil {
             throw DogRequirementError.descriptionInvalid
         }
         
@@ -70,7 +70,7 @@ extension DogRequirementProtocol {
       
     //if newInterval passes all tests, changes value, if not throws error
     mutating func changeInterval(newInterval: TimeInterval?) throws{
-        if newInterval == nil || newInterval == TimeInterval(16500){
+        if newInterval == nil{
             throw DogRequirementError.intervalInvalid
         }
         interval = newInterval!
@@ -86,12 +86,12 @@ extension DogRequirementProtocol {
     
     //resets value of description to constant/default value
     mutating func resetDescription(){
-        description = DogConstant.defaultRequirementDescription
+        description = RequirementConstant.defaultDescription
     }
     
     //resets value of time interval to constant/default value
     mutating func resetInterval(){
-        interval = TimeInterval(DogConstant.defaultRequirementTimeInterval)
+        interval = TimeInterval(RequirementConstant.defaultTimeInterval)
     }
       
 }
