@@ -10,6 +10,7 @@ import UIKit
 
 
 class Requirement: DogRequirementProtocol {
+    
     //label for what the requirement does, set by user, used as main name for requirement, e.g. potty or food time
     var label: String = DogConstant.defaultLabel
     
@@ -29,7 +30,6 @@ class Requirement: DogRequirementProtocol {
         initalizationDate = initDate
         lastDate = initDate
     }
-    
     
 }
 

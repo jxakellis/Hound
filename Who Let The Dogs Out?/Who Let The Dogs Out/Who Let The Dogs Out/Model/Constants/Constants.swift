@@ -14,8 +14,10 @@ enum DogConstant {
     static let defaultDescription = ""
     static let defaultBreed = ""
     static let defaultDogSpecificationKeys = ["name", "description", "breed"]
-    
-    static let defaultRequirementLabel = ""
-    static let defaultRequirementDescription = ""
-    static let defaultRequirementTimeInterval = 3600
+}
+
+enum RequirementConstant {
+    static let defaultLabel = "Potty"
+    static let defaultDescription = "Take Dog Out"
+    static let defaultTimeInterval = 3600
 }

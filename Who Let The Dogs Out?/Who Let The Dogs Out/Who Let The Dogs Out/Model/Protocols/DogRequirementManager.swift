@@ -10,7 +10,7 @@ import UIKit
 
 enum DogRequirementError: Error {
     case labelInvalid
-    case lescriptionInvalid
+    case descriptionInvalid
     case intervalInvalid
 }
 
@@ -32,11 +32,11 @@ protocol DogRequirementProtocol {
     
     init(initDate: Date) throws
     
-    mutating func changeLabel(newLabel: String) throws
+    mutating func changeLabel(newLabel: String?) throws
     
-    mutating func changeDescription(newDescription: String) throws
+    mutating func changeDescription(newDescription: String?) throws
     
-    mutating func changeInterval(newInterval: TimeInterval) throws
+    mutating func changeInterval(newInterval: TimeInterval?) throws
     
     
     //TEMPORARILY DISABLED DUE TO CONFLICT OF MATCHING NAMES WITH DIFFERENT DOG OBJECT
@@ -52,18 +52,28 @@ extension DogRequirementProtocol {
     //MARK: DogRequirmentProtocol Function Extension Implementation
     
     //if newLabel passes all tests, changes value, if not throws error
-    mutating func changeLabel(newLabel: String) throws{
-        label = newLabel
+    mutating func changeLabel(newLabel: String?) throws{
+        if newLabel == nil || newLabel == "test123" {
+            throw DogRequirementError.labelInvalid
+        }
+        label = newLabel!
     }
     
     //if newDescription passes all tests, changes value, if not throws error
-    mutating func changeDescription(newDescription: String) throws{
-        description = newDescription
+    mutating func changeDescription(newDescription: String?) throws{
+        if newDescription == nil || newDescription == "test123" {
+            throw DogRequirementError.descriptionInvalid
+        }
+        
+        description = newDescription!
     }
       
     //if newInterval passes all tests, changes value, if not throws error
-    mutating func changeInterval(newInterval: TimeInterval) throws{
-        interval = newInterval
+    mutating func changeInterval(newInterval: TimeInterval?) throws{
+        if newInterval == nil || newInterval == TimeInterval(16500){
+            throw DogRequirementError.intervalInvalid
+        }
+        interval = newInterval!
     }
     
     /*

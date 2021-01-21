@@ -100,7 +100,7 @@
         <!--Instantiate Dog Requirement -->
         <scene sceneID="8E9-yA-SaW">
             <objects>
-                <viewController title="Instantiate Dog Requirement " id="uJe-nq-2qo" sceneMemberID="viewController">
+                <viewController title="Instantiate Dog Requirement " id="uJe-nq-2qo" customClass="DogsInstantiateRequirementViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="MUR-Wf-RFm">
                         <rect key="frame" x="0.0" y="0.0" width="394" height="583"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -117,9 +117,10 @@
                                 </state>
                                 <connections>
                                     <action selector="addDog:" destination="8rJ-Kc-sve" eventType="touchUpInside" id="FFe-il-oUq"/>
+                                    <action selector="addToList:" destination="uJe-nq-2qo" eventType="touchUpInside" id="bQe-J3-Uv6"/>
                                 </connections>
                             </button>
-                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K2d-xg-IFv">
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" countDownDuration="5400" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K2d-xg-IFv">
                                 <rect key="frame" x="10" y="248" width="374" height="270"/>
                             </datePicker>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Count Down Interval" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lgW-Lf-9Fq">
@@ -199,6 +200,12 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Add A Requirement" id="8G7-vl-UY2"/>
+                    <connections>
+                        <outlet property="addToList" destination="APh-If-rUG" id="E3i-Ch-fZb"/>
+                        <outlet property="requirementDescription" destination="pzt-Dy-9b9" id="XVf-xW-ZBl"/>
+                        <outlet property="requirementInterval" destination="K2d-xg-IFv" id="xVk-YU-tPf"/>
+                        <outlet property="requirementName" destination="bhU-gI-wSc" id="5xl-GE-q5k"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dKn-14-LMR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -207,49 +214,63 @@
         <!--Add Dog Requirement Table View-->
         <scene sceneID="dyF-rW-vve">
             <objects>
-                <tableViewController title="Add Dog Requirement Table View" id="Tmz-g7-lDw" sceneMemberID="viewController">
+                <tableViewController title="Add Dog Requirement Table View" id="Tmz-g7-lDw" customClass="DogsRequirementTableViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="lYX-m1-L14">
                         <rect key="frame" x="0.0" y="0.0" width="394" height="583"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="79O-Ma-zM6">
-                                <rect key="frame" x="0.0" y="28" width="394" height="82.5"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="79O-Ma-zM6" customClass="DogsRequirementTableViewCell" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="394" height="87.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="79O-Ma-zM6" id="uZD-xf-ZPI">
-                                    <rect key="frame" x="0.0" y="0.0" width="394" height="82.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="394" height="87.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PLH NAME" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aZu-Qx-VXW">
-                                            <rect key="frame" x="30" y="21" width="162" height="40.5"/>
+                                            <rect key="frame" x="30" y="21" width="134.5" height="45.5"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="40" id="htf-F9-aej"/>
+                                                <constraint firstAttribute="height" constant="45" id="BKe-IC-PE8"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME INTERVAL" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HDY-ks-hpC">
-                                            <rect key="frame" x="202" y="21" width="162" height="40.5"/>
+                                            <rect key="frame" x="174.5" y="21" width="134.5" height="45.5"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="40" id="8S4-aE-jG4"/>
-                                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="8tr-7E-sSY"/>
+                                                <constraint firstAttribute="height" constant="45" id="RWa-3K-zfI"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mdp-nl-pPm">
+                                            <rect key="frame" x="319" y="21" width="45" height="45"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="45" id="ff7-mG-zjb"/>
+                                                <constraint firstAttribute="width" constant="45" id="uBk-bS-qSv"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                            <color key="tintColor" systemColor="labelColor"/>
+                                            <state key="normal" title="Button" image="trash" catalog="system">
+                                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="20"/>
+                                            </state>
+                                        </button>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="aZu-Qx-VXW" firstAttribute="top" secondItem="uZD-xf-ZPI" secondAttribute="topMargin" constant="10" id="3bO-PL-rDg"/>
-                                        <constraint firstItem="HDY-ks-hpC" firstAttribute="leading" secondItem="aZu-Qx-VXW" secondAttribute="trailing" constant="10" id="4Sv-BP-NR2"/>
-                                        <constraint firstAttribute="bottomMargin" secondItem="HDY-ks-hpC" secondAttribute="bottom" constant="10" id="6Fw-ul-pVC"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="HDY-ks-hpC" secondAttribute="trailing" constant="10" id="9xa-Ib-We2"/>
-                                        <constraint firstItem="aZu-Qx-VXW" firstAttribute="leading" secondItem="uZD-xf-ZPI" secondAttribute="leadingMargin" constant="10" id="K8I-qP-2rG"/>
-                                        <constraint firstItem="HDY-ks-hpC" firstAttribute="height" secondItem="aZu-Qx-VXW" secondAttribute="height" id="WuU-qj-g0k"/>
-                                        <constraint firstItem="HDY-ks-hpC" firstAttribute="top" secondItem="uZD-xf-ZPI" secondAttribute="topMargin" constant="10" id="g8h-KR-4Mv"/>
-                                        <constraint firstAttribute="bottomMargin" secondItem="aZu-Qx-VXW" secondAttribute="bottom" constant="10" id="mWO-Yj-O06"/>
-                                        <constraint firstItem="HDY-ks-hpC" firstAttribute="width" secondItem="aZu-Qx-VXW" secondAttribute="width" id="tud-lS-Quz"/>
+                                        <constraint firstItem="mdp-nl-pPm" firstAttribute="top" secondItem="uZD-xf-ZPI" secondAttribute="topMargin" constant="10" id="39v-oB-h2g"/>
+                                        <constraint firstItem="HDY-ks-hpC" firstAttribute="top" secondItem="uZD-xf-ZPI" secondAttribute="topMargin" constant="10" id="9oZ-8B-MR1"/>
+                                        <constraint firstItem="HDY-ks-hpC" firstAttribute="width" secondItem="aZu-Qx-VXW" secondAttribute="width" id="BIg-G4-PuR"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="mdp-nl-pPm" secondAttribute="trailing" constant="10" id="F2L-xq-5y9"/>
+                                        <constraint firstItem="HDY-ks-hpC" firstAttribute="height" secondItem="aZu-Qx-VXW" secondAttribute="height" id="LFE-hY-bsY"/>
+                                        <constraint firstItem="aZu-Qx-VXW" firstAttribute="leading" secondItem="uZD-xf-ZPI" secondAttribute="leadingMargin" constant="10" id="LHj-km-xW0"/>
+                                        <constraint firstItem="HDY-ks-hpC" firstAttribute="height" secondItem="aZu-Qx-VXW" secondAttribute="height" id="Rkf-s4-VCy"/>
+                                        <constraint firstItem="mdp-nl-pPm" firstAttribute="leading" secondItem="HDY-ks-hpC" secondAttribute="trailing" constant="10" id="ZrL-Bl-CLT"/>
+                                        <constraint firstItem="HDY-ks-hpC" firstAttribute="leading" secondItem="aZu-Qx-VXW" secondAttribute="trailing" constant="10" id="cMc-n2-bHJ"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="HDY-ks-hpC" secondAttribute="bottom" constant="10" id="dAm-f1-sT1"/>
+                                        <constraint firstItem="aZu-Qx-VXW" firstAttribute="top" secondItem="uZD-xf-ZPI" secondAttribute="topMargin" constant="10" id="mta-ch-9z6"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="aZu-Qx-VXW" secondAttribute="bottom" constant="10" id="sq6-NU-ATK"/>
                                     </constraints>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -270,12 +291,13 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Hqq-Wq-MjT" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-4441" y="720"/>
+            <point key="canvasLocation" x="-4442.0289855072469" y="719.53125"/>
         </scene>
         <!--Add Dog Requirement Navigation Controller-->
         <scene sceneID="jno-57-8Ma">
             <objects>
-                <navigationController title="Add Dog Requirement Navigation Controller" id="eFt-4z-qcU" sceneMemberID="viewController">
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3Kb-ze-siv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <navigationController title="Add Dog Requirement Navigation Controller" id="eFt-4z-qcU" customClass="DogsRequirementNavigationViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="8o7-wh-P2A">
                         <rect key="frame" x="0.0" y="44" width="394" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -287,14 +309,13 @@
                         <segue destination="Tmz-g7-lDw" kind="relationship" relationship="rootViewController" id="RbB-Ae-q2L"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="3Kb-ze-siv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-3510" y="720"/>
         </scene>
         <!--Add Dog Main Screen-->
         <scene sceneID="qQv-Z4-pwr">
             <objects>
-                <viewController title="Add Dog Main Screen" id="yj4-3A-FdI" sceneMemberID="viewController">
+                <viewController title="Add Dog Main Screen" id="yj4-3A-FdI" customClass="DogsAddDogViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="77a-Dp-kvd">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -361,13 +382,14 @@
                                     <color key="titleColor" systemColor="systemBackgroundColor"/>
                                 </state>
                                 <connections>
+                                    <action selector="addDog:" destination="yj4-3A-FdI" eventType="touchUpInside" id="57k-7X-JyV"/>
                                     <action selector="addDog:" destination="8rJ-Kc-sve" eventType="touchUpInside" id="mQb-gV-acL"/>
                                 </connections>
                             </button>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6MT-az-4bi">
                                 <rect key="frame" x="10" y="160" width="394" height="583"/>
                                 <connections>
-                                    <segue destination="eFt-4z-qcU" kind="embed" id="E3d-ML-4L4"/>
+                                    <segue destination="eFt-4z-qcU" kind="embed" identifier="dogRequirementNavigationController" id="E3d-ML-4L4"/>
                                 </connections>
                             </containerView>
                         </subviews>
@@ -403,6 +425,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="ktE-ob-ceW"/>
+                    <connections>
+                        <outlet property="dogBreed" destination="Mf1-mF-f2I" id="jsz-Lv-HEb"/>
+                        <outlet property="dogDescription" destination="27o-HD-GIn" id="LNa-U6-HTc"/>
+                        <outlet property="dogName" destination="7nG-bv-0ex" id="BPp-cb-W7P"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Px3-dS-KSe" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -587,7 +614,11 @@
         <image name="house.fill" catalog="system" width="128" height="106"/>
         <image name="pencil" catalog="system" width="128" height="113"/>
         <image name="plus" catalog="system" width="128" height="113"/>
+        <image name="trash" catalog="system" width="121" height="128"/>
         <systemColor name="darkTextColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
