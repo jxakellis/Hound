@@ -13,6 +13,8 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
     
     //MARK: Dogs Requirement Table View Cell
     
+    
+    //When the trash button is clicked on a cell, triggered through a delegate, this function is called to delete the corrosponding info
     func trashClicked(dogName: String) {
         do{
             try requirementManager.removeRequirement(requirementName: dogName)
@@ -27,14 +29,10 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
     
     var instantiateRequirementVC = DogsInstantiateRequirementViewController()
     
-    func didAddToList(requirement: Requirement) {
-        do{
-            try requirementManager.addRequirement(newRequirement: requirement)
-            updateTable()
-        }
-        catch {
-            print("Error when adding dog instantiated requirement to requirement list in DogsRequirementTableViewController")
-        }
+    //When this function is called through a delegate, it adds the information to the list of requirements and updates the cells to display it
+    func didAddToList(requirement: Requirement) throws{
+        try requirementManager.addRequirement(newRequirement: requirement)
+        updateTable()
     }
     
     //MARK: Main
@@ -45,9 +43,9 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
         super.viewDidLoad()
         var tempRequirement = Requirement()
         do{
-            try tempRequirement.changeLabel(newLabel: "abc")
-            try  tempRequirement.changeDescription(newDescription: "cde")
-            try tempRequirement.changeInterval(newInterval: TimeInterval(3600))
+            try tempRequirement.changeLabel(newLabel: "Ginger Penny Ollie Cooper")
+            try tempRequirement.changeDescription(newDescription: "cde")
+            try tempRequirement.changeInterval(newInterval: TimeInterval(360180))
         }
         catch{
             print("Error in DogsRequirementTableViewController with temp requirement \(error)")
@@ -71,11 +69,19 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
+        if requirementManager.requirements.count == 0{
+            return 1
+        }
         return requirementManager.requirements.count
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if requirementManager.requirements.count == 0{
+            let emptyCell = tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
+            return emptyCell
+        }
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "dogsRequirementTableViewCell", for: indexPath)
 
         let castCell = cell as! DogsRequirementTableViewCell

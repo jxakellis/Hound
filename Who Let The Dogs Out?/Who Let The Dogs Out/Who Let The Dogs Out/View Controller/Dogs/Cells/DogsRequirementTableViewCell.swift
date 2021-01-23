@@ -13,7 +13,7 @@ protocol DogsRequirementTableViewCellDelegate {
 
 
 class DogsRequirementTableViewCell: UITableViewCell {
-
+    
     var delegate: DogsRequirementTableViewCellDelegate! = nil
     
     @IBOutlet weak var timeInterval: UILabel!
@@ -28,18 +28,40 @@ class DogsRequirementTableViewCell: UITableViewCell {
     }
     
     func setTimeInterval(initTimeInterval: TimeInterval){
-        timeInterval.text = initTimeInterval.description
+        timeInterval.text = convertTimeIntervalToReadable(interperateTimeInterval: initTimeInterval)
+    }
+    
+    func convertTimeIntervalToReadable(interperateTimeInterval: TimeInterval) -> String {
+        let intTime = Int(interperateTimeInterval.rounded())
+        
+        let numHours = Int(intTime / 3600)
+        let numMinutes = Int((intTime % 3600)/60)
+        if numHours > 1 && numMinutes > 1{
+            return "\(numHours) Hours \(numMinutes) Minutes"
+        }
+        else if numHours > 1 && numMinutes == 1 {
+            return "\(numHours) Hours \(numMinutes) Minute"
+        }
+        else if numHours == 1 && numMinutes > 1 {
+            return "\(numHours) Hour \(numMinutes) Minutes"
+        }
+        else{
+            return "\(numHours) Hour \(numMinutes) Minute"
+        }
+        
     }
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        timeInterval.adjustsFontSizeToFitWidth = true
+        label.adjustsFontSizeToFitWidth = true
         // Initialization code
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
-
+    
 }

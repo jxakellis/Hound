@@ -53,7 +53,7 @@ extension DogRequirementProtocol {
     
     //if newLabel passes all tests, changes value, if not throws error
     mutating func changeLabel(newLabel: String?) throws{
-        if newLabel == nil || newLabel == "test123" {
+        if newLabel == nil || newLabel == "" {
             throw DogRequirementError.labelInvalid
         }
         label = newLabel!
@@ -70,7 +70,7 @@ extension DogRequirementProtocol {
       
     //if newInterval passes all tests, changes value, if not throws error
     mutating func changeInterval(newInterval: TimeInterval?) throws{
-        if newInterval == nil{
+        if newInterval == nil || newInterval! < TimeInterval(60.0){
             throw DogRequirementError.intervalInvalid
         }
         interval = newInterval!

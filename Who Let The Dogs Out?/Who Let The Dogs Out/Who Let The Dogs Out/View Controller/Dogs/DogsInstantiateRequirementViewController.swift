@@ -9,7 +9,7 @@
 import UIKit
 
 protocol DogsInstantiateRequirementViewControllerDelegate {
-    func didAddToList (requirement: Requirement)
+    func didAddToList (requirement: Requirement) throws
 }
 
 class DogsInstantiateRequirementViewController: UIViewController {
@@ -28,28 +28,27 @@ class DogsInstantiateRequirementViewController: UIViewController {
             try tempRequirement.changeLabel(newLabel: requirementName.text)
             try tempRequirement.changeDescription(newDescription: requirementDescription.text)
             try tempRequirement.changeInterval(newInterval: requirementInterval.countDownDuration)
-            delegate.didAddToList(requirement: tempRequirement)
+            try delegate.didAddToList(requirement: tempRequirement)
             navigationController?.popViewController(animated: true)
         }
-        catch DogRequirementError.labelInvalid{
-            
-            alertForError(message: "Invalid Dog Name")
-            
-            print("Invalid Requirement Label")
+        catch DogRequirementError.labelInvalid {
+            alertForError(message: "Invalid requirement name")
         }
         catch DogRequirementError.descriptionInvalid{
-            print("Invalid Requirement Description")
+            alertForError(message: "Invalid requirement description")
         }
         catch DogRequirementError.intervalInvalid {
-            print("Invalid Requirement Time Interval")
+            alertForError(message: "Invalid requirement time interval")
+        }
+        catch DogRequirementManagerError.requirementAlreadyPresent {
+            alertForError(message: "\"\(requirementName.text!)\" already present, please try a different name")
         }
         catch {
-            print("Invalid Requirement")
+            alertForError(message: "Error: \(error)")
         }
         
         
     }
-    
     
     func alertForError(message: String){
         let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
