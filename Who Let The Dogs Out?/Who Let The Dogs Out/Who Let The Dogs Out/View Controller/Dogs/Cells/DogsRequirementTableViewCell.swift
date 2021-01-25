@@ -16,22 +16,27 @@ class DogsRequirementTableViewCell: UITableViewCell {
     
     var delegate: DogsRequirementTableViewCellDelegate! = nil
     
-    @IBOutlet weak var timeInterval: UILabel!
-    @IBOutlet weak var label: UILabel!
+    @IBOutlet private weak var timeInterval: UILabel!
+    @IBOutlet private weak var label: UILabel!
     
-    @IBAction func trashClicked(_ sender: Any) {
+    
+    //When the trash button icon is clicked it executes this func, thru delegate finds a requirement with a matching name and then deletes it (handled elsewhere tho)
+    @IBAction private func trashClicked(_ sender: Any) {
         delegate.trashClicked(dogName: label.text!)
     }
     
+    //sets label to initLabel
     func setLabel(initLabel: String){
         label.text = initLabel
     }
     
+    //set time interval to initTimeInterval
     func setTimeInterval(initTimeInterval: TimeInterval){
         timeInterval.text = convertTimeIntervalToReadable(interperateTimeInterval: initTimeInterval)
     }
     
-    func convertTimeIntervalToReadable(interperateTimeInterval: TimeInterval) -> String {
+    //Converts a time interval to a more readable string to display, e.g. 3600.0 Time interval to 1 hour 0 minutes or 7320.0 to 2 hours 2 minutes
+    private func convertTimeIntervalToReadable(interperateTimeInterval: TimeInterval) -> String {
         let intTime = Int(interperateTimeInterval.rounded())
         
         let numHours = Int(intTime / 3600)
@@ -51,6 +56,7 @@ class DogsRequirementTableViewCell: UITableViewCell {
         
     }
     
+    //when cell is awoken / init, this is executed
     override func awakeFromNib() {
         super.awakeFromNib()
         timeInterval.adjustsFontSizeToFitWidth = true
@@ -58,6 +64,7 @@ class DogsRequirementTableViewCell: UITableViewCell {
         // Initialization code
     }
     
+    //when the cell is selected, code is run, currently unconfigured
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         

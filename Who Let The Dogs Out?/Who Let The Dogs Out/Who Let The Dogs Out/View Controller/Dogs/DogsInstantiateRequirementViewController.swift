@@ -8,20 +8,23 @@
 
 import UIKit
 
+//Delegate to pass setup requirement back to table view
 protocol DogsInstantiateRequirementViewControllerDelegate {
     func didAddToList (requirement: Requirement) throws
 }
 
 class DogsInstantiateRequirementViewController: UIViewController {
 
+    
     var delegate: DogsInstantiateRequirementViewControllerDelegate! = nil
     
-    @IBOutlet weak var addToList: UIButton!
-    @IBOutlet weak var requirementName: UITextField!
-    @IBOutlet weak var requirementDescription: UITextField!
-    @IBOutlet weak var requirementInterval: UIDatePicker!
+    @IBOutlet private weak var addToList: UIButton!
+    @IBOutlet private weak var requirementName: UITextField!
+    @IBOutlet private weak var requirementDescription: UITextField!
+    @IBOutlet private weak var requirementInterval: UIDatePicker!
     
-    @IBAction func addToList(_ sender: Any) {
+    //Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured requirement back to table view.
+    @IBAction private func addToList(_ sender: Any) {
         var tempRequirement = Requirement(initDate: Date())
         
         do {
@@ -50,7 +53,8 @@ class DogsInstantiateRequirementViewController: UIViewController {
         
     }
     
-    func alertForError(message: String){
+    //If an error is found, call this method to display an alert controller popup stating the error to the user
+    private func alertForError(message: String){
         let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         let alertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alertController.addAction(alertAction)
@@ -59,6 +63,11 @@ class DogsInstantiateRequirementViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        defaults()
+    }
+    
+    //default values and configs
+    private func defaults(){
         requirementName.text = RequirementConstant.defaultLabel
         requirementDescription.text = RequirementConstant.defaultDescription
         requirementInterval.countDownDuration = TimeInterval(RequirementConstant.defaultTimeInterval)

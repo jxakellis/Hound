@@ -62,11 +62,13 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
 
     // MARK: - Table view data source
 
+    //Number of sections
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
+    //Returns the number of cells present in section (currently only 1 section)
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         if requirementManager.requirements.count == 0{
@@ -75,7 +77,7 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
         return requirementManager.requirements.count
     }
 
-    
+    //Configures cells at the given index path, pulls from requirement manager requirements to get configuration parameters for each cell, corrosponding cell goes to corrosponding index of requirement manager requirement e.g. cell 1 at [0]
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if requirementManager.requirements.count == 0{
             let emptyCell = tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
@@ -93,6 +95,7 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
         return cell
     }
     
+    //Reloads table data when it is updated, if you change the data w/o calling this, the data display to the user will not be updated
     func updateTable(){
         self.tableView.reloadData()
     }
@@ -137,6 +140,7 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        //Links delegate to instantiateRequirement
         if segue.identifier == "instantiateRequirement" {
             instantiateRequirementVC = segue.destination as! DogsInstantiateRequirementViewController
             instantiateRequirementVC.delegate = self

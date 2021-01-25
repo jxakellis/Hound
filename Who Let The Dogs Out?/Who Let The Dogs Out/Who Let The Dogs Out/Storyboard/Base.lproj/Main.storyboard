@@ -215,7 +215,7 @@
         <scene sceneID="dyF-rW-vve">
             <objects>
                 <tableViewController title="Add Dog Requirement Table View" id="Tmz-g7-lDw" customClass="DogsRequirementTableViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="lYX-m1-L14">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="lYX-m1-L14">
                         <rect key="frame" x="0.0" y="0.0" width="394" height="583"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -285,7 +285,7 @@
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="empty" id="AeO-0m-QxR">
                                 <rect key="frame" x="0.0" y="93.5" width="394" height="65.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="AeO-0m-QxR" id="byy-EQ-4ec">
+                                <tableViewCellContentView key="contentView" hidden="YES" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="AeO-0m-QxR" id="byy-EQ-4ec">
                                     <rect key="frame" x="0.0" y="0.0" width="394" height="65.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
