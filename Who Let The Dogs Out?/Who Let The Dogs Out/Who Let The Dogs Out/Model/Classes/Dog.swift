@@ -25,7 +25,7 @@ class Dog: DogSpecificationManagerProtocol {
     var dogRequirments: RequirementManager = RequirementManager()
     
     //initalizes dictionary default values
-    func initalizeDogSpecificationDictionary(){
+    internal func initalizeDogSpecificationDictionary(){
         dogSpecifications["name"] = DogConstant.defaultLabel
         dogSpecifications ["description"] = DogConstant.defaultDescription
         dogSpecifications ["breed"] = DogConstant.defaultBreed

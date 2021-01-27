@@ -8,7 +8,13 @@
 
 import UIKit
 
+protocol DogsRequirementTableViewControllerDelegate {
+    func didUpdateRequirements(newRequirementList: [Requirement])
+}
+
 class DogsRequirementTableViewController: UITableViewController, DogsInstantiateRequirementViewControllerDelegate, DogsRequirementTableViewCellDelegate {
+    
+    var delegate: DogsRequirementTableViewControllerDelegate! = nil
     
     
     //MARK: Dogs Requirement Table View Cell
@@ -43,9 +49,9 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
         super.viewDidLoad()
         var tempRequirement = Requirement()
         do{
-            try tempRequirement.changeLabel(newLabel: "Ginger Penny Ollie Cooper")
-            try tempRequirement.changeDescription(newDescription: "cde")
-            try tempRequirement.changeInterval(newInterval: TimeInterval(360180))
+            try tempRequirement.changeLabel(newLabel: RequirementConstant.defaultLabel)
+            try tempRequirement.changeDescription(newDescription: RequirementConstant.defaultDescription)
+            try tempRequirement.changeInterval(newInterval: RequirementConstant.defaultTimeInterval)
         }
         catch{
             print("Error in DogsRequirementTableViewController with temp requirement \(error)")
@@ -141,7 +147,7 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         //Links delegate to instantiateRequirement
-        if segue.identifier == "instantiateRequirement" {
+        if segue.identifier == "dogsInstantiateRequirement" {
             instantiateRequirementVC = segue.destination as! DogsInstantiateRequirementViewController
             instantiateRequirementVC.delegate = self
         }

@@ -19,5 +19,5 @@ enum DogConstant {
 enum RequirementConstant {
     static let defaultLabel = "Potty"
     static let defaultDescription = "Take Dog Out"
-    static let defaultTimeInterval = 3600
+    static let defaultTimeInterval = (3600*2.5)
 }

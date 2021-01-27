@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="eFt-4z-qcU">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="yj4-3A-FdI">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -229,9 +229,6 @@
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PLH NAME" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aZu-Qx-VXW">
                                             <rect key="frame" x="10" y="10" width="154.5" height="45.5"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="45" id="YpZ-M9-5Ht"/>
-                                            </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -239,7 +236,7 @@
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME INTERVAL" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="3" translatesAutoresizingMaskIntoConstraints="NO" id="HDY-ks-hpC">
                                             <rect key="frame" x="174.5" y="10" width="154.5" height="45.5"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="45" id="Ydm-r1-6w9"/>
+                                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="yE2-Wa-V1o"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <nil key="textColor"/>
@@ -249,7 +246,6 @@
                                             <rect key="frame" x="339" y="10" width="45" height="45.5"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="45" id="Uid-he-BOb"/>
-                                                <constraint firstAttribute="height" constant="45" id="p5H-eF-Oi1"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="23"/>
                                             <color key="tintColor" systemColor="labelColor"/>
@@ -289,11 +285,10 @@
                                     <rect key="frame" x="0.0" y="0.0" width="394" height="65.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="EMPTY" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ePm-pV-DwD">
-                                            <rect key="frame" x="27" y="10" width="154.5" height="45.5"/>
+                                        <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="EMPTY" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ePm-pV-DwD">
+                                            <rect key="frame" x="10" y="10" width="50" height="45.5"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="QdQ-Y1-fBi"/>
-                                                <constraint firstAttribute="height" constant="45" id="W2F-FN-Imu"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <nil key="textColor"/>
@@ -303,6 +298,8 @@
                                     <constraints>
                                         <constraint firstAttribute="bottom" secondItem="ePm-pV-DwD" secondAttribute="bottom" constant="10" id="2Su-RH-rsC"/>
                                         <constraint firstItem="ePm-pV-DwD" firstAttribute="top" secondItem="byy-EQ-4ec" secondAttribute="top" constant="10" id="E5Y-4Z-RT2"/>
+                                        <constraint firstItem="ePm-pV-DwD" firstAttribute="leading" secondItem="byy-EQ-4ec" secondAttribute="leading" constant="10" id="nId-tS-b4D"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="ePm-pV-DwD" secondAttribute="trailing" constant="20" symbolic="YES" id="omJ-cO-Jkc"/>
                                     </constraints>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -312,10 +309,10 @@
                             <outlet property="delegate" destination="Tmz-g7-lDw" id="J8i-NV-rji"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Requirements" id="e0B-iR-KRK">
+                    <navigationItem key="navigationItem" title="Needs" id="e0B-iR-KRK">
                         <barButtonItem key="rightBarButtonItem" title="Add" image="plus" catalog="system" id="nqK-3A-POV">
                             <connections>
-                                <segue destination="uJe-nq-2qo" kind="show" identifier="instantiateRequirement" id="bee-G5-zdc"/>
+                                <segue destination="uJe-nq-2qo" kind="show" identifier="dogsInstantiateRequirement" id="bee-G5-zdc"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -337,7 +334,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </toolbar>
                     <connections>
-                        <segue destination="Tmz-g7-lDw" kind="relationship" relationship="rootViewController" id="RbB-Ae-q2L"/>
+                        <segue destination="Tmz-g7-lDw" kind="relationship" relationship="rootViewController" destinationCreationSelector="dogRequirementTableView" id="RbB-Ae-q2L"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3Kb-ze-siv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -458,9 +455,11 @@
                     </view>
                     <navigationItem key="navigationItem" id="ktE-ob-ceW"/>
                     <connections>
+                        <outlet property="addDogButton" destination="Lu2-Bs-kCu" id="o0w-dk-42e"/>
                         <outlet property="dogBreed" destination="Mf1-mF-f2I" id="jsz-Lv-HEb"/>
                         <outlet property="dogDescription" destination="27o-HD-GIn" id="LNa-U6-HTc"/>
                         <outlet property="dogName" destination="7nG-bv-0ex" id="BPp-cb-W7P"/>
+                        <outlet property="embeddedTableView" destination="6MT-az-4bi" id="dGS-SX-RQd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Px3-dS-KSe" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

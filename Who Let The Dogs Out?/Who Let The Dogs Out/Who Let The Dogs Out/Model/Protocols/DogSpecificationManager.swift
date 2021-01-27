@@ -17,8 +17,6 @@ protocol DogSpecificationManagerProtocol {
     
     init()
     
-   
-    
     //dogSpecifications
     var dogSpecifications: Dictionary<String,String?> { get set }
     
@@ -51,7 +49,7 @@ extension DogSpecificationManagerProtocol {
     }
     
     //checks to see if the dogSpecifications dictionary contains the given value at the given key spot, returns false if key is invalid; later implementation for value checking tbd
-    func checkDogSpecificationValueValid(key: String?, value: String?) -> Bool {
+    internal func checkDogSpecificationValueValid(key: String?, value: String?) -> Bool {
         if checkDogSpecificationKeyValid(key: key) == false {
             return false
         }
@@ -66,7 +64,7 @@ extension DogSpecificationManagerProtocol {
     }
     
     //checks to see if the dogSpecifications dictionary contains the given key, true if it does
-    func checkDogSpecificationKeyValid(key: String?) -> Bool{
+    internal func checkDogSpecificationKeyValid(key: String?) -> Bool{
         if key == nil {
             return false
         }

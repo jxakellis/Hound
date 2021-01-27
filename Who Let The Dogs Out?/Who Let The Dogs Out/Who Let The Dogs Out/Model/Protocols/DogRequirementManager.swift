@@ -112,6 +112,8 @@ protocol DogRequirementManagerProtocol {
     
     mutating func addRequirement(newRequirement: Requirement) throws
     
+    mutating func addRequirement(newRequirements: [Requirement]) throws
+    
     mutating func removeRequirement(requirementName: String) throws
     
     mutating func clearRequirements()
@@ -136,6 +138,12 @@ extension DogRequirementManagerProtocol {
             requirements.append(newRequirement)
         }
         
+    }
+    
+    mutating func addRequirement(newRequirements: [Requirement]) throws {
+        for requirement in newRequirements {
+            try addRequirement(newRequirement: requirement)
+        }
     }
     
     //removes trys to find a requirement whos label (capitals don't matter) matches requirement name given, if found removes requirement, if not found throws error
