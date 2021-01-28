@@ -13,7 +13,7 @@ protocol DogsInstantiateRequirementViewControllerDelegate {
     func didAddToList (requirement: Requirement) throws
 }
 
-class DogsInstantiateRequirementViewController: UIViewController {
+class DogsInstantiateRequirementViewController: UIViewController, AlertError {
 
     
     var delegate: DogsInstantiateRequirementViewControllerDelegate! = nil
@@ -51,14 +51,6 @@ class DogsInstantiateRequirementViewController: UIViewController {
         }
         
         
-    }
-    
-    //If an error is found, call this method to display an alert controller popup stating the error to the user
-    private func alertForError(message: String){
-        let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        let alertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-        alertController.addAction(alertAction)
-        present(alertController, animated: true, completion: nil)
     }
     
     override func viewDidLoad() {

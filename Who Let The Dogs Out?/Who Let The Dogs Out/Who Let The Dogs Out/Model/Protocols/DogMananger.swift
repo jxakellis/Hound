@@ -31,17 +31,17 @@ protocol DogManagerProtocol {
 extension DogManagerProtocol {
     mutating func addDog(dogAdded: Dog) throws {
         
-        if dogAdded.dogSpecifications["name"] == nil{
+        if dogAdded.dogSpecifications.dogSpecificationsDictionary["name"] == nil{
             throw DogManagerError.dogNameInvalid
         }
             
-        else if dogAdded.dogSpecifications["name"] == ""{
+        else if dogAdded.dogSpecifications.dogSpecificationsDictionary["name"] == ""{
             throw DogManagerError.dogNameInvalid
         }
             
         else{
          try dogs.forEach { (dog) in
-            if dog.dogSpecifications["name"]!!.lowercased() == dogAdded.dogSpecifications["name"]!!.lowercased(){
+            if dog.dogSpecifications.dogSpecificationsDictionary["name"]!!.lowercased() == dogAdded.dogSpecifications.dogSpecificationsDictionary["name"]!!.lowercased(){
                 throw DogManagerError.dogNameAlreadyPresent
                 }
             }
@@ -59,7 +59,7 @@ extension DogManagerProtocol {
         }
         
         for (index, dog) in dogs.enumerated(){
-            if dog.dogSpecifications["name"]!!.lowercased() == dogRemovedName.lowercased(){
+            if dog.dogSpecifications.dogSpecificationsDictionary["name"]!!.lowercased() == dogRemovedName.lowercased(){
                 matchingDog = (true, index)
             }
         }

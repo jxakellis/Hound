@@ -39,6 +39,8 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
     func didAddToList(requirement: Requirement) throws{
         try requirementManager.addRequirement(newRequirement: requirement)
         updateTable()
+        print(requirementManager.requirements[0])
+        delegate.didUpdateRequirements(newRequirementList: requirementManager.requirements)
     }
     
     //MARK: Main
@@ -147,7 +149,7 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         //Links delegate to instantiateRequirement
-        if segue.identifier == "dogsInstantiateRequirement" {
+        if segue.identifier == "dogsInstantiateRequirementViewController" {
             instantiateRequirementVC = segue.destination as! DogsInstantiateRequirementViewController
             instantiateRequirementVC.delegate = self
         }

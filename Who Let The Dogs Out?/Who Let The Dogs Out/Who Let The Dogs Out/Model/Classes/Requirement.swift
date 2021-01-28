@@ -12,10 +12,10 @@ import UIKit
 class Requirement: DogRequirementProtocol {
     
     //label for what the requirement does, set by user, used as main name for requirement, e.g. potty or food time
-    var label: String = DogConstant.defaultLabel
+    var label: String = RequirementConstant.defaultLabel
     
     //description set to describe what the requirement should do, should be set by user
-    var description: String = DogConstant.defaultDescription
+    var description: String = RequirementConstant.defaultDescription
     
     //stores exact Date object of when the requirement was initalized, used in conjunction with interval to later determine when a timer should fire
     var initalizationDate: Date = Date()

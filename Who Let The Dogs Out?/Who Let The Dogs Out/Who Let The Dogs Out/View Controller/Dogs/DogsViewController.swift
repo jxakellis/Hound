@@ -8,7 +8,14 @@
 
 import UIKit
 
-class DogsViewController: UIViewController {
+class DogsViewController: UIViewController, DogsAddDogViewControllerDelegate {
+    
+    //MARK: DogsAddDogViewControllerDelegate
+    
+    func didAddDog(addedDog: Dog) throws {
+        //
+    }
+    
 
     @IBOutlet weak var addDog: UIButton!
     
@@ -25,7 +32,15 @@ class DogsViewController: UIViewController {
         addDog.layer.cornerRadius = 8.0
     }
     
+    // MARK: - Navigation
 
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "dogAddDogViewController"{
+            
+        }
+    }
+    
 
 }
 

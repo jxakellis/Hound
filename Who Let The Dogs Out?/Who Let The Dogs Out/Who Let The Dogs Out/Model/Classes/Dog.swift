@@ -8,30 +8,13 @@
 
 import UIKit
 
-class Dog: DogSpecificationManagerProtocol {
-    
-    
-    //MARK: DogSpecificationManagerProtocol implementation
-    
-    //initalizes dictionary of specifications for the dog, each key e.g. "name", "breed" had default values
-    required init() {
-        initalizeDogSpecificationDictionary()
-    }
+class Dog {
     
     //dictionary of specifications for a dog, e.g. "name", "breed", "description"
-    var dogSpecifications: Dictionary<String, String?> = Dictionary<String,String?>()
+    var dogSpecifications: SpecificationManager = SpecificationManager()
     
     //RequirmentManager that handles all specified requirements for a dog, e.g. being taken to the outside every time interval or being fed.
     var dogRequirments: RequirementManager = RequirementManager()
-    
-    //initalizes dictionary default values
-    internal func initalizeDogSpecificationDictionary(){
-        dogSpecifications["name"] = DogConstant.defaultLabel
-        dogSpecifications ["description"] = DogConstant.defaultDescription
-        dogSpecifications ["breed"] = DogConstant.defaultBreed
-    }
-    
-    //functions
     
 }
 

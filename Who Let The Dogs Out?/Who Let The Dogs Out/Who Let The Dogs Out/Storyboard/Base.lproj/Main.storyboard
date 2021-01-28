@@ -312,7 +312,7 @@
                     <navigationItem key="navigationItem" title="Needs" id="e0B-iR-KRK">
                         <barButtonItem key="rightBarButtonItem" title="Add" image="plus" catalog="system" id="nqK-3A-POV">
                             <connections>
-                                <segue destination="uJe-nq-2qo" kind="show" identifier="dogsInstantiateRequirement" id="bee-G5-zdc"/>
+                                <segue destination="uJe-nq-2qo" kind="show" identifier="dogsInstantiateRequirementViewController" id="bee-G5-zdc"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -334,7 +334,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </toolbar>
                     <connections>
-                        <segue destination="Tmz-g7-lDw" kind="relationship" relationship="rootViewController" destinationCreationSelector="dogRequirementTableView" id="RbB-Ae-q2L"/>
+                        <segue destination="Tmz-g7-lDw" kind="relationship" relationship="rootViewController" destinationCreationSelector="dogsRequirementTableViewController" id="RbB-Ae-q2L"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3Kb-ze-siv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -486,7 +486,7 @@
                                 </state>
                                 <connections>
                                     <action selector="addDog:" destination="8rJ-Kc-sve" eventType="touchUpInside" id="Kx8-iG-4Sg"/>
-                                    <segue destination="yj4-3A-FdI" kind="show" id="5Qc-Q2-rb5"/>
+                                    <segue destination="yj4-3A-FdI" kind="show" identifier="dogsAddDogViewController" id="5Qc-Q2-rb5"/>
                                 </connections>
                             </button>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yIK-7w-b7P">

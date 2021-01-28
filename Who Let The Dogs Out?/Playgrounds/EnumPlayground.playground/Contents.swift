@@ -15,6 +15,7 @@ apple?.rawValue
 enum Test2: Error {
     case test1(String)
     case test2(String)
+    case test3
 }
 
 func testFunc() throws{
@@ -32,4 +33,26 @@ catch Test2.test1("strrr"){
 }
 catch Test2.test1{
     print("third case")
+}
+
+// TESTING the if case CustomErrorClass.certainError = passedError, see below
+
+func testFunc2() throws{
+    throw Test2.test3
+}
+
+func errorPasser(error: Test2){
+    if case Test2.test1("str") = error {
+        print("abc")
+    }
+    else if case Test2.test3 = error{
+        print("def")
+    }
+}
+
+do{
+    try testFunc2()
+}
+catch{
+    errorPasser(error: error as! Test2)
 }

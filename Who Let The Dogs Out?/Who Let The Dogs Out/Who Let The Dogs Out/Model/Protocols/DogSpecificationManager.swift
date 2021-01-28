@@ -6,14 +6,22 @@
 //  Copyright © 2020 Jonathan Xakellis. All rights reserved.
 //
 
+
+
 import UIKit
 
 enum DogSpecificationManagerError: Error{
-    case invalidKey(String?)
-    case invalidNewValue(String?)
+    case nilKey
+    case blankKey
+    case invalidKey
+    // the strings are the key that the value used
+    case nilNewValue(String)
+    case blankNewValue(String)
+    case invalidNewValue(String)
 }
 
-protocol DogSpecificationManagerProtocol {
+/*
+ protocol DogSpecificationManagerProtocol {
     
     init()
     
@@ -31,6 +39,8 @@ protocol DogSpecificationManagerProtocol {
     
     mutating func clearDogSpecificationsValues()
 }
+
+
 
 extension DogSpecificationManagerProtocol {
     //MARK: dogSpecifications dictionary management extension
@@ -54,7 +64,7 @@ extension DogSpecificationManagerProtocol {
             return false
         }
         
-        else if value == nil {
+        else if value == nil && value == ""{
             return false
         }
         else{
@@ -81,3 +91,4 @@ extension DogSpecificationManagerProtocol {
     }
     
 }
+ */
