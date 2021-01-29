@@ -20,19 +20,17 @@ class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNav
     func didUpdateRequirements(newRequirementList: [Requirement]) {
         dog.dogRequirments.clearRequirements()
         try! dog.dogRequirments.addRequirement(newRequirements: newRequirementList)
-        dogName.text = newRequirementList[0].label
-        print(newRequirementList[0].label)
     }
     
     //MARK: Properties
     
-    var tempVC = DogsRequirementNavigationViewController()
+    var dogsRequirementNavigationViewController = DogsRequirementNavigationViewController()
     
     var dog = Dog()
     
     var delegate: DogsAddDogViewControllerDelegate! = nil
     
-    //MARK: View IBConnect
+    //MARK: View IBOutlets and IBActions
     
     @IBOutlet weak var dogName: UITextField!
     @IBOutlet weak var dogDescription: UITextField!
@@ -41,6 +39,7 @@ class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNav
     @IBOutlet weak var embeddedTableView: UIView!
     @IBOutlet weak var addDogButton: UIButton!
     
+    //When the add button is clicked, runs a series of checks. Makes sure the name, description, and breed of the dog is valid, and if so then passes information up chain of view controllers to DogsViewController.
     @IBAction func addDog(_ sender: Any) {
         do{
             try dog.dogSpecifications.changeDogSpecifications(key: "name", newValue: dogName.text)
@@ -52,6 +51,8 @@ class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNav
         }
     }
     
+    //MARK: Main
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         dogName.text = "Fido"
@@ -61,7 +62,7 @@ class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNav
         addDogButton.layer.cornerRadius = 8.0
     }
     
-    //MARK: private functions
+    //MARK: Private functions
     
     private func addDogErrorHandle(error: DogSpecificationManagerError){
         if case DogSpecificationManagerError.nilKey = error {
@@ -95,8 +96,8 @@ class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNav
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "dogRequirementNavigationController"{
-            tempVC = segue.destination as! DogsRequirementNavigationViewController
-            tempVC.passThroughDelegate = self
+            dogsRequirementNavigationViewController = segue.destination as! DogsRequirementNavigationViewController
+            dogsRequirementNavigationViewController.passThroughDelegate = self
         }
     
 

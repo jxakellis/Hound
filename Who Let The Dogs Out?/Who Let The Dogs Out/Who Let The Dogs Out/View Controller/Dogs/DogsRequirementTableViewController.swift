@@ -9,16 +9,13 @@
 import UIKit
 
 protocol DogsRequirementTableViewControllerDelegate {
+    //When the requirement list is updated, the whole list is pushed through to the DogsAddDogVC, this is much simplier than updating one item at a time, easier for consistant arrays
     func didUpdateRequirements(newRequirementList: [Requirement])
 }
 
 class DogsRequirementTableViewController: UITableViewController, DogsInstantiateRequirementViewControllerDelegate, DogsRequirementTableViewCellDelegate {
     
-    var delegate: DogsRequirementTableViewControllerDelegate! = nil
-    
-    
     //MARK: Dogs Requirement Table View Cell
-    
     
     //When the trash button is clicked on a cell, triggered through a delegate, this function is called to delete the corrosponding info
     func trashClicked(dogName: String) {
@@ -33,19 +30,21 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
     
     //MARK: Dogs Instantiate Requirement
     
-    var instantiateRequirementVC = DogsInstantiateRequirementViewController()
+    var dogsInstantiateRequirementViewController = DogsInstantiateRequirementViewController()
     
     //When this function is called through a delegate, it adds the information to the list of requirements and updates the cells to display it
     func didAddToList(requirement: Requirement) throws{
         try requirementManager.addRequirement(newRequirement: requirement)
         updateTable()
-        print(requirementManager.requirements[0])
-        delegate.didUpdateRequirements(newRequirementList: requirementManager.requirements)
     }
     
-    //MARK: Main
+    //MARK: Properties
     
     var requirementManager = RequirementManager()
+    
+    var delegate: DogsRequirementTableViewControllerDelegate! = nil
+    
+    //MARK: Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,7 +67,7 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
         
     }
 
-    // MARK: - Table view data source
+    // MARK: - Table View Data Source
 
     //Number of sections
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -106,6 +105,7 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
     //Reloads table data when it is updated, if you change the data w/o calling this, the data display to the user will not be updated
     func updateTable(){
         self.tableView.reloadData()
+        delegate.didUpdateRequirements(newRequirementList: requirementManager.requirements)
     }
 
     /*
@@ -150,8 +150,8 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         //Links delegate to instantiateRequirement
         if segue.identifier == "dogsInstantiateRequirementViewController" {
-            instantiateRequirementVC = segue.destination as! DogsInstantiateRequirementViewController
-            instantiateRequirementVC.delegate = self
+            dogsInstantiateRequirementViewController = segue.destination as! DogsInstantiateRequirementViewController
+            dogsInstantiateRequirementViewController.delegate = self
         }
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
