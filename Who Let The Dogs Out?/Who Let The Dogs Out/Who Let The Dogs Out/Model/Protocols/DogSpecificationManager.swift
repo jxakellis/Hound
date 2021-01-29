@@ -14,6 +14,7 @@ enum DogSpecificationManagerError: Error{
     case nilKey
     case blankKey
     case invalidKey
+    case keyNotPresentInGlobalConstantList
     // the strings are the key that the value used
     case nilNewValue(String)
     case blankNewValue(String)

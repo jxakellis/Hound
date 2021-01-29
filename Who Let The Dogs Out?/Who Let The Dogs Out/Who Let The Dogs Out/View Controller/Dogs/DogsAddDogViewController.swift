@@ -49,6 +49,19 @@ class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNav
         catch {
             addDogErrorHandle(error: error as! DogSpecificationManagerError)
         }
+        do{
+            try delegate.didAddDog(addedDog: dog)
+            dismiss(animated: true, completion: nil)
+        }
+        catch DogManagerError.dogNameAlreadyPresent {
+            alertForError(message: "You already have a dog by that same name! Please try a different one.")
+        }
+        catch DogManagerError.dogNameBlank {
+            alertForError(message: "The dog name you input is blank! Please put in a name.")
+        }
+        catch {
+            alertForError(message: "There was an error with your dog: \(error)")
+        }
     }
     
     //MARK: Main

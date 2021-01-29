@@ -16,7 +16,7 @@ class Specification {
 
 class SpecificationManager {
     
-    var dogSpecificationsDictionary: Dictionary<String, String?> = Dictionary<String,String?>()
+    private var dogSpecificationsDictionary: Dictionary<String, String> = Dictionary<String,String>()
     
     init() {
         initalizeDogSpecificationDictionary()
@@ -26,6 +26,11 @@ class SpecificationManager {
         for i in 0..<DogConstant.defaultDogSpecificationKeys.count{
             dogSpecificationsDictionary[DogConstant.defaultDogSpecificationKeys[i].0] = DogConstant.defaultDogSpecificationKeys[i].1
         }
+    }
+    
+    func getDogSpecification(key: String?) throws -> String{
+        try checkDogSpecificationKeyValid(key: key)
+        return dogSpecificationsDictionary[key!]!
     }
     
     //function to change the value of the dictionary dogSpecifications at the position given by the key, checks to see if valid
@@ -50,6 +55,16 @@ class SpecificationManager {
     
     //checks to see if the dogSpecifications dictionary contains the given key, true if it does
     private func checkDogSpecificationKeyValid(key: String?) throws{
+        var keyPresent = false
+        for i in 0..<DogConstant.defaultDogSpecificationKeys.count{
+            if key == DogConstant.defaultDogSpecificationKeys[i].0{
+                keyPresent = true
+            }
+        }
+        if keyPresent == false{
+            throw DogSpecificationManagerError.keyNotPresentInGlobalConstantList
+        }
+        
         if key == nil {
             throw DogSpecificationManagerError.nilKey
         }
@@ -57,7 +72,6 @@ class SpecificationManager {
             throw DogSpecificationManagerError.blankKey
         }
         else if dogSpecificationsDictionary.keys.contains(key!) == false{
-            print(dogSpecificationsDictionary.keys)
             throw DogSpecificationManagerError.invalidKey
         }
         else{

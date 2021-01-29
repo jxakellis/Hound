@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol DogsMainScreenTableViewCellDogDescriptionDelegate{
+    
+}
+
 class DogsMainScreenTableViewCellDogDescription: UITableViewCell {
     
     

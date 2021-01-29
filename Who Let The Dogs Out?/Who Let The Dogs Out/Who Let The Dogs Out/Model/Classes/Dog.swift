@@ -16,8 +16,16 @@ class Dog {
     //RequirmentManager that handles all specified requirements for a dog, e.g. being taken to the outside every time interval or being fed.
     var dogRequirments: RequirementManager = RequirementManager()
     
+    var isEnabled = true
+    
 }
 
-class DogManager {
+class DogManager: DogManagerProtocol {
+    
+    var dogs: [Dog]
+    
+    init(){
+        dogs = []
+    }
     
 }
