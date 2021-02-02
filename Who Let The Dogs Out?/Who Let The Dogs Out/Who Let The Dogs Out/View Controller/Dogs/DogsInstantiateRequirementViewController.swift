@@ -14,7 +14,7 @@ protocol DogsInstantiateRequirementViewControllerDelegate {
 }
 
 class DogsInstantiateRequirementViewController: UIViewController, AlertError {
-
+    
     
     //MARK: Properties
     
@@ -36,22 +36,9 @@ class DogsInstantiateRequirementViewController: UIViewController, AlertError {
             try delegate.didAddToList(requirement: tempRequirement)
             navigationController?.popViewController(animated: true)
         }
-        catch DogRequirementError.labelInvalid {
-            alertForError(message: "Invalid requirement name")
-        }
-        catch DogRequirementError.descriptionInvalid{
-            alertForError(message: "Invalid requirement description")
-        }
-        catch DogRequirementError.intervalInvalid {
-            alertForError(message: "Invalid requirement time interval")
-        }
-        catch DogRequirementManagerError.requirementAlreadyPresent {
-            alertForError(message: "\"\(requirementName.text!)\" already present, please try a different name")
-        }
         catch {
-            alertForError(message: "Error: \(error)")
+            ErrorProcessor.handleError(error: error, classCalledFrom: self)
         }
-        
         
     }
     

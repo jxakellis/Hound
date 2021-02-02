@@ -100,7 +100,6 @@ enum DogRequirementManagerError: Error {
     case requirementAlreadyPresent
     case requirementNotPresent
     case requirementInvalid
-    case error
 }
 
 protocol DogRequirementManagerProtocol {

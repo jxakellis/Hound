@@ -47,20 +47,14 @@ class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNav
             try dog.dogSpecifications.changeDogSpecifications(key: "breed", newValue: dogBreed.text)
         }
         catch {
-            addDogErrorHandle(error: error as! DogSpecificationManagerError)
+            ErrorProcessor.handleError(error: error, classCalledFrom: self)
         }
         do{
             try delegate.didAddDog(addedDog: dog)
             dismiss(animated: true, completion: nil)
         }
-        catch DogManagerError.dogNameAlreadyPresent {
-            alertForError(message: "You already have a dog by that same name! Please try a different one.")
-        }
-        catch DogManagerError.dogNameBlank {
-            alertForError(message: "The dog name you input is blank! Please put in a name.")
-        }
         catch {
-            alertForError(message: "There was an error with your dog: \(error)")
+            ErrorProcessor.handleError(error: error, classCalledFrom: self)
         }
     }
     
@@ -75,44 +69,15 @@ class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNav
         addDogButton.layer.cornerRadius = 8.0
     }
     
-    //MARK: Private functions
-    
-    private func addDogErrorHandle(error: DogSpecificationManagerError){
-        if case DogSpecificationManagerError.nilKey = error {
-            alertForError(message: "Big Time Error! Nil Key for addDog -> dog.dogSpecifications.changeDogSpecifications in DogsAddDogViewController")
-        }
-        else if case DogSpecificationManagerError.blankKey = error {
-            alertForError(message: "Big Time Error! Blank Key for addDog -> dog.dogSpecifications.changeDogSpecifications in DogsAddDogViewController")
-        }
-        else if case DogSpecificationManagerError.invalidKey = error{
-            alertForError(message: "Big Time Error! Invalid Key for addDog -> dog.dogSpecifications.changeDogSpecifications in DogsAddDogViewController")
-        }
-        else if case DogSpecificationManagerError.nilNewValue("name") = error {
-            alertForError(message: "Your dog has an invalid name, try inputting something!")
-        }
-        else if case DogSpecificationManagerError.blankNewValue("name") = error {
-            alertForError(message: "Your dog has a blank name, try inputting something!")
-        }
-        else if case DogSpecificationManagerError.nilNewValue("description") = error {
-            alertForError(message: "Your dog has a invalid description, try inputting something")
-        }
-        else if case DogSpecificationManagerError.nilNewValue("breed") = error {
-            alertForError(message: "Your dog has a invalid breed, try inputting something")
-        }
-        else {
-            alertForError(message: error.localizedDescription)
-        }
-    }
-    
     // MARK: - Navigation
-
+    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "dogRequirementNavigationController"{
             dogsRequirementNavigationViewController = segue.destination as! DogsRequirementNavigationViewController
             dogsRequirementNavigationViewController.passThroughDelegate = self
         }
-    
-
-}
+        
+        
+    }
 }
