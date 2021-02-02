@@ -8,7 +8,41 @@
 
 import UIKit
 
-class DogsMainScreenTableViewController: UITableViewController {
+class DogsMainScreenTableViewController: UITableViewController, DogsMainScreenTableViewCellDogDisplayDelegate, DogsMainScreenTableViewCellDogRequirementDelegate {
+    
+    
+    
+    //MARK: Delegate implementation
+    
+    //Dog switch is toggled in DogsMainScreenTableViewCellDogDisplay
+    func dogSwitchToggled(dogName: String, isEnabled: Bool) {
+        //no redundancy built in
+        for i in 0..<dogManagerDisplay.dogs.count{
+            if try! dogManagerDisplay.dogs[i].dogSpecifications.getDogSpecification(key: "name") == dogName{
+                dogManagerDisplay.dogs[i].isEnabled = isEnabled
+                return
+            }
+        }
+    }
+    
+    //Requirement switch is toggled in DogsMainScreenTableViewCellDogRequirement
+    func requirementSwitchToggled(parentDogName: String, requirementName: String, isEnabled: Bool) {
+        //no redundancy built in
+        for i in 0..<dogManagerDisplay.dogs.count{
+            if try! dogManagerDisplay.dogs[i].dogSpecifications.getDogSpecification(key: "name") == parentDogName{
+                for x in 0..<dogManagerDisplay.dogs[i].dogRequirments.requirements.count {
+                    if dogManagerDisplay.dogs[i].dogRequirments.requirements[x].label == requirementName{
+                        dogManagerDisplay.dogs[i].dogRequirments.requirements[x].isEnabled = isEnabled
+                        return
+                    }
+                }
+            }
+        }
+    }
+    
+    //MARK: Properties
+    
+    private var dogManagerDisplay: DogManager = DogManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,27 +54,45 @@ class DogsMainScreenTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
+    //MARK: Class Functions
+    
+    func updateDogManager(newDogManager: DogManager){
+        dogManagerDisplay = newDogManager
+        self.tableView.reloadData()
+    }
+    
+    private func updateTable(){
+        self.tableView.reloadData()
+    }
+    
     // MARK: - Table view data source
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return dogManagerDisplay.dogs.count
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+            return dogManagerDisplay.dogs[section].dogRequirments.requirements.count+1
     }
     
-    /*
+    
      override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-     let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-     
-     // Configure the cell...
-     
-     return cell
+        if indexPath.row == 0{
+            let cell = tableView.dequeueReusableCell(withIdentifier: "dogsMainScreenTableViewCellDogDisplay", for: indexPath)
+            let testCell = cell as! DogsMainScreenTableViewCellDogDisplay
+            testCell.dogSetup(dogPassed: dogManagerDisplay.dogs[indexPath.section])
+            testCell.delegate = self
+            return cell
+        }
+        else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "dogsMainScreenTableViewCellDogRequirement", for: indexPath)
+            let testCell = cell as! DogsMainScreenTableViewCellDogRequirement
+            try! testCell.requirementSetup(parentDogName: dogManagerDisplay.dogs[indexPath.section].dogSpecifications.getDogSpecification(key: "name"), requirementPassed: dogManagerDisplay.dogs[indexPath.section].dogRequirments.requirements[indexPath.row-1])
+            testCell.delegate = self
+            return cell
+        }
      }
-     */
     
     /*
      // Override to support conditional editing of the table view.

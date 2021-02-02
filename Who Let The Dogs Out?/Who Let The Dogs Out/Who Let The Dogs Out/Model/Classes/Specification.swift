@@ -57,7 +57,7 @@ class SpecificationManager {
     private func checkDogSpecificationKeyValid(key: String?) throws{
         var keyPresent = false
         for i in 0..<DogConstant.defaultDogSpecificationKeys.count{
-            if key == DogConstant.defaultDogSpecificationKeys[i].0{
+            if key == DogConstant.defaultDogSpecificationKeys[i].0 {
                 keyPresent = true
             }
         }

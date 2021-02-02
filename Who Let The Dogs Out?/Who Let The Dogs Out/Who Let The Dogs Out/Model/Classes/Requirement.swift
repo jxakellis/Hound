@@ -25,6 +25,8 @@ class Requirement: DogRequirementProtocol {
     //TimeInterval that is used in conjunction with a Date() and timer handler to decide when an alarm should go off.
     var interval: TimeInterval = TimeInterval(RequirementConstant.defaultTimeInterval)
     
+    var isEnabled = RequirementConstant.defaultEnable
+    
     //if for some reason the initDate should be different, can be passed through using the init()
     required init(initDate: Date = Date()) {
         initalizationDate = initDate

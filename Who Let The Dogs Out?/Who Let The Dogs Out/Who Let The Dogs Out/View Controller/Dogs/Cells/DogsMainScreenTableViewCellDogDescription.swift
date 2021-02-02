@@ -8,13 +8,20 @@
 
 import UIKit
 
-protocol DogsMainScreenTableViewCellDogDescriptionDelegate{
+protocol DogsMainScreenTableViewCellDogDisplayDelegate{
     func dogSwitchToggled(dogName: String, isEnabled: Bool)
 }
 
-class DogsMainScreenTableViewCellDogDescription: UITableViewCell {
+class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
     
-    let delegate: DogsMainScreenTableViewCellDogDescriptionDelegate! = nil
+    
+    //MARK: Properties
+    
+    var dog: Dog = Dog()
+    
+    var delegate: DogsMainScreenTableViewCellDogDisplayDelegate! = nil
+    
+    //MARK: IB Links
     
     @IBOutlet weak var dogName: UILabel!
     
@@ -22,22 +29,29 @@ class DogsMainScreenTableViewCellDogDescription: UITableViewCell {
     
     @IBOutlet weak var dogToggleSwitch: UISwitch!
     
+    //Occurs when the on off switch is toggled
     @IBAction func dogSwitchToggled(_ sender: Any) {
-        delegate.dogSwitchToggled(dogName: dogName.text!, isEnabled: dogToggleSwitch.isOn)
+        dog.isEnabled = dogToggleSwitch.isOn
+        try! delegate.dogSwitchToggled(dogName: dog.dogSpecifications.getDogSpecification(key: "name"), isEnabled: self.dog.isEnabled)
     }
     
-    convenience init(dogName: String, dogDescription: String, dogEnabled: Bool){
-        self.init()
-        self.dogName.text = dogName
-        self.dogDescription.text = dogDescription
-        self.dogToggleSwitch.isOn = dogEnabled
+    //MARK: General Functions
+    
+    //Function used externally to setup dog
+    func dogSetup(dogPassed: Dog){
+        dog = dogPassed
+        try! self.dogName.text = dogPassed.dogSpecifications.getDogSpecification(key: "name")
+        try! self.dogDescription.text = dogPassed.dogSpecifications.getDogSpecification(key: "description")
+        self.dogToggleSwitch.isOn = dogPassed.isEnabled
     }
+    
+    //MARK: Default Functionality
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
-
+        
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 

@@ -22,7 +22,8 @@ class DogsViewController: UIViewController, DogsAddDogViewControllerDelegate {
     
     func didAddDog(addedDog: Dog) throws {
         try dogManager.addDog(dogAdded: addedDog)
-        try delegate.didAddDog(dogAdded: addedDog)
+        dogsMainScreenTableViewController.updateDogManager(newDogManager: self.dogManager)
+        //try delegate.didAddDog(dogAdded: addedDog)
     }
     
     //MARK: View IBOutlets and IBActions
@@ -35,7 +36,7 @@ class DogsViewController: UIViewController, DogsAddDogViewControllerDelegate {
     
     //MARK: Properties
     
-    var dogsAddDogViewController = DogsAddDogViewController()
+    var dogsMainScreenTableViewController = DogsMainScreenTableViewController()
     
     var dogManager = DogManager()
     
@@ -44,6 +45,11 @@ class DogsViewController: UIViewController, DogsAddDogViewControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         let defaultDog = Dog()
+        let defaultRequirement = Requirement()
+        defaultRequirement.label = "abc"
+        defaultRequirement.description = "def"
+        defaultRequirement.interval = TimeInterval(3600)
+        try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirement)
         try! defaultDog.dogSpecifications.changeDogSpecifications(key: "name", newValue: DogConstant.defaultDogSpecificationKeys[0].1)
         try! dogManager.addDog(dogAdded: defaultDog)
         // Do any additional setup after loading the view.
@@ -59,11 +65,13 @@ class DogsViewController: UIViewController, DogsAddDogViewControllerDelegate {
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "dogsAddDogViewController"{
+            var dogsAddDogViewController = DogsAddDogViewController()
             dogsAddDogViewController = segue.destination as! DogsAddDogViewController
             dogsAddDogViewController.delegate = self
         }
         if segue.identifier == "dogsMainScreenTableViewController" {
-            //do stuff soon
+            dogsMainScreenTableViewController = segue.destination as! DogsMainScreenTableViewController
+            dogsMainScreenTableViewController.updateDogManager(newDogManager: self.dogManager)
         }
     }
     

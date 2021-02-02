@@ -13,15 +13,10 @@ class Dog {
     //dictionary of specifications for a dog, e.g. "name", "breed", "description"
     var dogSpecifications: SpecificationManager = SpecificationManager()
     
+    var isEnabled = DogConstant.enabledTuple.1
+    
     //RequirmentManager that handles all specified requirements for a dog, e.g. being taken to the outside every time interval or being fed.
     var dogRequirments: RequirementManager = RequirementManager()
-    
-    var isEnabled: Bool
-    
-    init(){
-        isEnabled = true
-    }
-    
 }
 
 class DogManager: DogManagerProtocol {
