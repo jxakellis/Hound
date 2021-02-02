@@ -16,7 +16,11 @@ class Dog {
     //RequirmentManager that handles all specified requirements for a dog, e.g. being taken to the outside every time interval or being fed.
     var dogRequirments: RequirementManager = RequirementManager()
     
-    var isEnabled = true
+    var isEnabled: Bool
+    
+    init(){
+        isEnabled = true
+    }
     
 }
 

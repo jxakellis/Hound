@@ -8,12 +8,21 @@
 
 import UIKit
 
+protocol DogsViewControllerDelegate {
+    func didAddDog(dogAdded: Dog) throws
+    func didRemoveDog(dogRemoved: Dog) throws
+    func didUpdateDog(dogUpdated: Dog) throws
+}
+
 class DogsViewController: UIViewController, DogsAddDogViewControllerDelegate {
+    
+    let delegate: DogsViewControllerDelegate! = nil
     
     //MARK: DogsAddDogViewControllerDelegate
     
     func didAddDog(addedDog: Dog) throws {
         try dogManager.addDog(dogAdded: addedDog)
+        try delegate.didAddDog(dogAdded: addedDog)
     }
     
     //MARK: View IBOutlets and IBActions
@@ -52,6 +61,9 @@ class DogsViewController: UIViewController, DogsAddDogViewControllerDelegate {
         if segue.identifier == "dogsAddDogViewController"{
             dogsAddDogViewController = segue.destination as! DogsAddDogViewController
             dogsAddDogViewController.delegate = self
+        }
+        if segue.identifier == "dogsMainScreenTableViewController" {
+            //do stuff soon
         }
     }
     

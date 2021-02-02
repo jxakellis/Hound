@@ -34,14 +34,12 @@ enum DogSpecificationManagerError: Error{
     //Management of dogSpecifcations dictionary
     mutating func changeDogSpecifications(key: String?, newValue: String?) throws
     
-    func checkDogSpecificationValueValid(key: String?, value: String?) -> Bool
+    //func checkDogSpecificationValueValid(key: String?, value: String?) -> Bool
     
-    func checkDogSpecificationKeyValid(key: String?) -> Bool
+    //func checkDogSpecificationKeyValid(key: String?) -> Bool
     
     mutating func clearDogSpecificationsValues()
 }
-
-
 
 extension DogSpecificationManagerProtocol {
     //MARK: dogSpecifications dictionary management extension

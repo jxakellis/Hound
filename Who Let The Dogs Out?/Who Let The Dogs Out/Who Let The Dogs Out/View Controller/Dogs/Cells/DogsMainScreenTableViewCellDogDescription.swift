@@ -9,21 +9,28 @@
 import UIKit
 
 protocol DogsMainScreenTableViewCellDogDescriptionDelegate{
-    
+    func dogSwitchToggled(dogName: String, isEnabled: Bool)
 }
 
 class DogsMainScreenTableViewCellDogDescription: UITableViewCell {
     
+    let delegate: DogsMainScreenTableViewCellDogDescriptionDelegate! = nil
     
     @IBOutlet weak var dogName: UILabel!
     
     @IBOutlet weak var dogDescription: UILabel!
     
-    @IBOutlet weak var dogTimeInterval: UILabel!
-    
     @IBOutlet weak var dogToggleSwitch: UISwitch!
     
     @IBAction func dogSwitchToggled(_ sender: Any) {
+        delegate.dogSwitchToggled(dogName: dogName.text!, isEnabled: dogToggleSwitch.isOn)
+    }
+    
+    convenience init(dogName: String, dogDescription: String, dogEnabled: Bool){
+        self.init()
+        self.dogName.text = dogName
+        self.dogDescription.text = dogDescription
+        self.dogToggleSwitch.isOn = dogEnabled
     }
     
     override func awakeFromNib() {
