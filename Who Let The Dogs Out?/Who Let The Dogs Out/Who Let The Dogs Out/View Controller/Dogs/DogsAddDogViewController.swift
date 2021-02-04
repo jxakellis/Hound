@@ -10,6 +10,7 @@ import UIKit
 
 protocol DogsAddDogViewControllerDelegate{
     func didAddDog(addedDog: Dog) throws
+    func didUpdateDog(formerName: String, updatedDog: Dog) throws
 }
 
 class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNavigationViewControllerDelegate {
@@ -30,6 +31,8 @@ class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNav
     
     var delegate: DogsAddDogViewControllerDelegate! = nil
     
+    var updateDogTuple: (Bool, String) = (false, "")
+    
     //MARK: View IBOutlets and IBActions
     
     @IBOutlet weak var dogName: UITextField!
@@ -41,6 +44,7 @@ class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNav
     
     //When the add button is clicked, runs a series of checks. Makes sure the name, description, and breed of the dog is valid, and if so then passes information up chain of view controllers to DogsViewController.
     @IBAction func addDog(_ sender: Any) {
+        
         do{
             try dog.dogSpecifications.changeDogSpecifications(key: "name", newValue: dogName.text)
             try dog.dogSpecifications.changeDogSpecifications(key: "description", newValue: dogDescription.text)
@@ -50,8 +54,15 @@ class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNav
             ErrorProcessor.handleError(error: error, classCalledFrom: self)
         }
         do{
-            try delegate.didAddDog(addedDog: dog)
-            dismiss(animated: true, completion: nil)
+            
+            if updateDogTuple.0 == true{
+                try delegate.didUpdateDog(formerName: updateDogTuple.1, updatedDog: dog)
+                dismiss(animated: true, completion: nil)
+            }
+            else{
+                try delegate.didAddDog(addedDog: dog)
+                dismiss(animated: true, completion: nil)
+            }
         }
         catch {
             ErrorProcessor.handleError(error: error, classCalledFrom: self)

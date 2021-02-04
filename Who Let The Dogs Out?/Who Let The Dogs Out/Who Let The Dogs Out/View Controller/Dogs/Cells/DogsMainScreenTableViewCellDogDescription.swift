@@ -42,6 +42,9 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
         dog = dogPassed
         try! self.dogName.text = dogPassed.dogSpecifications.getDogSpecification(key: "name")
         try! self.dogDescription.text = dogPassed.dogSpecifications.getDogSpecification(key: "description")
+        if self.dogDescription.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+            self.dogDescription.text? = "No Description"
+        }
         self.dogToggleSwitch.isOn = dogPassed.isEnabled
     }
     

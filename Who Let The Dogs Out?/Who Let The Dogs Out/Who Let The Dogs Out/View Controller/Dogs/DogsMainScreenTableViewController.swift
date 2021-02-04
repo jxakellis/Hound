@@ -42,6 +42,8 @@ class DogsMainScreenTableViewController: UITableViewController, DogsMainScreenTa
     
     //MARK: Properties
     
+    var superDogsViewController: DogsViewController = DogsViewController()
+    
     private var dogManagerDisplay: DogManager = DogManager()
     
     override func viewDidLoad() {
@@ -94,6 +96,17 @@ class DogsMainScreenTableViewController: UITableViewController, DogsMainScreenTa
         }
      }
     
+    /*
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.row == 0{
+            superDogsViewController.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
+            superDogsViewController.dogsAddDogViewController.addDogButton.backgroundColor = .green
+            superDogsViewController.dogsAddDogViewController.addDogButton.setTitle("Update", for: .normal)
+            try! superDogsViewController.dogsAddDogViewController.updateDogTuple = (true, dogManagerDisplay.dogs[indexPath.section].dogSpecifications.getDogSpecification(key: "name"))
+        }
+        
+    }
+ */
     /*
      // Override to support conditional editing of the table view.
      override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
