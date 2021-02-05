@@ -8,7 +8,7 @@
 
 import UIKit
 protocol DogsRequirementTableViewCellDelegate {
-    func trashClicked(dogName: String)
+    func didClickTrash(dogName: String)
 }
 
 
@@ -22,7 +22,7 @@ class DogsRequirementTableViewCell: UITableViewCell {
     
     //When the trash button icon is clicked it executes this func, thru delegate finds a requirement with a matching name and then deletes it (handled elsewhere tho)
     @IBAction private func trashClicked(_ sender: Any) {
-        delegate.trashClicked(dogName: label.text!)
+        delegate.didClickTrash(dogName: label.text!)
     }
     
     //sets label to initLabel
@@ -62,6 +62,8 @@ class DogsRequirementTableViewCell: UITableViewCell {
         timeInterval.adjustsFontSizeToFitWidth = true
         label.adjustsFontSizeToFitWidth = true
         // Initialization code
+        self.contentMode = .center
+        self.imageView?.contentMode = .center
     }
     
     //when the cell is selected, code is run, currently unconfigured

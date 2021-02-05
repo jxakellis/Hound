@@ -9,7 +9,8 @@
 import UIKit
 
 protocol DogsMainScreenTableViewCellDogRequirementDelegate {
-    func requirementSwitchToggled(parentDogName: String, requirementName: String, isEnabled: Bool)
+    func didToggleRequirementSwitch(parentDogName: String, requirementName: String, isEnabled: Bool)
+    func didClickTrash(parentDogName: String, requirementName: String)
 }
 
 class DogsMainScreenTableViewCellDogRequirement: UITableViewCell {
@@ -23,14 +24,17 @@ class DogsMainScreenTableViewCellDogRequirement: UITableViewCell {
     var delegate: DogsMainScreenTableViewCellDogRequirementDelegate! = nil
     
     //MARK: IB Link
-
+    
     @IBOutlet weak var requirementName: UILabel!
     @IBOutlet weak var timeInterval: UILabel!
     @IBOutlet weak var `switch`: UISwitch!
     
     //When the on off switch is toggled
-    @IBAction func switchToggled(_ sender: Any) {
-        delegate.requirementSwitchToggled(parentDogName: self.parentDogName, requirementName: requirement.label, isEnabled: self.switch.isOn)
+    @IBAction func didToggleRequirementSwitch(_ sender: Any) {
+        delegate.didToggleRequirementSwitch(parentDogName: self.parentDogName, requirementName: requirement.label, isEnabled: self.switch.isOn)
+    }
+    @IBAction func didClickTrash(_ sender: Any) {
+        delegate.didClickTrash(parentDogName: self.parentDogName, requirementName: requirement.label)
     }
     
     //MARK: General Functions
@@ -74,11 +78,11 @@ class DogsMainScreenTableViewCellDogRequirement: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
     }
-        
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
-
+    
 }

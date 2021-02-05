@@ -25,13 +25,23 @@ class DogsRequirementNavigationViewController: UINavigationController, DogsRequi
         passThroughDelegate.didUpdateRequirements(newRequirementList: newRequirementList)
     }
     
+    var dogsRequirementTableViewController: DogsRequirementTableViewController! = nil
+    
     //MARK: Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         //Sets DogsRequirementTableViewController delegate to self, this is required to pass through the data to DogsAddDogViewController as this navigation controller is in the way.
-        let dogsRequirementTableViewController = self.viewControllers[self.viewControllers.count-1] as! DogsRequirementTableViewController
+        dogsRequirementTableViewController = self.viewControllers[self.viewControllers.count-1] as? DogsRequirementTableViewController
         dogsRequirementTableViewController.delegate = self
+    }
+    
+    //MARK: DogsAddDogViewController
+    
+    //Called by superview to pass down new requirements to subview, used when editting a dog
+    func didPassRequirements(passedRequirements: RequirementManager){
+        dogsRequirementTableViewController.requirementManager = passedRequirements
+        dogsRequirementTableViewController.updateTable()
     }
 }

@@ -9,7 +9,8 @@
 import UIKit
 
 protocol DogsMainScreenTableViewCellDogDisplayDelegate{
-    func dogSwitchToggled(dogName: String, isEnabled: Bool)
+    func didToggleDogSwitch(dogName: String, isEnabled: Bool)
+    func didClickTrash(dogName: String)
 }
 
 class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
@@ -30,9 +31,13 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
     @IBOutlet weak var dogToggleSwitch: UISwitch!
     
     //Occurs when the on off switch is toggled
-    @IBAction func dogSwitchToggled(_ sender: Any) {
+    @IBAction func didToggleDogSwitch(_ sender: Any) {
         dog.isEnabled = dogToggleSwitch.isOn
-        try! delegate.dogSwitchToggled(dogName: dog.dogSpecifications.getDogSpecification(key: "name"), isEnabled: self.dog.isEnabled)
+        try! delegate.didToggleDogSwitch(dogName: dog.dogSpecifications.getDogSpecification(key: "name"), isEnabled: self.dog.isEnabled)
+    }
+    
+    @IBAction func didClickTrash(_ sender: Any) {
+        try! delegate.didClickTrash(dogName: dog.dogSpecifications.getDogSpecification(key: "name"))
     }
     
     //MARK: General Functions
@@ -54,11 +59,11 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
     }
-        
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
-
+    
 }

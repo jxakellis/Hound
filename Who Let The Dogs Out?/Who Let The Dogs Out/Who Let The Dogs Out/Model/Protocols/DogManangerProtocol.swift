@@ -28,7 +28,9 @@ protocol DogManagerProtocol {
     
     mutating func clearDogs()
     
-    mutating func changeDogName(dogNameToBeChanged: String, newDogName: String) throws
+    //mutating func changeDogName(dogNameToBeChanged: String, newDogName: String) throws
+    
+    mutating func changeDog(dogNameToBeChanged: String, newDog: Dog) throws
     
 }
 
@@ -94,6 +96,7 @@ extension DogManagerProtocol {
         dogs.removeAll()
     }
     
+    /*
     mutating func changeDogName(dogNameToBeChanged: String, newDogName: String) throws{
         var dogToBeChanged: (Bool, Int?) = (false, nil)
         for i in 0..<dogs.count{
@@ -112,6 +115,24 @@ extension DogManagerProtocol {
         }
         else{
             try dogs[dogToBeChanged.1!].dogSpecifications.changeDogSpecifications(key: "name", newValue: newDogName)
+        }
+    }
+ */
+    mutating func changeDog(dogNameToBeChanged: String, newDog: Dog) throws{
+        var newDogIndex: Int?
+        
+        for i in 0..<dogs.count{
+            if try! dogs[i].dogSpecifications.getDogSpecification(key: "name") == dogNameToBeChanged {
+                newDogIndex = i
+            }
+        }
+        
+        if newDogIndex == nil{
+            throw DogManagerError.dogNameNotPresent
+        }
+        
+        else{
+            dogs[newDogIndex!] = newDog
         }
     }
 }

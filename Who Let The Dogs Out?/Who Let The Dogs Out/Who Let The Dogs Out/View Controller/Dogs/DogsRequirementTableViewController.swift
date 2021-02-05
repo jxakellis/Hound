@@ -18,7 +18,7 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
     //MARK: Dogs Requirement Table View Cell
     
     //When the trash button is clicked on a cell, triggered through a delegate, this function is called to delete the corrosponding info
-    func trashClicked(dogName: String) {
+    func didClickTrash(dogName: String) {
         do{
             try requirementManager.removeRequirement(requirementName: dogName)
             updateTable()

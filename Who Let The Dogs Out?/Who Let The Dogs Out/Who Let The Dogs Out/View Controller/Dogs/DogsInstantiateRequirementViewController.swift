@@ -26,7 +26,7 @@ class DogsInstantiateRequirementViewController: UIViewController, AlertError {
     @IBOutlet private weak var requirementInterval: UIDatePicker!
     
     //Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured requirement back to table view.
-    @IBAction private func addToList(_ sender: Any) {
+    @IBAction private func didAddToList(_ sender: Any) {
         var tempRequirement = Requirement(initDate: Date())
         
         do {
