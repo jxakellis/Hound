@@ -8,7 +8,15 @@
 
 import UIKit
 
-class Dog {
+class Dog: NSCopying {
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        let copy = Dog()
+        copy.dogRequirments = self.dogRequirments.copy() as! RequirementManager
+        copy.dogSpecifications = self.dogSpecifications.copy() as! SpecificationManager
+        copy.isEnabled = self.isEnabled
+        return copy
+    }
     
     //dictionary of specifications for a dog, e.g. "name", "breed", "description"
     var dogSpecifications: SpecificationManager = SpecificationManager()
@@ -19,7 +27,15 @@ class Dog {
     var dogRequirments: RequirementManager = RequirementManager()
 }
 
-class DogManager: DogManagerProtocol {
+class DogManager: DogManagerProtocol, NSCopying {
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        let copy = DogManager()
+        for i in 0..<dogs.count{
+            copy.dogs.append(dogs[i].copy() as! Dog)
+        }
+        return copy
+    }
     
     var dogs: [Dog]
     

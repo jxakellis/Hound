@@ -9,7 +9,17 @@
 import UIKit
 
 
-class Requirement: DogRequirementProtocol {
+class Requirement: DogRequirementProtocol, NSCopying {
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        //String(), Date(), Double() which TimeInterval is a typealias of are all structs aka not reference types
+        var copy = Requirement(initDate: self.initalizationDate)
+        try! copy.changeLabel(newLabel: self.label)
+        try! copy.changeInterval(newInterval: self.interval)
+        try! copy.changeDescription(newDescription: self.description)
+        copy.isEnabled = self.isEnabled
+        return copy
+    }
     
     //label for what the requirement does, set by user, used as main name for requirement, e.g. potty or food time
     var label: String = RequirementConstant.defaultLabel
@@ -25,7 +35,7 @@ class Requirement: DogRequirementProtocol {
     //TimeInterval that is used in conjunction with a Date() and timer handler to decide when an alarm should go off.
     var interval: TimeInterval = TimeInterval(RequirementConstant.defaultTimeInterval)
     
-    var isEnabled = RequirementConstant.defaultEnable
+    var isEnabled: Bool = RequirementConstant.defaultEnable
     
     //if for some reason the initDate should be different, can be passed through using the init()
     required init(initDate: Date = Date()) {
@@ -35,7 +45,16 @@ class Requirement: DogRequirementProtocol {
     
 }
 
-class RequirementManager: DogRequirementManagerProtocol {
+class RequirementManager: DogRequirementManagerProtocol, NSCopying {
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        let copy = RequirementManager()
+        for i in 0..<self.requirements.count {
+            copy.requirements.append(self.requirements[i].copy() as! Requirement)
+        }
+        return copy
+    }
+    
     //Array of requirements
     var requirements: [Requirement]
     

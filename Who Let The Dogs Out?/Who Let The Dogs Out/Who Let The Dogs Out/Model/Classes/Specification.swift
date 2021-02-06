@@ -14,7 +14,17 @@ class Specification {
 }
  */
 
-class SpecificationManager {
+class SpecificationManager: NSCopying {
+    
+    //NSCopying
+    func copy(with zone: NSZone? = nil) -> Any {
+        let copy = SpecificationManager()
+        for key in dogSpecificationsDictionary.keys{
+            copy.dogSpecificationsDictionary[key] = self.dogSpecificationsDictionary[key]!.copy() as? String
+        }
+        return copy
+    }
+    
     
     private var dogSpecificationsDictionary: Dictionary<String, String> = Dictionary<String,String>()
     

@@ -1,14 +1,14 @@
 //
-//  DogDisplayTableViewController.swift
+//  HomeMainScreenTableViewController.swift
 //  Who Let The Dogs Out
 //
-//  Created by Jonathan Xakellis on 11/20/20.
-//  Copyright © 2020 Jonathan Xakellis. All rights reserved.
+//  Created by Jonathan Xakellis on 2/5/21.
+//  Copyright © 2021 Jonathan Xakellis. All rights reserved.
 //
 
 import UIKit
 
-class DogDisplayTableViewController: UITableViewController {
+class HomeMainScreenTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,30 +24,23 @@ class DogDisplayTableViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        return 0
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 5
+        return 0
     }
 
-    
+    /*
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.row < 3{
-        let cell = tableView.dequeueReusableCell(withIdentifier: "defaultCell", for: indexPath)
-            return cell
-        }
-        else{
-        let cell = tableView.dequeueReusableCell(withIdentifier: "testCell", for: indexPath)
-        return cell
-        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
 
         // Configure the cell...
 
-        
+        return cell
     }
-    
+    */
 
     /*
     // Override to support conditional editing of the table view.

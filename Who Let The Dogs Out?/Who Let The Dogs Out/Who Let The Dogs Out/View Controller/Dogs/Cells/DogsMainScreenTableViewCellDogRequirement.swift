@@ -44,32 +44,7 @@ class DogsMainScreenTableViewCellDogRequirement: UITableViewCell {
         self.parentDogName = parentDogName
         self.requirement = requirementPassed
         self.requirementName.text = requirementPassed.label
-        self.timeInterval.text = convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.interval)
-    }
-    
-    //MARK: Private functions
-    
-    //Converts a time interval to a readable string e.g. TimeInterval(3600) -> 1 Hour 0 Minutes
-    private func convertTimeIntervalToReadable(interperateTimeInterval: TimeInterval) -> String {
-        let intTime = Int(interperateTimeInterval.rounded())
-        
-        let numHours = Int(intTime / 3600)
-        let numMinutes = Int((intTime % 3600)/60)
-        if numHours == 0 {
-            return "\(numMinutes) Minutes"
-        }
-        else if (numHours > 1 && numMinutes > 1){
-            return "\(numHours) Hours \(numMinutes) Minutes"
-        }
-        else if numHours > 1 && numMinutes == 1 {
-            return "\(numHours) Hours \(numMinutes) Minute"
-        }
-        else if numHours == 1 && numMinutes > 1 {
-            return "\(numHours) Hour \(numMinutes) Minutes"
-        }
-        else{
-            return "\(numHours) Hour \(numMinutes) Minute"
-        }
+        self.timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.interval)
     }
     
     //MARK: Default Functionality

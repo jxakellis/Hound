@@ -13,7 +13,14 @@ protocol DogsInstantiateRequirementViewControllerDelegate {
     func didAddToList (requirement: Requirement) throws
 }
 
-class DogsInstantiateRequirementViewController: UIViewController, AlertError {
+class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDelegate, AlertError {
+    
+    //MARK: UITextFieldDelegate
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+           self.view.endEditing(true)
+           return false
+    }
     
     
     //MARK: Properties
@@ -45,7 +52,16 @@ class DogsInstantiateRequirementViewController: UIViewController, AlertError {
     override func viewDidLoad() {
         super.viewDidLoad()
         defaults()
+        
+        requirementName.delegate = self
+        requirementName.returnKeyType = .done
+        
+        requirementDescription.delegate = self
+        requirementDescription.returnKeyType = .done
+        
     }
+    
+    
     
     //default values and configs
     private func defaults(){

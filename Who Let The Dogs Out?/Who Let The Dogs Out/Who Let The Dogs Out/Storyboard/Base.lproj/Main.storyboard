@@ -12,19 +12,13 @@
         <!--Home Main Screen-->
         <scene sceneID="hNz-n2-bh7">
             <objects>
-                <viewController title="Home Main Screen" id="9pv-A4-QxB" customClass="DogDisplayViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Home Main Screen" id="9pv-A4-QxB" customClass="HomeViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="tsR-hK-woN">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="Dogs" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="KQZ-1w-vlD">
-                                <rect key="frame" x="0.0" y="44" width="414" height="43"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="36"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="USa-GB-KYk">
-                                <rect key="frame" x="0.0" y="87" width="414" height="726"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="769"/>
                                 <connections>
                                     <segue destination="QHx-In-pv4" kind="embed" id="mAm-1k-o8H"/>
                                 </connections>
@@ -33,14 +27,10 @@
                         <viewLayoutGuide key="safeArea" id="PQr-Ze-W5v"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="KQZ-1w-vlD" firstAttribute="leading" secondItem="PQr-Ze-W5v" secondAttribute="leading" id="55e-GW-eDy"/>
                             <constraint firstItem="USa-GB-KYk" firstAttribute="leading" secondItem="PQr-Ze-W5v" secondAttribute="leading" id="AEa-UB-kCM"/>
                             <constraint firstItem="PQr-Ze-W5v" firstAttribute="trailing" secondItem="USa-GB-KYk" secondAttribute="trailing" id="Bkh-PC-zSE"/>
                             <constraint firstItem="PQr-Ze-W5v" firstAttribute="bottom" secondItem="USa-GB-KYk" secondAttribute="bottom" id="dNC-La-LJy"/>
-                            <constraint firstItem="USa-GB-KYk" firstAttribute="top" secondItem="KQZ-1w-vlD" secondAttribute="bottom" id="eBQ-zF-3Yd"/>
-                            <constraint firstItem="KQZ-1w-vlD" firstAttribute="trailing" secondItem="PQr-Ze-W5v" secondAttribute="trailing" id="gO2-6A-hbu"/>
-                            <constraint firstItem="USa-GB-KYk" firstAttribute="top" secondItem="KQZ-1w-vlD" secondAttribute="bottom" id="k28-VO-jlW"/>
-                            <constraint firstItem="KQZ-1w-vlD" firstAttribute="top" secondItem="PQr-Ze-W5v" secondAttribute="top" id="pXs-Ri-ICT"/>
+                            <constraint firstItem="USa-GB-KYk" firstAttribute="top" secondItem="PQr-Ze-W5v" secondAttribute="top" id="qsH-Wn-fKD"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Home" image="house.fill" catalog="system" id="acW-dT-cKf"/>
@@ -49,12 +39,12 @@
             </objects>
             <point key="canvasLocation" x="1587" y="7"/>
         </scene>
-        <!--Dog Display Table View Controller-->
+        <!--Home Main Screen Table View Controller-->
         <scene sceneID="Ihb-Ef-jOj">
             <objects>
-                <tableViewController id="QHx-In-pv4" customClass="DogDisplayTableViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="QHx-In-pv4" customClass="HomeMainScreenTableViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="57d-zI-FBT">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="726"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="769"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
@@ -64,12 +54,6 @@
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="C2j-L1-ESl" id="pda-EH-Ara">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="116"/>
                                     <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="cXX-dA-bag">
-                                            <rect key="frame" x="20" y="43" width="118" height="30"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        </slider>
-                                    </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="testCell" rowHeight="103" id="c4V-iB-Jdn">
@@ -78,12 +62,6 @@
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="c4V-iB-Jdn" id="mlE-dN-uuI">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="103"/>
                                     <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="klP-2a-6aW">
-                                            <rect key="frame" x="36" y="36" width="49" height="31"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        </switch>
-                                    </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
                         </prototypes>
@@ -333,7 +311,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </toolbar>
                     <connections>
-                        <segue destination="Tmz-g7-lDw" kind="relationship" relationship="rootViewController" destinationCreationSelector="dogsRequirementTableViewController" id="RbB-Ae-q2L"/>
+                        <segue destination="Tmz-g7-lDw" kind="relationship" relationship="rootViewController" id="RbB-Ae-q2L"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3Kb-ze-siv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -489,7 +467,7 @@
                                 </connections>
                             </button>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yIK-7w-b7P">
-                                <rect key="frame" x="0.0" y="109" width="404" height="694"/>
+                                <rect key="frame" x="10" y="109" width="394" height="694"/>
                                 <connections>
                                     <segue destination="AEi-KZ-cSf" kind="embed" identifier="dogsMainScreenTableViewController" id="Sf7-Qi-QCS"/>
                                 </connections>
@@ -505,12 +483,12 @@
                             <constraint firstItem="8b5-pw-vvl" firstAttribute="leading" secondItem="O1u-W8-tvY" secondAttribute="leading" constant="10" id="WX6-pO-S4O"/>
                             <constraint firstItem="O1u-W8-tvY" firstAttribute="bottom" secondItem="yIK-7w-b7P" secondAttribute="bottom" constant="10" id="Y2v-RJ-9TM"/>
                             <constraint firstItem="8b5-pw-vvl" firstAttribute="top" secondItem="O1u-W8-tvY" secondAttribute="top" constant="10" id="c0t-tf-JJ8"/>
-                            <constraint firstItem="yIK-7w-b7P" firstAttribute="leading" secondItem="O1u-W8-tvY" secondAttribute="leading" id="ldO-Rv-WpW"/>
+                            <constraint firstItem="yIK-7w-b7P" firstAttribute="leading" secondItem="O1u-W8-tvY" secondAttribute="leading" constant="10" id="ldO-Rv-WpW"/>
                             <constraint firstItem="8b5-pw-vvl" firstAttribute="leading" secondItem="O1u-W8-tvY" secondAttribute="leading" constant="10" id="tiC-Lx-51q"/>
                             <constraint firstItem="O1u-W8-tvY" firstAttribute="trailing" secondItem="yIK-7w-b7P" secondAttribute="trailing" constant="10" id="yHx-IJ-8RA"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Dogs" image="pencil" catalog="system" id="cPa-gy-q4n"/>
+                    <tabBarItem key="tabBarItem" title="Dogs" image="pawTabBar" selectedImage="pawTabBar" id="cPa-gy-q4n"/>
                     <connections>
                         <outlet property="willAddDog" destination="8b5-pw-vvl" id="lZ9-Zi-3aJ"/>
                     </connections>
@@ -524,21 +502,21 @@
             <objects>
                 <tableViewController storyboardIdentifier="Dogs Main Screen Embedded Table View" title="Dogs Main Screen Table View" id="AEi-KZ-cSf" customClass="DogsMainScreenTableViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" contentViewInsetsToSafeArea="NO" id="DkK-Io-vlc">
-                        <rect key="frame" x="0.0" y="0.0" width="404" height="694"/>
+                        <rect key="frame" x="0.0" y="0.0" width="394" height="694"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <viewLayoutGuide key="contentLayoutGuide" id="kT8-53-Cu8"/>
                         <viewLayoutGuide key="frameLayoutGuide" id="dO0-k2-qcN"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="empty" rowHeight="105" id="jwc-tS-HiW">
-                                <rect key="frame" x="0.0" y="28" width="404" height="105"/>
+                                <rect key="frame" x="0.0" y="28" width="394" height="105"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jwc-tS-HiW" id="jZg-6U-FHg">
-                                    <rect key="frame" x="0.0" y="0.0" width="404" height="105"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="394" height="105"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="mvG-zB-aCj">
-                                            <rect key="frame" x="0.0" y="0.0" width="404" height="105"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="394" height="105"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="104" id="UXG-Yf-o6B"/>
                                             </constraints>
@@ -553,20 +531,20 @@
                                 </tableViewCellContentView>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="16" reuseIdentifier="dogsMainScreenTableViewCellDogDisplay" rowHeight="105" id="tHZ-ho-5tn" customClass="DogsMainScreenTableViewCellDogDisplay" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="133" width="404" height="105"/>
+                                <rect key="frame" x="0.0" y="133" width="394" height="105"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" tableViewCell="tHZ-ho-5tn" id="G9A-nQ-CAR">
-                                    <rect key="frame" x="0.0" y="0.0" width="404" height="105"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="394" height="105"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ULV-hb-Xgp">
-                                            <rect key="frame" x="325" y="37" width="51" height="31"/>
+                                            <rect key="frame" x="315" y="37" width="51" height="31"/>
                                             <connections>
                                                 <action selector="didToggleDogSwitch:" destination="tHZ-ho-5tn" eventType="valueChanged" id="0gu-P4-Cwp"/>
                                             </connections>
                                         </switch>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="NAME" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8pH-6H-VGW">
-                                            <rect key="frame" x="65" y="11" width="210" height="38"/>
+                                            <rect key="frame" x="65" y="11" width="200" height="38"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="FFb-3B-q8F"/>
                                             </constraints>
@@ -575,7 +553,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DESCRIPTION" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="td6-5R-mpa">
-                                            <rect key="frame" x="65" y="54" width="210" height="30"/>
+                                            <rect key="frame" x="65" y="54" width="200" height="30"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="30" id="RGD-lR-30Q"/>
                                             </constraints>
@@ -591,10 +569,10 @@
                                                 <constraint firstAttribute="height" constant="45" id="kUm-HD-S7S"/>
                                                 <constraint firstAttribute="width" constant="45" id="ycw-KW-pLe"/>
                                             </constraints>
-                                            <imageReference key="image" image="paw" symbolScale="large"/>
+                                            <imageReference key="image" image="pawFullResolution" symbolScale="large"/>
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XKu-qx-ZJC">
-                                            <rect key="frame" x="280" y="32.5" width="40" height="40"/>
+                                            <rect key="frame" x="270" y="32.5" width="40" height="40"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="40" id="03s-9a-zcF"/>
                                                 <constraint firstAttribute="width" secondItem="XKu-qx-ZJC" secondAttribute="height" id="XQq-eV-P06"/>
@@ -631,14 +609,14 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="dogsMainScreenTableViewCellDogRequirement" rowHeight="75" id="Lai-xI-ipQ" customClass="DogsMainScreenTableViewCellDogRequirement" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="238" width="404" height="75"/>
+                                <rect key="frame" x="0.0" y="238" width="394" height="75"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" tableViewCell="Lai-xI-ipQ" id="g9N-na-X20">
-                                    <rect key="frame" x="0.0" y="0.0" width="404" height="75"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="394" height="75"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="REQ NAME" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Re-8c-KHz">
-                                            <rect key="frame" x="75" y="11" width="200" height="29"/>
+                                            <rect key="frame" x="75" y="11" width="190" height="29"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="30" id="3Ro-r0-kbC"/>
                                             </constraints>
@@ -647,13 +625,13 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bhe-v6-mKx">
-                                            <rect key="frame" x="325" y="22" width="51" height="31"/>
+                                            <rect key="frame" x="315" y="22" width="51" height="31"/>
                                             <connections>
                                                 <action selector="didToggleRequirementSwitch:" destination="Lai-xI-ipQ" eventType="valueChanged" id="eJv-qM-I9y"/>
                                             </connections>
                                         </switch>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME INTERVAL" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bK9-8i-YGQ">
-                                            <rect key="frame" x="75" y="45" width="200" height="20"/>
+                                            <rect key="frame" x="75" y="45" width="190" height="20"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="20" id="fL5-n7-OUt"/>
                                             </constraints>
@@ -680,7 +658,7 @@
                                             </constraints>
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4K7-YP-LCr">
-                                            <rect key="frame" x="280" y="17.5" width="40" height="40"/>
+                                            <rect key="frame" x="270" y="17.5" width="40" height="40"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="MYP-W2-hFU"/>
                                                 <constraint firstAttribute="width" secondItem="4K7-YP-LCr" secondAttribute="height" id="NTB-1U-gUj"/>
@@ -772,8 +750,8 @@
         <image name="arrow.turn.left.up" catalog="system" width="120" height="128"/>
         <image name="gear" catalog="system" width="128" height="119"/>
         <image name="house.fill" catalog="system" width="128" height="106"/>
-        <image name="paw" width="256" height="256"/>
-        <image name="pencil" catalog="system" width="128" height="113"/>
+        <image name="pawFullResolution" width="490" height="490.5"/>
+        <image name="pawTabBar" width="25" height="25"/>
         <image name="plus" catalog="system" width="128" height="113"/>
         <image name="trash" catalog="system" width="121" height="128"/>
         <systemColor name="darkTextColor">

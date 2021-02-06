@@ -13,7 +13,7 @@ protocol DogsAddDogViewControllerDelegate{
     func didUpdateDog(formerName: String, updatedDog: Dog) throws
 }
 
-class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNavigationViewControllerDelegate {
+class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewControllerDelegate, UITextFieldDelegate, AlertError{
     
     //MARK: Requirement Table VC Delegate
     
@@ -21,6 +21,13 @@ class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNav
     func didUpdateRequirements(newRequirementList: [Requirement]) {
         dog.dogRequirments.clearRequirements()
         try! dog.dogRequirments.addRequirement(newRequirements: newRequirementList)
+    }
+    
+    //MARK: UITextFieldDelegate
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+           self.view.endEditing(true)
+           return false
     }
     
     //MARK: Properties
@@ -44,6 +51,7 @@ class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNav
     
     //When the add button is clicked, runs a series of checks. Makes sure the name, description, and breed of the dog is valid, and if so then passes information up chain of view controllers to DogsViewController.
     @IBAction func willAddDog(_ sender: Any) {
+        
         do{
             try dog.dogSpecifications.changeDogSpecifications(key: "name", newValue: dogName.text)
             try dog.dogSpecifications.changeDogSpecifications(key: "description", newValue: dogDescription.text)
@@ -51,6 +59,7 @@ class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNav
         }
         catch {
             ErrorProcessor.handleError(error: error, classCalledFrom: self)
+            return
         }
         
         
@@ -76,6 +85,17 @@ class DogsAddDogViewController: UIViewController, AlertError, DogsRequirementNav
         super.viewDidLoad()
         
         willInitalize()
+        
+        ibOutletSetup()
+    }
+    
+    private func ibOutletSetup(){
+        dogName.delegate = self
+        dogName.returnKeyType = .done
+        dogDescription.delegate = self
+        dogDescription.returnKeyType = .done
+        dogBreed.delegate = self
+        dogBreed.returnKeyType = .done
         
         addDogButton.layer.cornerRadius = 8.0
     }
