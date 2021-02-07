@@ -9,7 +9,26 @@
 import UIKit
 
 
-class Requirement: DogRequirementProtocol, NSCopying {
+class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
+    
+    //MARK: Conformation EnableProtocol
+    
+    private var isEnabled: Bool = DogConstant.defaultEnable
+    
+    func setEnable(newEnableStatus: Bool) {
+        isEnabled = newEnableStatus
+    }
+    
+    func willToggle() {
+        isEnabled.toggle()
+    }
+    
+    func getEnable() -> Bool{
+        return isEnabled
+    }
+    
+    
+    //MARK: Conformation NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         //String(), Date(), Double() which TimeInterval is a typealias of are all structs aka not reference types
@@ -34,8 +53,6 @@ class Requirement: DogRequirementProtocol, NSCopying {
     
     //TimeInterval that is used in conjunction with a Date() and timer handler to decide when an alarm should go off.
     var interval: TimeInterval = TimeInterval(RequirementConstant.defaultTimeInterval)
-    
-    var isEnabled: Bool = RequirementConstant.defaultEnable
     
     //if for some reason the initDate should be different, can be passed through using the init()
     required init(initDate: Date = Date()) {

@@ -13,7 +13,7 @@ protocol DogsMainScreenTableViewControllerDelegate{
     func didUpdateDogManager(newDogManager: DogManager)
 }
 
-class DogsMainScreenTableViewController: UITableViewController, DogsMainScreenTableViewCellDogDisplayDelegate, DogsMainScreenTableViewCellDogRequirementDelegate {
+class DogsMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol, DogsMainScreenTableViewCellDogDisplayDelegate, DogsMainScreenTableViewCellDogRequirementDelegate {
     
     //MARK: DogsMainScreenTableViewCellDogDisplayDelegate
     
@@ -25,8 +25,8 @@ class DogsMainScreenTableViewController: UITableViewController, DogsMainScreenTa
         
         for i in 0..<sudoDogManager.dogs.count{
             if try! sudoDogManager.dogs[i].dogSpecifications.getDogSpecification(key: "name") == dogName{
-                sudoDogManager.dogs[i].isEnabled = isEnabled
-                setDogManager(newDogManager: sudoDogManager)
+                sudoDogManager.dogs[i].setEnable(newEnableStatus: isEnabled)
+                setDogManager(newDogManager: sudoDogManager, updateDogManagerDependents: false)
                 return
             }
         }
@@ -54,8 +54,8 @@ class DogsMainScreenTableViewController: UITableViewController, DogsMainScreenTa
             if try! sudoDogManager.dogs[i].dogSpecifications.getDogSpecification(key: "name") == parentDogName{
                 for x in 0..<sudoDogManager.dogs[i].dogRequirments.requirements.count {
                     if sudoDogManager.dogs[i].dogRequirments.requirements[x].label == requirementName{
-                        sudoDogManager.dogs[i].dogRequirments.requirements[x].isEnabled = isEnabled
-                        setDogManager(newDogManager: sudoDogManager)
+                        sudoDogManager.dogs[i].dogRequirments.requirements[x].setEnable(newEnableStatus: isEnabled)
+                        setDogManager(newDogManager: sudoDogManager, updateDogManagerDependents: false)
                         return
                     }
                 }
@@ -92,19 +92,20 @@ class DogsMainScreenTableViewController: UITableViewController, DogsMainScreenTa
     }
     
     //Sets dog manager, when the value of dog manager is changed it not only changes the variable but calls other needed functions to reflect the change
-    func setDogManager(newDogManager: DogManager, sentFromSuperView: Bool = false){
+    func setDogManager(newDogManager: DogManager, updateDogManagerDependents: Bool = true, sentFromSuperView: Bool = false){
         dogManager = newDogManager.copy() as! DogManager
         
         if sentFromSuperView == false{
             delegate.didUpdateDogManager(newDogManager: getDogManager())
         }
         
-        updateDogManagerDependents()
+        if updateDogManagerDependents == true{
+            self.updateDogManagerDependents()
+        }
     }
     
     //Updates different visual aspects to reflect data change of dogManager
     func updateDogManagerDependents(){
-        
         if getDogManager().dogs.count > 0 {
             tableView.allowsSelection = true
         }

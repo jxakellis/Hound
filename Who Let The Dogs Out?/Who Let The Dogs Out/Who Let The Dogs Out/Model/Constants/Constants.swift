@@ -17,7 +17,7 @@ enum DogConstant {
     private static let nameTuple: (String, String) = ("name", "Fido")
     private static let descriptionTuple: (String, String) = ("description", "Fiesty")
     private static let breedTuple: (String, String) = ("breed", "Golden Retriever")
-    static let enabledTuple: (String, Bool) = ("enabled", true)
+    static let defaultEnable: Bool = true
     static let defaultDogSpecificationKeys: [(String, String)] = [nameTuple, descriptionTuple, breedTuple]
 }
 
@@ -25,5 +25,5 @@ enum RequirementConstant {
     static let defaultLabel = "Potty"
     static let defaultDescription = "Take Dog Out"
     static let defaultTimeInterval = (3600*2.5)
-    static let defaultEnable = true
+    static let defaultEnable: Bool = true
 }

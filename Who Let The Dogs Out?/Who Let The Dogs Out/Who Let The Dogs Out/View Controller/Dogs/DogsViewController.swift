@@ -12,7 +12,7 @@ protocol DogsViewControllerDelegate {
     func didUpdateDogManager(newDogManager: DogManager)
 }
 
-class DogsViewController: UIViewController, DogsAddDogViewControllerDelegate, DogsMainScreenTableViewControllerDelegate{
+class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsAddDogViewControllerDelegate, DogsMainScreenTableViewControllerDelegate{
     
     //MARK: DogsMainScreenTableViewControllerDelegate
     
@@ -35,7 +35,7 @@ class DogsViewController: UIViewController, DogsAddDogViewControllerDelegate, Do
     
     //If the dog manager was updated in DogsMainScreenTableViewController, this function is called to reflect that change here with this dogManager
     func didUpdateDogManager(newDogManager: DogManager) {
-        setDogManager(newDogManager: newDogManager)
+        setDogManager(newDogManager: newDogManager, updateDogManagerDependents: false)
     }
     
     
@@ -84,10 +84,12 @@ class DogsViewController: UIViewController, DogsAddDogViewControllerDelegate, Do
     }
     
     //Sets dog manager, when the value of dog manager is changed it not only changes the variable but calls other needed functions to reflect the change
-    func setDogManager(newDogManager: DogManager, sentFromSuperView: Bool = false){
+    func setDogManager(newDogManager: DogManager, updateDogManagerDependents: Bool = true, sentFromSuperView: Bool = false) {
         dogManager = newDogManager.copy() as! DogManager
-        //originally under      if segue.identifier == "dogsMainScreenTableViewController"
-        updateDogManagerDependents()
+        
+        if updateDogManagerDependents == true {
+            self.updateDogManagerDependents()
+        }
         
         if sentFromSuperView == false {
             delegate.didUpdateDogManager(newDogManager: getDogManager())
@@ -107,11 +109,6 @@ class DogsViewController: UIViewController, DogsAddDogViewControllerDelegate, Do
         
         updateDogManagerDependents()
         
-        willAddDogButtonConfig()
-       }
-    
-    //Configures Add Dog button to have rounded corners
-    private func willAddDogButtonConfig(){
         willAddDog.layer.cornerRadius = 8.0
     }
     

@@ -11,7 +11,8 @@ import UIKit
 extension String {
     //Converts a time interval to a more readable string to display, e.g. 3600.0 Time interval to 1 hour 0 minutes or 7320.0 to 2 hours 2 minutes
     static func convertTimeIntervalToReadable(interperateTimeInterval: TimeInterval) -> String {
-        let intTime = Int(interperateTimeInterval.rounded())
+        
+        let intTime = abs(Int(interperateTimeInterval.rounded()))
         
         let numHours = Int(intTime / 3600)
         let numMinutes = Int((intTime % 3600)/60)

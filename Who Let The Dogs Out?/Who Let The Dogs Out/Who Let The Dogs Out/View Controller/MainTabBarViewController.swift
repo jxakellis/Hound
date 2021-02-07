@@ -8,12 +8,14 @@
 
 import UIKit
 
-class MainTabBarViewController: UITabBarController, DogsViewControllerDelegate {
+class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsViewControllerDelegate {
+    
+    
     
     //MARK: DogsViewControllerDelegate
     
     func didUpdateDogManager(newDogManager: DogManager) {
-        setMasterDogManager(newDogManager: newDogManager)
+        setDogManager(newDogManager: newDogManager)
     }
     
     //MARK: Master Dog Manager
@@ -21,13 +23,17 @@ class MainTabBarViewController: UITabBarController, DogsViewControllerDelegate {
     private var masterDogManager: DogManager = DogManager()
     
     //Get method, returns a copy of dogManager to remove possible editting of dog manager through class reference type
-    func getMasterDogManager() -> DogManager {
+    func getDogManager() -> DogManager {
         return masterDogManager.copy() as! DogManager
     }
     
     //Sets dog manager, when the value of dog manager is changed it not only changes the variable but calls other needed functions to reflect the change
-    func setMasterDogManager(newDogManager: DogManager){
+    func setDogManager(newDogManager: DogManager, updateDogManagerDependents: Bool = true, sentFromSuperView: Bool = false){
         masterDogManager = newDogManager.copy() as! DogManager
+    }
+    
+    func updateDogManagerDependents() {
+        
     }
     
     override func viewDidLoad() {
@@ -38,8 +44,9 @@ class MainTabBarViewController: UITabBarController, DogsViewControllerDelegate {
         let dogsViewController = self.viewControllers![1] as! DogsViewController
         
         dogsViewController.delegate = self
-        dogsViewController.setDogManager(newDogManager: getMasterDogManager(), sentFromSuperView: true)
+        dogsViewController.setDogManager(newDogManager: getDogManager(), sentFromSuperView: true)
         
+        // var cal = Calendar(identifier: .gregorian)
     }
     
     //A default dog for the user
@@ -61,11 +68,11 @@ class MainTabBarViewController: UITabBarController, DogsViewControllerDelegate {
         for i in 0..<DogConstant.defaultDogSpecificationKeys.count{
         try! defaultDog.dogSpecifications.changeDogSpecifications(key: DogConstant.defaultDogSpecificationKeys[i].0, newValue: DogConstant.defaultDogSpecificationKeys[i].1)
         }
-        defaultDog.isEnabled = true
+        defaultDog.setEnable(newEnableStatus: true)
         
-        var sudoDogManager = getMasterDogManager()
+        var sudoDogManager = getDogManager()
         try! sudoDogManager.addDog(dogAdded: defaultDog)
-        setMasterDogManager(newDogManager: sudoDogManager)
+        setDogManager(newDogManager: sudoDogManager)
     }
 
     /*

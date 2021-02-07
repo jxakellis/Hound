@@ -8,7 +8,28 @@
 
 import UIKit
 
-class Dog: NSCopying {
+class Dog: NSCopying, EnableProtocol {
+    
+    
+    
+    //MARK: Conformation EnableProtocol
+    
+    private var isEnabled: Bool = DogConstant.defaultEnable
+    
+    func setEnable(newEnableStatus: Bool) {
+        isEnabled = newEnableStatus
+    }
+    
+    func willToggle() {
+        isEnabled.toggle()
+    }
+    
+    func getEnable() -> Bool{
+        return isEnabled
+    }
+    
+    
+    //MARK: Conformation NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = Dog()
@@ -18,10 +39,10 @@ class Dog: NSCopying {
         return copy
     }
     
+    //MARK: Properties
+    
     //dictionary of specifications for a dog, e.g. "name", "breed", "description"
     var dogSpecifications: SpecificationManager = SpecificationManager()
-    
-    var isEnabled = DogConstant.enabledTuple.1
     
     //RequirmentManager that handles all specified requirements for a dog, e.g. being taken to the outside every time interval or being fed.
     var dogRequirments: RequirementManager = RequirementManager()

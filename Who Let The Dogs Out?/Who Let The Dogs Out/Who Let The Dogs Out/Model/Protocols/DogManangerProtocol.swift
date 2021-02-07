@@ -136,3 +136,13 @@ extension DogManagerProtocol {
         }
     }
 }
+
+protocol DogManagerControlFlowProtocol {
+    
+    func getDogManager() -> DogManager
+    
+    func setDogManager(newDogManager: DogManager, updateDogManagerDependents: Bool, sentFromSuperView: Bool)
+    
+    func updateDogManagerDependents()
+    
+}

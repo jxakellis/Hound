@@ -77,7 +77,7 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "dogsRequirementTableViewCell", for: indexPath)
-       
+        
         let castCell = cell as! DogsRequirementTableViewCell
         castCell.delegate = self
         castCell.setLabel(initLabel: requirementManager.requirements[indexPath.row].label)
