@@ -13,7 +13,7 @@ protocol DogsAddDogViewControllerDelegate{
     func didUpdateDog(formerName: String, updatedDog: Dog) throws
 }
 
-class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewControllerDelegate, UITextFieldDelegate, AlertError{
+class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewControllerDelegate, UITextFieldDelegate{
     
     //MARK: Requirement Table VC Delegate
     
@@ -58,7 +58,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
             try dog.dogSpecifications.changeDogSpecifications(key: "breed", newValue: dogBreed.text)
         }
         catch {
-            ErrorProcessor.handleError(error: error, classCalledFrom: self)
+            ErrorProcessor.handleError(error: error, sender: self)
             return
         }
         
@@ -74,7 +74,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
             }
         }
         catch {
-            ErrorProcessor.handleError(error: error, classCalledFrom: self)
+            ErrorProcessor.handleError(error: error, sender: self)
         }
         
     }

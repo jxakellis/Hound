@@ -17,29 +17,30 @@ extension String {
         let numHours = Int(intTime / 3600)
         let numMinutes = Int((intTime % 3600)/60)
         let numSeconds = Int((intTime % 3600)%60)
-        if numHours == 0 {
-            return "\(numMinutes) Minutes"
+        
+        var readableString = ""
+        
+        if numHours > 1 {
+            readableString.append("\(numHours) Hours ")
         }
-        else if (numHours > 1 && (numMinutes > 1 || numMinutes == 0)){
-            return "\(numHours) Hours \(numMinutes) Minutes"
+        else if numHours == 1 {
+            readableString.append("\(numHours) Hour ")
         }
-        else if numHours > 1 && numMinutes == 1 {
-            return "\(numHours) Hours \(numMinutes) Minute"
+        
+        if numMinutes > 1 {
+            readableString.append("\(numMinutes) Minutes ")
         }
-        else if numHours == 1 && (numMinutes > 1 || numMinutes == 0) {
-            return "\(numHours) Hour \(numMinutes) Minutes"
+        else if numMinutes == 1 {
+            readableString.append("\(numMinutes) Minute ")
         }
-        else if numHours == 1 && numMinutes == 1{
-            return "\(numHours) Hour \(numMinutes) Minute"
-        }
-        else if numSeconds > 1 || numSeconds == 0 {
-            return "\(numSeconds) Seconds"
+        
+        if numSeconds > 1{
+            readableString.append("\(numSeconds) Seconds")
         }
         else if numSeconds == 1 {
-            return "\(numSeconds) Second"
+            readableString.append("\(numSeconds) Second")
         }
-        else {
-            return "unable to convert, TI: \(interperateTimeInterval)"
-        }
+        
+        return readableString
     }
 }

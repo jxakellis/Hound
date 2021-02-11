@@ -10,8 +10,6 @@ import UIKit
 
 class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsViewControllerDelegate {
     
-    
-    
     //MARK: DogsViewControllerDelegate
     
     func didUpdateDogManager(newDogManager: DogManager) {
@@ -36,6 +34,10 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         
     }
     
+    //MARK: Main
+    
+    var timingManager: Timing? = nil
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -46,7 +48,9 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         dogsViewController.delegate = self
         dogsViewController.setDogManager(newDogManager: getDogManager(), sentFromSuperView: true)
         
-        // var cal = Calendar(identifier: .gregorian)
+        Utils.sender = self
+        
+        timingManager = Timing(dogManager: self.getDogManager())
     }
     
     //A default dog for the user
@@ -56,7 +60,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         let defaultRequirementOne = Requirement()
         defaultRequirementOne.label = "Potty"
         defaultRequirementOne.description = "Take The Dog Out"
-        defaultRequirementOne.interval = TimeInterval((3600*3)+(3600*(1/3)))
+        //defaultRequirementOne.interval = TimeInterval((3600*3)+(3600*(1/3)))
+        defaultRequirementOne.interval = TimeInterval(5)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementOne)
         
         let defaultRequirementTwo = Requirement()

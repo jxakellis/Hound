@@ -70,7 +70,13 @@ extension DogRequirementProtocol {
       
     //if newInterval passes all tests, changes value, if not throws error
     mutating func changeInterval(newInterval: TimeInterval?) throws{
-        if newInterval == nil || newInterval! < TimeInterval(60.0){
+        
+        /*
+         if newInterval == nil || newInterval! < TimeInterval(60.0){
+             throw DogRequirementError.intervalInvalid
+         }
+         */
+        if newInterval == nil{
             throw DogRequirementError.intervalInvalid
         }
         interval = newInterval!

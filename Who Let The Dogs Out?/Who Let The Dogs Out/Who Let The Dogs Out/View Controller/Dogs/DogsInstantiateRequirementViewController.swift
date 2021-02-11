@@ -13,7 +13,7 @@ protocol DogsInstantiateRequirementViewControllerDelegate {
     func didAddToList (requirement: Requirement) throws
 }
 
-class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDelegate, AlertError {
+class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDelegate {
     
     //MARK: UITextFieldDelegate
     
@@ -44,7 +44,7 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
             navigationController?.popViewController(animated: true)
         }
         catch {
-            ErrorProcessor.handleError(error: error, classCalledFrom: self)
+            ErrorProcessor.handleError(error: error, sender: self)
         }
         
     }
