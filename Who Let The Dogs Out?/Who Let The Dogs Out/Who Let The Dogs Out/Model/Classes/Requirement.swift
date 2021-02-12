@@ -27,7 +27,6 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
         return isEnabled
     }
     
-    
     //MARK: Conformation NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
@@ -37,6 +36,7 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
         try! copy.changeInterval(newInterval: self.interval)
         try! copy.changeDescription(newDescription: self.description)
         copy.lastExecution = self.lastExecution
+        copy.intervalElapsed = self.intervalElapsed
         copy.isEnabled = self.isEnabled
         return copy
     }
@@ -51,6 +51,8 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
     var initalizationDate: Date = Date()
     
     var lastExecution: Date
+    
+    var intervalElapsed: TimeInterval = TimeInterval(0)
     
     //TimeInterval that is used in conjunction with a Date() and timer handler to decide when an alarm should go off.
     var interval: TimeInterval = TimeInterval(RequirementConstant.defaultTimeInterval)

@@ -27,6 +27,9 @@ protocol DogRequirementProtocol {
     //last time the requirement was fired
     var lastExecution: Date { get set }
     
+    //how much time of the interval of been used up, this is used for when a timer is paused and then unpaused and have to calculate remaining time
+    var intervalElapsed: TimeInterval { get set }
+    
     //interval at which a timer should be triggered for requirement
     var interval: TimeInterval { get set }
     
@@ -39,6 +42,8 @@ protocol DogRequirementProtocol {
     mutating func changeInterval(newInterval: TimeInterval?) throws
     
     mutating func changeLastExecution(newLastExecution: Date)
+    
+    mutating func changeIntervalElapsed(intervalElapsed: TimeInterval)
     
     //TEMPORARILY DISABLED DUE TO CONFLICT OF MATCHING NAMES WITH DIFFERENT DOG OBJECT
     // mutating func resetLabel()
@@ -85,6 +90,10 @@ extension DogRequirementProtocol {
     
     mutating func changeLastExecution(newLastExecution: Date){
         lastExecution = newLastExecution
+    }
+    
+    mutating func changeIntervalElapsed(intervalElapsed: TimeInterval){
+        self.intervalElapsed = intervalElapsed
     }
     
     /*

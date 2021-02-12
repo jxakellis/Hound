@@ -27,6 +27,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             for r in try! 0..<sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements.count {
                 if try! sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements[r].getEnable() == true {
                     try! sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements[r].lastExecution = Date()
+                    try! sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements[r].changeIntervalElapsed(intervalElapsed: TimeInterval(0))
                 }
             }
         }
@@ -56,6 +57,8 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         if isEnabled == true {
             try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.findRequirement(requirementName: requirementName).lastExecution = Date()
+            var sudoRequirement = try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.findRequirement(requirementName: requirementName)
+            sudoRequirement.changeIntervalElapsed(intervalElapsed: TimeInterval(0))
         }
         setDogManager(newDogManager: sudoDogManager, sender: DogsMainScreenTableViewCellDogRequirement())
         
@@ -99,6 +102,10 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         }
         
         self.updateDogManagerDependents()
+        
+        if !(sender is DogsMainScreenTableViewCellDogDisplay) && !(sender is DogsMainScreenTableViewCellDogRequirement) {
+            updateTable()
+        }
     }
     
     //Updates different visual aspects to reflect data change of dogManager

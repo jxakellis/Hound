@@ -17,7 +17,7 @@ class TimingManager: TimingProtocol, DogManagerControlFlowProtocol {
     var delegate: TimingManagerDelegate! = nil
     
     //saves the state when all alarms are paused
-    private var pauseState: (Date?, Bool, Date) = (nil, false, Date())
+    private var pauseState: (Date?, Bool) = (nil, false)
     
     //MARK: DogManagerControlFlowProtocol Implementation
     
@@ -69,9 +69,8 @@ class TimingManager: TimingProtocol, DogManagerControlFlowProtocol {
                 var executionDate: Date! = nil
                 
                 if didUnpause == true {
-                    let intervalElapsed: TimeInterval = self.getDogManager().dogs[d].dogRequirments.requirements[r].lastExecution.distance(to: pauseState.0!)
                     
-                    let intervalLeft: TimeInterval = getDogManager().dogs[d].dogRequirments.requirements[r].interval - intervalElapsed
+                    let intervalLeft: TimeInterval = getDogManager().dogs[d].dogRequirments.requirements[r].interval - getDogManager().dogs[d].dogRequirments.requirements[r].intervalElapsed
                     
                     executionDate = Date.executionDate(lastExecution: Date(), interval: intervalLeft)
                     
@@ -129,6 +128,7 @@ class TimingManager: TimingProtocol, DogManagerControlFlowProtocol {
         let sudoDogManager = getDogManager()
         var sudoRequirement: Requirement = try! sudoDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName)
         sudoRequirement.changeLastExecution(newLastExecution: Date())
+        sudoRequirement.changeIntervalElapsed(intervalElapsed: TimeInterval(0))
         
         setDogManager(newDogManager: sudoDogManager, sender: self)
     }
@@ -153,14 +153,29 @@ class TimingManager: TimingProtocol, DogManagerControlFlowProtocol {
     
     func willTogglePause(newPauseStatus: Bool) {
         if newPauseStatus == true {
-            invalidateAll()
             self.pauseState.0 = Date()
             self.pauseState.1 = true
+            
+            willPause()
+            
+            invalidateAll()
+            
         }
         else {
             self.pauseState.1 = false
             willInitalize(didUnpause: true)
         }
+    }
+    
+    func willPause(){
+        let sudoDogManager = getDogManager()
+        for dogKey in timerManager.keys{
+            for requirementKey in timerManager[dogKey]!.keys {
+                var sudoRequirement = try! sudoDogManager.findDog(dogName: dogKey).dogRequirments.findRequirement(requirementName: requirementKey)
+                sudoRequirement.changeIntervalElapsed(intervalElapsed: sudoRequirement.lastExecution.distance(to: pauseState.0!))
+            }
+        }
+        setDogManager(newDogManager: sudoDogManager, sender: self)
     }
     
 }
