@@ -10,7 +10,7 @@ import UIKit
 
 protocol DogsMainScreenTableViewControllerDelegate{
     func didSelectDog(sectionIndexOfDog: Int)
-    func didUpdateDogManager(newDogManager: DogManager)
+    func didUpdateDogManager(newDogManager: DogManager, sender: AnyObject?)
 }
 
 class DogsMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol, DogsMainScreenTableViewCellDogDisplayDelegate, DogsMainScreenTableViewCellDogRequirementDelegate {
@@ -19,17 +19,20 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     //Dog switch is toggled in DogsMainScreenTableViewCellDogDisplay
     func didToggleDogSwitch(dogName: String, isEnabled: Bool) {
-        //no redundancy built in
         
         let sudoDogManager = getDogManager()
+        try! sudoDogManager.findDog(dogName: dogName).setEnable(newEnableStatus: isEnabled)
         
-        for i in 0..<sudoDogManager.dogs.count{
-            if try! sudoDogManager.dogs[i].dogSpecifications.getDogSpecification(key: "name") == dogName{
-                sudoDogManager.dogs[i].setEnable(newEnableStatus: isEnabled)
-                setDogManager(newDogManager: sudoDogManager, updateDogManagerDependents: false)
-                return
+        if isEnabled == true {
+            for r in try! 0..<sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements.count {
+                if try! sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements[r].getEnable() == true {
+                    try! sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements[r].lastExecution = Date()
+                }
             }
         }
+        
+        setDogManager(newDogManager: sudoDogManager, sender: DogsMainScreenTableViewCellDogDisplay())
+        
     }
     
     //If the trash button was clicked in the Dog Display cell, this function is called using a delegate from the cell class to handle the press
@@ -39,42 +42,33 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         try! sudoDogManager.removeDog(name: dogName)
         
-        setDogManager(newDogManager: sudoDogManager)
+        setDogManager(newDogManager: sudoDogManager, sender: DogsMainScreenTableViewCellDogDisplay())
+        updateTable()
     }
     
     //MARK: DogsMainScreenTableViewCellDogRequirementDelegate
     
     //Requirement switch is toggled in DogsMainScreenTableViewCellDogRequirement
     func didToggleRequirementSwitch(parentDogName: String, requirementName: String, isEnabled: Bool) {
-        //no redundancy built in
         
         let sudoDogManager = getDogManager()
+        try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.findRequirement(requirementName: requirementName).setEnable(newEnableStatus: isEnabled)
         
-        for i in 0..<sudoDogManager.dogs.count{
-            if try! sudoDogManager.dogs[i].dogSpecifications.getDogSpecification(key: "name") == parentDogName{
-                for x in 0..<sudoDogManager.dogs[i].dogRequirments.requirements.count {
-                    if sudoDogManager.dogs[i].dogRequirments.requirements[x].label == requirementName{
-                        sudoDogManager.dogs[i].dogRequirments.requirements[x].setEnable(newEnableStatus: isEnabled)
-                        setDogManager(newDogManager: sudoDogManager, updateDogManagerDependents: false)
-                        return
-                    }
-                }
-            }
+        if isEnabled == true {
+            try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.findRequirement(requirementName: requirementName).lastExecution = Date()
         }
+        setDogManager(newDogManager: sudoDogManager, sender: DogsMainScreenTableViewCellDogRequirement())
+        
     }
     
     //If the trash button was clicked in the Dog Requirement cell, this function is called using a delegate from the cell class to handle the press
     func didClickTrash(parentDogName: String, requirementName: String) {
         
         let sudoDogManager = getDogManager()
+        try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.removeRequirement(requirementName: requirementName)
+        setDogManager(newDogManager: sudoDogManager, sender: DogsMainScreenTableViewCellDogRequirement())
+        updateTable()
         
-        for i in 0..<sudoDogManager.dogs.count{
-            if try! sudoDogManager.dogs[i].dogSpecifications.getDogSpecification(key: "name") == parentDogName{
-                try! sudoDogManager.dogs[i].dogRequirments.removeRequirement(requirementName: requirementName)
-                setDogManager(newDogManager: sudoDogManager)
-                return
-            }
-        }
     }
     
     
@@ -92,16 +86,19 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     }
     
     //Sets dog manager, when the value of dog manager is changed it not only changes the variable but calls other needed functions to reflect the change
-    func setDogManager(newDogManager: DogManager, updateDogManagerDependents: Bool = true, sentFromSuperView: Bool = false){
+    func setDogManager(newDogManager: DogManager, sender: AnyObject?){
         dogManager = newDogManager.copy() as! DogManager
         
-        if sentFromSuperView == false{
-            delegate.didUpdateDogManager(newDogManager: getDogManager())
+        //possible senders
+        //DogsRequirementTableViewCell
+        //DogsMainScreenTableViewCellDogDisplay
+        //DogsViewController
+        
+        if !(sender is DogsViewController){
+            delegate.didUpdateDogManager(newDogManager: getDogManager(), sender: self)
         }
         
-        if updateDogManagerDependents == true{
-            self.updateDogManagerDependents()
-        }
+        self.updateDogManagerDependents()
     }
     
     //Updates different visual aspects to reflect data change of dogManager
@@ -113,7 +110,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             tableView.allowsSelection = false
         }
         
-        updateTable()
+        //update tableview moved else where
     }
     
     override func viewDidLoad() {

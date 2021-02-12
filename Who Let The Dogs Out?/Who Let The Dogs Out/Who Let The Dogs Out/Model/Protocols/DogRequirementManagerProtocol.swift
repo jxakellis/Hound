@@ -25,7 +25,7 @@ protocol DogRequirementProtocol {
     var initalizationDate: Date { get set }
     
     //last time the requirement was fired
-    var lastDate: Date { get set }
+    var lastExecution: Date { get set }
     
     //interval at which a timer should be triggered for requirement
     var interval: TimeInterval { get set }
@@ -38,6 +38,7 @@ protocol DogRequirementProtocol {
     
     mutating func changeInterval(newInterval: TimeInterval?) throws
     
+    mutating func changeLastExecution(newLastExecution: Date)
     
     //TEMPORARILY DISABLED DUE TO CONFLICT OF MATCHING NAMES WITH DIFFERENT DOG OBJECT
     // mutating func resetLabel()
@@ -82,6 +83,10 @@ extension DogRequirementProtocol {
         interval = newInterval!
     }
     
+    mutating func changeLastExecution(newLastExecution: Date){
+        lastExecution = newLastExecution
+    }
+    
     /*
      TEMPORARILY DISABLED DUE TO CONFLICT OF MATCHING NAMES WITH DIFFERENT DOG OBJECT
      //resets value of label to constant/default value
@@ -99,7 +104,6 @@ extension DogRequirementProtocol {
     mutating func resetInterval(){
         interval = TimeInterval(RequirementConstant.defaultTimeInterval)
     }
-      
 }
 
 enum DogRequirementManagerError: Error {
@@ -122,6 +126,8 @@ protocol DogRequirementManagerProtocol {
     mutating func removeRequirement(requirementName: String) throws
     
     mutating func clearRequirements()
+    
+    func findRequirement(requirementName requirementToFind: String) throws -> Requirement
 }
 
 extension DogRequirementManagerProtocol {
@@ -187,5 +193,14 @@ extension DogRequirementManagerProtocol {
         //clears all requirements, should make requirements an empty array
     mutating func clearRequirements() {
         requirements.removeAll()
+    }
+    
+    func findRequirement(requirementName requirementToFind: String) throws -> Requirement {
+        for r in 0..<requirements.count{
+            if requirements[r].label == requirementToFind {
+                return requirements[r]
+            }
+        }
+        throw DogRequirementManagerError.requirementNotPresent
     }
 }

@@ -8,12 +8,18 @@
 
 import UIKit
 
-class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsViewControllerDelegate {
+class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsViewControllerDelegate, TimingManagerDelegate, SettingsViewControllerDelegate {
     
-    //MARK: DogsViewControllerDelegate
+    //MARK: SettingsViewControllerDelegate
     
-    func didUpdateDogManager(newDogManager: DogManager) {
-        setDogManager(newDogManager: newDogManager)
+    func didTogglePause(newPauseState: Bool) {
+        timingManager?.willTogglePause(newPauseStatus: newPauseState)
+    }
+    
+    //MARK: TimingManagerDelegate && DogsViewControllerDelegate
+    
+    func didUpdateDogManager(newDogManager: DogManager, sender: AnyObject?) {
+        setDogManager(newDogManager: newDogManager, sender: sender)
     }
     
     //MARK: Master Dog Manager
@@ -26,68 +32,65 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     }
     
     //Sets dog manager, when the value of dog manager is changed it not only changes the variable but calls other needed functions to reflect the change
-    func setDogManager(newDogManager: DogManager, updateDogManagerDependents: Bool = true, sentFromSuperView: Bool = false){
+    func setDogManager(newDogManager: DogManager, sender: AnyObject?){
+        
+        //possible senders
+        //MainTabBarViewController
+        //TimingManager
+        //DogsViewController
+        
         masterDogManager = newDogManager.copy() as! DogManager
+        
+        if !(sender is MainTabBarViewController) && !(sender is TimingManager){
+            self.updateDogManagerDependents()
+        }
+        
+        if sender is TimingManager {
+            dogsViewController.setDogManager(newDogManager: getDogManager(), sender: self)
+        }
     }
     
     func updateDogManagerDependents() {
-        
+        timingManager?.setDogManager(newDogManager: getDogManager(), sender: self)
     }
     
     //MARK: Main
     
-    var timingManager: Timing? = nil
+    var timingManager: TimingManager? = nil
+    
+    var dogsViewController: DogsViewController! = nil
+    
+    var settingsViewController: SettingsViewController! = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        defaultDog()
+        setDogManager(newDogManager: DogManagerConstant.defaultDogManager, sender: self)
         
-        let dogsViewController = self.viewControllers![1] as! DogsViewController
+        dogsViewController = self.viewControllers![1] as? DogsViewController
         
         dogsViewController.delegate = self
-        dogsViewController.setDogManager(newDogManager: getDogManager(), sentFromSuperView: true)
+        dogsViewController.setDogManager(newDogManager: getDogManager(), sender: self)
+        
+        settingsViewController = self.viewControllers![2] as? SettingsViewController
+        
+        settingsViewController.delegate = self
         
         Utils.sender = self
         
-        timingManager = Timing(dogManager: self.getDogManager())
+        timingManager = TimingManager()
+        timingManager?.setDogManager(newDogManager: getDogManager(), sender: self)
+        timingManager?.delegate = self
     }
     
-    //A default dog for the user
-    private func defaultDog(){
-        let defaultDog = Dog()
-        
-        let defaultRequirementOne = Requirement()
-        defaultRequirementOne.label = "Potty"
-        defaultRequirementOne.description = "Take The Dog Out"
-        //defaultRequirementOne.interval = TimeInterval((3600*3)+(3600*(1/3)))
-        defaultRequirementOne.interval = TimeInterval(5)
-        try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementOne)
-        
-        let defaultRequirementTwo = Requirement()
-        defaultRequirementTwo.label = "Food"
-        defaultRequirementTwo.description = "Feed The Dog"
-        defaultRequirementTwo.interval = TimeInterval((3600*7)+(3600*0.75))
-        try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementTwo)
-        
-        for i in 0..<DogConstant.defaultDogSpecificationKeys.count{
-        try! defaultDog.dogSpecifications.changeDogSpecifications(key: DogConstant.defaultDogSpecificationKeys[i].0, newValue: DogConstant.defaultDogSpecificationKeys[i].1)
-        }
-        defaultDog.setEnable(newEnableStatus: true)
-        
-        var sudoDogManager = getDogManager()
-        try! sudoDogManager.addDog(dogAdded: defaultDog)
-        setDogManager(newDogManager: sudoDogManager)
-    }
-
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destination.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
 }

@@ -8,21 +8,25 @@
 
 import UIKit
 
+enum TimingError: Error{
+    case unableToInvalidate
+}
+
 protocol TimingProtocol {
     
     //init(dogManager: DogManager)
     
-    func willInitalize()
+    //func willInitalize()
     
-    func willReinitalize()
+    //func willReinitalize()
     
     func willReinitalize(dogName: String, requirementName: String) throws
     
-    func didExecuteTimer(sender: Timer)
+    //func didExecuteTimer(sender: Timer)
     
-    func willTogglePause(pasueStatus: Bool)
+    func willTogglePause(newPauseStatus: Bool)
     
-    func invalidateAll()
+    //func invalidateAll()
     
     func invalidate(dogName: String, requirementName: String) throws
     

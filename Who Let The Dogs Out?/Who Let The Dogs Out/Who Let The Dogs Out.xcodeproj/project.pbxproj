@@ -11,7 +11,6 @@
 		A20C99952568666300E2C9C8 /* DogRequirementManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C99942568666300E2C9C8 /* DogRequirementManagerProtocol.swift */; };
 		A20C99972568671F00E2C9C8 /* Requirement.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C99962568671F00E2C9C8 /* Requirement.swift */; };
 		A20C999925686B7600E2C9C8 /* Timing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C999825686B7600E2C9C8 /* Timing.swift */; };
-		A20C999B25686B9100E2C9C8 /* DogTimingManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C999A25686B9100E2C9C8 /* DogTimingManagerProtocol.swift */; };
 		A226736225CDC36800904032 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A226736125CDC36800904032 /* StringExtension.swift */; };
 		A226736C25CDC59300904032 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A226736B25CDC59300904032 /* HomeViewController.swift */; };
 		A226737025CDC5D000904032 /* HomeMainScreenTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A226736F25CDC5D000904032 /* HomeMainScreenTableViewController.swift */; };
@@ -58,7 +57,6 @@
 		A20C99942568666300E2C9C8 /* DogRequirementManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogRequirementManagerProtocol.swift; sourceTree = "<group>"; };
 		A20C99962568671F00E2C9C8 /* Requirement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Requirement.swift; sourceTree = "<group>"; };
 		A20C999825686B7600E2C9C8 /* Timing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timing.swift; sourceTree = "<group>"; };
-		A20C999A25686B9100E2C9C8 /* DogTimingManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogTimingManagerProtocol.swift; sourceTree = "<group>"; };
 		A226736125CDC36800904032 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		A226736B25CDC59300904032 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		A226736F25CDC5D000904032 /* HomeMainScreenTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMainScreenTableViewController.swift; sourceTree = "<group>"; };
@@ -157,7 +155,6 @@
 				A258AEF025661689005242E4 /* DogSpecificationManagerProtocol.swift */,
 				A2C1243C257FE62900C93D91 /* DogManangerProtocol.swift */,
 				A20C99942568666300E2C9C8 /* DogRequirementManagerProtocol.swift */,
-				A20C999A25686B9100E2C9C8 /* DogTimingManagerProtocol.swift */,
 				A2853D8E25CFB4AD0068AEE3 /* EnableProtocol.swift */,
 				A20B38CF25D4680800DA2DE2 /* TimingProtocol.swift */,
 			);
@@ -396,7 +393,6 @@
 				A20B38D025D4680800DA2DE2 /* TimingProtocol.swift in Sources */,
 				A226736225CDC36800904032 /* StringExtension.swift in Sources */,
 				A2E66C9B25534A880068CCA6 /* AppDelegate.swift in Sources */,
-				A20C999B25686B9100E2C9C8 /* DogTimingManagerProtocol.swift in Sources */,
 				A247B96425C87F300017FE66 /* MainTabBarViewController.swift in Sources */,
 				A226736C25CDC59300904032 /* HomeViewController.swift in Sources */,
 				A20C999925686B7600E2C9C8 /* Timing.swift in Sources */,

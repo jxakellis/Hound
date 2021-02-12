@@ -45,12 +45,15 @@ class DogsMainScreenTableViewCellDogRequirement: UITableViewCell {
         self.requirement = requirementPassed
         self.requirementName.text = requirementPassed.label
         self.timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.interval)
+        self.switch.isOn = requirementPassed.getEnable()
     }
     
     //MARK: Default Functionality
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        self.requirementName.adjustsFontSizeToFitWidth = true
+        self.timeInterval.adjustsFontSizeToFitWidth = true
         // Initialization code
     }
     

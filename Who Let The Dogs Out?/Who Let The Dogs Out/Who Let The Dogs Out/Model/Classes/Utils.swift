@@ -29,7 +29,8 @@ class Utils
         
         if targetViewController.presentedViewController?.isViewLoaded == true{
             targetViewController.presentedViewController?.dismiss(animated: true, completion: {
-                targetViewController.present(alertController, animated: true, completion: nil)
+                    targetViewController.present(alertController, animated: true, completion: nil)
+                
             })
         }
         else{

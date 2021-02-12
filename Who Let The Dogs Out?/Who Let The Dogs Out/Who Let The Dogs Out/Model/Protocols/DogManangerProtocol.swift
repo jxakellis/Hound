@@ -32,6 +32,7 @@ protocol DogManagerProtocol {
     
     mutating func changeDog(dogNameToBeChanged: String, newDog: Dog) throws
     
+    func findDog(dogName dogToBeFound: String) throws -> Dog
 }
 
 extension DogManagerProtocol {
@@ -135,13 +136,23 @@ extension DogManagerProtocol {
             dogs[newDogIndex!] = newDog
         }
     }
+    
+    func findDog(dogName dogToBeFound: String) throws -> Dog {
+        for d in 0..<dogs.count{
+            if try dogs[d].dogSpecifications.getDogSpecification(key: "name") == dogToBeFound{
+                return dogs[d]
+            }
+        }
+        
+        throw DogManagerError.dogNameNotPresent
+    }
 }
 
 protocol DogManagerControlFlowProtocol {
     
     func getDogManager() -> DogManager
     
-    func setDogManager(newDogManager: DogManager, updateDogManagerDependents: Bool, sentFromSuperView: Bool)
+    func setDogManager(newDogManager: DogManager, sender: AnyObject?)
     
     func updateDogManagerDependents()
     

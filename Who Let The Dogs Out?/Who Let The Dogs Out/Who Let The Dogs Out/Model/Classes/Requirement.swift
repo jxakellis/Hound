@@ -36,6 +36,7 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
         try! copy.changeLabel(newLabel: self.label)
         try! copy.changeInterval(newInterval: self.interval)
         try! copy.changeDescription(newDescription: self.description)
+        copy.lastExecution = self.lastExecution
         copy.isEnabled = self.isEnabled
         return copy
     }
@@ -49,7 +50,7 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
     //stores exact Date object of when the requirement was initalized, used in conjunction with interval to later determine when a timer should fire
     var initalizationDate: Date = Date()
     
-    var lastDate: Date
+    var lastExecution: Date
     
     //TimeInterval that is used in conjunction with a Date() and timer handler to decide when an alarm should go off.
     var interval: TimeInterval = TimeInterval(RequirementConstant.defaultTimeInterval)
@@ -57,7 +58,7 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
     //if for some reason the initDate should be different, can be passed through using the init()
     required init(initDate: Date = Date()) {
         initalizationDate = initDate
-        lastDate = initDate
+        lastExecution = initDate
     }
     
 }

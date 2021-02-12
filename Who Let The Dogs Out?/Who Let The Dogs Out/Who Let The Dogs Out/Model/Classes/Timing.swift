@@ -8,12 +8,16 @@
 
 import UIKit
 
-class Timing: TimingProtocol, DogManagerControlFlowProtocol {
+protocol TimingManagerDelegate {
+    func didUpdateDogManager(newDogManager: DogManager, sender: AnyObject?)
+}
+
+class TimingManager: TimingProtocol, DogManagerControlFlowProtocol {
     
-    init(dogManager: DogManager = DogManager()){
-        self.setDogManager(newDogManager: dogManager, updateDogManagerDependents: false)
-        self.willInitalize()
-    }
+    var delegate: TimingManagerDelegate! = nil
+    
+    //saves the state when all alarms are paused
+    private var pauseState: (Date?, Bool, Date) = (nil, false, Date())
     
     //MARK: DogManagerControlFlowProtocol Implementation
     
@@ -27,12 +31,17 @@ class Timing: TimingProtocol, DogManagerControlFlowProtocol {
         return dogManager.copy() as! DogManager
     }
     
-    func setDogManager(newDogManager: DogManager, updateDogManagerDependents: Bool = true, sentFromSuperView: Bool = false) {
+    func setDogManager(newDogManager: DogManager, sender: AnyObject?) {
+        
         dogManager = newDogManager.copy() as! DogManager
         
-        if updateDogManagerDependents == true {
+        if !(sender is TimingManager) {
             self.updateDogManagerDependents()
         }
+        else if sender is TimingManager {
+            delegate.didUpdateDogManager(newDogManager: getDogManager(), sender: self)
+        }
+        
     }
     
     func updateDogManagerDependents() {
@@ -41,20 +50,44 @@ class Timing: TimingProtocol, DogManagerControlFlowProtocol {
     
     //MARK: TimingProtocol Implementation
     
-    func willInitalize() {
-        print("currentDate \(Date().description)")
+    private func willInitalize(didUnpause: Bool = false) {
+        guard pauseState.1 == false else {
+            return
+        }
         for d in 0..<self.getDogManager().dogs.count{
+            guard self.getDogManager().dogs[d].getEnable() == true else {
+                continue
+            }
+            
             for r in 0..<self.getDogManager().dogs[d].dogRequirments.requirements.count{
                 
-                let executionDate = Date.executionDate(lastExecution: self.getDogManager().dogs[d].dogRequirments.requirements[r].lastDate, interval: self.getDogManager().dogs[d].dogRequirments.requirements[r].interval)
+                guard self.getDogManager().dogs[d].dogRequirments.requirements[r].getEnable() == true
+                else{
+                    continue
+                }
                 
-                try! print("\(self.getDogManager().dogs[d].dogSpecifications.getDogSpecification(key: "name")) + \(self.getDogManager().dogs[d].dogRequirments.requirements[r].label) + executionDate \(executionDate.description)")
+                var executionDate: Date! = nil
+                
+                if didUnpause == true {
+                    let intervalElapsed: TimeInterval = self.getDogManager().dogs[d].dogRequirments.requirements[r].lastExecution.distance(to: pauseState.0!)
+                    
+                    let intervalLeft: TimeInterval = getDogManager().dogs[d].dogRequirments.requirements[r].interval - intervalElapsed
+                    
+                    executionDate = Date.executionDate(lastExecution: Date(), interval: intervalLeft)
+                    
+                    //debug info
+                    //print("originalDate: \(pauseState.2)  pausedDate: \(pauseState.0!) currentDate: \(Date()) intervalElapsed: \(intervalElapsed.description) intervalLeft: \(intervalLeft.description) executionDate: \(executionDate.description)")
+                }
+                
+                else if didUnpause == false{
+                    executionDate = Date.executionDate(lastExecution: self.getDogManager().dogs[d].dogRequirments.requirements[r].lastExecution, interval: self.getDogManager().dogs[d].dogRequirments.requirements[r].interval)
+                }
                 
                 let timer = Timer(fireAt: executionDate,
                                   interval: self.getDogManager().dogs[d].dogRequirments.requirements[r].interval,
                                   target: self,
                                   selector: #selector(self.didExecuteTimer(sender:)),
-                                  userInfo: ["dogIndex": d, "requirementIndex": r],
+                                  userInfo: try! ["dogName": self.getDogManager().dogs[d].dogSpecifications.getDogSpecification(key: "name"), "requirementName": self.getDogManager().dogs[d].dogRequirments.requirements[r].label],
                                   repeats: true)
                 
                 RunLoop.main.add(timer, forMode: .common)
@@ -69,7 +102,7 @@ class Timing: TimingProtocol, DogManagerControlFlowProtocol {
         }
     }
     
-    func willReinitalize() {
+    private func willReinitalize() {
         self.invalidateAll()
         self.willInitalize()
     }
@@ -78,35 +111,56 @@ class Timing: TimingProtocol, DogManagerControlFlowProtocol {
         //code
     }
     
-    @objc func didExecuteTimer(sender: Timer) {
-        guard let parsedDictionary = sender.userInfo as? [String: Int]
+    @objc private func didExecuteTimer(sender: Timer) {
+        guard let parsedDictionary = sender.userInfo as? [String: String]
         else{
             print("error timing manager didExecuteTimer")
             return
         }
         
-        let dogIndex = parsedDictionary["dogIndex"]!
-        let requirementIndex = parsedDictionary["requirementIndex"]!
-        //let requirementIndex = sender.userInfo["requirementIndex"] as
+        let dogName = parsedDictionary["dogName"]!
+        let requirementName = parsedDictionary["requirementName"]!
         
-        let title = try! "Alarm for \(self.getDogManager().dogs[dogIndex].dogSpecifications.getDogSpecification(key: "name"))"
-        let message = "\(self.getDogManager().dogs[dogIndex].dogRequirments.requirements[requirementIndex].label) (\(self.getDogManager().dogs[dogIndex].dogRequirments.requirements[requirementIndex].description))"
+        let title = "Alarm for \(dogName)"
+        let message = try! "\(self.getDogManager().findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName).label) (\(self.getDogManager().findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName).description))"
         
-       // keyWindow?.rootViewController?.present(alertController, animated: true, completion: nil)
         Utils.willShowAlert(title: title, message: message)
+        
+        let sudoDogManager = getDogManager()
+        var sudoRequirement: Requirement = try! sudoDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName)
+        sudoRequirement.changeLastExecution(newLastExecution: Date())
+        
+        setDogManager(newDogManager: sudoDogManager, sender: self)
     }
     
-    func willTogglePause(pasueStatus: Bool) {
-        //code
-    }
-    
-    func invalidateAll() {
-        //code
+    private func invalidateAll() {
+        for dogKey in timerManager.keys{
+            for requirementKey in timerManager[dogKey]!.keys {
+                timerManager[dogKey]![requirementKey]!.invalidate()
+            }
+        }
     }
     
     func invalidate(dogName: String, requirementName: String) throws {
-        //code
+        if timerManager[dogName] == nil{
+            throw TimingError.unableToInvalidate
+        }
+        if timerManager[dogName]![requirementName] == nil {
+            throw TimingError.unableToInvalidate
+        }
+        timerManager[dogName]![requirementName]!.invalidate()
     }
     
+    func willTogglePause(newPauseStatus: Bool) {
+        if newPauseStatus == true {
+            invalidateAll()
+            self.pauseState.0 = Date()
+            self.pauseState.1 = true
+        }
+        else {
+            self.pauseState.1 = false
+            willInitalize(didUnpause: true)
+        }
+    }
     
 }

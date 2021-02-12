@@ -57,6 +57,8 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        self.dogName.adjustsFontSizeToFitWidth = true
+        self.dogDescription.adjustsFontSizeToFitWidth = true
         // Initialization code
     }
     

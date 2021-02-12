@@ -61,8 +61,6 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
         
     }
     
-    
-    
     //default values and configs
     private func defaults(){
         requirementName.text = RequirementConstant.defaultLabel

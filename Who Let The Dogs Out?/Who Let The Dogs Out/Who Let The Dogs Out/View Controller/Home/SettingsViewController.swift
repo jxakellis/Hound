@@ -8,8 +8,20 @@
 
 import UIKit
 
+protocol SettingsViewControllerDelegate {
+    func didTogglePause(newPauseState: Bool)
+}
+
 class SettingsViewController: UIViewController {
 
+    var delegate: SettingsViewControllerDelegate! = nil
+    
+    @IBOutlet weak var isPaused: UISwitch!
+    
+    @IBAction func didTogglePause(_ sender: Any) {
+        delegate.didTogglePause(newPauseState: isPaused.isOn)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
