@@ -12,8 +12,18 @@ class Utils
 {
     static var sender: UIViewController = UIViewController.init()
     
-    static func willShowAlert(targetViewController: UIViewController = sender, title: String, message: String)
+    static func willShowAlert(sender: AnyObject = sender, title: String, message: String)
     {
+        
+        let targetViewController: UIViewController
+        
+        if !(sender is UIViewController) {
+            targetViewController = Utils.sender
+        }
+        else{
+            targetViewController = sender as! UIViewController
+        }
+        
         let alertController = UIAlertController(
             title: title,
             message: message,
@@ -41,7 +51,17 @@ class Utils
 
 class ErrorProcessor{
     
-    static func alertForError(targetViewController: UIViewController = Utils.sender, message: String){
+    static func alertForError(sender: AnyObject = Utils.sender, message: String){
+        
+        let targetViewController: UIViewController
+        
+        if !(sender is UIViewController) {
+            targetViewController = Utils.sender
+        }
+        else{
+            targetViewController = sender as! UIViewController
+        }
+        
         let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         let alertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alertController.addAction(alertAction)
@@ -56,7 +76,7 @@ class ErrorProcessor{
         }
     }
     
-    static func handleError(error: Error, sender: UIViewController){
+    static func handleError(error: Error, sender: AnyObject){
         
         //print name of class, e.g. Who_Let_The_Dogs_Out.DogsViewController
         //print(NSStringFromClass(classCalledFrom.classForCoder))
@@ -76,12 +96,12 @@ class ErrorProcessor{
             return
         }
         else {
-            ErrorProcessor.alertForError(message: "Unable to handle error from \(NSStringFromClass(sender.classForCoder)) with ErrorProcessor of error: \(error.localizedDescription)")
+            ErrorProcessor.alertForError(message: "Unable to handle error from \(NSStringFromClass(sender.classForCoder)) with ErrorProcessor of error type: \(error.localizedDescription)")
         }
     }
     
     //Returns true if able to find a match in enum DogSpecificationManagerError to the error provided
-    private func handleDogSpecificationManagerError(error: Error, sender: UIViewController) -> Bool{
+    private func handleDogSpecificationManagerError(error: Error, sender: AnyObject) -> Bool{
         /*
          case nilKey
          case blankKey
@@ -145,7 +165,7 @@ class ErrorProcessor{
     }
     
     //Returns true if able to find a match in enum DogManagerError to the error provided
-    private func handleDogManagerError(error: Error, sender: UIViewController) -> Bool{
+    private func handleDogManagerError(error: Error, sender: AnyObject) -> Bool{
         /*
          case dogNameNotPresent
          case dogNameAlreadyPresent
@@ -174,7 +194,7 @@ class ErrorProcessor{
     }
     
     //Returns true if able to find a match in enum DogRequirementError to the error provided
-    private func handleDogRequirementError(error: Error, sender: UIViewController) -> Bool{
+    private func handleDogRequirementError(error: Error, sender: AnyObject) -> Bool{
         /*
          case labelInvalid
          case descriptionInvalid
@@ -198,7 +218,7 @@ class ErrorProcessor{
     }
     
     //Returns true if able to find a match in enum DogRequirementManagerError to the error provided
-    private func handleDogRequirementManagerError(error: Error, sender: UIViewController) -> Bool{
+    private func handleDogRequirementManagerError(error: Error, sender: AnyObject) -> Bool{
         /*
          case requirementAlreadyPresent
          case requirementNotPresent

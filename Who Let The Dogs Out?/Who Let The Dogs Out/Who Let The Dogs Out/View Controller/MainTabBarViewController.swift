@@ -13,7 +13,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     //MARK: SettingsViewControllerDelegate
     
     func didTogglePause(newPauseState: Bool) {
-        timingManager?.willTogglePause(newPauseStatus: newPauseState)
+        timingManager?.willTogglePause(dogManager: getDogManager(), newPauseStatus: newPauseState)
     }
     
     //MARK: TimingManagerDelegate && DogsViewControllerDelegate
@@ -51,7 +51,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     }
     
     func updateDogManagerDependents() {
-        timingManager?.setDogManager(newDogManager: getDogManager(), sender: self)
+        timingManager?.willReinitalize(dogManager: getDogManager())
     }
     
     //MARK: Main
@@ -79,8 +79,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         Utils.sender = self
         
         timingManager = TimingManager()
-        timingManager?.setDogManager(newDogManager: getDogManager(), sender: self)
         timingManager?.delegate = self
+        timingManager?.willInitalize(dogManager: getDogManager())
     }
     
     /*

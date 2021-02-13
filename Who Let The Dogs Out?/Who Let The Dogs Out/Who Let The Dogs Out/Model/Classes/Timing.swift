@@ -12,56 +12,35 @@ protocol TimingManagerDelegate {
     func didUpdateDogManager(newDogManager: DogManager, sender: AnyObject?)
 }
 
-class TimingManager: TimingProtocol, DogManagerControlFlowProtocol {
+class TimingManager: TimingProtocol {
+    
+    //MARK: MAIN
     
     var delegate: TimingManagerDelegate! = nil
     
     //saves the state when all alarms are paused
     private var pauseState: (Date?, Bool) = (nil, false)
     
-    //MARK: DogManagerControlFlowProtocol Implementation
-    
-    private var dogManager = DogManager()
-    
     //Corrolates to dogManager
     //Dictionary<dogName: String, Dictionary<requirementName: String, associatedTimer: Timer>>
-    private var timerManager: Dictionary<String,Dictionary<String,Timer>> = Dictionary<String,Dictionary<String,Timer>>()
-    
-    func getDogManager() -> DogManager {
-        return dogManager.copy() as! DogManager
-    }
-    
-    func setDogManager(newDogManager: DogManager, sender: AnyObject?) {
-        
-        dogManager = newDogManager.copy() as! DogManager
-        
-        if !(sender is TimingManager) {
-            self.updateDogManagerDependents()
-        }
-        else if sender is TimingManager {
-            delegate.didUpdateDogManager(newDogManager: getDogManager(), sender: self)
-        }
-        
-    }
-    
-    func updateDogManagerDependents() {
-        willReinitalize()
-    }
+    private var timerDictionary: Dictionary<String,Dictionary<String,Timer>>? = Dictionary<String,Dictionary<String,Timer>>()
     
     //MARK: TimingProtocol Implementation
     
-    private func willInitalize(didUnpause: Bool = false) {
+    func willInitalize(dogManager: DogManager, didUnpause: Bool = false){
+        
         guard pauseState.1 == false else {
             return
         }
-        for d in 0..<self.getDogManager().dogs.count{
-            guard self.getDogManager().dogs[d].getEnable() == true else {
+        
+        for d in 0..<dogManager.dogs.count{
+            guard dogManager.dogs[d].getEnable() == true else {
                 continue
             }
             
-            for r in 0..<self.getDogManager().dogs[d].dogRequirments.requirements.count{
+            for r in 0..<dogManager.dogs[d].dogRequirments.requirements.count{
                 
-                guard self.getDogManager().dogs[d].dogRequirments.requirements[r].getEnable() == true
+                guard dogManager.dogs[d].dogRequirments.requirements[r].getEnable() == true
                 else{
                     continue
                 }
@@ -70,7 +49,7 @@ class TimingManager: TimingProtocol, DogManagerControlFlowProtocol {
                 
                 if didUnpause == true {
                     
-                    let intervalLeft: TimeInterval = getDogManager().dogs[d].dogRequirments.requirements[r].interval - getDogManager().dogs[d].dogRequirments.requirements[r].intervalElapsed
+                    let intervalLeft: TimeInterval = dogManager.dogs[d].dogRequirments.requirements[r].interval - dogManager.dogs[d].dogRequirments.requirements[r].intervalElapsed
                     
                     executionDate = Date.executionDate(lastExecution: Date(), interval: intervalLeft)
                     
@@ -79,103 +58,105 @@ class TimingManager: TimingProtocol, DogManagerControlFlowProtocol {
                 }
                 
                 else if didUnpause == false{
-                    executionDate = Date.executionDate(lastExecution: self.getDogManager().dogs[d].dogRequirments.requirements[r].lastExecution, interval: self.getDogManager().dogs[d].dogRequirments.requirements[r].interval)
+                    executionDate = Date.executionDate(lastExecution: dogManager.dogs[d].dogRequirments.requirements[r].lastExecution, interval: dogManager.dogs[d].dogRequirments.requirements[r].interval)
                 }
                 
                 let timer = Timer(fireAt: executionDate,
-                                  interval: self.getDogManager().dogs[d].dogRequirments.requirements[r].interval,
+                                  interval: dogManager.dogs[d].dogRequirments.requirements[r].interval,
                                   target: self,
                                   selector: #selector(self.didExecuteTimer(sender:)),
-                                  userInfo: try! ["dogName": self.getDogManager().dogs[d].dogSpecifications.getDogSpecification(key: "name"), "requirementName": self.getDogManager().dogs[d].dogRequirments.requirements[r].label],
+                                  userInfo: try! ["dogName": dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name"), "requirementName": dogManager.dogs[d].dogRequirments.requirements[r].label, "dogManager": dogManager],
                                   repeats: true)
                 
                 RunLoop.main.add(timer, forMode: .common)
                 
-                var nestedTimerManager: Dictionary<String, Timer> = try! timerManager[self.getDogManager().dogs[d].dogSpecifications.getDogSpecification(key: "name")] ?? Dictionary<String, Timer>()
+                var nestedtimerDictionary: Dictionary<String, Timer> = try! timerDictionary![dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name")] ?? Dictionary<String, Timer>()
                 
-                nestedTimerManager[self.getDogManager().dogs[d].dogRequirments.requirements[r].label] = timer
+                nestedtimerDictionary[dogManager.dogs[d].dogRequirments.requirements[r].label] = timer
                 
-                try! timerManager[self.getDogManager().dogs[d].dogSpecifications.getDogSpecification(key: "name")] = nestedTimerManager
-                
+                try! timerDictionary![dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name")] = nestedtimerDictionary
             }
         }
     }
     
-    private func willReinitalize() {
+    func willReinitalize(dogManager: DogManager) {
         self.invalidateAll()
-        self.willInitalize()
+        self.willInitalize(dogManager: dogManager)
     }
     
     func willReinitalize(dogName: String, requirementName: String) throws {
         //code
     }
     
-    @objc private func didExecuteTimer(sender: Timer) {
-        guard let parsedDictionary = sender.userInfo as? [String: String]
+    @objc private func didExecuteTimer(sender: Timer){
+        guard let parsedDictionary = sender.userInfo as? [String: Any]
         else{
-            print("error timing manager didExecuteTimer")
+            ErrorProcessor.handleError(error: TimingError.parseSenderInfoFailed, sender: self)
             return
         }
         
-        let dogName = parsedDictionary["dogName"]!
-        let requirementName = parsedDictionary["requirementName"]!
+        let dogManager: DogManager = parsedDictionary["dogManager"]! as! DogManager
+        let dogName: String = parsedDictionary["dogName"]! as! String
+        let requirementName: String = parsedDictionary["requirementName"]! as! String
+       
         
         let title = "Alarm for \(dogName)"
-        let message = try! "\(self.getDogManager().findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName).label) (\(self.getDogManager().findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName).description))"
+        let message = try! "\(dogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName).label) (\(dogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName).description))"
         
         Utils.willShowAlert(title: title, message: message)
         
-        let sudoDogManager = getDogManager()
+        let sudoDogManager = dogManager
         var sudoRequirement: Requirement = try! sudoDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName)
         sudoRequirement.changeLastExecution(newLastExecution: Date())
         sudoRequirement.changeIntervalElapsed(intervalElapsed: TimeInterval(0))
         
-        setDogManager(newDogManager: sudoDogManager, sender: self)
+        delegate.didUpdateDogManager(newDogManager: sudoDogManager, sender: self)
     }
     
     private func invalidateAll() {
-        for dogKey in timerManager.keys{
-            for requirementKey in timerManager[dogKey]!.keys {
-                timerManager[dogKey]![requirementKey]!.invalidate()
+        for dogKey in timerDictionary!.keys{
+            for requirementKey in timerDictionary![dogKey]!.keys {
+                timerDictionary![dogKey]![requirementKey]!.invalidate()
             }
         }
     }
     
     func invalidate(dogName: String, requirementName: String) throws {
-        if timerManager[dogName] == nil{
-            throw TimingError.unableToInvalidate
+        if timerDictionary![dogName] == nil{
+            throw TimingError.invalidateFailed
         }
-        if timerManager[dogName]![requirementName] == nil {
-            throw TimingError.unableToInvalidate
+        if timerDictionary![dogName]![requirementName] == nil {
+            throw TimingError.invalidateFailed
         }
-        timerManager[dogName]![requirementName]!.invalidate()
+        timerDictionary![dogName]![requirementName]!.invalidate()
     }
     
-    func willTogglePause(newPauseStatus: Bool) {
+    func willTogglePause(dogManager: DogManager, newPauseStatus: Bool) {
         if newPauseStatus == true {
             self.pauseState.0 = Date()
             self.pauseState.1 = true
             
-            willPause()
+            willPause(dogManager: dogManager)
             
             invalidateAll()
             
         }
         else {
             self.pauseState.1 = false
-            willInitalize(didUnpause: true)
+            willInitalize(dogManager: dogManager, didUnpause: true)
         }
     }
     
-    func willPause(){
-        let sudoDogManager = getDogManager()
-        for dogKey in timerManager.keys{
-            for requirementKey in timerManager[dogKey]!.keys {
+    private func willPause(dogManager: DogManager){
+        let sudoDogManager = dogManager
+        for dogKey in timerDictionary!.keys{
+            for requirementKey in timerDictionary![dogKey]!.keys {
                 var sudoRequirement = try! sudoDogManager.findDog(dogName: dogKey).dogRequirments.findRequirement(requirementName: requirementKey)
                 sudoRequirement.changeIntervalElapsed(intervalElapsed: sudoRequirement.lastExecution.distance(to: pauseState.0!))
             }
         }
-        setDogManager(newDogManager: sudoDogManager, sender: self)
+        
+        delegate.didUpdateDogManager(newDogManager: sudoDogManager, sender: self)
     }
     
 }
