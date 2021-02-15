@@ -48,7 +48,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="defaultCell" id="C2j-L1-ESl" customClass="DogDisplayTableViewCellDefault" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="homeMainScreenTableViewCellDogRequirementDisplay" rowHeight="100.5" id="C2j-L1-ESl" customClass="HomeMainScreenTableViewCellDogRequirementDisplay" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="414" height="100.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="C2j-L1-ESl" id="pda-EH-Ara">
@@ -56,16 +56,16 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="REQ NAME" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QBB-Fh-atX">
-                                            <rect key="frame" x="10" y="10" width="192" height="45.5"/>
+                                            <rect key="frame" x="15" y="10" width="136" height="45.5"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="45" id="CXb-NM-ibl"/>
+                                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="CXb-NM-ibl"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="for: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gtp-T3-2IH">
-                                            <rect key="frame" x="10" y="65.5" width="35" height="25"/>
+                                            <rect key="frame" x="15" y="65.5" width="35" height="25"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="35" id="Z3z-dO-ENq"/>
                                                 <constraint firstAttribute="height" constant="25" id="kk9-SR-Z8N"/>
@@ -75,7 +75,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DOG NAME" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EDc-RT-0yv">
-                                            <rect key="frame" x="55" y="65.5" width="147" height="25"/>
+                                            <rect key="frame" x="60" y="65.5" width="91" height="25"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="25" id="zav-Bx-Wu5"/>
                                             </constraints>
@@ -84,7 +84,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME LEFT" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LW9-n4-Z8I">
-                                            <rect key="frame" x="212" y="10" width="192" height="80.5"/>
+                                            <rect key="frame" x="161" y="10" width="238" height="80.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -92,29 +92,51 @@
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="LW9-n4-Z8I" firstAttribute="leading" secondItem="QBB-Fh-atX" secondAttribute="trailing" constant="10" id="25I-wP-uMh"/>
-                                        <constraint firstItem="gtp-T3-2IH" firstAttribute="leading" secondItem="pda-EH-Ara" secondAttribute="leading" constant="10" id="5mK-HJ-diz"/>
                                         <constraint firstAttribute="bottom" secondItem="LW9-n4-Z8I" secondAttribute="bottom" constant="10" id="5ta-oH-gl6"/>
                                         <constraint firstItem="gtp-T3-2IH" firstAttribute="leading" secondItem="QBB-Fh-atX" secondAttribute="leading" id="7nN-Td-0KU"/>
                                         <constraint firstItem="QBB-Fh-atX" firstAttribute="top" secondItem="pda-EH-Ara" secondAttribute="top" constant="10" id="EFH-YA-qwK"/>
-                                        <constraint firstItem="LW9-n4-Z8I" firstAttribute="width" secondItem="QBB-Fh-atX" secondAttribute="width" id="GJB-Z7-JeI"/>
+                                        <constraint firstItem="LW9-n4-Z8I" firstAttribute="width" secondItem="QBB-Fh-atX" secondAttribute="width" multiplier="1.75" id="I5b-RM-IYa"/>
                                         <constraint firstItem="EDc-RT-0yv" firstAttribute="top" secondItem="QBB-Fh-atX" secondAttribute="bottom" constant="10" id="Mpf-0k-GWQ"/>
                                         <constraint firstItem="LW9-n4-Z8I" firstAttribute="top" secondItem="pda-EH-Ara" secondAttribute="top" constant="10" id="S9X-qj-6SA"/>
                                         <constraint firstAttribute="bottom" secondItem="gtp-T3-2IH" secondAttribute="bottom" constant="10" id="Udm-Ya-2rr"/>
-                                        <constraint firstAttribute="trailing" secondItem="LW9-n4-Z8I" secondAttribute="trailing" constant="10" id="YRO-L4-oHn"/>
+                                        <constraint firstAttribute="trailing" secondItem="LW9-n4-Z8I" secondAttribute="trailing" constant="15" id="YRO-L4-oHn"/>
                                         <constraint firstItem="LW9-n4-Z8I" firstAttribute="leading" secondItem="EDc-RT-0yv" secondAttribute="trailing" constant="10" id="ZJs-e7-kev"/>
                                         <constraint firstItem="EDc-RT-0yv" firstAttribute="leading" secondItem="gtp-T3-2IH" secondAttribute="trailing" constant="10" id="fk4-D2-0Kz"/>
-                                        <constraint firstItem="QBB-Fh-atX" firstAttribute="leading" secondItem="pda-EH-Ara" secondAttribute="leading" constant="10" id="nrI-S3-dvO"/>
+                                        <constraint firstItem="gtp-T3-2IH" firstAttribute="leading" secondItem="pda-EH-Ara" secondAttribute="leading" constant="15" id="mov-Nj-2Lt"/>
+                                        <constraint firstItem="QBB-Fh-atX" firstAttribute="leading" secondItem="pda-EH-Ara" secondAttribute="leading" constant="15" id="nrI-S3-dvO"/>
                                         <constraint firstAttribute="bottom" secondItem="EDc-RT-0yv" secondAttribute="bottom" constant="10" id="sOu-Nm-XRq"/>
                                         <constraint firstItem="gtp-T3-2IH" firstAttribute="top" secondItem="QBB-Fh-atX" secondAttribute="bottom" constant="10" id="zbX-pZ-ScU"/>
                                     </constraints>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="dogName" destination="EDc-RT-0yv" id="xDL-m9-Q7g"/>
+                                    <outlet property="requirementName" destination="QBB-Fh-atX" id="UwX-b6-o0N"/>
+                                    <outlet property="timeLeft" destination="LW9-n4-Z8I" id="d0X-Qo-NBE"/>
+                                </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="testCell" rowHeight="103" id="c4V-iB-Jdn">
-                                <rect key="frame" x="0.0" y="128.5" width="414" height="103"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="empty" id="c4V-iB-Jdn">
+                                <rect key="frame" x="0.0" y="128.5" width="414" height="130.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="c4V-iB-Jdn" id="mlE-dN-uuI">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="103"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="130.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Active Alarms" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Iyl-0a-TKh">
+                                            <rect key="frame" x="15" y="15" width="384" height="100.5"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="9rH-kU-VS2"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="Iyl-0a-TKh" secondAttribute="trailing" constant="15" id="8gw-1E-XmE"/>
+                                        <constraint firstAttribute="bottom" secondItem="Iyl-0a-TKh" secondAttribute="bottom" constant="15" id="8nv-E3-eV0"/>
+                                        <constraint firstItem="Iyl-0a-TKh" firstAttribute="leading" secondItem="mlE-dN-uuI" secondAttribute="leading" constant="15" id="gnk-xW-ewc"/>
+                                        <constraint firstItem="Iyl-0a-TKh" firstAttribute="top" secondItem="mlE-dN-uuI" secondAttribute="top" constant="15" id="z0Y-gN-Wba"/>
+                                    </constraints>
                                 </tableViewCellContentView>
                             </tableViewCell>
                         </prototypes>
@@ -133,11 +155,11 @@
             <objects>
                 <viewController title="Instantiate Dog Requirement " id="uJe-nq-2qo" customClass="DogsInstantiateRequirementViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="MUR-Wf-RFm">
-                        <rect key="frame" x="0.0" y="0.0" width="394" height="583"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="583"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="APh-If-rUG">
-                                <rect key="frame" x="10" y="528" width="374" height="45"/>
+                                <rect key="frame" x="10" y="528" width="394" height="45"/>
                                 <color key="backgroundColor" systemColor="darkTextColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="9Cx-UZ-ZLb"/>
@@ -151,10 +173,10 @@
                                 </connections>
                             </button>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" countDownDuration="5400" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K2d-xg-IFv">
-                                <rect key="frame" x="10" y="248" width="374" height="270"/>
+                                <rect key="frame" x="10" y="248" width="394" height="270"/>
                             </datePicker>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Count Down Interval" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lgW-Lf-9Fq">
-                                <rect key="frame" x="10" y="198" width="374" height="40"/>
+                                <rect key="frame" x="10" y="198" width="394" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="gpG-MY-5nc"/>
                                 </constraints>
@@ -186,10 +208,10 @@
                                 </subviews>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="cCe-OF-f25">
-                                <rect key="frame" x="135" y="98" width="249" height="90"/>
+                                <rect key="frame" x="135" y="98" width="269" height="90"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bhU-gI-wSc">
-                                        <rect key="frame" x="0.0" y="0.0" width="249" height="40"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="269" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="mg2-hf-j9Z"/>
                                         </constraints>
@@ -197,7 +219,7 @@
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="pzt-Dy-9b9">
-                                        <rect key="frame" x="0.0" y="50" width="249" height="40"/>
+                                        <rect key="frame" x="0.0" y="50" width="269" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="8PK-Gg-S6B"/>
                                         </constraints>
@@ -246,25 +268,25 @@
             <objects>
                 <tableViewController title="Add Dog Requirement Table View" id="Tmz-g7-lDw" customClass="DogsRequirementTableViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="lYX-m1-L14">
-                        <rect key="frame" x="0.0" y="0.0" width="394" height="583"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="583"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="dogsRequirementTableViewCell" id="79O-Ma-zM6" customClass="DogsRequirementTableViewCell" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="394" height="65.5"/>
+                                <rect key="frame" x="0.0" y="28" width="414" height="65.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="79O-Ma-zM6" id="uZD-xf-ZPI">
-                                    <rect key="frame" x="0.0" y="0.0" width="394" height="65.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="65.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PLH NAME" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aZu-Qx-VXW">
-                                            <rect key="frame" x="10" y="10" width="154.5" height="45.5"/>
+                                            <rect key="frame" x="10" y="10" width="164.5" height="45.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME INTERVAL" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="3" translatesAutoresizingMaskIntoConstraints="NO" id="HDY-ks-hpC">
-                                            <rect key="frame" x="174.5" y="10" width="154.5" height="45.5"/>
+                                            <rect key="frame" x="184.5" y="10" width="164.5" height="45.5"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="yE2-Wa-V1o"/>
                                             </constraints>
@@ -273,7 +295,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mdp-nl-pPm">
-                                            <rect key="frame" x="339" y="10" width="45" height="45.5"/>
+                                            <rect key="frame" x="359" y="10" width="45" height="45.5"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="45" id="Uid-he-BOb"/>
                                             </constraints>
@@ -309,10 +331,10 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="empty" id="AeO-0m-QxR">
-                                <rect key="frame" x="0.0" y="93.5" width="394" height="65.5"/>
+                                <rect key="frame" x="0.0" y="93.5" width="414" height="65.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" hidden="YES" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="AeO-0m-QxR" id="byy-EQ-4ec">
-                                    <rect key="frame" x="0.0" y="0.0" width="394" height="65.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="65.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="EMPTY" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ePm-pV-DwD">
@@ -357,7 +379,7 @@
             <objects>
                 <navigationController title="Add Dog Requirement Navigation Controller" id="eFt-4z-qcU" customClass="DogsRequirementNavigationViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="8o7-wh-P2A">
-                        <rect key="frame" x="0.0" y="44" width="394" height="44"/>
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="4cy-Nd-Ayj">
@@ -445,7 +467,7 @@
                                 </connections>
                             </button>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6MT-az-4bi">
-                                <rect key="frame" x="10" y="160" width="394" height="583"/>
+                                <rect key="frame" x="0.0" y="160" width="414" height="583"/>
                                 <connections>
                                     <segue destination="eFt-4z-qcU" kind="embed" identifier="dogRequirementNavigationController" id="E3d-ML-4L4"/>
                                 </connections>
@@ -457,7 +479,7 @@
                             <constraint firstItem="E9z-49-nYa" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" constant="10" id="2xR-JQ-bLM"/>
                             <constraint firstItem="27o-HD-GIn" firstAttribute="top" secondItem="7nG-bv-0ex" secondAttribute="bottom" constant="10" id="Dul-pn-zc5"/>
                             <constraint firstItem="6MT-az-4bi" firstAttribute="top" secondItem="E9z-49-nYa" secondAttribute="bottom" constant="10" id="HVt-Yj-Jc4"/>
-                            <constraint firstItem="6MT-az-4bi" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" constant="10" id="Jhd-YK-Qhl"/>
+                            <constraint firstItem="6MT-az-4bi" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" id="Jhd-YK-Qhl"/>
                             <constraint firstItem="7nG-bv-0ex" firstAttribute="leading" secondItem="ht7-hC-mOx" secondAttribute="trailing" constant="10" id="Jox-gT-P79"/>
                             <constraint firstItem="xg8-HR-nc3" firstAttribute="trailing" secondItem="7nG-bv-0ex" secondAttribute="trailing" constant="10" id="LBN-kd-RaI"/>
                             <constraint firstItem="Lu2-Bs-kCu" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" constant="10" id="M6M-iH-raK"/>
@@ -470,7 +492,7 @@
                             <constraint firstItem="Lu2-Bs-kCu" firstAttribute="top" secondItem="6MT-az-4bi" secondAttribute="bottom" constant="10" id="Vm0-7M-VAh"/>
                             <constraint firstItem="Mf1-mF-f2I" firstAttribute="leading" secondItem="7nG-bv-0ex" secondAttribute="leading" id="YIG-xt-f8G"/>
                             <constraint firstItem="xnr-3B-PYB" firstAttribute="top" secondItem="ht7-hC-mOx" secondAttribute="bottom" constant="10" id="ZY9-Rm-BUB"/>
-                            <constraint firstItem="xg8-HR-nc3" firstAttribute="trailing" secondItem="6MT-az-4bi" secondAttribute="trailing" constant="10" id="ckS-Ws-N2u"/>
+                            <constraint firstItem="xg8-HR-nc3" firstAttribute="trailing" secondItem="6MT-az-4bi" secondAttribute="trailing" id="ckS-Ws-N2u"/>
                             <constraint firstItem="xnr-3B-PYB" firstAttribute="trailing" secondItem="ht7-hC-mOx" secondAttribute="trailing" id="eVB-Uc-Vny"/>
                             <constraint firstItem="ht7-hC-mOx" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" constant="10" id="f7c-0a-wbR"/>
                             <constraint firstItem="27o-HD-GIn" firstAttribute="leading" secondItem="xnr-3B-PYB" secondAttribute="trailing" constant="10" id="h5K-nc-dwg"/>
@@ -520,7 +542,7 @@
                                 </connections>
                             </button>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yIK-7w-b7P">
-                                <rect key="frame" x="10" y="109" width="394" height="694"/>
+                                <rect key="frame" x="0.0" y="109" width="414" height="694"/>
                                 <connections>
                                     <segue destination="AEi-KZ-cSf" kind="embed" identifier="dogsMainScreenTableViewController" id="Sf7-Qi-QCS"/>
                                 </connections>
@@ -536,9 +558,9 @@
                             <constraint firstItem="8b5-pw-vvl" firstAttribute="leading" secondItem="O1u-W8-tvY" secondAttribute="leading" constant="10" id="WX6-pO-S4O"/>
                             <constraint firstItem="O1u-W8-tvY" firstAttribute="bottom" secondItem="yIK-7w-b7P" secondAttribute="bottom" constant="10" id="Y2v-RJ-9TM"/>
                             <constraint firstItem="8b5-pw-vvl" firstAttribute="top" secondItem="O1u-W8-tvY" secondAttribute="top" constant="10" id="c0t-tf-JJ8"/>
-                            <constraint firstItem="yIK-7w-b7P" firstAttribute="leading" secondItem="O1u-W8-tvY" secondAttribute="leading" constant="10" id="ldO-Rv-WpW"/>
+                            <constraint firstItem="yIK-7w-b7P" firstAttribute="leading" secondItem="O1u-W8-tvY" secondAttribute="leading" id="ldO-Rv-WpW"/>
                             <constraint firstItem="8b5-pw-vvl" firstAttribute="leading" secondItem="O1u-W8-tvY" secondAttribute="leading" constant="10" id="tiC-Lx-51q"/>
-                            <constraint firstItem="O1u-W8-tvY" firstAttribute="trailing" secondItem="yIK-7w-b7P" secondAttribute="trailing" constant="10" id="yHx-IJ-8RA"/>
+                            <constraint firstItem="O1u-W8-tvY" firstAttribute="trailing" secondItem="yIK-7w-b7P" secondAttribute="trailing" id="yHx-IJ-8RA"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Dogs" image="pawTabBar" selectedImage="pawTabBar" id="cPa-gy-q4n"/>
@@ -555,21 +577,21 @@
             <objects>
                 <tableViewController storyboardIdentifier="Dogs Main Screen Embedded Table View" title="Dogs Main Screen Table View" id="AEi-KZ-cSf" customClass="DogsMainScreenTableViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" contentViewInsetsToSafeArea="NO" id="DkK-Io-vlc">
-                        <rect key="frame" x="0.0" y="0.0" width="394" height="694"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="694"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <viewLayoutGuide key="contentLayoutGuide" id="kT8-53-Cu8"/>
                         <viewLayoutGuide key="frameLayoutGuide" id="dO0-k2-qcN"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="empty" rowHeight="105" id="jwc-tS-HiW">
-                                <rect key="frame" x="0.0" y="28" width="394" height="105"/>
+                                <rect key="frame" x="0.0" y="28" width="414" height="105"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jwc-tS-HiW" id="jZg-6U-FHg">
-                                    <rect key="frame" x="0.0" y="0.0" width="394" height="105"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="105"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="mvG-zB-aCj">
-                                            <rect key="frame" x="0.0" y="0.0" width="394" height="105"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="105"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="104" id="UXG-Yf-o6B"/>
                                             </constraints>
@@ -584,20 +606,20 @@
                                 </tableViewCellContentView>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="16" reuseIdentifier="dogsMainScreenTableViewCellDogDisplay" id="tHZ-ho-5tn" customClass="DogsMainScreenTableViewCellDogDisplay" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="133" width="394" height="100.5"/>
+                                <rect key="frame" x="0.0" y="133" width="414" height="100.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" tableViewCell="tHZ-ho-5tn" id="G9A-nQ-CAR">
-                                    <rect key="frame" x="0.0" y="0.0" width="394" height="100.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="100.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ULV-hb-Xgp">
-                                            <rect key="frame" x="315" y="35" width="51" height="31"/>
+                                            <rect key="frame" x="335" y="35" width="51" height="31"/>
                                             <connections>
                                                 <action selector="didToggleDogSwitch:" destination="tHZ-ho-5tn" eventType="valueChanged" id="0gu-P4-Cwp"/>
                                             </connections>
                                         </switch>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="NAME" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8pH-6H-VGW">
-                                            <rect key="frame" x="65" y="10" width="200" height="45"/>
+                                            <rect key="frame" x="65" y="10" width="220" height="45"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="45" id="FFb-3B-q8F"/>
                                             </constraints>
@@ -606,7 +628,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DESCRIPTION" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="td6-5R-mpa">
-                                            <rect key="frame" x="65" y="60" width="200" height="30"/>
+                                            <rect key="frame" x="65" y="60" width="220" height="30"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="30" id="RGD-lR-30Q"/>
                                             </constraints>
@@ -625,7 +647,7 @@
                                             <imageReference key="image" image="pawFullResolution" symbolScale="large"/>
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XKu-qx-ZJC">
-                                            <rect key="frame" x="270" y="30.5" width="40" height="40"/>
+                                            <rect key="frame" x="290" y="30.5" width="40" height="40"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="40" id="03s-9a-zcF"/>
                                                 <constraint firstAttribute="width" secondItem="XKu-qx-ZJC" secondAttribute="height" id="XQq-eV-P06"/>
@@ -658,18 +680,18 @@
                                 <connections>
                                     <outlet property="dogDescription" destination="td6-5R-mpa" id="KzD-5J-16c"/>
                                     <outlet property="dogName" destination="8pH-6H-VGW" id="Mci-aa-oSh"/>
-                                    <outlet property="dogToggleSwitch" destination="ULV-hb-Xgp" id="v6N-ug-d5v"/>
+                                    <outlet property="dogToggleSwitch" destination="ULV-hb-Xgp" id="L54-w6-hUd"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="dogsMainScreenTableViewCellDogRequirement" id="Lai-xI-ipQ" customClass="DogsMainScreenTableViewCellDogRequirement" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="233.5" width="394" height="75.5"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="dogsMainScreenTableViewCellDogRequirementDisplay" id="Lai-xI-ipQ" customClass="DogsMainScreenTableViewCellDogRequirementDisplay" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="233.5" width="414" height="75.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" tableViewCell="Lai-xI-ipQ" id="g9N-na-X20">
-                                    <rect key="frame" x="0.0" y="0.0" width="394" height="75.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="75.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="REQ NAME" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Re-8c-KHz">
-                                            <rect key="frame" x="75" y="10" width="190" height="30"/>
+                                            <rect key="frame" x="75" y="10" width="210" height="30"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="30" id="3Ro-r0-kbC"/>
                                             </constraints>
@@ -678,13 +700,13 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bhe-v6-mKx">
-                                            <rect key="frame" x="315" y="22.5" width="51" height="31"/>
+                                            <rect key="frame" x="335" y="22.5" width="51" height="31"/>
                                             <connections>
-                                                <action selector="didToggleRequirementSwitch:" destination="Lai-xI-ipQ" eventType="valueChanged" id="eJv-qM-I9y"/>
+                                                <action selector="didToggleRequirementSwitch:" destination="Lai-xI-ipQ" eventType="valueChanged" id="VnM-MU-e7x"/>
                                             </connections>
                                         </switch>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME INTERVAL" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bK9-8i-YGQ">
-                                            <rect key="frame" x="75" y="45.5" width="190" height="20"/>
+                                            <rect key="frame" x="75" y="45.5" width="210" height="20"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="fL5-n7-OUt"/>
                                             </constraints>
@@ -711,7 +733,7 @@
                                             </constraints>
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4K7-YP-LCr">
-                                            <rect key="frame" x="270" y="18" width="40" height="40"/>
+                                            <rect key="frame" x="290" y="18" width="40" height="40"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="MYP-W2-hFU"/>
                                                 <constraint firstAttribute="width" secondItem="4K7-YP-LCr" secondAttribute="height" id="NTB-1U-gUj"/>
@@ -746,9 +768,9 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="requirementName" destination="9Re-8c-KHz" id="ldR-hc-lvq"/>
-                                    <outlet property="switch" destination="bhe-v6-mKx" id="Hzo-Lh-qzv"/>
-                                    <outlet property="timeInterval" destination="bK9-8i-YGQ" id="SSt-98-PI0"/>
+                                    <outlet property="requirementName" destination="9Re-8c-KHz" id="YuO-Lz-hzp"/>
+                                    <outlet property="requirementToggleSwitch" destination="bhe-v6-mKx" id="pBZ-5o-cNj"/>
+                                    <outlet property="timeInterval" destination="bK9-8i-YGQ" id="gFa-Aj-7Cz"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>

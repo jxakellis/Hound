@@ -36,23 +36,23 @@ enum DogManagerConstant {
         let defaultRequirementOne = Requirement()
         defaultRequirementOne.label = "Potty"
         defaultRequirementOne.description = "Take The Dog Out"
-        //defaultRequirementOne.interval = TimeInterval((3600*3)+(3600*(1/3)))
-        defaultRequirementOne.interval = TimeInterval(35)
+        defaultRequirementOne.interval = TimeInterval((3600*3)+(3600*(1/3)))
+        //defaultRequirementOne.interval = TimeInterval(50)
         defaultRequirementOne.setEnable(newEnableStatus: false)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementOne)
         
         let defaultRequirementTwo = Requirement()
         defaultRequirementTwo.label = "Food"
         defaultRequirementTwo.description = "Feed The Dog"
-        //defaultRequirementTwo.interval = TimeInterval((3600*7)+(3600*0.75))
-        defaultRequirementTwo.interval = TimeInterval(10)
+        defaultRequirementTwo.interval = TimeInterval((3600*7)+(3600*0.75))
+        //defaultRequirementTwo.interval = TimeInterval(20)
         defaultRequirementTwo.setEnable(newEnableStatus: true)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementTwo)
         
         let defaultRequirementThree = Requirement()
         defaultRequirementThree.label = "Brush"
         defaultRequirementThree.description = "Brush His Fur Out"
-        //defaultRequirementTwo.interval = TimeInterval((3600*7)+(3600*0.75))
+        //defaultRequirementThree.interval = TimeInterval((3600*7)+(3600*0.75))
         defaultRequirementThree.interval = TimeInterval(15)
         defaultRequirementThree.setEnable(newEnableStatus: true)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementThree)

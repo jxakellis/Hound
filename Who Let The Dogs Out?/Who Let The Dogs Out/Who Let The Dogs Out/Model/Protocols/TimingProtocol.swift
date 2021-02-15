@@ -17,19 +17,19 @@ protocol TimingProtocol {
     
     //init(dogManager: DogManager)
     
-    func willInitalize(dogManager: DogManager, didUnpause: Bool)
+    static func willInitalize(dogManager: DogManager, didUnpause: Bool)
     
-    func willReinitalize(dogManager: DogManager)
+    static func willReinitalize(dogManager: DogManager)
     
-    func willReinitalize(dogName: String, requirementName: String) throws
+    static func willReinitalize(dogName: String, requirementName: String) throws
     
     //func didExecuteTimer(sender: Timer)
     
-    func willTogglePause(dogManager: DogManager, newPauseStatus: Bool)
+    static func willTogglePause(dogManager: DogManager, newPauseStatus: Bool)
     
     //func invalidateAll()
     
-    func invalidate(dogName: String, requirementName: String) throws
+    static func invalidate(dogName: String, requirementName: String) throws
     
     
 }

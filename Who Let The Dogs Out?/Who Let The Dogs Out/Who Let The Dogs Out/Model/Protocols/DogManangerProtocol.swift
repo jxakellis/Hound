@@ -33,6 +33,8 @@ protocol DogManagerProtocol {
     mutating func changeDog(dogNameToBeChanged: String, newDog: Dog) throws
     
     func findDog(dogName dogToBeFound: String) throws -> Dog
+    
+    func findIndex(dogName dogToBeFound: String) throws -> Int
 }
 
 extension DogManagerProtocol {
@@ -40,24 +42,24 @@ extension DogManagerProtocol {
     //ASSUME DOG ADDED IS A VALID DOG, due to it having to go through the DogSpecificationManager to change properties.
     mutating func addDog(dogAdded: Dog) throws {
         /*
-        if try! dogAdded.dogSpecifications.getDogSpecification(key: "name") == nil{
-            throw DogManagerError.dogNameInvalid
-        }
+         if try! dogAdded.dogSpecifications.getDogSpecification(key: "name") == nil{
+         throw DogManagerError.dogNameInvalid
+         }
          */
-            
+        
         if try! dogAdded.dogSpecifications.getDogSpecification(key: "name") == ""{
             throw DogManagerError.dogNameBlank
         }
-            
+        
         else{
-         try dogs.forEach { (dog) in
-            if try! dog.dogSpecifications.getDogSpecification(key: "name").lowercased() == dogAdded.dogSpecifications.getDogSpecification(key: "name").lowercased(){
-                throw DogManagerError.dogNameAlreadyPresent
+            try dogs.forEach { (dog) in
+                if try! dog.dogSpecifications.getDogSpecification(key: "name").lowercased() == dogAdded.dogSpecifications.getDogSpecification(key: "name").lowercased(){
+                    throw DogManagerError.dogNameAlreadyPresent
                 }
             }
         }
         
-        dogs.append(dogAdded)
+        dogs.append(dogAdded.copy() as! Dog)
         
     }
     
@@ -98,27 +100,27 @@ extension DogManagerProtocol {
     }
     
     /*
-    mutating func changeDogName(dogNameToBeChanged: String, newDogName: String) throws{
-        var dogToBeChanged: (Bool, Int?) = (false, nil)
-        for i in 0..<dogs.count{
-            if try! dogs[i].dogSpecifications.getDogSpecification(key: "name").lowercased() == newDogName.lowercased(){
-                if dogToBeChanged.0 == true{
-                    throw DogManagerError.dogNameAlreadyPresent
-                }
-                else{
-                    dogToBeChanged.0 = true
-                    dogToBeChanged.1 = i
-                }
-            }
-        }
-        if dogToBeChanged.0 == false{
-            throw DogManagerError.dogNameNotPresent
-        }
-        else{
-            try dogs[dogToBeChanged.1!].dogSpecifications.changeDogSpecifications(key: "name", newValue: newDogName)
-        }
-    }
- */
+     mutating func changeDogName(dogNameToBeChanged: String, newDogName: String) throws{
+     var dogToBeChanged: (Bool, Int?) = (false, nil)
+     for i in 0..<dogs.count{
+     if try! dogs[i].dogSpecifications.getDogSpecification(key: "name").lowercased() == newDogName.lowercased(){
+     if dogToBeChanged.0 == true{
+     throw DogManagerError.dogNameAlreadyPresent
+     }
+     else{
+     dogToBeChanged.0 = true
+     dogToBeChanged.1 = i
+     }
+     }
+     }
+     if dogToBeChanged.0 == false{
+     throw DogManagerError.dogNameNotPresent
+     }
+     else{
+     try dogs[dogToBeChanged.1!].dogSpecifications.changeDogSpecifications(key: "name", newValue: newDogName)
+     }
+     }
+     */
     mutating func changeDog(dogNameToBeChanged: String, newDog: Dog) throws{
         var newDogIndex: Int?
         
@@ -133,7 +135,7 @@ extension DogManagerProtocol {
         }
         
         else{
-            dogs[newDogIndex!] = newDog
+            dogs[newDogIndex!] = newDog.copy() as! Dog
         }
     }
     
@@ -144,6 +146,15 @@ extension DogManagerProtocol {
             }
         }
         
+        throw DogManagerError.dogNameNotPresent
+    }
+    
+    func findIndex(dogName dogToBeFound: String) throws -> Int{
+        for d in 0..<dogs.count{
+            if try! dogs[d].dogSpecifications.getDogSpecification(key: "name") == dogToBeFound {
+                return d
+            }
+        }
         throw DogManagerError.dogNameNotPresent
     }
 }

@@ -43,7 +43,7 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
     //MARK: General Functions
     
     //Function used externally to setup dog
-    func dogSetup(dogPassed: Dog){
+    func setup(dogPassed: Dog){
         dog = dogPassed
         try! self.dogName.text = dogPassed.dogSpecifications.getDogSpecification(key: "name")
         try! self.dogDescription.text = dogPassed.dogSpecifications.getDogSpecification(key: "description")

@@ -137,6 +137,8 @@ protocol DogRequirementManagerProtocol {
     mutating func clearRequirements()
     
     func findRequirement(requirementName requirementToFind: String) throws -> Requirement
+    
+    func findIndex(requirementName requirementToFind: String) throws -> Int
 }
 
 extension DogRequirementManagerProtocol {
@@ -155,7 +157,7 @@ extension DogRequirementManagerProtocol {
             throw DogRequirementManagerError.requirementAlreadyPresent
         }
         else {
-            requirements.append(newRequirement)
+            requirements.append(newRequirement.copy() as! Requirement)
         }
         
     }
@@ -208,6 +210,15 @@ extension DogRequirementManagerProtocol {
         for r in 0..<requirements.count{
             if requirements[r].label == requirementToFind {
                 return requirements[r]
+            }
+        }
+        throw DogRequirementManagerError.requirementNotPresent
+    }
+    
+    func findIndex(requirementName requirementToFind: String) throws -> Int {
+        for r in 0..<requirements.count{
+            if requirements[r].label == requirementToFind {
+                return r
             }
         }
         throw DogRequirementManagerError.requirementNotPresent

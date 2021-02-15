@@ -10,7 +10,7 @@ import UIKit
 
 extension String {
     //Converts a time interval to a more readable string to display, e.g. 3600.0 Time interval to 1 hour 0 minutes or 7320.0 to 2 hours 2 minutes
-    static func convertTimeIntervalToReadable(interperateTimeInterval: TimeInterval) -> String {
+    static func convertTimeIntervalToReadable(interperateTimeInterval: TimeInterval, showSeconds: Bool = false) -> String {
         
         let intTime = abs(Int(interperateTimeInterval.rounded()))
         
@@ -34,11 +34,14 @@ extension String {
             readableString.append("\(numMinutes) Minute ")
         }
         
-        if numSeconds > 1{
-            readableString.append("\(numSeconds) Seconds")
-        }
-        else if numSeconds == 1 {
-            readableString.append("\(numSeconds) Second")
+        
+        if showSeconds == true{
+            if numSeconds > 1 || numSeconds == 0 {
+                readableString.append("\(numSeconds) Seconds")
+            }
+            else if numSeconds == 1 {
+                readableString.append("\(numSeconds) Second")
+            }
         }
         
         return readableString

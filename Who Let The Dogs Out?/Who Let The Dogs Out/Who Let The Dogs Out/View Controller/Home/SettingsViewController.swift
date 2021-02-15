@@ -16,8 +16,10 @@ class SettingsViewController: UIViewController {
 
     var delegate: SettingsViewControllerDelegate! = nil
     
+    //Switch for pause all alarms
     @IBOutlet weak var isPaused: UISwitch!
     
+    //If the pause all alarms switch it triggered, calls thing function
     @IBAction func didTogglePause(_ sender: Any) {
         delegate.didTogglePause(newPauseState: isPaused.isOn)
     }

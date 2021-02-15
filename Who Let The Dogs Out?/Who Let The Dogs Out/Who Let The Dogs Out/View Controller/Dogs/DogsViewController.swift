@@ -94,7 +94,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             self.updateDogManagerDependents()
         }
         
-        if !(sender is MainTabBarViewController) {
+        if !(sender is MainTabBarViewController)  {
             delegate.didUpdateDogManager(newDogManager: getDogManager(), sender: sender)
         }
         

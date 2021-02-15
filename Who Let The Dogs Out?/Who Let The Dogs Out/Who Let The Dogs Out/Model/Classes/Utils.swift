@@ -53,6 +53,8 @@ class ErrorProcessor{
     
     static func alertForError(sender: AnyObject = Utils.sender, message: String){
         
+        Utils.willShowAlert(sender: sender, title: "Error", message: message)
+        /*
         let targetViewController: UIViewController
         
         if !(sender is UIViewController) {
@@ -74,6 +76,8 @@ class ErrorProcessor{
         else{
             targetViewController.present(alertController, animated: true, completion: nil)
         }
+         */
+        
     }
     
     static func handleError(error: Error, sender: AnyObject){

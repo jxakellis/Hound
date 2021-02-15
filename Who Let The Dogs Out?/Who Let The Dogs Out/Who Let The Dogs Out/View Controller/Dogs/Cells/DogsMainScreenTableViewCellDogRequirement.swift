@@ -8,30 +8,29 @@
 
 import UIKit
 
-protocol DogsMainScreenTableViewCellDogRequirementDelegate {
+protocol DogsMainScreenTableViewCellDogRequirementDisplayDelegate {
     func didToggleRequirementSwitch(parentDogName: String, requirementName: String, isEnabled: Bool)
     func didClickTrash(parentDogName: String, requirementName: String)
 }
 
-class DogsMainScreenTableViewCellDogRequirement: UITableViewCell {
-    
+class DogsMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
     
     //MARK:  Properties
     var requirement: Requirement = Requirement()
     
     var parentDogName: String = ""
     
-    var delegate: DogsMainScreenTableViewCellDogRequirementDelegate! = nil
+    var delegate: DogsMainScreenTableViewCellDogRequirementDisplayDelegate! = nil
     
     //MARK: IB Link
     
     @IBOutlet weak var requirementName: UILabel!
     @IBOutlet weak var timeInterval: UILabel!
-    @IBOutlet weak var `switch`: UISwitch!
+    @IBOutlet weak var requirementToggleSwitch: UISwitch!
     
     //When the on off switch is toggled
     @IBAction func didToggleRequirementSwitch(_ sender: Any) {
-        delegate.didToggleRequirementSwitch(parentDogName: self.parentDogName, requirementName: requirement.label, isEnabled: self.switch.isOn)
+        delegate.didToggleRequirementSwitch(parentDogName: self.parentDogName, requirementName: requirement.label, isEnabled: self.requirementToggleSwitch.isOn)
     }
     @IBAction func didClickTrash(_ sender: Any) {
         delegate.didClickTrash(parentDogName: self.parentDogName, requirementName: requirement.label)
@@ -40,12 +39,17 @@ class DogsMainScreenTableViewCellDogRequirement: UITableViewCell {
     //MARK: General Functions
     
     //Setup function that sets up the different IBOutlet properties
-    func requirementSetup(parentDogName: String, requirementPassed: Requirement){
+    func setup(parentDogName: String, requirementPassed: Requirement){
         self.parentDogName = parentDogName
         self.requirement = requirementPassed
         self.requirementName.text = requirementPassed.label
-        self.timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.interval)
-        self.switch.isOn = requirementPassed.getEnable()
+        if requirementPassed.interval < 60 {
+            self.timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.interval, showSeconds: true)
+        }
+        else {
+            self.timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.interval)
+        }
+        self.requirementToggleSwitch.isOn = requirementPassed.getEnable()
     }
     
     //MARK: Default Functionality

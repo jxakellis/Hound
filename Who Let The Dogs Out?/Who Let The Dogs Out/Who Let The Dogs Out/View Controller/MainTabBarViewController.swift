@@ -10,10 +10,12 @@ import UIKit
 
 class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsViewControllerDelegate, TimingManagerDelegate, SettingsViewControllerDelegate {
     
+    
+    
     //MARK: SettingsViewControllerDelegate
     
     func didTogglePause(newPauseState: Bool) {
-        timingManager?.willTogglePause(dogManager: getDogManager(), newPauseStatus: newPauseState)
+        TimingManager.willTogglePause(dogManager: getDogManager(), newPauseStatus: newPauseState)
     }
     
     //MARK: TimingManagerDelegate && DogsViewControllerDelegate
@@ -25,6 +27,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     //MARK: Master Dog Manager
     
     private var masterDogManager: DogManager = DogManager()
+    
+    static var staticDogManager: DogManager = DogManager()
     
     //Get method, returns a copy of dogManager to remove possible editting of dog manager through class reference type
     func getDogManager() -> DogManager {
@@ -40,27 +44,29 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         //DogsViewController
         
         masterDogManager = newDogManager.copy() as! DogManager
+        MainTabBarViewController.staticDogManager = newDogManager.copy() as! DogManager
         
-        if !(sender is MainTabBarViewController) && !(sender is TimingManager){
-            self.updateDogManagerDependents()
-        }
-        
-        if sender is TimingManager {
+        if sender is TimingManager.Type || sender is TimingManager{
             dogsViewController.setDogManager(newDogManager: getDogManager(), sender: self)
         }
+        else if !(sender is MainTabBarViewController){
+                self.updateDogManagerDependents()
+        }
+        
+        
     }
     
     func updateDogManagerDependents() {
-        timingManager?.willReinitalize(dogManager: getDogManager())
+        TimingManager.willReinitalize(dogManager: getDogManager())
     }
     
     //MARK: Main
     
-    var timingManager: TimingManager? = nil
-    
     var dogsViewController: DogsViewController! = nil
     
     var settingsViewController: SettingsViewController! = nil
+    
+    var homeViewController: HomeViewController! = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,19 +74,19 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         setDogManager(newDogManager: DogManagerConstant.defaultDogManager, sender: self)
         
         dogsViewController = self.viewControllers![1] as? DogsViewController
-        
         dogsViewController.delegate = self
         dogsViewController.setDogManager(newDogManager: getDogManager(), sender: self)
         
         settingsViewController = self.viewControllers![2] as? SettingsViewController
-        
         settingsViewController.delegate = self
+        
+        homeViewController = self.viewControllers![0] as? HomeViewController
+        
         
         Utils.sender = self
         
-        timingManager = TimingManager()
-        timingManager?.delegate = self
-        timingManager?.willInitalize(dogManager: getDogManager())
+        TimingManager.delegate = self
+        TimingManager.willInitalize(dogManager: getDogManager())
     }
     
     /*
