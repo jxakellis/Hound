@@ -59,6 +59,8 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     
     @IBOutlet weak var willAddDog: UIButton!
     
+    @IBOutlet weak var willAddDogBackground: UIButton!
+    
     @IBAction func willAddDog(_ sender: Any) {
         
     }
@@ -111,8 +113,8 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         super.viewDidLoad()
         
         updateDogManagerDependents()
-        
-        willAddDog.layer.cornerRadius = 8.0
+        self.view.bringSubviewToFront(willAddDogBackground)
+        self.view.bringSubviewToFront(willAddDog)
     }
     
     // MARK: - Navigation

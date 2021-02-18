@@ -1,12 +1,24 @@
 
 Future Implementation Needed
 
-DogRequirementManager
-    extension DogRequirementProtocol
-        mutating func resetLabel()
-            Goes hand in hand with future error about two dogs being set to same name of "", build system
-            
-DogSpecificationManager
-    extension DogSpecificationManagerProtocol
-        func checkDogSpecificationValueValid(key: String?, value: String?) -> Bool
-            Build system to check if a value is valid, e.g. if the key is "name" check if the value provided for name is valid, if its "description" check if the description is valid. Build a flexible system to adapt to changing keys, possibly implement constants for the keys too so they are constant and known.
+
+All Pages
+Have text at top to tell what page it is, e.g. at top of home page say home (or maybe active alarms?)
+
+Dog Model
+Remove dog breed
+Possible remove dog description
+
+Dogs Page
+remove weird up arrows to denote sublist, make dog name a tad bigger instead and it should be good
+
+Home + Dogs Page
+Add blue circle dog/plus button to the bottom right, makes it much clearer
+
+
+
+Bugs
+
+Fix bug where when an error is produced from adding a dog, the alert of that error does not dismiss the view, right now if you produce an error e.g. like a second "Fido" AlertForError or whatever will display the error but before is presents the error is dismisses any currently presented view to show itself, find out how to stack ontop?
+
+When adding a dog and editting a text field, e.g. the name or description, if you click elsewhere to do something else, it does not dismiss the keyboard that pops up, make it so if somewhere else if clicked is resigns the first responder. Note, this is also a bug inside the embedded requirement/need adding view, so address there too.
