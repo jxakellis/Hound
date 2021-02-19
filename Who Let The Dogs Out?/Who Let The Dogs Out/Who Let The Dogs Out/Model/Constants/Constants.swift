@@ -13,12 +13,10 @@ enum DogConstant {
     //convert to tuple so the defaults for the keys are directly linked.
     //static let defaultLabel = ""
     //static let defaultDescription = ""
-    //static let defaultBreed = ""
     private static let nameTuple: (String, String) = ("name", "Fido")
     private static let descriptionTuple: (String, String) = ("description", "Fiesty")
-    private static let breedTuple: (String, String) = ("breed", "Golden Retriever")
     static let defaultEnable: Bool = true
-    static let defaultDogSpecificationKeys: [(String, String)] = [nameTuple, descriptionTuple, breedTuple]
+    static let defaultDogSpecificationKeys: [(String, String)] = [nameTuple, descriptionTuple]
 }
 
 enum RequirementConstant {

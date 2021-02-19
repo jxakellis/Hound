@@ -10,9 +10,14 @@ import UIKit
 
 class HomeViewController: UIViewController {
 
+    @IBOutlet weak var willLog: UIButton!
+    @IBOutlet weak var willLogBackground: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        self.view.bringSubviewToFront(willLogBackground)
+        self.view.bringSubviewToFront(willLog)
         // Do any additional setup after loading the view.
     }
     

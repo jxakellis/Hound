@@ -28,7 +28,6 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         
         dogsAddDogViewController.didPassRequirements(passedRequirements: getDogManager().dogs[sectionIndexOfDog].dogRequirments)
         
-        dogsAddDogViewController.addDogButton.backgroundColor = .systemGreen
         dogsAddDogViewController.addDogButton.setTitle("Update Dog", for: .normal)
         
     }
@@ -60,10 +59,6 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     @IBOutlet weak var willAddDog: UIButton!
     
     @IBOutlet weak var willAddDogBackground: UIButton!
-    
-    @IBAction func willAddDog(_ sender: Any) {
-        
-    }
     
     //MARK: Properties
     

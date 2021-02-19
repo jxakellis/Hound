@@ -19,7 +19,8 @@ class TimingManager: TimingProtocol {
     static var delegate: TimingManagerDelegate! = nil
     
     //saves the state when all alarms are paused
-    static var pauseState: (Date?, Bool) = (nil, false)
+    //(Last Pause, Is Currently Paused, Last Unpause)
+    static var pauseState: (Date?, Bool, Date?) = (nil, false, nil)
     
     //Corrolates to dogManager
     //Dictionary<dogName: String, Dictionary<requirementName: String, associatedTimer: Timer>>
@@ -159,6 +160,7 @@ class TimingManager: TimingProtocol {
             
         }
         else {
+            self.pauseState.2 = Date()
             self.pauseState.1 = false
             willInitalize(dogManager: dogManager, didUnpause: true)
         }
@@ -168,8 +170,16 @@ class TimingManager: TimingProtocol {
         let sudoDogManager = dogManager
         for dogKey in timerDictionary.keys{
             for requirementKey in timerDictionary[dogKey]!.keys {
+                
                 var sudoRequirement = try! sudoDogManager.findDog(dogName: dogKey).dogRequirments.findRequirement(requirementName: requirementKey)
-                sudoRequirement.changeIntervalElapsed(intervalElapsed: sudoRequirement.lastExecution.distance(to: pauseState.0!))
+                
+                if sudoRequirement.intervalElapsed <= 0.01 {
+                    sudoRequirement.changeIntervalElapsed(intervalElapsed: sudoRequirement.lastExecution.distance(to: pauseState.0!))
+                }
+                else{
+                    sudoRequirement.changeIntervalElapsed(intervalElapsed: (sudoRequirement.intervalElapsed + pauseState.2!.distance(to: (pauseState.0!))))
+                }
+                
             }
         }
         

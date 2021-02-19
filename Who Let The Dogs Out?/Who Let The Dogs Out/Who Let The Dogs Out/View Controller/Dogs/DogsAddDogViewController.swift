@@ -44,18 +44,18 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     @IBOutlet weak var dogName: UITextField!
     @IBOutlet weak var dogDescription: UITextField!
-    @IBOutlet weak var dogBreed: UITextField!
     
     @IBOutlet weak var embeddedTableView: UIView!
+    
+    @IBOutlet weak var addDogButtonBackground: UIButton!
     @IBOutlet weak var addDogButton: UIButton!
     
-    //When the add button is clicked, runs a series of checks. Makes sure the name, description, and breed of the dog is valid, and if so then passes information up chain of view controllers to DogsViewController.
+    //When the add button is clicked, runs a series of checks. Makes sure the name and description of the dog is valid, and if so then passes information up chain of view controllers to DogsViewController.
     @IBAction func willAddDog(_ sender: Any) {
         
         do{
             try dog.dogSpecifications.changeDogSpecifications(key: "name", newValue: dogName.text)
             try dog.dogSpecifications.changeDogSpecifications(key: "description", newValue: dogDescription.text)
-            try dog.dogSpecifications.changeDogSpecifications(key: "breed", newValue: dogBreed.text)
         }
         catch {
             ErrorProcessor.handleError(error: error, sender: self)
@@ -84,6 +84,11 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.setupToHideKeyboardOnTapOnView()
+        
+        self.view.bringSubviewToFront(addDogButtonBackground)
+        self.view.bringSubviewToFront(addDogButton)
+        
         willInitalize()
         
         ibOutletSetup()
@@ -91,25 +96,17 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     private func ibOutletSetup(){
         dogName.delegate = self
-        dogName.returnKeyType = .done
         dogDescription.delegate = self
-        dogDescription.returnKeyType = .done
-        dogBreed.delegate = self
-        dogBreed.returnKeyType = .done
-        
-        addDogButton.layer.cornerRadius = 8.0
     }
     
     func willInitalize(){
         if updateDogTuple.0 == true {
             try! dogName.text = dog.dogSpecifications.getDogSpecification(key: "name")
             try! dogDescription.text = dog.dogSpecifications.getDogSpecification(key: "description")
-            try! dogBreed.text = dog.dogSpecifications.getDogSpecification(key: "breed")
         }
         else{
             dogName.text = "Fido"
             dogDescription.text = "Friendly"
-            dogBreed.text = "Golden Retriever"
         }
     }
     

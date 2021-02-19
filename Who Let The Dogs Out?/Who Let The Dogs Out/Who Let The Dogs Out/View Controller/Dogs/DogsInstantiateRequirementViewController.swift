@@ -13,7 +13,13 @@ protocol DogsInstantiateRequirementViewControllerDelegate {
     func didAddToList (requirement: Requirement) throws
 }
 
-class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDelegate {
+class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate{
+    
+    //MARK: UIGestureRecognizerDelegate
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
     
     //MARK: UITextFieldDelegate
     
@@ -22,15 +28,20 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
         return false
     }
     
+    @IBAction func gestureRecognizer(_ sender: Any) {
     
+    }
     //MARK: Properties
     
     var delegate: DogsInstantiateRequirementViewControllerDelegate! = nil
     
-    @IBOutlet private weak var addToList: UIButton!
     @IBOutlet private weak var requirementName: UITextField!
     @IBOutlet private weak var requirementDescription: UITextField!
     @IBOutlet private weak var requirementInterval: UIDatePicker!
+    
+    @IBAction func requirementIntervalValueChanged(_ sender: Any) {
+        self.dismissKeyboard()
+    }
     
     //Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured requirement back to table view.
     @IBAction private func didAddToList(_ sender: Any) {
@@ -51,14 +62,23 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //Keyboard first responder management
+        self.setupToHideKeyboardOnTapOnView()
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.delegate = self
+        requirementInterval.addGestureRecognizer(tap)
+        
         defaults()
         
         requirementName.delegate = self
-        requirementName.returnKeyType = .done
-        
         requirementDescription.delegate = self
-        requirementDescription.returnKeyType = .done
         
+    }
+    
+    @objc internal override func dismissKeyboard() {
+        let mainTabBarViewController = Utils.sender as! MainTabBarViewController
+        mainTabBarViewController.dogsViewController.presentedViewController?.dismissKeyboard()
     }
     
     //default values and configs
@@ -66,7 +86,5 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
         requirementName.text = RequirementConstant.defaultLabel
         requirementDescription.text = RequirementConstant.defaultDescription
         requirementInterval.countDownDuration = TimeInterval(RequirementConstant.defaultTimeInterval)
-        
-        addToList.layer.cornerRadius = 8.0
     }
 }

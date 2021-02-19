@@ -41,7 +41,7 @@ class Dog: NSCopying, EnableProtocol {
     
     //MARK: Properties
     
-    //dictionary of specifications for a dog, e.g. "name", "breed", "description"
+    //dictionary of specifications for a dog, e.g. "name", "description"
     var dogSpecifications: SpecificationManager = SpecificationManager()
     
     //RequirmentManager that handles all specified requirements for a dog, e.g. being taken to the outside every time interval or being fed.

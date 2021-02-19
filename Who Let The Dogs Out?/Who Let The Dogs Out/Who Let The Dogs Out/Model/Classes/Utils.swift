@@ -38,10 +38,15 @@ class Utils
         alertController.addAction(alertAction)
         
         if targetViewController.presentedViewController?.isViewLoaded == true{
-            targetViewController.presentedViewController?.dismiss(animated: true, completion: {
+            if targetViewController.presentedViewController is DogsAddDogViewController {
+                targetViewController.presentedViewController?.present(alertController, animated: true, completion: nil)
+            }
+            else{
+                targetViewController.presentedViewController?.dismiss(animated: true, completion: {
                     targetViewController.present(alertController, animated: true, completion: nil)
-                
-            })
+                    
+                })
+            }
         }
         else{
             targetViewController.present(alertController, animated: true, completion: nil)
@@ -55,27 +60,27 @@ class ErrorProcessor{
         
         Utils.willShowAlert(sender: sender, title: "Error", message: message)
         /*
-        let targetViewController: UIViewController
-        
-        if !(sender is UIViewController) {
-            targetViewController = Utils.sender
-        }
-        else{
-            targetViewController = sender as! UIViewController
-        }
-        
-        let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        let alertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-        alertController.addAction(alertAction)
-        
-        if targetViewController.presentedViewController?.isViewLoaded == true{
-            targetViewController.presentedViewController?.dismiss(animated: true, completion: {
-                targetViewController.present(alertController, animated: true, completion: nil)
-            })
-        }
-        else{
-            targetViewController.present(alertController, animated: true, completion: nil)
-        }
+         let targetViewController: UIViewController
+         
+         if !(sender is UIViewController) {
+         targetViewController = Utils.sender
+         }
+         else{
+         targetViewController = sender as! UIViewController
+         }
+         
+         let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+         let alertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+         alertController.addAction(alertAction)
+         
+         if targetViewController.presentedViewController?.isViewLoaded == true{
+         targetViewController.presentedViewController?.dismiss(animated: true, completion: {
+         targetViewController.present(alertController, animated: true, completion: nil)
+         })
+         }
+         else{
+         targetViewController.present(alertController, animated: true, completion: nil)
+         }
          */
         
     }
@@ -100,7 +105,7 @@ class ErrorProcessor{
             return
         }
         else {
-            ErrorProcessor.alertForError(message: "Unable to handle error from \(NSStringFromClass(sender.classForCoder)) with ErrorProcessor of error type: \(error.localizedDescription)")
+            ErrorProcessor.alertForError(sender: sender, message: "Unable to handle error from \(NSStringFromClass(sender.classForCoder)) with ErrorProcessor of error type: \(error.localizedDescription)")
         }
     }
     
@@ -117,50 +122,38 @@ class ErrorProcessor{
          case invalidNewValue(String)
          */
         if case DogSpecificationManagerError.nilKey = error {
-            ErrorProcessor.alertForError(message: "Big Time Error! Nil Key from \(NSStringFromClass(sender.classForCoder))")
+            ErrorProcessor.alertForError(sender: sender, message: "Big Time Error! Nil Key from \(NSStringFromClass(sender.classForCoder))")
             return true
         }
         else if case DogSpecificationManagerError.blankKey = error {
-            ErrorProcessor.alertForError(message: "Big Time Error! Blank Key from \(NSStringFromClass(sender.classForCoder))")
+            ErrorProcessor.alertForError(sender: sender, message: "Big Time Error! Blank Key from \(NSStringFromClass(sender.classForCoder))")
             return true
         }
         else if case DogSpecificationManagerError.invalidKey = error{
-            ErrorProcessor.alertForError(message: "Big Time Error! Invalid Key from \(NSStringFromClass(sender.classForCoder))")
+            ErrorProcessor.alertForError(sender: sender, message: "Big Time Error! Invalid Key from \(NSStringFromClass(sender.classForCoder))")
             return true
         }
         else if case DogSpecificationManagerError.nilNewValue("name") = error {
-            ErrorProcessor.alertForError(message: "Your dog has an invalid name, try typing something else in!")
+            ErrorProcessor.alertForError(sender: sender, message: "Your dog has an invalid name, try typing something else in!")
             return true
         }
         else if case DogSpecificationManagerError.blankNewValue("name") = error {
-            ErrorProcessor.alertForError(message: "Your dog has a blank name, try typing something in!")
+            ErrorProcessor.alertForError(sender: sender, message: "Your dog has a blank name, try typing something in!")
             return true
         }
-        //Do not punish for an empty description or breed, theoretically possible to happen though so added
+        //Do not punish for an empty description, theoretically possible to happen though so added
         else if case DogSpecificationManagerError.nilNewValue("description") = error {
-            ErrorProcessor.alertForError(message: "Your dog has a invalid description, try typing something else in!")
-            return true
-        }
-        else if case DogSpecificationManagerError.nilNewValue("breed") = error {
-            ErrorProcessor.alertForError(message: "Your dog has a invalid breed, try typing something else in!")
+            ErrorProcessor.alertForError(sender: sender, message: "Your dog has a invalid description, try typing something else in!")
             return true
         }
         //These should not be needed but are here as they are theoretically possible
         else if case DogSpecificationManagerError.blankNewValue("description") = error {
-            ErrorProcessor.alertForError(message: "Your dog has a blank description, try typing something in!")
-            return true
-        }
-        else if case DogSpecificationManagerError.blankNewValue("breed") = error {
-            ErrorProcessor.alertForError(message: "Your dog has a blank breed, try typing something in!")
+            ErrorProcessor.alertForError(sender: sender, message: "Your dog has a blank description, try typing something in!")
             return true
         }
         //These should not be needed but are here as they are theoretically possible
         else if case DogSpecificationManagerError.invalidNewValue("description") = error {
-            ErrorProcessor.alertForError(message: "Your dog has an invalid description, try typing something else in!")
-            return true
-        }
-        else if case DogSpecificationManagerError.invalidNewValue("breed") = error {
-            ErrorProcessor.alertForError(message: "Your dog has an invalid breed, try typing something else in!")
+            ErrorProcessor.alertForError(sender: sender, message: "Your dog has an invalid description, try typing something else in!")
             return true
         }
         else{
@@ -177,19 +170,19 @@ class ErrorProcessor{
          case dogNameBlank
          */
         if case DogManagerError.dogNameNotPresent = error {
-            ErrorProcessor.alertForError(message: "Could not find a match for a dog matching your name!")
+            ErrorProcessor.alertForError(sender: sender, message: "Could not find a match for a dog matching your name!")
             return true
         }
         else if case DogManagerError.dogNameAlreadyPresent = error {
-            ErrorProcessor.alertForError(message: "Your dog's name is already present, please try a different one.")
+            ErrorProcessor.alertForError(sender: sender, message: "Your dog's name is already present, please try a different one.")
             return true
         }
         else if case DogManagerError.dogNameInvalid = error {
-            ErrorProcessor.alertForError(message: "Your dog's name is invalid, please try a different one.")
+            ErrorProcessor.alertForError(sender: sender, message: "Your dog's name is invalid, please try a different one.")
             return true
         }
         else if case DogManagerError.dogNameBlank = error {
-            ErrorProcessor.alertForError(message: "Your dog's name is blank, try typing something in.")
+            ErrorProcessor.alertForError(sender: sender, message: "Your dog's name is blank, try typing something in.")
             return true
         }
         else{
@@ -205,15 +198,15 @@ class ErrorProcessor{
          case intervalInvalid
          */
         if case DogRequirementError.labelInvalid = error {
-            ErrorProcessor.alertForError(message: "Your dog's requirement name is invalid, please try a different one.")
+            ErrorProcessor.alertForError(sender: sender, message: "Your dog's requirement name is invalid, please try a different one.")
             return true
         }
         else if case DogRequirementError.descriptionInvalid = error {
-            ErrorProcessor.alertForError(message: "Your dog's requirement description is invalid, please try a different one.")
+            ErrorProcessor.alertForError(sender: sender, message: "Your dog's requirement description is invalid, please try a different one.")
             return true
         }
         else if case DogRequirementError.intervalInvalid = error {
-            ErrorProcessor.alertForError(message: "Your dog's countdown time is invalid, please try a different one.")
+            ErrorProcessor.alertForError(sender: sender, message: "Your dog's countdown time is invalid, please try a different one.")
             return true
         }
         else{
@@ -229,15 +222,15 @@ class ErrorProcessor{
          case requirementInvalid
          */
         if case DogRequirementManagerError.requirementAlreadyPresent = error {
-            ErrorProcessor.alertForError(message: "Your requirement's name is already present, please try a different one.")
+            ErrorProcessor.alertForError(sender: sender, message: "Your requirement's name is already present, please try a different one.")
             return true
         }
         else if case DogRequirementManagerError.requirementNotPresent = error{
-            ErrorProcessor.alertForError(message: "Could not find a match for your requirement!")
+            ErrorProcessor.alertForError(sender: sender, message: "Could not find a match for your requirement!")
             return true
         }
         else if case DogRequirementManagerError.requirementInvalid = error {
-            ErrorProcessor.alertForError(message: "Your requirement is invalid, please try something different.")
+            ErrorProcessor.alertForError(sender: sender, message: "Your requirement is invalid, please try something different.")
             return true
         }
         else{
