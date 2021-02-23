@@ -8,9 +8,17 @@
 
 import UIKit
 
+protocol HomeMainScreenTableViewControllerDelegate {
+    func didSelectRow(sender: AnyObject)
+    func didDeselectAllRows(sender: AnyObject)
+}
+
 class HomeMainScreenTableViewController: UITableViewController {
     
+    //MARK: Calculated Properties
+    
     private var activeDogManager: DogManager {
+        ///MainTabBarViewController's dogManager copied and transformed to have only active requirements of active dogs present
         var dogManager = DogManager()
         
         for d in 0..<MainTabBarViewController.staticDogManager.dogs.count {
@@ -34,7 +42,8 @@ class HomeMainScreenTableViewController: UITableViewController {
         return dogManager
     }
     
-    private var activeTimers: Int{
+     var activeTimers: Int{
+        ///Returns number of active timers
         var count = 0
         for d in 0..<MainTabBarViewController.staticDogManager.dogs.count {
             guard MainTabBarViewController.staticDogManager.dogs[d].getEnable() == true else{
@@ -53,6 +62,8 @@ class HomeMainScreenTableViewController: UITableViewController {
     }
     
     private func timerPriority(priorityIndex: Int) -> (String, Requirement) {
+        ///Returns parentDogName and Requirement for a given index of priority sorted version of activeDogManager, timer to execute soonest is index 0
+        
         var assortedTimers: [(String, Requirement)] = []
         
         let activeDogManagerCopy: DogManager = self.activeDogManager.copy() as! DogManager
@@ -79,11 +90,20 @@ class HomeMainScreenTableViewController: UITableViewController {
         return assortedTimers[priorityIndex]
     }
     
+    //MARK: Properties
+    
+    private var loopTimer: Timer?
+    
+    var delegate: HomeMainScreenTableViewControllerDelegate! = nil
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.tableView.allowsSelection = false
         self.tableView.separatorInset = UIEdgeInsets.zero
+    
+        tableView.dataSource = self
+        tableView.delegate = self
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
         
@@ -91,28 +111,55 @@ class HomeMainScreenTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
-    var loopTimer: Timer?
-    
-    override func viewDidAppear(_ animated: Bool) {
-        loopTimer = Timer.init(fireAt: Date(), interval: TimeInterval(1), target: self, selector: #selector(self.reloadTable), userInfo: nil, repeats: true)
-        
-        RunLoop.main.add(loopTimer!, forMode: .default)
-        
+    override func viewWillAppear(_ animated: Bool) {
         if self.activeTimers == 0 {
             self.tableView.separatorStyle = .none
+            self.tableView.allowsSelection = false
         }
         else if self.activeTimers > 0 {
             self.tableView.separatorStyle = .singleLine
+            self.tableView.allowsMultipleSelection = true
         }
-        self.tableView.reloadData()
+        
+        self.reloadTable()
+        
+        loopTimer = Timer.init(fireAt: Date(), interval: TimeInterval(1), target: self, selector: #selector(self.reloadTable), userInfo: nil, repeats: true)
+        
+        RunLoop.main.add(loopTimer!, forMode: .default)
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        loopTimer?.invalidate()
+    override func viewWillDisappear(_ animated: Bool) {
+        loopTimer!.invalidate()
     }
     
     @objc private func reloadTable(){
+        ///Reloads the tableViews data, has to persist any selected rows so tableView.reloadData() is not sufficent as it tosses the information
+        let selectedIndexPaths = self.tableView.indexPathsForSelectedRows
+        
         self.tableView.reloadData()
+        
+        //if timer is not implemented, constant alerts about symbolic breakpoint at UITableViewAlertForCellForRowAtIndexPathAccessDuringUpdate due to the tableView.reloadData() above
+        if selectedIndexPaths != nil{
+            let timer = Timer(fireAt: Date(), interval: 0, target: self, selector: #selector(selectIndexPaths(sender:)), userInfo: ["selectedIndexPaths" : selectedIndexPaths!], repeats: false)
+            
+            RunLoop.main.add(timer, forMode: .default)
+        }
+    }
+    
+    @objc private func selectIndexPaths(sender: Timer){
+        
+        guard let parsedDictionary = sender.userInfo as? [String: [IndexPath]]
+        else{
+            print("error HMCTVC selectIndexPaths")
+            return
+        }
+        
+        let selectedIndexPaths: [IndexPath] = parsedDictionary["selectedIndexPaths"]!
+        
+        for selectedIndexPath in selectedIndexPaths{
+            self.tableView.selectRow(at: selectedIndexPath, animated: false, scrollPosition: .none)
+        }
+        
     }
     
     // MARK: - Table view data source
@@ -148,6 +195,17 @@ class HomeMainScreenTableViewController: UITableViewController {
         }
     }
     
+    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        if self.tableView.indexPathsForSelectedRows == nil {
+            delegate.didDeselectAllRows(sender: self)
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if self.tableView.indexPathsForSelectedRows?.count == 1 {
+            delegate.didSelectRow(sender: self)
+        }
+    }
     
     /*
      // Override to support conditional editing of the table view.

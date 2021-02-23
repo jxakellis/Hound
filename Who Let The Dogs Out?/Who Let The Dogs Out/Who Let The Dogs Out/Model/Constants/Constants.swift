@@ -34,8 +34,8 @@ enum DogManagerConstant {
         let defaultRequirementOne = Requirement()
         defaultRequirementOne.label = "Potty"
         defaultRequirementOne.description = "Take The Dog Out"
-        defaultRequirementOne.interval = TimeInterval((3600*3)+(3600*(1/3)))
-        //defaultRequirementOne.interval = TimeInterval(50)
+        //defaultRequirementOne.interval = TimeInterval((3600*3)+(3600*(1/3)))
+        defaultRequirementOne.interval = TimeInterval(35)
         defaultRequirementOne.setEnable(newEnableStatus: false)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementOne)
         

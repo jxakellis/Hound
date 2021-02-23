@@ -18,20 +18,20 @@ class TimingManager: TimingProtocol {
     
     static var delegate: TimingManagerDelegate! = nil
     
-    //saves the state when all alarms are paused
-    //(Last Pause, Is Currently Paused, Last Unpause)
+    ///saves the state when all alarms are paused: (Last Pause, Is Currently Paused, Last Unpause)
     static var pauseState: (Date?, Bool, Date?) = (nil, false, nil)
     
-    //Corrolates to dogManager
-    //Dictionary<dogName: String, Dictionary<requirementName: String, associatedTimer: Timer>>
+    ///Corrolates to dogManager: "
+    ///Dictionary<dogName: String, Dictionary<requirementName: String, associatedTimer: Timer>>"
     
-    //DO NOT COPY, WILL MAKE MULTIPLE TIMERS WHICH WILL FIRE SIMULTANIOUSLY
+    /// IMPORTANT NOTE: DO NOT COPY, WILL MAKE MULTIPLE TIMERS WHICH WILL FIRE SIMULTANIOUSLY
     static var timerDictionary: Dictionary<String,Dictionary<String,Timer>> = Dictionary<String,Dictionary<String,Timer>>()
     
     //MARK: TimingProtocol Implementation
     
-    //Takes a DogManager and potentially a Bool of if all alarms were unpaused, goes through the dog manager and finds all enabled requirements under all enabled dogs and sets a timer to fire.
+    
     static func willInitalize(dogManager: DogManager, didUnpause: Bool = false){
+        ///Takes a DogManager and potentially a Bool of if all alarms were unpaused, goes through the dog manager and finds all enabled requirements under all enabled dogs and sets a timer to fire.
         
         //Makes sure pauseAllAlarms is false, don't want to instantiate alarms when they should be paused
         guard self.pauseState.1 == false else {
@@ -91,19 +91,22 @@ class TimingManager: TimingProtocol {
         }
     }
     
-    //Reinitalizes all alarms when a new dogManager is sent
+    
     static func willReinitalize(dogManager: DogManager) {
+        ///Reinitalizes all alarms when a new dogManager is sent
         self.invalidateAll()
         self.willInitalize(dogManager: dogManager)
     }
     
-    //Reinitalizes a single requirement, not used right now
+    
     static func willReinitalize(dogName: String, requirementName: String) throws {
+        ///Reinitalizes a single requirement, not implemented currently
         //code
     }
     
-    //Used as a selector when constructing timer in willInitalize, when called at an unknown point in time by the timer it presents an alert and updates information about the requirement
+   
     @objc private static func didExecuteTimer(sender: Timer){
+        ///Used as a selector when constructing timer in willInitalize, when called at an unknown point in time by the timer it presents an alert and updates information about the requirement
         guard let parsedDictionary = sender.userInfo as? [String: Any]
         else{
             ErrorProcessor.handleError(error: TimingError.parseSenderInfoFailed, sender: self)
@@ -128,8 +131,9 @@ class TimingManager: TimingProtocol {
         delegate.didUpdateDogManager(newDogManager: sudoDogManager, sender: self)
     }
     
-    //Invalidates all timers
+    
     private static func invalidateAll() {
+        ///Invalidates all timers
         for dogKey in timerDictionary.keys{
             for requirementKey in timerDictionary[dogKey]!.keys {
                 timerDictionary[dogKey]![requirementKey]!.invalidate()
@@ -137,8 +141,9 @@ class TimingManager: TimingProtocol {
         }
     }
     
-    //Invalidates a specific timer
+    
     static func invalidate(dogName: String, requirementName: String) throws {
+        ///Invalidates a specific timer
         if timerDictionary[dogName] == nil{
             throw TimingError.invalidateFailed
         }
@@ -148,8 +153,9 @@ class TimingManager: TimingProtocol {
         timerDictionary[dogName]![requirementName]!.invalidate()
     }
     
-    //Toggles pause status of timers, called when pauseAllAlarms in settings is switched to a new state
+    
     static func willTogglePause(dogManager: DogManager, newPauseStatus: Bool) {
+        ///Toggles pause status of timers, called when pauseAllAlarms in settings is switched to a new state
         if newPauseStatus == true {
             self.pauseState.0 = Date()
             self.pauseState.1 = true

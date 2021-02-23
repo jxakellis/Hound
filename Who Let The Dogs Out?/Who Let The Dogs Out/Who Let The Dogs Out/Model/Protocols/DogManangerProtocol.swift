@@ -121,6 +121,7 @@ extension DogManagerProtocol {
      }
      }
      */
+    
     mutating func changeDog(dogNameToBeChanged: String, newDog: Dog) throws{
         var newDogIndex: Int?
         

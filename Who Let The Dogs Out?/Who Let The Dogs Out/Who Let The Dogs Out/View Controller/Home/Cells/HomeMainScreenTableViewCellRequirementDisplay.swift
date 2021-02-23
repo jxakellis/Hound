@@ -18,6 +18,8 @@ class HomeMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
     
     var timeIntervalLeft: TimeInterval?
     
+    var requirementSource: Requirement! = nil
+    
     @IBOutlet weak var requirementName: UILabel!
     
     @IBOutlet weak var dogName: UILabel!
@@ -25,6 +27,7 @@ class HomeMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
     @IBOutlet weak var timeLeft: UILabel!
     
     func setup(parentDogName: String, requirementPassed: Requirement) {
+        self.requirementSource = requirementPassed
         requirementName.text = requirementPassed.label
         dogName.text = parentDogName
         
@@ -48,12 +51,6 @@ class HomeMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
         dogName.adjustsFontSizeToFitWidth = true
         timeLeft.adjustsFontSizeToFitWidth = true
         // Initialization code
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
 
 }

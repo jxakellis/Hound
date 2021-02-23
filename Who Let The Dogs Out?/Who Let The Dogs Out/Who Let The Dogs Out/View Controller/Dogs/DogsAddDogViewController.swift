@@ -47,9 +47,9 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     @IBOutlet weak var embeddedTableView: UIView!
     
+    
     @IBOutlet weak var addDogButtonBackground: UIButton!
     @IBOutlet weak var addDogButton: UIButton!
-    
     //When the add button is clicked, runs a series of checks. Makes sure the name and description of the dog is valid, and if so then passes information up chain of view controllers to DogsViewController.
     @IBAction func willAddDog(_ sender: Any) {
         
@@ -79,6 +79,13 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         
     }
     
+    @IBOutlet weak var cancelAddDogButton: UIButton!
+    @IBOutlet weak var cancelAddDogButtonBackground: UIButton!
+    
+    @IBAction func cancelAddDogButton(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     //MARK: Main
     
     override func viewDidLoad() {
@@ -88,6 +95,9 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         
         self.view.bringSubviewToFront(addDogButtonBackground)
         self.view.bringSubviewToFront(addDogButton)
+
+        self.view.bringSubviewToFront(cancelAddDogButtonBackground)
+        self.view.bringSubviewToFront(cancelAddDogButton)
         
         willInitalize()
         

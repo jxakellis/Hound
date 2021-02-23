@@ -8,9 +8,20 @@
 
 import UIKit
 
-class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsViewControllerDelegate, TimingManagerDelegate, SettingsViewControllerDelegate {
+class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsViewControllerDelegate, TimingManagerDelegate, SettingsViewControllerDelegate, HomeViewControllerDelegate {
     
+   //MARK: HomeViewControllerDelegate
     
+    func didLogTimers(sender: AnyObject, loggedRequirements: [(String, Requirement)]) {
+        if sender is HomeViewController {
+            let sudoDogManager = self.getDogManager()
+            for loggedRequirement in loggedRequirements {
+                var sudoRequirement = try! sudoDogManager.findDog(dogName: loggedRequirement.0).dogRequirments.findRequirement(requirementName: loggedRequirement.1.label)
+                sudoRequirement.changeLastExecution(newLastExecution: Date())
+            }
+            self.setDogManager(newDogManager: sudoDogManager, sender: sender)
+        }
+    }
     
     //MARK: SettingsViewControllerDelegate
     
@@ -50,7 +61,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
             dogsViewController.setDogManager(newDogManager: getDogManager(), sender: self)
         }
         else if !(sender is MainTabBarViewController){
-                self.updateDogManagerDependents()
+            self.updateDogManagerDependents()
         }
         
         
@@ -81,6 +92,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         settingsViewController.delegate = self
         
         homeViewController = self.viewControllers![0] as? HomeViewController
+        homeViewController.delegate = self
         
         
         Utils.sender = self

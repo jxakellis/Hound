@@ -20,7 +20,7 @@
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="USa-GB-KYk">
                                 <rect key="frame" x="0.0" y="99" width="414" height="714"/>
                                 <connections>
-                                    <segue destination="QHx-In-pv4" kind="embed" id="mAm-1k-o8H"/>
+                                    <segue destination="QHx-In-pv4" kind="embed" identifier="homeMainScreenTableViewController" id="mAm-1k-o8H"/>
                                 </connections>
                             </containerView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Alarms" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6hY-qq-Arx">
@@ -44,10 +44,13 @@
                                     <constraint firstAttribute="height" constant="90" id="TPC-6E-e0D"/>
                                 </constraints>
                                 <color key="tintColor" systemColor="linkColor"/>
-                                <state key="normal" image="plus.circle.fill" catalog="system">
+                                <state key="normal" image="checkmark.circle.fill" catalog="system">
                                     <color key="titleColor" systemColor="systemBackgroundColor"/>
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
                                 </state>
+                                <connections>
+                                    <action selector="willLog:" destination="9pv-A4-QxB" eventType="touchUpInside" id="BUQ-Hk-LDb"/>
+                                </connections>
                             </button>
                             <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8py-Lg-6VP">
                                 <rect key="frame" x="314" y="713" width="90" height="90"/>
@@ -56,35 +59,81 @@
                                     <constraint firstAttribute="width" secondItem="8py-Lg-6VP" secondAttribute="height" multiplier="1:1" id="uw6-So-Tre"/>
                                 </constraints>
                                 <color key="tintColor" systemColor="systemBackgroundColor"/>
-                                <state key="normal" image="plus.circle" catalog="system">
+                                <state key="normal" image="checkmark.circle" catalog="system">
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
                                 </state>
                             </button>
+                            <button hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iAP-C3-yka">
+                                <rect key="frame" x="10" y="713" width="90" height="90"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="iAP-C3-yka" secondAttribute="height" multiplier="1:1" id="d5K-im-h04"/>
+                                    <constraint firstAttribute="height" constant="90" id="q6O-tW-Bhg"/>
+                                </constraints>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" image="arrow.backward.circle" catalog="system">
+                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
+                                </state>
+                            </button>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eJj-Jz-5QN">
+                                <rect key="frame" x="10" y="713" width="90" height="90"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="eJj-Jz-5QN" secondAttribute="height" multiplier="1:1" id="rPz-fv-pgg"/>
+                                    <constraint firstAttribute="height" constant="90" id="twB-1C-4kX"/>
+                                </constraints>
+                                <color key="tintColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" image="arrow.backward.circle.fill" catalog="system">
+                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
+                                </state>
+                                <connections>
+                                    <action selector="cancelAddDogButton:" destination="yj4-3A-FdI" eventType="touchUpInside" id="Odi-XN-8NF"/>
+                                    <action selector="cancelWillLog:" destination="9pv-A4-QxB" eventType="touchUpInside" id="3uE-QQ-Oki"/>
+                                </connections>
+                            </button>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please Select Alarms to Log" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IIH-c7-iZ1">
+                                <rect key="frame" x="100" y="713" width="214" height="90"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="PQr-Ze-W5v"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="USa-GB-KYk" firstAttribute="leading" secondItem="PQr-Ze-W5v" secondAttribute="leading" id="AEa-UB-kCM"/>
                             <constraint firstItem="PQr-Ze-W5v" firstAttribute="trailing" secondItem="USa-GB-KYk" secondAttribute="trailing" id="Bkh-PC-zSE"/>
+                            <constraint firstItem="8py-Lg-6VP" firstAttribute="bottom" secondItem="IIH-c7-iZ1" secondAttribute="bottom" id="J3G-44-EVT"/>
                             <constraint firstItem="Zqv-uc-oQG" firstAttribute="top" secondItem="6hY-qq-Arx" secondAttribute="bottom" id="LP4-BE-n7S"/>
+                            <constraint firstItem="8py-Lg-6VP" firstAttribute="top" secondItem="IIH-c7-iZ1" secondAttribute="top" id="MFl-Ag-WB8"/>
                             <constraint firstItem="PQr-Ze-W5v" firstAttribute="bottom" secondItem="LS2-zI-Hd9" secondAttribute="bottom" constant="10" id="SOj-cQ-qeB"/>
                             <constraint firstItem="Zqv-uc-oQG" firstAttribute="trailing" secondItem="tsR-hK-woN" secondAttribute="centerX" id="TBU-7e-Ykr"/>
                             <constraint firstItem="PQr-Ze-W5v" firstAttribute="trailing" secondItem="8py-Lg-6VP" secondAttribute="trailing" constant="10" id="TL6-QG-5hy"/>
+                            <constraint firstItem="PQr-Ze-W5v" firstAttribute="bottom" secondItem="iAP-C3-yka" secondAttribute="bottom" constant="10" id="UH8-tw-IKz"/>
                             <constraint firstItem="6hY-qq-Arx" firstAttribute="top" secondItem="PQr-Ze-W5v" secondAttribute="top" constant="10" id="XJw-Qb-G28"/>
                             <constraint firstItem="PQr-Ze-W5v" firstAttribute="trailing" secondItem="LS2-zI-Hd9" secondAttribute="trailing" constant="10" id="cGD-Z7-e1t"/>
                             <constraint firstItem="PQr-Ze-W5v" firstAttribute="bottom" secondItem="USa-GB-KYk" secondAttribute="bottom" id="dNC-La-LJy"/>
+                            <constraint firstItem="LS2-zI-Hd9" firstAttribute="leading" secondItem="IIH-c7-iZ1" secondAttribute="trailing" id="fBc-eZ-Bwi"/>
+                            <constraint firstItem="eJj-Jz-5QN" firstAttribute="leading" secondItem="PQr-Ze-W5v" secondAttribute="leading" constant="10" id="gum-0s-tHe"/>
                             <constraint firstItem="Zqv-uc-oQG" firstAttribute="leading" secondItem="PQr-Ze-W5v" secondAttribute="leading" constant="10" id="gzU-02-H0j"/>
                             <constraint firstItem="6hY-qq-Arx" firstAttribute="trailing" secondItem="tsR-hK-woN" secondAttribute="centerX" id="hYL-gR-ldS"/>
                             <constraint firstItem="USa-GB-KYk" firstAttribute="top" secondItem="Zqv-uc-oQG" secondAttribute="bottom" id="liP-7M-mNc"/>
                             <constraint firstItem="Zqv-uc-oQG" firstAttribute="top" secondItem="6hY-qq-Arx" secondAttribute="bottom" id="phX-PY-L1L"/>
                             <constraint firstItem="6hY-qq-Arx" firstAttribute="leading" secondItem="PQr-Ze-W5v" secondAttribute="leading" constant="10" id="qCm-zA-oWx"/>
                             <constraint firstItem="PQr-Ze-W5v" firstAttribute="bottom" secondItem="8py-Lg-6VP" secondAttribute="bottom" constant="10" id="rOb-f1-G1h"/>
+                            <constraint firstItem="PQr-Ze-W5v" firstAttribute="bottom" secondItem="eJj-Jz-5QN" secondAttribute="bottom" constant="10" id="sew-Cc-TAF"/>
+                            <constraint firstItem="IIH-c7-iZ1" firstAttribute="centerY" secondItem="eJj-Jz-5QN" secondAttribute="centerY" id="u9C-5p-5I9"/>
+                            <constraint firstItem="IIH-c7-iZ1" firstAttribute="leading" secondItem="iAP-C3-yka" secondAttribute="trailing" id="uY1-Nc-7vd"/>
+                            <constraint firstItem="iAP-C3-yka" firstAttribute="leading" secondItem="PQr-Ze-W5v" secondAttribute="leading" constant="10" id="xpd-52-dKC"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Home" image="house.fill" catalog="system" id="acW-dT-cKf"/>
                     <connections>
+                        <outlet property="cancelWillLog" destination="eJj-Jz-5QN" id="uup-Ld-Dgx"/>
+                        <outlet property="cancelWillLogBackground" destination="iAP-C3-yka" id="IgZ-eU-tRG"/>
                         <outlet property="willLog" destination="LS2-zI-Hd9" id="DpN-UV-yqE"/>
                         <outlet property="willLogBackground" destination="8py-Lg-6VP" id="Ctq-uo-7IU"/>
+                        <outlet property="willLogLabel" destination="IIH-c7-iZ1" id="Vv6-Db-AT3"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
@@ -515,18 +564,49 @@
                                     <segue destination="eFt-4z-qcU" kind="embed" identifier="dogRequirementNavigationController" id="E3d-ML-4L4"/>
                                 </connections>
                             </containerView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iWI-X8-QFy">
+                                <rect key="frame" x="10" y="708" width="90" height="90"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="iWI-X8-QFy" secondAttribute="height" multiplier="1:1" id="MwO-Hx-HSs"/>
+                                    <constraint firstAttribute="height" constant="90" id="aOy-AN-Xsy"/>
+                                </constraints>
+                                <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" image="arrow.backward.circle.fill" catalog="system">
+                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
+                                </state>
+                                <connections>
+                                    <action selector="cancelAddDogButton:" destination="yj4-3A-FdI" eventType="touchUpInside" id="HEQ-Lj-7yW"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pg4-10-30f">
+                                <rect key="frame" x="10" y="708" width="90" height="90"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="Pg4-10-30f" secondAttribute="height" multiplier="1:1" id="8ag-OT-ToR"/>
+                                    <constraint firstAttribute="height" constant="90" id="YBH-FH-AhB"/>
+                                </constraints>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" image="arrow.backward.circle" catalog="system">
+                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
+                                </state>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="xg8-HR-nc3"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="xg8-HR-nc3" firstAttribute="bottom" secondItem="6MT-az-4bi" secondAttribute="bottom" constant="10" id="Bb3-uV-0Aw"/>
                             <constraint firstItem="27o-HD-GIn" firstAttribute="top" secondItem="7nG-bv-0ex" secondAttribute="bottom" constant="10" id="Dul-pn-zc5"/>
+                            <constraint firstItem="iWI-X8-QFy" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" constant="10" id="Eo5-Ii-XmA"/>
                             <constraint firstItem="xg8-HR-nc3" firstAttribute="trailing" secondItem="Lu2-Bs-kCu" secondAttribute="trailing" constant="10" id="Erk-oA-bfs"/>
+                            <constraint firstItem="xg8-HR-nc3" firstAttribute="bottom" secondItem="Pg4-10-30f" secondAttribute="bottom" constant="10" id="F1P-Kq-2KK"/>
+                            <constraint firstItem="xg8-HR-nc3" firstAttribute="bottom" secondItem="iWI-X8-QFy" secondAttribute="bottom" constant="10" id="FAy-rg-Gte"/>
                             <constraint firstItem="6MT-az-4bi" firstAttribute="top" secondItem="xnr-3B-PYB" secondAttribute="bottom" constant="10" id="FR1-la-dDY"/>
                             <constraint firstItem="6MT-az-4bi" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" id="Jhd-YK-Qhl"/>
                             <constraint firstItem="7nG-bv-0ex" firstAttribute="leading" secondItem="ht7-hC-mOx" secondAttribute="trailing" constant="10" id="Jox-gT-P79"/>
                             <constraint firstItem="xg8-HR-nc3" firstAttribute="trailing" secondItem="7nG-bv-0ex" secondAttribute="trailing" constant="10" id="LBN-kd-RaI"/>
                             <constraint firstItem="7nG-bv-0ex" firstAttribute="top" secondItem="xg8-HR-nc3" secondAttribute="top" constant="10" id="PFA-Kv-bZp"/>
+                            <constraint firstItem="Pg4-10-30f" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" constant="10" id="RXb-kC-U4Q"/>
                             <constraint firstItem="ht7-hC-mOx" firstAttribute="top" secondItem="xg8-HR-nc3" secondAttribute="top" constant="10" id="Rf6-f2-uhz"/>
                             <constraint firstItem="xnr-3B-PYB" firstAttribute="top" secondItem="ht7-hC-mOx" secondAttribute="bottom" constant="10" id="ZY9-Rm-BUB"/>
                             <constraint firstItem="xg8-HR-nc3" firstAttribute="bottom" secondItem="9Ma-OG-XR6" secondAttribute="bottom" constant="10" id="ZdK-jR-HjC"/>
@@ -546,6 +626,8 @@
                     <connections>
                         <outlet property="addDogButton" destination="Lu2-Bs-kCu" id="o0w-dk-42e"/>
                         <outlet property="addDogButtonBackground" destination="9Ma-OG-XR6" id="cDg-hE-K2Q"/>
+                        <outlet property="cancelAddDogButton" destination="iWI-X8-QFy" id="yqY-el-FXa"/>
+                        <outlet property="cancelAddDogButtonBackground" destination="Pg4-10-30f" id="Cch-NX-mQg"/>
                         <outlet property="dogDescription" destination="27o-HD-GIn" id="LNa-U6-HTc"/>
                         <outlet property="dogName" destination="7nG-bv-0ex" id="BPp-cb-W7P"/>
                         <outlet property="embeddedTableView" destination="6MT-az-4bi" id="dGS-SX-RQd"/>
@@ -922,6 +1004,8 @@
     </scenes>
     <resources>
         <image name="alarm" catalog="system" width="124" height="128"/>
+        <image name="arrow.backward.circle" catalog="system" width="128" height="121"/>
+        <image name="arrow.backward.circle.fill" catalog="system" width="128" height="121"/>
         <image name="checkmark.circle" catalog="system" width="128" height="121"/>
         <image name="checkmark.circle.fill" catalog="system" width="128" height="121"/>
         <image name="gear" catalog="system" width="128" height="119"/>

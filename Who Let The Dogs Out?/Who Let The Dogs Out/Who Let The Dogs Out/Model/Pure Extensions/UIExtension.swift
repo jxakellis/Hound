@@ -16,14 +16,27 @@ extension UIViewController
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(
             target: self,
             action: #selector(UIViewController.dismissKeyboard))
-
+        
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
     }
-
+    
     @objc func dismissKeyboard()
     {
         view.endEditing(true)
     }
+}
+
+extension UITableView {
+    /// Deselects all rows
+    func deselectAll(){
+        if indexPathsForSelectedRows != nil{
+            for indexPath in self.indexPathsForSelectedRows! {
+                self.deselectRow(at: indexPath, animated: false)
+            }
+        }
+    }
+    
+    
 }
 

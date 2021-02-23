@@ -118,6 +118,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "dogsAddDogViewController"{
             dogsAddDogViewController = segue.destination as! DogsAddDogViewController
+            dogsAddDogViewController.modalPresentationStyle = .fullScreen
             dogsAddDogViewController.delegate = self
         }
         if segue.identifier == "dogsMainScreenTableViewController" {

@@ -9,4 +9,4 @@ Add blue circle dog/plus button to the bottom right, makes it much clearer
 
 Bugs
 
-When adding a dog and editting a text field, e.g. the name or description, if you click elsewhere to do something else, it does not dismiss the keyboard that pops up, make it so if somewhere else if clicked is resigns the first responder. Note, this is also a bug inside the embedded requirement/need adding view, so address there too.
+
