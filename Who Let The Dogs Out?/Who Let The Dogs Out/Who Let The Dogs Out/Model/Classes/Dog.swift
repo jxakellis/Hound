@@ -8,12 +8,17 @@
 
 import UIKit
 
+enum DogError: Error {
+    case noRequirementsPresent
+}
+
 class Dog: NSCopying, EnableProtocol {
     
     
     
     //MARK: Conformation EnableProtocol
     
+    ///Whether or not the dog is enabled, if disabled all requirements under this will not fire (but have their own independent isEnabled state)
     private var isEnabled: Bool = DogConstant.defaultEnable
     
     func setEnable(newEnableStatus: Bool) {
@@ -41,10 +46,10 @@ class Dog: NSCopying, EnableProtocol {
     
     //MARK: Properties
     
-    //dictionary of specifications for a dog, e.g. "name", "description"
+    ///dictionary of specifications for a dog, e.g. "name", "description"
     var dogSpecifications: SpecificationManager = SpecificationManager()
     
-    //RequirmentManager that handles all specified requirements for a dog, e.g. being taken to the outside every time interval or being fed.
+    ///RequirmentManager that handles all specified requirements for a dog, e.g. being taken to the outside every time interval or being fed.
     var dogRequirments: RequirementManager = RequirementManager()
 }
 
@@ -58,8 +63,10 @@ class DogManager: DogManagerProtocol, NSCopying {
         return copy
     }
     
+    ///Array of dogs
     var dogs: [Dog]
     
+    ///initalizes, sets dogs to []
     init(){
         dogs = []
     }

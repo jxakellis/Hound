@@ -8,15 +8,8 @@
 
 import UIKit
 
-/*
-class Specification {
-    
-}
- */
-
 class SpecificationManager: NSCopying {
     
-    //NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = SpecificationManager()
         for key in dogSpecificationsDictionary.keys{
@@ -25,31 +18,33 @@ class SpecificationManager: NSCopying {
         return copy
     }
     
-    
+    ///Dictionary of dogSpecifications, allows for adaptability, currently only "name" and "description"
     private var dogSpecificationsDictionary: Dictionary<String, String> = Dictionary<String,String>()
     
     init() {
         initalizeDogSpecificationDictionary()
     }
     
+    ///Initalizes the dogSpecificationDictionary to defaults
     private func initalizeDogSpecificationDictionary(){
         for i in 0..<DogConstant.defaultDogSpecificationKeys.count{
             dogSpecificationsDictionary[DogConstant.defaultDogSpecificationKeys[i].0] = DogConstant.defaultDogSpecificationKeys[i].1
         }
     }
     
+    ///Returns a given value for a specified dog specification key
     func getDogSpecification(key: String?) throws -> String{
         try checkDogSpecificationKeyValid(key: key)
         return dogSpecificationsDictionary[key!]!
     }
     
-    //function to change the value of the dictionary dogSpecifications at the position given by the key, checks to see if valid
+    ///function to change the value of the dictionary dogSpecifications at the position given by the key, checks to see if valid
     func changeDogSpecifications(key: String?, newValue: String?) throws {
         try checkDogSpecificationValueValid(key: key, value: newValue)
         dogSpecificationsDictionary[key!] = newValue!
     }
     
-    //checks to see if the dogSpecifications dictionary contains the given value at the given key spot, returns false if key is invalid; later implementation for value checking tbd
+    ///checks to see if the dogSpecifications dictionary contains the given value at the given key spot, returns false if key is invalid; later implementation for value checking tbd
     private func checkDogSpecificationValueValid(key: String?, value: String?) throws {
         try checkDogSpecificationKeyValid(key: key)
         if value == nil{
@@ -63,7 +58,7 @@ class SpecificationManager: NSCopying {
         }
     }
     
-    //checks to see if the dogSpecifications dictionary contains the given key, true if it does
+    ///checks to see if the dogSpecifications dictionary contains the given key, true if it does
     private func checkDogSpecificationKeyValid(key: String?) throws{
         var keyPresent = false
         for i in 0..<DogConstant.defaultDogSpecificationKeys.count{
@@ -89,7 +84,7 @@ class SpecificationManager: NSCopying {
         }
     }
     
-    //goes through all keys in dogSpecifications and resets all values to ""
+    ///goes through all keys in dogSpecifications and resets all values to ""
     func clearDogSpecificationsValues(){
         for (key, _) in dogSpecificationsDictionary{
             dogSpecificationsDictionary[key] = ""

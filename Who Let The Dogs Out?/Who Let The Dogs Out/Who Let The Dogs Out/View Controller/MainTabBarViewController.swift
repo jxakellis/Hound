@@ -59,11 +59,11 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         
         if sender is TimingManager.Type || sender is TimingManager{
             dogsViewController.setDogManager(newDogManager: getDogManager(), sender: self)
+            homeViewController.homeMainScreenTableViewController.reloadTable()
         }
         else if !(sender is MainTabBarViewController){
             self.updateDogManagerDependents()
         }
-        
         
     }
     
@@ -78,6 +78,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     var settingsViewController: SettingsViewController! = nil
     
     var homeViewController: HomeViewController! = nil
+    
+    static var mainTabBarViewController: MainTabBarViewController! = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -94,11 +96,15 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         homeViewController = self.viewControllers![0] as? HomeViewController
         homeViewController.delegate = self
         
-        
-        Utils.sender = self
+        MainTabBarViewController.mainTabBarViewController = self
         
         TimingManager.delegate = self
         TimingManager.willInitalize(dogManager: getDogManager())
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        Utils.presenter = self
     }
     
     /*

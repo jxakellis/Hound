@@ -17,8 +17,8 @@ class HomeMainScreenTableViewController: UITableViewController {
     
     //MARK: Calculated Properties
     
+    ///MainTabBarViewController's dogManager copied and transformed to have only active requirements of active dogs present
     private var activeDogManager: DogManager {
-        ///MainTabBarViewController's dogManager copied and transformed to have only active requirements of active dogs present
         var dogManager = DogManager()
         
         for d in 0..<MainTabBarViewController.staticDogManager.dogs.count {
@@ -42,8 +42,9 @@ class HomeMainScreenTableViewController: UITableViewController {
         return dogManager
     }
     
-     var activeTimers: Int{
-        ///Returns number of active timers
+    ///Returns number of active timers
+    var activeTimers: Int{
+        
         var count = 0
         for d in 0..<MainTabBarViewController.staticDogManager.dogs.count {
             guard MainTabBarViewController.staticDogManager.dogs[d].getEnable() == true else{
@@ -61,8 +62,8 @@ class HomeMainScreenTableViewController: UITableViewController {
         return count
     }
     
+    ///Returns parentDogName and Requirement for a given index of priority sorted version of activeDogManager, timer to execute soonest is index 0
     private func timerPriority(priorityIndex: Int) -> (String, Requirement) {
-        ///Returns parentDogName and Requirement for a given index of priority sorted version of activeDogManager, timer to execute soonest is index 0
         
         var assortedTimers: [(String, Requirement)] = []
         
@@ -92,6 +93,7 @@ class HomeMainScreenTableViewController: UITableViewController {
     
     //MARK: Properties
     
+    ///Timer that repeats every second to update tableView data, needed due to the fact the timers countdown every second
     private var loopTimer: Timer?
     
     var delegate: HomeMainScreenTableViewControllerDelegate! = nil
@@ -101,7 +103,7 @@ class HomeMainScreenTableViewController: UITableViewController {
         
         self.tableView.allowsSelection = false
         self.tableView.separatorInset = UIEdgeInsets.zero
-    
+        
         tableView.dataSource = self
         tableView.delegate = self
         // Uncomment the following line to preserve selection between presentations
@@ -132,8 +134,8 @@ class HomeMainScreenTableViewController: UITableViewController {
         loopTimer!.invalidate()
     }
     
-    @objc private func reloadTable(){
-        ///Reloads the tableViews data, has to persist any selected rows so tableView.reloadData() is not sufficent as it tosses the information
+    ///Reloads the tableViews data, has to persist any selected rows so tableView.reloadData() is not sufficent as it tosses the information
+    @objc func reloadTable(){
         let selectedIndexPaths = self.tableView.indexPathsForSelectedRows
         
         self.tableView.reloadData()
@@ -146,6 +148,7 @@ class HomeMainScreenTableViewController: UITableViewController {
         }
     }
     
+    ///Visually selects rows that were selected before the tableView was reloaded, done in a timer format due to weird bug as without the delay an error break things
     @objc private func selectIndexPaths(sender: Timer){
         
         guard let parsedDictionary = sender.userInfo as? [String: [IndexPath]]

@@ -43,11 +43,11 @@ class DogsMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
         self.parentDogName = parentDogName
         self.requirement = requirementPassed
         self.requirementName.text = requirementPassed.label
-        if requirementPassed.interval < 60 {
-            self.timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.interval, showSeconds: true)
+        if requirementPassed.executionInterval < 60 {
+            self.timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.executionInterval)
         }
         else {
-            self.timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.interval)
+            self.timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.executionInterval)
         }
         self.requirementToggleSwitch.isOn = requirementPassed.getEnable()
     }

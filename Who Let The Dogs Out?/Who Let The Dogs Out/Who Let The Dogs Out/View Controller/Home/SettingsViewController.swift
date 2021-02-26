@@ -16,29 +16,36 @@ class SettingsViewController: UIViewController {
 
     var delegate: SettingsViewControllerDelegate! = nil
     
-    //Switch for pause all alarms
+    
+    //MARK: Pause All Alarms
+    ///Switch for pause all alarms
     @IBOutlet weak var isPaused: UISwitch!
     
-    //If the pause all alarms switch it triggered, calls thing function
+    ///If the pause all alarms switch it triggered, calls thing function
     @IBAction func didTogglePause(_ sender: Any) {
         delegate.didTogglePause(newPauseState: isPaused.isOn)
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+    //MARK: Scheduled Pause
+    
+    @IBOutlet weak var isScheduled: UISwitch!
+    
+    @IBAction func didToggleSchedule(_ sender: Any) {
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    @IBOutlet weak var startScheduledDatePicker: UIDatePicker!
+    
+    @IBOutlet weak var endScheduledDatePicker: UIDatePicker!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        startScheduledDatePicker.date.roundDate(roundingInterval: TimeInterval(startScheduledDatePicker.minuteInterval * 60))
+        endScheduledDatePicker.date.addTimeInterval(TimeInterval(endScheduledDatePicker.minuteInterval * 60))
+        endScheduledDatePicker.date.roundDate(roundingInterval: TimeInterval(endScheduledDatePicker.minuteInterval * 60))
     }
-    */
-
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+    }
 }

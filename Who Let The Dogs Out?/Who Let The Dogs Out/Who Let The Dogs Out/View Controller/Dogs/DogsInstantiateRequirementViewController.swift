@@ -43,9 +43,14 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
         self.dismissKeyboard()
     }
     
+    @IBAction func backButton(_ sender: Any) {
+        performSegue(withIdentifier: "unwindToAddDogRequirementTableView", sender: self)
+    }
+    
+    
     //Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured requirement back to table view.
     @IBAction private func didAddToList(_ sender: Any) {
-        var tempRequirement = Requirement(initDate: Date())
+        var tempRequirement = Requirement()
         
         do {
             try tempRequirement.changeLabel(newLabel: requirementName.text)
@@ -59,6 +64,7 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
         }
         
     }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,8 +83,7 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
     }
     
     @objc internal override func dismissKeyboard() {
-        let mainTabBarViewController = Utils.sender as! MainTabBarViewController
-        mainTabBarViewController.dogsViewController.presentedViewController?.dismissKeyboard()
+        MainTabBarViewController.mainTabBarViewController.dogsViewController.presentedViewController?.dismissKeyboard()
     }
     
     //default values and configs

@@ -13,7 +13,7 @@ protocol HomeMainScreenTableViewCellDogRequirementDisplayDelegate{
 }
 
 class HomeMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
-
+    
     //MARK: Main
     
     var timeIntervalLeft: TimeInterval?
@@ -25,6 +25,7 @@ class HomeMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
     @IBOutlet weak var dogName: UILabel!
     
     @IBOutlet weak var timeLeft: UILabel!
+    @IBOutlet weak var timeSinceLastExecution: UILabel!
     
     func setup(parentDogName: String, requirementPassed: Requirement) {
         self.requirementSource = requirementPassed
@@ -32,15 +33,25 @@ class HomeMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
         dogName.text = parentDogName
         
         if TimingManager.pauseState.1 == true {
-            timeLeft.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.interval - requirementPassed.intervalElapsed, showSeconds: true)
-            self.timeIntervalLeft = (requirementPassed.interval - requirementPassed.intervalElapsed)
+            timeLeft.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.executionInterval - requirementPassed.intervalElapsed)
+            self.timeIntervalLeft = (requirementPassed.executionInterval - requirementPassed.intervalElapsed)
         }
         else{
-            let fireDate = TimingManager.timerDictionary[parentDogName]![requirementPassed.label]!.fireDate
-            self.timeIntervalLeft = Date().distance(to: fireDate)
-            timeLeft.text = String.convertTimeIntervalToReadable(interperateTimeInterval: self.timeIntervalLeft!, showSeconds: true)
+            if TimingManager.timerDictionary[parentDogName]![requirementPassed.label]!.isValid == false {
+                timeSinceLastExecution.text = "It's Happening"
+                timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: .semibold)])
+            }
+            else {
+                let fireDate = TimingManager.timerDictionary[parentDogName]![requirementPassed.label]!.fireDate
+                self.timeIntervalLeft = Date().distance(to: fireDate)
+                timeLeft.text = String.convertTimeIntervalToReadable(interperateTimeInterval: self.timeIntervalLeft!)
+                timeLeft.attributedText = timeLeft.text!.withFontAtEnd(text: " Left", font: UIFont.systemFont(ofSize: 17, weight: .semibold))
+                timeSinceLastExecution.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.lastExecution.distance(to: Date()))
+                timeSinceLastExecution.attributedText = timeSinceLastExecution.text!.withFontAtEnd(text: " Since Last Time", font: UIFont.systemFont(ofSize: 17, weight: .semibold))
+            }
         }
-        timeLeft.text = timeLeft.text! + " Left"
+        
+        
         
         
     }
@@ -52,5 +63,5 @@ class HomeMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
         timeLeft.adjustsFontSizeToFitWidth = true
         // Initialization code
     }
-
+    
 }

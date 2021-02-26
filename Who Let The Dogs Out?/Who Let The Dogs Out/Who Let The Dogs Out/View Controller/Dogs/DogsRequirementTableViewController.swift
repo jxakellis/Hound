@@ -38,6 +38,10 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
         updateTable()
     }
     
+    @IBAction func unwind(_ seg: UIStoryboardSegue){
+        
+    }
+    
     //MARK: Properties
     
     var requirementManager = RequirementManager()
@@ -50,6 +54,16 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
         super.viewDidLoad()
         
         tableView.separatorInset = UIEdgeInsets.zero
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        MainTabBarViewController.mainTabBarViewController.dogsViewController.dogsAddDogViewController.willHideButtons(isHidden: false)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        MainTabBarViewController.mainTabBarViewController.dogsViewController.dogsAddDogViewController.willHideButtons(isHidden: true)
     }
     
     // MARK: - Table View Data Source
@@ -81,7 +95,7 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
         let castCell = cell as! DogsRequirementTableViewCell
         castCell.delegate = self
         castCell.setLabel(initLabel: requirementManager.requirements[indexPath.row].label)
-        castCell.setTimeInterval(initTimeInterval: requirementManager.requirements[indexPath.row].interval)
+        castCell.setTimeInterval(initTimeInterval: requirementManager.requirements[indexPath.row].executionInterval)
         // Configure the cell...
         
         return cell

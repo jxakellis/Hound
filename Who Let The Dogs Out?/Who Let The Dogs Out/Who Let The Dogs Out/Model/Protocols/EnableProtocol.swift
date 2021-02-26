@@ -12,10 +12,13 @@ protocol EnableProtocol {
     
     //var isEnabled: Bool { get set }
     
+    ///Changes isEnabled to newEnableStatus
     func setEnable(newEnableStatus: Bool)
     
+    ///Toggles isEnabled
     func willToggle()
     
+    ///Returns isEnabled state
     func getEnable() -> Bool
     
 }

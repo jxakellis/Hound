@@ -8,6 +8,7 @@
 
 import UIKit
 
+///Enum full of cases of possible errors from DogRequirement
 enum DogRequirementError: Error {
     case labelInvalid
     case descriptionInvalid
@@ -15,25 +16,20 @@ enum DogRequirementError: Error {
 }
 
 protocol DogRequirementProtocol {
-    //name of requirement, can't be repeated, will throw error if try to add two requirments to same requirement manager with same label
+    ///name of requirement, can't be repeated, will throw error if try to add two requirments to same requirement manager with same label
     var label: String { get set }
     
-    //descripton of reqirement
+    ///descripton of reqirement
     var description: String { get set }
     
-    //time at which requirement was initalized
-    var initalizationDate: Date { get set }
+    ///interval at which a timer should be triggered for requirement
+    var executionInterval: TimeInterval { get set }
     
-    //last time the requirement was fired
+    ///last time the requirement was fired
     var lastExecution: Date { get set }
     
-    //how much time of the interval of been used up, this is used for when a timer is paused and then unpaused and have to calculate remaining time
+    ///how much time of the interval of been used up, this is used for when a timer is paused and then unpaused and have to calculate remaining time
     var intervalElapsed: TimeInterval { get set }
-    
-    //interval at which a timer should be triggered for requirement
-    var interval: TimeInterval { get set }
-    
-    init(initDate: Date) throws
     
     mutating func changeLabel(newLabel: String?) throws
     
@@ -44,20 +40,13 @@ protocol DogRequirementProtocol {
     mutating func changeLastExecution(newLastExecution: Date)
     
     mutating func changeIntervalElapsed(intervalElapsed: TimeInterval)
-    
-    //TEMPORARILY DISABLED DUE TO CONFLICT OF MATCHING NAMES WITH DIFFERENT DOG OBJECT
-    // mutating func resetLabel()
-    
-    mutating func resetDescription()
-    
-    mutating func resetInterval()
 }
 
 extension DogRequirementProtocol {
     
     //MARK: DogRequirmentProtocol Function Extension Implementation
     
-    //if newLabel passes all tests, changes value, if not throws error
+    ///if newLabel passes all tests, changes value, if not throws error
     mutating func changeLabel(newLabel: String?) throws{
         if newLabel == nil || newLabel == "" {
             throw DogRequirementError.labelInvalid
@@ -65,7 +54,7 @@ extension DogRequirementProtocol {
         label = newLabel!
     }
     
-    //if newDescription passes all tests, changes value, if not throws error
+    ///if newDescription passes all tests, changes value, if not throws error
     mutating func changeDescription(newDescription: String?) throws{
         if newDescription == nil {
             throw DogRequirementError.descriptionInvalid
@@ -74,7 +63,7 @@ extension DogRequirementProtocol {
         description = newDescription!
     }
       
-    //if newInterval passes all tests, changes value, if not throws error
+    ///if newInterval passes all tests, changes value, if not throws error
     mutating func changeInterval(newInterval: TimeInterval?) throws{
         
         /*
@@ -85,36 +74,21 @@ extension DogRequirementProtocol {
         if newInterval == nil{
             throw DogRequirementError.intervalInvalid
         }
-        interval = newInterval!
+        executionInterval = newInterval!
     }
     
+    ///if newLastExecution passes all tests, changes value
     mutating func changeLastExecution(newLastExecution: Date){
         lastExecution = newLastExecution
     }
     
+    ///if newLastExecution passes all tests, changes value
     mutating func changeIntervalElapsed(intervalElapsed: TimeInterval){
         self.intervalElapsed = intervalElapsed
     }
-    
-    /*
-     TEMPORARILY DISABLED DUE TO CONFLICT OF MATCHING NAMES WITH DIFFERENT DOG OBJECT
-     //resets value of label to constant/default value
-    mutating func resetLabel(){
-        label = DogConstant.defaultRequirementLabel
-    }
-     */
-    
-    //resets value of description to constant/default value
-    mutating func resetDescription(){
-        description = RequirementConstant.defaultDescription
-    }
-    
-    //resets value of time interval to constant/default value
-    mutating func resetInterval(){
-        interval = TimeInterval(RequirementConstant.defaultTimeInterval)
-    }
 }
 
+///Enum full of cases of possible errors from DogRequirementManager
 enum DogRequirementManagerError: Error {
     case requirementAlreadyPresent
     case requirementNotPresent
@@ -143,7 +117,7 @@ protocol DogRequirementManagerProtocol {
 
 extension DogRequirementManagerProtocol {
     
-    //checks to see if a requirement with the same label is present, if not then adds new requirement, if one is then throws error
+    ///checks to see if a requirement with the same label is present, if not then adds new requirement, if one is then throws error
     mutating func addRequirement(newRequirement: Requirement) throws {
         var requirementAlreadyPresent = false
         
@@ -168,7 +142,7 @@ extension DogRequirementManagerProtocol {
         }
     }
     
-    //removes trys to find a requirement whos label (capitals don't matter) matches requirement name given, if found removes requirement, if not found throws error
+    ///removes trys to find a requirement whos label (capitals don't matter) matches requirement name given, if found removes requirement, if not found throws error
     mutating func removeRequirement(requirementName: String) throws{
         var requirementNotPresent = true
         
@@ -201,11 +175,12 @@ extension DogRequirementManagerProtocol {
         }
     }
     
-        //clears all requirements, should make requirements an empty array
+        ///clears all requirements, should make requirements an empty array
     mutating func clearRequirements() {
         requirements.removeAll()
     }
     
+    ///finds and returns the reference of a requirement matching the given name
     func findRequirement(requirementName requirementToFind: String) throws -> Requirement {
         for r in 0..<requirements.count{
             if requirements[r].label == requirementToFind {
@@ -215,6 +190,7 @@ extension DogRequirementManagerProtocol {
         throw DogRequirementManagerError.requirementNotPresent
     }
     
+    ///finds and returns the index of a requirement with a name in terms of the requirement: [Requirement] array
     func findIndex(requirementName requirementToFind: String) throws -> Int {
         for r in 0..<requirements.count{
             if requirements[r].label == requirementToFind {

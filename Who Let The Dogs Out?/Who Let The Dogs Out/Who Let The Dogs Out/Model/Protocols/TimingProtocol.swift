@@ -8,7 +8,7 @@
 
 import UIKit
 
-enum TimingError: Error{
+enum TimingManagerError: Error{
     case parseSenderInfoFailed
     case invalidateFailed
 }

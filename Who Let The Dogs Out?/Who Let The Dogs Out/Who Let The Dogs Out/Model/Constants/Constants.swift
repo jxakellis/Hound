@@ -35,15 +35,15 @@ enum DogManagerConstant {
         defaultRequirementOne.label = "Potty"
         defaultRequirementOne.description = "Take The Dog Out"
         //defaultRequirementOne.interval = TimeInterval((3600*3)+(3600*(1/3)))
-        defaultRequirementOne.interval = TimeInterval(35)
+        defaultRequirementOne.executionInterval = TimeInterval(35)
         defaultRequirementOne.setEnable(newEnableStatus: false)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementOne)
         
         let defaultRequirementTwo = Requirement()
         defaultRequirementTwo.label = "Food"
         defaultRequirementTwo.description = "Feed The Dog"
-        defaultRequirementTwo.interval = TimeInterval((3600*7)+(3600*0.75))
-        //defaultRequirementTwo.interval = TimeInterval(20)
+        //defaultRequirementTwo.executionInterval = TimeInterval((3600*7)+(3600*0.75))
+        defaultRequirementTwo.executionInterval = TimeInterval(20)
         defaultRequirementTwo.setEnable(newEnableStatus: true)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementTwo)
         
@@ -51,7 +51,7 @@ enum DogManagerConstant {
         defaultRequirementThree.label = "Brush"
         defaultRequirementThree.description = "Brush His Fur Out"
         //defaultRequirementThree.interval = TimeInterval((3600*7)+(3600*0.75))
-        defaultRequirementThree.interval = TimeInterval(15)
+        defaultRequirementThree.executionInterval = TimeInterval(15)
         defaultRequirementThree.setEnable(newEnableStatus: true)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementThree)
         
@@ -69,4 +69,8 @@ enum DogManagerConstant {
         try! sudoDogManager.addDog(dogAdded: DogManagerConstant.defaultDog.copy() as! Dog)
         return sudoDogManager.copy() as! DogManager
     }
+}
+
+enum TimerConstant {
+    static var defaultSnooze = TimeInterval(60*30)
 }

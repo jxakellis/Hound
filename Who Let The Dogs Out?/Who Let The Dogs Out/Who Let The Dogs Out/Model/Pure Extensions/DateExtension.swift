@@ -10,7 +10,7 @@ import UIKit
 
 extension Date {
     
-    //Returns a Date object that is the product of adding interval: TimeInterval to pastDate until it is greater than or equal to current date.
+    ///Returns a Date object that is the product of adding interval: TimeInterval to pastDate until it is greater than or equal to current date.
     static func executionDate(lastExecution pastDate: Date,  currentDate: Date = Date(), interval: TimeInterval) -> Date {
         
         let timeElapsedSincePast = currentDate.timeIntervalSince(pastDate)
@@ -26,11 +26,15 @@ extension Date {
         return Date(timeInterval: (Double(timesIntervalNeedsAdded) * interval), since: pastDate)
     }
     
-    /*
-     Used for calculating timeInterval between two dates, final print returns it in a hours and minutes representation
-     let futureDate = Date(timeInterval: TimeInterval((3600)*2.5), since: Date())
-     let ti = futureDate.timeIntervalSince(Date())
-     print(ti)
-     print(String.convertTimeIntervalToReadable(interperateTimeInterval: ti))
-     */
+    ///Returns a rounded version of targetDate depending on roundingInterval, e.g. targetDate 18:41:51 -> rounded 18:42:00 for RI of 10 but for a RI of 5 rounded 18:41:50
+    static func roundDate(targetDate: Date, roundingInterval: TimeInterval) -> Date{
+        let rounded = Date(timeIntervalSinceReferenceDate: (targetDate.timeIntervalSinceReferenceDate / roundingInterval).rounded(.toNearestOrEven) * roundingInterval)
+        return rounded
+    }
+    
+    ///Mutates self depending on roundingInterval, e.g. self 18:41:51 -> newRoundedSelf 18:42:00 for RI of 10 but for a RI of 5 rounded 18:41:50
+    mutating func roundDate(roundingInterval: TimeInterval) {
+        let rounded = Date(timeIntervalSinceReferenceDate: (self.timeIntervalSinceReferenceDate / roundingInterval).rounded(.toNearestOrEven) * roundingInterval)
+        self = rounded
+    }
 }

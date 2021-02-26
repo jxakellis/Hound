@@ -104,6 +104,11 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         ibOutletSetup()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        Utils.presenter = self
+    }
+    
     private func ibOutletSetup(){
         dogName.delegate = self
         dogDescription.delegate = self
@@ -117,6 +122,29 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         else{
             dogName.text = "Fido"
             dogDescription.text = "Friendly"
+        }
+    }
+    
+    func willHideButtons(isHidden: Bool){
+        if isHidden == false {
+            addDogButton.isEnabled = true
+            addDogButton.isHidden = false
+            addDogButtonBackground.isEnabled = true
+            addDogButtonBackground.isHidden = false
+            cancelAddDogButton.isEnabled = true
+            cancelAddDogButton.isHidden = false
+            cancelAddDogButtonBackground.isEnabled = true
+            cancelAddDogButtonBackground.isHidden = false
+        }
+        else {
+            addDogButton.isEnabled = false
+            addDogButton.isHidden = true
+            addDogButtonBackground.isEnabled = false
+            addDogButtonBackground.isHidden = true
+            cancelAddDogButton.isEnabled = false
+            cancelAddDogButton.isHidden = true
+            cancelAddDogButtonBackground.isEnabled = false
+            cancelAddDogButtonBackground.isHidden = true
         }
     }
     

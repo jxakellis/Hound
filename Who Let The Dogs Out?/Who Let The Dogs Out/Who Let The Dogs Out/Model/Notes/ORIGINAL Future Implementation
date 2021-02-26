@@ -1,0 +1,28 @@
+
+ORIGINAL Future Implementation Needed
+
+2/23/2021
+
+**    Add logging record feature?
+
+Home Page
+    Change alarms to reminders (and change home in tabbar to reminders)
+    Add display to show when timer was last executed, do not integrate pause with it as it should show how long from it was last executed
+    Add three different options for when the alarm goes off, turn off (change isEnabled), one for remind shortly/ snooze (e.g. 30 minutes) and one for reset alarm (already implemented)
+    Decrease precision when converting time to string, if over an hour show hours and minutes, if under an hour show minutes no seconds, and only show seconds under a minute
+    
+Dogs
+    Change from dogs overview to dogs configeration
+    Add editting for a requirement
+    Add nudge/error if trying to add a dog with no requirements
+    
+    AddDog
+        Add title to the top like the tab bar pages, e.g. Create Dog
+        Hide big green and back when adding a requirement/need to a dog, how dad fumbled when not clicking addToList before hitting big green to update/add dog.
+        Change from needs to reminders in all parts
+        Change embedded Add need thing from Add A Need to Create reminder
+        When adding a need/reminder change back arrow from <Needs to just <
+        Change from Add To List to Add (tab bar button)
+
+AlertController
+    Create different Utils for willShowDogReminder (? on name) instead of willShowAlert as wSDR will have three button but wSA will only have the ok button

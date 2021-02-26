@@ -16,13 +16,14 @@ class HomeViewController: UIViewController, HomeMainScreenTableViewControllerDel
     
     //MARK: HomeMainScreenTableViewControllerDelegate
     
+    ///function called by HomeMainScreenTableViewControllerDelegate to specify that all rows in the tableview are unselected
     func didDeselectAllRows(sender: AnyObject) {
-        ///function called by HomeMainScreenTableViewControllerDelegate to specify that all rows in the tableview are unselected
+        
         willToggleLogState(sender: sender, newSelectionControlState: false)
     }
     
+    ///function called by HomeMainScreenTableViewControllerDelegate to specify that the tableview went from zero rows selected to one row selected, indicating a new selection state
     func didSelectRow(sender: AnyObject) {
-        ///function called by HomeMainScreenTableViewControllerDelegate to specify that the tableview went from zero rows selected to one row selected, indicating a new selection state
         willToggleLogState(sender: sender, newSelectionControlState: true)
     }
     
@@ -99,9 +100,8 @@ class HomeViewController: UIViewController, HomeMainScreenTableViewControllerDel
         willToggleLogState(sender: self, newSelectionControlState: false)
     }
     
+    ///Toggles all corrosponding information to the specified newState: Bool, sender is the VC which called this information
     private func willToggleLogState(sender: AnyObject, newSelectionControlState: Bool){
-        
-        ///Toggles all corrosponding information to the specified newState: Bool, sender is the VC which called this information
         if newSelectionControlState == true && homeMainScreenTableViewController.activeTimers > 0 {
             //Visual element in current VC management
             willLog.tintColor = UIColor.systemGreen
