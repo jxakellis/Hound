@@ -10,7 +10,8 @@ import UIKit
 
 //Delegate to pass setup requirement back to table view
 protocol DogsInstantiateRequirementViewControllerDelegate {
-    func didAddToList (requirement: Requirement) throws
+    func didAddRequirement(newRequirement: Requirement) throws
+    func didUpdateRequirement(formerName: String, updatedRequirement: Requirement) throws
 }
 
 class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate{
@@ -27,10 +28,6 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
         self.view.endEditing(true)
         return false
     }
-    
-    @IBAction func gestureRecognizer(_ sender: Any) {
-    
-    }
     //MARK: Properties
     
     var delegate: DogsInstantiateRequirementViewControllerDelegate! = nil
@@ -38,6 +35,8 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
     @IBOutlet private weak var requirementName: UITextField!
     @IBOutlet private weak var requirementDescription: UITextField!
     @IBOutlet private weak var requirementInterval: UIDatePicker!
+    
+    @IBOutlet weak var saveButton: UIBarButtonItem!
     
     @IBAction func requirementIntervalValueChanged(_ sender: Any) {
         self.dismissKeyboard()
@@ -49,14 +48,19 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
     
     
     //Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured requirement back to table view.
-    @IBAction private func didAddToList(_ sender: Any) {
+    @IBAction private func willSave(_ sender: Any) {
         var tempRequirement = Requirement()
         
         do {
-            try tempRequirement.changeLabel(newLabel: requirementName.text)
+            try tempRequirement.changeName(newName: requirementName.text)
             try tempRequirement.changeDescription(newDescription: requirementDescription.text)
             try tempRequirement.changeInterval(newInterval: requirementInterval.countDownDuration)
-            try delegate.didAddToList(requirement: tempRequirement)
+            if setupTuple.3 == false {
+                try delegate.didAddRequirement(newRequirement: tempRequirement)
+            }
+            else {
+                try delegate.didUpdateRequirement(formerName: setupTuple.0, updatedRequirement: tempRequirement)
+            }
             navigationController?.popViewController(animated: true)
         }
         catch {
@@ -65,6 +69,7 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
         
     }
     
+    var setupTuple: (String, String, TimeInterval, Bool) = (RequirementConstant.defaultName, RequirementConstant.defaultDescription, RequirementConstant.defaultTimeInterval, false)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,7 +80,15 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
         tap.delegate = self
         requirementInterval.addGestureRecognizer(tap)
         
-        defaults()
+        requirementName.text = setupTuple.0
+        requirementDescription.text = setupTuple.1
+        requirementInterval.countDownDuration = setupTuple.2
+        if setupTuple.3 == true {
+            saveButton.title = "Update"
+        }
+        else {
+            saveButton.title = "Add"
+        }
         
         requirementName.delegate = self
         requirementDescription.delegate = self
@@ -84,12 +97,5 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
     
     @objc internal override func dismissKeyboard() {
         MainTabBarViewController.mainTabBarViewController.dogsViewController.presentedViewController?.dismissKeyboard()
-    }
-    
-    //default values and configs
-    private func defaults(){
-        requirementName.text = RequirementConstant.defaultLabel
-        requirementDescription.text = RequirementConstant.defaultDescription
-        requirementInterval.countDownDuration = TimeInterval(RequirementConstant.defaultTimeInterval)
     }
 }

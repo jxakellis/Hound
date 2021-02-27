@@ -17,17 +17,17 @@ class DogsRequirementTableViewCell: UITableViewCell {
     var delegate: DogsRequirementTableViewCellDelegate! = nil
     
     @IBOutlet private weak var timeInterval: UILabel!
-    @IBOutlet private weak var label: UILabel!
+    @IBOutlet private weak var name: UILabel!
     
     
     //When the trash button icon is clicked it executes this func, thru delegate finds a requirement with a matching name and then deletes it (handled elsewhere tho)
     @IBAction private func trashClicked(_ sender: Any) {
-        delegate.didClickTrash(dogName: label.text!)
+        delegate.didClickTrash(dogName: name.text!)
     }
     
     //sets label to initLabel
-    func setLabel(initLabel: String){
-        label.text = initLabel
+    func setName(initName: String){
+        name.text = initName
     }
     
     //set time interval to initTimeInterval
@@ -39,7 +39,7 @@ class DogsRequirementTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         timeInterval.adjustsFontSizeToFitWidth = true
-        label.adjustsFontSizeToFitWidth = true
+        name.adjustsFontSizeToFitWidth = true
         // Initialization code
         self.contentMode = .center
         self.imageView?.contentMode = .center

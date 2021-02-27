@@ -75,7 +75,7 @@ class HomeMainScreenTableViewController: UITableViewController {
             
             for d in 0..<activeDogManagerCopy.dogs.count {
                 for r in 0..<activeDogManagerCopy.dogs[d].dogRequirments.requirements.count {
-                    let currentTimeInterval = try! Date().distance(to: TimingManager.timerDictionary[activeDogManagerCopy.dogs[d].dogSpecifications.getDogSpecification(key: "name")]![activeDogManagerCopy.dogs[d].dogRequirments.requirements[r].label]!.fireDate)
+                    let currentTimeInterval = try! Date().distance(to: TimingManager.timerDictionary[activeDogManagerCopy.dogs[d].dogSpecifications.getDogSpecification(key: "name")]![activeDogManagerCopy.dogs[d].dogRequirments.requirements[r].name]!.fireDate)
                     
                     if currentTimeInterval < lowestTimeInterval
                     {
@@ -85,7 +85,7 @@ class HomeMainScreenTableViewController: UITableViewController {
                 }
             }
             assortedTimers.append(lowestRequirement!)
-            try! activeDogManagerCopy.findDog(dogName: lowestRequirement!.0).dogRequirments.removeRequirement(requirementName: lowestRequirement!.1.label)
+            try! activeDogManagerCopy.findDog(dogName: lowestRequirement!.0).dogRequirments.removeRequirement(requirementName: lowestRequirement!.1.name)
         }
         
         return assortedTimers[priorityIndex]

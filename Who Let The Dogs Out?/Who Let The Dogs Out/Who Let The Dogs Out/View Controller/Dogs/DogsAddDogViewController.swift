@@ -9,7 +9,7 @@
 import UIKit
 
 protocol DogsAddDogViewControllerDelegate{
-    func didAddDog(addedDog: Dog) throws
+    func didAddDog(newDog: Dog) throws
     func didUpdateDog(formerName: String, updatedDog: Dog) throws
 }
 
@@ -69,7 +69,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
                 dismiss(animated: true, completion: nil)
             }
             else{
-                try delegate.didAddDog(addedDog: dog)
+                try delegate.didAddDog(newDog: dog)
                 dismiss(animated: true, completion: nil)
             }
         }

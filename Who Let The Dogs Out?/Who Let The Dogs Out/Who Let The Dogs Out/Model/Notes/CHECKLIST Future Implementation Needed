@@ -5,9 +5,6 @@ CHECKLIST Future Implementation Needed
 
 Home Page
     Add three different options for when the alarm goes off, turn off (change isEnabled), one for remind shortly/ snooze (e.g. 30 minutes) and one for reset alarm (already implemented)
-    
-Dogs
-    Add editting for a requirement
-    Add nudge/error if trying to add a dog with no requirements
+
 
 

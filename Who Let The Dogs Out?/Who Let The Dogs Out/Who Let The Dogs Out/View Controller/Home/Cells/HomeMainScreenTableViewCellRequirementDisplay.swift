@@ -29,7 +29,7 @@ class HomeMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
     
     func setup(parentDogName: String, requirementPassed: Requirement) {
         self.requirementSource = requirementPassed
-        requirementName.text = requirementPassed.label
+        requirementName.text = requirementPassed.name
         dogName.text = parentDogName
         
         if TimingManager.pauseState.1 == true {
@@ -37,12 +37,12 @@ class HomeMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
             self.timeIntervalLeft = (requirementPassed.executionInterval - requirementPassed.intervalElapsed)
         }
         else{
-            if TimingManager.timerDictionary[parentDogName]![requirementPassed.label]!.isValid == false {
+            if TimingManager.timerDictionary[parentDogName]![requirementPassed.name]!.isValid == false {
                 timeSinceLastExecution.text = "It's Happening"
                 timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: .semibold)])
             }
             else {
-                let fireDate = TimingManager.timerDictionary[parentDogName]![requirementPassed.label]!.fireDate
+                let fireDate = TimingManager.timerDictionary[parentDogName]![requirementPassed.name]!.fireDate
                 self.timeIntervalLeft = Date().distance(to: fireDate)
                 timeLeft.text = String.convertTimeIntervalToReadable(interperateTimeInterval: self.timeIntervalLeft!)
                 timeLeft.attributedText = timeLeft.text!.withFontAtEnd(text: " Left", font: UIFont.systemFont(ofSize: 17, weight: .semibold))

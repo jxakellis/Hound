@@ -29,7 +29,7 @@ protocol TimingProtocol {
     
     //func invalidateAll()
     
-    static func invalidate(dogName: String, requirementName: String) throws
+    //static func invalidate(dogName: String, requirementName: String) throws
     
     
 }

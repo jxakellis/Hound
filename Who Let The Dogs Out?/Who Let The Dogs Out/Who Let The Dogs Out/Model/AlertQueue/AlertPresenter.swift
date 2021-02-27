@@ -28,7 +28,6 @@ class AlertPresenter{
     private func showNextAlert() {
         if alertQueue.queuePresent() && locked == false{
             locked = true
-            print("showNextAlert elements count: \(alertQueue.elements.count)")
             Utils.presenter.present(alertQueue.dequeue()!, animated: true)
         }
     }

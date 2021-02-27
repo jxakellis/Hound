@@ -33,7 +33,7 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
     func copy(with zone: NSZone? = nil) -> Any {
         //String(), Date(), Double() which TimeInterval is a typealias of are all structs aka not reference types
         var copy = Requirement()
-        try! copy.changeLabel(newLabel: self.label)
+        try! copy.changeName(newName: self.name)
         try! copy.changeInterval(newInterval: self.executionInterval)
         try! copy.changeDescription(newDescription: self.description)
         copy.lastExecution = self.lastExecution
@@ -43,8 +43,8 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
         return copy
     }
     
-    ///label for what the requirement does, set by user, used as main name for requirement, e.g. potty or food
-    var label: String = RequirementConstant.defaultLabel
+    ///name for what the requirement does, set by user, used as main name for requirement, e.g. potty or food
+    var name: String = RequirementConstant.defaultName
     
     ///description set to describe what the requirement should do, should be set by user
     var description: String = RequirementConstant.defaultDescription

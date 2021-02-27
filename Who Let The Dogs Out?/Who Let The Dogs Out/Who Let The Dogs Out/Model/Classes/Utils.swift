@@ -155,11 +155,11 @@ class ErrorProcessor{
     ///Returns true if able to find a match in enum DogRequirementError to the error provided
     private func handleDogRequirementError(error: Error, sender: AnyObject) -> Bool{
         /*
-         case labelInvalid
+         case nameInvalid
          case descriptionInvalid
          case intervalInvalid
          */
-        if case DogRequirementError.labelInvalid = error {
+        if case DogRequirementError.nameInvalid = error {
             ErrorProcessor.alertForError(message: "Your dog's reminder name is invalid, please try a different one.")
             return true
         }

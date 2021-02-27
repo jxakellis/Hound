@@ -9,7 +9,8 @@
 import UIKit
 
 protocol DogsMainScreenTableViewControllerDelegate{
-    func didSelectDog(sectionIndexOfDog: Int)
+    func didSelectDog(indexPathSection dogIndex: Int)
+    func didSelectRequirement(indexPathSection dogIndex: Int, indexPathRow requirementIndex: Int)
     func didUpdateDogManager(newDogManager: DogManager, sender: AnyObject?)
 }
 
@@ -17,7 +18,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     //MARK: DogsMainScreenTableViewCellDogDisplayDelegate
     
-    //Dog switch is toggled in DogsMainScreenTableViewCellDogDisplay
+    ///Dog switch is toggled in DogsMainScreenTableViewCellDogDisplay
     func didToggleDogSwitch(dogName: String, isEnabled: Bool) {
         
         let sudoDogManager = getDogManager()
@@ -27,7 +28,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             for r in try! 0..<sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements.count {
                 if try! sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements[r].getEnable() == true {
                     try! sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements[r].lastExecution = Date()
-                    try! sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements[r].changeIntervalElapsed(intervalElapsed: TimeInterval(0))
+                    try! sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements[r].changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
                 }
             }
         }
@@ -42,7 +43,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         cell.dogToggleSwitch.setOn(isEnabled, animated: true)
     }
     
-    //If the trash button was clicked in the Dog Display cell, this function is called using a delegate from the cell class to handle the press
+    ///If the trash button was clicked in the Dog Display cell, this function is called using a delegate from the cell class to handle the press
     func didClickTrash(dogName: String) {
         
         var sudoDogManager = getDogManager()
@@ -55,7 +56,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     //MARK: DogsMainScreenTableViewCellDogRequirementDelegate
     
-    //Requirement switch is toggled in DogsMainScreenTableViewCellDogRequirement
+    ///Requirement switch is toggled in DogsMainScreenTableViewCellDogRequirement
     func didToggleRequirementSwitch(parentDogName: String, requirementName: String, isEnabled: Bool) {
         
         let sudoDogManager = getDogManager()
@@ -64,7 +65,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         if isEnabled == true {
             try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.findRequirement(requirementName: requirementName).lastExecution = Date()
             var sudoRequirement = try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.findRequirement(requirementName: requirementName)
-            sudoRequirement.changeIntervalElapsed(intervalElapsed: TimeInterval(0))
+            sudoRequirement.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
         }
         
         setDogManager(newDogManager: sudoDogManager, sender: DogsMainScreenTableViewCellDogRequirementDisplay())
@@ -77,7 +78,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         cell.requirementToggleSwitch.setOn(isEnabled, animated: true)
     }
     
-    //If the trash button was clicked in the Dog Requirement cell, this function is called using a delegate from the cell class to handle the press
+    ///If the trash button was clicked in the Dog Requirement cell, this function is called using a delegate from the cell class to handle the press
     func didClickTrash(parentDogName: String, requirementName: String) {
         
         let sudoDogManager = getDogManager()
@@ -98,12 +99,10 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     private var dogManager: DogManager = DogManager()
     
-    //Get method, returns a copy of dogManager to remove possible editting of dog manager through class reference type
     func getDogManager() -> DogManager {
         return dogManager.copy() as! DogManager
     }
     
-    //Sets dog manager, when the value of dog manager is changed it not only changes the variable but calls other needed functions to reflect the change
     func setDogManager(newDogManager: DogManager, sender: AnyObject?){
         dogManager = newDogManager.copy() as! DogManager
         
@@ -202,7 +201,11 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         if getDogManager().dogs.count > 0 {
             if indexPath.row == 0{
-                delegate.didSelectDog(sectionIndexOfDog: indexPath.section)
+                delegate.didSelectDog(indexPathSection: indexPath.section)
+                
+            }
+            else if indexPath.row > 0 {
+                delegate.didSelectRequirement(indexPathSection: indexPath.section, indexPathRow: indexPath.row-1)
             }
             tableView.deselectRow(at: indexPath, animated: true)
         }

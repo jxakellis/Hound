@@ -16,7 +16,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         if sender is HomeViewController {
             let sudoDogManager = self.getDogManager()
             for loggedRequirement in loggedRequirements {
-                var sudoRequirement = try! sudoDogManager.findDog(dogName: loggedRequirement.0).dogRequirments.findRequirement(requirementName: loggedRequirement.1.label)
+                var sudoRequirement = try! sudoDogManager.findDog(dogName: loggedRequirement.0).dogRequirments.findRequirement(requirementName: loggedRequirement.1.name)
                 sudoRequirement.changeLastExecution(newLastExecution: Date())
             }
             self.setDogManager(newDogManager: sudoDogManager, sender: sender)

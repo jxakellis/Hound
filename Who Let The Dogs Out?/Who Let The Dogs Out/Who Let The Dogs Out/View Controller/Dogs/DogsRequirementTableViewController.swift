@@ -15,6 +15,7 @@ protocol DogsRequirementTableViewControllerDelegate {
 
 class DogsRequirementTableViewController: UITableViewController, DogsInstantiateRequirementViewControllerDelegate, DogsRequirementTableViewCellDelegate {
     
+    
     //MARK: Dogs Requirement Table View Cell
     
     //When the trash button is clicked on a cell, triggered through a delegate, this function is called to delete the corrosponding info
@@ -24,7 +25,7 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
             updateTable()
         }
         catch {
-            print("\(requirementManager.requirements.count)" + requirementManager.requirements[0].label)
+            print("\(requirementManager.requirements.count)" + requirementManager.requirements[0].name)
         }
     }
     
@@ -33,8 +34,13 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
     var dogsInstantiateRequirementViewController = DogsInstantiateRequirementViewController()
     
     //When this function is called through a delegate, it adds the information to the list of requirements and updates the cells to display it
-    func didAddToList(requirement: Requirement) throws{
-        try requirementManager.addRequirement(newRequirement: requirement)
+    func didAddRequirement(newRequirement: Requirement) throws{
+        try requirementManager.addRequirement(newRequirement: newRequirement)
+        updateTable()
+    }
+    
+    func didUpdateRequirement(formerName: String, updatedRequirement: Requirement) throws {
+        try requirementManager.changeRequirement(requirementToBeChanged: formerName, newRequirement: updatedRequirement)
         updateTable()
     }
     
@@ -52,12 +58,19 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         tableView.separatorInset = UIEdgeInsets.zero
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        if self.requirementManager.requirements.count == 0 {
+            self.tableView.allowsSelection = false
+        }
+        else {
+            self.tableView.allowsSelection = true
+        }
+        
         MainTabBarViewController.mainTabBarViewController.dogsViewController.dogsAddDogViewController.willHideButtons(isHidden: false)
     }
     
@@ -65,7 +78,6 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
         super.viewWillDisappear(animated)
         MainTabBarViewController.mainTabBarViewController.dogsViewController.dogsAddDogViewController.willHideButtons(isHidden: true)
     }
-    
     // MARK: - Table View Data Source
     
     //Number of sections
@@ -94,7 +106,7 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
         
         let castCell = cell as! DogsRequirementTableViewCell
         castCell.delegate = self
-        castCell.setLabel(initLabel: requirementManager.requirements[indexPath.row].label)
+        castCell.setName(initName: requirementManager.requirements[indexPath.row].name)
         castCell.setTimeInterval(initTimeInterval: requirementManager.requirements[indexPath.row].executionInterval)
         // Configure the cell...
         
@@ -103,57 +115,42 @@ class DogsRequirementTableViewController: UITableViewController, DogsInstantiate
     
     //Reloads table data when it is updated, if you change the data w/o calling this, the data display to the user will not be updated
     func updateTable(){
+        
+        if self.requirementManager.requirements.count == 0 {
+            self.tableView.allowsSelection = false
+        }
+        else {
+            self.tableView.allowsSelection = true
+        }
+        
         self.tableView.reloadData()
         delegate.didUpdateRequirements(newRequirementList: requirementManager.requirements)
     }
     
-    /*
-     // Override to support conditional editing of the table view.
-     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
-     */
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        selectedTuple = (requirementManager.requirements[indexPath.row].name, requirementManager.requirements[indexPath.row].description, requirementManager.requirements[indexPath.row].executionInterval, true)
+        
+        self.performSegue(withIdentifier: "dogsInstantiateRequirementViewController", sender: self)
+        
+    }
     
-    /*
-     // Override to support editing the table view.
-     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-     if editingStyle == .delete {
-     // Delete the row from the data source
-     tableView.deleteRows(at: [indexPath], with: .fade)
-     } else if editingStyle == .insert {
-     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-     }
-     }
-     */
-    
-    /*
-     // Override to support rearranging the table view.
-     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-     
-     }
-     */
-    
-    /*
-     // Override to support conditional rearranging of the table view.
-     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the item to be re-orderable.
-     return true
-     }
-     */
-    
+    private var selectedTuple: (String, String, TimeInterval, Bool)? = nil
     
     // MARK: - Navigation
     
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         //Links delegate to instantiateRequirement
         if segue.identifier == "dogsInstantiateRequirementViewController" {
             dogsInstantiateRequirementViewController = segue.destination as! DogsInstantiateRequirementViewController
             dogsInstantiateRequirementViewController.delegate = self
+            
+            if self.selectedTuple != nil {
+                dogsInstantiateRequirementViewController.setupTuple = self.selectedTuple!
+                self.selectedTuple = nil
+            }
+            
         }
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
     }
     
     

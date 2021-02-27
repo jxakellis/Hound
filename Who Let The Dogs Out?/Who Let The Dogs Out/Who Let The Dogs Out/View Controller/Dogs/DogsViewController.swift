@@ -12,42 +12,58 @@ protocol DogsViewControllerDelegate {
     func didUpdateDogManager(newDogManager: DogManager, sender: AnyObject?)
 }
 
-class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsAddDogViewControllerDelegate, DogsMainScreenTableViewControllerDelegate{
+class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsAddDogViewControllerDelegate, DogsMainScreenTableViewControllerDelegate, DogsUpdateRequirementViewControllerDelegate{
+    
+    //MARK: DogsUpdateRequirementViewControllerDelegate
+    
+    func didUpdateRequirement(parentDogName: String, formerName: String, updatedRequirement: Requirement) throws {
+        let sudoDogManager = getDogManager()
+        try sudoDogManager.findDog(dogName: parentDogName).dogRequirments.changeRequirement(requirementToBeChanged: formerName, newRequirement: updatedRequirement)
+        setDogManager(newDogManager: sudoDogManager, sender: DogsUpdateRequirementViewController())
+    }
     
     //MARK: DogsMainScreenTableViewControllerDelegate
     
-    //If a dog was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the dogs information
-    func didSelectDog(sectionIndexOfDog: Int) {
+    ///If a dog was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the dogs information
+    func didSelectDog(indexPathSection dogIndex: Int) {
         
         self.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
         
         //Conversion of "DogsAddDogViewController" to update mode
-        try! dogsAddDogViewController.updateDogTuple = (true, getDogManager().dogs[sectionIndexOfDog].dogSpecifications.getDogSpecification(key: "name"))
-        dogsAddDogViewController.dog = getDogManager().dogs[sectionIndexOfDog]
+        try! dogsAddDogViewController.updateDogTuple = (true, getDogManager().dogs[dogIndex].dogSpecifications.getDogSpecification(key: "name"))
+        dogsAddDogViewController.dog = getDogManager().dogs[dogIndex]
         dogsAddDogViewController.willInitalize()
         
-        dogsAddDogViewController.didPassRequirements(passedRequirements: getDogManager().dogs[sectionIndexOfDog].dogRequirments)
+        dogsAddDogViewController.didPassRequirements(passedRequirements: getDogManager().dogs[dogIndex].dogRequirments)
         
         dogsAddDogViewController.addDogButton.setTitle("Update Dog", for: .normal)
         
     }
     
-    //If the dog manager was updated in DogsMainScreenTableViewController, this function is called to reflect that change here with this dogManager
+    ///If a requirement was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the requirements information
+    func didSelectRequirement(indexPathSection dogIndex: Int, indexPathRow requirementIndex: Int) {
+        self.performSegue(withIdentifier: "dogsUpdateRequirementViewController", sender: DogsMainScreenTableViewController())
+        
+        dogsUpdateRequirementViewController.requirement = getDogManager().dogs[dogIndex].dogRequirments.requirements[requirementIndex]
+        try! dogsUpdateRequirementViewController.parentDogName = getDogManager().dogs[dogIndex].dogSpecifications.getDogSpecification(key: "name")
+    }
+    
+    ///If the dog manager was updated in DogsMainScreenTableViewController, this function is called to reflect that change here with this dogManager
     func didUpdateDogManager(newDogManager: DogManager, sender: AnyObject?) {
         setDogManager(newDogManager: newDogManager, sender: sender)
     }
     
     //MARK: DogsAddDogViewControllerDelegate
     
-    //If a dog was added by the subview, this function is called with a delegate and is incorporated into the dog manager here
-    func didAddDog(addedDog: Dog) throws {
+    ///If a dog was added by the subview, this function is called with a delegate and is incorporated into the dog manager here
+    func didAddDog(newDog: Dog) throws {
         var sudoDogManager = getDogManager()
-        try sudoDogManager.addDog(dogAdded: addedDog)
+        try sudoDogManager.addDog(dogAdded: newDog)
         setDogManager(newDogManager: sudoDogManager, sender: DogsAddDogViewController())
         //try delegate.didAddDog(dogAdded: addedDog)
     }
     
-    //If a dog was updated, its former name (as its name could have been changed) and new dog instance is passed here, matching old dog is found and replaced with new
+    ///If a dog was updated, its former name (as its name could have been changed) and new dog instance is passed here, matching old dog is found and replaced with new
     func didUpdateDog(formerName: String, updatedDog: Dog) throws {
         var sudoDogManager = getDogManager()
         try sudoDogManager.changeDog(dogNameToBeChanged: formerName, newDog: updatedDog)
@@ -68,17 +84,16 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     
     var dogsAddDogViewController = DogsAddDogViewController()
     
+    var dogsUpdateRequirementViewController = DogsUpdateRequirementViewController()
+    
     //MARK: Dog Manager
     
-    //seperation of church and state or something, this is mainly so when dogManager is changed, it is all routed through these two functions and the necessary action is taken.
     private var dogManager = DogManager()
     
-    //Get method, returns a copy of dogManager to remove possible editting of dog manager through class reference type
     func getDogManager() -> DogManager {
         return dogManager.copy() as! DogManager
     }
     
-    //Sets dog manager, when the value of dog manager is changed it not only changes the variable but calls other needed functions to reflect the change
     func setDogManager(newDogManager: DogManager, sender: AnyObject?) {
         dogManager = newDogManager.copy() as! DogManager
         
@@ -124,6 +139,11 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         if segue.identifier == "dogsMainScreenTableViewController" {
             dogsMainScreenTableViewController = segue.destination as! DogsMainScreenTableViewController
             dogsMainScreenTableViewController.delegate = self
+        }
+        if segue.identifier == "dogsUpdateRequirementViewController" {
+            dogsUpdateRequirementViewController = segue.destination as! DogsUpdateRequirementViewController
+            dogsUpdateRequirementViewController.modalPresentationStyle = .fullScreen
+            dogsUpdateRequirementViewController.delegate = self
         }
     }
     

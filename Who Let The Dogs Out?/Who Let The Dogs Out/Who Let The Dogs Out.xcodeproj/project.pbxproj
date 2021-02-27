@@ -32,6 +32,7 @@
 		A28A0B4825B922E80057BEC7 /* DogsRequirementTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28A0B4725B922E80057BEC7 /* DogsRequirementTableViewController.swift */; };
 		A28A0B4C25B923BA0057BEC7 /* DogsRequirementNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28A0B4B25B923BA0057BEC7 /* DogsRequirementNavigationViewController.swift */; };
 		A28A0B5025B924140057BEC7 /* DogsRequirementTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28A0B4F25B924140057BEC7 /* DogsRequirementTableViewCell.swift */; };
+		A28AF46D25E9C7C80018B575 /* DogsUpdateRequirementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28AF46C25E9C7C80018B575 /* DogsUpdateRequirementViewController.swift */; };
 		A290F38A25D4B10400429C9D /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A290F38925D4B10400429C9D /* Utils.swift */; };
 		A2AA423225C337C700EAE129 /* Specification.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA423125C337C700EAE129 /* Specification.swift */; };
 		A2B18E3825E8A4C000951AC3 /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B18E3525E8A4C000951AC3 /* AlertPresenter.swift */; };
@@ -83,6 +84,7 @@
 		A28A0B4725B922E80057BEC7 /* DogsRequirementTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsRequirementTableViewController.swift; sourceTree = "<group>"; };
 		A28A0B4B25B923BA0057BEC7 /* DogsRequirementNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsRequirementNavigationViewController.swift; sourceTree = "<group>"; };
 		A28A0B4F25B924140057BEC7 /* DogsRequirementTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsRequirementTableViewCell.swift; sourceTree = "<group>"; };
+		A28AF46C25E9C7C80018B575 /* DogsUpdateRequirementViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsUpdateRequirementViewController.swift; sourceTree = "<group>"; };
 		A290F38925D4B10400429C9D /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		A2AA423125C337C700EAE129 /* Specification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Specification.swift; sourceTree = "<group>"; };
 		A2B18E3525E8A4C000951AC3 /* AlertPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 				A28A0B4B25B923BA0057BEC7 /* DogsRequirementNavigationViewController.swift */,
 				A28A0B4725B922E80057BEC7 /* DogsRequirementTableViewController.swift */,
 				A27C3D8E25B8A213005F46BA /* DogsInstantiateRequirementViewController.swift */,
+				A28AF46C25E9C7C80018B575 /* DogsUpdateRequirementViewController.swift */,
 				A27C139325AD2B210031B6A0 /* Cells */,
 			);
 			path = Dogs;
@@ -407,6 +410,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A28AF46D25E9C7C80018B575 /* DogsUpdateRequirementViewController.swift in Sources */,
 				A2853D8F25CFB4AD0068AEE3 /* EnableProtocol.swift in Sources */,
 				A27C3D8F25B8A213005F46BA /* DogsInstantiateRequirementViewController.swift in Sources */,
 				A231ACE525DEEA3B00B11E84 /* UIExtension.swift in Sources */,

@@ -11,7 +11,7 @@ import Foundation
 enum DogConstant {
     
     //convert to tuple so the defaults for the keys are directly linked.
-    //static let defaultLabel = ""
+    //static let defaultName = ""
     //static let defaultDescription = ""
     private static let nameTuple: (String, String) = ("name", "Fido")
     private static let descriptionTuple: (String, String) = ("description", "Fiesty")
@@ -20,7 +20,7 @@ enum DogConstant {
 }
 
 enum RequirementConstant {
-    static let defaultLabel = "Potty"
+    static let defaultName = "Potty"
     static let defaultDescription = "Take Dog Out"
     static let defaultTimeInterval = (3600*2.5)
     static let defaultEnable: Bool = true
@@ -32,7 +32,7 @@ enum DogManagerConstant {
         let defaultDog = Dog()
         
         let defaultRequirementOne = Requirement()
-        defaultRequirementOne.label = "Potty"
+        defaultRequirementOne.name = "Potty"
         defaultRequirementOne.description = "Take The Dog Out"
         //defaultRequirementOne.interval = TimeInterval((3600*3)+(3600*(1/3)))
         defaultRequirementOne.executionInterval = TimeInterval(35)
@@ -40,7 +40,7 @@ enum DogManagerConstant {
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementOne)
         
         let defaultRequirementTwo = Requirement()
-        defaultRequirementTwo.label = "Food"
+        defaultRequirementTwo.name = "Food"
         defaultRequirementTwo.description = "Feed The Dog"
         //defaultRequirementTwo.executionInterval = TimeInterval((3600*7)+(3600*0.75))
         defaultRequirementTwo.executionInterval = TimeInterval(20)
@@ -48,7 +48,7 @@ enum DogManagerConstant {
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementTwo)
         
         let defaultRequirementThree = Requirement()
-        defaultRequirementThree.label = "Brush"
+        defaultRequirementThree.name = "Brush"
         defaultRequirementThree.description = "Brush His Fur Out"
         //defaultRequirementThree.interval = TimeInterval((3600*7)+(3600*0.75))
         defaultRequirementThree.executionInterval = TimeInterval(15)

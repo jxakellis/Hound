@@ -30,10 +30,10 @@ class DogsMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
     
     //When the on off switch is toggled
     @IBAction func didToggleRequirementSwitch(_ sender: Any) {
-        delegate.didToggleRequirementSwitch(parentDogName: self.parentDogName, requirementName: requirement.label, isEnabled: self.requirementToggleSwitch.isOn)
+        delegate.didToggleRequirementSwitch(parentDogName: self.parentDogName, requirementName: requirement.name, isEnabled: self.requirementToggleSwitch.isOn)
     }
     @IBAction func didClickTrash(_ sender: Any) {
-        delegate.didClickTrash(parentDogName: self.parentDogName, requirementName: requirement.label)
+        delegate.didClickTrash(parentDogName: self.parentDogName, requirementName: requirement.name)
     }
     
     //MARK: General Functions
@@ -42,7 +42,7 @@ class DogsMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
     func setup(parentDogName: String, requirementPassed: Requirement){
         self.parentDogName = parentDogName
         self.requirement = requirementPassed
-        self.requirementName.text = requirementPassed.label
+        self.requirementName.text = requirementPassed.name
         if requirementPassed.executionInterval < 60 {
             self.timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.executionInterval)
         }
