@@ -40,6 +40,7 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
         copy.intervalElapsed = self.intervalElapsed
         copy.isEnabled = self.isEnabled
         copy.isSnoozed = self.isSnoozed
+        copy.executionDates = self.executionDates
         return copy
     }
     
@@ -61,6 +62,8 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
     var intervalElapsed: TimeInterval = TimeInterval(0)
     
     var isSnoozed: Bool = false
+    
+    var executionDates: [Date] = []
     
 }
 

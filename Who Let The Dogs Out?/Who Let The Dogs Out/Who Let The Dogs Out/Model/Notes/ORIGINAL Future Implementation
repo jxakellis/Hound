@@ -26,3 +26,11 @@ Dogs
 
 AlertController
     Create different Utils for willShowDogReminder (? on name) instead of willShowAlert as wSDR will have three button but wSA will only have the ok button
+    
+2/28/2021
+
+Potentially restructure sender system into two components: localizedSneder and originSender
+Origin sender: Will store the very root call of the function, where a user action (i believe in most cases) called some function to trigger a series of events.
+Localized sender: Will store the last class to handle the function call.
+
+This will allow for the class having the information passed to it to know what direction to route it in without having to compare originSender to every possible class. For example HomeMainScreenTableView could make a dogManager change, the origin sender would be itself, when it reaches MainTabBarViewController, the localized sender would be HomeViewController, as it just passed the information to MTBVC but the origin sender would still be HMSTVC. This would potentislly solve bugs where through the passage of information and updating, the class of the originSender is reached again and without this functionality once the class is reached it would update/change information that was already handled when it made that original function call (which started the chain).

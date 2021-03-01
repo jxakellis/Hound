@@ -9,11 +9,48 @@
 import UIKit
 
 protocol HomeMainScreenTableViewControllerDelegate {
-    func didSelectRow(sender: AnyObject)
-    func didDeselectAllRows(sender: AnyObject)
+    func didSelectOption()
 }
 
-class HomeMainScreenTableViewController: UITableViewController {
+class HomeMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol, HomeMainScreenTableViewCellDogRequirementLogDelegate {
+    
+    //MARK: HomeMainScreenTableViewCellDogRequirementLogDelegate
+    
+    func didDisable(dogName: String, requirementName: String) {
+        TimingManager.willDisableAlarm(dogName: dogName, requirementName: requirementName, dogManager: getDogManager())
+        delegate.didSelectOption()
+    }
+    
+    func didSnooze(dogName: String, requirementName: String) {
+        TimingManager.willSnoozeAlarm(dogName: dogName, requirementName: requirementName, dogManager: getDogManager())
+        delegate.didSelectOption()
+    }
+    
+    func didReset(dogName: String, requirementName: String) {
+        TimingManager.willResetAlarm(dogName: dogName, requirementName: requirementName, dogManager: getDogManager())
+        delegate.didSelectOption()
+    }
+    
+    //MARK: DogManagerControlFlowProtocol
+    
+    private var dogManager: DogManager = DogManager()
+    
+    func getDogManager() -> DogManager {
+        return dogManager.copy() as! DogManager
+    }
+    
+    func setDogManager(newDogManager: DogManager, sender: AnyObject?) {
+        self.dogManager = newDogManager.copy() as! DogManager
+        
+        if sender is HomeViewController {
+            self.updateDogManagerDependents()
+        }
+    }
+    
+    func updateDogManagerDependents() {
+        self.reloadTable()
+    }
+    
     
     //MARK: Calculated Properties
     
@@ -21,45 +58,25 @@ class HomeMainScreenTableViewController: UITableViewController {
     private var activeDogManager: DogManager {
         var dogManager = DogManager()
         
-        for d in 0..<MainTabBarViewController.staticDogManager.dogs.count {
-            guard MainTabBarViewController.staticDogManager.dogs[d].getEnable() == true else{
+        for d in 0..<self.getDogManager().dogs.count {
+            guard self.getDogManager().dogs[d].getEnable() == true else{
                 continue
             }
             
-            let dogAdd = MainTabBarViewController.staticDogManager.dogs[d].copy() as! Dog
+            let dogAdd = self.getDogManager().dogs[d].copy() as! Dog
             dogAdd.dogRequirments.clearRequirements()
             
-            for r in 0..<MainTabBarViewController.staticDogManager.dogs[d].dogRequirments.requirements.count {
-                guard MainTabBarViewController.staticDogManager.dogs[d].dogRequirments.requirements[r].getEnable() == true else{
+            for r in 0..<self.getDogManager().dogs[d].dogRequirments.requirements.count {
+                guard self.getDogManager().dogs[d].dogRequirments.requirements[r].getEnable() == true else{
                     continue
                 }
                 
-                try! dogAdd.dogRequirments.addRequirement(newRequirement: MainTabBarViewController.staticDogManager.dogs[d].dogRequirments.requirements[r].copy() as! Requirement)
+                try! dogAdd.dogRequirments.addRequirement(newRequirement: self.getDogManager().dogs[d].dogRequirments.requirements[r].copy() as! Requirement)
             }
             try! dogManager.addDog(dogAdded: dogAdd)
         }
         
         return dogManager
-    }
-    
-    ///Returns number of active timers
-    var activeTimers: Int{
-        
-        var count = 0
-        for d in 0..<MainTabBarViewController.staticDogManager.dogs.count {
-            guard MainTabBarViewController.staticDogManager.dogs[d].getEnable() == true else{
-                continue
-            }
-            
-            for r in 0..<MainTabBarViewController.staticDogManager.dogs[d].dogRequirments.requirements.count {
-                guard MainTabBarViewController.staticDogManager.dogs[d].dogRequirments.requirements[r].getEnable() == true else{
-                    continue
-                }
-                
-                count = count + 1
-            }
-        }
-        return count
     }
     
     ///Returns parentDogName and Requirement for a given index of priority sorted version of activeDogManager, timer to execute soonest is index 0
@@ -69,7 +86,7 @@ class HomeMainScreenTableViewController: UITableViewController {
         
         let activeDogManagerCopy: DogManager = self.activeDogManager.copy() as! DogManager
         
-        for _ in 0..<self.activeTimers {
+        for _ in 0..<TimingManager.activeTimers {
             var lowestTimeInterval: TimeInterval = .infinity
             var lowestRequirement: (String, Requirement)?
             
@@ -98,6 +115,8 @@ class HomeMainScreenTableViewController: UITableViewController {
     
     var delegate: HomeMainScreenTableViewControllerDelegate! = nil
     
+    var logState: Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -106,21 +125,14 @@ class HomeMainScreenTableViewController: UITableViewController {
         
         tableView.dataSource = self
         tableView.delegate = self
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-        
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if self.activeTimers == 0 {
+        if TimingManager.activeTimers == 0 {
             self.tableView.separatorStyle = .none
-            self.tableView.allowsSelection = false
         }
-        else if self.activeTimers > 0 {
+        else if TimingManager.activeTimers > 0 {
             self.tableView.separatorStyle = .singleLine
-            self.tableView.allowsMultipleSelection = true
         }
         
         self.reloadTable()
@@ -136,17 +148,21 @@ class HomeMainScreenTableViewController: UITableViewController {
     
     ///Reloads the tableViews data, has to persist any selected rows so tableView.reloadData() is not sufficent as it tosses the information
     @objc func reloadTable(){
-        let selectedIndexPaths = self.tableView.indexPathsForSelectedRows
+        //let selectedIndexPaths = self.tableView.indexPathsForSelectedRows
         
         self.tableView.reloadData()
         
+        /*
         //if timer is not implemented, constant alerts about symbolic breakpoint at UITableViewAlertForCellForRowAtIndexPathAccessDuringUpdate due to the tableView.reloadData() above
         if selectedIndexPaths != nil{
             let timer = Timer(fireAt: Date(), interval: 0, target: self, selector: #selector(selectIndexPaths(sender:)), userInfo: ["selectedIndexPaths" : selectedIndexPaths!], repeats: false)
             
             RunLoop.main.add(timer, forMode: .default)
         }
+ */
     }
+    
+    /*
     
     ///Visually selects rows that were selected before the tableView was reloaded, done in a timer format due to weird bug as without the delay an error break things
     @objc private func selectIndexPaths(sender: Timer){
@@ -164,6 +180,7 @@ class HomeMainScreenTableViewController: UITableViewController {
         }
         
     }
+ */
     
     // MARK: - Table view data source
     
@@ -173,16 +190,28 @@ class HomeMainScreenTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if self.activeTimers == 0 {
+        if TimingManager.activeTimers == 0 {
             return 1
         }
-        return self.activeTimers
+        return TimingManager.activeTimers
     }
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if self.activeTimers == 0 {
+        if TimingManager.activeTimers == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
+            
+            return cell
+        }
+        else if logState == true {
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "homeMainScreenTableViewCellDogRequirementLog", for: indexPath)
+            
+            let cellPriority = self.timerPriority(priorityIndex: indexPath.row)
+            
+            let testCell = cell as! HomeMainScreenTableViewCellDogRequirementLog
+            testCell.setup(parentDogName: cellPriority.0, requirementName: cellPriority.1.name)
+            testCell.delegate = self
             
             return cell
         }
@@ -195,18 +224,6 @@ class HomeMainScreenTableViewController: UITableViewController {
             testCell.setup(parentDogName: cellPriority.0, requirementPassed: cellPriority.1)
             
             return cell
-        }
-    }
-    
-    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        if self.tableView.indexPathsForSelectedRows == nil {
-            delegate.didDeselectAllRows(sender: self)
-        }
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if self.tableView.indexPathsForSelectedRows?.count == 1 {
-            delegate.didSelectRow(sender: self)
         }
     }
     

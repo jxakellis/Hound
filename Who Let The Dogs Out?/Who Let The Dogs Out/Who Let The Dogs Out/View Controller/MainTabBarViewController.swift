@@ -8,8 +8,9 @@
 
 import UIKit
 
-class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsViewControllerDelegate, TimingManagerDelegate, SettingsViewControllerDelegate, HomeViewControllerDelegate {
+class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsViewControllerDelegate, TimingManagerDelegate, SettingsViewControllerDelegate {
     
+    /*
    //MARK: HomeViewControllerDelegate
     
     func didLogTimers(sender: AnyObject, loggedRequirements: [(String, Requirement)]) {
@@ -22,6 +23,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
             self.setDogManager(newDogManager: sudoDogManager, sender: sender)
         }
     }
+ */
     
     //MARK: SettingsViewControllerDelegate
     
@@ -59,9 +61,14 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         
         if sender is TimingManager.Type || sender is TimingManager{
             dogsViewController.setDogManager(newDogManager: getDogManager(), sender: self)
-            homeViewController.homeMainScreenTableViewController.reloadTable()
+            homeViewController.setDogManager(newDogManager: getDogManager(), sender: self)
         }
-        else if !(sender is MainTabBarViewController){
+        
+        if sender is DogsViewController {
+            homeViewController.setDogManager(newDogManager: getDogManager(), sender: self)
+        }
+        
+        if !(sender is MainTabBarViewController){
             self.updateDogManagerDependents()
         }
         
@@ -84,6 +91,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
+        
         setDogManager(newDogManager: DogManagerConstant.defaultDogManager, sender: self)
         
         dogsViewController = self.viewControllers![1] as? DogsViewController
@@ -94,7 +103,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         settingsViewController.delegate = self
         
         homeViewController = self.viewControllers![0] as? HomeViewController
-        homeViewController.delegate = self
+        homeViewController.setDogManager(newDogManager: getDogManager(), sender: self)
+        //homeViewController.delegate = self
         
         MainTabBarViewController.mainTabBarViewController = self
         

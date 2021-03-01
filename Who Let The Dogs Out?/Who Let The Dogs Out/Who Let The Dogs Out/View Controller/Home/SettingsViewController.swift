@@ -33,15 +33,8 @@ class SettingsViewController: UIViewController {
     @IBAction func didToggleSchedule(_ sender: Any) {
     }
     
-    @IBOutlet weak var startScheduledDatePicker: UIDatePicker!
-    
-    @IBOutlet weak var endScheduledDatePicker: UIDatePicker!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        startScheduledDatePicker.date.roundDate(roundingInterval: TimeInterval(startScheduledDatePicker.minuteInterval * 60))
-        endScheduledDatePicker.date.addTimeInterval(TimeInterval(endScheduledDatePicker.minuteInterval * 60))
-        endScheduledDatePicker.date.roundDate(roundingInterval: TimeInterval(endScheduledDatePicker.minuteInterval * 60))
     }
     
     override func viewWillAppear(_ animated: Bool) {

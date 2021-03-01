@@ -44,9 +44,17 @@ class HomeMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
             else {
                 let fireDate = TimingManager.timerDictionary[parentDogName]![requirementPassed.name]!.fireDate
                 self.timeIntervalLeft = Date().distance(to: fireDate)
-                timeLeft.text = String.convertTimeIntervalToReadable(interperateTimeInterval: self.timeIntervalLeft!)
+                
+                let timeLeftText = String.convertTimeIntervalToReadable(interperateTimeInterval: self.timeIntervalLeft!)
+                
+                timeLeft.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: .regular)])
+                    
                 timeLeft.attributedText = timeLeft.text!.withFontAtEnd(text: " Left", font: UIFont.systemFont(ofSize: 17, weight: .semibold))
-                timeSinceLastExecution.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.lastExecution.distance(to: Date()))
+                
+                let timeSinceLastExecutionText = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.lastExecution.distance(to: Date()))
+                
+                timeSinceLastExecution.attributedText = NSAttributedString(string: timeSinceLastExecutionText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: .regular)])
+                
                 timeSinceLastExecution.attributedText = timeSinceLastExecution.text!.withFontAtEnd(text: " Since Last Time", font: UIFont.systemFont(ofSize: 17, weight: .semibold))
             }
         }
@@ -61,7 +69,6 @@ class HomeMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
         requirementName.adjustsFontSizeToFitWidth = true
         dogName.adjustsFontSizeToFitWidth = true
         timeLeft.adjustsFontSizeToFitWidth = true
-        // Initialization code
     }
     
 }

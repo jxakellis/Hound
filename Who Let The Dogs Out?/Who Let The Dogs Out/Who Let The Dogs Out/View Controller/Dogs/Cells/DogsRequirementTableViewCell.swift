@@ -21,7 +21,7 @@ class DogsRequirementTableViewCell: UITableViewCell {
     
     
     //When the trash button icon is clicked it executes this func, thru delegate finds a requirement with a matching name and then deletes it (handled elsewhere tho)
-    @IBAction private func trashClicked(_ sender: Any) {
+    @IBAction private func didClickTrash(_ sender: Any) {
         delegate.didClickTrash(dogName: name.text!)
     }
     

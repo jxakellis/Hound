@@ -8,23 +8,38 @@
 
 import UIKit
 
+/*
 protocol HomeViewControllerDelegate {
     func didLogTimers(sender: AnyObject, loggedRequirements: [(String, Requirement)])
 }
+ */
 
-class HomeViewController: UIViewController, HomeMainScreenTableViewControllerDelegate {
+class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeMainScreenTableViewControllerDelegate {
     
     //MARK: HomeMainScreenTableViewControllerDelegate
     
-    ///function called by HomeMainScreenTableViewControllerDelegate to specify that all rows in the tableview are unselected
-    func didDeselectAllRows(sender: AnyObject) {
-        
-        willToggleLogState(sender: sender, newSelectionControlState: false)
+    func didSelectOption() {
+        self.willToggleLogState(sender: self, newSelectionControlState: false)
     }
     
-    ///function called by HomeMainScreenTableViewControllerDelegate to specify that the tableview went from zero rows selected to one row selected, indicating a new selection state
-    func didSelectRow(sender: AnyObject) {
-        willToggleLogState(sender: sender, newSelectionControlState: true)
+    //MARK: DogManagerControlFlowProtocol
+    
+    private var dogManager: DogManager = DogManager()
+    
+    func getDogManager() -> DogManager {
+        return dogManager.copy() as! DogManager
+    }
+    
+    func setDogManager(newDogManager: DogManager, sender: AnyObject?) {
+        dogManager = newDogManager.copy() as! DogManager
+        
+        if sender is MainTabBarViewController {
+            homeMainScreenTableViewController.setDogManager(newDogManager: getDogManager(), sender: self)
+        }
+    }
+    
+    func updateDogManagerDependents() {
+        //
     }
     
     //MARK: IBOutlet and IBAction
@@ -45,6 +60,7 @@ class HomeViewController: UIViewController, HomeMainScreenTableViewControllerDel
         }
         //on to off
         else if logState == true {
+            /*
             if self.homeMainScreenTableViewController.tableView.indexPathsForSelectedRows != nil{
                 var requirementsLogged: [(String, Requirement)] = []
                 for indexPath in self.homeMainScreenTableViewController.tableView.indexPathsForSelectedRows! {
@@ -53,7 +69,7 @@ class HomeViewController: UIViewController, HomeMainScreenTableViewControllerDel
                 }
                 delegate.didLogTimers(sender: self, loggedRequirements: requirementsLogged)
             }
-            
+            */
             willToggleLogState(sender: self, newSelectionControlState: false)
         }
     }
@@ -64,7 +80,7 @@ class HomeViewController: UIViewController, HomeMainScreenTableViewControllerDel
     
     //MARK: Properties
     
-    var delegate: HomeViewControllerDelegate! = nil
+    //var delegate: HomeViewControllerDelegate! = nil
     
     var homeMainScreenTableViewController = HomeMainScreenTableViewController()
     
@@ -81,7 +97,7 @@ class HomeViewController: UIViewController, HomeMainScreenTableViewControllerDel
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if homeMainScreenTableViewController.activeTimers == 0 {
+        if TimingManager.activeTimers == 0 {
             willToggleLogState(sender: self, newSelectionControlState: false)
             willLog.isHidden = true
             willLog.isEnabled = false
@@ -102,7 +118,7 @@ class HomeViewController: UIViewController, HomeMainScreenTableViewControllerDel
     
     ///Toggles all corrosponding information to the specified newState: Bool, sender is the VC which called this information
     private func willToggleLogState(sender: AnyObject, newSelectionControlState: Bool){
-        if newSelectionControlState == true && homeMainScreenTableViewController.activeTimers > 0 {
+        if newSelectionControlState == true && TimingManager.activeTimers > 0 {
             //Visual element in current VC management
             willLog.tintColor = UIColor.systemGreen
             cancelWillLog.isEnabled = true
@@ -110,6 +126,11 @@ class HomeViewController: UIViewController, HomeMainScreenTableViewControllerDel
             cancelWillLogBackground.isEnabled = true
             cancelWillLogBackground.isHidden = false
             willLogLabel.isHidden = false
+            
+            if !(sender is HomeMainScreenTableViewController) {
+                homeMainScreenTableViewController.logState = true
+                homeMainScreenTableViewController.tableView.reloadData()
+            }
             
             logState = true
         }
@@ -123,7 +144,7 @@ class HomeViewController: UIViewController, HomeMainScreenTableViewControllerDel
             willLogLabel.isHidden = true
             
             if !(sender is HomeMainScreenTableViewController) {
-                homeMainScreenTableViewController.tableView.deselectAll()
+                homeMainScreenTableViewController.logState = false
                 homeMainScreenTableViewController.tableView.reloadData()
             }
             
@@ -140,6 +161,7 @@ class HomeViewController: UIViewController, HomeMainScreenTableViewControllerDel
         
         if segue.identifier == "homeMainScreenTableViewController"{
             homeMainScreenTableViewController = segue.destination as! HomeMainScreenTableViewController
+            homeMainScreenTableViewController.setDogManager(newDogManager: self.getDogManager(), sender: self)
             homeMainScreenTableViewController.delegate = self
         }
         
