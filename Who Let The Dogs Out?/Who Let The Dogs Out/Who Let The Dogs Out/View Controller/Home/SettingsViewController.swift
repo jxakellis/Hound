@@ -26,11 +26,12 @@ class SettingsViewController: UIViewController {
         delegate.didTogglePause(newPauseState: isPaused.isOn)
     }
     
-    //MARK: Scheduled Pause
+    //MARK: Default Snooze
     
-    @IBOutlet weak var isScheduled: UISwitch!
+    @IBOutlet weak var snoozeInterval: UIDatePicker!
     
-    @IBAction func didToggleSchedule(_ sender: Any) {
+    @IBAction func didUpdateSnoozeInterval(_ sender: Any) {
+        TimerConstant.defaultSnooze = snoozeInterval.countDownDuration
     }
     
     override func viewDidLoad() {

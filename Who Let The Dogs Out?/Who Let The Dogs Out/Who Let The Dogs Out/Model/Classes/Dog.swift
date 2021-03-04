@@ -23,6 +23,9 @@ class Dog: NSCopying, EnableProtocol {
     
     func setEnable(newEnableStatus: Bool) {
         isEnabled = newEnableStatus
+        for r in dogRequirments.requirements {
+            r.activeInterval = r.executionInterval
+        }
     }
     
     func willToggle() {

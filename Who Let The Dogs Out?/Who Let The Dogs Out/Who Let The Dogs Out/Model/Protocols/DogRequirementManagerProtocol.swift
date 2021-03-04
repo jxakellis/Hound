@@ -23,13 +23,18 @@ protocol DogRequirementProtocol {
     var description: String { get set }
     
     ///interval at which a timer should be triggered for requirement
-    var executionInterval: TimeInterval { get set }
+    var executionInterval: TimeInterval { get }
+    
+    ///The interval that is currently activated to calculate.
+    var activeInterval: TimeInterval { get set }
     
     ///last time the requirement was fired
     var lastExecution: Date { get set }
     
     ///how much time of the interval of been used up, this is used for when a timer is paused and then unpaused and have to calculate remaining time
     var intervalElapsed: TimeInterval { get set }
+    
+    var isSnoozed: Bool { get }
     
     mutating func changeName(newName: String?) throws
     
@@ -40,6 +45,8 @@ protocol DogRequirementProtocol {
     mutating func changeLastExecution(newLastExecution: Date)
     
     mutating func changeIntervalElapsed(newIntervalElapsed: TimeInterval)
+    
+    mutating func changeSnooze(newSnoozeStatus: Bool)
 }
 
 extension DogRequirementProtocol {
@@ -61,20 +68,6 @@ extension DogRequirementProtocol {
         }
         
         description = newDescription!
-    }
-      
-    ///if newInterval passes all tests, changes value, if not throws error
-    mutating func changeInterval(newInterval: TimeInterval?) throws{
-        
-        /*
-         if newInterval == nil || newInterval! < TimeInterval(60.0){
-             throw DogRequirementError.intervalInvalid
-         }
-         */
-        if newInterval == nil{
-            throw DogRequirementError.intervalInvalid
-        }
-        executionInterval = newInterval!
     }
     
     ///if newLastExecution passes all tests, changes value
@@ -219,4 +212,17 @@ extension DogRequirementManagerProtocol {
         }
         throw DogRequirementManagerError.requirementNotPresent
     }
+}
+
+protocol RequirementManagerControlFlowProtocol {
+    
+    ///Returns a copy of RequirementManager used to avoid accidental changes (due to reference type) by classes which get their dog manager from here
+    func getRequirementManager() -> RequirementManager
+    
+    ///Sets requirementManager equal to newRequirementManager, depending on sender will also call methods to propogate change.
+    func setRequirementManager(newRequirementManager: RequirementManager, sender: AnyObject?)
+    
+    //Updates things dependent on requirementManager
+    func updateRequirementManagerDependents()
+    
 }

@@ -211,6 +211,30 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         }
     }
     
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let sudoDogManager = getDogManager()
+            if indexPath.row > 0 {
+                sudoDogManager.dogs[indexPath.section].dogRequirments.requirements.remove(at: indexPath.row-1)
+            }
+            else {
+                sudoDogManager.dogs.remove(at: indexPath.section)
+            }
+            setDogManager(newDogManager: sudoDogManager, sender: self)
+        }
+    }
+    
+    /*
+     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+         if editingStyle == .delete {
+             objects.remove(at: indexPath.row)
+             tableView.deleteRows(at: [indexPath], with: .fade)
+         } else if editingStyle == .insert {
+             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
+         }
+     }
+     */
+    
     /*
      // Override to support conditional editing of the table view.
      override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {

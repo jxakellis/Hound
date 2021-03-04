@@ -35,7 +35,7 @@ enum DogManagerConstant {
         defaultRequirementOne.name = "Potty"
         defaultRequirementOne.description = "Take The Dog Out"
         //defaultRequirementOne.interval = TimeInterval((3600*3)+(3600*(1/3)))
-        defaultRequirementOne.executionInterval = TimeInterval(35)
+        try! defaultRequirementOne.changeInterval(newInterval: TimeInterval(35))
         defaultRequirementOne.setEnable(newEnableStatus: false)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementOne)
         
@@ -43,7 +43,7 @@ enum DogManagerConstant {
         defaultRequirementTwo.name = "Food"
         defaultRequirementTwo.description = "Feed The Dog"
         //defaultRequirementTwo.executionInterval = TimeInterval((3600*7)+(3600*0.75))
-        defaultRequirementTwo.executionInterval = TimeInterval(20)
+        try! defaultRequirementTwo.changeInterval(newInterval: TimeInterval(20))
         defaultRequirementTwo.setEnable(newEnableStatus: true)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementTwo)
         
@@ -51,7 +51,7 @@ enum DogManagerConstant {
         defaultRequirementThree.name = "Brush"
         defaultRequirementThree.description = "Brush His Fur Out"
         //defaultRequirementThree.interval = TimeInterval((3600*7)+(3600*0.75))
-        defaultRequirementThree.executionInterval = TimeInterval(15)
+        try! defaultRequirementThree.changeInterval(newInterval: TimeInterval(15))
         defaultRequirementThree.setEnable(newEnableStatus: true)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementThree)
         

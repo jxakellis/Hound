@@ -18,6 +18,9 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
     
     func setEnable(newEnableStatus: Bool) {
         isEnabled = newEnableStatus
+        if newEnableStatus == true {
+            self.activeInterval = self.executionInterval
+        }
     }
     
     func willToggle() {
@@ -36,11 +39,12 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
         try! copy.changeName(newName: self.name)
         try! copy.changeInterval(newInterval: self.executionInterval)
         try! copy.changeDescription(newDescription: self.description)
+        copy.changeSnooze(newSnoozeStatus: self.isSnoozed)
         copy.lastExecution = self.lastExecution
         copy.intervalElapsed = self.intervalElapsed
         copy.isEnabled = self.isEnabled
-        copy.isSnoozed = self.isSnoozed
         copy.executionDates = self.executionDates
+        copy.activeInterval = self.activeInterval
         return copy
     }
     
@@ -50,20 +54,59 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
     ///description set to describe what the requirement should do, should be set by user
     var description: String = RequirementConstant.defaultDescription
     
-    ///TimeInterval that is used in conjunction with a Date() and timer handler to decide when an alarm should go off.
-    var executionInterval: TimeInterval = TimeInterval(RequirementConstant.defaultTimeInterval)
+    //MARK: Execution Interval
     
-    //Timing Calculations
+    private var storedExecutionInterval: TimeInterval = TimeInterval(RequirementConstant.defaultTimeInterval)
+    ///TimeInterval that is used in conjunction with a Date() and timer handler to decide when an alarm should go off.
+    var executionInterval: TimeInterval {
+        return storedExecutionInterval
+    }
+    
+    ///if newInterval passes all tests, changes value, if not throws error
+    func changeInterval(newInterval: TimeInterval?) throws{
+        
+        /*
+         if newInterval == nil || newInterval! < TimeInterval(60.0){
+             throw DogRequirementError.intervalInvalid
+         }
+         */
+        if newInterval == nil{
+            throw DogRequirementError.intervalInvalid
+        }
+        self.storedExecutionInterval = newInterval!
+        if self.isSnoozed == false {
+            activeInterval = newInterval!
+        }
+    }
+    
+    //MARK: Timing Calculations
     
     ///stores exact Date object of when the requirement was last executed (i.e. last fired and sent an alert)
     var lastExecution: Date = Date()
     
+    var activeInterval: TimeInterval = TimeInterval(RequirementConstant.defaultTimeInterval)
+    
     ///stores time elapsed of timer, this is only utilized if a timer is paused as it is needed to calculate when to fire the timer when it is unpaused. There is no built in pause feature so a timer must be invalidated and a new one created later on, hence this being needed.
     var intervalElapsed: TimeInterval = TimeInterval(0)
     
-    var isSnoozed: Bool = false
-    
     var executionDates: [Date] = []
+    
+    //MARK: Snooze
+    
+    private var storedIsSnoozed: Bool = false
+    var isSnoozed: Bool {
+        return storedIsSnoozed
+    }
+    
+    func changeSnooze(newSnoozeStatus: Bool) {
+        if newSnoozeStatus == true {
+            activeInterval = TimerConstant.defaultSnooze
+        }
+        else {
+            activeInterval = self.executionInterval
+        }
+        self.storedIsSnoozed = newSnoozeStatus
+    }
     
 }
 

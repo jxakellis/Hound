@@ -101,12 +101,15 @@ class TimingManager: TimingProtocol {
                     
                     var intervalLeft: TimeInterval! = nil
                     
+                    intervalLeft = requirement.activeInterval - requirement.intervalElapsed
+                    /*
                     if requirement.isSnoozed == true{
                         intervalLeft = TimerConstant.defaultSnooze - requirement.intervalElapsed
                     }
                     else{
                         intervalLeft = requirement.executionInterval - requirement.intervalElapsed
                     }
+                     */
                     
                     executionDate = Date.executionDate(lastExecution: Date(), interval: intervalLeft)
                     
@@ -117,12 +120,15 @@ class TimingManager: TimingProtocol {
                 
                 //If not transitioning from unpaused, calculates execution date traditionally
                 else if didUnpause == false{
+                    executionDate = Date.executionDate(lastExecution: requirement.lastExecution, interval: requirement.activeInterval)
+                    /*
                     if requirement.isSnoozed == true{
                         executionDate = Date.executionDate(lastExecution: requirement.lastExecution, interval: TimerConstant.defaultSnooze)
                     }
                     else{
-                        executionDate = Date.executionDate(lastExecution: dogManager.dogs[d].dogRequirments.requirements[r].lastExecution, interval: dogManager.dogs[d].dogRequirments.requirements[r].executionInterval)
+                        executionDate = Date.executionDate(lastExecution: requirement.lastExecution, interval: requirement.executionInterval)
                     }
+                     */
                 }
                 
                 if Date().distance(to: executionDate) < 0 {
@@ -133,7 +139,7 @@ class TimingManager: TimingProtocol {
                                   interval: -1,
                                   target: self,
                                   selector: #selector(self.didExecuteTimer(sender:)),
-                                  userInfo: try! ["dogName": dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name"), "requirement": dogManager.dogs[d].dogRequirments.requirements[r], "dogManager": dogManager],
+                                  userInfo: try! ["dogName": dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name"), "requirement": requirement, "dogManager": dogManager],
                                   repeats: false)
                 
                 RunLoop.main.add(timer, forMode: .common)
@@ -176,7 +182,7 @@ class TimingManager: TimingProtocol {
         let sudoDogManager = dogManager
         var sudoRequirement: Requirement = try! sudoDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirement.name)
         sudoRequirement.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
-        sudoRequirement.isSnoozed = false
+        sudoRequirement.changeSnooze(newSnoozeStatus: false)
         
         delegate.didUpdateDogManager(newDogManager: sudoDogManager, sender: self)
         
@@ -310,7 +316,7 @@ class TimingManager: TimingProtocol {
     ///Finishes executing alarm and then sets its isSnoozed to true, note passed requirement should be a reference to a requirement in passed dogManager
     static func willSnoozeAlarm(dogName targetDogName: String, requirementName targetRequirementName: String, dogManager: DogManager = MainTabBarViewController.staticDogManager){
         var requirement = try! dogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
-        requirement.isSnoozed = true
+        requirement.changeSnooze(newSnoozeStatus: true)
         requirement.changeLastExecution(newLastExecution: Date())
         requirement.executionDates.append(Date())
         delegate.didUpdateDogManager(newDogManager: dogManager, sender: self)
@@ -320,7 +326,7 @@ class TimingManager: TimingProtocol {
     ///Finishs executing alarm
     static func willResetAlarm(dogName targetDogName: String, requirementName targetRequirementName: String, dogManager: DogManager = MainTabBarViewController.staticDogManager){
         var requirement = try! dogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
-        requirement.isSnoozed = false
+        requirement.changeSnooze(newSnoozeStatus: false)
         requirement.changeLastExecution(newLastExecution: Date())
         requirement.executionDates.append(Date())
         delegate.didUpdateDogManager(newDogManager: dogManager, sender: self)
