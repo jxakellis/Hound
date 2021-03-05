@@ -60,16 +60,6 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
         }
         //on to off
         else if logState == true {
-            /*
-            if self.homeMainScreenTableViewController.tableView.indexPathsForSelectedRows != nil{
-                var requirementsLogged: [(String, Requirement)] = []
-                for indexPath in self.homeMainScreenTableViewController.tableView.indexPathsForSelectedRows! {
-                    let cell = homeMainScreenTableViewController.tableView.cellForRow(at: indexPath) as! HomeMainScreenTableViewCellDogRequirementDisplay
-                    requirementsLogged.append((cell.dogName.text!, cell.requirementSource))
-                }
-                delegate.didLogTimers(sender: self, loggedRequirements: requirementsLogged)
-            }
-            */
             willToggleLogState(sender: self, newSelectionControlState: false)
         }
     }
@@ -99,16 +89,18 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     override func viewWillAppear(_ animated: Bool) {
         if TimingManager.activeTimers == 0 {
             willToggleLogState(sender: self, newSelectionControlState: false)
-            willLog.isHidden = true
-            willLog.isEnabled = false
-            willLogBackground.isHidden = true
-            willLogBackground.isEnabled = false
+            
+                self.willLog.isHidden = true
+                self.willLog.isEnabled = false
+                self.willLogBackground.isHidden = true
+                self.willLogBackground.isEnabled = false
+            
         }
         else {
-            willLog.isHidden = false
-            willLog.isEnabled = true
-            willLogBackground.isHidden = false
-            willLogBackground.isEnabled = true
+                self.willLog.isHidden = false
+                self.willLog.isEnabled = true
+                self.willLogBackground.isHidden = false
+                self.willLogBackground.isEnabled = true
         }
     }
     
@@ -120,12 +112,13 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     private func willToggleLogState(sender: AnyObject, newSelectionControlState: Bool){
         if newSelectionControlState == true && TimingManager.activeTimers > 0 {
             //Visual element in current VC management
-            willLog.tintColor = UIColor.systemGreen
-            cancelWillLog.isEnabled = true
-            cancelWillLog.isHidden = false
-            cancelWillLogBackground.isEnabled = true
-            cancelWillLogBackground.isHidden = false
-            willLogLabel.isHidden = false
+           
+            self.cancelWillLog.isEnabled = true
+            self.cancelWillLog.isHidden = false
+            self.cancelWillLogBackground.isEnabled = true
+            self.cancelWillLogBackground.isHidden = false
+            self.willLogLabel.isHidden = false
+            self.willLog.tintColor = UIColor.systemGreen
             
             if !(sender is HomeMainScreenTableViewController) {
                 homeMainScreenTableViewController.logState = true
@@ -136,12 +129,12 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
         }
         else if newSelectionControlState == false {
             //Visual element in current VC management
-            willLog.tintColor = UIColor.link
-            cancelWillLog.isEnabled = false
-            cancelWillLog.isHidden = true
-            cancelWillLogBackground.isEnabled = false
-            cancelWillLog.isHidden = true
-            willLogLabel.isHidden = true
+            self.cancelWillLog.isEnabled = false
+            self.cancelWillLog.isHidden = true
+            self.cancelWillLogBackground.isEnabled = false
+            self.cancelWillLog.isHidden = true
+            self.willLogLabel.isHidden = true
+                self.willLog.tintColor = UIColor.link
             
             if !(sender is HomeMainScreenTableViewController) {
                 homeMainScreenTableViewController.logState = false

@@ -40,3 +40,18 @@ extension UITableView {
     
 }
 
+class ScaledButton: UIButton {
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.setImage(self.currentImage?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: self.frame.width)), for: .normal)
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.setImage(self.currentImage?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: self.frame.width)), for: .normal)
+    }
+    
+    
+}
+
