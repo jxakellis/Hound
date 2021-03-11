@@ -9,9 +9,36 @@
 import UIKit
 
 
-class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
+class Requirement: NSObject, NSCoding, NSCopying, DogRequirementProtocol,  EnableProtocol {
     
-    //MARK: Conformation EnableProtocol
+     //MARK: NSCoding
+     required init?(coder aDecoder: NSCoder) {
+        isEnabled = aDecoder.decodeBool(forKey: "isEnabled")
+        name = aDecoder.decodeObject(forKey: "name") as! String
+        requirementDescription = aDecoder.decodeObject(forKey: "requirementDescription") as! String
+        storedExecutionInterval = aDecoder.decodeDouble(forKey: "executionInterval")
+        lastExecution = aDecoder.decodeObject(forKey: "lastExecution") as! Date
+        activeInterval = aDecoder.decodeDouble(forKey: "activeInterval") 
+        intervalElapsed = aDecoder.decodeDouble(forKey: "intervalElapsed")
+        executionDates = aDecoder.decodeObject(forKey: "executionDates") as! [Date]
+        storedIsSnoozed = aDecoder.decodeBool(forKey: "isSnoozed")
+        isPresentationHandled = aDecoder.decodeBool(forKey: "isPresentationHandled")
+     }
+     
+     func encode(with aCoder: NSCoder) {
+        aCoder.encode(isEnabled, forKey: "isEnabled")
+        aCoder.encode(name, forKey: "name")
+        aCoder.encode(requirementDescription, forKey: "requirementDescription")
+        aCoder.encode(executionInterval, forKey: "executionInterval")
+        aCoder.encode(lastExecution, forKey: "lastExecution")
+        aCoder.encode(activeInterval, forKey: "activeInterval")
+        aCoder.encode(intervalElapsed, forKey: "intervalElapsed")
+        aCoder.encode(executionDates, forKey: "executionDates")
+        aCoder.encode(isSnoozed, forKey: "isSnoozed")
+        aCoder.encode(isPresentationHandled,forKey: "isPresentationHandled")
+     }
+     
+    //MARK: EnableProtocol
     
     ///Whether or not the requirement  is enabled, if disabled all requirements will not fire, if parentDog isEnabled == false will not fire
     private var isEnabled: Bool = DogConstant.defaultEnable
@@ -31,20 +58,21 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
         return isEnabled
     }
     
-    //MARK: Conformation NSCopying
+    //MARK: NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         //String(), Date(), Double() which TimeInterval is a typealias of are all structs aka not reference types
         var copy = Requirement()
         try! copy.changeName(newName: self.name)
         try! copy.changeInterval(newInterval: self.executionInterval)
-        try! copy.changeDescription(newDescription: self.description)
+        try! copy.changeDescription(newDescription: self.requirementDescription)
         copy.changeSnooze(newSnoozeStatus: self.isSnoozed)
         copy.lastExecution = self.lastExecution
         copy.intervalElapsed = self.intervalElapsed
         copy.isEnabled = self.isEnabled
         copy.executionDates = self.executionDates
         copy.activeInterval = self.activeInterval
+        copy.isPresentationHandled = self.isPresentationHandled
         return copy
     }
     
@@ -52,7 +80,7 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
     var name: String = RequirementConstant.defaultName
     
     ///description set to describe what the requirement should do, should be set by user
-    var description: String = RequirementConstant.defaultDescription
+    var requirementDescription: String = RequirementConstant.defaultDescription
     
     //MARK: Execution Interval
     
@@ -91,6 +119,8 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
     
     var executionDates: [Date] = []
     
+    var isPresentationHandled: Bool = false
+    
     //MARK: Snooze
     
     private var storedIsSnoozed: Bool = false
@@ -108,10 +138,24 @@ class Requirement: DogRequirementProtocol, NSCopying, EnableProtocol {
         self.storedIsSnoozed = newSnoozeStatus
     }
     
+    override init() {
+        super.init()
+    }
+    
 }
 
-class RequirementManager: DogRequirementManagerProtocol, NSCopying {
+class RequirementManager: NSObject, NSCoding, NSCopying, DogRequirementManagerProtocol {
     
+    //MARK: NSCoding
+    required init?(coder aDecoder: NSCoder) {
+        requirements = aDecoder.decodeObject(forKey: "requirements") as! [Requirement]
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(requirements, forKey: "requirements")
+    }
+    
+    //MARK: NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = RequirementManager()
         for i in 0..<self.requirements.count {

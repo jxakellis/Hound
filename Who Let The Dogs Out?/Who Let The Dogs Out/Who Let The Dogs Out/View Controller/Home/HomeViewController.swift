@@ -110,7 +110,7 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     
     ///Toggles all corrosponding information to the specified newState: Bool, sender is the VC which called this information
     private func willToggleLogState(sender: AnyObject, newSelectionControlState: Bool){
-        if newSelectionControlState == true && TimingManager.activeTimers > 0 {
+        if newSelectionControlState == true && TimingManager.activeTimers != nil && TimingManager.activeTimers! > 0 {
             //Visual element in current VC management
            
             self.cancelWillLog.isEnabled = true

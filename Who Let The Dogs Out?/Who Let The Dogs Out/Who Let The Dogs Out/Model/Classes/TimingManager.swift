@@ -12,34 +12,25 @@ protocol TimingManagerDelegate {
     func didUpdateDogManager(newDogManager: DogManager, sender: AnyObject?)
 }
 
-class TimingManager: TimingProtocol {
+class TimingManager{
     
     //MARK: MAIN
     
     static var delegate: TimingManagerDelegate! = nil
     
-    ///saves the state when all alarms are paused: (Last Pause, Is Currently Paused, Last Unpause)
-    static var pauseState: (Date?, Bool, Date?) = (nil, false, nil)
+    ///Saves state isPaused
+    static var isPaused: Bool = false
+    ///Saves date of last pause (if there was one)
+    static var lastPause: Date?
+    ///Saves date of last unpause (if there was one)
+    static var lastUnpause: Date?
     
     ///Returns number of active timers
-    static var activeTimers: Int{
+    static var activeTimers: Int?{
         
-        /*
-         this was of doing it falls apart when a timer is executing, as the timer is invalid but that invalid timer is still active it breaks display.
-        var count = 0
-        
-        for dogKey in timerDictionary.keys {
-            for requirementKey in timerDictionary[dogKey]!.keys {
-                if timerDictionary[dogKey]![requirementKey]!.isValid == true {
-                    count = count + 1
-                }
-            }
+        guard isPaused == false else {
+            return nil
         }
-        
-        print("active timers \(count)")
-        return count
-         */
-        
         
         var count = 0
         for d in 0..<MainTabBarViewController.staticDogManager.dogs.count {
@@ -56,7 +47,7 @@ class TimingManager: TimingProtocol {
             }
         }
         return count
-         
+        
     }
     
     ///Corrolates to dogManager: "
@@ -67,12 +58,12 @@ class TimingManager: TimingProtocol {
     
     //MARK: TimingProtocol Implementation
     
-    
+    ///Initalizes all timers according to the dogManager passed, assumes no timers currently active and if transitioning from Paused to Unpaused (didUnpuase = true) handles logic differently
     static func willInitalize(dogManager: DogManager, didUnpause: Bool = false){
         ///Takes a DogManager and potentially a Bool of if all alarms were unpaused, goes through the dog manager and finds all enabled requirements under all enabled dogs and sets a timer to fire.
         
         //Makes sure pauseAllAlarms is false, don't want to instantiate alarms when they should be paused
-        guard self.pauseState.1 == false else {
+        guard self.isPaused == false else {
             return
         }
         
@@ -102,14 +93,6 @@ class TimingManager: TimingProtocol {
                     var intervalLeft: TimeInterval! = nil
                     
                     intervalLeft = requirement.activeInterval - requirement.intervalElapsed
-                    /*
-                    if requirement.isSnoozed == true{
-                        intervalLeft = TimerConstant.defaultSnooze - requirement.intervalElapsed
-                    }
-                    else{
-                        intervalLeft = requirement.executionInterval - requirement.intervalElapsed
-                    }
-                     */
                     
                     executionDate = Date.executionDate(lastExecution: Date(), interval: intervalLeft)
                     
@@ -121,18 +104,6 @@ class TimingManager: TimingProtocol {
                 //If not transitioning from unpaused, calculates execution date traditionally
                 else if didUnpause == false{
                     executionDate = Date.executionDate(lastExecution: requirement.lastExecution, interval: requirement.activeInterval)
-                    /*
-                    if requirement.isSnoozed == true{
-                        executionDate = Date.executionDate(lastExecution: requirement.lastExecution, interval: TimerConstant.defaultSnooze)
-                    }
-                    else{
-                        executionDate = Date.executionDate(lastExecution: requirement.lastExecution, interval: requirement.executionInterval)
-                    }
-                     */
-                }
-                
-                if Date().distance(to: executionDate) < 0 {
-                    continue
                 }
                 
                 let timer = Timer(fireAt: executionDate,
@@ -142,19 +113,26 @@ class TimingManager: TimingProtocol {
                                   userInfo: try! ["dogName": dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name"), "requirement": requirement, "dogManager": dogManager],
                                   repeats: false)
                 
-                RunLoop.main.add(timer, forMode: .common)
-                
                 //Updates timerDictionary to reflect new alarm added, this is so a reference to the created timer can be referenced later and invalidated if needed.
                 var nestedtimerDictionary: Dictionary<String, Timer> = try! timerDictionary[dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name")] ?? Dictionary<String, Timer>()
                 
                 nestedtimerDictionary[requirement.name] = timer
                 
                 try! timerDictionary[dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name")] = nestedtimerDictionary
+                
+                if Date().distance(to: executionDate) < 0 {
+                    if requirement.isPresentationHandled == true {
+                        continue
+                    }
+                }
+                
+                RunLoop.main.add(timer, forMode: .common)
+                
             }
         }
     }
     
-    
+    ///Invalidates all current timers then calls willInitalize, makes it a clean slate then re sets everything up
     static func willReinitalize(dogManager: DogManager) {
         ///Reinitalizes all alarms when a new dogManager is sent
         self.invalidateAll()
@@ -166,34 +144,27 @@ class TimingManager: TimingProtocol {
         
     }
     
-   
-    @objc private static func didExecuteTimer(sender: Timer){
-        ///Used as a selector when constructing timer in willInitalize, when called at an unknown point in time by the timer it presents an alert and updates information about the requirement
-        guard let parsedDictionary = sender.userInfo as? [String: Any]
-        else{
-            ErrorProcessor.handleError(error: TimingManagerError.parseSenderInfoFailed, sender: self)
-            return
+    ///Toggles pause for a given dogManager to a specifided newPauseState
+    static func willTogglePause(dogManager: DogManager, newPauseStatus: Bool) {
+        ///Toggles pause status of timers, called when pauseAllAlarms in settings is switched to a new state
+        if newPauseStatus == true {
+            self.lastPause = Date()
+            self.isPaused = true
+            
+            willPause(dogManager: dogManager)
+            
+            invalidateAll()
+            
         }
-        
-        let dogManager: DogManager = parsedDictionary["dogManager"]! as! DogManager
-        let dogName: String = parsedDictionary["dogName"]! as! String
-        let requirement: Requirement = parsedDictionary["requirement"]! as! Requirement
-
-        let sudoDogManager = dogManager
-        var sudoRequirement: Requirement = try! sudoDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirement.name)
-        sudoRequirement.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
-        sudoRequirement.changeSnooze(newSnoozeStatus: false)
-        
-        delegate.didUpdateDogManager(newDogManager: sudoDogManager, sender: self)
-        
-        let title = "\(requirement.name) - \(dogName)"
-        let message = " \(requirement.description)"
-        let reinitilizationInfo: (String, Requirement) = (dogName, requirement)
-        
-        TimingManager.willShowTimer(title: title, message: message, reinitilizationInfo: reinitilizationInfo)
+        else {
+            self.lastUnpause = Date()
+            self.isPaused = false
+            willInitalize(dogManager: dogManager, didUnpause: true)
+        }
     }
     
     
+    ///Invalidates all timers
     private static func invalidateAll() {
         ///Invalidates all timers
         for dogKey in timerDictionary.keys{
@@ -203,7 +174,7 @@ class TimingManager: TimingProtocol {
         }
     }
     
-    
+    ///Invalidates a given timer, located using dogName and requirementName, can throw if timer not found
     private static func invalidate(dogName: String, requirementName: String) throws {
         ///Invalidates a specific timer
         if timerDictionary[dogName] == nil{
@@ -215,26 +186,7 @@ class TimingManager: TimingProtocol {
         timerDictionary[dogName]![requirementName]!.invalidate()
     }
     
-    
-    static func willTogglePause(dogManager: DogManager, newPauseStatus: Bool) {
-        ///Toggles pause status of timers, called when pauseAllAlarms in settings is switched to a new state
-        if newPauseStatus == true {
-            self.pauseState.0 = Date()
-            self.pauseState.1 = true
-            
-            willPause(dogManager: dogManager)
-            
-            invalidateAll()
-            
-        }
-        else {
-            self.pauseState.2 = Date()
-            self.pauseState.1 = false
-            willInitalize(dogManager: dogManager, didUnpause: true)
-        }
-    }
-    
-    ///Updates dogManager to reflect the changes in intervalElapsed
+    ///Updates dogManager to reflect the changes in intervalElapsed as if everything is paused the amount of time elapsed by each alarm must to saved so when unpaused the new timers can be properly calculated
     private static func willPause(dogManager: DogManager){
         let sudoDogManager = dogManager
         for dogKey in timerDictionary.keys{
@@ -243,10 +195,10 @@ class TimingManager: TimingProtocol {
                 var sudoRequirement = try! sudoDogManager.findDog(dogName: dogKey).dogRequirments.findRequirement(requirementName: requirementKey)
                 
                 if sudoRequirement.intervalElapsed <= 0.01 {
-                    sudoRequirement.changeIntervalElapsed(newIntervalElapsed: sudoRequirement.lastExecution.distance(to: pauseState.0!))
+                    sudoRequirement.changeIntervalElapsed(newIntervalElapsed: sudoRequirement.lastExecution.distance(to: self.lastPause!))
                 }
                 else{
-                    sudoRequirement.changeIntervalElapsed(newIntervalElapsed: (sudoRequirement.intervalElapsed + pauseState.2!.distance(to: (pauseState.0!))))
+                    sudoRequirement.changeIntervalElapsed(newIntervalElapsed: (sudoRequirement.intervalElapsed + self.lastUnpause!.distance(to: (self.lastPause!))))
                 }
                 
             }
@@ -255,9 +207,26 @@ class TimingManager: TimingProtocol {
         delegate.didUpdateDogManager(newDogManager: sudoDogManager, sender: self)
     }
     
-    private static func willShowTimer(sender: AnyObject = Utils.presenter, title: String, message: String, reinitilizationInfo: (String, Requirement)){
+    ///Used as a selector when constructing timer in willInitalize, when called at an unknown point in time by the timer it triggers helper functions to create both in app notifcations and iOS notifcations
+    @objc private static func didExecuteTimer(sender: Timer){
         
-        let requirement = reinitilizationInfo.1
+        guard let parsedDictionary = sender.userInfo as? [String: Any]
+        else{
+            ErrorProcessor.handleError(error: TimingManagerError.parseSenderInfoFailed, sender: self)
+            return
+        }
+        
+        let dogName: String = parsedDictionary["dogName"]! as! String
+        let requirement: Requirement = parsedDictionary["requirement"]! as! Requirement
+        
+        TimingManager.willShowTimer(dogName: dogName, requirement: requirement)
+    }
+    
+    ///Creates alertController to queue for presentation along with information passed along with it to reinitalize the alarm once an option is selected (e.g. disable or snooze)
+    private static func willShowTimer(sender: AnyObject = Utils.presenter, dogName: String, requirement: Requirement){
+        
+        let title = "\(requirement.name) - \(dogName)"
+        let message = " \(requirement.requirementDescription)"
         
         let alertController = CustomAlertController(
             title: title,
@@ -271,7 +240,7 @@ class TimingManager: TimingProtocol {
                 {
                     (alert: UIAlertAction!)  in
                     //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                    TimingManager.willResetAlarm(dogName: reinitilizationInfo.0, requirementName: requirement.name)
+                    TimingManager.willResetAlarm(dogName: dogName, requirementName: requirement.name)
                 })
         let alertActionSnooze = UIAlertAction(
             title:"Snooze",
@@ -280,7 +249,7 @@ class TimingManager: TimingProtocol {
                 {
                     (alert: UIAlertAction!)  in
                     //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                    TimingManager.willSnoozeAlarm(dogName: reinitilizationInfo.0, requirementName: requirement.name)
+                    TimingManager.willSnoozeAlarm(dogName: dogName, requirementName: requirement.name)
                 })
         let alertActionDisable = UIAlertAction(
             title:"Disable",
@@ -289,11 +258,15 @@ class TimingManager: TimingProtocol {
                 {
                     (alert: UIAlertAction!)  in
                     //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                    TimingManager.willDisableAlarm(dogName: reinitilizationInfo.0, requirementName: requirement.name)
+                    TimingManager.willDisableAlarm(dogName: dogName, requirementName: requirement.name)
                 })
         alertController.addAction(alertActionDone)
         alertController.addAction(alertActionSnooze)
         alertController.addAction(alertActionDisable)
+        
+        let sudoDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
+        try! sudoDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirement.name).isPresentationHandled = true
+        delegate.didUpdateDogManager(newDogManager: sudoDogManager, sender: self)
         
         AlertPresenter.shared.enqueueAlertForPresentation(alertController)
         
@@ -307,30 +280,34 @@ class TimingManager: TimingProtocol {
         }
         
         var requirement = try! dogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
+        
+        requirement.timerReset()
+        
         requirement.setEnable(newEnableStatus: false)
-        requirement.changeLastExecution(newLastExecution: Date())
-        requirement.executionDates.append(Date())
+        
         delegate.didUpdateDogManager(newDogManager: dogManager, sender: self)
     }
     
     ///Finishes executing alarm and then sets its isSnoozed to true, note passed requirement should be a reference to a requirement in passed dogManager
     static func willSnoozeAlarm(dogName targetDogName: String, requirementName targetRequirementName: String, dogManager: DogManager = MainTabBarViewController.staticDogManager){
         var requirement = try! dogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
+        
+        requirement.timerReset()
+        
         requirement.changeSnooze(newSnoozeStatus: true)
-        requirement.changeLastExecution(newLastExecution: Date())
-        requirement.executionDates.append(Date())
+        
         delegate.didUpdateDogManager(newDogManager: dogManager, sender: self)
-        TimingManager.willReinitalize(dogManager: dogManager)
     }
     
-    ///Finishs executing alarm
+    ///Finishs executing alarm then just resets it to countdown again
     static func willResetAlarm(dogName targetDogName: String, requirementName targetRequirementName: String, dogManager: DogManager = MainTabBarViewController.staticDogManager){
-        var requirement = try! dogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
-        requirement.changeSnooze(newSnoozeStatus: false)
-        requirement.changeLastExecution(newLastExecution: Date())
-        requirement.executionDates.append(Date())
-        delegate.didUpdateDogManager(newDogManager: dogManager, sender: self)
-        TimingManager.willReinitalize(dogManager: dogManager)
+        let sudoDogManager = dogManager
+        
+        var requirement = try! sudoDogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
+        
+        requirement.timerReset()
+        
+        delegate.didUpdateDogManager(newDogManager: sudoDogManager, sender: self)
     }
     
     

@@ -8,8 +8,18 @@
 
 import UIKit
 
-class SpecificationManager: NSCopying {
+class SpecificationManager: NSObject, NSCoding, NSCopying {
     
+    //MARK: NSCoding
+    required init?(coder aDecoder: NSCoder) {
+        dogSpecificationsDictionary = aDecoder.decodeObject(forKey: "dogSpecificationsDictionary") as! Dictionary<String,String>
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(dogSpecificationsDictionary, forKey: "dogSpecificationsDictionary")
+    }
+    
+    //MARK: NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = SpecificationManager()
         for key in dogSpecificationsDictionary.keys{
@@ -21,7 +31,8 @@ class SpecificationManager: NSCopying {
     ///Dictionary of dogSpecifications, allows for adaptability, currently only "name" and "description"
     private var dogSpecificationsDictionary: Dictionary<String, String> = Dictionary<String,String>()
     
-    init() {
+    override init() {
+        super.init()
         initalizeDogSpecificationDictionary()
     }
     

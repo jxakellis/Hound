@@ -10,21 +10,6 @@ import UIKit
 
 class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsViewControllerDelegate, TimingManagerDelegate, SettingsViewControllerDelegate {
     
-    /*
-   //MARK: HomeViewControllerDelegate
-    
-    func didLogTimers(sender: AnyObject, loggedRequirements: [(String, Requirement)]) {
-        if sender is HomeViewController {
-            let sudoDogManager = self.getDogManager()
-            for loggedRequirement in loggedRequirements {
-                var sudoRequirement = try! sudoDogManager.findDog(dogName: loggedRequirement.0).dogRequirments.findRequirement(requirementName: loggedRequirement.1.name)
-                sudoRequirement.changeLastExecution(newLastExecution: Date())
-            }
-            self.setDogManager(newDogManager: sudoDogManager, sender: sender)
-        }
-    }
- */
-    
     //MARK: SettingsViewControllerDelegate
     
     func didTogglePause(newPauseState: Bool) {
@@ -91,10 +76,11 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
+        let decoded = UserDefaults.standard.object(forKey: "dogManager") as! Data
+        let decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
         
-        setDogManager(newDogManager: DogManagerConstant.defaultDogManager, sender: self)
-        
+        setDogManager(newDogManager: decodedDogManager, sender: self)
+       
         dogsViewController = self.viewControllers![1] as? DogsViewController
         dogsViewController.delegate = self
         dogsViewController.setDogManager(newDogManager: getDogManager(), sender: self)
@@ -110,12 +96,14 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         
         TimingManager.delegate = self
         TimingManager.willInitalize(dogManager: getDogManager())
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         Utils.presenter = self
+        super.viewWillAppear(animated)
     }
+    
     
     /*
      // MARK: - Navigation

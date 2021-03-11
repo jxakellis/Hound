@@ -151,17 +151,26 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        selectedTuple = (getRequirementManager().requirements[indexPath.row].name, getRequirementManager().requirements[indexPath.row].description, getRequirementManager().requirements[indexPath.row].executionInterval, true)
+        selectedTuple = (getRequirementManager().requirements[indexPath.row].name, getRequirementManager().requirements[indexPath.row].requirementDescription, getRequirementManager().requirements[indexPath.row].executionInterval, true)
         
         self.performSegue(withIdentifier: "dogsInstantiateRequirementViewController", sender: self)
         
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            var sudoRequirementManager = getRequirementManager()
+        let sudoRequirementManager = getRequirementManager()
+        if editingStyle == .delete && sudoRequirementManager.requirements.count > 0{
             sudoRequirementManager.requirements.remove(at: indexPath.row)
             setRequirementManager(newRequirementManager: sudoRequirementManager, sender: self)
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        if self.getRequirementManager().requirements.count == 0 {
+            return false
+        }
+        else {
+            return true
         }
     }
     

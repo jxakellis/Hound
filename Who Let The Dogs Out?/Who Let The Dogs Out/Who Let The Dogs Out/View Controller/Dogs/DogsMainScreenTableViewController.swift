@@ -212,7 +212,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
+        if editingStyle == .delete && getDogManager().dogs.count > 0 {
             let sudoDogManager = getDogManager()
             if indexPath.row > 0 {
                 sudoDogManager.dogs[indexPath.section].dogRequirments.requirements.remove(at: indexPath.row-1)
@@ -221,6 +221,15 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 sudoDogManager.dogs.remove(at: indexPath.section)
             }
             setDogManager(newDogManager: sudoDogManager, sender: self)
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        if self.getDogManager().dogs.count == 0 {
+            return false
+        }
+        else {
+            return true
         }
     }
     

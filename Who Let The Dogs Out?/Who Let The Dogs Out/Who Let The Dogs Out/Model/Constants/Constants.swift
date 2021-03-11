@@ -9,10 +9,6 @@
 import Foundation
 
 enum DogConstant {
-    
-    //convert to tuple so the defaults for the keys are directly linked.
-    //static let defaultName = ""
-    //static let defaultDescription = ""
     private static let nameTuple: (String, String) = ("name", "Fido")
     private static let descriptionTuple: (String, String) = ("description", "Fiesty")
     static let defaultEnable: Bool = true
@@ -33,7 +29,7 @@ enum DogManagerConstant {
         
         let defaultRequirementOne = Requirement()
         defaultRequirementOne.name = "Potty"
-        defaultRequirementOne.description = "Take The Dog Out"
+        defaultRequirementOne.requirementDescription = "Take The Dog Out"
         //defaultRequirementOne.interval = TimeInterval((3600*3)+(3600*(1/3)))
         try! defaultRequirementOne.changeInterval(newInterval: TimeInterval(35))
         defaultRequirementOne.setEnable(newEnableStatus: false)
@@ -41,7 +37,7 @@ enum DogManagerConstant {
         
         let defaultRequirementTwo = Requirement()
         defaultRequirementTwo.name = "Food"
-        defaultRequirementTwo.description = "Feed The Dog"
+        defaultRequirementTwo.requirementDescription = "Feed The Dog"
         //defaultRequirementTwo.executionInterval = TimeInterval((3600*7)+(3600*0.75))
         try! defaultRequirementTwo.changeInterval(newInterval: TimeInterval(20))
         defaultRequirementTwo.setEnable(newEnableStatus: true)
@@ -49,7 +45,7 @@ enum DogManagerConstant {
         
         let defaultRequirementThree = Requirement()
         defaultRequirementThree.name = "Brush"
-        defaultRequirementThree.description = "Brush His Fur Out"
+        defaultRequirementThree.requirementDescription = "Brush His Fur Out"
         //defaultRequirementThree.interval = TimeInterval((3600*7)+(3600*0.75))
         try! defaultRequirementThree.changeInterval(newInterval: TimeInterval(15))
         defaultRequirementThree.setEnable(newEnableStatus: true)
@@ -72,5 +68,5 @@ enum DogManagerConstant {
 }
 
 enum TimerConstant {
-    static var defaultSnooze = TimeInterval(60*30)
+    static var defaultSnooze: TimeInterval = UserDefaults.standard.value(forKey: "defaultSnooze") as! TimeInterval
 }

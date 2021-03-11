@@ -13,6 +13,7 @@ enum TimingManagerError: Error{
     case invalidateFailed
 }
 
+/*
 protocol TimingProtocol {
     
     //init(dogManager: DogManager)
@@ -33,3 +34,4 @@ protocol TimingProtocol {
     
     
 }
+ */

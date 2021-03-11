@@ -35,6 +35,104 @@ class Utils
         AlertPresenter.shared.enqueueAlertForPresentation(alertController)
         
     }
+    
+    static func willCreateUNUserNotification(dogName: String, requirementName: String, executionDate: Date){
+        
+         let content = UNMutableNotificationContent()
+         content.title = "Reminder for \(dogName)"
+         content.body = "\(requirementName)"
+        
+        let executionDateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: executionDate)
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: executionDateComponents, repeats: false)
+        
+        let uuidString = UUID().uuidString
+        let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { (error) in
+            if (error != nil){
+                print("willCreateUNUserNotification error: \(error!.localizedDescription)")
+            }
+        }
+    }
+}
+
+class Persistence{
+    ///Called by App or Scene Delegate when setting up in didFinishLaunchingWithOptions, can be either the first time setup or a recurring setup (i.e. not the app isnt being opened for the first time)
+    static func willSetup(isRecurringSetup: Bool = false){
+        if isRecurringSetup == true{
+            TimingManager.isPaused = UserDefaults.standard.value(forKey: "isPaused") as! Bool
+            TimingManager.lastPause = UserDefaults.standard.value(forKey: "lastPause") as? Date
+            TimingManager.lastUnpause = UserDefaults.standard.value(forKey: "lastUnpause") as? Date
+            
+            TimerConstant.defaultSnooze = UserDefaults.standard.value(forKey: "defaultSnooze") as! TimeInterval
+        }
+        else {
+            let data = DogManagerConstant.defaultDogManager
+            let encodedData = try! NSKeyedArchiver.archivedData(withRootObject: data, requiringSecureCoding: false)
+            UserDefaults.standard.setValue(encodedData, forKey: "dogManager")
+            UserDefaults.standard.setValue(TimeInterval(60*30), forKey: "defaultSnooze")
+            
+            UserDefaults.standard.setValue(false, forKey: "isPaused")
+            UserDefaults.standard.setValue(nil, forKey: "lastPause")
+            UserDefaults.standard.setValue(nil, forKey: "lastUnpause")
+            
+            UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
+            
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
+                //add stuff if denied
+            }
+        }
+    }
+    
+    ///Called by App or Scene Delegate when entering the background, used to save information, can be called when terminating for a slightly modifed case.
+    static func willEnterBackground(isTerminating: Bool = false){
+        //dogManager
+        let dataDogManager = MainTabBarViewController.staticDogManager
+        let encodedDataDogManager = try! NSKeyedArchiver.archivedData(withRootObject: dataDogManager, requiringSecureCoding: false)
+         UserDefaults.standard.setValue(encodedDataDogManager, forKey: "dogManager")
+        
+        //Pause State
+        UserDefaults.standard.setValue(TimingManager.isPaused, forKey: "isPaused")
+        UserDefaults.standard.setValue(TimingManager.lastPause, forKey: "lastPause")
+        UserDefaults.standard.setValue(TimingManager.lastUnpause, forKey: "lastUnpause")
+        
+        //Snooze interval
+        UserDefaults.standard.setValue(TimerConstant.defaultSnooze, forKey: "defaultSnooze")
+        
+        if isTerminating == true  {
+            
+            /*
+             //Doesn't work, can reach this code successfully but the notification must somehow be thrown away when terminating. No trigger, trigger at current Date() and trigger at current Date() plus 5 seconds all don't work to make the iOS notifcation happen.
+             
+             
+            let content = UNMutableNotificationContent()
+            content.title = "Oops, you terminated Who Let the Dogs Out!"
+            content.body = "Your upcoming reminders might not ring due to the app being closed. Please reopen the app if you wish for them to ring."
+            
+            let dateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: Date())
+            
+            let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+            
+            let request = UNNotificationRequest(identifier: "willTerminate", content: content, trigger: nil)
+            
+            UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+             */
+            
+        }
+        else {
+            for dogKey in TimingManager.timerDictionary.keys{
+                for requirementKey in TimingManager.timerDictionary[dogKey]!.keys{
+                    Utils.willCreateUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!.fireDate)
+                }
+            }
+        }
+        
+    }
+    
+    static func willEnterForeground(){
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+    }
 }
 
 class ErrorProcessor{

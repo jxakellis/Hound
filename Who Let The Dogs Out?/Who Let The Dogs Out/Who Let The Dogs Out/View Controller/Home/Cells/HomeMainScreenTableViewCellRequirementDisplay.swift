@@ -32,17 +32,17 @@ class HomeMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
         requirementName.text = requirementPassed.name
         dogName.text = parentDogName
         
-        if TimingManager.pauseState.1 == true {
+        if TimingManager.isPaused == true {
             timeLeft.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.executionInterval - requirementPassed.intervalElapsed)
             self.timeIntervalLeft = (requirementPassed.executionInterval - requirementPassed.intervalElapsed)
         }
         else{
-            if TimingManager.timerDictionary[parentDogName]![requirementPassed.name]!.isValid == false {
+            let fireDate = TimingManager.timerDictionary[parentDogName]![requirementPassed.name]!.fireDate
+            if Date().distance(to: fireDate) <= 0 {
                 timeSinceLastExecution.text = "It's Happening"
                 timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: .semibold)])
             }
             else {
-                let fireDate = TimingManager.timerDictionary[parentDogName]![requirementPassed.name]!.fireDate
                 self.timeIntervalLeft = Date().distance(to: fireDate)
                 
                 let timeLeftText = String.convertTimeIntervalToReadable(interperateTimeInterval: self.timeIntervalLeft!)

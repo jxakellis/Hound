@@ -104,7 +104,7 @@ class DogsUpdateRequirementViewController: UIViewController, UITextFieldDelegate
         super.viewWillAppear(animated)
         Utils.presenter = self
         requirementName.text = requirement.name
-        requirementDescription.text = requirement.description
+        requirementDescription.text = requirement.requirementDescription
         requirementInterval.countDownDuration = requirement.executionInterval
     }
     

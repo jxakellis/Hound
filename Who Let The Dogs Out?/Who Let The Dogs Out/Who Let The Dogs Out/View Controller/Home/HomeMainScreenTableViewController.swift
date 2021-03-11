@@ -86,7 +86,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         
         let activeDogManagerCopy: DogManager = self.activeDogManager.copy() as! DogManager
         
-        for _ in 0..<TimingManager.activeTimers {
+        for _ in 0..<TimingManager.activeTimers! {
             var lowestTimeInterval: TimeInterval = .infinity
             var lowestRequirement: (String, Requirement)?
             
@@ -128,10 +128,10 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if TimingManager.activeTimers == 0 {
+        if TimingManager.activeTimers == 0 || TimingManager.activeTimers == nil{
             self.tableView.separatorStyle = .none
         }
-        else if TimingManager.activeTimers > 0 {
+        else if TimingManager.activeTimers! > 0 {
             self.tableView.separatorStyle = .singleLine
         }
         
@@ -148,39 +148,9 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     
     ///Reloads the tableViews data, has to persist any selected rows so tableView.reloadData() is not sufficent as it tosses the information
     @objc func reloadTable(){
-        //let selectedIndexPaths = self.tableView.indexPathsForSelectedRows
-        
         self.tableView.reloadData()
-        
-        /*
-        //if timer is not implemented, constant alerts about symbolic breakpoint at UITableViewAlertForCellForRowAtIndexPathAccessDuringUpdate due to the tableView.reloadData() above
-        if selectedIndexPaths != nil{
-            let timer = Timer(fireAt: Date(), interval: 0, target: self, selector: #selector(selectIndexPaths(sender:)), userInfo: ["selectedIndexPaths" : selectedIndexPaths!], repeats: false)
-            
-            RunLoop.main.add(timer, forMode: .default)
-        }
- */
     }
     
-    /*
-    
-    ///Visually selects rows that were selected before the tableView was reloaded, done in a timer format due to weird bug as without the delay an error break things
-    @objc private func selectIndexPaths(sender: Timer){
-        
-        guard let parsedDictionary = sender.userInfo as? [String: [IndexPath]]
-        else{
-            print("error HMCTVC selectIndexPaths")
-            return
-        }
-        
-        let selectedIndexPaths: [IndexPath] = parsedDictionary["selectedIndexPaths"]!
-        
-        for selectedIndexPath in selectedIndexPaths{
-            self.tableView.selectRow(at: selectedIndexPath, animated: false, scrollPosition: .none)
-        }
-        
-    }
- */
     
     // MARK: - Table view data source
     
@@ -190,15 +160,25 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if TimingManager.activeTimers == 0 {
+        if TimingManager.activeTimers == 0 || TimingManager.activeTimers == nil {
             return 1
         }
-        return TimingManager.activeTimers
+        return TimingManager.activeTimers!
     }
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if TimingManager.activeTimers == 0 {
+        if TimingManager.activeTimers == nil {
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
+            
+            let testCell = cell as! HomeMainScreenTableViewCellEmpty
+            testCell.label.text = "All Reminders Paused"
+            
+            return cell
+            
+        }
+        else if TimingManager.activeTimers == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
             
             return cell

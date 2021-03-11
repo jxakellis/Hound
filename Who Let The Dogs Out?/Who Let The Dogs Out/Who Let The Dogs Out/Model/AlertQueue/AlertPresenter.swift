@@ -17,6 +17,8 @@ class AlertPresenter{
     
     static let shared = AlertPresenter()
     
+    static var queueDictionary: Dictionary<String,Dictionary<String, Bool>> = Dictionary<String,Dictionary<String,Bool>>()
+    
     // MARK: - Present
     
     func enqueueAlertForPresentation(_ alertController: UIAlertController) {

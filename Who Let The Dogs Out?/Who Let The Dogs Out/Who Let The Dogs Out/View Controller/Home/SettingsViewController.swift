@@ -16,7 +16,6 @@ class SettingsViewController: UIViewController {
 
     var delegate: SettingsViewControllerDelegate! = nil
     
-    
     //MARK: Pause All Alarms
     ///Switch for pause all alarms
     @IBOutlet weak var isPaused: UISwitch!
@@ -36,10 +35,7 @@ class SettingsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
+        snoozeInterval.countDownDuration = UserDefaults.standard.value(forKey: "defaultSnooze") as! TimeInterval
+        isPaused.isOn = UserDefaults.standard.value(forKey: "isPaused") as! Bool
     }
 }

@@ -20,7 +20,7 @@ protocol DogRequirementProtocol {
     var name: String { get set }
     
     ///descripton of reqirement
-    var description: String { get set }
+    var requirementDescription: String { get set }
     
     ///interval at which a timer should be triggered for requirement
     var executionInterval: TimeInterval { get }
@@ -36,6 +36,10 @@ protocol DogRequirementProtocol {
     
     var isSnoozed: Bool { get }
     
+    var executionDates: [Date] { get set }
+    
+    var isPresentationHandled: Bool { get set }
+    
     mutating func changeName(newName: String?) throws
     
     mutating func changeDescription(newDescription: String?) throws
@@ -47,6 +51,8 @@ protocol DogRequirementProtocol {
     mutating func changeIntervalElapsed(newIntervalElapsed: TimeInterval)
     
     mutating func changeSnooze(newSnoozeStatus: Bool)
+    
+    mutating func timerReset()
 }
 
 extension DogRequirementProtocol {
@@ -67,7 +73,7 @@ extension DogRequirementProtocol {
             throw DogRequirementError.descriptionInvalid
         }
         
-        description = newDescription!
+        requirementDescription = newDescription!
     }
     
     ///if newLastExecution passes all tests, changes value
@@ -78,6 +84,20 @@ extension DogRequirementProtocol {
     ///if newLastExecution passes all tests, changes value
     mutating func changeIntervalElapsed(newIntervalElapsed: TimeInterval){
         self.intervalElapsed = intervalElapsed
+    }
+    
+    mutating func timerReset(){
+        self.changeSnooze(newSnoozeStatus: false)
+        self.changeLastExecution(newLastExecution: Date())
+        self.executionDates.append(Date())
+        self.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
+        self.isPresentationHandled = false
+        /*
+         targetRequirement.changeSnooze(newSnoozeStatus: false)
+         targetRequirement.changeLastExecution(newLastExecution: Date())
+         targetRequirement.executionDates.append(Date())
+         targetRequirement.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
+         */
     }
 }
 
@@ -108,6 +128,7 @@ protocol DogRequirementManagerProtocol {
     func findRequirement(requirementName requirementToFind: String) throws -> Requirement
     
     func findIndex(requirementName requirementToFind: String) throws -> Int
+    
 }
 
 extension DogRequirementManagerProtocol {

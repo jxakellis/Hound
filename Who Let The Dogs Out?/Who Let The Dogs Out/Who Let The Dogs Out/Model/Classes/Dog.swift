@@ -12,9 +12,20 @@ enum DogError: Error {
     case noRequirementsPresent
 }
 
-class Dog: NSCopying, EnableProtocol {
+class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     
+    //MARK: NSCoding
+    required init?(coder aDecoder: NSCoder) {
+        dogSpecifications = aDecoder.decodeObject(forKey: "dogSpecifications") as! SpecificationManager
+        dogRequirments = aDecoder.decodeObject(forKey: "dogRequirments") as! RequirementManager
+        isEnabled = aDecoder.decodeBool(forKey: "isEnabled")
+    }
     
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(dogSpecifications, forKey: "dogSpecifications")
+        aCoder.encode(dogRequirments, forKey: "dogRequirments")
+        aCoder.encode(isEnabled, forKey: "isEnabled")
+    }
     
     //MARK: Conformation EnableProtocol
     
@@ -37,7 +48,7 @@ class Dog: NSCopying, EnableProtocol {
     }
     
     
-    //MARK: Conformation NSCopying
+    //MARK: NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = Dog()
@@ -54,10 +65,39 @@ class Dog: NSCopying, EnableProtocol {
     
     ///RequirmentManager that handles all specified requirements for a dog, e.g. being taken to the outside every time interval or being fed.
     var dogRequirments: RequirementManager = RequirementManager()
+    
+    override init() {
+        super.init()
+    }
 }
 
-class DogManager: DogManagerProtocol, NSCopying {
+class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
     
+    /*
+     // MARK: - NSCoding
+        required init(coder aDecoder: NSCoder) {
+            id = aDecoder.decodeObject(forKey: "id") as? Int ?? aDecoder.decodeInteger(forKey: "id")
+            name = aDecoder.decodeObject(forKey: "name") as! String
+            URLString = aDecoder.decodeObject(forKey: "URLString") as! String
+        }
+
+        func encode(with aCoder: NSCoder) {
+            aCoder.encode(id, forKey: "id")
+            aCoder.encode(name, forKey: "name")
+            aCoder.encode(URLString, forKey: "URLString")
+        }
+     */
+    
+    //MARK: NSCoding
+    required init?(coder aDecoder: NSCoder) {
+        dogs = aDecoder.decodeObject(forKey: "dogs") as! [Dog]
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(dogs, forKey: "dogs")
+    }
+    
+    //MARK: NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = DogManager()
         for i in 0..<dogs.count{
@@ -70,8 +110,9 @@ class DogManager: DogManagerProtocol, NSCopying {
     var dogs: [Dog]
     
     ///initalizes, sets dogs to []
-    init(){
+    override init(){
         dogs = []
+        super.init()
     }
     
 }
