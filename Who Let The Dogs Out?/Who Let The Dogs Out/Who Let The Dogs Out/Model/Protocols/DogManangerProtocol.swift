@@ -37,6 +37,8 @@ protocol DogManagerProtocol {
     func findDog(dogName dogToBeFound: String) throws -> Dog
     
     func findIndex(dogName dogToBeFound: String) throws -> Int
+    
+    func revokeIsPresentationHandled()
 }
 
 extension DogManagerProtocol {
@@ -143,6 +145,15 @@ extension DogManagerProtocol {
             }
         }
         throw DogManagerError.dogNameNotPresent
+    }
+    
+    ///If the application is terminated while one of the alertcontrollers is poped up, .isPresentationHandled stays true for the requirement but the alert controller is killed and never compleded, when the app is restarted it believes there is an alertcontroller already queued for the past due requirement but that alert controller isn't present because it was destroyed.
+    func revokeIsPresentationHandled() {
+        for dog in dogs {
+            for req in dog.dogRequirments.requirements{
+                req.isPresentationHandled = false
+            }
+        }
     }
 }
 

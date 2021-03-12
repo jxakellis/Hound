@@ -68,5 +68,17 @@ enum DogManagerConstant {
 }
 
 enum TimerConstant {
-    static var defaultSnooze: TimeInterval = UserDefaults.standard.value(forKey: "defaultSnooze") as! TimeInterval
+    static var defaultSnooze: TimeInterval = TimeInterval(60*30)
+}
+
+enum UserDefaultsKeys: String{
+    case didFirstTimeSetup = "didFirstTimeSetup"
+    case dogManager = "dogManager"
+    case defaultSnooze = "defaultSnooze"
+    case isPaused = "isPaused"
+    case lastPause = "lastPause"
+    case lastUnpause = "lastUnpause"
+    case isRequestAuthorizationGranted = "isRequestAuthorizationGranted"
+    case isNotificationEnabled = "isNotificationEnabled"
+    case alertPresenter = "alertPresenter"
 }

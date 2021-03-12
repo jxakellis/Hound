@@ -53,6 +53,7 @@ protocol DogRequirementProtocol {
     mutating func changeSnooze(newSnoozeStatus: Bool)
     
     mutating func timerReset()
+    
 }
 
 extension DogRequirementProtocol {

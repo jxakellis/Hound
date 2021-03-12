@@ -21,9 +21,9 @@ class TimingManager{
     ///Saves state isPaused
     static var isPaused: Bool = false
     ///Saves date of last pause (if there was one)
-    static var lastPause: Date?
+    static var lastPause: Date? = nil
     ///Saves date of last unpause (if there was one)
-    static var lastUnpause: Date?
+    static var lastUnpause: Date? = nil
     
     ///Returns number of active timers
     static var activeTimers: Int?{
@@ -95,9 +95,6 @@ class TimingManager{
                     intervalLeft = requirement.activeInterval - requirement.intervalElapsed
                     
                     executionDate = Date.executionDate(lastExecution: Date(), interval: intervalLeft)
-                    
-                    //debug info
-                    //print("originalDate: \(pauseState.2)  pausedDate: \(pauseState.0!) currentDate: \(Date()) intervalElapsed: \(intervalElapsed.description) intervalLeft: \(intervalLeft.description) executionDate: \(executionDate.description)")
                     
                 }
                 
@@ -223,7 +220,7 @@ class TimingManager{
     }
     
     ///Creates alertController to queue for presentation along with information passed along with it to reinitalize the alarm once an option is selected (e.g. disable or snooze)
-    private static func willShowTimer(sender: AnyObject = Utils.presenter, dogName: String, requirement: Requirement){
+    static func willShowTimer(sender: AnyObject = Utils.presenter, dogName: String, requirement: Requirement){
         
         let title = "\(requirement.name) - \(dogName)"
         let message = " \(requirement.requirementDescription)"
@@ -264,9 +261,13 @@ class TimingManager{
         alertController.addAction(alertActionSnooze)
         alertController.addAction(alertActionDisable)
         
+    
         let sudoDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
-        try! sudoDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirement.name).isPresentationHandled = true
-        delegate.didUpdateDogManager(newDogManager: sudoDogManager, sender: self)
+        let requirement = try! sudoDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirement.name)
+        if requirement.isPresentationHandled == false {
+            requirement.isPresentationHandled = true
+            delegate.didUpdateDogManager(newDogManager: sudoDogManager, sender: self)
+        }
         
         AlertPresenter.shared.enqueueAlertForPresentation(alertController)
         

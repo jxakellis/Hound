@@ -10,12 +10,25 @@
 
 import Foundation
 
-struct Queue<Element> {
+class Queue<Element>: NSObject, NSCoding {
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(elements, forKey: "elements")
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        elements = aDecoder.decodeObject(forKey: "elements") as! [Element]
+    }
+    
+    override init(){
+        super.init()
+    }
+    
     var elements = [Element]()
     
     // MARK: - Operations
     
-    mutating func enqueue(_ element: Element) {
+    func enqueue(_ element: Element) {
         elements.append(element)
     }
     
@@ -23,7 +36,7 @@ struct Queue<Element> {
         return !(elements.isEmpty)
     }
     
-    mutating func dequeue() -> Element? {
+    func dequeue() -> Element? {
         guard !elements.isEmpty else {
             return nil
         }

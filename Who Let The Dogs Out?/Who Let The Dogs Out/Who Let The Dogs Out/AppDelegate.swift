@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         //retrieve value from local store, if value doesn't exist then false is returned
-        hasSetup = UserDefaults.standard.bool(forKey: "hasSetup")
+        hasSetup = UserDefaults.standard.bool(forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
         
         if hasSetup{
             print("recurringSetup")
@@ -30,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("firstTimeSetup")
             Persistence.willSetup()
             
-            UserDefaults.standard.setValue(true, forKey: "hasSetup")
+            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
         }
         return true
     }

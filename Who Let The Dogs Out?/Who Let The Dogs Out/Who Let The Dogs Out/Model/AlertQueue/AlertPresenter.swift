@@ -11,31 +11,69 @@
 import Foundation
 import UIKit
 
-class AlertPresenter{
-    private var alertQueue = Queue<UIAlertController>()
+class AlertPresenter: NSObject, NSCoding{
+    
+    //MARK: NSCoding
+    required init?(coder aDecoder: NSCoder) {
+        alertQueue = aDecoder.decodeObject(forKey: "alertQueue") as! Queue<CustomAlertController>
+        locked = aDecoder.decodeBool(forKey: "locked")
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(alertQueue, forKey: "alertQueue")
+        aCoder.encode(locked, forKey: "locked")
+    }
+    
+    override init(){
+        super.init()
+    }
+    
+    private var alertQueue = Queue<CustomAlertController>()
     private var locked = false
+    private var halted = false
+    var currentPresentation: CustomAlertController?
     
-    static let shared = AlertPresenter()
-    
-    static var queueDictionary: Dictionary<String,Dictionary<String, Bool>> = Dictionary<String,Dictionary<String,Bool>>()
+    static var shared = AlertPresenter()
     
     // MARK: - Present
     
-    func enqueueAlertForPresentation(_ alertController: UIAlertController) {
+    func enqueueAlertForPresentation(_ alertController: CustomAlertController) {
         alertQueue.enqueue(alertController)
         
         showNextAlert()
     }
     
     private func showNextAlert() {
+        guard halted == false else {
+            return
+        }
         if alertQueue.queuePresent() && locked == false{
             locked = true
-            Utils.presenter.present(alertQueue.dequeue()!, animated: true)
+            currentPresentation = alertQueue.elements.first
+            Utils.presenter.present(currentPresentation!, animated: true)
         }
     }
     
     func viewDidComplete() {
         locked = false
+        currentPresentation = nil
+        alertQueue.elements.removeFirst()
+        showNextAlert()
+    }
+    
+    func refresh(dogManager: DogManager){
+        halted = true
+        let sudoDogManager = dogManager.copy() as! DogManager
+        if currentPresentation == nil {
+            for d in sudoDogManager.dogs{
+                for r in d.dogRequirments.requirements{
+                    if r.isPresentationHandled == true {
+                        try! TimingManager.willShowTimer(dogName: d.dogSpecifications.getDogSpecification(key: "name"), requirement: r)
+                    }
+                }
+            }
+        }
+        halted = false
         showNextAlert()
     }
 }

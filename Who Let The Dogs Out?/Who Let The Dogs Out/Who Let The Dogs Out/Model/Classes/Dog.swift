@@ -73,21 +73,6 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
 
 class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
     
-    /*
-     // MARK: - NSCoding
-        required init(coder aDecoder: NSCoder) {
-            id = aDecoder.decodeObject(forKey: "id") as? Int ?? aDecoder.decodeInteger(forKey: "id")
-            name = aDecoder.decodeObject(forKey: "name") as! String
-            URLString = aDecoder.decodeObject(forKey: "URLString") as! String
-        }
-
-        func encode(with aCoder: NSCoder) {
-            aCoder.encode(id, forKey: "id")
-            aCoder.encode(name, forKey: "name")
-            aCoder.encode(URLString, forKey: "URLString")
-        }
-     */
-    
     //MARK: NSCoding
     required init?(coder aDecoder: NSCoder) {
         dogs = aDecoder.decodeObject(forKey: "dogs") as! [Dog]

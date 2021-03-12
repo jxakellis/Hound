@@ -60,70 +60,73 @@ class Utils
 class Persistence{
     ///Called by App or Scene Delegate when setting up in didFinishLaunchingWithOptions, can be either the first time setup or a recurring setup (i.e. not the app isnt being opened for the first time)
     static func willSetup(isRecurringSetup: Bool = false){
+        
         if isRecurringSetup == true{
-            TimingManager.isPaused = UserDefaults.standard.value(forKey: "isPaused") as! Bool
-            TimingManager.lastPause = UserDefaults.standard.value(forKey: "lastPause") as? Date
-            TimingManager.lastUnpause = UserDefaults.standard.value(forKey: "lastUnpause") as? Date
+            //not first time setup
             
-            TimerConstant.defaultSnooze = UserDefaults.standard.value(forKey: "defaultSnooze") as! TimeInterval
+            TimingManager.isPaused = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool
+            TimingManager.lastPause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastPause.rawValue) as? Date
+            TimingManager.lastUnpause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastUnpause.rawValue) as? Date
+            
+           TimerConstant.defaultSnooze = UserDefaults.standard.value(forKey: UserDefaultsKeys.defaultSnooze.rawValue) as! TimeInterval
+            
         }
+        
         else {
+            //first time setup
             let data = DogManagerConstant.defaultDogManager
             let encodedData = try! NSKeyedArchiver.archivedData(withRootObject: data, requiringSecureCoding: false)
-            UserDefaults.standard.setValue(encodedData, forKey: "dogManager")
-            UserDefaults.standard.setValue(TimeInterval(60*30), forKey: "defaultSnooze")
+            UserDefaults.standard.setValue(encodedData, forKey: UserDefaultsKeys.dogManager.rawValue)
             
-            UserDefaults.standard.setValue(false, forKey: "isPaused")
-            UserDefaults.standard.setValue(nil, forKey: "lastPause")
-            UserDefaults.standard.setValue(nil, forKey: "lastUnpause")
+            UserDefaults.standard.setValue(TimingManager.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
+            UserDefaults.standard.setValue(TimingManager.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
+            UserDefaults.standard.setValue(TimingManager.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
+            
+            UserDefaults.standard.setValue(TimerConstant.defaultSnooze, forKey: UserDefaultsKeys.defaultSnooze.rawValue)
             
             UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
             
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
-                //add stuff if denied
+                UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isRequestAuthorizationGranted.rawValue)
+                UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
             }
         }
     }
     
     ///Called by App or Scene Delegate when entering the background, used to save information, can be called when terminating for a slightly modifed case.
     static func willEnterBackground(isTerminating: Bool = false){
+        
         //dogManager
-        let dataDogManager = MainTabBarViewController.staticDogManager
+        let dataDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
         let encodedDataDogManager = try! NSKeyedArchiver.archivedData(withRootObject: dataDogManager, requiringSecureCoding: false)
-         UserDefaults.standard.setValue(encodedDataDogManager, forKey: "dogManager")
+         UserDefaults.standard.setValue(encodedDataDogManager, forKey: UserDefaultsKeys.dogManager.rawValue)
         
         //Pause State
-        UserDefaults.standard.setValue(TimingManager.isPaused, forKey: "isPaused")
-        UserDefaults.standard.setValue(TimingManager.lastPause, forKey: "lastPause")
-        UserDefaults.standard.setValue(TimingManager.lastUnpause, forKey: "lastUnpause")
+        UserDefaults.standard.setValue(TimingManager.isPaused, forKey: UserDefaultsKeys.defaultSnooze.rawValue)
+        UserDefaults.standard.setValue(TimingManager.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
+        UserDefaults.standard.setValue(TimingManager.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
         
         //Snooze interval
-        UserDefaults.standard.setValue(TimerConstant.defaultSnooze, forKey: "defaultSnooze")
+        
+        UserDefaults.standard.setValue(TimerConstant.defaultSnooze, forKey: UserDefaultsKeys.defaultSnooze.rawValue)
+        
+        //notification on off and authorization
+        //SettingsVC.ISN and .ISA are both calculated properties so no need to update.
+       // UserDefaults.standard.setValue(SettingsViewController.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+        //UserDefaults.standard.setValue(SettingsViewController.isNotificationAuthorized, forKey: UserDefaultsKeys.isRequestAuthorizationGranted.rawValue)
         
         if isTerminating == true  {
             
-            /*
-             //Doesn't work, can reach this code successfully but the notification must somehow be thrown away when terminating. No trigger, trigger at current Date() and trigger at current Date() plus 5 seconds all don't work to make the iOS notifcation happen.
-             
-             
-            let content = UNMutableNotificationContent()
-            content.title = "Oops, you terminated Who Let the Dogs Out!"
-            content.body = "Your upcoming reminders might not ring due to the app being closed. Please reopen the app if you wish for them to ring."
-            
-            let dateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: Date())
-            
-            let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
-            
-            let request = UNNotificationRequest(identifier: "willTerminate", content: content, trigger: nil)
-            
-            UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
-             */
-            
         }
+        
         else {
-            for dogKey in TimingManager.timerDictionary.keys{
-                for requirementKey in TimingManager.timerDictionary[dogKey]!.keys{
-                    Utils.willCreateUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!.fireDate)
+            if UserDefaults.standard.value(forKey: UserDefaultsKeys.isRequestAuthorizationGranted.rawValue) as! Bool == true
+                && UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool == true
+                && UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool == false{
+                for dogKey in TimingManager.timerDictionary.keys{
+                    for requirementKey in TimingManager.timerDictionary[dogKey]!.keys{
+                        Utils.willCreateUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!.fireDate)
+                    }
                 }
             }
         }
@@ -131,7 +134,46 @@ class Persistence{
     }
     
     static func willEnterForeground(){
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        checkIsNotificationAuthorizationGranted()
+        
+        if UserDefaults.standard.value(forKey: UserDefaultsKeys.isRequestAuthorizationGranted.rawValue) != nil && UserDefaults.standard.value(forKey: UserDefaultsKeys.isRequestAuthorizationGranted.rawValue) as! Bool == true{
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+            UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        }
+    }
+    
+    ///Checks to see if a change in notification permissions has occured, if it has then update to reflect
+    static private func checkIsNotificationAuthorizationGranted() {
+        UNUserNotificationCenter.current().getNotificationSettings { (permission) in
+            switch permission.authorizationStatus {
+            case .authorized:
+                UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isRequestAuthorizationGranted.rawValue)
+            case .denied:
+                print(".denied")
+                UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isRequestAuthorizationGranted.rawValue)
+                UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+                //Updates switch to reflect change, if the last view open was the settings page then the app is exitted and property changed in the settings app then this app is reopened, VWL will not be called as the settings page was already opened, weird edge case.
+                DispatchQueue.main.async {
+                    let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController.settingsViewController
+                    if settingsVC != nil && settingsVC!.isViewLoaded && settingsVC!.isNotificationEnabledSwitch != nil {
+                        let notifSwitch: UISwitch! = settingsVC!.isNotificationEnabledSwitch
+                        if notifSwitch.isOn != UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool {
+                            notifSwitch.setOn(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool, animated: true)
+                        }
+                    }
+                }
+            case .notDetermined:
+                print(".notDetermined")
+            case .provisional:
+                print(".provisional")
+            case .ephemeral:
+                print(".ephemeral")
+            @unknown default:
+                print("unknown")
+            }
+        }
+        
+       
     }
 }
 

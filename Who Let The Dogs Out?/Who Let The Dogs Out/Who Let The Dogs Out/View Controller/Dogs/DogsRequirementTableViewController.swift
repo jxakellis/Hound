@@ -24,7 +24,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
             updateTable()
         }
         catch {
-            print("\(requirementManager.requirements.count)" + requirementManager.requirements[0].name)
+            fatalError("DogsRequirementTableViewController func didClickTrash(dogName: String)")
         }
     }
     

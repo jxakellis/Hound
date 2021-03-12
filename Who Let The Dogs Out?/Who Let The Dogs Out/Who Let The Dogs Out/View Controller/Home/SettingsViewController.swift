@@ -16,7 +16,52 @@ class SettingsViewController: UIViewController {
 
     var delegate: SettingsViewControllerDelegate! = nil
     
-    //MARK: Pause All Alarms
+    //MARK: Notifications
+    
+    static var isNotificationAuthorized: Bool {
+        get { return UserDefaults.standard.value(forKey: UserDefaultsKeys.isRequestAuthorizationGranted.rawValue) as! Bool }
+        set(newBool) {
+            UserDefaults.standard.setValue(newBool, forKey: UserDefaultsKeys.isRequestAuthorizationGranted.rawValue)
+        }
+    }
+    static var isNotificationEnabled: Bool {
+        get { return UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool }
+        set(newBool) {
+            UserDefaults.standard.setValue(newBool, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+        }
+    }
+    
+    @IBOutlet weak var isNotificationEnabledSwitch: UISwitch!
+    
+    @IBAction func didToggleNotificationEnabled(_ sender: Any) {
+        //Notifications not authorized, it is also know that they MUST be disabled then and the switch is going from off to on
+        if SettingsViewController.isNotificationAuthorized == false {
+            Utils.willShowAlert(title: "Notifcations Disabled", message: "To enable notifications go to the Settings App -> Notifications -> APP NAME and enable \"Allow Notifications\"")
+            
+            let switchDisableTimer = Timer(fireAt: Date().addingTimeInterval(0.15), interval: -1, target: self, selector: #selector(disableIsNotificationEnabledSwitch), userInfo: nil, repeats: false)
+            
+            RunLoop.main.add(switchDisableTimer, forMode: .common)
+            
+        }
+        //Notifications authorized
+        else {
+            //notications enabled, going from on to off
+            if SettingsViewController.isNotificationEnabled == true {
+                SettingsViewController.isNotificationEnabled = false
+            }
+            //notifications disabled, going from off to on
+            else {
+                SettingsViewController.isNotificationEnabled = true
+            }
+        }
+    }
+    
+    @objc private func disableIsNotificationEnabledSwitch(){
+        self.isNotificationEnabledSwitch.setOn(false, animated: true)
+    }
+    
+    
+    //MARK: Pause
     ///Switch for pause all alarms
     @IBOutlet weak var isPaused: UISwitch!
     
@@ -25,7 +70,7 @@ class SettingsViewController: UIViewController {
         delegate.didTogglePause(newPauseState: isPaused.isOn)
     }
     
-    //MARK: Default Snooze
+    //MARK: Snooze
     
     @IBOutlet weak var snoozeInterval: UIDatePicker!
     
@@ -35,7 +80,13 @@ class SettingsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        snoozeInterval.countDownDuration = UserDefaults.standard.value(forKey: "defaultSnooze") as! TimeInterval
-        isPaused.isOn = UserDefaults.standard.value(forKey: "isPaused") as! Bool
+        snoozeInterval.countDownDuration = TimerConstant.defaultSnooze
+        isPaused.isOn = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        isNotificationEnabledSwitch.isOn = SettingsViewController.isNotificationEnabled
+    }
+    
 }

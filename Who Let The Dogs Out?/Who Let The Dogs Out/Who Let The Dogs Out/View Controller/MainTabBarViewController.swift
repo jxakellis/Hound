@@ -76,7 +76,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let decoded = UserDefaults.standard.object(forKey: "dogManager") as! Data
+        let decoded = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as! Data
         let decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
         
         setDogManager(newDogManager: decodedDogManager, sender: self)
@@ -97,11 +97,17 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         TimingManager.delegate = self
         TimingManager.willInitalize(dogManager: getDogManager())
         
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         Utils.presenter = self
         super.viewWillAppear(animated)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AlertPresenter.shared.refresh(dogManager: getDogManager())
     }
     
     
