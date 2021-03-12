@@ -40,13 +40,19 @@ class DogsUpdateRequirementViewController: UIViewController, UITextFieldDelegate
     
     ///Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured requirement to DogsViewController
     @IBAction private func willUpdate(_ sender: Any) {
-        var tempRequirement = Requirement()
+        var tempRequirement = self.targetRequirement!.copy() as! Requirement
         
         do {
             try tempRequirement.changeName(newName: requirementName.text)
             try tempRequirement.changeDescription(newDescription: requirementDescription.text)
             try tempRequirement.changeInterval(newInterval: requirementInterval.countDownDuration)
-            try delegate.didUpdateRequirement(parentDogName: parentDogName, formerName: requirement.name, updatedRequirement: tempRequirement)
+            
+            //If the executionInterval (the countdown duration) is changed then is changes its execution interval, this is because (for example) if you were 5 minutes in to a 1 hour countdown but then change it to 30 minutes, you would want to be 0 minutes into the new alarm and not 5 minutes in like previously.
+            if tempRequirement.executionInterval != targetRequirement!.executionInterval{
+                tempRequirement.changeLastExecution(newLastExecution: Date())
+            }
+            
+            try delegate.didUpdateRequirement(parentDogName: parentDogName, formerName: targetRequirement!.name, updatedRequirement: tempRequirement)
             self.dismiss(animated: true, completion: nil)
         }
         catch {
@@ -75,7 +81,7 @@ class DogsUpdateRequirementViewController: UIViewController, UITextFieldDelegate
     
     var delegate: DogsUpdateRequirementViewControllerDelegate! = nil
     
-    var requirement: Requirement! = nil
+    var targetRequirement: Requirement! = nil
     
     var parentDogName: String! = nil
     
@@ -103,9 +109,9 @@ class DogsUpdateRequirementViewController: UIViewController, UITextFieldDelegate
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         Utils.presenter = self
-        requirementName.text = requirement.name
-        requirementDescription.text = requirement.requirementDescription
-        requirementInterval.countDownDuration = requirement.executionInterval
+        requirementName.text = targetRequirement.name
+        requirementDescription.text = targetRequirement.requirementDescription
+        requirementInterval.countDownDuration = targetRequirement.executionInterval
     }
     
 

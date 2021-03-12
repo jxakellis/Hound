@@ -118,6 +118,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         if updateDogTuple.0 == true {
             try! dogName.text = dog.dogSpecifications.getDogSpecification(key: "name")
             try! dogDescription.text = dog.dogSpecifications.getDogSpecification(key: "description")
+            dogsRequirementNavigationViewController.didPassRequirements(passedRequirements: dog.dogRequirments)
         }
         else{
             dogName.text = "Fido"

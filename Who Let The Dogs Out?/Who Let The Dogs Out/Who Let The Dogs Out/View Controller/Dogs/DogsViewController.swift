@@ -18,7 +18,9 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     
     func didUpdateRequirement(parentDogName: String, formerName: String, updatedRequirement: Requirement) throws {
         let sudoDogManager = getDogManager()
+        
         try sudoDogManager.findDog(dogName: parentDogName).dogRequirments.changeRequirement(requirementToBeChanged: formerName, newRequirement: updatedRequirement)
+        
         setDogManager(newDogManager: sudoDogManager, sender: DogsUpdateRequirementViewController())
     }
     
@@ -34,7 +36,8 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         dogsAddDogViewController.dog = getDogManager().dogs[dogIndex]
         dogsAddDogViewController.willInitalize()
         
-        dogsAddDogViewController.didPassRequirements(passedRequirements: getDogManager().dogs[dogIndex].dogRequirments)
+        //chaged to handle locally
+        //dogsAddDogViewController.didPassRequirements(passedRequirements: getDogManager().dogs[dogIndex].dogRequirments)
         
         dogsAddDogViewController.addDogButton.setTitle("Update Dog", for: .normal)
         
@@ -44,7 +47,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     func didSelectRequirement(indexPathSection dogIndex: Int, indexPathRow requirementIndex: Int) {
         self.performSegue(withIdentifier: "dogsUpdateRequirementViewController", sender: DogsMainScreenTableViewController())
         
-        dogsUpdateRequirementViewController.requirement = getDogManager().dogs[dogIndex].dogRequirments.requirements[requirementIndex]
+        dogsUpdateRequirementViewController.targetRequirement = getDogManager().dogs[dogIndex].dogRequirments.requirements[requirementIndex]
         try! dogsUpdateRequirementViewController.parentDogName = getDogManager().dogs[dogIndex].dogSpecifications.getDogSpecification(key: "name")
     }
     
@@ -57,6 +60,12 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     
     ///If a dog was added by the subview, this function is called with a delegate and is incorporated into the dog manager here
     func didAddDog(newDog: Dog) throws {
+        
+        //This makes it so when a dog is added all of its requirements start counting down at the same time (b/c same last execution) instead counting down from when the requirement was added to the dog.
+        for requirementIndex in 0..<newDog.dogRequirments.requirements.count{
+            newDog.dogRequirments.requirements[requirementIndex].changeLastExecution(newLastExecution: Date())
+        }
+        
         var sudoDogManager = getDogManager()
         try sudoDogManager.addDog(dogAdded: newDog)
         setDogManager(newDogManager: sudoDogManager, sender: DogsAddDogViewController())
