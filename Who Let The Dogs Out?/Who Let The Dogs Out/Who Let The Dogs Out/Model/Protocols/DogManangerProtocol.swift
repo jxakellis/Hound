@@ -163,7 +163,7 @@ protocol DogManagerControlFlowProtocol {
     func getDogManager() -> DogManager
     
     ///Sets DogManger equal to newDogManager, depending on sender will also call methods to propogate change.
-    func setDogManager(newDogManager: DogManager, sender: AnyObject?)
+    func setDogManager(sender: Sender, newDogManager: DogManager)
     
     ///Updates things dependent on dogManager
     func updateDogManagerDependents()

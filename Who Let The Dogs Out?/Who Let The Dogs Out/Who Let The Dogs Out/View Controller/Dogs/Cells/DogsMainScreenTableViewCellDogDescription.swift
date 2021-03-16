@@ -9,8 +9,8 @@
 import UIKit
 
 protocol DogsMainScreenTableViewCellDogDisplayDelegate{
-    func didToggleDogSwitch(dogName: String, isEnabled: Bool)
-    func didClickTrash(dogName: String)
+    func didToggleDogSwitch(sender: Sender, dogName: String, isEnabled: Bool)
+    func didClickTrash(sender: Sender, dogName: String)
 }
 
 class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
@@ -33,11 +33,11 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
     //Occurs when the on off switch is toggled
     @IBAction func didToggleDogSwitch(_ sender: Any) {
         dog.setEnable(newEnableStatus: dogToggleSwitch.isOn)
-        try! delegate.didToggleDogSwitch(dogName: dog.dogSpecifications.getDogSpecification(key: "name"), isEnabled: self.dog.getEnable())
+        try! delegate.didToggleDogSwitch(sender: Sender(origin: self, localized: self), dogName: dog.dogSpecifications.getDogSpecification(key: "name"), isEnabled: self.dog.getEnable())
     }
     
     @IBAction func didClickTrash(_ sender: Any) {
-        try! delegate.didClickTrash(dogName: dog.dogSpecifications.getDogSpecification(key: "name"))
+        try! delegate.didClickTrash(sender: Sender(origin: self, localized: self), dogName: dog.dogSpecifications.getDogSpecification(key: "name"))
     }
     
     //MARK: General Functions

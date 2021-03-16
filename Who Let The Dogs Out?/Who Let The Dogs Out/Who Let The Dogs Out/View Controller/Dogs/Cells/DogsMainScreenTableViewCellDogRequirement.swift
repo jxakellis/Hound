@@ -9,8 +9,8 @@
 import UIKit
 
 protocol DogsMainScreenTableViewCellDogRequirementDisplayDelegate {
-    func didToggleRequirementSwitch(parentDogName: String, requirementName: String, isEnabled: Bool)
-    func didClickTrash(parentDogName: String, requirementName: String)
+    func didToggleRequirementSwitch(sender: Sender, parentDogName: String, requirementName: String, isEnabled: Bool)
+    func didClickTrash(sender: Sender, parentDogName: String, requirementName: String)
 }
 
 class DogsMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
@@ -30,10 +30,10 @@ class DogsMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
     
     //When the on off switch is toggled
     @IBAction func didToggleRequirementSwitch(_ sender: Any) {
-        delegate.didToggleRequirementSwitch(parentDogName: self.parentDogName, requirementName: requirement.name, isEnabled: self.requirementToggleSwitch.isOn)
+        delegate.didToggleRequirementSwitch(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, requirementName: requirement.name, isEnabled: self.requirementToggleSwitch.isOn)
     }
     @IBAction func didClickTrash(_ sender: Any) {
-        delegate.didClickTrash(parentDogName: self.parentDogName, requirementName: requirement.name)
+        delegate.didClickTrash(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, requirementName: requirement.name)
     }
     
     //MARK: General Functions

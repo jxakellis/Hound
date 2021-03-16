@@ -11,7 +11,7 @@ import UIKit
 protocol DogsMainScreenTableViewControllerDelegate{
     func didSelectDog(indexPathSection dogIndex: Int)
     func didSelectRequirement(indexPathSection dogIndex: Int, indexPathRow requirementIndex: Int)
-    func didUpdateDogManager(newDogManager: DogManager, sender: AnyObject?)
+    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
 class DogsMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol, DogsMainScreenTableViewCellDogDisplayDelegate, DogsMainScreenTableViewCellDogRequirementDisplayDelegate {
@@ -19,7 +19,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     //MARK: DogsMainScreenTableViewCellDogDisplayDelegate
     
     ///Dog switch is toggled in DogsMainScreenTableViewCellDogDisplay
-    func didToggleDogSwitch(dogName: String, isEnabled: Bool) {
+    func didToggleDogSwitch(sender: Sender, dogName: String, isEnabled: Bool) {
         
         let sudoDogManager = getDogManager()
         try! sudoDogManager.findDog(dogName: dogName).setEnable(newEnableStatus: isEnabled)
@@ -33,7 +33,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             }
         }
         
-        setDogManager(newDogManager: sudoDogManager, sender: DogsMainScreenTableViewCellDogDisplay())
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
         
         //This is so the cell animates the changing of the switch properly, if this code wasnt implemented then when the table view is reloaded a new batch of cells is produced and that cell has the new switch state, bypassing the animation as the instantant the old one is switched it produces and shows the new switch
         let indexPath = try! IndexPath(row: 0, section: getDogManager().findIndex(dogName: dogName))
@@ -44,20 +44,20 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     }
     
     ///If the trash button was clicked in the Dog Display cell, this function is called using a delegate from the cell class to handle the press
-    func didClickTrash(dogName: String) {
+    func didClickTrash(sender: Sender, dogName: String) {
         
         var sudoDogManager = getDogManager()
         
         try! sudoDogManager.removeDog(name: dogName)
         
-        setDogManager(newDogManager: sudoDogManager, sender: DogsMainScreenTableViewCellDogDisplay())
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
         
     }
     
     //MARK: DogsMainScreenTableViewCellDogRequirementDelegate
     
     ///Requirement switch is toggled in DogsMainScreenTableViewCellDogRequirement
-    func didToggleRequirementSwitch(parentDogName: String, requirementName: String, isEnabled: Bool) {
+    func didToggleRequirementSwitch(sender: Sender, parentDogName: String, requirementName: String, isEnabled: Bool) {
         
         let sudoDogManager = getDogManager()
         try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.findRequirement(requirementName: requirementName).setEnable(newEnableStatus: isEnabled)
@@ -68,7 +68,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             sudoRequirement.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
         }
         
-        setDogManager(newDogManager: sudoDogManager, sender: DogsMainScreenTableViewCellDogRequirementDisplay())
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
         
         //This is so the cell animates the changing of the switch properly, if this code wasnt implemented then when the table view is reloaded a new batch of cells is produced and that cell has the new switch state, bypassing the animation as the instantant the old one is switched it produces and shows the new switch
         let indexPath = try! IndexPath(row: getDogManager().findDog(dogName: parentDogName).dogRequirments.findIndex(requirementName: requirementName)+1, section: getDogManager().findIndex(dogName: parentDogName))
@@ -79,11 +79,11 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     }
     
     ///If the trash button was clicked in the Dog Requirement cell, this function is called using a delegate from the cell class to handle the press
-    func didClickTrash(parentDogName: String, requirementName: String) {
+    func didClickTrash(sender: Sender, parentDogName: String, requirementName: String) {
         
         let sudoDogManager = getDogManager()
         try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.removeRequirement(requirementName: requirementName)
-        setDogManager(newDogManager: sudoDogManager, sender: DogsMainScreenTableViewCellDogRequirementDisplay())
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
         updateTable()
         
     }
@@ -103,16 +103,15 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         return dogManager.copy() as! DogManager
     }
     
-    func setDogManager(newDogManager: DogManager, sender: AnyObject?){
+    func setDogManager(sender: Sender, newDogManager: DogManager){
         dogManager = newDogManager.copy() as! DogManager
         
         //possible senders
         //DogsRequirementTableViewCell
         //DogsMainScreenTableViewCellDogDisplay
         //DogsViewController
-        
-        if !(sender is DogsViewController){
-            delegate.didUpdateDogManager(newDogManager: getDogManager(), sender: self)
+        if !(sender.localized is DogsViewController){
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
         
         self.updateDogManagerDependents()
@@ -131,6 +130,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     }
     
     override func viewDidLoad() {
+        self.dogManager = MainTabBarViewController.staticDogManager
         super.viewDidLoad()
         
         if getDogManager().dogs.count == 0 {
@@ -138,11 +138,11 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         }
         
         tableView.separatorInset = UIEdgeInsets.zero
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-        
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.updateTable()
     }
     
     //MARK: Class Functions
@@ -171,7 +171,6 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         if getDogManager().dogs.count == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
             return cell
@@ -220,7 +219,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             else {
                 sudoDogManager.dogs.remove(at: indexPath.section)
             }
-            setDogManager(newDogManager: sudoDogManager, sender: self)
+            setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
         }
     }
     

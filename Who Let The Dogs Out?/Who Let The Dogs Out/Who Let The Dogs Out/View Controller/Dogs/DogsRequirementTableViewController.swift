@@ -36,13 +36,13 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     func didAddRequirement(newRequirement: Requirement) throws{
         var sudoRequirementManager = getRequirementManager()
         try sudoRequirementManager.addRequirement(newRequirement: newRequirement)
-        setRequirementManager(newRequirementManager: sudoRequirementManager, sender: self)
+        setRequirementManager(sender: Sender(origin: self, localized: self), newRequirementManager: sudoRequirementManager)
     }
     
     func didUpdateRequirement(formerName: String, updatedRequirement: Requirement) throws {
         var sudoRequirementManager = getRequirementManager()
         try sudoRequirementManager.changeRequirement(requirementToBeChanged: formerName, newRequirement: updatedRequirement)
-        setRequirementManager(newRequirementManager: sudoRequirementManager, sender: self)
+        setRequirementManager(sender: Sender(origin: self, localized: self), newRequirementManager: sudoRequirementManager)
     }
     
     @IBAction func unwind(_ seg: UIStoryboardSegue){
@@ -57,10 +57,10 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
         return requirementManager.copy() as! RequirementManager
     }
     
-    func setRequirementManager(newRequirementManager: RequirementManager, sender: AnyObject?) {
+    func setRequirementManager(sender: Sender, newRequirementManager: RequirementManager) {
         requirementManager = newRequirementManager.copy() as! RequirementManager
         
-        if !(sender is DogsRequirementNavigationViewController){
+        if !(sender.localized is DogsRequirementNavigationViewController){
             delegate.didUpdateRequirements(newRequirementList: getRequirementManager().requirements)
         }
         
@@ -161,7 +161,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
         let sudoRequirementManager = getRequirementManager()
         if editingStyle == .delete && sudoRequirementManager.requirements.count > 0{
             sudoRequirementManager.requirements.remove(at: indexPath.row)
-            setRequirementManager(newRequirementManager: sudoRequirementManager, sender: self)
+            setRequirementManager(sender: Sender(origin: self, localized: self), newRequirementManager: sudoRequirementManager)
         }
     }
     

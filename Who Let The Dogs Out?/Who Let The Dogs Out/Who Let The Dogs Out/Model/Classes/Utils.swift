@@ -125,7 +125,10 @@ class Persistence{
                 && UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool == false{
                 for dogKey in TimingManager.timerDictionary.keys{
                     for requirementKey in TimingManager.timerDictionary[dogKey]!.keys{
-                        Utils.willCreateUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!.fireDate)
+                        guard TimingManager.timerDictionary[dogKey]![requirementKey]! != nil && TimingManager.timerDictionary[dogKey]![requirementKey]!!.isValid else{
+                            continue
+                        }
+                        Utils.willCreateUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!!.fireDate)
                     }
                 }
             }
@@ -186,33 +189,44 @@ class ErrorProcessor{
         
     }
     
+    private static func alertForErrorProcessor(sender: Sender, message: String){
+        let originTest = sender.origin
+        if originTest != nil{
+            Utils.willShowAlert(title: "Error from \(NSStringFromClass(originTest!.classForCoder))", message: message)
+        }
+        else {
+            Utils.willShowAlert(title: "Error from unknown class", message: message)
+        }
+        
+    }
+    
     ///Handles a given error, uses helper functions to compare against all known (custom) error types
-    static func handleError(error: Error, sender: AnyObject){
+    static func handleError(sender: Sender, error: Error){
         
         let errorProcessorInstance = ErrorProcessor()
         
-        if errorProcessorInstance.handleDogSpecificationManagerError(error: error, sender: sender) == true {
+        if errorProcessorInstance.handleDogSpecificationManagerError(sender: sender, error: error) == true {
             return
         }
-        else if errorProcessorInstance.handleDogRequirementError(error: error, sender: sender) == true {
+        else if errorProcessorInstance.handleDogRequirementError(sender: sender, error: error) == true {
             return
         }
-        else if errorProcessorInstance.handleDogRequirementManagerError(error: error, sender: sender) == true {
+        else if errorProcessorInstance.handleDogRequirementManagerError(sender: sender, error: error) == true {
             return
         }
-        else if errorProcessorInstance.handleDogManagerError(error: error, sender: sender) == true{
+        else if errorProcessorInstance.handleDogManagerError(sender: sender, error: error) == true{
             return
         }
-        else if errorProcessorInstance.handleMiscError(error: error, sender: sender) == true{
+        else if errorProcessorInstance.handleMiscError(sender: sender, error: error) == true{
             return
         }
         else {
-            ErrorProcessor.alertForError(message: "Unable to handle error from \(NSStringFromClass(sender.classForCoder)) with ErrorProcessor of error type: \(error.localizedDescription)")
+            ErrorProcessor.alertForErrorProcessor(sender: sender, message: "Unable to desifer error of description: \(error.localizedDescription)")
         }
     }
     
     ///Returns true if able to find a match in enum DogSpecificationManagerError to the error provided
-    private func handleDogSpecificationManagerError(error: Error, sender: AnyObject) -> Bool{
+    private func handleDogSpecificationManagerError(sender: Sender, error: Error) -> Bool{
         /*
          case nilKey
          case blankKey
@@ -224,15 +238,15 @@ class ErrorProcessor{
          case invalidNewValue(String)
          */
         if case DogSpecificationManagerError.nilKey = error {
-            ErrorProcessor.alertForError(message: "Big Time Error! Nil Key from \(NSStringFromClass(sender.classForCoder))")
+            ErrorProcessor.alertForErrorProcessor(sender: sender, message: "Big Time Error! Nil Key")
             return true
         }
         else if case DogSpecificationManagerError.blankKey = error {
-            ErrorProcessor.alertForError(message: "Big Time Error! Blank Key from \(NSStringFromClass(sender.classForCoder))")
+            ErrorProcessor.alertForErrorProcessor(sender: sender, message: "Big Time Error! Blank Key")
             return true
         }
         else if case DogSpecificationManagerError.invalidKey = error{
-            ErrorProcessor.alertForError(message: "Big Time Error! Invalid Key from \(NSStringFromClass(sender.classForCoder))")
+            ErrorProcessor.alertForErrorProcessor(sender: sender, message: "Big Time Error! Invalid Key")
             return true
         }
         else if case DogSpecificationManagerError.nilNewValue("name") = error {
@@ -264,7 +278,7 @@ class ErrorProcessor{
     }
     
     ///Returns true if able to find a match in enum DogManagerError to the error provided
-    private func handleDogManagerError(error: Error, sender: AnyObject) -> Bool{
+    private func handleDogManagerError(sender: Sender, error: Error) -> Bool{
         /*
          case dogNameNotPresent
          case dogNameAlreadyPresent
@@ -293,7 +307,7 @@ class ErrorProcessor{
     }
     
     ///Returns true if able to find a match in enum DogRequirementError to the error provided
-    private func handleDogRequirementError(error: Error, sender: AnyObject) -> Bool{
+    private func handleDogRequirementError(sender: Sender, error: Error) -> Bool{
         /*
          case nameInvalid
          case descriptionInvalid
@@ -317,7 +331,7 @@ class ErrorProcessor{
     }
     
     ///Returns true if able to find a match in enum DogRequirementManagerError to the error provided
-    private func handleDogRequirementManagerError(error: Error, sender: AnyObject) -> Bool{
+    private func handleDogRequirementManagerError(sender: Sender, error: Error) -> Bool{
         /*
          case requirementAlreadyPresent
          case requirementNotPresent
@@ -341,7 +355,7 @@ class ErrorProcessor{
     }
     
     ///Returns true if able to find a match in one of a few small custom error enums
-    private func handleMiscError(error: Error, sender: AnyObject) -> Bool {
+    private func handleMiscError(sender: Sender, error: Error) -> Bool {
         if case DogError.noRequirementsPresent = error {
             ErrorProcessor.alertForError(message: "Your dog has no reminders, please try adding one.")
             return true

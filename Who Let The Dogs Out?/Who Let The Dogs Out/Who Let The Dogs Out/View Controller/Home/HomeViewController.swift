@@ -9,17 +9,22 @@
 import UIKit
 
 /*
-protocol HomeViewControllerDelegate {
-    func didLogTimers(sender: AnyObject, loggedRequirements: [(String, Requirement)])
-}
+ protocol HomeViewControllerDelegate {
+ func didLogTimers(sender: AnyObject, loggedRequirements: [(String, Requirement)])
+ }
  */
 
 class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeMainScreenTableViewControllerDelegate {
     
     //MARK: HomeMainScreenTableViewControllerDelegate
     
-    func didSelectOption() {
-        self.willToggleLogState(sender: self, newSelectionControlState: false)
+    func didSelectOption(sender: Sender) {
+        if TimingManager.activeTimers == nil || TimingManager.activeTimers == 0 {
+            willToggleLogState(sender: sender, newSelectionControlState: nil, animated: true)
+        }
+        else {
+            willToggleLogState(sender: sender, newSelectionControlState: false, animated: true)
+        }
     }
     
     //MARK: DogManagerControlFlowProtocol
@@ -30,11 +35,15 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
         return dogManager.copy() as! DogManager
     }
     
-    func setDogManager(newDogManager: DogManager, sender: AnyObject?) {
+    func setDogManager(sender: Sender, newDogManager: DogManager) {
         dogManager = newDogManager.copy() as! DogManager
         
-        if sender is MainTabBarViewController {
-            homeMainScreenTableViewController.setDogManager(newDogManager: getDogManager(), sender: self)
+        if sender.localized is MainTabBarViewController {
+            homeMainScreenTableViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+        }
+        
+        if sender.origin is TimingManager.Type || sender.origin is TimingManager {
+            controlRefresh(sender: Sender(origin: sender, localized: self), animated: true)
         }
     }
     
@@ -56,16 +65,16 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
         
         //off to on
         if logState == false {
-            willToggleLogState(sender: self, newSelectionControlState: true)
+            willToggleLogState(sender: Sender(origin: self, localized: self), newSelectionControlState: true)
         }
         //on to off
         else if logState == true {
-            willToggleLogState(sender: self, newSelectionControlState: false)
+            willToggleLogState(sender: Sender(origin: self, localized: self), newSelectionControlState: false)
         }
     }
     
     @IBAction func cancelWillLog(_ sender: Any) {
-        willToggleLogState(sender: self, newSelectionControlState: false)
+        willToggleLogState(sender: Sender(origin: self, localized: self), newSelectionControlState: false)
     }
     
     //MARK: Properties
@@ -81,68 +90,170 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.willLogLabel.isEnabled = false
+        self.willLogLabel.isHidden = true
+        
         self.view.bringSubviewToFront(willLogBackground)
         self.view.bringSubviewToFront(willLog)
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if TimingManager.activeTimers == 0 {
-            willToggleLogState(sender: self, newSelectionControlState: false)
-            
-                self.willLog.isHidden = true
-                self.willLog.isEnabled = false
-                self.willLogBackground.isHidden = true
-                self.willLogBackground.isEnabled = false
-            
-        }
-        else {
-                self.willLog.isHidden = false
-                self.willLog.isEnabled = true
-                self.willLogBackground.isHidden = false
-                self.willLogBackground.isEnabled = true
-        }
+        controlRefresh(sender: Sender(origin: self, localized: self), animated: false)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        willToggleLogState(sender: self, newSelectionControlState: false)
+        willToggleLogState(sender: Sender(origin: self, localized: self), newSelectionControlState: false, animated: false)
     }
     
     ///Toggles all corrosponding information to the specified newState: Bool, sender is the VC which called this information
-    private func willToggleLogState(sender: AnyObject, newSelectionControlState: Bool){
-        if newSelectionControlState == true && TimingManager.activeTimers != nil && TimingManager.activeTimers! > 0 {
-            //Visual element in current VC management
-           
-            self.cancelWillLog.isEnabled = true
-            self.cancelWillLog.isHidden = false
-            self.cancelWillLogBackground.isEnabled = true
-            self.cancelWillLogBackground.isHidden = false
-            self.willLogLabel.isHidden = false
-            self.willLog.tintColor = UIColor.systemGreen
-            
-            if !(sender is HomeMainScreenTableViewController) {
-                homeMainScreenTableViewController.logState = true
-                homeMainScreenTableViewController.tableView.reloadData()
+    private func willToggleLogState(sender: Sender, newSelectionControlState: Bool?, animated: Bool = true){
+        if newSelectionControlState == nil {
+            if logState == true {
+                
+                if animated == true{
+                    let originCWL = cancelWillLog.frame.origin
+                    let originCWLB = cancelWillLogBackground.frame.origin
+                    
+                    DispatchQueue.main.async {
+                        UIView.animate(withDuration: 0.35) {
+                            self.cancelWillLog.frame = CGRect(origin: self.willLog.frame.origin, size: self.cancelWillLog.frame.size)
+                            self.cancelWillLogBackground.frame = CGRect(origin: self.willLogBackground.frame.origin, size: self.cancelWillLogBackground.frame.size)
+                            self.willLog.tintColor = UIColor.link
+                        } completion: { (completed) in
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
+                                self.toggleWillLogVisibility(isHidden: true)
+                                self.toggleCancelWillLogVisibility(isHidden: true)
+                                self.cancelWillLog.frame = CGRect(origin: originCWL, size: self.cancelWillLog.frame.size)
+                                self.cancelWillLogBackground.frame = CGRect(origin: originCWLB, size: self.cancelWillLogBackground.frame.size)
+                                
+                            }
+                            
+                        }
+                    }
+                    
+                }
+                else if animated == false {
+                    toggleWillLogVisibility(isHidden: true)
+                    toggleCancelWillLogVisibility(isHidden: true)
+                    self.willLog.tintColor = UIColor.link
+                }
             }
-            
-            logState = true
-        }
-        else if newSelectionControlState == false {
-            //Visual element in current VC management
-            self.cancelWillLog.isEnabled = false
-            self.cancelWillLog.isHidden = true
-            self.cancelWillLogBackground.isEnabled = false
-            self.cancelWillLog.isHidden = true
-            self.willLogLabel.isHidden = true
-                self.willLog.tintColor = UIColor.link
-            
-            if !(sender is HomeMainScreenTableViewController) {
-                homeMainScreenTableViewController.logState = false
-                homeMainScreenTableViewController.tableView.reloadData()
+            else if logState == false{
+                if animated == true {
+                    toggleWillLogVisibility(isHidden: true)
+                    toggleCancelWillLogVisibility(isHidden: true)
+                }
+                else if animated == false{
+                    toggleWillLogVisibility(isHidden: true)
+                    toggleCancelWillLogVisibility(isHidden: true)
+                }
             }
             
             logState = false
         }
+        else if newSelectionControlState! == true && TimingManager.activeTimers != nil && TimingManager.activeTimers! > 0 {
+            //Visual element in current VC management
+            let originCWL = cancelWillLog.frame.origin
+            let originCWLB = cancelWillLogBackground.frame.origin
+            
+            cancelWillLog.frame = CGRect(origin: willLog.frame.origin, size: cancelWillLog.frame.size)
+            cancelWillLogBackground.frame = CGRect(origin: willLogBackground.frame.origin, size: cancelWillLogBackground.frame.size)
+            
+            toggleCancelWillLogVisibility(isHidden: false)
+            
+            UIView.animate(withDuration: 0.35) {
+                self.cancelWillLog.frame = CGRect(origin: originCWL, size: self.cancelWillLog.frame.size)
+                self.cancelWillLogBackground.frame = CGRect(origin: originCWLB, size: self.cancelWillLogBackground.frame.size)
+                self.willLog.tintColor = UIColor.systemGreen
+            }
+            
+            logState = true
+            toggleCancelWillLogTouch(isTouchEnabled: true)
+        }
+        else if newSelectionControlState! == false {
+            //Visual element in current VC management
+            toggleCancelWillLogTouch(isTouchEnabled: false)
+            if animated == true {
+                let originCWL = cancelWillLog.frame.origin
+                let originCWLB = cancelWillLogBackground.frame.origin
+                
+                
+                UIView.animate(withDuration: 0.35) {
+                    self.cancelWillLog.frame = CGRect(origin: self.willLog.frame.origin, size: self.cancelWillLog.frame.size)
+                    self.cancelWillLogBackground.frame = CGRect(origin: self.willLogBackground.frame.origin, size: self.cancelWillLogBackground.frame.size)
+                    self.willLog.tintColor = UIColor.link
+                    
+                } completion: { (completed) in
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
+                        self.toggleCancelWillLogVisibility(isHidden: true)
+                        //reset button to original position but it is now hidden.
+                        self.cancelWillLog.frame = CGRect(origin: originCWL, size: self.cancelWillLog.frame.size)
+                        self.cancelWillLogBackground.frame = CGRect(origin: originCWLB, size: self.cancelWillLogBackground.frame.size)
+                    }
+                }
+            }
+            else if animated == false {
+                self.toggleCancelWillLogVisibility(isHidden: true)
+                self.willLog.tintColor = UIColor.link
+            }
+            
+            logState = false
+        }
+        
+        if !(sender.localized is HomeMainScreenTableViewController) {
+            homeMainScreenTableViewController.logState = self.logState
+            homeMainScreenTableViewController.reloadTable()
+        }
+    }
+    
+    ///Refreshes the buttons to reflect the data present
+    func controlRefresh(sender: Sender, animated: Bool){
+        if TimingManager.activeTimers == nil || TimingManager.activeTimers == 0 {
+            willToggleLogState(sender: Sender(origin: sender, localized: self), newSelectionControlState: nil, animated: animated)
+        }
+        else {
+            toggleWillLogVisibility(isHidden: false)
+            toggleWillLogTouch(isTouchEnabled: true)
+        }
+    }
+    
+    private func toggleWillLogVisibility(isHidden: Bool){
+        if isHidden == true {
+            self.willLog.isHidden = true
+            self.willLog.isEnabled = false
+            self.willLogBackground.isHidden = true
+            self.willLogBackground.isEnabled = false
+        }
+        else {
+            self.willLog.isHidden = false
+            self.willLog.isEnabled = true
+            self.willLogBackground.isHidden = false
+            self.willLogBackground.isEnabled = true
+        }
+    }
+    
+    private func toggleWillLogTouch(isTouchEnabled: Bool){
+        willLog.isUserInteractionEnabled = isTouchEnabled
+    }
+    
+    private func toggleCancelWillLogVisibility(isHidden: Bool){
+        if isHidden == true {
+            self.cancelWillLog.isHidden = true
+            self.cancelWillLog.isEnabled = false
+            self.cancelWillLogBackground.isHidden = true
+            self.cancelWillLogBackground.isEnabled = false
+        }
+        else {
+            self.cancelWillLog.isHidden = false
+            self.cancelWillLog.isEnabled = true
+            self.cancelWillLogBackground.isHidden = false
+            self.cancelWillLogBackground.isEnabled = true
+        }
+    }
+    
+    private func toggleCancelWillLogTouch(isTouchEnabled: Bool){
+        cancelWillLog.isUserInteractionEnabled = isTouchEnabled
     }
     
     
@@ -154,7 +265,7 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
         
         if segue.identifier == "homeMainScreenTableViewController"{
             homeMainScreenTableViewController = segue.destination as! HomeMainScreenTableViewController
-            homeMainScreenTableViewController.setDogManager(newDogManager: self.getDogManager(), sender: self)
+            homeMainScreenTableViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: self.getDogManager())
             homeMainScreenTableViewController.delegate = self
         }
         

@@ -9,8 +9,8 @@
 import UIKit
 
 protocol DogsAddDogViewControllerDelegate{
-    func didAddDog(newDog: Dog) throws
-    func didUpdateDog(formerName: String, updatedDog: Dog) throws
+    func didAddDog(sender: Sender, newDog: Dog) throws
+    func didUpdateDog(sender: Sender, formerName: String, updatedDog: Dog) throws
 }
 
 class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewControllerDelegate, UITextFieldDelegate{
@@ -58,23 +58,23 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
             try dog.dogSpecifications.changeDogSpecifications(key: "description", newValue: dogDescription.text)
         }
         catch {
-            ErrorProcessor.handleError(error: error, sender: self)
+            ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: error)
             return
         }
         
         
         do{
             if updateDogTuple.0 == true{
-                try delegate.didUpdateDog(formerName: updateDogTuple.1, updatedDog: dog)
+                try delegate.didUpdateDog(sender: Sender(origin: self, localized: self), formerName: updateDogTuple.1, updatedDog: dog)
                 dismiss(animated: true, completion: nil)
             }
             else{
-                try delegate.didAddDog(newDog: dog)
+                try delegate.didAddDog(sender: Sender(origin: self, localized: self), newDog: dog)
                 dismiss(animated: true, completion: nil)
             }
         }
         catch {
-            ErrorProcessor.handleError(error: error, sender: self)
+            ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: error)
         }
         
     }
@@ -118,7 +118,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         if updateDogTuple.0 == true {
             try! dogName.text = dog.dogSpecifications.getDogSpecification(key: "name")
             try! dogDescription.text = dog.dogSpecifications.getDogSpecification(key: "description")
-            dogsRequirementNavigationViewController.didPassRequirements(passedRequirements: dog.dogRequirments)
+            dogsRequirementNavigationViewController.didPassRequirements(sender: Sender(origin: self, localized: self), passedRequirements: dog.dogRequirments)
         }
         else{
             dogName.text = "Fido"
@@ -147,13 +147,6 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
             cancelAddDogButtonBackground.isEnabled = false
             cancelAddDogButtonBackground.isHidden = true
         }
-    }
-    
-    //MARK: DogsViewController
-    
-    //Called by superview to pass down new requirements to subview, used when editting a dog
-    func didPassRequirements(passedRequirements: RequirementManager){
-        dogsRequirementNavigationViewController.didPassRequirements(passedRequirements: passedRequirements)
     }
     
     // MARK: - Navigation

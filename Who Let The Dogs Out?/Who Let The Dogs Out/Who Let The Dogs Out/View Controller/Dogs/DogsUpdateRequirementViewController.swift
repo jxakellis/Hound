@@ -9,7 +9,7 @@
 import UIKit
 
 protocol DogsUpdateRequirementViewControllerDelegate {
-    func didUpdateRequirement(parentDogName: String, formerName: String, updatedRequirement: Requirement) throws
+    func didUpdateRequirement(sender: Sender, parentDogName: String, formerName: String, updatedRequirement: Requirement) throws
 }
 
 class DogsUpdateRequirementViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate {
@@ -47,16 +47,16 @@ class DogsUpdateRequirementViewController: UIViewController, UITextFieldDelegate
             try tempRequirement.changeDescription(newDescription: requirementDescription.text)
             try tempRequirement.changeInterval(newInterval: requirementInterval.countDownDuration)
             
-            //If the executionInterval (the countdown duration) is changed then is changes its execution interval, this is because (for example) if you were 5 minutes in to a 1 hour countdown but then change it to 30 minutes, you would want to be 0 minutes into the new alarm and not 5 minutes in like previously.
+            //If the executionInterval (the countdown duration) is changed then is changes its execution interval, this is because (for example) if you were 5 minutes in to a 1 hour countdown but then change it to 30 minutes, you would want to be 0 minutes into the new timer and not 5 minutes in like previously.
             if tempRequirement.executionInterval != targetRequirement!.executionInterval{
                 tempRequirement.changeLastExecution(newLastExecution: Date())
             }
             
-            try delegate.didUpdateRequirement(parentDogName: parentDogName, formerName: targetRequirement!.name, updatedRequirement: tempRequirement)
+            try delegate.didUpdateRequirement(sender: Sender(origin: self, localized: self), parentDogName: parentDogName, formerName: targetRequirement!.name, updatedRequirement: tempRequirement)
             self.dismiss(animated: true, completion: nil)
         }
         catch {
-            ErrorProcessor.handleError(error: error, sender: self)
+            ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: error)
         }
     }
     

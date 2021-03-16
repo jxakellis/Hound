@@ -18,8 +18,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     
     //MARK: TimingManagerDelegate && DogsViewControllerDelegate
     
-    func didUpdateDogManager(newDogManager: DogManager, sender: AnyObject?) {
-        setDogManager(newDogManager: newDogManager, sender: sender)
+    func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
+        setDogManager(sender: sender, newDogManager: newDogManager)
     }
     
     //MARK: Master Dog Manager
@@ -34,7 +34,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     }
     
     //Sets dog manager, when the value of dog manager is changed it not only changes the variable but calls other needed functions to reflect the change
-    func setDogManager(newDogManager: DogManager, sender: AnyObject?){
+    func setDogManager(sender: Sender, newDogManager: DogManager){
         
         //possible senders
         //MainTabBarViewController
@@ -44,16 +44,16 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         masterDogManager = newDogManager.copy() as! DogManager
         MainTabBarViewController.staticDogManager = newDogManager.copy() as! DogManager
         
-        if sender is TimingManager.Type || sender is TimingManager{
-            dogsViewController.setDogManager(newDogManager: getDogManager(), sender: self)
-            homeViewController.setDogManager(newDogManager: getDogManager(), sender: self)
+        if sender.localized is TimingManager.Type || sender.localized is TimingManager{
+            dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+            homeViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
         
-        if sender is DogsViewController {
-            homeViewController.setDogManager(newDogManager: getDogManager(), sender: self)
+        if sender.localized is DogsViewController {
+            homeViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
         
-        if !(sender is MainTabBarViewController){
+        if !(sender.localized is MainTabBarViewController){
             self.updateDogManagerDependents()
         }
         
@@ -79,17 +79,17 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         let decoded = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as! Data
         let decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
         
-        setDogManager(newDogManager: decodedDogManager, sender: self)
+        setDogManager(sender: Sender(origin: self, localized: self), newDogManager: decodedDogManager.copy() as! DogManager)
        
         dogsViewController = self.viewControllers![1] as? DogsViewController
         dogsViewController.delegate = self
-        dogsViewController.setDogManager(newDogManager: getDogManager(), sender: self)
+        dogsViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
         
         settingsViewController = self.viewControllers![2] as? SettingsViewController
         settingsViewController.delegate = self
         
         homeViewController = self.viewControllers![0] as? HomeViewController
-        homeViewController.setDogManager(newDogManager: getDogManager(), sender: self)
+        homeViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
         //homeViewController.delegate = self
         
         MainTabBarViewController.mainTabBarViewController = self
@@ -97,6 +97,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         TimingManager.delegate = self
         TimingManager.willInitalize(dogManager: getDogManager())
         
+       
         
     }
     

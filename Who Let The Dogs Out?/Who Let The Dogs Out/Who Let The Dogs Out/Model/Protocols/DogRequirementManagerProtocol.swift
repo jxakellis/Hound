@@ -18,39 +18,49 @@ enum DogRequirementError: Error {
 protocol DogRequirementProtocol {
     ///name of requirement, can't be repeated, will throw error if try to add two requirments to same requirement manager with same name
     var name: String { get set }
+    mutating func changeName(newName: String?) throws
     
     ///descripton of reqirement
     var requirementDescription: String { get set }
+    mutating func changeDescription(newDescription: String?) throws
+    
+    var isSnoozed: Bool { get }
+    mutating func changeSnooze(newSnoozeStatus: Bool)
+    
+    var executionDates: [Date] { get set }
+    
+    var isPresentationHandled: Bool { get set }
+    
+    //FUTURE-- COUNT DOWN COMPONENTS BELOW (NEXT 4)
     
     ///interval at which a timer should be triggered for requirement
     var executionInterval: TimeInterval { get }
+    mutating func changeInterval(newInterval: TimeInterval?) throws
     
     ///The interval that is currently activated to calculate.
     var activeInterval: TimeInterval { get set }
     
     ///last time the requirement was fired
     var lastExecution: Date { get set }
+    mutating func changeLastExecution(newLastExecution: Date)
     
     ///how much time of the interval of been used up, this is used for when a timer is paused and then unpaused and have to calculate remaining time
     var intervalElapsed: TimeInterval { get set }
-    
-    var isSnoozed: Bool { get }
-    
-    var executionDates: [Date] { get set }
-    
-    var isPresentationHandled: Bool { get set }
-    
-    mutating func changeName(newName: String?) throws
-    
-    mutating func changeDescription(newDescription: String?) throws
-    
-    mutating func changeInterval(newInterval: TimeInterval?) throws
-    
-    mutating func changeLastExecution(newLastExecution: Date)
-    
     mutating func changeIntervalElapsed(newIntervalElapsed: TimeInterval)
+   
     
-    mutating func changeSnooze(newSnoozeStatus: Bool)
+   
+    
+    
+    
+    
+    
+    
+    
+   
+    
+    
+    
     
     mutating func timerReset()
     
@@ -242,7 +252,7 @@ protocol RequirementManagerControlFlowProtocol {
     func getRequirementManager() -> RequirementManager
     
     ///Sets requirementManager equal to newRequirementManager, depending on sender will also call methods to propogate change.
-    func setRequirementManager(newRequirementManager: RequirementManager, sender: AnyObject?)
+    func setRequirementManager(sender: Sender, newRequirementManager: RequirementManager)
     
     //Updates things dependent on requirementManager
     func updateRequirementManagerDependents()

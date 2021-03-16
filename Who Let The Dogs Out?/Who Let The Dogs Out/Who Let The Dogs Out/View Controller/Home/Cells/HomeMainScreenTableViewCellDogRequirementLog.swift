@@ -9,9 +9,9 @@
 import UIKit
 
 protocol HomeMainScreenTableViewCellDogRequirementLogDelegate {
-    func didDisable(dogName: String, requirementName: String)
-    func didSnooze(dogName: String, requirementName: String)
-    func didReset(dogName: String, requirementName: String)
+    func didDisable(sender: Sender, dogName: String, requirementName: String)
+    func didSnooze(sender: Sender, dogName: String, requirementName: String)
+    func didReset(sender: Sender, dogName: String, requirementName: String)
     
 }
 
@@ -27,13 +27,13 @@ class HomeMainScreenTableViewCellDogRequirementLog: UITableViewCell {
     @IBOutlet weak var resetText: UILabel!
     
     @IBAction func didDisable(_ sender: Any) {
-        delegate.didDisable(dogName: dogName.text!, requirementName: requirementName.text!)
+        delegate.didDisable(sender: Sender(origin: self, localized: self), dogName: dogName.text!, requirementName: requirementName.text!)
     }
     @IBAction func didSnooze(_ sender: Any) {
-        delegate.didSnooze(dogName: dogName.text!, requirementName: requirementName.text!)
+        delegate.didSnooze(sender: Sender(origin: self, localized: self), dogName: dogName.text!, requirementName: requirementName.text!)
     }
     @IBAction func didReset(_ sender: Any) {
-        delegate.didReset(dogName: dogName.text!, requirementName: requirementName.text!)
+        delegate.didReset(sender: Sender(origin: self, localized: self), dogName: dogName.text!, requirementName: requirementName.text!)
     }
     
     func setup(parentDogName: String, requirementName: String){

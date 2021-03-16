@@ -64,7 +64,7 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
             navigationController?.popViewController(animated: true)
         }
         catch {
-            ErrorProcessor.handleError(error: error, sender: self)
+            ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: error)
         }
         
     }

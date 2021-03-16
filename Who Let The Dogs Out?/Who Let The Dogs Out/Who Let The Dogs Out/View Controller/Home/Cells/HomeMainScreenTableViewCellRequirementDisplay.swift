@@ -37,7 +37,7 @@ class HomeMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
             self.timeIntervalLeft = (requirementPassed.executionInterval - requirementPassed.intervalElapsed)
         }
         else{
-            let fireDate = TimingManager.timerDictionary[parentDogName]![requirementPassed.name]!.fireDate
+            let fireDate = TimingManager.timerDictionary[parentDogName]![requirementPassed.name]!!.fireDate
             if Date().distance(to: fireDate) <= 0 {
                 timeSinceLastExecution.text = "It's Happening"
                 timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: .semibold)])

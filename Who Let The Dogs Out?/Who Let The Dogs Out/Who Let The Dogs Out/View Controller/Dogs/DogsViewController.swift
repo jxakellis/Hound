@@ -9,19 +9,19 @@
 import UIKit
 
 protocol DogsViewControllerDelegate {
-    func didUpdateDogManager(newDogManager: DogManager, sender: AnyObject?)
+    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
 class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsAddDogViewControllerDelegate, DogsMainScreenTableViewControllerDelegate, DogsUpdateRequirementViewControllerDelegate{
     
     //MARK: DogsUpdateRequirementViewControllerDelegate
     
-    func didUpdateRequirement(parentDogName: String, formerName: String, updatedRequirement: Requirement) throws {
+    func didUpdateRequirement(sender: Sender, parentDogName: String, formerName: String, updatedRequirement: Requirement) throws {
         let sudoDogManager = getDogManager()
         
         try sudoDogManager.findDog(dogName: parentDogName).dogRequirments.changeRequirement(requirementToBeChanged: formerName, newRequirement: updatedRequirement)
         
-        setDogManager(newDogManager: sudoDogManager, sender: DogsUpdateRequirementViewController())
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     
     //MARK: DogsMainScreenTableViewControllerDelegate
@@ -36,9 +36,6 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         dogsAddDogViewController.dog = getDogManager().dogs[dogIndex]
         dogsAddDogViewController.willInitalize()
         
-        //chaged to handle locally
-        //dogsAddDogViewController.didPassRequirements(passedRequirements: getDogManager().dogs[dogIndex].dogRequirments)
-        
         dogsAddDogViewController.addDogButton.setTitle("Update Dog", for: .normal)
         
     }
@@ -52,14 +49,14 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     }
     
     ///If the dog manager was updated in DogsMainScreenTableViewController, this function is called to reflect that change here with this dogManager
-    func didUpdateDogManager(newDogManager: DogManager, sender: AnyObject?) {
-        setDogManager(newDogManager: newDogManager, sender: sender)
+    func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
+        setDogManager(sender: sender, newDogManager: newDogManager)
     }
     
     //MARK: DogsAddDogViewControllerDelegate
     
     ///If a dog was added by the subview, this function is called with a delegate and is incorporated into the dog manager here
-    func didAddDog(newDog: Dog) throws {
+    func didAddDog(sender: Sender, newDog: Dog) throws {
         
         //This makes it so when a dog is added all of its requirements start counting down at the same time (b/c same last execution) instead counting down from when the requirement was added to the dog.
         for requirementIndex in 0..<newDog.dogRequirments.requirements.count{
@@ -68,15 +65,15 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         
         var sudoDogManager = getDogManager()
         try sudoDogManager.addDog(dogAdded: newDog)
-        setDogManager(newDogManager: sudoDogManager, sender: DogsAddDogViewController())
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
         //try delegate.didAddDog(dogAdded: addedDog)
     }
     
     ///If a dog was updated, its former name (as its name could have been changed) and new dog instance is passed here, matching old dog is found and replaced with new
-    func didUpdateDog(formerName: String, updatedDog: Dog) throws {
+    func didUpdateDog(sender: Sender, formerName: String, updatedDog: Dog) throws {
         var sudoDogManager = getDogManager()
         try sudoDogManager.changeDog(dogNameToBeChanged: formerName, newDog: updatedDog)
-        setDogManager(newDogManager: sudoDogManager, sender: DogsAddDogViewController())
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     
     //MARK: View IBOutlets and IBActions
@@ -103,7 +100,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         return dogManager.copy() as! DogManager
     }
     
-    func setDogManager(newDogManager: DogManager, sender: AnyObject?) {
+    func setDogManager(sender: Sender, newDogManager: DogManager) {
         dogManager = newDogManager.copy() as! DogManager
         
         //possible senders
@@ -111,19 +108,19 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         //DogsAddDogViewController
         //MainTabBarViewController
         
-        if !(sender is DogsMainScreenTableViewController) {
-            self.updateDogManagerDependents()
+        if !(sender.localized is DogsMainScreenTableViewController) {
+            dogsMainScreenTableViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
         
-        if !(sender is MainTabBarViewController)  {
-            delegate.didUpdateDogManager(newDogManager: getDogManager(), sender: self)
+        if !(sender.localized is MainTabBarViewController)  {
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
         
     }
     
     //Updates different visual aspects to reflect data change of dogManager
     func updateDogManagerDependents(){
-        dogsMainScreenTableViewController.setDogManager(newDogManager: getDogManager(), sender: self)
+        //
     }
     
     //MARK: Main

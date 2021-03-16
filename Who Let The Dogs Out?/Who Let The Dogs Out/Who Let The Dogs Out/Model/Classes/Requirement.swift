@@ -85,7 +85,7 @@ class Requirement: NSObject, NSCoding, NSCopying, DogRequirementProtocol,  Enabl
     //MARK: Execution Interval
     
     private var storedExecutionInterval: TimeInterval = TimeInterval(RequirementConstant.defaultTimeInterval)
-    ///TimeInterval that is used in conjunction with a Date() and timer handler to decide when an alarm should go off.
+    ///TimeInterval that is used in conjunction with a Date() and timer handler to decide when an timer should go off.
     var executionInterval: TimeInterval {
         return storedExecutionInterval
     }

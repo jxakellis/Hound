@@ -40,7 +40,7 @@ class DogsRequirementNavigationViewController: UINavigationController, DogsRequi
     //MARK: DogsAddDogViewController
     
     //Called by superview to pass down new requirements to subview, used when editting a dog
-    func didPassRequirements(passedRequirements: RequirementManager){
-        dogsRequirementTableViewController.setRequirementManager(newRequirementManager: passedRequirements, sender: self)
+    func didPassRequirements(sender: Sender, passedRequirements: RequirementManager){
+        dogsRequirementTableViewController.setRequirementManager(sender: Sender(origin: sender, localized: self), newRequirementManager: passedRequirements)
     }
 }

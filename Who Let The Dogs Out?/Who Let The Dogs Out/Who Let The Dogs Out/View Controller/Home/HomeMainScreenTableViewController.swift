@@ -9,26 +9,32 @@
 import UIKit
 
 protocol HomeMainScreenTableViewControllerDelegate {
-    func didSelectOption()
+    func didSelectOption(sender: Sender)
 }
 
 class HomeMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol, HomeMainScreenTableViewCellDogRequirementLogDelegate {
     
     //MARK: HomeMainScreenTableViewCellDogRequirementLogDelegate
     
-    func didDisable(dogName: String, requirementName: String) {
-        TimingManager.willDisableAlarm(dogName: dogName, requirementName: requirementName, dogManager: getDogManager())
-        delegate.didSelectOption()
+    func didDisable(sender: Sender, dogName: String, requirementName: String) {
+        logState = false
+        TimingManager.willDisableTimer(sender: Sender(origin: sender, localized: self), dogName: dogName, requirementName: requirementName, dogManager: getDogManager())
+        delegate.didSelectOption(sender: Sender(origin: sender, localized: self))
+        updateDogManagerDependents()
     }
     
-    func didSnooze(dogName: String, requirementName: String) {
-        TimingManager.willSnoozeAlarm(dogName: dogName, requirementName: requirementName, dogManager: getDogManager())
-        delegate.didSelectOption()
+    func didSnooze(sender: Sender, dogName: String, requirementName: String) {
+        logState = false
+        TimingManager.willSnoozeTimer(sender: Sender(origin: sender, localized: self), dogName: dogName, requirementName: requirementName, dogManager: getDogManager())
+        delegate.didSelectOption(sender: Sender(origin: sender, localized: self))
+        updateDogManagerDependents()
     }
     
-    func didReset(dogName: String, requirementName: String) {
-        TimingManager.willResetAlarm(dogName: dogName, requirementName: requirementName, dogManager: getDogManager())
-        delegate.didSelectOption()
+    func didReset(sender: Sender, dogName: String, requirementName: String) {
+        logState = false
+        TimingManager.willResetTimer(sender: Sender(origin: sender, localized: self), dogName: dogName, requirementName: requirementName, dogManager: getDogManager())
+        delegate.didSelectOption(sender: Sender(origin: sender, localized: self))
+        updateDogManagerDependents()
     }
     
     //MARK: DogManagerControlFlowProtocol
@@ -39,10 +45,10 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         return dogManager.copy() as! DogManager
     }
     
-    func setDogManager(newDogManager: DogManager, sender: AnyObject?) {
+    func setDogManager(sender: Sender, newDogManager: DogManager) {
         self.dogManager = newDogManager.copy() as! DogManager
         
-        if sender is HomeViewController {
+        if sender.localized is HomeViewController {
             self.updateDogManagerDependents()
         }
     }
@@ -92,7 +98,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             
             for d in 0..<activeDogManagerCopy.dogs.count {
                 for r in 0..<activeDogManagerCopy.dogs[d].dogRequirments.requirements.count {
-                    let currentTimeInterval = try! Date().distance(to: TimingManager.timerDictionary[activeDogManagerCopy.dogs[d].dogSpecifications.getDogSpecification(key: "name")]![activeDogManagerCopy.dogs[d].dogRequirments.requirements[r].name]!.fireDate)
+                    let currentTimeInterval = try! Date().distance(to: TimingManager.timerDictionary[activeDogManagerCopy.dogs[d].dogSpecifications.getDogSpecification(key: "name")]![activeDogManagerCopy.dogs[d].dogRequirments.requirements[r].name]!!.fireDate)
                     
                     if currentTimeInterval < lowestTimeInterval
                     {
@@ -128,12 +134,6 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if TimingManager.activeTimers == 0 || TimingManager.activeTimers == nil{
-            self.tableView.separatorStyle = .none
-        }
-        else if TimingManager.activeTimers! > 0 {
-            self.tableView.separatorStyle = .singleLine
-        }
         
         self.reloadTable()
         
@@ -149,6 +149,13 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     ///Reloads the tableViews data, has to persist any selected rows so tableView.reloadData() is not sufficent as it tosses the information
     @objc func reloadTable(){
         self.tableView.reloadData()
+        
+        if TimingManager.activeTimers == 0 || TimingManager.activeTimers == nil{
+            self.tableView.separatorStyle = .none
+        }
+        else if TimingManager.activeTimers! > 0 {
+            self.tableView.separatorStyle = .singleLine
+        }
     }
     
     
@@ -180,6 +187,16 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         }
         else if TimingManager.activeTimers == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
+            
+            let testCell = cell as! HomeMainScreenTableViewCellEmpty
+            
+            if getDogManager().dogs.count != 0 {
+                
+                testCell.label.text = "All Reminders Disabled"
+            }
+            else {
+                testCell.label.text = "No Reminders Created"
+            }
             
             return cell
         }
