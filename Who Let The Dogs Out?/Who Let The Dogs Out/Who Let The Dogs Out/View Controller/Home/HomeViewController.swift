@@ -108,6 +108,9 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     
     ///Toggles all corrosponding information to the specified newState: Bool, sender is the VC which called this information
     private func willToggleLogState(sender: Sender, newSelectionControlState: Bool?, animated: Bool = true){
+        toggleCancelWillLogTouch(isTouchEnabled: false)
+        toggleWillLogTouch(isTouchEnabled: false)
+        
         if newSelectionControlState == nil {
             if logState == true {
                 
@@ -116,12 +119,12 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
                     let originCWLB = cancelWillLogBackground.frame.origin
                     
                     DispatchQueue.main.async {
-                        UIView.animate(withDuration: 0.35) {
+                        UIView.animate(withDuration: AnimationConstant.HomeLogStateAnimate.rawValue) {
                             self.cancelWillLog.frame = CGRect(origin: self.willLog.frame.origin, size: self.cancelWillLog.frame.size)
                             self.cancelWillLogBackground.frame = CGRect(origin: self.willLogBackground.frame.origin, size: self.cancelWillLogBackground.frame.size)
                             self.willLog.tintColor = UIColor.link
                         } completion: { (completed) in
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + AnimationConstant.HomeLogStateDisappearDelay.rawValue) {
                                 self.toggleWillLogVisibility(isHidden: true)
                                 self.toggleCancelWillLogVisibility(isHidden: true)
                                 self.cancelWillLog.frame = CGRect(origin: originCWL, size: self.cancelWillLog.frame.size)
@@ -162,49 +165,66 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
             
             toggleCancelWillLogVisibility(isHidden: false)
             
-            UIView.animate(withDuration: 0.35) {
+            UIView.animate(withDuration: AnimationConstant.HomeLogStateAnimate.rawValue) {
                 self.cancelWillLog.frame = CGRect(origin: originCWL, size: self.cancelWillLog.frame.size)
                 self.cancelWillLogBackground.frame = CGRect(origin: originCWLB, size: self.cancelWillLogBackground.frame.size)
                 self.willLog.tintColor = UIColor.systemGreen
+            } completion: { (completed) in
+                self.toggleWillLogTouch(isTouchEnabled: true)
+                self.toggleCancelWillLogTouch(isTouchEnabled: true)
             }
             
             logState = true
-            toggleCancelWillLogTouch(isTouchEnabled: true)
+            /*
+            if !(sender.localized is HomeMainScreenTableViewController) {
+                homeMainScreenTableViewController.logState = self.logState
+                homeMainScreenTableViewController.reloadTable()
+            }
+             */
         }
         else if newSelectionControlState! == false {
             //Visual element in current VC management
-            toggleCancelWillLogTouch(isTouchEnabled: false)
             if animated == true {
+                
+                //homeMainScreenTableViewController.willFadeAwayLogView()
+                
                 let originCWL = cancelWillLog.frame.origin
                 let originCWLB = cancelWillLogBackground.frame.origin
                 
-                
-                UIView.animate(withDuration: 0.35) {
+                UIView.animate(withDuration: AnimationConstant.HomeLogStateAnimate.rawValue) {
                     self.cancelWillLog.frame = CGRect(origin: self.willLog.frame.origin, size: self.cancelWillLog.frame.size)
                     self.cancelWillLogBackground.frame = CGRect(origin: self.willLogBackground.frame.origin, size: self.cancelWillLogBackground.frame.size)
                     self.willLog.tintColor = UIColor.link
                     
                 } completion: { (completed) in
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + AnimationConstant.HomeLogStateDisappearDelay.rawValue) {
                         self.toggleCancelWillLogVisibility(isHidden: true)
                         //reset button to original position but it is now hidden.
                         self.cancelWillLog.frame = CGRect(origin: originCWL, size: self.cancelWillLog.frame.size)
                         self.cancelWillLogBackground.frame = CGRect(origin: originCWLB, size: self.cancelWillLogBackground.frame.size)
+                        self.toggleWillLogTouch(isTouchEnabled: true)
                     }
                 }
+                
+                
             }
             else if animated == false {
                 self.toggleCancelWillLogVisibility(isHidden: true)
                 self.willLog.tintColor = UIColor.link
+                self.toggleWillLogTouch(isTouchEnabled: true)
             }
             
             logState = false
         }
         
+        
         if !(sender.localized is HomeMainScreenTableViewController) {
             homeMainScreenTableViewController.logState = self.logState
             homeMainScreenTableViewController.reloadTable()
         }
+         
+        
+        
     }
     
     ///Refreshes the buttons to reflect the data present

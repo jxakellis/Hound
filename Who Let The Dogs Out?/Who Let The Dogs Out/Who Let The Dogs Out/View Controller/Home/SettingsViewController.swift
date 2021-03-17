@@ -81,12 +81,13 @@ class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         snoozeInterval.countDownDuration = TimerConstant.defaultSnooze
-        isPaused.isOn = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool
+        isPaused.isOn = TimingManager.isPaused
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         isNotificationEnabledSwitch.isOn = SettingsViewController.isNotificationEnabled
     }
+    
     
 }

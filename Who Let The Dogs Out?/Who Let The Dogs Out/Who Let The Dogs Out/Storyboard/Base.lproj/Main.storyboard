@@ -383,8 +383,14 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
+                                    <outlet property="disableButton" destination="WWs-xT-scx" id="rdb-t3-LAv"/>
+                                    <outlet property="disableText" destination="mCf-43-Yqx" id="8I6-Ox-FJC"/>
                                     <outlet property="dogName" destination="pNz-Ip-2Zt" id="hjf-MF-QQ6"/>
                                     <outlet property="requirementName" destination="UjJ-UQ-0fz" id="obf-45-40A"/>
+                                    <outlet property="resetButton" destination="5Rd-ye-pZh" id="vtz-Gf-yaQ"/>
+                                    <outlet property="resetText" destination="ZbU-gF-cSz" id="Qbz-vg-fEU"/>
+                                    <outlet property="snoozeButton" destination="Yhz-b0-QkC" id="Uih-HC-dZB"/>
+                                    <outlet property="snoozeText" destination="Zhf-yq-F77" id="aJm-HR-sQk"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>

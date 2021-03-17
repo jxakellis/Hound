@@ -64,6 +64,7 @@ class Persistence{
         if isRecurringSetup == true{
             //not first time setup
             
+           
             TimingManager.isPaused = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool
             TimingManager.lastPause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastPause.rawValue) as? Date
             TimingManager.lastUnpause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastUnpause.rawValue) as? Date
@@ -102,7 +103,7 @@ class Persistence{
          UserDefaults.standard.setValue(encodedDataDogManager, forKey: UserDefaultsKeys.dogManager.rawValue)
         
         //Pause State
-        UserDefaults.standard.setValue(TimingManager.isPaused, forKey: UserDefaultsKeys.defaultSnooze.rawValue)
+        UserDefaults.standard.setValue(TimingManager.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
         UserDefaults.standard.setValue(TimingManager.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
         UserDefaults.standard.setValue(TimingManager.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
         
@@ -125,11 +126,12 @@ class Persistence{
                 && UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool == false{
                 for dogKey in TimingManager.timerDictionary.keys{
                     for requirementKey in TimingManager.timerDictionary[dogKey]!.keys{
+                        print("passed3")
                         guard TimingManager.timerDictionary[dogKey]![requirementKey]! != nil && TimingManager.timerDictionary[dogKey]![requirementKey]!!.isValid else{
                             continue
                         }
                         Utils.willCreateUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!!.fireDate)
-                    }
+                     }
                 }
             }
         }
@@ -372,6 +374,91 @@ class ErrorProcessor{
             return false
         }
     }
+}
+
+class Sender {
+    
+    let origin: AnyObject?
+    var localized: AnyObject?
+    
+    init(origin: AnyObject, localized: AnyObject){
+        if origin is Sender{
+            let castedSender = origin as! Sender
+            self.origin = castedSender.origin
+        }
+        else {
+            self.origin = origin
+        }
+        if localized is Sender {
+            fatalError("localized cannot be sender")
+        }
+        else{
+            self.localized = localized
+        }
+    }
+    
+}
+
+class CompletionHandler {
+    
+    
+    
+    /*
+     
+     //Implemention Example
+     
+     typealias CompletionHandler = (completed: Bool) -> Void
+     
+     func doSomthing(exampleParameter: String, completionHandler: CompletionHandler) {
+     
+        if exampleParameter = "correctString" {
+            completionHandler(completed: true)
+        }
+        else {
+            completionHandler(completed: false)
+        }
+     }
+     
+     //Use example
+     
+     doSomething(exampleParameter: "apple", { (completion) -> Void in
+     
+        if completion {
+            //Success
+        }
+        else {
+            //Failure
+        }
+     
+     })
+     
+     
+     
+     //ABOVE CODE IS REWRITTEN FROM BELOW
+     
+     typealias CompletionHandler = (success:Bool) -> Void
+
+     func downloadFileFromURL(url: NSURL,completionHandler: CompletionHandler) {
+
+         // download code.
+
+         let flag = true // true if download succeed,false otherwise
+
+         completionHandler(success: flag)
+     }
+
+     // How to use it.
+
+     downloadFileFromURL(NSURL(string: "url_str")!, { (success) -> Void in
+
+         // When download completes,control flow goes here.
+         if success {
+             // download success
+         } else {
+             // download fail
+         }
+     })
+     */
 }
 
 

@@ -121,7 +121,20 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     
     var delegate: HomeMainScreenTableViewControllerDelegate! = nil
     
-    var logState: Bool = false
+    private var storedLogState: Bool = false
+    var logState: Bool {
+        get {
+            return storedLogState
+        }
+        set(newLogState) {
+            if newLogState == false {
+                firstTimeFade = true
+            }
+        storedLogState = newLogState
+        }
+    }
+    
+    //MARK: View Management
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -146,6 +159,8 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         loopTimer!.invalidate()
     }
     
+    //MARK: Misc Functions
+    
     ///Reloads the tableViews data, has to persist any selected rows so tableView.reloadData() is not sufficent as it tosses the information
     @objc func reloadTable(){
         self.tableView.reloadData()
@@ -158,8 +173,30 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         }
     }
     
+    /*
+    func willFadeAwayLogView(){
+        for cellRow in 0..<TimingManager.activeTimers! {
+            
+            print("willFadeAwayLogView -- cR: \(cellRow)")
+            let cell = tableView(self.tableView, cellForRowAt: IndexPath(row: cellRow, section: 0))
+            let testCell: HomeMainScreenTableViewCellDogRequirementLog = cell as! HomeMainScreenTableViewCellDogRequirementLog
+            
+            
+            testCell.toggleFade(newFadeStatus: false, animated: true) { (fadeCompleted) in
+                if cellRow+1 == TimingManager.activeTimers! {
+                    print("reloaded table")
+                    //self.reloadTable()
+                    //self.logState = false
+                }
+            }
+            
+        }
+        
+    }
+     */
     
-    // MARK: - Table view data source
+    
+    // MARK: - Table View Management
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
@@ -173,6 +210,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         return TimingManager.activeTimers!
     }
     
+    private var firstTimeFade: Bool = true
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if TimingManager.activeTimers == nil {
@@ -190,7 +228,18 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             
             let testCell = cell as! HomeMainScreenTableViewCellEmpty
             
-            if getDogManager().dogs.count != 0 {
+            var requirementCreated: Bool = false
+            for dog in 0..<getDogManager().dogs.count {
+                if requirementCreated == true {
+                    break
+                }
+                if getDogManager().dogs[dog].dogRequirments.requirements.count > 0 {
+                    requirementCreated = true
+                    break
+                }
+            }
+            
+            if getDogManager().dogs.count != 0 && requirementCreated == true{
                 
                 testCell.label.text = "All Reminders Disabled"
             }
@@ -201,7 +250,6 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             return cell
         }
         else if logState == true {
-            
             let cell = tableView.dequeueReusableCell(withIdentifier: "homeMainScreenTableViewCellDogRequirementLog", for: indexPath)
             
             let cellPriority = self.timerPriority(priorityIndex: indexPath.row)
@@ -209,6 +257,14 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             let testCell = cell as! HomeMainScreenTableViewCellDogRequirementLog
             testCell.setup(parentDogName: cellPriority.0, requirementName: cellPriority.1.name)
             testCell.delegate = self
+            
+            if firstTimeFade == true{
+                testCell.toggleFade(newFadeStatus: true, animated: true)
+                
+                if indexPath.row + 1 == TimingManager.activeTimers {
+                    firstTimeFade = false
+                }
+            }
             
             return cell
         }

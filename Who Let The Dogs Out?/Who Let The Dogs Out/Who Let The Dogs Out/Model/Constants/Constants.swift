@@ -39,7 +39,7 @@ enum DogManagerConstant {
         defaultRequirementTwo.name = "Food"
         defaultRequirementTwo.requirementDescription = "Feed The Dog"
         //defaultRequirementTwo.executionInterval = TimeInterval((3600*7)+(3600*0.75))
-        try! defaultRequirementTwo.changeInterval(newInterval: TimeInterval(15))
+        try! defaultRequirementTwo.changeInterval(newInterval: TimeInterval(17))
         defaultRequirementTwo.setEnable(newEnableStatus: false)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementTwo)
         
@@ -47,7 +47,7 @@ enum DogManagerConstant {
         defaultRequirementThree.name = "Brush"
         defaultRequirementThree.requirementDescription = "Brush His Fur Out"
         //defaultRequirementThree.interval = TimeInterval((3600*7)+(3600*0.75))
-        try! defaultRequirementThree.changeInterval(newInterval: TimeInterval(6))
+        try! defaultRequirementThree.changeInterval(newInterval: TimeInterval(10))
         defaultRequirementThree.setEnable(newEnableStatus: true)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementThree)
         
@@ -81,4 +81,10 @@ enum UserDefaultsKeys: String{
     case isRequestAuthorizationGranted = "isRequestAuthorizationGranted"
     case isNotificationEnabled = "isNotificationEnabled"
     case alertPresenter = "alertPresenter"
+}
+
+enum AnimationConstant: Double{
+    
+    case HomeLogStateAnimate = 0.42
+    case HomeLogStateDisappearDelay = 0.15
 }
