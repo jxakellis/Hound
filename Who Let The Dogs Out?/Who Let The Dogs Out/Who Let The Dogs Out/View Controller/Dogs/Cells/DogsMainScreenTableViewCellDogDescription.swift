@@ -10,7 +10,7 @@ import UIKit
 
 protocol DogsMainScreenTableViewCellDogDisplayDelegate{
     func didToggleDogSwitch(sender: Sender, dogName: String, isEnabled: Bool)
-    func didClickTrash(sender: Sender, dogName: String)
+    //func didClickTrash(sender: Sender, dogName: String)
 }
 
 class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
@@ -36,9 +36,11 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
         try! delegate.didToggleDogSwitch(sender: Sender(origin: self, localized: self), dogName: dog.dogSpecifications.getDogSpecification(key: "name"), isEnabled: self.dog.getEnable())
     }
     
+    /*
     @IBAction func didClickTrash(_ sender: Any) {
         try! delegate.didClickTrash(sender: Sender(origin: self, localized: self), dogName: dog.dogSpecifications.getDogSpecification(key: "name"))
     }
+     */
     
     //MARK: General Functions
     

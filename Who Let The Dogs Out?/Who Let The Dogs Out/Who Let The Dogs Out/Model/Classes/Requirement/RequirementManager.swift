@@ -1,5 +1,5 @@
 //
-//  DogRequirementManager.swift
+//  Requirement.swift
 //  Who Let The Dogs Out
 //
 //  Created by Jonathan Xakellis on 11/20/20.
@@ -8,119 +8,15 @@
 
 import UIKit
 
-///Enum full of cases of possible errors from DogRequirement
-enum DogRequirementError: Error {
-    case nameInvalid
-    case descriptionInvalid
-    case intervalInvalid
-}
-
-protocol DogRequirementProtocol {
-    ///name of requirement, can't be repeated, will throw error if try to add two requirments to same requirement manager with same name
-    var name: String { get set }
-    mutating func changeName(newName: String?) throws
-    
-    ///descripton of reqirement
-    var requirementDescription: String { get set }
-    mutating func changeDescription(newDescription: String?) throws
-    
-    var isSnoozed: Bool { get }
-    mutating func changeSnooze(newSnoozeStatus: Bool)
-    
-    var executionDates: [Date] { get set }
-    
-    var isPresentationHandled: Bool { get set }
-    
-    //FUTURE-- COUNT DOWN COMPONENTS BELOW (NEXT 4)
-    
-    ///interval at which a timer should be triggered for requirement
-    var executionInterval: TimeInterval { get }
-    mutating func changeInterval(newInterval: TimeInterval?) throws
-    
-    ///The interval that is currently activated to calculate.
-    var activeInterval: TimeInterval { get set }
-    
-    ///last time the requirement was fired
-    var lastExecution: Date { get set }
-    mutating func changeLastExecution(newLastExecution: Date)
-    
-    ///how much time of the interval of been used up, this is used for when a timer is paused and then unpaused and have to calculate remaining time
-    var intervalElapsed: TimeInterval { get set }
-    mutating func changeIntervalElapsed(newIntervalElapsed: TimeInterval)
-   
-    
-   
-    
-    
-    
-    
-    
-    
-    
-   
-    
-    
-    
-    
-    mutating func timerReset()
-    
-}
-
-extension DogRequirementProtocol {
-    
-    //MARK: DogRequirmentProtocol Function Extension Implementation
-    
-    ///if newName passes all tests, changes value, if not throws error
-    mutating func changeName(newName: String?) throws{
-        if newName == nil || newName == "" {
-            throw DogRequirementError.nameInvalid
-        }
-        name = newName!
-    }
-    
-    ///if newDescription passes all tests, changes value, if not throws error
-    mutating func changeDescription(newDescription: String?) throws{
-        if newDescription == nil {
-            throw DogRequirementError.descriptionInvalid
-        }
-        
-        requirementDescription = newDescription!
-    }
-    
-    ///if newLastExecution passes all tests, changes value
-    mutating func changeLastExecution(newLastExecution: Date){
-        lastExecution = newLastExecution
-    }
-    
-    ///if newLastExecution passes all tests, changes value
-    mutating func changeIntervalElapsed(newIntervalElapsed: TimeInterval){
-        self.intervalElapsed = intervalElapsed
-    }
-    
-    mutating func timerReset(){
-        self.changeSnooze(newSnoozeStatus: false)
-        self.changeLastExecution(newLastExecution: Date())
-        self.executionDates.append(Date())
-        self.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
-        self.isPresentationHandled = false
-        /*
-         targetRequirement.changeSnooze(newSnoozeStatus: false)
-         targetRequirement.changeLastExecution(newLastExecution: Date())
-         targetRequirement.executionDates.append(Date())
-         targetRequirement.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
-         */
-    }
-}
-
-///Enum full of cases of possible errors from DogRequirementManager
-enum DogRequirementManagerError: Error {
+///Enum full of cases of possible errors from RequirementManager
+enum RequirementManagerError: Error {
     case requirementAlreadyPresent
     case requirementNotPresent
     case requirementInvalid
     case requirementNameNotPresent
 }
 
-protocol DogRequirementManagerProtocol {
+protocol RequirementManagerProtocol {
     
     //array of requirments, a dog should contain one of these to specify all of its requirements
     var requirements: [Requirement] { get set }
@@ -142,20 +38,20 @@ protocol DogRequirementManagerProtocol {
     
 }
 
-extension DogRequirementManagerProtocol {
+extension RequirementManagerProtocol {
     
     ///checks to see if a requirement with the same name is present, if not then adds new requirement, if one is then throws error
     mutating func addRequirement(newRequirement: Requirement) throws {
         var requirementAlreadyPresent = false
         
         requirements.forEach { (req) in
-            if (req.name.lowercased()) == (newRequirement.name.lowercased()){
+            if (req.requirementName.lowercased()) == (newRequirement.requirementName.lowercased()){
                 requirementAlreadyPresent = true
             }
         }
         
         if requirementAlreadyPresent == true{
-            throw DogRequirementManagerError.requirementAlreadyPresent
+            throw RequirementManagerError.requirementAlreadyPresent
         }
         else {
             requirements.append(newRequirement.copy() as! Requirement)
@@ -175,7 +71,7 @@ extension DogRequirementManagerProtocol {
         
         //goes through requirements to see if the given requirement name (aka requirement name) is in the array of requirments
         requirements.forEach { (req) in
-            if (req.name.lowercased()) == (requirementName.lowercased()){
+            if (req.requirementName.lowercased()) == (requirementName.lowercased()){
                 requirementNotPresent = false
                 
             }
@@ -184,14 +80,14 @@ extension DogRequirementManagerProtocol {
         //if provided requirement is not present, throws error
         
         if requirementNotPresent == true{
-            throw DogRequirementManagerError.requirementNotPresent
+            throw RequirementManagerError.requirementNotPresent
         }
         //if provided requirement is present, proceeds
         else {
             //finds index of given requirement (through requirement name), returns nil if not found but it should be if code is written correctly, code should not be not be able to reach this point if requirement name was not present
             var indexOfRemovalTarget: Int?{
                 for index in 0...Int(requirements.count){
-                    if (requirements[index].name.lowercased()) == requirementName.lowercased(){
+                    if (requirements[index].requirementName.lowercased()) == requirementName.lowercased(){
                         return index
                     }
                 }
@@ -207,13 +103,13 @@ extension DogRequirementManagerProtocol {
         var newRequirementIndex: Int?
         
         for i in 0..<requirements.count {
-            if requirements[i].name == requirementToBeChanged {
+            if requirements[i].requirementName == requirementToBeChanged {
                 newRequirementIndex = i
             }
         }
         
         if newRequirementIndex == nil {
-            throw DogRequirementManagerError.requirementNameNotPresent
+            throw RequirementManagerError.requirementNameNotPresent
         }
         else {
             requirements[newRequirementIndex!] = newRequirement.copy() as! Requirement
@@ -228,22 +124,52 @@ extension DogRequirementManagerProtocol {
     ///finds and returns the reference of a requirement matching the given name
     func findRequirement(requirementName requirementToFind: String) throws -> Requirement {
         for r in 0..<requirements.count{
-            if requirements[r].name == requirementToFind {
+            if requirements[r].requirementName == requirementToFind {
                 return requirements[r]
             }
         }
-        throw DogRequirementManagerError.requirementNotPresent
+        throw RequirementManagerError.requirementNotPresent
     }
     
     ///finds and returns the index of a requirement with a name in terms of the requirement: [Requirement] array
     func findIndex(requirementName requirementToFind: String) throws -> Int {
         for r in 0..<requirements.count{
-            if requirements[r].name == requirementToFind {
+            if requirements[r].requirementName == requirementToFind {
                 return r
             }
         }
-        throw DogRequirementManagerError.requirementNotPresent
+        throw RequirementManagerError.requirementNotPresent
     }
+}
+
+class RequirementManager: NSObject, NSCoding, NSCopying, RequirementManagerProtocol {
+    
+    //MARK: NSCoding
+    required init?(coder aDecoder: NSCoder) {
+        requirements = aDecoder.decodeObject(forKey: "requirements") as! [Requirement]
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(requirements, forKey: "requirements")
+    }
+    
+    //MARK: NSCopying
+    func copy(with zone: NSZone? = nil) -> Any {
+        let copy = RequirementManager()
+        for i in 0..<self.requirements.count {
+            copy.requirements.append(self.requirements[i].copy() as! Requirement)
+        }
+        return copy
+    }
+    
+    ///Array of requirements
+    var requirements: [Requirement]
+    
+    ///if the array should be set to something by default, can be done so with init
+    required init(initRequirements: [Requirement] = []) {
+        requirements = initRequirements
+    }
+    
 }
 
 protocol RequirementManagerControlFlowProtocol {

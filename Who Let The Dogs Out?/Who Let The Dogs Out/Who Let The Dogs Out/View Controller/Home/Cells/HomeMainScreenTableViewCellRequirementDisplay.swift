@@ -8,11 +8,11 @@
 
 import UIKit
 
-protocol HomeMainScreenTableViewCellDogRequirementDisplayDelegate{
+protocol HomeMainScreenTableViewCellRequirementDisplayDelegate{
     
 }
 
-class HomeMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
+class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     
     //MARK: Main
     
@@ -29,15 +29,15 @@ class HomeMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
     
     func setup(parentDogName: String, requirementPassed: Requirement) {
         self.requirementSource = requirementPassed
-        requirementName.text = requirementPassed.name
+        requirementName.text = requirementPassed.requirementName
         dogName.text = parentDogName
         
         if TimingManager.isPaused == true {
-            timeLeft.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.executionInterval - requirementPassed.intervalElapsed)
-            self.timeIntervalLeft = (requirementPassed.executionInterval - requirementPassed.intervalElapsed)
+            timeLeft.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.countDownComponents.executionInterval - requirementPassed.countDownComponents.intervalElapsed)
+            self.timeIntervalLeft = (requirementPassed.countDownComponents.executionInterval - requirementPassed.countDownComponents.intervalElapsed)
         }
         else{
-            let fireDate = TimingManager.timerDictionary[parentDogName]![requirementPassed.name]!!.fireDate
+            let fireDate = TimingManager.timerDictionary[parentDogName]![requirementPassed.requirementName]!!.fireDate
             if Date().distance(to: fireDate) <= 0 {
                 timeSinceLastExecution.text = "It's Happening"
                 timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: .semibold)])
@@ -51,7 +51,7 @@ class HomeMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
                     
                 timeLeft.attributedText = timeLeft.text!.withFontAtEnd(text: " Left", font: UIFont.systemFont(ofSize: 17, weight: .semibold))
                 
-                let timeSinceLastExecutionText = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.lastExecution.distance(to: Date()))
+                let timeSinceLastExecutionText = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.executionBasis.distance(to: Date()))
                 
                 timeSinceLastExecution.attributedText = NSAttributedString(string: timeSinceLastExecutionText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: .regular)])
                 

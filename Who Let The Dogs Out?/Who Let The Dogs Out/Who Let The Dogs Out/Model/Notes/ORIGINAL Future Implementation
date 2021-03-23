@@ -34,3 +34,17 @@ Origin sender: Will store the very root call of the function, where a user actio
 Localized sender: Will store the last class to handle the function call.
 
 This will allow for the class having the information passed to it to know what direction to route it in without having to compare originSender to every possible class. For example HomeMainScreenTableView could make a dogManager change, the origin sender would be itself, when it reaches MainTabBarViewController, the localized sender would be HomeViewController, as it just passed the information to MTBVC but the origin sender would still be HMSTVC. This would potentislly solve bugs where through the passage of information and updating, the class of the originSender is reached again and without this functionality once the class is reached it would update/change information that was already handled when it made that original function call (which started the chain).
+
+3/17/2021
+
+Create default schedule that is based off researched numbers for users when they first launch the app, basically just modify the default dog a tiny bit so it has accurate real life numbers.
+
+Time of day
+    Add checkbox when time of day is selected when creating/updating reminder where user can select a certain time interval to be reminded after the task is completed (NOT SNOOZED). Potentially call it (when showing alarm) Post-Task Reminder and say at the bottom when configuring the requirement "Remind me again (DATE PICKER) after this reminder"
+    TECH INFO:
+        Compartmentalize requirements so it has two different classes inside, one thats countdown components which has all of the current things and then add TimeOfDay components that can store time of day. Right now only one time of day reminder is needed but DO NOT build functionality for multiple time of day reminders within one requirement as it will add to much completity. Potentially add later but dad said not to.
+
+Change add button to an animated button. Make little pop ups for different options. Example: If you have three dogs, make pop ups above blue add button (bottom to top in this order) Add A Dog, Add A reminder for Penny, Add a reminder for Fido, Add a reminder for Penny, and Add a reminder for Ginger
+
+Add always present chevron.right to the dogs page to indicate that it is editable, make no function changes but just chevron to the right of the toggle on off button to show that you can click the cell to edit it.
+    Add a enable/disable slide when editting a dog so you can turn it off while on edit menu, also add the enable/disable to the tableview of reminders when editting a dog. This is the functionality already on the Dogs Configuration home page but add it so it is accessable when editting a dog.

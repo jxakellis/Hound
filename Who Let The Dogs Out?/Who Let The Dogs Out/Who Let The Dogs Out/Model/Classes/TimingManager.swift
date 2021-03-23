@@ -87,20 +87,32 @@ class TimingManager{
                 
                 var executionDate: Date! = nil
                 
+                var targetComponent: Component! = nil
+                
+                if requirement.snoozeComponents.isSnoozed == true {
+                    targetComponent = requirement.snoozeComponents
+                }
+                else {
+                    targetComponent = requirement.countDownComponents
+                }
+                
                 //If transitioning from paused to unpaused, calculates execution date differently, this is because the timer elasped an amount of time before it was paused, so it only has its interval minus the time elapsed left to go.
                 if didUnpause == true {
                     
-                    var intervalLeft: TimeInterval! = nil
-                    
-                    intervalLeft = requirement.activeInterval - requirement.intervalElapsed
-                    
-                    executionDate = Date.executionDate(lastExecution: Date(), interval: intervalLeft)
+                    executionDate = Date.executionDate(lastExecution: Date(), interval: requirement.intervalRemaining)
                     
                 }
                 
                 //If not transitioning from unpaused, calculates execution date traditionally
                 else if didUnpause == false{
-                    executionDate = Date.executionDate(lastExecution: requirement.lastExecution, interval: requirement.activeInterval)
+                    
+                    if targetComponent is SnoozeComponents {
+                        executionDate = Date.executionDate(lastExecution: requirement.executionBasis, interval: requirement.snoozeComponents.executionInterval)
+                    }
+                    else {
+                        executionDate = Date.executionDate(lastExecution: requirement.executionBasis, interval: requirement.countDownComponents.executionInterval)
+                    }
+                    
                 }
                 
                 let timer = Timer(fireAt: executionDate,
@@ -113,7 +125,7 @@ class TimingManager{
                 //Updates timerDictionary to reflect new timer added, this is so a reference to the created timer can be referenced later and invalidated if needed.
                 var nestedtimerDictionary: Dictionary<String, Timer?> = try! timerDictionary[dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name")] ?? Dictionary<String, Timer?>()
                 
-                nestedtimerDictionary[requirement.name] = timer
+                nestedtimerDictionary[requirement.requirementName] = timer
                 
                 try! timerDictionary[dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name")] = nestedtimerDictionary
                 
@@ -197,14 +209,27 @@ class TimingManager{
                     continue
                 }
                 
-                var sudoRequirement = try! sudoDogManager.findDog(dogName: dogKey).dogRequirments.findRequirement(requirementName: requirementKey)
+                let sudoRequirement = try! sudoDogManager.findDog(dogName: dogKey).dogRequirments.findRequirement(requirementName: requirementKey)
                 
-                if sudoRequirement.intervalElapsed <= 0.01 {
-                    sudoRequirement.changeIntervalElapsed(newIntervalElapsed: sudoRequirement.lastExecution.distance(to: self.lastPause!))
+                
+                if sudoRequirement.snoozeComponents.isSnoozed == false {
+                    if sudoRequirement.countDownComponents.intervalElapsed <= 0.001 {
+                        sudoRequirement.countDownComponents.changeIntervalElapsed(newIntervalElapsed: sudoRequirement.executionBasis.distance(to: self.lastPause!))
+                    }
+                    else{
+                        sudoRequirement.countDownComponents.changeIntervalElapsed(newIntervalElapsed: (sudoRequirement.countDownComponents.intervalElapsed + self.lastUnpause!.distance(to: (self.lastPause!))))
+                    }
                 }
-                else{
-                    sudoRequirement.changeIntervalElapsed(newIntervalElapsed: (sudoRequirement.intervalElapsed + self.lastUnpause!.distance(to: (self.lastPause!))))
+                else if sudoRequirement.snoozeComponents.isSnoozed == true {
+                    if sudoRequirement.snoozeComponents.intervalElapsed <= 0.001 {
+                        sudoRequirement.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: sudoRequirement.executionBasis.distance(to: self.lastPause!))
+                    }
+                    else{
+                        sudoRequirement.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: (sudoRequirement.snoozeComponents.intervalElapsed + self.lastUnpause!.distance(to: (self.lastPause!))))
+                    }
                 }
+                
+                
                 
             }
         }
@@ -230,7 +255,7 @@ class TimingManager{
     ///Creates alertController to queue for presentation along with information passed along with it to reinitalize the timer once an option is selected (e.g. disable or snooze)
     static func willShowTimer(sender: Sender = Sender(origin: Utils.presenter, localized: Utils.presenter), dogName: String, requirement: Requirement){
         
-        let title = "\(requirement.name) - \(dogName)"
+        let title = "\(requirement.requirementName) - \(dogName)"
         let message = " \(requirement.requirementDescription)"
         
         let alertController = CustomAlertController(
@@ -245,7 +270,7 @@ class TimingManager{
                 {
                     (alert: UIAlertAction!)  in
                     //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                    TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementName: requirement.name)
+                    TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementName: requirement.requirementName)
                 })
         let alertActionSnooze = UIAlertAction(
             title:"Snooze",
@@ -254,7 +279,7 @@ class TimingManager{
                 {
                     (alert: UIAlertAction!)  in
                     //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                    TimingManager.willSnoozeTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementName: requirement.name)
+                    TimingManager.willSnoozeTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementName: requirement.requirementName)
                 })
         let alertActionDisable = UIAlertAction(
             title:"Disable",
@@ -263,7 +288,7 @@ class TimingManager{
                 {
                     (alert: UIAlertAction!)  in
                     //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                    TimingManager.willDisableTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementName: requirement.name)
+                    TimingManager.willDisableTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementName: requirement.requirementName)
                 })
         alertController.addAction(alertActionDone)
         alertController.addAction(alertActionSnooze)
@@ -271,7 +296,7 @@ class TimingManager{
         
     
         let sudoDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
-        let requirement = try! sudoDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirement.name)
+        let requirement = try! sudoDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirement.requirementName)
         if requirement.isPresentationHandled == false {
             requirement.isPresentationHandled = true
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
@@ -291,7 +316,7 @@ class TimingManager{
             TimingManager.timerDictionary[targetDogName]![targetRequirementName]! = nil
         }
         
-        var requirement = try! dogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
+        let requirement = try! dogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
         
         requirement.timerReset()
         
@@ -302,11 +327,11 @@ class TimingManager{
     
     ///Finishes executing timer and then sets its isSnoozed to true, note passed requirement should be a reference to a requirement in passed dogManager
     static func willSnoozeTimer(sender: Sender, dogName targetDogName: String, requirementName targetRequirementName: String, dogManager: DogManager = MainTabBarViewController.staticDogManager){
-        var requirement = try! dogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
+        let requirement = try! dogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
         
         requirement.timerReset()
         
-        requirement.changeSnooze(newSnoozeStatus: true)
+        requirement.snoozeComponents.changeSnooze(newSnoozeStatus: true)
         
         delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
     }
@@ -315,7 +340,7 @@ class TimingManager{
     static func willResetTimer(sender: Sender, dogName targetDogName: String, requirementName targetRequirementName: String, dogManager: DogManager = MainTabBarViewController.staticDogManager){
         let sudoDogManager = dogManager
         
-        var requirement = try! sudoDogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
+        let requirement = try! sudoDogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
         
         requirement.timerReset()
         

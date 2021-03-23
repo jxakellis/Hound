@@ -1,9 +1,9 @@
 //
-//  File.swift
+//  DogManager.swift
 //  Who Let The Dogs Out
 //
-//  Created by Jonathan Xakellis on 12/8/20.
-//  Copyright © 2020 Jonathan Xakellis. All rights reserved.
+//  Created by Jonathan Xakellis on 3/21/21.
+//  Copyright © 2021 Jonathan Xakellis. All rights reserved.
 //
 
 import UIKit
@@ -155,6 +155,37 @@ extension DogManagerProtocol {
             }
         }
     }
+}
+
+class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
+    
+    //MARK: NSCoding
+    required init?(coder aDecoder: NSCoder) {
+        dogs = aDecoder.decodeObject(forKey: "dogs") as! [Dog]
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(dogs, forKey: "dogs")
+    }
+    
+    //MARK: NSCopying
+    func copy(with zone: NSZone? = nil) -> Any {
+        let copy = DogManager()
+        for i in 0..<dogs.count{
+            copy.dogs.append(dogs[i].copy() as! Dog)
+        }
+        return copy
+    }
+    
+    ///Array of dogs
+    var dogs: [Dog]
+    
+    ///initalizes, sets dogs to []
+    override init(){
+        dogs = []
+        super.init()
+    }
+    
 }
 
 protocol DogManagerControlFlowProtocol {

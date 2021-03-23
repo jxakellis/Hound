@@ -35,7 +35,7 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     func setEnable(newEnableStatus: Bool) {
         isEnabled = newEnableStatus
         for r in dogRequirments.requirements {
-            r.activeInterval = r.executionInterval
+            r.snoozeComponents.changeSnooze(newSnoozeStatus: false)
         }
     }
     
@@ -71,33 +71,4 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     }
 }
 
-class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
-    
-    //MARK: NSCoding
-    required init?(coder aDecoder: NSCoder) {
-        dogs = aDecoder.decodeObject(forKey: "dogs") as! [Dog]
-    }
-    
-    func encode(with aCoder: NSCoder) {
-        aCoder.encode(dogs, forKey: "dogs")
-    }
-    
-    //MARK: NSCopying
-    func copy(with zone: NSZone? = nil) -> Any {
-        let copy = DogManager()
-        for i in 0..<dogs.count{
-            copy.dogs.append(dogs[i].copy() as! Dog)
-        }
-        return copy
-    }
-    
-    ///Array of dogs
-    var dogs: [Dog]
-    
-    ///initalizes, sets dogs to []
-    override init(){
-        dogs = []
-        super.init()
-    }
-    
-}
+

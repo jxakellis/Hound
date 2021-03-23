@@ -8,7 +8,8 @@
 
 import UIKit
 protocol DogsRequirementTableViewCellDelegate {
-    func didClickTrash(dogName: String)
+    //func didClickTrash(requiremntName: String)
+    func didToggleEnable(sender: Sender, requirementName: String, newEnableStatus: Bool)
 }
 
 
@@ -16,30 +17,33 @@ class DogsRequirementTableViewCell: UITableViewCell {
     
     var delegate: DogsRequirementTableViewCellDelegate! = nil
     
-    @IBOutlet private weak var timeInterval: UILabel!
-    @IBOutlet private weak var name: UILabel!
+    @IBOutlet private weak var requirementTimeInterval: UILabel!
+    @IBOutlet private weak var requirementName: UILabel!
+    @IBOutlet private weak var requirementEnableStatus: UISwitch!
     
-    
+    /*
     //When the trash button icon is clicked it executes this func, thru delegate finds a requirement with a matching name and then deletes it (handled elsewhere tho)
     @IBAction private func didClickTrash(_ sender: Any) {
         delegate.didClickTrash(dogName: name.text!)
     }
+     */
     
-    //sets label to initLabel
-    func setName(initName: String){
-        name.text = initName
+    @IBAction func didToggleEnable(_ sender: Any) {
+        delegate.didToggleEnable(sender: Sender(origin: self, localized: self), requirementName: self.requirementName.text!, newEnableStatus: self.requirementEnableStatus.isOn)
     }
     
-    //set time interval to initTimeInterval
-    func setTimeInterval(initTimeInterval: TimeInterval){
-        timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: initTimeInterval)
+    func setup(requirement: Requirement){
+        self.requirementName.text = requirement.requirementName
+        self.requirementTimeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirement.countDownComponents.executionInterval)
+        self.requirementEnableStatus.isOn = requirement.getEnable()
+        
     }
     
     //when cell is awoken / init, this is executed
     override func awakeFromNib() {
         super.awakeFromNib()
-        timeInterval.adjustsFontSizeToFitWidth = true
-        name.adjustsFontSizeToFitWidth = true
+        requirementTimeInterval.adjustsFontSizeToFitWidth = true
+        requirementName.adjustsFontSizeToFitWidth = true
         // Initialization code
         self.contentMode = .center
         self.imageView?.contentMode = .center

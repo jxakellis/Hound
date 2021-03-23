@@ -12,9 +12,9 @@ protocol HomeMainScreenTableViewControllerDelegate {
     func didSelectOption(sender: Sender)
 }
 
-class HomeMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol, HomeMainScreenTableViewCellDogRequirementLogDelegate {
+class HomeMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol, HomeMainScreenTableViewCellRequirementLogDelegate {
     
-    //MARK: HomeMainScreenTableViewCellDogRequirementLogDelegate
+    //MARK: HomeMainScreenTableViewCellRequirementLogDelegate
     
     func didDisable(sender: Sender, dogName: String, requirementName: String) {
         logState = false
@@ -98,7 +98,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             
             for d in 0..<activeDogManagerCopy.dogs.count {
                 for r in 0..<activeDogManagerCopy.dogs[d].dogRequirments.requirements.count {
-                    let currentTimeInterval = try! Date().distance(to: TimingManager.timerDictionary[activeDogManagerCopy.dogs[d].dogSpecifications.getDogSpecification(key: "name")]![activeDogManagerCopy.dogs[d].dogRequirments.requirements[r].name]!!.fireDate)
+                    let currentTimeInterval = try! Date().distance(to: TimingManager.timerDictionary[activeDogManagerCopy.dogs[d].dogSpecifications.getDogSpecification(key: "name")]![activeDogManagerCopy.dogs[d].dogRequirments.requirements[r].requirementName]!!.fireDate)
                     
                     if currentTimeInterval < lowestTimeInterval
                     {
@@ -108,7 +108,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
                 }
             }
             assortedTimers.append(lowestRequirement!)
-            try! activeDogManagerCopy.findDog(dogName: lowestRequirement!.0).dogRequirments.removeRequirement(requirementName: lowestRequirement!.1.name)
+            try! activeDogManagerCopy.findDog(dogName: lowestRequirement!.0).dogRequirments.removeRequirement(requirementName: lowestRequirement!.1.requirementName)
         }
         
         return assortedTimers[priorityIndex]
@@ -179,7 +179,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             
             print("willFadeAwayLogView -- cR: \(cellRow)")
             let cell = tableView(self.tableView, cellForRowAt: IndexPath(row: cellRow, section: 0))
-            let testCell: HomeMainScreenTableViewCellDogRequirementLog = cell as! HomeMainScreenTableViewCellDogRequirementLog
+            let testCell: HomeMainScreenTableViewCellRequirementLog = cell as! HomeMainScreenTableViewCellRequirementLog
             
             
             testCell.toggleFade(newFadeStatus: false, animated: true) { (fadeCompleted) in
@@ -250,12 +250,12 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             return cell
         }
         else if logState == true {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "homeMainScreenTableViewCellDogRequirementLog", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: "homeMainScreenTableViewCellRequirementLog", for: indexPath)
             
             let cellPriority = self.timerPriority(priorityIndex: indexPath.row)
             
-            let testCell = cell as! HomeMainScreenTableViewCellDogRequirementLog
-            testCell.setup(parentDogName: cellPriority.0, requirementName: cellPriority.1.name)
+            let testCell = cell as! HomeMainScreenTableViewCellRequirementLog
+            testCell.setup(parentDogName: cellPriority.0, requirementName: cellPriority.1.requirementName)
             testCell.delegate = self
             
             if firstTimeFade == true{
@@ -269,11 +269,11 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             return cell
         }
         else{
-            let cell = tableView.dequeueReusableCell(withIdentifier: "homeMainScreenTableViewCellDogRequirementDisplay", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: "homeMainScreenTableViewCellRequirementDisplay", for: indexPath)
             
             let cellPriority = self.timerPriority(priorityIndex: indexPath.row)
             
-            let testCell = cell as! HomeMainScreenTableViewCellDogRequirementDisplay
+            let testCell = cell as! HomeMainScreenTableViewCellRequirementDisplay
             testCell.setup(parentDogName: cellPriority.0, requirementPassed: cellPriority.1)
             
             return cell

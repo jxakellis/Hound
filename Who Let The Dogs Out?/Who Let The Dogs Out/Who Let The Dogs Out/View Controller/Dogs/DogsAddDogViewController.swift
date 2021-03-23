@@ -44,6 +44,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     @IBOutlet weak var dogName: UITextField!
     @IBOutlet weak var dogDescription: UITextField!
+    @IBOutlet weak var dogEnableStatus: UISwitch!
     
     @IBOutlet weak var embeddedTableView: UIView!
     
@@ -56,6 +57,8 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         do{
             try dog.dogSpecifications.changeDogSpecifications(key: "name", newValue: dogName.text)
             try dog.dogSpecifications.changeDogSpecifications(key: "description", newValue: dogDescription.text)
+            
+            dog.setEnable(newEnableStatus: dogEnableStatus.isOn)
         }
         catch {
             ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: error)
@@ -109,6 +112,11 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         Utils.presenter = self
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        //Utils.presenter = self
+    }
+    
     private func ibOutletSetup(){
         dogName.delegate = self
         dogDescription.delegate = self
@@ -118,11 +126,13 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         if updateDogTuple.0 == true {
             try! dogName.text = dog.dogSpecifications.getDogSpecification(key: "name")
             try! dogDescription.text = dog.dogSpecifications.getDogSpecification(key: "description")
+            dogEnableStatus.isOn = dog.getEnable()
             dogsRequirementNavigationViewController.didPassRequirements(sender: Sender(origin: self, localized: self), passedRequirements: dog.dogRequirments)
         }
         else{
-            dogName.text = "Fido"
-            dogDescription.text = "Friendly"
+            dogName.text = DogConstant.defaultDogSpecificationKeys[0].1
+            dogDescription.text = DogConstant.defaultDogSpecificationKeys[1].1
+            dogEnableStatus.isOn = DogConstant.defaultEnable
         }
     }
     

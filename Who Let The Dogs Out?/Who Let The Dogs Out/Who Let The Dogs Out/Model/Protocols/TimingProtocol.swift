@@ -13,25 +13,3 @@ enum TimingManagerError: Error{
     case invalidateFailed
 }
 
-/*
-protocol TimingProtocol {
-    
-    //init(dogManager: DogManager)
-    
-    static func willInitalize(dogManager: DogManager, didUnpause: Bool)
-    
-    static func willReinitalize(dogManager: DogManager)
-    
-    static func willReinitalize(dogName: String, requirementName: String) throws
-    
-    //func didExecuteTimer(sender: Timer)
-    
-    static func willTogglePause(dogManager: DogManager, newPauseStatus: Bool)
-    
-    //func invalidateAll()
-    
-    //static func invalidate(dogName: String, requirementName: String) throws
-    
-    
-}
- */

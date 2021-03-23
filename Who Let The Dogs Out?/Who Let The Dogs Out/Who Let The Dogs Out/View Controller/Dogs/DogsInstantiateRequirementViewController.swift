@@ -35,6 +35,7 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
     @IBOutlet private weak var requirementName: UITextField!
     @IBOutlet private weak var requirementDescription: UITextField!
     @IBOutlet private weak var requirementInterval: UIDatePicker!
+    @IBOutlet private weak var requirementEnableStatus: UISwitch!
     
     @IBOutlet weak var saveButton: UIBarButtonItem!
     
@@ -43,23 +44,24 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
     }
     
     @IBAction func backButton(_ sender: Any) {
-        performSegue(withIdentifier: "unwindToAddDogRequirementTableView", sender: self)
+        performSegue(withIdentifier: "unwindToAddRequirementTableView", sender: self)
     }
     
     
     //Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured requirement back to table view.
     @IBAction private func willSave(_ sender: Any) {
-        var tempRequirement = Requirement()
+        let tempRequirement = Requirement()
         
         do {
-            try tempRequirement.changeName(newName: requirementName.text)
-            try tempRequirement.changeDescription(newDescription: requirementDescription.text)
-            try tempRequirement.changeInterval(newInterval: requirementInterval.countDownDuration)
-            if setupTuple.3 == false {
+            try tempRequirement.changeRequirementName(newRequirementName: requirementName.text)
+            try tempRequirement.changeRequirementDescription(newRequirementDescription: requirementDescription.text)
+            tempRequirement.countDownComponents.changeExecutionInterval(newExecutionInterval: requirementInterval.countDownDuration)
+            tempRequirement.setEnable(newEnableStatus: requirementEnableStatus.isOn)
+            if setupTuple.1 == false {
                 try delegate.didAddRequirement(newRequirement: tempRequirement)
             }
             else {
-                try delegate.didUpdateRequirement(formerName: setupTuple.0, updatedRequirement: tempRequirement)
+                try delegate.didUpdateRequirement(formerName: setupTuple.0.requirementName, updatedRequirement: tempRequirement)
             }
             navigationController?.popViewController(animated: true)
         }
@@ -69,7 +71,7 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
         
     }
     
-    var setupTuple: (String, String, TimeInterval, Bool) = (RequirementConstant.defaultName, RequirementConstant.defaultDescription, RequirementConstant.defaultTimeInterval, false)
+    var setupTuple: (Requirement, Bool) = (RequirementConstant.defaultRequirement, false)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,10 +82,11 @@ class DogsInstantiateRequirementViewController: UIViewController, UITextFieldDel
         tap.delegate = self
         requirementInterval.addGestureRecognizer(tap)
         
-        requirementName.text = setupTuple.0
-        requirementDescription.text = setupTuple.1
-        requirementInterval.countDownDuration = setupTuple.2
-        if setupTuple.3 == true {
+        requirementName.text = setupTuple.0.requirementName
+        requirementDescription.text = setupTuple.0.requirementDescription
+        requirementInterval.countDownDuration = setupTuple.0.countDownComponents.executionInterval
+        requirementEnableStatus.isOn = setupTuple.0.getEnable()
+        if setupTuple.1 == true {
             saveButton.title = "Update"
         }
         else {

@@ -10,7 +10,7 @@ import Foundation
 
 enum DogConstant {
     private static let nameTuple: (String, String) = ("name", "Fido")
-    private static let descriptionTuple: (String, String) = ("description", "Fiesty")
+    private static let descriptionTuple: (String, String) = ("description", "Friendly")
     static let defaultEnable: Bool = true
     static let defaultDogSpecificationKeys: [(String, String)] = [nameTuple, descriptionTuple]
 }
@@ -20,6 +20,13 @@ enum RequirementConstant {
     static let defaultDescription = "Take Dog Out"
     static let defaultTimeInterval = (3600*2.5)
     static let defaultEnable: Bool = true
+    static var defaultRequirement: Requirement { let req = Requirement()
+        try! req.changeRequirementName(newRequirementName: defaultName)
+        req.countDownComponents.changeExecutionInterval(newExecutionInterval: defaultTimeInterval)
+        try! req.changeRequirementDescription(newRequirementDescription: defaultDescription)
+        req.setEnable(newEnableStatus: defaultEnable)
+        return req
+    }
 }
 
 enum DogManagerConstant {
@@ -28,26 +35,26 @@ enum DogManagerConstant {
         let defaultDog = Dog()
         
         let defaultRequirementOne = Requirement()
-        defaultRequirementOne.name = "Potty"
-        defaultRequirementOne.requirementDescription = "Take The Dog Out"
+        try! defaultRequirementOne.changeRequirementName(newRequirementName: "Potty")
+        try! defaultRequirementOne.changeRequirementDescription(newRequirementDescription: "Take The Dog Out")
         //defaultRequirementOne.interval = TimeInterval((3600*3)+(3600*(1/3)))
-        try! defaultRequirementOne.changeInterval(newInterval: TimeInterval(25))
+        defaultRequirementOne.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(50))
         defaultRequirementOne.setEnable(newEnableStatus: false)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementOne)
         
         let defaultRequirementTwo = Requirement()
-        defaultRequirementTwo.name = "Food"
-        defaultRequirementTwo.requirementDescription = "Feed The Dog"
+        try! defaultRequirementTwo.changeRequirementName(newRequirementName: "Food")
+        try! defaultRequirementTwo.changeRequirementDescription(newRequirementDescription: "Feed The Dog")
         //defaultRequirementTwo.executionInterval = TimeInterval((3600*7)+(3600*0.75))
-        try! defaultRequirementTwo.changeInterval(newInterval: TimeInterval(17))
+        defaultRequirementTwo.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(35))
         defaultRequirementTwo.setEnable(newEnableStatus: false)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementTwo)
         
         let defaultRequirementThree = Requirement()
-        defaultRequirementThree.name = "Brush"
-        defaultRequirementThree.requirementDescription = "Brush His Fur Out"
+        try! defaultRequirementThree.changeRequirementName(newRequirementName: "Brush")
+        try! defaultRequirementThree.changeRequirementDescription(newRequirementDescription: "Brush His Fur Out")
         //defaultRequirementThree.interval = TimeInterval((3600*7)+(3600*0.75))
-        try! defaultRequirementThree.changeInterval(newInterval: TimeInterval(10))
+        defaultRequirementThree.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(15))
         defaultRequirementThree.setEnable(newEnableStatus: true)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementThree)
         
@@ -55,7 +62,7 @@ enum DogManagerConstant {
         try! defaultDog.dogSpecifications.changeDogSpecifications(key: DogConstant.defaultDogSpecificationKeys[i].0, newValue: DogConstant.defaultDogSpecificationKeys[i].1)
         }
         
-        defaultDog.setEnable(newEnableStatus: true)
+        defaultDog.setEnable(newEnableStatus: DogConstant.defaultEnable)
     
         return defaultDog
     }

@@ -1,5 +1,5 @@
 //
-//  HomeMainScreenTableViewCellDogRequirementLog.swift
+//  HomeMainScreenTableViewCellRequirementLog.swift
 //  Who Let The Dogs Out
 //
 //  Created by Jonathan Xakellis on 2/26/21.
@@ -8,16 +8,16 @@
 
 import UIKit
 
-protocol HomeMainScreenTableViewCellDogRequirementLogDelegate {
+protocol HomeMainScreenTableViewCellRequirementLogDelegate {
     func didDisable(sender: Sender, dogName: String, requirementName: String)
     func didSnooze(sender: Sender, dogName: String, requirementName: String)
     func didReset(sender: Sender, dogName: String, requirementName: String)
     
 }
 
-class HomeMainScreenTableViewCellDogRequirementLog: UITableViewCell {
+class HomeMainScreenTableViewCellRequirementLog: UITableViewCell {
     
-    var delegate: HomeMainScreenTableViewCellDogRequirementLogDelegate! = nil
+    var delegate: HomeMainScreenTableViewCellRequirementLogDelegate! = nil
     
     var status = false
     
@@ -61,7 +61,7 @@ class HomeMainScreenTableViewCellDogRequirementLog: UITableViewCell {
             }
         }
         else if isFadingTo == false{
-            fatalError("code current broken, don't use")
+            fatalError("HomeMainScreenTableViewCellRequirementLog toggleFade(newFadeStatus: True, etc...) code current broken, don't use")
             //something weird is happening with the cell, when trying to fade buttons away when preparing for a new cell, even the direct below statement doesn't work, it won't change the button opacities at all. I even made it so that the cells are always log state and doesn't change so they stay loaded when I hit my green/blue checkmark but still nothing works. I tried DispatchQueue.Main but nothing seems to allow for change. I disabled reloadTable aswell so these cells stayed loaded even when they should have been replaced with the coundown display cells but still I could not change opacity. Investigate, the problem most likely does not lie within this tableViewCell class but rather the parent tableView class, possible due to something with memory and loading where the cell is no longer loaded/modifyable/something even though I can still reference it.
             self.applyAlpha(newAlpha: 0)
             if animated == true {

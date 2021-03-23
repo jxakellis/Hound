@@ -14,7 +14,7 @@ protocol DogsMainScreenTableViewControllerDelegate{
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class DogsMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol, DogsMainScreenTableViewCellDogDisplayDelegate, DogsMainScreenTableViewCellDogRequirementDisplayDelegate {
+class DogsMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol, DogsMainScreenTableViewCellDogDisplayDelegate, DogsMainScreenTableViewCellRequirementDisplayDelegate {
     
     //MARK: DogsMainScreenTableViewCellDogDisplayDelegate
     
@@ -27,8 +27,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         if isEnabled == true {
             for r in try! 0..<sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements.count {
                 if try! sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements[r].getEnable() == true {
-                    try! sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements[r].lastExecution = Date()
-                    try! sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements[r].changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
+                    try! sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements[r].changeExecutionBasis(newExecutionBasis: Date())
                 }
             }
         }
@@ -43,6 +42,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         cell.dogToggleSwitch.setOn(isEnabled, animated: true)
     }
     
+    /*
     ///If the trash button was clicked in the Dog Display cell, this function is called using a delegate from the cell class to handle the press
     func didClickTrash(sender: Sender, dogName: String) {
         
@@ -53,19 +53,18 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         setDogManager(sender: sender, newDogManager: sudoDogManager)
         
     }
+    */
     
-    //MARK: DogsMainScreenTableViewCellDogRequirementDelegate
+    //MARK: DogsMainScreenTableViewCellRequirementDelegate
     
-    ///Requirement switch is toggled in DogsMainScreenTableViewCellDogRequirement
+    ///Requirement switch is toggled in DogsMainScreenTableViewCellRequirement
     func didToggleRequirementSwitch(sender: Sender, parentDogName: String, requirementName: String, isEnabled: Bool) {
         
         let sudoDogManager = getDogManager()
         try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.findRequirement(requirementName: requirementName).setEnable(newEnableStatus: isEnabled)
         
         if isEnabled == true {
-            try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.findRequirement(requirementName: requirementName).lastExecution = Date()
-            var sudoRequirement = try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.findRequirement(requirementName: requirementName)
-            sudoRequirement.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
+            try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.findRequirement(requirementName: requirementName).changeExecutionBasis(newExecutionBasis: Date())
         }
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
@@ -73,11 +72,12 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         //This is so the cell animates the changing of the switch properly, if this code wasnt implemented then when the table view is reloaded a new batch of cells is produced and that cell has the new switch state, bypassing the animation as the instantant the old one is switched it produces and shows the new switch
         let indexPath = try! IndexPath(row: getDogManager().findDog(dogName: parentDogName).dogRequirments.findIndex(requirementName: requirementName)+1, section: getDogManager().findIndex(dogName: parentDogName))
         
-        let cell = tableView.cellForRow(at: indexPath) as! DogsMainScreenTableViewCellDogRequirementDisplay
+        let cell = tableView.cellForRow(at: indexPath) as! DogsMainScreenTableViewCellRequirementDisplay
         cell.requirementToggleSwitch.isOn = !isEnabled
         cell.requirementToggleSwitch.setOn(isEnabled, animated: true)
     }
     
+    /*
     ///If the trash button was clicked in the Dog Requirement cell, this function is called using a delegate from the cell class to handle the press
     func didClickTrash(sender: Sender, parentDogName: String, requirementName: String) {
         
@@ -87,6 +87,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         updateTable()
         
     }
+    */
     
     
     //MARK: Properties
@@ -185,9 +186,9 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             return cell
         }
         else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "dogsMainScreenTableViewCellDogRequirementDisplay", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: "dogsMainScreenTableViewCellRequirementDisplay", for: indexPath)
             
-            let testCell = cell as! DogsMainScreenTableViewCellDogRequirementDisplay
+            let testCell = cell as! DogsMainScreenTableViewCellRequirementDisplay
             try! testCell.setup(parentDogName: getDogManager().dogs[indexPath.section].dogSpecifications.getDogSpecification(key: "name"), requirementPassed: getDogManager().dogs[indexPath.section].dogRequirments.requirements[indexPath.row-1])
             testCell.delegate = self
             

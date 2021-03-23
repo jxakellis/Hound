@@ -126,7 +126,6 @@ class Persistence{
                 && UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool == false{
                 for dogKey in TimingManager.timerDictionary.keys{
                     for requirementKey in TimingManager.timerDictionary[dogKey]!.keys{
-                        print("passed3")
                         guard TimingManager.timerDictionary[dogKey]![requirementKey]! != nil && TimingManager.timerDictionary[dogKey]![requirementKey]!!.isValid else{
                             continue
                         }
@@ -210,10 +209,10 @@ class ErrorProcessor{
         if errorProcessorInstance.handleDogSpecificationManagerError(sender: sender, error: error) == true {
             return
         }
-        else if errorProcessorInstance.handleDogRequirementError(sender: sender, error: error) == true {
+        else if errorProcessorInstance.handleRequirementError(sender: sender, error: error) == true {
             return
         }
-        else if errorProcessorInstance.handleDogRequirementManagerError(sender: sender, error: error) == true {
+        else if errorProcessorInstance.handleRequirementManagerError(sender: sender, error: error) == true {
             return
         }
         else if errorProcessorInstance.handleDogManagerError(sender: sender, error: error) == true{
@@ -308,22 +307,22 @@ class ErrorProcessor{
         }
     }
     
-    ///Returns true if able to find a match in enum DogRequirementError to the error provided
-    private func handleDogRequirementError(sender: Sender, error: Error) -> Bool{
+    ///Returns true if able to find a match in enum RequirementError to the error provided
+    private func handleRequirementError(sender: Sender, error: Error) -> Bool{
         /*
          case nameInvalid
          case descriptionInvalid
          case intervalInvalid
          */
-        if case DogRequirementError.nameInvalid = error {
+        if case RequirementError.nameInvalid = error {
             ErrorProcessor.alertForError(message: "Your dog's reminder name is invalid, please try a different one.")
             return true
         }
-        else if case DogRequirementError.descriptionInvalid = error {
+        else if case RequirementError.descriptionInvalid = error {
             ErrorProcessor.alertForError(message: "Your dog's reminder description is invalid, please try a different one.")
             return true
         }
-        else if case DogRequirementError.intervalInvalid = error {
+        else if case RequirementError.intervalInvalid = error {
             ErrorProcessor.alertForError(message: "Your dog's reminder countdown time is invalid, please try a different one.")
             return true
         }
@@ -332,22 +331,22 @@ class ErrorProcessor{
         }
     }
     
-    ///Returns true if able to find a match in enum DogRequirementManagerError to the error provided
-    private func handleDogRequirementManagerError(sender: Sender, error: Error) -> Bool{
+    ///Returns true if able to find a match in enum RequirementManagerError to the error provided
+    private func handleRequirementManagerError(sender: Sender, error: Error) -> Bool{
         /*
          case requirementAlreadyPresent
          case requirementNotPresent
          case requirementInvalid
          */
-        if case DogRequirementManagerError.requirementAlreadyPresent = error {
+        if case RequirementManagerError.requirementAlreadyPresent = error {
             ErrorProcessor.alertForError(message: "Your reminder's name is already present, please try a different one.")
             return true
         }
-        else if case DogRequirementManagerError.requirementNotPresent = error{
+        else if case RequirementManagerError.requirementNotPresent = error{
             ErrorProcessor.alertForError(message: "Could not find a match for your reminder!")
             return true
         }
-        else if case DogRequirementManagerError.requirementInvalid = error {
+        else if case RequirementManagerError.requirementInvalid = error {
             ErrorProcessor.alertForError(message: "Your reminder is invalid, please try something different.")
             return true
         }

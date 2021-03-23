@@ -1,5 +1,5 @@
 //
-//  DogsMainScreenTableViewCellDogRequirement.swift
+//  DogsMainScreenTableViewCellRequirement.swift
 //  Who Let The Dogs Out
 //
 //  Created by Jonathan Xakellis on 2/2/21.
@@ -8,19 +8,19 @@
 
 import UIKit
 
-protocol DogsMainScreenTableViewCellDogRequirementDisplayDelegate {
+protocol DogsMainScreenTableViewCellRequirementDisplayDelegate {
     func didToggleRequirementSwitch(sender: Sender, parentDogName: String, requirementName: String, isEnabled: Bool)
-    func didClickTrash(sender: Sender, parentDogName: String, requirementName: String)
+    //func didClickTrash(sender: Sender, parentDogName: String, requirementName: String)
 }
 
-class DogsMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
+class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     
     //MARK:  Properties
     var requirement: Requirement = Requirement()
     
     var parentDogName: String = ""
     
-    var delegate: DogsMainScreenTableViewCellDogRequirementDisplayDelegate! = nil
+    var delegate: DogsMainScreenTableViewCellRequirementDisplayDelegate! = nil
     
     //MARK: IB Link
     
@@ -30,11 +30,14 @@ class DogsMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
     
     //When the on off switch is toggled
     @IBAction func didToggleRequirementSwitch(_ sender: Any) {
-        delegate.didToggleRequirementSwitch(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, requirementName: requirement.name, isEnabled: self.requirementToggleSwitch.isOn)
+        delegate.didToggleRequirementSwitch(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, requirementName: requirement.requirementName, isEnabled: self.requirementToggleSwitch.isOn)
     }
+    
+    /*
     @IBAction func didClickTrash(_ sender: Any) {
         delegate.didClickTrash(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, requirementName: requirement.name)
     }
+    */
     
     //MARK: General Functions
     
@@ -42,12 +45,12 @@ class DogsMainScreenTableViewCellDogRequirementDisplay: UITableViewCell {
     func setup(parentDogName: String, requirementPassed: Requirement){
         self.parentDogName = parentDogName
         self.requirement = requirementPassed
-        self.requirementName.text = requirementPassed.name
-        if requirementPassed.executionInterval < 60 {
-            self.timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.executionInterval)
+        self.requirementName.text = requirementPassed.requirementName
+        if requirementPassed.countDownComponents.executionInterval < 60 {
+            self.timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.countDownComponents.executionInterval)
         }
         else {
-            self.timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.executionInterval)
+            self.timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.countDownComponents.executionInterval)
         }
         self.requirementToggleSwitch.isOn = requirementPassed.getEnable()
     }

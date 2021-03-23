@@ -60,7 +60,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         
         //This makes it so when a dog is added all of its requirements start counting down at the same time (b/c same last execution) instead counting down from when the requirement was added to the dog.
         for requirementIndex in 0..<newDog.dogRequirments.requirements.count{
-            newDog.dogRequirments.requirements[requirementIndex].changeLastExecution(newLastExecution: Date())
+            newDog.dogRequirments.requirements[requirementIndex].changeExecutionBasis(newExecutionBasis: Date())
         }
         
         var sudoDogManager = getDogManager()

@@ -1,0 +1,13 @@
+
+
+Functions
+
+Function Naming
+
+
+Parameter Naming
+
+-camelCase with new before parameter, if the parameter is a Bool then add Status to the end
+    Examples
+        -func willDoSomething(newRequirement: Requirement)
+        -func didDoSomething(newEnableStatus: Bool)

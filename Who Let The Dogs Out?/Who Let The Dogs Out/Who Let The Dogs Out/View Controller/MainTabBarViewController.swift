@@ -102,12 +102,15 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        Utils.presenter = self
+        //Called before the view is added to the windows’ view hierarchy
         super.viewWillAppear(animated)
+        Utils.presenter = self
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        //Called after the view is added to the view hierarchy
         super.viewDidAppear(animated)
+        Utils.presenter = self
         AlertPresenter.shared.refresh(dogManager: getDogManager())
     }
     

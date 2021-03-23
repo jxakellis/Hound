@@ -40,19 +40,21 @@ class DogsUpdateRequirementViewController: UIViewController, UITextFieldDelegate
     
     ///Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured requirement to DogsViewController
     @IBAction private func willUpdate(_ sender: Any) {
-        var tempRequirement = self.targetRequirement!.copy() as! Requirement
+        let tempRequirement = self.targetRequirement!.copy() as! Requirement
         
         do {
-            try tempRequirement.changeName(newName: requirementName.text)
-            try tempRequirement.changeDescription(newDescription: requirementDescription.text)
-            try tempRequirement.changeInterval(newInterval: requirementInterval.countDownDuration)
+            try tempRequirement.changeRequirementName(newRequirementName: requirementName.text)
+            try tempRequirement.changeRequirementDescription(newRequirementDescription: requirementDescription.text)
+            tempRequirement.countDownComponents.changeExecutionInterval(newExecutionInterval: requirementInterval.countDownDuration)
+            
+            tempRequirement.setEnable(newEnableStatus: requirementEnableStatus.isOn)
             
             //If the executionInterval (the countdown duration) is changed then is changes its execution interval, this is because (for example) if you were 5 minutes in to a 1 hour countdown but then change it to 30 minutes, you would want to be 0 minutes into the new timer and not 5 minutes in like previously.
-            if tempRequirement.executionInterval != targetRequirement!.executionInterval{
-                tempRequirement.changeLastExecution(newLastExecution: Date())
+            if tempRequirement.countDownComponents.executionInterval != targetRequirement!.countDownComponents.executionInterval{
+                tempRequirement.changeExecutionBasis(newExecutionBasis: Date())
             }
             
-            try delegate.didUpdateRequirement(sender: Sender(origin: self, localized: self), parentDogName: parentDogName, formerName: targetRequirement!.name, updatedRequirement: tempRequirement)
+            try delegate.didUpdateRequirement(sender: Sender(origin: self, localized: self), parentDogName: parentDogName, formerName: targetRequirement!.requirementName, updatedRequirement: tempRequirement)
             self.dismiss(animated: true, completion: nil)
         }
         catch {
@@ -72,6 +74,9 @@ class DogsUpdateRequirementViewController: UIViewController, UITextFieldDelegate
     @IBOutlet private weak var requirementDescription: UITextField!
     
     @IBOutlet private weak var requirementInterval: UIDatePicker!
+    
+    @IBOutlet weak var requirementEnableStatus: UISwitch!
+    
     
     @IBAction private func requirementIntervalValueChanged(_ sender: Any) {
         self.dismissKeyboard()
@@ -109,9 +114,15 @@ class DogsUpdateRequirementViewController: UIViewController, UITextFieldDelegate
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         Utils.presenter = self
-        requirementName.text = targetRequirement.name
+        requirementName.text = targetRequirement.requirementName
         requirementDescription.text = targetRequirement.requirementDescription
-        requirementInterval.countDownDuration = targetRequirement.executionInterval
+        requirementInterval.countDownDuration = targetRequirement.countDownComponents.executionInterval
+        requirementEnableStatus.isOn = targetRequirement.getEnable()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        //Utils.presenter = self
     }
     
 

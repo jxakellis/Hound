@@ -14,9 +14,22 @@ protocol DogsRequirementTableViewControllerDelegate {
 }
 
 class DogsRequirementTableViewController: UITableViewController, RequirementManagerControlFlowProtocol, DogsInstantiateRequirementViewControllerDelegate, DogsRequirementTableViewCellDelegate {
-    
     //MARK: Dogs Requirement Table View Cell
     
+    func didToggleEnable(sender: Sender, requirementName: String, newEnableStatus: Bool) {
+        let sudoRequirementManager = getRequirementManager()
+        do {
+           try sudoRequirementManager.findRequirement(requirementName: requirementName).setEnable(newEnableStatus: newEnableStatus)
+            setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
+        }
+        catch {
+            fatalError("DogsRequirementTableViewController func didToggleEnable(requirementName: String, newEnableStatus: Bool) error")
+        }
+        
+        
+    }
+    
+    /*
     ///When the trash button is clicked on a cell, triggered through a delegate, this function is called to delete the corrosponding info
     func didClickTrash(dogName: String) {
         do{
@@ -27,6 +40,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
             fatalError("DogsRequirementTableViewController func didClickTrash(dogName: String)")
         }
     }
+     */
     
     //MARK: Dogs Instantiate Requirement
     
@@ -64,7 +78,10 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
             delegate.didUpdateRequirements(newRequirementList: getRequirementManager().requirements)
         }
         
-        updateRequirementManagerDependents()
+        if !(sender.origin is DogsRequirementTableViewCell){
+            updateRequirementManagerDependents()
+        }
+       
     }
     
     func updateRequirementManagerDependents() {
@@ -129,9 +146,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
         
         let castCell = cell as! DogsRequirementTableViewCell
         castCell.delegate = self
-        castCell.setName(initName: getRequirementManager().requirements[indexPath.row].name)
-        castCell.setTimeInterval(initTimeInterval: getRequirementManager().requirements[indexPath.row].executionInterval)
-        // Configure the cell...
+        castCell.setup(requirement: getRequirementManager().requirements[indexPath.row])
         
         return cell
     }
@@ -151,7 +166,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        selectedTuple = (getRequirementManager().requirements[indexPath.row].name, getRequirementManager().requirements[indexPath.row].requirementDescription, getRequirementManager().requirements[indexPath.row].executionInterval, true)
+        selectedTuple = (getRequirementManager().requirements[indexPath.row], true)
         
         self.performSegue(withIdentifier: "dogsInstantiateRequirementViewController", sender: self)
         
@@ -174,7 +189,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
         }
     }
     
-    private var selectedTuple: (String, String, TimeInterval, Bool)? = nil
+    private var selectedTuple: (Requirement, Bool)? = nil
     
     // MARK: - Navigation
     
