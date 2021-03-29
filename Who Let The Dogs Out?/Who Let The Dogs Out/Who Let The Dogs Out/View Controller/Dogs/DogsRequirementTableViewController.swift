@@ -29,19 +29,6 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
         
     }
     
-    /*
-    ///When the trash button is clicked on a cell, triggered through a delegate, this function is called to delete the corrosponding info
-    func didClickTrash(dogName: String) {
-        do{
-            try requirementManager.removeRequirement(requirementName: dogName)
-            updateTable()
-        }
-        catch {
-            fatalError("DogsRequirementTableViewController func didClickTrash(dogName: String)")
-        }
-    }
-     */
-    
     //MARK: Dogs Instantiate Requirement
     
     var dogsInstantiateRequirementViewController = DogsInstantiateRequirementViewController()
@@ -59,6 +46,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
         setRequirementManager(sender: Sender(origin: self, localized: self), newRequirementManager: sudoRequirementManager)
     }
     
+    ///Allows for unwind to this page when back button is clicked in requirement editor
     @IBAction func unwind(_ seg: UIStoryboardSegue){
         
     }
@@ -90,7 +78,8 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     
     //MARK: Properties
     
-    
+    ///Used for when a requirement is selected (aka clicked) on the table view in order to pass information to open the editing page for the requirement
+    private var selectedTuple: (Requirement, Bool)? = nil
     
     var delegate: DogsRequirementTableViewControllerDelegate! = nil
     
@@ -118,7 +107,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
         super.viewWillDisappear(animated)
         MainTabBarViewController.mainTabBarViewController.dogsViewController.dogsAddDogViewController.willHideButtons(isHidden: true)
     }
-    // MARK: - Table View Data Source
+    // MARK: Table View Management
     
     //Number of sections
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -188,8 +177,6 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
             return true
         }
     }
-    
-    private var selectedTuple: (Requirement, Bool)? = nil
     
     // MARK: - Navigation
     

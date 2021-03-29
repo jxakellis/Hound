@@ -42,19 +42,6 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         cell.dogToggleSwitch.setOn(isEnabled, animated: true)
     }
     
-    /*
-    ///If the trash button was clicked in the Dog Display cell, this function is called using a delegate from the cell class to handle the press
-    func didClickTrash(sender: Sender, dogName: String) {
-        
-        var sudoDogManager = getDogManager()
-        
-        try! sudoDogManager.removeDog(name: dogName)
-        
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
-        
-    }
-    */
-    
     //MARK: DogsMainScreenTableViewCellRequirementDelegate
     
     ///Requirement switch is toggled in DogsMainScreenTableViewCellRequirement
@@ -77,26 +64,13 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         cell.requirementToggleSwitch.setOn(isEnabled, animated: true)
     }
     
-    /*
-    ///If the trash button was clicked in the Dog Requirement cell, this function is called using a delegate from the cell class to handle the press
-    func didClickTrash(sender: Sender, parentDogName: String, requirementName: String) {
-        
-        let sudoDogManager = getDogManager()
-        try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.removeRequirement(requirementName: requirementName)
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
-        updateTable()
-        
-    }
-    */
-    
-    
     //MARK: Properties
     
     var delegate: DogsMainScreenTableViewControllerDelegate! = nil
     
     var updatingSwitch: Bool = false
     
-    //MARK: Dog Manager
+    //MARK: DogManagerControlFlowProtocol
     
     private var dogManager: DogManager = DogManager()
     
@@ -130,6 +104,8 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         updateTable()
     }
     
+    //MARK: Main
+    
     override func viewDidLoad() {
         self.dogManager = MainTabBarViewController.staticDogManager
         super.viewDidLoad()
@@ -146,13 +122,11 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         self.updateTable()
     }
     
-    //MARK: Class Functions
-    
     private func updateTable(){
         self.tableView.reloadData()
     }
     
-    // MARK: - Table view data source
+    // MARK: Table View Management
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections

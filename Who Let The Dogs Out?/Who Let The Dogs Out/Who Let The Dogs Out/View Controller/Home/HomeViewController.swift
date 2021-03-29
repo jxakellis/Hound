@@ -19,7 +19,7 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     //MARK: HomeMainScreenTableViewControllerDelegate
     
     func didSelectOption(sender: Sender) {
-        if TimingManager.activeTimers == nil || TimingManager.activeTimers == 0 {
+        if TimingManager.enabledTimersCount == nil || TimingManager.enabledTimersCount == 0 {
             willToggleLogState(sender: sender, newSelectionControlState: nil, animated: true)
         }
         else {
@@ -51,7 +51,7 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
         //
     }
     
-    //MARK: IBOutlet and IBAction
+    //MARK: IB
     
     @IBOutlet weak var willLog: UIButton!
     @IBOutlet weak var willLogBackground: UIButton!
@@ -90,7 +90,7 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.willLogLabel.isEnabled = false
+        //self.willLogLabel.isEnabled = false
         self.willLogLabel.isHidden = true
         
         self.view.bringSubviewToFront(willLogBackground)
@@ -155,7 +155,7 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
             
             logState = false
         }
-        else if newSelectionControlState! == true && TimingManager.activeTimers != nil && TimingManager.activeTimers! > 0 {
+        else if newSelectionControlState! == true && TimingManager.enabledTimersCount != nil && TimingManager.enabledTimersCount! > 0 {
             //Visual element in current VC management
             let originCWL = cancelWillLog.frame.origin
             let originCWLB = cancelWillLogBackground.frame.origin
@@ -229,7 +229,7 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     
     ///Refreshes the buttons to reflect the data present
     func controlRefresh(sender: Sender, animated: Bool){
-        if TimingManager.activeTimers == nil || TimingManager.activeTimers == 0 {
+        if TimingManager.enabledTimersCount == nil || TimingManager.enabledTimersCount == 0 {
             willToggleLogState(sender: Sender(origin: sender, localized: self), newSelectionControlState: nil, animated: animated)
         }
         else {
@@ -241,15 +241,15 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     private func toggleWillLogVisibility(isHidden: Bool){
         if isHidden == true {
             self.willLog.isHidden = true
-            self.willLog.isEnabled = false
+            //self.willLog.isEnabled = false
             self.willLogBackground.isHidden = true
-            self.willLogBackground.isEnabled = false
+            //self.willLogBackground.isEnabled = false
         }
         else {
             self.willLog.isHidden = false
-            self.willLog.isEnabled = true
+            //self.willLog.isEnabled = true
             self.willLogBackground.isHidden = false
-            self.willLogBackground.isEnabled = true
+            //self.willLogBackground.isEnabled = true
         }
     }
     
@@ -260,15 +260,15 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     private func toggleCancelWillLogVisibility(isHidden: Bool){
         if isHidden == true {
             self.cancelWillLog.isHidden = true
-            self.cancelWillLog.isEnabled = false
+            //self.cancelWillLog.isEnabled = false
             self.cancelWillLogBackground.isHidden = true
-            self.cancelWillLogBackground.isEnabled = false
+            //self.cancelWillLogBackground.isEnabled = false
         }
         else {
             self.cancelWillLog.isHidden = false
-            self.cancelWillLog.isEnabled = true
+            //self.cancelWillLog.isEnabled = true
             self.cancelWillLogBackground.isHidden = false
-            self.cancelWillLogBackground.isEnabled = true
+            //self.cancelWillLogBackground.isEnabled = true
         }
     }
     

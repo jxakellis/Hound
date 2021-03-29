@@ -10,19 +10,11 @@ import UIKit
 
 protocol DogsMainScreenTableViewCellDogDisplayDelegate{
     func didToggleDogSwitch(sender: Sender, dogName: String, isEnabled: Bool)
-    //func didClickTrash(sender: Sender, dogName: String)
 }
 
 class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
     
-    
-    //MARK: Properties
-    
-    var dog: Dog = Dog()
-    
-    var delegate: DogsMainScreenTableViewCellDogDisplayDelegate! = nil
-    
-    //MARK: IB Links
+    //MARK: IB
     
     @IBOutlet weak var dogName: UILabel!
     
@@ -36,26 +28,13 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
         try! delegate.didToggleDogSwitch(sender: Sender(origin: self, localized: self), dogName: dog.dogSpecifications.getDogSpecification(key: "name"), isEnabled: self.dog.getEnable())
     }
     
-    /*
-    @IBAction func didClickTrash(_ sender: Any) {
-        try! delegate.didClickTrash(sender: Sender(origin: self, localized: self), dogName: dog.dogSpecifications.getDogSpecification(key: "name"))
-    }
-     */
+    //MARK: Properties
     
-    //MARK: General Functions
+    var dog: Dog = Dog()
     
-    //Function used externally to setup dog
-    func setup(dogPassed: Dog){
-        dog = dogPassed
-        try! self.dogName.text = dogPassed.dogSpecifications.getDogSpecification(key: "name")
-        try! self.dogDescription.text = dogPassed.dogSpecifications.getDogSpecification(key: "description")
-        if self.dogDescription.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
-            self.dogDescription.text? = "No Description"
-        }
-        self.dogToggleSwitch.isOn = dogPassed.getEnable()
-    }
+    var delegate: DogsMainScreenTableViewCellDogDisplayDelegate! = nil
     
-    //MARK: Default Functionality
+    //MARK: Main
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -68,6 +47,17 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
         super.setSelected(selected, animated: animated)
         
         // Configure the view for the selected state
+    }
+    
+    //Function used externally to setup dog
+    func setup(dogPassed: Dog){
+        dog = dogPassed
+        try! self.dogName.text = dogPassed.dogSpecifications.getDogSpecification(key: "name")
+        try! self.dogDescription.text = dogPassed.dogSpecifications.getDogSpecification(key: "description")
+        if self.dogDescription.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+            self.dogDescription.text? = "No Description"
+        }
+        self.dogToggleSwitch.isOn = dogPassed.getEnable()
     }
     
 }

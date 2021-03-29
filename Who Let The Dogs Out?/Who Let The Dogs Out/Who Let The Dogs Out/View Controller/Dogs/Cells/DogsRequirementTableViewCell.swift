@@ -8,36 +8,27 @@
 
 import UIKit
 protocol DogsRequirementTableViewCellDelegate {
-    //func didClickTrash(requiremntName: String)
     func didToggleEnable(sender: Sender, requirementName: String, newEnableStatus: Bool)
 }
 
 
 class DogsRequirementTableViewCell: UITableViewCell {
     
-    var delegate: DogsRequirementTableViewCellDelegate! = nil
+    //MARK: IB
     
     @IBOutlet private weak var requirementTimeInterval: UILabel!
     @IBOutlet private weak var requirementName: UILabel!
     @IBOutlet private weak var requirementEnableStatus: UISwitch!
     
-    /*
-    //When the trash button icon is clicked it executes this func, thru delegate finds a requirement with a matching name and then deletes it (handled elsewhere tho)
-    @IBAction private func didClickTrash(_ sender: Any) {
-        delegate.didClickTrash(dogName: name.text!)
-    }
-     */
-    
     @IBAction func didToggleEnable(_ sender: Any) {
         delegate.didToggleEnable(sender: Sender(origin: self, localized: self), requirementName: self.requirementName.text!, newEnableStatus: self.requirementEnableStatus.isOn)
     }
     
-    func setup(requirement: Requirement){
-        self.requirementName.text = requirement.requirementName
-        self.requirementTimeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirement.countDownComponents.executionInterval)
-        self.requirementEnableStatus.isOn = requirement.getEnable()
-        
-    }
+    //MARK: Properties
+    
+    var delegate: DogsRequirementTableViewCellDelegate! = nil
+    
+    //MARK: Main
     
     //when cell is awoken / init, this is executed
     override func awakeFromNib() {
@@ -54,6 +45,18 @@ class DogsRequirementTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
         
         // Configure the view for the selected state
+    }
+    
+    func setup(requirement: Requirement){
+        self.requirementName.text = requirement.requirementName
+        if requirement.timingStyle == .countDown {
+        self.requirementTimeInterval.text = String.convertToReadable(interperateTimeInterval: requirement.countDownComponents.executionInterval)
+        }
+        else {
+            try! self.requirementTimeInterval.text = String.convertToReadable(interperatedDateComponents: requirement.timeOfDayComponents.timeOfDayComponent)
+        }
+        self.requirementEnableStatus.isOn = requirement.getEnable()
+        
     }
     
 }

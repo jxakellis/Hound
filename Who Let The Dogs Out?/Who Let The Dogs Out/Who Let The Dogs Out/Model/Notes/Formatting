@@ -11,3 +11,22 @@ Parameter Naming
     Examples
         -func willDoSomething(newRequirement: Requirement)
         -func didDoSomething(newEnableStatus: Bool)
+        
+        
+ViewController Code Order
+
+//MARK: Delegate 1
+
+//MARK: Delegate 2
+
+etc.
+
+//MARK: IB
+
+//MARK: Properties
+
+//MARK: Main
+
+//MARK: TableView (IF PRESENT)
+
+//MARK: Navigation

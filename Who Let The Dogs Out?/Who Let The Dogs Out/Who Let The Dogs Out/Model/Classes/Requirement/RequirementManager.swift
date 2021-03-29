@@ -10,7 +10,7 @@ import UIKit
 
 ///Enum full of cases of possible errors from RequirementManager
 enum RequirementManagerError: Error {
-    case requirementAlreadyPresent
+   case requirementAlreadyPresent
     case requirementNotPresent
     case requirementInvalid
     case requirementNameNotPresent
@@ -53,6 +53,7 @@ extension RequirementManagerProtocol {
         if requirementAlreadyPresent == true{
             throw RequirementManagerError.requirementAlreadyPresent
         }
+        
         else {
             requirements.append(newRequirement.copy() as! Requirement)
         }
@@ -100,17 +101,28 @@ extension RequirementManagerProtocol {
     
     ///
     mutating func changeRequirement(requirementToBeChanged: String, newRequirement: Requirement) throws {
-        var newRequirementIndex: Int?
         
+        //check to find the index of targetted requirement
+        var newRequirementIndex: Int?
         for i in 0..<requirements.count {
-            if requirements[i].requirementName == requirementToBeChanged {
+            if requirements[i].requirementName.lowercased() == requirementToBeChanged.lowercased() {
                 newRequirementIndex = i
+            }
+        }
+        
+        //check to see if new name is a duplicate of another requirement name
+        for i in 0..<requirements.count {
+            if requirements[i].requirementName.lowercased() == newRequirement.requirementName.lowercased() {
+                if i != newRequirementIndex {
+                    throw RequirementManagerError.requirementAlreadyPresent
+                }
             }
         }
         
         if newRequirementIndex == nil {
             throw RequirementManagerError.requirementNameNotPresent
         }
+        
         else {
             requirements[newRequirementIndex!] = newRequirement.copy() as! Requirement
         }
@@ -124,7 +136,7 @@ extension RequirementManagerProtocol {
     ///finds and returns the reference of a requirement matching the given name
     func findRequirement(requirementName requirementToFind: String) throws -> Requirement {
         for r in 0..<requirements.count{
-            if requirements[r].requirementName == requirementToFind {
+            if requirements[r].requirementName.lowercased() == requirementToFind.lowercased() {
                 return requirements[r]
             }
         }

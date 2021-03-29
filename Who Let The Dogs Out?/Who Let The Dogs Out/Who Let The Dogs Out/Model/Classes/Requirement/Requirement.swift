@@ -28,6 +28,13 @@ enum RequirementStyle: String {
     case timeOfDay = "timeOfDay"
 }
 
+enum RequirementMode {
+    case countDown
+    case timeOfDay
+    case snooze
+    case secondaryReminder
+}
+
 protocol RequirementProtocol {
     
     ///name for what the requirement does, set by user, used as main name for requirement, e.g. potty or food, can't be repeated, will throw error if try to add two requirments to same requirement manager with same name
@@ -42,7 +49,7 @@ protocol RequirementProtocol {
     ///An array of all dates that logs when the timer has fired, whether by snooze, regular timing convention, etc. ANY TIME
     var executionDates: [Date] { get set }
     
-    ///Similar to executionDate but instead of being a log of everytime the time has fired it is either the date the timer has last fired or the date it should be basing its execution off of, e.g. 5 minutes into the alarm you change the countdown from 30 minutes to 15, you don't want to log an execution as there was no one but you want to start the timer fresh and have it count down from the moment it was changed.
+    ///Similar to executionDate but instead of being a log of everytime the time has fired it is either the date the timer has last fired or the date it should be basing its execution off of, e.g. 5 minutes into the timer you change the countdown from 30 minutes to 15, you don't want to log an execution as there was no one but you want to start the timer fresh and have it count down from the moment it was changed.
     var executionBasis: Date { get }
     ///Changes executionBasis to the specified value, note if the Date is equal to the current date (i.e. newExecutionBasis == Date()) then resets all components intervals elapsed to zero.
     mutating func changeExecutionBasis(newExecutionBasis: Date)
@@ -53,17 +60,25 @@ protocol RequirementProtocol {
     ///The components needed for a countdown based timer
     var countDownComponents: CountDownComponents { get set }
     
-    ///The components needed if an alarm is snoozed
+    ///The components needed if an timer is snoozed
     var snoozeComponents: SnoozeComponents { get set }
     
+    ///The components needed if for time of day based timer
+    var timeOfDayComponents: TimeOfDayComponents { get set }
+    
+    ///Figures out whether the requirement is in snooze, count down, time of day, or another timer mode. Returns enum case corrosponding
+    var timerMode: RequirementMode { get }
+    
     ///An enum that indicates whether the requirement is in countdown format or time of day format
-    var timingStyle: RequirementStyle { get set }
+    var timingStyle: RequirementStyle { get }
+    ///Function to change timing style and adjust data corrosponding accordingly.
+    mutating func changeTimingStyle(newTimingStyle: RequirementStyle)
     
     ///Calculated time interval remaining that taking into account factors to produce correct value for conditions and parameters
-    var intervalRemaining: TimeInterval { get }
+    var intervalRemaining: TimeInterval? { get }
     
     ///Called when a timer is fired/executed and an option to deal with it is selected by the user, preps for future use
-    mutating func timerReset()
+    mutating func timerReset(didExecuteToUser didExecute: Bool)
     
     
     
@@ -75,15 +90,17 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = Requirement()
+        copy.setEnable(newEnableStatus: self.getEnable())
         try! copy.changeRequirementName(newRequirementName: self.requirementName)
         try! copy.changeRequirementDescription(newRequirementDescription: self.requirementDescription)
         
-        copy.countDownComponents = self.countDownComponents.copy() as! CountDownComponents
-        copy.snoozeComponents = self.snoozeComponents.copy() as! SnoozeComponents
-        copy.timingStyle = self.timingStyle
-        
-        copy.setEnable(newEnableStatus: self.getEnable())
         copy.isPresentationHandled = self.isPresentationHandled
+        copy.countDownComponents = self.countDownComponents.copy() as! CountDownComponents
+        copy.timeOfDayComponents = self.timeOfDayComponents.copy() as! TimeOfDayComponents
+        copy.snoozeComponents = self.snoozeComponents.copy() as! SnoozeComponents
+        
+        copy.storedTimingStyle = self.timingStyle
+        
         copy.executionDates = self.executionDates
         copy.storedExecutionBasis = self.executionBasis
         
@@ -104,8 +121,9 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         self.storedExecutionBasis = aDecoder.decodeObject(forKey: "executionBasis") as! Date
         self.isPresentationHandled = aDecoder.decodeBool(forKey: "isPresentationHandled")
         self.countDownComponents = aDecoder.decodeObject(forKey: "countDownComponents") as! CountDownComponents
+        self.timeOfDayComponents = aDecoder.decodeObject(forKey: "timeOfDayComponents") as! TimeOfDayComponents
         self.snoozeComponents = aDecoder.decodeObject(forKey: "snoozeComponents") as! SnoozeComponents
-        self.timingStyle = RequirementStyle(rawValue: aDecoder.decodeObject(forKey: "timingStyle") as! String)!
+        self.storedTimingStyle = RequirementStyle(rawValue: aDecoder.decodeObject(forKey: "timingStyle") as! String)!
      }
      
      func encode(with aCoder: NSCoder) {
@@ -116,8 +134,9 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         aCoder.encode(storedExecutionBasis, forKey: "executionBasis")
         aCoder.encode(isPresentationHandled, forKey: "isPresentationHandled")
         aCoder.encode(countDownComponents, forKey: "countDownComponents")
+        aCoder.encode(timeOfDayComponents, forKey: "timeOfDayComponents")
         aCoder.encode(snoozeComponents, forKey: "snoozeComponents")
-        aCoder.encode(timingStyle.rawValue, forKey: "timingStyle")
+        aCoder.encode(storedTimingStyle.rawValue, forKey: "timingStyle")
      }
      
     //MARK: EnableProtocol
@@ -182,21 +201,69 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
     
     var countDownComponents: CountDownComponents = CountDownComponents()
     
+    var timeOfDayComponents: TimeOfDayComponents = TimeOfDayComponents()
+    
     var snoozeComponents: SnoozeComponents = SnoozeComponents()
     
-    var timingStyle: RequirementStyle = .countDown
-    
-    var intervalRemaining: TimeInterval {
-        if snoozeComponents.isSnoozed == true {
-            return snoozeComponents.executionInterval - snoozeComponents.intervalElapsed
+    var timerMode: RequirementMode {
+        if snoozeComponents.isSnoozed == true{
+            return .snooze
+        }
+        else if timingStyle == .countDown {
+            return .countDown
+        }
+        else if timingStyle == .timeOfDay {
+            return .timeOfDay
         }
         else {
-            return countDownComponents.executionInterval - countDownComponents.intervalElapsed
+            //HDLL
+            return .secondaryReminder
         }
     }
     
-    func timerReset(){
-        self.executionDates.append(Date())
+    private var storedTimingStyle: RequirementStyle = .countDown
+    var timingStyle: RequirementStyle { return storedTimingStyle }
+    func changeTimingStyle(newTimingStyle: RequirementStyle){
+        guard newTimingStyle != storedTimingStyle else {
+            return
+        }
+        
+        self.timerReset(didExecuteToUser: false)
+        
+        if newTimingStyle == .countDown {
+            storedTimingStyle = .countDown
+        }
+        else {
+            storedTimingStyle = .timeOfDay
+        }
+    }
+    
+    var intervalRemaining: TimeInterval? {
+        if timerMode == .snooze{
+            return snoozeComponents.executionInterval - snoozeComponents.intervalElapsed
+        }
+        else if timerMode == .countDown{
+            return countDownComponents.executionInterval - countDownComponents.intervalElapsed
+        }
+        else if timerMode == .timeOfDay {
+            if self.executionBasis.distance(to: self.timeOfDayComponents.previousTimeOfDay) > 0 {
+                return nil
+            }
+            else {
+                return Date().distance(to: self.timeOfDayComponents.nextTimeOfDay)
+            }
+        }
+        else {
+            //HDLL
+            fatalError("not implemented")
+            //return -1
+        }
+    }
+    
+    func timerReset(didExecuteToUser didExecute: Bool = true){
+        if didExecute == true {
+            self.executionDates.append(Date())
+        }
         self.changeExecutionBasis(newExecutionBasis: Date())
         self.isPresentationHandled = false
         
@@ -206,7 +273,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
             self.countDownComponents.timerReset()
         }
         else {
-            //HDLL
+            self.timeOfDayComponents.timerReset()
         }
         
     }

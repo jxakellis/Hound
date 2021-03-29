@@ -8,9 +8,13 @@
 
 import UIKit
 
+enum StringExtensionError: Error {
+    case invalidDateComponents
+}
+
 extension String {
     //Converts a time interval to a more readable string to display, e.g. 3600.0 Time interval to 1 hour 0 minutes or 7320.0 to 2 hours 2 minutes
-    static func convertTimeIntervalToReadable(interperateTimeInterval: TimeInterval) -> String {
+    static func convertToReadable(interperateTimeInterval: TimeInterval) -> String {
         
         let intTime = abs(Int(interperateTimeInterval.rounded()))
         
@@ -32,6 +36,37 @@ extension String {
         }
         
         return readableString
+    }
+    
+    static func convertToReadable(interperatedDateComponents: DateComponents) throws -> String {
+        
+        if interperatedDateComponents.hour == nil || interperatedDateComponents.minute == nil {
+            throw StringExtensionError.invalidDateComponents
+        }
+        
+        let hour: Int = interperatedDateComponents.hour!
+        let minute: Int = interperatedDateComponents.minute!
+        
+        var amOrPM: String {
+            if hour <= 12 {
+                return "AM"
+            }
+            else {
+                return "PM"
+            }
+        }
+        
+        var adjustedHour = hour
+        if adjustedHour > 12 {
+            adjustedHour = adjustedHour - 12
+        }
+        
+        if minute < 10 {
+            return "\(adjustedHour):0\(minute) \(amOrPM)"
+        }
+        else {
+            return "\(adjustedHour):\(minute) \(amOrPM)"
+        }
     }
     
     mutating private func addHours(numHours: Int){

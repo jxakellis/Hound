@@ -44,14 +44,47 @@ class ScaledButton: UIButton {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.setImage(self.currentImage?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: self.frame.width)), for: .normal)
+        self.scaleSymbolPontSize()
+    }
+    
+    private func scaleSymbolPontSize(){
+        var smallestDimension: CGFloat {
+            if self.frame.width <= self.frame.height {
+                return self.frame.width
+            }
+            else {
+                return self.frame.height
+            }
+        }
+        self.setImage(self.currentImage?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: smallestDimension)), for: .normal)
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        self.setImage(self.currentImage?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: self.frame.width)), for: .normal)
+        self.scaleSymbolPontSize()
     }
     
+    override func setImage(_ image: UIImage?, for state: UIControl.State) {
+        super.setImage(image, for: state)
+        if image != nil && image!.isSymbolImage == true {
+            DispatchQueue.main.async {
+                self.scaleSymbolPontSize()
+            }
+        }
+    }
+    
+}
+
+class CustomLabel: UILabel {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.adjustsFontSizeToFitWidth = true
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.adjustsFontSizeToFitWidth = true
+    }
     
 }
 

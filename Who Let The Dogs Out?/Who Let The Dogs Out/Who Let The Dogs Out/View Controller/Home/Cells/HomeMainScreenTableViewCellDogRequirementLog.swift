@@ -17,9 +17,7 @@ protocol HomeMainScreenTableViewCellRequirementLogDelegate {
 
 class HomeMainScreenTableViewCellRequirementLog: UITableViewCell {
     
-    var delegate: HomeMainScreenTableViewCellRequirementLogDelegate! = nil
-    
-    var status = false
+    //MARK: IB
     
     @IBOutlet weak var requirementName: UILabel!
     @IBOutlet weak var dogName: UILabel!
@@ -39,6 +37,28 @@ class HomeMainScreenTableViewCellRequirementLog: UITableViewCell {
     }
     @IBAction func didReset(_ sender: Any) {
         delegate.didReset(sender: Sender(origin: self, localized: self), dogName: dogName.text!, requirementName: requirementName.text!)
+    }
+    
+    //MARK: Properties
+    
+    var delegate: HomeMainScreenTableViewCellRequirementLogDelegate! = nil
+    
+    var status = false
+    
+    //MARK: Main
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        requirementName.adjustsFontSizeToFitWidth = true
+        dogName.adjustsFontSizeToFitWidth = true
+        
+       // self.applyAlpha(newAlpha: 0)
+        //self.toggleFade(newFadeStatus: true, animated: true)
+        
+       // self.contentView.bringSubviewToFront(disableText)
+       // self.contentView.bringSubviewToFront(snoozeText)
+       // self.contentView.bringSubviewToFront(resetText)
     }
     
     func setup(parentDogName: String, requirementName: String){
@@ -83,20 +103,6 @@ class HomeMainScreenTableViewCellRequirementLog: UITableViewCell {
         }
     }
     
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-        requirementName.adjustsFontSizeToFitWidth = true
-        dogName.adjustsFontSizeToFitWidth = true
-        
-       // self.applyAlpha(newAlpha: 0)
-        //self.toggleFade(newFadeStatus: true, animated: true)
-        
-       // self.contentView.bringSubviewToFront(disableText)
-       // self.contentView.bringSubviewToFront(snoozeText)
-       // self.contentView.bringSubviewToFront(resetText)
-    }
     
     ///Applys alpha value to all buttons and their labels in the cell.
     private func applyAlpha(newAlpha: CGFloat){

@@ -29,24 +29,23 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     ///If a dog was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the dogs information
     func didSelectDog(indexPathSection dogIndex: Int) {
         
-        self.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
-        
-        //Conversion of "DogsAddDogViewController" to update mode
-        try! dogsAddDogViewController.updateDogTuple = (true, getDogManager().dogs[dogIndex].dogSpecifications.getDogSpecification(key: "name"))
-        dogsAddDogViewController.dog = getDogManager().dogs[dogIndex]
-        dogsAddDogViewController.willInitalize()
-        
-        dogsAddDogViewController.addDogButton.setTitle("Update Dog", for: .normal)
+        willOpenDog(dogToBeOpened: getDogManager().dogs[dogIndex])
         
     }
     
+    private var selectedTargetRequirement: Requirement!
+    private var selectedParentDogName: String!
     ///If a requirement was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the requirements information
     func didSelectRequirement(indexPathSection dogIndex: Int, indexPathRow requirementIndex: Int) {
+        
+        selectedTargetRequirement = getDogManager().dogs[dogIndex].dogRequirments.requirements[requirementIndex]
+        try! selectedParentDogName = getDogManager().dogs[dogIndex].dogSpecifications.getDogSpecification(key: "name")
+        
         self.performSegue(withIdentifier: "dogsUpdateRequirementViewController", sender: DogsMainScreenTableViewController())
         
-        dogsUpdateRequirementViewController.targetRequirement = getDogManager().dogs[dogIndex].dogRequirments.requirements[requirementIndex]
-        try! dogsUpdateRequirementViewController.parentDogName = getDogManager().dogs[dogIndex].dogSpecifications.getDogSpecification(key: "name")
     }
+    
+    //MARK: DogManagerControlFlowProtocol
     
     ///If the dog manager was updated in DogsMainScreenTableViewController, this function is called to reflect that change here with this dogManager
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
@@ -76,21 +75,12 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     
-    //MARK: View IBOutlets and IBActions
+    //MARK: IB
     
-    @IBOutlet weak var willAddDog: UIButton!
+    @IBOutlet weak var willAddButton: UIButton!
     
-    @IBOutlet weak var willAddDogBackground: UIButton!
+    @IBOutlet weak var willAddButtonBackground: UIButton!
     
-    //MARK: Properties
-    
-    var delegate: DogsViewControllerDelegate! = nil
-    
-    var dogsMainScreenTableViewController = DogsMainScreenTableViewController()
-    
-    var dogsAddDogViewController = DogsAddDogViewController()
-    
-    var dogsUpdateRequirementViewController = DogsUpdateRequirementViewController()
     
     //MARK: Dog Manager
     
@@ -123,14 +113,194 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         //
     }
     
+    //MARK: Properties
+    
+    var delegate: DogsViewControllerDelegate! = nil
+    
+    var dogsMainScreenTableViewController = DogsMainScreenTableViewController()
+    
+    var dogsAddDogViewController = DogsAddDogViewController()
+    
+    var dogsUpdateRequirementViewController = DogsUpdateRequirementViewController()
+    
     //MARK: Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        updateDogManagerDependents()
-        self.view.bringSubviewToFront(willAddDogBackground)
-        self.view.bringSubviewToFront(willAddDog)
+        self.view.bringSubviewToFront(willAddButtonBackground)
+        self.view.bringSubviewToFront(willAddButton)
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.changeAddStatus(newAddStatus: false)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
+    //MARK: Navigation To Dog Addition and Modification
+    
+    ///Opens the dogsAddDogViewController, if a dog is passed (which is required) then instead of opening a fresh add dog page, opens up the corrosponding one for the dog
+    private func willOpenDog(dogToBeOpened: Dog? = nil ){
+        
+        self.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
+        
+        ///Is opening a dog
+        if dogToBeOpened != nil {
+        //Conversion of "DogsAddDogViewController" to update mode
+        dogsAddDogViewController.isUpdating = true
+        dogsAddDogViewController.targetDog = dogToBeOpened!
+        dogsAddDogViewController.willInitalize()
+        
+        dogsAddDogViewController.addDogButton.setTitle("Update Dog", for: .normal)
+        }
+        
+    }
+    
+    @objc private func willOpenDog(sender: UIButton) {
+        print("sender tag \(sender.tag)")
+        if sender.tag == 0 {
+            self.willOpenDog(dogToBeOpened: nil)
+        }
+        else {
+            self.willOpenDog(dogToBeOpened: getDogManager().dogs[sender.tag-1])
+        }
+    }
+    
+    //MARK: Programmically Added Add Requirement To Dog / Add Dog Buttons
+    
+    private var addStatus: Bool = false
+    private var addButtons: [ScaledButton] = []
+    private var addButtonsBackground: [ScaledButton] = []
+    
+    ///Changes the status of the subAddButtons which navigate to add a dog, add a requirement for "DOG NAME", add a requirement for "DOG NAME 2" etc, from present and active to hidden, includes animation
+    private func changeAddStatus(newAddStatus: Bool){
+        
+        if newAddStatus == true{
+            //Slight correction with last () as even with the correct corrindates for aligned trailing for some reason the the new subbuttons slightly bluge out when they should be conceiled by the WillAddButton.
+            let originXWithAlignedTrailing: CGFloat = (willAddButton.frame.origin.x+willAddButton.frame.width)-subButtonSize-(willAddButton.frame.size.width*0.035)
+            
+            let willAddDogButton = ScaledButton(frame: CGRect(origin: CGPoint(x: originXWithAlignedTrailing, y: willAddButton.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
+            //TRADITIONAL willAddDogButton.setImage(UIImage(systemName: "plus.circle.fill")!, for: .normal)
+            willAddDogButton.setImage(UIImage(systemName: "plus.circle")!, for: .normal)
+            willAddDogButton.tintColor = .link
+            willAddDogButton.tag = 0
+            willAddDogButton.addTarget(self, action: #selector(willOpenDog(sender:)), for: .touchUpInside)
+            
+            let willAddDogButtonBackground = ScaledButton(frame: CGRect(origin: CGPoint(x: originXWithAlignedTrailing, y: willAddButton.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
+            //TRADITIONAL willAddDogButtonBackground.setImage(UIImage(systemName: "plus.circle"), for: .normal)
+            willAddDogButtonBackground.setImage(UIImage(systemName: "plus.circle.fill"), for: .normal)
+            willAddDogButtonBackground.tintColor = .systemBackground
+            willAddDogButtonBackground.isUserInteractionEnabled = false
+            
+            addButtons.append(willAddDogButton)
+            addButtonsBackground.append(willAddDogButtonBackground)
+            
+            for dogIndex in 0..<getDogManager().dogs.count{
+                guard maximumSubButtonCount > addButtons.count else {
+                    break
+                }
+                
+                let willAddRequirementButton = ScaledButton(frame: CGRect(origin: CGPoint(x: addButtons.last!.frame.origin.x, y: addButtons.last!.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
+                willAddRequirementButton.setImage(UIImage(systemName: "plus.circle.fill")!, for: .normal)
+                willAddRequirementButton.tintColor = .link
+                willAddRequirementButton.tag = dogIndex+1
+                willAddRequirementButton.addTarget(self, action: #selector(willOpenDog(sender:)), for: .touchUpInside)
+                
+                let willAddRequirementButtonBackground = ScaledButton(frame: CGRect(origin: CGPoint(x: addButtons.last!.frame.origin.x, y: addButtons.last!.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
+                willAddRequirementButtonBackground.setImage(UIImage(systemName: "plus.circle")!, for: .normal)
+                willAddRequirementButtonBackground.tintColor = .systemBackground
+                willAddRequirementButtonBackground.isUserInteractionEnabled = false
+                
+                addButtons.append(willAddRequirementButton)
+                addButtonsBackground.append(willAddRequirementButtonBackground)
+                
+            }
+            for buttonIndex in 0..<addButtons.count{
+                let button = addButtons[buttonIndex]
+                let buttonBackground = addButtonsBackground[buttonIndex]
+                
+                let buttonOrigin = button.frame.origin
+                
+                let originYWithAlignedMiddle = willAddButton.frame.midY - (button.frame.height/2)
+                
+                button.frame.origin = CGPoint(x: button.frame.origin.x, y: originYWithAlignedMiddle)
+                buttonBackground.frame.origin = button.frame.origin
+                
+                //button.alpha = 0
+                view.addSubview(buttonBackground)
+                view.addSubview(button)
+                UIView.animate(withDuration: AnimationConstant.HomeLogStateAnimate.rawValue) {
+                    button.frame.origin = buttonOrigin
+                    buttonBackground.frame.origin = buttonOrigin
+                    //button.alpha = 1
+                } completion: { (completed) in
+                    //
+                }
+
+            }
+            view.bringSubviewToFront(willAddButtonBackground)
+            view.bringSubviewToFront(willAddButton)
+            
+        }
+        else if newAddStatus == false{
+            for buttonIndex in 0..<addButtons.count{
+                let button = addButtons[buttonIndex]
+                let buttonBackground = addButtonsBackground[buttonIndex]
+                //button.alpha = 1
+                let originYWithAlignedMiddle = willAddButton.frame.midY - (button.frame.height/2)
+                
+                UIView.animate(withDuration: AnimationConstant.HomeLogStateAnimate.rawValue) {
+                    
+                    
+                    button.frame.origin = CGPoint(x: button.frame.origin.x, y: originYWithAlignedMiddle)
+                    buttonBackground.frame.origin = CGPoint(x: button.frame.origin.x, y: originYWithAlignedMiddle)
+                    //button.alpha = 0
+                } completion: { (completed) in
+                    DispatchQueue.main.asyncAfter(deadline: .now() + AnimationConstant.HomeLogStateDisappearDelay.rawValue) {
+                        button.isHidden = true
+                        button.removeFromSuperview()
+                        buttonBackground.isHidden = true
+                        buttonBackground.removeFromSuperview()
+                    }
+                }
+
+            }
+            addButtons.removeAll()
+            addButtonsBackground.removeAll()
+        }
+        addStatus = newAddStatus
+    }
+    
+    @IBAction func willAddButton(_ sender: Any) {
+        self.changeAddStatus(newAddStatus: !addStatus)
+        //performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
+    }
+    
+    ///The size of the subAddButtons in relation to the willAddButtomn
+    private var subButtonSize: CGFloat {
+        let multiplier: CGFloat = 0.65
+        if willAddButton.frame.size.width <= willAddButton.frame.size.height{
+            return willAddButton.frame.size.width * multiplier
+        }
+        else {
+            return willAddButton.frame.size.height * multiplier
+        }
+    }
+    @IBOutlet private weak var thinBlackLine: UIImageView!
+    
+    ///Calculates total Y space available, from the botton of the thinBlackLine below the pageTitle to the top of the willAddButton
+    private var subButtonTotalAvailableYSpace: CGFloat {
+        return willAddButton.frame.origin.y - (thinBlackLine.frame.origin.y + thinBlackLine.frame.height)
+    }
+    
+    ///Uses subButtonSize and subButtonTotalAvailableYSpace to figure out how many buttons can fit, rounds down, so if 2.9999 can fit then only 2 will as not enough space for third
+    private var maximumSubButtonCount: Int {
+        return Int(subButtonTotalAvailableYSpace / (subButtonSize + 10).rounded(.down))
     }
     
     // MARK: - Navigation
@@ -148,6 +318,8 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         }
         if segue.identifier == "dogsUpdateRequirementViewController" {
             dogsUpdateRequirementViewController = segue.destination as! DogsUpdateRequirementViewController
+            dogsUpdateRequirementViewController.targetRequirement = selectedTargetRequirement
+            dogsUpdateRequirementViewController.parentDogName = selectedParentDogName
             dogsUpdateRequirementViewController.modalPresentationStyle = .fullScreen
             dogsUpdateRequirementViewController.delegate = self
         }

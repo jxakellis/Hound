@@ -76,6 +76,7 @@ class Persistence{
         else {
             //first time setup
             let data = DogManagerConstant.defaultDogManager
+            //let data = DogManager()
             let encodedData = try! NSKeyedArchiver.archivedData(withRootObject: data, requiringSecureCoding: false)
             UserDefaults.standard.setValue(encodedData, forKey: UserDefaultsKeys.dogManager.rawValue)
             
@@ -126,10 +127,10 @@ class Persistence{
                 && UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool == false{
                 for dogKey in TimingManager.timerDictionary.keys{
                     for requirementKey in TimingManager.timerDictionary[dogKey]!.keys{
-                        guard TimingManager.timerDictionary[dogKey]![requirementKey]! != nil && TimingManager.timerDictionary[dogKey]![requirementKey]!!.isValid else{
+                        guard TimingManager.timerDictionary[dogKey]![requirementKey]!.isValid else{
                             continue
                         }
-                        Utils.willCreateUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!!.fireDate)
+                        Utils.willCreateUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!.fireDate)
                      }
                 }
             }

@@ -13,8 +13,6 @@ protocol SettingsViewControllerDelegate {
 }
 
 class SettingsViewController: UIViewController {
-
-    var delegate: SettingsViewControllerDelegate! = nil
     
     //MARK: Notifications
     
@@ -77,6 +75,12 @@ class SettingsViewController: UIViewController {
     @IBAction func didUpdateSnoozeInterval(_ sender: Any) {
         TimerConstant.defaultSnooze = snoozeInterval.countDownDuration
     }
+    
+    //MARK: Properties
+    
+    var delegate: SettingsViewControllerDelegate! = nil
+    
+    //MARK: Main
     
     override func viewDidLoad() {
         super.viewDidLoad()

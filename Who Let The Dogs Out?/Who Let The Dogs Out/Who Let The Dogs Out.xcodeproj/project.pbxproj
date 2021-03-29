@@ -26,6 +26,9 @@
 		A25C432225D8A89600B05C8D /* HomeMainScreenTableViewCellRequirementDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25C432125D8A89600B05C8D /* HomeMainScreenTableViewCellRequirementDisplay.swift */; };
 		A265848D25E8128400E8B812 /* CHECKLIST Future Implementation Needed in Resources */ = {isa = PBXBuildFile; fileRef = A265848C25E8128400E8B812 /* CHECKLIST Future Implementation Needed */; };
 		A26AF36E25807887005D5DAB /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26AF36D25807887005D5DAB /* DateExtension.swift */; };
+		A278ED882610FF05000575FC /* DogsRequirementManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278ED872610FF05000575FC /* DogsRequirementManagerViewController.swift */; };
+		A278ED8C2610FF3D000575FC /* DogsRequirementCountDownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278ED8B2610FF3D000575FC /* DogsRequirementCountDownViewController.swift */; };
+		A278ED942610FF89000575FC /* DogsRequirementTimeOfDayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278ED932610FF89000575FC /* DogsRequirementTimeOfDayViewController.swift */; };
 		A27C139725AD2BD70031B6A0 /* DogsMainScreenTableViewCellDogDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = A27C139625AD2BD70031B6A0 /* DogsMainScreenTableViewCellDogDescription.swift */; };
 		A27C3D8B25B781B4005F46BA /* DogsAddDogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A27C3D8A25B781B4005F46BA /* DogsAddDogViewController.swift */; };
 		A27C3D8F25B8A213005F46BA /* DogsInstantiateRequirementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A27C3D8E25B8A213005F46BA /* DogsInstantiateRequirementViewController.swift */; };
@@ -82,6 +85,9 @@
 		A25C432125D8A89600B05C8D /* HomeMainScreenTableViewCellRequirementDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMainScreenTableViewCellRequirementDisplay.swift; sourceTree = "<group>"; };
 		A265848C25E8128400E8B812 /* CHECKLIST Future Implementation Needed */ = {isa = PBXFileReference; lastKnownFileType = text; path = "CHECKLIST Future Implementation Needed"; sourceTree = "<group>"; };
 		A26AF36D25807887005D5DAB /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
+		A278ED872610FF05000575FC /* DogsRequirementManagerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DogsRequirementManagerViewController.swift; path = "../New Group/DogsRequirementManagerViewController.swift"; sourceTree = "<group>"; };
+		A278ED8B2610FF3D000575FC /* DogsRequirementCountDownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsRequirementCountDownViewController.swift; sourceTree = "<group>"; };
+		A278ED932610FF89000575FC /* DogsRequirementTimeOfDayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsRequirementTimeOfDayViewController.swift; sourceTree = "<group>"; };
 		A27C139625AD2BD70031B6A0 /* DogsMainScreenTableViewCellDogDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsMainScreenTableViewCellDogDescription.swift; sourceTree = "<group>"; };
 		A27C3D8A25B781B4005F46BA /* DogsAddDogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsAddDogViewController.swift; sourceTree = "<group>"; };
 		A27C3D8E25B8A213005F46BA /* DogsInstantiateRequirementViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsInstantiateRequirementViewController.swift; sourceTree = "<group>"; };
@@ -206,6 +212,26 @@
 			path = "Pure Extensions";
 			sourceTree = "<group>";
 		};
+		A278ED912610FF45000575FC /* Requirement Modification */ = {
+			isa = PBXGroup;
+			children = (
+				A27C3D8E25B8A213005F46BA /* DogsInstantiateRequirementViewController.swift */,
+				A28AF46C25E9C7C80018B575 /* DogsUpdateRequirementViewController.swift */,
+				A278ED922610FF55000575FC /* Requirement Base */,
+			);
+			path = "Requirement Modification";
+			sourceTree = "<group>";
+		};
+		A278ED922610FF55000575FC /* Requirement Base */ = {
+			isa = PBXGroup;
+			children = (
+				A278ED872610FF05000575FC /* DogsRequirementManagerViewController.swift */,
+				A278ED8B2610FF3D000575FC /* DogsRequirementCountDownViewController.swift */,
+				A278ED932610FF89000575FC /* DogsRequirementTimeOfDayViewController.swift */,
+			);
+			path = "Requirement Base";
+			sourceTree = "<group>";
+		};
 		A27C138A25AD2A520031B6A0 /* Dogs */ = {
 			isa = PBXGroup;
 			children = (
@@ -214,8 +240,7 @@
 				A27C3D8A25B781B4005F46BA /* DogsAddDogViewController.swift */,
 				A28A0B4B25B923BA0057BEC7 /* DogsRequirementNavigationViewController.swift */,
 				A28A0B4725B922E80057BEC7 /* DogsRequirementTableViewController.swift */,
-				A27C3D8E25B8A213005F46BA /* DogsInstantiateRequirementViewController.swift */,
-				A28AF46C25E9C7C80018B575 /* DogsUpdateRequirementViewController.swift */,
+				A278ED912610FF45000575FC /* Requirement Modification */,
 				A27C139325AD2B210031B6A0 /* Cells */,
 			);
 			path = Dogs;
@@ -434,6 +459,7 @@
 				A28AF46D25E9C7C80018B575 /* DogsUpdateRequirementViewController.swift in Sources */,
 				A2853D8F25CFB4AD0068AEE3 /* GeneralManagementProtocols.swift in Sources */,
 				A27C3D8F25B8A213005F46BA /* DogsInstantiateRequirementViewController.swift in Sources */,
+				A278ED942610FF89000575FC /* DogsRequirementTimeOfDayViewController.swift in Sources */,
 				A231ACE525DEEA3B00B11E84 /* UIExtension.swift in Sources */,
 				A29390732608480800879C79 /* DogManager.swift in Sources */,
 				A2536B3C2608364F00E2FF6A /* RequirementComponets.swift in Sources */,
@@ -459,8 +485,10 @@
 				A286934925769EEB00C0C06E /* Constants.swift in Sources */,
 				A290F38A25D4B10400429C9D /* Misc Utils.swift in Sources */,
 				A20C99972568671F00E2C9C8 /* RequirementManager.swift in Sources */,
+				A278ED882610FF05000575FC /* DogsRequirementManagerViewController.swift in Sources */,
 				A2B18E3925E8A4C000951AC3 /* Queue.swift in Sources */,
 				A2E66C9D25534A880068CCA6 /* SceneDelegate.swift in Sources */,
+				A278ED8C2610FF3D000575FC /* DogsRequirementCountDownViewController.swift in Sources */,
 				A226737425CDC60C00904032 /* SettingsViewController.swift in Sources */,
 				A2AA423225C337C700EAE129 /* Specification.swift in Sources */,
 				A27C139725AD2BD70031B6A0 /* DogsMainScreenTableViewCellDogDescription.swift in Sources */,

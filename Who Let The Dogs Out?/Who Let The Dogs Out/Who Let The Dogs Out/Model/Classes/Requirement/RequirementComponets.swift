@@ -83,6 +83,7 @@ protocol SnoozeComponentsProtocol {
     
     ///Bool on whether or not the parent requirement is snoozed
     var isSnoozed: Bool { get }
+    ///Change isSnoozed to new status and does accompanying changes
     mutating func changeSnooze(newSnoozeStatus: Bool)
     
 }
@@ -94,6 +95,7 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountDownProtocol
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = SnoozeComponents()
         copy.changeSnooze(newSnoozeStatus: self.isSnoozed)
+        copy.changeIntervalElapsed(newIntervalElapsed: self.intervalElapsed)
         copy.changeExecutionInterval(newExecutionInterval: self.executionInterval)
         return copy
     }
@@ -121,16 +123,10 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountDownProtocol
     private var storedIsSnoozed: Bool = false
     var isSnoozed: Bool { return storedIsSnoozed }
     func changeSnooze(newSnoozeStatus: Bool) {
-        //HDLL
-        /*
-         HDLL
         if newSnoozeStatus == true {
-            activeInterval = TimerConstant.defaultSnooze
+            storedExecutionInterval = TimerConstant.defaultSnooze
         }
-        else {
-            activeInterval = self.executionInterval
-        }
-    */
+    
         storedIsSnoozed = newSnoozeStatus
     }
     
@@ -151,6 +147,101 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountDownProtocol
         self.changeSnooze(newSnoozeStatus: false)
         self.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
     }
+}
+
+enum TimeOfDayComponentsError: Error {
+    case invalidCalendarComponent
+}
+
+protocol TimeOfDayComponentsProtocol {
+    ///DateComponent that stores the hour and minute specified (e.g. 8:26 am) of the time of day timer
+    var timeOfDayComponent: DateComponents { get }
+    mutating func changeTimeOfDayComponent(newTimeOfDayComponent: DateComponents) throws
+    mutating func changeTimeOfDayComponent(newTimeOfDayComponent: Calendar.Component, newValue: Int) throws
+    
+    ///Date that is calculated from timeOfDayComponent when the timer should next fire
+    var nextTimeOfDay: Date { get }
+    
+    ///nextTimeOfDay except 24 hours before
+    var previousTimeOfDay: Date { get }
+    
+    ///Called when a timer is handled and needs to be reset
+    func timerReset()
+}
+
+class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsProtocol {
+    
+    //MARK: NSCopying
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        let copy = TimeOfDayComponents()
+        copy.storedTimeOfDayComponent = self.storedTimeOfDayComponent
+        return copy
+    }
+    
+    //MARK: NSCoding
+    
+    override init(){
+        super.init()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        self.storedTimeOfDayComponent = aDecoder.decodeObject(forKey: "timeOfDayComponent") as! DateComponents
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(storedTimeOfDayComponent, forKey: "timeOfDayComponent")
+    }
+    
+    
+    //MARK: TimeOfDayComponentsProtocol
+    
+    private var storedTimeOfDayComponent: DateComponents = TimerConstant.defaultTimeOfDay
+    var timeOfDayComponent: DateComponents { return storedTimeOfDayComponent }
+    func changeTimeOfDayComponent(newTimeOfDayComponent: DateComponents) throws {
+        if newTimeOfDayComponent.hour != nil {
+            storedTimeOfDayComponent.hour = newTimeOfDayComponent.hour
+        }
+        if newTimeOfDayComponent.minute != nil {
+            storedTimeOfDayComponent.minute = newTimeOfDayComponent.minute
+        }
+       // if newTimeOfDayComponent.second != nil {
+        //    storedTimeOfDayComponent.second = newTimeOfDayComponent.second
+        //}
+    }
+    func changeTimeOfDayComponent(newTimeOfDayComponent: Calendar.Component, newValue: Int) throws {
+        if newTimeOfDayComponent == .hour {
+            storedTimeOfDayComponent.hour = newValue
+        }
+        else if newTimeOfDayComponent == .minute {
+            storedTimeOfDayComponent.minute = newValue
+        }
+       // else if newTimeOfDayComponent == .second {
+        //    storedTimeOfDayComponent.second = newValue
+       // }
+        else {
+            throw TimeOfDayComponentsError.invalidCalendarComponent
+        }
+    }
+    
+    var nextTimeOfDay: Date { var calculatedDate: Date = Date()
+        calculatedDate = Calendar.current.date(bySettingHour: timeOfDayComponent.hour!, minute: timeOfDayComponent.minute!, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)!
+        
+        if Date().distance(to: calculatedDate) <= 0 {
+            return (calculatedDate.addingTimeInterval(TimeInterval(24*60*60)))
+        }
+        return calculatedDate
+    }
+    
+    var previousTimeOfDay: Date {
+        return Date(timeInterval: TimeInterval(-1*60*60*24), since: nextTimeOfDay)
+    }
+    
+    func timerReset() {
+        //
+    }
+    
+    
 }
 
 

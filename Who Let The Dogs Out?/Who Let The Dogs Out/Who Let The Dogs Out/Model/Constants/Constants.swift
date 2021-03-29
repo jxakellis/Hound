@@ -33,20 +33,21 @@ enum DogManagerConstant {
     
     static var defaultDog: Dog {
         let defaultDog = Dog()
-        
+    
         let defaultRequirementOne = Requirement()
         try! defaultRequirementOne.changeRequirementName(newRequirementName: "Potty")
         try! defaultRequirementOne.changeRequirementDescription(newRequirementDescription: "Take The Dog Out")
-        //defaultRequirementOne.interval = TimeInterval((3600*3)+(3600*(1/3)))
-        defaultRequirementOne.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(50))
+        defaultRequirementOne.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval((3600*3)+(3600*(1/3))))
+        //defaultRequirementOne.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(50))
         defaultRequirementOne.setEnable(newEnableStatus: false)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementOne)
+ 
         
         let defaultRequirementTwo = Requirement()
         try! defaultRequirementTwo.changeRequirementName(newRequirementName: "Food")
         try! defaultRequirementTwo.changeRequirementDescription(newRequirementDescription: "Feed The Dog")
         //defaultRequirementTwo.executionInterval = TimeInterval((3600*7)+(3600*0.75))
-        defaultRequirementTwo.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(35))
+        defaultRequirementTwo.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(180))
         defaultRequirementTwo.setEnable(newEnableStatus: false)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementTwo)
         
@@ -54,8 +55,8 @@ enum DogManagerConstant {
         try! defaultRequirementThree.changeRequirementName(newRequirementName: "Brush")
         try! defaultRequirementThree.changeRequirementDescription(newRequirementDescription: "Brush His Fur Out")
         //defaultRequirementThree.interval = TimeInterval((3600*7)+(3600*0.75))
-        defaultRequirementThree.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(15))
-        defaultRequirementThree.setEnable(newEnableStatus: true)
+        defaultRequirementThree.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(3600))
+        defaultRequirementThree.setEnable(newEnableStatus: false)
         try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementThree)
         
         for i in 0..<DogConstant.defaultDogSpecificationKeys.count{
@@ -76,6 +77,7 @@ enum DogManagerConstant {
 
 enum TimerConstant {
     static var defaultSnooze: TimeInterval = TimeInterval(60*30)
+    static var defaultTimeOfDay: DateComponents = DateComponents(calendar: nil, timeZone: nil, era: nil, year: nil, month: nil, day: nil, hour: 8, minute: 30, second: 0, nanosecond: 0, weekday: nil, weekdayOrdinal: nil, quarter: nil, weekOfMonth: nil, weekOfYear: nil, yearForWeekOfYear: nil)
 }
 
 enum UserDefaultsKeys: String{

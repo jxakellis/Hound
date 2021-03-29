@@ -14,16 +14,18 @@ protocol DogsRequirementNavigationViewControllerDelegate {
 
 class DogsRequirementNavigationViewController: UINavigationController, DogsRequirementTableViewControllerDelegate {
     
-    //MARK: Properties
     
-    //This delegate is used in order to connect the delegate from the sub table view to the master embedded view, i.e. connect DogsRequirementTableViewController delegate to DogsAddDogViewController
-    var passThroughDelegate: DogsRequirementNavigationViewControllerDelegate! = nil
     
     //MARK: DogsRequirementTableViewControllerDelegate
     
     func didUpdateRequirements(newRequirementList: [Requirement]) {
         passThroughDelegate.didUpdateRequirements(newRequirementList: newRequirementList)
     }
+    
+    //MARK: Properties
+    
+    //This delegate is used in order to connect the delegate from the sub table view to the master embedded view, i.e. connect DogsRequirementTableViewController delegate to DogsAddDogViewController
+    var passThroughDelegate: DogsRequirementNavigationViewControllerDelegate! = nil
     
     var dogsRequirementTableViewController: DogsRequirementTableViewController! = nil
     

@@ -22,7 +22,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         setDogManager(sender: sender, newDogManager: newDogManager)
     }
     
-    //MARK: Master Dog Manager
+    //MARK: DogManagerControlFlowProtocol + MasterDogManager
     
     private var masterDogManager: DogManager = DogManager()
     
@@ -63,7 +63,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         TimingManager.willReinitalize(dogManager: getDogManager())
     }
     
-    //MARK: Main
+    //MARK: Properties
     
     var dogsViewController: DogsViewController! = nil
     
@@ -72,6 +72,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     var homeViewController: HomeViewController! = nil
     
     static var mainTabBarViewController: MainTabBarViewController! = nil
+    
+    //MARK: Main
     
     override func viewDidLoad() {
         super.viewDidLoad()

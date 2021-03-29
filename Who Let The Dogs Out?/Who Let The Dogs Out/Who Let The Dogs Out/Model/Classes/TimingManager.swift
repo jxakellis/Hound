@@ -26,7 +26,7 @@ class TimingManager{
     static var lastUnpause: Date? = nil
     
     ///Returns number of active timers
-    static var activeTimers: Int?{
+    static var enabledTimersCount: Int?{
         
         guard isPaused == false else {
             return nil
@@ -54,7 +54,7 @@ class TimingManager{
     ///Dictionary<dogName: String, Dictionary<requirementName: String, associatedTimer: Timer>>"
     
     /// IMPORTANT NOTE: DO NOT COPY, WILL MAKE MULTIPLE TIMERS WHICH WILL FIRE SIMULTANIOUSLY
-    static var timerDictionary: Dictionary<String,Dictionary<String,Timer?>> = Dictionary<String,Dictionary<String,Timer?>>()
+    static var timerDictionary: Dictionary<String,Dictionary<String,Timer>> = Dictionary<String,Dictionary<String,Timer>>()
     
     //MARK: TimingProtocol Implementation
     
@@ -80,42 +80,12 @@ class TimingManager{
                 let requirement = dogManager.dogs[d].dogRequirments.requirements[r]
                 
                 //makes sure a requirement is enabled
-                guard requirement.getEnable() == true
+                guard requirement.getEnable() == true && requirement.isPresentationHandled == false
                 else{
                     continue
                 }
                 
-                var executionDate: Date! = nil
-                
-                var targetComponent: Component! = nil
-                
-                if requirement.snoozeComponents.isSnoozed == true {
-                    targetComponent = requirement.snoozeComponents
-                }
-                else {
-                    targetComponent = requirement.countDownComponents
-                }
-                
-                //If transitioning from paused to unpaused, calculates execution date differently, this is because the timer elasped an amount of time before it was paused, so it only has its interval minus the time elapsed left to go.
-                if didUnpause == true {
-                    
-                    executionDate = Date.executionDate(lastExecution: Date(), interval: requirement.intervalRemaining)
-                    
-                }
-                
-                //If not transitioning from unpaused, calculates execution date traditionally
-                else if didUnpause == false{
-                    
-                    if targetComponent is SnoozeComponents {
-                        executionDate = Date.executionDate(lastExecution: requirement.executionBasis, interval: requirement.snoozeComponents.executionInterval)
-                    }
-                    else {
-                        executionDate = Date.executionDate(lastExecution: requirement.executionBasis, interval: requirement.countDownComponents.executionInterval)
-                    }
-                    
-                }
-                
-                let timer = Timer(fireAt: executionDate,
+                let timer = Timer(fireAt: TimingManager.executionDate(requirement: requirement, didUnpause: didUnpause),
                                   interval: -1,
                                   target: self,
                                   selector: #selector(self.didExecuteTimer(sender:)),
@@ -123,22 +93,72 @@ class TimingManager{
                                   repeats: false)
                 
                 //Updates timerDictionary to reflect new timer added, this is so a reference to the created timer can be referenced later and invalidated if needed.
-                var nestedtimerDictionary: Dictionary<String, Timer?> = try! timerDictionary[dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name")] ?? Dictionary<String, Timer?>()
+                var nestedtimerDictionary: Dictionary<String, Timer> = try! timerDictionary[dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name")] ?? Dictionary<String,Timer>()
                 
                 nestedtimerDictionary[requirement.requirementName] = timer
                 
                 try! timerDictionary[dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name")] = nestedtimerDictionary
                 
-                if Date().distance(to: executionDate) < 0 {
-                    if requirement.isPresentationHandled == true {
-                        continue
-                    }
-                }
-                
                 RunLoop.main.add(timer, forMode: .common)
                 
             }
         }
+    }
+    
+    private static func executionDate(requirement: Requirement, didUnpause: Bool) -> Date {
+        //Date which the timer should fire
+        var executionDate: Date! = nil
+        
+        if requirement.timerMode == .snooze{
+            //If transitioning from paused to unpaused, calculates execution date differently, this is because the timer elasped an amount of time before it was paused, so it only has its interval minus the time elapsed left to go.
+            if didUnpause == true {
+                
+                executionDate = Date.executionDate(lastExecution: Date(), interval: requirement.intervalRemaining!)
+                return executionDate
+                
+            }
+            else if didUnpause == false{
+                
+                executionDate = Date.executionDate(lastExecution: requirement.executionBasis, interval: requirement.snoozeComponents.executionInterval)
+                return executionDate
+                
+            }
+        }
+        else if requirement.timerMode == .timeOfDay {
+            if requirement.intervalRemaining == nil {
+                print("missed TOD alarm")
+                executionDate = Date()
+                return executionDate
+            }
+            else {
+                print("waiting for TOD alarm to strike")
+                executionDate = requirement.timeOfDayComponents.nextTimeOfDay
+                print("current: \(Date().description), exeDate: \(executionDate.description)")
+                return executionDate
+            }
+        }
+        else if requirement.timerMode == .countDown{
+           
+            if didUnpause == true {
+                
+                executionDate = Date.executionDate(lastExecution: Date(), interval: requirement.intervalRemaining!)
+                return executionDate
+                
+            }
+            
+            //If not transitioning from unpaused, calculates execution date traditionally
+            else if didUnpause == false{
+                
+                executionDate = Date.executionDate(lastExecution: requirement.executionBasis, interval: requirement.countDownComponents.executionInterval)
+                return executionDate
+                
+            }
+        }
+        else {
+            fatalError("not implemented currently")
+        }
+        
+        return executionDate
     }
     
     ///Invalidates all current timers then calls willInitalize, makes it a clean slate then re sets everything up
@@ -178,12 +198,11 @@ class TimingManager{
         ///Invalidates all timers
         for dogKey in timerDictionary.keys{
             for requirementKey in timerDictionary[dogKey]!.keys {
-                if timerDictionary[dogKey]![requirementKey]! != nil {
-                    timerDictionary[dogKey]![requirementKey]!!.invalidate()
-                    timerDictionary[dogKey]![requirementKey]! = nil
-                }
+                    timerDictionary[dogKey]![requirementKey]!.invalidate()
+                    
             }
         }
+        
     }
     
     ///Invalidates a given timer, located using dogName and requirementName, can throw if timer not found
@@ -195,8 +214,7 @@ class TimingManager{
         if timerDictionary[dogName]![requirementName] == nil {
             throw TimingManagerError.invalidateFailed
         }
-        timerDictionary[dogName]![requirementName]!!.invalidate()
-        timerDictionary[dogName]![requirementName]! = nil
+        timerDictionary[dogName]![requirementName]!.invalidate()
     }
     
     ///Updates dogManager to reflect the changes in intervalElapsed as if everything is paused the amount of time elapsed by each timer must to saved so when unpaused the new timers can be properly calculated
@@ -205,7 +223,7 @@ class TimingManager{
         for dogKey in timerDictionary.keys{
             for requirementKey in timerDictionary[dogKey]!.keys {
                 
-                guard timerDictionary[dogKey]![requirementKey]! != nil && timerDictionary[dogKey]![requirementKey]!!.isValid else {
+                guard timerDictionary[dogKey]![requirementKey]!.isValid else {
                     continue
                 }
                 
@@ -309,12 +327,10 @@ class TimingManager{
     ///Finishes executing timer and then disables it, note passed requirement should be a reference to a requirement in passed dogManager
     static func willDisableTimer(sender: Sender, dogName targetDogName: String, requirementName targetRequirementName: String, dogManager: DogManager = MainTabBarViewController.staticDogManager){
         
-        if TimingManager.timerDictionary[targetDogName]![targetRequirementName]! != nil {
-            if TimingManager.timerDictionary[targetDogName]![targetRequirementName]!!.isValid == true {
-                TimingManager.timerDictionary[targetDogName]![targetRequirementName]!!.invalidate()
+        
+            if TimingManager.timerDictionary[targetDogName]![targetRequirementName]!.isValid == true {
+                TimingManager.timerDictionary[targetDogName]![targetRequirementName]!.invalidate()
             }
-            TimingManager.timerDictionary[targetDogName]![targetRequirementName]! = nil
-        }
         
         let requirement = try! dogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
         
@@ -338,6 +354,7 @@ class TimingManager{
     
     ///Finishs executing timer then just resets it to countdown again
     static func willResetTimer(sender: Sender, dogName targetDogName: String, requirementName targetRequirementName: String, dogManager: DogManager = MainTabBarViewController.staticDogManager){
+        
         let sudoDogManager = dogManager
         
         let requirement = try! sudoDogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)

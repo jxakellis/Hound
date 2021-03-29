@@ -14,11 +14,7 @@ protocol HomeMainScreenTableViewCellRequirementDisplayDelegate{
 
 class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     
-    //MARK: Main
-    
-    var timeIntervalLeft: TimeInterval?
-    
-    var requirementSource: Requirement! = nil
+    //MARK: IB
     
     @IBOutlet weak var requirementName: UILabel!
     
@@ -27,17 +23,32 @@ class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     @IBOutlet weak var timeLeft: UILabel!
     @IBOutlet weak var timeSinceLastExecution: UILabel!
     
+    //MARK: Properties
+    
+    var timeIntervalLeft: TimeInterval?
+    
+    var requirementSource: Requirement! = nil
+    
+    //MARK: Main
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        requirementName.adjustsFontSizeToFitWidth = true
+        dogName.adjustsFontSizeToFitWidth = true
+        timeLeft.adjustsFontSizeToFitWidth = true
+    }
+    
     func setup(parentDogName: String, requirementPassed: Requirement) {
         self.requirementSource = requirementPassed
         requirementName.text = requirementPassed.requirementName
         dogName.text = parentDogName
         
         if TimingManager.isPaused == true {
-            timeLeft.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.countDownComponents.executionInterval - requirementPassed.countDownComponents.intervalElapsed)
+            timeLeft.text = String.convertToReadable(interperateTimeInterval: requirementPassed.countDownComponents.executionInterval - requirementPassed.countDownComponents.intervalElapsed)
             self.timeIntervalLeft = (requirementPassed.countDownComponents.executionInterval - requirementPassed.countDownComponents.intervalElapsed)
         }
         else{
-            let fireDate = TimingManager.timerDictionary[parentDogName]![requirementPassed.requirementName]!!.fireDate
+            let fireDate: Date = TimingManager.timerDictionary[parentDogName]![requirementPassed.requirementName]!.fireDate
             if Date().distance(to: fireDate) <= 0 {
                 timeSinceLastExecution.text = "It's Happening"
                 timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: .semibold)])
@@ -45,13 +56,13 @@ class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
             else {
                 self.timeIntervalLeft = Date().distance(to: fireDate)
                 
-                let timeLeftText = String.convertTimeIntervalToReadable(interperateTimeInterval: self.timeIntervalLeft!)
+                let timeLeftText = String.convertToReadable(interperateTimeInterval: self.timeIntervalLeft!)
                 
                 timeLeft.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: .regular)])
                     
                 timeLeft.attributedText = timeLeft.text!.withFontAtEnd(text: " Left", font: UIFont.systemFont(ofSize: 17, weight: .semibold))
                 
-                let timeSinceLastExecutionText = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.executionBasis.distance(to: Date()))
+                let timeSinceLastExecutionText = String.convertToReadable(interperateTimeInterval: requirementPassed.executionBasis.distance(to: Date()))
                 
                 timeSinceLastExecution.attributedText = NSAttributedString(string: timeSinceLastExecutionText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: .regular)])
                 
@@ -62,13 +73,6 @@ class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
         
         
         
-    }
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        requirementName.adjustsFontSizeToFitWidth = true
-        dogName.adjustsFontSizeToFitWidth = true
-        timeLeft.adjustsFontSizeToFitWidth = true
     }
     
 }

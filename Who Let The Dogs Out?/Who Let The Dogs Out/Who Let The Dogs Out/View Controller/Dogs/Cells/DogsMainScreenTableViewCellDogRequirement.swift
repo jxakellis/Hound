@@ -10,19 +10,11 @@ import UIKit
 
 protocol DogsMainScreenTableViewCellRequirementDisplayDelegate {
     func didToggleRequirementSwitch(sender: Sender, parentDogName: String, requirementName: String, isEnabled: Bool)
-    //func didClickTrash(sender: Sender, parentDogName: String, requirementName: String)
 }
 
 class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     
-    //MARK:  Properties
-    var requirement: Requirement = Requirement()
-    
-    var parentDogName: String = ""
-    
-    var delegate: DogsMainScreenTableViewCellRequirementDisplayDelegate! = nil
-    
-    //MARK: IB Link
+    //MARK: IB
     
     @IBOutlet weak var requirementName: UILabel!
     @IBOutlet weak var timeInterval: UILabel!
@@ -33,29 +25,14 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
         delegate.didToggleRequirementSwitch(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, requirementName: requirement.requirementName, isEnabled: self.requirementToggleSwitch.isOn)
     }
     
-    /*
-    @IBAction func didClickTrash(_ sender: Any) {
-        delegate.didClickTrash(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, requirementName: requirement.name)
-    }
-    */
+    //MARK:  Properties
+    var requirement: Requirement = Requirement()
     
-    //MARK: General Functions
+    var parentDogName: String = ""
     
-    //Setup function that sets up the different IBOutlet properties
-    func setup(parentDogName: String, requirementPassed: Requirement){
-        self.parentDogName = parentDogName
-        self.requirement = requirementPassed
-        self.requirementName.text = requirementPassed.requirementName
-        if requirementPassed.countDownComponents.executionInterval < 60 {
-            self.timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.countDownComponents.executionInterval)
-        }
-        else {
-            self.timeInterval.text = String.convertTimeIntervalToReadable(interperateTimeInterval: requirementPassed.countDownComponents.executionInterval)
-        }
-        self.requirementToggleSwitch.isOn = requirementPassed.getEnable()
-    }
+    var delegate: DogsMainScreenTableViewCellRequirementDisplayDelegate! = nil
     
-    //MARK: Default Functionality
+    //MARK: Main
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -68,6 +45,21 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
         super.setSelected(selected, animated: animated)
         
         // Configure the view for the selected state
+    }
+    
+    //Setup function that sets up the different IBOutlet properties
+    func setup(parentDogName: String, requirementPassed: Requirement){
+        self.parentDogName = parentDogName
+        self.requirement = requirementPassed
+        self.requirementName.text = requirementPassed.requirementName
+        
+        if requirementPassed.timingStyle == .countDown {
+        self.timeInterval.text = String.convertToReadable(interperateTimeInterval: requirementPassed.countDownComponents.executionInterval)
+        }
+        else {
+            try! self.timeInterval.text = String.convertToReadable(interperatedDateComponents: requirementPassed.timeOfDayComponents.timeOfDayComponent)
+        }
+        self.requirementToggleSwitch.isOn = requirementPassed.getEnable()
     }
     
 }

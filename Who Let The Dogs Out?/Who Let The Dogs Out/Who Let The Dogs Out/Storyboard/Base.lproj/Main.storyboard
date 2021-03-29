@@ -23,7 +23,7 @@
                                     <segue destination="QHx-In-pv4" kind="embed" identifier="homeMainScreenTableViewController" id="mAm-1k-o8H"/>
                                 </connections>
                             </containerView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reminders" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6hY-qq-Arx">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reminders" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6hY-qq-Arx" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                 <rect key="frame" x="10" y="54" width="197" height="35"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="35" id="Fid-td-u2n"/>
@@ -412,105 +412,21 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="583"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" countDownDuration="5400" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K2d-xg-IFv">
-                                <rect key="frame" x="0.0" y="288" width="414" height="295"/>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xpx-kk-0ei">
+                                <rect key="frame" x="0.0" y="88" width="414" height="495"/>
                                 <connections>
-                                    <action selector="requirementIntervalValueChanged:" destination="uJe-nq-2qo" eventType="valueChanged" id="s5N-3v-L5P"/>
+                                    <segue destination="ngF-4H-kgO" kind="embed" identifier="dogsInstantiateRequirementManagerViewController" id="1g9-zQ-LRF"/>
                                 </connections>
-                            </datePicker>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Count Down Interval" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lgW-Lf-9Fq">
-                                <rect key="frame" x="10" y="248" width="394" height="40"/>
-                                <gestureRecognizers/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="gpG-MY-5nc"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="keV-kK-WRt">
-                                <rect key="frame" x="10" y="98" width="115" height="90"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dcv-0K-gmj">
-                                        <rect key="frame" x="0.0" y="0.0" width="115" height="40"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="40" id="8CJ-6s-FAs"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uHS-mH-36w">
-                                        <rect key="frame" x="0.0" y="50" width="115" height="40"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="40" id="cSv-fW-YZ6"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="90" id="OQm-qS-Yay"/>
-                                </constraints>
-                            </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="cCe-OF-f25">
-                                <rect key="frame" x="135" y="98" width="269" height="90"/>
-                                <subviews>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bhU-gI-wSc">
-                                        <rect key="frame" x="0.0" y="0.0" width="269" height="40"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="40" id="mg2-hf-j9Z"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
-                                    </textField>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="pzt-Dy-9b9">
-                                        <rect key="frame" x="0.0" y="50" width="269" height="40"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="40" id="8PK-Gg-S6B"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
-                                    </textField>
-                                </subviews>
-                            </stackView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enabled:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TWT-Ax-Oyv">
-                                <rect key="frame" x="10" y="198" width="115" height="40"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="Mjh-vv-vAO"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ni7-it-J2y">
-                                <rect key="frame" x="135" y="202.5" width="51" height="31"/>
-                            </switch>
+                            </containerView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="SKx-zj-U97"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <gestureRecognizers/>
                         <constraints>
-                            <constraint firstItem="SKx-zj-U97" firstAttribute="trailing" secondItem="K2d-xg-IFv" secondAttribute="trailing" id="1yB-hi-VPj"/>
-                            <constraint firstItem="cCe-OF-f25" firstAttribute="leading" secondItem="keV-kK-WRt" secondAttribute="trailing" constant="10" id="2Vb-Jg-VBp"/>
-                            <constraint firstItem="keV-kK-WRt" firstAttribute="top" secondItem="SKx-zj-U97" secondAttribute="top" constant="10" id="5pQ-aN-mgw"/>
-                            <constraint firstItem="lgW-Lf-9Fq" firstAttribute="top" secondItem="TWT-Ax-Oyv" secondAttribute="bottom" constant="10" id="8q2-6e-0cR"/>
-                            <constraint firstItem="cCe-OF-f25" firstAttribute="top" secondItem="SKx-zj-U97" secondAttribute="top" constant="10" id="8uZ-tK-ppB"/>
-                            <constraint firstItem="keV-kK-WRt" firstAttribute="leading" secondItem="SKx-zj-U97" secondAttribute="leading" constant="10" id="Blx-Sg-mZj"/>
-                            <constraint firstItem="lgW-Lf-9Fq" firstAttribute="leading" secondItem="SKx-zj-U97" secondAttribute="leading" constant="10" id="NHL-kz-Tzd"/>
-                            <constraint firstItem="TWT-Ax-Oyv" firstAttribute="trailing" secondItem="keV-kK-WRt" secondAttribute="trailing" id="TDD-h9-Cyt"/>
-                            <constraint firstItem="Ni7-it-J2y" firstAttribute="leading" secondItem="cCe-OF-f25" secondAttribute="leading" id="WK3-08-Lbc"/>
-                            <constraint firstItem="SKx-zj-U97" firstAttribute="bottom" secondItem="K2d-xg-IFv" secondAttribute="bottom" id="ZK6-Np-RdJ"/>
-                            <constraint firstItem="TWT-Ax-Oyv" firstAttribute="leading" secondItem="keV-kK-WRt" secondAttribute="leading" id="aLB-cK-xWs"/>
-                            <constraint firstItem="cCe-OF-f25" firstAttribute="height" secondItem="keV-kK-WRt" secondAttribute="height" id="bMH-na-JNi"/>
-                            <constraint firstItem="K2d-xg-IFv" firstAttribute="centerX" secondItem="MUR-Wf-RFm" secondAttribute="centerX" id="eOh-sa-DbN"/>
-                            <constraint firstItem="K2d-xg-IFv" firstAttribute="top" secondItem="lgW-Lf-9Fq" secondAttribute="bottom" id="mXU-xs-kZ5"/>
-                            <constraint firstItem="K2d-xg-IFv" firstAttribute="leading" secondItem="SKx-zj-U97" secondAttribute="leading" id="rg6-6a-wKh"/>
-                            <constraint firstItem="Ni7-it-J2y" firstAttribute="centerY" secondItem="TWT-Ax-Oyv" secondAttribute="centerY" id="tm0-Xt-nxD"/>
-                            <constraint firstItem="SKx-zj-U97" firstAttribute="trailing" secondItem="cCe-OF-f25" secondAttribute="trailing" constant="10" id="vos-i7-QRY"/>
-                            <constraint firstItem="TWT-Ax-Oyv" firstAttribute="top" secondItem="keV-kK-WRt" secondAttribute="bottom" constant="10" id="xYe-wS-nRN"/>
-                            <constraint firstItem="SKx-zj-U97" firstAttribute="trailing" secondItem="lgW-Lf-9Fq" secondAttribute="trailing" constant="10" id="y6b-Us-XgV"/>
+                            <constraint firstItem="SKx-zj-U97" firstAttribute="trailing" secondItem="xpx-kk-0ei" secondAttribute="trailing" id="OhT-Sy-nzq"/>
+                            <constraint firstItem="xpx-kk-0ei" firstAttribute="top" secondItem="SKx-zj-U97" secondAttribute="top" id="Us4-Zh-IIH"/>
+                            <constraint firstItem="SKx-zj-U97" firstAttribute="bottom" secondItem="xpx-kk-0ei" secondAttribute="bottom" id="XxF-tP-HVn"/>
+                            <constraint firstItem="xpx-kk-0ei" firstAttribute="leading" secondItem="SKx-zj-U97" secondAttribute="leading" id="zhI-AP-vag"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Create Reminder" id="8G7-vl-UY2">
@@ -526,12 +442,8 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="requirementDescription" destination="pzt-Dy-9b9" id="XVf-xW-ZBl"/>
-                        <outlet property="requirementEnableStatus" destination="Ni7-it-J2y" id="vJ0-cM-BT4"/>
-                        <outlet property="requirementInterval" destination="K2d-xg-IFv" id="xVk-YU-tPf"/>
-                        <outlet property="requirementName" destination="bhU-gI-wSc" id="5xl-GE-q5k"/>
                         <outlet property="saveButton" destination="Zkj-fw-kwu" id="jYu-bs-4EZ"/>
-                        <segue destination="d6Q-iQ-ILW" kind="unwind" identifier="unwindToAddDogRequirementTableView" unwindAction="unwind:" id="3gj-qC-jw2"/>
+                        <segue destination="d6Q-iQ-ILW" kind="unwind" identifier="unwindToAddDogRequirementTableView" unwindAction="unwind:" id="nkx-Qo-NmW"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dKn-14-LMR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -671,6 +583,172 @@
             </objects>
             <point key="canvasLocation" x="-3510" y="720"/>
         </scene>
+        <!--Dog Requirement Count Down-->
+        <scene sceneID="igG-O6-rrf">
+            <objects>
+                <viewController title="Dog Requirement Count Down" id="gRX-vW-PrI" customClass="DogsRequirementCountDownViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="1dJ-c5-zaj">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="564"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" countDownDuration="5400" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nvt-ES-U6h">
+                                <rect key="frame" x="0.0" y="44" width="414" height="520"/>
+                                <connections>
+                                    <action selector="willUpdateCountDown:" destination="gRX-vW-PrI" eventType="editingChanged" id="Qt9-8F-KfP"/>
+                                    <action selector="willUpdateCountDown:" destination="gRX-vW-PrI" eventType="valueChanged" id="xZo-V2-zDP"/>
+                                </connections>
+                            </datePicker>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="aPZ-Qw-aGi"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Nvt-ES-U6h" firstAttribute="trailing" secondItem="aPZ-Qw-aGi" secondAttribute="trailing" id="3AE-uS-qfv"/>
+                            <constraint firstItem="Nvt-ES-U6h" firstAttribute="top" secondItem="aPZ-Qw-aGi" secondAttribute="top" id="maJ-oO-70x"/>
+                            <constraint firstItem="Nvt-ES-U6h" firstAttribute="leading" secondItem="aPZ-Qw-aGi" secondAttribute="leading" id="mu4-Pt-JKb"/>
+                            <constraint firstItem="aPZ-Qw-aGi" firstAttribute="bottom" secondItem="Nvt-ES-U6h" secondAttribute="bottom" id="oea-q0-XKy"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="countDown" destination="Nvt-ES-U6h" id="Mte-bp-dcp"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="abH-IM-GOX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-6297" y="-757"/>
+        </scene>
+        <!--Dog Requirement Editor-->
+        <scene sceneID="XfX-La-uZ0">
+            <objects>
+                <viewController title="Dog Requirement Editor" id="ngF-4H-kgO" customClass="DogsRequirementManagerViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="wCA-tV-nak">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Mof-PE-gVW">
+                                <rect key="frame" x="10" y="54" width="115" height="90"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="txX-Vb-DvX">
+                                        <rect key="frame" x="0.0" y="0.0" width="115" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="xD2-uT-3W0"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wyo-2M-huZ">
+                                        <rect key="frame" x="0.0" y="50" width="115" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="mAR-1A-0BC"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="90" id="Eh3-qW-W5n"/>
+                                </constraints>
+                            </stackView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="0wl-L9-v7T">
+                                <rect key="frame" x="135" y="54" width="269" height="90"/>
+                                <subviews>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fuk-rc-lgL">
+                                        <rect key="frame" x="0.0" y="0.0" width="269" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="AAE-FT-JQ0"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
+                                    </textField>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="1sk-hK-Yuh">
+                                        <rect key="frame" x="0.0" y="50" width="269" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="gk5-g2-MUx"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
+                                    </textField>
+                                </subviews>
+                            </stackView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enabled:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mOc-Nw-xUd">
+                                <rect key="frame" x="10" y="154" width="115" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="xyt-XZ-g5l"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="je1-CJ-DNf">
+                                <rect key="frame" x="135" y="158.5" width="51" height="31"/>
+                            </switch>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="HGx-qs-bNl">
+                                <rect key="frame" x="10" y="204" width="394" height="41"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="k6W-zz-RLt"/>
+                                </constraints>
+                                <segments>
+                                    <segment title="Count Down"/>
+                                    <segment title="Time Of Day"/>
+                                </segments>
+                                <connections>
+                                    <action selector="segmentedControl:" destination="ngF-4H-kgO" eventType="valueChanged" id="SbE-AV-4lM"/>
+                                </connections>
+                            </segmentedControl>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MhX-Hm-1r1">
+                                <rect key="frame" x="0.0" y="244" width="414" height="564"/>
+                                <connections>
+                                    <segue destination="gRX-vW-PrI" kind="embed" identifier="dogsRequirementCountDownViewController" id="wbe-5J-4CA"/>
+                                </connections>
+                            </containerView>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XhW-xN-8L1">
+                                <rect key="frame" x="0.0" y="244" width="414" height="564"/>
+                                <connections>
+                                    <segue destination="Zjt-y9-htp" kind="embed" identifier="dogsRequirementTimeOfDayViewController" id="FIA-mJ-bsf"/>
+                                </connections>
+                            </containerView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Ntn-GY-riH"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Ntn-GY-riH" firstAttribute="bottom" secondItem="XhW-xN-8L1" secondAttribute="bottom" id="0nz-sN-TbZ"/>
+                            <constraint firstItem="Mof-PE-gVW" firstAttribute="leading" secondItem="Ntn-GY-riH" secondAttribute="leading" constant="10" id="1pM-cX-ct9"/>
+                            <constraint firstItem="mOc-Nw-xUd" firstAttribute="trailing" secondItem="Mof-PE-gVW" secondAttribute="trailing" id="3jg-DT-HmA"/>
+                            <constraint firstItem="mOc-Nw-xUd" firstAttribute="top" secondItem="Mof-PE-gVW" secondAttribute="bottom" constant="10" id="4Ac-am-6nJ"/>
+                            <constraint firstItem="MhX-Hm-1r1" firstAttribute="leading" secondItem="Ntn-GY-riH" secondAttribute="leading" id="9WJ-N4-oR4"/>
+                            <constraint firstItem="XhW-xN-8L1" firstAttribute="top" secondItem="HGx-qs-bNl" secondAttribute="bottom" id="9hl-RK-lqP"/>
+                            <constraint firstItem="Ntn-GY-riH" firstAttribute="trailing" secondItem="HGx-qs-bNl" secondAttribute="trailing" constant="10" id="AEi-QX-gDi"/>
+                            <constraint firstItem="Mof-PE-gVW" firstAttribute="top" secondItem="Ntn-GY-riH" secondAttribute="top" constant="10" id="As7-n8-hZf"/>
+                            <constraint firstItem="HGx-qs-bNl" firstAttribute="leading" secondItem="Ntn-GY-riH" secondAttribute="leading" constant="10" id="Atu-vO-o0R"/>
+                            <constraint firstItem="HGx-qs-bNl" firstAttribute="top" secondItem="mOc-Nw-xUd" secondAttribute="bottom" constant="10" id="BFD-VZ-fi9"/>
+                            <constraint firstItem="XhW-xN-8L1" firstAttribute="leading" secondItem="Ntn-GY-riH" secondAttribute="leading" id="FxC-O9-sYW"/>
+                            <constraint firstItem="Ntn-GY-riH" firstAttribute="trailing" secondItem="0wl-L9-v7T" secondAttribute="trailing" constant="10" id="H5z-fJ-6h8"/>
+                            <constraint firstItem="0wl-L9-v7T" firstAttribute="height" secondItem="Mof-PE-gVW" secondAttribute="height" id="IJc-0m-tAn"/>
+                            <constraint firstItem="mOc-Nw-xUd" firstAttribute="leading" secondItem="Mof-PE-gVW" secondAttribute="leading" id="Iqe-Vg-yf4"/>
+                            <constraint firstItem="je1-CJ-DNf" firstAttribute="leading" secondItem="0wl-L9-v7T" secondAttribute="leading" id="O1k-6e-BdU"/>
+                            <constraint firstItem="0wl-L9-v7T" firstAttribute="leading" secondItem="Mof-PE-gVW" secondAttribute="trailing" constant="10" id="Zeq-cc-QuU"/>
+                            <constraint firstItem="0wl-L9-v7T" firstAttribute="top" secondItem="Ntn-GY-riH" secondAttribute="top" constant="10" id="buN-cv-kfv"/>
+                            <constraint firstItem="Ntn-GY-riH" firstAttribute="bottom" secondItem="MhX-Hm-1r1" secondAttribute="bottom" id="dEF-BX-tio"/>
+                            <constraint firstItem="Ntn-GY-riH" firstAttribute="trailing" secondItem="MhX-Hm-1r1" secondAttribute="trailing" id="jTV-kg-chZ"/>
+                            <constraint firstItem="je1-CJ-DNf" firstAttribute="centerY" secondItem="mOc-Nw-xUd" secondAttribute="centerY" id="rbG-Gf-u07"/>
+                            <constraint firstItem="MhX-Hm-1r1" firstAttribute="top" secondItem="HGx-qs-bNl" secondAttribute="bottom" id="tKc-j7-yXd"/>
+                            <constraint firstItem="Ntn-GY-riH" firstAttribute="trailing" secondItem="XhW-xN-8L1" secondAttribute="trailing" id="zuU-I2-f6U"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="countDownContainerView" destination="MhX-Hm-1r1" id="bfp-I7-24p"/>
+                        <outlet property="requirementDescription" destination="1sk-hK-Yuh" id="WLR-Ot-Pjl"/>
+                        <outlet property="requirementEnableStatus" destination="je1-CJ-DNf" id="IYH-6A-rzb"/>
+                        <outlet property="requirementName" destination="fuk-rc-lgL" id="5Zy-9g-Re2"/>
+                        <outlet property="segmentedControl" destination="HGx-qs-bNl" id="zzB-gc-U8D"/>
+                        <outlet property="timeOfDayContainerView" destination="XhW-xN-8L1" id="FBC-wr-cy3"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UPy-gR-xxt" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-5272" y="-757"/>
+        </scene>
         <!--Add Dog Main Screen-->
         <scene sceneID="qQv-Z4-pwr">
             <objects>
@@ -775,7 +853,7 @@
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
                                 </state>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create Dog" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ez3-B6-l6Y">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create Dog" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ez3-B6-l6Y" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                 <rect key="frame" x="10" y="10" width="197" height="35"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="35" id="9Eb-RG-gFz"/>
@@ -877,10 +955,10 @@
                                 <color key="tintColor" systemColor="linkColor"/>
                                 <state key="normal" image="plus.circle.fill" catalog="system">
                                     <color key="titleColor" systemColor="systemBackgroundColor"/>
-                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="90"/>
                                 </state>
                                 <connections>
-                                    <segue destination="yj4-3A-FdI" kind="show" identifier="dogsAddDogViewController" id="g0H-Ol-MKe"/>
+                                    <action selector="willAddButton:" destination="8rJ-Kc-sve" eventType="touchUpInside" id="NLZ-uJ-GEb"/>
                                 </connections>
                             </button>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yIK-7w-b7P">
@@ -897,10 +975,10 @@
                                 </constraints>
                                 <color key="tintColor" systemColor="systemBackgroundColor"/>
                                 <state key="normal" image="plus.circle" catalog="system">
-                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="90"/>
                                 </state>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Dogs Configuration" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Imb-Bk-Vdb">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Dogs Configuration" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Imb-Bk-Vdb" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                 <rect key="frame" x="10" y="54" width="197" height="35"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="35" id="ugy-FS-pJp"/>
@@ -936,9 +1014,11 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Dogs" image="pawTabBar" selectedImage="pawTabBar" id="cPa-gy-q4n"/>
                     <connections>
-                        <outlet property="willAddDog" destination="8b5-pw-vvl" id="e1F-bC-okp"/>
-                        <outlet property="willAddDogBackground" destination="vhe-hX-gRw" id="QUJ-Dm-XLO"/>
+                        <outlet property="thinBlackLine" destination="2xM-kg-qD6" id="4Cm-ig-ABa"/>
+                        <outlet property="willAddButton" destination="8b5-pw-vvl" id="pTI-mr-SxA"/>
+                        <outlet property="willAddButtonBackground" destination="vhe-hX-gRw" id="9Z0-SR-2vW"/>
                         <segue destination="ihm-KQ-9ZO" kind="show" identifier="dogsUpdateRequirementViewController" id="aHQ-Vp-kOd"/>
+                        <segue destination="yj4-3A-FdI" kind="show" identifier="dogsAddDogViewController" id="ZXp-P8-izA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Nw-L8-lE0" sceneMemberID="firstResponder"/>
@@ -1140,8 +1220,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pause All Reminders" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WPE-BO-1UA">
-                                <rect key="frame" x="10" y="199" width="310" height="30"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pause All Reminders" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WPE-BO-1UA" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                                <rect key="frame" x="10" y="199" width="197" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -1152,7 +1232,7 @@
                                     <action selector="didTogglePause:" destination="6ov-Cv-Z6e" eventType="valueChanged" id="bvD-0N-zxH"/>
                                 </connections>
                             </switch>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Settings" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5OX-7G-QMF">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Settings" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5OX-7G-QMF" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                 <rect key="frame" x="10" y="54" width="197" height="35"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="35" id="aGX-Ab-fF2"/>
@@ -1166,14 +1246,14 @@
                                     <constraint firstAttribute="height" constant="10" id="RTq-K1-RTj"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Default Snooze Time" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5XI-x6-k1X">
-                                <rect key="frame" x="10" y="274" width="222" height="30"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Default Snooze Time" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5XI-x6-k1X" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                                <rect key="frame" x="10" y="274" width="197" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <datePicker contentMode="scaleToFill" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ji9-5y-z4O">
-                                <rect key="frame" x="232" y="244" width="182" height="90"/>
+                                <rect key="frame" x="207" y="244" width="207" height="90"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="90" id="LZd-hh-uY5"/>
                                 </constraints>
@@ -1181,8 +1261,8 @@
                                     <action selector="didUpdateSnoozeInterval:" destination="6ov-Cv-Z6e" eventType="valueChanged" id="CJh-Bi-h1T"/>
                                 </connections>
                             </datePicker>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Notifications" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IHJ-Pi-wZe">
-                                <rect key="frame" x="10" y="124" width="310" height="30"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Notifications" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IHJ-Pi-wZe" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                                <rect key="frame" x="10" y="124" width="197" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -1198,8 +1278,10 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="IHJ-Pi-wZe" firstAttribute="centerY" secondItem="jYw-6o-Qim" secondAttribute="centerY" id="3EZ-Q9-9cp"/>
+                            <constraint firstItem="WPE-BO-1UA" firstAttribute="trailing" secondItem="tOq-zv-aC6" secondAttribute="centerX" id="4hF-AA-9k4"/>
                             <constraint firstItem="5OX-7G-QMF" firstAttribute="leading" secondItem="riO-2q-eJ3" secondAttribute="leading" constant="10" id="5Lv-XV-m4y"/>
-                            <constraint firstItem="SdO-Oy-C1y" firstAttribute="leading" secondItem="WPE-BO-1UA" secondAttribute="trailing" id="92g-Gh-GJM"/>
+                            <constraint firstItem="SdO-Oy-C1y" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="WPE-BO-1UA" secondAttribute="trailing" id="92g-Gh-GJM"/>
+                            <constraint firstItem="IHJ-Pi-wZe" firstAttribute="trailing" secondItem="tOq-zv-aC6" secondAttribute="centerX" id="D1V-pB-7ay"/>
                             <constraint firstItem="5XI-x6-k1X" firstAttribute="top" secondItem="WPE-BO-1UA" secondAttribute="bottom" constant="45" id="Eq5-lr-bAl"/>
                             <constraint firstItem="lUd-ld-cVQ" firstAttribute="top" secondItem="5OX-7G-QMF" secondAttribute="bottom" id="Jdj-o9-g3s"/>
                             <constraint firstItem="Ji9-5y-z4O" firstAttribute="trailing" secondItem="riO-2q-eJ3" secondAttribute="trailing" id="KrA-pd-Hnf"/>
@@ -1209,7 +1291,7 @@
                             <constraint firstItem="SdO-Oy-C1y" firstAttribute="centerY" secondItem="WPE-BO-1UA" secondAttribute="centerY" id="QDC-tV-b8o"/>
                             <constraint firstItem="riO-2q-eJ3" firstAttribute="trailing" secondItem="SdO-Oy-C1y" secondAttribute="trailing" constant="45" id="RhR-00-C1i"/>
                             <constraint firstItem="riO-2q-eJ3" firstAttribute="trailing" secondItem="jYw-6o-Qim" secondAttribute="trailing" constant="45" id="Vdj-Mo-3ap"/>
-                            <constraint firstItem="jYw-6o-Qim" firstAttribute="leading" secondItem="IHJ-Pi-wZe" secondAttribute="trailing" id="bI7-ny-lgY"/>
+                            <constraint firstItem="jYw-6o-Qim" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="IHJ-Pi-wZe" secondAttribute="trailing" constant="10" id="bI7-ny-lgY"/>
                             <constraint firstItem="WPE-BO-1UA" firstAttribute="top" secondItem="IHJ-Pi-wZe" secondAttribute="bottom" constant="45" id="diG-Ci-4X1"/>
                             <constraint firstItem="lUd-ld-cVQ" firstAttribute="trailing" secondItem="tOq-zv-aC6" secondAttribute="centerX" id="dvz-KX-x0k"/>
                             <constraint firstItem="Ji9-5y-z4O" firstAttribute="centerY" secondItem="5XI-x6-k1X" secondAttribute="centerY" id="ewY-US-LBd"/>
@@ -1217,6 +1299,7 @@
                             <constraint firstItem="IHJ-Pi-wZe" firstAttribute="leading" secondItem="riO-2q-eJ3" secondAttribute="leading" constant="10" id="kqG-Wg-tcz"/>
                             <constraint firstItem="5OX-7G-QMF" firstAttribute="trailing" secondItem="tOq-zv-aC6" secondAttribute="centerX" id="lBu-Ky-OKg"/>
                             <constraint firstItem="5OX-7G-QMF" firstAttribute="top" secondItem="riO-2q-eJ3" secondAttribute="top" constant="10" id="tSg-TS-jfj"/>
+                            <constraint firstItem="5XI-x6-k1X" firstAttribute="trailing" secondItem="tOq-zv-aC6" secondAttribute="centerX" id="ufM-h4-IJo"/>
                             <constraint firstItem="5XI-x6-k1X" firstAttribute="leading" secondItem="riO-2q-eJ3" secondAttribute="leading" constant="10" id="yMi-AK-bj2"/>
                         </constraints>
                     </view>
@@ -1258,69 +1341,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" countDownDuration="5400" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ioq-Lw-pfq">
-                                <rect key="frame" x="0.0" y="200" width="414" height="608"/>
-                                <connections>
-                                    <action selector="requirementIntervalValueChanged:" destination="ihm-KQ-9ZO" eventType="valueChanged" id="od1-B4-Umq"/>
-                                </connections>
-                            </datePicker>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Count Down Interval" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UYe-NH-B7c">
-                                <rect key="frame" x="10" y="160" width="394" height="40"/>
-                                <gestureRecognizers/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="2yy-1G-FTx"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Pnw-JL-hkZ">
-                                <rect key="frame" x="10" y="10" width="115" height="90"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Kp-YQ-asR">
-                                        <rect key="frame" x="0.0" y="0.0" width="115" height="40"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="40" id="SKY-lo-iML"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7KC-bt-jve">
-                                        <rect key="frame" x="0.0" y="50" width="115" height="40"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="40" id="pUK-n3-nUg"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="90" id="hwD-Df-znX"/>
-                                </constraints>
-                            </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Edv-PL-jdo">
-                                <rect key="frame" x="135" y="10" width="269" height="90"/>
-                                <subviews>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="OdI-nx-Ujd">
-                                        <rect key="frame" x="0.0" y="0.0" width="269" height="40"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="40" id="bQV-d2-q8F"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
-                                    </textField>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="H6c-l3-bby">
-                                        <rect key="frame" x="0.0" y="50" width="269" height="40"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="40" id="rLL-mq-0Y0"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
-                                    </textField>
-                                </subviews>
-                            </stackView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="etL-8U-WAh" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                 <rect key="frame" x="314" y="708" width="90" height="90"/>
                                 <constraints>
@@ -1375,60 +1395,35 @@
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
                                 </state>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enabled:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="52I-mN-gdk">
-                                <rect key="frame" x="10" y="110" width="115" height="40"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="pKm-f2-7Zg"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="afi-qu-hdV">
-                                <rect key="frame" x="135" y="114.5" width="51" height="31"/>
-                            </switch>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="M3d-rJ-te8">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
+                                <connections>
+                                    <segue destination="ngF-4H-kgO" kind="embed" identifier="dogsUpdateRequirementManagerViewController" id="GZX-3R-sVV"/>
+                                </connections>
+                            </containerView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="orO-H4-AD3"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="orO-H4-AD3" firstAttribute="bottom" secondItem="etL-8U-WAh" secondAttribute="bottom" constant="10" id="0CH-g1-wdP"/>
-                            <constraint firstItem="Pnw-JL-hkZ" firstAttribute="top" secondItem="orO-H4-AD3" secondAttribute="top" constant="10" id="0G4-OC-Fhk"/>
-                            <constraint firstItem="UYe-NH-B7c" firstAttribute="top" secondItem="52I-mN-gdk" secondAttribute="bottom" constant="10" id="1tT-jX-lBJ"/>
-                            <constraint firstItem="52I-mN-gdk" firstAttribute="trailing" secondItem="Pnw-JL-hkZ" secondAttribute="trailing" id="22f-TD-fDe"/>
-                            <constraint firstItem="Ioq-Lw-pfq" firstAttribute="leading" secondItem="orO-H4-AD3" secondAttribute="leading" id="2Xy-dI-y2c"/>
-                            <constraint firstItem="52I-mN-gdk" firstAttribute="leading" secondItem="Pnw-JL-hkZ" secondAttribute="leading" id="7Ab-oY-zCg"/>
-                            <constraint firstItem="Pnw-JL-hkZ" firstAttribute="leading" secondItem="orO-H4-AD3" secondAttribute="leading" constant="10" id="8Us-jm-sAh"/>
-                            <constraint firstItem="52I-mN-gdk" firstAttribute="top" secondItem="Pnw-JL-hkZ" secondAttribute="bottom" constant="10" id="9FB-0D-J4F"/>
+                            <constraint firstItem="M3d-rJ-te8" firstAttribute="leading" secondItem="orO-H4-AD3" secondAttribute="leading" id="1qS-dT-e9V"/>
                             <constraint firstItem="orO-H4-AD3" firstAttribute="bottom" secondItem="Fyn-yj-60g" secondAttribute="bottom" constant="10" id="AI4-gf-KbP"/>
-                            <constraint firstItem="Ioq-Lw-pfq" firstAttribute="centerX" secondItem="0OB-AJ-Dor" secondAttribute="centerX" id="KBI-t0-iwE"/>
                             <constraint firstItem="orO-H4-AD3" firstAttribute="bottom" secondItem="L3p-WY-59A" secondAttribute="bottom" constant="10" id="Mpw-7H-SIT"/>
-                            <constraint firstItem="Edv-PL-jdo" firstAttribute="top" secondItem="orO-H4-AD3" secondAttribute="top" constant="10" id="OLY-1j-E1G"/>
+                            <constraint firstItem="orO-H4-AD3" firstAttribute="trailing" secondItem="M3d-rJ-te8" secondAttribute="trailing" id="Mu7-sP-2Dc"/>
                             <constraint firstItem="L3p-WY-59A" firstAttribute="leading" secondItem="orO-H4-AD3" secondAttribute="leading" constant="10" id="P98-Vg-k8V"/>
                             <constraint firstItem="orO-H4-AD3" firstAttribute="bottom" secondItem="BEQ-Uc-wNM" secondAttribute="bottom" constant="10" id="PBt-MV-ERs"/>
-                            <constraint firstItem="orO-H4-AD3" firstAttribute="trailing" secondItem="Ioq-Lw-pfq" secondAttribute="trailing" id="PYH-o5-CIz"/>
-                            <constraint firstItem="Ioq-Lw-pfq" firstAttribute="top" secondItem="UYe-NH-B7c" secondAttribute="bottom" id="Q3T-NV-6pd"/>
-                            <constraint firstItem="Edv-PL-jdo" firstAttribute="leading" secondItem="Pnw-JL-hkZ" secondAttribute="trailing" constant="10" id="R1X-mT-vKO"/>
                             <constraint firstItem="orO-H4-AD3" firstAttribute="trailing" secondItem="etL-8U-WAh" secondAttribute="trailing" constant="10" id="UbE-cn-Gy6"/>
-                            <constraint firstItem="afi-qu-hdV" firstAttribute="leading" secondItem="Edv-PL-jdo" secondAttribute="leading" id="f55-J1-Q9i"/>
                             <constraint firstItem="orO-H4-AD3" firstAttribute="trailing" secondItem="Fyn-yj-60g" secondAttribute="trailing" constant="10" id="fWR-Pb-iSh"/>
                             <constraint firstItem="BEQ-Uc-wNM" firstAttribute="leading" secondItem="orO-H4-AD3" secondAttribute="leading" constant="10" id="fm7-ve-CW9"/>
-                            <constraint firstItem="orO-H4-AD3" firstAttribute="bottom" secondItem="Ioq-Lw-pfq" secondAttribute="bottom" id="ksP-Ra-VGn"/>
-                            <constraint firstItem="orO-H4-AD3" firstAttribute="trailing" secondItem="UYe-NH-B7c" secondAttribute="trailing" constant="10" id="o8N-9M-hhD"/>
-                            <constraint firstItem="Edv-PL-jdo" firstAttribute="height" secondItem="Pnw-JL-hkZ" secondAttribute="height" id="oAA-Va-vpO"/>
-                            <constraint firstItem="orO-H4-AD3" firstAttribute="trailing" secondItem="Edv-PL-jdo" secondAttribute="trailing" constant="10" id="oUc-LV-Si9"/>
-                            <constraint firstItem="afi-qu-hdV" firstAttribute="centerY" secondItem="52I-mN-gdk" secondAttribute="centerY" id="qjE-cd-H3m"/>
-                            <constraint firstItem="UYe-NH-B7c" firstAttribute="leading" secondItem="orO-H4-AD3" secondAttribute="leading" constant="10" id="xbQ-bi-A4p"/>
+                            <constraint firstItem="M3d-rJ-te8" firstAttribute="top" secondItem="orO-H4-AD3" secondAttribute="top" id="h1e-E8-92P"/>
+                            <constraint firstItem="orO-H4-AD3" firstAttribute="bottom" secondItem="M3d-rJ-te8" secondAttribute="bottom" id="wmX-Sn-GUV"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="Gy0-XG-Wif"/>
                     <connections>
                         <outlet property="cancelUpdateRequirementButton" destination="L3p-WY-59A" id="iz9-8o-gf8"/>
                         <outlet property="cancelUpdateRequirementButtonBackground" destination="BEQ-Uc-wNM" id="hOh-12-Rpq"/>
-                        <outlet property="requirementDescription" destination="H6c-l3-bby" id="bZA-aw-wyi"/>
-                        <outlet property="requirementEnableStatus" destination="afi-qu-hdV" id="K6y-89-agB"/>
-                        <outlet property="requirementInterval" destination="Ioq-Lw-pfq" id="aIs-CE-KNB"/>
-                        <outlet property="requirementName" destination="OdI-nx-Ujd" id="Z1k-8A-Cbz"/>
                         <outlet property="updateRequirementButton" destination="etL-8U-WAh" id="Gde-b7-a4v"/>
                         <outlet property="updateRequirementButtonBackground" destination="Fyn-yj-60g" id="HnS-tg-nvf"/>
                     </connections>
@@ -1437,7 +1432,43 @@
             </objects>
             <point key="canvasLocation" x="-2265" y="-757"/>
         </scene>
+        <!--Dog Requirement Time Of Day-->
+        <scene sceneID="ErY-O8-nZd">
+            <objects>
+                <viewController title="Dog Requirement Time Of Day" id="Zjt-y9-htp" customClass="DogsRequirementTimeOfDayViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="87k-Ug-zEc">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="564"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="1" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="KE9-sW-ERX">
+                                <rect key="frame" x="0.0" y="44" width="414" height="520"/>
+                                <connections>
+                                    <action selector="willUpdateTimeOfDay:" destination="Zjt-y9-htp" eventType="editingChanged" id="jsA-DP-FU5"/>
+                                    <action selector="willUpdateTimeOfDay:" destination="Zjt-y9-htp" eventType="valueChanged" id="lIe-ee-oaT"/>
+                                </connections>
+                            </datePicker>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="tsl-PX-q6k"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="tsl-PX-q6k" firstAttribute="bottom" secondItem="KE9-sW-ERX" secondAttribute="bottom" id="5Uf-cf-7Pk"/>
+                            <constraint firstItem="KE9-sW-ERX" firstAttribute="leading" secondItem="tsl-PX-q6k" secondAttribute="leading" id="fV3-KS-xmY"/>
+                            <constraint firstItem="KE9-sW-ERX" firstAttribute="top" secondItem="tsl-PX-q6k" secondAttribute="top" id="j6h-bA-dBa"/>
+                            <constraint firstItem="tsl-PX-q6k" firstAttribute="trailing" secondItem="KE9-sW-ERX" secondAttribute="trailing" id="qVm-fy-PA1"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="timeOfDay" destination="KE9-sW-ERX" id="v6l-fk-P9V"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="DEU-ai-82Z" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-5272" y="-1343"/>
+        </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="GZX-3R-sVV"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <image name="alarm" catalog="system" width="124" height="128"/>
         <image name="arrow.backward.circle" catalog="system" width="128" height="121"/>

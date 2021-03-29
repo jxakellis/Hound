@@ -58,7 +58,26 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     }
     
     
-    //MARK: Calculated Properties
+    
+    //MARK: Properties
+    
+    ///Timer that repeats every second to update tableView data, needed due to the fact the timers countdown every second
+    private var loopTimer: Timer?
+    
+    var delegate: HomeMainScreenTableViewControllerDelegate! = nil
+    
+    private var storedLogState: Bool = false
+    var logState: Bool {
+        get {
+            return storedLogState
+        }
+        set(newLogState) {
+            if newLogState == false {
+                firstTimeFade = true
+            }
+            storedLogState = newLogState
+        }
+    }
     
     ///MainTabBarViewController's dogManager copied and transformed to have only active requirements of active dogs present
     private var activeDogManager: DogManager {
@@ -92,19 +111,29 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         
         let activeDogManagerCopy: DogManager = self.activeDogManager.copy() as! DogManager
         
-        for _ in 0..<TimingManager.activeTimers! {
+        for _ in 0..<TimingManager.enabledTimersCount! {
             var lowestTimeInterval: TimeInterval = .infinity
             var lowestRequirement: (String, Requirement)?
             
             for d in 0..<activeDogManagerCopy.dogs.count {
                 for r in 0..<activeDogManagerCopy.dogs[d].dogRequirments.requirements.count {
-                    let currentTimeInterval = try! Date().distance(to: TimingManager.timerDictionary[activeDogManagerCopy.dogs[d].dogSpecifications.getDogSpecification(key: "name")]![activeDogManagerCopy.dogs[d].dogRequirments.requirements[r].requirementName]!!.fireDate)
+    
                     
-                    if currentTimeInterval < lowestTimeInterval
-                    {
-                        lowestTimeInterval = currentTimeInterval
-                        lowestRequirement = try! (activeDogManagerCopy.dogs[d].dogSpecifications.getDogSpecification(key: "name"), activeDogManagerCopy.dogs[d].dogRequirments.requirements[r])
+                    let fireDate: Date? = try! TimingManager.timerDictionary[activeDogManagerCopy.dogs[d].dogSpecifications.getDogSpecification(key: "name")]![activeDogManagerCopy.dogs[d].dogRequirments.requirements[r].requirementName]?.fireDate
+                    
+                    if fireDate == nil {
+                        fatalError("asdadsad")
                     }
+                    else {
+                        let currentTimeInterval = Date().distance(to: fireDate!)
+                        
+                        if currentTimeInterval < lowestTimeInterval
+                        {
+                            lowestTimeInterval = currentTimeInterval
+                            lowestRequirement = try! (activeDogManagerCopy.dogs[d].dogSpecifications.getDogSpecification(key: "name"), activeDogManagerCopy.dogs[d].dogRequirments.requirements[r])
+                        }
+                    }
+                    
                 }
             }
             assortedTimers.append(lowestRequirement!)
@@ -114,27 +143,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         return assortedTimers[priorityIndex]
     }
     
-    //MARK: Properties
-    
-    ///Timer that repeats every second to update tableView data, needed due to the fact the timers countdown every second
-    private var loopTimer: Timer?
-    
-    var delegate: HomeMainScreenTableViewControllerDelegate! = nil
-    
-    private var storedLogState: Bool = false
-    var logState: Bool {
-        get {
-            return storedLogState
-        }
-        set(newLogState) {
-            if newLogState == false {
-                firstTimeFade = true
-            }
-        storedLogState = newLogState
-        }
-    }
-    
-    //MARK: View Management
+    //MARK: Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -159,40 +168,38 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         loopTimer!.invalidate()
     }
     
-    //MARK: Misc Functions
-    
     ///Reloads the tableViews data, has to persist any selected rows so tableView.reloadData() is not sufficent as it tosses the information
     @objc func reloadTable(){
         self.tableView.reloadData()
         
-        if TimingManager.activeTimers == 0 || TimingManager.activeTimers == nil{
+        if TimingManager.enabledTimersCount == 0 || TimingManager.enabledTimersCount == nil{
             self.tableView.separatorStyle = .none
         }
-        else if TimingManager.activeTimers! > 0 {
+        else if TimingManager.enabledTimersCount! > 0 {
             self.tableView.separatorStyle = .singleLine
         }
     }
     
     /*
-    func willFadeAwayLogView(){
-        for cellRow in 0..<TimingManager.activeTimers! {
-            
-            print("willFadeAwayLogView -- cR: \(cellRow)")
-            let cell = tableView(self.tableView, cellForRowAt: IndexPath(row: cellRow, section: 0))
-            let testCell: HomeMainScreenTableViewCellRequirementLog = cell as! HomeMainScreenTableViewCellRequirementLog
-            
-            
-            testCell.toggleFade(newFadeStatus: false, animated: true) { (fadeCompleted) in
-                if cellRow+1 == TimingManager.activeTimers! {
-                    print("reloaded table")
-                    //self.reloadTable()
-                    //self.logState = false
-                }
-            }
-            
-        }
-        
-    }
+     func willFadeAwayLogView(){
+     for cellRow in 0..<TimingManager.activeTimers! {
+     
+     print("willFadeAwayLogView -- cR: \(cellRow)")
+     let cell = tableView(self.tableView, cellForRowAt: IndexPath(row: cellRow, section: 0))
+     let testCell: HomeMainScreenTableViewCellRequirementLog = cell as! HomeMainScreenTableViewCellRequirementLog
+     
+     
+     testCell.toggleFade(newFadeStatus: false, animated: true) { (fadeCompleted) in
+     if cellRow+1 == TimingManager.activeTimers! {
+     print("reloaded table")
+     //self.reloadTable()
+     //self.logState = false
+     }
+     }
+     
+     }
+     
+     }
      */
     
     
@@ -204,16 +211,16 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if TimingManager.activeTimers == 0 || TimingManager.activeTimers == nil {
+        if TimingManager.enabledTimersCount == 0 || TimingManager.enabledTimersCount == nil {
             return 1
         }
-        return TimingManager.activeTimers!
+        return TimingManager.enabledTimersCount!
     }
     
     private var firstTimeFade: Bool = true
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if TimingManager.activeTimers == nil {
+        if TimingManager.enabledTimersCount == nil {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
             
@@ -223,7 +230,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             return cell
             
         }
-        else if TimingManager.activeTimers == 0 {
+        else if TimingManager.enabledTimersCount == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
             
             let testCell = cell as! HomeMainScreenTableViewCellEmpty
@@ -261,7 +268,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             if firstTimeFade == true{
                 testCell.toggleFade(newFadeStatus: true, animated: true)
                 
-                if indexPath.row + 1 == TimingManager.activeTimers {
+                if indexPath.row + 1 == TimingManager.enabledTimersCount {
                     firstTimeFade = false
                 }
             }

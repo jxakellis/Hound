@@ -37,4 +37,9 @@ extension Date {
         let rounded = Date(timeIntervalSinceReferenceDate: (self.timeIntervalSinceReferenceDate / roundingInterval).rounded(.toNearestOrEven) * roundingInterval)
         self = rounded
     }
+    
+    ///Returns Date in respect to self but adjusted to current time zone to reflect
+    func withCurrentTimeZone() -> Date {
+        return Date(timeInterval: TimeInterval(TimeZone.current.secondsFromGMT()), since: self)
+    }
 }

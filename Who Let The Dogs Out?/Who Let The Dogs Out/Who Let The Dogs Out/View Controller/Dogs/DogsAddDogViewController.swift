@@ -19,8 +19,8 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     //assume all requirements are valid due to the fact that they are all checked and validated through DogsRequirementTableViewController
     func didUpdateRequirements(newRequirementList: [Requirement]) {
-        dog.dogRequirments.clearRequirements()
-        try! dog.dogRequirments.addRequirement(newRequirements: newRequirementList)
+        targetDog.dogRequirments.clearRequirements()
+        try! targetDog.dogRequirments.addRequirement(newRequirements: newRequirementList)
     }
     
     //MARK: UITextFieldDelegate
@@ -30,17 +30,9 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         return false
     }
     
-    //MARK: Properties
     
-    var dogsRequirementNavigationViewController: DogsRequirementNavigationViewController! = nil
     
-    var dog = Dog()
-    
-    var delegate: DogsAddDogViewControllerDelegate! = nil
-    
-    var updateDogTuple: (Bool, String) = (false, "")
-    
-    //MARK: View IBOutlets and IBActions
+    //MARK: IB
     
     @IBOutlet weak var dogName: UITextField!
     @IBOutlet weak var dogDescription: UITextField!
@@ -51,14 +43,17 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     @IBOutlet weak var addDogButtonBackground: UIButton!
     @IBOutlet weak var addDogButton: UIButton!
+    
     //When the add button is clicked, runs a series of checks. Makes sure the name and description of the dog is valid, and if so then passes information up chain of view controllers to DogsViewController.
     @IBAction func willAddDog(_ sender: Any) {
         
+        let updatedDog = targetDog.copy() as! Dog
+        
         do{
-            try dog.dogSpecifications.changeDogSpecifications(key: "name", newValue: dogName.text)
-            try dog.dogSpecifications.changeDogSpecifications(key: "description", newValue: dogDescription.text)
+            try updatedDog.dogSpecifications.changeDogSpecifications(key: "name", newValue: dogName.text)
+            try updatedDog.dogSpecifications.changeDogSpecifications(key: "description", newValue: dogDescription.text)
             
-            dog.setEnable(newEnableStatus: dogEnableStatus.isOn)
+            updatedDog.setEnable(newEnableStatus: dogEnableStatus.isOn)
         }
         catch {
             ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: error)
@@ -67,12 +62,12 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         
         
         do{
-            if updateDogTuple.0 == true{
-                try delegate.didUpdateDog(sender: Sender(origin: self, localized: self), formerName: updateDogTuple.1, updatedDog: dog)
+            if isUpdating == true{
+                try delegate.didUpdateDog(sender: Sender(origin: self, localized: self), formerName: try! targetDog.dogSpecifications.getDogSpecification(key: "name"), updatedDog: updatedDog)
                 dismiss(animated: true, completion: nil)
             }
             else{
-                try delegate.didAddDog(sender: Sender(origin: self, localized: self), newDog: dog)
+                try delegate.didAddDog(sender: Sender(origin: self, localized: self), newDog: updatedDog)
                 dismiss(animated: true, completion: nil)
             }
         }
@@ -88,6 +83,16 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     @IBAction func cancelAddDogButton(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
+    
+    //MARK: Properties
+    
+    var dogsRequirementNavigationViewController: DogsRequirementNavigationViewController! = nil
+    
+    var targetDog = Dog()
+    
+    var delegate: DogsAddDogViewControllerDelegate! = nil
+    
+    var isUpdating: Bool = false
     
     //MARK: Main
     
@@ -105,6 +110,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         willInitalize()
         
         ibOutletSetup()
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -123,38 +129,33 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     }
     
     func willInitalize(){
-        if updateDogTuple.0 == true {
-            try! dogName.text = dog.dogSpecifications.getDogSpecification(key: "name")
-            try! dogDescription.text = dog.dogSpecifications.getDogSpecification(key: "description")
-            dogEnableStatus.isOn = dog.getEnable()
-            dogsRequirementNavigationViewController.didPassRequirements(sender: Sender(origin: self, localized: self), passedRequirements: dog.dogRequirments)
+        
+        //if isUpdating == true {
+            try! dogName.text = targetDog.dogSpecifications.getDogSpecification(key: "name")
+            try! dogDescription.text = targetDog.dogSpecifications.getDogSpecification(key: "description")
+            dogEnableStatus.isOn = targetDog.getEnable()
+            dogsRequirementNavigationViewController.didPassRequirements(sender: Sender(origin: self, localized: self), passedRequirements: targetDog.dogRequirments)
+            /*
         }
         else{
             dogName.text = DogConstant.defaultDogSpecificationKeys[0].1
             dogDescription.text = DogConstant.defaultDogSpecificationKeys[1].1
             dogEnableStatus.isOn = DogConstant.defaultEnable
         }
+ */
     }
     
     func willHideButtons(isHidden: Bool){
         if isHidden == false {
-            addDogButton.isEnabled = true
             addDogButton.isHidden = false
-            addDogButtonBackground.isEnabled = true
             addDogButtonBackground.isHidden = false
-            cancelAddDogButton.isEnabled = true
             cancelAddDogButton.isHidden = false
-            cancelAddDogButtonBackground.isEnabled = true
             cancelAddDogButtonBackground.isHidden = false
         }
         else {
-            addDogButton.isEnabled = false
             addDogButton.isHidden = true
-            addDogButtonBackground.isEnabled = false
             addDogButtonBackground.isHidden = true
-            cancelAddDogButton.isEnabled = false
             cancelAddDogButton.isHidden = true
-            cancelAddDogButtonBackground.isEnabled = false
             cancelAddDogButtonBackground.isHidden = true
         }
     }
