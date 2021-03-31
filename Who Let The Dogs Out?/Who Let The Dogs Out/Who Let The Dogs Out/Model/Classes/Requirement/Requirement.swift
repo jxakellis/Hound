@@ -18,6 +18,7 @@ import UIKit
 
 ///Enum full of cases of possible errors from Requirement
 enum RequirementError: Error {
+    case nameBlank
     case nameInvalid
     case descriptionInvalid
     case intervalInvalid
@@ -144,7 +145,11 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
     ///Whether or not the requirement  is enabled, if disabled all requirements will not fire, if parentDog isEnabled == false will not fire
     private var isEnabled: Bool = DogConstant.defaultEnable
     
+    ///Changes isEnabled to newEnableStatus, note if toggling from false to true the execution basis is changed to the current Date()
     func setEnable(newEnableStatus: Bool) {
+        if isEnabled == false && newEnableStatus == true {
+            self.changeExecutionBasis(newExecutionBasis: Date())
+        }
         isEnabled = newEnableStatus
         //HDLL
         //if newEnableStatus == true {
@@ -166,7 +171,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
     var requirementName: String { return storedRequirementName }
     func changeRequirementName(newRequirementName: String?) throws {
         if newRequirementName == nil || newRequirementName == "" {
-            throw RequirementError.nameInvalid
+            throw RequirementError.nameBlank
         }
         storedRequirementName = newRequirementName!
     }

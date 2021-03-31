@@ -10,8 +10,8 @@ import UIKit
 
 //Delegate to pass setup requirement back to table view
 protocol DogsInstantiateRequirementViewControllerDelegate {
-    func didAddRequirement(newRequirement: Requirement) throws
-    func didUpdateRequirement(formerName: String, updatedRequirement: Requirement) throws
+    func didAddRequirement(sender: Sender, newRequirement: Requirement) throws
+    func didUpdateRequirement(sender: Sender, formerName: String, updatedRequirement: Requirement) throws
 }
 
 class DogsInstantiateRequirementViewController: UIViewController, DogsRequirementManagerViewControllerDelegate{
@@ -21,7 +21,7 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
     
     func didAddRequirement(newRequirement: Requirement) {
         do {
-            try delegate.didAddRequirement(newRequirement: newRequirement)
+            try delegate.didAddRequirement(sender: Sender(origin: self, localized: self), newRequirement: newRequirement)
             navigationController?.popViewController(animated: true)
         }
         catch {
@@ -32,7 +32,7 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
     
     func didUpdateRequirement(formerName: String, updatedRequirement: Requirement) {
         do {
-            try delegate.didUpdateRequirement(formerName: formerName, updatedRequirement: updatedRequirement)
+            try delegate.didUpdateRequirement(sender: Sender(origin: self, localized: self), formerName: formerName, updatedRequirement: updatedRequirement)
             navigationController?.popViewController(animated: true)
         }
         catch {
@@ -41,6 +41,8 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
     }
     
     //MARK: IB
+    
+    @IBOutlet weak var pageNavigationBar: UINavigationItem!
     
     @IBOutlet private weak var saveButton: UIBarButtonItem!
         
@@ -60,18 +62,20 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
     
     var dogsRequirementManagerViewController = DogsRequirementManagerViewController()
     
-    var setupTuple: (Requirement, Bool) = (RequirementConstant.defaultRequirement, false)
+    var targetRequirement: Requirement?
     
     //MARK: Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if setupTuple.1 == true {
+        if targetRequirement != nil {
             saveButton.title = "Update"
+            pageNavigationBar.title = "Update Reminder"
         }
         else {
             saveButton.title = "Add"
+            pageNavigationBar.title = "Create Reminder"
         }
         
     }
@@ -80,8 +84,7 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
         if segue.identifier == "dogsInstantiateRequirementManagerViewController"{
             dogsRequirementManagerViewController = segue.destination as! DogsRequirementManagerViewController
             dogsRequirementManagerViewController.delegate = self
-            dogsRequirementManagerViewController.isUpdating = setupTuple.1
-            dogsRequirementManagerViewController.targetRequirement = setupTuple.0
+            dogsRequirementManagerViewController.targetRequirement = targetRequirement
         }
     }
     

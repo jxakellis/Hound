@@ -92,6 +92,4 @@ class SettingsViewController: UIViewController {
         super.viewWillAppear(animated)
         isNotificationEnabledSwitch.isOn = SettingsViewController.isNotificationEnabled
     }
-    
-    
 }

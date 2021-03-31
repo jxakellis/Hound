@@ -88,3 +88,27 @@ class CustomLabel: UILabel {
     
 }
 
+extension UILabel {
+    /*
+     func makeOutLine(oulineColor: UIColor, foregroundColor: UIColor{
+             let strokeTextAttributes = [
+                 NSAttributedString.Key.strokeColor : oulineColor,
+                 NSAttributedString.Key.foregroundColor : foregroundColor,
+                 NSAttributedString.Key.strokeWidth : -4.0,
+                 NSAttributedString.Key.font : font ?? UIFont.systemFontSize
+                 ] as [NSAttributedString.Key : Any]
+             self.attributedText = NSMutableAttributedString(string: self.text ?? "", attributes: strokeTextAttributes)
+         }
+     */
+    
+    func outline(outlineColor: UIColor, insideColor foregroundColor: UIColor, outlineWidth: CGFloat){
+        let strokeTextAttributes = [
+            NSAttributedString.Key.strokeColor : outlineColor,
+            NSAttributedString.Key.foregroundColor : foregroundColor,
+            NSAttributedString.Key.strokeWidth : outlineWidth,
+            NSAttributedString.Key.font : font ?? UIFont.systemFontSize
+            ] as [NSAttributedString.Key : Any]
+        self.attributedText = NSMutableAttributedString(string: self.text ?? "", attributes: strokeTextAttributes)
+    }
+}
+

@@ -24,14 +24,6 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         let sudoDogManager = getDogManager()
         try! sudoDogManager.findDog(dogName: dogName).setEnable(newEnableStatus: isEnabled)
         
-        if isEnabled == true {
-            for r in try! 0..<sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements.count {
-                if try! sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements[r].getEnable() == true {
-                    try! sudoDogManager.findDog(dogName: dogName).dogRequirments.requirements[r].changeExecutionBasis(newExecutionBasis: Date())
-                }
-            }
-        }
-        
         setDogManager(sender: sender, newDogManager: sudoDogManager)
         
         //This is so the cell animates the changing of the switch properly, if this code wasnt implemented then when the table view is reloaded a new batch of cells is produced and that cell has the new switch state, bypassing the animation as the instantant the old one is switched it produces and shows the new switch
@@ -49,10 +41,6 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         let sudoDogManager = getDogManager()
         try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.findRequirement(requirementName: requirementName).setEnable(newEnableStatus: isEnabled)
-        
-        if isEnabled == true {
-            try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.findRequirement(requirementName: requirementName).changeExecutionBasis(newExecutionBasis: Date())
-        }
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
         
@@ -88,20 +76,27 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         if !(sender.localized is DogsViewController){
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
+        if !(sender.origin is DogsMainScreenTableViewController){
+            self.updateDogManagerDependents()
+        }
         
-        self.updateDogManagerDependents()
+        updateTableConstraints()
+    }
+    
+    private func updateTableConstraints(){
+        if getDogManager().dogs.count > 0 {
+            tableView.allowsSelection = true
+            self.tableView.rowHeight = -1.0
+        }
+        else{
+            tableView.allowsSelection = false
+            self.tableView.rowHeight = 100.5
+        }
     }
     
     //Updates different visual aspects to reflect data change of dogManager
     func updateDogManagerDependents(){
-        if getDogManager().dogs.count > 0 {
-            tableView.allowsSelection = true
-        }
-        else{
-            tableView.allowsSelection = false
-        }
-        
-        updateTable()
+        self.updateTable()
     }
     
     //MARK: Main
@@ -130,9 +125,9 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        if getDogManager().dogs.count == 0 {
-            return 1
-        }
+        //if getDogManager().dogs.count == 0 {
+        //    return 1
+        //}
         return getDogManager().dogs.count
     }
     
@@ -146,10 +141,6 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if getDogManager().dogs.count == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
-            return cell
-        }
         
         if indexPath.row == 0{
             let cell = tableView.dequeueReusableCell(withIdentifier: "dogsMainScreenTableViewCellDogDisplay", for: indexPath)
@@ -165,7 +156,6 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             let testCell = cell as! DogsMainScreenTableViewCellRequirementDisplay
             try! testCell.setup(parentDogName: getDogManager().dogs[indexPath.section].dogSpecifications.getDogSpecification(key: "name"), requirementPassed: getDogManager().dogs[indexPath.section].dogRequirments.requirements[indexPath.row-1])
             testCell.delegate = self
-            
             return cell
         }
     }
@@ -190,11 +180,15 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             let sudoDogManager = getDogManager()
             if indexPath.row > 0 {
                 sudoDogManager.dogs[indexPath.section].dogRequirments.requirements.remove(at: indexPath.row-1)
+                setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
+                self.tableView.deleteRows(at: [indexPath], with: .automatic)
             }
             else {
                 sudoDogManager.dogs.remove(at: indexPath.section)
+                setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
+                self.tableView.deleteSections([indexPath.section], with: .automatic)
             }
-            setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
+            
         }
     }
     

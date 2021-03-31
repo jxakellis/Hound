@@ -62,9 +62,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     var delegate: DogsRequirementManagerViewControllerDelegate! = nil
     
-    var targetRequirement: Requirement = RequirementConstant.defaultRequirement
-    
-    var isUpdating: Bool = false
+    var targetRequirement: Requirement? = nil
     
     private var dogsRequirementCountDownViewController = DogsRequirementCountDownViewController()
     
@@ -75,23 +73,37 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //Segmented control setup
-        if targetRequirement.timingStyle == .countDown {
+        if targetRequirement == nil {
             segmentedControl.selectedSegmentIndex = 0
             countDownContainerView.isHidden = false
             timeOfDayContainerView.isHidden = true
             
+            requirementName.text = nil
+            
+            requirementDescription.text = nil
+            
+            requirementEnableStatus.isOn = true
         }
-        else {
-            segmentedControl.selectedSegmentIndex = 1
-            countDownContainerView.isHidden = true
-            timeOfDayContainerView.isHidden = false
+        else{
+            
+            //Segmented control setup
+            if targetRequirement!.timingStyle == .countDown {
+                segmentedControl.selectedSegmentIndex = 0
+                countDownContainerView.isHidden = false
+                timeOfDayContainerView.isHidden = true
+                
+            }
+            else {
+                segmentedControl.selectedSegmentIndex = 1
+                countDownContainerView.isHidden = true
+                timeOfDayContainerView.isHidden = false
+            }
+            
+            //Data setup
+            requirementName.text = targetRequirement!.requirementName
+            requirementDescription.text = targetRequirement!.requirementDescription
+            requirementEnableStatus.isOn = targetRequirement!.getEnable()
         }
-        
-        //Data setup
-        requirementName.text = targetRequirement.requirementName
-        requirementDescription.text = targetRequirement.requirementDescription
-        requirementEnableStatus.isOn = targetRequirement.getEnable()
         
         //Keyboard first responder management
         self.setupToHideKeyboardOnTapOnView()
@@ -101,6 +113,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         dogsRequirementTimeOfDayViewController.timeOfDay.addGestureRecognizer(tap)
         requirementName.delegate = self
         requirementDescription.delegate = self
+        
         
         // Do any additional setup after loading the view.
     }
@@ -113,7 +126,14 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     }
     
     func willSaveRequirement(){
-        let updatedRequirement = targetRequirement.copy() as! Requirement
+        let updatedRequirement: Requirement!
+        if targetRequirement != nil{
+            updatedRequirement = targetRequirement!.copy() as? Requirement
+        }
+        else {
+            updatedRequirement = Requirement()
+        }
+        
         
         do {
             try updatedRequirement.changeRequirementName(newRequirementName: requirementName.text)
@@ -131,21 +151,22 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
                 updatedRequirement.changeTimingStyle(newTimingStyle: .timeOfDay)
             }
             
-            if isUpdating == false {
+            if targetRequirement == nil {
                 delegate.didAddRequirement(newRequirement: updatedRequirement)
             }
             else {
                 
                 //If the executionInterval (the countdown duration) is changed then is changes its execution interval, this is because (for example) if you were 5 minutes in to a 1 hour countdown but then change it to 30 minutes, you would want to be 0 minutes into the new timer and not 5 minutes in like previously.
-                if updatedRequirement.countDownComponents.executionInterval != targetRequirement.countDownComponents.executionInterval && updatedRequirement.timingStyle == .countDown{
+                if updatedRequirement.countDownComponents.executionInterval != targetRequirement!.countDownComponents.executionInterval && updatedRequirement.timingStyle == .countDown{
                     updatedRequirement.changeExecutionBasis(newExecutionBasis: Date())
                     updatedRequirement.snoozeComponents.changeSnooze(newSnoozeStatus: false)
                 }
-                else if updatedRequirement.timeOfDayComponents.timeOfDayComponent != targetRequirement.timeOfDayComponents.timeOfDayComponent && updatedRequirement.timingStyle == .timeOfDay{
+                else if updatedRequirement.timeOfDayComponents.timeOfDayComponent != targetRequirement!.timeOfDayComponents.timeOfDayComponent && updatedRequirement.timingStyle == .timeOfDay{
                     updatedRequirement.changeExecutionBasis(newExecutionBasis: Date())
                     updatedRequirement.snoozeComponents.changeSnooze(newSnoozeStatus: false)
                 }
-                delegate.didUpdateRequirement(formerName: targetRequirement.requirementName, updatedRequirement: updatedRequirement)
+                
+                delegate.didUpdateRequirement(formerName: targetRequirement!.requirementName, updatedRequirement: updatedRequirement)
             }
         }
         catch {
@@ -161,13 +182,13 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         if segue.identifier == "dogsRequirementCountDownViewController"{
             dogsRequirementCountDownViewController = segue.destination as! DogsRequirementCountDownViewController
             dogsRequirementCountDownViewController.delegate = self
-            dogsRequirementCountDownViewController.passedInterval = targetRequirement.countDownComponents.executionInterval
+            dogsRequirementCountDownViewController.passedInterval = targetRequirement?.countDownComponents.executionInterval
             
         }
         if segue.identifier == "dogsRequirementTimeOfDayViewController"{
             dogsRequirementTimeOfDayViewController = segue.destination as! DogsRequirementTimeOfDayViewController
             dogsRequirementTimeOfDayViewController.delegate = self
-            dogsRequirementTimeOfDayViewController.passedTimeOfDay = targetRequirement.timeOfDayComponents.nextTimeOfDay
+            dogsRequirementTimeOfDayViewController.passedTimeOfDay = targetRequirement?.timeOfDayComponents.nextTimeOfDay
             
         }
         

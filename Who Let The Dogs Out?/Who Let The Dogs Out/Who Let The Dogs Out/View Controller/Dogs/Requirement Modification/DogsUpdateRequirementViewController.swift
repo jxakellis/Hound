@@ -93,7 +93,6 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
         if segue.identifier == "dogsUpdateRequirementManagerViewController"{
             dogsRequirementManagerViewController = segue.destination as! DogsRequirementManagerViewController
             dogsRequirementManagerViewController.targetRequirement = self.targetRequirement
-            dogsRequirementManagerViewController.isUpdating = true
             dogsRequirementManagerViewController.delegate = self
         }
     }

@@ -19,7 +19,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     func didToggleEnable(sender: Sender, requirementName: String, newEnableStatus: Bool) {
         let sudoRequirementManager = getRequirementManager()
         do {
-           try sudoRequirementManager.findRequirement(requirementName: requirementName).setEnable(newEnableStatus: newEnableStatus)
+            try sudoRequirementManager.findRequirement(requirementName: requirementName).setEnable(newEnableStatus: newEnableStatus)
             setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
         }
         catch {
@@ -34,16 +34,16 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     var dogsInstantiateRequirementViewController = DogsInstantiateRequirementViewController()
     
     ///When this function is called through a delegate, it adds the information to the list of requirements and updates the cells to display it
-    func didAddRequirement(newRequirement: Requirement) throws{
+    func didAddRequirement(sender: Sender, newRequirement: Requirement) throws{
         var sudoRequirementManager = getRequirementManager()
         try sudoRequirementManager.addRequirement(newRequirement: newRequirement)
-        setRequirementManager(sender: Sender(origin: self, localized: self), newRequirementManager: sudoRequirementManager)
+        setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
     }
     
-    func didUpdateRequirement(formerName: String, updatedRequirement: Requirement) throws {
+    func didUpdateRequirement(sender: Sender, formerName: String, updatedRequirement: Requirement) throws {
         var sudoRequirementManager = getRequirementManager()
         try sudoRequirementManager.changeRequirement(requirementToBeChanged: formerName, newRequirement: updatedRequirement)
-        setRequirementManager(sender: Sender(origin: self, localized: self), newRequirementManager: sudoRequirementManager)
+        setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
     }
     
     ///Allows for unwind to this page when back button is clicked in requirement editor
@@ -66,10 +66,21 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
             delegate.didUpdateRequirements(newRequirementList: getRequirementManager().requirements)
         }
         
-        if !(sender.origin is DogsRequirementTableViewCell){
+        if !(sender.origin is DogsRequirementTableViewCell) && !(sender.origin is DogsRequirementTableViewController){
             updateRequirementManagerDependents()
         }
-       
+        
+        updateTableConstraints()
+        
+    }
+    
+    private func updateTableConstraints(){
+        if getRequirementManager().requirements.count > 0{
+            self.tableView.rowHeight = -1
+        }
+        else {
+            self.tableView.rowHeight = 65.5
+        }
     }
     
     func updateRequirementManagerDependents() {
@@ -79,7 +90,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     //MARK: Properties
     
     ///Used for when a requirement is selected (aka clicked) on the table view in order to pass information to open the editing page for the requirement
-    private var selectedTuple: (Requirement, Bool)? = nil
+    private var selectedRequirement: Requirement?
     
     var delegate: DogsRequirementTableViewControllerDelegate! = nil
     
@@ -118,18 +129,14 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     ///Returns the number of cells present in section (currently only 1 section)
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        if getRequirementManager().requirements.count == 0{
-            return 1
-        }
+        //if getRequirementManager().requirements.count == 0{
+        //    return 1
+        //}
         return getRequirementManager().requirements.count
     }
     
     ///Configures cells at the given index path, pulls from requirement manager requirements to get configuration parameters for each cell, corrosponding cell goes to corrosponding index of requirement manager requirement e.g. cell 1 at [0]
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if getRequirementManager().requirements.count == 0{
-            let emptyCell = tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
-            return emptyCell
-        }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "dogsRequirementTableViewCell", for: indexPath)
         
@@ -155,8 +162,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        selectedTuple = (getRequirementManager().requirements[indexPath.row], true)
-        
+        selectedRequirement = getRequirementManager().requirements[indexPath.row]
         self.performSegue(withIdentifier: "dogsInstantiateRequirementViewController", sender: self)
         
     }
@@ -166,6 +172,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
         if editingStyle == .delete && sudoRequirementManager.requirements.count > 0{
             sudoRequirementManager.requirements.remove(at: indexPath.row)
             setRequirementManager(sender: Sender(origin: self, localized: self), newRequirementManager: sudoRequirementManager)
+            self.tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
     
@@ -186,9 +193,9 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
             dogsInstantiateRequirementViewController = segue.destination as! DogsInstantiateRequirementViewController
             dogsInstantiateRequirementViewController.delegate = self
             
-            if self.selectedTuple != nil {
-                dogsInstantiateRequirementViewController.setupTuple = self.selectedTuple!
-                self.selectedTuple = nil
+            if selectedRequirement != nil {
+                dogsInstantiateRequirementViewController.targetRequirement = selectedRequirement!
+                selectedRequirement = nil
             }
             
         }

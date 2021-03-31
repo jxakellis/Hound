@@ -33,6 +33,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     
     //MARK: IB
+    @IBOutlet weak var pageTitle: CustomLabel!
     
     @IBOutlet weak var dogName: UITextField!
     @IBOutlet weak var dogDescription: UITextField!

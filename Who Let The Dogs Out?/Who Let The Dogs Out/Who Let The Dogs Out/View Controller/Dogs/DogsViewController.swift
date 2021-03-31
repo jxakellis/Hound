@@ -29,7 +29,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     ///If a dog was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the dogs information
     func didSelectDog(indexPathSection dogIndex: Int) {
         
-        willOpenDog(dogToBeOpened: getDogManager().dogs[dogIndex])
+        willOpenDog(dogToBeOpened: getDogManager().dogs[dogIndex], isAddingRequirement: false)
         
     }
     
@@ -145,29 +145,36 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     //MARK: Navigation To Dog Addition and Modification
     
     ///Opens the dogsAddDogViewController, if a dog is passed (which is required) then instead of opening a fresh add dog page, opens up the corrosponding one for the dog
-    private func willOpenDog(dogToBeOpened: Dog? = nil ){
+    private func willOpenDog(dogToBeOpened: Dog? = nil, isAddingRequirement: Bool = false){
         
         self.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
+        
         
         ///Is opening a dog
         if dogToBeOpened != nil {
         //Conversion of "DogsAddDogViewController" to update mode
+            if isAddingRequirement == true {
+                dogsAddDogViewController.dogsRequirementNavigationViewController.dogsRequirementTableViewController.performSegue(withIdentifier: "dogsInstantiateRequirementViewController", sender: self)
+            }
+            
         dogsAddDogViewController.isUpdating = true
         dogsAddDogViewController.targetDog = dogToBeOpened!
         dogsAddDogViewController.willInitalize()
-        
-        dogsAddDogViewController.addDogButton.setTitle("Update Dog", for: .normal)
+            dogsAddDogViewController.pageTitle.text = "Update Dog"
+            
+        }
+        else {
+            dogsAddDogViewController.pageTitle.text = "Create Dog"
         }
         
     }
     
     @objc private func willOpenDog(sender: UIButton) {
-        print("sender tag \(sender.tag)")
         if sender.tag == 0 {
-            self.willOpenDog(dogToBeOpened: nil)
+            self.willOpenDog(dogToBeOpened: nil, isAddingRequirement: false)
         }
         else {
-            self.willOpenDog(dogToBeOpened: getDogManager().dogs[sender.tag-1])
+            self.willOpenDog(dogToBeOpened: getDogManager().dogs[sender.tag-1], isAddingRequirement: true)
         }
     }
     
@@ -176,6 +183,8 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     private var addStatus: Bool = false
     private var addButtons: [ScaledButton] = []
     private var addButtonsBackground: [ScaledButton] = []
+    private var addButtonsLabel: [UILabel] = []
+    private var addButtonsLabelBackground: [UILabel] = []
     
     ///Changes the status of the subAddButtons which navigate to add a dog, add a requirement for "DOG NAME", add a requirement for "DOG NAME 2" etc, from present and active to hidden, includes animation
     private func changeAddStatus(newAddStatus: Bool){
@@ -191,14 +200,15 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             willAddDogButton.tag = 0
             willAddDogButton.addTarget(self, action: #selector(willOpenDog(sender:)), for: .touchUpInside)
             
-            let willAddDogButtonBackground = ScaledButton(frame: CGRect(origin: CGPoint(x: originXWithAlignedTrailing, y: willAddButton.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
-            //TRADITIONAL willAddDogButtonBackground.setImage(UIImage(systemName: "plus.circle"), for: .normal)
-            willAddDogButtonBackground.setImage(UIImage(systemName: "plus.circle.fill"), for: .normal)
-            willAddDogButtonBackground.tintColor = .systemBackground
-            willAddDogButtonBackground.isUserInteractionEnabled = false
+            let willAddDogButtonBackground = createAddButtonBackground(willAddDogButton)
+            
+            let willAddDogButtonLabel = createAddButtonLabel(willAddDogButton, text: "Add A New Dog")
+            let willAddDogButtonLabelBackground = createAddButtonLabelBackground(willAddDogButtonLabel)
             
             addButtons.append(willAddDogButton)
             addButtonsBackground.append(willAddDogButtonBackground)
+            addButtonsLabel.append(willAddDogButtonLabel)
+            addButtonsLabelBackground.append(willAddDogButtonLabelBackground)
             
             for dogIndex in 0..<getDogManager().dogs.count{
                 guard maximumSubButtonCount > addButtons.count else {
@@ -206,37 +216,49 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                 }
                 
                 let willAddRequirementButton = ScaledButton(frame: CGRect(origin: CGPoint(x: addButtons.last!.frame.origin.x, y: addButtons.last!.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
-                willAddRequirementButton.setImage(UIImage(systemName: "plus.circle.fill")!, for: .normal)
+                //TRADITIONAL willAddRequirementButton.setImage(UIImage(systemName: "plus.circle.fill")!, for: .normal)
+                willAddRequirementButton.setImage(UIImage(systemName: "plus.circle")!, for: .normal)
                 willAddRequirementButton.tintColor = .link
                 willAddRequirementButton.tag = dogIndex+1
                 willAddRequirementButton.addTarget(self, action: #selector(willOpenDog(sender:)), for: .touchUpInside)
                 
-                let willAddRequirementButtonBackground = ScaledButton(frame: CGRect(origin: CGPoint(x: addButtons.last!.frame.origin.x, y: addButtons.last!.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
-                willAddRequirementButtonBackground.setImage(UIImage(systemName: "plus.circle")!, for: .normal)
-                willAddRequirementButtonBackground.tintColor = .systemBackground
-                willAddRequirementButtonBackground.isUserInteractionEnabled = false
+                let willAddRequirementButtonBackground = createAddButtonBackground(willAddRequirementButton)
+                
+                let willAddRequirementButtonLabel = createAddButtonLabel(willAddRequirementButton, text: "Add A Reminder For \(try! getDogManager().dogs[dogIndex].dogSpecifications.getDogSpecification(key: "name"))")
+                let willAddRequirementButtonLabelBackground = createAddButtonLabelBackground(willAddRequirementButtonLabel)
                 
                 addButtons.append(willAddRequirementButton)
                 addButtonsBackground.append(willAddRequirementButtonBackground)
-                
+                addButtonsLabel.append(willAddRequirementButtonLabel)
+                addButtonsLabelBackground.append(willAddRequirementButtonLabelBackground)
             }
             for buttonIndex in 0..<addButtons.count{
                 let button = addButtons[buttonIndex]
                 let buttonBackground = addButtonsBackground[buttonIndex]
+                let buttonLabel = addButtonsLabel[buttonIndex]
+                let buttonLabelBackground = addButtonsLabelBackground[buttonIndex]
                 
                 let buttonOrigin = button.frame.origin
+                let buttonLabelOrigin = buttonLabel.frame.origin
                 
                 let originYWithAlignedMiddle = willAddButton.frame.midY - (button.frame.height/2)
                 
-                button.frame.origin = CGPoint(x: button.frame.origin.x, y: originYWithAlignedMiddle)
+                button.frame.origin.y = originYWithAlignedMiddle
                 buttonBackground.frame.origin = button.frame.origin
+                buttonLabel.frame.origin.x = self.view.safeAreaLayoutGuide.layoutFrame.maxX
+                buttonLabelBackground.frame.origin.x = self.view.safeAreaLayoutGuide.layoutFrame.maxX
                 
-                //button.alpha = 0
+                //button.alpha = 0-
+                view.addSubview(buttonLabelBackground)
+                view.addSubview(buttonLabel)
                 view.addSubview(buttonBackground)
                 view.addSubview(button)
+                
                 UIView.animate(withDuration: AnimationConstant.HomeLogStateAnimate.rawValue) {
                     button.frame.origin = buttonOrigin
                     buttonBackground.frame.origin = buttonOrigin
+                    buttonLabel.frame.origin = buttonLabelOrigin
+                    buttonLabelBackground.frame.origin = buttonLabelOrigin
                     //button.alpha = 1
                 } completion: { (completed) in
                     //
@@ -251,14 +273,19 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             for buttonIndex in 0..<addButtons.count{
                 let button = addButtons[buttonIndex]
                 let buttonBackground = addButtonsBackground[buttonIndex]
+                let buttonLabel = addButtonsLabel[buttonIndex]
+                let buttonLabelBackground = addButtonsLabelBackground[buttonIndex]
+                
                 //button.alpha = 1
                 let originYWithAlignedMiddle = willAddButton.frame.midY - (button.frame.height/2)
                 
                 UIView.animate(withDuration: AnimationConstant.HomeLogStateAnimate.rawValue) {
                     
                     
-                    button.frame.origin = CGPoint(x: button.frame.origin.x, y: originYWithAlignedMiddle)
-                    buttonBackground.frame.origin = CGPoint(x: button.frame.origin.x, y: originYWithAlignedMiddle)
+                    button.frame.origin.y = originYWithAlignedMiddle
+                    buttonBackground.frame.origin.y = originYWithAlignedMiddle
+                    buttonLabel.frame.origin.x = self.view.safeAreaLayoutGuide.layoutFrame.maxX
+                    buttonLabelBackground.frame.origin.x = self.view.safeAreaLayoutGuide.layoutFrame.maxX
                     //button.alpha = 0
                 } completion: { (completed) in
                     DispatchQueue.main.asyncAfter(deadline: .now() + AnimationConstant.HomeLogStateDisappearDelay.rawValue) {
@@ -266,14 +293,61 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                         button.removeFromSuperview()
                         buttonBackground.isHidden = true
                         buttonBackground.removeFromSuperview()
+                        buttonLabel.isHidden = true
+                        buttonLabel.removeFromSuperview()
+                        buttonLabelBackground.isHidden = true
+                        buttonLabelBackground.removeFromSuperview()
                     }
                 }
 
             }
             addButtons.removeAll()
             addButtonsBackground.removeAll()
+            addButtonsLabel.removeAll()
+            addButtonsLabelBackground.removeAll()
         }
         addStatus = newAddStatus
+    }
+    
+    
+    ///Creates a label for a given add button with the specified text, handles all frame, origin, and size related things
+    private func createAddButtonLabel(_ button: ScaledButton, text: String) -> UILabel {
+        let buttonLabelFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        let buttonLabelSize = text.withBounded(font: buttonLabelFont)
+        let buttonLabel = UILabel(frame: CGRect(origin: CGPoint (x: button.frame.origin.x - buttonLabelSize.width, y: button.frame.midY - (buttonLabelSize.height/2)),size: buttonLabelSize ))
+            
+        buttonLabel.attributedText = NSAttributedString(string: text, attributes: [.font: buttonLabelFont])
+        buttonLabel.textColor = .link
+        
+        //buttonLabel.isHidden = true
+        
+        buttonLabel.isUserInteractionEnabled = false
+        buttonLabel.adjustsFontSizeToFitWidth = true
+         
+        return buttonLabel
+    }
+    
+    ///Creates a label for a given add button with the specified text, handles all frame, origin, and size related things
+    private func createAddButtonLabelBackground(_ label: UILabel) -> UILabel {
+        let buttonLabel = UILabel(frame: label.frame)
+        buttonLabel.font = label.font
+        buttonLabel.text = label.text
+        buttonLabel.outline(outlineColor: .systemBackground, insideColor: .link, outlineWidth: 15)
+        
+        buttonLabel.isUserInteractionEnabled = false
+        buttonLabel.adjustsFontSizeToFitWidth = true
+         
+        return buttonLabel
+    }
+    
+    
+    
+    private func createAddButtonBackground(_ button: ScaledButton) -> ScaledButton {
+        let buttonBackground = ScaledButton(frame: button.frame)
+        buttonBackground.setImage(UIImage(systemName: "plus.circle.fill"), for: .normal)
+        buttonBackground.tintColor = .systemBackground
+        buttonBackground.isUserInteractionEnabled = false
+        return buttonBackground
     }
     
     @IBAction func willAddButton(_ sender: Any) {

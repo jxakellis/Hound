@@ -126,14 +126,11 @@ class TimingManager{
         }
         else if requirement.timerMode == .timeOfDay {
             if requirement.intervalRemaining == nil {
-                print("missed TOD alarm")
                 executionDate = Date()
                 return executionDate
             }
             else {
-                print("waiting for TOD alarm to strike")
                 executionDate = requirement.timeOfDayComponents.nextTimeOfDay
-                print("current: \(Date().description), exeDate: \(executionDate.description)")
                 return executionDate
             }
         }

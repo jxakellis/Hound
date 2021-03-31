@@ -59,8 +59,6 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     @IBOutlet weak var cancelWillLog: UIButton!
     @IBOutlet weak var cancelWillLogBackground: UIButton!
     
-    @IBOutlet weak var willLogLabel: UILabel!
-    
     @IBAction func willLog(_ sender: Any) {
         
         //off to on
@@ -90,8 +88,8 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //self.willLogLabel.isEnabled = false
-        self.willLogLabel.isHidden = true
+        self.view.bringSubviewToFront(cancelWillLogBackground)
+        self.view.bringSubviewToFront(cancelWillLog)
         
         self.view.bringSubviewToFront(willLogBackground)
         self.view.bringSubviewToFront(willLog)
@@ -239,18 +237,8 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     }
     
     private func toggleWillLogVisibility(isHidden: Bool){
-        if isHidden == true {
-            self.willLog.isHidden = true
-            //self.willLog.isEnabled = false
-            self.willLogBackground.isHidden = true
-            //self.willLogBackground.isEnabled = false
-        }
-        else {
-            self.willLog.isHidden = false
-            //self.willLog.isEnabled = true
-            self.willLogBackground.isHidden = false
-            //self.willLogBackground.isEnabled = true
-        }
+            self.willLog.isHidden = isHidden
+            self.willLogBackground.isHidden = isHidden
     }
     
     private func toggleWillLogTouch(isTouchEnabled: Bool){
@@ -258,18 +246,8 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     }
     
     private func toggleCancelWillLogVisibility(isHidden: Bool){
-        if isHidden == true {
-            self.cancelWillLog.isHidden = true
-            //self.cancelWillLog.isEnabled = false
-            self.cancelWillLogBackground.isHidden = true
-            //self.cancelWillLogBackground.isEnabled = false
-        }
-        else {
-            self.cancelWillLog.isHidden = false
-            //self.cancelWillLog.isEnabled = true
-            self.cancelWillLogBackground.isHidden = false
-            //self.cancelWillLogBackground.isEnabled = true
-        }
+            self.cancelWillLog.isHidden = isHidden
+            self.cancelWillLogBackground.isHidden = isHidden
     }
     
     private func toggleCancelWillLogTouch(isTouchEnabled: Bool){

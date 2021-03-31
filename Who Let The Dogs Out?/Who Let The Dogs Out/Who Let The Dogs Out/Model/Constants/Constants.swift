@@ -9,16 +9,16 @@
 import Foundation
 
 enum DogConstant {
-    private static let nameTuple: (String, String) = ("name", "Fido")
-    private static let descriptionTuple: (String, String) = ("description", "Friendly")
+    private static let nameTuple: (String, String) = ("name", "Bella")
+    private static let descriptionTuple: (String, String) = ("description", "Friendly puppy")
     static let defaultEnable: Bool = true
     static let defaultDogSpecificationKeys: [(String, String)] = [nameTuple, descriptionTuple]
 }
 
 enum RequirementConstant {
     static let defaultName = "Potty"
-    static let defaultDescription = "Take Dog Out"
-    static let defaultTimeInterval = (3600*2.5)
+    static let defaultDescription = "Take dog outside"
+    static let defaultTimeInterval = (3600*2.0)
     static let defaultEnable: Bool = true
     static var defaultRequirement: Requirement { let req = Requirement()
         try! req.changeRequirementName(newRequirementName: defaultName)
@@ -31,46 +31,73 @@ enum RequirementConstant {
 
 enum DogManagerConstant {
     
-    static var defaultDog: Dog {
-        let defaultDog = Dog()
+    static var testingDog: Dog {
+        let testingDog = Dog()
     
-        let defaultRequirementOne = Requirement()
-        try! defaultRequirementOne.changeRequirementName(newRequirementName: "Potty")
-        try! defaultRequirementOne.changeRequirementDescription(newRequirementDescription: "Take The Dog Out")
-        defaultRequirementOne.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval((3600*3)+(3600*(1/3))))
+        let testingRequirementOne = Requirement()
+        try! testingRequirementOne.changeRequirementName(newRequirementName: "Potty")
+        try! testingRequirementOne.changeRequirementDescription(newRequirementDescription: "Take Dog Outside")
+        testingRequirementOne.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval((3600*3)+(3600*(1/3))))
         //defaultRequirementOne.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(50))
-        defaultRequirementOne.setEnable(newEnableStatus: false)
-        try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementOne)
+        testingRequirementOne.setEnable(newEnableStatus: false)
+        try! testingDog.dogRequirments.addRequirement(newRequirement: testingRequirementOne)
  
         
-        let defaultRequirementTwo = Requirement()
-        try! defaultRequirementTwo.changeRequirementName(newRequirementName: "Food")
-        try! defaultRequirementTwo.changeRequirementDescription(newRequirementDescription: "Feed The Dog")
-        //defaultRequirementTwo.executionInterval = TimeInterval((3600*7)+(3600*0.75))
-        defaultRequirementTwo.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(180))
-        defaultRequirementTwo.setEnable(newEnableStatus: false)
-        try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementTwo)
+        let testingRequirementTwo = Requirement()
+        try! testingRequirementTwo.changeRequirementName(newRequirementName: "Food")
+        try! testingRequirementTwo.changeRequirementDescription(newRequirementDescription: "Feed The Dog")
+        testingRequirementTwo.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(180))
+        testingRequirementTwo.setEnable(newEnableStatus: false)
+        try! testingDog.dogRequirments.addRequirement(newRequirement: testingRequirementTwo)
         
-        let defaultRequirementThree = Requirement()
-        try! defaultRequirementThree.changeRequirementName(newRequirementName: "Brush")
-        try! defaultRequirementThree.changeRequirementDescription(newRequirementDescription: "Brush His Fur Out")
-        //defaultRequirementThree.interval = TimeInterval((3600*7)+(3600*0.75))
-        defaultRequirementThree.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(3600))
-        defaultRequirementThree.setEnable(newEnableStatus: false)
-        try! defaultDog.dogRequirments.addRequirement(newRequirement: defaultRequirementThree)
+        let testingRequirementThree = Requirement()
+        try! testingRequirementThree.changeRequirementName(newRequirementName: "Brush")
+        try! testingRequirementThree.changeRequirementDescription(newRequirementDescription: "Brush His Fur Out")
+        //testingRequirementThree.interval = TimeInterval((3600*7)+(3600*0.75))
+        testingRequirementThree.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(3600))
+        testingRequirementThree.setEnable(newEnableStatus: false)
+        try! testingDog.dogRequirments.addRequirement(newRequirement: testingRequirementThree)
         
         for i in 0..<DogConstant.defaultDogSpecificationKeys.count{
-        try! defaultDog.dogSpecifications.changeDogSpecifications(key: DogConstant.defaultDogSpecificationKeys[i].0, newValue: DogConstant.defaultDogSpecificationKeys[i].1)
+        try! testingDog.dogSpecifications.changeDogSpecifications(key: DogConstant.defaultDogSpecificationKeys[i].0, newValue: DogConstant.defaultDogSpecificationKeys[i].1)
         }
         
-        defaultDog.setEnable(newEnableStatus: DogConstant.defaultEnable)
+        testingDog.setEnable(newEnableStatus: DogConstant.defaultEnable)
     
-        return defaultDog
+        return testingDog
+    }
+    
+    static var userDefaultDog: Dog {
+        let userDefaultDog = Dog()
+        
+        try! userDefaultDog.dogRequirments.addRequirement(newRequirement: RequirementConstant.defaultRequirement)
+        
+        let userDefaultRequirementTwo = Requirement()
+        try! userDefaultRequirementTwo.changeRequirementName(newRequirementName: "Food")
+        try! userDefaultRequirementTwo.changeRequirementDescription(newRequirementDescription: "Feed the dog")
+        userDefaultRequirementTwo.countDownComponents.changeExecutionInterval(newExecutionInterval: 60*60*8.0)
+        try! userDefaultDog.dogRequirments.addRequirement(newRequirement: userDefaultRequirementTwo)
+        
+        let userDefaultRequirementThree = Requirement()
+        try! userDefaultRequirementThree.changeRequirementName(newRequirementName: "Play")
+        try! userDefaultRequirementThree.changeRequirementDescription(newRequirementDescription: "Play with the dog")
+        userDefaultRequirementThree.changeTimingStyle(newTimingStyle: .timeOfDay)
+        try! userDefaultRequirementThree.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 15)
+        try! userDefaultRequirementThree.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 30)
+        try! userDefaultDog.dogRequirments.addRequirement(newRequirement: userDefaultRequirementThree)
+        
+        for i in 0..<DogConstant.defaultDogSpecificationKeys.count{
+        try! userDefaultDog.dogSpecifications.changeDogSpecifications(key: DogConstant.defaultDogSpecificationKeys[i].0, newValue: DogConstant.defaultDogSpecificationKeys[i].1)
+        }
+        
+        userDefaultDog.setEnable(newEnableStatus: DogConstant.defaultEnable)
+    
+        return userDefaultDog
     }
     
     static var defaultDogManager: DogManager {
         var sudoDogManager = DogManager()
-        try! sudoDogManager.addDog(dogAdded: DogManagerConstant.defaultDog.copy() as! Dog)
+        try! sudoDogManager.addDog(dogAdded: DogManagerConstant.userDefaultDog.copy() as! Dog)
         return sudoDogManager.copy() as! DogManager
     }
 }

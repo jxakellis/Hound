@@ -13,7 +13,7 @@ enum StringExtensionError: Error {
 }
 
 extension String {
-    //Converts a time interval to a more readable string to display, e.g. 3600.0 Time interval to 1 hour 0 minutes or 7320.0 to 2 hours 2 minutes
+    ///Converts a time interval to a more readable string to display, e.g. 3600.0 Time interval to 1 hour 0 minutes or 7320.0 to 2 hours 2 minutes
     static func convertToReadable(interperateTimeInterval: TimeInterval) -> String {
         
         let intTime = abs(Int(interperateTimeInterval.rounded()))
@@ -38,6 +38,7 @@ extension String {
         return readableString
     }
     
+    ///Converts dateComponents with .hour and .minute to a readable string, e.g. 8:56AM or 2:23 PM
     static func convertToReadable(interperatedDateComponents: DateComponents) throws -> String {
         
         if interperatedDateComponents.hour == nil || interperatedDateComponents.minute == nil {
@@ -96,6 +97,7 @@ extension String {
         }
     }
     
+    ///Adds given text with given font to the end of the string, converts whole thing to NSAttributedString
     func withFontAtEnd(text: String, font customFont: UIFont) -> NSAttributedString {
         let originalString = NSMutableAttributedString(string: self)
         
@@ -107,6 +109,7 @@ extension String {
         return originalString
     }
     
+    ///Adds given text with given font to the start of the string, converts whole thing to NSAttributedString
     func withFontAtBeginning(text: String, font customFont: UIFont) -> NSAttributedString {
         let originalString = NSMutableAttributedString(string: self)
         
@@ -116,5 +119,36 @@ extension String {
         customAttributedString.append(originalString)
         
         return customAttributedString
+    }
+    
+    ///Takes the string with a given font and height and finds the width the text takes up
+    func withBoundedWidth(font: UIFont = UIFont.systemFont(ofSize: 17), height: CGFloat) -> CGSize {
+            let attrString = NSAttributedString(string: self, attributes: [.font: font])
+        
+            let bounds = attrString.boundingRect(with: CGSize(width: .greatestFiniteMagnitude, height: height), options: .usesLineFragmentOrigin, context: nil)
+        
+            let size = CGSize(width: bounds.width, height: bounds.height)
+        
+            return size
+        
+    }
+    
+    ///Takes the string with a given font and width and finds the height the text takes up
+    func withBoundedHeight(font: UIFont = UIFont.systemFont(ofSize: 17), width: CGFloat) -> CGSize {
+        let attrString = NSAttributedString(string: self, attributes: [.font: font])
+    
+        let bounds = attrString.boundingRect(with: CGSize(width: width, height: .greatestFiniteMagnitude), options: .usesLineFragmentOrigin, context: nil)
+    
+        let size = CGSize(width: bounds.width, height: bounds.height)
+    
+        return size
+    
+    }
+    
+    func withBounded(font: UIFont = UIFont.systemFont(ofSize: 17)) -> CGSize {
+        let boundHeight = self.withBoundedHeight(font: font, width: .greatestFiniteMagnitude)
+        let boundWidth = self.withBoundedWidth(font: font, height: .greatestFiniteMagnitude)
+        return CGSize (width: boundWidth.width, height: boundHeight.height)
+        
     }
 }

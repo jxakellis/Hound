@@ -319,6 +319,10 @@ class ErrorProcessor{
             ErrorProcessor.alertForError(message: "Your dog's reminder name is invalid, please try a different one.")
             return true
         }
+        else if case RequirementError.nameBlank = error {
+            ErrorProcessor.alertForError(message: "Your reminder's name is blank, try typing something in.")
+            return true
+        }
         else if case RequirementError.descriptionInvalid = error {
             ErrorProcessor.alertForError(message: "Your dog's reminder description is invalid, please try a different one.")
             return true

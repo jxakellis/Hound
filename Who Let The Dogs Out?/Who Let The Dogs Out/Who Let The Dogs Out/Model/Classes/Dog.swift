@@ -33,6 +33,14 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     private var isEnabled: Bool = DogConstant.defaultEnable
     
     func setEnable(newEnableStatus: Bool) {
+        if isEnabled == false && newEnableStatus == true {
+            for r in dogRequirments.requirements {
+                guard r.getEnable() == true else {
+                    continue
+                }
+                r.changeExecutionBasis(newExecutionBasis: Date())
+            }
+        }
         isEnabled = newEnableStatus
         for r in dogRequirments.requirements {
             r.snoozeComponents.changeSnooze(newSnoozeStatus: false)
