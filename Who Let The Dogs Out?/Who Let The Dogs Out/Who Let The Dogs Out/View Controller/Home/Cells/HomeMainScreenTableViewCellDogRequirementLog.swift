@@ -53,12 +53,12 @@ class HomeMainScreenTableViewCellRequirementLog: UITableViewCell {
         requirementName.adjustsFontSizeToFitWidth = true
         dogName.adjustsFontSizeToFitWidth = true
         
-       // self.applyAlpha(newAlpha: 0)
+        // self.applyAlpha(newAlpha: 0)
         //self.toggleFade(newFadeStatus: true, animated: true)
         
-       // self.contentView.bringSubviewToFront(disableText)
-       // self.contentView.bringSubviewToFront(snoozeText)
-       // self.contentView.bringSubviewToFront(resetText)
+        // self.contentView.bringSubviewToFront(disableText)
+        // self.contentView.bringSubviewToFront(snoozeText)
+        // self.contentView.bringSubviewToFront(resetText)
     }
     
     func setup(parentDogName: String, requirementName: String){
@@ -70,32 +70,34 @@ class HomeMainScreenTableViewCellRequirementLog: UITableViewCell {
         if isFadingTo == true{
             if animated == true{
                 self.applyAlpha(newAlpha: 0)
-            UIView.animate(withDuration: AnimationConstant.HomeLogStateAnimate.rawValue) {
-                self.applyAlpha(newAlpha: 1)
-            } completion: { (completed) in
-                //completion
-            }
+                UIView.animate(withDuration: AnimationConstant.largeButtonShow.rawValue, delay: 0.0, options: .curveEaseIn, animations: {
+                    self.applyAlpha(newAlpha: 1)
+                }, completion: { (completed) in
+                    //
+                })
             }
             else {
                 self.applyAlpha(newAlpha: 1)
             }
         }
         else if isFadingTo == false{
-            fatalError("HomeMainScreenTableViewCellRequirementLog toggleFade(newFadeStatus: True, etc...) code current broken, don't use")
+            //fatalError("HomeMainScreenTableViewCellRequirementLog toggleFade(newFadeStatus: True, etc...) code current broken, don't use")
             //something weird is happening with the cell, when trying to fade buttons away when preparing for a new cell, even the direct below statement doesn't work, it won't change the button opacities at all. I even made it so that the cells are always log state and doesn't change so they stay loaded when I hit my green/blue checkmark but still nothing works. I tried DispatchQueue.Main but nothing seems to allow for change. I disabled reloadTable aswell so these cells stayed loaded even when they should have been replaced with the coundown display cells but still I could not change opacity. Investigate, the problem most likely does not lie within this tableViewCell class but rather the parent tableView class, possible due to something with memory and loading where the cell is no longer loaded/modifyable/something even though I can still reference it.
-            self.applyAlpha(newAlpha: 0)
+            self.applyAlpha(newAlpha: 1)
             if animated == true {
-                    UIView.animate(withDuration: AnimationConstant.HomeLogStateAnimate.rawValue) {
-                        let nano = Calendar(identifier: .gregorian).component(.nanosecond, from: Date())
-                        print("in actual cell, started \(nano)")
+                UIView.animate(withDuration: AnimationConstant.largeButtonShow.rawValue) {
+                    let nano = Calendar(identifier: .gregorian).component(.nanosecond, from: Date())
+                    print("in actual cell, started \(nano)")
+                    DispatchQueue.main.async {
                         self.applyAlpha(newAlpha: 0)
-                    } completion: { (completed) in
-                        let nano = Calendar(identifier: .gregorian).component(.nanosecond, from: Date())
-                        print("in actual cell, completed \(nano)")
-                        if fadeCompletion != nil {
-                            fadeCompletion!(completed)
-                        }
                     }
+                } completion: { (completed) in
+                    let nano = Calendar(identifier: .gregorian).component(.nanosecond, from: Date())
+                    print("in actual cell, completed \(nano)")
+                    if fadeCompletion != nil {
+                        fadeCompletion!(completed)
+                    }
+                }
             }
             else if animated == false {
                 self.applyAlpha(newAlpha: 0)
@@ -113,5 +115,5 @@ class HomeMainScreenTableViewCellRequirementLog: UITableViewCell {
         resetText.alpha = newAlpha
         resetButton.alpha = newAlpha
     }
-
+    
 }

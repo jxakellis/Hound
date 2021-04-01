@@ -75,7 +75,9 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             if newLogState == false {
                 firstTimeFade = true
             }
-            storedLogState = newLogState
+                storedLogState = newLogState
+                self.reloadTable()
+            
         }
     }
     
@@ -159,7 +161,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         
         self.reloadTable()
         
-        loopTimer = Timer.init(fireAt: Date(), interval: TimeInterval(1), target: self, selector: #selector(self.reloadTable), userInfo: nil, repeats: true)
+        loopTimer = Timer(fireAt: Date(), interval: TimeInterval(1), target: self, selector: #selector(self.reloadTable), userInfo: nil, repeats: true)
         
         RunLoop.main.add(loopTimer!, forMode: .default)
     }

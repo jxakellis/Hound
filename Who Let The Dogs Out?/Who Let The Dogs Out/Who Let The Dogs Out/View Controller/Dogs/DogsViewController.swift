@@ -254,7 +254,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                 view.addSubview(buttonBackground)
                 view.addSubview(button)
                 
-                UIView.animate(withDuration: AnimationConstant.HomeLogStateAnimate.rawValue) {
+                UIView.animate(withDuration: AnimationConstant.largeButtonShow.rawValue) {
                     button.frame.origin = buttonOrigin
                     buttonBackground.frame.origin = buttonOrigin
                     buttonLabel.frame.origin = buttonLabelOrigin
@@ -279,7 +279,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                 //button.alpha = 1
                 let originYWithAlignedMiddle = willAddButton.frame.midY - (button.frame.height/2)
                 
-                UIView.animate(withDuration: AnimationConstant.HomeLogStateAnimate.rawValue) {
+                UIView.animate(withDuration: AnimationConstant.largeButtonShow.rawValue) {
                     
                     
                     button.frame.origin.y = originYWithAlignedMiddle
@@ -288,7 +288,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                     buttonLabelBackground.frame.origin.x = self.view.safeAreaLayoutGuide.layoutFrame.maxX
                     //button.alpha = 0
                 } completion: { (completed) in
-                    DispatchQueue.main.asyncAfter(deadline: .now() + AnimationConstant.HomeLogStateDisappearDelay.rawValue) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + AnimationConstant.largeButtonHide.rawValue) {
                         button.isHidden = true
                         button.removeFromSuperview()
                         buttonBackground.isHidden = true
@@ -332,7 +332,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         let buttonLabel = UILabel(frame: label.frame)
         buttonLabel.font = label.font
         buttonLabel.text = label.text
-        buttonLabel.outline(outlineColor: .systemBackground, insideColor: .link, outlineWidth: 15)
+        buttonLabel.outline(outlineColor: .white, insideColor: .link, outlineWidth: 15)
         
         buttonLabel.isUserInteractionEnabled = false
         buttonLabel.adjustsFontSizeToFitWidth = true
@@ -345,7 +345,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     private func createAddButtonBackground(_ button: ScaledButton) -> ScaledButton {
         let buttonBackground = ScaledButton(frame: button.frame)
         buttonBackground.setImage(UIImage(systemName: "plus.circle.fill"), for: .normal)
-        buttonBackground.tintColor = .systemBackground
+        buttonBackground.tintColor = .white
         buttonBackground.isUserInteractionEnabled = false
         return buttonBackground
     }

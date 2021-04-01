@@ -117,12 +117,12 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
                     let originCWLB = cancelWillLogBackground.frame.origin
                     
                     DispatchQueue.main.async {
-                        UIView.animate(withDuration: AnimationConstant.HomeLogStateAnimate.rawValue) {
+                        UIView.animate(withDuration: AnimationConstant.largeButtonShow.rawValue) {
                             self.cancelWillLog.frame = CGRect(origin: self.willLog.frame.origin, size: self.cancelWillLog.frame.size)
                             self.cancelWillLogBackground.frame = CGRect(origin: self.willLogBackground.frame.origin, size: self.cancelWillLogBackground.frame.size)
                             self.willLog.tintColor = UIColor.link
                         } completion: { (completed) in
-                            DispatchQueue.main.asyncAfter(deadline: .now() + AnimationConstant.HomeLogStateDisappearDelay.rawValue) {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + AnimationConstant.largeButtonHide.rawValue) {
                                 self.toggleWillLogVisibility(isHidden: true)
                                 self.toggleCancelWillLogVisibility(isHidden: true)
                                 self.cancelWillLog.frame = CGRect(origin: originCWL, size: self.cancelWillLog.frame.size)
@@ -163,7 +163,7 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
             
             toggleCancelWillLogVisibility(isHidden: false)
             
-            UIView.animate(withDuration: AnimationConstant.HomeLogStateAnimate.rawValue) {
+            UIView.animate(withDuration: AnimationConstant.largeButtonShow.rawValue) {
                 self.cancelWillLog.frame = CGRect(origin: originCWL, size: self.cancelWillLog.frame.size)
                 self.cancelWillLogBackground.frame = CGRect(origin: originCWLB, size: self.cancelWillLogBackground.frame.size)
                 self.willLog.tintColor = UIColor.systemGreen
@@ -189,13 +189,13 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
                 let originCWL = cancelWillLog.frame.origin
                 let originCWLB = cancelWillLogBackground.frame.origin
                 
-                UIView.animate(withDuration: AnimationConstant.HomeLogStateAnimate.rawValue) {
+                UIView.animate(withDuration: AnimationConstant.largeButtonShow.rawValue) {
                     self.cancelWillLog.frame = CGRect(origin: self.willLog.frame.origin, size: self.cancelWillLog.frame.size)
                     self.cancelWillLogBackground.frame = CGRect(origin: self.willLogBackground.frame.origin, size: self.cancelWillLogBackground.frame.size)
                     self.willLog.tintColor = UIColor.link
                     
                 } completion: { (completed) in
-                    DispatchQueue.main.asyncAfter(deadline: .now() + AnimationConstant.HomeLogStateDisappearDelay.rawValue) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + AnimationConstant.largeButtonHide.rawValue) {
                         self.toggleCancelWillLogVisibility(isHidden: true)
                         //reset button to original position but it is now hidden.
                         self.cancelWillLog.frame = CGRect(origin: originCWL, size: self.cancelWillLog.frame.size)
@@ -218,7 +218,6 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
         
         if !(sender.localized is HomeMainScreenTableViewController) {
             homeMainScreenTableViewController.logState = self.logState
-            homeMainScreenTableViewController.reloadTable()
         }
          
         

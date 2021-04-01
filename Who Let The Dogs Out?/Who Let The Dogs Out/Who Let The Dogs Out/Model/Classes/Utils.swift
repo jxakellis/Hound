@@ -36,11 +36,48 @@ class Utils
         
     }
     
+    static func willCreateFollowUpUNUserNotification(dogName: String, requirementName: String, executionDate: Date){
+        let requirement = try! MainTabBarViewController.staticDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName)
+         let content = UNMutableNotificationContent()
+         content.title = "Follow up reminder for \(dogName)"
+        
+        if requirement.requirementDescription.trimmingCharacters(in: .whitespaces) != ""{
+            content.body = "Five minutes ago: \(requirementName)"
+        }
+        else {
+            content.body = "It's been five minutes, give your dog a helping hand!"
+        }
+        
+         content.sound = .default
+        
+        let executionDateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: executionDate)
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: executionDateComponents, repeats: false)
+        
+        let uuidString = UUID().uuidString
+        let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { (error) in
+            if (error != nil){
+                print("willCreateUNUserNotification error: \(error!.localizedDescription)")
+            }
+        }
+    }
+    
     static func willCreateUNUserNotification(dogName: String, requirementName: String, executionDate: Date){
         
+        let requirement = try! MainTabBarViewController.staticDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName)
          let content = UNMutableNotificationContent()
          content.title = "Reminder for \(dogName)"
-         content.body = "\(requirementName)"
+        
+        if requirement.requirementDescription.trimmingCharacters(in: .whitespaces) != ""{
+            content.body = "\(requirementName): \(requirement.requirementDescription)"
+        }
+        else {
+            content.body = requirementName
+        }
+        
+         content.sound = .default
         
         let executionDateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: executionDate)
         
@@ -63,20 +100,21 @@ class Persistence{
         
         if isRecurringSetup == true{
             //not first time setup
-            
-           
             TimingManager.isPaused = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool
             TimingManager.lastPause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastPause.rawValue) as? Date
             TimingManager.lastUnpause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastUnpause.rawValue) as? Date
             
            TimerConstant.defaultSnooze = UserDefaults.standard.value(forKey: UserDefaultsKeys.defaultSnooze.rawValue) as! TimeInterval
             
+            NotificationConstant.willFollowUp = UserDefaults.standard.value(forKey: UserDefaultsKeys.willFollowUp.rawValue) as! Bool
+            NotificationConstant.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool
+            NotificationConstant.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool
+            
         }
         
         else {
             //first time setup
             let data = DogManagerConstant.defaultDogManager
-            //let data = DogManager()
             let encodedData = try! NSKeyedArchiver.archivedData(withRootObject: data, requiringSecureCoding: false)
             UserDefaults.standard.setValue(encodedData, forKey: UserDefaultsKeys.dogManager.rawValue)
             
@@ -89,9 +127,15 @@ class Persistence{
             UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
             
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
-                UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isRequestAuthorizationGranted.rawValue)
+                print(isGranted)
+                UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
                 UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+                NotificationConstant.isNotificationAuthorized = isGranted
+                NotificationConstant.isNotificationEnabled = isGranted
+                NotificationConstant.willFollowUp = isGranted
             }
+            
+            UserDefaults.standard.setValue(NotificationConstant.willFollowUp, forKey: UserDefaultsKeys.willFollowUp.rawValue)
         }
     }
     
@@ -112,6 +156,12 @@ class Persistence{
         
         UserDefaults.standard.setValue(TimerConstant.defaultSnooze, forKey: UserDefaultsKeys.defaultSnooze.rawValue)
         
+        //Notifications
+        
+        UserDefaults.standard.setValue(NotificationConstant.willFollowUp, forKey: UserDefaultsKeys.willFollowUp.rawValue)
+        UserDefaults.standard.setValue(NotificationConstant.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
+        UserDefaults.standard.setValue(NotificationConstant.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+        
         //notification on off and authorization
         //SettingsVC.ISN and .ISA are both calculated properties so no need to update.
        // UserDefaults.standard.setValue(SettingsViewController.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
@@ -122,15 +172,27 @@ class Persistence{
         }
         
         else {
-            if UserDefaults.standard.value(forKey: UserDefaultsKeys.isRequestAuthorizationGranted.rawValue) as! Bool == true
-                && UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool == true
-                && UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool == false{
+            
+            /*
+             Checks for disconnects between what is displayed in the switches, what is stored in static variables and what is stored in user defaults
+            print("willFollowUp \(NotificationConstant.willFollowUp) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.willFollowUp.rawValue) as! Bool)")
+            print("isAuthorized \(NotificationConstant.isNotificationAuthorized) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool)")
+            print("isEnabled \(NotificationConstant.isNotificationEnabled) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool)")
+            print("isPaused \(TimingManager.isPaused) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool)")
+             */
+            
+            if NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled && !TimingManager.isPaused {
                 for dogKey in TimingManager.timerDictionary.keys{
+                    
                     for requirementKey in TimingManager.timerDictionary[dogKey]!.keys{
                         guard TimingManager.timerDictionary[dogKey]![requirementKey]!.isValid else{
                             continue
                         }
                         Utils.willCreateUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!.fireDate)
+                        if NotificationConstant.willFollowUp == true {
+                            Utils.willCreateFollowUpUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!.fireDate + (60.0*5.0))
+                        }
+                        
                      }
                 }
             }
@@ -141,7 +203,7 @@ class Persistence{
     static func willEnterForeground(){
         checkIsNotificationAuthorizationGranted()
         
-        if UserDefaults.standard.value(forKey: UserDefaultsKeys.isRequestAuthorizationGranted.rawValue) != nil && UserDefaults.standard.value(forKey: UserDefaultsKeys.isRequestAuthorizationGranted.rawValue) as! Bool == true{
+        if NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled == true{
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
             UNUserNotificationCenter.current().removeAllDeliveredNotifications()
         }
@@ -152,19 +214,20 @@ class Persistence{
         UNUserNotificationCenter.current().getNotificationSettings { (permission) in
             switch permission.authorizationStatus {
             case .authorized:
-                UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isRequestAuthorizationGranted.rawValue)
+                UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
+                NotificationConstant.isNotificationAuthorized = true
             case .denied:
                 print(".denied")
-                UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isRequestAuthorizationGranted.rawValue)
+                UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
                 UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+                NotificationConstant.isNotificationAuthorized = false
+                NotificationConstant.isNotificationEnabled = false
+                NotificationConstant.willFollowUp = false
                 //Updates switch to reflect change, if the last view open was the settings page then the app is exitted and property changed in the settings app then this app is reopened, VWL will not be called as the settings page was already opened, weird edge case.
                 DispatchQueue.main.async {
                     let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController.settingsViewController
                     if settingsVC != nil && settingsVC!.isViewLoaded && settingsVC!.isNotificationEnabledSwitch != nil {
-                        let notifSwitch: UISwitch! = settingsVC!.isNotificationEnabledSwitch
-                        if notifSwitch.isOn != UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool {
-                            notifSwitch.setOn(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool, animated: true)
-                        }
+                        settingsVC?.refreshNotificationSwitches(animated: false)
                     }
                 }
             case .notDetermined:
@@ -403,7 +466,7 @@ class Sender {
     
 }
 
-class CompletionHandler {
+//class CompletionHandler {
     
     
     
@@ -463,7 +526,7 @@ class CompletionHandler {
          }
      })
      */
-}
+//}
 
 
 

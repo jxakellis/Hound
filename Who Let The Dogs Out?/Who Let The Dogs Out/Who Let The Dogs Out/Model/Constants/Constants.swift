@@ -10,7 +10,7 @@ import Foundation
 
 enum DogConstant {
     private static let nameTuple: (String, String) = ("name", "Bella")
-    private static let descriptionTuple: (String, String) = ("description", "Friendly puppy")
+    private static let descriptionTuple: (String, String) = ("description", "Friendly")
     static let defaultEnable: Bool = true
     static let defaultDogSpecificationKeys: [(String, String)] = [nameTuple, descriptionTuple]
 }
@@ -37,17 +37,17 @@ enum DogManagerConstant {
         let testingRequirementOne = Requirement()
         try! testingRequirementOne.changeRequirementName(newRequirementName: "Potty")
         try! testingRequirementOne.changeRequirementDescription(newRequirementDescription: "Take Dog Outside")
-        testingRequirementOne.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval((3600*3)+(3600*(1/3))))
+        testingRequirementOne.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(25))
         //defaultRequirementOne.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(50))
-        testingRequirementOne.setEnable(newEnableStatus: false)
+        testingRequirementOne.setEnable(newEnableStatus: true)
         try! testingDog.dogRequirments.addRequirement(newRequirement: testingRequirementOne)
  
         
         let testingRequirementTwo = Requirement()
         try! testingRequirementTwo.changeRequirementName(newRequirementName: "Food")
         try! testingRequirementTwo.changeRequirementDescription(newRequirementDescription: "Feed The Dog")
-        testingRequirementTwo.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(180))
-        testingRequirementTwo.setEnable(newEnableStatus: false)
+        testingRequirementTwo.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(15))
+        testingRequirementTwo.setEnable(newEnableStatus: true)
         try! testingDog.dogRequirments.addRequirement(newRequirement: testingRequirementTwo)
         
         let testingRequirementThree = Requirement()
@@ -107,20 +107,37 @@ enum TimerConstant {
     static var defaultTimeOfDay: DateComponents = DateComponents(calendar: nil, timeZone: nil, era: nil, year: nil, month: nil, day: nil, hour: 8, minute: 30, second: 0, nanosecond: 0, weekday: nil, weekdayOrdinal: nil, quarter: nil, weekOfMonth: nil, weekOfYear: nil, yearForWeekOfYear: nil)
 }
 
+enum NotificationConstant {
+    static var willFollowUp: Bool = true
+    static var isNotificationEnabled: Bool = false
+    static var isNotificationAuthorized: Bool = false
+}
+
 enum UserDefaultsKeys: String{
     case didFirstTimeSetup = "didFirstTimeSetup"
     case dogManager = "dogManager"
-    case defaultSnooze = "defaultSnooze"
+    case alertPresenter = "alertPresenter"
+    
+    //Timing
     case isPaused = "isPaused"
     case lastPause = "lastPause"
     case lastUnpause = "lastUnpause"
-    case isRequestAuthorizationGranted = "isRequestAuthorizationGranted"
+    case defaultSnooze = "defaultSnooze"
+    
+    
+    //Notifications
+    case willFollowUp = "willFollowUp"
     case isNotificationEnabled = "isNotificationEnabled"
-    case alertPresenter = "alertPresenter"
+    case isNotificationAuthorized = "isNotificationAuthorized"
 }
 
 enum AnimationConstant: Double{
     
-    case HomeLogStateAnimate = 0.42
-    case HomeLogStateDisappearDelay = 0.15
+    case largeButtonShow = 0.30
+    case largeButtonHide = 0.1500000001
+    
+    case toolTipShow = 0.1000000002
+    case toolTipHide = 0.1000000003
+    
+    
 }
