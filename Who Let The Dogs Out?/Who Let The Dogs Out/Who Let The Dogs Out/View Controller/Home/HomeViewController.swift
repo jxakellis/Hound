@@ -19,7 +19,7 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     //MARK: HomeMainScreenTableViewControllerDelegate
     
     func didSelectOption(sender: Sender) {
-        if TimingManager.enabledTimersCount == nil || TimingManager.enabledTimersCount == 0 {
+        if TimingManager.currentlyActiveTimersCount == nil || TimingManager.currentlyActiveTimersCount == 0 {
             willToggleLogState(sender: sender, newSelectionControlState: nil, animated: true)
         }
         else {
@@ -153,7 +153,7 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
             
             logState = false
         }
-        else if newSelectionControlState! == true && TimingManager.enabledTimersCount != nil && TimingManager.enabledTimersCount! > 0 {
+        else if newSelectionControlState! == true && TimingManager.currentlyActiveTimersCount != nil && TimingManager.currentlyActiveTimersCount! > 0 {
             //Visual element in current VC management
             let originCWL = cancelWillLog.frame.origin
             let originCWLB = cancelWillLogBackground.frame.origin
@@ -226,7 +226,7 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     
     ///Refreshes the buttons to reflect the data present
     func controlRefresh(sender: Sender, animated: Bool){
-        if TimingManager.enabledTimersCount == nil || TimingManager.enabledTimersCount == 0 {
+        if TimingManager.currentlyActiveTimersCount == nil || TimingManager.currentlyActiveTimersCount == 0 {
             willToggleLogState(sender: Sender(origin: sender, localized: self), newSelectionControlState: nil, animated: animated)
         }
         else {

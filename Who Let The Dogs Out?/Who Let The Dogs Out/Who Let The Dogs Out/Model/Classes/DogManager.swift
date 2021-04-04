@@ -21,29 +21,49 @@ protocol DogManagerProtocol {
     
     var dogs: [Dog] { get set }
     
-    mutating func addDog(dogAdded: Dog) throws
+    ///Returns true if any the dogs present has atleast 1 requirement, if there is no requirement present under any of the dogs (e.g. 0 requirements total) return false
+    var hasCreatedRequirement: Bool { get }
+    
+    ///Returns true if any dogs are present, if there is dogs present/created then returns false
+    var hasCreatedDog: Bool { get }
+    
+    ///Returns true if any the dogs present has atleast 1 enabled requirement, if there is no enabled requirement present under any of the dogs (e.g. 0  enabled requirements total) return false
+    var hasEnabledRequirement: Bool { get }
+    
+    ///Returns true if any the dogs present  are enabled, if there is no enabled dogs presen return false
+    var hasEnabledDog: Bool { get }
+    
+    ///Counts up all enabled requirements under all enabled dogs, does not factor in isPaused, purely self
+    var enabledTimersCount: Int { get }
+    
+    ///Checks dog name to see if its valid and checks to see if it is valid in context of other dog names already present, assumes requirements and specifications are already validiated
+     mutating func addDog(dogAdded: Dog) throws
+    
+    ///Adds array of dog to dogs
     mutating func addDog(dogsAdded: [Dog]) throws
     
+    ///clears and sets dogs equal to dogsSet
     mutating func setDog(dogsSet: [Dog]) throws
     
+    ///removes a dog with the given name
     mutating func removeDog(name dogRemoved: String) throws
     
+    ///removes all dogs from dogs
     mutating func clearDogs()
     
-    //mutating func changeDogName(dogNameToBeChanged: String, newDogName: String) throws
-    
+    ///Changes a dog, takes a dog name and finds the corropsonding dog then replaces it with a new, different dog reference
     mutating func changeDog(dogNameToBeChanged: String, newDog: Dog) throws
     
+    ///finds and returns a reference to a dog matching the given name
     func findDog(dogName dogToBeFound: String) throws -> Dog
     
+    ///finds and returns the index of a dog with a given name in terms of the dogs: [Dog] array
     func findIndex(dogName dogToBeFound: String) throws -> Int
-    
-    func revokeIsPresentationHandled()
+
 }
 
 extension DogManagerProtocol {
     
-    ///Checks dog name to see if its valid and checks to see if it is valid in context of other dog names already present, assumes requirements and specifications are already validiated
     mutating func addDog(dogAdded: Dog) throws {
         /*
          if try! dogAdded.dogSpecifications.getDogSpecification(key: "name") == nil{
@@ -67,20 +87,20 @@ extension DogManagerProtocol {
         
     }
     
-    ///Adds array of dog to dogs
+    
     mutating func addDog(dogsAdded: [Dog]) throws{
         for i in 0..<dogsAdded.count{
             try addDog(dogAdded: dogsAdded[i])
         }
     }
     
-    ///clears and sets dogs equal to dogsSet
+    
     mutating func setDog(dogsSet: [Dog]) throws{
         clearDogs()
         try addDog(dogsAdded: dogsSet)
     }
     
-    ///removes a dog the given name
+   
     mutating func removeDog(name dogRemovedName: String) throws {
         var matchingDog: (Bool, Int?) = (false, nil)
         
@@ -102,12 +122,12 @@ extension DogManagerProtocol {
         }
     }
     
-    ///removes all dogs from dogs
+    
     mutating func clearDogs(){
         dogs.removeAll()
     }
     
-    ///Changes a dog, takes a dog name and finds the corropsonding dog then replaces it with a new, different dog reference
+    
     mutating func changeDog(dogNameToBeChanged: String, newDog: Dog) throws{
         var newDogIndex: Int?
         
@@ -126,7 +146,7 @@ extension DogManagerProtocol {
         }
     }
     
-    ///finds and returns a reference to a dog matching the given name
+    
     func findDog(dogName dogToBeFound: String) throws -> Dog {
         for d in 0..<dogs.count{
             if try dogs[d].dogSpecifications.getDogSpecification(key: "name") == dogToBeFound{
@@ -137,7 +157,7 @@ extension DogManagerProtocol {
         throw DogManagerError.dogNameNotPresent
     }
     
-    ///finds and returns the index of a dog with a given name in terms of the dogs: [Dog] array
+    
     func findIndex(dogName dogToBeFound: String) throws -> Int{
         for d in 0..<dogs.count{
             if try! dogs[d].dogSpecifications.getDogSpecification(key: "name") == dogToBeFound {
@@ -147,14 +167,61 @@ extension DogManagerProtocol {
         throw DogManagerError.dogNameNotPresent
     }
     
-    ///If the application is terminated while one of the alertcontrollers is poped up, .isPresentationHandled stays true for the requirement but the alert controller is killed and never compleded, when the app is restarted it believes there is an alertcontroller already queued for the past due requirement but that alert controller isn't present because it was destroyed.
-    func revokeIsPresentationHandled() {
-        for dog in dogs {
-            for req in dog.dogRequirments.requirements{
-                req.isPresentationHandled = false
+    var hasCreatedRequirement: Bool {
+        for dog in 0..<dogs.count {
+            if dogs[dog].dogRequirments.requirements.count > 0 {
+                return true
             }
         }
+        return false
     }
+    
+    var hasCreatedDog: Bool {
+        for _ in dogs {
+            return true
+        }
+        return false
+    }
+    
+    var hasEnabledRequirement: Bool {
+        for dog in dogs {
+            for requirement in dog.dogRequirments.requirements {
+                if requirement.getEnable() == true {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
+    var hasEnabledDog: Bool {
+        for dog in dogs {
+            if dog.getEnable() == true {
+                return true
+            }
+        }
+        return false
+    }
+    
+    var enabledTimersCount: Int {
+        var count = 0
+        for d in 0..<MainTabBarViewController.staticDogManager.dogs.count {
+            guard MainTabBarViewController.staticDogManager.dogs[d].getEnable() == true else{
+                continue
+            }
+            
+            for r in 0..<MainTabBarViewController.staticDogManager.dogs[d].dogRequirments.requirements.count {
+                guard MainTabBarViewController.staticDogManager.dogs[d].dogRequirments.requirements[r].getEnable() == true else{
+                    continue
+                }
+                
+                count = count + 1
+            }
+        }
+        return count
+    }
+    
+    
 }
 
 class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {

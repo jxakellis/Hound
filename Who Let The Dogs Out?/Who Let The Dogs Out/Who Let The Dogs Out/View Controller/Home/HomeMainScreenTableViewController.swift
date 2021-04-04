@@ -113,7 +113,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         
         let activeDogManagerCopy: DogManager = self.activeDogManager.copy() as! DogManager
         
-        for _ in 0..<TimingManager.enabledTimersCount! {
+        for _ in 0..<TimingManager.currentlyActiveTimersCount! {
             var lowestTimeInterval: TimeInterval = .infinity
             var lowestRequirement: (String, Requirement)?
             
@@ -174,10 +174,10 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     @objc func reloadTable(){
         self.tableView.reloadData()
         
-        if TimingManager.enabledTimersCount == 0 || TimingManager.enabledTimersCount == nil{
+        if TimingManager.currentlyActiveTimersCount == 0 || TimingManager.currentlyActiveTimersCount == nil{
             self.tableView.separatorStyle = .none
         }
-        else if TimingManager.enabledTimersCount! > 0 {
+        else if TimingManager.currentlyActiveTimersCount! > 0 {
             self.tableView.separatorStyle = .singleLine
         }
     }
@@ -213,16 +213,16 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if TimingManager.enabledTimersCount == 0 || TimingManager.enabledTimersCount == nil {
+        if TimingManager.currentlyActiveTimersCount == 0 || TimingManager.currentlyActiveTimersCount == nil {
             return 1
         }
-        return TimingManager.enabledTimersCount!
+        return TimingManager.currentlyActiveTimersCount!
     }
     
     private var firstTimeFade: Bool = true
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if TimingManager.enabledTimersCount == nil {
+        if TimingManager.currentlyActiveTimersCount == nil {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
             
@@ -232,28 +232,28 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             return cell
             
         }
-        else if TimingManager.enabledTimersCount == 0 {
+        else if TimingManager.currentlyActiveTimersCount == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
             
             let testCell = cell as! HomeMainScreenTableViewCellEmpty
             
-            var requirementCreated: Bool = false
-            for dog in 0..<getDogManager().dogs.count {
-                if requirementCreated == true {
-                    break
-                }
-                if getDogManager().dogs[dog].dogRequirments.requirements.count > 0 {
-                    requirementCreated = true
-                    break
-                }
+            if getDogManager().hasCreatedDog == false{
+                testCell.label.text = "No Dogs Or Reminders Created"
             }
-            
-            if getDogManager().dogs.count != 0 && requirementCreated == true{
-                
+            else if getDogManager().hasCreatedRequirement == false {
+                testCell.label.text = "No Reminders Created"
+            }
+            else if getDogManager().hasEnabledDog == false && getDogManager().hasEnabledRequirement == false {
+                testCell.label.text = "All Dogs and Reminders Disabled"
+            }
+            else if getDogManager().hasEnabledDog == false {
+                testCell.label.text = "All Dogs Disabled"
+            }
+            else if getDogManager().hasCreatedRequirement == true{
                 testCell.label.text = "All Reminders Disabled"
             }
             else {
-                testCell.label.text = "No Reminders Created"
+                testCell.label.text = "HomeMainScreenTableViewController Decipher Error"
             }
             
             return cell
@@ -270,7 +270,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             if firstTimeFade == true{
                 testCell.toggleFade(newFadeStatus: true, animated: true)
                 
-                if indexPath.row + 1 == TimingManager.enabledTimersCount {
+                if indexPath.row + 1 == TimingManager.currentlyActiveTimersCount {
                     firstTimeFade = false
                 }
             }

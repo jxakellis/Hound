@@ -16,18 +16,18 @@ enum ToolTipPosition: Int {
 
 class ToolTipView: UIView {
     
-    var toolTipLabelBackground:CGRect!
+    private var toolTipLabelBackground:CGRect!
     
     ///Inset of text from edge of rounded rectangle background, its value is applied to both the left and right side so total inset will be 2x
-    var toolTipLabelWidthInset : CGFloat = 8.0
+    private var toolTipLabelWidthInset : CGFloat = 8.0
     
     ///Inset of text from edge of rounded rectangle background, its value is applied to both the left and right side so total inset will be 2x
-    var toolTipLabelHeightInset : CGFloat = 8.0
+    private var toolTipLabelHeightInset : CGFloat = 8.0
     
     ///Offset of the rectangle from the sourceView (aka button)
-    var toolTipOffset: CGFloat  = 10.0
+    private var toolTipOffset: CGFloat  = 10.0
     
-    var toolTipPosition : ToolTipPosition = .middle
+    private var toolTipPosition : ToolTipPosition = .middle
     
     convenience init(sourceView: UIView, message: String, toolTipPosition: ToolTipPosition){
        
@@ -52,14 +52,14 @@ class ToolTipView: UIView {
        drawToolTip(rect)
     }
     
-    func drawToolTip(_ rect : CGRect){
+    private func drawToolTip(_ rect : CGRect){
        toolTipLabelBackground = CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height - toolTipOffset)
        let toolTipLabelBackgroundBez = UIBezierPath(roundedRect: toolTipLabelBackground, cornerRadius: 5.0)
        let shape = createShapeLayer(toolTipLabelBackgroundBez.cgPath)
        self.layer.insertSublayer(shape, at: 0)
     }
     
-    func createShapeLayer(_ path : CGPath) -> CAShapeLayer{
+    private func createShapeLayer(_ path : CGPath) -> CAShapeLayer{
        let shape = CAShapeLayer()
        shape.path = path
         //shape.fillColor = UIColor.systemGray5.cgColor
@@ -71,7 +71,7 @@ class ToolTipView: UIView {
        return shape
     }
     
-    func createLabel(_ text : String){
+    private func createLabel(_ text : String){
        let label = UILabel(frame: CGRect(x: toolTipLabelWidthInset, y: toolTipLabelHeightInset, width: frame.width - (2 * toolTipLabelWidthInset), height: frame.height - toolTipOffset - (2 * toolTipLabelHeightInset)))
        label.text = text
        // label.textColor = .black

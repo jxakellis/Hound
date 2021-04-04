@@ -16,9 +16,9 @@ class SettingsViewController: UIViewController, ToolTipable {
     
     //MARK: Notifications
     
-    @IBOutlet weak var isNotificationEnabledSwitch: UISwitch!
+    @IBOutlet private weak var isNotificationEnabledSwitch: UISwitch!
     
-    @IBAction func didToggleNotificationEnabled(_ sender: Any) {
+    @IBAction private func didToggleNotificationEnabled(_ sender: Any) {
         //Notifications not authorized, it is also know that they MUST be disabled then and the switch is going from off to on
         if NotificationConstant.isNotificationAuthorized == false {
             Utils.willShowAlert(title: "Notifcations Disabled", message: "To enable notifications go to the Settings App -> Notifications -> APP NAME and enable \"Allow Notifications\"")
@@ -33,12 +33,12 @@ class SettingsViewController: UIViewController, ToolTipable {
             //notications enabled, going from on to off
             if NotificationConstant.isNotificationEnabled == true {
                 NotificationConstant.isNotificationEnabled = false
-                synchronizeWillFollowUp(animated: true)
+                synchronizeShouldFollowUp(animated: true)
             }
             //notifications disabled, going from off to on
             else {
                 NotificationConstant.isNotificationEnabled = true
-                synchronizeWillFollowUp(animated: true)
+                synchronizeShouldFollowUp(animated: true)
             }
         }
     }
@@ -52,59 +52,73 @@ class SettingsViewController: UIViewController, ToolTipable {
         if isNotificationEnabledSwitch.isOn != NotificationConstant.isNotificationEnabled {
             isNotificationEnabledSwitch.setOn(NotificationConstant.isNotificationEnabled, animated: true)
         }
-        self.synchronizeWillFollowUp(animated: animated)
+        self.synchronizeShouldFollowUp(animated: animated)
     }
     
-    private func synchronizeWillFollowUp(animated: Bool){
+    
+    
+    //MARK: Follow Up Notification
+    
+    @IBOutlet private weak var shouldFollowUp: UISwitch!
+    
+    @IBAction private func didToggleFollowUp(_ sender: Any) {
+        NotificationConstant.shouldFollowUp = shouldFollowUp.isOn
+    }
+    
+    private func synchronizeShouldFollowUp(animated: Bool){
         //animated
         if animated == true {
             //notifications are enabled
             if NotificationConstant.isNotificationEnabled == true {
-                willFollowUp.isEnabled = true
+                shouldFollowUp.isEnabled = true
             }
             //notifications are disabled
             else {
-                willFollowUp.isEnabled = false
-                willFollowUp.setOn(false, animated: true)
-                NotificationConstant.willFollowUp = false
+                shouldFollowUp.isEnabled = false
+                shouldFollowUp.setOn(false, animated: true)
+                NotificationConstant.shouldFollowUp = false
             }
         }
         //not animated
         else {
             //notifications are enabled
             if NotificationConstant.isNotificationEnabled == true {
-                willFollowUp.isEnabled = true
+                shouldFollowUp.isEnabled = true
             }
             //notifications are disabled
             else {
-                willFollowUp.isEnabled = false
-                willFollowUp.isOn = false
-                NotificationConstant.willFollowUp = false
+                shouldFollowUp.isEnabled = false
+                shouldFollowUp.isOn = false
+                NotificationConstant.shouldFollowUp = false
             }
         }
     }
     
-    //MARK: Follow Up Notification
-    
-    @IBOutlet weak var willFollowUp: UISwitch!
-    @IBAction func didToggleFollowUp(_ sender: Any) {
-        NotificationConstant.willFollowUp = willFollowUp.isOn
-    }
-    
-    
     
     //MARK: Pause
     ///Switch for pause all timers
-    @IBOutlet weak var isPaused: UISwitch!
+    @IBOutlet private weak var isPaused: UISwitch!
     
     ///If the pause all timers switch it triggered, calls thing function
     @IBAction private func didTogglePause(_ sender: Any) {
         delegate.didTogglePause(newPauseState: isPaused.isOn)
     }
     
+    ///Synchronizes the isPaused switch enable and isOn variables to reflect that amount of timers active, if non are active then locks user from changing switch
+    private func synchronizeIsPaused(){
+        if MainTabBarViewController.staticDogManager.enabledTimersCount == 0{
+            TimingManager.isPaused = false
+            self.isPaused.isOn = false
+            self.isPaused.isEnabled = false
+        }
+        else {
+            self.isPaused.isEnabled = true
+        }
+    }
+    
     //MARK: Snooze
     
-    @IBOutlet weak var snoozeInterval: UIDatePicker!
+    @IBOutlet private weak var snoozeInterval: UIDatePicker!
     
     @IBAction private func didUpdateSnoozeInterval(_ sender: Any) {
         TimerConstant.defaultSnooze = snoozeInterval.countDownDuration
@@ -116,8 +130,8 @@ class SettingsViewController: UIViewController, ToolTipable {
         
         private var currentToolTip: ToolTipView?
         
-        @IBOutlet weak var toolTipButton: UIButton!
-        @IBAction func toolTip(_ sender: Any) {
+        @IBOutlet private weak var toolTipButton: UIButton!
+        @IBAction private func toolTip(_ sender: Any) {
             toolTipButton.isUserInteractionEnabled = false
             if currentToolTip != nil {
                 hideToolTip(sourceButton: toolTipButton)
@@ -153,9 +167,64 @@ class SettingsViewController: UIViewController, ToolTipable {
             }
         }
     
+    //MARK: Reset
+    
+    @IBOutlet private weak var resetButton: UIButton!
+    
+    @IBAction private func willReset(_ sender: Any) {
+        
+         let alertController = CustomAlertController(
+             title: "Are you sure you want to reset?",
+             message: "This action will delete and reset all data to default, in the process restarting the app",
+             preferredStyle: .alert)
+         
+         let alertReset = UIAlertAction(
+             title:"Reset",
+            style: .destructive,
+             handler:
+                 {
+                     (alert: UIAlertAction!)  in
+                    UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
+                    
+                    let restartTimer = Timer(fireAt: Date(), interval: -1, target: self, selector: #selector(self.showRestartMessage), userInfo: nil, repeats: false)
+                    
+                    RunLoop.main.add(restartTimer, forMode: .common)
+                 })
+        
+        let alertCancel = UIAlertAction(
+            title:"Cancel",
+            style: .cancel,
+            handler:
+                {
+                    (alert: UIAlertAction!)  in
+                    
+                })
+         
+         alertController.addAction(alertReset)
+         alertController.addAction(alertCancel)
+         
+         AlertPresenter.shared.enqueueAlertForPresentation(alertController)
+         
+    }
+    
+    @objc private func showRestartMessage(){
+        let alertController = CustomAlertController(
+            title: "Restarting now....",
+            message: nil,
+            preferredStyle: .alert)
+        
+        AlertPresenter.shared.enqueueAlertForPresentation(alertController)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            exit(-1)
+        }
+    }
+    
     //MARK: Properties
     
     var delegate: SettingsViewControllerDelegate! = nil
+    
+    @IBOutlet weak var pageTitle: CustomLabel!
     
     //MARK: Main
     
@@ -163,14 +232,21 @@ class SettingsViewController: UIViewController, ToolTipable {
         super.viewDidLoad()
         snoozeInterval.countDownDuration = TimerConstant.defaultSnooze
         isPaused.isOn = TimingManager.isPaused
+        resetButton.layer.cornerRadius = 8.0
+        
+        /*
+        let pageTitleSeperatorLine = UIView(frame: CGRect(x: pageTitle.frame.origin.x, y: pageTitle.frame.maxY + 3.0, width: pageTitle.frame.width, height: 4.5))
+        pageTitleSeperatorLine.backgroundColor = .link
+        pageTitleSeperatorLine.layer.cornerRadius = (pageTitleSeperatorLine.frame.height-1)/2
+        view.addSubview(pageTitleSeperatorLine)
+         */
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         isNotificationEnabledSwitch.isOn = NotificationConstant.isNotificationEnabled
-        synchronizeWillFollowUp(animated: false)
-        
-        
+        synchronizeShouldFollowUp(animated: false)
+        synchronizeIsPaused()
     }
     
     override func viewWillDisappear(_ animated: Bool) {

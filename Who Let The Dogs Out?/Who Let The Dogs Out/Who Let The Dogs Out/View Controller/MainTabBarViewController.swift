@@ -44,6 +44,10 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         masterDogManager = newDogManager.copy() as! DogManager
         MainTabBarViewController.staticDogManager = newDogManager.copy() as! DogManager
         
+        if getDogManager().hasCreatedRequirement == false || getDogManager().hasEnabledRequirement == false || getDogManager().hasEnabledDog == false {
+            TimingManager.isPaused = false
+        }
+        
         if sender.localized is TimingManager.Type || sender.localized is TimingManager{
             dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             homeViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())

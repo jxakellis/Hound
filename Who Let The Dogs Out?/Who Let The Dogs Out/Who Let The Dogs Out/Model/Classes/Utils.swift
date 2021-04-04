@@ -106,7 +106,7 @@ class Persistence{
             
            TimerConstant.defaultSnooze = UserDefaults.standard.value(forKey: UserDefaultsKeys.defaultSnooze.rawValue) as! TimeInterval
             
-            NotificationConstant.willFollowUp = UserDefaults.standard.value(forKey: UserDefaultsKeys.willFollowUp.rawValue) as! Bool
+            NotificationConstant.shouldFollowUp = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool
             NotificationConstant.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool
             NotificationConstant.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool
             
@@ -127,15 +127,15 @@ class Persistence{
             UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
             
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
-                print(isGranted)
                 UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
                 UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+                UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
                 NotificationConstant.isNotificationAuthorized = isGranted
                 NotificationConstant.isNotificationEnabled = isGranted
-                NotificationConstant.willFollowUp = isGranted
+                NotificationConstant.shouldFollowUp = isGranted
             }
             
-            UserDefaults.standard.setValue(NotificationConstant.willFollowUp, forKey: UserDefaultsKeys.willFollowUp.rawValue)
+            
         }
     }
     
@@ -158,7 +158,7 @@ class Persistence{
         
         //Notifications
         
-        UserDefaults.standard.setValue(NotificationConstant.willFollowUp, forKey: UserDefaultsKeys.willFollowUp.rawValue)
+        UserDefaults.standard.setValue(NotificationConstant.shouldFollowUp, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
         UserDefaults.standard.setValue(NotificationConstant.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
         UserDefaults.standard.setValue(NotificationConstant.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
         
@@ -173,13 +173,13 @@ class Persistence{
         
         else {
             
-            /*
-             Checks for disconnects between what is displayed in the switches, what is stored in static variables and what is stored in user defaults
-            print("willFollowUp \(NotificationConstant.willFollowUp) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.willFollowUp.rawValue) as! Bool)")
+            
+            // Checks for disconnects between what is displayed in the switches, what is stored in static variables and what is stored in user defaults
+            print("shouldFollowUp \(NotificationConstant.shouldFollowUp) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool)")
             print("isAuthorized \(NotificationConstant.isNotificationAuthorized) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool)")
             print("isEnabled \(NotificationConstant.isNotificationEnabled) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool)")
             print("isPaused \(TimingManager.isPaused) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool)")
-             */
+             
             
             if NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled && !TimingManager.isPaused {
                 for dogKey in TimingManager.timerDictionary.keys{
@@ -189,7 +189,7 @@ class Persistence{
                             continue
                         }
                         Utils.willCreateUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!.fireDate)
-                        if NotificationConstant.willFollowUp == true {
+                        if NotificationConstant.shouldFollowUp == true {
                             Utils.willCreateFollowUpUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!.fireDate + (60.0*5.0))
                         }
                         
@@ -201,7 +201,7 @@ class Persistence{
     }
     
     static func willEnterForeground(){
-        checkIsNotificationAuthorizationGranted()
+        synchronizeNotificationAuthorization()
         
         if NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled == true{
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
@@ -210,10 +210,11 @@ class Persistence{
     }
     
     ///Checks to see if a change in notification permissions has occured, if it has then update to reflect
-    static private func checkIsNotificationAuthorizationGranted() {
+    static private func synchronizeNotificationAuthorization() {
         UNUserNotificationCenter.current().getNotificationSettings { (permission) in
             switch permission.authorizationStatus {
             case .authorized:
+                print(".authorized")
                 UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
                 NotificationConstant.isNotificationAuthorized = true
             case .denied:
@@ -222,11 +223,11 @@ class Persistence{
                 UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
                 NotificationConstant.isNotificationAuthorized = false
                 NotificationConstant.isNotificationEnabled = false
-                NotificationConstant.willFollowUp = false
+                NotificationConstant.shouldFollowUp = false
                 //Updates switch to reflect change, if the last view open was the settings page then the app is exitted and property changed in the settings app then this app is reopened, VWL will not be called as the settings page was already opened, weird edge case.
                 DispatchQueue.main.async {
                     let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController.settingsViewController
-                    if settingsVC != nil && settingsVC!.isViewLoaded && settingsVC!.isNotificationEnabledSwitch != nil {
+                    if settingsVC != nil && settingsVC!.isViewLoaded {
                         settingsVC?.refreshNotificationSwitches(animated: false)
                     }
                 }

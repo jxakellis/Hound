@@ -108,7 +108,7 @@ enum TimerConstant {
 }
 
 enum NotificationConstant {
-    static var willFollowUp: Bool = true
+    static var shouldFollowUp: Bool = true
     static var isNotificationEnabled: Bool = false
     static var isNotificationAuthorized: Bool = false
 }
@@ -117,6 +117,7 @@ enum UserDefaultsKeys: String{
     case didFirstTimeSetup = "didFirstTimeSetup"
     case dogManager = "dogManager"
     case alertPresenter = "alertPresenter"
+    case shouldPerformCleanInstall = "shouldPerformCleanInstall"
     
     //Timing
     case isPaused = "isPaused"
@@ -126,7 +127,7 @@ enum UserDefaultsKeys: String{
     
     
     //Notifications
-    case willFollowUp = "willFollowUp"
+    case shouldFollowUp = "shouldFollowUp"
     case isNotificationEnabled = "isNotificationEnabled"
     case isNotificationAuthorized = "isNotificationAuthorized"
 }

@@ -18,16 +18,15 @@ class TimingManager{
     
     static var delegate: TimingManagerDelegate! = nil
     
-    ///Saves state isPaused
+    ///Saves state isPaused, self.isPaused can be modified by SettingsViewController but this is only when there are no active timers and pause is automatically set to unpaused
     static var isPaused: Bool = false
     ///Saves date of last pause (if there was one)
     static var lastPause: Date? = nil
     ///Saves date of last unpause (if there was one)
     static var lastUnpause: Date? = nil
     
-    ///Returns number of active timers
-    static var enabledTimersCount: Int?{
-        
+    ///Returns number of active timers, returns nil if paused
+    static var currentlyActiveTimersCount: Int? {
         guard isPaused == false else {
             return nil
         }
@@ -47,7 +46,6 @@ class TimingManager{
             }
         }
         return count
-        
     }
     
     ///Corrolates to dogManager: "
@@ -172,6 +170,13 @@ class TimingManager{
     
     ///Toggles pause for a given dogManager to a specifided newPauseState
     static func willTogglePause(dogManager: DogManager, newPauseStatus: Bool) {
+        
+        //self.isPaused can be modified by SettingsViewController but this is only when there are no active timers and pause is automatically set to unpaused
+        
+        guard newPauseStatus != self.isPaused else {
+            return
+        }
+        
         ///Toggles pause status of timers, called when pauseAllTimers in settings is switched to a new state
         if newPauseStatus == true {
             self.lastPause = Date()

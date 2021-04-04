@@ -13,24 +13,37 @@ import UserNotifications
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var hasSetup: Bool!
+    
+    var shouldPerformCleanInstall: Bool!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        //retrieve value from local store, if value doesn't exist then false is returned
-        hasSetup = UserDefaults.standard.bool(forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
+        shouldPerformCleanInstall = UserDefaults.standard.bool(forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
         
-        if hasSetup{
-            print("recurringSetup")
-            Persistence.willSetup(isRecurringSetup: true)
-            
-            hasSetup = true
-        }
-        else {
-            print("firstTimeSetup")
+        if shouldPerformCleanInstall == true {
+            print("cleanInstall (used for when the user wants to reset the app)")
             Persistence.willSetup()
             
             UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
+            UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
+        }
+        else {
+            //retrieve value from local store, if value doesn't exist then false is returned
+            hasSetup = UserDefaults.standard.bool(forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
+            
+            if hasSetup{
+                print("recurringSetup")
+                Persistence.willSetup(isRecurringSetup: true)
+                
+                hasSetup = true
+            }
+            else {
+                print("firstTimeSetup")
+                Persistence.willSetup()
+                
+                UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
+            }
         }
         return true
     }
