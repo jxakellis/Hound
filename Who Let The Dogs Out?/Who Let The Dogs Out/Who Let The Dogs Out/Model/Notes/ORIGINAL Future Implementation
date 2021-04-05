@@ -48,3 +48,25 @@ Change add button to an animated button. Make little pop ups for different optio
 
 Add always present chevron.right to the dogs page to indicate that it is editable, make no function changes but just chevron to the right of the toggle on off button to show that you can click the cell to edit it.
     Add a enable/disable slide when editting a dog so you can turn it off while on edit menu, also add the enable/disable to the tableview of reminders when editting a dog. This is the functionality already on the Dogs Configuration home page but add it so it is accessable when editting a dog.
+
+4/5/2021
+
+Change Home Screen
+    REQUIREMENT DISPLAY-
+        Disable and remove "since last time" (leave in data structure for future)
+    LOGGING REQUIREMENT - Allow a requirement to be clicked and pop up an action sheet of options isntead of convertion cells to requirement log. Remove snooze and disable from options, allow the only option as either log or skip next alarm (depending on whether it is countdown or time of day). Hide (don't completely axe) blue button as it is implicit. Add chevron to indicate clickability.
+    
+Take off the disable button for when a requirement is executed as it can be fat fingered
+
+Change bella defaults
+    Breakfast at 7 am
+    Dinner at 5 pm
+    Potty every 2 hours
+    
+Turn on follow up reminder by default
+
+For count down requirement, when displaying its time interval, change from "TI" to every "TI" e.g. 3 Hours -> Every 3 Hours
+
+Stop displaying dog description on dogs configuration, keep in data model, disable and hide input fields
+
+When launching for the first time, have entry page as configure dogs and not home screen dispaly

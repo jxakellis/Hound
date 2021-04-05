@@ -1,5 +1,9 @@
 
 CHECKLIST Future Implementation Needed
 
+Change Home Screen
+    LOGGING REQUIREMENT - Allow a requirement to be clicked and pop up an action sheet of options isntead of convertion cells to requirement log. Remove snooze and disable from options, allow the only option as either log or skip next alarm (depending on whether it is countdown or time of day). Hide (don't completely axe) blue button as it is implicit. Add chevron to indicate clickability.
+
+Disable and hide input fields for dog description
 
 

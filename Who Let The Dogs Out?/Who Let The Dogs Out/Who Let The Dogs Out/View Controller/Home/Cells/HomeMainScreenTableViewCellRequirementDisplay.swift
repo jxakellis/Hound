@@ -21,7 +21,6 @@ class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     @IBOutlet weak var dogName: UILabel!
     
     @IBOutlet weak var timeLeft: UILabel!
-    @IBOutlet weak var timeSinceLastExecution: UILabel!
     
     //MARK: Properties
     
@@ -49,24 +48,25 @@ class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
         }
         else{
             let fireDate: Date = TimingManager.timerDictionary[parentDogName]![requirementPassed.requirementName]!.fireDate
+            
             if Date().distance(to: fireDate) <= 0 {
-                timeSinceLastExecution.text = "It's Happening"
-                timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: .semibold)])
+                //timeSinceLastExecution.text = "It's Happening"
+                timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .semibold)])
             }
             else {
                 self.timeIntervalLeft = Date().distance(to: fireDate)
                 
                 let timeLeftText = String.convertToReadable(interperateTimeInterval: self.timeIntervalLeft!)
                 
-                timeLeft.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: .regular)])
+                timeLeft.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .regular)])
                     
-                timeLeft.attributedText = timeLeft.text!.withFontAtEnd(text: " Left", font: UIFont.systemFont(ofSize: 17, weight: .semibold))
+                timeLeft.attributedText = timeLeft.text!.withFontAtEnd(text: " Left", font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .semibold))
                 
-                let timeSinceLastExecutionText = String.convertToReadable(interperateTimeInterval: requirementPassed.executionBasis.distance(to: Date()))
+                //let timeSinceLastExecutionText = String.convertToReadable(interperateTimeInterval: requirementPassed.executionBasis.distance(to: Date()))
                 
-                timeSinceLastExecution.attributedText = NSAttributedString(string: timeSinceLastExecutionText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: .regular)])
+               // timeSinceLastExecution.attributedText = NSAttributedString(string: timeSinceLastExecutionText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: .regular)])
                 
-                timeSinceLastExecution.attributedText = timeSinceLastExecution.text!.withFontAtEnd(text: " Since Last Time", font: UIFont.systemFont(ofSize: 17, weight: .semibold))
+               // timeSinceLastExecution.attributedText = timeSinceLastExecution.text!.withFontAtEnd(text: " Since Last Time", font: UIFont.systemFont(ofSize: 17, weight: .semibold))
             }
         }
         

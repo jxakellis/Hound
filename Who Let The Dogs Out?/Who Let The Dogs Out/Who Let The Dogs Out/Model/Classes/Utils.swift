@@ -118,6 +118,8 @@ class Persistence{
             let encodedData = try! NSKeyedArchiver.archivedData(withRootObject: data, requiringSecureCoding: false)
             UserDefaults.standard.setValue(encodedData, forKey: UserDefaultsKeys.dogManager.rawValue)
             
+            MainTabBarViewController.selectedEntryIndex = 1
+            
             UserDefaults.standard.setValue(TimingManager.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
             UserDefaults.standard.setValue(TimingManager.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
             UserDefaults.standard.setValue(TimingManager.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
@@ -174,11 +176,13 @@ class Persistence{
         else {
             
             
+            /*
             // Checks for disconnects between what is displayed in the switches, what is stored in static variables and what is stored in user defaults
             print("shouldFollowUp \(NotificationConstant.shouldFollowUp) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool)")
             print("isAuthorized \(NotificationConstant.isNotificationAuthorized) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool)")
             print("isEnabled \(NotificationConstant.isNotificationEnabled) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool)")
             print("isPaused \(TimingManager.isPaused) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool)")
+             */
              
             
             if NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled && !TimingManager.isPaused {
@@ -215,12 +219,24 @@ class Persistence{
             switch permission.authorizationStatus {
             case .authorized:
                 print(".authorized")
+                
+                //going from off to on, meaning the user has gone into the settings app and turned notifications from disabled to enabled
+                if UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool == false {
+                    UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+                    UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
+                    NotificationConstant.isNotificationEnabled = true
+                    NotificationConstant.shouldFollowUp = true
+                }
+                
                 UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
                 NotificationConstant.isNotificationAuthorized = true
+                
+                
             case .denied:
                 print(".denied")
                 UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
                 UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+                UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
                 NotificationConstant.isNotificationAuthorized = false
                 NotificationConstant.isNotificationEnabled = false
                 NotificationConstant.shouldFollowUp = false

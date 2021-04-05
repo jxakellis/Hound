@@ -50,7 +50,7 @@ class DogsRequirementTableViewCell: UITableViewCell {
     func setup(requirement: Requirement){
         self.requirementName.text = requirement.requirementName
         if requirement.timingStyle == .countDown {
-        self.requirementTimeInterval.text = String.convertToReadable(interperateTimeInterval: requirement.countDownComponents.executionInterval)
+        self.requirementTimeInterval.text = "Every \(String.convertToReadable(interperateTimeInterval: requirement.countDownComponents.executionInterval))"
         }
         else {
             try! self.requirementTimeInterval.text = String.convertToReadable(interperatedDateComponents: requirement.timeOfDayComponents.timeOfDayComponent)

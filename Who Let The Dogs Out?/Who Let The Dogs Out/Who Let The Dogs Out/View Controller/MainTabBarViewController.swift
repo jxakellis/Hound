@@ -77,6 +77,9 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     
     static var mainTabBarViewController: MainTabBarViewController! = nil
     
+    ///The tab on the tab bar that the app should open to, if its the first time openning the app then go the the second tab (configure dogs) which is index 1 as index starts at 0
+    static var selectedEntryIndex: Int = 0
+    
     //MARK: Main
     
     override func viewDidLoad() {
@@ -86,6 +89,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         let decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
         
         setDogManager(sender: Sender(origin: self, localized: self), newDogManager: decodedDogManager.copy() as! DogManager)
+        
+        self.selectedIndex = MainTabBarViewController.selectedEntryIndex
        
         dogsViewController = self.viewControllers![1] as? DogsViewController
         dogsViewController.delegate = self

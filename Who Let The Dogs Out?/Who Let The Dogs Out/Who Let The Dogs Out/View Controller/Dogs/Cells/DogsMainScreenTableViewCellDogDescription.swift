@@ -18,8 +18,6 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
     
     @IBOutlet weak var dogName: UILabel!
     
-    @IBOutlet weak var dogDescription: UILabel!
-    
     @IBOutlet weak var dogToggleSwitch: UISwitch!
     
     //Occurs when the on off switch is toggled
@@ -39,7 +37,6 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         self.dogName.adjustsFontSizeToFitWidth = true
-        self.dogDescription.adjustsFontSizeToFitWidth = true
         // Initialization code
     }
     
@@ -53,10 +50,6 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
     func setup(dogPassed: Dog){
         dog = dogPassed
         try! self.dogName.text = dogPassed.dogSpecifications.getDogSpecification(key: "name")
-        try! self.dogDescription.text = dogPassed.dogSpecifications.getDogSpecification(key: "description")
-        if self.dogDescription.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
-            self.dogDescription.text? = "No Description"
-        }
         self.dogToggleSwitch.isOn = dogPassed.getEnable()
     }
     

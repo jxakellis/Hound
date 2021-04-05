@@ -292,6 +292,7 @@ class TimingManager{
                     //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                     TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementName: requirement.requirementName)
                 })
+        
         let alertActionSnooze = UIAlertAction(
             title:"Snooze",
             style: .default,
@@ -301,6 +302,7 @@ class TimingManager{
                     //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                     TimingManager.willSnoozeTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementName: requirement.requirementName)
                 })
+        /*
         let alertActionDisable = UIAlertAction(
             title:"Disable",
             style: .destructive,
@@ -310,9 +312,10 @@ class TimingManager{
                     //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                     TimingManager.willDisableTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementName: requirement.requirementName)
                 })
+         */
         alertController.addAction(alertActionDone)
         alertController.addAction(alertActionSnooze)
-        alertController.addAction(alertActionDisable)
+        //alertController.addAction(alertActionDisable)
         
     
         let sudoDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager

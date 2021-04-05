@@ -71,6 +71,7 @@ class SettingsViewController: UIViewController, ToolTipable {
             //notifications are enabled
             if NotificationConstant.isNotificationEnabled == true {
                 shouldFollowUp.isEnabled = true
+                shouldFollowUp.isOn = NotificationConstant.shouldFollowUp
             }
             //notifications are disabled
             else {
@@ -84,6 +85,7 @@ class SettingsViewController: UIViewController, ToolTipable {
             //notifications are enabled
             if NotificationConstant.isNotificationEnabled == true {
                 shouldFollowUp.isEnabled = true
+                shouldFollowUp.isOn = NotificationConstant.shouldFollowUp
             }
             //notifications are disabled
             else {

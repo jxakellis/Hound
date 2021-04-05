@@ -90,7 +90,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         }
         else{
             tableView.allowsSelection = false
-            self.tableView.rowHeight = 100.5
+            self.tableView.rowHeight = 65.5
         }
     }
     

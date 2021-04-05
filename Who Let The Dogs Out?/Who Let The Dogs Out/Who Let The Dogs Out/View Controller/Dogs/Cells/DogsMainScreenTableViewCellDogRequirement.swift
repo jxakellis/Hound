@@ -54,7 +54,7 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
         self.requirementName.text = requirementPassed.requirementName
         
         if requirementPassed.timingStyle == .countDown {
-        self.timeInterval.text = String.convertToReadable(interperateTimeInterval: requirementPassed.countDownComponents.executionInterval)
+        self.timeInterval.text = "Every \(String.convertToReadable(interperateTimeInterval: requirementPassed.countDownComponents.executionInterval))"
         }
         else {
             try! self.timeInterval.text = String.convertToReadable(interperatedDateComponents: requirementPassed.timeOfDayComponents.timeOfDayComponent)

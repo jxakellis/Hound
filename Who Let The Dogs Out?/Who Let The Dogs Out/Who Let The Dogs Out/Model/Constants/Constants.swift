@@ -73,17 +73,19 @@ enum DogManagerConstant {
         try! userDefaultDog.dogRequirments.addRequirement(newRequirement: RequirementConstant.defaultRequirement)
         
         let userDefaultRequirementTwo = Requirement()
-        try! userDefaultRequirementTwo.changeRequirementName(newRequirementName: "Food")
+        try! userDefaultRequirementTwo.changeRequirementName(newRequirementName: "Breakfast")
         try! userDefaultRequirementTwo.changeRequirementDescription(newRequirementDescription: "Feed the dog")
-        userDefaultRequirementTwo.countDownComponents.changeExecutionInterval(newExecutionInterval: 60*60*8.0)
+        userDefaultRequirementTwo.changeTimingStyle(newTimingStyle: .timeOfDay)
+        try! userDefaultRequirementTwo.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 7)
+        try! userDefaultRequirementTwo.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
         try! userDefaultDog.dogRequirments.addRequirement(newRequirement: userDefaultRequirementTwo)
         
         let userDefaultRequirementThree = Requirement()
-        try! userDefaultRequirementThree.changeRequirementName(newRequirementName: "Play")
-        try! userDefaultRequirementThree.changeRequirementDescription(newRequirementDescription: "Play with the dog")
+        try! userDefaultRequirementThree.changeRequirementName(newRequirementName: "Dinner")
+        try! userDefaultRequirementThree.changeRequirementDescription(newRequirementDescription: "Feed the dog")
         userDefaultRequirementThree.changeTimingStyle(newTimingStyle: .timeOfDay)
-        try! userDefaultRequirementThree.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 15)
-        try! userDefaultRequirementThree.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 30)
+        try! userDefaultRequirementThree.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 5+12)
+        try! userDefaultRequirementThree.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
         try! userDefaultDog.dogRequirments.addRequirement(newRequirement: userDefaultRequirementThree)
         
         for i in 0..<DogConstant.defaultDogSpecificationKeys.count{
