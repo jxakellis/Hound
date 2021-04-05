@@ -159,6 +159,11 @@ protocol TimeOfDayComponentsProtocol {
     mutating func changeTimeOfDayComponent(newTimeOfDayComponent: DateComponents) throws
     mutating func changeTimeOfDayComponent(newTimeOfDayComponent: Calendar.Component, newValue: Int) throws
     
+    ///Whether or not the next time of day alarm will be skipped
+    var isSkipping: Bool { get }
+    ///Changes isSkipping and data associated
+    mutating func changeIsSkipping(newSkipStatus: Bool)
+    
     ///Date that is calculated from timeOfDayComponent when the timer should next fire
     var nextTimeOfDay: Date { get }
     
@@ -176,6 +181,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = TimeOfDayComponents()
         copy.storedTimeOfDayComponent = self.storedTimeOfDayComponent
+        copy.storedIsSkipping = self.storedIsSkipping
         return copy
     }
     
@@ -187,10 +193,12 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     
     required init?(coder aDecoder: NSCoder) {
         self.storedTimeOfDayComponent = aDecoder.decodeObject(forKey: "timeOfDayComponent") as! DateComponents
+        self.storedIsSkipping = aDecoder.decodeBool(forKey: "isSkipping")
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(storedTimeOfDayComponent, forKey: "timeOfDayComponent")
+        aCoder.encode(storedIsSkipping, forKey: "isSkipping")
     }
     
     
@@ -199,6 +207,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     private var storedTimeOfDayComponent: DateComponents = TimerConstant.defaultTimeOfDay
     var timeOfDayComponent: DateComponents { return storedTimeOfDayComponent }
     func changeTimeOfDayComponent(newTimeOfDayComponent: DateComponents) throws {
+        
         if newTimeOfDayComponent.hour != nil {
             storedTimeOfDayComponent.hour = newTimeOfDayComponent.hour
         }
@@ -224,21 +233,43 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         }
     }
     
+    private var storedIsSkipping: Bool = TimerConstant.defaultSkipStatus
+    var isSkipping: Bool { return storedIsSkipping }
+    func changeIsSkipping(newSkipStatus: Bool) {
+        storedIsSkipping = newSkipStatus
+    }
+    
     var nextTimeOfDay: Date { var calculatedDate: Date = Date()
         calculatedDate = Calendar.current.date(bySettingHour: timeOfDayComponent.hour!, minute: timeOfDayComponent.minute!, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)!
         
+        
+        //If the nextTimeOfDay is actually in the past, adds 24 hours to make it into the nextTimeOfDay
         if Date().distance(to: calculatedDate) <= 0 {
+            if isSkipping == true {
+                calculatedDate = calculatedDate + (24.0 * 60 * 60)
+            }
             return (calculatedDate.addingTimeInterval(TimeInterval(24*60*60)))
         }
+        
+        if isSkipping == true {
+            calculatedDate = calculatedDate + (24.0 * 60 * 60)
+        }
+        
         return calculatedDate
     }
     
     var previousTimeOfDay: Date {
-        return Date(timeInterval: TimeInterval(-1*60*60*24), since: nextTimeOfDay)
+        var calculatedDate = Date(timeInterval: TimeInterval(-1*60*60*24), since: nextTimeOfDay)
+        //correction for isSkipping as without it the previous time of day would be in the future while isSkipping == true
+        if isSkipping == true {
+            calculatedDate = calculatedDate - (24.0 * 60 * 60)
+        }
+        
+        return calculatedDate
     }
     
     func timerReset() {
-        //
+        changeIsSkipping(newSkipStatus: false)
     }
     
     

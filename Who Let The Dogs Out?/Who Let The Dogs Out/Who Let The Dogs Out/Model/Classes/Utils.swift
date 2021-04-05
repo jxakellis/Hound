@@ -24,7 +24,7 @@ class Utils
         
         let alertAction = UIAlertAction(
             title:"OK",
-            style: .default,
+            style: .cancel,
             handler:
                 {
                     (alert: UIAlertAction!)  in
@@ -33,6 +33,64 @@ class Utils
         alertController.addAction(alertAction)
         
         AlertPresenter.shared.enqueueAlertForPresentation(alertController)
+        
+    }
+    
+    static func willShowActionSheet(sender: Sender, parentDogName: String, requirement: Requirement){
+        let alertController = CustomAlertController(title: "\(requirement.requirementName) for \(parentDogName)", message: nil, preferredStyle: .actionSheet)
+        
+        let alertActionCancel = UIAlertAction(
+            title:"Cancel",
+            style: .cancel,
+            handler:
+                {
+                    (alert: UIAlertAction!)  in
+                })
+        
+        let alertActionDisable = UIAlertAction(
+            title:"Disable",
+            style: .destructive,
+            handler:
+                {
+                    (alert: UIAlertAction!)  in
+                    TimingManager.willDisableTimer(sender: sender, dogName: parentDogName, requirementName: requirement.requirementName)
+                })
+        
+        var logTitle: String {
+            if requirement.timerMode == .timeOfDay {
+                if requirement.timeOfDayComponents.isSkipping == true {
+                    return "Unskip Next Reminder"
+                }
+                else {
+                    return "Skip Next Reminder"
+                }
+            }
+            else {
+                return "Log Reminder"
+            }
+        }
+        
+        let alertActionLog = UIAlertAction(
+        title: logTitle,
+        style: .default,
+        handler:
+            {
+                (alert: UIAlertAction!)  in
+                if requirement.timerMode == .timeOfDay {
+                    TimingManager.willToggleSkipTimer(sender: sender, dogName: parentDogName, requirementName: requirement.requirementName)
+                }
+                else {
+                    TimingManager.willResetTimer(sender: sender, dogName: parentDogName, requirementName: requirement.requirementName)
+                }
+                
+            })
+        
+        alertController.addAction(alertActionCancel)
+        alertController.addAction(alertActionLog)
+        alertController.addAction(alertActionDisable)
+        
+        AlertPresenter.shared.enqueueAlertForPresentation(alertController)
+        
         
     }
     
@@ -200,8 +258,16 @@ class Persistence{
                      }
                 }
             }
+            /*
+             pending notif checker
+            print("current date \(Date())")
+             UNUserNotificationCenter.current().getPendingNotificationRequests { (notifs) in
+                for notif in notifs{
+                    print("\(notif.content.title)  \(notif.content.body)   \(notif.trigger?.description)")
+                }
+            }
+             */
         }
-        
     }
     
     static func willEnterForeground(){

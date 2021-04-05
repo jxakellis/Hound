@@ -18,7 +18,8 @@ extension String {
         
         let intTime = abs(Int(interperateTimeInterval.rounded()))
         
-        let numHours = Int(intTime / 3600)
+        let numDays = Int(intTime / (86400))
+        let numHours = Int((intTime % (86400))/(3600))
         let numMinutes = Int((intTime % 3600)/60)
         let numSeconds = Int((intTime % 3600)%60)
         
@@ -30,9 +31,12 @@ extension String {
             readableString.addSeconds(numSeconds: numSeconds)
         case 60..<3600:
             readableString.addMinutes(numMinutes: numMinutes)
-        default:
+        case 3600..<86400:
             readableString.addHours(numHours: numHours)
             readableString.addMinutes(numMinutes: numMinutes)
+        default:
+            readableString.addDays(numDays: numDays)
+            readableString.addHours(numHours: numHours)
         }
         
         return readableString
@@ -67,6 +71,15 @@ extension String {
         }
         else {
             return "\(adjustedHour):\(minute) \(amOrPM)"
+        }
+    }
+    
+    mutating private func addDays(numDays: Int){
+        if numDays > 1 {
+            self.append("\(numDays) Days ")
+        }
+        else if numDays == 1 {
+            self.append("\(numDays) Day ")
         }
     }
     

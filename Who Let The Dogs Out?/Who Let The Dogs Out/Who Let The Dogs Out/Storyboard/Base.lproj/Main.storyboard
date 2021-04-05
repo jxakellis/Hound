@@ -175,8 +175,8 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="100"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="REQ NAME" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QBB-Fh-atX">
-                                            <rect key="frame" x="15" y="10" width="138" height="45"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="REQ NAME" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="QBB-Fh-atX" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                                            <rect key="frame" x="15" y="10" width="128.5" height="45"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="45" id="CXb-NM-ibl"/>
                                             </constraints>
@@ -194,8 +194,8 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DOG NAME" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EDc-RT-0yv">
-                                            <rect key="frame" x="60" y="65" width="93" height="25"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DOG NAME" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="EDc-RT-0yv" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                                            <rect key="frame" x="60" y="65" width="83.5" height="25"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="25" id="zav-Bx-Wu5"/>
                                             </constraints>
@@ -203,24 +203,34 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME LEFT" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="8" translatesAutoresizingMaskIntoConstraints="NO" id="LW9-n4-Z8I">
-                                            <rect key="frame" x="163" y="10" width="241" height="80"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME LEFT" textAlignment="center" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="LW9-n4-Z8I" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                                            <rect key="frame" x="153.5" y="10" width="225.5" height="80"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.5" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="a8i-2X-O0A">
+                                            <rect key="frame" x="384" y="37" width="20" height="26.5"/>
+                                            <color key="tintColor" systemColor="systemGrayColor"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" secondItem="a8i-2X-O0A" secondAttribute="height" multiplier="1:1.5" id="nO7-jq-IGV"/>
+                                                <constraint firstAttribute="width" constant="20" id="nV6-z0-b4w"/>
+                                            </constraints>
+                                        </imageView>
                                     </subviews>
                                     <constraints>
+                                        <constraint firstItem="a8i-2X-O0A" firstAttribute="leading" secondItem="LW9-n4-Z8I" secondAttribute="trailing" constant="5" id="17k-g2-tBK"/>
                                         <constraint firstItem="LW9-n4-Z8I" firstAttribute="leading" secondItem="QBB-Fh-atX" secondAttribute="trailing" constant="10" id="25I-wP-uMh"/>
                                         <constraint firstItem="LW9-n4-Z8I" firstAttribute="centerY" secondItem="pda-EH-Ara" secondAttribute="centerY" id="3Jb-7K-X4L"/>
                                         <constraint firstItem="LW9-n4-Z8I" firstAttribute="top" secondItem="QBB-Fh-atX" secondAttribute="top" id="7Lw-iJ-n15"/>
                                         <constraint firstItem="gtp-T3-2IH" firstAttribute="leading" secondItem="QBB-Fh-atX" secondAttribute="leading" id="7nN-Td-0KU"/>
+                                        <constraint firstItem="a8i-2X-O0A" firstAttribute="centerY" secondItem="pda-EH-Ara" secondAttribute="centerY" id="CON-Ue-7XL"/>
                                         <constraint firstItem="QBB-Fh-atX" firstAttribute="top" secondItem="pda-EH-Ara" secondAttribute="top" constant="10" id="EFH-YA-qwK"/>
                                         <constraint firstItem="LW9-n4-Z8I" firstAttribute="width" secondItem="QBB-Fh-atX" secondAttribute="width" multiplier="1.75" id="I5b-RM-IYa"/>
+                                        <constraint firstAttribute="trailing" secondItem="a8i-2X-O0A" secondAttribute="trailing" constant="10" id="KEB-af-XGa"/>
                                         <constraint firstItem="EDc-RT-0yv" firstAttribute="top" secondItem="QBB-Fh-atX" secondAttribute="bottom" constant="10" id="Mpf-0k-GWQ"/>
                                         <constraint firstItem="LW9-n4-Z8I" firstAttribute="bottom" secondItem="EDc-RT-0yv" secondAttribute="bottom" id="ObN-jr-U6S"/>
                                         <constraint firstAttribute="bottom" secondItem="gtp-T3-2IH" secondAttribute="bottom" constant="10" id="Udm-Ya-2rr"/>
-                                        <constraint firstAttribute="trailing" secondItem="LW9-n4-Z8I" secondAttribute="trailing" constant="10" id="YRO-L4-oHn"/>
                                         <constraint firstItem="LW9-n4-Z8I" firstAttribute="leading" secondItem="EDc-RT-0yv" secondAttribute="trailing" constant="10" id="ZJs-e7-kev"/>
                                         <constraint firstItem="EDc-RT-0yv" firstAttribute="leading" secondItem="gtp-T3-2IH" secondAttribute="trailing" constant="10" id="fk4-D2-0Kz"/>
                                         <constraint firstItem="EDc-RT-0yv" firstAttribute="trailing" secondItem="QBB-Fh-atX" secondAttribute="trailing" id="kJP-6Z-zjN"/>
@@ -243,7 +253,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="100"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="REQ NAME" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UjJ-UQ-0fz">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="REQ NAME" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="UjJ-UQ-0fz">
                                             <rect key="frame" x="15" y="10" width="139" height="45"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="45" id="htO-Ia-aQb"/>
@@ -262,7 +272,7 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DOG NAME" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pNz-Ip-2Zt">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DOG NAME" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="pNz-Ip-2Zt">
                                             <rect key="frame" x="60" y="65" width="94" height="25"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="25" id="GHU-0e-l0X"/>
@@ -447,13 +457,13 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="65.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PLH NAME" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aZu-Qx-VXW">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PLH NAME" textAlignment="center" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="aZu-Qx-VXW" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                             <rect key="frame" x="10" y="10" width="150" height="45.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME INTERVAL" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="3" translatesAutoresizingMaskIntoConstraints="NO" id="HDY-ks-hpC">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME INTERVAL" textAlignment="center" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="HDY-ks-hpC" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                             <rect key="frame" x="170" y="10" width="150" height="45.5"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="yE2-Wa-V1o"/>
@@ -468,7 +478,7 @@
                                                 <action selector="didToggleEnable:" destination="79O-Ma-zM6" eventType="valueChanged" id="6MO-Kf-mAJ"/>
                                             </connections>
                                         </switch>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="noQ-55-Bdw">
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.5" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="noQ-55-Bdw">
                                             <rect key="frame" x="389" y="23.5" width="15" height="19"/>
                                             <color key="tintColor" systemColor="systemGrayColor"/>
                                             <constraints>
@@ -1007,7 +1017,7 @@
                                                 <action selector="didToggleDogSwitch:" destination="tHZ-ho-5tn" eventType="valueChanged" id="0gu-P4-Cwp"/>
                                             </connections>
                                         </switch>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="NAME" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8pH-6H-VGW">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="NAME" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="8pH-6H-VGW" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                             <rect key="frame" x="65" y="10" width="245" height="45.5"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="45" id="FFb-3B-q8F"/>
@@ -1026,7 +1036,7 @@
                                             </constraints>
                                             <imageReference key="image" image="pawFullResolution" symbolScale="large"/>
                                         </imageView>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="2Cv-gS-fE5">
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.5" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="2Cv-gS-fE5">
                                             <rect key="frame" x="379" y="16" width="25" height="34"/>
                                             <color key="tintColor" systemColor="systemGrayColor"/>
                                             <constraints>
@@ -1060,7 +1070,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="75.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="REQ NAME" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Re-8c-KHz">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="REQ NAME" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="9Re-8c-KHz" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                             <rect key="frame" x="75" y="10" width="235" height="30"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="30" id="3Ro-r0-kbC"/>
@@ -1075,7 +1085,7 @@
                                                 <action selector="didToggleRequirementSwitch:" destination="Lai-xI-ipQ" eventType="valueChanged" id="VnM-MU-e7x"/>
                                             </connections>
                                         </switch>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME INTERVAL" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bK9-8i-YGQ">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME INTERVAL" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="bK9-8i-YGQ" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                             <rect key="frame" x="75" y="45.5" width="235" height="20"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="fL5-n7-OUt"/>
@@ -1093,7 +1103,7 @@
                                             </constraints>
                                             <imageReference key="image" image="alarm" catalog="system" symbolScale="large"/>
                                         </imageView>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="vrP-ae-kTK">
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.5" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="vrP-ae-kTK">
                                             <rect key="frame" x="379" y="21" width="25" height="34"/>
                                             <color key="tintColor" systemColor="systemGrayColor"/>
                                             <constraints>
@@ -1143,7 +1153,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pause All Reminders" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WPE-BO-1UA" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pause All Reminders" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="WPE-BO-1UA" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                 <rect key="frame" x="10" y="274" width="300" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="OHh-9U-20N"/>
@@ -1173,7 +1183,7 @@
                                     <constraint firstAttribute="height" constant="10" id="RTq-K1-RTj"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Default Snooze Time" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5XI-x6-k1X" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Default Snooze Time" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="5XI-x6-k1X" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                 <rect key="frame" x="10" y="349" width="175" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="Ika-u2-CNQ"/>
@@ -1192,7 +1202,7 @@
                                     <action selector="didUpdateSnoozeInterval:" destination="6ov-Cv-Z6e" eventType="valueChanged" id="CJh-Bi-h1T"/>
                                 </connections>
                             </datePicker>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Notifications" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IHJ-Pi-wZe" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Notifications" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="IHJ-Pi-wZe" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                 <rect key="frame" x="10" y="124" width="300" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="zog-xo-daJ"/>
@@ -1207,7 +1217,7 @@
                                     <action selector="didToggleNotificationEnabled:" destination="6ov-Cv-Z6e" eventType="valueChanged" id="doO-qH-Yfj"/>
                                 </connections>
                             </switch>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Follow Up Reminder" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="501-cH-NaI" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Follow Up Reminder" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="501-cH-NaI" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
                                 <rect key="frame" x="10" y="199" width="169" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="TQK-1h-aSz"/>

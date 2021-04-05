@@ -17,21 +17,21 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     //MARK: HomeMainScreenTableViewCellRequirementLogDelegate
     
     func didDisable(sender: Sender, dogName: String, requirementName: String) {
-        logState = false
+        //logState = false
         TimingManager.willDisableTimer(sender: Sender(origin: sender, localized: self), dogName: dogName, requirementName: requirementName, dogManager: getDogManager())
         delegate.didSelectOption(sender: Sender(origin: sender, localized: self))
         updateDogManagerDependents()
     }
     
     func didSnooze(sender: Sender, dogName: String, requirementName: String) {
-        logState = false
+        //logState = false
         TimingManager.willSnoozeTimer(sender: Sender(origin: sender, localized: self), dogName: dogName, requirementName: requirementName, dogManager: getDogManager())
         delegate.didSelectOption(sender: Sender(origin: sender, localized: self))
         updateDogManagerDependents()
     }
     
     func didReset(sender: Sender, dogName: String, requirementName: String) {
-        logState = false
+        //logState = false
         TimingManager.willResetTimer(sender: Sender(origin: sender, localized: self), dogName: dogName, requirementName: requirementName, dogManager: getDogManager())
         delegate.didSelectOption(sender: Sender(origin: sender, localized: self))
         updateDogManagerDependents()
@@ -66,6 +66,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     
     var delegate: HomeMainScreenTableViewControllerDelegate! = nil
     
+    /*
     private var storedLogState: Bool = false
     var logState: Bool {
         get {
@@ -80,6 +81,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             
         }
     }
+     */
     
     ///MainTabBarViewController's dogManager copied and transformed to have only active requirements of active dogs present
     private var activeDogManager: DogManager {
@@ -149,8 +151,6 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.tableView.allowsSelection = false
         self.tableView.separatorInset = UIEdgeInsets.zero
         
         tableView.dataSource = self
@@ -176,9 +176,11 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         
         if TimingManager.currentlyActiveTimersCount == 0 || TimingManager.currentlyActiveTimersCount == nil{
             self.tableView.separatorStyle = .none
+            self.tableView.allowsSelection = false
         }
         else if TimingManager.currentlyActiveTimersCount! > 0 {
             self.tableView.separatorStyle = .singleLine
+            self.tableView.allowsSelection = true
         }
     }
     
@@ -258,6 +260,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             
             return cell
         }
+        /*
         else if logState == true {
             let cell = tableView.dequeueReusableCell(withIdentifier: "homeMainScreenTableViewCellRequirementLog", for: indexPath)
             
@@ -277,6 +280,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             
             return cell
         }
+         */
         else{
             let cell = tableView.dequeueReusableCell(withIdentifier: "homeMainScreenTableViewCellRequirementDisplay", for: indexPath)
             
@@ -287,6 +291,14 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             
             return cell
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let priorityPosition = timerPriority(priorityIndex: indexPath.row)
+        let parentDogName = priorityPosition.0
+        let requirement = priorityPosition.1
+        
+        Utils.willShowActionSheet(sender: Sender(origin: self, localized: self), parentDogName: parentDogName, requirement: requirement)
     }
     
     /*

@@ -164,6 +164,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
                 else if updatedRequirement.timeOfDayComponents.timeOfDayComponent != targetRequirement!.timeOfDayComponents.timeOfDayComponent && updatedRequirement.timingStyle == .timeOfDay{
                     updatedRequirement.changeExecutionBasis(newExecutionBasis: Date())
                     updatedRequirement.snoozeComponents.changeSnooze(newSnoozeStatus: false)
+                    updatedRequirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: false)
                 }
                 
                 delegate.didUpdateRequirement(formerName: targetRequirement!.requirementName, updatedRequirement: updatedRequirement)

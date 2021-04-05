@@ -19,12 +19,14 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     //MARK: HomeMainScreenTableViewControllerDelegate
     
     func didSelectOption(sender: Sender) {
+        /*
         if TimingManager.currentlyActiveTimersCount == nil || TimingManager.currentlyActiveTimersCount == 0 {
             willToggleLogState(sender: sender, newSelectionControlState: nil, animated: true)
         }
         else {
             willToggleLogState(sender: sender, newSelectionControlState: false, animated: true)
         }
+         */
     }
     
     //MARK: DogManagerControlFlowProtocol
@@ -43,7 +45,7 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
         }
         
         if sender.origin is TimingManager.Type || sender.origin is TimingManager {
-            controlRefresh(sender: Sender(origin: sender, localized: self), animated: true)
+            //controlRefresh(sender: Sender(origin: sender, localized: self), animated: true)
         }
     }
     
@@ -59,6 +61,7 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     @IBOutlet weak var cancelWillLog: UIButton!
     @IBOutlet weak var cancelWillLogBackground: UIButton!
     
+    /*
     @IBAction func willLog(_ sender: Any) {
         
         //off to on
@@ -74,6 +77,7 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     @IBAction func cancelWillLog(_ sender: Any) {
         willToggleLogState(sender: Sender(origin: self, localized: self), newSelectionControlState: false)
     }
+     */
     
     //MARK: Properties
     
@@ -94,16 +98,22 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
         self.view.bringSubviewToFront(willLogBackground)
         self.view.bringSubviewToFront(willLog)
         
+        cancelWillLogBackground.isHidden = true
+        cancelWillLog.isHidden = true
+        willLogBackground.isHidden = true
+        willLog.isHidden = true
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        controlRefresh(sender: Sender(origin: self, localized: self), animated: false)
+        //controlRefresh(sender: Sender(origin: self, localized: self), animated: false)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        willToggleLogState(sender: Sender(origin: self, localized: self), newSelectionControlState: false, animated: false)
+        //willToggleLogState(sender: Sender(origin: self, localized: self), newSelectionControlState: false, animated: false)
     }
     
+    /*
     ///Toggles all corrosponding information to the specified newState: Bool, sender is the VC which called this information
     private func willToggleLogState(sender: Sender, newSelectionControlState: Bool?, animated: Bool = true){
         toggleCancelWillLogTouch(isTouchEnabled: false)
@@ -223,6 +233,7 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
         
         
     }
+ 
     
     ///Refreshes the buttons to reflect the data present
     func controlRefresh(sender: Sender, animated: Bool){
@@ -252,6 +263,8 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     private func toggleCancelWillLogTouch(isTouchEnabled: Bool){
         cancelWillLog.isUserInteractionEnabled = isTouchEnabled
     }
+ 
+  */
     
     
     

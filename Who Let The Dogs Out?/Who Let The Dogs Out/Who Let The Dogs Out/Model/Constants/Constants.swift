@@ -107,6 +107,7 @@ enum DogManagerConstant {
 enum TimerConstant {
     static var defaultSnooze: TimeInterval = TimeInterval(60*30)
     static var defaultTimeOfDay: DateComponents = DateComponents(calendar: nil, timeZone: nil, era: nil, year: nil, month: nil, day: nil, hour: 8, minute: 30, second: 0, nanosecond: 0, weekday: nil, weekdayOrdinal: nil, quarter: nil, weekOfMonth: nil, weekOfYear: nil, yearForWeekOfYear: nil)
+    static var defaultSkipStatus: Bool = false
 }
 
 enum NotificationConstant {

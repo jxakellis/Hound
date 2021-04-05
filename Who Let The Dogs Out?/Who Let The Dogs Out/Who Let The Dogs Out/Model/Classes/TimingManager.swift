@@ -283,9 +283,19 @@ class TimingManager{
             message: message,
             preferredStyle: .alert)
         
+        let alertActionCancel = UIAlertAction(
+            title:"Cancel",
+            style: .cancel,
+            handler:
+                {
+                    (alert: UIAlertAction!)  in
+                    //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
+                    TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementName: requirement.requirementName)
+                })
+        
         let alertActionDone = UIAlertAction(
             title:"Did it!",
-            style: .cancel,
+            style: .default,
             handler:
                 {
                     (alert: UIAlertAction!)  in
@@ -367,6 +377,23 @@ class TimingManager{
         requirement.timerReset()
         
         delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
+    }
+    
+    ///For time of day requirements it toggles isSkipping
+    static func willToggleSkipTimer(sender: Sender, dogName targetDogName: String, requirementName targetRequirementName: String, dogManager: DogManager = MainTabBarViewController.staticDogManager){
+        let sudoDogManager = dogManager
+        
+        let requirement = try! sudoDogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
+        
+        if requirement.timerMode != .timeOfDay {
+            fatalError("Not .timeOfDay but trying to skip")
+        }
+        
+        requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: !requirement.timeOfDayComponents.isSkipping)
+        
+        
+        delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
+        
     }
     
     
