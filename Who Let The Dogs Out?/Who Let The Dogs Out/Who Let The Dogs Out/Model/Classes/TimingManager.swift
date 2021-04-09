@@ -283,6 +283,7 @@ class TimingManager{
             message: message,
             preferredStyle: .alert)
         
+        //Same as alertActionDone but provides a simplier option if a user just wants the popup to go away.
         let alertActionCancel = UIAlertAction(
             title:"Cancel",
             style: .cancel,
@@ -310,7 +311,7 @@ class TimingManager{
                 {
                     (alert: UIAlertAction!)  in
                     //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                    TimingManager.willSnoozeTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementName: requirement.requirementName)
+                    TimingManager.willSnoozeTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementName: requirement.requirementName, isCancellingSnooze: false)
                 })
         /*
         let alertActionDisable = UIAlertAction(
@@ -325,6 +326,7 @@ class TimingManager{
          */
         alertController.addAction(alertActionDone)
         alertController.addAction(alertActionSnooze)
+        alertController.addAction(alertActionCancel)
         //alertController.addAction(alertActionDisable)
         
     
@@ -349,7 +351,7 @@ class TimingManager{
         
         let requirement = try! dogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
         
-        requirement.timerReset()
+        requirement.timerReset(didExecuteToUser: true)
         
         requirement.setEnable(newEnableStatus: false)
         
@@ -357,12 +359,14 @@ class TimingManager{
     }
     
     ///Finishes executing timer and then sets its isSnoozed to true, note passed requirement should be a reference to a requirement in passed dogManager
-    static func willSnoozeTimer(sender: Sender, dogName targetDogName: String, requirementName targetRequirementName: String, dogManager: DogManager = MainTabBarViewController.staticDogManager){
+    static func willSnoozeTimer(sender: Sender, dogName targetDogName: String, requirementName targetRequirementName: String, isCancellingSnooze: Bool, dogManager: DogManager = MainTabBarViewController.staticDogManager){
         let requirement = try! dogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
         
-        requirement.timerReset()
+        let newSnoozeStatus = !isCancellingSnooze
         
-        requirement.snoozeComponents.changeSnooze(newSnoozeStatus: true)
+        requirement.timerReset(didExecuteToUser: newSnoozeStatus)
+        
+        requirement.snoozeComponents.changeSnooze(newSnoozeStatus: newSnoozeStatus)
         
         delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
     }
@@ -374,7 +378,7 @@ class TimingManager{
         
         let requirement = try! sudoDogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
         
-        requirement.timerReset()
+        requirement.timerReset(didExecuteToUser: true)
         
         delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
     }
@@ -390,7 +394,6 @@ class TimingManager{
         }
         
         requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: !requirement.timeOfDayComponents.isSkipping)
-        
         
         delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
         

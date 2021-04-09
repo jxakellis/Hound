@@ -12,8 +12,9 @@ protocol HomeMainScreenTableViewControllerDelegate {
     func didSelectOption(sender: Sender)
 }
 
-class HomeMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol, HomeMainScreenTableViewCellRequirementLogDelegate {
+class HomeMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol{
     
+    /*
     //MARK: HomeMainScreenTableViewCellRequirementLogDelegate
     
     func didDisable(sender: Sender, dogName: String, requirementName: String) {
@@ -36,6 +37,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         delegate.didSelectOption(sender: Sender(origin: sender, localized: self))
         updateDogManagerDependents()
     }
+     */
     
     //MARK: DogManagerControlFlowProtocol
     
@@ -184,27 +186,84 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         }
     }
     
-    /*
-     func willFadeAwayLogView(){
-     for cellRow in 0..<TimingManager.activeTimers! {
-     
-     print("willFadeAwayLogView -- cR: \(cellRow)")
-     let cell = tableView(self.tableView, cellForRowAt: IndexPath(row: cellRow, section: 0))
-     let testCell: HomeMainScreenTableViewCellRequirementLog = cell as! HomeMainScreenTableViewCellRequirementLog
-     
-     
-     testCell.toggleFade(newFadeStatus: false, animated: true) { (fadeCompleted) in
-     if cellRow+1 == TimingManager.activeTimers! {
-     print("reloaded table")
-     //self.reloadTable()
-     //self.logState = false
-     }
-     }
-     
-     }
-     
-     }
-     */
+    ///Called when a requirement is clicked by the user, display an action sheet of possible modifcations to the alarm.
+    private func willShowSelectedActionSheet(parentDogName: String, requirement: Requirement){
+        let alertController = CustomAlertController(title: "\(requirement.requirementName) for \(parentDogName)", message: nil, preferredStyle: .actionSheet)
+        
+        let alertActionCancel = UIAlertAction(
+            title:"Cancel",
+            style: .cancel,
+            handler:
+                {
+                    (alert: UIAlertAction!)  in
+                })
+        
+        let alertActionDisable = UIAlertAction(
+            title:"Disable",
+            style: .destructive,
+            handler:
+                {
+                    (alert: UIAlertAction!)  in
+                    TimingManager.willDisableTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementName: requirement.requirementName)
+                })
+        
+        var logTitle: String {
+            if requirement.timerMode == .snooze || requirement.timerMode == .countDown {
+                return "Did it!"
+            }
+            else {
+                if requirement.timeOfDayComponents.isSkipping == true {
+                    return "Unskip Next Reminder"
+                }
+                else {
+                    return "Skip Next Reminder"
+                }
+            }
+        }
+        
+        let alertActionLog = UIAlertAction(
+        title: logTitle,
+        style: .default,
+        handler:
+            {
+                (alert: UIAlertAction!)  in
+                if requirement.timerMode == .timeOfDay {
+                    TimingManager.willToggleSkipTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementName: requirement.requirementName)
+                }
+                else {
+                    TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementName: requirement.requirementName)
+                }
+                
+            })
+        
+        let alertActionSnooze = UIAlertAction(
+            title: "Cancel Snooze",
+            style: .default,
+            handler:
+                {
+                    (alert: UIAlertAction!)  in
+                    
+                    TimingManager.willSnoozeTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementName: requirement.requirementName, isCancellingSnooze: true)
+                })
+        
+       
+        
+        alertController.addAction(alertActionCancel)
+        
+        alertController.addAction(alertActionLog)
+        
+        if requirement.snoozeComponents.isSnoozed == true {
+            alertController.addAction(alertActionSnooze)
+        }
+        
+        alertController.addAction(alertActionDisable)
+        
+        
+        
+        AlertPresenter.shared.enqueueAlertForPresentation(alertController)
+        
+        
+    }
     
     
     // MARK: - Table View Management
@@ -260,27 +319,6 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             
             return cell
         }
-        /*
-        else if logState == true {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "homeMainScreenTableViewCellRequirementLog", for: indexPath)
-            
-            let cellPriority = self.timerPriority(priorityIndex: indexPath.row)
-            
-            let testCell = cell as! HomeMainScreenTableViewCellRequirementLog
-            testCell.setup(parentDogName: cellPriority.0, requirementName: cellPriority.1.requirementName)
-            testCell.delegate = self
-            
-            if firstTimeFade == true{
-                testCell.toggleFade(newFadeStatus: true, animated: true)
-                
-                if indexPath.row + 1 == TimingManager.currentlyActiveTimersCount {
-                    firstTimeFade = false
-                }
-            }
-            
-            return cell
-        }
-         */
         else{
             let cell = tableView.dequeueReusableCell(withIdentifier: "homeMainScreenTableViewCellRequirementDisplay", for: indexPath)
             
@@ -298,52 +336,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         let parentDogName = priorityPosition.0
         let requirement = priorityPosition.1
         
-        Utils.willShowActionSheet(sender: Sender(origin: self, localized: self), parentDogName: parentDogName, requirement: requirement)
+        willShowSelectedActionSheet(parentDogName: parentDogName, requirement: requirement)
     }
-    
-    /*
-     // Override to support conditional editing of the table view.
-     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
-     */
-    
-    /*
-     // Override to support editing the table view.
-     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-     if editingStyle == .delete {
-     // Delete the row from the data source
-     tableView.deleteRows(at: [indexPath], with: .fade)
-     } else if editingStyle == .insert {
-     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-     }
-     }
-     */
-    
-    /*
-     // Override to support rearranging the table view.
-     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-     
-     }
-     */
-    
-    /*
-     // Override to support conditional rearranging of the table view.
-     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the item to be re-orderable.
-     return true
-     }
-     */
-    
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
     
 }

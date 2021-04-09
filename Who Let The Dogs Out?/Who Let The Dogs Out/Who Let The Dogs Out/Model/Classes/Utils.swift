@@ -36,64 +36,6 @@ class Utils
         
     }
     
-    static func willShowActionSheet(sender: Sender, parentDogName: String, requirement: Requirement){
-        let alertController = CustomAlertController(title: "\(requirement.requirementName) for \(parentDogName)", message: nil, preferredStyle: .actionSheet)
-        
-        let alertActionCancel = UIAlertAction(
-            title:"Cancel",
-            style: .cancel,
-            handler:
-                {
-                    (alert: UIAlertAction!)  in
-                })
-        
-        let alertActionDisable = UIAlertAction(
-            title:"Disable",
-            style: .destructive,
-            handler:
-                {
-                    (alert: UIAlertAction!)  in
-                    TimingManager.willDisableTimer(sender: sender, dogName: parentDogName, requirementName: requirement.requirementName)
-                })
-        
-        var logTitle: String {
-            if requirement.timerMode == .timeOfDay {
-                if requirement.timeOfDayComponents.isSkipping == true {
-                    return "Unskip Next Reminder"
-                }
-                else {
-                    return "Skip Next Reminder"
-                }
-            }
-            else {
-                return "Log Reminder"
-            }
-        }
-        
-        let alertActionLog = UIAlertAction(
-        title: logTitle,
-        style: .default,
-        handler:
-            {
-                (alert: UIAlertAction!)  in
-                if requirement.timerMode == .timeOfDay {
-                    TimingManager.willToggleSkipTimer(sender: sender, dogName: parentDogName, requirementName: requirement.requirementName)
-                }
-                else {
-                    TimingManager.willResetTimer(sender: sender, dogName: parentDogName, requirementName: requirement.requirementName)
-                }
-                
-            })
-        
-        alertController.addAction(alertActionCancel)
-        alertController.addAction(alertActionLog)
-        alertController.addAction(alertActionDisable)
-        
-        AlertPresenter.shared.enqueueAlertForPresentation(alertController)
-        
-        
-    }
-    
     static func willCreateFollowUpUNUserNotification(dogName: String, requirementName: String, executionDate: Date){
         let requirement = try! MainTabBarViewController.staticDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName)
          let content = UNMutableNotificationContent()
@@ -165,6 +107,7 @@ class Persistence{
            TimerConstant.defaultSnooze = UserDefaults.standard.value(forKey: UserDefaultsKeys.defaultSnooze.rawValue) as! TimeInterval
             
             NotificationConstant.shouldFollowUp = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool
+            NotificationConstant.followUpDelay = UserDefaults.standard.value(forKey: UserDefaultsKeys.followUpDelay.rawValue) as! TimeInterval
             NotificationConstant.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool
             NotificationConstant.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool
             
@@ -186,6 +129,8 @@ class Persistence{
             
             UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
             
+            
+            
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
                 UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
                 UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
@@ -195,6 +140,7 @@ class Persistence{
                 NotificationConstant.shouldFollowUp = isGranted
             }
             
+            UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: "followUpDelay")
             
         }
     }
@@ -219,6 +165,7 @@ class Persistence{
         //Notifications
         
         UserDefaults.standard.setValue(NotificationConstant.shouldFollowUp, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
+        UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
         UserDefaults.standard.setValue(NotificationConstant.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
         UserDefaults.standard.setValue(NotificationConstant.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
         
@@ -252,7 +199,7 @@ class Persistence{
                         }
                         Utils.willCreateUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!.fireDate)
                         if NotificationConstant.shouldFollowUp == true {
-                            Utils.willCreateFollowUpUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!.fireDate + (60.0*5.0))
+                            Utils.willCreateFollowUpUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!.fireDate + NotificationConstant.followUpDelay)
                         }
                         
                      }

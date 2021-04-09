@@ -158,13 +158,10 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
                 
                 //If the executionInterval (the countdown duration) is changed then is changes its execution interval, this is because (for example) if you were 5 minutes in to a 1 hour countdown but then change it to 30 minutes, you would want to be 0 minutes into the new timer and not 5 minutes in like previously.
                 if updatedRequirement.countDownComponents.executionInterval != targetRequirement!.countDownComponents.executionInterval && updatedRequirement.timingStyle == .countDown{
-                    updatedRequirement.changeExecutionBasis(newExecutionBasis: Date())
-                    updatedRequirement.snoozeComponents.changeSnooze(newSnoozeStatus: false)
+                    updatedRequirement.timerReset(didExecuteToUser: false)
                 }
                 else if updatedRequirement.timeOfDayComponents.timeOfDayComponent != targetRequirement!.timeOfDayComponents.timeOfDayComponent && updatedRequirement.timingStyle == .timeOfDay{
-                    updatedRequirement.changeExecutionBasis(newExecutionBasis: Date())
-                    updatedRequirement.snoozeComponents.changeSnooze(newSnoozeStatus: false)
-                    updatedRequirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: false)
+                    updatedRequirement.timerReset(didExecuteToUser: false)
                 }
                 
                 delegate.didUpdateRequirement(formerName: targetRequirement!.requirementName, updatedRequirement: updatedRequirement)

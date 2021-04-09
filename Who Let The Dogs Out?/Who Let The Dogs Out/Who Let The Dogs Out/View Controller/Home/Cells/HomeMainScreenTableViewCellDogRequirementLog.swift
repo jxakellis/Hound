@@ -6,6 +6,8 @@
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
 //
 
+/*
+
 import UIKit
 
 protocol HomeMainScreenTableViewCellRequirementLogDelegate {
@@ -117,3 +119,4 @@ class HomeMainScreenTableViewCellRequirementLog: UITableViewCell {
     }
     
 }
+*/

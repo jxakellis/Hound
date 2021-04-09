@@ -37,7 +37,12 @@ class ToolTipView: UIView {
         
         let sourceCenter = sourceView.center
         
-        let frameNeeded = CGRect(x: (sourceCenter.x - (messageBounds.width/2) - toolTipLabelWidthInset), y: sourceView.frame.origin.y - messageBounds.height - (toolTipLabelHeightInset * 2) - toolTipOffset, width: messageBounds.width + (toolTipLabelWidthInset * 2), height: messageBounds.height + (toolTipLabelHeightInset * 2) + toolTipOffset)
+        let frameX = (sourceCenter.x - (messageBounds.width/2) - toolTipLabelWidthInset)
+        let frameY = sourceView.frame.origin.y - messageBounds.height - (toolTipLabelHeightInset * 2) - toolTipOffset
+        let frameWidth = messageBounds.width + (toolTipLabelWidthInset * 2)
+        let frameHeight = messageBounds.height + (toolTipLabelHeightInset * 2) + toolTipOffset
+        
+        let frameNeeded = CGRect(x: frameX, y: frameY, width: frameWidth, height: frameHeight)
         
         self.frame = frameNeeded
         

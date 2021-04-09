@@ -85,7 +85,7 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol, HomeM
     
     var homeMainScreenTableViewController = HomeMainScreenTableViewController()
     
-    var logState: Bool = false
+    //var logState: Bool = false
     
     //MARK: Main
     

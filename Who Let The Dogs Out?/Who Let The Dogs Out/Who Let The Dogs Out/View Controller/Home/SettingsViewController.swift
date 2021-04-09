@@ -33,12 +33,12 @@ class SettingsViewController: UIViewController, ToolTipable {
             //notications enabled, going from on to off
             if NotificationConstant.isNotificationEnabled == true {
                 NotificationConstant.isNotificationEnabled = false
-                synchronizeShouldFollowUp(animated: true)
+                synchronizeFollowUpComponents(animated: true)
             }
             //notifications disabled, going from off to on
             else {
                 NotificationConstant.isNotificationEnabled = true
-                synchronizeShouldFollowUp(animated: true)
+                synchronizeFollowUpComponents(animated: true)
             }
         }
     }
@@ -52,12 +52,14 @@ class SettingsViewController: UIViewController, ToolTipable {
         if isNotificationEnabledSwitch.isOn != NotificationConstant.isNotificationEnabled {
             isNotificationEnabledSwitch.setOn(NotificationConstant.isNotificationEnabled, animated: true)
         }
-        self.synchronizeShouldFollowUp(animated: animated)
+        self.synchronizeFollowUpComponents(animated: animated)
     }
     
     
     
     //MARK: Follow Up Notification
+    
+    @IBOutlet weak var followUpReminderLabel: CustomLabel!
     
     @IBOutlet private weak var shouldFollowUp: UISwitch!
     
@@ -65,19 +67,23 @@ class SettingsViewController: UIViewController, ToolTipable {
         NotificationConstant.shouldFollowUp = shouldFollowUp.isOn
     }
     
-    private func synchronizeShouldFollowUp(animated: Bool){
+    private func synchronizeFollowUpComponents(animated: Bool){
         //animated
         if animated == true {
             //notifications are enabled
             if NotificationConstant.isNotificationEnabled == true {
                 shouldFollowUp.isEnabled = true
                 shouldFollowUp.isOn = NotificationConstant.shouldFollowUp
+                
+                followUpDelayInterval.isEnabled = true
             }
             //notifications are disabled
             else {
                 shouldFollowUp.isEnabled = false
                 shouldFollowUp.setOn(false, animated: true)
                 NotificationConstant.shouldFollowUp = false
+                
+                followUpDelayInterval.isEnabled = false
             }
         }
         //not animated
@@ -86,14 +92,26 @@ class SettingsViewController: UIViewController, ToolTipable {
             if NotificationConstant.isNotificationEnabled == true {
                 shouldFollowUp.isEnabled = true
                 shouldFollowUp.isOn = NotificationConstant.shouldFollowUp
+                
+                followUpDelayInterval.isEnabled = true
             }
             //notifications are disabled
             else {
                 shouldFollowUp.isEnabled = false
                 shouldFollowUp.isOn = false
                 NotificationConstant.shouldFollowUp = false
+                
+                followUpDelayInterval.isEnabled = false
             }
         }
+    }
+    
+    //MARK: Follow Up Delay
+    
+    @IBOutlet weak var followUpDelayInterval: UIDatePicker!
+    
+    @IBAction func didUpdateFollowUpDelay(_ sender: Any) {
+        NotificationConstant.followUpDelay = followUpDelayInterval.countDownDuration
     }
     
     
@@ -139,35 +157,38 @@ class SettingsViewController: UIViewController, ToolTipable {
                 hideToolTip(sourceButton: toolTipButton)
             }
             else {
-                showToolTip(sourceButton: toolTipButton, message: "Sends a follow up \nnotification if the first one\nis not responded to\nwithin five minutes")
+                showToolTip(sourceButton: toolTipButton, message: "Sends a follow up \nnotification if the first one\nis not responded to")
             }
         }
         
         func showToolTip(sourceButton: UIButton, message: String) {
             let tipView = ToolTipView(sourceView: sourceButton, message: message, toolTipPosition: .middle)
-            view.addSubview(tipView)
+            sourceButton.superview?.addSubview(tipView)
             currentToolTip = tipView
             performToolTipShow(sourceButton: sourceButton, tipView)
         }
         
         func hideToolTip(sourceButton: UIButton? = nil) {
-            if sourceButton != nil && currentToolTip != nil{
-                
-                UIView.animate(withDuration: 0.3, delay: 0.3, options: .curveEaseOut, animations: {
-                    self.currentToolTip!.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-                }) { finished in
-                    self.currentToolTip?.removeFromSuperview()
-                    self.currentToolTip = nil
-                    sourceButton!.isUserInteractionEnabled = true
-                    
+                if self.currentToolTip != nil{
+                    UIView.animate(withDuration: 0.3, delay: 0.3, options: .curveEaseOut, animations: {
+                        self.currentToolTip!.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+                    }) { finished in
+                        self.currentToolTip?.removeFromSuperview()
+                        self.currentToolTip = nil
+                        if sourceButton != nil {
+                            sourceButton!.isUserInteractionEnabled = true
+                        }
+                        
+                    }
                 }
-            }
-            else if currentToolTip != nil{
-                toolTipButton.isUserInteractionEnabled = true
-                currentToolTip?.removeFromSuperview()
-                currentToolTip = nil
-            }
+            
+            
         }
+    
+    ///If hideToolTip is exposed to objc and used in selector for tap gesture recognizer then for some reason
+    @objc private func willHideToolTip(){
+        hideToolTip()
+    }
     
     //MARK: Reset
     
@@ -228,13 +249,38 @@ class SettingsViewController: UIViewController, ToolTipable {
     
     @IBOutlet weak var pageTitle: CustomLabel!
     
+    @IBOutlet weak var scrollViewContainerForAll: UIView!
+    
     //MARK: Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        followUpDelayInterval.countDownDuration = NotificationConstant.followUpDelay
         snoozeInterval.countDownDuration = TimerConstant.defaultSnooze
         isPaused.isOn = TimingManager.isPaused
         resetButton.layer.cornerRadius = 8.0
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(willHideToolTip))
+        self.view.addGestureRecognizer(tap)
+        
+        var followUpReminderLabelWidth: CGFloat {
+            let neededConstraintSpace: CGFloat = 10.0 + 10.0 + 2.0 + 45.0
+            let otherButtonSpace: CGFloat = shouldFollowUp.frame.width + toolTipButton.frame.width
+            let maximumWidth: CGFloat = view.frame.width - otherButtonSpace - neededConstraintSpace
+            
+            let neededLabelSize: CGSize = (followUpReminderLabel.text?.withBoundedWidth(font: followUpReminderLabel.font, height: followUpReminderLabel.frame.height))!
+            
+            let neededLabelWidth: CGFloat = neededLabelSize.width
+            
+            if neededLabelWidth > maximumWidth {
+                return maximumWidth
+            }
+            else {
+                return neededLabelWidth
+            }
+        }
+        
+        followUpReminderLabel.frame = CGRect(x: followUpReminderLabel.frame.origin.x, y: followUpReminderLabel.frame.origin.y, width: followUpReminderLabelWidth, height: followUpReminderLabel.frame.height)
         
         /*
         let pageTitleSeperatorLine = UIView(frame: CGRect(x: pageTitle.frame.origin.x, y: pageTitle.frame.maxY + 3.0, width: pageTitle.frame.width, height: 4.5))
@@ -247,7 +293,7 @@ class SettingsViewController: UIViewController, ToolTipable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         isNotificationEnabledSwitch.isOn = NotificationConstant.isNotificationEnabled
-        synchronizeShouldFollowUp(animated: false)
+        synchronizeFollowUpComponents(animated: false)
         synchronizeIsPaused()
     }
     

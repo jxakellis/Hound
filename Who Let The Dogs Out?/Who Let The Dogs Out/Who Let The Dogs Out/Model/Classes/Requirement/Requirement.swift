@@ -78,7 +78,7 @@ protocol RequirementProtocol {
     ///Calculated time interval remaining that taking into account factors to produce correct value for conditions and parameters
     var intervalRemaining: TimeInterval? { get }
     
-    ///Called when a timer is fired/executed and an option to deal with it is selected by the user, preps for future use
+    ///Called when a timer is fired/executed and an option to deal with it is selected by the user, if the reset is trigger by a user doing an action that constitude a reset, specify as so, but if doing something like changing the value of some component it was did not exeute to user. If didExecuteToUse is true it does the same thing as false except it appends the current date to the array of executionDates which keeps tracks of each time a requirement is formally executed.
     mutating func timerReset(didExecuteToUser didExecute: Bool)
     
     
@@ -265,7 +265,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         }
     }
     
-    func timerReset(didExecuteToUser didExecute: Bool = true){
+    func timerReset(didExecuteToUser didExecute: Bool){
         if didExecute == true {
             self.executionDates.append(Date())
         }

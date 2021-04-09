@@ -352,7 +352,6 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     
     @IBAction func willAddButton(_ sender: Any) {
         self.changeAddStatus(newAddStatus: !addStatus)
-        //performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
     }
     
     ///The size of the subAddButtons in relation to the willAddButtomn
