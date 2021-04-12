@@ -5,7 +5,7 @@
 //  Created by Jonathan Xakellis on 2/1/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
 //
-
+import AVFoundation
 import UIKit
 
 class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsViewControllerDelegate, TimingManagerDelegate, SettingsViewControllerDelegate {
@@ -108,7 +108,18 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         TimingManager.delegate = self
         TimingManager.willInitalize(dogManager: getDogManager())
         
-       
+        /*
+        for int in 1000...1351{
+            let float: Double = Double(int)
+            let delay: Double = (float - 1000.0)*2.0
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                    print(int)
+                    let systemSoundID: SystemSoundID = SystemSoundID(int)
+                    AudioServicesPlayAlertSound(systemSoundID)
+                }
+                
+            }
+        */
         
     }
     

@@ -14,7 +14,7 @@ protocol TimingManagerDelegate {
 
 class TimingManager{
     
-    //MARK: MAIN
+    //MARK: Properties
     
     static var delegate: TimingManagerDelegate! = nil
     
@@ -54,7 +54,7 @@ class TimingManager{
     /// IMPORTANT NOTE: DO NOT COPY, WILL MAKE MULTIPLE TIMERS WHICH WILL FIRE SIMULTANIOUSLY
     static var timerDictionary: Dictionary<String,Dictionary<String,Timer>> = Dictionary<String,Dictionary<String,Timer>>()
     
-    //MARK: TimingProtocol Implementation
+    //MARK: Main
     
     ///Initalizes all timers according to the dogManager passed, assumes no timers currently active and if transitioning from Paused to Unpaused (didUnpuase = true) handles logic differently
     static func willInitalize(dogManager: DogManager, didUnpause: Bool = false){
@@ -84,11 +84,12 @@ class TimingManager{
                 }
                 
                 let timer = Timer(fireAt: TimingManager.executionDate(requirement: requirement, didUnpause: didUnpause),
-                                  interval: -1,
-                                  target: self,
-                                  selector: #selector(self.didExecuteTimer(sender:)),
-                                  userInfo: try! ["dogName": dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name"), "requirement": requirement, "dogManager": dogManager],
-                                  repeats: false)
+                                      interval: -1,
+                                      target: self,
+                                      selector: #selector(self.didExecuteTimer(sender:)),
+                                      userInfo: try! ["dogName": dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name"), "requirement": requirement],
+                                      repeats: false)
+                
                 
                 //Updates timerDictionary to reflect new timer added, this is so a reference to the created timer can be referenced later and invalidated if needed.
                 var nestedtimerDictionary: Dictionary<String, Timer> = try! timerDictionary[dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name")] ?? Dictionary<String,Timer>()
@@ -99,10 +100,20 @@ class TimingManager{
                 
                 RunLoop.main.add(timer, forMode: .common)
                 
+                if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.unskipDate != nil {
+                    let isSkippingDisabler = Timer(fireAt: requirement.timeOfDayComponents.unskipDate!,
+                                                 interval: -1,
+                                                 target: self,
+                                                 selector: #selector(self.willUpdateIsSkipping(sender:)),
+                                                 userInfo: try! ["dogName": dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name"), "requirement": requirement, "dogManager": dogManager],
+                                                 repeats: false)
+                    RunLoop.main.add(isSkippingDisabler, forMode: .common)
+                }
+                
             }
         }
     }
-    
+
     private static func executionDate(requirement: Requirement, didUnpause: Bool) -> Date {
         //Date which the timer should fire
         var executionDate: Date! = nil
@@ -167,6 +178,28 @@ class TimingManager{
     static func willReinitalize(dogName: String, requirementName: String) throws {
         
     }
+    
+    ///If a requirement is skipping the next time of day alarm, at some point it will go from 1+ day away to 23 hours and 59 minutes. When that happens then the timer should be changed from isSkipping to normal mode because it just skipped that alarm that should have happened
+    @objc private static func willUpdateIsSkipping(sender: Timer){
+        guard let parsedDictionary = sender.userInfo as? [String: Any]
+        else{
+            ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: TimingManagerError.parseSenderInfoFailed)
+            return
+        }
+        print("willUpdateIsSkipping")
+        let dogName: String = parsedDictionary["dogName"]! as! String
+        let requirementName: String = (parsedDictionary["requirement"]! as! Requirement).requirementName
+        
+        let sudoDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
+        let requirement = try! sudoDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName)
+        
+        requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: false)
+        requirement.changeExecutionBasis(newExecutionBasis: Date())
+        
+        delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
+    }
+    
+    //MARK: Pause Control
     
     ///Toggles pause for a given dogManager to a specifided newPauseState
     static func willTogglePause(dogManager: DogManager, newPauseStatus: Bool) {
@@ -256,6 +289,8 @@ class TimingManager{
         
         delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
     }
+
+    //MARK: Timer Actions
     
     ///Used as a selector when constructing timer in willInitalize, when called at an unknown point in time by the timer it triggers helper functions to create both in app notifcations and iOS notifcations
     @objc private static func didExecuteTimer(sender: Timer){
@@ -313,21 +348,9 @@ class TimingManager{
                     //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                     TimingManager.willSnoozeTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementName: requirement.requirementName, isCancellingSnooze: false)
                 })
-        /*
-        let alertActionDisable = UIAlertAction(
-            title:"Disable",
-            style: .destructive,
-            handler:
-                {
-                    (alert: UIAlertAction!)  in
-                    //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                    TimingManager.willDisableTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementName: requirement.requirementName)
-                })
-         */
         alertController.addAction(alertActionDone)
         alertController.addAction(alertActionSnooze)
         alertController.addAction(alertActionCancel)
-        //alertController.addAction(alertActionDisable)
         
     
         let sudoDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
@@ -378,25 +401,22 @@ class TimingManager{
         
         let requirement = try! sudoDogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
         
-        requirement.timerReset(didExecuteToUser: true)
-        
-        delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
-    }
-    
-    ///For time of day requirements it toggles isSkipping
-    static func willToggleSkipTimer(sender: Sender, dogName targetDogName: String, requirementName targetRequirementName: String, dogManager: DogManager = MainTabBarViewController.staticDogManager){
-        let sudoDogManager = dogManager
-        
-        let requirement = try! sudoDogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
-        
-        if requirement.timerMode != .timeOfDay {
-            fatalError("Not .timeOfDay but trying to skip")
+        if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.isSkipping == false && Date().distance(to: TimingManager.timerDictionary[targetDogName]![targetRequirementName]!.fireDate) > 0{
+            print("skip")
+            requirement.timerReset(didExecuteToUser: true)
+            requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: true)
+        }
+        else if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.isSkipping == true{
+            print("unskip")
+            requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: false)
+            requirement.changeExecutionBasis(newExecutionBasis: requirement.executionDates.removeLast())
+        }
+        else {
+            print("reg")
+            requirement.timerReset(didExecuteToUser: true)
         }
         
-        requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: !requirement.timeOfDayComponents.isSkipping)
-        
         delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
-        
     }
     
     

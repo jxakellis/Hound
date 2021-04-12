@@ -70,3 +70,23 @@ For count down requirement, when displaying its time interval, change from "TI" 
 Stop displaying dog description on dogs configuration, keep in data model, disable and hide input fields
 
 When launching for the first time, have entry page as configure dogs and not home screen dispaly
+
+4/11/2021
+
+Remove cancel snooze option when clicking on a reminder on the home screen
+
+Change cancel button when you have a .alert alertController when a reminder goes off to make the reminder enabled but inactive, i.e. say no more time left and leave it to sit there until handled e.g. clicking Did it!
+
+Handle how i want but change skip next reminder to did it and unskip to undid it?, up to me to figure out exact edge case
+
+Sound when alert pops up in app (vibration?)
+
+Font awesome?
+
+Icon for app (explore art teacher)
+
+App name exploration, link into words in the work of puppy training and house breaking. Explore amazon for example.
+
+Write app store description, should be used in app story obviously but also given to usability testers (in additon to what they should try to do)
+
+Work on logs page

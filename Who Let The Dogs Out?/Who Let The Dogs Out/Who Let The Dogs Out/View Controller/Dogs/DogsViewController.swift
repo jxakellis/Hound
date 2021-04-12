@@ -128,6 +128,13 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let dimView = UIView(frame: self.view.frame)
+        dimView.alpha = 0
+        //dimView.backgroundColor = UIColor.init(hue: 0.0, saturation: 0.0, brightness: 0.66, alpha: 1.0)
+        dimView.backgroundColor = UIColor.black
+        dimScreenView = dimView
+        self.view.addSubview(dimView)
+        
         self.view.bringSubviewToFront(willAddButtonBackground)
         self.view.bringSubviewToFront(willAddButton)
         
@@ -180,6 +187,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     
     //MARK: Programmically Added Add Requirement To Dog / Add Dog Buttons
     
+    private var dimScreenView: UIView!
     private var addStatus: Bool = false
     private var addButtons: [ScaledButton] = []
     private var addButtonsBackground: [ScaledButton] = []
@@ -208,7 +216,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             addButtons.append(willAddDogButton)
             addButtonsBackground.append(willAddDogButtonBackground)
             addButtonsLabel.append(willAddDogButtonLabel)
-            addButtonsLabelBackground.append(willAddDogButtonLabelBackground)
+           addButtonsLabelBackground.append(willAddDogButtonLabelBackground)
             
             for dogIndex in 0..<getDogManager().dogs.count{
                 guard maximumSubButtonCount > addButtons.count else {
@@ -248,7 +256,6 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                 buttonLabel.frame.origin.x = self.view.safeAreaLayoutGuide.layoutFrame.maxX
                 buttonLabelBackground.frame.origin.x = self.view.safeAreaLayoutGuide.layoutFrame.maxX
                 
-                //button.alpha = 0-
                 view.addSubview(buttonLabelBackground)
                 view.addSubview(buttonLabel)
                 view.addSubview(buttonBackground)
@@ -258,8 +265,10 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                     button.frame.origin = buttonOrigin
                     buttonBackground.frame.origin = buttonOrigin
                     buttonLabel.frame.origin = buttonLabelOrigin
-                    buttonLabelBackground.frame.origin = buttonLabelOrigin
-                    //button.alpha = 1
+                   buttonLabelBackground.frame.origin = buttonLabelOrigin
+                    self.dimScreenView.alpha = 0.66
+                    MainTabBarViewController.mainTabBarViewController.tabBar.alpha = 0.1
+                    
                 } completion: { (completed) in
                     //
                 }
@@ -276,7 +285,6 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                 let buttonLabel = addButtonsLabel[buttonIndex]
                 let buttonLabelBackground = addButtonsLabelBackground[buttonIndex]
                 
-                //button.alpha = 1
                 let originYWithAlignedMiddle = willAddButton.frame.midY - (button.frame.height/2)
                 
                 UIView.animate(withDuration: AnimationConstant.largeButtonShow.rawValue) {
@@ -286,7 +294,8 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                     buttonBackground.frame.origin.y = originYWithAlignedMiddle
                     buttonLabel.frame.origin.x = self.view.safeAreaLayoutGuide.layoutFrame.maxX
                     buttonLabelBackground.frame.origin.x = self.view.safeAreaLayoutGuide.layoutFrame.maxX
-                    //button.alpha = 0
+                    self.dimScreenView.alpha = 0
+                    MainTabBarViewController.mainTabBarViewController.tabBar.alpha = 1
                 } completion: { (completed) in
                     DispatchQueue.main.asyncAfter(deadline: .now() + AnimationConstant.largeButtonHide.rawValue) {
                         button.isHidden = true
@@ -317,7 +326,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         let buttonLabel = UILabel(frame: CGRect(origin: CGPoint (x: button.frame.origin.x - buttonLabelSize.width, y: button.frame.midY - (buttonLabelSize.height/2)),size: buttonLabelSize ))
             
         buttonLabel.attributedText = NSAttributedString(string: text, attributes: [.font: buttonLabelFont])
-        buttonLabel.textColor = .link
+        buttonLabel.textColor = .white
         
         //buttonLabel.isHidden = true
         
@@ -332,7 +341,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         let buttonLabel = UILabel(frame: label.frame)
         buttonLabel.font = label.font
         buttonLabel.text = label.text
-        buttonLabel.outline(outlineColor: .white, insideColor: .link, outlineWidth: 15)
+        buttonLabel.outline(outlineColor: .link, insideColor: .link, outlineWidth: 15)
         
         buttonLabel.isUserInteractionEnabled = false
         buttonLabel.adjustsFontSizeToFitWidth = true

@@ -78,6 +78,8 @@ protocol RequirementProtocol {
     ///Calculated time interval remaining that taking into account factors to produce correct value for conditions and parameters
     var intervalRemaining: TimeInterval? { get }
     
+    var executionDate: Date? { get }
+    
     ///Called when a timer is fired/executed and an option to deal with it is selected by the user, if the reset is trigger by a user doing an action that constitude a reset, specify as so, but if doing something like changing the value of some component it was did not exeute to user. If didExecuteToUse is true it does the same thing as false except it appends the current date to the array of executionDates which keeps tracks of each time a requirement is formally executed.
     mutating func timerReset(didExecuteToUser didExecute: Bool)
     
@@ -138,6 +140,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         aCoder.encode(timeOfDayComponents, forKey: "timeOfDayComponents")
         aCoder.encode(snoozeComponents, forKey: "snoozeComponents")
         aCoder.encode(storedTimingStyle.rawValue, forKey: "timingStyle")
+        
      }
      
     //MARK: EnableProtocol
@@ -263,6 +266,65 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
             fatalError("not implemented")
             //return -1
         }
+    }
+    
+    var executionDate: Date? {
+        guard self.getEnable() == true else {
+            return nil
+        }
+        
+        //Date which the timer should fire
+        var executionDate: Date! = nil
+        
+        //Snoozing
+        if self.timerMode == .snooze{
+            
+            //If has been paused before
+            if didUnpause == true {
+                
+                executionDate = Date.executionDate(lastExecution: Date(), interval: requirement.intervalRemaining!)
+                return executionDate
+                
+            }
+            else if didUnpause == false{
+                
+                executionDate = Date.executionDate(lastExecution: requirement.executionBasis, interval: requirement.snoozeComponents.executionInterval)
+                return executionDate
+                
+            }
+        }
+        else if requirement.timerMode == .timeOfDay {
+            if requirement.intervalRemaining == nil {
+                executionDate = Date()
+                return executionDate
+            }
+            else {
+                executionDate = requirement.timeOfDayComponents.nextTimeOfDay
+                return executionDate
+            }
+        }
+        else if requirement.timerMode == .countDown{
+           
+            if didUnpause == true {
+                
+                executionDate = Date.executionDate(lastExecution: Date(), interval: requirement.intervalRemaining!)
+                return executionDate
+                
+            }
+            
+            //If not transitioning from unpaused, calculates execution date traditionally
+            else if didUnpause == false{
+                
+                executionDate = Date.executionDate(lastExecution: requirement.executionBasis, interval: requirement.countDownComponents.executionInterval)
+                return executionDate
+                
+            }
+        }
+        else {
+            fatalError("not implemented currently")
+        }
+        
+        return executionDate
     }
     
     func timerReset(didExecuteToUser didExecute: Bool){

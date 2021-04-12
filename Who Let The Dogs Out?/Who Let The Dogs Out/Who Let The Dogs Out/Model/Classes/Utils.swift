@@ -197,6 +197,7 @@ class Persistence{
                         guard TimingManager.timerDictionary[dogKey]![requirementKey]!.isValid else{
                             continue
                         }
+                        
                         Utils.willCreateUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!.fireDate)
                         if NotificationConstant.shouldFollowUp == true {
                             Utils.willCreateFollowUpUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!.fireDate + NotificationConstant.followUpDelay)

@@ -170,6 +170,9 @@ protocol TimeOfDayComponentsProtocol {
     ///nextTimeOfDay except 24 hours before
     var previousTimeOfDay: Date { get }
     
+    ///If the next timeOfDay alarm is skipped then at some point the time will pass where it transfers from being skipped to regular mode, this is that date at which is should transition back
+    var unskipDate: Date? { get }
+    
     ///Called when a timer is handled and needs to be reset
     func timerReset()
 }
@@ -266,6 +269,14 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         }
         
         return calculatedDate
+    }
+    
+    var unskipDate: Date? {
+        guard isSkipping == true else {
+            return nil
+        }
+        
+        return nextTimeOfDay.addingTimeInterval(-1.0*60*60*24)
     }
     
     func timerReset() {

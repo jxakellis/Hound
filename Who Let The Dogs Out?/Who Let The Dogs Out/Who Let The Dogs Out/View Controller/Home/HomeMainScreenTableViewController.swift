@@ -213,10 +213,10 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             }
             else {
                 if requirement.timeOfDayComponents.isSkipping == true {
-                    return "Unskip Next Reminder"
+                    return "Undo it!"
                 }
                 else {
-                    return "Skip Next Reminder"
+                    return "Did it!"
                 }
             }
         }
@@ -227,41 +227,16 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         handler:
             {
                 (alert: UIAlertAction!)  in
-                if requirement.timerMode == .timeOfDay {
-                    TimingManager.willToggleSkipTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementName: requirement.requirementName)
-                }
-                else {
-                    TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementName: requirement.requirementName)
-                }
+                TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementName: requirement.requirementName)
                 
             })
-        
-        let alertActionSnooze = UIAlertAction(
-            title: "Cancel Snooze",
-            style: .default,
-            handler:
-                {
-                    (alert: UIAlertAction!)  in
-                    
-                    TimingManager.willSnoozeTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementName: requirement.requirementName, isCancellingSnooze: true)
-                })
-        
-       
-        
         alertController.addAction(alertActionCancel)
         
         alertController.addAction(alertActionLog)
         
-        if requirement.snoozeComponents.isSnoozed == true {
-            alertController.addAction(alertActionSnooze)
-        }
-        
         alertController.addAction(alertActionDisable)
         
-        
-        
         AlertPresenter.shared.enqueueAlertForPresentation(alertController)
-        
         
     }
     

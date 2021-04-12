@@ -18,7 +18,7 @@ enum DogConstant {
 enum RequirementConstant {
     static let defaultName = "Potty"
     static let defaultDescription = "Take dog outside"
-    static let defaultTimeInterval = (3600*2.0)
+    static let defaultTimeInterval = (3600*0.5)
     static let defaultEnable: Bool = true
     static var defaultRequirement: Requirement { let req = Requirement()
         try! req.changeRequirementName(newRequirementName: defaultName)

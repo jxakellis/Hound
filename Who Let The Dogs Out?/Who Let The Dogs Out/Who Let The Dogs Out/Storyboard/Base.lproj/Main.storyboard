@@ -398,11 +398,11 @@
             <objects>
                 <viewController title="Instantiate Dog Requirement " id="uJe-nq-2qo" customClass="DogsInstantiateRequirementViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="MUR-Wf-RFm">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="583"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="633"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xpx-kk-0ei">
-                                <rect key="frame" x="0.0" y="88" width="414" height="495"/>
+                                <rect key="frame" x="0.0" y="88" width="414" height="545"/>
                                 <connections>
                                     <segue destination="ngF-4H-kgO" kind="embed" identifier="dogsInstantiateRequirementManagerViewController" id="1g9-zQ-LRF"/>
                                 </connections>
@@ -446,7 +446,7 @@
             <objects>
                 <tableViewController title="Add Dog Requirement Table View" id="Tmz-g7-lDw" customClass="DogsRequirementTableViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="lYX-m1-L14">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="583"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="633"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
@@ -731,7 +731,7 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xnr-3B-PYB">
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xnr-3B-PYB">
                                 <rect key="frame" x="10" y="115" width="119.5" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="vLg-i7-Vct"/>
@@ -748,7 +748,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                             </textField>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="27o-HD-GIn">
+                            <textField hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="27o-HD-GIn">
                                 <rect key="frame" x="139.5" y="115" width="264.5" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="fjZ-f0-hrd"/>
@@ -784,7 +784,7 @@
                                 </connections>
                             </button>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6MT-az-4bi">
-                                <rect key="frame" x="0.0" y="225" width="414" height="583"/>
+                                <rect key="frame" x="0.0" y="175" width="414" height="633"/>
                                 <connections>
                                     <segue destination="eFt-4z-qcU" kind="embed" identifier="dogRequirementNavigationController" id="E3d-ML-4L4"/>
                                 </connections>
@@ -829,7 +829,7 @@
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enabled:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R1G-Y6-u2J">
-                                <rect key="frame" x="10" y="165" width="119.5" height="40"/>
+                                <rect key="frame" x="10" y="115" width="119.5" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="O6J-Xr-bae"/>
                                 </constraints>
@@ -838,7 +838,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TEj-xg-wOu">
-                                <rect key="frame" x="139.5" y="169.5" width="51" height="31"/>
+                                <rect key="frame" x="139.5" y="119.5" width="51" height="31"/>
                             </switch>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="xg8-HR-nc3"/>
@@ -856,7 +856,7 @@
                             <constraint firstItem="xg8-HR-nc3" firstAttribute="trailing" secondItem="Lu2-Bs-kCu" secondAttribute="trailing" constant="10" id="Erk-oA-bfs"/>
                             <constraint firstItem="iWI-X8-QFy" firstAttribute="leading" secondItem="Pg4-10-30f" secondAttribute="leading" id="F5B-HA-OD7"/>
                             <constraint firstItem="xg8-HR-nc3" firstAttribute="bottom" secondItem="iWI-X8-QFy" secondAttribute="bottom" constant="10" id="FAy-rg-Gte"/>
-                            <constraint firstItem="6MT-az-4bi" firstAttribute="top" secondItem="xnr-3B-PYB" secondAttribute="bottom" constant="70" id="FR1-la-dDY"/>
+                            <constraint firstItem="6MT-az-4bi" firstAttribute="top" secondItem="R1G-Y6-u2J" secondAttribute="bottom" constant="20" id="FR1-la-dDY"/>
                             <constraint firstItem="Lu2-Bs-kCu" firstAttribute="leading" secondItem="9Ma-OG-XR6" secondAttribute="leading" id="FZW-j2-hg7"/>
                             <constraint firstItem="6MT-az-4bi" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" id="Jhd-YK-Qhl"/>
                             <constraint firstItem="7nG-bv-0ex" firstAttribute="leading" secondItem="ht7-hC-mOx" secondAttribute="trailing" constant="10" id="Jox-gT-P79"/>
@@ -882,7 +882,7 @@
                             <constraint firstItem="R1G-Y6-u2J" firstAttribute="trailing" secondItem="ht7-hC-mOx" secondAttribute="trailing" id="scP-Ti-Rqm"/>
                             <constraint firstItem="xnr-3B-PYB" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" constant="10" id="uFU-i9-04k"/>
                             <constraint firstItem="d0b-Zh-XWb" firstAttribute="trailing" secondItem="Ez3-B6-l6Y" secondAttribute="trailing" id="uLE-BD-QzW"/>
-                            <constraint firstItem="R1G-Y6-u2J" firstAttribute="top" secondItem="xnr-3B-PYB" secondAttribute="bottom" constant="10" id="xgW-R5-zwh"/>
+                            <constraint firstItem="R1G-Y6-u2J" firstAttribute="top" secondItem="ht7-hC-mOx" secondAttribute="bottom" constant="10" id="xgW-R5-zwh"/>
                             <constraint firstItem="xg8-HR-nc3" firstAttribute="trailing" secondItem="27o-HD-GIn" secondAttribute="trailing" constant="10" id="ylS-FQ-UJd"/>
                             <constraint firstItem="Ez3-B6-l6Y" firstAttribute="trailing" secondItem="77a-Dp-kvd" secondAttribute="centerX" id="zEm-OS-rLa"/>
                             <constraint firstItem="R1G-Y6-u2J" firstAttribute="leading" secondItem="ht7-hC-mOx" secondAttribute="leading" id="zjl-hb-CMj"/>
