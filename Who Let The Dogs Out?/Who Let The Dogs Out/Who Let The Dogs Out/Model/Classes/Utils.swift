@@ -232,7 +232,6 @@ class Persistence{
         UNUserNotificationCenter.current().getNotificationSettings { (permission) in
             switch permission.authorizationStatus {
             case .authorized:
-                print(".authorized")
                 
                 //going from off to on, meaning the user has gone into the settings app and turned notifications from disabled to enabled
                 if UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool == false {
@@ -247,7 +246,6 @@ class Persistence{
                 
                 
             case .denied:
-                print(".denied")
                 UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
                 UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
                 UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
@@ -268,7 +266,7 @@ class Persistence{
             case .ephemeral:
                 print(".ephemeral")
             @unknown default:
-                print("unknown")
+                print("unknown auth status")
             }
         }
         

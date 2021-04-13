@@ -83,7 +83,7 @@ class TimingManager{
                     continue
                 }
                 
-                let timer = Timer(fireAt: TimingManager.executionDate(requirement: requirement, didUnpause: didUnpause),
+                let timer = Timer(fireAt: requirement.executionDate!,
                                       interval: -1,
                                       target: self,
                                       selector: #selector(self.didExecuteTimer(sender:)),
@@ -113,59 +113,6 @@ class TimingManager{
             }
         }
     }
-
-    private static func executionDate(requirement: Requirement, didUnpause: Bool) -> Date {
-        //Date which the timer should fire
-        var executionDate: Date! = nil
-        
-        if requirement.timerMode == .snooze{
-            //If transitioning from paused to unpaused, calculates execution date differently, this is because the timer elasped an amount of time before it was paused, so it only has its interval minus the time elapsed left to go.
-            if didUnpause == true {
-                
-                executionDate = Date.executionDate(lastExecution: Date(), interval: requirement.intervalRemaining!)
-                return executionDate
-                
-            }
-            else if didUnpause == false{
-                
-                executionDate = Date.executionDate(lastExecution: requirement.executionBasis, interval: requirement.snoozeComponents.executionInterval)
-                return executionDate
-                
-            }
-        }
-        else if requirement.timerMode == .timeOfDay {
-            if requirement.intervalRemaining == nil {
-                executionDate = Date()
-                return executionDate
-            }
-            else {
-                executionDate = requirement.timeOfDayComponents.nextTimeOfDay
-                return executionDate
-            }
-        }
-        else if requirement.timerMode == .countDown{
-           
-            if didUnpause == true {
-                
-                executionDate = Date.executionDate(lastExecution: Date(), interval: requirement.intervalRemaining!)
-                return executionDate
-                
-            }
-            
-            //If not transitioning from unpaused, calculates execution date traditionally
-            else if didUnpause == false{
-                
-                executionDate = Date.executionDate(lastExecution: requirement.executionBasis, interval: requirement.countDownComponents.executionInterval)
-                return executionDate
-                
-            }
-        }
-        else {
-            fatalError("not implemented currently")
-        }
-        
-        return executionDate
-    }
     
     ///Invalidates all current timers then calls willInitalize, makes it a clean slate then re sets everything up
     static func willReinitalize(dogManager: DogManager) {
@@ -186,7 +133,6 @@ class TimingManager{
             ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: TimingManagerError.parseSenderInfoFailed)
             return
         }
-        print("willUpdateIsSkipping")
         let dogName: String = parsedDictionary["dogName"]! as! String
         let requirementName: String = (parsedDictionary["requirement"]! as! Requirement).requirementName
         
@@ -194,7 +140,7 @@ class TimingManager{
         let requirement = try! sudoDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName)
         
         requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: false)
-        requirement.changeExecutionBasis(newExecutionBasis: Date())
+        requirement.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
         
         delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
     }
@@ -223,7 +169,7 @@ class TimingManager{
         else {
             self.lastUnpause = Date()
             self.isPaused = false
-            willInitalize(dogManager: dogManager, didUnpause: true)
+            willUnpause(dogManager: dogManager)
         }
     }
     
@@ -254,7 +200,6 @@ class TimingManager{
     
     ///Updates dogManager to reflect the changes in intervalElapsed as if everything is paused the amount of time elapsed by each timer must to saved so when unpaused the new timers can be properly calculated
     private static func willPause(dogManager: DogManager){
-        let sudoDogManager = dogManager
         for dogKey in timerDictionary.keys{
             for requirementKey in timerDictionary[dogKey]!.keys {
                 
@@ -262,23 +207,23 @@ class TimingManager{
                     continue
                 }
                 
-                let sudoRequirement = try! sudoDogManager.findDog(dogName: dogKey).dogRequirments.findRequirement(requirementName: requirementKey)
+                let requirement = try! dogManager.findDog(dogName: dogKey).dogRequirments.findRequirement(requirementName: requirementKey)
                 
                 
-                if sudoRequirement.snoozeComponents.isSnoozed == false {
-                    if sudoRequirement.countDownComponents.intervalElapsed <= 0.001 {
-                        sudoRequirement.countDownComponents.changeIntervalElapsed(newIntervalElapsed: sudoRequirement.executionBasis.distance(to: self.lastPause!))
+                if requirement.snoozeComponents.isSnoozed == false {
+                    if requirement.countDownComponents.intervalElapsed <= 0.001 {
+                        requirement.countDownComponents.changeIntervalElapsed(newIntervalElapsed: requirement.executionBasis.distance(to: self.lastPause!))
                     }
                     else{
-                        sudoRequirement.countDownComponents.changeIntervalElapsed(newIntervalElapsed: (sudoRequirement.countDownComponents.intervalElapsed + self.lastUnpause!.distance(to: (self.lastPause!))))
+                        requirement.countDownComponents.changeIntervalElapsed(newIntervalElapsed: (requirement.countDownComponents.intervalElapsed + self.lastUnpause!.distance(to: (self.lastPause!))))
                     }
                 }
-                else if sudoRequirement.snoozeComponents.isSnoozed == true {
-                    if sudoRequirement.snoozeComponents.intervalElapsed <= 0.001 {
-                        sudoRequirement.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: sudoRequirement.executionBasis.distance(to: self.lastPause!))
+                else if requirement.snoozeComponents.isSnoozed == true {
+                    if requirement.snoozeComponents.intervalElapsed <= 0.001 {
+                        requirement.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: requirement.executionBasis.distance(to: self.lastPause!))
                     }
                     else{
-                        sudoRequirement.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: (sudoRequirement.snoozeComponents.intervalElapsed + self.lastUnpause!.distance(to: (self.lastPause!))))
+                        requirement.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: (requirement.snoozeComponents.intervalElapsed + self.lastUnpause!.distance(to: (self.lastPause!))))
                     }
                 }
                 
@@ -287,7 +232,28 @@ class TimingManager{
             }
         }
         
-        delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
+        delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
+    }
+    
+    private static func willUnpause(dogManager: DogManager){
+        
+        for dog in dogManager.dogs{
+            guard dog.getEnable() == true else {
+                continue
+            }
+            for requirement in dog.dogRequirments.requirements {
+                
+                guard requirement.getEnable() == true else {
+                    continue
+                }
+                
+                requirement.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: false)
+                
+                
+            }
+        }
+        
+        delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
     }
 
     //MARK: Timer Actions
@@ -409,7 +375,7 @@ class TimingManager{
         else if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.isSkipping == true{
             print("unskip")
             requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: false)
-            requirement.changeExecutionBasis(newExecutionBasis: requirement.executionDates.removeLast())
+            requirement.changeExecutionBasis(newExecutionBasis: requirement.logDates.removeLast(), shouldResetIntervalsElapsed: true)
         }
         else {
             print("reg")

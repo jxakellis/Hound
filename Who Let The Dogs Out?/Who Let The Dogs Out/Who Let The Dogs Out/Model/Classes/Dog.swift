@@ -38,7 +38,7 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
                 guard r.getEnable() == true else {
                     continue
                 }
-                r.changeExecutionBasis(newExecutionBasis: Date())
+                r.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
             }
         }
         isEnabled = newEnableStatus

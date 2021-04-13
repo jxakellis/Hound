@@ -48,12 +48,12 @@ protocol RequirementProtocol {
     mutating func changeRequirementDescription(newRequirementDescription: String?) throws
     
     ///An array of all dates that logs when the timer has fired, whether by snooze, regular timing convention, etc. ANY TIME
-    var executionDates: [Date] { get set }
+    var logDates: [Date] { get set }
     
     ///Similar to executionDate but instead of being a log of everytime the time has fired it is either the date the timer has last fired or the date it should be basing its execution off of, e.g. 5 minutes into the timer you change the countdown from 30 minutes to 15, you don't want to log an execution as there was no one but you want to start the timer fresh and have it count down from the moment it was changed.
     var executionBasis: Date { get }
     ///Changes executionBasis to the specified value, note if the Date is equal to the current date (i.e. newExecutionBasis == Date()) then resets all components intervals elapsed to zero.
-    mutating func changeExecutionBasis(newExecutionBasis: Date)
+    mutating func changeExecutionBasis(newExecutionBasis: Date, shouldResetIntervalsElapsed: Bool)
     
     ///True if the presentation of the timer (when it is time to present) has been handled and sent to the presentation handler, prevents repeats of the timer being sent to the presenation handler over and over.
     var isPresentationHandled: Bool { get set }
@@ -80,7 +80,7 @@ protocol RequirementProtocol {
     
     var executionDate: Date? { get }
     
-    ///Called when a timer is fired/executed and an option to deal with it is selected by the user, if the reset is trigger by a user doing an action that constitude a reset, specify as so, but if doing something like changing the value of some component it was did not exeute to user. If didExecuteToUse is true it does the same thing as false except it appends the current date to the array of executionDates which keeps tracks of each time a requirement is formally executed.
+    ///Called when a timer is fired/executed and an option to deal with it is selected by the user, if the reset is trigger by a user doing an action that constitude a reset, specify as so, but if doing something like changing the value of some component it was did not exeute to user. If didExecuteToUse is true it does the same thing as false except it appends the current date to the array of logDates which keeps tracks of each time a requirement is formally executed.
     mutating func timerReset(didExecuteToUser didExecute: Bool)
     
     
@@ -104,7 +104,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         
         copy.storedTimingStyle = self.timingStyle
         
-        copy.executionDates = self.executionDates
+        copy.logDates = self.logDates
         copy.storedExecutionBasis = self.executionBasis
         
         return copy
@@ -120,7 +120,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         self.isEnabled = aDecoder.decodeBool(forKey: "isEnabled")
         self.storedRequirementName = aDecoder.decodeObject(forKey: "requirementName") as! String
         self.storedRequirementDescription = aDecoder.decodeObject(forKey: "requirementDescription") as! String
-        self.executionDates = aDecoder.decodeObject(forKey: "executionDates") as! [Date]
+        self.logDates = aDecoder.decodeObject(forKey: "logDates") as! [Date]
         self.storedExecutionBasis = aDecoder.decodeObject(forKey: "executionBasis") as! Date
         self.isPresentationHandled = aDecoder.decodeBool(forKey: "isPresentationHandled")
         self.countDownComponents = aDecoder.decodeObject(forKey: "countDownComponents") as! CountDownComponents
@@ -133,7 +133,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         aCoder.encode(isEnabled, forKey: "isEnabled")
         aCoder.encode(storedRequirementName, forKey: "requirementName")
         aCoder.encode(storedRequirementDescription, forKey: "requirementDescription")
-        aCoder.encode(executionDates, forKey: "executionDates")
+        aCoder.encode(logDates, forKey: "logDates")
         aCoder.encode(storedExecutionBasis, forKey: "executionBasis")
         aCoder.encode(isPresentationHandled, forKey: "isPresentationHandled")
         aCoder.encode(countDownComponents, forKey: "countDownComponents")
@@ -151,7 +151,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
     ///Changes isEnabled to newEnableStatus, note if toggling from false to true the execution basis is changed to the current Date()
     func setEnable(newEnableStatus: Bool) {
         if isEnabled == false && newEnableStatus == true {
-            self.changeExecutionBasis(newExecutionBasis: Date())
+            self.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
         }
         isEnabled = newEnableStatus
         //HDLL
@@ -190,15 +190,15 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         storedRequirementDescription = newRequirementDescription!
     }
     
-    var executionDates: [Date] = []
+    var logDates: [Date] = []
     
     private var storedExecutionBasis: Date = Date()
     var executionBasis: Date { return storedExecutionBasis }
-    func changeExecutionBasis(newExecutionBasis: Date){
+    func changeExecutionBasis(newExecutionBasis: Date, shouldResetIntervalsElapsed: Bool){
         storedExecutionBasis = newExecutionBasis
         
         //If resetting the executionBasis to the current time (and not changing it to another executionBasis of some other requirement) then resets interval elasped as timers would have to be fresh
-        if newExecutionBasis.distance(to: Date()) <= 1{
+        if shouldResetIntervalsElapsed == true {
             snoozeComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
             countDownComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
         }
@@ -247,13 +247,16 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
     }
     
     var intervalRemaining: TimeInterval? {
-        if timerMode == .snooze{
+        //snooze
+        if timerMode == .snooze {
             return snoozeComponents.executionInterval - snoozeComponents.intervalElapsed
         }
+        //countdown
         else if timerMode == .countDown{
             return countDownComponents.executionInterval - countDownComponents.intervalElapsed
         }
         else if timerMode == .timeOfDay {
+            //if the previousTimeOfDay is closer to the present than executionBasis returns nil, indicates missed alarm
             if self.executionBasis.distance(to: self.timeOfDayComponents.previousTimeOfDay) > 0 {
                 return nil
             }
@@ -273,65 +276,33 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
             return nil
         }
         
-        //Date which the timer should fire
-        var executionDate: Date! = nil
-        
         //Snoozing
         if self.timerMode == .snooze{
-            
-            //If has been paused before
-            if didUnpause == true {
-                
-                executionDate = Date.executionDate(lastExecution: Date(), interval: requirement.intervalRemaining!)
-                return executionDate
-                
-            }
-            else if didUnpause == false{
-                
-                executionDate = Date.executionDate(lastExecution: requirement.executionBasis, interval: requirement.snoozeComponents.executionInterval)
-                return executionDate
-                
-            }
+            return Date.executionDate(lastExecution: executionBasis, interval: intervalRemaining!)
         }
-        else if requirement.timerMode == .timeOfDay {
-            if requirement.intervalRemaining == nil {
-                executionDate = Date()
-                return executionDate
+        //Time of Day Alarm
+        else if timerMode == .timeOfDay {
+            //If the intervalRemaining is nil than means there is no time left
+            if intervalRemaining == nil {
+                return Date()
             }
             else {
-                executionDate = requirement.timeOfDayComponents.nextTimeOfDay
-                return executionDate
+                return timeOfDayComponents.nextTimeOfDay
             }
         }
-        else if requirement.timerMode == .countDown{
-           
-            if didUnpause == true {
-                
-                executionDate = Date.executionDate(lastExecution: Date(), interval: requirement.intervalRemaining!)
-                return executionDate
-                
-            }
-            
-            //If not transitioning from unpaused, calculates execution date traditionally
-            else if didUnpause == false{
-                
-                executionDate = Date.executionDate(lastExecution: requirement.executionBasis, interval: requirement.countDownComponents.executionInterval)
-                return executionDate
-                
-            }
+        else if timerMode == .countDown{
+            return Date.executionDate(lastExecution: executionBasis, interval: intervalRemaining!)
         }
         else {
             fatalError("not implemented currently")
         }
-        
-        return executionDate
     }
     
     func timerReset(didExecuteToUser didExecute: Bool){
         if didExecute == true {
-            self.executionDates.append(Date())
+            self.logDates.append(Date())
         }
-        self.changeExecutionBasis(newExecutionBasis: Date())
+        self.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
         self.isPresentationHandled = false
         
         snoozeComponents.timerReset()
