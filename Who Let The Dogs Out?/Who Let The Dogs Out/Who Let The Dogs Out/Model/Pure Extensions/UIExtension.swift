@@ -40,53 +40,7 @@ extension UITableView {
     
 }
 
-class ScaledButton: UIButton {
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.scaleSymbolPontSize()
-    }
-    
-    private func scaleSymbolPontSize(){
-        var smallestDimension: CGFloat {
-            if self.frame.width <= self.frame.height {
-                return self.frame.width
-            }
-            else {
-                return self.frame.height
-            }
-        }
-        self.setImage(self.currentImage?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: smallestDimension)), for: .normal)
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        self.scaleSymbolPontSize()
-    }
-    
-    override func setImage(_ image: UIImage?, for state: UIControl.State) {
-        super.setImage(image, for: state)
-        if image != nil && image!.isSymbolImage == true {
-            DispatchQueue.main.async {
-                self.scaleSymbolPontSize()
-            }
-        }
-    }
-    
-}
 
-class CustomLabel: UILabel {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.adjustsFontSizeToFitWidth = true
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        self.adjustsFontSizeToFitWidth = true
-    }
-    
-}
 
 extension UILabel {
     /*
@@ -111,4 +65,26 @@ extension UILabel {
         self.attributedText = NSMutableAttributedString(string: self.text ?? "", attributes: strokeTextAttributes)
     }
 }
+
+extension UIColor {
+
+    func rgb() -> (red:Int, green:Int, blue:Int, alpha:Int)? {
+        var fRed : CGFloat = 0
+        var fGreen : CGFloat = 0
+        var fBlue : CGFloat = 0
+        var fAlpha: CGFloat = 0
+        if self.getRed(&fRed, green: &fGreen, blue: &fBlue, alpha: &fAlpha) {
+            let iRed = Int(fRed * 255.0)
+            let iGreen = Int(fGreen * 255.0)
+            let iBlue = Int(fBlue * 255.0)
+            let iAlpha = Int(fAlpha * 255.0)
+
+            return (red:iRed, green:iGreen, blue:iBlue, alpha:iAlpha)
+        } else {
+            // Could not extract RGBA components:
+            return nil
+        }
+    }
+}
+
 

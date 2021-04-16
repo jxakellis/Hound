@@ -23,7 +23,7 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
     //Occurs when the on off switch is toggled
     @IBAction func didToggleDogSwitch(_ sender: Any) {
         dog.setEnable(newEnableStatus: dogToggleSwitch.isOn)
-        try! delegate.didToggleDogSwitch(sender: Sender(origin: self, localized: self), dogName: dog.dogSpecifications.getDogSpecification(key: "name"), isEnabled: self.dog.getEnable())
+       delegate.didToggleDogSwitch(sender: Sender(origin: self, localized: self), dogName: dog.dogTraits.dogName, isEnabled: self.dog.getEnable())
     }
     
     //MARK: Properties
@@ -49,7 +49,7 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
     //Function used externally to setup dog
     func setup(dogPassed: Dog){
         dog = dogPassed
-        try! self.dogName.text = dogPassed.dogSpecifications.getDogSpecification(key: "name")
+        self.dogName.text = dogPassed.dogTraits.dogName
         self.dogToggleSwitch.isOn = dogPassed.getEnable()
     }
     

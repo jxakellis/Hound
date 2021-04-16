@@ -8,14 +8,13 @@
 //  Modified by Jonathan Xakellis on 2/5/21.
 //
 
-import Foundation
 import UIKit
 
 class AlertPresenter: NSObject, NSCoding{
     
     //MARK: NSCoding
     required init?(coder aDecoder: NSCoder) {
-        alertQueue = aDecoder.decodeObject(forKey: "alertQueue") as! Queue<CustomAlertController>
+        alertQueue = aDecoder.decodeObject(forKey: "alertQueue") as! Queue<GeneralAlertController>
         locked = aDecoder.decodeBool(forKey: "locked")
     }
     
@@ -28,16 +27,16 @@ class AlertPresenter: NSObject, NSCoding{
         super.init()
     }
     
-    private var alertQueue = Queue<CustomAlertController>()
+    private var alertQueue = Queue<GeneralAlertController>()
     private var locked = false
     private var halted = false
-    var currentPresentation: CustomAlertController?
+    var currentPresentation: GeneralAlertController?
     
     static var shared = AlertPresenter()
     
     // MARK: - Present
     
-    func enqueueAlertForPresentation(_ alertController: CustomAlertController) {
+    func enqueueAlertForPresentation(_ alertController: GeneralAlertController) {
         alertQueue.enqueue(alertController)
         
         showNextAlert()
@@ -68,7 +67,7 @@ class AlertPresenter: NSObject, NSCoding{
             for d in sudoDogManager.dogs{
                 for r in d.dogRequirments.requirements{
                     if r.isPresentationHandled == true {
-                        try! TimingManager.willShowTimer(dogName: d.dogSpecifications.getDogSpecification(key: "name"), requirement: r)
+                        TimingManager.willShowTimer(dogName: d.dogTraits.dogName, requirement: r)
                     }
                 }
             }
@@ -78,8 +77,3 @@ class AlertPresenter: NSObject, NSCoding{
     }
 }
 
-class CustomAlertController: UIAlertController {
-    override func viewDidDisappear(_ animated: Bool) {
-        AlertPresenter.shared.viewDidComplete()
-    }
-}

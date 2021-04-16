@@ -24,7 +24,7 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
         do {
             
             try delegate.didUpdateRequirement(sender: Sender(origin: self, localized: self), parentDogName: parentDogName, formerName: targetRequirement!.requirementName, updatedRequirement: updatedRequirement)
-            self.dismiss(animated: true, completion: nil)
+            self.performSegue(withIdentifier: "unwindToDogsViewControllerUR", sender: self)
         }
         catch {
             ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: error)
@@ -51,7 +51,7 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
     
     ///The cancel / exit button was pressed, dismisses view to complete intended action
     @IBAction private func willCancel(_ sender: Any) {
-        self.dismiss(animated: true, completion: nil)
+        self.performSegue(withIdentifier: "unwindToDogsViewControllerUR", sender: self)
     }
     
     //MARK: Properties

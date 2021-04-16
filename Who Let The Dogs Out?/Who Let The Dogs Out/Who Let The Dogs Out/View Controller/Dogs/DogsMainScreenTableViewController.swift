@@ -154,7 +154,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             let cell = tableView.dequeueReusableCell(withIdentifier: "dogsMainScreenTableViewCellRequirementDisplay", for: indexPath)
             
             let testCell = cell as! DogsMainScreenTableViewCellRequirementDisplay
-            try! testCell.setup(parentDogName: getDogManager().dogs[indexPath.section].dogSpecifications.getDogSpecification(key: "name"), requirementPassed: getDogManager().dogs[indexPath.section].dogRequirments.requirements[indexPath.row-1])
+            testCell.setup(parentDogName: getDogManager().dogs[indexPath.section].dogTraits.dogName, requirementPassed: getDogManager().dogs[indexPath.section].dogRequirments.requirements[indexPath.row-1])
             testCell.delegate = self
             return cell
         }

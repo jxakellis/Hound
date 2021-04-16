@@ -151,6 +151,7 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountDownProtocol
 
 enum TimeOfDayComponentsError: Error {
     case invalidCalendarComponent
+    case invalidWeekdayArray
 }
 
 protocol TimeOfDayComponentsProtocol {
@@ -163,11 +164,17 @@ protocol TimeOfDayComponentsProtocol {
     var isSkipping: Bool { get }
     ///Changes isSkipping and data associated
     mutating func changeIsSkipping(newSkipStatus: Bool)
+
+    ///The weekdays on which the requirement should fire
+    var weekdays: [Int] { get }
     
-    ///Date that is calculated from timeOfDayComponent when the timer should next fire
+    ///Changes the weekdays, if empty or nil throws an error due to the fact that there needs to be atleast one time of week
+    mutating func changeWeekdays(newWeekdays: [Int]?) throws
+    
+    ///The Date that the alarm should next fire at
     var nextTimeOfDay: Date { get }
     
-    ///nextTimeOfDay except 24 hours before
+    ///The Date that the alarm should have last fired at
     var previousTimeOfDay: Date { get }
     
     ///If the next timeOfDay alarm is skipped then at some point the time will pass where it transfers from being skipped to regular mode, this is that date at which is should transition back
@@ -185,6 +192,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         let copy = TimeOfDayComponents()
         copy.storedTimeOfDayComponent = self.storedTimeOfDayComponent
         copy.storedIsSkipping = self.storedIsSkipping
+        copy.storedWeekDays = self.storedWeekDays
         return copy
     }
     
@@ -197,11 +205,13 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     required init?(coder aDecoder: NSCoder) {
         self.storedTimeOfDayComponent = aDecoder.decodeObject(forKey: "timeOfDayComponent") as! DateComponents
         self.storedIsSkipping = aDecoder.decodeBool(forKey: "isSkipping")
+        self.storedWeekDays = aDecoder.decodeObject(forKey: "storedWeekDays") as! [Int]
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(storedTimeOfDayComponent, forKey: "timeOfDayComponent")
         aCoder.encode(storedIsSkipping, forKey: "isSkipping")
+        aCoder.encode(storedWeekDays, forKey: "storedWeekDays")
     }
     
     
@@ -242,33 +252,138 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         storedIsSkipping = newSkipStatus
     }
     
-    var nextTimeOfDay: Date { var calculatedDate: Date = Date()
-        calculatedDate = Calendar.current.date(bySettingHour: timeOfDayComponent.hour!, minute: timeOfDayComponent.minute!, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)!
-        
-        
-        //If the nextTimeOfDay is actually in the past, adds 24 hours to make it into the nextTimeOfDay
-        if Date().distance(to: calculatedDate) <= 0 {
-            if isSkipping == true {
-                calculatedDate = calculatedDate + (24.0 * 60 * 60)
+    private var storedWeekDays: [Int] = [1,2,3,4,5,6,7]
+    var weekdays: [Int] { return storedWeekDays }
+    
+    func changeWeekdays(newWeekdays: [Int]?) throws{
+        if newWeekdays == nil || newWeekdays!.isEmpty{
+            throw TimeOfDayComponentsError.invalidWeekdayArray
+        }
+        else if storedWeekDays != newWeekdays! {
+            storedWeekDays = newWeekdays!
+            changeIsSkipping(newSkipStatus: false)
+        }
+        else {
+        }
+    }
+    
+    ///Produces an array of atleast two with all of the future dates that the requirement will fire given the weekday(s), hour, and minute
+    private var futureExecutionDates: [Date] {
+        var calculatedDates: [Date] = []
+            for weekday in weekdays{
+                var calculatedDate = Date()
+                calculatedDate = Calendar.current.date(bySetting: .weekday, value: weekday, of: calculatedDate)!
+                calculatedDate = Calendar.current.date(bySettingHour: timeOfDayComponent.hour!, minute: timeOfDayComponent.minute!, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)!
+                
+                //Correction for if setting components to the same day, e.g. if its 11:00Am friday and you apply 8:30AM Friday to the current date, then it is in the past, this gets around this by making it 8:30AM Next Friday
+                if Date().distance(to: calculatedDate) < 0 {
+                    calculatedDate = Calendar.current.date(byAdding: .day, value: 7, to: calculatedDate)!
+                }
+                
+                calculatedDates.append(calculatedDate)
             }
-            return (calculatedDate.addingTimeInterval(TimeInterval(24*60*60)))
+        
+        
+        if calculatedDates.count > 1 {
+            calculatedDates.sort()
+        }
+        else if calculatedDates.count == 1{
+            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 7, to: calculatedDates[0])!)
+        }
+        else {
+            fatalError("calculatedDates 0")
         }
         
-        if isSkipping == true {
-            calculatedDate = calculatedDate + (24.0 * 60 * 60)
+        
+        return calculatedDates
+    }
+
+    ///Date that is calculated from timeOfDayComponent when the timer should next fire when the requirement is skipping
+    var skippingNextTimeOfDay: Date {
+        
+        
+        let traditionalNextTOD = self.traditionalNextTimeOfDay
+        
+        //If there are multiple dates to be sorted through to find the date that is closer in time to traditionalNextTimeOfDay but still in the future
+        if weekdays.count > 1 {
+            let calculatedDates = futureExecutionDates
+            var nextSoonestCalculatedDate: Date = futureExecutionDates.last!
+            
+            for calculatedDate in calculatedDates {
+                //If the calculated date is greater in time (future) that the normal non skipping time and the calculatedDate is closer in time to the trad date, then sets nextSoonest to calculatedDate
+                if traditionalNextTOD.distance(to: calculatedDate) > 0 && traditionalNextTOD.distance(to: calculatedDate) < traditionalNextTOD.distance(to: nextSoonestCalculatedDate){
+                    nextSoonestCalculatedDate = calculatedDate
+                }
+            }
+            
+            return nextSoonestCalculatedDate
+        }
+        //If only 1 day of week selected then all you have to do is add 1 week.
+        else {
+            return Calendar.current.date(byAdding: .day, value: 7, to: traditionalNextTOD)!
         }
         
-        return calculatedDate
+
+        
+    }
+
+    ///Date that is calculated from timeOfDayComponent when the timer should next fire, does not factor in isSkipping
+    var traditionalNextTimeOfDay: Date {
+        
+        let calculatedDates = futureExecutionDates
+        
+        //want to start with the date furthest away in time
+        var soonestCalculatedDate: Date = calculatedDates.last!
+        
+        for calculatedDate in calculatedDates {
+            //if calculated date is in the future (as trad should be) and if its closer to the present that the soonestCalculatedDate, then sets soonest to calculated
+            if Date().distance(to: calculatedDate) > 0 && Date().distance(to: calculatedDate) < Date().distance(to: soonestCalculatedDate){
+                soonestCalculatedDate = calculatedDate
+            }
+        }
+
+        return soonestCalculatedDate
     }
     
     var previousTimeOfDay: Date {
-        var calculatedDate = Date(timeInterval: TimeInterval(-1*60*60*24), since: nextTimeOfDay)
-        //correction for isSkipping as without it the previous time of day would be in the future while isSkipping == true
-        if isSkipping == true {
-            calculatedDate = calculatedDate - (24.0 * 60 * 60)
+        
+        let traditionalNextTOD = self.traditionalNextTimeOfDay
+        
+        if weekdays.count > 1{
+            var preceedingExecutionDates = futureExecutionDates
+        
+            //Subtracts a week from all futureExecutionDates
+            for futureExecutionDateIndex in 0..<futureExecutionDates.count{
+                let preceedingExecutionDate: Date = Calendar.current.date(byAdding: .day, value: -7, to: preceedingExecutionDates[futureExecutionDateIndex])!
+                preceedingExecutionDates[futureExecutionDateIndex] = preceedingExecutionDate
+        }
+            
+        //choose most extreme
+        var closestCalculatedDate: Date = preceedingExecutionDates.first!
+        
+        //Looks for a date that is both before the nextTimeOfDay but closer in time to
+        for preceedingExecutionDate in preceedingExecutionDates {
+            
+            //for the two .distance comparisions after the &&, the distances are going to be negative because it is going in reverse time. This means that the > is in the right direction. Write it out if it doesn't make sense
+            if traditionalNextTOD.distance(to: preceedingExecutionDate) < 0 && traditionalNextTOD.distance(to: preceedingExecutionDate) > traditionalNextTOD.distance(to: closestCalculatedDate){
+                closestCalculatedDate = preceedingExecutionDate
+            }
         }
         
-        return calculatedDate
+        return closestCalculatedDate
+        }
+        else {
+            return Calendar.current.date(byAdding: .day, value: -7, to: traditionalNextTOD)!
+        }
+    }
+    
+    var nextTimeOfDay: Date {
+        if isSkipping == true {
+            return skippingNextTimeOfDay
+        }
+        else {
+            return traditionalNextTimeOfDay
+        }
     }
     
     var unskipDate: Date? {
@@ -276,7 +391,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
             return nil
         }
         
-        return nextTimeOfDay.addingTimeInterval(-1.0*60*60*24)
+        return traditionalNextTimeOfDay
     }
     
     func timerReset() {

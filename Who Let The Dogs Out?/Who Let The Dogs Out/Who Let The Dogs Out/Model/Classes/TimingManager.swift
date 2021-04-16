@@ -54,10 +54,13 @@ class TimingManager{
     /// IMPORTANT NOTE: DO NOT COPY, WILL MAKE MULTIPLE TIMERS WHICH WILL FIRE SIMULTANIOUSLY
     static var timerDictionary: Dictionary<String,Dictionary<String,Timer>> = Dictionary<String,Dictionary<String,Timer>>()
     
+    ///If a timeOfDay alarm is being skipped, this array stores all the timers that are responsible for unskipping the alarm when it goes from 1 Day -> 23 Hours 59 Minutes
+    private static var isSkippingDisablers: [Timer] = []
+    
     //MARK: Main
     
     ///Initalizes all timers according to the dogManager passed, assumes no timers currently active and if transitioning from Paused to Unpaused (didUnpuase = true) handles logic differently
-    static func willInitalize(dogManager: DogManager, didUnpause: Bool = false){
+    static func willInitalize(dogManager: DogManager){
         ///Takes a DogManager and potentially a Bool of if all timers were unpaused, goes through the dog manager and finds all enabled requirements under all enabled dogs and sets a timer to fire.
         
         //Makes sure isPaused is false, don't want to instantiate timers when they should be paused
@@ -77,41 +80,63 @@ class TimingManager{
                 
                 let requirement = dogManager.dogs[d].dogRequirments.requirements[r]
                 
-                //makes sure a requirement is enabled
+                //makes sure a requirement is enabled and its presentation is not being handled
                 guard requirement.getEnable() == true && requirement.isPresentationHandled == false
                 else{
                     continue
                 }
                 
-                let timer = Timer(fireAt: requirement.executionDate!,
-                                      interval: -1,
-                                      target: self,
-                                      selector: #selector(self.didExecuteTimer(sender:)),
-                                      userInfo: try! ["dogName": dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name"), "requirement": requirement],
-                                      repeats: false)
+                var timer: Timer!
+                
+                //active
+                if requirement.isActive == true {
+                    timer = Timer(fireAt: requirement.executionDate!,
+                                          interval: -1,
+                                          target: self,
+                                          selector: #selector(self.didExecuteTimer(sender:)),
+                                          userInfo: ["dogName": dogManager.dogs[d].dogTraits.dogName, "requirement": requirement],
+                                          repeats: false)
+                    RunLoop.main.add(timer, forMode: .common)
+                }
+                
+                //inactive, still adds to the runloop as the timer execution date and number of timers is used for many functions
+                else {
+                    timer = Timer(fireAt: requirement.executionDate!,
+                                          interval: -1,
+                                          target: self,
+                                          selector: #selector(self.sudoSelector),
+                                          userInfo: nil,
+                                          repeats: false)
+                }
                 
                 
                 //Updates timerDictionary to reflect new timer added, this is so a reference to the created timer can be referenced later and invalidated if needed.
-                var nestedtimerDictionary: Dictionary<String, Timer> = try! timerDictionary[dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name")] ?? Dictionary<String,Timer>()
+                var nestedtimerDictionary: Dictionary<String, Timer> = timerDictionary[dogManager.dogs[d].dogTraits.dogName] ?? Dictionary<String,Timer>()
                 
                 nestedtimerDictionary[requirement.requirementName] = timer
                 
-                try! timerDictionary[dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name")] = nestedtimerDictionary
+                timerDictionary[dogManager.dogs[d].dogTraits.dogName] = nestedtimerDictionary
                 
-                RunLoop.main.add(timer, forMode: .common)
                 
+                
+                //Sets a timer that executes when the timer should go from isSkipping true -> false, e.g. 1 Day left on a timer that is skipping and when it hits 23 hours and 59 minutes it turns into a regular nonskipping timer
                 if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.unskipDate != nil {
                     let isSkippingDisabler = Timer(fireAt: requirement.timeOfDayComponents.unskipDate!,
                                                  interval: -1,
                                                  target: self,
                                                  selector: #selector(self.willUpdateIsSkipping(sender:)),
-                                                 userInfo: try! ["dogName": dogManager.dogs[d].dogSpecifications.getDogSpecification(key: "name"), "requirement": requirement, "dogManager": dogManager],
+                                                 userInfo: ["dogName": dogManager.dogs[d].dogTraits.dogName, "requirement": requirement, "dogManager": dogManager],
                                                  repeats: false)
+                    isSkippingDisablers.append(isSkippingDisabler)
                     RunLoop.main.add(isSkippingDisabler, forMode: .common)
                 }
                 
             }
         }
+    }
+    
+    ///Dummy selector sent to an inactive timer, an inactive timer (due to the way the infrastructure is built) still needs to be added to the timer dictionary so dependent components can display information properly
+    @objc static private func sudoSelector(){
     }
     
     ///Invalidates all current timers then calls willInitalize, makes it a clean slate then re sets everything up
@@ -123,7 +148,7 @@ class TimingManager{
     
     ///Not implented currently
     static func willReinitalize(dogName: String, requirementName: String) throws {
-        
+        fatalError("Not implemented")
     }
     
     ///If a requirement is skipping the next time of day alarm, at some point it will go from 1+ day away to 23 hours and 59 minutes. When that happens then the timer should be changed from isSkipping to normal mode because it just skipped that alarm that should have happened
@@ -180,9 +205,14 @@ class TimingManager{
         for dogKey in timerDictionary.keys{
             for requirementKey in timerDictionary[dogKey]!.keys {
                     timerDictionary[dogKey]![requirementKey]!.invalidate()
-                    
             }
         }
+        
+        for timerIndex in 0..<isSkippingDisablers.count {
+            isSkippingDisablers[timerIndex].invalidate()
+        }
+        
+        isSkippingDisablers.removeAll()
         
     }
     
@@ -203,28 +233,42 @@ class TimingManager{
         for dogKey in timerDictionary.keys{
             for requirementKey in timerDictionary[dogKey]!.keys {
                 
+                //checks to make sure the enabled timer found is still valid (invalid ones are just ones from the past, left in the data)
                 guard timerDictionary[dogKey]![requirementKey]!.isValid else {
                     continue
                 }
                 
                 let requirement = try! dogManager.findDog(dogName: dogKey).dogRequirments.findRequirement(requirementName: requirementKey)
                 
-                
-                if requirement.snoozeComponents.isSnoozed == false {
-                    if requirement.countDownComponents.intervalElapsed <= 0.001 {
+                //If requirement is counting down
+                if requirement.timerMode == .countDown {
+                    //If intervalElapsed has not been added to before
+                    if requirement.countDownComponents.intervalElapsed <= 0.0001 {
                         requirement.countDownComponents.changeIntervalElapsed(newIntervalElapsed: requirement.executionBasis.distance(to: self.lastPause!))
                     }
+                    //If intervalElapsed has been added to before
                     else{
+                        
                         requirement.countDownComponents.changeIntervalElapsed(newIntervalElapsed: (requirement.countDownComponents.intervalElapsed + self.lastUnpause!.distance(to: (self.lastPause!))))
                     }
                 }
-                else if requirement.snoozeComponents.isSnoozed == true {
-                    if requirement.snoozeComponents.intervalElapsed <= 0.001 {
+                //If requirement is snoozed
+                else if requirement.timerMode == .snooze {
+                    //If intervalElapsed has not been added to before
+                    if requirement.snoozeComponents.intervalElapsed <= 0.0001 {
                         requirement.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: requirement.executionBasis.distance(to: self.lastPause!))
                     }
+                    //If intervalElapsed has been added to before
                     else{
                         requirement.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: (requirement.snoozeComponents.intervalElapsed + self.lastUnpause!.distance(to: (self.lastPause!))))
                     }
+                }
+                //If requirement is time of day
+                else if requirement.timerMode == .timeOfDay{
+                    //nothing as time of day does not utilize interval elapsed
+                }
+                else {
+                    fatalError("Not Implemented")
                 }
                 
                 
@@ -235,8 +279,10 @@ class TimingManager{
         delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
     }
     
+    ///Updates dogManager to reflect needed changes to the executionBasis, without this change the interval remaining would be based off an incorrect start date and fire at the wrong time. Can't use just Date() as it would be inaccurate if reinitalized but executionBasis + intervalRemaining will yield the same executionDate everytime.
     private static func willUnpause(dogManager: DogManager){
         
+        //Goes through all enabled dogs and all their enabled requirements
         for dog in dogManager.dogs{
             guard dog.getEnable() == true else {
                 continue
@@ -247,6 +293,7 @@ class TimingManager{
                     continue
                 }
                 
+                //Changes the execution basis to the current time of unpause, if the execution basis is not changed then the interval remaining will go off a earlier point in time and have an overall earlier execution date, making the timer fire too early
                 requirement.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: false)
                 
                 
@@ -261,6 +308,7 @@ class TimingManager{
     ///Used as a selector when constructing timer in willInitalize, when called at an unknown point in time by the timer it triggers helper functions to create both in app notifcations and iOS notifcations
     @objc private static func didExecuteTimer(sender: Timer){
         
+        //Parses the sender info needed to figure out which requirement's timer fired
         guard let parsedDictionary = sender.userInfo as? [String: Any]
         else{
             ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: TimingManagerError.parseSenderInfoFailed)
@@ -277,22 +325,21 @@ class TimingManager{
     static func willShowTimer(sender: Sender = Sender(origin: Utils.presenter, localized: Utils.presenter), dogName: String, requirement: Requirement){
         
         let title = "\(requirement.requirementName) - \(dogName)"
-        let message = " \(requirement.requirementDescription)"
+        let message = "\(requirement.requirementDescription)"
         
-        let alertController = CustomAlertController(
+        let alertController = AlarmAlertController(
             title: title,
             message: message,
             preferredStyle: .alert)
         
-        //Same as alertActionDone but provides a simplier option if a user just wants the popup to go away.
-        let alertActionCancel = UIAlertAction(
-            title:"Cancel",
+        let alertActionDismiss = UIAlertAction(
+            title:"Dismiss",
             style: .cancel,
             handler:
                 {
                     (alert: UIAlertAction!)  in
                     //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                    TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementName: requirement.requirementName)
+                    TimingManager.willInactivateTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementName: requirement.requirementName)
                 })
         
         let alertActionDone = UIAlertAction(
@@ -316,7 +363,7 @@ class TimingManager{
                 })
         alertController.addAction(alertActionDone)
         alertController.addAction(alertActionSnooze)
-        alertController.addAction(alertActionCancel)
+        alertController.addAction(alertActionDismiss)
         
     
         let sudoDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
@@ -367,22 +414,36 @@ class TimingManager{
         
         let requirement = try! sudoDogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
         
-        if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.isSkipping == false && Date().distance(to: TimingManager.timerDictionary[targetDogName]![targetRequirementName]!.fireDate) > 0{
-            print("skip")
+        //inactive to active
+        if requirement.isActive == false{
+            requirement.changeActiveStatus(newActiveStatus: true)
+        }
+        //Skips next TOD
+        else if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.isSkipping == false && Date().distance(to: TimingManager.timerDictionary[targetDogName]![targetRequirementName]!.fireDate) > 0{
             requirement.timerReset(didExecuteToUser: true)
             requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: true)
         }
+        //Unskips next TOD
         else if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.isSkipping == true{
-            print("unskip")
             requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: false)
             requirement.changeExecutionBasis(newExecutionBasis: requirement.logDates.removeLast(), shouldResetIntervalsElapsed: true)
         }
+        //Regular reset
         else {
-            print("reg")
             requirement.timerReset(didExecuteToUser: true)
         }
         
         delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
+    }
+    
+    ///If dismiss is clicked when a timer fires and its pop of choices shows, it puts the timer into a disable like state. It still shows on the home screen and can be clicked on but remains inactive with no future timers.
+    static func willInactivateTimer(sender: Sender, dogName targetDogName: String, requirementName targetRequirementName: String, dogManager: DogManager = MainTabBarViewController.staticDogManager){
+        
+        
+        let requirement = try! dogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
+        
+        requirement.changeActiveStatus(newActiveStatus: false)
+        
     }
     
     

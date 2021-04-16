@@ -24,9 +24,9 @@ class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     
     //MARK: Properties
     
-    var timeIntervalLeft: TimeInterval?
-    
     var requirementSource: Requirement! = nil
+    
+    var parentDogName: String! = nil
     
     //MARK: Main
     
@@ -39,12 +39,12 @@ class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     
     func setup(parentDogName: String, requirementPassed: Requirement) {
         self.requirementSource = requirementPassed
+        self.parentDogName = parentDogName
         requirementName.text = requirementPassed.requirementName
         dogName.text = parentDogName
         
         if TimingManager.isPaused == true {
             timeLeft.text = String.convertToReadable(interperateTimeInterval: requirementPassed.countDownComponents.executionInterval - requirementPassed.countDownComponents.intervalElapsed)
-            self.timeIntervalLeft = (requirementPassed.countDownComponents.executionInterval - requirementPassed.countDownComponents.intervalElapsed)
         }
         else{
             let fireDate: Date = TimingManager.timerDictionary[parentDogName]![requirementPassed.requirementName]!.fireDate
@@ -54,23 +54,38 @@ class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
                 timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .semibold)])
             }
             else {
-                self.timeIntervalLeft = Date().distance(to: fireDate)
                 
-                let timeLeftText = String.convertToReadable(interperateTimeInterval: self.timeIntervalLeft!)
+                let timeLeftText = String.convertToReadable(interperateTimeInterval: Date().distance(to: fireDate))
                 
                 timeLeft.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .regular)])
-                    
+                
                 timeLeft.attributedText = timeLeft.text!.withFontAtEnd(text: " Left", font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .semibold))
-                
-                //let timeSinceLastExecutionText = String.convertToReadable(interperateTimeInterval: requirementPassed.executionBasis.distance(to: Date()))
-                
-               // timeSinceLastExecution.attributedText = NSAttributedString(string: timeSinceLastExecutionText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: .regular)])
-                
-               // timeSinceLastExecution.attributedText = timeSinceLastExecution.text!.withFontAtEnd(text: " Since Last Time", font: UIFont.systemFont(ofSize: 17, weight: .semibold))
             }
         }
         
         
+    }
+    
+    func reloadCell(){
+        if TimingManager.isPaused == true {
+            timeLeft.text = String.convertToReadable(interperateTimeInterval: requirementSource.countDownComponents.executionInterval - requirementSource.countDownComponents.intervalElapsed)
+        }
+        else{
+            let fireDate: Date = TimingManager.timerDictionary[parentDogName]![requirementSource.requirementName]!.fireDate
+            
+            if Date().distance(to: fireDate) <= 0 {
+                //timeSinceLastExecution.text = "It's Happening"
+                timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .semibold)])
+            }
+            else {
+                
+                let timeLeftText = String.convertToReadable(interperateTimeInterval: Date().distance(to: fireDate))
+                
+                timeLeft.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .regular)])
+                
+                timeLeft.attributedText = timeLeft.text!.withFontAtEnd(text: " Left", font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .semibold))
+            }
+        }
         
         
     }

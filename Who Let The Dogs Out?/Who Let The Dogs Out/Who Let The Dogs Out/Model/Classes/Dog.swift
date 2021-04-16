@@ -16,13 +16,13 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     
     //MARK: NSCoding
     required init?(coder aDecoder: NSCoder) {
-        dogSpecifications = aDecoder.decodeObject(forKey: "dogSpecifications") as! SpecificationManager
+        dogTraits = aDecoder.decodeObject(forKey: "dogTraits") as! DogTraitManager
         dogRequirments = aDecoder.decodeObject(forKey: "dogRequirments") as! RequirementManager
         isEnabled = aDecoder.decodeBool(forKey: "isEnabled")
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(dogSpecifications, forKey: "dogSpecifications")
+        aCoder.encode(dogTraits, forKey: "dogTraits")
         aCoder.encode(dogRequirments, forKey: "dogRequirments")
         aCoder.encode(isEnabled, forKey: "isEnabled")
     }
@@ -61,15 +61,15 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = Dog()
         copy.dogRequirments = self.dogRequirments.copy() as! RequirementManager
-        copy.dogSpecifications = self.dogSpecifications.copy() as! SpecificationManager
+        copy.dogTraits = self.dogTraits.copy() as! DogTraitManager
         copy.isEnabled = self.isEnabled
         return copy
     }
     
     //MARK: Properties
     
-    ///dictionary of specifications for a dog, e.g. "name", "description"
-    var dogSpecifications: SpecificationManager = SpecificationManager()
+    ///Traint"
+    var dogTraits: DogTraitManager = DogTraitManager()
     
     ///RequirmentManager that handles all specified requirements for a dog, e.g. being taken to the outside every time interval or being fed.
     var dogRequirments: RequirementManager = RequirementManager()

@@ -18,125 +18,33 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="USa-GB-KYk">
-                                <rect key="frame" x="0.0" y="99" width="414" height="714"/>
+                                <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <connections>
                                     <segue destination="QHx-In-pv4" kind="embed" identifier="homeMainScreenTableViewController" id="mAm-1k-o8H"/>
                                 </connections>
                             </containerView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reminders" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6hY-qq-Arx" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="10" y="54" width="197" height="35"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="35" id="Fid-td-u2n"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="straightBlackLine" translatesAutoresizingMaskIntoConstraints="NO" id="Zqv-uc-oQG">
-                                <rect key="frame" x="10" y="89" width="197" height="10"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="10" id="76K-l0-OJn"/>
-                                </constraints>
-                            </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LS2-zI-Hd9" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="314" y="713" width="90" height="90"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="LS2-zI-Hd9" secondAttribute="height" multiplier="1:1" id="KA9-Fu-GUV"/>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="90" id="TPC-6E-e0D"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="YHV-D9-vD9"/>
-                                </constraints>
-                                <color key="tintColor" systemColor="linkColor"/>
-                                <state key="normal" image="checkmark.circle.fill" catalog="system">
-                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
-                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
-                                </state>
-                                <connections>
-                                    <action selector="willLog:" destination="9pv-A4-QxB" eventType="touchUpInside" id="BUQ-Hk-LDb"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8py-Lg-6VP" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="314" y="713" width="90" height="90"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <state key="normal" image="checkmark.circle" catalog="system">
-                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
-                                </state>
-                            </button>
-                            <button hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iAP-C3-yka" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="10" y="713" width="90" height="90"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <state key="normal">
-                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
-                                    <imageReference key="image" image="arrow.backward.circle" catalog="system" symbolScale="large"/>
-                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
-                                </state>
-                            </button>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eJj-Jz-5QN" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="10" y="713" width="90" height="90"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="dxs-dE-nCL"/>
-                                    <constraint firstAttribute="width" secondItem="eJj-Jz-5QN" secondAttribute="height" multiplier="1:1" id="rPz-fv-pgg"/>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="90" id="twB-1C-4kX"/>
-                                </constraints>
-                                <color key="tintColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <state key="normal">
-                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
-                                    <imageReference key="image" image="arrow.backward.circle.fill" catalog="system" symbolScale="large"/>
-                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
-                                </state>
-                                <connections>
-                                    <action selector="cancelAddDogButton:" destination="yj4-3A-FdI" eventType="touchUpInside" id="Odi-XN-8NF"/>
-                                    <action selector="cancelWillLog:" destination="9pv-A4-QxB" eventType="touchUpInside" id="3uE-QQ-Oki"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="PQr-Ze-W5v"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="8py-Lg-6VP" firstAttribute="trailing" secondItem="LS2-zI-Hd9" secondAttribute="trailing" id="09j-EH-mkL"/>
-                            <constraint firstItem="8py-Lg-6VP" firstAttribute="bottom" secondItem="LS2-zI-Hd9" secondAttribute="bottom" id="161-jA-Wqi"/>
-                            <constraint firstItem="eJj-Jz-5QN" firstAttribute="leading" secondItem="iAP-C3-yka" secondAttribute="leading" id="4AG-Uk-aOZ"/>
                             <constraint firstItem="USa-GB-KYk" firstAttribute="leading" secondItem="PQr-Ze-W5v" secondAttribute="leading" id="AEa-UB-kCM"/>
                             <constraint firstItem="PQr-Ze-W5v" firstAttribute="trailing" secondItem="USa-GB-KYk" secondAttribute="trailing" id="Bkh-PC-zSE"/>
-                            <constraint firstItem="Zqv-uc-oQG" firstAttribute="top" secondItem="6hY-qq-Arx" secondAttribute="bottom" id="LP4-BE-n7S"/>
-                            <constraint firstItem="eJj-Jz-5QN" firstAttribute="bottom" secondItem="iAP-C3-yka" secondAttribute="bottom" id="O74-vG-r2i"/>
-                            <constraint firstItem="PQr-Ze-W5v" firstAttribute="bottom" secondItem="LS2-zI-Hd9" secondAttribute="bottom" constant="10" id="SOj-cQ-qeB"/>
-                            <constraint firstItem="Zqv-uc-oQG" firstAttribute="trailing" secondItem="tsR-hK-woN" secondAttribute="centerX" id="TBU-7e-Ykr"/>
-                            <constraint firstItem="eJj-Jz-5QN" firstAttribute="trailing" secondItem="iAP-C3-yka" secondAttribute="trailing" id="W2p-hN-Bwl"/>
-                            <constraint firstItem="6hY-qq-Arx" firstAttribute="top" secondItem="PQr-Ze-W5v" secondAttribute="top" constant="10" id="XJw-Qb-G28"/>
-                            <constraint firstItem="eJj-Jz-5QN" firstAttribute="top" secondItem="iAP-C3-yka" secondAttribute="top" id="Zsb-Jh-vn6"/>
-                            <constraint firstItem="8py-Lg-6VP" firstAttribute="leading" secondItem="LS2-zI-Hd9" secondAttribute="leading" id="bfS-CO-SJ4"/>
-                            <constraint firstItem="PQr-Ze-W5v" firstAttribute="trailing" secondItem="LS2-zI-Hd9" secondAttribute="trailing" constant="10" id="cGD-Z7-e1t"/>
+                            <constraint firstItem="USa-GB-KYk" firstAttribute="top" secondItem="PQr-Ze-W5v" secondAttribute="top" id="CrM-0I-Vm8"/>
                             <constraint firstItem="PQr-Ze-W5v" firstAttribute="bottom" secondItem="USa-GB-KYk" secondAttribute="bottom" id="dNC-La-LJy"/>
-                            <constraint firstItem="eJj-Jz-5QN" firstAttribute="width" secondItem="PQr-Ze-W5v" secondAttribute="width" multiplier="90/414" priority="999" id="fK9-jH-czA"/>
-                            <constraint firstItem="eJj-Jz-5QN" firstAttribute="leading" secondItem="PQr-Ze-W5v" secondAttribute="leading" constant="10" id="gum-0s-tHe"/>
-                            <constraint firstItem="Zqv-uc-oQG" firstAttribute="leading" secondItem="PQr-Ze-W5v" secondAttribute="leading" constant="10" id="gzU-02-H0j"/>
-                            <constraint firstItem="6hY-qq-Arx" firstAttribute="trailing" secondItem="tsR-hK-woN" secondAttribute="centerX" id="hYL-gR-ldS"/>
-                            <constraint firstItem="USa-GB-KYk" firstAttribute="top" secondItem="Zqv-uc-oQG" secondAttribute="bottom" id="liP-7M-mNc"/>
-                            <constraint firstItem="Zqv-uc-oQG" firstAttribute="top" secondItem="6hY-qq-Arx" secondAttribute="bottom" id="phX-PY-L1L"/>
-                            <constraint firstItem="6hY-qq-Arx" firstAttribute="leading" secondItem="PQr-Ze-W5v" secondAttribute="leading" constant="10" id="qCm-zA-oWx"/>
-                            <constraint firstItem="LS2-zI-Hd9" firstAttribute="width" secondItem="PQr-Ze-W5v" secondAttribute="width" multiplier="90/414" priority="999" id="qrb-my-71h"/>
-                            <constraint firstItem="PQr-Ze-W5v" firstAttribute="bottom" secondItem="eJj-Jz-5QN" secondAttribute="bottom" constant="10" id="sew-Cc-TAF"/>
-                            <constraint firstItem="8py-Lg-6VP" firstAttribute="top" secondItem="LS2-zI-Hd9" secondAttribute="top" id="x7L-Mc-6wr"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Reminders" image="house.fill" catalog="system" id="acW-dT-cKf"/>
-                    <connections>
-                        <outlet property="cancelWillLog" destination="eJj-Jz-5QN" id="uup-Ld-Dgx"/>
-                        <outlet property="cancelWillLogBackground" destination="iAP-C3-yka" id="IgZ-eU-tRG"/>
-                        <outlet property="willLog" destination="LS2-zI-Hd9" id="DpN-UV-yqE"/>
-                        <outlet property="willLogBackground" destination="8py-Lg-6VP" id="Ctq-uo-7IU"/>
-                    </connections>
+                    <navigationItem key="navigationItem" title="Reminders" id="G6I-w9-OAI"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1586.9565217391305" y="6.6964285714285712"/>
+            <point key="canvasLocation" x="3417" y="33"/>
         </scene>
         <!--Home Main Screen Table View Controller-->
         <scene sceneID="Ihb-Ef-jOj">
             <objects>
                 <tableViewController id="QHx-In-pv4" customClass="HomeMainScreenTableViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="57d-zI-FBT">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="714"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="725"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
@@ -246,142 +154,6 @@
                                     <outlet property="timeLeft" destination="LW9-n4-Z8I" id="d0X-Qo-NBE"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="homeMainScreenTableViewCellRequirementLog" rowHeight="100" id="Jph-jA-m4f" customClass="HomeMainScreenTableViewCellRequirementLog" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="258.5" width="414" height="100"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Jph-jA-m4f" id="gJU-fw-jlT">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="100"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="REQ NAME" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="UjJ-UQ-0fz">
-                                            <rect key="frame" x="15" y="10" width="139" height="45"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="45" id="htO-Ia-aQb"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="for:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T2V-LM-rRW">
-                                            <rect key="frame" x="15" y="65" width="35" height="25"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="35" id="Cw8-0Z-s3f"/>
-                                                <constraint firstAttribute="height" constant="25" id="hrp-CY-Q8g"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DOG NAME" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="pNz-Ip-2Zt">
-                                            <rect key="frame" x="60" y="65" width="94" height="25"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="25" id="GHU-0e-l0X"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Rd-ye-pZh" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                            <rect key="frame" x="324" y="10" width="80" height="80"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" secondItem="5Rd-ye-pZh" secondAttribute="height" multiplier="1:1" id="ifH-cZ-PQD"/>
-                                            </constraints>
-                                            <state key="normal" image="circle.fill" catalog="system">
-                                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
-                                            </state>
-                                            <connections>
-                                                <action selector="didReset:" destination="Jph-jA-m4f" eventType="touchUpInside" id="Qze-vk-CEd"/>
-                                            </connections>
-                                        </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yhz-b0-QkC" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                            <rect key="frame" x="244" y="10" width="80" height="80"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" secondItem="Yhz-b0-QkC" secondAttribute="height" multiplier="1:1" id="nVM-vt-3EH"/>
-                                            </constraints>
-                                            <state key="normal" image="circle.fill" catalog="system">
-                                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
-                                            </state>
-                                            <connections>
-                                                <action selector="didSnooze:" destination="Jph-jA-m4f" eventType="touchUpInside" id="Mcm-gA-rI5"/>
-                                            </connections>
-                                        </button>
-                                        <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WWs-xT-scx" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                            <rect key="frame" x="164" y="10" width="80" height="80"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" secondItem="WWs-xT-scx" secondAttribute="height" multiplier="1:1" id="nHi-K9-0UN"/>
-                                            </constraints>
-                                            <color key="tintColor" systemColor="systemRedColor"/>
-                                            <state key="normal" image="circle.fill" catalog="system">
-                                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
-                                            </state>
-                                            <connections>
-                                                <action selector="didDisable:" destination="Jph-jA-m4f" eventType="touchUpInside" id="XeE-LF-pW7"/>
-                                            </connections>
-                                        </button>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Disable" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mCf-43-Yqx">
-                                            <rect key="frame" x="164" y="10" width="80" height="80"/>
-                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Snooze" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zhf-yq-F77">
-                                            <rect key="frame" x="244" y="10" width="80" height="80"/>
-                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reset" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZbU-gF-cSz">
-                                            <rect key="frame" x="324" y="10" width="80" height="80"/>
-                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstAttribute="bottom" secondItem="5Rd-ye-pZh" secondAttribute="bottom" constant="10" id="3T0-te-v76"/>
-                                        <constraint firstItem="WWs-xT-scx" firstAttribute="top" secondItem="gJU-fw-jlT" secondAttribute="top" constant="10" id="5uf-Ot-nlg"/>
-                                        <constraint firstItem="UjJ-UQ-0fz" firstAttribute="top" secondItem="gJU-fw-jlT" secondAttribute="top" constant="10" id="6DS-Go-wqK"/>
-                                        <constraint firstItem="Zhf-yq-F77" firstAttribute="trailing" secondItem="Yhz-b0-QkC" secondAttribute="trailing" id="95w-KT-2Ke"/>
-                                        <constraint firstItem="Zhf-yq-F77" firstAttribute="leading" secondItem="Yhz-b0-QkC" secondAttribute="leading" id="CNR-Ip-7uC"/>
-                                        <constraint firstItem="T2V-LM-rRW" firstAttribute="leading" secondItem="UjJ-UQ-0fz" secondAttribute="leading" id="DKq-cy-w0G"/>
-                                        <constraint firstAttribute="bottom" secondItem="WWs-xT-scx" secondAttribute="bottom" constant="10" id="GfH-lt-nbY"/>
-                                        <constraint firstItem="pNz-Ip-2Zt" firstAttribute="leading" secondItem="T2V-LM-rRW" secondAttribute="trailing" constant="10" id="HfT-c3-UJN"/>
-                                        <constraint firstItem="ZbU-gF-cSz" firstAttribute="bottom" secondItem="5Rd-ye-pZh" secondAttribute="bottom" id="Hjk-Af-Ntt"/>
-                                        <constraint firstItem="mCf-43-Yqx" firstAttribute="bottom" secondItem="WWs-xT-scx" secondAttribute="bottom" id="IAK-sw-yMh"/>
-                                        <constraint firstItem="T2V-LM-rRW" firstAttribute="leading" secondItem="gJU-fw-jlT" secondAttribute="leading" constant="15" id="IKj-ny-EzJ"/>
-                                        <constraint firstItem="Yhz-b0-QkC" firstAttribute="leading" secondItem="WWs-xT-scx" secondAttribute="trailing" id="Ics-c3-v5d"/>
-                                        <constraint firstItem="5Rd-ye-pZh" firstAttribute="top" secondItem="gJU-fw-jlT" secondAttribute="top" constant="10" id="In1-pK-PrG"/>
-                                        <constraint firstAttribute="trailing" secondItem="5Rd-ye-pZh" secondAttribute="trailing" constant="10" id="JRG-DZ-o82"/>
-                                        <constraint firstItem="Zhf-yq-F77" firstAttribute="top" secondItem="Yhz-b0-QkC" secondAttribute="top" id="KBj-aN-Ahg"/>
-                                        <constraint firstItem="Yhz-b0-QkC" firstAttribute="top" secondItem="gJU-fw-jlT" secondAttribute="top" constant="10" id="Lyb-fo-WH7"/>
-                                        <constraint firstItem="mCf-43-Yqx" firstAttribute="top" secondItem="WWs-xT-scx" secondAttribute="top" id="Nd1-aH-OMH"/>
-                                        <constraint firstItem="pNz-Ip-2Zt" firstAttribute="top" secondItem="UjJ-UQ-0fz" secondAttribute="bottom" constant="10" id="O0x-gd-Yn4"/>
-                                        <constraint firstItem="T2V-LM-rRW" firstAttribute="top" secondItem="UjJ-UQ-0fz" secondAttribute="bottom" constant="10" id="QTN-9e-CV9"/>
-                                        <constraint firstItem="Zhf-yq-F77" firstAttribute="bottom" secondItem="Yhz-b0-QkC" secondAttribute="bottom" id="RCq-YC-Zog"/>
-                                        <constraint firstAttribute="bottom" secondItem="Yhz-b0-QkC" secondAttribute="bottom" constant="10" id="S2M-ll-AYs"/>
-                                        <constraint firstItem="UjJ-UQ-0fz" firstAttribute="leading" secondItem="gJU-fw-jlT" secondAttribute="leading" constant="15" id="W5O-fd-dDp"/>
-                                        <constraint firstItem="ZbU-gF-cSz" firstAttribute="trailing" secondItem="5Rd-ye-pZh" secondAttribute="trailing" id="aEd-ih-ttQ"/>
-                                        <constraint firstItem="mCf-43-Yqx" firstAttribute="leading" secondItem="WWs-xT-scx" secondAttribute="leading" id="chz-kj-uDr"/>
-                                        <constraint firstItem="pNz-Ip-2Zt" firstAttribute="trailing" secondItem="UjJ-UQ-0fz" secondAttribute="trailing" id="dp9-ZZ-mYR"/>
-                                        <constraint firstItem="ZbU-gF-cSz" firstAttribute="top" secondItem="5Rd-ye-pZh" secondAttribute="top" id="emd-3w-6sH"/>
-                                        <constraint firstItem="WWs-xT-scx" firstAttribute="leading" secondItem="UjJ-UQ-0fz" secondAttribute="trailing" constant="10" id="mbo-3g-2kA"/>
-                                        <constraint firstItem="mCf-43-Yqx" firstAttribute="trailing" secondItem="WWs-xT-scx" secondAttribute="trailing" id="nWk-td-kuE"/>
-                                        <constraint firstItem="5Rd-ye-pZh" firstAttribute="leading" secondItem="Yhz-b0-QkC" secondAttribute="trailing" id="oeV-cy-EZi"/>
-                                        <constraint firstAttribute="bottom" secondItem="T2V-LM-rRW" secondAttribute="bottom" constant="10" id="sNT-vL-48v"/>
-                                        <constraint firstItem="ZbU-gF-cSz" firstAttribute="leading" secondItem="5Rd-ye-pZh" secondAttribute="leading" id="vFN-91-lVK"/>
-                                    </constraints>
-                                </tableViewCellContentView>
-                                <connections>
-                                    <outlet property="disableButton" destination="WWs-xT-scx" id="rdb-t3-LAv"/>
-                                    <outlet property="disableText" destination="mCf-43-Yqx" id="8I6-Ox-FJC"/>
-                                    <outlet property="dogName" destination="pNz-Ip-2Zt" id="hjf-MF-QQ6"/>
-                                    <outlet property="requirementName" destination="UjJ-UQ-0fz" id="obf-45-40A"/>
-                                    <outlet property="resetButton" destination="5Rd-ye-pZh" id="vtz-Gf-yaQ"/>
-                                    <outlet property="resetText" destination="ZbU-gF-cSz" id="Qbz-vg-fEU"/>
-                                    <outlet property="snoozeButton" destination="Yhz-b0-QkC" id="Uih-HC-dZB"/>
-                                    <outlet property="snoozeText" destination="Zhf-yq-F77" id="aJm-HR-sQk"/>
-                                </connections>
-                            </tableViewCell>
                         </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="QHx-In-pv4" id="V2i-eF-zR1"/>
@@ -391,18 +163,18 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="v81-jK-W9m" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1585.5072463768117" y="766.74107142857144"/>
+            <point key="canvasLocation" x="4700" y="6"/>
         </scene>
         <!--Instantiate Dog Requirement -->
         <scene sceneID="8E9-yA-SaW">
             <objects>
                 <viewController title="Instantiate Dog Requirement " id="uJe-nq-2qo" customClass="DogsInstantiateRequirementViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="MUR-Wf-RFm">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="633"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="615"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xpx-kk-0ei">
-                                <rect key="frame" x="0.0" y="88" width="414" height="545"/>
+                                <rect key="frame" x="0.0" y="88" width="414" height="527"/>
                                 <connections>
                                     <segue destination="ngF-4H-kgO" kind="embed" identifier="dogsInstantiateRequirementManagerViewController" id="1g9-zQ-LRF"/>
                                 </connections>
@@ -420,11 +192,13 @@
                     </view>
                     <navigationItem key="navigationItem" title="Create Reminder" id="8G7-vl-UY2">
                         <barButtonItem key="leftBarButtonItem" image="chevron.left" catalog="system" id="5Is-K5-zsR">
+                            <color key="tintColor" systemColor="systemBlueColor"/>
                             <connections>
                                 <action selector="backButton:" destination="uJe-nq-2qo" id="epd-l0-cLf"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Add" id="Zkj-fw-kwu">
+                            <color key="tintColor" systemColor="systemBlueColor"/>
                             <connections>
                                 <action selector="willSave:" destination="uJe-nq-2qo" id="SZm-Rj-PwE"/>
                             </connections>
@@ -446,7 +220,7 @@
             <objects>
                 <tableViewController title="Add Dog Requirement Table View" id="Tmz-g7-lDw" customClass="DogsRequirementTableViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="lYX-m1-L14">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="633"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="615"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
@@ -517,6 +291,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Reminders" id="e0B-iR-KRK">
                         <barButtonItem key="rightBarButtonItem" title="Add" image="plus" catalog="system" id="nqK-3A-POV">
+                            <color key="tintColor" systemColor="systemBlueColor"/>
                             <connections>
                                 <action selector="addButton:" destination="Tmz-g7-lDw" id="NVj-fE-tGY"/>
                                 <segue destination="uJe-nq-2qo" kind="show" identifier="dogsInstantiateRequirementViewController" id="bee-G5-zdc"/>
@@ -536,6 +311,11 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="8o7-wh-P2A">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <textAttributes key="titleTextAttributes">
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                            <color key="textColor" systemColor="systemBlueColor"/>
+                        </textAttributes>
                     </navigationBar>
                     <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="4cy-Nd-Ayj">
                         <autoresizingMask key="autoresizingMask"/>
@@ -546,18 +326,18 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3Kb-ze-siv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3510" y="720"/>
+            <point key="canvasLocation" x="-3617" y="720"/>
         </scene>
         <!--Dog Requirement Count Down-->
         <scene sceneID="igG-O6-rrf">
             <objects>
                 <viewController title="Dog Requirement Count Down" id="gRX-vW-PrI" customClass="DogsRequirementCountDownViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1dJ-c5-zaj">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="564"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="481"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" countDownDuration="5400" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nvt-ES-U6h">
-                                <rect key="frame" x="0.0" y="44" width="414" height="520"/>
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" countDownDuration="5400" minuteInterval="5" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nvt-ES-U6h">
+                                <rect key="frame" x="0.0" y="44" width="414" height="437"/>
                                 <connections>
                                     <action selector="willUpdateCountDown:" destination="gRX-vW-PrI" eventType="editingChanged" id="Qt9-8F-KfP"/>
                                     <action selector="willUpdateCountDown:" destination="gRX-vW-PrI" eventType="valueChanged" id="xZo-V2-zDP"/>
@@ -586,7 +366,7 @@
             <objects>
                 <viewController title="Dog Requirement Editor" id="ngF-4H-kgO" customClass="DogsRequirementManagerViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wCA-tV-nak">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="725"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Mof-PE-gVW">
@@ -657,18 +437,19 @@
                                     <segment title="Count Down"/>
                                     <segment title="Time Of Day"/>
                                 </segments>
+                                <color key="selectedSegmentTintColor" systemColor="linkColor"/>
                                 <connections>
                                     <action selector="segmentedControl:" destination="ngF-4H-kgO" eventType="valueChanged" id="SbE-AV-4lM"/>
                                 </connections>
                             </segmentedControl>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MhX-Hm-1r1">
-                                <rect key="frame" x="0.0" y="244" width="414" height="564"/>
+                                <rect key="frame" x="0.0" y="244" width="414" height="481"/>
                                 <connections>
                                     <segue destination="gRX-vW-PrI" kind="embed" identifier="dogsRequirementCountDownViewController" id="wbe-5J-4CA"/>
                                 </connections>
                             </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XhW-xN-8L1">
-                                <rect key="frame" x="0.0" y="244" width="414" height="564"/>
+                                <rect key="frame" x="0.0" y="244" width="414" height="481"/>
                                 <connections>
                                     <segue destination="Zjt-y9-htp" kind="embed" identifier="dogsRequirementTimeOfDayViewController" id="FIA-mJ-bsf"/>
                                 </connections>
@@ -719,11 +500,11 @@
             <objects>
                 <viewController title="Add Dog Main Screen" id="yj4-3A-FdI" customClass="DogsAddDogViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="77a-Dp-kvd">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ht7-hC-mOx">
-                                <rect key="frame" x="10" y="65" width="119.5" height="40"/>
+                                <rect key="frame" x="10" y="98" width="82" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="mpz-M7-SPB"/>
                                 </constraints>
@@ -731,33 +512,16 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xnr-3B-PYB">
-                                <rect key="frame" x="10" y="115" width="119.5" height="40"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="vLg-i7-Vct"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="7nG-bv-0ex">
-                                <rect key="frame" x="139.5" y="65" width="264.5" height="40"/>
+                                <rect key="frame" x="102" y="98" width="302" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="fYP-CF-N0q"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                             </textField>
-                            <textField hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="27o-HD-GIn">
-                                <rect key="frame" x="139.5" y="115" width="264.5" height="40"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="fjZ-f0-hrd"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
-                            </textField>
                             <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9Ma-OG-XR6" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="314" y="708" width="90" height="90"/>
+                                <rect key="frame" x="314" y="713" width="90" height="90"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" image="checkmark.circle" catalog="system">
                                     <color key="titleColor" systemColor="systemBackgroundColor"/>
@@ -768,7 +532,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Lu2-Bs-kCu" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="314" y="708" width="90" height="90"/>
+                                <rect key="frame" x="314" y="713" width="90" height="90"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="lessThanOrEqual" constant="90" id="7qr-pu-RRZ"/>
                                     <constraint firstAttribute="width" secondItem="Lu2-Bs-kCu" secondAttribute="height" multiplier="1:1" id="YZr-of-Ody"/>
@@ -784,13 +548,13 @@
                                 </connections>
                             </button>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6MT-az-4bi">
-                                <rect key="frame" x="0.0" y="175" width="414" height="633"/>
+                                <rect key="frame" x="0.0" y="198" width="414" height="615"/>
                                 <connections>
                                     <segue destination="eFt-4z-qcU" kind="embed" identifier="dogRequirementNavigationController" id="E3d-ML-4L4"/>
                                 </connections>
                             </containerView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iWI-X8-QFy" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="10" y="708" width="90" height="90"/>
+                                <rect key="frame" x="10" y="713" width="90" height="90"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="MFV-Kl-CzE"/>
                                     <constraint firstAttribute="width" secondItem="iWI-X8-QFy" secondAttribute="height" multiplier="1:1" id="MwO-Hx-HSs"/>
@@ -806,30 +570,15 @@
                                 </connections>
                             </button>
                             <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pg4-10-30f" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="10" y="708" width="90" height="90"/>
+                                <rect key="frame" x="10" y="713" width="90" height="90"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" image="arrow.backward.circle" catalog="system">
                                     <color key="titleColor" systemColor="systemBackgroundColor"/>
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
                                 </state>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create Dog" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ez3-B6-l6Y" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="10" y="10" width="197" height="35"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="35" id="9Eb-RG-gFz"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="straightBlackLine" translatesAutoresizingMaskIntoConstraints="NO" id="d0b-Zh-XWb">
-                                <rect key="frame" x="10" y="45" width="197" height="10"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="10" id="vIe-T6-9aH"/>
-                                </constraints>
-                            </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enabled:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R1G-Y6-u2J">
-                                <rect key="frame" x="10" y="115" width="119.5" height="40"/>
+                                <rect key="frame" x="10" y="148" width="82" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="O6J-Xr-bae"/>
                                 </constraints>
@@ -838,25 +587,22 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TEj-xg-wOu">
-                                <rect key="frame" x="139.5" y="119.5" width="51" height="31"/>
+                                <rect key="frame" x="102" y="152.5" width="51" height="31"/>
                             </switch>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="xg8-HR-nc3"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="Lu2-Bs-kCu" firstAttribute="trailing" secondItem="9Ma-OG-XR6" secondAttribute="trailing" id="2C4-vu-nBo"/>
-                            <constraint firstItem="d0b-Zh-XWb" firstAttribute="leading" secondItem="Ez3-B6-l6Y" secondAttribute="leading" id="2GV-pm-BSa"/>
-                            <constraint firstItem="Ez3-B6-l6Y" firstAttribute="top" secondItem="xg8-HR-nc3" secondAttribute="top" constant="10" id="2J5-aX-dmu"/>
-                            <constraint firstItem="xnr-3B-PYB" firstAttribute="leading" secondItem="ht7-hC-mOx" secondAttribute="leading" id="8a3-2u-0l7"/>
                             <constraint firstItem="iWI-X8-QFy" firstAttribute="trailing" secondItem="Pg4-10-30f" secondAttribute="trailing" id="8fV-5y-y58"/>
+                            <constraint firstItem="ht7-hC-mOx" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" constant="10" id="9PP-Iv-TBj"/>
                             <constraint firstItem="iWI-X8-QFy" firstAttribute="bottom" secondItem="Pg4-10-30f" secondAttribute="bottom" id="BMc-6r-zgY"/>
                             <constraint firstItem="xg8-HR-nc3" firstAttribute="bottom" secondItem="6MT-az-4bi" secondAttribute="bottom" id="Bb3-uV-0Aw"/>
-                            <constraint firstItem="TEj-xg-wOu" firstAttribute="leading" secondItem="27o-HD-GIn" secondAttribute="leading" id="BgP-g0-stG"/>
                             <constraint firstItem="iWI-X8-QFy" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" constant="10" id="Eo5-Ii-XmA"/>
                             <constraint firstItem="xg8-HR-nc3" firstAttribute="trailing" secondItem="Lu2-Bs-kCu" secondAttribute="trailing" constant="10" id="Erk-oA-bfs"/>
                             <constraint firstItem="iWI-X8-QFy" firstAttribute="leading" secondItem="Pg4-10-30f" secondAttribute="leading" id="F5B-HA-OD7"/>
                             <constraint firstItem="xg8-HR-nc3" firstAttribute="bottom" secondItem="iWI-X8-QFy" secondAttribute="bottom" constant="10" id="FAy-rg-Gte"/>
-                            <constraint firstItem="6MT-az-4bi" firstAttribute="top" secondItem="R1G-Y6-u2J" secondAttribute="bottom" constant="20" id="FR1-la-dDY"/>
+                            <constraint firstItem="6MT-az-4bi" firstAttribute="top" secondItem="R1G-Y6-u2J" secondAttribute="bottom" constant="10" id="FR1-la-dDY"/>
                             <constraint firstItem="Lu2-Bs-kCu" firstAttribute="leading" secondItem="9Ma-OG-XR6" secondAttribute="leading" id="FZW-j2-hg7"/>
                             <constraint firstItem="6MT-az-4bi" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" id="Jhd-YK-Qhl"/>
                             <constraint firstItem="7nG-bv-0ex" firstAttribute="leading" secondItem="ht7-hC-mOx" secondAttribute="trailing" constant="10" id="Jox-gT-P79"/>
@@ -864,46 +610,42 @@
                             <constraint firstItem="xg8-HR-nc3" firstAttribute="trailing" secondItem="7nG-bv-0ex" secondAttribute="trailing" constant="10" id="LBN-kd-RaI"/>
                             <constraint firstItem="7nG-bv-0ex" firstAttribute="top" secondItem="ht7-hC-mOx" secondAttribute="top" id="QWV-fc-Ini"/>
                             <constraint firstItem="iWI-X8-QFy" firstAttribute="width" secondItem="xg8-HR-nc3" secondAttribute="width" multiplier="90/414" priority="999" id="Rud-tB-epn"/>
+                            <constraint firstItem="ht7-hC-mOx" firstAttribute="top" secondItem="xg8-HR-nc3" secondAttribute="top" constant="10" id="TOH-dW-3Gj"/>
                             <constraint firstItem="Lu2-Bs-kCu" firstAttribute="bottom" secondItem="9Ma-OG-XR6" secondAttribute="bottom" id="Tni-QQ-aLa"/>
                             <constraint firstItem="iWI-X8-QFy" firstAttribute="top" secondItem="Pg4-10-30f" secondAttribute="top" id="U8Y-6j-TPT"/>
-                            <constraint firstItem="ht7-hC-mOx" firstAttribute="top" secondItem="d0b-Zh-XWb" secondAttribute="bottom" constant="10" id="W65-dD-1Kr"/>
-                            <constraint firstItem="Ez3-B6-l6Y" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" constant="10" id="Wsr-Ca-KwT"/>
-                            <constraint firstItem="xnr-3B-PYB" firstAttribute="top" secondItem="ht7-hC-mOx" secondAttribute="bottom" constant="10" id="ZY9-Rm-BUB"/>
                             <constraint firstItem="xg8-HR-nc3" firstAttribute="trailing" secondItem="6MT-az-4bi" secondAttribute="trailing" id="ckS-Ws-N2u"/>
                             <constraint firstItem="TEj-xg-wOu" firstAttribute="centerY" secondItem="R1G-Y6-u2J" secondAttribute="centerY" id="e1f-Gx-UzL"/>
-                            <constraint firstItem="xnr-3B-PYB" firstAttribute="trailing" secondItem="ht7-hC-mOx" secondAttribute="trailing" id="eVB-Uc-Vny"/>
-                            <constraint firstItem="xnr-3B-PYB" firstAttribute="trailing" secondItem="ht7-hC-mOx" secondAttribute="trailing" id="fRd-xR-l90"/>
-                            <constraint firstItem="27o-HD-GIn" firstAttribute="top" secondItem="xnr-3B-PYB" secondAttribute="top" id="g03-wB-JU5"/>
-                            <constraint firstItem="d0b-Zh-XWb" firstAttribute="top" secondItem="Ez3-B6-l6Y" secondAttribute="bottom" id="gSR-4A-0KG"/>
-                            <constraint firstItem="27o-HD-GIn" firstAttribute="leading" secondItem="xnr-3B-PYB" secondAttribute="trailing" constant="10" id="h5K-nc-dwg"/>
+                            <constraint firstItem="TEj-xg-wOu" firstAttribute="leading" secondItem="7nG-bv-0ex" secondAttribute="leading" id="i26-XH-vwA"/>
                             <constraint firstItem="xg8-HR-nc3" firstAttribute="bottom" secondItem="Lu2-Bs-kCu" secondAttribute="bottom" constant="10" id="kfB-YS-qhv"/>
-                            <constraint firstItem="27o-HD-GIn" firstAttribute="leading" secondItem="7nG-bv-0ex" secondAttribute="leading" id="nQK-sf-LpU"/>
                             <constraint firstItem="Lu2-Bs-kCu" firstAttribute="top" secondItem="9Ma-OG-XR6" secondAttribute="top" id="pjD-88-5wR"/>
                             <constraint firstItem="R1G-Y6-u2J" firstAttribute="trailing" secondItem="ht7-hC-mOx" secondAttribute="trailing" id="scP-Ti-Rqm"/>
-                            <constraint firstItem="xnr-3B-PYB" firstAttribute="leading" secondItem="xg8-HR-nc3" secondAttribute="leading" constant="10" id="uFU-i9-04k"/>
-                            <constraint firstItem="d0b-Zh-XWb" firstAttribute="trailing" secondItem="Ez3-B6-l6Y" secondAttribute="trailing" id="uLE-BD-QzW"/>
                             <constraint firstItem="R1G-Y6-u2J" firstAttribute="top" secondItem="ht7-hC-mOx" secondAttribute="bottom" constant="10" id="xgW-R5-zwh"/>
-                            <constraint firstItem="xg8-HR-nc3" firstAttribute="trailing" secondItem="27o-HD-GIn" secondAttribute="trailing" constant="10" id="ylS-FQ-UJd"/>
-                            <constraint firstItem="Ez3-B6-l6Y" firstAttribute="trailing" secondItem="77a-Dp-kvd" secondAttribute="centerX" id="zEm-OS-rLa"/>
                             <constraint firstItem="R1G-Y6-u2J" firstAttribute="leading" secondItem="ht7-hC-mOx" secondAttribute="leading" id="zjl-hb-CMj"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="ktE-ob-ceW"/>
+                    <navigationItem key="navigationItem" title="Create Dog" id="P27-vi-zWN">
+                        <barButtonItem key="leftBarButtonItem" image="chevron.left" catalog="system" id="xhQ-Fp-b2Q">
+                            <connections>
+                                <action selector="cancelAddDogButton:" destination="yj4-3A-FdI" id="mKY-l1-5Mf"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="addDogButton" destination="Lu2-Bs-kCu" id="o0w-dk-42e"/>
                         <outlet property="addDogButtonBackground" destination="9Ma-OG-XR6" id="cDg-hE-K2Q"/>
                         <outlet property="cancelAddDogButton" destination="iWI-X8-QFy" id="yqY-el-FXa"/>
                         <outlet property="cancelAddDogButtonBackground" destination="Pg4-10-30f" id="Cch-NX-mQg"/>
-                        <outlet property="dogDescription" destination="27o-HD-GIn" id="LNa-U6-HTc"/>
                         <outlet property="dogEnableStatus" destination="TEj-xg-wOu" id="mMX-Pa-Sng"/>
-                        <outlet property="dogName" destination="7nG-bv-0ex" id="BPp-cb-W7P"/>
+                        <outlet property="dogName" destination="7nG-bv-0ex" id="FOB-Ms-LQm"/>
                         <outlet property="embeddedTableView" destination="6MT-az-4bi" id="dGS-SX-RQd"/>
-                        <outlet property="pageTitle" destination="Ez3-B6-l6Y" id="wfr-V5-DoJ"/>
+                        <outlet property="navigationItem" destination="P27-vi-zWN" id="X0y-m0-gln"/>
+                        <segue destination="lsF-Dr-5BE" kind="unwind" identifier="unwindToDogsViewController" unwindAction="unwind:" id="BJH-LK-VtV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Px3-dS-KSe" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="lsF-Dr-5BE" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-3510" y="7"/>
+            <point key="canvasLocation" x="-3617" y="48"/>
         </scene>
         <!--Dogs Main Screen-->
         <scene sceneID="wg7-f3-ORb">
@@ -920,7 +662,7 @@
                                     <constraint firstAttribute="height" relation="lessThanOrEqual" constant="90" id="ZUn-33-LGX"/>
                                     <constraint firstAttribute="width" secondItem="8b5-pw-vvl" secondAttribute="height" multiplier="1:1" id="v1r-Ea-sLf"/>
                                 </constraints>
-                                <color key="tintColor" systemColor="linkColor"/>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
                                 <state key="normal" image="plus.circle.fill" catalog="system">
                                     <color key="titleColor" systemColor="systemBackgroundColor"/>
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="90"/>
@@ -930,7 +672,7 @@
                                 </connections>
                             </button>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yIK-7w-b7P">
-                                <rect key="frame" x="0.0" y="99" width="414" height="714"/>
+                                <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <connections>
                                     <segue destination="AEi-KZ-cSf" kind="embed" identifier="dogsMainScreenTableViewController" id="Sf7-Qi-QCS"/>
                                 </connections>
@@ -942,47 +684,25 @@
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="90"/>
                                 </state>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Configure Dogs" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Imb-Bk-Vdb" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="10" y="54" width="197" height="35"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="35" id="ugy-FS-pJp"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="straightBlackLine" translatesAutoresizingMaskIntoConstraints="NO" id="2xM-kg-qD6">
-                                <rect key="frame" x="10" y="89" width="197" height="10"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="10" id="hJh-mf-2Q7"/>
-                                </constraints>
-                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="O1u-W8-tvY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="8b5-pw-vvl" firstAttribute="leading" secondItem="vhe-hX-gRw" secondAttribute="leading" id="4ux-rO-lvk"/>
-                            <constraint firstItem="Imb-Bk-Vdb" firstAttribute="top" secondItem="O1u-W8-tvY" secondAttribute="top" constant="10" id="LyH-ha-OxH"/>
                             <constraint firstItem="8b5-pw-vvl" firstAttribute="trailing" secondItem="vhe-hX-gRw" secondAttribute="trailing" id="PUm-pB-O8h"/>
-                            <constraint firstItem="O1u-W8-tvY" firstAttribute="centerX" secondItem="Imb-Bk-Vdb" secondAttribute="trailing" id="Rfr-kv-pix"/>
-                            <constraint firstItem="yIK-7w-b7P" firstAttribute="top" secondItem="2xM-kg-qD6" secondAttribute="bottom" id="Wvn-fB-jAs"/>
                             <constraint firstItem="O1u-W8-tvY" firstAttribute="bottom" secondItem="yIK-7w-b7P" secondAttribute="bottom" id="Y2v-RJ-9TM"/>
-                            <constraint firstItem="2xM-kg-qD6" firstAttribute="leading" secondItem="O1u-W8-tvY" secondAttribute="leading" constant="10" id="Yq1-Fe-X5R"/>
                             <constraint firstItem="8b5-pw-vvl" firstAttribute="width" secondItem="O1u-W8-tvY" secondAttribute="width" multiplier="90/414" priority="999" id="Zfs-Sy-mmc"/>
                             <constraint firstItem="O1u-W8-tvY" firstAttribute="trailing" secondItem="8b5-pw-vvl" secondAttribute="trailing" constant="10" id="aV1-4W-xHJ"/>
                             <constraint firstItem="O1u-W8-tvY" firstAttribute="bottom" secondItem="8b5-pw-vvl" secondAttribute="bottom" constant="10" id="iry-rx-EwW"/>
                             <constraint firstItem="yIK-7w-b7P" firstAttribute="leading" secondItem="O1u-W8-tvY" secondAttribute="leading" id="ldO-Rv-WpW"/>
-                            <constraint firstItem="2xM-kg-qD6" firstAttribute="top" secondItem="Imb-Bk-Vdb" secondAttribute="bottom" id="qmR-Yo-PKi"/>
                             <constraint firstItem="8b5-pw-vvl" firstAttribute="bottom" secondItem="vhe-hX-gRw" secondAttribute="bottom" id="toG-rN-MmR"/>
-                            <constraint firstItem="Imb-Bk-Vdb" firstAttribute="leading" secondItem="O1u-W8-tvY" secondAttribute="leading" constant="10" id="uh3-tc-VsC"/>
-                            <constraint firstItem="2xM-kg-qD6" firstAttribute="trailing" secondItem="QS5-Rx-YEW" secondAttribute="centerX" id="vjA-7o-4If"/>
                             <constraint firstItem="O1u-W8-tvY" firstAttribute="trailing" secondItem="yIK-7w-b7P" secondAttribute="trailing" id="yHx-IJ-8RA"/>
                             <constraint firstItem="8b5-pw-vvl" firstAttribute="top" secondItem="vhe-hX-gRw" secondAttribute="top" id="z4x-8j-hEh"/>
+                            <constraint firstItem="yIK-7w-b7P" firstAttribute="top" secondItem="O1u-W8-tvY" secondAttribute="top" id="zcA-OE-9qz"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Dogs" image="pawTabBar" selectedImage="pawTabBar" id="cPa-gy-q4n"/>
+                    <navigationItem key="navigationItem" title="Configure Dogs" id="3cK-GK-ZQ2"/>
                     <connections>
-                        <outlet property="thinBlackLine" destination="2xM-kg-qD6" id="4Cm-ig-ABa"/>
                         <outlet property="willAddButton" destination="8b5-pw-vvl" id="pTI-mr-SxA"/>
                         <outlet property="willAddButtonBackground" destination="vhe-hX-gRw" id="9Z0-SR-2vW"/>
                         <segue destination="ihm-KQ-9ZO" kind="show" identifier="dogsUpdateRequirementViewController" id="aHQ-Vp-kOd"/>
@@ -991,14 +711,14 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Nw-L8-lE0" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2265.217391304348" y="6.6964285714285712"/>
+            <point key="canvasLocation" x="-2267" y="48"/>
         </scene>
         <!--Dogs Main Screen Table View-->
         <scene sceneID="bAW-wY-m9w">
             <objects>
                 <tableViewController storyboardIdentifier="Dogs Main Screen Embedded Table View" title="Dogs Main Screen Table View" id="AEi-KZ-cSf" customClass="DogsMainScreenTableViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" contentViewInsetsToSafeArea="NO" id="DkK-Io-vlc">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="714"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="725"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <viewLayoutGuide key="contentLayoutGuide" id="kT8-53-Cu8"/>
@@ -1143,7 +863,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fXr-R9-8mN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2265.217391304348" y="756.69642857142856"/>
+            <point key="canvasLocation" x="-2265" y="783"/>
         </scene>
         <!--Settings Main Screen-->
         <scene sceneID="Iej-j5-F3q">
@@ -1154,16 +874,16 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" keyboardDismissMode="onDrag" translatesAutoresizingMaskIntoConstraints="NO" id="Tl1-fS-eKQ">
-                                <rect key="frame" x="0.0" y="99" width="414" height="714"/>
+                                <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DGn-uG-1kc">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="480"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gVu-eH-0bi" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                                <rect key="frame" x="181" y="112" width="16" height="16"/>
+                                                <rect key="frame" x="182" y="109" width="22" height="22"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="gVu-eH-0bi" secondAttribute="height" multiplier="1:1" id="75a-vb-ldE"/>
-                                                    <constraint firstAttribute="height" constant="16" id="UXx-e9-Qn5"/>
+                                                    <constraint firstAttribute="height" constant="22" id="UXx-e9-Qn5"/>
                                                 </constraints>
                                                 <color key="tintColor" systemColor="labelColor"/>
                                                 <state key="normal" image="info.circle" catalog="system"/>
@@ -1273,7 +993,7 @@
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstItem="Csv-1E-jpJ" firstAttribute="centerY" secondItem="l4n-f0-xlb" secondAttribute="centerY" id="3HP-0y-i1p"/>
-                                            <constraint firstItem="gVu-eH-0bi" firstAttribute="leading" secondItem="8Fc-Ih-bii" secondAttribute="trailing" constant="2" id="5hu-d9-u7Z"/>
+                                            <constraint firstItem="gVu-eH-0bi" firstAttribute="leading" secondItem="8Fc-Ih-bii" secondAttribute="trailing" constant="3" id="5hu-d9-u7Z"/>
                                             <constraint firstItem="UmK-LO-HUz" firstAttribute="top" secondItem="TLL-uF-akP" secondAttribute="bottom" constant="50" id="9Ko-sx-wy7"/>
                                             <constraint firstItem="l4n-f0-xlb" firstAttribute="leading" secondItem="4D0-gF-bOZ" secondAttribute="leading" id="CdU-tm-AsD"/>
                                             <constraint firstItem="Ci3-tA-FE1" firstAttribute="leading" secondItem="4D0-gF-bOZ" secondAttribute="leading" id="ClX-0X-a4h"/>
@@ -1319,44 +1039,22 @@
                                 <viewLayoutGuide key="contentLayoutGuide" id="a3n-m4-iSG"/>
                                 <viewLayoutGuide key="frameLayoutGuide" id="8s3-Sx-9rf"/>
                             </scrollView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Settings" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nae-Ht-EMJ" customClass="CustomLabel" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="10" y="54" width="197" height="35"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="35" id="oCE-gB-MCJ"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="straightBlackLine" translatesAutoresizingMaskIntoConstraints="NO" id="sDg-zk-gd8">
-                                <rect key="frame" x="10" y="89" width="197" height="10"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="10" id="O8h-je-kAo"/>
-                                </constraints>
-                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="3hh-in-rRx"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="sDg-zk-gd8" firstAttribute="trailing" secondItem="nae-Ht-EMJ" secondAttribute="trailing" id="5jb-RY-KLa"/>
-                            <constraint firstItem="sDg-zk-gd8" firstAttribute="top" secondItem="nae-Ht-EMJ" secondAttribute="bottom" id="7FY-n2-7Bv"/>
-                            <constraint firstItem="nae-Ht-EMJ" firstAttribute="leading" secondItem="3hh-in-rRx" secondAttribute="leading" constant="10" id="9Gu-AI-8Tf"/>
-                            <constraint firstItem="Tl1-fS-eKQ" firstAttribute="top" secondItem="sDg-zk-gd8" secondAttribute="bottom" id="AK4-8E-K5W"/>
-                            <constraint firstItem="sDg-zk-gd8" firstAttribute="leading" secondItem="nae-Ht-EMJ" secondAttribute="leading" id="LVa-5f-g8z"/>
-                            <constraint firstItem="nae-Ht-EMJ" firstAttribute="trailing" secondItem="w6G-wG-m6c" secondAttribute="centerX" id="YYi-mV-q3G"/>
                             <constraint firstItem="Tl1-fS-eKQ" firstAttribute="leading" secondItem="3hh-in-rRx" secondAttribute="leading" id="cIa-9j-qCn"/>
+                            <constraint firstItem="Tl1-fS-eKQ" firstAttribute="top" secondItem="3hh-in-rRx" secondAttribute="top" id="jB6-iy-kvX"/>
                             <constraint firstItem="3hh-in-rRx" firstAttribute="bottom" secondItem="Tl1-fS-eKQ" secondAttribute="bottom" id="nBC-ju-Njk"/>
                             <constraint firstItem="3hh-in-rRx" firstAttribute="trailing" secondItem="Tl1-fS-eKQ" secondAttribute="trailing" id="r7c-ek-GXR"/>
-                            <constraint firstItem="nae-Ht-EMJ" firstAttribute="top" secondItem="3hh-in-rRx" secondAttribute="top" constant="10" id="uuM-XK-WVu"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Settings" image="gear" catalog="system" id="1ee-KT-eOC"/>
+                    <navigationItem key="navigationItem" title="Settings" id="cTz-i4-lSN"/>
                     <connections>
                         <outlet property="followUpDelayInterval" destination="aOM-HB-xn3" id="SvO-PL-q9j"/>
                         <outlet property="followUpReminderLabel" destination="8Fc-Ih-bii" id="t7e-FS-J8B"/>
                         <outlet property="isNotificationEnabledSwitch" destination="QPX-E7-5mO" id="16O-Zk-tz9"/>
                         <outlet property="isPaused" destination="Csv-1E-jpJ" id="x9A-PC-9y5"/>
-                        <outlet property="pageTitle" destination="nae-Ht-EMJ" id="xfn-H4-Dkm"/>
                         <outlet property="resetButton" destination="UmK-LO-HUz" id="tFF-8X-v7H"/>
                         <outlet property="scrollViewContainerForAll" destination="DGn-uG-1kc" id="Ac8-K5-cQL"/>
                         <outlet property="shouldFollowUp" destination="wBZ-D0-bLD" id="Bwd-K8-X6c"/>
@@ -1366,37 +1064,38 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="T4l-RA-wGk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-49" y="1052"/>
+            <point key="canvasLocation" x="861" y="1944"/>
         </scene>
         <!--Main Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">
             <objects>
                 <tabBarController title="Main Tab Bar Controller" id="49e-Tb-3d3" customClass="MainTabBarViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" title="test" id="vH9-JD-UUu"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" itemPositioning="centered" id="W28-zg-YXA">
                         <rect key="frame" x="0.0" y="975" width="768" height="49"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                     </tabBar>
                     <connections>
-                        <segue destination="9pv-A4-QxB" kind="relationship" relationship="viewControllers" id="u7Y-xg-7CH"/>
-                        <segue destination="8rJ-Kc-sve" kind="relationship" relationship="viewControllers" id="lzU-1b-eKA"/>
-                        <segue destination="yOJ-Bd-jVl" kind="relationship" relationship="viewControllers" id="CeX-iU-V0j"/>
+                        <segue destination="hsT-yY-7dg" kind="relationship" relationship="viewControllers" id="wFP-MN-uNE"/>
+                        <segue destination="c3p-F3-kMn" kind="relationship" relationship="viewControllers" id="lzU-1b-eKA"/>
+                        <segue destination="t9t-B7-eVe" kind="relationship" relationship="viewControllers" id="CeX-iU-V0j"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-49" y="7"/>
+            <point key="canvasLocation" x="860.86956521739137" y="32.8125"/>
         </scene>
         <!--Update Dog Requirement -->
         <scene sceneID="Kgj-aC-JCD">
             <objects>
                 <viewController title="Update Dog Requirement " id="ihm-KQ-9ZO" customClass="DogsUpdateRequirementViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="0OB-AJ-Dor">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="etL-8U-WAh" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="314" y="708" width="90" height="90"/>
+                                <rect key="frame" x="314" y="713" width="90" height="90"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="etL-8U-WAh" secondAttribute="height" multiplier="1:1" id="98v-Kx-pIm"/>
                                     <constraint firstAttribute="height" relation="lessThanOrEqual" constant="90" id="daq-uA-GBP"/>
@@ -1412,7 +1111,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L3p-WY-59A" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="10" y="708" width="90" height="90"/>
+                                <rect key="frame" x="10" y="713" width="90" height="90"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="lessThanOrEqual" constant="90" id="PhL-tM-Csf"/>
                                     <constraint firstAttribute="width" secondItem="L3p-WY-59A" secondAttribute="height" multiplier="1:1" id="ZDG-AK-5Vr"/>
@@ -1428,7 +1127,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fyn-yj-60g" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="314" y="708" width="90" height="90"/>
+                                <rect key="frame" x="314" y="713" width="90" height="90"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" image="checkmark.circle" catalog="system">
                                     <color key="titleColor" systemColor="systemBackgroundColor"/>
@@ -1436,7 +1135,7 @@
                                 </state>
                             </button>
                             <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BEQ-Uc-wNM" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
-                                <rect key="frame" x="10" y="708" width="90" height="90"/>
+                                <rect key="frame" x="10" y="713" width="90" height="90"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" image="arrow.backward.circle" catalog="system">
                                     <color key="titleColor" systemColor="systemBackgroundColor"/>
@@ -1444,7 +1143,7 @@
                                 </state>
                             </button>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="M3d-rJ-te8">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
+                                <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <connections>
                                     <segue destination="ngF-4H-kgO" kind="embed" identifier="dogsUpdateRequirementManagerViewController" id="GZX-3R-sVV"/>
                                 </connections>
@@ -1474,15 +1173,23 @@
                             <constraint firstItem="orO-H4-AD3" firstAttribute="bottom" secondItem="M3d-rJ-te8" secondAttribute="bottom" id="wmX-Sn-GUV"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="Gy0-XG-Wif"/>
+                    <navigationItem key="navigationItem" title="Update Requirement" id="1kf-GJ-Ilq">
+                        <barButtonItem key="leftBarButtonItem" image="chevron.left" catalog="system" id="Z1T-wz-umF">
+                            <connections>
+                                <action selector="willCancel:" destination="ihm-KQ-9ZO" id="AiZ-Kt-99U"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="cancelUpdateRequirementButton" destination="L3p-WY-59A" id="iz9-8o-gf8"/>
                         <outlet property="cancelUpdateRequirementButtonBackground" destination="BEQ-Uc-wNM" id="hOh-12-Rpq"/>
                         <outlet property="updateRequirementButton" destination="etL-8U-WAh" id="Gde-b7-a4v"/>
                         <outlet property="updateRequirementButtonBackground" destination="Fyn-yj-60g" id="HnS-tg-nvf"/>
+                        <segue destination="DVh-Bc-vjm" kind="unwind" identifier="unwindToDogsViewControllerUR" unwindAction="unwind:" id="G2P-Yh-8WM"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wbj-ty-Ibs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="DVh-Bc-vjm" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-2265" y="-757"/>
         </scene>
@@ -1491,33 +1198,216 @@
             <objects>
                 <viewController title="Dog Requirement Time Of Day" id="Zjt-y9-htp" customClass="DogsRequirementTimeOfDayViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="87k-Ug-zEc">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="564"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="481"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="1" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="KE9-sW-ERX">
-                                <rect key="frame" x="0.0" y="44" width="414" height="520"/>
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="5" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="KE9-sW-ERX">
+                                <rect key="frame" x="0.0" y="113.5" width="414" height="367.5"/>
                                 <connections>
                                     <action selector="willUpdateTimeOfDay:" destination="Zjt-y9-htp" eventType="editingChanged" id="jsA-DP-FU5"/>
                                     <action selector="willUpdateTimeOfDay:" destination="Zjt-y9-htp" eventType="valueChanged" id="lIe-ee-oaT"/>
                                 </connections>
                             </datePicker>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JqF-PI-2lY" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                                <rect key="frame" x="10" y="54" width="49.5" height="49.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="JqF-PI-2lY" secondAttribute="height" multiplier="1:1" id="Hm2-gr-qNw"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <state key="normal" image="s.circle.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="toggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="rFG-OD-MOp"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BWf-ZH-KPJ" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                                <rect key="frame" x="67.5" y="54" width="49.5" height="49.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="BWf-ZH-KPJ" secondAttribute="height" multiplier="1:1" id="W3p-ZI-opV"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <state key="normal" image="m.circle.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="toggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="6Wf-Mx-mYl"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zN3-Wx-58L" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                                <rect key="frame" x="125" y="54" width="49.5" height="49.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="zN3-Wx-58L" secondAttribute="height" multiplier="1:1" id="ca2-mX-CXo"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <state key="normal" image="t.circle.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="toggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="UXW-Ia-tHs"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2b7-cC-Q2l" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                                <rect key="frame" x="182.5" y="54" width="49" height="49.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="2b7-cC-Q2l" secondAttribute="height" multiplier="1:1" id="JxE-Nt-KwL"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <state key="normal" image="w.circle.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="toggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="wHN-iQ-eU9"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TMQ-Jx-Z8B" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                                <rect key="frame" x="239.5" y="54" width="49.5" height="49.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="TMQ-Jx-Z8B" secondAttribute="height" multiplier="1:1" id="qxT-O5-cqh"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <state key="normal" image="t.circle.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="toggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="zAJ-6P-6D0"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Ap-4c-M9b" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                                <rect key="frame" x="297" y="54" width="49.5" height="49.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="2Ap-4c-M9b" secondAttribute="height" multiplier="1:1" id="9Oc-WS-VYr"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <state key="normal" image="f.circle.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="toggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="eFG-Qs-JQZ"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zb1-0i-9Km" customClass="ScaledButton" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target">
+                                <rect key="frame" x="354.5" y="54" width="49.5" height="49.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="Zb1-0i-9Km" secondAttribute="height" multiplier="1:1" id="Hbo-Qd-gDX"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <state key="normal" image="s.circle.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="toggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="sAq-pw-aLp"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="tsl-PX-q6k"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="zN3-Wx-58L" firstAttribute="width" secondItem="JqF-PI-2lY" secondAttribute="width" id="4Fx-No-mWs"/>
                             <constraint firstItem="tsl-PX-q6k" firstAttribute="bottom" secondItem="KE9-sW-ERX" secondAttribute="bottom" id="5Uf-cf-7Pk"/>
+                            <constraint firstItem="zN3-Wx-58L" firstAttribute="leading" secondItem="BWf-ZH-KPJ" secondAttribute="trailing" constant="8" id="7rY-u6-t1B"/>
+                            <constraint firstItem="Zb1-0i-9Km" firstAttribute="leading" secondItem="2Ap-4c-M9b" secondAttribute="trailing" constant="8" id="8Ss-s1-aHm"/>
+                            <constraint firstItem="2b7-cC-Q2l" firstAttribute="width" secondItem="JqF-PI-2lY" secondAttribute="width" id="9Cg-ke-VaS"/>
+                            <constraint firstItem="2Ap-4c-M9b" firstAttribute="top" secondItem="JqF-PI-2lY" secondAttribute="top" id="D1K-LV-q8o"/>
+                            <constraint firstItem="JqF-PI-2lY" firstAttribute="top" secondItem="tsl-PX-q6k" secondAttribute="top" constant="10" id="DeZ-7f-m8t"/>
+                            <constraint firstItem="KE9-sW-ERX" firstAttribute="top" secondItem="JqF-PI-2lY" secondAttribute="bottom" constant="10" id="Dzx-gJ-aE1"/>
+                            <constraint firstItem="Zb1-0i-9Km" firstAttribute="width" secondItem="JqF-PI-2lY" secondAttribute="width" id="GFC-JZ-Ffw"/>
+                            <constraint firstItem="2b7-cC-Q2l" firstAttribute="bottom" secondItem="JqF-PI-2lY" secondAttribute="bottom" id="JQn-1D-2az"/>
+                            <constraint firstItem="TMQ-Jx-Z8B" firstAttribute="leading" secondItem="2b7-cC-Q2l" secondAttribute="trailing" constant="8" id="KNp-Kw-clr"/>
+                            <constraint firstItem="tsl-PX-q6k" firstAttribute="trailing" secondItem="Zb1-0i-9Km" secondAttribute="trailing" constant="10" id="MoW-V2-8DO"/>
+                            <constraint firstItem="zN3-Wx-58L" firstAttribute="bottom" secondItem="JqF-PI-2lY" secondAttribute="bottom" id="OhK-fR-y3T"/>
+                            <constraint firstItem="2Ap-4c-M9b" firstAttribute="leading" secondItem="TMQ-Jx-Z8B" secondAttribute="trailing" constant="8" id="PQL-td-xSP"/>
+                            <constraint firstItem="JqF-PI-2lY" firstAttribute="leading" secondItem="tsl-PX-q6k" secondAttribute="leading" constant="10" id="QBW-Sm-Eaj"/>
+                            <constraint firstItem="2Ap-4c-M9b" firstAttribute="width" secondItem="JqF-PI-2lY" secondAttribute="width" id="Qhv-xT-L16"/>
+                            <constraint firstItem="BWf-ZH-KPJ" firstAttribute="top" secondItem="JqF-PI-2lY" secondAttribute="top" id="TSZ-xt-Hxd"/>
+                            <constraint firstItem="TMQ-Jx-Z8B" firstAttribute="top" secondItem="JqF-PI-2lY" secondAttribute="top" id="U9g-d6-8Re"/>
+                            <constraint firstItem="2b7-cC-Q2l" firstAttribute="leading" secondItem="zN3-Wx-58L" secondAttribute="trailing" constant="8" id="YZ6-Cx-pmC"/>
+                            <constraint firstItem="BWf-ZH-KPJ" firstAttribute="bottom" secondItem="JqF-PI-2lY" secondAttribute="bottom" id="b9v-vi-WNY"/>
+                            <constraint firstItem="BWf-ZH-KPJ" firstAttribute="leading" secondItem="JqF-PI-2lY" secondAttribute="trailing" constant="8" id="cSo-st-Dlp"/>
+                            <constraint firstItem="2b7-cC-Q2l" firstAttribute="top" secondItem="JqF-PI-2lY" secondAttribute="top" id="eaf-Dj-Oho"/>
                             <constraint firstItem="KE9-sW-ERX" firstAttribute="leading" secondItem="tsl-PX-q6k" secondAttribute="leading" id="fV3-KS-xmY"/>
-                            <constraint firstItem="KE9-sW-ERX" firstAttribute="top" secondItem="tsl-PX-q6k" secondAttribute="top" id="j6h-bA-dBa"/>
+                            <constraint firstItem="Zb1-0i-9Km" firstAttribute="bottom" secondItem="JqF-PI-2lY" secondAttribute="bottom" id="nNC-h2-273"/>
                             <constraint firstItem="tsl-PX-q6k" firstAttribute="trailing" secondItem="KE9-sW-ERX" secondAttribute="trailing" id="qVm-fy-PA1"/>
+                            <constraint firstItem="zN3-Wx-58L" firstAttribute="top" secondItem="JqF-PI-2lY" secondAttribute="top" id="qbP-hv-zBs"/>
+                            <constraint firstItem="BWf-ZH-KPJ" firstAttribute="width" secondItem="JqF-PI-2lY" secondAttribute="width" id="uKs-W3-y6o"/>
+                            <constraint firstItem="2Ap-4c-M9b" firstAttribute="bottom" secondItem="JqF-PI-2lY" secondAttribute="bottom" id="veI-LK-D0Z"/>
+                            <constraint firstItem="Zb1-0i-9Km" firstAttribute="top" secondItem="JqF-PI-2lY" secondAttribute="top" id="xiG-3H-9s1"/>
+                            <constraint firstItem="TMQ-Jx-Z8B" firstAttribute="bottom" secondItem="JqF-PI-2lY" secondAttribute="bottom" id="yqf-ei-9JU"/>
+                            <constraint firstItem="TMQ-Jx-Z8B" firstAttribute="width" secondItem="JqF-PI-2lY" secondAttribute="width" id="zJW-0b-vUE"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="friday" destination="2Ap-4c-M9b" id="vWV-nD-4nj"/>
+                        <outlet property="monday" destination="BWf-ZH-KPJ" id="TqP-Ek-Hpx"/>
+                        <outlet property="saturday" destination="Zb1-0i-9Km" id="PGG-g2-wZt"/>
+                        <outlet property="sunday" destination="JqF-PI-2lY" id="SPU-bL-GRU"/>
+                        <outlet property="thursday" destination="TMQ-Jx-Z8B" id="JA2-i0-14R"/>
                         <outlet property="timeOfDay" destination="KE9-sW-ERX" id="v6l-fk-P9V"/>
+                        <outlet property="tuesday" destination="zN3-Wx-58L" id="xPw-t6-CtT"/>
+                        <outlet property="wednesday" destination="2b7-cC-Q2l" id="3ui-aw-nBX"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DEU-ai-82Z" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-5272" y="-1343"/>
+        </scene>
+        <!--Reminders-->
+        <scene sceneID="Crs-0n-IXj">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="hsT-yY-7dg" customClass="HomeNavigationViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Reminders" image="house.fill" catalog="system" id="acW-dT-cKf"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="zCM-bH-4WW">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <textAttributes key="titleTextAttributes">
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
+                            <color key="textColor" systemColor="systemBlueColor"/>
+                        </textAttributes>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="9pv-A4-QxB" kind="relationship" relationship="rootViewController" id="9aa-4R-fq8"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UV8-j3-cOd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2319" y="33"/>
+        </scene>
+        <!--Settings-->
+        <scene sceneID="DYF-tb-Yz2">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="t9t-B7-eVe" customClass="SettingsNavigationViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Settings" image="gear" catalog="system" id="1ee-KT-eOC"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="DrI-Pw-scK">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <textAttributes key="titleTextAttributes">
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
+                            <color key="textColor" systemColor="systemBlueColor"/>
+                        </textAttributes>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="yOJ-Bd-jVl" kind="relationship" relationship="rootViewController" id="L4u-hR-IaX"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0Jn-Ma-d9n" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="861" y="1081"/>
+        </scene>
+        <!--Dogs-->
+        <scene sceneID="3cf-I6-Jg6">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="c3p-F3-kMn" customClass="DogsNavigationViewController" customModule="Who_Let_The_Dogs_Out" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Dogs" image="pawTabBar" selectedImage="pawTabBar" id="cPa-gy-q4n"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="qxF-gX-J4v">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <textAttributes key="titleTextAttributes">
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
+                            <color key="textColor" systemColor="systemBlueColor"/>
+                        </textAttributes>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="8rJ-Kc-sve" kind="relationship" relationship="rootViewController" id="p3A-me-FME"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UGI-1Q-c4s" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-794" y="33"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
@@ -1531,16 +1421,19 @@
         <image name="checkmark.circle.fill" catalog="system" width="128" height="121"/>
         <image name="chevron.left" catalog="system" width="96" height="128"/>
         <image name="chevron.right" catalog="system" width="96" height="128"/>
-        <image name="circle.fill" catalog="system" width="128" height="121"/>
+        <image name="f.circle.fill" catalog="system" width="128" height="121"/>
         <image name="gear" catalog="system" width="128" height="119"/>
         <image name="house.fill" catalog="system" width="128" height="106"/>
         <image name="info.circle" catalog="system" width="128" height="121"/>
+        <image name="m.circle.fill" catalog="system" width="128" height="121"/>
         <image name="pawFullResolution" width="490" height="490.5"/>
         <image name="pawTabBar" width="25" height="25"/>
         <image name="plus" catalog="system" width="128" height="113"/>
         <image name="plus.circle" catalog="system" width="128" height="121"/>
         <image name="plus.circle.fill" catalog="system" width="128" height="121"/>
-        <image name="straightBlackLine" width="224" height="5"/>
+        <image name="s.circle.fill" catalog="system" width="128" height="121"/>
+        <image name="t.circle.fill" catalog="system" width="128" height="121"/>
+        <image name="w.circle.fill" catalog="system" width="128" height="121"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
@@ -1549,6 +1442,9 @@
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBlueColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGrayColor">
             <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

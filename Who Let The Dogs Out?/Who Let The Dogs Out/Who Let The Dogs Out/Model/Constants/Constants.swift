@@ -6,13 +6,13 @@
 //  Copyright © 2020 Jonathan Xakellis. All rights reserved.
 //
 
-import Foundation
+import UIKit
+import AudioToolbox
 
 enum DogConstant {
-    private static let nameTuple: (String, String) = ("name", "Bella")
-    private static let descriptionTuple: (String, String) = ("description", "Friendly")
     static let defaultEnable: Bool = true
-    static let defaultDogSpecificationKeys: [(String, String)] = [nameTuple, descriptionTuple]
+    static let defaultName: String = "Bella"
+    static let defaultDescription: String = "Friendly"
 }
 
 enum RequirementConstant {
@@ -33,34 +33,9 @@ enum DogManagerConstant {
     
     static var testingDog: Dog {
         let testingDog = Dog()
-    
-        let testingRequirementOne = Requirement()
-        try! testingRequirementOne.changeRequirementName(newRequirementName: "Potty")
-        try! testingRequirementOne.changeRequirementDescription(newRequirementDescription: "Take Dog Outside")
-        testingRequirementOne.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(25))
-        //defaultRequirementOne.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(50))
-        testingRequirementOne.setEnable(newEnableStatus: true)
-        try! testingDog.dogRequirments.addRequirement(newRequirement: testingRequirementOne)
- 
         
-        let testingRequirementTwo = Requirement()
-        try! testingRequirementTwo.changeRequirementName(newRequirementName: "Food")
-        try! testingRequirementTwo.changeRequirementDescription(newRequirementDescription: "Feed The Dog")
-        testingRequirementTwo.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(15))
-        testingRequirementTwo.setEnable(newEnableStatus: true)
-        try! testingDog.dogRequirments.addRequirement(newRequirement: testingRequirementTwo)
-        
-        let testingRequirementThree = Requirement()
-        try! testingRequirementThree.changeRequirementName(newRequirementName: "Brush")
-        try! testingRequirementThree.changeRequirementDescription(newRequirementDescription: "Brush His Fur Out")
-        //testingRequirementThree.interval = TimeInterval((3600*7)+(3600*0.75))
-        testingRequirementThree.countDownComponents.changeExecutionInterval(newExecutionInterval: TimeInterval(3600))
-        testingRequirementThree.setEnable(newEnableStatus: false)
-        try! testingDog.dogRequirments.addRequirement(newRequirement: testingRequirementThree)
-        
-        for i in 0..<DogConstant.defaultDogSpecificationKeys.count{
-        try! testingDog.dogSpecifications.changeDogSpecifications(key: DogConstant.defaultDogSpecificationKeys[i].0, newValue: DogConstant.defaultDogSpecificationKeys[i].1)
-        }
+        try! testingDog.dogRequirments.addRequirement(newRequirement: RequirementConstant.defaultRequirement)
+        testingDog.dogRequirments.requirements[0].countDownComponents.changeExecutionInterval(newExecutionInterval: 30.0)
         
         testingDog.setEnable(newEnableStatus: DogConstant.defaultEnable)
     
@@ -88,10 +63,6 @@ enum DogManagerConstant {
         try! userDefaultRequirementThree.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
         try! userDefaultDog.dogRequirments.addRequirement(newRequirement: userDefaultRequirementThree)
         
-        for i in 0..<DogConstant.defaultDogSpecificationKeys.count{
-        try! userDefaultDog.dogSpecifications.changeDogSpecifications(key: DogConstant.defaultDogSpecificationKeys[i].0, newValue: DogConstant.defaultDogSpecificationKeys[i].1)
-        }
-        
         userDefaultDog.setEnable(newEnableStatus: DogConstant.defaultEnable)
     
         return userDefaultDog
@@ -108,6 +79,7 @@ enum TimerConstant {
     static var defaultSnooze: TimeInterval = TimeInterval(60*30)
     static var defaultTimeOfDay: DateComponents = DateComponents(calendar: nil, timeZone: nil, era: nil, year: nil, month: nil, day: nil, hour: 8, minute: 30, second: 0, nanosecond: 0, weekday: nil, weekdayOrdinal: nil, quarter: nil, weekOfMonth: nil, weekOfYear: nil, yearForWeekOfYear: nil)
     static var defaultSkipStatus: Bool = false
+    static var defaultSystemSound: SystemSoundID = SystemSoundID(1007)
 }
 
 enum NotificationConstant {
@@ -145,5 +117,34 @@ enum AnimationConstant: Double{
     case toolTipShow = 0.1000000002
     case toolTipHide = 0.1000000003
     
+    case switchButton = 0.1200000001
     
+    
+}
+
+ 
+ 
+enum ColorConstant {
+    case gray
+}
+
+extension ColorConstant: RawRepresentable {
+    typealias RawValue = UIColor
+    
+    init?(rawValue: RawValue) {
+        switch rawValue {
+        case UIColor.systemGray.withAlphaComponent(0.30):
+            self = .gray
+        default:
+            print("nil")
+            return nil
+        }
+    }
+    
+    var rawValue: RawValue {
+        switch self {
+        case .gray:
+            return UIColor.systemGray.withAlphaComponent(0.30)
+        }
+    }
 }

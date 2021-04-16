@@ -37,6 +37,8 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     //MARK: IB
     
+    
+    
     @IBOutlet private weak var countDownContainerView: UIView!
     
     @IBOutlet private weak var timeOfDayContainerView: UIView!
@@ -72,6 +74,8 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.segmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 15), .foregroundColor: UIColor.white], for: .normal)
+        self.segmentedControl.backgroundColor = ColorConstant.gray.rawValue
         
         if targetRequirement == nil {
             segmentedControl.selectedSegmentIndex = 0
@@ -120,8 +124,8 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     @objc internal override func dismissKeyboard() {
         super.dismissKeyboard()
-        if !(MainTabBarViewController.mainTabBarViewController.dogsViewController.presentedViewController! is DogsUpdateRequirementViewController){
-            MainTabBarViewController.mainTabBarViewController.dogsViewController.presentedViewController!.dismissKeyboard()
+        if  MainTabBarViewController.mainTabBarViewController.dogsViewController.navigationController?.topViewController !=  nil && MainTabBarViewController.mainTabBarViewController.dogsViewController.navigationController!.topViewController! is DogsAddDogViewController{
+            MainTabBarViewController.mainTabBarViewController.dogsViewController.navigationController!.topViewController!.dismissKeyboard()
         }
     }
     
@@ -144,6 +148,8 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
             
             try! updatedRequirement.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: Calendar.current.dateComponents([.hour, .minute], from: dogsRequirementTimeOfDayViewController.timeOfDay.date))
             
+            try updatedRequirement.timeOfDayComponents.changeWeekdays(newWeekdays: dogsRequirementTimeOfDayViewController.weekdays)
+            
             if segmentedControl.selectedSegmentIndex == 0 && updatedRequirement.timingStyle != .countDown{
                 updatedRequirement.changeTimingStyle(newTimingStyle: .countDown)
             }
@@ -160,7 +166,8 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
                 if updatedRequirement.countDownComponents.executionInterval != targetRequirement!.countDownComponents.executionInterval && updatedRequirement.timingStyle == .countDown{
                     updatedRequirement.timerReset(didExecuteToUser: false)
                 }
-                else if updatedRequirement.timeOfDayComponents.timeOfDayComponent != targetRequirement!.timeOfDayComponents.timeOfDayComponent && updatedRequirement.timingStyle == .timeOfDay{
+                else if updatedRequirement.timingStyle == .timeOfDay &&  (updatedRequirement.timeOfDayComponents.timeOfDayComponent != targetRequirement!.timeOfDayComponents.timeOfDayComponent || updatedRequirement.timeOfDayComponents.weekdays != targetRequirement!.timeOfDayComponents.weekdays){
+                    print("something changed")
                     updatedRequirement.timerReset(didExecuteToUser: false)
                 }
                 
@@ -186,7 +193,12 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         if segue.identifier == "dogsRequirementTimeOfDayViewController"{
             dogsRequirementTimeOfDayViewController = segue.destination as! DogsRequirementTimeOfDayViewController
             dogsRequirementTimeOfDayViewController.delegate = self
-            dogsRequirementTimeOfDayViewController.passedTimeOfDay = targetRequirement?.timeOfDayComponents.nextTimeOfDay
+            
+            if targetRequirement != nil {
+                dogsRequirementTimeOfDayViewController.passedTimeOfDay = targetRequirement!.timeOfDayComponents.nextTimeOfDay
+                dogsRequirementTimeOfDayViewController.passedWeekDays = targetRequirement!.timeOfDayComponents.weekdays
+            }
+            
             
         }
         

@@ -14,7 +14,7 @@ enum StringExtensionError: Error {
 
 extension String {
     ///Converts a time interval to a more readable string to display, e.g. 3600.0 Time interval to 1 hour 0 minutes or 7320.0 to 2 hours 2 minutes
-    static func convertToReadable(interperateTimeInterval: TimeInterval) -> String {
+    static func convertToReadable(interperateTimeInterval: TimeInterval, capitalizeLetters: Bool = true) -> String {
         
         let intTime = abs(Int(interperateTimeInterval.rounded()))
         
@@ -39,7 +39,15 @@ extension String {
             readableString.addHours(numHours: numHours)
         }
         
-        return readableString
+        if readableString.last == " "{
+            readableString.removeLast()
+        }
+        if capitalizeLetters == false {
+            return readableString.lowercased()
+        }
+        else {
+            return readableString
+        }
     }
     
     ///Converts dateComponents with .hour and .minute to a readable string, e.g. 8:56AM or 2:23 PM

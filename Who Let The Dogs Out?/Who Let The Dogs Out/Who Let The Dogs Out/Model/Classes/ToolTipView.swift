@@ -68,7 +68,7 @@ class ToolTipView: UIView {
        let shape = CAShapeLayer()
        shape.path = path
         //shape.fillColor = UIColor.systemGray5.cgColor
-        shape.fillColor = UIColor.link.cgColor
+        shape.fillColor = UIColor.systemBlue.cgColor
        shape.shadowColor = UIColor.black.withAlphaComponent(0.60).cgColor
        shape.shadowOffset = CGSize(width: 0, height: 2)
        shape.shadowRadius = 5.0

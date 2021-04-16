@@ -8,7 +8,7 @@
 import AVFoundation
 import UIKit
 
-class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsViewControllerDelegate, TimingManagerDelegate, SettingsViewControllerDelegate {
+class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, SettingsNavigationViewControllerDelegate {
     
     //MARK: SettingsViewControllerDelegate
     
@@ -44,6 +44,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         masterDogManager = newDogManager.copy() as! DogManager
         MainTabBarViewController.staticDogManager = newDogManager.copy() as! DogManager
         
+        //Updates isPaused to reflect any changes in data, if there are no enabled/creaed requirements or no enabled/created dogs then turns isPaused off as there is nothing to pause
         if getDogManager().hasCreatedRequirement == false || getDogManager().hasEnabledRequirement == false || getDogManager().hasEnabledDog == false {
             TimingManager.isPaused = false
         }
@@ -69,10 +70,13 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     
     //MARK: Properties
     
+    var dogsNavigationViewController: DogsNavigationViewController! = nil
     var dogsViewController: DogsViewController! = nil
     
+    var settingsNavigationViewController: SettingsNavigationViewController! = nil
     var settingsViewController: SettingsViewController! = nil
     
+    var homeNavigationViewController: HomeNavigationViewController! = nil
     var homeViewController: HomeViewController! = nil
     
     static var mainTabBarViewController: MainTabBarViewController! = nil
@@ -92,34 +96,23 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         
         self.selectedIndex = MainTabBarViewController.selectedEntryIndex
        
-        dogsViewController = self.viewControllers![1] as? DogsViewController
-        dogsViewController.delegate = self
+        dogsNavigationViewController = self.viewControllers![1] as? DogsNavigationViewController
+        dogsNavigationViewController.passThroughDelegate = self
+        dogsViewController = dogsNavigationViewController.viewControllers[0] as? DogsViewController
         dogsViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
         
-        settingsViewController = self.viewControllers![2] as? SettingsViewController
-        settingsViewController.delegate = self
+        settingsNavigationViewController = self.viewControllers![2] as? SettingsNavigationViewController
+        settingsViewController = settingsNavigationViewController.viewControllers[0] as? SettingsViewController
+        settingsNavigationViewController.passThroughDelegate = self
         
-        homeViewController = self.viewControllers![0] as? HomeViewController
+        homeNavigationViewController = self.viewControllers![0] as? HomeNavigationViewController
+        homeViewController = homeNavigationViewController.viewControllers[0] as? HomeViewController
         homeViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
-        //homeViewController.delegate = self
         
         MainTabBarViewController.mainTabBarViewController = self
         
         TimingManager.delegate = self
         TimingManager.willInitalize(dogManager: getDogManager())
-        
-        /*
-        for int in 1000...1351{
-            let float: Double = Double(int)
-            let delay: Double = (float - 1000.0)*2.0
-                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                    print(int)
-                    let systemSoundID: SystemSoundID = SystemSoundID(int)
-                    AudioServicesPlayAlertSound(systemSoundID)
-                }
-                
-            }
-        */
         
     }
     
@@ -134,6 +127,14 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         super.viewDidAppear(animated)
         Utils.presenter = self
         AlertPresenter.shared.refresh(dogManager: getDogManager())
+    }
+    
+    override open var shouldAutorotate: Bool {
+        return false
+    }
+    
+    override open var supportedInterfaceOrientations: UIInterfaceOrientationMask{
+        return .portrait
     }
     
     

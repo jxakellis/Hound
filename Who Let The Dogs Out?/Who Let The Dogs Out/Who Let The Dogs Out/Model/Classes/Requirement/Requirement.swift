@@ -58,6 +58,12 @@ protocol RequirementProtocol {
     ///True if the presentation of the timer (when it is time to present) has been handled and sent to the presentation handler, prevents repeats of the timer being sent to the presenation handler over and over.
     var isPresentationHandled: Bool { get set }
     
+    ///If an timer is dismissed when it fires and alerts the user, the requirement will remain inactive until interacted with again. Similar to being disabled except it will sit on the home screen just doing nothing
+    var isActive: Bool { get }
+    
+    ///Changes the active status and accompanying information
+    mutating func changeActiveStatus(newActiveStatus: Bool)
+    
     ///The components needed for a countdown based timer
     var countDownComponents: CountDownComponents { get set }
     
@@ -78,6 +84,7 @@ protocol RequirementProtocol {
     ///Calculated time interval remaining that taking into account factors to produce correct value for conditions and parameters
     var intervalRemaining: TimeInterval? { get }
     
+    ///The date at which the requirement should fire, i.e. go off to the user and display an alert
     var executionDate: Date? { get }
     
     ///Called when a timer is fired/executed and an option to deal with it is selected by the user, if the reset is trigger by a user doing an action that constitude a reset, specify as so, but if doing something like changing the value of some component it was did not exeute to user. If didExecuteToUse is true it does the same thing as false except it appends the current date to the array of logDates which keeps tracks of each time a requirement is formally executed.
@@ -98,6 +105,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         try! copy.changeRequirementDescription(newRequirementDescription: self.requirementDescription)
         
         copy.isPresentationHandled = self.isPresentationHandled
+        copy.storedIsActive = self.isActive
         copy.countDownComponents = self.countDownComponents.copy() as! CountDownComponents
         copy.timeOfDayComponents = self.timeOfDayComponents.copy() as! TimeOfDayComponents
         copy.snoozeComponents = self.snoozeComponents.copy() as! SnoozeComponents
@@ -127,6 +135,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         self.timeOfDayComponents = aDecoder.decodeObject(forKey: "timeOfDayComponents") as! TimeOfDayComponents
         self.snoozeComponents = aDecoder.decodeObject(forKey: "snoozeComponents") as! SnoozeComponents
         self.storedTimingStyle = RequirementStyle(rawValue: aDecoder.decodeObject(forKey: "timingStyle") as! String)!
+        self.storedIsActive = aDecoder.decodeBool(forKey: "isActive")
      }
      
      func encode(with aCoder: NSCoder) {
@@ -140,6 +149,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         aCoder.encode(timeOfDayComponents, forKey: "timeOfDayComponents")
         aCoder.encode(snoozeComponents, forKey: "snoozeComponents")
         aCoder.encode(storedTimingStyle.rawValue, forKey: "timingStyle")
+        aCoder.encode(storedIsActive, forKey: "isActive")
         
      }
      
@@ -154,10 +164,6 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
             self.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
         }
         isEnabled = newEnableStatus
-        //HDLL
-        //if newEnableStatus == true {
-        //    self.activeInterval = self.executionInterval
-       // }
     }
     
     func willToggle() {
@@ -206,6 +212,24 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
     }
     
     var isPresentationHandled: Bool = false
+    
+    private var storedIsActive: Bool = true
+    var isActive: Bool { return storedIsActive }
+    
+    func changeActiveStatus(newActiveStatus: Bool){
+        //newActiveStatus different from the one stored
+        if newActiveStatus != storedIsActive{
+            //transitioning to active
+            if newActiveStatus == true{
+                self.timerReset(didExecuteToUser: true)
+            }
+            //transitioning to inactive
+            else {
+                isPresentationHandled = false
+                storedIsActive = false
+            }
+        }
+    }
     
     var countDownComponents: CountDownComponents = CountDownComponents()
     
@@ -260,7 +284,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
             if self.executionBasis.distance(to: self.timeOfDayComponents.previousTimeOfDay) > 0 {
                 return nil
             }
-            else {
+            else{
                 return Date().distance(to: self.timeOfDayComponents.nextTimeOfDay)
             }
         }
@@ -299,9 +323,16 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
     }
     
     func timerReset(didExecuteToUser didExecute: Bool){
+        
+        //changeActiveStatus already calls timerReset if transitioning from inactive to active so circumvent this by directly accessing storedIsActive
+        if isActive == false {
+            storedIsActive = true
+        }
+        
         if didExecute == true {
             self.logDates.append(Date())
         }
+        
         self.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
         self.isPresentationHandled = false
         

@@ -32,11 +32,11 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     
     
+    
     //MARK: IB
-    @IBOutlet weak var pageTitle: CustomLabel!
+    
     
     @IBOutlet weak var dogName: UITextField!
-    @IBOutlet weak var dogDescription: UITextField!
     @IBOutlet weak var dogEnableStatus: UISwitch!
     
     @IBOutlet weak var embeddedTableView: UIView!
@@ -51,8 +51,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         let updatedDog = targetDog.copy() as! Dog
         
         do{
-            try updatedDog.dogSpecifications.changeDogSpecifications(key: "name", newValue: dogName.text)
-            try updatedDog.dogSpecifications.changeDogSpecifications(key: "description", newValue: dogDescription.text)
+            try updatedDog.dogTraits.changeDogName(newDogName: dogName.text)
             
             updatedDog.setEnable(newEnableStatus: dogEnableStatus.isOn)
         }
@@ -64,12 +63,12 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         
         do{
             if isUpdating == true{
-                try delegate.didUpdateDog(sender: Sender(origin: self, localized: self), formerName: try! targetDog.dogSpecifications.getDogSpecification(key: "name"), updatedDog: updatedDog)
-                dismiss(animated: true, completion: nil)
+                try delegate.didUpdateDog(sender: Sender(origin: self, localized: self), formerName: targetDog.dogTraits.dogName, updatedDog: updatedDog)
+                self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
             }
             else{
                 try delegate.didAddDog(sender: Sender(origin: self, localized: self), newDog: updatedDog)
-                dismiss(animated: true, completion: nil)
+                self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
             }
         }
         catch {
@@ -82,9 +81,9 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     @IBOutlet weak var cancelAddDogButtonBackground: UIButton!
     
     @IBAction func cancelAddDogButton(_ sender: Any) {
-        self.dismiss(animated: true, completion: nil)
+        self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
     }
-    
+
     //MARK: Properties
     
     var dogsRequirementNavigationViewController: DogsRequirementNavigationViewController! = nil
@@ -94,6 +93,8 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     var delegate: DogsAddDogViewControllerDelegate! = nil
     
     var isUpdating: Bool = false
+    
+    var isAddingRequirement: Bool = false
     
     //MARK: Main
     
@@ -108,10 +109,9 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         self.view.bringSubviewToFront(cancelAddDogButtonBackground)
         self.view.bringSubviewToFront(cancelAddDogButton)
         
-        willInitalize()
-        
         ibOutletSetup()
         
+        willInitalize()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -121,29 +121,32 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
         //Utils.presenter = self
     }
     
     private func ibOutletSetup(){
         dogName.delegate = self
-        dogDescription.delegate = self
     }
     
-    func willInitalize(){
+    private func willInitalize(){
         
-        //if isUpdating == true {
-            try! dogName.text = targetDog.dogSpecifications.getDogSpecification(key: "name")
-            try! dogDescription.text = targetDog.dogSpecifications.getDogSpecification(key: "description")
-            dogEnableStatus.isOn = targetDog.getEnable()
-            dogsRequirementNavigationViewController.didPassRequirements(sender: Sender(origin: self, localized: self), passedRequirements: targetDog.dogRequirments)
-            /*
+        dogName.text = targetDog.dogTraits.dogName
+        dogEnableStatus.isOn = targetDog.getEnable()
+        dogsRequirementNavigationViewController.didPassRequirements(sender: Sender(origin: self, localized: self), passedRequirements: targetDog.dogRequirments)
+        
+        if isUpdating == true {
+            self.navigationItem.title = "Update Dog"
+            
+            if isAddingRequirement == true {
+                dogsRequirementNavigationViewController.dogsRequirementTableViewController.performSegue(withIdentifier: "dogsInstantiateRequirementViewController", sender: self)
+            }
+            
         }
-        else{
-            dogName.text = DogConstant.defaultDogSpecificationKeys[0].1
-            dogDescription.text = DogConstant.defaultDogSpecificationKeys[1].1
-            dogEnableStatus.isOn = DogConstant.defaultEnable
+        else {
+            self.navigationItem.title = "Create Dog"
         }
- */
+ 
     }
     
     func willHideButtons(isHidden: Bool){

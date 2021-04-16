@@ -10,10 +10,10 @@ import UIKit
 
 ///Enum full of cases of possible errors from DogManager
 enum DogManagerError: Error{
+    case dogNameBlank
+    case dogNameInvalid
     case dogNameNotPresent
     case dogNameAlreadyPresent
-    case dogNameInvalid
-    case dogNameBlank
 }
 
 ///Protocol outlining functionality of DogManger
@@ -36,7 +36,7 @@ protocol DogManagerProtocol {
     ///Counts up all enabled requirements under all enabled dogs, does not factor in isPaused, purely self
     var enabledTimersCount: Int { get }
     
-    ///Checks dog name to see if its valid and checks to see if it is valid in context of other dog names already present, assumes requirements and specifications are already validiated
+    ///Checks dog name to see if its valid and checks to see if it is valid in context of other dog names already present, assumes requirements and traits are already validiated
      mutating func addDog(dogAdded: Dog) throws
     
     ///Adds array of dog to dogs
@@ -59,25 +59,26 @@ protocol DogManagerProtocol {
     
     ///finds and returns the index of a dog with a given name in terms of the dogs: [Dog] array
     func findIndex(dogName dogToBeFound: String) throws -> Int
-
+    
+    mutating func clearAllPresentationHandled()
 }
 
 extension DogManagerProtocol {
     
     mutating func addDog(dogAdded: Dog) throws {
         /*
-         if try! dogAdded.dogSpecifications.getDogSpecification(key: "name") == nil{
+         if try! dogAdded.dogTraits.dogName == nil{
          throw DogManagerError.dogNameInvalid
          }
          */
         
-        if try! dogAdded.dogSpecifications.getDogSpecification(key: "name") == ""{
+        if dogAdded.dogTraits.dogName == ""{
             throw DogManagerError.dogNameBlank
         }
         
         else{
             try dogs.forEach { (dog) in
-                if try! dog.dogSpecifications.getDogSpecification(key: "name").lowercased() == dogAdded.dogSpecifications.getDogSpecification(key: "name").lowercased(){
+                if dog.dogTraits.dogName.lowercased() == dogAdded.dogTraits.dogName.lowercased(){
                     throw DogManagerError.dogNameAlreadyPresent
                 }
             }
@@ -109,7 +110,7 @@ extension DogManagerProtocol {
         }
         
         for (index, dog) in dogs.enumerated(){
-            if try! dog.dogSpecifications.getDogSpecification(key: "name").lowercased() == dogRemovedName.lowercased(){
+            if dog.dogTraits.dogName.lowercased() == dogRemovedName.lowercased(){
                 matchingDog = (true, index)
             }
         }
@@ -132,7 +133,7 @@ extension DogManagerProtocol {
         var newDogIndex: Int?
         
         for i in 0..<dogs.count{
-            if try! dogs[i].dogSpecifications.getDogSpecification(key: "name") == dogNameToBeChanged {
+            if dogs[i].dogTraits.dogName == dogNameToBeChanged {
                 newDogIndex = i
             }
         }
@@ -149,7 +150,7 @@ extension DogManagerProtocol {
     
     func findDog(dogName dogToBeFound: String) throws -> Dog {
         for d in 0..<dogs.count{
-            if try dogs[d].dogSpecifications.getDogSpecification(key: "name") == dogToBeFound{
+            if dogs[d].dogTraits.dogName == dogToBeFound{
                 return dogs[d]
             }
         }
@@ -160,7 +161,7 @@ extension DogManagerProtocol {
     
     func findIndex(dogName dogToBeFound: String) throws -> Int{
         for d in 0..<dogs.count{
-            if try! dogs[d].dogSpecifications.getDogSpecification(key: "name") == dogToBeFound {
+            if dogs[d].dogTraits.dogName == dogToBeFound {
                 return d
             }
         }
@@ -219,6 +220,14 @@ extension DogManagerProtocol {
             }
         }
         return count
+    }
+    
+    mutating func clearAllPresentationHandled(){
+        for dog in dogs{
+            for requirement in dog.dogRequirments.requirements{
+                requirement.isPresentationHandled = false
+            }
+        }
     }
     
     

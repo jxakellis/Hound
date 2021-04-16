@@ -8,36 +8,7 @@
 
 import UIKit
 
-protocol HomeMainScreenTableViewControllerDelegate {
-    func didSelectOption(sender: Sender)
-}
-
 class HomeMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol{
-    
-    /*
-    //MARK: HomeMainScreenTableViewCellRequirementLogDelegate
-    
-    func didDisable(sender: Sender, dogName: String, requirementName: String) {
-        //logState = false
-        TimingManager.willDisableTimer(sender: Sender(origin: sender, localized: self), dogName: dogName, requirementName: requirementName, dogManager: getDogManager())
-        delegate.didSelectOption(sender: Sender(origin: sender, localized: self))
-        updateDogManagerDependents()
-    }
-    
-    func didSnooze(sender: Sender, dogName: String, requirementName: String) {
-        //logState = false
-        TimingManager.willSnoozeTimer(sender: Sender(origin: sender, localized: self), dogName: dogName, requirementName: requirementName, dogManager: getDogManager())
-        delegate.didSelectOption(sender: Sender(origin: sender, localized: self))
-        updateDogManagerDependents()
-    }
-    
-    func didReset(sender: Sender, dogName: String, requirementName: String) {
-        //logState = false
-        TimingManager.willResetTimer(sender: Sender(origin: sender, localized: self), dogName: dogName, requirementName: requirementName, dogManager: getDogManager())
-        delegate.didSelectOption(sender: Sender(origin: sender, localized: self))
-        updateDogManagerDependents()
-    }
-     */
     
     //MARK: DogManagerControlFlowProtocol
     
@@ -59,31 +30,10 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         self.reloadTable()
     }
     
-    
-    
     //MARK: Properties
     
     ///Timer that repeats every second to update tableView data, needed due to the fact the timers countdown every second
     private var loopTimer: Timer?
-    
-    var delegate: HomeMainScreenTableViewControllerDelegate! = nil
-    
-    /*
-    private var storedLogState: Bool = false
-    var logState: Bool {
-        get {
-            return storedLogState
-        }
-        set(newLogState) {
-            if newLogState == false {
-                firstTimeFade = true
-            }
-                storedLogState = newLogState
-                self.reloadTable()
-            
-        }
-    }
-     */
     
     ///MainTabBarViewController's dogManager copied and transformed to have only active requirements of active dogs present
     private var activeDogManager: DogManager {
@@ -125,7 +75,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
                 for r in 0..<activeDogManagerCopy.dogs[d].dogRequirments.requirements.count {
     
                     
-                    let fireDate: Date? = try! TimingManager.timerDictionary[activeDogManagerCopy.dogs[d].dogSpecifications.getDogSpecification(key: "name")]![activeDogManagerCopy.dogs[d].dogRequirments.requirements[r].requirementName]?.fireDate
+                    let fireDate: Date? =  TimingManager.timerDictionary[activeDogManagerCopy.dogs[d].dogTraits.dogName]![activeDogManagerCopy.dogs[d].dogRequirments.requirements[r].requirementName]?.fireDate
                     
                     if fireDate == nil {
                         fatalError("asdadsad")
@@ -136,7 +86,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
                         if currentTimeInterval < lowestTimeInterval
                         {
                             lowestTimeInterval = currentTimeInterval
-                            lowestRequirement = try! (activeDogManagerCopy.dogs[d].dogSpecifications.getDogSpecification(key: "name"), activeDogManagerCopy.dogs[d].dogRequirments.requirements[r])
+                            lowestRequirement = (activeDogManagerCopy.dogs[d].dogTraits.dogName, activeDogManagerCopy.dogs[d].dogRequirments.requirements[r])
                         }
                     }
                     
@@ -163,18 +113,31 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         
         self.reloadTable()
         
-        loopTimer = Timer(fireAt: Date(), interval: TimeInterval(1), target: self, selector: #selector(self.reloadTable), userInfo: nil, repeats: true)
-        
-        RunLoop.main.add(loopTimer!, forMode: .default)
+        if getDogManager().hasEnabledDog && getDogManager().hasEnabledRequirement{
+            loopTimer = Timer(fireAt: Date(), interval: 1.0, target: self, selector: #selector(self.loopReload), userInfo: nil, repeats: true)
+            
+            RunLoop.main.add(loopTimer!, forMode: .default)
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        loopTimer!.invalidate()
+        if loopTimer != nil {
+            loopTimer!.invalidate()
+            loopTimer = nil
+        }
+    }
+    
+    @objc private func loopReload(){
+        for cell in tableView.visibleCells{
+            let sudoCell = cell as! HomeMainScreenTableViewCellRequirementDisplay
+            sudoCell.reloadCell()
+        }
     }
     
     ///Reloads the tableViews data, has to persist any selected rows so tableView.reloadData() is not sufficent as it tosses the information
-    @objc func reloadTable(){
+    func reloadTable(){
         self.tableView.reloadData()
+        
         
         if TimingManager.currentlyActiveTimersCount == 0 || TimingManager.currentlyActiveTimersCount == nil{
             self.tableView.separatorStyle = .none
@@ -188,7 +151,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     
     ///Called when a requirement is clicked by the user, display an action sheet of possible modifcations to the alarm.
     private func willShowSelectedActionSheet(parentDogName: String, requirement: Requirement){
-        let alertController = CustomAlertController(title: "\(requirement.requirementName) for \(parentDogName)", message: nil, preferredStyle: .actionSheet)
+        let alertController = GeneralAlertController(title: "\(requirement.requirementName) for \(parentDogName)", message: nil, preferredStyle: .actionSheet)
         
         let alertActionCancel = UIAlertAction(
             title:"Cancel",
@@ -208,7 +171,11 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
                 })
         
         var logTitle: String {
-            if requirement.timerMode == .snooze || requirement.timerMode == .countDown {
+            //Yes I know these if statements are redundent and terrible coding but it's whatever
+            if requirement.isActive == false {
+                return "Did it!"
+            }
+            else if requirement.timerMode == .snooze || requirement.timerMode == .countDown {
                 return "Did it!"
             }
             else {
@@ -307,11 +274,11 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.tableView.deselectRow(at: indexPath, animated: true)
         let priorityPosition = timerPriority(priorityIndex: indexPath.row)
         let parentDogName = priorityPosition.0
         let requirement = priorityPosition.1
         
         willShowSelectedActionSheet(parentDogName: parentDogName, requirement: requirement)
     }
-    
 }

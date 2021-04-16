@@ -196,7 +196,7 @@ class SettingsViewController: UIViewController, ToolTipable {
     
     @IBAction private func willReset(_ sender: Any) {
         
-         let alertController = CustomAlertController(
+         let alertController = GeneralAlertController(
              title: "Are you sure you want to reset?",
              message: "This action will delete and reset all data to default, in the process restarting the app",
              preferredStyle: .alert)
@@ -231,7 +231,7 @@ class SettingsViewController: UIViewController, ToolTipable {
     }
     
     @objc private func showRestartMessage(){
-        let alertController = CustomAlertController(
+        let alertController = GeneralAlertController(
             title: "Restarting now....",
             message: nil,
             preferredStyle: .alert)
@@ -246,8 +246,6 @@ class SettingsViewController: UIViewController, ToolTipable {
     //MARK: Properties
     
     var delegate: SettingsViewControllerDelegate! = nil
-    
-    @IBOutlet weak var pageTitle: CustomLabel!
     
     @IBOutlet weak var scrollViewContainerForAll: UIView!
     
@@ -264,7 +262,7 @@ class SettingsViewController: UIViewController, ToolTipable {
         self.view.addGestureRecognizer(tap)
         
         var followUpReminderLabelWidth: CGFloat {
-            let neededConstraintSpace: CGFloat = 10.0 + 10.0 + 2.0 + 45.0
+            let neededConstraintSpace: CGFloat = 10.0 + 10.0 + 3.0 + 45.0
             let otherButtonSpace: CGFloat = shouldFollowUp.frame.width + toolTipButton.frame.width
             let maximumWidth: CGFloat = view.frame.width - otherButtonSpace - neededConstraintSpace
             
@@ -284,7 +282,7 @@ class SettingsViewController: UIViewController, ToolTipable {
         
         /*
         let pageTitleSeperatorLine = UIView(frame: CGRect(x: pageTitle.frame.origin.x, y: pageTitle.frame.maxY + 3.0, width: pageTitle.frame.width, height: 4.5))
-        pageTitleSeperatorLine.backgroundColor = .link
+        pageTitleSeperatorLine.backgroundColor = .systemBlue
         pageTitleSeperatorLine.layer.cornerRadius = (pageTitleSeperatorLine.frame.height-1)/2
         view.addSubview(pageTitleSeperatorLine)
          */
@@ -292,6 +290,8 @@ class SettingsViewController: UIViewController, ToolTipable {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        Utils.presenter = self
+        
         isNotificationEnabledSwitch.isOn = NotificationConstant.isNotificationEnabled
         synchronizeFollowUpComponents(animated: false)
         synchronizeIsPaused()
