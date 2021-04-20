@@ -62,9 +62,9 @@ class AlertPresenter: NSObject, NSCoding{
     
     func refresh(dogManager: DogManager){
         halted = true
-        let sudoDogManager = dogManager.copy() as! DogManager
+        //DogManagerEfficencyImprovement let sudoDogManager = dogManager.copy() as! DogManager
         if currentPresentation == nil {
-            for d in sudoDogManager.dogs{
+            for d in dogManager.dogs{
                 for r in d.dogRequirments.requirements{
                     if r.isPresentationHandled == true {
                         TimingManager.willShowTimer(dogName: d.dogTraits.dogName, requirement: r)

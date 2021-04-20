@@ -19,7 +19,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     //assume all requirements are valid due to the fact that they are all checked and validated through DogsRequirementTableViewController
     func didUpdateRequirements(newRequirementList: [Requirement]) {
-        targetDog.dogRequirments.clearRequirements()
+        targetDog.dogRequirments.requirements.removeAll()
         try! targetDog.dogRequirments.addRequirement(newRequirements: newRequirementList)
     }
     

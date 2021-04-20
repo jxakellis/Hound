@@ -1,25 +1,21 @@
 import UIKit
 
-extension UIColor {
+let tuples: [(String, Int)] = [("str3",3),("str1",1),("str2",2),("str5",5),("str0",0),("str-7",-7),]
 
-    func rgb() -> (red:Int, green:Int, blue:Int, alpha:Int)? {
-        var fRed : CGFloat = 0
-        var fGreen : CGFloat = 0
-        var fBlue : CGFloat = 0
-        var fAlpha: CGFloat = 0
-        if self.getRed(&fRed, green: &fGreen, blue: &fBlue, alpha: &fAlpha) {
-            let iRed = Int(fRed * 255.0)
-            let iGreen = Int(fGreen * 255.0)
-            let iBlue = Int(fBlue * 255.0)
-            let iAlpha = Int(fAlpha * 255.0)
+var tuplesCopy = tuples
 
-            return (red:iRed, green:iGreen, blue:iBlue, alpha:iAlpha)
-        } else {
-            // Could not extract RGBA components:
-            return nil
-        }
+tuplesCopy.sort { (arg1, arg2) -> Bool in
+    
+    let (str1, int1) = arg1
+    let (str2, int2) = arg2
+    
+    if arg1.1 < arg2.1{
+        return true
     }
+    
+    return false
 }
 
-print(UIColor.systemGray.withAlphaComponent(0.30).rgb())
+print(tuples)
+print(tuplesCopy)
 

@@ -24,6 +24,7 @@
 		A2536B54260843E900E2FF6A /* Requirement.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2536B53260843E900E2FF6A /* Requirement.swift */; };
 		A258AEEF25661580005242E4 /* Dog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A258AEEE25661580005242E4 /* Dog.swift */; };
 		A25C432225D8A89600B05C8D /* HomeMainScreenTableViewCellRequirementDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25C432125D8A89600B05C8D /* HomeMainScreenTableViewCellRequirementDisplay.swift */; };
+		A25FC7A9262E6334007AD1B3 /* LogsMainScreenTableViewCellHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25FC7A8262E6334007AD1B3 /* LogsMainScreenTableViewCellHeader.swift */; };
 		A265848D25E8128400E8B812 /* CHECKLIST Future Implementation Needed in Resources */ = {isa = PBXBuildFile; fileRef = A265848C25E8128400E8B812 /* CHECKLIST Future Implementation Needed */; };
 		A26AF36E25807887005D5DAB /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26AF36D25807887005D5DAB /* DateExtension.swift */; };
 		A278ED882610FF05000575FC /* DogsRequirementManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278ED872610FF05000575FC /* DogsRequirementManagerViewController.swift */; };
@@ -41,12 +42,16 @@
 		A28AF46D25E9C7C80018B575 /* DogsUpdateRequirementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28AF46C25E9C7C80018B575 /* DogsUpdateRequirementViewController.swift */; };
 		A290F38A25D4B10400429C9D /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A290F38925D4B10400429C9D /* Utils.swift */; };
 		A29390732608480800879C79 /* DogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29390722608480800879C79 /* DogManager.swift */; };
+		A293E194262F19E90008A9F7 /* LogsMainScreenTableViewCellBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = A293E193262F19E80008A9F7 /* LogsMainScreenTableViewCellBody.swift */; };
 		A2AA423225C337C700EAE129 /* DogTraitsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA423125C337C700EAE129 /* DogTraitsManager.swift */; };
 		A2B18E3825E8A4C000951AC3 /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B18E3525E8A4C000951AC3 /* AlertPresenter.swift */; };
 		A2B18E3925E8A4C000951AC3 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B18E3625E8A4C000951AC3 /* Queue.swift */; };
 		A2B2CA2D25F858380095D15B /* HomeMainScreenTableViewCellEmpty.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B2CA2C25F858380095D15B /* HomeMainScreenTableViewCellEmpty.swift */; };
 		A2B9A92726291AD800626FAE /* radar_ios_7.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2B9A92626291AD800626FAE /* radar_ios_7.wav */; };
 		A2B9A92B2629213800626FAE /* CustomClasses.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9A92A2629213800626FAE /* CustomClasses.swift */; };
+		A2B9DAE9262B2DFA00A47D57 /* LogsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9DAE8262B2DFA00A47D57 /* LogsNavigationViewController.swift */; };
+		A2B9DAED262B2E0A00A47D57 /* LogsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9DAEC262B2E0A00A47D57 /* LogsViewController.swift */; };
+		A2B9DAF1262B2F2D00A47D57 /* LogsMainScreenTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9DAF0262B2F2D00A47D57 /* LogsMainScreenTableViewController.swift */; };
 		A2C014C92628ABA500DDE288 /* HomeNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C014C82628ABA500DDE288 /* HomeNavigationViewController.swift */; };
 		A2C014CF2628AD2F00DDE288 /* SettingsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C014CE2628AD2F00DDE288 /* SettingsNavigationViewController.swift */; };
 		A2C014D52628AEEE00DDE288 /* DogsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C014D42628AEEE00DDE288 /* DogsNavigationViewController.swift */; };
@@ -88,6 +93,7 @@
 		A2536B53260843E900E2FF6A /* Requirement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Requirement.swift; sourceTree = "<group>"; };
 		A258AEEE25661580005242E4 /* Dog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dog.swift; sourceTree = "<group>"; };
 		A25C432125D8A89600B05C8D /* HomeMainScreenTableViewCellRequirementDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMainScreenTableViewCellRequirementDisplay.swift; sourceTree = "<group>"; };
+		A25FC7A8262E6334007AD1B3 /* LogsMainScreenTableViewCellHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsMainScreenTableViewCellHeader.swift; sourceTree = "<group>"; };
 		A265848C25E8128400E8B812 /* CHECKLIST Future Implementation Needed */ = {isa = PBXFileReference; lastKnownFileType = text; path = "CHECKLIST Future Implementation Needed"; sourceTree = "<group>"; };
 		A26AF36D25807887005D5DAB /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
 		A278ED872610FF05000575FC /* DogsRequirementManagerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DogsRequirementManagerViewController.swift; path = "../New Group/DogsRequirementManagerViewController.swift"; sourceTree = "<group>"; };
@@ -105,12 +111,16 @@
 		A28AF46C25E9C7C80018B575 /* DogsUpdateRequirementViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsUpdateRequirementViewController.swift; sourceTree = "<group>"; };
 		A290F38925D4B10400429C9D /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		A29390722608480800879C79 /* DogManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogManager.swift; sourceTree = "<group>"; };
+		A293E193262F19E80008A9F7 /* LogsMainScreenTableViewCellBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsMainScreenTableViewCellBody.swift; sourceTree = "<group>"; };
 		A2AA423125C337C700EAE129 /* DogTraitsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogTraitsManager.swift; sourceTree = "<group>"; };
 		A2B18E3525E8A4C000951AC3 /* AlertPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
 		A2B18E3625E8A4C000951AC3 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		A2B2CA2C25F858380095D15B /* HomeMainScreenTableViewCellEmpty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMainScreenTableViewCellEmpty.swift; sourceTree = "<group>"; };
 		A2B9A92626291AD800626FAE /* radar_ios_7.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = radar_ios_7.wav; sourceTree = "<group>"; };
 		A2B9A92A2629213800626FAE /* CustomClasses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomClasses.swift; sourceTree = "<group>"; };
+		A2B9DAE8262B2DFA00A47D57 /* LogsNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsNavigationViewController.swift; sourceTree = "<group>"; };
+		A2B9DAEC262B2E0A00A47D57 /* LogsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsViewController.swift; sourceTree = "<group>"; };
+		A2B9DAF0262B2F2D00A47D57 /* LogsMainScreenTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsMainScreenTableViewController.swift; sourceTree = "<group>"; };
 		A2C014C82628ABA500DDE288 /* HomeNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNavigationViewController.swift; sourceTree = "<group>"; };
 		A2C014CE2628AD2F00DDE288 /* SettingsNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SettingsNavigationViewController.swift; path = "Who Let The Dogs Out/View Controller/Home/SettingsNavigationViewController.swift"; sourceTree = SOURCE_ROOT; };
 		A2C014D42628AEEE00DDE288 /* DogsNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsNavigationViewController.swift; sourceTree = "<group>"; };
@@ -158,6 +168,7 @@
 		A258AEE9256614F9005242E4 /* View Controller */ = {
 			isa = PBXGroup;
 			children = (
+				A2B9DAE7262B2DD500A47D57 /* Logs */,
 				A27C138C25AD2A620031B6A0 /* Settings */,
 				A27C138B25AD2A5C0031B6A0 /* Home */,
 				A27C138A25AD2A520031B6A0 /* Dogs */,
@@ -211,6 +222,15 @@
 				A20C999825686B7600E2C9C8 /* TimingManager.swift */,
 			);
 			path = Classes;
+			sourceTree = "<group>";
+		};
+		A25FC7A7262E631E007AD1B3 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				A25FC7A8262E6334007AD1B3 /* LogsMainScreenTableViewCellHeader.swift */,
+				A293E193262F19E80008A9F7 /* LogsMainScreenTableViewCellBody.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 		A26AF36C25807878005D5DAB /* Pure Extensions */ = {
@@ -331,6 +351,17 @@
 				A2B9A92626291AD800626FAE /* radar_ios_7.wav */,
 			);
 			path = "Sound Effects";
+			sourceTree = "<group>";
+		};
+		A2B9DAE7262B2DD500A47D57 /* Logs */ = {
+			isa = PBXGroup;
+			children = (
+				A2B9DAE8262B2DFA00A47D57 /* LogsNavigationViewController.swift */,
+				A2B9DAEC262B2E0A00A47D57 /* LogsViewController.swift */,
+				A2B9DAF0262B2F2D00A47D57 /* LogsMainScreenTableViewController.swift */,
+				A25FC7A7262E631E007AD1B3 /* Cells */,
+			);
+			path = Logs;
 			sourceTree = "<group>";
 		};
 		A2E66C8E25534A880068CCA6 = {
@@ -485,6 +516,7 @@
 				A24725952614F3BF00259691 /* ToolTipView.swift in Sources */,
 				A27C3D8F25B8A213005F46BA /* DogsInstantiateRequirementViewController.swift in Sources */,
 				A278ED942610FF89000575FC /* DogsRequirementTimeOfDayViewController.swift in Sources */,
+				A2B9DAF1262B2F2D00A47D57 /* LogsMainScreenTableViewController.swift in Sources */,
 				A231ACE525DEEA3B00B11E84 /* UIExtension.swift in Sources */,
 				A29390732608480800879C79 /* DogManager.swift in Sources */,
 				A2536B3C2608364F00E2FF6A /* RequirementComponets.swift in Sources */,
@@ -492,6 +524,7 @@
 				A2C014C92628ABA500DDE288 /* HomeNavigationViewController.swift in Sources */,
 				A27C3D8B25B781B4005F46BA /* DogsAddDogViewController.swift in Sources */,
 				A26AF36E25807887005D5DAB /* DateExtension.swift in Sources */,
+				A25FC7A9262E6334007AD1B3 /* LogsMainScreenTableViewCellHeader.swift in Sources */,
 				A2E66CA125534A880068CCA6 /* DogsViewController.swift in Sources */,
 				A2B2CA2D25F858380095D15B /* HomeMainScreenTableViewCellEmpty.swift in Sources */,
 				A20B38D025D4680800DA2DE2 /* TimingProtocol.swift in Sources */,
@@ -500,15 +533,18 @@
 				A2E66C9B25534A880068CCA6 /* AppDelegate.swift in Sources */,
 				A2536B54260843E900E2FF6A /* Requirement.swift in Sources */,
 				A247B96425C87F300017FE66 /* MainTabBarViewController.swift in Sources */,
+				A2B9DAED262B2E0A00A47D57 /* LogsViewController.swift in Sources */,
 				A226736C25CDC59300904032 /* HomeViewController.swift in Sources */,
 				A2C014D52628AEEE00DDE288 /* DogsNavigationViewController.swift in Sources */,
 				A20C999925686B7600E2C9C8 /* TimingManager.swift in Sources */,
 				A28A0B4825B922E80057BEC7 /* DogsRequirementTableViewController.swift in Sources */,
+				A293E194262F19E90008A9F7 /* LogsMainScreenTableViewCellBody.swift in Sources */,
 				A2B9A92B2629213800626FAE /* CustomClasses.swift in Sources */,
 				A258AEEF25661580005242E4 /* Dog.swift in Sources */,
 				A226737025CDC5D000904032 /* HomeMainScreenTableViewController.swift in Sources */,
 				A247B96825C883680017FE66 /* DogsMainScreenTableViewController.swift in Sources */,
 				A2EAF17D25C9D45E0022BBDD /* DogsMainScreenTableViewCellDogRequirement.swift in Sources */,
+				A2B9DAE9262B2DFA00A47D57 /* LogsNavigationViewController.swift in Sources */,
 				A25C432225D8A89600B05C8D /* HomeMainScreenTableViewCellRequirementDisplay.swift in Sources */,
 				A286934925769EEB00C0C06E /* Constants.swift in Sources */,
 				A290F38A25D4B10400429C9D /* Utils.swift in Sources */,

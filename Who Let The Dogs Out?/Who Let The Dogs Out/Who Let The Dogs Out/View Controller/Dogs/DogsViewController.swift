@@ -75,23 +75,18 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     
-    //MARK: IB
-    
-    @IBOutlet weak var willAddButton: UIButton!
-    
-    @IBOutlet weak var willAddButtonBackground: UIButton!
-    
-    
-    //MARK: Dog Manager
+    //MARK: DogManagerControlFlowProtocol
     
     private var dogManager = DogManager()
     
     func getDogManager() -> DogManager {
-        return dogManager.copy() as! DogManager
+        //DogManagerEfficencyImprovement return dogManager.copy() as! DogManager
+        return dogManager
     }
     
     func setDogManager(sender: Sender, newDogManager: DogManager) {
-        dogManager = newDogManager.copy() as! DogManager
+        //DogManagerEfficencyImprovement dogManager = newDogManager.copy() as! DogManager
+        dogManager = newDogManager
         
         //possible senders
         //DogsMainScreenTableViewController
@@ -113,6 +108,20 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         //
     }
     
+    //MARK: IB
+    
+    @IBOutlet weak var willAddButton: UIButton!
+    
+    @IBOutlet weak var willAddButtonBackground: UIButton!
+    
+    @IBAction func didClickSettings(_ sender: Any) {
+        self.tabBarController!.selectedIndex = 3
+    }
+    
+    @IBAction func willAddButton(_ sender: Any) {
+            self.changeAddStatus(newAddStatus: !addStatus)
+        }
+
     //MARK: Properties
     
     var delegate: DogsViewControllerDelegate! = nil
@@ -128,11 +137,15 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let dismissAddDogTap = UITapGestureRecognizer(target: self, action: #selector(toggleAddStatusToFalse))
+        self.dismissAddDogTap = dismissAddDogTap
+        
         let dimView = UIView(frame: self.view.frame)
         dimView.alpha = 0
-        //dimView.backgroundColor = UIColor.init(hue: 0.0, saturation: 0.0, brightness: 0.66, alpha: 1.0)
         dimView.backgroundColor = UIColor.black
         dimScreenView = dimView
+        dimScreenView.addGestureRecognizer(dismissAddDogTap)
+        
         self.view.addSubview(dimView)
         
         self.view.bringSubviewToFront(willAddButtonBackground)
@@ -180,26 +193,38 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     
     //MARK: Programmically Added Add Requirement To Dog / Add Dog Buttons
     
+    private var universalTapGesture: UITapGestureRecognizer!
     private var dimScreenView: UIView!
+    private var dismissAddDogTap: UITapGestureRecognizer!
+    
     private var addStatus: Bool = false
+    
     private var addButtons: [ScaledButton] = []
     private var addButtonsBackground: [ScaledButton] = []
     private var addButtonsLabel: [UILabel] = []
     private var addButtonsLabelBackground: [UILabel] = []
     
+    ///For selector in UITapGestureRecognizer
+    @objc private func toggleAddStatusToFalse(){
+        changeAddStatus(newAddStatus: false)
+    }
+    
     ///Changes the status of the subAddButtons which navigate to add a dog, add a requirement for "DOG NAME", add a requirement for "DOG NAME 2" etc, from present and active to hidden, includes animation
     private func changeAddStatus(newAddStatus: Bool){
         
+        ///Toggles to adding
         if newAddStatus == true{
             //Slight correction with last () as even with the correct corrindates for aligned trailing for some reason the the new subbuttons slightly bluge out when they should be conceiled by the WillAddButton.
             let originXWithAlignedTrailing: CGFloat = (willAddButton.frame.origin.x+willAddButton.frame.width)-subButtonSize-(willAddButton.frame.size.width*0.035)
             
+            //Creates the "add new dog" button to click
             let willAddDogButton = ScaledButton(frame: CGRect(origin: CGPoint(x: originXWithAlignedTrailing, y: willAddButton.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
             willAddDogButton.setImage(UIImage(systemName: "plus.circle")!, for: .normal)
             willAddDogButton.tintColor = .systemBlue
             willAddDogButton.tag = 0
             willAddDogButton.addTarget(self, action: #selector(willOpenDog(sender:)), for: .touchUpInside)
             
+            //Create white background layered behind original button as middle is see through
             let willAddDogButtonBackground = createAddButtonBackground(willAddDogButton)
             
             let willAddDogButtonLabel = createAddButtonLabel(willAddDogButton, text: "Add A New Dog")
@@ -210,11 +235,13 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             addButtonsLabel.append(willAddDogButtonLabel)
             addButtonsLabelBackground.append(willAddDogButtonLabelBackground)
             
+            //Goes through all the dogs and create a corresponding button for them so you can add a reminder ro them
             for dogIndex in 0..<getDogManager().dogs.count{
                 guard maximumSubButtonCount > addButtons.count else {
                     break
                 }
                 
+                //creates clickable button with a position that it relative to the subbutton below it
                 let willAddRequirementButton = ScaledButton(frame: CGRect(origin: CGPoint(x: addButtons.last!.frame.origin.x, y: addButtons.last!.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
                 willAddRequirementButton.setImage(UIImage(systemName: "plus.circle")!, for: .normal)
                 willAddRequirementButton.tintColor = .systemBlue
@@ -231,7 +258,11 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                 addButtonsLabel.append(willAddRequirementButtonLabel)
                 addButtonsLabelBackground.append(willAddRequirementButtonLabelBackground)
             }
+            //goes through all buttons, labels, and their background and animates them to their correct position
             for buttonIndex in 0..<addButtons.count{
+                
+                self.dismissAddDogTap.isEnabled = true
+                
                 let button = addButtons[buttonIndex]
                 let buttonBackground = addButtonsBackground[buttonIndex]
                 let buttonLabel = addButtonsLabel[buttonIndex]
@@ -278,6 +309,9 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         }
         else if newAddStatus == false{
             for buttonIndex in 0..<addButtons.count{
+                
+                self.dismissAddDogTap.isEnabled = false
+                
                 let button = addButtons[buttonIndex]
                 let buttonBackground = addButtonsBackground[buttonIndex]
                 let buttonLabel = addButtonsLabel[buttonIndex]
@@ -322,6 +356,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         addStatus = newAddStatus
     }
     
+    //MARK: changeAddStatus Helper Functions
     
     ///Creates a label for a given add button with the specified text, handles all frame, origin, and size related things
     private func createAddButtonLabel(_ button: ScaledButton, text: String) -> UILabel {
@@ -353,8 +388,6 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         return buttonLabel
     }
     
-    
-    
     private func createAddButtonBackground(_ button: ScaledButton) -> ScaledButton {
         let buttonBackground = ScaledButton(frame: button.frame)
         buttonBackground.setImage(UIImage(systemName: "plus.circle.fill"), for: .normal)
@@ -363,9 +396,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         return buttonBackground
     }
     
-    @IBAction func willAddButton(_ sender: Any) {
-        self.changeAddStatus(newAddStatus: !addStatus)
-    }
+    //MARK: changeAddStatus Calculated Variables
     
     ///The size of the subAddButtons in relation to the willAddButtomn
     private var subButtonSize: CGFloat {

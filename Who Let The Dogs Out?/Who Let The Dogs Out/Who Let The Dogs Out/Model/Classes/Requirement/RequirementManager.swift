@@ -30,8 +30,6 @@ protocol RequirementManagerProtocol {
     mutating func removeRequirement(requirementName: String) throws
     mutating func changeRequirement(requirementToBeChanged: String, newRequirement: Requirement) throws
     
-    mutating func clearRequirements()
-    
     func findRequirement(requirementName requirementToFind: String) throws -> Requirement
     
     func findIndex(requirementName requirementToFind: String) throws -> Int
@@ -55,7 +53,8 @@ extension RequirementManagerProtocol {
         }
         
         else {
-            requirements.append(newRequirement.copy() as! Requirement)
+            //RequirementEfficencyImprovements requirements.append(newRequirement.copy() as! Requirement)
+            requirements.append(newRequirement)
         }
         
     }
@@ -124,13 +123,9 @@ extension RequirementManagerProtocol {
         }
         
         else {
-            requirements[newRequirementIndex!] = newRequirement.copy() as! Requirement
+            //RequirementEfficencyImprovements requirements[newRequirementIndex!] = newRequirement.copy() as! Requirement
+            requirements[newRequirementIndex!] = newRequirement
         }
-    }
-    
-        ///clears all requirements, should make requirements an empty array
-    mutating func clearRequirements() {
-        requirements.removeAll()
     }
     
     ///finds and returns the reference of a requirement matching the given name

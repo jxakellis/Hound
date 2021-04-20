@@ -69,9 +69,9 @@ enum DogManagerConstant {
     }
     
     static var defaultDogManager: DogManager {
-        var sudoDogManager = DogManager()
-        try! sudoDogManager.addDog(dogAdded: DogManagerConstant.userDefaultDog.copy() as! Dog)
-        return sudoDogManager.copy() as! DogManager
+        var dogManager = DogManager()
+        try! dogManager.addDog(dogAdded: DogManagerConstant.userDefaultDog)
+        return dogManager
     }
 }
 

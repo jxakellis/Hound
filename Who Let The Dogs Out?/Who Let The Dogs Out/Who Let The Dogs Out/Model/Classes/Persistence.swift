@@ -63,8 +63,10 @@ class Persistence{
     static func willEnterBackground(isTerminating: Bool = false){
         
         //dogManager
+        //DogManagerEfficencyImprovement OK, Changes are being made that might not apply to the rest of the system, might be invalid, or might affect finding something
         var dataDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
         dataDogManager.clearAllPresentationHandled()
+        
         let encodedDataDogManager = try! NSKeyedArchiver.archivedData(withRootObject: dataDogManager, requiringSecureCoding: false)
          UserDefaults.standard.setValue(encodedDataDogManager, forKey: UserDefaultsKeys.dogManager.rawValue)
         

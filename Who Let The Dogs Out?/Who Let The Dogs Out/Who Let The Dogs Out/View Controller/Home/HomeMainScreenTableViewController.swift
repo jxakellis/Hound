@@ -15,12 +15,13 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     private var dogManager: DogManager = DogManager()
     
     func getDogManager() -> DogManager {
-        return dogManager.copy() as! DogManager
+        //DogManagerEfficencyImprovement return dogManager.copy() as! DogManager
+        return dogManager
     }
     
     func setDogManager(sender: Sender, newDogManager: DogManager) {
-        self.dogManager = newDogManager.copy() as! DogManager
-        
+        //DogManagerEfficencyImprovement self.dogManager = newDogManager.copy() as! DogManager
+        dogManager = newDogManager
         if sender.localized is HomeViewController {
             self.updateDogManagerDependents()
         }
@@ -35,37 +36,13 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     ///Timer that repeats every second to update tableView data, needed due to the fact the timers countdown every second
     private var loopTimer: Timer?
     
-    ///MainTabBarViewController's dogManager copied and transformed to have only active requirements of active dogs present
-    private var activeDogManager: DogManager {
-        var dogManager = DogManager()
-        
-        for d in 0..<self.getDogManager().dogs.count {
-            guard self.getDogManager().dogs[d].getEnable() == true else{
-                continue
-            }
-            
-            let dogAdd = self.getDogManager().dogs[d].copy() as! Dog
-            dogAdd.dogRequirments.clearRequirements()
-            
-            for r in 0..<self.getDogManager().dogs[d].dogRequirments.requirements.count {
-                guard self.getDogManager().dogs[d].dogRequirments.requirements[r].getEnable() == true else{
-                    continue
-                }
-                
-                try! dogAdd.dogRequirments.addRequirement(newRequirement: self.getDogManager().dogs[d].dogRequirments.requirements[r].copy() as! Requirement)
-            }
-            try! dogManager.addDog(dogAdded: dogAdd)
-        }
-        
-        return dogManager
-    }
-    
     ///Returns parentDogName and Requirement for a given index of priority sorted version of activeDogManager, timer to execute soonest is index 0
     private func timerPriority(priorityIndex: Int) -> (String, Requirement) {
         
         var assortedTimers: [(String, Requirement)] = []
         
-        let activeDogManagerCopy: DogManager = self.activeDogManager.copy() as! DogManager
+        //FUTUREEFFICENCY, compact this function as every time this page willAppear and the cells are reloaded, each individual cell calls thing function to figure out its priority. Makes unneccessary copies.
+        let activeDogManagerCopy: DogManager = getDogManager().activeDogManager
         
         for _ in 0..<TimingManager.currentlyActiveTimersCount! {
             var lowestTimeInterval: TimeInterval = .infinity
@@ -129,8 +106,14 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     
     @objc private func loopReload(){
         for cell in tableView.visibleCells{
-            let sudoCell = cell as! HomeMainScreenTableViewCellRequirementDisplay
-            sudoCell.reloadCell()
+            if cell is HomeMainScreenTableViewCellEmpty{
+                loopTimer!.invalidate()
+                loopTimer = nil
+            }
+            else {
+                let sudoCell = cell as! HomeMainScreenTableViewCellRequirementDisplay
+                sudoCell.reloadCell()
+            }
         }
     }
     
@@ -151,6 +134,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     
     ///Called when a requirement is clicked by the user, display an action sheet of possible modifcations to the alarm.
     private func willShowSelectedActionSheet(parentDogName: String, requirement: Requirement){
+        
         let alertController = GeneralAlertController(title: "\(requirement.requirementName) for \(parentDogName)", message: nil, preferredStyle: .actionSheet)
         
         let alertActionCancel = UIAlertAction(

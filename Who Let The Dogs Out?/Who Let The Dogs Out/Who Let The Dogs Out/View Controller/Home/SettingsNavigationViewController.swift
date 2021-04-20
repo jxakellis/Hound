@@ -30,8 +30,6 @@ class SettingsNavigationViewController: UINavigationController, SettingsViewCont
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //self.navigationBar.setBackgroundImage(UIImage(), for:.default)
-        //self.navigationBar.shadowImage = UIImage()
         
         settingsViewController = self.viewControllers[0] as? SettingsViewController
         settingsViewController.delegate = self

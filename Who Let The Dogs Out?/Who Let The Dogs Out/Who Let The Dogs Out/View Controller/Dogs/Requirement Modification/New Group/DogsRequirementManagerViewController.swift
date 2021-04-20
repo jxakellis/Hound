@@ -195,7 +195,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
             dogsRequirementTimeOfDayViewController.delegate = self
             
             if targetRequirement != nil {
-                dogsRequirementTimeOfDayViewController.passedTimeOfDay = targetRequirement!.timeOfDayComponents.nextTimeOfDay
+                dogsRequirementTimeOfDayViewController.passedTimeOfDay = targetRequirement!.timeOfDayComponents.nextTimeOfDay(requirementExecutionBasis: targetRequirement!.executionBasis)
                 dogsRequirementTimeOfDayViewController.passedWeekDays = targetRequirement!.timeOfDayComponents.weekdays
             }
             

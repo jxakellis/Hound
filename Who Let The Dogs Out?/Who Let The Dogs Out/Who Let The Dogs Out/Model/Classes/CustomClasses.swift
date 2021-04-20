@@ -10,8 +10,6 @@ import UIKit
 import AudioToolbox
 import AVFoundation
 
-
-
 class Sender {
     
     let origin: AnyObject?

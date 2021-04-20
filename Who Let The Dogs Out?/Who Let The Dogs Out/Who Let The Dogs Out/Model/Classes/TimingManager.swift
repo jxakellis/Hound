@@ -80,10 +80,34 @@ class TimingManager{
                 
                 let requirement = dogManager.dogs[d].dogRequirments.requirements[r]
                 
+                
+                
                 //makes sure a requirement is enabled and its presentation is not being handled
                 guard requirement.getEnable() == true && requirement.isPresentationHandled == false
                 else{
                     continue
+                }
+                /*
+                print("TM")
+                print(Date())
+                print("skipping \(requirement.timeOfDayComponents.isSkipping)")
+                print("exe basis \(requirement.executionBasis)")
+                print("exe date \(requirement.executionDate)")
+                print("trad \(requirement.timeOfDayComponents.traditionalNextTimeOfDay(executionBasis: requirement.executionBasis))")
+                print("skip \(requirement.timeOfDayComponents.skippingNextTimeOfDay(executionBasis: requirement.executionBasis))")
+                print("next \(requirement.timeOfDayComponents.nextTimeOfDay(requirementExecutionBasis: requirement.executionBasis))")
+                */
+                //Sets a timer that executes when the timer should go from isSkipping true -> false, e.g. 1 Day left on a timer that is skipping and when it hits 23 hours and 59 minutes it turns into a regular nonskipping timer
+                let unskipDate = requirement.timeOfDayComponents.unskipDate(timerMode: requirement.timerMode, requirementExecutionBasis: requirement.executionBasis)
+                if unskipDate != nil {
+                    let isSkippingDisabler = Timer(fireAt: unskipDate!,
+                                                 interval: -1,
+                                                 target: self,
+                                                 selector: #selector(self.willUpdateIsSkipping(sender:)),
+                                                 userInfo: ["dogName": dogManager.dogs[d].dogTraits.dogName, "requirement": requirement, "dogManager": dogManager],
+                                                 repeats: false)
+                    isSkippingDisablers.append(isSkippingDisabler)
+                    RunLoop.main.add(isSkippingDisabler, forMode: .common)
                 }
                 
                 var timer: Timer!
@@ -116,21 +140,6 @@ class TimingManager{
                 nestedtimerDictionary[requirement.requirementName] = timer
                 
                 timerDictionary[dogManager.dogs[d].dogTraits.dogName] = nestedtimerDictionary
-                
-                
-                
-                //Sets a timer that executes when the timer should go from isSkipping true -> false, e.g. 1 Day left on a timer that is skipping and when it hits 23 hours and 59 minutes it turns into a regular nonskipping timer
-                if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.unskipDate != nil {
-                    let isSkippingDisabler = Timer(fireAt: requirement.timeOfDayComponents.unskipDate!,
-                                                 interval: -1,
-                                                 target: self,
-                                                 selector: #selector(self.willUpdateIsSkipping(sender:)),
-                                                 userInfo: ["dogName": dogManager.dogs[d].dogTraits.dogName, "requirement": requirement, "dogManager": dogManager],
-                                                 repeats: false)
-                    isSkippingDisablers.append(isSkippingDisabler)
-                    RunLoop.main.add(isSkippingDisabler, forMode: .common)
-                }
-                
             }
         }
     }
@@ -146,10 +155,6 @@ class TimingManager{
         self.willInitalize(dogManager: dogManager)
     }
     
-    ///Not implented currently
-    static func willReinitalize(dogName: String, requirementName: String) throws {
-        fatalError("Not implemented")
-    }
     
     ///If a requirement is skipping the next time of day alarm, at some point it will go from 1+ day away to 23 hours and 59 minutes. When that happens then the timer should be changed from isSkipping to normal mode because it just skipped that alarm that should have happened
     @objc private static func willUpdateIsSkipping(sender: Timer){
@@ -161,13 +166,14 @@ class TimingManager{
         let dogName: String = parsedDictionary["dogName"]! as! String
         let requirementName: String = (parsedDictionary["requirement"]! as! Requirement).requirementName
         
-        let sudoDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
-        let requirement = try! sudoDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName)
+        //DogManagerEfficencyImprovement let sudoDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
+        let dogManager = MainTabBarViewController.staticDogManager
+        let requirement = try! dogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName)
         
         requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: false)
         requirement.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
         
-        delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
+        delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
     }
     
     //MARK: Pause Control
@@ -366,11 +372,13 @@ class TimingManager{
         alertController.addAction(alertActionDismiss)
         
     
-        let sudoDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
-        let requirement = try! sudoDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirement.requirementName)
+        //DogManagerEfficencyImprovement let sudoDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
+        let dogManager = MainTabBarViewController.staticDogManager
+        let requirement = try! dogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirement.requirementName)
+        
         if requirement.isPresentationHandled == false {
             requirement.isPresentationHandled = true
-            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
         }
         
         AlertPresenter.shared.enqueueAlertForPresentation(alertController)
@@ -420,13 +428,14 @@ class TimingManager{
         }
         //Skips next TOD
         else if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.isSkipping == false && Date().distance(to: TimingManager.timerDictionary[targetDogName]![targetRequirementName]!.fireDate) > 0{
+            let executionBasisBackup = requirement.executionBasis
             requirement.timerReset(didExecuteToUser: true)
             requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: true)
+            requirement.changeExecutionBasis(newExecutionBasis: executionBasisBackup, shouldResetIntervalsElapsed: false)
         }
         //Unskips next TOD
         else if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.isSkipping == true{
             requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: false)
-            requirement.changeExecutionBasis(newExecutionBasis: requirement.logDates.removeLast(), shouldResetIntervalsElapsed: true)
         }
         //Regular reset
         else {

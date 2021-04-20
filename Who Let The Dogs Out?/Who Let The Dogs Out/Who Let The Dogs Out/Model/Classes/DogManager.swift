@@ -36,6 +36,9 @@ protocol DogManagerProtocol {
     ///Counts up all enabled requirements under all enabled dogs, does not factor in isPaused, purely self
     var enabledTimersCount: Int { get }
     
+    ///returns self but with only enabled dogs with enabled requirements
+    var activeDogManager: DogManager { get }
+    
     ///Checks dog name to see if its valid and checks to see if it is valid in context of other dog names already present, assumes requirements and traits are already validiated
      mutating func addDog(dogAdded: Dog) throws
     
@@ -53,6 +56,9 @@ protocol DogManagerProtocol {
     
     ///Changes a dog, takes a dog name and finds the corropsonding dog then replaces it with a new, different dog reference
     mutating func changeDog(dogNameToBeChanged: String, newDog: Dog) throws
+    
+    ///If a time of day alarm was skipping, looks and sees if it has passed said skipped time and should go back to normal
+    mutating func synchronizeIsSkipping()
     
     ///finds and returns a reference to a dog matching the given name
     func findDog(dogName dogToBeFound: String) throws -> Dog
@@ -84,7 +90,8 @@ extension DogManagerProtocol {
             }
         }
         
-        dogs.append(dogAdded.copy() as! Dog)
+        //DogEfficencyImprovement dogs.append(dogAdded.copy() as! Dog)
+        dogs.append(dogAdded)
         
     }
     
@@ -143,7 +150,25 @@ extension DogManagerProtocol {
         }
         
         else{
-            dogs[newDogIndex!] = newDog.copy() as! Dog
+            //DogEfficencyImprovement dogs[newDogIndex!] = newDog.copy() as! Dog
+            dogs[newDogIndex!] = newDog
+        }
+    }
+    
+    mutating func synchronizeIsSkipping(){
+        let activeDogManager = self.activeDogManager
+        
+        for dogIndex in 0..<activeDogManager.dogs.count{
+            for requirementIndex in 0..<activeDogManager.dogs[dogIndex].dogRequirments.requirements.count{
+                let requirement = activeDogManager.dogs[dogIndex].dogRequirments.requirements[requirementIndex]
+                
+                let unskipDate = requirement.timeOfDayComponents.unskipDate(timerMode: requirement.timerMode, requirementExecutionBasis: requirement.executionBasis)
+                
+                if unskipDate != nil && Date().distance(to: unskipDate!) < 0{
+                    self.dogs[dogIndex].dogRequirments.requirements[requirementIndex].timeOfDayComponents.changeIsSkipping(newSkipStatus: true)
+                    self.dogs[dogIndex].dogRequirments.requirements[requirementIndex].changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
+                }
+            }
         }
     }
     
@@ -260,6 +285,32 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
     override init(){
         dogs = []
         super.init()
+    }
+    
+    var activeDogManager: DogManager{
+        var activeDogManager = DogManager()
+        activeDogManager.dogs.removeAll()
+        
+        for d in 0..<self.dogs.count {
+            guard self.dogs[d].getEnable() == true else{
+                continue
+            }
+            
+            let dogAdd = self.dogs[d].copy() as! Dog
+            dogAdd.dogRequirments.requirements.removeAll()
+            
+            for r in 0..<self.dogs[d].dogRequirments.requirements.count {
+                guard self.dogs[d].dogRequirments.requirements[r].getEnable() == true else{
+                    continue
+                }
+                
+                try! dogAdd.dogRequirments.addRequirement(newRequirement: self.dogs[d].dogRequirments.requirements[r].copy() as! Requirement)
+            }
+            
+            try! activeDogManager.addDog(dogAdded: dogAdd)
+        }
+        
+        return activeDogManager
     }
     
 }

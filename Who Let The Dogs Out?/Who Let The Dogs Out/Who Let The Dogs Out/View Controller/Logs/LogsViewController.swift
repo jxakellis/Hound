@@ -1,14 +1,14 @@
 //
-//  HomeViewController.swift
+//  LogsViewController.swift
 //  Who Let The Dogs Out
 //
-//  Created by Jonathan Xakellis on 2/5/21.
+//  Created by Jonathan Xakellis on 4/17/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
 //
 
 import UIKit
 
-class HomeViewController: UIViewController, DogManagerControlFlowProtocol {
+class LogsViewController: UIViewController, DogManagerControlFlowProtocol {
     
     
     //MARK: DogManagerControlFlowProtocol
@@ -24,12 +24,8 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol {
         //DogManagerEfficencyImprovement dogManager = newDogManager.copy() as! DogManager
         dogManager = newDogManager
         
-        if sender.localized is MainTabBarViewController {
-            homeMainScreenTableViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
-        }
-        
-        if sender.origin is TimingManager.Type || sender.origin is TimingManager {
-            //controlRefresh(sender: Sender(origin: sender, localized: self), animated: true)
+        if sender.localized is MainTabBarViewController{
+            logsMainScreenTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
         }
     }
     
@@ -37,22 +33,22 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol {
         //
     }
     
-    //MARK: IB
     
+    //MARK: IB
     
     @IBAction func didClickSettings(_ sender: Any) {
         self.tabBarController!.selectedIndex = 3
     }
-    
     //MARK: Properties
     
-    var homeMainScreenTableViewController = HomeMainScreenTableViewController()
+    var logsMainScreenTableViewController: LogsMainScreenTableViewController? = nil
     
     //MARK: Main
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -60,19 +56,17 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol {
         Utils.presenter = self
     }
     
-    
+
     
     // MARK: - Navigation
-    
+
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-        if segue.identifier == "homeMainScreenTableViewController"{
-            homeMainScreenTableViewController = segue.destination as! HomeMainScreenTableViewController
-            homeMainScreenTableViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: self.getDogManager())
+        if segue.identifier == "logsMainScreenTableViewController"{
+            logsMainScreenTableViewController = segue.destination as? LogsMainScreenTableViewController
+            logsMainScreenTableViewController!.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
         }
-        
     }
     
-    
+
 }

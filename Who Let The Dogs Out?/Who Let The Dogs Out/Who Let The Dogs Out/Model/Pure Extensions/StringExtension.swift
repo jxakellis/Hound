@@ -15,7 +15,6 @@ enum StringExtensionError: Error {
 extension String {
     ///Converts a time interval to a more readable string to display, e.g. 3600.0 Time interval to 1 hour 0 minutes or 7320.0 to 2 hours 2 minutes
     static func convertToReadable(interperateTimeInterval: TimeInterval, capitalizeLetters: Bool = true) -> String {
-        
         let intTime = abs(Int(interperateTimeInterval.rounded()))
         
         let numDays = Int(intTime / (86400))

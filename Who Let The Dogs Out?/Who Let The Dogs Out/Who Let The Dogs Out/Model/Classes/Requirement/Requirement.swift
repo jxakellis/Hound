@@ -52,6 +52,7 @@ protocol RequirementProtocol {
     
     ///Similar to executionDate but instead of being a log of everytime the time has fired it is either the date the timer has last fired or the date it should be basing its execution off of, e.g. 5 minutes into the timer you change the countdown from 30 minutes to 15, you don't want to log an execution as there was no one but you want to start the timer fresh and have it count down from the moment it was changed.
     var executionBasis: Date { get }
+    
     ///Changes executionBasis to the specified value, note if the Date is equal to the current date (i.e. newExecutionBasis == Date()) then resets all components intervals elapsed to zero.
     mutating func changeExecutionBasis(newExecutionBasis: Date, shouldResetIntervalsElapsed: Bool)
     
@@ -162,6 +163,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
     func setEnable(newEnableStatus: Bool) {
         if isEnabled == false && newEnableStatus == true {
             self.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
+            timeOfDayComponents.changeIsSkipping(newSkipStatus: false)
         }
         isEnabled = newEnableStatus
     }
@@ -281,11 +283,11 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         }
         else if timerMode == .timeOfDay {
             //if the previousTimeOfDay is closer to the present than executionBasis returns nil, indicates missed alarm
-            if self.executionBasis.distance(to: self.timeOfDayComponents.previousTimeOfDay) > 0 {
+            if self.executionBasis.distance(to: self.timeOfDayComponents.previousTimeOfDay(requirementExecutionBasis: self.executionBasis)) > 0 {
                 return nil
             }
             else{
-                return Date().distance(to: self.timeOfDayComponents.nextTimeOfDay)
+                return Date().distance(to: self.timeOfDayComponents.nextTimeOfDay(requirementExecutionBasis: self.executionBasis))
             }
         }
         else {
@@ -311,7 +313,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
                 return Date()
             }
             else {
-                return timeOfDayComponents.nextTimeOfDay
+                return timeOfDayComponents.nextTimeOfDay(requirementExecutionBasis: self.executionBasis)
             }
         }
         else if timerMode == .countDown{
