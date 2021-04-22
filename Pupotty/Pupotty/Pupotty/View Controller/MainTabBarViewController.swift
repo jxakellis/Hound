@@ -7,7 +7,7 @@
 //
 import UIKit
 
-class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, SettingsNavigationViewControllerDelegate {
+class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, SettingsNavigationViewControllerDelegate, LogsNavigationViewControllerDelegate {
     
     //MARK: SettingsViewControllerDelegate
     
@@ -46,6 +46,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         masterDogManager = newDogManager
         MainTabBarViewController.staticDogManager = newDogManager
         
+        
+        
         //Updates isPaused to reflect any changes in data, if there are no enabled/creaed requirements or no enabled/created dogs then turns isPaused off as there is nothing to pause
         if getDogManager().hasCreatedRequirement == false || getDogManager().hasEnabledRequirement == false || getDogManager().hasEnabledDog == false {
             TimingManager.isPaused = false
@@ -60,6 +62,11 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         if sender.localized is DogsViewController {
             homeViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+        }
+        
+        if sender.localized is LogsViewController {
+            homeViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+            dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
         
         if !(sender.localized is MainTabBarViewController){
@@ -111,6 +118,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         homeViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
         
         logsNavigationViewController = self.viewControllers![1] as? LogsNavigationViewController
+        logsNavigationViewController.passThroughDelegate = self
         logsViewController = logsNavigationViewController.viewControllers[0] as? LogsViewController
         logsViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
        
@@ -120,10 +128,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         dogsViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
         
         settingsNavigationViewController = self.viewControllers![3] as? SettingsNavigationViewController
-        settingsViewController = settingsNavigationViewController.viewControllers[0] as? SettingsViewController
         settingsNavigationViewController.passThroughDelegate = self
-        
-       
+        settingsViewController = settingsNavigationViewController.viewControllers[0] as? SettingsViewController
         
         MainTabBarViewController.mainTabBarViewController = self
         

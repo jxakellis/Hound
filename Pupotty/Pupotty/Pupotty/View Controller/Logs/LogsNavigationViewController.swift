@@ -8,11 +8,24 @@
 
 import UIKit
 
-class LogsNavigationViewController: UINavigationController{
+protocol LogsNavigationViewControllerDelegate{
+    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+}
+
+class LogsNavigationViewController: UINavigationController, LogsViewControllerDelegate{
+    
+    //MARK: LogsViewControllerDelegate
+    
+    func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
+        passThroughDelegate.didUpdateDogManager(sender: sender, newDogManager: newDogManager)
+    }
+    
     
     //MARK: Properties
     
     var logsViewController: LogsViewController! = nil
+    
+    var passThroughDelegate: LogsNavigationViewControllerDelegate! = nil
     
     //MARK: Main
 
@@ -20,6 +33,7 @@ class LogsNavigationViewController: UINavigationController{
         super.viewDidLoad()
 
         logsViewController = self.viewControllers[0] as? LogsViewController
+        logsViewController.delegate = self
     }
     
 

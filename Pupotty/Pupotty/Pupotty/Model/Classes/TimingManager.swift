@@ -435,7 +435,9 @@ class TimingManager{
         //Unskips next TOD
         else if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.isSkipping == true{
             requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: false)
-            requirement.logDates.removeLast()
+            if requirement.logDates.isEmpty == false {
+                requirement.logDates.removeLast()
+            }
         }
         //Regular reset
         else {

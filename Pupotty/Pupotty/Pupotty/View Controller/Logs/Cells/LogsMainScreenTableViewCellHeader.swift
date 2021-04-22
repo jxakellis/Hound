@@ -10,11 +10,11 @@ import UIKit
 
 class LogsMainScreenTableViewCellHeader: UITableViewCell {
     
-    @IBOutlet weak var header: CustomLabel!
+    @IBOutlet private weak var header: CustomLabel!
     
     //MARK: Properties
     
-    var dateSource: Date! = nil
+    private var dateSource: Date! = nil
     
     //MARK: Main
     

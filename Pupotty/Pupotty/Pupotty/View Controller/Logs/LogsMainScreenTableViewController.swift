@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol LogsMainScreenTableViewControllerDelegate{
+    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+}
+
 class LogsMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol {
     
     //MARK: DogManagerControlFlowProtocol
@@ -101,16 +105,26 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             return uniqueLogDates
         }
         
+        self.consolidatedLogDates = calculatedConsolidatedLogDates
+        self.uniqueLogDates = calculatedUniqueLogDates
+        
         if !(sender.localized is LogsMainScreenTableViewController) {
-            self.consolidatedLogDates = calculatedConsolidatedLogDates
-            self.uniqueLogDates = calculatedUniqueLogDates
             self.reloadTable()
+        }
+        else {
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
+            updateDogManagerDependents()
         }
         
     }
     
     func updateDogManagerDependents() {
-        //
+        if uniqueLogDates.count == 0 {
+            tableView.separatorStyle = .none
+        }
+        else {
+            tableView.separatorStyle = .singleLine
+        }
     }
     
     //MARK: Properties
@@ -120,6 +134,8 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     ///Stores an array of unique days (of a given year) which a logging event occured. E.g. you logged twice on january 1st 2020& once on january 4th 2020, so the array would be [(1,2020),(4,2020)]
     private var uniqueLogDates: [(Int, Int, [(Date, String, Requirement)])] = []
+    
+    var delegate: LogsMainScreenTableViewControllerDelegate! = nil
     
     //MARK: Main
 
@@ -142,12 +158,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     private func reloadTable(){
         
-        if uniqueLogDates.count == 0 {
-            tableView.separatorStyle = .none
-        }
-        else {
-            tableView.separatorStyle = .singleLine
-        }
+        updateDogManagerDependents()
         
         tableView.reloadData()
     }
@@ -204,40 +215,56 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     }
     
 
-    /*
+    
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+        if indexPath.row != 0 {
+            return true
+        }
+        else {
+            return false
+        }
     }
-    */
+    
 
-    /*
+    
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
+            tableView.performBatchUpdates {
+                // Delete the row from the data source
+                let newDogManager = getDogManager()
+                
+                let originalNumberOfSections = uniqueLogDates.count
+                
+                let cellInfo = uniqueLogDates[indexPath.section].2[indexPath.row-1]
+                let requirement = try! newDogManager.findDog(dogName: cellInfo.1).dogRequirments.findRequirement(requirementName: cellInfo.2.requirementName)
+                
+                requirement.logDates.remove(at: requirement.logDates.firstIndex(of: cellInfo.0)!)
+                
+                setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager)
+                
+                tableView.deleteRows(at: [indexPath], with: .fade)
+                
+                //removed final log and must update header
+                if uniqueLogDates.count == 0 {
+                    let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsMainScreenTableViewCellHeader
+                    headerCell.setup(dateSource: nil)
+                    
+                }
+                //removed final log of a given section and must delete all headers and body in that now gone-from-the-data section
+                else if originalNumberOfSections != uniqueLogDates.count{
+                    tableView.deleteSections(IndexSet(integer: indexPath.section), with: .automatic)
+                }
+            } completion: { (completed) in
+            }
 
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
+            
+            
+            
+        }
     }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
+    
 
     /*
     // MARK: - Navigation

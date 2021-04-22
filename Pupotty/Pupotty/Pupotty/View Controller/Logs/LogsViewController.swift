@@ -8,8 +8,17 @@
 
 import UIKit
 
-class LogsViewController: UIViewController, DogManagerControlFlowProtocol {
+protocol LogsViewControllerDelegate{
+    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+}
+
+class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsMainScreenTableViewControllerDelegate {
     
+    //MARK: LogsMainScreenTableViewControllerDelegate
+    
+    func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
+        setDogManager(sender: sender, newDogManager: newDogManager)
+    }
     
     //MARK: DogManagerControlFlowProtocol
     
@@ -27,6 +36,9 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol {
         if sender.localized is MainTabBarViewController{
             logsMainScreenTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
         }
+        if sender.localized is LogsMainScreenTableViewController{
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
+        }
     }
     
     func updateDogManagerDependents() {
@@ -36,12 +48,14 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol {
     
     //MARK: IB
     
-    @IBAction func didClickSettings(_ sender: Any) {
+    @IBAction private func didClickSettings(_ sender: Any) {
         self.tabBarController!.selectedIndex = 3
     }
     //MARK: Properties
     
-    var logsMainScreenTableViewController: LogsMainScreenTableViewController? = nil
+    var logsMainScreenTableViewController: LogsMainScreenTableViewController! = nil
+    
+    var delegate: LogsViewControllerDelegate! = nil
     
     //MARK: Main
 
@@ -64,7 +78,8 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "logsMainScreenTableViewController"{
             logsMainScreenTableViewController = segue.destination as? LogsMainScreenTableViewController
-            logsMainScreenTableViewController!.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
+            logsMainScreenTableViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
+            logsMainScreenTableViewController.delegate = self
         }
     }
     

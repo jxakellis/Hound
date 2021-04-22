@@ -13,15 +13,15 @@ class LogsMainScreenTableViewCellBody: UITableViewCell {
     
     //MARK: IB
     
-    @IBOutlet weak var dogName: CustomLabel!
-    @IBOutlet weak var requirementName: CustomLabel!
-    @IBOutlet weak var dateDescription: CustomLabel!
+    @IBOutlet private weak var dogName: CustomLabel!
+    @IBOutlet private weak var requirementName: CustomLabel!
+    @IBOutlet private weak var dateDescription: CustomLabel!
     
     //MARK: Properties
     
-    var parentDogName: String! = nil
-    var requirementSource: Requirement! = nil
-    var dateSource: Date! = nil
+    private var parentDogName: String! = nil
+    private var requirementSource: Requirement! = nil
+    private var dateSource: Date! = nil
     
     //MARK: Main
     
