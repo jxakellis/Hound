@@ -76,7 +76,7 @@ class DogsRequirementTimeOfDayViewController: UIViewController, UIGestureRecogni
             timeOfDay.date = passedTimeOfDay!
         }
         else{
-            timeOfDay.date = Date()
+            timeOfDay.date = Date.roundDate(targetDate: Date(), roundingInterval: 60.0*5, roundingMethod: .up)
         }
     }
     

@@ -221,7 +221,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     
     //MARK: TimeOfDayComponentsProtocol
     
-    private var storedTimeOfDayComponent: DateComponents = TimerConstant.defaultTimeOfDay
+    private var storedTimeOfDayComponent: DateComponents = DateComponents()
     var timeOfDayComponent: DateComponents { return storedTimeOfDayComponent }
     func changeTimeOfDayComponent(newTimeOfDayComponent: DateComponents) throws {
         

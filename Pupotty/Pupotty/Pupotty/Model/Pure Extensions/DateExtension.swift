@@ -27,14 +27,14 @@ extension Date {
     }
     
     ///Returns a rounded version of targetDate depending on roundingInterval, e.g. targetDate 18:41:51 -> rounded 18:42:00 for RI of 10 but for a RI of 5 rounded 18:41:50
-    static func roundDate(targetDate: Date, roundingInterval: TimeInterval) -> Date{
-        let rounded = Date(timeIntervalSinceReferenceDate: (targetDate.timeIntervalSinceReferenceDate / roundingInterval).rounded(.toNearestOrEven) * roundingInterval)
+    static func roundDate(targetDate: Date, roundingInterval: TimeInterval, roundingMethod: FloatingPointRoundingRule) -> Date{
+        let rounded = Date(timeIntervalSinceReferenceDate: (targetDate.timeIntervalSinceReferenceDate / roundingInterval).rounded(roundingMethod) * roundingInterval)
         return rounded
     }
     
     ///Mutates self depending on roundingInterval, e.g. self 18:41:51 -> newRoundedSelf 18:42:00 for RI of 10 but for a RI of 5 rounded 18:41:50
-    mutating func roundDate(roundingInterval: TimeInterval) {
-        let rounded = Date(timeIntervalSinceReferenceDate: (self.timeIntervalSinceReferenceDate / roundingInterval).rounded(.toNearestOrEven) * roundingInterval)
+    mutating func roundDate(roundingInterval: TimeInterval, roundingMethod: FloatingPointRoundingRule) {
+        let rounded = Date(timeIntervalSinceReferenceDate: (self.timeIntervalSinceReferenceDate / roundingInterval).rounded(roundingMethod) * roundingInterval)
         self = rounded
     }
     

@@ -144,17 +144,20 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
             try updatedRequirement.changeRequirementDescription(newRequirementDescription: requirementDescription.text)
             updatedRequirement.setEnable(newEnableStatus: requirementEnableStatus.isOn)
             
-            updatedRequirement.countDownComponents.changeExecutionInterval(newExecutionInterval: dogsRequirementCountDownViewController.countDown.countDownDuration)
-            
-            try! updatedRequirement.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: Calendar.current.dateComponents([.hour, .minute], from: dogsRequirementTimeOfDayViewController.timeOfDay.date))
-            
+            //even if TOD is not selected, still saves week days
             try updatedRequirement.timeOfDayComponents.changeWeekdays(newWeekdays: dogsRequirementTimeOfDayViewController.weekdays)
             
-            if segmentedControl.selectedSegmentIndex == 0 && updatedRequirement.timingStyle != .countDown{
+            //only saves countdown if countdown mode is selected
+            if segmentedControl.selectedSegmentIndex == 0{
                 updatedRequirement.changeTimingStyle(newTimingStyle: .countDown)
+                updatedRequirement.countDownComponents.changeExecutionInterval(newExecutionInterval: dogsRequirementCountDownViewController.countDown.countDownDuration)
             }
-            else if segmentedControl.selectedSegmentIndex == 1 && updatedRequirement.timingStyle != .timeOfDay{
+            //only saves TOD if TOD mode is selected, this makes it so if the TOD is not configured and selected then the next time it is opened the datePicker time of day is set to the current (rounded up to neared 5 minutes)
+            else if segmentedControl.selectedSegmentIndex == 1{
                 updatedRequirement.changeTimingStyle(newTimingStyle: .timeOfDay)
+                try! updatedRequirement.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: Calendar.current.dateComponents([.hour, .minute], from: dogsRequirementTimeOfDayViewController.timeOfDay.date))
+                
+                
             }
             
             if targetRequirement == nil {
@@ -167,7 +170,6 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
                     updatedRequirement.timerReset(didExecuteToUser: false)
                 }
                 else if updatedRequirement.timingStyle == .timeOfDay &&  (updatedRequirement.timeOfDayComponents.timeOfDayComponent != targetRequirement!.timeOfDayComponents.timeOfDayComponent || updatedRequirement.timeOfDayComponents.weekdays != targetRequirement!.timeOfDayComponents.weekdays){
-                    print("something changed")
                     updatedRequirement.timerReset(didExecuteToUser: false)
                 }
                 
@@ -195,7 +197,9 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
             dogsRequirementTimeOfDayViewController.delegate = self
             
             if targetRequirement != nil {
-                dogsRequirementTimeOfDayViewController.passedTimeOfDay = targetRequirement!.timeOfDayComponents.nextTimeOfDay(requirementExecutionBasis: targetRequirement!.executionBasis)
+                if targetRequirement!.timeOfDayComponents.timeOfDayComponent.hour != nil{
+                    dogsRequirementTimeOfDayViewController.passedTimeOfDay = targetRequirement!.timeOfDayComponents.nextTimeOfDay(requirementExecutionBasis: targetRequirement!.executionBasis)
+                }
                 dogsRequirementTimeOfDayViewController.passedWeekDays = targetRequirement!.timeOfDayComponents.weekdays
             }
             

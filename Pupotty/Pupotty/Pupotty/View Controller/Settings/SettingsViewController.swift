@@ -238,7 +238,7 @@ class SettingsViewController: UIViewController, ToolTipable {
         
         AlertPresenter.shared.enqueueAlertForPresentation(alertController)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
             exit(-1)
         }
     }

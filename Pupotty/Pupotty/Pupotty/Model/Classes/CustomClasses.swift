@@ -62,7 +62,7 @@ class AlarmAlertController: GeneralAlertController {
     private func loopVibrate(){
         if shouldVibrate == true {
             AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
                     self.loopVibrate()
                 }
             }
@@ -71,7 +71,7 @@ class AlarmAlertController: GeneralAlertController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        DispatchQueue.main.async{
+        DispatchQueue.global().async{
             self.loadAlarmSound()
             self.loopVibrate()
             self.audioPlayer.play()
@@ -80,7 +80,7 @@ class AlarmAlertController: GeneralAlertController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        DispatchQueue.main.async{
+        DispatchQueue.global().async{
             self.audioPlayer.stop()
             self.shouldVibrate = false
         }
@@ -103,7 +103,13 @@ class ScaledButton: UIButton {
                 return self.frame.height
             }
         }
-        self.setImage(self.currentImage?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: smallestDimension)), for: .normal)
+        
+        if currentImage != nil && currentImage!.isSymbolImage == true {
+            DispatchQueue.main.async {
+                super.setImage(self.currentImage?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: smallestDimension)), for: .normal)
+            }
+        }
+        
     }
     
     required init?(coder: NSCoder) {
@@ -113,11 +119,7 @@ class ScaledButton: UIButton {
     
     override func setImage(_ image: UIImage?, for state: UIControl.State) {
         super.setImage(image, for: state)
-        if image != nil && image!.isSymbolImage == true {
-            DispatchQueue.main.async {
-                self.scaleSymbolPontSize()
-            }
-        }
+        self.scaleSymbolPontSize()
     }
     
 }
