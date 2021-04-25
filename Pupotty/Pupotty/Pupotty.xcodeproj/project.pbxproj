@@ -120,6 +120,7 @@
 		A2B9DAE8262B2DFA00A47D57 /* LogsNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsNavigationViewController.swift; sourceTree = "<group>"; };
 		A2B9DAEC262B2E0A00A47D57 /* LogsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsViewController.swift; sourceTree = "<group>"; };
 		A2B9DAF0262B2F2D00A47D57 /* LogsMainScreenTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsMainScreenTableViewController.swift; sourceTree = "<group>"; };
+		A2BE1EA32634C6D800A36C57 /* PupottyDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PupottyDebug.entitlements; sourceTree = "<group>"; };
 		A2C014C82628ABA500DDE288 /* HomeNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNavigationViewController.swift; sourceTree = "<group>"; };
 		A2C014CE2628AD2F00DDE288 /* SettingsNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SettingsNavigationViewController.swift; path = "Pupotty/View Controller/Settings/SettingsNavigationViewController.swift"; sourceTree = SOURCE_ROOT; };
 		A2C014D42628AEEE00DDE288 /* DogsNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsNavigationViewController.swift; sourceTree = "<group>"; };
@@ -131,7 +132,7 @@
 		A2E66CA525534A8A0068CCA6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A2E66CA825534A8A0068CCA6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A2E66CAA25534A8A0068CCA6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A2E66CAF25534A8A0068CCA6 /* Pupotty.swiftmodule */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Pupotty.swiftmodule; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2E66CAF25534A8A0068CCA6 /* Pupotty.swiftmodule */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = Pupotty.swiftmodule; path = PupottyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2EAF17C25C9D45E0022BBDD /* DogsMainScreenTableViewCellDogRequirement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsMainScreenTableViewCellDogRequirement.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -381,6 +382,7 @@
 		A2E66C9925534A880068CCA6 /* Pupotty */ = {
 			isa = PBXGroup;
 			children = (
+				A2BE1EA32634C6D800A36C57 /* PupottyDebug.entitlements */,
 				A2B9A92526291A6000626FAE /* Sound Effects */,
 				A258AEEB25661525005242E4 /* Model */,
 				A258AEEA25661517005242E4 /* Storyboard */,
@@ -706,6 +708,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Pupotty/PupottyDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9L3M99FST5;
 				INFOPLIST_FILE = "$(SRCROOT)/Pupotty/Info.plist";
