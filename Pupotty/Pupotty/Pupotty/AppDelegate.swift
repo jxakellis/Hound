@@ -19,9 +19,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
+        //see if last time setup crashed
+        let didCrashDuringLastSetup = UserDefaults.standard.bool(forKey: "didCrashDuringSetup")
+        
+        //will be set to false if successfully setup
+        UserDefaults.standard.setValue(true, forKey: "didCrashDuringSetup")
+        
         shouldPerformCleanInstall = UserDefaults.standard.bool(forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
         
-        if shouldPerformCleanInstall == true {
+        if didCrashDuringLastSetup == true {
+            print("crashedDuringLastSetup")
+            Persistence.willSetup()
+            
+            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
+            UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                Utils.willShowAlert(title: "🚨Crashed detected🚨", message: "Pupotty crashed during its last launch and had to reset itself to default in order to recover. I am sorry for the inconvenience😢")
+            }
+           
+        }
+        else if shouldPerformCleanInstall == true {
             print("cleanInstall (used for when the user wants to reset the app)")
             Persistence.willSetup()
             
@@ -45,6 +63,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
             }
         }
+        
         return true
     }
 

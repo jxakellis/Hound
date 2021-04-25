@@ -136,6 +136,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         TimingManager.delegate = self
         TimingManager.willInitalize(dogManager: getDogManager())
         
+        UserDefaults.standard.setValue(false, forKey: "didCrashDuringSetup")
     }
     
     override func viewWillAppear(_ animated: Bool) {

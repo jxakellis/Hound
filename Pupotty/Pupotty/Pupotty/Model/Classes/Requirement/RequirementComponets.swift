@@ -210,6 +210,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         self.storedTimeOfDayComponent = aDecoder.decodeObject(forKey: "timeOfDayComponent") as! DateComponents
         self.storedIsSkipping = aDecoder.decodeBool(forKey: "isSkipping")
         self.storedWeekDays = aDecoder.decodeObject(forKey: "storedWeekDays") as! [Int]
+        
     }
     
     func encode(with aCoder: NSCoder) {

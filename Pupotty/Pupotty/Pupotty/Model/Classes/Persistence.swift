@@ -11,7 +11,6 @@ import UIKit
 class Persistence{
     ///Called by App or Scene Delegate when setting up in didFinishLaunchingWithOptions, can be either the first time setup or a recurring setup (i.e. not the app isnt being opened for the first time)
     static func willSetup(isRecurringSetup: Bool = false){
-        
         if isRecurringSetup == true{
             //not first time setup
             TimingManager.isPaused = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool
@@ -24,7 +23,6 @@ class Persistence{
             NotificationConstant.followUpDelay = UserDefaults.standard.value(forKey: UserDefaultsKeys.followUpDelay.rawValue) as! TimeInterval
             NotificationConstant.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool
             NotificationConstant.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool
-            
         }
         
         else {

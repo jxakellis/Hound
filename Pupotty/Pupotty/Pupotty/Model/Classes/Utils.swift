@@ -101,17 +101,17 @@ class ErrorProcessor{
     ///Alerts for an error, just calls Utils.willShowAlert currently with a specified title of "Error"
     static func alertForError(message: String){
         
-        Utils.willShowAlert(title: "Error", message: message)
+        Utils.willShowAlert(title: "🚨Error🚨", message: message)
         
     }
     
     private static func alertForErrorProcessor(sender: Sender, message: String){
         let originTest = sender.origin
         if originTest != nil{
-            Utils.willShowAlert(title: "Error from \(NSStringFromClass(originTest!.classForCoder))", message: message)
+            Utils.willShowAlert(title: "🚨Error from \(NSStringFromClass(originTest!.classForCoder))🚨", message: message)
         }
         else {
-            Utils.willShowAlert(title: "Error from unknown class", message: message)
+            Utils.willShowAlert(title: "🚨Error from unknown class🚨", message: message)
         }
         
     }
