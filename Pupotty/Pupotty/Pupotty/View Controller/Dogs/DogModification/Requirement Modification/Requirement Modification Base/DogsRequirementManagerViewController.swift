@@ -1,6 +1,6 @@
 //
 //  DogsRequirementManagerViewController.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 3/28/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
@@ -43,7 +43,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     @IBOutlet private weak var timeOfDayContainerView: UIView!
     
-    @IBOutlet private weak var requirementName: UITextField!
+    @IBOutlet weak var requirementName: UITextField!
     @IBOutlet private weak var requirementDescription: UITextField!
     @IBOutlet private weak var requirementEnableStatus: UISwitch!
     
@@ -167,10 +167,10 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
                 
                 //If the executionInterval (the countdown duration) is changed then is changes its execution interval, this is because (for example) if you were 5 minutes in to a 1 hour countdown but then change it to 30 minutes, you would want to be 0 minutes into the new timer and not 5 minutes in like previously.
                 if updatedRequirement.countDownComponents.executionInterval != targetRequirement!.countDownComponents.executionInterval && updatedRequirement.timingStyle == .countDown{
-                    updatedRequirement.timerReset(didExecuteToUser: false)
+                    updatedRequirement.timerReset(shouldLogExecution: false)
                 }
                 else if updatedRequirement.timingStyle == .timeOfDay &&  (updatedRequirement.timeOfDayComponents.timeOfDayComponent != targetRequirement!.timeOfDayComponents.timeOfDayComponent || updatedRequirement.timeOfDayComponents.weekdays != targetRequirement!.timeOfDayComponents.weekdays){
-                    updatedRequirement.timerReset(didExecuteToUser: false)
+                    updatedRequirement.timerReset(shouldLogExecution: false)
                 }
                 
                 delegate.didUpdateRequirement(formerName: targetRequirement!.requirementName, updatedRequirement: updatedRequirement)

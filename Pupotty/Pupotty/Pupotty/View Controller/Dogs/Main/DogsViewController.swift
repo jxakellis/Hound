@@ -1,6 +1,6 @@
 //
 //  SecondViewController.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 11/4/20.
 //  Copyright © 2020 Jonathan Xakellis. All rights reserved.
@@ -20,6 +20,14 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         let sudoDogManager = getDogManager()
         
         try sudoDogManager.findDog(dogName: parentDogName).dogRequirments.changeRequirement(requirementToBeChanged: formerName, newRequirement: updatedRequirement)
+        
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
+    }
+    
+    func didRemoveRequirement(sender: Sender, parentDogName: String, removedRequirementName: String) {
+        let sudoDogManager = getDogManager()
+        
+        try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.removeRequirement(requirementName: removedRequirementName)
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
@@ -75,6 +83,12 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     
+    func didRemoveDog(sender: Sender, removedDogName: String) {
+        var sudoDogManager = getDogManager()
+        try! sudoDogManager.removeDog(name: removedDogName)
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
+    }
+    
     //MARK: DogManagerControlFlowProtocol
     
     private var dogManager = DogManager()
@@ -114,10 +128,6 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     @IBOutlet weak var willAddButton: UIButton!
     
     @IBOutlet weak var willAddButtonBackground: UIButton!
-    
-    @IBAction func didClickSettings(_ sender: Any) {
-        self.tabBarController!.selectedIndex = 3
-    }
     
     @IBAction func willAddButton(_ sender: Any) {
             self.changeAddStatus(newAddStatus: !addStatus)

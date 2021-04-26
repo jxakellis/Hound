@@ -1,6 +1,6 @@
 //
 //  Persistence.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 4/16/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
@@ -42,7 +42,7 @@ class Persistence{
             UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
             
             
-            
+            /*
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
                 UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
                 UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
@@ -51,8 +51,13 @@ class Persistence{
                 NotificationConstant.isNotificationEnabled = isGranted
                 NotificationConstant.shouldFollowUp = isGranted
             }
-            
+             */
+            UserDefaults.standard.setValue(NotificationConstant.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
+            UserDefaults.standard.setValue(NotificationConstant.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+            UserDefaults.standard.setValue(NotificationConstant.shouldFollowUp, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: "followUpDelay")
+            
+            MainTabBarViewController.firstTimeSetup = true
             
         }
     }
@@ -84,11 +89,6 @@ class Persistence{
         UserDefaults.standard.setValue(NotificationConstant.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
         UserDefaults.standard.setValue(NotificationConstant.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
         
-        //notification on off and authorization
-        //SettingsVC.ISN and .ISA are both calculated properties so no need to update.
-       // UserDefaults.standard.setValue(SettingsViewController.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
-        //UserDefaults.standard.setValue(SettingsViewController.isNotificationAuthorized, forKey: UserDefaultsKeys.isRequestAuthorizationGranted.rawValue)
-        
         if isTerminating == true  {
             
         }
@@ -102,7 +102,7 @@ class Persistence{
             print("isAuthorized \(NotificationConstant.isNotificationAuthorized) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool)")
             print("isEnabled \(NotificationConstant.isNotificationEnabled) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool)")
             print("isPaused \(TimingManager.isPaused) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool)")
-             */
+            */
              
             
             if NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled && !TimingManager.isPaused {
@@ -171,7 +171,7 @@ class Persistence{
                 DispatchQueue.main.async {
                     let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController.settingsViewController
                     if settingsVC != nil && settingsVC!.isViewLoaded {
-                        settingsVC?.refreshNotificationSwitches(animated: false)
+                        settingsVC?.synchonrizeAllNotificationSwitches(animated: false)
                     }
                 }
             case .notDetermined:

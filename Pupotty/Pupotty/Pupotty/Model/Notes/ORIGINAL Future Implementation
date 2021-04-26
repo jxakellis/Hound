@@ -90,3 +90,45 @@ App name exploration, link into words in the work of puppy training and house br
 Write app store description, should be used in app story obviously but also given to usability testers (in additon to what they should try to do)
 
 Work on logs page
+
+4/25/2021
+
+Usability Test 1 - Andrew
+
+Dog switch doesn't properly indicate subalarm disable (e.g. disabling bella doesnt show sub alarms are disabled)
+
+Can't find delete to remove Bella
+
+User wants to enter a reminder every two hours, didn't know that countdown was recurring
+
+User assumed that back button was saving, and didn't have anything save
+
+Created a dog but didn't hit save, it wasn't available in reminder area
+
+Wants auto capitalization of dog name / reminder name
+
+Check snooze for if it adds to log dates as it shouldnt
+
+Click on log so you add a note
+
+Add pop up for the first time for the user to name their dog.
+
+Filtering for logs
+
+If trying to backout without saving, have a popup asking if they want to.
+
+Can't add an arbitrary log without adding a reminder
+
+Replace gear in top right with with an i circle to present info about the page
+
+Didn't realize that countdown was recurring -- Change Count Down to recurring and add text that says "do every... datePicker"
+
+Good:
+Clean
+Intuative
+Able to pause everything (like pausing dating app)
+Useful for a while until puppy starts whining and doesn't need alarm
+
+Negative:
+Not working on older version
+Deleting not clear

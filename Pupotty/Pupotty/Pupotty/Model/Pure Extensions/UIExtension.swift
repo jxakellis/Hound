@@ -1,6 +1,6 @@
 //
 //  UIViewControllerExtension.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 2/18/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.

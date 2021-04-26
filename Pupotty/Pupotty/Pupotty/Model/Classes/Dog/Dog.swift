@@ -1,6 +1,6 @@
 //
 //  Dog.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 11/18/20.
 //  Copyright © 2020 Jonathan Xakellis. All rights reserved.
@@ -38,7 +38,13 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
                 guard r.getEnable() == true else {
                     continue
                 }
-                r.timerReset(didExecuteToUser: false)
+                r.timerReset(shouldLogExecution: false)
+            }
+        }
+        
+        if newEnableStatus == false{
+            for r in dogRequirments.requirements{
+                r.setEnable(newEnableStatus: false)
             }
         }
         

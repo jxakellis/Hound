@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 11/4/20.
 //  Copyright © 2020 Jonathan Xakellis. All rights reserved.
@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
             UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 Utils.willShowAlert(title: "🚨Crashed detected🚨", message: "Pupotty crashed during its last launch and had to reset itself to default in order to recover. I am sorry for the inconvenience😢")
             }
            

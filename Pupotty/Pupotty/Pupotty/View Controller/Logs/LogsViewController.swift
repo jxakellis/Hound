@@ -1,6 +1,6 @@
 //
 //  LogsViewController.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 4/17/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
@@ -45,12 +45,6 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
         //
     }
     
-    
-    //MARK: IB
-    
-    @IBAction private func didClickSettings(_ sender: Any) {
-        self.tabBarController!.selectedIndex = 3
-    }
     //MARK: Properties
     
     var logsMainScreenTableViewController: LogsMainScreenTableViewController! = nil
@@ -73,6 +67,11 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
 
     
     // MARK: - Navigation
+    
+    ///Allows for unwind to this page when back button is clicked in requirement editor
+    @IBAction func unwind(_ seg: UIStoryboardSegue){
+        
+    }
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

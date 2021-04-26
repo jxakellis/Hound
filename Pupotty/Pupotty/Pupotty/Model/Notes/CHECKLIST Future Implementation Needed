@@ -1,3 +1,11 @@
 
 CHECKLIST Future Implementation Needed
 
+Usability Test 1 - Andrew
+
+When confirmation for going back (e.g. do you want exit without saving data?), add a checker to see if any information is modified. If no information has been modified then do not show popup.
+
+Filtering for logs
+
+Can't add an arbitrary log without adding a reminder
+

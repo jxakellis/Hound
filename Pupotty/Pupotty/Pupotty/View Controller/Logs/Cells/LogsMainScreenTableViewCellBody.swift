@@ -1,6 +1,6 @@
 //
 //  LogsMainScreenTableViewCellBody.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 4/20/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
@@ -21,7 +21,7 @@ class LogsMainScreenTableViewCellBody: UITableViewCell {
     
     private var parentDogName: String! = nil
     private var requirementSource: Requirement! = nil
-    private var dateSource: Date! = nil
+    private var logSource: RequirementLog! = nil
     
     //MARK: Main
     
@@ -30,8 +30,8 @@ class LogsMainScreenTableViewCellBody: UITableViewCell {
         // Initialization code
     }
     
-    func setup(date: Date, parentDogName: String, requirement: Requirement){
-        self.dateSource = date
+    func setup(log logSource: RequirementLog, parentDogName: String, requirement: Requirement){
+        self.logSource = logSource
         self.requirementSource = requirement
         self.parentDogName = parentDogName
         
@@ -40,7 +40,11 @@ class LogsMainScreenTableViewCellBody: UITableViewCell {
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)
-        dateDescription.text = dateFormatter.string(from: date)
+        dateDescription.text = dateFormatter.string(from: logSource.date)
+        
+        if logSource.note.trimmingCharacters(in: .whitespaces) != "" {
+            dateDescription.text?.append(" - \(logSource.note)")
+        }
         
         dogName.frame = CGRect(origin: dogName.frame.origin,
                                size: dogName.text!.withBoundedWidth(font: dogName.font, height: dogName.frame.height))

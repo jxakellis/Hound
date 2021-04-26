@@ -1,6 +1,6 @@
 //
 //  Requirementt.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 3/21/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
@@ -48,7 +48,7 @@ protocol RequirementProtocol {
     mutating func changeRequirementDescription(newRequirementDescription: String?) throws
     
     ///An array of all dates that logs when the timer has fired, whether by snooze, regular timing convention, etc. ANY TIME
-    var logDates: [Date] { get set }
+    var logDates: [RequirementLog] { get set }
     
     ///Similar to executionDate but instead of being a log of everytime the time has fired it is either the date the timer has last fired or the date it should be basing its execution off of, e.g. 5 minutes into the timer you change the countdown from 30 minutes to 15, you don't want to log an execution as there was no one but you want to start the timer fresh and have it count down from the moment it was changed.
     var executionBasis: Date { get }
@@ -89,7 +89,7 @@ protocol RequirementProtocol {
     var executionDate: Date? { get }
     
     ///Called when a timer is fired/executed and an option to deal with it is selected by the user, if the reset is trigger by a user doing an action that constitude a reset, specify as so, but if doing something like changing the value of some component it was did not exeute to user. If didExecuteToUse is true it does the same thing as false except it appends the current date to the array of logDates which keeps tracks of each time a requirement is formally executed.
-    mutating func timerReset(didExecuteToUser didExecute: Bool)
+    mutating func timerReset(shouldLogExecution: Bool)
     
     
     
@@ -129,7 +129,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         self.isEnabled = aDecoder.decodeBool(forKey: "isEnabled")
         self.storedRequirementName = aDecoder.decodeObject(forKey: "requirementName") as! String
         self.storedRequirementDescription = aDecoder.decodeObject(forKey: "requirementDescription") as! String
-        self.logDates = aDecoder.decodeObject(forKey: "logDates") as! [Date]
+        self.logDates = aDecoder.decodeObject(forKey: "logDates") as! [RequirementLog]
         self.storedExecutionBasis = aDecoder.decodeObject(forKey: "executionBasis") as! Date
         self.isPresentationHandled = aDecoder.decodeBool(forKey: "isPresentationHandled")
         self.countDownComponents = aDecoder.decodeObject(forKey: "countDownComponents") as! CountDownComponents
@@ -162,7 +162,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
     ///Changes isEnabled to newEnableStatus, note if toggling from false to true the execution basis is changed to the current Date()
     func setEnable(newEnableStatus: Bool) {
         if isEnabled == false && newEnableStatus == true {
-            timerReset(didExecuteToUser: false)
+            timerReset(shouldLogExecution: false)
         }
         isEnabled = newEnableStatus
     }
@@ -197,7 +197,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         storedRequirementDescription = newRequirementDescription!
     }
     
-    var logDates: [Date] = []
+    var logDates: [RequirementLog] = []
     
     private var storedExecutionBasis: Date = Date()
     var executionBasis: Date { return storedExecutionBasis }
@@ -222,7 +222,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         if newActiveStatus != storedIsActive{
             //transitioning to active
             if newActiveStatus == true{
-                self.timerReset(didExecuteToUser: true)
+                self.timerReset(shouldLogExecution: true)
             }
             //transitioning to inactive
             else {
@@ -261,7 +261,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
             return
         }
         
-        self.timerReset(didExecuteToUser: false)
+        self.timerReset(shouldLogExecution: false)
         
         if newTimingStyle == .countDown {
             storedTimingStyle = .countDown
@@ -323,15 +323,15 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         }
     }
     
-    func timerReset(didExecuteToUser didExecute: Bool){
+    func timerReset(shouldLogExecution: Bool){
         
         //changeActiveStatus already calls timerReset if transitioning from inactive to active so circumvent this by directly accessing storedIsActive
         if isActive == false {
             storedIsActive = true
         }
         
-        if didExecute == true {
-            self.logDates.append(Date())
+        if shouldLogExecution == true {
+            self.logDates.append(RequirementLog(date: Date()))
         }
         
         self.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)

@@ -1,6 +1,6 @@
 //
 //  Constants.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 12/1/20.
 //  Copyright © 2020 Jonathan Xakellis. All rights reserved.
@@ -83,7 +83,7 @@ enum TimerConstant {
 }
 
 enum NotificationConstant {
-    static var shouldFollowUp: Bool = true
+    static var shouldFollowUp: Bool = false
     static var followUpDelay: TimeInterval = 5.0 * 60.0
     static var isNotificationEnabled: Bool = false
     static var isNotificationAuthorized: Bool = false

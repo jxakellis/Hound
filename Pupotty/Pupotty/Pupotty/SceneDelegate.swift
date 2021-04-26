@@ -1,6 +1,6 @@
 //
 //  SceneDelegate.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 11/4/20.
 //  Copyright © 2020 Jonathan Xakellis. All rights reserved.

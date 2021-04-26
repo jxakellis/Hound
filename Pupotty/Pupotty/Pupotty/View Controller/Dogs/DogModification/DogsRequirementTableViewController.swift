@@ -1,6 +1,6 @@
 //
 //  DogsRequirementTableViewController.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 1/20/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
@@ -46,6 +46,12 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
         setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
     }
     
+    func didRemoveRequirement(sender: Sender, removedRequirementName: String) {
+        var sudoRequirementManager = getRequirementManager()
+        try! sudoRequirementManager.removeRequirement(requirementName: removedRequirementName)
+        setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
+    }
+    
     ///Allows for unwind to this page when back button is clicked in requirement editor
     @IBAction func unwind(_ seg: UIStoryboardSegue){
         
@@ -63,6 +69,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     func setRequirementManager(sender: Sender, newRequirementManager: RequirementManager) {
         //RequirementManagerEfficencyImprovements requirementManager = newRequirementManager.copy() as! RequirementManager
         requirementManager = newRequirementManager
+        
         if !(sender.localized is DogsRequirementNavigationViewController){
             delegate.didUpdateRequirements(newRequirementList: getRequirementManager().requirements)
         }

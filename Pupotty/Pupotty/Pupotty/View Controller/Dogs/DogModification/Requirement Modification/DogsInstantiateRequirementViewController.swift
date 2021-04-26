@@ -1,6 +1,6 @@
 //
 //  DogsInstantiateRequirementViewController.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 1/20/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
@@ -12,6 +12,7 @@ import UIKit
 protocol DogsInstantiateRequirementViewControllerDelegate {
     func didAddRequirement(sender: Sender, newRequirement: Requirement) throws
     func didUpdateRequirement(sender: Sender, formerName: String, updatedRequirement: Requirement) throws
+    func didRemoveRequirement(sender: Sender, removedRequirementName: String)
 }
 
 class DogsInstantiateRequirementViewController: UIViewController, DogsRequirementManagerViewControllerDelegate{
@@ -47,8 +48,28 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
     @IBOutlet private weak var saveButton: UIBarButtonItem!
         
     @IBAction private func backButton(_ sender: Any) {
-            performSegue(withIdentifier: "unwindToAddDogRequirementTableView", sender: self)
+        self.performSegue(withIdentifier: "unwindToAddDogRequirementTableView", sender: self)
         }
+    
+    @IBOutlet weak var requirementRemoveButton: UIBarButtonItem!
+    @IBAction func willRemoveRequirement(_ sender: Any) {
+        let removeRequirementConfirmation = GeneralAlertController(title: "Are you sure you want to delete \"\(dogsRequirementManagerViewController.requirementName.text ?? targetRequirement!.requirementName)\"", message: nil, preferredStyle: .alert)
+        
+        let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { (UIAlertAction) in
+            self.delegate.didRemoveRequirement(sender: Sender(origin: self, localized: self), removedRequirementName: self.targetRequirement!.requirementName)
+            self.performSegue(withIdentifier: "unwindToAddDogRequirementTableView", sender: self)
+        }
+        
+        let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel) { (UIAlertAction) in
+            //
+        }
+        
+        removeRequirementConfirmation.addAction(alertActionRemove)
+        removeRequirementConfirmation.addAction(alertActionCancel)
+        
+        AlertPresenter.shared.enqueueAlertForPresentation(removeRequirementConfirmation)
+    }
+    
     //Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured requirement back to table view.
         @IBAction private func willSave(_ sender: Any) {
             
@@ -70,10 +91,12 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
         super.viewDidLoad()
         
         if targetRequirement != nil {
+            requirementRemoveButton.isEnabled = true
             saveButton.title = "Update"
             pageNavigationBar.title = "Update Reminder"
         }
         else {
+            requirementRemoveButton.isEnabled = false
             saveButton.title = "Add"
             pageNavigationBar.title = "Create Reminder"
         }

@@ -1,6 +1,6 @@
 //
 //  SettingsViewController.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 2/5/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
@@ -19,42 +19,66 @@ class SettingsViewController: UIViewController, ToolTipable {
     @IBOutlet private weak var isNotificationEnabledSwitch: UISwitch!
     
     @IBAction private func didToggleNotificationEnabled(_ sender: Any) {
-        //Notifications not authorized, it is also know that they MUST be disabled then and the switch is going from off to on
-        if NotificationConstant.isNotificationAuthorized == false {
-            Utils.willShowAlert(title: "Notifcations Disabled", message: "To enable notifications go to the Settings App -> Notifications -> Pupotty and enable \"Allow Notifications\"")
-            
-            let switchDisableTimer = Timer(fireAt: Date().addingTimeInterval(0.15), interval: -1, target: self, selector: #selector(disableIsNotificationEnabledSwitch), userInfo: nil, repeats: false)
-            
-            RunLoop.main.add(switchDisableTimer, forMode: .common)
-            
-        }
-        //Notifications authorized
-        else {
-            //notications enabled, going from on to off
-            if NotificationConstant.isNotificationEnabled == true {
-                NotificationConstant.isNotificationEnabled = false
-                synchronizeFollowUpComponents(animated: true)
+        
+        UNUserNotificationCenter.current().getNotificationSettings { (permission) in
+            switch permission.authorizationStatus {
+            case .authorized:
+                DispatchQueue.main.async {
+                    //notications enabled, going from on to off
+                    if NotificationConstant.isNotificationEnabled == true {
+                        NotificationConstant.isNotificationEnabled = false
+                    }
+                    //notifications disabled, going from off to on
+                    else {
+                        NotificationConstant.isNotificationEnabled = true
+                    }
+                    self.synchronizeFollowUpComponents(animated: true)
+                }
+            case .denied:
+                DispatchQueue.main.async {
+                    Utils.willShowAlert(title: "Notifcations Disabled", message: "To enable notifications go to the Settings App -> Notifications -> Pupotty and enable \"Allow Notifications\"")
+                    
+                    let switchDisableTimer = Timer(fireAt: Date().addingTimeInterval(0.15), interval: -1, target: self, selector: #selector(self.disableIsNotificationEnabledSwitch), userInfo: nil, repeats: false)
+                    
+                    RunLoop.main.add(switchDisableTimer, forMode: .common)
+                    
+                    self.synchonrizeAllNotificationSwitches(animated: true)
+                }
+            case .notDetermined:
+                UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
+                    NotificationConstant.isNotificationAuthorized = isGranted
+                    NotificationConstant.isNotificationEnabled = isGranted
+                    NotificationConstant.shouldFollowUp = isGranted
+                    
+                    DispatchQueue.main.async {
+                        self.synchonrizeAllNotificationSwitches(animated: true)
+                    }
+                    
+                }
+            case .provisional:
+                print(".provisional")
+            case .ephemeral:
+                print(".ephemeral")
+            @unknown default:
+                print("unknown auth status")
             }
-            //notifications disabled, going from off to on
-            else {
-                NotificationConstant.isNotificationEnabled = true
-                synchronizeFollowUpComponents(animated: true)
-            }
         }
+        
+        
+        
     }
     
     @objc private func disableIsNotificationEnabledSwitch(){
         self.isNotificationEnabledSwitch.setOn(false, animated: true)
     }
     
-    func refreshNotificationSwitches(animated: Bool){
+    func synchonrizeAllNotificationSwitches(animated: Bool){
         //If disconnect between stored and displayed
         if isNotificationEnabledSwitch.isOn != NotificationConstant.isNotificationEnabled {
             isNotificationEnabledSwitch.setOn(NotificationConstant.isNotificationEnabled, animated: true)
         }
         self.synchronizeFollowUpComponents(animated: animated)
     }
-    
     
     
     //MARK: Follow Up Notification
@@ -68,42 +92,21 @@ class SettingsViewController: UIViewController, ToolTipable {
     }
     
     private func synchronizeFollowUpComponents(animated: Bool){
-        //animated
-        if animated == true {
             //notifications are enabled
             if NotificationConstant.isNotificationEnabled == true {
                 shouldFollowUp.isEnabled = true
-                shouldFollowUp.isOn = NotificationConstant.shouldFollowUp
+                shouldFollowUp.setOn(NotificationConstant.shouldFollowUp, animated: animated)
                 
                 followUpDelayInterval.isEnabled = true
             }
             //notifications are disabled
             else {
                 shouldFollowUp.isEnabled = false
-                shouldFollowUp.setOn(false, animated: true)
+                shouldFollowUp.setOn(false, animated: animated)
                 NotificationConstant.shouldFollowUp = false
                 
                 followUpDelayInterval.isEnabled = false
             }
-        }
-        //not animated
-        else {
-            //notifications are enabled
-            if NotificationConstant.isNotificationEnabled == true {
-                shouldFollowUp.isEnabled = true
-                shouldFollowUp.isOn = NotificationConstant.shouldFollowUp
-                
-                followUpDelayInterval.isEnabled = true
-            }
-            //notifications are disabled
-            else {
-                shouldFollowUp.isEnabled = false
-                shouldFollowUp.isOn = false
-                NotificationConstant.shouldFollowUp = false
-                
-                followUpDelayInterval.isEnabled = false
-            }
-        }
     }
     
     //MARK: Follow Up Delay

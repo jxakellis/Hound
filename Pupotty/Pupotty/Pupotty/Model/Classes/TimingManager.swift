@@ -1,6 +1,6 @@
 //
 //  Timing.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 11/20/20.
 //  Copyright © 2020 Jonathan Xakellis. All rights reserved.
@@ -394,7 +394,7 @@ class TimingManager{
         
         let requirement = try! dogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(requirementName: targetRequirementName)
         
-        requirement.timerReset(didExecuteToUser: true)
+        requirement.timerReset(shouldLogExecution: true)
         
         requirement.setEnable(newEnableStatus: false)
         
@@ -407,7 +407,7 @@ class TimingManager{
         
         let newSnoozeStatus = !isCancellingSnooze
         
-        requirement.timerReset(didExecuteToUser: newSnoozeStatus)
+        requirement.timerReset(shouldLogExecution: false)
         
         requirement.snoozeComponents.changeSnooze(newSnoozeStatus: newSnoozeStatus)
         
@@ -428,7 +428,7 @@ class TimingManager{
         //Skips next TOD
         else if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.isSkipping == false && Date().distance(to: TimingManager.timerDictionary[targetDogName]![targetRequirementName]!.fireDate) > 0{
             let executionBasisBackup = requirement.executionBasis
-            requirement.timerReset(didExecuteToUser: true)
+            requirement.timerReset(shouldLogExecution: true)
             requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: true)
             requirement.changeExecutionBasis(newExecutionBasis: executionBasisBackup, shouldResetIntervalsElapsed: false)
         }
@@ -441,7 +441,7 @@ class TimingManager{
         }
         //Regular reset
         else {
-            requirement.timerReset(didExecuteToUser: true)
+            requirement.timerReset(shouldLogExecution: true)
         }
         
         delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)

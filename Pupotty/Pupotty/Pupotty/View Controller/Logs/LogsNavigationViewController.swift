@@ -1,6 +1,6 @@
 //
 //  LogsNavigationViewController.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 4/17/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.

@@ -1,13 +1,21 @@
 //
 //  MainTabBarViewController.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 2/1/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
 //
 import UIKit
 
-class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, SettingsNavigationViewControllerDelegate, LogsNavigationViewControllerDelegate {
+class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, SettingsNavigationViewControllerDelegate, LogsNavigationViewControllerDelegate, IntroductionViewControllerDelegate {
+    
+    //MARK: IntroductionViewControllerDelegate
+    
+    func didSetDogName(sender: Sender, dogName: String) {
+        let sudoDogManager = getDogManager()
+        try! sudoDogManager.dogs[0].dogTraits.changeDogName(newDogName: dogName)
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
+    }
     
     //MARK: SettingsViewControllerDelegate
     
@@ -69,6 +77,12 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
             dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
         
+        if sender.localized is IntroductionViewController {
+            homeViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+            logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+            dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+        }
+        
         if !(sender.localized is MainTabBarViewController){
             self.updateDogManagerDependents()
         }
@@ -93,7 +107,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     var settingsNavigationViewController: SettingsNavigationViewController! = nil
     var settingsViewController: SettingsViewController! = nil
     
-   
+    static var firstTimeSetup: Bool = false
     
     static var mainTabBarViewController: MainTabBarViewController! = nil
     
@@ -150,6 +164,11 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         super.viewDidAppear(animated)
         Utils.presenter = self
         AlertPresenter.shared.refresh(dogManager: getDogManager())
+        
+        if MainTabBarViewController.firstTimeSetup == true {
+            MainTabBarViewController.firstTimeSetup = false
+            self.performSegue(withIdentifier: "introductionViewController", sender: self)
+        }
     }
     
     override open var shouldAutorotate: Bool {
@@ -161,14 +180,17 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     }
     
     
-    /*
+    
      // MARK: - Navigation
      
      // In a storyboard-based application, you will often want to do a little preparation before navigation
      override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
+        if segue.identifier == "introductionViewController"{
+            let introductionViewController: IntroductionViewController = segue.destination as! IntroductionViewController
+            introductionViewController.delegate = self
+            //self.present(introductionViewController, animated: true, completion: nil)
+        }
      }
-     */
+     
     
 }

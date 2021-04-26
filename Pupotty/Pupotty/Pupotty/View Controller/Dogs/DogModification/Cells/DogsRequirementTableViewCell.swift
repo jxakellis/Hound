@@ -1,6 +1,6 @@
 //
 //  DogsRequirementTableViewCell.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 1/20/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.

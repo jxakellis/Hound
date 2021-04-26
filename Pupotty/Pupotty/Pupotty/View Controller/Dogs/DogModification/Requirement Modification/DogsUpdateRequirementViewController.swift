@@ -1,6 +1,6 @@
 //
 //  DogsUpdateRequirementViewController.swift
-//  Who Let The Dogs Out
+//  Pupotty
 //
 //  Created by Jonathan Xakellis on 2/26/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
@@ -10,6 +10,7 @@ import UIKit
 
 protocol DogsUpdateRequirementViewControllerDelegate {
     func didUpdateRequirement(sender: Sender, parentDogName: String, formerName: String, updatedRequirement: Requirement) throws
+    func didRemoveRequirement(sender: Sender, parentDogName: String, removedRequirementName: String)
 }
 
 class DogsUpdateRequirementViewController: UIViewController, DogsRequirementManagerViewControllerDelegate {
@@ -24,7 +25,7 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
         do {
             
             try delegate.didUpdateRequirement(sender: Sender(origin: self, localized: self), parentDogName: parentDogName, formerName: targetRequirement!.requirementName, updatedRequirement: updatedRequirement)
-            self.performSegue(withIdentifier: "unwindToDogsViewControllerUR", sender: self)
+            self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
         }
         catch {
             ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: error)
@@ -49,9 +50,43 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
         
     }
     
+    @IBOutlet weak var requirementRemoveButton: UIBarButtonItem!
+    
+    @IBAction func willRemoveRequirement(_ sender: Any) {
+        let removeRequirementConfirmation = GeneralAlertController(title: "Are you sure you want to delete \"\(dogsRequirementManagerViewController.requirementName.text ?? targetRequirement.requirementName)\"", message: nil, preferredStyle: .alert)
+        
+        let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { (UIAlertAction) in
+            self.delegate.didRemoveRequirement(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, removedRequirementName: self.targetRequirement.requirementName)
+            self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
+        }
+        
+        let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel) { (UIAlertAction) in
+            //
+        }
+        
+        removeRequirementConfirmation.addAction(alertActionRemove)
+        removeRequirementConfirmation.addAction(alertActionCancel)
+        
+        AlertPresenter.shared.enqueueAlertForPresentation(removeRequirementConfirmation)
+    }
+    
     ///The cancel / exit button was pressed, dismisses view to complete intended action
     @IBAction private func willCancel(_ sender: Any) {
-        self.performSegue(withIdentifier: "unwindToDogsViewControllerUR", sender: self)
+        
+        let unsavedInformationConfirmation = GeneralAlertController(title: "Are you sure you want to exit?", message: "Any changes you have made won't be saved", preferredStyle: .alert)
+        
+        let alertActionExit = UIAlertAction(title: "Yes, I don't want to save", style: .default) { (UIAlertAction) in
+            self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
+        }
+        
+        let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel) { (UIAlertAction) in
+            //
+        }
+        
+        unsavedInformationConfirmation.addAction(alertActionExit)
+        unsavedInformationConfirmation.addAction(alertActionCancel)
+        
+        AlertPresenter.shared.enqueueAlertForPresentation(unsavedInformationConfirmation)
     }
     
     //MARK: Properties
