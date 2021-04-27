@@ -118,7 +118,7 @@ extension String {
     }
     
     ///Adds given text with given font to the end of the string, converts whole thing to NSAttributedString
-    func withFontAtEnd(text: String, font customFont: UIFont) -> NSAttributedString {
+    func addingFontToEnd(text: String, font customFont: UIFont) -> NSAttributedString {
         let originalString = NSMutableAttributedString(string: self)
         
         let customFontAttribute = [NSAttributedString.Key.font: customFont]
@@ -130,7 +130,7 @@ extension String {
     }
     
     ///Adds given text with given font to the start of the string, converts whole thing to NSAttributedString
-    func withFontAtBeginning(text: String, font customFont: UIFont) -> NSAttributedString {
+    func addingFontToBeginning(text: String, font customFont: UIFont) -> NSAttributedString {
         let originalString = NSMutableAttributedString(string: self)
         
         let customFontAttribute = [NSAttributedString.Key.font: customFont]
@@ -142,7 +142,7 @@ extension String {
     }
     
     ///Takes the string with a given font and height and finds the width the text takes up
-    func withBoundedWidth(font: UIFont = UIFont.systemFont(ofSize: 17), height: CGFloat) -> CGSize {
+    func boundingFrom(font: UIFont = UIFont.systemFont(ofSize: 17), height: CGFloat) -> CGSize {
             let attrString = NSAttributedString(string: self, attributes: [.font: font])
         
             let bounds = attrString.boundingRect(with: CGSize(width: .greatestFiniteMagnitude, height: height), options: .usesLineFragmentOrigin, context: nil)
@@ -154,7 +154,7 @@ extension String {
     }
     
     ///Takes the string with a given font and width and finds the height the text takes up
-    func withBoundedHeight(font: UIFont = UIFont.systemFont(ofSize: 17), width: CGFloat) -> CGSize {
+    func boundingFrom(font: UIFont = UIFont.systemFont(ofSize: 17), width: CGFloat) -> CGSize {
         let attrString = NSAttributedString(string: self, attributes: [.font: font])
     
         let bounds = attrString.boundingRect(with: CGSize(width: width, height: .greatestFiniteMagnitude), options: .usesLineFragmentOrigin, context: nil)
@@ -165,9 +165,9 @@ extension String {
     
     }
     
-    func withBounded(font: UIFont = UIFont.systemFont(ofSize: 17)) -> CGSize {
-        let boundHeight = self.withBoundedHeight(font: font, width: .greatestFiniteMagnitude)
-        let boundWidth = self.withBoundedWidth(font: font, height: .greatestFiniteMagnitude)
+    func bounding(font: UIFont = UIFont.systemFont(ofSize: 17)) -> CGSize {
+        let boundHeight = self.boundingFrom(font: font, width: .greatestFiniteMagnitude)
+        let boundWidth = self.boundingFrom(font: font, height: .greatestFiniteMagnitude)
         return CGSize (width: boundWidth.width, height: boundHeight.height)
         
     }

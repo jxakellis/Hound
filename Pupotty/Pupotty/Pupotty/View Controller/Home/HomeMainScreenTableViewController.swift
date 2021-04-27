@@ -137,13 +137,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         
         let alertController = GeneralAlertController(title: "\(requirement.requirementName) for \(parentDogName)", message: nil, preferredStyle: .actionSheet)
         
-        let alertActionCancel = UIAlertAction(
-            title:"Cancel",
-            style: .cancel,
-            handler:
-                {
-                    (alert: UIAlertAction!)  in
-                })
+        let alertActionCancel = UIAlertAction(title:"Cancel", style: .cancel, handler: nil)
         
         let alertActionDisable = UIAlertAction(
             title:"Disable",

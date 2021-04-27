@@ -109,9 +109,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
             self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
         }
         
-        let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel) { (UIAlertAction) in
-            //
-        }
+        let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
         unsavedInformationConfirmation.addAction(alertActionExit)
         unsavedInformationConfirmation.addAction(alertActionCancel)

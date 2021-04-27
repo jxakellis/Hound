@@ -113,7 +113,7 @@ class DogsRequirementTableViewCell: UITableViewCell {
             }
         }
         
-        requirementDisplay.attributedText = requirementDisplay.text?.withFontAtBeginning(text: requirement.requirementName + " -", font: UIFont.systemFont(ofSize: requirementDisplay.font.pointSize, weight: .medium))
+        requirementDisplay.attributedText = requirementDisplay.text?.addingFontToBeginning(text: requirement.requirementName + " -", font: UIFont.systemFont(ofSize: requirementDisplay.font.pointSize, weight: .medium))
         
         self.requirementEnableStatus.isOn = requirement.getEnable()
         

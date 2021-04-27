@@ -60,9 +60,7 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
             self.performSegue(withIdentifier: "unwindToAddDogRequirementTableView", sender: self)
         }
         
-        let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel) { (UIAlertAction) in
-            //
-        }
+        let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
         removeRequirementConfirmation.addAction(alertActionRemove)
         removeRequirementConfirmation.addAction(alertActionCancel)

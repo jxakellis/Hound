@@ -59,7 +59,7 @@ class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
                 
                 timeLeft.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .regular)])
                 
-                timeLeft.attributedText = timeLeft.text!.withFontAtEnd(text: " Left", font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .semibold))
+                timeLeft.attributedText = timeLeft.text!.addingFontToEnd(text: " Left", font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .semibold))
             }
         }
         
@@ -83,7 +83,7 @@ class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
                 
                 timeLeft.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .regular)])
                 
-                timeLeft.attributedText = timeLeft.text!.withFontAtEnd(text: " Left", font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .semibold))
+                timeLeft.attributedText = timeLeft.text!.addingFontToEnd(text: " Left", font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .semibold))
             }
         }
         

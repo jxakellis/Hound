@@ -27,6 +27,8 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet private weak var dogName: UITextField!
     
+    @IBOutlet private weak var notificationsDescription: CustomLabel!
+    
     @IBOutlet private weak var helpDescription: CustomLabel!
     
     @IBOutlet private weak var continueButton: UIButton!
@@ -96,11 +98,15 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate {
     
     ///Scales the frames of different labels so that they fit their text with the set font perfectly.
     private func scaleLabelFrames(){
-        dogNameDescription.frame.size = (dogNameDescription.text?.withBoundedHeight(font: dogNameDescription.font, width: dogNameDescription.frame.width))!
+        dogNameDescription.frame.size = (dogNameDescription.text?.boundingFrom(font: dogNameDescription.font, width: dogNameDescription.frame.width))!
         
         dogNameDescription.removeConstraint(dogNameDescription.constraints[0])
         
-        helpDescription.frame.size = (helpDescription.text?.withBoundedHeight(font: helpDescription.font, width: helpDescription.frame.width))!
+        notificationsDescription.frame.size = (notificationsDescription.text?.boundingFrom(font: notificationsDescription.font, width: notificationsDescription.frame.width))!
+        
+        notificationsDescription.removeConstraint(notificationsDescription.constraints[0])
+        
+        helpDescription.frame.size = (helpDescription.text?.boundingFrom(font: helpDescription.font, width: helpDescription.frame.width))!
         
         helpDescription.removeConstraint(helpDescription.constraints[0])
     }

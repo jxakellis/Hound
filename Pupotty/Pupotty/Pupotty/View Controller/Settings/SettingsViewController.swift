@@ -217,14 +217,7 @@ class SettingsViewController: UIViewController, ToolTipable {
                     RunLoop.main.add(restartTimer, forMode: .common)
                  })
         
-        let alertCancel = UIAlertAction(
-            title:"Cancel",
-            style: .cancel,
-            handler:
-                {
-                    (alert: UIAlertAction!)  in
-                    
-                })
+        let alertCancel = UIAlertAction(title:"Cancel", style: .cancel, handler: nil)
          
          alertController.addAction(alertReset)
          alertController.addAction(alertCancel)
@@ -269,7 +262,7 @@ class SettingsViewController: UIViewController, ToolTipable {
             let otherButtonSpace: CGFloat = shouldFollowUp.frame.width + toolTipButton.frame.width
             let maximumWidth: CGFloat = view.frame.width - otherButtonSpace - neededConstraintSpace
             
-            let neededLabelSize: CGSize = (followUpReminderLabel.text?.withBoundedWidth(font: followUpReminderLabel.font, height: followUpReminderLabel.frame.height))!
+            let neededLabelSize: CGSize = (followUpReminderLabel.text?.boundingFrom(font: followUpReminderLabel.font, height: followUpReminderLabel.frame.height))!
             
             let neededLabelWidth: CGFloat = neededLabelSize.width
             

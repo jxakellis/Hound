@@ -372,7 +372,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     ///Creates a label for a given add button with the specified text, handles all frame, origin, and size related things
     private func createAddButtonLabel(_ button: ScaledButton, text: String) -> UILabel {
         let buttonLabelFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
-        let buttonLabelSize = text.withBounded(font: buttonLabelFont)
+        let buttonLabelSize = text.bounding(font: buttonLabelFont)
         let buttonLabel = UILabel(frame: CGRect(origin: CGPoint (x: button.frame.origin.x - buttonLabelSize.width, y: button.frame.midY - (buttonLabelSize.height/2)),size: buttonLabelSize ))
             
         buttonLabel.attributedText = NSAttributedString(string: text, attributes: [.font: buttonLabelFont])

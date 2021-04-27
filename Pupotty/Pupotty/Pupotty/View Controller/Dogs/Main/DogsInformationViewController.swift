@@ -28,11 +28,11 @@ class DogsInformationViewController: UIViewController {
         
         configureLabelText()
         
-        purposeBody.frame.size = (purposeBody.text?.withBoundedHeight(font: purposeBody.font, width: purposeBody.frame.width))!
+        purposeBody.frame.size = (purposeBody.text?.boundingFrom(font: purposeBody.font, width: purposeBody.frame.width))!
         
         purposeBody.removeConstraint(purposeBody.constraints[0])
         
-        howToUseBody.frame.size = (howToUseBody.text?.withBoundedHeight(font: howToUseBody.font, width: howToUseBody.frame.width))!
+        howToUseBody.frame.size = (howToUseBody.text?.boundingFrom(font: howToUseBody.font, width: howToUseBody.frame.width))!
         
         howToUseBody.removeConstraint(howToUseBody.constraints[0])
     }
@@ -45,7 +45,7 @@ class DogsInformationViewController: UIViewController {
     ///Configures the body text to an attributed string, the headers are .semibold and rest is .regular, font size is the one specified in the storyboard
     private func configureLabelText(){
         let howToUseBodyAttributedText = NSMutableAttributedString(string: "Create New:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)])
-        howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo create a new dog or reminder click on the blue plus circle (located in bottom right) and then the corresponding option. You can also create a new reminder while editing a dog by clicking the small blue plus button next to the word \"Reminders\"\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
+        howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo create a new dog or reminder, click on the blue plus circle (located in bottom right) and then the corresponding option. You can also create a new reminder while editing a dog by clicking the small blue plus button next to the word \"Reminders\"\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
         
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Manage Current:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
@@ -53,11 +53,11 @@ class DogsInformationViewController: UIViewController {
         
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Edit Current:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
-        howToUseBodyAttributedText.append(NSAttributedString(string: "\nClick on any dog or reminder you wish to modify. The same principles apply inside any of these menus for managing, editing, and deleting.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
+        howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo modify a dog or reminder, click on the desired one. From there you can see and change all of its information, excluding logs. The same principles apply inside any of these menus for managing, editing, and deleting.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
         
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Delete Current:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
-        howToUseBodyAttributedText.append(NSAttributedString(string: "\nSwipe left on a dog or a reminder to delete it. Another way to delete is to click on one of them then click the trash can icon located in the top right.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
+        howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo delete a dog or reminder, swipe left on it. Another way to delete is to click on one then click the trash can icon located in the top right.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
         
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Reminder Timing:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))

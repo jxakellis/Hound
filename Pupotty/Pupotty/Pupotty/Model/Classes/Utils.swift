@@ -26,13 +26,7 @@ class Utils
             message: trimmedMessage,
             preferredStyle: .alert)
         
-        let alertAction = UIAlertAction(
-            title:"OK",
-            style: .cancel,
-            handler:
-                {
-                    (alert: UIAlertAction!)  in
-                })
+        let alertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         
         alertController.addAction(alertAction)
         

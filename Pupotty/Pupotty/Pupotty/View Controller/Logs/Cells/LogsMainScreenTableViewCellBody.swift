@@ -47,9 +47,9 @@ class LogsMainScreenTableViewCellBody: UITableViewCell {
         }
         
         dogName.frame = CGRect(origin: dogName.frame.origin,
-                               size: dogName.text!.withBoundedWidth(font: dogName.font, height: dogName.frame.height))
+                               size: dogName.text!.boundingFrom(font: dogName.font, height: dogName.frame.height))
         requirementName.frame = CGRect(origin: requirementName.frame.origin,
-                                            size: requirementName.text!.withBoundedWidth(font: requirementName.font, height: requirementName.frame.height))
+                                            size: requirementName.text!.boundingFrom(font: requirementName.font, height: requirementName.frame.height))
         
     }
 

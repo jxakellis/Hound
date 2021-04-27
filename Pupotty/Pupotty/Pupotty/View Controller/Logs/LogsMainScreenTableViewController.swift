@@ -280,7 +280,12 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         alertController.addTextField { (UITextField) in
             UITextField.text = selectedLog.0.note
+            UITextField.clearButtonMode = .always
+            UITextField.autocapitalizationType = .sentences
+            UITextField.placeholder = "Note about \(selectedLog.1)'s \(selectedLog.2.requirementName)"
+            UITextField.returnKeyType = .done
         }
+        //alertController
         
         let alertActionSubmit = UIAlertAction(title: "Submit", style: .default) { (UIAlertAction) in
             selectedLog.0.changeNote(newNote: alertController.textFields![0].text ?? "")

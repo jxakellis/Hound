@@ -60,9 +60,7 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
             self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
         }
         
-        let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel) { (UIAlertAction) in
-            //
-        }
+        let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
         removeRequirementConfirmation.addAction(alertActionRemove)
         removeRequirementConfirmation.addAction(alertActionCancel)
@@ -79,9 +77,7 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
             self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
         }
         
-        let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel) { (UIAlertAction) in
-            //
-        }
+        let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
         unsavedInformationConfirmation.addAction(alertActionExit)
         unsavedInformationConfirmation.addAction(alertActionCancel)

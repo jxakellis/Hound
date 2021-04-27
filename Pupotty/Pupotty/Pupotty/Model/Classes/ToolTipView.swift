@@ -33,7 +33,7 @@ class ToolTipView: UIView {
        
         self.init()
         
-        let messageBounds = message.withBounded()
+        let messageBounds = message.bounding()
         
         let sourceCenter = sourceView.center
         

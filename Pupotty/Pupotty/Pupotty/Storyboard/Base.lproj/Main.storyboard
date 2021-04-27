@@ -52,8 +52,87 @@
                     <view key="view" contentMode="scaleToFill" id="a5q-sn-b7g">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8jj-GS-rFC">
+                                <rect key="frame" x="0.0" y="88" width="414" height="725"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KWu-EC-c1X" userLabel="Scroll View Container For All">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="430"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Purpose" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="j0M-Pa-ISw" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="10" width="394" height="40"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="40" id="5U2-er-pXX"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="40"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Used to see, log, and manage reminders." lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="ac9-Be-gqS" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="60" width="394" height="100"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="100" id="atf-9a-6rw"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="How To Use" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="1Aq-4d-UDU" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="170" width="394" height="40"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="40" id="1hu-9e-ZjB"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="40"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="text set in class" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="312-a2-HEc" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="220" width="394" height="200"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="200" id="rnL-mJ-92t"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="j0M-Pa-ISw" secondAttribute="trailing" constant="10" id="1sk-cB-IfU"/>
+                                            <constraint firstItem="312-a2-HEc" firstAttribute="leading" secondItem="KWu-EC-c1X" secondAttribute="leading" constant="10" id="D3u-iS-Deb"/>
+                                            <constraint firstAttribute="trailing" secondItem="1Aq-4d-UDU" secondAttribute="trailing" constant="10" id="KpR-vo-E8C"/>
+                                            <constraint firstItem="ac9-Be-gqS" firstAttribute="top" secondItem="j0M-Pa-ISw" secondAttribute="bottom" constant="10" id="Mtf-nb-UnP"/>
+                                            <constraint firstAttribute="bottom" secondItem="312-a2-HEc" secondAttribute="bottom" constant="10" id="NrA-sf-b7J"/>
+                                            <constraint firstItem="312-a2-HEc" firstAttribute="top" secondItem="1Aq-4d-UDU" secondAttribute="bottom" constant="10" id="PAf-VF-fiV"/>
+                                            <constraint firstItem="j0M-Pa-ISw" firstAttribute="leading" secondItem="KWu-EC-c1X" secondAttribute="leading" constant="10" id="Yfp-la-8qm"/>
+                                            <constraint firstItem="ac9-Be-gqS" firstAttribute="leading" secondItem="KWu-EC-c1X" secondAttribute="leading" constant="10" id="Z3c-ew-3NG"/>
+                                            <constraint firstItem="1Aq-4d-UDU" firstAttribute="top" secondItem="ac9-Be-gqS" secondAttribute="bottom" constant="10" id="bxW-kq-jAp"/>
+                                            <constraint firstAttribute="trailing" secondItem="312-a2-HEc" secondAttribute="trailing" constant="10" id="fjJ-mz-PeK"/>
+                                            <constraint firstAttribute="trailing" secondItem="ac9-Be-gqS" secondAttribute="trailing" constant="10" id="l7V-Ng-B1m"/>
+                                            <constraint firstItem="j0M-Pa-ISw" firstAttribute="top" secondItem="KWu-EC-c1X" secondAttribute="top" constant="10" id="sWa-L3-iRN"/>
+                                            <constraint firstItem="1Aq-4d-UDU" firstAttribute="leading" secondItem="KWu-EC-c1X" secondAttribute="leading" constant="10" id="xuL-Xg-fvz"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="KWu-EC-c1X" firstAttribute="top" secondItem="tB3-hk-4S4" secondAttribute="top" id="6tO-T8-DM6"/>
+                                    <constraint firstItem="KWu-EC-c1X" firstAttribute="width" secondItem="CV8-gT-x4m" secondAttribute="width" id="JQR-mi-P5R"/>
+                                    <constraint firstItem="KWu-EC-c1X" firstAttribute="leading" secondItem="tB3-hk-4S4" secondAttribute="leading" id="r2x-vi-nqc"/>
+                                    <constraint firstItem="KWu-EC-c1X" firstAttribute="trailing" secondItem="tB3-hk-4S4" secondAttribute="trailing" id="vC7-59-2ej"/>
+                                    <constraint firstItem="KWu-EC-c1X" firstAttribute="bottom" secondItem="tB3-hk-4S4" secondAttribute="bottom" id="yvL-2P-O89"/>
+                                </constraints>
+                                <viewLayoutGuide key="contentLayoutGuide" id="tB3-hk-4S4"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="CV8-gT-x4m"/>
+                            </scrollView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="qge-Jy-1zq"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="8jj-GS-rFC" firstAttribute="leading" secondItem="qge-Jy-1zq" secondAttribute="leading" id="2C9-ab-YHd"/>
+                            <constraint firstItem="8jj-GS-rFC" firstAttribute="top" secondItem="qge-Jy-1zq" secondAttribute="top" id="Qpf-dK-tUw"/>
+                            <constraint firstItem="qge-Jy-1zq" firstAttribute="trailing" secondItem="8jj-GS-rFC" secondAttribute="trailing" id="bgh-hb-5Jj"/>
+                            <constraint firstItem="qge-Jy-1zq" firstAttribute="bottom" secondItem="8jj-GS-rFC" secondAttribute="bottom" id="zKc-5U-85h"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Reminders Information" id="Stz-3c-NtG">
                         <barButtonItem key="leftBarButtonItem" image="chevron.left" catalog="system" id="c8X-EA-0Bf">
@@ -63,6 +142,8 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="howToUseBody" destination="312-a2-HEc" id="Ic3-s9-FG6"/>
+                        <outlet property="purposeBody" destination="ac9-Be-gqS" id="VF7-t5-VuD"/>
                         <segue destination="Ihw-P3-kQr" kind="unwind" identifier="unwindToHomeViewController" unwindAction="unwind:" id="dcR-rB-D5D"/>
                     </connections>
                 </viewController>
@@ -1057,7 +1138,7 @@
                                                     <action selector="didUpdateSnoozeInterval:" destination="yOJ-Bd-jVl" eventType="valueChanged" id="QpP-tG-WEf"/>
                                                 </connections>
                                             </datePicker>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Notifications" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="4D0-gF-bOZ" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Alarm Notifications" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="4D0-gF-bOZ" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
                                                 <rect key="frame" x="10" y="25" width="300" height="30"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="30" id="AQm-GA-VoY"/>
@@ -1372,8 +1453,87 @@
                     <view key="view" contentMode="scaleToFill" id="i4B-GI-E4U">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yr6-Pd-Tm3">
+                                <rect key="frame" x="0.0" y="88" width="414" height="725"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lxN-QV-jr5" userLabel="Scroll View Container For All">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="430"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Purpose" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="HxW-lL-rcd" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="10" width="394" height="40"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="40" id="RXa-iw-Tu7"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="40"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Used to see, edit, and delete reminder logs." lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="gSa-uV-Pe7" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="60" width="394" height="100"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="100" id="OJE-GI-HOT"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="How To Use" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Dgg-Al-SVf" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="170" width="394" height="40"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="40" id="CGx-mR-a3B"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="40"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="text set in class" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="rVo-xQ-Lmb" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="220" width="394" height="200"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="200" id="1kr-PH-Gcz"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="bottom" secondItem="rVo-xQ-Lmb" secondAttribute="bottom" constant="10" id="1xF-Dv-IUv"/>
+                                            <constraint firstAttribute="trailing" secondItem="rVo-xQ-Lmb" secondAttribute="trailing" constant="10" id="43q-U2-qnz"/>
+                                            <constraint firstItem="HxW-lL-rcd" firstAttribute="top" secondItem="lxN-QV-jr5" secondAttribute="top" constant="10" id="CZx-Dg-2Z7"/>
+                                            <constraint firstItem="gSa-uV-Pe7" firstAttribute="leading" secondItem="lxN-QV-jr5" secondAttribute="leading" constant="10" id="Gun-ZU-EKp"/>
+                                            <constraint firstAttribute="trailing" secondItem="HxW-lL-rcd" secondAttribute="trailing" constant="10" id="Kbw-iq-0oc"/>
+                                            <constraint firstAttribute="trailing" secondItem="Dgg-Al-SVf" secondAttribute="trailing" constant="10" id="PNg-ej-PTW"/>
+                                            <constraint firstItem="gSa-uV-Pe7" firstAttribute="top" secondItem="HxW-lL-rcd" secondAttribute="bottom" constant="10" id="PY5-vB-hMK"/>
+                                            <constraint firstItem="rVo-xQ-Lmb" firstAttribute="leading" secondItem="lxN-QV-jr5" secondAttribute="leading" constant="10" id="Pf7-4a-3v8"/>
+                                            <constraint firstItem="rVo-xQ-Lmb" firstAttribute="top" secondItem="Dgg-Al-SVf" secondAttribute="bottom" constant="10" id="Shj-MX-phj"/>
+                                            <constraint firstItem="Dgg-Al-SVf" firstAttribute="leading" secondItem="lxN-QV-jr5" secondAttribute="leading" constant="10" id="YTA-00-xgf"/>
+                                            <constraint firstItem="HxW-lL-rcd" firstAttribute="leading" secondItem="lxN-QV-jr5" secondAttribute="leading" constant="10" id="ZX5-ue-SdF"/>
+                                            <constraint firstAttribute="trailing" secondItem="gSa-uV-Pe7" secondAttribute="trailing" constant="10" id="eFt-05-Gc3"/>
+                                            <constraint firstItem="Dgg-Al-SVf" firstAttribute="top" secondItem="gSa-uV-Pe7" secondAttribute="bottom" constant="10" id="mRm-Ha-cZd"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="lxN-QV-jr5" firstAttribute="trailing" secondItem="md6-61-xDW" secondAttribute="trailing" id="5ut-ff-BzI"/>
+                                    <constraint firstItem="lxN-QV-jr5" firstAttribute="width" secondItem="YjH-dw-N4v" secondAttribute="width" id="S4W-4h-Mx6"/>
+                                    <constraint firstItem="lxN-QV-jr5" firstAttribute="bottom" secondItem="md6-61-xDW" secondAttribute="bottom" id="Y16-3X-hOf"/>
+                                    <constraint firstItem="lxN-QV-jr5" firstAttribute="leading" secondItem="md6-61-xDW" secondAttribute="leading" id="gay-Gg-3I1"/>
+                                    <constraint firstItem="lxN-QV-jr5" firstAttribute="top" secondItem="md6-61-xDW" secondAttribute="top" id="pt8-QA-hA5"/>
+                                </constraints>
+                                <viewLayoutGuide key="contentLayoutGuide" id="md6-61-xDW"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="YjH-dw-N4v"/>
+                            </scrollView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="kN3-Ib-e4v"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="yr6-Pd-Tm3" firstAttribute="leading" secondItem="kN3-Ib-e4v" secondAttribute="leading" id="8Py-kP-C5y"/>
+                            <constraint firstItem="kN3-Ib-e4v" firstAttribute="bottom" secondItem="yr6-Pd-Tm3" secondAttribute="bottom" id="KJ0-wD-zxR"/>
+                            <constraint firstItem="yr6-Pd-Tm3" firstAttribute="trailing" secondItem="kN3-Ib-e4v" secondAttribute="trailing" id="def-Uk-JYo"/>
+                            <constraint firstItem="yr6-Pd-Tm3" firstAttribute="top" secondItem="kN3-Ib-e4v" secondAttribute="top" id="hkN-xL-Yud"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Dog Logs Information" id="Pcf-n2-ZNC">
                         <barButtonItem key="leftBarButtonItem" image="chevron.left" catalog="system" id="m9G-Xi-KwK">
@@ -1383,6 +1543,8 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="howToUseBody" destination="rVo-xQ-Lmb" id="C2h-oR-FdQ"/>
+                        <outlet property="purposeBody" destination="gSa-uV-Pe7" id="KJe-GG-SNL"/>
                         <segue destination="j43-ZZ-FFx" kind="unwind" identifier="unwindToLogsViewController" unwindAction="unwind:" id="b1W-iG-HgW"/>
                     </connections>
                 </viewController>
@@ -1461,34 +1623,25 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES" textContentType="name"/>
                             </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Alarm Notifications:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="gjf-ku-89w" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="10" y="220.5" width="300" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="oya-P9-vH5"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="0FZ-Za-zwc" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
                                 <rect key="frame" x="10" y="100" width="394" height="60"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="E0U-Ti-bZn"/>
                                 </constraints>
-                                <string key="text">We will generate a dog with reminders and the name you type in. You can edit the dog at a later date and create, edit, or delete reminders. You can also create an entirely new dog or delete one.</string>
+                                <string key="text">We will generate a dog with the name you type in that comes with reminders. You can edit the dog at a later date and create, edit, or delete reminders. You can also create an entirely new dog or delete one.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="QGy-Ve-RhM">
-                                <rect key="frame" x="320" y="220" width="51" height="31"/>
+                                <rect key="frame" x="320" y="249.5" width="51" height="31"/>
                                 <color key="onTintColor" systemColor="systemBlueColor"/>
                                 <connections>
                                     <action selector="didToggleNotifications:" destination="w3D-Ib-MEE" eventType="valueChanged" id="yla-8s-ERR"/>
                                 </connections>
                             </switch>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Help:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="JjD-00-mbp" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="10" y="261" width="394" height="30"/>
+                                <rect key="frame" x="10" y="320" width="394" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="uyb-EQ-yrH"/>
                                 </constraints>
@@ -1497,7 +1650,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="g1M-ux-eH0" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="10" y="301" width="394" height="60"/>
+                                <rect key="frame" x="10" y="360" width="394" height="60"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="4lv-5n-cg5"/>
                                 </constraints>
@@ -1506,6 +1659,29 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="b2i-1l-N6Y">
+                                <rect key="frame" x="10" y="220" width="300" height="90"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Alarm Notifications:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="gjf-ku-89w" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="300" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="oya-P9-vH5"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="🚨🚨🚨Enable to get notifications when your reminders go off" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="GFF-5e-2Jo" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="30" width="300" height="60"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="60" id="A9s-ql-wbj"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="zOy-im-afc"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -1514,26 +1690,26 @@
                             <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="0FZ-Za-zwc" secondAttribute="trailing" constant="10" id="315-lh-O1p"/>
                             <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="JjD-00-mbp" secondAttribute="trailing" constant="10" id="3VK-g4-BLR"/>
                             <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="esp-x0-Cun" secondAttribute="trailing" constant="10" id="5dY-VO-Nxf"/>
+                            <constraint firstItem="b2i-1l-N6Y" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" constant="10" id="5jO-1k-jIV"/>
+                            <constraint firstItem="QGy-Ve-RhM" firstAttribute="leading" secondItem="b2i-1l-N6Y" secondAttribute="trailing" constant="10" id="7Sr-bu-aBD"/>
                             <constraint firstItem="0FZ-Za-zwc" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" constant="10" id="7cd-xV-s4h"/>
-                            <constraint firstItem="QGy-Ve-RhM" firstAttribute="centerY" secondItem="gjf-ku-89w" secondAttribute="centerY" id="7ob-3C-skL"/>
-                            <constraint firstItem="gjf-ku-89w" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" constant="10" id="Amw-mF-uhB"/>
-                            <constraint firstItem="QGy-Ve-RhM" firstAttribute="top" secondItem="CXH-t8-W6h" secondAttribute="bottom" constant="10" id="B4L-cq-anu"/>
                             <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="g1M-ux-eH0" secondAttribute="trailing" constant="10" id="EU0-CC-fMB"/>
                             <constraint firstItem="g1M-ux-eH0" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" constant="10" id="Ekg-LW-YxK"/>
                             <constraint firstItem="RY9-6G-ybY" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" constant="10" id="F3j-eD-vQt"/>
                             <constraint firstItem="zOy-im-afc" firstAttribute="bottom" secondItem="S8N-37-uHI" secondAttribute="bottom" constant="10" id="JfO-pB-Gl0"/>
-                            <constraint firstItem="QGy-Ve-RhM" firstAttribute="leading" secondItem="gjf-ku-89w" secondAttribute="trailing" constant="10" id="KUS-nR-b4w"/>
                             <constraint firstItem="g1M-ux-eH0" firstAttribute="top" secondItem="JjD-00-mbp" secondAttribute="bottom" constant="10" id="NSn-yv-pTP"/>
-                            <constraint firstItem="JjD-00-mbp" firstAttribute="top" secondItem="QGy-Ve-RhM" secondAttribute="bottom" constant="10" id="OPm-OO-4K2"/>
                             <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="S8N-37-uHI" secondAttribute="trailing" constant="10" id="PdD-Ur-05W"/>
                             <constraint firstItem="0FZ-Za-zwc" firstAttribute="top" secondItem="RY9-6G-ybY" secondAttribute="bottom" constant="10" id="RwC-vj-HhS"/>
                             <constraint firstItem="CXH-t8-W6h" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" constant="10" id="SoS-bo-RmP"/>
                             <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="CXH-t8-W6h" secondAttribute="trailing" constant="10" id="Tz7-zX-8hc"/>
                             <constraint firstItem="CXH-t8-W6h" firstAttribute="top" secondItem="0FZ-Za-zwc" secondAttribute="bottom" constant="10" id="Xy0-I8-1Cr"/>
+                            <constraint firstItem="QGy-Ve-RhM" firstAttribute="centerY" secondItem="b2i-1l-N6Y" secondAttribute="centerY" id="Z5S-1m-DeO"/>
                             <constraint firstItem="esp-x0-Cun" firstAttribute="top" secondItem="zOy-im-afc" secondAttribute="top" constant="10" id="aWC-ia-rJP"/>
                             <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="QGy-Ve-RhM" secondAttribute="trailing" constant="45" id="hCs-WL-WyB"/>
+                            <constraint firstItem="b2i-1l-N6Y" firstAttribute="top" secondItem="CXH-t8-W6h" secondAttribute="bottom" constant="10" id="jdI-sA-deT"/>
                             <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="RY9-6G-ybY" secondAttribute="trailing" constant="10" id="ntl-O9-0LT"/>
                             <constraint firstItem="RY9-6G-ybY" firstAttribute="top" secondItem="esp-x0-Cun" secondAttribute="bottom" constant="10" id="op7-OX-FV3"/>
+                            <constraint firstItem="JjD-00-mbp" firstAttribute="top" secondItem="b2i-1l-N6Y" secondAttribute="bottom" constant="10" id="pzv-Xa-dEf"/>
                             <constraint firstItem="esp-x0-Cun" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" constant="10" id="qOp-oz-I6e"/>
                             <constraint firstItem="JjD-00-mbp" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" constant="10" id="zle-gj-hNA"/>
                         </constraints>
@@ -1545,6 +1721,7 @@
                         <outlet property="dogNameDescription" destination="0FZ-Za-zwc" id="9fP-m4-o1j"/>
                         <outlet property="helpDescription" destination="g1M-ux-eH0" id="03z-Vf-beT"/>
                         <outlet property="isNotificationEnabledSwitch" destination="QGy-Ve-RhM" id="i4e-a8-VUh"/>
+                        <outlet property="notificationsDescription" destination="GFF-5e-2Jo" id="uBS-d7-jxv"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ig9-EO-oHv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
