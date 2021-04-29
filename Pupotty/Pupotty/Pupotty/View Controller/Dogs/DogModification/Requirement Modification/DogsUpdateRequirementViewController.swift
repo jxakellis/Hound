@@ -15,7 +15,7 @@ protocol DogsUpdateRequirementViewControllerDelegate {
 
 class DogsUpdateRequirementViewController: UIViewController, DogsRequirementManagerViewControllerDelegate {
     
-    //MARK: DogsRequirementManagerViewControllerDelegate
+    //MARK: - DogsRequirementManagerViewControllerDelegate
 
     func didAddRequirement(newRequirement: Requirement) {
         fatalError("shouldn't be possible")
@@ -32,7 +32,7 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
         }
     }
     
-    //MARK: IB
+    //MARK: - IB
     
     //Buttons to manage the information fate, whether to update or to cancel
     
@@ -85,7 +85,7 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
         AlertPresenter.shared.enqueueAlertForPresentation(unsavedInformationConfirmation)
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
     var delegate: DogsUpdateRequirementViewControllerDelegate! = nil
     
@@ -95,7 +95,7 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
     
     var parentDogName: String! = nil
     
-    //MARK: Main
+    //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()

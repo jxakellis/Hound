@@ -14,27 +14,27 @@ protocol DogsRequirementCountDownViewControllerDelegate {
 
 class DogsRequirementCountDownViewController: UIViewController, UIGestureRecognizerDelegate {
     
-    //MARK: UIGestureRecognizerDelegate
+    //MARK: - UIGestureRecognizerDelegate
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
     
 
-    //MARK: IB
+    //MARK: - IB
     
     @IBOutlet weak var countDown: UIDatePicker!
     @IBAction func willUpdateCountDown(_ sender: Any) {
         delegate.willDismissKeyboard()
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
    var delegate: DogsRequirementCountDownViewControllerDelegate! = nil
     
     var passedInterval: TimeInterval?
     
-    //MARK: Main
+    //MARK: - Main
     
     override func viewDidLoad() {
         

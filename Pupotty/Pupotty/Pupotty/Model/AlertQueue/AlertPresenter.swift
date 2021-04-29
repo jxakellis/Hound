@@ -12,7 +12,7 @@ import UIKit
 
 class AlertPresenter: NSObject, NSCoding{
     
-    //MARK: NSCoding
+    //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         alertQueue = aDecoder.decodeObject(forKey: "alertQueue") as! Queue<GeneralAlertController>
         locked = aDecoder.decodeBool(forKey: "locked")

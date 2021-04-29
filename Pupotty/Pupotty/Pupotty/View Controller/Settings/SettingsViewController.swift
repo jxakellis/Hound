@@ -14,7 +14,7 @@ protocol SettingsViewControllerDelegate {
 
 class SettingsViewController: UIViewController, ToolTipable {
     
-    //MARK: Notifications
+    //MARK: - Notifications
     
     @IBOutlet private weak var isNotificationEnabledSwitch: UISwitch!
     
@@ -81,7 +81,7 @@ class SettingsViewController: UIViewController, ToolTipable {
     }
     
     
-    //MARK: Follow Up Notification
+    //MARK: - Follow Up Notification
     
     @IBOutlet weak var followUpReminderLabel: CustomLabel!
     
@@ -109,7 +109,7 @@ class SettingsViewController: UIViewController, ToolTipable {
             }
     }
     
-    //MARK: Follow Up Delay
+    //MARK: - Follow Up Delay
     
     @IBOutlet weak var followUpDelayInterval: UIDatePicker!
     
@@ -118,7 +118,7 @@ class SettingsViewController: UIViewController, ToolTipable {
     }
     
     
-    //MARK: Pause
+    //MARK: - Pause
     ///Switch for pause all timers
     @IBOutlet private weak var isPaused: UISwitch!
     
@@ -139,7 +139,7 @@ class SettingsViewController: UIViewController, ToolTipable {
         }
     }
     
-    //MARK: Snooze
+    //MARK: - Snooze
     
     @IBOutlet private weak var snoozeInterval: UIDatePicker!
     
@@ -147,7 +147,7 @@ class SettingsViewController: UIViewController, ToolTipable {
         TimerConstant.defaultSnooze = snoozeInterval.countDownDuration
     }
     
-    //MARK: Tool Tip
+    //MARK: - Tool Tip
     
     
         
@@ -193,7 +193,7 @@ class SettingsViewController: UIViewController, ToolTipable {
         hideToolTip()
     }
     
-    //MARK: Reset
+    //MARK: - Reset
     
     @IBOutlet private weak var resetButton: UIButton!
     
@@ -239,13 +239,13 @@ class SettingsViewController: UIViewController, ToolTipable {
         }
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
     var delegate: SettingsViewControllerDelegate! = nil
     
     @IBOutlet weak var scrollViewContainerForAll: UIView!
     
-    //MARK: Main
+    //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -14,7 +14,7 @@ protocol DogsRequirementTableViewControllerDelegate {
 }
 
 class DogsRequirementTableViewController: UITableViewController, RequirementManagerControlFlowProtocol, DogsInstantiateRequirementViewControllerDelegate, DogsRequirementTableViewCellDelegate {
-    //MARK: Dogs Requirement Table View Cell
+    //MARK: - Dogs Requirement Table View Cell
     
     func didToggleEnable(sender: Sender, requirementName: String, newEnableStatus: Bool) {
         let sudoRequirementManager = getRequirementManager()
@@ -29,7 +29,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
         
     }
     
-    //MARK: Dogs Instantiate Requirement
+    //MARK: - Dogs Instantiate Requirement
     
     var dogsInstantiateRequirementViewController = DogsInstantiateRequirementViewController()
     
@@ -57,7 +57,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
         
     }
     
-    //MARK: Requirement Manager Control Flow Protocol
+    //MARK: - Requirement Manager Control Flow Protocol
     
     private var requirementManager = RequirementManager()
     
@@ -95,14 +95,14 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
         self.updateTable()
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
     ///Used for when a requirement is selected (aka clicked) on the table view in order to pass information to open the editing page for the requirement
     private var selectedRequirement: Requirement?
     
     var delegate: DogsRequirementTableViewControllerDelegate! = nil
     
-    //MARK: Main
+    //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -11,7 +11,7 @@ import UIKit
 class LogsInformationViewController: UIViewController {
     
     
-    //MARK: IB
+    //MARK: - IB
     
     @IBOutlet weak var purposeBody: CustomLabel!
     
@@ -22,7 +22,7 @@ class LogsInformationViewController: UIViewController {
     }
     
     
-    //MARK: Main
+    //MARK: - Main
 
     override func viewDidLoad() {
         super.viewDidLoad()

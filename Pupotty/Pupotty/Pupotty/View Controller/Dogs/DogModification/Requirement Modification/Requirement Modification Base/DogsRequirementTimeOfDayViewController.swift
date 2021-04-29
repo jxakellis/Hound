@@ -14,13 +14,13 @@ protocol DogsRequirementTimeOfDayViewControllerDelegate {
 
 class DogsRequirementTimeOfDayViewController: UIViewController, UIGestureRecognizerDelegate {
     
-    //MARK: UIGestureRecognizerDelegate
+    //MARK: - UIGestureRecognizerDelegate
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
     
-    //MARK: IB
+    //MARK: - IB
     
     @IBOutlet private weak var sunday: ScaledButton!
     @IBOutlet private weak var monday: ScaledButton!
@@ -57,7 +57,7 @@ class DogsRequirementTimeOfDayViewController: UIViewController, UIGestureRecogni
         delegate.willDismissKeyboard()
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
     var delegate: DogsRequirementTimeOfDayViewControllerDelegate! = nil
     
@@ -65,7 +65,7 @@ class DogsRequirementTimeOfDayViewController: UIViewController, UIGestureRecogni
     
     var passedWeekDays: [Int] = [1,2,3,4,5,6,7]
     
-    //MARK: Main
+    //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()

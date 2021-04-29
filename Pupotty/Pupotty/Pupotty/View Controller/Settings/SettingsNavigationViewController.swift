@@ -14,19 +14,19 @@ protocol SettingsNavigationViewControllerDelegate{
 
 class SettingsNavigationViewController: UINavigationController, SettingsViewControllerDelegate {
     
-    //MARK: SettingsViewControllerDelegate
+    //MARK: - SettingsViewControllerDelegate
     
     func didTogglePause(newPauseState: Bool) {
         passThroughDelegate.didTogglePause(newPauseState: newPauseState)
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
     var passThroughDelegate: SettingsNavigationViewControllerDelegate! = nil
     
     var settingsViewController: SettingsViewController! = nil
     
-    //MARK: Main
+    //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()

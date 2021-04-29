@@ -9,7 +9,7 @@ import UIKit
 
 class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, SettingsNavigationViewControllerDelegate, LogsNavigationViewControllerDelegate, IntroductionViewControllerDelegate {
     
-    //MARK: IntroductionViewControllerDelegate
+    //MARK: - IntroductionViewControllerDelegate
     
     func didSetDogName(sender: Sender, dogName: String) {
         let sudoDogManager = getDogManager()
@@ -17,19 +17,19 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     
-    //MARK: SettingsViewControllerDelegate
+    //MARK: - SettingsViewControllerDelegate
     
     func didTogglePause(newPauseState: Bool) {
         TimingManager.willTogglePause(dogManager: getDogManager(), newPauseStatus: newPauseState)
     }
     
-    //MARK: TimingManagerDelegate && DogsViewControllerDelegate
+    //MARK: - TimingManagerDelegate && DogsViewControllerDelegate
     
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
         setDogManager(sender: sender, newDogManager: newDogManager)
     }
     
-    //MARK: DogManagerControlFlowProtocol + MasterDogManager
+    //MARK: - DogManagerControlFlowProtocol + MasterDogManager
     
     private var masterDogManager: DogManager = DogManager()
     
@@ -93,7 +93,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         TimingManager.willReinitalize(dogManager: getDogManager())
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
     var homeNavigationViewController: HomeNavigationViewController! = nil
     var homeViewController: HomeViewController! = nil
@@ -114,7 +114,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     ///The tab on the tab bar that the app should open to, if its the first time openning the app then go the the second tab (configure dogs) which is index 1 as index starts at 0
     static var selectedEntryIndex: Int = 0
     
-    //MARK: Main
+    //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()

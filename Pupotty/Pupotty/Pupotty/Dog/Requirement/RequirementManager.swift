@@ -151,7 +151,7 @@ extension RequirementManagerProtocol {
 
 class RequirementManager: NSObject, NSCoding, NSCopying, RequirementManagerProtocol {
     
-    //MARK: NSCoding
+    //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         requirements = aDecoder.decodeObject(forKey: "requirements") as! [Requirement]
     }
@@ -160,7 +160,7 @@ class RequirementManager: NSObject, NSCoding, NSCopying, RequirementManagerProto
         aCoder.encode(requirements, forKey: "requirements")
     }
     
-    //MARK: NSCopying
+    //MARK: - NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = RequirementManager()
         for i in 0..<self.requirements.count {

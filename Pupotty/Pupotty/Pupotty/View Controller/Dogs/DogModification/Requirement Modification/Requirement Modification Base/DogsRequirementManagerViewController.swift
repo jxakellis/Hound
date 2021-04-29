@@ -15,27 +15,27 @@ protocol DogsRequirementManagerViewControllerDelegate{
 
 class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, DogsRequirementCountDownViewControllerDelegate, DogsRequirementTimeOfDayViewControllerDelegate{
     
-    //MARK: DogsRequirementCountDownViewControllerDelegate and DogsRequirementTimeOfDayViewControllerDelegate
+    //MARK: - DogsRequirementCountDownViewControllerDelegate and DogsRequirementTimeOfDayViewControllerDelegate
     
     func willDismissKeyboard() {
         self.dismissKeyboard()
     }
     
     
-    //MARK: UIGestureRecognizerDelegate
+    //MARK: - UIGestureRecognizerDelegate
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
     
-    //MARK: UITextFieldDelegate
+    //MARK: - UITextFieldDelegate
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
         return false
     }
     
-    //MARK: IB
+    //MARK: - IB
     
     
     
@@ -60,7 +60,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         }
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
     var delegate: DogsRequirementManagerViewControllerDelegate! = nil
     
@@ -70,7 +70,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     private var dogsRequirementTimeOfDayViewController = DogsRequirementTimeOfDayViewController()
     
-    //MARK: Main
+    //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -183,7 +183,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     
     
-    //MARK: Navigation
+    //MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "dogsRequirementCountDownViewController"{

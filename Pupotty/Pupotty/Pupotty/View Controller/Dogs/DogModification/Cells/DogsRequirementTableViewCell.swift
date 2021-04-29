@@ -14,7 +14,7 @@ protocol DogsRequirementTableViewCellDelegate {
 
 class DogsRequirementTableViewCell: UITableViewCell {
     
-    //MARK: IB
+    //MARK: - IB
     
     @IBOutlet private weak var requirementDisplay: UILabel!
     @IBOutlet private weak var requirementEnableStatus: UISwitch!
@@ -23,13 +23,13 @@ class DogsRequirementTableViewCell: UITableViewCell {
         delegate.didToggleEnable(sender: Sender(origin: self, localized: self), requirementName: requirementSource.requirementName, newEnableStatus: self.requirementEnableStatus.isOn)
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
     var delegate: DogsRequirementTableViewCellDelegate! = nil
     
     var requirementSource: Requirement! = nil
     
-    //MARK: Main
+    //MARK: - Main
     
     //when cell is awoken / init, this is executed
     override func awakeFromNib() {

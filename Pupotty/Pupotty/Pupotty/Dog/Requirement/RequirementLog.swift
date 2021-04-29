@@ -23,14 +23,14 @@ class RequirementLog: NSObject, NSCoding, NSCopying, RequirementLogProtocol{
     
     
     
-    //MARK: NSCopying
+    //MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = RequirementLog(date: self.date, note: self.note)
         return copy
     }
     
-    //MARK: NSCoding
+    //MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
         self.storedDate = aDecoder.decodeObject(forKey: "date") as! Date
@@ -42,7 +42,7 @@ class RequirementLog: NSObject, NSCoding, NSCopying, RequirementLogProtocol{
         aCoder.encode(storedNote, forKey: "note")
     }
     
-    //MARK: RequirementLogProtocol
+    //MARK: - RequirementLogProtocol
     
     init(date: Date, note: String = ""){
         storedDate = date

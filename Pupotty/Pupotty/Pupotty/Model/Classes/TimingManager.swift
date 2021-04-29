@@ -14,7 +14,7 @@ protocol TimingManagerDelegate {
 
 class TimingManager{
     
-    //MARK: Properties
+    //MARK: - Properties
     
     static var delegate: TimingManagerDelegate! = nil
     
@@ -56,7 +56,7 @@ class TimingManager{
     
     ///If a timeOfDay alarm is being skipped, this array stores all the timers that are responsible for unskipping the alarm when it goes from 1 Day -> 23 Hours 59 Minutes
     private static var isSkippingDisablers: [Timer] = []
-    //MARK: Main
+    //MARK: - Main
     
     ///Initalizes all timers according to the dogManager passed, assumes no timers currently active and if transitioning from Paused to Unpaused (didUnpuase = true) handles logic differently
     static func willInitalize(dogManager: DogManager){
@@ -175,7 +175,7 @@ class TimingManager{
         delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
     }
     
-    //MARK: Pause Control
+    //MARK: - Pause Control
     
     ///Toggles pause for a given dogManager to a specifided newPauseState
     static func willTogglePause(dogManager: DogManager, newPauseStatus: Bool) {
@@ -308,7 +308,7 @@ class TimingManager{
         delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
     }
 
-    //MARK: Timer Actions
+    //MARK: - Timer Actions
     
     ///Used as a selector when constructing timer in willInitalize, when called at an unknown point in time by the timer it triggers helper functions to create both in app notifcations and iOS notifcations
     @objc private static func didExecuteTimer(sender: Timer){

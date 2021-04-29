@@ -16,14 +16,14 @@ protocol DogsAddDogViewControllerDelegate{
 
 class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewControllerDelegate, UITextFieldDelegate{
     
-    //MARK: Requirement Table VC Delegate
+    //MARK: - Requirement Table VC Delegate
     
     //assume all requirements are valid due to the fact that they are all checked and validated through DogsRequirementTableViewController
     func didUpdateRequirements(newRequirementList: [Requirement]) {
         updatedRequirements = newRequirementList
     }
     
-    //MARK: UITextFieldDelegate
+    //MARK: - UITextFieldDelegate
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
@@ -33,7 +33,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     
     
-    //MARK: IB
+    //MARK: - IB
     
     @IBOutlet private weak var dogName: UITextField!
     @IBOutlet private weak var dogEnableStatus: UISwitch!
@@ -118,7 +118,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         
     }
 
-    //MARK: Properties
+    //MARK: - Properties
     
     var dogsRequirementNavigationViewController: DogsRequirementNavigationViewController! = nil
     
@@ -132,7 +132,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     private var updatedRequirements: [Requirement]? = nil
     
-    //MARK: Main
+    //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()

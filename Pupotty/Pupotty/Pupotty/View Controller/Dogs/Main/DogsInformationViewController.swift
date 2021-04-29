@@ -10,7 +10,7 @@ import UIKit
 
 class DogsInformationViewController: UIViewController {
     
-    //MARK: IB
+    //MARK: - IB
     
     @IBOutlet private weak var purposeBody: CustomLabel!
     
@@ -21,7 +21,7 @@ class DogsInformationViewController: UIViewController {
     }
     
     
-    //MARK: Main
+    //MARK: - Main
 
     override func viewDidLoad() {
         super.viewDidLoad()

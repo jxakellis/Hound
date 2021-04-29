@@ -14,7 +14,7 @@ protocol DogsMainScreenTableViewCellDogDisplayDelegate{
 
 class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
     
-    //MARK: IB
+    //MARK: - IB
     
     @IBOutlet weak var dogName: UILabel!
     
@@ -26,13 +26,13 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
        delegate.didToggleDogSwitch(sender: Sender(origin: self, localized: self), dogName: dog.dogTraits.dogName, isEnabled: self.dog.getEnable())
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
     var dog: Dog = Dog()
     
     var delegate: DogsMainScreenTableViewCellDogDisplayDelegate! = nil
     
-    //MARK: Main
+    //MARK: - Main
     
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -14,20 +14,20 @@ protocol LogsNavigationViewControllerDelegate{
 
 class LogsNavigationViewController: UINavigationController, LogsViewControllerDelegate{
     
-    //MARK: LogsViewControllerDelegate
+    //MARK: - LogsViewControllerDelegate
     
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
         passThroughDelegate.didUpdateDogManager(sender: sender, newDogManager: newDogManager)
     }
     
     
-    //MARK: Properties
+    //MARK: - Properties
     
     var logsViewController: LogsViewController! = nil
     
     var passThroughDelegate: LogsNavigationViewControllerDelegate! = nil
     
-    //MARK: Main
+    //MARK: - Main
 
     override func viewDidLoad() {
         super.viewDidLoad()

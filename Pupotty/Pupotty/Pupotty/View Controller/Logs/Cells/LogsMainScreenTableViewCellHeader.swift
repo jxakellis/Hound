@@ -12,11 +12,11 @@ class LogsMainScreenTableViewCellHeader: UITableViewCell {
     
     @IBOutlet private weak var header: CustomLabel!
     
-    //MARK: Properties
+    //MARK: - Properties
     
     private var logSource: RequirementLog! = nil
     
-    //MARK: Main
+    //MARK: - Main
     
     override func awakeFromNib() {
         super.awakeFromNib()

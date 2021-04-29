@@ -11,19 +11,19 @@ import UIKit
 class LogsMainScreenTableViewCellBody: UITableViewCell {
 
     
-    //MARK: IB
+    //MARK: - IB
     
     @IBOutlet private weak var dogName: CustomLabel!
     @IBOutlet private weak var requirementName: CustomLabel!
     @IBOutlet private weak var dateDescription: CustomLabel!
     
-    //MARK: Properties
+    //MARK: - Properties
     
     private var parentDogName: String! = nil
     private var requirementSource: Requirement! = nil
     private var logSource: RequirementLog! = nil
     
-    //MARK: Main
+    //MARK: - Main
     
     override func awakeFromNib() {
         super.awakeFromNib()

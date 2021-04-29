@@ -18,7 +18,7 @@ protocol DogsInstantiateRequirementViewControllerDelegate {
 class DogsInstantiateRequirementViewController: UIViewController, DogsRequirementManagerViewControllerDelegate{
     
     
-    //MARK: DogsRequirementManagerViewControllerDelegate
+    //MARK: - DogsRequirementManagerViewControllerDelegate
     
     func didAddRequirement(newRequirement: Requirement) {
         do {
@@ -41,7 +41,7 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
         }
     }
     
-    //MARK: IB
+    //MARK: - IB
     
     @IBOutlet weak var pageNavigationBar: UINavigationItem!
     
@@ -75,7 +75,7 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
           
         }
         
-    //MARK: Properties
+    //MARK: - Properties
     
     var delegate: DogsInstantiateRequirementViewControllerDelegate! = nil
     
@@ -83,7 +83,7 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
     
     var targetRequirement: Requirement?
     
-    //MARK: Main
+    //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()

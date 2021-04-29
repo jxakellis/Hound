@@ -14,7 +14,7 @@ protocol DogsMainScreenTableViewCellRequirementDisplayDelegate {
 
 class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     
-    //MARK: IB
+    //MARK: - IB
     
     @IBOutlet weak var requirementName: UILabel!
     @IBOutlet weak var timeInterval: UILabel!
@@ -25,14 +25,14 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
         delegate.didToggleRequirementSwitch(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, requirementName: requirement.requirementName, isEnabled: self.requirementToggleSwitch.isOn)
     }
     
-    //MARK:  Properties
+    //MARK: -  Properties
     var requirement: Requirement = Requirement()
     
     var parentDogName: String = ""
     
     var delegate: DogsMainScreenTableViewCellRequirementDisplayDelegate! = nil
     
-    //MARK: Main
+    //MARK: - Main
     
     override func awakeFromNib() {
         super.awakeFromNib()

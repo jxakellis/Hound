@@ -16,7 +16,7 @@ protocol DogsMainScreenTableViewControllerDelegate{
 
 class DogsMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol, DogsMainScreenTableViewCellDogDisplayDelegate, DogsMainScreenTableViewCellRequirementDisplayDelegate {
     
-    //MARK: DogsMainScreenTableViewCellDogDisplayDelegate
+    //MARK: - DogsMainScreenTableViewCellDogDisplayDelegate
     
     ///Dog switch is toggled in DogsMainScreenTableViewCellDogDisplay
     func didToggleDogSwitch(sender: Sender, dogName: String, isEnabled: Bool) {
@@ -34,7 +34,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         cell.dogToggleSwitch.setOn(isEnabled, animated: true)
     }
     
-    //MARK: DogsMainScreenTableViewCellRequirementDelegate
+    //MARK: - DogsMainScreenTableViewCellRequirementDelegate
     
     ///Requirement switch is toggled in DogsMainScreenTableViewCellRequirement
     func didToggleRequirementSwitch(sender: Sender, parentDogName: String, requirementName: String, isEnabled: Bool) {
@@ -52,13 +52,13 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         cell.requirementToggleSwitch.setOn(isEnabled, animated: true)
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
     var delegate: DogsMainScreenTableViewControllerDelegate! = nil
     
     var updatingSwitch: Bool = false
     
-    //MARK: DogManagerControlFlowProtocol
+    //MARK: - DogManagerControlFlowProtocol
     
     private var dogManager: DogManager = DogManager()
     
@@ -101,7 +101,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         self.updateTable()
     }
     
-    //MARK: Main
+    //MARK: - Main
     
     override func viewDidLoad() {
         self.dogManager = MainTabBarViewController.staticDogManager
@@ -147,17 +147,17 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         if indexPath.row == 0{
             let cell = tableView.dequeueReusableCell(withIdentifier: "dogsMainScreenTableViewCellDogDisplay", for: indexPath)
             
-            let testCell = cell as! DogsMainScreenTableViewCellDogDisplay
-            testCell.setup(dogPassed: getDogManager().dogs[indexPath.section])
-            testCell.delegate = self
+            let customCell = cell as! DogsMainScreenTableViewCellDogDisplay
+            customCell.setup(dogPassed: getDogManager().dogs[indexPath.section])
+            customCell.delegate = self
             return cell
         }
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "dogsMainScreenTableViewCellRequirementDisplay", for: indexPath)
             
-            let testCell = cell as! DogsMainScreenTableViewCellRequirementDisplay
-            testCell.setup(parentDogName: getDogManager().dogs[indexPath.section].dogTraits.dogName, requirementPassed: getDogManager().dogs[indexPath.section].dogRequirments.requirements[indexPath.row-1])
-            testCell.delegate = self
+            let customCell = cell as! DogsMainScreenTableViewCellRequirementDisplay
+            customCell.setup(parentDogName: getDogManager().dogs[indexPath.section].dogTraits.dogName, requirementPassed: getDogManager().dogs[indexPath.section].dogRequirments.requirements[indexPath.row-1])
+            customCell.delegate = self
             return cell
         }
     }

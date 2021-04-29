@@ -32,7 +32,7 @@ protocol GeneralCountDownProtocol {
 
 class CountDownComponents: Component, NSCoding, NSCopying, GeneralCountDownProtocol {
     
-    //MARK: NSCopying
+    //MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = CountDownComponents()
@@ -41,7 +41,7 @@ class CountDownComponents: Component, NSCoding, NSCopying, GeneralCountDownProto
         return copy
     }
     
-    //MARK: NSCoding
+    //MARK: - NSCoding
     
     override init(){
         super.init()
@@ -57,7 +57,7 @@ class CountDownComponents: Component, NSCoding, NSCopying, GeneralCountDownProto
         aCoder.encode(intervalElapsed, forKey: "intervalElapsed")
     }
     
-    //MARK: CountDownComponentsProtocol
+    //MARK: - CountDownComponentsProtocol
     
     private var storedExecutionInterval: TimeInterval = TimeInterval(RequirementConstant.defaultTimeInterval)
     var executionInterval: TimeInterval { return storedExecutionInterval }
@@ -90,7 +90,7 @@ protocol SnoozeComponentsProtocol {
 
 class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountDownProtocol, SnoozeComponentsProtocol {
     
-    //MARK: NSCopying
+    //MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = SnoozeComponents()
@@ -100,7 +100,7 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountDownProtocol
         return copy
     }
     
-    //MARK: NSCoding
+    //MARK: - NSCoding
     
     override init(){
         super.init()
@@ -118,7 +118,7 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountDownProtocol
         aCoder.encode(storedIntervalElapsed, forKey: "intervalElapsed")
     }
     
-    //MARK: SnoozeComponentsProtocol
+    //MARK: - SnoozeComponentsProtocol
     
     private var storedIsSnoozed: Bool = false
     var isSnoozed: Bool { return storedIsSnoozed }
@@ -190,7 +190,7 @@ protocol TimeOfDayComponentsDelegate{
 
 class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsProtocol {
     
-    //MARK: NSCopying
+    //MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = TimeOfDayComponents()
@@ -200,7 +200,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         return copy
     }
     
-    //MARK: NSCoding
+    //MARK: - NSCoding
     
     override init(){
         super.init()
@@ -220,7 +220,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     }
     
     
-    //MARK: TimeOfDayComponentsProtocol
+    //MARK: - TimeOfDayComponentsProtocol
     
     private var storedTimeOfDayComponent: DateComponents = DateComponents()
     var timeOfDayComponent: DateComponents { return storedTimeOfDayComponent }

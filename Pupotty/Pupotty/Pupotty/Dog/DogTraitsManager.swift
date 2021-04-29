@@ -29,7 +29,7 @@ protocol DogTraitManagerProtocol{
 
 class DogTraitManager: NSObject, NSCoding, NSCopying, DogTraitManagerProtocol {
     
-    //MARK: NSCoding
+    //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         storedDogName = aDecoder.decodeObject(forKey: "dogName") as! String
     }
@@ -38,7 +38,7 @@ class DogTraitManager: NSObject, NSCoding, NSCopying, DogTraitManagerProtocol {
         aCoder.encode(storedDogName, forKey: "dogName")
     }
     
-    //MARK: NSCopying
+    //MARK: - NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = DogTraitManager()
         copy.storedDogName = self.storedDogName

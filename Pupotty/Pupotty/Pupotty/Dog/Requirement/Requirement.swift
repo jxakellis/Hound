@@ -97,7 +97,7 @@ protocol RequirementProtocol {
 
 class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnableProtocol {
     
-    //MARK: NSCopying
+    //MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = Requirement()
@@ -119,7 +119,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         return copy
     }
     
-     //MARK: NSCoding
+     //MARK: - NSCoding
     
     override init() {
         super.init()
@@ -154,7 +154,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         
      }
      
-    //MARK: EnableProtocol
+    //MARK: - EnableProtocol
     
     ///Whether or not the requirement  is enabled, if disabled all requirements will not fire, if parentDog isEnabled == false will not fire
     private var isEnabled: Bool = DogConstant.defaultEnable
@@ -175,7 +175,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         return isEnabled
     }
     
-    //MARK: RequirementProtocol
+    //MARK: - RequirementProtocol
     
     private var storedRequirementName: String = RequirementConstant.defaultName
     var requirementName: String { return storedRequirementName }

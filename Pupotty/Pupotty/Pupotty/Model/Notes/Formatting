@@ -15,18 +15,18 @@ Parameter Naming
         
 ViewController Code Order
 
-//MARK: Delegate 1
+//MARK: - Delegate 1
 
-//MARK: Delegate 2
+//MARK: - Delegate 2
 
 etc.
 
-//MARK: IB
+//MARK: - IB
 
-//MARK: Properties
+//MARK: - Properties
 
-//MARK: Main
+//MARK: - Main
 
-//MARK: TableView (IF PRESENT)
+//MARK: - TableView (IF PRESENT)
 
-//MARK: Navigation
+//MARK: - Navigation

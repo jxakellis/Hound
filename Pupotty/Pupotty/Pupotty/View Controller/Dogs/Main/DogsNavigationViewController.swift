@@ -14,19 +14,19 @@ protocol DogsNavigationViewControllerDelegate{
 
 class DogsNavigationViewController: UINavigationController, DogsViewControllerDelegate {
     
-    //MARK: DogsViewControllerDelegate
+    //MARK: - DogsViewControllerDelegate
     
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
         passThroughDelegate.didUpdateDogManager(sender: sender, newDogManager: newDogManager)
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
     var passThroughDelegate: DogsNavigationViewControllerDelegate! = nil
     
     var dogsViewController: DogsViewController!
     
-    //MARK: Main
+    //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -14,7 +14,7 @@ enum DogError: Error {
 
 class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     
-    //MARK: NSCoding
+    //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         dogTraits = aDecoder.decodeObject(forKey: "dogTraits") as! DogTraitManager
         dogRequirments = aDecoder.decodeObject(forKey: "dogRequirments") as! RequirementManager
@@ -27,7 +27,7 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
         aCoder.encode(isEnabled, forKey: "isEnabled")
     }
     
-    //MARK: Conformation EnableProtocol
+    //MARK: - Conformation EnableProtocol
     
     ///Whether or not the dog is enabled, if disabled all requirements under this will not fire (but have their own independent isEnabled state)
     private var isEnabled: Bool = DogConstant.defaultEnable
@@ -60,7 +60,7 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     }
     
     
-    //MARK: NSCopying
+    //MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = Dog()
@@ -70,7 +70,7 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
         return copy
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
     ///Traint"
     var dogTraits: DogTraitManager = DogTraitManager()

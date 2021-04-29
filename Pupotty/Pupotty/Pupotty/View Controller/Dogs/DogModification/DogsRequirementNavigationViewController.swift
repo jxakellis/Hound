@@ -16,20 +16,20 @@ class DogsRequirementNavigationViewController: UINavigationController, DogsRequi
     
     
     
-    //MARK: DogsRequirementTableViewControllerDelegate
+    //MARK: - DogsRequirementTableViewControllerDelegate
     
     func didUpdateRequirements(newRequirementList: [Requirement]) {
         passThroughDelegate.didUpdateRequirements(newRequirementList: newRequirementList)
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
     //This delegate is used in order to connect the delegate from the sub table view to the master embedded view, i.e. connect DogsRequirementTableViewController delegate to DogsAddDogViewController
     var passThroughDelegate: DogsRequirementNavigationViewControllerDelegate! = nil
     
     var dogsRequirementTableViewController: DogsRequirementTableViewController! = nil
     
-    //MARK: Main
+    //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +39,7 @@ class DogsRequirementNavigationViewController: UINavigationController, DogsRequi
         dogsRequirementTableViewController.delegate = self
     }
     
-    //MARK: DogsAddDogViewController
+    //MARK: - DogsAddDogViewController
     
     //Called by superview to pass down new requirements to subview, used when editting a dog
     func didPassRequirements(sender: Sender, passedRequirements: RequirementManager){

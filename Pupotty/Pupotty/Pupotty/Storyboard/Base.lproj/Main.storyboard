@@ -1435,6 +1435,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Dog Logs" id="mPD-W7-7Ov">
+                        <barButtonItem key="leftBarButtonItem" title="Filter" id="yUW-46-74D">
+                            <connections>
+                                <action selector="willShowFilter:" destination="xhV-UK-dqn" id="Ssp-a0-wHp"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" image="info.circle" catalog="system" id="X5X-Ez-1L8">
                             <connections>
                                 <segue destination="bft-FI-lsz" kind="show" id="Tm7-sx-6K0"/>
@@ -1444,7 +1449,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dF9-0I-JQn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="861" y="-2357"/>
+            <point key="canvasLocation" x="860.86956521739137" y="-2357.1428571428569"/>
         </scene>
         <!--Dog Logs Information-->
         <scene sceneID="uGs-yE-LDz">

@@ -260,7 +260,7 @@ extension DogManagerProtocol {
 
 class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
     
-    //MARK: NSCoding
+    //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         dogs = aDecoder.decodeObject(forKey: "dogs") as! [Dog]
     }
@@ -269,7 +269,7 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         aCoder.encode(dogs, forKey: "dogs")
     }
     
-    //MARK: NSCopying
+    //MARK: - NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = DogManager()
         for i in 0..<dogs.count{

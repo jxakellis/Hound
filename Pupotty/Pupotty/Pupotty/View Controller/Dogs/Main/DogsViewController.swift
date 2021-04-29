@@ -14,7 +14,7 @@ protocol DogsViewControllerDelegate {
 
 class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsAddDogViewControllerDelegate, DogsMainScreenTableViewControllerDelegate, DogsUpdateRequirementViewControllerDelegate{
     
-    //MARK: DogsUpdateRequirementViewControllerDelegate
+    //MARK: - DogsUpdateRequirementViewControllerDelegate
     
     func didUpdateRequirement(sender: Sender, parentDogName: String, formerName: String, updatedRequirement: Requirement) throws {
         let sudoDogManager = getDogManager()
@@ -32,7 +32,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     
-    //MARK: DogsMainScreenTableViewControllerDelegate
+    //MARK: - DogsMainScreenTableViewControllerDelegate
     
     ///If a dog was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the dogs information
     func didSelectDog(indexPathSection dogIndex: Int) {
@@ -53,14 +53,14 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         
     }
     
-    //MARK: DogManagerControlFlowProtocol
+    //MARK: - DogManagerControlFlowProtocol
     
     ///If the dog manager was updated in DogsMainScreenTableViewController, this function is called to reflect that change here with this dogManager
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
         setDogManager(sender: sender, newDogManager: newDogManager)
     }
     
-    //MARK: DogsAddDogViewControllerDelegate
+    //MARK: - DogsAddDogViewControllerDelegate
     
     ///If a dog was added by the subview, this function is called with a delegate and is incorporated into the dog manager here
     func didAddDog(sender: Sender, newDog: Dog) throws {
@@ -89,7 +89,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     
-    //MARK: DogManagerControlFlowProtocol
+    //MARK: - DogManagerControlFlowProtocol
     
     private var dogManager = DogManager()
     
@@ -123,7 +123,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         //
     }
     
-    //MARK: IB
+    //MARK: - IB
     
     @IBOutlet weak var willAddButton: UIButton!
     
@@ -133,7 +133,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             self.changeAddStatus(newAddStatus: !addStatus)
         }
 
-    //MARK: Properties
+    //MARK: - Properties
     
     var delegate: DogsViewControllerDelegate! = nil
     
@@ -143,7 +143,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     
     var dogsUpdateRequirementViewController = DogsUpdateRequirementViewController()
     
-    //MARK: Main
+    //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -174,7 +174,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         Utils.presenter = self
     }
     
-    //MARK: Navigation To Dog Addition and Modification
+    //MARK: - Navigation To Dog Addition and Modification
     
     ///Opens the dogsAddDogViewController, if a dog is passed (which is required) then instead of opening a fresh add dog page, opens up the corrosponding one for the dog
     private func willOpenDog(dogToBeOpened: Dog? = nil, isAddingRequirement: Bool = false){
@@ -202,7 +202,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         }
     }
     
-    //MARK: Programmically Added Add Requirement To Dog / Add Dog Buttons
+    //MARK: - Programmically Added Add Requirement To Dog / Add Dog Buttons
     
     private var universalTapGesture: UITapGestureRecognizer!
     private var dimScreenView: UIView!
@@ -367,7 +367,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         addStatus = newAddStatus
     }
     
-    //MARK: changeAddStatus Helper Functions
+    //MARK: - changeAddStatus Helper Functions
     
     ///Creates a label for a given add button with the specified text, handles all frame, origin, and size related things
     private func createAddButtonLabel(_ button: ScaledButton, text: String) -> UILabel {
@@ -407,7 +407,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         return buttonBackground
     }
     
-    //MARK: changeAddStatus Calculated Variables
+    //MARK: - changeAddStatus Calculated Variables
     
     ///The size of the subAddButtons in relation to the willAddButtomn
     private var subButtonSize: CGFloat {

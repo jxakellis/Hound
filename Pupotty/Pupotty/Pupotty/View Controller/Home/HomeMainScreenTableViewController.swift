@@ -10,7 +10,7 @@ import UIKit
 
 class HomeMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol{
     
-    //MARK: DogManagerControlFlowProtocol
+    //MARK: - DogManagerControlFlowProtocol
     
     private var dogManager: DogManager = DogManager()
     
@@ -31,7 +31,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         self.reloadTable()
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
     ///Timer that repeats every second to update tableView data, needed due to the fact the timers countdown every second
     private var loopTimer: Timer?
@@ -76,7 +76,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         return assortedTimers[priorityIndex]
     }
     
-    //MARK: Main
+    //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -207,8 +207,8 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
             
-            let testCell = cell as! HomeMainScreenTableViewCellEmpty
-            testCell.label.text = "All Reminders Paused"
+            let customCell = cell as! HomeMainScreenTableViewCellEmpty
+            customCell.label.text = "All Reminders Paused"
             
             return cell
             
@@ -216,25 +216,25 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         else if TimingManager.currentlyActiveTimersCount == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
             
-            let testCell = cell as! HomeMainScreenTableViewCellEmpty
+            let customCell = cell as! HomeMainScreenTableViewCellEmpty
             
             if getDogManager().hasCreatedDog == false{
-                testCell.label.text = "No Dogs Or Reminders Created"
+                customCell.label.text = "No Dogs Or Reminders Created"
             }
             else if getDogManager().hasCreatedRequirement == false {
-                testCell.label.text = "No Reminders Created"
+                customCell.label.text = "No Reminders Created"
             }
             else if getDogManager().hasEnabledDog == false && getDogManager().hasEnabledRequirement == false {
-                testCell.label.text = "All Dogs and Reminders Disabled"
+                customCell.label.text = "All Dogs and Reminders Disabled"
             }
             else if getDogManager().hasEnabledDog == false {
-                testCell.label.text = "All Dogs Disabled"
+                customCell.label.text = "All Dogs Disabled"
             }
             else if getDogManager().hasCreatedRequirement == true{
-                testCell.label.text = "All Reminders Disabled"
+                customCell.label.text = "All Reminders Disabled"
             }
             else {
-                testCell.label.text = "HomeMainScreenTableViewController Decipher Error"
+                customCell.label.text = "HomeMainScreenTableViewController Decipher Error"
             }
             
             return cell
@@ -244,8 +244,8 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             
             let cellPriority = self.timerPriority(priorityIndex: indexPath.row)
             
-            let testCell = cell as! HomeMainScreenTableViewCellRequirementDisplay
-            testCell.setup(parentDogName: cellPriority.0, requirementPassed: cellPriority.1)
+            let customCell = cell as! HomeMainScreenTableViewCellRequirementDisplay
+            customCell.setup(parentDogName: cellPriority.0, requirementPassed: cellPriority.1)
             
             return cell
         }

@@ -14,14 +14,14 @@ protocol IntroductionViewControllerDelegate {
 
 class IntroductionViewController: UIViewController, UITextFieldDelegate {
     
-    //MARK: UITextFieldDelegate
+    //MARK: - UITextFieldDelegate
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.dismissKeyboard()
         return false
     }
     
-    //MARK: IB
+    //MARK: - IB
     
     @IBOutlet private weak var dogNameDescription: CustomLabel!
     
@@ -60,11 +60,11 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
     var delegate: IntroductionViewControllerDelegate! = nil
     
-    //MARK: Main
+    //MARK: - Main
 
     override func viewDidLoad() {
         super.viewDidLoad()

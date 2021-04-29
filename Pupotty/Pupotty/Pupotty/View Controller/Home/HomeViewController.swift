@@ -11,7 +11,7 @@ import UIKit
 class HomeViewController: UIViewController, DogManagerControlFlowProtocol {
     
     
-    //MARK: DogManagerControlFlowProtocol
+    //MARK: - DogManagerControlFlowProtocol
     
     private var dogManager: DogManager = DogManager()
     
@@ -37,11 +37,11 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol {
         //
     }
     
-    //MARK: Properties
+    //MARK: - Properties
     
     var homeMainScreenTableViewController = HomeMainScreenTableViewController()
     
-    //MARK: Main
+    //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()

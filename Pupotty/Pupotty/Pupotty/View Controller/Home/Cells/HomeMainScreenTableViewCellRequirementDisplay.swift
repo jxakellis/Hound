@@ -14,7 +14,7 @@ protocol HomeMainScreenTableViewCellRequirementDisplayDelegate{
 
 class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     
-    //MARK: IB
+    //MARK: - IB
     
     @IBOutlet weak var requirementName: UILabel!
     
@@ -22,13 +22,13 @@ class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     
     @IBOutlet weak var timeLeft: UILabel!
     
-    //MARK: Properties
+    //MARK: - Properties
     
     var requirementSource: Requirement! = nil
     
     var parentDogName: String! = nil
     
-    //MARK: Main
+    //MARK: - Main
     
     override func awakeFromNib() {
         super.awakeFromNib()
