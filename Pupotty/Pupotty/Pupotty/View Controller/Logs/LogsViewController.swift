@@ -214,10 +214,61 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
     //MARK: - Drop Down Functions
     
     private func setUpDropDown(){
+        
+        ///Finds the widthNeeded by the largest label, has a minimum and maximum possible along with subtracting the space taken by leading and trailing constraints.
+        var neededWidthForLabel: CGFloat{
+            let maximumWidth: CGFloat = view.safeAreaLayoutGuide.layoutFrame.width - 20.0
+            let minimumWidth: CGFloat = 100.0 - 20.0
+            
+            ///Finds the largestWidth taken up by any label, later compared to constraint sizes of min and max
+            var largestLabelWidth: CGFloat {
+                /*
+                 if indexPath.row == 0 {
+                     customCell.requirementName.attributedText = NSAttributedString(string: getDogManager().dogs[indexPath.section].dogTraits.dogName, attributes: [.font: UIFont.systemFont(ofSize: 20, weight: .semibold)])
+                 }
+                 else {
+                     customCell.requirementName.attributedText = NSAttributedString(string: getDogManager().dogs[indexPath.section].dogRequirments.requirements[indexPath.row-1].requirementName, attributes: [.font: UIFont.systemFont(ofSize: 15, weight: .regular)])
+                 }
+                 */
+                let sudoDogManager = getDogManager()
+                var largest: CGFloat = 0.0
+                
+                for dogIndex in 0..<sudoDogManager.dogs.count{
+                    let dog = sudoDogManager.dogs[dogIndex]
+                    let dogNameWidth = dog.dogTraits.dogName.boundingFrom(font: UIFont.systemFont(ofSize: 20, weight: .semibold), height: 30.0).width
+                    
+                    if dogNameWidth > largest {
+                        largest = dogNameWidth
+                    }
+                    
+                    for requirementIndex in 0..<dog.dogRequirments.requirements.count{
+                        let requirement = dog.dogRequirments.requirements[requirementIndex]
+                        let requirementNameWidth = requirement.requirementName.boundingFrom(font: UIFont.systemFont(ofSize: 15, weight: .regular), height: 30.0).width
+                        
+                        if requirementNameWidth > largest {
+                            largest = requirementNameWidth
+                        }
+                        
+                    }
+                }
+                
+                return largest
+            }
+            
+            switch largestLabelWidth {
+            case 0..<minimumWidth:
+                return minimumWidth
+            case minimumWidth...maximumWidth:
+                return largestLabelWidth
+            default:
+                return maximumWidth
+            }
+        }
+        
         dropDown.makeDropDownIdentifier = "DROP_DOWN_NEW"
         dropDown.cellReusableIdentifier = "dropDownCell"
         dropDown.makeDropDownDataSourceProtocol = self
-        dropDown.setUpDropDown(viewPositionReference: (CGRect(origin: self.view.safeAreaLayoutGuide.layoutFrame.origin, size: CGSize(width: 100.0, height: 0.0))), offset: 0.0)
+        dropDown.setUpDropDown(viewPositionReference: (CGRect(origin: self.view.safeAreaLayoutGuide.layoutFrame.origin, size: CGSize(width: neededWidthForLabel + 20.0, height: 0.0))), offset: 0.0)
         dropDown.nib = UINib(nibName: "DropDownTableViewCell", bundle: nil)
         dropDown.setRowHeight(height: self.dropDownRowHeight)
         self.view.addSubview(dropDown)

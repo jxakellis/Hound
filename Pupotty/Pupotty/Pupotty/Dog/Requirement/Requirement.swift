@@ -109,6 +109,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         copy.storedIsActive = self.isActive
         copy.countDownComponents = self.countDownComponents.copy() as! CountDownComponents
         copy.timeOfDayComponents = self.timeOfDayComponents.copy() as! TimeOfDayComponents
+        copy.timeOfDayComponents.masterRequirement = copy
         copy.snoozeComponents = self.snoozeComponents.copy() as! SnoozeComponents
         
         copy.storedTimingStyle = self.timingStyle
@@ -123,9 +124,11 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
     
     override init() {
         super.init()
+        self.timeOfDayComponents.masterRequirement = self
     }
     
      required init?(coder aDecoder: NSCoder) {
+        super.init()
         self.isEnabled = aDecoder.decodeBool(forKey: "isEnabled")
         self.storedRequirementName = aDecoder.decodeObject(forKey: "requirementName") as! String
         self.storedRequirementDescription = aDecoder.decodeObject(forKey: "requirementDescription") as! String
@@ -134,6 +137,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementProtocol, EnablePro
         self.isPresentationHandled = aDecoder.decodeBool(forKey: "isPresentationHandled")
         self.countDownComponents = aDecoder.decodeObject(forKey: "countDownComponents") as! CountDownComponents
         self.timeOfDayComponents = aDecoder.decodeObject(forKey: "timeOfDayComponents") as! TimeOfDayComponents
+        self.timeOfDayComponents.masterRequirement = self
         self.snoozeComponents = aDecoder.decodeObject(forKey: "snoozeComponents") as! SnoozeComponents
         self.storedTimingStyle = RequirementStyle(rawValue: aDecoder.decodeObject(forKey: "timingStyle") as! String)!
         self.storedIsActive = aDecoder.decodeBool(forKey: "isActive")

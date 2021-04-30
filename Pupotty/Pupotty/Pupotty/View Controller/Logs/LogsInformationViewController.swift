@@ -57,7 +57,7 @@ class LogsInformationViewController: UIViewController {
         
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Filtering and Sorting:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
-        howToUseBodyAttributedText.append(NSAttributedString(string: "\nNot currently supported. All logs are complied together and then sorted from most recent to oldest.", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
+        howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo Filter by either a reminder or a dog, click \"Filter\" then the select the desired option. Filters are automatically removed if a new log is added or they can be manually removed by selecting the option again.", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
         howToUseBody.attributedText = howToUseBodyAttributedText
     }
 

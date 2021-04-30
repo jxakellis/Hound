@@ -155,6 +155,10 @@ enum TimeOfDayComponentsError: Error {
 }
 
 protocol TimeOfDayComponentsProtocol {
+    
+    ///Reference to the requirement that holds the timeOfDayComponent, required for connectivity.
+    var masterRequirement: Requirement! { get set }
+    
     ///DateComponent that stores the hour and minute specified (e.g. 8:26 am) of the time of day timer
     var timeOfDayComponent: DateComponents { get }
     mutating func changeTimeOfDayComponent(newTimeOfDayComponent: DateComponents) throws
@@ -164,6 +168,9 @@ protocol TimeOfDayComponentsProtocol {
     var isSkipping: Bool { get }
     ///Changes isSkipping and data associated
     mutating func changeIsSkipping(newSkipStatus: Bool)
+    
+    ///If is skipping is true, then a certain log date was appended. If unskipped it has to remove that certain logDate, but if logDates was modified with the Logs page then you have to figure out if that certain log date is still there and if so then remove it.
+    var isSkippingLogDate: Date? { get set }
 
     ///The weekdays on which the requirement should fire
     var weekdays: [Int] { get }
@@ -196,6 +203,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         let copy = TimeOfDayComponents()
         copy.storedTimeOfDayComponent = self.storedTimeOfDayComponent
         copy.storedIsSkipping = self.storedIsSkipping
+        copy.isSkippingLogDate = self.isSkippingLogDate
         copy.storedWeekDays = self.storedWeekDays
         return copy
     }
@@ -209,18 +217,21 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     required init?(coder aDecoder: NSCoder) {
         self.storedTimeOfDayComponent = aDecoder.decodeObject(forKey: "timeOfDayComponent") as! DateComponents
         self.storedIsSkipping = aDecoder.decodeBool(forKey: "isSkipping")
+        self.isSkippingLogDate = aDecoder.decodeObject(forKey: "isSkippingLogDate") as? Date
         self.storedWeekDays = aDecoder.decodeObject(forKey: "storedWeekDays") as! [Int]
-        
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(storedTimeOfDayComponent, forKey: "timeOfDayComponent")
         aCoder.encode(storedIsSkipping, forKey: "isSkipping")
+        aCoder.encode(isSkippingLogDate, forKey: "isSkippingLogDate")
         aCoder.encode(storedWeekDays, forKey: "storedWeekDays")
     }
     
     
     //MARK: - TimeOfDayComponentsProtocol
+    
+    var masterRequirement: Requirement! = nil
     
     private var storedTimeOfDayComponent: DateComponents = DateComponents()
     var timeOfDayComponent: DateComponents { return storedTimeOfDayComponent }
@@ -254,8 +265,30 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     private var storedIsSkipping: Bool = TimerConstant.defaultSkipStatus
     var isSkipping: Bool { return storedIsSkipping }
     func changeIsSkipping(newSkipStatus: Bool) {
+        guard newSkipStatus != storedIsSkipping else {
+            return
+        }
+        
+        if newSkipStatus == true {
+            isSkippingLogDate = Date()
+        }
+        else {
+            if isSkippingLogDate != nil{
+                for logDateIndex in 0..<masterRequirement.logDates.count{
+                    if masterRequirement.logDates[logDateIndex].date.distance(to: isSkippingLogDate!) < 1{
+                        masterRequirement.logDates.remove(at: logDateIndex)
+                        break
+                    }
+                }
+            }
+            
+            isSkippingLogDate = nil
+        }
+        
         storedIsSkipping = newSkipStatus
     }
+    
+    var isSkippingLogDate: Date? = nil
     
     private var storedWeekDays: [Int] = [1,2,3,4,5,6,7]
     var weekdays: [Int] { return storedWeekDays }
