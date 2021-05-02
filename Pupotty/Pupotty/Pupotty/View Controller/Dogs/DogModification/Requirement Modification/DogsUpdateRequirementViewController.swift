@@ -70,8 +70,8 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
     
     ///The cancel / exit button was pressed, dismisses view to complete intended action
     @IBAction private func willCancel(_ sender: Any) {
-        
-        let unsavedInformationConfirmation = GeneralAlertController(title: "Are you sure you want to exit?", message: "Any changes you have made won't be saved", preferredStyle: .alert)
+        //"Any changes you have made won't be saved"
+        let unsavedInformationConfirmation = GeneralAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
         
         let alertActionExit = UIAlertAction(title: "Yes, I don't want to save", style: .default) { (UIAlertAction) in
             self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)

@@ -431,15 +431,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" countDownDuration="5400" minuteInterval="5" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nvt-ES-U6h">
-                                <rect key="frame" x="0.0" y="79.5" width="414" height="253.5"/>
+                                <rect key="frame" x="0.0" y="78" width="414" height="255"/>
                                 <connections>
                                     <action selector="willUpdateCountDown:" destination="gRX-vW-PrI" eventType="editingChanged" id="Qt9-8F-KfP"/>
                                     <action selector="willUpdateCountDown:" destination="gRX-vW-PrI" eventType="valueChanged" id="xZo-V2-zDP"/>
                                 </connections>
                             </datePicker>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Repeat Every:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OxU-He-Qgo">
-                                <rect key="frame" x="10" y="54" width="404" height="25.5"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
+                                <rect key="frame" x="10" y="54" width="404" height="24"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -475,7 +475,7 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Mof-PE-gVW">
                                 <rect key="frame" x="10" y="54" width="115" height="90"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="txX-Vb-DvX" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="txX-Vb-DvX" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="115" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="xD2-uT-3W0"/>
@@ -484,7 +484,7 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wyo-2M-huZ" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Description:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wyo-2M-huZ" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="115" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="mAR-1A-0BC"/>
@@ -501,25 +501,25 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="0wl-L9-v7T">
                                 <rect key="frame" x="135" y="54" width="269" height="90"/>
                                 <subviews>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fuk-rc-lgL">
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="fuk-rc-lgL">
                                         <rect key="frame" x="0.0" y="0.0" width="269" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="AAE-FT-JQ0"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES" textContentType="name"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                                     </textField>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="1sk-hK-Yuh">
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="1sk-hK-Yuh">
                                         <rect key="frame" x="0.0" y="50" width="269" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="gk5-g2-MUx"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                                     </textField>
                                 </subviews>
                             </stackView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enabled:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mOc-Nw-xUd" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Enabled:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mOc-Nw-xUd" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
                                 <rect key="frame" x="10" y="154" width="115" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="xyt-XZ-g5l"/>
@@ -607,8 +607,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ht7-hC-mOx">
-                                <rect key="frame" x="10" y="98" width="82" height="40"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ht7-hC-mOx" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="10" y="98" width="61" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="mpz-M7-SPB"/>
                                 </constraints>
@@ -616,8 +616,8 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="7nG-bv-0ex">
-                                <rect key="frame" x="102" y="98" width="302" height="40"/>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="7nG-bv-0ex">
+                                <rect key="frame" x="81" y="98" width="323" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="fYP-CF-N0q"/>
                                 </constraints>
@@ -691,7 +691,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <switch hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TEj-xg-wOu">
-                                <rect key="frame" x="102" y="152.5" width="51" height="31"/>
+                                <rect key="frame" x="81" y="152.5" width="51" height="31"/>
                                 <color key="onTintColor" systemColor="systemBlueColor"/>
                             </switch>
                         </subviews>
@@ -723,10 +723,21 @@
                             <constraint firstItem="TEj-xg-wOu" firstAttribute="leading" secondItem="7nG-bv-0ex" secondAttribute="leading" id="i26-XH-vwA"/>
                             <constraint firstItem="xg8-HR-nc3" firstAttribute="bottom" secondItem="Lu2-Bs-kCu" secondAttribute="bottom" constant="10" id="kfB-YS-qhv"/>
                             <constraint firstItem="Lu2-Bs-kCu" firstAttribute="top" secondItem="9Ma-OG-XR6" secondAttribute="top" id="pjD-88-5wR"/>
-                            <constraint firstItem="R1G-Y6-u2J" firstAttribute="trailing" secondItem="ht7-hC-mOx" secondAttribute="trailing" id="scP-Ti-Rqm"/>
                             <constraint firstItem="R1G-Y6-u2J" firstAttribute="top" secondItem="ht7-hC-mOx" secondAttribute="bottom" constant="10" id="xgW-R5-zwh"/>
                             <constraint firstItem="R1G-Y6-u2J" firstAttribute="leading" secondItem="ht7-hC-mOx" secondAttribute="leading" id="zjl-hb-CMj"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="R1G-Y6-u2J"/>
+                                <exclude reference="TEj-xg-wOu"/>
+                            </mask>
+                            <mask key="constraints">
+                                <exclude reference="xgW-R5-zwh"/>
+                                <exclude reference="zjl-hb-CMj"/>
+                                <exclude reference="e1f-Gx-UzL"/>
+                                <exclude reference="i26-XH-vwA"/>
+                            </mask>
+                        </variation>
                     </view>
                     <navigationItem key="navigationItem" title="Create Dog" id="P27-vi-zWN">
                         <barButtonItem key="leftBarButtonItem" image="chevron.left" catalog="system" id="xhQ-Fp-b2Q">
@@ -1342,61 +1353,74 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="40.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="251" text="Bella (EX)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="I8b-bv-nCs" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Bella (EX)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="I8b-bv-nCs" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
                                             <rect key="frame" x="10" y="10" width="72" height="20.5"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="rFQ-Oo-Gyp"/>
+                                                <constraint firstAttribute="height" constant="20" id="asK-tU-yM1"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Potty(EX)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="256-LL-2wv" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" text="Potty(EX)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="256-LL-2wv" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
                                             <rect key="frame" x="92" y="10" width="68" height="20.5"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="nOP-lA-LGf"/>
+                                                <constraint firstAttribute="height" constant="20" id="1Z6-Vj-lLp"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="11:11 AM (EX)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="GBf-dW-x4B" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                            <rect key="frame" x="170" y="10" width="207.5" height="20.5"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="11:11 AM (EX)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="GBf-dW-x4B" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                            <rect key="frame" x="170" y="10" width="91.5" height="20.5"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="Jkk-ds-bdd"/>
+                                                <constraint firstAttribute="height" constant="20" id="hNQ-Us-zDJ"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.5" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="ECs-Mb-B4l">
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.5" contentMode="scaleAspectFit" horizontalHuggingPriority="254" verticalHuggingPriority="254" horizontalCompressionResistancePriority="754" verticalCompressionResistancePriority="754" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="ECs-Mb-B4l">
                                             <rect key="frame" x="387.5" y="10" width="16.5" height="21"/>
                                             <color key="tintColor" systemColor="systemGrayColor"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" secondItem="ECs-Mb-B4l" secondAttribute="height" multiplier="1:1.5" id="bHB-Mt-AJD"/>
                                             </constraints>
                                         </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="NOTE" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="ch9-X0-qjW" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                            <rect key="frame" x="271.5" y="10" width="106" height="20.5"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="20" id="bM8-85-rOi"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                     </subviews>
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="ECs-Mb-B4l" secondAttribute="trailing" constant="10" id="ABJ-OW-T4y"/>
                                         <constraint firstItem="ECs-Mb-B4l" firstAttribute="top" secondItem="3L0-6w-EHw" secondAttribute="top" constant="8" id="C1S-dG-vkm"/>
+                                        <constraint firstItem="ch9-X0-qjW" firstAttribute="top" secondItem="3L0-6w-EHw" secondAttribute="top" constant="10" id="GXg-es-02G"/>
                                         <constraint firstItem="256-LL-2wv" firstAttribute="leading" secondItem="I8b-bv-nCs" secondAttribute="trailing" constant="10" id="HHw-le-lGP"/>
                                         <constraint firstAttribute="bottom" secondItem="256-LL-2wv" secondAttribute="bottom" constant="10" id="Pxj-6g-uUH"/>
                                         <constraint firstAttribute="bottom" secondItem="I8b-bv-nCs" secondAttribute="bottom" constant="10" id="QN1-wp-lRY"/>
-                                        <constraint firstItem="ECs-Mb-B4l" firstAttribute="leading" secondItem="GBf-dW-x4B" secondAttribute="trailing" constant="10" id="Y4N-n7-wzs"/>
+                                        <constraint firstAttribute="bottom" secondItem="ch9-X0-qjW" secondAttribute="bottom" constant="10" id="S2X-TX-Y9R"/>
                                         <constraint firstItem="GBf-dW-x4B" firstAttribute="top" secondItem="3L0-6w-EHw" secondAttribute="top" constant="10" id="aGK-PB-Saa"/>
+                                        <constraint firstItem="ch9-X0-qjW" firstAttribute="leading" secondItem="GBf-dW-x4B" secondAttribute="trailing" constant="10" id="aeg-2C-1do"/>
                                         <constraint firstItem="GBf-dW-x4B" firstAttribute="leading" secondItem="256-LL-2wv" secondAttribute="trailing" constant="10" id="cqE-U8-O3W"/>
                                         <constraint firstItem="I8b-bv-nCs" firstAttribute="leading" secondItem="3L0-6w-EHw" secondAttribute="leading" constant="10" id="dNB-Pm-Tlc"/>
                                         <constraint firstItem="I8b-bv-nCs" firstAttribute="top" secondItem="3L0-6w-EHw" secondAttribute="top" constant="10" id="e9g-4G-fki"/>
                                         <constraint firstItem="256-LL-2wv" firstAttribute="top" secondItem="3L0-6w-EHw" secondAttribute="top" constant="10" id="euS-IX-IXk"/>
+                                        <constraint firstItem="ECs-Mb-B4l" firstAttribute="leading" secondItem="ch9-X0-qjW" secondAttribute="trailing" constant="10" id="pSK-Go-fzw"/>
                                         <constraint firstAttribute="bottom" secondItem="GBf-dW-x4B" secondAttribute="bottom" constant="10" id="syk-yK-SOv"/>
                                         <constraint firstAttribute="bottom" secondItem="ECs-Mb-B4l" secondAttribute="bottom" constant="8" id="x4l-mN-g0i"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="dateDescription" destination="GBf-dW-x4B" id="HGS-aO-Deo"/>
                                     <outlet property="dogName" destination="I8b-bv-nCs" id="zxx-f7-FSp"/>
-                                    <outlet property="requirementName" destination="256-LL-2wv" id="5TR-Oo-UxY"/>
+                                    <outlet property="logDate" destination="GBf-dW-x4B" id="0Ln-fN-Nue"/>
+                                    <outlet property="logName" destination="256-LL-2wv" id="ODC-nh-RI3"/>
+                                    <outlet property="logNote" destination="ch9-X0-qjW" id="IVL-lC-w9e"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1424,13 +1448,43 @@
                                     <segue destination="Vb4-XU-h1N" kind="embed" identifier="logsMainScreenTableViewController" id="f4s-dd-Si4"/>
                                 </connections>
                             </containerView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yMB-b6-Ja9" customClass="ScaledButton" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="314" y="713" width="90" height="90"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="3sJ-HE-z4h"/>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="90" id="DlK-B5-Zaj"/>
+                                    <constraint firstAttribute="width" secondItem="yMB-b6-Ja9" secondAttribute="height" multiplier="1:1" id="vOn-wy-z0K"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <state key="normal" image="plus.circle.fill" catalog="system">
+                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="90"/>
+                                </state>
+                                <connections>
+                                    <action selector="willAddButton:" destination="8rJ-Kc-sve" eventType="touchUpInside" id="jyA-re-Kv4"/>
+                                    <segue destination="SZm-Ec-oLW" kind="show" identifier="logsAddArbitraryLogViewController" id="yhi-NW-dKs"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M9H-R5-vFI" customClass="ScaledButton" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="314" y="713" width="90" height="90"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" image="plus.circle" catalog="system">
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="90"/>
+                                </state>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="HUA-JN-P5v"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="HUA-JN-P5v" firstAttribute="trailing" secondItem="yMB-b6-Ja9" secondAttribute="trailing" constant="10" id="3cl-i7-4LE"/>
                             <constraint firstItem="2c1-46-nyx" firstAttribute="top" secondItem="HUA-JN-P5v" secondAttribute="top" id="6Hr-2E-ykd"/>
                             <constraint firstItem="HUA-JN-P5v" firstAttribute="bottom" secondItem="2c1-46-nyx" secondAttribute="bottom" id="8Bh-Uf-BKt"/>
+                            <constraint firstItem="HUA-JN-P5v" firstAttribute="bottom" secondItem="yMB-b6-Ja9" secondAttribute="bottom" constant="10" id="AYg-yT-PHb"/>
                             <constraint firstItem="2c1-46-nyx" firstAttribute="leading" secondItem="HUA-JN-P5v" secondAttribute="leading" id="Ik0-EL-1iV"/>
+                            <constraint firstItem="yMB-b6-Ja9" firstAttribute="trailing" secondItem="M9H-R5-vFI" secondAttribute="trailing" id="Iwd-8C-ktv"/>
+                            <constraint firstItem="yMB-b6-Ja9" firstAttribute="top" secondItem="M9H-R5-vFI" secondAttribute="top" id="hcq-N0-9YB"/>
+                            <constraint firstItem="yMB-b6-Ja9" firstAttribute="bottom" secondItem="M9H-R5-vFI" secondAttribute="bottom" id="kCX-KN-TUA"/>
+                            <constraint firstItem="yMB-b6-Ja9" firstAttribute="leading" secondItem="M9H-R5-vFI" secondAttribute="leading" id="nLB-0H-trN"/>
                             <constraint firstItem="HUA-JN-P5v" firstAttribute="trailing" secondItem="2c1-46-nyx" secondAttribute="trailing" id="yaV-RV-s1z"/>
                         </constraints>
                     </view>
@@ -1446,10 +1500,189 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="willAddArbitraryLog" destination="yMB-b6-Ja9" id="qAB-PK-KHD"/>
+                        <outlet property="willAddArbitraryLogBackground" destination="M9H-R5-vFI" id="vhU-Vc-0Oi"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dF9-0I-JQn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="860.86956521739137" y="-2357.1428571428569"/>
+        </scene>
+        <!--Add Arbitrary Log-->
+        <scene sceneID="34g-m7-pUG">
+            <objects>
+                <viewController id="SZm-Ec-oLW" customClass="LogsAddArbitraryLogViewController" customModule="Pupotty" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="beU-yv-S8Y">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="5" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="0FN-6L-oEu">
+                                <rect key="frame" x="0.0" y="337" width="414" height="476"/>
+                                <connections>
+                                    <action selector="didUpdateDatePicker:" destination="SZm-Ec-oLW" eventType="valueChanged" id="pFf-A0-31r"/>
+                                </connections>
+                            </datePicker>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X2i-5S-er5" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="10" y="203" width="61" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="FVP-iD-i2b"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="NOTE: This will NOT create any alarms. It will only record it to the table of logs." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="obj-1g-zpe" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="10" y="108" width="394" height="75"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="75" id="ltP-3h-F8x"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="placeholder" borderStyle="roundedRect" textAlignment="natural" clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="5JK-Ct-p4v">
+                                <rect key="frame" x="81" y="203" width="323" height="40"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Note:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CVw-JM-VSN" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="10" y="253" width="61" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="KMw-Bs-ryr"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="6MF-r3-mug">
+                                <rect key="frame" x="81" y="253" width="323" height="40"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bLz-mC-dUW" customClass="ScaledButton" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="10" y="713" width="90" height="90"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="90" id="AQx-ip-xdO"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="rgd-ZM-em9"/>
+                                </constraints>
+                                <color key="tintColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" image="arrow.backward.circle.fill" catalog="system">
+                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
+                                </state>
+                                <connections>
+                                    <action selector="willCancel:" destination="SZm-Ec-oLW" eventType="touchUpInside" id="hNh-Y3-kJw"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mbU-X7-WfL" customClass="ScaledButton" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="10" y="713" width="90" height="90"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" image="arrow.backward.circle" catalog="system">
+                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aFT-Sz-KlF" customClass="ScaledButton" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="314" y="713" width="90" height="90"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" image="checkmark.circle" catalog="system">
+                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
+                                </state>
+                                <connections>
+                                    <action selector="willAddDog:" destination="yj4-3A-FdI" eventType="touchUpInside" id="5U7-G2-mZq"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="x5G-Ck-EDF" customClass="ScaledButton" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="314" y="713" width="90" height="90"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="x5G-Ck-EDF" secondAttribute="height" multiplier="1:1" id="BEO-fP-vVf"/>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="90" id="I4z-37-9IB"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="bNJ-Dm-Guu"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <state key="normal" image="checkmark.circle.fill" catalog="system">
+                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
+                                </state>
+                                <connections>
+                                    <action selector="willAddDog:" destination="yj4-3A-FdI" eventType="touchUpInside" id="dyX-8g-JX6"/>
+                                    <action selector="willAddLog:" destination="SZm-Ec-oLW" eventType="touchUpInside" id="gqC-wo-ahC"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Date of Event:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AqH-mh-m9F" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="10" y="303" width="394" height="24"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="zlF-84-edY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="0FN-6L-oEu" firstAttribute="leading" secondItem="zlF-84-edY" secondAttribute="leading" id="0lN-zX-tQr"/>
+                            <constraint firstItem="bLz-mC-dUW" firstAttribute="width" secondItem="bLz-mC-dUW" secondAttribute="height" multiplier="1:1" id="1eE-kt-nMJ"/>
+                            <constraint firstItem="zlF-84-edY" firstAttribute="bottom" secondItem="0FN-6L-oEu" secondAttribute="bottom" id="3iv-I0-6uR"/>
+                            <constraint firstItem="AqH-mh-m9F" firstAttribute="leading" secondItem="zlF-84-edY" secondAttribute="leading" constant="10" id="4gc-5X-Mti"/>
+                            <constraint firstItem="x5G-Ck-EDF" firstAttribute="leading" secondItem="aFT-Sz-KlF" secondAttribute="leading" id="4lB-Ei-e6R"/>
+                            <constraint firstItem="CVw-JM-VSN" firstAttribute="top" secondItem="X2i-5S-er5" secondAttribute="bottom" constant="10" id="9Yb-0z-To8"/>
+                            <constraint firstItem="X2i-5S-er5" firstAttribute="leading" secondItem="zlF-84-edY" secondAttribute="leading" constant="10" id="9wN-S2-4de"/>
+                            <constraint firstItem="6MF-r3-mug" firstAttribute="top" secondItem="CVw-JM-VSN" secondAttribute="top" id="BWC-U6-N2u"/>
+                            <constraint firstItem="x5G-Ck-EDF" firstAttribute="trailing" secondItem="aFT-Sz-KlF" secondAttribute="trailing" id="HgP-BA-SsP"/>
+                            <constraint firstItem="x5G-Ck-EDF" firstAttribute="width" secondItem="x5G-Ck-EDF" secondAttribute="height" multiplier="1:1" id="IZG-pF-gcW"/>
+                            <constraint firstItem="0FN-6L-oEu" firstAttribute="top" secondItem="AqH-mh-m9F" secondAttribute="bottom" constant="10" id="MFC-0Z-H9G"/>
+                            <constraint firstItem="CVw-JM-VSN" firstAttribute="leading" secondItem="X2i-5S-er5" secondAttribute="leading" id="MGz-u4-d7d"/>
+                            <constraint firstItem="6MF-r3-mug" firstAttribute="trailing" secondItem="5JK-Ct-p4v" secondAttribute="trailing" id="RNC-a9-Zdd"/>
+                            <constraint firstItem="bLz-mC-dUW" firstAttribute="bottom" secondItem="mbU-X7-WfL" secondAttribute="bottom" id="Shi-z2-Jal"/>
+                            <constraint firstItem="bLz-mC-dUW" firstAttribute="leading" secondItem="zlF-84-edY" secondAttribute="leading" constant="10" id="UE0-hT-CtL"/>
+                            <constraint firstItem="5JK-Ct-p4v" firstAttribute="leading" secondItem="X2i-5S-er5" secondAttribute="trailing" constant="10" id="UhF-aa-cdI"/>
+                            <constraint firstItem="AqH-mh-m9F" firstAttribute="top" secondItem="6MF-r3-mug" secondAttribute="bottom" constant="10" id="VOq-02-Gmm"/>
+                            <constraint firstItem="X2i-5S-er5" firstAttribute="top" secondItem="obj-1g-zpe" secondAttribute="bottom" constant="20" id="XnE-Cw-XOR"/>
+                            <constraint firstItem="zlF-84-edY" firstAttribute="bottom" secondItem="x5G-Ck-EDF" secondAttribute="bottom" constant="10" id="ZU6-d9-fFM"/>
+                            <constraint firstItem="CVw-JM-VSN" firstAttribute="trailing" secondItem="X2i-5S-er5" secondAttribute="trailing" id="ddW-uH-GsW"/>
+                            <constraint firstItem="bLz-mC-dUW" firstAttribute="trailing" secondItem="mbU-X7-WfL" secondAttribute="trailing" id="ewd-xd-agC"/>
+                            <constraint firstItem="zlF-84-edY" firstAttribute="trailing" secondItem="obj-1g-zpe" secondAttribute="trailing" constant="10" id="f7G-Y0-SeM"/>
+                            <constraint firstItem="x5G-Ck-EDF" firstAttribute="top" secondItem="aFT-Sz-KlF" secondAttribute="top" id="fn7-fB-Lg2"/>
+                            <constraint firstItem="6MF-r3-mug" firstAttribute="leading" secondItem="5JK-Ct-p4v" secondAttribute="leading" id="gif-Zx-ckS"/>
+                            <constraint firstItem="bLz-mC-dUW" firstAttribute="top" secondItem="mbU-X7-WfL" secondAttribute="top" id="hr4-QG-qui"/>
+                            <constraint firstItem="5JK-Ct-p4v" firstAttribute="bottom" secondItem="X2i-5S-er5" secondAttribute="bottom" id="lTY-Gp-ehd"/>
+                            <constraint firstItem="zlF-84-edY" firstAttribute="trailing" secondItem="AqH-mh-m9F" secondAttribute="trailing" constant="10" id="mhE-md-FPa"/>
+                            <constraint firstItem="obj-1g-zpe" firstAttribute="leading" secondItem="zlF-84-edY" secondAttribute="leading" constant="10" id="mlq-60-n6o"/>
+                            <constraint firstItem="obj-1g-zpe" firstAttribute="top" secondItem="zlF-84-edY" secondAttribute="top" constant="20" id="npj-kC-ygL"/>
+                            <constraint firstItem="zlF-84-edY" firstAttribute="trailing" secondItem="0FN-6L-oEu" secondAttribute="trailing" id="okZ-O3-O0H"/>
+                            <constraint firstItem="5JK-Ct-p4v" firstAttribute="top" secondItem="X2i-5S-er5" secondAttribute="top" id="tkl-Pj-Quq"/>
+                            <constraint firstItem="x5G-Ck-EDF" firstAttribute="bottom" secondItem="aFT-Sz-KlF" secondAttribute="bottom" id="uN5-36-1Uk"/>
+                            <constraint firstItem="zlF-84-edY" firstAttribute="trailing" secondItem="5JK-Ct-p4v" secondAttribute="trailing" constant="10" id="uxw-TH-fVy"/>
+                            <constraint firstItem="bLz-mC-dUW" firstAttribute="leading" secondItem="mbU-X7-WfL" secondAttribute="leading" id="wPp-Kp-U03"/>
+                            <constraint firstItem="zlF-84-edY" firstAttribute="bottom" secondItem="bLz-mC-dUW" secondAttribute="bottom" constant="10" id="wq4-O7-Pbj"/>
+                            <constraint firstItem="zlF-84-edY" firstAttribute="trailing" secondItem="x5G-Ck-EDF" secondAttribute="trailing" constant="10" id="wy8-xV-JZn"/>
+                            <constraint firstItem="6MF-r3-mug" firstAttribute="bottom" secondItem="CVw-JM-VSN" secondAttribute="bottom" id="xyo-jI-XMD"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Add Arbitrary Log" id="PyI-jW-rkK">
+                        <barButtonItem key="leftBarButtonItem" image="chevron.backward" catalog="system" id="Bil-3N-toY">
+                            <connections>
+                                <action selector="willCancel:" destination="SZm-Ec-oLW" id="NfR-Js-xTb"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="addLogButton" destination="x5G-Ck-EDF" id="iNG-6a-B9W"/>
+                        <outlet property="addLogButtonBackground" destination="aFT-Sz-KlF" id="ktK-Pt-g9M"/>
+                        <outlet property="cancelAddLogButton" destination="bLz-mC-dUW" id="mia-St-jI3"/>
+                        <outlet property="cancelAddLogButtonBackground" destination="mbU-X7-WfL" id="GY4-hr-qFf"/>
+                        <outlet property="logDate" destination="0FN-6L-oEu" id="VmN-3j-Tew"/>
+                        <outlet property="logDisclaimer" destination="obj-1g-zpe" id="O6a-kg-X4q"/>
+                        <outlet property="logName" destination="5JK-Ct-p4v" id="nKD-IR-2u0"/>
+                        <outlet property="logNote" destination="6MF-r3-mug" id="ccJ-Nz-VN6"/>
+                        <segue destination="u7k-gr-e3c" kind="unwind" identifier="unwindToLogsViewController" unwindAction="unwind:" id="rhh-Hf-Q4L"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sb8-0C-zGY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="u7k-gr-e3c" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="1535" y="-3275"/>
         </scene>
         <!--Dog Logs Information-->
         <scene sceneID="uGs-yE-LDz">
@@ -1556,7 +1789,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zh4-7e-uMR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="j43-ZZ-FFx" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="861" y="-3277"/>
+            <point key="canvasLocation" x="338" y="-3274"/>
         </scene>
         <!--Main Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">
@@ -1599,7 +1832,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                                 <connections>
-                                    <action selector="didContinue:" destination="w3D-Ib-MEE" eventType="touchUpInside" id="0zN-5Y-lwF"/>
+                                    <action selector="willContinue:" destination="w3D-Ib-MEE" eventType="touchUpInside" id="pDR-DT-E0O"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welcome" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="esp-x0-Cun" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
@@ -1945,6 +2178,7 @@
                             <constraint firstItem="zN3-Wx-58L" firstAttribute="width" secondItem="JqF-PI-2lY" secondAttribute="width" id="4Fx-No-mWs"/>
                             <constraint firstItem="tsl-PX-q6k" firstAttribute="bottom" secondItem="KE9-sW-ERX" secondAttribute="bottom" id="5Uf-cf-7Pk"/>
                             <constraint firstItem="zN3-Wx-58L" firstAttribute="leading" secondItem="BWf-ZH-KPJ" secondAttribute="trailing" constant="8" id="7rY-u6-t1B"/>
+                            <constraint firstItem="tsl-PX-q6k" firstAttribute="trailing" secondItem="Zb1-0i-9Km" secondAttribute="trailing" constant="10" id="7yf-Zx-why"/>
                             <constraint firstItem="Zb1-0i-9Km" firstAttribute="leading" secondItem="2Ap-4c-M9b" secondAttribute="trailing" constant="8" id="8Ss-s1-aHm"/>
                             <constraint firstItem="2b7-cC-Q2l" firstAttribute="width" secondItem="JqF-PI-2lY" secondAttribute="width" id="9Cg-ke-VaS"/>
                             <constraint firstItem="2Ap-4c-M9b" firstAttribute="top" secondItem="JqF-PI-2lY" secondAttribute="top" id="D1K-LV-q8o"/>
@@ -1984,6 +2218,12 @@
                         <outlet property="timeOfDay" destination="KE9-sW-ERX" id="v6l-fk-P9V"/>
                         <outlet property="tuesday" destination="zN3-Wx-58L" id="xPw-t6-CtT"/>
                         <outlet property="wednesday" destination="2b7-cC-Q2l" id="3ui-aw-nBX"/>
+                        <outletCollection property="interWeekdayConstraints" destination="cSo-st-Dlp" collectionClass="NSMutableArray" id="2RS-sJ-qbR"/>
+                        <outletCollection property="interWeekdayConstraints" destination="7rY-u6-t1B" collectionClass="NSMutableArray" id="aH0-7c-E18"/>
+                        <outletCollection property="interWeekdayConstraints" destination="YZ6-Cx-pmC" collectionClass="NSMutableArray" id="er1-oB-RdQ"/>
+                        <outletCollection property="interWeekdayConstraints" destination="KNp-Kw-clr" collectionClass="NSMutableArray" id="91w-wn-13d"/>
+                        <outletCollection property="interWeekdayConstraints" destination="PQL-td-xSP" collectionClass="NSMutableArray" id="ezH-r6-6Pw"/>
+                        <outletCollection property="interWeekdayConstraints" destination="8Ss-s1-aHm" collectionClass="NSMutableArray" id="XPe-6M-C12"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DEU-ai-82Z" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -2097,6 +2337,7 @@
         <image name="calendar" catalog="system" width="128" height="106"/>
         <image name="checkmark.circle" catalog="system" width="128" height="121"/>
         <image name="checkmark.circle.fill" catalog="system" width="128" height="121"/>
+        <image name="chevron.backward" catalog="system" width="96" height="128"/>
         <image name="chevron.left" catalog="system" width="96" height="128"/>
         <image name="chevron.right" catalog="system" width="96" height="128"/>
         <image name="f.circle.fill" catalog="system" width="128" height="121"/>

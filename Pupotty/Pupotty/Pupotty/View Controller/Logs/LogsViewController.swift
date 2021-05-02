@@ -12,9 +12,19 @@ protocol LogsViewControllerDelegate{
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsMainScreenTableViewControllerDelegate, MakeDropDownDataSourceProtocol {
+class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsMainScreenTableViewControllerDelegate, MakeDropDownDataSourceProtocol, LogsAddArbitraryLogViewControllerDelegate {
     
     
+    
+    //MARK: - LogsAddArbitraryLogViewControllerDelegate
+    
+    func didAddArbitraryLog(sender: Sender, parentDogName: String, newArbitraryLog: ArbitraryLog) throws {
+        let sudoDogManager = getDogManager()
+        if sudoDogManager.dogs.isEmpty == false {
+            sudoDogManager.dogs[0].dogTraits.arbitraryLogDates.append(newArbitraryLog)
+        }
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
+    }
     
     //MARK: - LogsMainScreenTableViewControllerDelegate
     
@@ -26,16 +36,19 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
     
     private var dropDownRowHeight: CGFloat = 30
     
+    private let filterDogNameFont: UIFont = UIFont.systemFont(ofSize: 20, weight: .semibold)
+    private let filterRequirementNameFont: UIFont = UIFont.systemFont(ofSize: 15, weight: .regular)
+    
     func configureCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, makeDropDownIdentifier: String) {
         if makeDropDownIdentifier == "DROP_DOWN_NEW"{
             let customCell = cell as! DropDownTableViewCell
             
             
             if indexPath.row == 0 {
-                customCell.requirementName.attributedText = NSAttributedString(string: getDogManager().dogs[indexPath.section].dogTraits.dogName, attributes: [.font: UIFont.systemFont(ofSize: 20, weight: .semibold)])
+                customCell.requirementName.attributedText = NSAttributedString(string: getDogManager().dogs[indexPath.section].dogTraits.dogName, attributes: [.font: filterDogNameFont])
             }
             else {
-                customCell.requirementName.attributedText = NSAttributedString(string: getDogManager().dogs[indexPath.section].dogRequirments.requirements[indexPath.row-1].requirementName, attributes: [.font: UIFont.systemFont(ofSize: 15, weight: .regular)])
+                customCell.requirementName.attributedText = NSAttributedString(string: getDogManager().dogs[indexPath.section].dogRequirments.requirements[indexPath.row-1].requirementName, attributes: [.font: filterRequirementNameFont])
             }
             
             if indexPath == filterIndexPath{
@@ -51,16 +64,17 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
     func numberOfRows(forSection: Int) -> Int {
         let sudoDogManager = getDogManager()
         var count = 1
-            for _ in sudoDogManager.dogs[forSection].dogRequirments.requirements{
-                count = count + 1
-            }
         
-        if count == 0{
+        if sudoDogManager.dogs.isEmpty == true {
             return 1
         }
-        else {
-            return count
+        
+        for _ in sudoDogManager.dogs[forSection].dogRequirments.requirements{
+            count = count + 1
         }
+        
+        return count
+        
     }
     
     func numberOfSections() -> Int {
@@ -118,21 +132,29 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
         dogManager = newDogManager
         
         if sender.localized is MainTabBarViewController{
+            updateDogManagerDependents()
             logsMainScreenTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
             filterIndexPath = nil
         }
         if sender.localized is LogsMainScreenTableViewController{
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
         }
+        if sender.localized is LogsAddArbitraryLogViewController{
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
+            logsMainScreenTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
+        }
     }
     
     func updateDogManagerDependents() {
-        //
+        willAddArbitraryLog?.isHidden = dogManager.dogs.isEmpty
+        willAddArbitraryLogBackground?.isHidden = dogManager.dogs.isEmpty
     }
     
     //MARK: - IB
     
-    @IBOutlet weak var button: UIButton!
+    @IBOutlet private weak var willAddArbitraryLog: ScaledButton!
+    @IBOutlet private weak var willAddArbitraryLogBackground: ScaledButton!
+    
     
     @IBAction private func willShowFilter(_ sender: Any) {
         
@@ -173,6 +195,7 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
     
     private let dropDown = MakeDropDown()
     
+    //IndexPath of a filter selected in the dropDown menu, nil if not filtering
     private var storedFilterIndexPath: IndexPath? = nil
     private var filterIndexPath: IndexPath? {
         get {
@@ -193,6 +216,7 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.view.bringSubviewToFront(willAddArbitraryLog)
         // Do any additional setup after loading the view.
     }
     
@@ -208,10 +232,11 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        dropDown.hideDropDown()
+        dropDown.hideDropDown(removeFromSuperview: true)
     }
     
     //MARK: - Drop Down Functions
+    
     
     private func setUpDropDown(){
         
@@ -222,20 +247,13 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
             
             ///Finds the largestWidth taken up by any label, later compared to constraint sizes of min and max
             var largestLabelWidth: CGFloat {
-                /*
-                 if indexPath.row == 0 {
-                     customCell.requirementName.attributedText = NSAttributedString(string: getDogManager().dogs[indexPath.section].dogTraits.dogName, attributes: [.font: UIFont.systemFont(ofSize: 20, weight: .semibold)])
-                 }
-                 else {
-                     customCell.requirementName.attributedText = NSAttributedString(string: getDogManager().dogs[indexPath.section].dogRequirments.requirements[indexPath.row-1].requirementName, attributes: [.font: UIFont.systemFont(ofSize: 15, weight: .regular)])
-                 }
-                 */
+                
                 let sudoDogManager = getDogManager()
                 var largest: CGFloat = 0.0
                 
                 for dogIndex in 0..<sudoDogManager.dogs.count{
                     let dog = sudoDogManager.dogs[dogIndex]
-                    let dogNameWidth = dog.dogTraits.dogName.boundingFrom(font: UIFont.systemFont(ofSize: 20, weight: .semibold), height: 30.0).width
+                    let dogNameWidth = dog.dogTraits.dogName.boundingFrom(font: filterDogNameFont, height: 30.0).width
                     
                     if dogNameWidth > largest {
                         largest = dogNameWidth
@@ -243,7 +261,7 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
                     
                     for requirementIndex in 0..<dog.dogRequirments.requirements.count{
                         let requirement = dog.dogRequirments.requirements[requirementIndex]
-                        let requirementNameWidth = requirement.requirementName.boundingFrom(font: UIFont.systemFont(ofSize: 15, weight: .regular), height: 30.0).width
+                        let requirementNameWidth = requirement.requirementName.boundingFrom(font: filterRequirementNameFont, height: 30.0).width
                         
                         if requirementNameWidth > largest {
                             largest = requirementNameWidth
@@ -287,6 +305,48 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
             logsMainScreenTableViewController = segue.destination as? LogsMainScreenTableViewController
             logsMainScreenTableViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
             logsMainScreenTableViewController.delegate = self
+        }
+        else if segue.identifier == "logsAddArbitraryLogViewController"{
+            let logsAddArbitraryLogViewController = segue.destination as! LogsAddArbitraryLogViewController
+            
+            //Find the name that is most relevant to the arbitraryLog
+            var defaultArbitraryLogName: String?{
+                let sudoDogManager = getDogManager()
+                var mostRecentArbitraryLog: ArbitraryLog? = nil
+                
+                //trys to find most recent arbitrary log, mostRecentArbitraryLog is nil if none exist
+                for dogIndex in 0..<sudoDogManager.dogs.count{
+                    //if mostRecentArbitraryLog is nil then tries to set equal to current dog most recent arbitrary log, nothing happens if that array is empty as mostRecentArbitraryLog is set to nil again
+                    if mostRecentArbitraryLog == nil {
+                        mostRecentArbitraryLog = sudoDogManager.dogs[dogIndex].dogTraits.arbitraryLogDates.last
+                    }
+                    //if mostRecentArbitraryLog is not nil, then looks for a dog's arbitrary log that was more recent in time
+                    else if sudoDogManager.dogs[dogIndex].dogTraits.arbitraryLogDates.isEmpty == false {
+                        let currentDogMostRecentArbitraryLog = sudoDogManager.dogs[dogIndex].dogTraits.arbitraryLogDates.last!
+                        
+                        if currentDogMostRecentArbitraryLog.creationDate.distance(to: mostRecentArbitraryLog!.creationDate) < 0{
+                            mostRecentArbitraryLog = currentDogMostRecentArbitraryLog
+                        }
+                    }
+                    
+                }
+                
+                //mostRecentArbitraryLog not nil then returns the logName as that is most relevant
+                if mostRecentArbitraryLog != nil{
+                    return mostRecentArbitraryLog!.logName
+                }
+                //if not arbitraryLogs exsist then trys to find the most recent requirement logged and returns its name
+                else if logsMainScreenTableViewController.consolidatedLogDates.isEmpty == false{
+                    return logsMainScreenTableViewController.consolidatedLogDates.first!.activeLogName
+                }
+                //returns nil if no logs of any kind exist
+                else {
+                    return nil
+                }
+                
+            }
+            logsAddArbitraryLogViewController.lastArbitraryLogName = defaultArbitraryLogName
+            logsAddArbitraryLogViewController.delegate = self
         }
     }
     

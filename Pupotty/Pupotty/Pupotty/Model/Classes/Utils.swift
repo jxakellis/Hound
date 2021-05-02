@@ -115,19 +115,31 @@ class ErrorProcessor{
         
         let errorProcessorInstance = ErrorProcessor()
         
-        if errorProcessorInstance.handleDogSpecificationManagerError(sender: sender, error: error) == true {
-            return
-        }
-        else if errorProcessorInstance.handleRequirementError(sender: sender, error: error) == true {
-            return
-        }
-        else if errorProcessorInstance.handleRequirementManagerError(sender: sender, error: error) == true {
+        if errorProcessorInstance.handleTimingManagerError(sender: sender, error: error) == true {
             return
         }
         else if errorProcessorInstance.handleDogManagerError(sender: sender, error: error) == true{
             return
         }
-        else if errorProcessorInstance.handleMiscError(sender: sender, error: error) == true{
+        else if errorProcessorInstance.handleDogError(sender: sender, error: error) == true{
+            return
+        }
+        else  if errorProcessorInstance.handleDogTraitManagerError(sender: sender, error: error) == true {
+            return
+        }
+        else if errorProcessorInstance.handleArbitraryLogError(sender: sender, error: error) == true {
+            return
+        }
+        else if errorProcessorInstance.handleRequirementManagerError(sender: sender, error: error) == true {
+            return
+        }
+        else if errorProcessorInstance.handleRequirementError(sender: sender, error: error) == true {
+            return
+        }
+        else if errorProcessorInstance.handleTimeOfDayComponentsError(sender: sender, error: error) == true {
+            return
+        }
+        else if errorProcessorInstance.handleStringExtensionError(sender: sender, error: error) == true {
             return
         }
         else {
@@ -135,28 +147,20 @@ class ErrorProcessor{
         }
     }
     
-    ///Returns true if able to find a match in enum DogSpecificationManagerError to the error provided
-    private func handleDogSpecificationManagerError(sender: Sender, error: Error) -> Bool{
+    ///Returns true if able to find a match in enum TimingManagerError to the error provided
+    private func handleTimingManagerError(sender: Sender, error: Error) -> Bool{
         /*
-         case nilKey
-         case blankKey
-         case invalidKey
-         case keyNotPresentInGlobalConstantList
-         // the strings are the key that the value used
-         case nilNewValue(String)
-         case blankNewValue(String)
-         case invalidNewValue(String)
+         enum TimingManagerError: Error{
+             case parseSenderInfoFailed
+             case invalidateFailed
+         }
          */
-        if case DogTraitManagerError.nilName = error {
-            ErrorProcessor.alertForError(message: "Your dog has an invalid name, try typing something else in!")
+        if case TimingManagerError.invalidateFailed = error {
+            ErrorProcessor.alertForError(message: "Unable to invalidate the timer handling a certain reminder")
             return true
         }
-        else if case DogTraitManagerError.blankName = error {
-            ErrorProcessor.alertForError(message: "Your dog has a blank name, try typing something in!")
-            return true
-        }
-        else if case DogTraitManagerError.invalidName = error {
-            ErrorProcessor.alertForError(message: "Your dog has a invalid name, try typing something else in!")
+        else if case TimingManagerError.parseSenderInfoFailed = error {
+            ErrorProcessor.alertForError(message: "Unable to parse sender info in TimingManager")
             return true
         }
         else {
@@ -167,10 +171,12 @@ class ErrorProcessor{
     ///Returns true if able to find a match in enum DogManagerError to the error provided
     private func handleDogManagerError(sender: Sender, error: Error) -> Bool{
         /*
-         case dogNameNotPresent
-         case dogNameAlreadyPresent
-         case dogNameInvalid
-         case dogNameBlank
+         enum DogManagerError: Error{
+             case dogNameBlank
+             case dogNameInvalid
+             case dogNameNotPresent
+             case dogNameAlreadyPresent
+         }
          */
         if case DogManagerError.dogNameNotPresent = error {
             ErrorProcessor.alertForError(message: "Could not find a match for a dog matching your name!")
@@ -193,12 +199,109 @@ class ErrorProcessor{
         }
     }
     
+    ///Returns true if able to find a match in enum DogError to the error provided
+    private func handleDogError(sender: Sender, error: Error) -> Bool{
+        /*
+         enum DogError: Error {
+             case noRequirementsPresent
+         }
+         */
+        if case DogError.noRequirementsPresent = error {
+            ErrorProcessor.alertForError(message: "Your dog has no reminders, please try adding one.")
+            return true
+        }
+        else{
+            return false
+        }
+    }
+    
+    ///Returns true if able to find a match in enum DogTraitManagerError to the error provided
+    private func handleDogTraitManagerError(sender: Sender, error: Error) -> Bool{
+        /*
+         enum DogTraitManagerError: Error{
+             case nilName
+             case blankName
+             case invalidName
+         }
+         */
+        if case DogTraitManagerError.nilName = error {
+            ErrorProcessor.alertForError(message: "Your dog has an invalid name, try typing something else in!")
+            return true
+        }
+        else if case DogTraitManagerError.blankName = error {
+            ErrorProcessor.alertForError(message: "Your dog has a blank name, try typing something in!")
+            return true
+        }
+        else if case DogTraitManagerError.invalidName = error {
+            ErrorProcessor.alertForError(message: "Your dog has a invalid name, try typing something else in!")
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    
+    ///Returns true if able to find a match in enum ArbitraryLogError to the error provided
+    private func handleArbitraryLogError(sender: Sender, error: Error) -> Bool {
+        /*
+         enum ArbitraryLogError: Error {
+             case nilLogName
+             case blankLogName
+         }
+         */
+        if case ArbitraryLogError.nilLogName = error {
+            ErrorProcessor.alertForError(message: "Your arbitrary log has no name, please try putting one in.")
+            return true
+        }
+        else if case ArbitraryLogError.blankLogName = error {
+            ErrorProcessor.alertForError(message: "Your arbitrary log has a blank name, please try putting typing one in.")
+            return true
+        }
+        else{
+            return false
+        }
+    }
+    
+    ///Returns true if able to find a match in enum RequirementManagerError to the error provided
+    private func handleRequirementManagerError(sender: Sender, error: Error) -> Bool{
+        /*
+         enum RequirementManagerError: Error {
+            case requirementAlreadyPresent
+             case requirementNotPresent
+             case requirementInvalid
+             case requirementNameNotPresent
+         }
+         */
+        if case RequirementManagerError.requirementAlreadyPresent = error {
+            ErrorProcessor.alertForError(message: "Your reminder's name is already present, please try a different one.")
+            return true
+        }
+        else if case RequirementManagerError.requirementNotPresent = error{
+            ErrorProcessor.alertForError(message: "Could not find a match for your reminder!")
+            return true
+        }
+        else if case RequirementManagerError.requirementInvalid = error {
+            ErrorProcessor.alertForError(message: "Your reminder is invalid, please try something different.")
+            return true
+        }
+        else if case RequirementManagerError.requirementNameNotPresent = error {
+            ErrorProcessor.alertForError(message: "Your reminder couldn't be located while attempting to modify its data")
+            return true
+        }
+        else{
+            return false
+        }
+    }
+    
     ///Returns true if able to find a match in enum RequirementError to the error provided
     private func handleRequirementError(sender: Sender, error: Error) -> Bool{
         /*
-         case nameInvalid
-         case descriptionInvalid
-         case intervalInvalid
+         enum RequirementError: Error {
+             case nameBlank
+             case nameInvalid
+             case descriptionInvalid
+             case intervalInvalid
+         }
          */
         if case RequirementError.nameInvalid = error {
             ErrorProcessor.alertForError(message: "Your dog's reminder name is invalid, please try a different one.")
@@ -221,45 +324,15 @@ class ErrorProcessor{
         }
     }
     
-    ///Returns true if able to find a match in enum RequirementManagerError to the error provided
-    private func handleRequirementManagerError(sender: Sender, error: Error) -> Bool{
+    ///Returns true if able to find a match in enum TimeOfDayComponentsError to the error provided
+    private func handleTimeOfDayComponentsError(sender: Sender, error: Error) -> Bool{
         /*
-         case requirementAlreadyPresent
-         case requirementNotPresent
-         case requirementInvalid
+         enum TimeOfDayComponentsError: Error {
+             case invalidCalendarComponent
+             case invalidWeekdayArray
+         }
          */
-        if case RequirementManagerError.requirementAlreadyPresent = error {
-            ErrorProcessor.alertForError(message: "Your reminder's name is already present, please try a different one.")
-            return true
-        }
-        else if case RequirementManagerError.requirementNotPresent = error{
-            ErrorProcessor.alertForError(message: "Could not find a match for your reminder!")
-            return true
-        }
-        else if case RequirementManagerError.requirementInvalid = error {
-            ErrorProcessor.alertForError(message: "Your reminder is invalid, please try something different.")
-            return true
-        }
-        else{
-            return false
-        }
-    }
-    
-    ///Returns true if able to find a match in one of a few small custom error enums
-    private func handleMiscError(sender: Sender, error: Error) -> Bool {
-        if case DogError.noRequirementsPresent = error {
-            ErrorProcessor.alertForError(message: "Your dog has no reminders, please try adding one.")
-            return true
-        }
-        else if case TimingManagerError.invalidateFailed = error {
-            ErrorProcessor.alertForError(message: "Unable to invalidate the timer handling a certain reminder")
-            return true
-        }
-        else if case TimingManagerError.parseSenderInfoFailed = error {
-            ErrorProcessor.alertForError(message: "Unable to parse sender info in TimingManager")
-            return true
-        }
-        else if case TimeOfDayComponentsError.invalidCalendarComponent = error {
+        if case TimeOfDayComponentsError.invalidCalendarComponent = error {
             ErrorProcessor.alertForError(message: "Invalid Calendar Components")
             return true
         }
@@ -271,6 +344,22 @@ class ErrorProcessor{
             return false
         }
     }
+    
+    private func handleStringExtensionError(sender: Sender, error: Error) -> Bool{
+        /*
+         enum StringExtensionError: Error {
+             case invalidDateComponents
+         }
+         */
+        if case StringExtensionError.invalidDateComponents = error {
+            ErrorProcessor.alertForError(message: "Invalid dateComponent passed to String extension.")
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    
 }
 
 

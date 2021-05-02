@@ -35,6 +35,7 @@
 		A263B30E2638AADD00E1DCE6 /* DropDownTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A263B30D2638AADD00E1DCE6 /* DropDownTableViewCell.xib */; };
 		A263B3112638AAEB00E1DCE6 /* DropDownTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A263B3102638AAEA00E1DCE6 /* DropDownTableViewCell.swift */; };
 		A265848D25E8128400E8B812 /* CHECKLIST Future Implementation Needed in Resources */ = {isa = PBXBuildFile; fileRef = A265848C25E8128400E8B812 /* CHECKLIST Future Implementation Needed */; };
+		A26A7585263CFF8C0026DE34 /* LogsAddArbitraryLogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26A7584263CFF8C0026DE34 /* LogsAddArbitraryLogViewController.swift */; };
 		A26AF36E25807887005D5DAB /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26AF36D25807887005D5DAB /* DateExtension.swift */; };
 		A278ED882610FF05000575FC /* DogsRequirementManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278ED872610FF05000575FC /* DogsRequirementManagerViewController.swift */; };
 		A278ED8C2610FF3D000575FC /* DogsRequirementCountDownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278ED8B2610FF3D000575FC /* DogsRequirementCountDownViewController.swift */; };
@@ -103,6 +104,7 @@
 		A263B30D2638AADD00E1DCE6 /* DropDownTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DropDownTableViewCell.xib; sourceTree = "<group>"; };
 		A263B3102638AAEA00E1DCE6 /* DropDownTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropDownTableViewCell.swift; sourceTree = "<group>"; };
 		A265848C25E8128400E8B812 /* CHECKLIST Future Implementation Needed */ = {isa = PBXFileReference; lastKnownFileType = text; path = "CHECKLIST Future Implementation Needed"; sourceTree = "<group>"; };
+		A26A7584263CFF8C0026DE34 /* LogsAddArbitraryLogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsAddArbitraryLogViewController.swift; sourceTree = "<group>"; };
 		A26AF36D25807887005D5DAB /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
 		A278ED872610FF05000575FC /* DogsRequirementManagerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsRequirementManagerViewController.swift; sourceTree = "<group>"; };
 		A278ED8B2610FF3D000575FC /* DogsRequirementCountDownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsRequirementCountDownViewController.swift; sourceTree = "<group>"; };
@@ -283,6 +285,15 @@
 			path = DropDown;
 			sourceTree = "<group>";
 		};
+		A26A7583263CFF4E0026DE34 /* Nested */ = {
+			isa = PBXGroup;
+			children = (
+				A20C87D82636312000CC6AEF /* LogsInformationViewController.swift */,
+				A26A7584263CFF8C0026DE34 /* LogsAddArbitraryLogViewController.swift */,
+			);
+			path = Nested;
+			sourceTree = "<group>";
+		};
 		A26AF36C25807878005D5DAB /* Pure Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -402,8 +413,8 @@
 			children = (
 				A2B9DAE8262B2DFA00A47D57 /* LogsNavigationViewController.swift */,
 				A2B9DAEC262B2E0A00A47D57 /* LogsViewController.swift */,
-				A20C87D82636312000CC6AEF /* LogsInformationViewController.swift */,
 				A2B9DAF0262B2F2D00A47D57 /* LogsMainScreenTableViewController.swift */,
+				A26A7583263CFF4E0026DE34 /* Nested */,
 				A25FC7A7262E631E007AD1B3 /* Cells */,
 			);
 			path = Logs;
@@ -598,6 +609,7 @@
 				A2B9A92B2629213800626FAE /* AlertControllers.swift in Sources */,
 				A258AEEF25661580005242E4 /* Dog.swift in Sources */,
 				A226737025CDC5D000904032 /* HomeMainScreenTableViewController.swift in Sources */,
+				A26A7585263CFF8C0026DE34 /* LogsAddArbitraryLogViewController.swift in Sources */,
 				A247B96825C883680017FE66 /* DogsMainScreenTableViewController.swift in Sources */,
 				A2EAF17D25C9D45E0022BBDD /* DogsMainScreenTableViewCellDogRequirement.swift in Sources */,
 				A2B9DAE9262B2DFA00A47D57 /* LogsNavigationViewController.swift in Sources */,

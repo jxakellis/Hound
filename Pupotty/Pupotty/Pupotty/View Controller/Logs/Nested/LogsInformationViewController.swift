@@ -51,6 +51,9 @@ class LogsInformationViewController: UIViewController {
         howToUseBodyAttributedText.append(NSAttributedString(string: "Edit Notes:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
         howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo edit a note, which by default is blank, simply click on the desired log. In the pop-up, enter your note and click \"Submit\".\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
         
+        howToUseBodyAttributedText.append(NSAttributedString(string: "Add Arbitrary Log:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
+        howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo add an arbitrary log, click the on the blue plus circle located in the bottom right. This will allow you to log an independent, unscheduled event; this log will not create, modify, or delete any reminders or alarms. For example, once in a while you take your dog to the vet. You record this with an arbitrary log, so you remember, but no further action by Pupotty is needed.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
+        
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Delete Logs:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
         howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo delete a log, along with its accompanying note, swipe left on it.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))

@@ -34,7 +34,7 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet private weak var continueButton: UIButton!
     
     ///Clicked continues button at the bottom to dismiss
-    @IBAction private func didContinue(_ sender: Any) {
+    @IBAction private func willContinue(_ sender: Any) {
         //data passage handled in view will disappear as the view can also be swiped down instead of hitting the continue button.
         self.dismiss(animated: true, completion: nil)
     }

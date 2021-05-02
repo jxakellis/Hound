@@ -200,7 +200,7 @@ class SettingsViewController: UIViewController, ToolTipable {
     @IBAction private func willReset(_ sender: Any) {
         
          let alertController = GeneralAlertController(
-             title: "🚨Are you sure you want to reset?🚨",
+             title: "Are you sure you want to reset?",
              message: "This action will delete and reset all data to default, in the process restarting the app.",
              preferredStyle: .alert)
          

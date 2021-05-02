@@ -16,6 +16,10 @@ enum DogTraitManagerError: Error{
 }
 
 protocol DogTraitManagerProtocol{
+    
+    ///logDates that aren't attached to a requirement object, free standing with no timing involved
+    var arbitraryLogDates: [ArbitraryLog] { get set }
+    
     ///The dog's name
     var dogName: String { get }
     ///Changes the dog's name
@@ -32,16 +36,19 @@ class DogTraitManager: NSObject, NSCoding, NSCopying, DogTraitManagerProtocol {
     //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         storedDogName = aDecoder.decodeObject(forKey: "dogName") as! String
+        arbitraryLogDates = aDecoder.decodeObject(forKey: "arbitraryLogDates") as! [ArbitraryLog]
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(storedDogName, forKey: "dogName")
+        aCoder.encode(arbitraryLogDates, forKey: "arbitraryLogDates")
     }
     
     //MARK: - NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = DogTraitManager()
         copy.storedDogName = self.storedDogName
+        copy.arbitraryLogDates = self.arbitraryLogDates
         return copy
     }
     
@@ -49,6 +56,8 @@ class DogTraitManager: NSObject, NSCoding, NSCopying, DogTraitManagerProtocol {
     override init() {
         super.init()
     }
+    
+    var arbitraryLogDates: [ArbitraryLog] = []
     
     private var storedDogName: String = DogConstant.defaultName
     var dogName: String { return storedDogName }
@@ -63,5 +72,6 @@ class DogTraitManager: NSObject, NSCoding, NSCopying, DogTraitManagerProtocol {
             storedDogName = newDogName!
         }
     }
+    
     
 }

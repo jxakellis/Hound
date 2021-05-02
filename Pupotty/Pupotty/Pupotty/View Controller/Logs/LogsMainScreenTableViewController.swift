@@ -14,6 +14,96 @@ protocol LogsMainScreenTableViewControllerDelegate{
 
 class LogsMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol {
     
+    ///Helps to convert between the two competing tuples, one is for a traditional log from an alarm going off (or being done early) and one is from entering an arbitrary log on the logs page
+    class LogDisplay{
+        
+        
+        init(){
+            
+        }
+        
+        ///If traditionalTuple from a requirement then use this
+        convenience init(traditionalTuple: (RequirementLog, String, Requirement)) {
+            self.init()
+            self.traditionalLog = traditionalTuple
+        }
+        
+        ///if an arbitraryLog from a manually produced method on Logs, use this
+        convenience init(arbitraryTuple: (ArbitraryLog, String)) {
+            self.init()
+            self.arbitraryLog = arbitraryTuple
+        }
+        
+        var traditionalLog: (RequirementLog, String, Requirement)? = nil
+        
+        var arbitraryLog: (ArbitraryLog, String)? = nil
+        
+        ///Whether or not the log is arbitrary
+        var isArbitrary: Bool {
+            if traditionalLog != nil && arbitraryLog == nil {
+                return false
+            }
+            else if traditionalLog == nil && arbitraryLog != nil {
+                return true
+            }
+            else {
+                fatalError()
+            }
+        }
+        
+        ///Returns either traditionalLog or the arbitraryLog
+        var activeLog: RequirementLog {
+            if traditionalLog != nil && arbitraryLog == nil {
+                return traditionalLog!.0
+            }
+            else if traditionalLog == nil && arbitraryLog != nil {
+                return arbitraryLog!.0
+            }
+            else {
+                fatalError()
+            }
+        }
+        
+        ///Finds which log is active then sources the correct name
+        var activeLogName: String {
+            if traditionalLog != nil && arbitraryLog == nil {
+                return traditionalLog!.2.requirementName
+            }
+            else if traditionalLog == nil && arbitraryLog != nil {
+                return arbitraryLog!.0.logName
+            }
+            else {
+                fatalError()
+            }
+        }
+        
+        ///Finds the parentDogName of the active log
+        var activeDogName: String {
+            if traditionalLog != nil && arbitraryLog == nil {
+                return traditionalLog!.1
+            }
+            else if traditionalLog == nil && arbitraryLog != nil {
+                return arbitraryLog!.1
+            }
+            else {
+                fatalError()
+            }
+        }
+        
+        ///If a traditionalLog is active, then returns its requirement
+        var activeRequirement: Requirement? {
+            if traditionalLog != nil && arbitraryLog == nil {
+                return traditionalLog!.2
+            }
+            else if traditionalLog == nil && arbitraryLog != nil {
+                return nil
+            }
+            else {
+                fatalError()
+            }
+        }
+    }
+    
     //MARK: - DogManagerControlFlowProtocol
     
     private var dogManager: DogManager = DogManager()
@@ -40,17 +130,24 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     func updateDogManagerDependents() {
         
         ///Sorts all dates of every time a requirement was logged into a tuple, containing the actual date, the parent dog name, and the requirement, theb sorts is chronologically from last (closet to present) to first (the first event that happened, so it is the oldest).
-        var calculatedConsolidatedLogDates: [(RequirementLog, String, Requirement)] {
+        var calculatedConsolidatedLogDates: [LogDisplay] {
             let dogManager = getDogManager()
-            var consolidatedLogDates: [(RequirementLog, String, Requirement)] = []
+            var consolidatedLogDates: [LogDisplay] = []
             
             //not filtering
             if filterIndexPath == nil {
                 for dogIndex in 0..<dogManager.dogs.count{
+                    //adds arbitrarylogs
+                    let dog = dogManager.dogs[dogIndex]
+                    for arbitraryLog in dog.dogTraits.arbitraryLogDates{
+                        consolidatedLogDates.append(LogDisplay(arbitraryTuple: (arbitraryLog, dog.dogTraits.dogName)))
+                    }
+                   
+                    //adds all requirement logDates from dog
                     for requirementIndex in 0..<dogManager.dogs[dogIndex].dogRequirments.requirements.count{
                         let requirement = dogManager.dogs[dogIndex].dogRequirments.requirements[requirementIndex]
                         for requirementLog in requirement.logDates {
-                            consolidatedLogDates.append((requirementLog, dogManager.dogs[dogIndex].dogTraits.dogName, requirement))
+                            consolidatedLogDates.append(LogDisplay(traditionalTuple: (requirementLog, dogManager.dogs[dogIndex].dogTraits.dogName, requirement)))
                         }
                     }
                 }
@@ -59,9 +156,15 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             else if filterIndexPath!.row == 0{
                 let dog = dogManager.dogs[filterIndexPath!.section]
                 
+                //adds arbitrarylogs
+                for arbitraryLog in dog.dogTraits.arbitraryLogDates{
+                    consolidatedLogDates.append(LogDisplay(arbitraryTuple: (arbitraryLog, dog.dogTraits.dogName)))
+                }
+                
+                //adds all requirement logDates from dog
                 for requirement in dog.dogRequirments.requirements{
                     for requirementLog in requirement.logDates {
-                        consolidatedLogDates.append((requirementLog, dog.dogTraits.dogName, requirement))
+                        consolidatedLogDates.append(LogDisplay(traditionalTuple: (requirementLog, dog.dogTraits.dogName, requirement)))
                     }
                 }
             }
@@ -70,19 +173,22 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 let dog = dogManager.dogs[filterIndexPath!.section]
                 let requirement = dog.dogRequirments.requirements[filterIndexPath!.row-1]
                 
+                //adds all logs from requirement
                 for requirementLog in requirement.logDates {
-                    consolidatedLogDates.append((requirementLog, dog.dogTraits.dogName, requirement))
+                    consolidatedLogDates.append(LogDisplay(traditionalTuple: (requirementLog, dog.dogTraits.dogName, requirement)))
                 }
             }
             
             
-            
+            //sorts from earlist in time (e.g. 1970) to most recent (e.g. 2021)
             consolidatedLogDates.sort { (var1, var2) -> Bool in
-                let (requirementLog1, _, _) = var1
-                let (requirementLog2, _, _) = var2
+                let log1: RequirementLog = var1.activeLog
+                let log2: RequirementLog! = var2.activeLog
+                
+                //returns true if var1's log1 is earlier in time than var2's log2
                 
                 //If date1's distance to date2 is positive, i.e. date2 is later in time, returns false as date2 should be ordered first (most recent (to current Date()) dates first)
-                if requirementLog1.date.distance(to: requirementLog2.date) > 0 {
+                if log1.date.distance(to: log2.date) > 0 {
                     return false
                 }
                 //If date1 is later in time than date2, returns true as it should come before date2
@@ -95,50 +201,71 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         }
         
         ///Makes an array of unique days (of a given year) which a logging event occured, for every log that happened on a given unique day/year combo, its information (Date, parentDogName, Requirement) is appeneded to the array attached to the unique pair.
-        var calculatedUniqueLogDates: [(Int, Int, [(RequirementLog, String, Requirement)])] {
-            var uniqueLogDates: [(Int, Int, [(RequirementLog, String, Requirement)])] = []
+        var calculatedUniqueLogDates: [(Int, Int, [LogDisplay])] {
+            var uniqueLogDates: [(Int, Int, Int, [LogDisplay])] = []
             
             //goes through all dates present where a log happened
             for consolidatedLogDatesIndex in 0..<consolidatedLogDates.count{
-                let yearAndDayComponents = Calendar.current.dateComponents([.year,.day], from: consolidatedLogDates[consolidatedLogDatesIndex].0.date)
+                
+                let yearMonthDayComponents = Calendar.current.dateComponents([.year,.month,.day,], from: consolidatedLogDates[consolidatedLogDatesIndex].activeLog.date)
                 
                 //Checks to make sure the day and year are valid
-                if yearAndDayComponents.day == nil && yearAndDayComponents.year == nil {
-                    print("year and/or day nil")
+                
+                if yearMonthDayComponents.day == nil || yearMonthDayComponents.month == nil || yearMonthDayComponents.year == nil {
+                    print("year, month, or day nil")
                 }
                 //Checks to see if the uniqueLogDates contains the day & year pair already, if it doesnt then adds it and the corresponding dateLog for that day, if there is more than one they will be added in further recursion
                 else if uniqueLogDates.contains(where: { (arg1) -> Bool in
                     
-                    let (day, year, _) = arg1
-                    if yearAndDayComponents.day == day && yearAndDayComponents.year == year {
+                    let (day, month, year, _) = arg1
+                    if yearMonthDayComponents.day == day && yearMonthDayComponents.month == month && yearMonthDayComponents.year == year {
                         return true
                     }
                     else {
                         return false
                     }
                 }) == false {
-                    uniqueLogDates.append((yearAndDayComponents.day!, yearAndDayComponents.year!, [consolidatedLogDates[consolidatedLogDatesIndex]]))
+                    uniqueLogDates.append((yearMonthDayComponents.day!, yearMonthDayComponents.month!, yearMonthDayComponents.year!, [consolidatedLogDates[consolidatedLogDatesIndex]]))
                 }
                 //if a day and year pair is already present, then just appends to their corresponding array that stores all logs that happened on that given pair of day & year
                 else {
-                    uniqueLogDates[uniqueLogDates.count-1].2.append(consolidatedLogDates[consolidatedLogDatesIndex])
+                    uniqueLogDates[uniqueLogDates.count-1].3.append(consolidatedLogDates[consolidatedLogDatesIndex])
                 }
             }
             
             uniqueLogDates.sort { (arg1, arg2) -> Bool in
-                let (day1, year1, _) = arg1
-                let (day2, year2, _) = arg2
+                let (day1, month1, year1, _) = arg1
+                let (day2, month2, year2, _) = arg2
                 
                 //if the year is bigger and the day is bigger then that comes first (e.g.  (4, 2020) comes first in the array and (2,2020) comes second, so most recent is first)
-                if year1 >= year2 && day1 > day2{
-                    return true
+                if year1 >= year2 {
+                    if month1 > month2 {
+                        return true
+                    }
+                    else if month1 == month2 {
+                        if day1 >= day2{
+                            return true
+                        }
+                        else {
+                            return false
+                        }
+                    }
+                    else {
+                        return false
+                    }
+                    
                 }
                 else {
                     return false
                 }
             }
             
-            return uniqueLogDates
+            var converted: [(Int, Int, [LogDisplay])] = []
+            for uniqueLogDate in uniqueLogDates{
+                converted.append((uniqueLogDate.0, uniqueLogDate.2, uniqueLogDate.3))
+            }
+            
+            return converted
         }
         
         self.consolidatedLogDates = calculatedConsolidatedLogDates
@@ -158,10 +285,10 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     //MARK: - Properties
     
     ///Stores all dates of every time a requirement was logged into a tuple, containing the actual date, the parent dog name, and the requirement,  sorted chronologically, first to last.
-    private var consolidatedLogDates: [(RequirementLog, String, Requirement)] = []
+    var consolidatedLogDates: [LogDisplay] = []
     
     ///Stores an array of unique days (of a given year) which a logging event occured. E.g. you logged twice on january 1st 2020& once on january 4th 2020, so the array would be [(1,2020),(4,2020)]
-    private var uniqueLogDates: [(Int, Int, [(RequirementLog, String, Requirement)])] = []
+    private var uniqueLogDates: [(Int, Int, [LogDisplay])] = []
     
     ///IndexPath of current filtering scheme
     private var filterIndexPath: IndexPath? = nil
@@ -232,7 +359,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeader", for: indexPath)
             
             let customCell = cell as! LogsMainScreenTableViewCellHeader
-            customCell.setup(log: uniqueLogDates[indexPath.section].2[0].0)
+            customCell.setup(log: uniqueLogDates[indexPath.section].2[0].activeLog)
             
             return cell
         }
@@ -240,8 +367,18 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBody", for: indexPath)
             
             let customCell = cell as! LogsMainScreenTableViewCellBody
-            let infoTuple = uniqueLogDates[indexPath.section].2[indexPath.row-1]
-            customCell.setup(log: infoTuple.0, parentDogName: infoTuple.1, requirement: infoTuple.2)
+            let logDisplay = uniqueLogDates[indexPath.section].2[indexPath.row-1]
+            
+            var logName: String {
+                if logDisplay.activeLog is ArbitraryLog{
+                    return (logDisplay.activeLog as! ArbitraryLog).logName
+                }
+                else {
+                    return logDisplay.traditionalLog!.2.requirementName
+                }
+            }
+            
+            customCell.setup(isArbitrary: logDisplay.isArbitrary, log: logDisplay.activeLog, parentDogName: logDisplay.activeDogName, logName: logName)
 
             return cell
         }
@@ -270,19 +407,33 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 
                 let originalNumberOfSections = uniqueLogDates.count
                 
-                let cellInfo = uniqueLogDates[indexPath.section].2[indexPath.row-1]
-                let requirement = try! newDogManager.findDog(dogName: cellInfo.1).dogRequirments.findRequirement(requirementName: cellInfo.2.requirementName)
-                
-                let firstIndex = requirement.logDates.firstIndex { (arg0) -> Bool in
-                    if arg0.date == cellInfo.0.date{
-                        return true
+                let cellLogDisplay = uniqueLogDates[indexPath.section].2[indexPath.row-1]
+                if cellLogDisplay.isArbitrary == false {
+                    let requirement = try! newDogManager.findDog(dogName: cellLogDisplay.activeDogName).dogRequirments.findRequirement(requirementName: cellLogDisplay.activeRequirement!.requirementName)
+                    
+                    let firstIndex = requirement.logDates.firstIndex { (arg0) -> Bool in
+                        if arg0.date == cellLogDisplay.activeLog.date{
+                            return true
+                        }
+                        else {
+                            return false
+                        }
                     }
-                    else {
-                        return false
+                    
+                    requirement.logDates.remove(at: firstIndex!)
+                }
+                else {
+                    let dog = try! newDogManager.findDog(dogName: cellLogDisplay.activeDogName)
+                    for arbitraryLogIndex in 0..<dog.dogTraits.arbitraryLogDates.count {
+                        if dog.dogTraits.arbitraryLogDates[arbitraryLogIndex].uuid == cellLogDisplay.arbitraryLog!.0.uuid{
+                            dog.dogTraits.arbitraryLogDates.remove(at: arbitraryLogIndex)
+                            break
+                        }
                     }
                 }
                 
-                requirement.logDates.remove(at: firstIndex!)
+                
+                
                 
                 setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager)
                 
@@ -313,21 +464,21 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)
-        let formattedDate: String = dateFormatter.string(from: selectedLog.0.date)
+        let formattedDate: String = dateFormatter.string(from: selectedLog.activeLog.date)
         
-        let alertController = GeneralAlertController(title: "Edit Note", message: "\(selectedLog.1) \(selectedLog.2.requirementName) \(formattedDate)", preferredStyle: .alert)
+        let alertController = GeneralAlertController(title: "Edit Note", message: "\(selectedLog.activeDogName) \(selectedLog.activeLogName) \(formattedDate)", preferredStyle: .alert)
         
         alertController.addTextField { (UITextField) in
-            UITextField.text = selectedLog.0.note
+            UITextField.text = selectedLog.activeLog.note
             UITextField.clearButtonMode = .always
             UITextField.autocapitalizationType = .sentences
-            UITextField.placeholder = "Note about \(selectedLog.1)'s \(selectedLog.2.requirementName)"
+            UITextField.placeholder = "Note about \(selectedLog.activeDogName)'s \(selectedLog.activeLogName)"
             UITextField.returnKeyType = .done
         }
         //alertController
         
         let alertActionSubmit = UIAlertAction(title: "Submit", style: .default) { (UIAlertAction) in
-            selectedLog.0.changeNote(newNote: alertController.textFields![0].text ?? "")
+            selectedLog.activeLog.changeNote(newNote: alertController.textFields![0].text ?? "")
             self.delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: self.getDogManager())
             self.reloadTable()
         }

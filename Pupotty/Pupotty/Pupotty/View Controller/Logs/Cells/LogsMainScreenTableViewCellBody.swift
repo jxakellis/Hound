@@ -14,42 +14,73 @@ class LogsMainScreenTableViewCellBody: UITableViewCell {
     //MARK: - IB
     
     @IBOutlet private weak var dogName: CustomLabel!
-    @IBOutlet private weak var requirementName: CustomLabel!
-    @IBOutlet private weak var dateDescription: CustomLabel!
+    @IBOutlet private weak var logName: CustomLabel!
+    @IBOutlet private weak var logDate: CustomLabel!
+    @IBOutlet private weak var logNote: CustomLabel!
     
     //MARK: - Properties
     
-    private var parentDogName: String! = nil
-    private var requirementSource: Requirement! = nil
+    private var parentDogNameSource: String! = nil
+    private var logNameSource: String! = nil
     private var logSource: RequirementLog! = nil
+    private var isArbitrary: Bool! = nil
     
     //MARK: - Main
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
     
-    func setup(log logSource: RequirementLog, parentDogName: String, requirement: Requirement){
+    func setup(isArbitrary: Bool, log logSource: RequirementLog, parentDogName: String, logName: String){
         self.logSource = logSource
-        self.requirementSource = requirement
-        self.parentDogName = parentDogName
+        self.logNameSource = logName
+        self.parentDogNameSource = parentDogName
+        self.isArbitrary = isArbitrary
         
         self.dogName.text = parentDogName
-        self.requirementName.text = requirement.requirementName
+        self.logName.text = logName
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)
-        dateDescription.text = dateFormatter.string(from: logSource.date)
+        logDate.text = dateFormatter.string(from: logSource.date)
         
-        if logSource.note.trimmingCharacters(in: .whitespaces) != "" {
-            dateDescription.text?.append(" - \(logSource.note)")
+        logNote.text = logSource.note
+
+        for label in [dogName, self.logName, logDate, logNote]{
+            var constraintsToDeactivate: [NSLayoutConstraint] = []
+            
+            for constraintIndex in 0..<label!.constraints.count{
+                if label!.constraints[constraintIndex].firstAttribute == .width{
+                    constraintsToDeactivate.append(label!.constraints[constraintIndex])
+                }
+            }
+            
+            NSLayoutConstraint.deactivate(constraintsToDeactivate)
         }
         
-        dogName.frame = CGRect(origin: dogName.frame.origin,
-                               size: dogName.text!.boundingFrom(font: dogName.font, height: dogName.frame.height))
-        requirementName.frame = CGRect(origin: requirementName.frame.origin,
-                                            size: requirementName.text!.boundingFrom(font: requirementName.font, height: requirementName.frame.height))
+        var labelWidthConstraints: [NSLayoutConstraint] = []
+        
+        let dogNameTextWidth = dogName.text!.boundingFrom(font: dogName.font, height: dogName.frame.height).width
+        let dogNameWidthConstraint = NSLayoutConstraint.init(item: dogName!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: dogNameTextWidth)
+        labelWidthConstraints.append(dogNameWidthConstraint)
+        
+        let logNameTextWidth = self.logName.text!.boundingFrom(font: self.logName.font, height: self.logName.frame.height).width
+        let logNameWidthConstaint = NSLayoutConstraint.init(item: self.logName!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: logNameTextWidth)
+        labelWidthConstraints.append(logNameWidthConstaint)
+        
+        let logDateTextWidth = logDate.text!.boundingFrom(font: logDate.font, height: logDate.frame.height).width
+        let logDateWidthConstraint = NSLayoutConstraint.init(item: logDate!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: logDateTextWidth)
+        labelWidthConstraints.append(logDateWidthConstraint)
+        
+        if logNote.text?.trimmingCharacters(in: .whitespacesAndNewlines) != ""{
+            let logNoteWidthConstraint = NSLayoutConstraint.init(item: logNote!, attribute: .width, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 20.0)
+            labelWidthConstraints.append(logNoteWidthConstraint)
+        }
+        
+        NSLayoutConstraint.activate(labelWidthConstraints)
+        
+        self.contentView.setNeedsLayout()
+        self.contentView.layoutIfNeeded()
         
     }
 

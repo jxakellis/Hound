@@ -22,6 +22,8 @@ class DogsRequirementTimeOfDayViewController: UIViewController, UIGestureRecogni
     
     //MARK: - IB
     
+    @IBOutlet private var interWeekdayConstraints: [NSLayoutConstraint]!
+    
     @IBOutlet private weak var sunday: ScaledButton!
     @IBOutlet private weak var monday: ScaledButton!
     @IBOutlet private weak var tuesday: ScaledButton!
@@ -130,6 +132,15 @@ class DogsRequirementTimeOfDayViewController: UIViewController, UIGestureRecogni
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        for constraint in interWeekdayConstraints {
+            constraint.constant = (8.0/414.0)*self.view.safeAreaLayoutGuide.layoutFrame.width
+        }
+        
     }
     
     /*
