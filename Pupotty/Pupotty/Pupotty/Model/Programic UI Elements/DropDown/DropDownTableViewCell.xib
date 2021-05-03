@@ -21,7 +21,7 @@
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Requirement Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8cA-qQ-fYX">
                                 <rect key="frame" x="10" y="0.0" width="180" height="30"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -47,7 +47,7 @@
                 <outlet property="coveringView" destination="bA2-DK-RsH" id="JMS-ft-HBs"/>
                 <outlet property="requirementName" destination="8cA-qQ-fYX" id="BJ2-gm-95Z"/>
             </connections>
-            <point key="canvasLocation" x="36.799999999999997" y="148.42578710644679"/>
+            <point key="canvasLocation" x="188.80000000000001" y="75.562218890554732"/>
         </tableViewCell>
     </objects>
 </document>

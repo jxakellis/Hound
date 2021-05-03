@@ -106,7 +106,7 @@ class DogsRequirementTimeOfDayViewController: UIViewController, UIGestureRecogni
             case 7:
                 saturday.tintColor = .systemBlue
             default:
-                print("unknown day of week: \(dayOfWeek)")
+                print("unknown day of week: \(dayOfWeek) while synchronizeWeekdays for DogsRequirementTimeOfDayViewController")
             }
         }
     }

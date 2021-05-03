@@ -86,16 +86,7 @@ class TimingManager{
                 else{
                     continue
                 }
-                /*
-                print("TM")
-                print(Date())
-                print("skipping \(requirement.timeOfDayComponents.isSkipping)")
-                print("exe basis \(requirement.executionBasis)")
-                print("exe date \(requirement.executionDate)")
-                print("trad \(requirement.timeOfDayComponents.traditionalNextTimeOfDay(executionBasis: requirement.executionBasis))")
-                print("skip \(requirement.timeOfDayComponents.skippingNextTimeOfDay(executionBasis: requirement.executionBasis))")
-                print("next \(requirement.timeOfDayComponents.nextTimeOfDay(requirementExecutionBasis: requirement.executionBasis))")
-                */
+                
                 //Sets a timer that executes when the timer should go from isSkipping true -> false, e.g. 1 Day left on a timer that is skipping and when it hits 23 hours and 59 minutes it turns into a regular nonskipping timer
                 let unskipDate = requirement.timeOfDayComponents.unskipDate(timerMode: requirement.timerMode, requirementExecutionBasis: requirement.executionBasis)
                 if unskipDate != nil {
@@ -273,7 +264,7 @@ class TimingManager{
                     //nothing as time of day does not utilize interval elapsed
                 }
                 else {
-                    fatalError("Not Implemented")
+                    fatalError("Not Implemented requirement.timerMode type, willPause(dogManager: DogManager)")
                 }
                 
                 

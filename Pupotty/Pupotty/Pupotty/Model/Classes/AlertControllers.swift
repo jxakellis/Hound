@@ -30,7 +30,7 @@ class AlarmAlertController: GeneralAlertController {
             audioPlayer.numberOfLoops = .max
             
         } catch {
-            print("couldn't load the file")
+            print("couldn't load file for loadAlarmSound")
         }
     }
     

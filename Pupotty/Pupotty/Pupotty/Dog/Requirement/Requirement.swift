@@ -285,7 +285,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         }
         else {
             //HDLL
-            fatalError("not implemented")
+            fatalError("not implemented timerMode for intervalRemaining, Requirement")
             //return -1
         }
     }
@@ -313,7 +313,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
             return Date.executionDate(lastExecution: executionBasis, interval: intervalRemaining!)
         }
         else {
-            fatalError("not implemented currently")
+            fatalError("not implemented timerMode for executionDate, requirement")
         }
     }
     

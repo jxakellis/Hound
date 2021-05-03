@@ -329,7 +329,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
             calculatedDates.append(Calendar.current.date(byAdding: .day, value: 7, to: calculatedDates[0])!)
         }
         else {
-            fatalError("calculatedDates 0")
+            fatalError("calculatedDates 0 for futureExecutionDates, RequirementComponents")
         }
         
         

@@ -55,7 +55,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
                     let fireDate: Date? =  TimingManager.timerDictionary[activeDogManagerCopy.dogs[d].dogTraits.dogName]![activeDogManagerCopy.dogs[d].dogRequirments.requirements[r].requirementName]?.fireDate
                     
                     if fireDate == nil {
-                        fatalError("asdadsad")
+                        fatalError("fireDate nil for timerPriority when it should exist, HomeMainScreenTableViewController")
                     }
                     else {
                         let currentTimeInterval = Date().distance(to: fireDate!)

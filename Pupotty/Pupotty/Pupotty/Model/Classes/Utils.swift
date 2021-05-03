@@ -250,11 +250,11 @@ class ErrorProcessor{
          }
          */
         if case ArbitraryLogError.nilLogName = error {
-            ErrorProcessor.alertForError(message: "Your arbitrary log has no name, please try putting one in.")
+            ErrorProcessor.alertForError(message: "Your arbitrary log has no name, try typing something in!")
             return true
         }
         else if case ArbitraryLogError.blankLogName = error {
-            ErrorProcessor.alertForError(message: "Your arbitrary log has a blank name, please try putting typing one in.")
+            ErrorProcessor.alertForError(message: "Your arbitrary log has a blank name, try typing something in!")
             return true
         }
         else{

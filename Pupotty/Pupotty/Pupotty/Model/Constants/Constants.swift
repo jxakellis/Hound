@@ -136,7 +136,7 @@ extension ColorConstant: RawRepresentable {
         case UIColor.systemGray.withAlphaComponent(0.30):
             self = .gray
         default:
-            print("nil")
+            print("ColorConstant nil while init")
             return nil
         }
     }

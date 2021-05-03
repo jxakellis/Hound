@@ -90,7 +90,7 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
         
         if targetRequirement != nil {
             requirementRemoveButton.isEnabled = true
-            saveButton.title = "Update"
+            saveButton.title = "Save"
             pageNavigationBar.title = "Update Reminder"
         }
         else {

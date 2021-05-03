@@ -16,93 +16,93 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     ///Helps to convert between the two competing tuples, one is for a traditional log from an alarm going off (or being done early) and one is from entering an arbitrary log on the logs page
     class LogDisplay{
+    
+    
+    init(){
         
-        
-        init(){
-            
+    }
+    
+    ///If traditionalTuple from a requirement then use this
+    convenience init(traditionalTuple: (RequirementLog, String, Requirement)) {
+        self.init()
+        self.traditionalLog = traditionalTuple
+    }
+    
+    ///if an arbitraryLog from a manually produced method on Logs, use this
+    convenience init(arbitraryTuple: (ArbitraryLog, String)) {
+        self.init()
+        self.arbitraryLog = arbitraryTuple
+    }
+    
+    var traditionalLog: (RequirementLog, String, Requirement)? = nil
+    
+    var arbitraryLog: (ArbitraryLog, String)? = nil
+    
+    ///Whether or not the log is arbitrary
+    var isArbitrary: Bool {
+        if traditionalLog != nil && arbitraryLog == nil {
+            return false
         }
-        
-        ///If traditionalTuple from a requirement then use this
-        convenience init(traditionalTuple: (RequirementLog, String, Requirement)) {
-            self.init()
-            self.traditionalLog = traditionalTuple
+        else if traditionalLog == nil && arbitraryLog != nil {
+            return true
         }
-        
-        ///if an arbitraryLog from a manually produced method on Logs, use this
-        convenience init(arbitraryTuple: (ArbitraryLog, String)) {
-            self.init()
-            self.arbitraryLog = arbitraryTuple
-        }
-        
-        var traditionalLog: (RequirementLog, String, Requirement)? = nil
-        
-        var arbitraryLog: (ArbitraryLog, String)? = nil
-        
-        ///Whether or not the log is arbitrary
-        var isArbitrary: Bool {
-            if traditionalLog != nil && arbitraryLog == nil {
-                return false
-            }
-            else if traditionalLog == nil && arbitraryLog != nil {
-                return true
-            }
-            else {
-                fatalError()
-            }
-        }
-        
-        ///Returns either traditionalLog or the arbitraryLog
-        var activeLog: RequirementLog {
-            if traditionalLog != nil && arbitraryLog == nil {
-                return traditionalLog!.0
-            }
-            else if traditionalLog == nil && arbitraryLog != nil {
-                return arbitraryLog!.0
-            }
-            else {
-                fatalError()
-            }
-        }
-        
-        ///Finds which log is active then sources the correct name
-        var activeLogName: String {
-            if traditionalLog != nil && arbitraryLog == nil {
-                return traditionalLog!.2.requirementName
-            }
-            else if traditionalLog == nil && arbitraryLog != nil {
-                return arbitraryLog!.0.logName
-            }
-            else {
-                fatalError()
-            }
-        }
-        
-        ///Finds the parentDogName of the active log
-        var activeDogName: String {
-            if traditionalLog != nil && arbitraryLog == nil {
-                return traditionalLog!.1
-            }
-            else if traditionalLog == nil && arbitraryLog != nil {
-                return arbitraryLog!.1
-            }
-            else {
-                fatalError()
-            }
-        }
-        
-        ///If a traditionalLog is active, then returns its requirement
-        var activeRequirement: Requirement? {
-            if traditionalLog != nil && arbitraryLog == nil {
-                return traditionalLog!.2
-            }
-            else if traditionalLog == nil && arbitraryLog != nil {
-                return nil
-            }
-            else {
-                fatalError()
-            }
+        else {
+            fatalError()
         }
     }
+    
+    ///Returns either traditionalLog or the arbitraryLog
+    var activeLog: RequirementLog {
+        if traditionalLog != nil && arbitraryLog == nil {
+            return traditionalLog!.0
+        }
+        else if traditionalLog == nil && arbitraryLog != nil {
+            return arbitraryLog!.0
+        }
+        else {
+            fatalError()
+        }
+    }
+    
+    ///Finds which log is active then sources the correct name
+    var activeLogName: String {
+        if traditionalLog != nil && arbitraryLog == nil {
+            return traditionalLog!.2.requirementName
+        }
+        else if traditionalLog == nil && arbitraryLog != nil {
+            return arbitraryLog!.0.logName
+        }
+        else {
+            fatalError()
+        }
+    }
+    
+    ///Finds the parentDogName of the active log
+    var activeDogName: String {
+        if traditionalLog != nil && arbitraryLog == nil {
+            return traditionalLog!.1
+        }
+        else if traditionalLog == nil && arbitraryLog != nil {
+            return arbitraryLog!.1
+        }
+        else {
+            fatalError()
+        }
+    }
+    
+    ///If a traditionalLog is active, then returns its requirement
+    var activeRequirement: Requirement? {
+        if traditionalLog != nil && arbitraryLog == nil {
+            return traditionalLog!.2
+        }
+        else if traditionalLog == nil && arbitraryLog != nil {
+            return nil
+        }
+        else {
+            fatalError()
+        }
+    }
+}
     
     //MARK: - DogManagerControlFlowProtocol
     
@@ -168,15 +168,38 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     }
                 }
             }
-            //row is not zero so filtering by a specific requirement
+            //row is not zero so filtering by a specific requirement or arbitrary
             else{
                 let dog = dogManager.dogs[filterIndexPath!.section]
-                let requirement = dog.dogRequirments.requirements[filterIndexPath!.row-1]
                 
-                //adds all logs from requirement
-                for requirementLog in requirement.logDates {
-                    consolidatedLogDates.append(LogDisplay(traditionalTuple: (requirementLog, dog.dogTraits.dogName, requirement)))
+                //arbitrary filter not possible
+                if filterIsArbitrary == false {
+                    let requirement = dog.dogRequirments.requirements[filterIndexPath!.row-1]
+                    
+                    //adds all logs from requirement
+                    for requirementLog in requirement.logDates {
+                        consolidatedLogDates.append(LogDisplay(traditionalTuple: (requirementLog, dog.dogTraits.dogName, requirement)))
+                    }
                 }
+                //arbitrary filter possible
+                else {
+                    //arbitrary row
+                    if filterIndexPath!.row == 1 {
+                        for arbitraryLog in dog.dogTraits.arbitraryLogDates{
+                            consolidatedLogDates.append(LogDisplay(arbitraryTuple: (arbitraryLog, dog.dogTraits.dogName)))
+                        }
+                    }
+                    //specific requirement
+                    else {
+                        let requirement = dog.dogRequirments.requirements[filterIndexPath!.row-2]
+                        
+                        //adds all logs from requirement
+                        for requirementLog in requirement.logDates {
+                            consolidatedLogDates.append(LogDisplay(traditionalTuple: (requirementLog, dog.dogTraits.dogName, requirement)))
+                        }
+                    }
+                }
+                
             }
             
             
@@ -212,7 +235,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 //Checks to make sure the day and year are valid
                 
                 if yearMonthDayComponents.day == nil || yearMonthDayComponents.month == nil || yearMonthDayComponents.year == nil {
-                    print("year, month, or day nil")
+                    fatalError("year, month, or day nil for calculatedUniqueLogDates")
                 }
                 //Checks to see if the uniqueLogDates contains the day & year pair already, if it doesnt then adds it and the corresponding dateLog for that day, if there is more than one they will be added in further recursion
                 else if uniqueLogDates.contains(where: { (arg1) -> Bool in
@@ -293,6 +316,8 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     ///IndexPath of current filtering scheme
     private var filterIndexPath: IndexPath? = nil
     
+    private var filterIsArbitrary: Bool = false
+    
     var delegate: LogsMainScreenTableViewControllerDelegate! = nil
     
     //MARK: - Main
@@ -319,6 +344,15 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     func willApplyFiltering(associatedToIndexPath indexPath: IndexPath?){
         
         filterIndexPath = indexPath
+        
+        //filtering by arbitraryLogs
+        if filterIndexPath?.row == 1 && getDogManager().dogs[indexPath!.section].dogTraits.arbitraryLogDates.isEmpty == false {
+            filterIsArbitrary = true
+        }
+        //not filtering by arbitraryLogs
+        else {
+            filterIsArbitrary = false
+        }
         
         reloadTable()
     }
@@ -347,6 +381,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        //no logs present
         if uniqueLogDates.count == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeader", for: indexPath)
             
@@ -355,6 +390,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             
             return cell
         }
+        //logs present but header
         else if indexPath.row == 0{
             let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeader", for: indexPath)
             
@@ -363,6 +399,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             
             return cell
         }
+        //log
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBody", for: indexPath)
             
@@ -388,6 +425,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        //can rows that aren't header (header at .row == 0)
         if indexPath.row != 0 {
             return true
         }
@@ -407,12 +445,14 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 
                 let originalNumberOfSections = uniqueLogDates.count
                 
-                let cellLogDisplay = uniqueLogDates[indexPath.section].2[indexPath.row-1]
-                if cellLogDisplay.isArbitrary == false {
-                    let requirement = try! newDogManager.findDog(dogName: cellLogDisplay.activeDogName).dogRequirments.findRequirement(requirementName: cellLogDisplay.activeRequirement!.requirementName)
+                let cellToDelete = uniqueLogDates[indexPath.section].2[indexPath.row-1]
+                
+                //if cell is a traditonal log, uses traditonal method
+                if cellToDelete.isArbitrary == false {
+                    let requirement = try! newDogManager.findDog(dogName: cellToDelete.activeDogName).dogRequirments.findRequirement(requirementName: cellToDelete.activeRequirement!.requirementName)
                     
                     let firstIndex = requirement.logDates.firstIndex { (arg0) -> Bool in
-                        if arg0.date == cellLogDisplay.activeLog.date{
+                        if arg0.date == cellToDelete.activeLog.date{
                             return true
                         }
                         else {
@@ -422,10 +462,11 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     
                     requirement.logDates.remove(at: firstIndex!)
                 }
+                //if cell isArbitrary uses arbitrary method of finding what to delete
                 else {
-                    let dog = try! newDogManager.findDog(dogName: cellLogDisplay.activeDogName)
+                    let dog = try! newDogManager.findDog(dogName: cellToDelete.activeDogName)
                     for arbitraryLogIndex in 0..<dog.dogTraits.arbitraryLogDates.count {
-                        if dog.dogTraits.arbitraryLogDates[arbitraryLogIndex].uuid == cellLogDisplay.arbitraryLog!.0.uuid{
+                        if dog.dogTraits.arbitraryLogDates[arbitraryLogIndex].uuid == cellToDelete.arbitraryLog!.0.uuid{
                             dog.dogTraits.arbitraryLogDates.remove(at: arbitraryLogIndex)
                             break
                         }
@@ -459,6 +500,8 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.tableView.deselectRow(at: indexPath, animated: true)
+        
+        //shows alertcontroller with a textfield to edit or delete the comment present for a given log
         
         let selectedLog = uniqueLogDates[indexPath.section].2[indexPath.row-1]
         
