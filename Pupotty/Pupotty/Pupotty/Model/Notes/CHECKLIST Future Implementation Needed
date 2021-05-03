@@ -1,10 +1,38 @@
 
 CHECKLIST Future Implementation Needed
 
-Can't add an arbitrary log without adding a reminder
+***Add more info for follow up delay on settings, doesn't know the difference between snooze and follow up.
+
+**Don't save reminder doesn't check if info has changed, always pops
+
+***Be able to add picture of dog, add breed info with attached stuff real life info.
+
+**Logs page is just a history log, can't add info (you can through notes but that isn't clear). Make notes more clear.
+
+*Sorting of reminders page instead of chronological, sort like dogs page.
+
+***Logos / icons for reminders (maybe dog)
+
+Instead of actionSheet pop up on reminders page, would rather have another page to add info
+
+Want different page when clicking on a note, segue to a different page instead. Show info and ability to edit.
+
+***Left to a different tab bar page before hitting save, maybe auto save if the person leaves the page.
+
+**Thinks the info pages are the exact same between pages, not different / custom info. Also are a bit lengthy. Could be more interactive. Instead of describing, show with pictures.
+
+Thinks the recurring timer keeps repeating even if not responded to.
+
+Auto sort requirements for a dog chronologically.
+
+Change dogs to configure and configure dogs to configure reminders, display time left (like on reminders page) under the requirement
+
+Change entering name of reminder to drop down of types
 
 4/26/2021
 
 Song - Third Period - 5/20 or 5/24
+
 Talk to dad abt presenting to song
+
 Setup testflight sharing for UT and feedback

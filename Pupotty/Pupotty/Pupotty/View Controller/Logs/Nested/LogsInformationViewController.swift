@@ -46,13 +46,13 @@ class LogsInformationViewController: UIViewController {
     ///Configures the body text to an attributed string, the headers are .semibold and rest is .regular, font size is the one specified in the storyboard
     private func configureLabelText(){
         let howToUseBodyAttributedText = NSMutableAttributedString(string: "Logs:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)])
-        howToUseBodyAttributedText.append(NSAttributedString(string: "\nLogs keep track of everytime you took your dog out and at what time. They have a built-in notes feature which allows you to write anything important that also occured.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
+        howToUseBodyAttributedText.append(NSAttributedString(string: "\nLogs keep track of everytime you completed a reminder and at what time. They have a built-in notes feature which allows you to write anything important that also occured. You can also create an arbitrary log to track an event indepenent of a reminder.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Edit Notes:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
         howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo edit a note, which by default is blank, simply click on the desired log. In the pop-up, enter your note and click \"Submit\".\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Add Arbitrary Log:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
-        howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo add an arbitrary log, click the on the blue plus circle located in the bottom right. This will allow you to log an independent, unscheduled event; this log will not create, modify, or delete any reminders or alarms. For example, once in a while you take your dog to the vet. You record this with an arbitrary log, so you remember, but no further action by Pupotty is needed.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
+        howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo add an arbitrary log, click on the blue plus circle located in the bottom right. This will allow you to log an independent, unscheduled event; this log will not create, modify, or delete any reminders or alarms. Useful for one time, occasional events such as taking your dog to the vet.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
         
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Delete Logs:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
@@ -60,7 +60,7 @@ class LogsInformationViewController: UIViewController {
         
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Filtering and Sorting:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
-        howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo Filter by either a reminder or a dog, click \"Filter\" then the select the desired option. Filters are automatically removed if a new log is added, or they can be manually removed by selecting the option again.", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
+        howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo Filter by either a dog, arbitrary logs, or areminder, click \"Filter\" then the select the desired option. Filters are automatically removed if a new log is added, or they can be manually removed by selecting the option again.", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
         howToUseBody.attributedText = howToUseBodyAttributedText
     }
 

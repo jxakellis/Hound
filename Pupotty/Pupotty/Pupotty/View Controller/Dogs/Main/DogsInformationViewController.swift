@@ -45,7 +45,7 @@ class DogsInformationViewController: UIViewController {
     ///Configures the body text to an attributed string, the headers are .semibold and rest is .regular, font size is the one specified in the storyboard
     private func configureLabelText(){
         let howToUseBodyAttributedText = NSMutableAttributedString(string: "Create New:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)])
-        howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo create a new dog or reminder, click on the blue plus circle (located in bottom right) and then the corresponding option. You can also create a new reminder while editing a dog by clicking the small blue plus button next to the word \"Reminders\"\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
+        howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo create a new dog or reminder, click on the blue plus circle and then the corresponding option. You can also create a new reminder while editing a dog by clicking the small blue plus button next to the word \"Reminders\".\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
         
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Manage Current:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))

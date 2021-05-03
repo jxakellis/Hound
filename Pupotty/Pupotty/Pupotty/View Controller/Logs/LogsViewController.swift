@@ -160,6 +160,7 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
         
         if sender.localized is MainTabBarViewController{
             logsMainScreenTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
+            
             filterIndexPath = nil
             logsMainScreenTableViewController?.willApplyFiltering(associatedToIndexPath: filterIndexPath)
             logsAddArbitraryLogViewController?.performSegue(withIdentifier: "unwindToLogsViewController", sender: self)
@@ -169,7 +170,10 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
         }
         if sender.localized is LogsAddArbitraryLogViewController{
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
+            
             logsMainScreenTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
+            filterIndexPath = nil
+            logsMainScreenTableViewController?.willApplyFiltering(associatedToIndexPath: filterIndexPath)
         }
         
         updateDogManagerDependents()

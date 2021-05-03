@@ -51,7 +51,7 @@ class HomeInformationViewController: UIViewController {
         
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Snooze Reminder:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
-        howToUseBodyAttributedText.append(NSAttributedString(string: "\nIf an alarm sounds and you cannot do it right away, select \"Snooze\". This will not log the reminder, but it will sound an alarm again once it is done snoozing. The length of time that it snoozes is configurable in settings.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
+        howToUseBodyAttributedText.append(NSAttributedString(string: "\nIf an alarm sounds and you cannot do it right away, select \"Snooze\". This will not log the reminder, but it will sound an alarm once it is done snoozing. The length of time that it snoozes is configurable in settings.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Inactivate Reminder:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
         howToUseBodyAttributedText.append(NSAttributedString(string: "\nIf an alarm sounds and you do not want to deal with it, click \"Dismiss\". This won't fully disable the reminder, but it will sit inactive until you click it and select an option. Deactivating a reminder will not log it and will disable its alarms until you are ready to start using it again. To re-activate, just select \"Did it!\".\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
