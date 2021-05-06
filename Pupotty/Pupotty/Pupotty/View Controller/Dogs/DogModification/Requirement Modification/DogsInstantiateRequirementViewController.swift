@@ -11,11 +11,17 @@ import UIKit
 //Delegate to pass setup requirement back to table view
 protocol DogsInstantiateRequirementViewControllerDelegate {
     func didAddRequirement(sender: Sender, newRequirement: Requirement) throws
-    func didUpdateRequirement(sender: Sender, formerName: String, updatedRequirement: Requirement) throws
-    func didRemoveRequirement(sender: Sender, removedRequirementName: String)
+    func didUpdateRequirement(sender: Sender, updatedRequirement: Requirement) throws
+    func didRemoveRequirement(sender: Sender, removedRequirementUUID: String)
 }
 
 class DogsInstantiateRequirementViewController: UIViewController, DogsRequirementManagerViewControllerDelegate{
+    
+    //MARK: - Auto Save Trigger
+    
+    func didUpdateInformation() {
+        //do nothing as the only auto save warning should be when the master is exited (this is the sub requirement add field of the super dog updator/adder)
+    }
     
     
     //MARK: - DogsRequirementManagerViewControllerDelegate
@@ -31,9 +37,9 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
         
     }
     
-    func didUpdateRequirement(formerName: String, updatedRequirement: Requirement) {
+    func didUpdateRequirement(updatedRequirement: Requirement) {
         do {
-            try delegate.didUpdateRequirement(sender: Sender(origin: self, localized: self), formerName: formerName, updatedRequirement: updatedRequirement)
+            try delegate.didUpdateRequirement(sender: Sender(origin: self, localized: self), updatedRequirement: updatedRequirement)
             navigationController?.popViewController(animated: true)
         }
         catch {
@@ -48,16 +54,19 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
     @IBOutlet private weak var saveButton: UIBarButtonItem!
         
     @IBAction private func backButton(_ sender: Any) {
-        self.performSegue(withIdentifier: "unwindToAddDogRequirementTableView", sender: self)
+        //self.performSegue(withIdentifier: "unwindToAddDogRequirementTableView", sender: self)
+        self.navigationController?.popViewController(animated: true)
         }
     
     @IBOutlet weak var requirementRemoveButton: UIBarButtonItem!
+    
     @IBAction func willRemoveRequirement(_ sender: Any) {
-        let removeRequirementConfirmation = GeneralAlertController(title: "Are you sure you want to delete \"\(dogsRequirementManagerViewController.requirementName.text ?? targetRequirement!.requirementName)\"", message: nil, preferredStyle: .alert)
+        let removeRequirementConfirmation = GeneralAlertController(title: "Are you sure you want to delete \"\(dogsRequirementManagerViewController.requirementAction.text ?? targetRequirement!.requirementType.rawValue)\"", message: nil, preferredStyle: .alert)
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { (UIAlertAction) in
-            self.delegate.didRemoveRequirement(sender: Sender(origin: self, localized: self), removedRequirementName: self.targetRequirement!.requirementName)
-            self.performSegue(withIdentifier: "unwindToAddDogRequirementTableView", sender: self)
+            self.delegate.didRemoveRequirement(sender: Sender(origin: self, localized: self), removedRequirementUUID: self.targetRequirement!.uuid)
+            //self.performSegue(withIdentifier: "unwindToAddDogRequirementTableView", sender: self)
+            self.navigationController?.popViewController(animated: true)
         }
         
         let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -91,7 +100,7 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
         if targetRequirement != nil {
             requirementRemoveButton.isEnabled = true
             saveButton.title = "Save"
-            pageNavigationBar.title = "Update Reminder"
+            pageNavigationBar.title = "Edit Reminder"
         }
         else {
             requirementRemoveButton.isEnabled = false

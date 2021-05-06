@@ -9,11 +9,18 @@
 import UIKit
 
 protocol DogsUpdateRequirementViewControllerDelegate {
-    func didUpdateRequirement(sender: Sender, parentDogName: String, formerName: String, updatedRequirement: Requirement) throws
-    func didRemoveRequirement(sender: Sender, parentDogName: String, removedRequirementName: String)
+    func didUpdateRequirement(sender: Sender, parentDogName: String, updatedRequirement: Requirement) throws
+    func didRemoveRequirement(sender: Sender, parentDogName: String, removedRequirementUUID: String)
 }
 
 class DogsUpdateRequirementViewController: UIViewController, DogsRequirementManagerViewControllerDelegate {
+    
+    //MARK: Auto Save Trigger
+    
+    func didUpdateInformation() {
+        shouldPromptSaveWarning = true
+    }
+    
     
     //MARK: - DogsRequirementManagerViewControllerDelegate
 
@@ -21,11 +28,12 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
         fatalError("shouldn't be possible")
     }
     
-    func didUpdateRequirement(formerName: String, updatedRequirement: Requirement) {
+    func didUpdateRequirement(updatedRequirement: Requirement) {
         do {
             
-            try delegate.didUpdateRequirement(sender: Sender(origin: self, localized: self), parentDogName: parentDogName, formerName: targetRequirement!.requirementName, updatedRequirement: updatedRequirement)
-            self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
+            try delegate.didUpdateRequirement(sender: Sender(origin: self, localized: self), parentDogName: parentDogName, updatedRequirement: updatedRequirement)
+            //self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
+            self.navigationController?.popViewController(animated: true)
         }
         catch {
             ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: error)
@@ -53,11 +61,12 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
     @IBOutlet weak var requirementRemoveButton: UIBarButtonItem!
     
     @IBAction func willRemoveRequirement(_ sender: Any) {
-        let removeRequirementConfirmation = GeneralAlertController(title: "Are you sure you want to delete \"\(dogsRequirementManagerViewController.requirementName.text ?? targetRequirement.requirementName)\"", message: nil, preferredStyle: .alert)
+        let removeRequirementConfirmation = GeneralAlertController(title: "Are you sure you want to delete \"\(dogsRequirementManagerViewController.requirementAction.text ?? targetRequirement.requirementType.rawValue)\"", message: nil, preferredStyle: .alert)
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { (UIAlertAction) in
-            self.delegate.didRemoveRequirement(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, removedRequirementName: self.targetRequirement.requirementName)
-            self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
+            self.delegate.didRemoveRequirement(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, removedRequirementUUID: self.targetRequirement.uuid)
+            //self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
+            self.navigationController?.popViewController(animated: true)
         }
         
         let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -71,18 +80,25 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
     ///The cancel / exit button was pressed, dismisses view to complete intended action
     @IBAction private func willCancel(_ sender: Any) {
         //"Any changes you have made won't be saved"
-        let unsavedInformationConfirmation = GeneralAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
-        
-        let alertActionExit = UIAlertAction(title: "Yes, I don't want to save", style: .default) { (UIAlertAction) in
-            self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
+        if shouldPromptSaveWarning == true {
+            let unsavedInformationConfirmation = GeneralAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
+            
+            let alertActionExit = UIAlertAction(title: "Yes, I don't want to save", style: .default) { (UIAlertAction) in
+                //self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
+                self.navigationController?.popViewController(animated: true)
+            }
+            
+            let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            
+            unsavedInformationConfirmation.addAction(alertActionExit)
+            unsavedInformationConfirmation.addAction(alertActionCancel)
+            
+            AlertPresenter.shared.enqueueAlertForPresentation(unsavedInformationConfirmation)
+        }
+        else {
+            self.navigationController?.popViewController(animated: true)
         }
         
-        let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        
-        unsavedInformationConfirmation.addAction(alertActionExit)
-        unsavedInformationConfirmation.addAction(alertActionCancel)
-        
-        AlertPresenter.shared.enqueueAlertForPresentation(unsavedInformationConfirmation)
     }
     
     //MARK: - Properties
@@ -94,6 +110,9 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
     var targetRequirement: Requirement! = nil
     
     var parentDogName: String! = nil
+    
+    ///Auto save warning will show if true
+    private var shouldPromptSaveWarning: Bool = false
     
     //MARK: - Main
     

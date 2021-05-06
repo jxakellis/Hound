@@ -10,6 +10,7 @@ import UIKit
 
 protocol DogsRequirementCountDownViewControllerDelegate {
     func willDismissKeyboard()
+    func didUpdateInformation()
 }
 
 class DogsRequirementCountDownViewController: UIViewController, UIGestureRecognizerDelegate {
@@ -24,8 +25,10 @@ class DogsRequirementCountDownViewController: UIViewController, UIGestureRecogni
     //MARK: - IB
     
     @IBOutlet weak var countDown: UIDatePicker!
+    
     @IBAction func willUpdateCountDown(_ sender: Any) {
         delegate.willDismissKeyboard()
+        delegate.didUpdateInformation()
     }
     
     //MARK: - Properties
@@ -33,16 +36,26 @@ class DogsRequirementCountDownViewController: UIViewController, UIGestureRecogni
    var delegate: DogsRequirementCountDownViewControllerDelegate! = nil
     
     var passedInterval: TimeInterval?
-    
     //MARK: - Main
     
     override func viewDidLoad() {
         
-        if passedInterval != nil {
-            countDown.countDownDuration = passedInterval!
+        //keep duplicate as without it the user can see the .asyncafter visual scroll, but this duplicate stops a value changed not being called on first value change bug
+        if self.passedInterval != nil {
+            self.countDown.countDownDuration = self.passedInterval!
         }
         else {
-            countDown.countDownDuration = RequirementConstant.defaultTimeInterval
+            self.countDown.countDownDuration = RequirementConstant.defaultTimeInterval
+        }
+        
+        //fix bug with datePicker value changed not triggering on first go
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
+            if self.passedInterval != nil {
+                self.countDown.countDownDuration = self.passedInterval!
+            }
+            else {
+                self.countDown.countDownDuration = RequirementConstant.defaultTimeInterval
+            }
         }
         
     }

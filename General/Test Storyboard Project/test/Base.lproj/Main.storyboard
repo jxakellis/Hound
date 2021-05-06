@@ -27,10 +27,23 @@
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="75"/>
                                 </state>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A4M-nx-bn1">
+                                <rect key="frame" x="100" y="319" width="200" height="200"/>
+                                <color key="backgroundColor" systemColor="systemBlueColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="eji-dC-0Wp"/>
+                                    <constraint firstAttribute="width" constant="200" id="loG-vz-fdI"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="35"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="qdy-c7-m9E"/>
                         <color key="backgroundColor" systemColor="systemOrangeColor"/>
                         <constraints>
+                            <constraint firstItem="A4M-nx-bn1" firstAttribute="leading" secondItem="qdy-c7-m9E" secondAttribute="leading" constant="100" id="0Re-hp-xV1"/>
+                            <constraint firstItem="A4M-nx-bn1" firstAttribute="top" secondItem="Dfj-B8-vuv" secondAttribute="bottom" constant="100" id="AnX-js-6AW"/>
                             <constraint firstItem="Dfj-B8-vuv" firstAttribute="top" secondItem="qdy-c7-m9E" secondAttribute="top" constant="100" id="OLI-6j-Z9U"/>
                             <constraint firstItem="Dfj-B8-vuv" firstAttribute="leading" secondItem="qdy-c7-m9E" secondAttribute="leading" constant="100" id="qnE-sX-9Te"/>
                         </constraints>
@@ -38,6 +51,7 @@
                     <navigationItem key="navigationItem" title="Title" id="vwx-tv-FJ2"/>
                     <connections>
                         <outlet property="but" destination="Dfj-B8-vuv" id="xgO-rl-zvQ"/>
+                        <outlet property="label" destination="A4M-nx-bn1" id="Kvq-FT-O1C"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WGA-nI-Ske" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -47,6 +61,9 @@
     </scenes>
     <resources>
         <image name="plus.circle.fill" catalog="system" width="128" height="121"/>
+        <systemColor name="systemBlueColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
         <systemColor name="systemOrangeColor">
             <color red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

@@ -169,7 +169,7 @@ protocol TimeOfDayComponentsProtocol {
     ///Changes isSkipping and data associated
     mutating func changeIsSkipping(newSkipStatus: Bool)
     
-    ///If is skipping is true, then a certain log date was appended. If unskipped it has to remove that certain logDate, but if logDates was modified with the Logs page then you have to figure out if that certain log date is still there and if so then remove it.
+    ///If is skipping is true, then a certain log date was appended. If unskipped it has to remove that certain logDate, but if logs was modified with the Logs page then you have to figure out if that certain log date is still there and if so then remove it.
     var isSkippingLogDate: Date? { get set }
 
     ///The weekdays on which the requirement should fire
@@ -274,9 +274,10 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         }
         else {
             if isSkippingLogDate != nil{
-                for logDateIndex in 0..<masterRequirement.logDates.count{
-                    if masterRequirement.logDates[logDateIndex].date.distance(to: isSkippingLogDate!) < 1{
-                        masterRequirement.logDates.remove(at: logDateIndex)
+                //if the log added by skipping the reminder is unmodified, finds and removes it in the unskip process
+                for logDateIndex in 0..<masterRequirement.logs.count{
+                    if masterRequirement.logs[logDateIndex].date.distance(to: isSkippingLogDate!) < 1 && masterRequirement.logs[logDateIndex].date.distance(to: isSkippingLogDate!) > -1{
+                        masterRequirement.logs.remove(at: logDateIndex)
                         break
                     }
                 }

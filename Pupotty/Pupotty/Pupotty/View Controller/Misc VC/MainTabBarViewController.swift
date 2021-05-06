@@ -9,11 +9,19 @@ import UIKit
 
 class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, SettingsNavigationViewControllerDelegate, LogsNavigationViewControllerDelegate, IntroductionViewControllerDelegate {
     
+    
+    
     //MARK: - IntroductionViewControllerDelegate
     
     func didSetDogName(sender: Sender, dogName: String) {
         let sudoDogManager = getDogManager()
         try! sudoDogManager.dogs[0].dogTraits.changeDogName(newDogName: dogName)
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
+    }
+    
+    func didSetDogIcon(sender: Sender, dogIcon: UIImage) {
+        let sudoDogManager = getDogManager()
+        sudoDogManager.dogs[0].dogTraits.icon = dogIcon
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     
@@ -62,23 +70,23 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         }
         
         if sender.localized is TimingManager.Type || sender.localized is TimingManager{
-            homeViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+            homeViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
         
         if sender.localized is DogsViewController {
-            homeViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+            homeViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
         
         if sender.localized is LogsViewController {
-            homeViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+            homeViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
         
         if sender.localized is IntroductionViewController {
-            homeViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+            homeViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
@@ -95,8 +103,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     
     //MARK: - Properties
     
-    var homeNavigationViewController: HomeNavigationViewController! = nil
-    var homeViewController: HomeViewController! = nil
+    var homeNavigationViewController: HomeNavigationViewController? = nil
+    var homeViewController: HomeViewController? = nil
     
     var logsNavigationViewController: LogsNavigationViewController! = nil
     var logsViewController: LogsViewController! = nil
@@ -127,21 +135,23 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         
         self.selectedIndex = MainTabBarViewController.selectedEntryIndex
         
-        homeNavigationViewController = self.viewControllers![0] as? HomeNavigationViewController
-        homeViewController = homeNavigationViewController.viewControllers[0] as? HomeViewController
-        homeViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
+        /*
+         homeNavigationViewController = self.viewControllers![0] as? HomeNavigationViewController
+         homeViewController = homeNavigationViewController.viewControllers[0] as? HomeViewController
+         homeViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
+         */
         
-        logsNavigationViewController = self.viewControllers![1] as? LogsNavigationViewController
+        logsNavigationViewController = self.viewControllers![0] as? LogsNavigationViewController
         logsNavigationViewController.passThroughDelegate = self
         logsViewController = logsNavigationViewController.viewControllers[0] as? LogsViewController
         logsViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
        
-        dogsNavigationViewController = self.viewControllers![2] as? DogsNavigationViewController
+        dogsNavigationViewController = self.viewControllers![1] as? DogsNavigationViewController
         dogsNavigationViewController.passThroughDelegate = self
         dogsViewController = dogsNavigationViewController.viewControllers[0] as? DogsViewController
         dogsViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
         
-        settingsNavigationViewController = self.viewControllers![3] as? SettingsNavigationViewController
+        settingsNavigationViewController = self.viewControllers![2] as? SettingsNavigationViewController
         settingsNavigationViewController.passThroughDelegate = self
         settingsViewController = settingsNavigationViewController.viewControllers[0] as? SettingsViewController
         

@@ -16,11 +16,11 @@ class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     
     //MARK: - IB
     
-    @IBOutlet weak var requirementName: UILabel!
+    @IBOutlet private weak var requirementType: CustomLabel!
     
-    @IBOutlet weak var dogName: UILabel!
+    @IBOutlet private weak var dogName: CustomLabel!
     
-    @IBOutlet weak var timeLeft: UILabel!
+    @IBOutlet private weak var timeLeft: CustomLabel!
     
     //MARK: - Properties
     
@@ -32,46 +32,28 @@ class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        requirementName.adjustsFontSizeToFitWidth = true
-        dogName.adjustsFontSizeToFitWidth = true
-        timeLeft.adjustsFontSizeToFitWidth = true
     }
     
     func setup(parentDogName: String, requirementPassed: Requirement) {
         self.requirementSource = requirementPassed
         self.parentDogName = parentDogName
-        requirementName.text = requirementPassed.requirementName
+        requirementType.text = requirementPassed.requirementType.rawValue
         dogName.text = parentDogName
         
-        if TimingManager.isPaused == true {
-            timeLeft.text = String.convertToReadable(interperateTimeInterval: requirementPassed.countDownComponents.executionInterval - requirementPassed.countDownComponents.intervalElapsed)
-        }
-        else{
-            let fireDate: Date = TimingManager.timerDictionary[parentDogName]![requirementPassed.requirementName]!.fireDate
-            
-            if Date().distance(to: fireDate) <= 0 {
-                //timeSinceLastExecution.text = "It's Happening"
-                timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .semibold)])
-            }
-            else {
-                
-                let timeLeftText = String.convertToReadable(interperateTimeInterval: Date().distance(to: fireDate))
-                
-                timeLeft.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .regular)])
-                
-                timeLeft.attributedText = timeLeft.text!.addingFontToEnd(text: " Left", font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .semibold))
-            }
-        }
-        
+        configureTimeLeftText()
         
     }
     
     func reloadCell(){
+        configureTimeLeftText()
+    }
+    
+    private func configureTimeLeftText(){
         if TimingManager.isPaused == true {
             timeLeft.text = String.convertToReadable(interperateTimeInterval: requirementSource.countDownComponents.executionInterval - requirementSource.countDownComponents.intervalElapsed)
         }
         else{
-            let fireDate: Date = TimingManager.timerDictionary[parentDogName]![requirementSource.requirementName]!.fireDate
+            let fireDate: Date = TimingManager.timerDictionary[parentDogName]![requirementSource.uuid]!.fireDate
             
             if Date().distance(to: fireDate) <= 0 {
                 //timeSinceLastExecution.text = "It's Happening"
@@ -86,8 +68,6 @@ class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
                 timeLeft.attributedText = timeLeft.text!.addingFontToEnd(text: " Left", font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: .semibold))
             }
         }
-        
-        
     }
     
 }

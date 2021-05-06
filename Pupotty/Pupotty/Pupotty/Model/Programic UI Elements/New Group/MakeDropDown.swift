@@ -11,9 +11,9 @@ import UIKit
 protocol MakeDropDownDataSourceProtocol{
     func configureCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, makeDropDownIdentifier: String)
     ///Returns number of rows in a given section of the dropDownMenu
-    func numberOfRows(forSection: Int) -> Int
+    func numberOfRows(forSection: Int, makeDropDownIdentifier: String) -> Int
     ///Returns number section in the dropDownMenu
-    func numberOfSections() -> Int
+    func numberOfSections(makeDropDownIdentifier: String) -> Int
     
     ///Called when an item is selected in the dropdown menu
     func selectItemInDropDown(indexPath: IndexPath, makeDropDownIdentifier: String)
@@ -67,9 +67,10 @@ class MakeDropDown: UIView{
     
     /// Shows Drop Down Menu, hides it if already present
     func showDropDown(height: CGFloat, selectedIndexPath: IndexPath? = nil){
-        if isDropDownPresent{
+        if isDropDownPresent == true{
             self.hideDropDown()
-        }else{
+        }
+        else{
             reloadDropDownData()
             isDropDownPresent = true
             self.frame = CGRect(x: (self.viewPositionRef?.minX)!, y: (self.viewPositionRef?.maxY)! + self.offset, width: width, height: 0)
@@ -97,17 +98,19 @@ class MakeDropDown: UIView{
     
     ///Hides DropDownMenu
     func hideDropDown(removeFromSuperview shouldRemoveFromSuperview: Bool = false){
-        isDropDownPresent = false
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.3, options: .curveLinear
-            , animations: {
-                self.frame.size = CGSize(width: self.width, height: 0)
-                self.dropDownTableView?.frame.size = CGSize(width: self.width, height: 0)
-        }) { (_) in
-            if shouldRemoveFromSuperview == true {
-                self.removeFromSuperview()
-                self.dropDownTableView?.removeFromSuperview()
+        if isDropDownPresent == true {
+            isDropDownPresent = false
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.3, options: .curveLinear
+                , animations: {
+                    self.frame.size = CGSize(width: self.width, height: 0)
+                    self.dropDownTableView?.frame.size = CGSize(width: self.width, height: 0)
+            }) { (_) in
+                if shouldRemoveFromSuperview == true {
+                    self.removeFromSuperview()
+                    self.dropDownTableView?.removeFromSuperview()
+                }
+                
             }
-            
         }
     }
 }
@@ -117,11 +120,11 @@ class MakeDropDown: UIView{
 extension MakeDropDown: UITableViewDelegate, UITableViewDataSource{
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return (makeDropDownDataSourceProtocol?.numberOfSections() ?? 0)
+        return (makeDropDownDataSourceProtocol?.numberOfSections(makeDropDownIdentifier: self.makeDropDownIdentifier) ?? 0)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return (makeDropDownDataSourceProtocol?.numberOfRows(forSection: section) ?? 0)
+        return (makeDropDownDataSourceProtocol?.numberOfRows(forSection: section, makeDropDownIdentifier: self.makeDropDownIdentifier) ?? 0)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

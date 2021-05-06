@@ -8,7 +8,7 @@
 
 import UIKit
 protocol DogsRequirementTableViewCellDelegate {
-    func didToggleEnable(sender: Sender, requirementName: String, newEnableStatus: Bool)
+    func didToggleEnable(sender: Sender, requirementUUID: String, newEnableStatus: Bool)
 }
 
 
@@ -20,7 +20,7 @@ class DogsRequirementTableViewCell: UITableViewCell {
     @IBOutlet private weak var requirementEnableStatus: UISwitch!
     
     @IBAction func didToggleEnable(_ sender: Any) {
-        delegate.didToggleEnable(sender: Sender(origin: self, localized: self), requirementName: requirementSource.requirementName, newEnableStatus: self.requirementEnableStatus.isOn)
+        delegate.didToggleEnable(sender: Sender(origin: self, localized: self), requirementUUID: requirementSource.uuid, newEnableStatus: self.requirementEnableStatus.isOn)
     }
     
     //MARK: - Properties
@@ -113,7 +113,7 @@ class DogsRequirementTableViewCell: UITableViewCell {
             }
         }
         
-        requirementDisplay.attributedText = requirementDisplay.text?.addingFontToBeginning(text: requirement.requirementName + " -", font: UIFont.systemFont(ofSize: requirementDisplay.font.pointSize, weight: .medium))
+        requirementDisplay.attributedText = requirementDisplay.text?.addingFontToBeginning(text: requirement.requirementType.rawValue + " -", font: UIFont.systemFont(ofSize: requirementDisplay.font.pointSize, weight: .medium))
         
         self.requirementEnableStatus.isOn = requirement.getEnable()
         

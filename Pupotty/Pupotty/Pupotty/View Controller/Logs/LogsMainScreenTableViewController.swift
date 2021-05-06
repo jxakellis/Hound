@@ -10,99 +10,10 @@ import UIKit
 
 protocol LogsMainScreenTableViewControllerDelegate{
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+    func didSelectLog(parentDogName: String, requirement: Requirement?, log: KnownLog)
 }
 
 class LogsMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol {
-    
-    ///Helps to convert between the two competing tuples, one is for a traditional log from an alarm going off (or being done early) and one is from entering an arbitrary log on the logs page
-    class LogDisplay{
-    
-    
-    init(){
-        
-    }
-    
-    ///If traditionalTuple from a requirement then use this
-    convenience init(traditionalTuple: (RequirementLog, String, Requirement)) {
-        self.init()
-        self.traditionalLog = traditionalTuple
-    }
-    
-    ///if an arbitraryLog from a manually produced method on Logs, use this
-    convenience init(arbitraryTuple: (ArbitraryLog, String)) {
-        self.init()
-        self.arbitraryLog = arbitraryTuple
-    }
-    
-    var traditionalLog: (RequirementLog, String, Requirement)? = nil
-    
-    var arbitraryLog: (ArbitraryLog, String)? = nil
-    
-    ///Whether or not the log is arbitrary
-    var isArbitrary: Bool {
-        if traditionalLog != nil && arbitraryLog == nil {
-            return false
-        }
-        else if traditionalLog == nil && arbitraryLog != nil {
-            return true
-        }
-        else {
-            fatalError()
-        }
-    }
-    
-    ///Returns either traditionalLog or the arbitraryLog
-    var activeLog: RequirementLog {
-        if traditionalLog != nil && arbitraryLog == nil {
-            return traditionalLog!.0
-        }
-        else if traditionalLog == nil && arbitraryLog != nil {
-            return arbitraryLog!.0
-        }
-        else {
-            fatalError()
-        }
-    }
-    
-    ///Finds which log is active then sources the correct name
-    var activeLogName: String {
-        if traditionalLog != nil && arbitraryLog == nil {
-            return traditionalLog!.2.requirementName
-        }
-        else if traditionalLog == nil && arbitraryLog != nil {
-            return arbitraryLog!.0.logName
-        }
-        else {
-            fatalError()
-        }
-    }
-    
-    ///Finds the parentDogName of the active log
-    var activeDogName: String {
-        if traditionalLog != nil && arbitraryLog == nil {
-            return traditionalLog!.1
-        }
-        else if traditionalLog == nil && arbitraryLog != nil {
-            return arbitraryLog!.1
-        }
-        else {
-            fatalError()
-        }
-    }
-    
-    ///If a traditionalLog is active, then returns its requirement
-    var activeRequirement: Requirement? {
-        if traditionalLog != nil && arbitraryLog == nil {
-            return traditionalLog!.2
-        }
-        else if traditionalLog == nil && arbitraryLog != nil {
-            return nil
-        }
-        else {
-            fatalError()
-        }
-    }
-}
     
     //MARK: - DogManagerControlFlowProtocol
     
@@ -130,24 +41,25 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     func updateDogManagerDependents() {
         
         ///Sorts all dates of every time a requirement was logged into a tuple, containing the actual date, the parent dog name, and the requirement, theb sorts is chronologically from last (closet to present) to first (the first event that happened, so it is the oldest).
-        var calculatedConsolidatedLogDates: [LogDisplay] {
+        var calculatedConsolidatedLogs: [(String, Requirement?, KnownLog)] {
             let dogManager = getDogManager()
-            var consolidatedLogDates: [LogDisplay] = []
+            var consolidatedLogs: [(String, Requirement?, KnownLog)] = []
             
             //not filtering
             if filterIndexPath == nil {
                 for dogIndex in 0..<dogManager.dogs.count{
-                    //adds arbitrarylogs
+                    //adds dog logs
                     let dog = dogManager.dogs[dogIndex]
-                    for arbitraryLog in dog.dogTraits.arbitraryLogDates{
-                        consolidatedLogDates.append(LogDisplay(arbitraryTuple: (arbitraryLog, dog.dogTraits.dogName)))
+                    for dogLog in dog.dogTraits.logs{
+                        consolidatedLogs.append((dog.dogTraits.dogName, nil, dogLog))
                     }
-                   
-                    //adds all requirement logDates from dog
+                    
+                    //adds all requirement logs from dog
                     for requirementIndex in 0..<dogManager.dogs[dogIndex].dogRequirments.requirements.count{
                         let requirement = dogManager.dogs[dogIndex].dogRequirments.requirements[requirementIndex]
-                        for requirementLog in requirement.logDates {
-                            consolidatedLogDates.append(LogDisplay(traditionalTuple: (requirementLog, dogManager.dogs[dogIndex].dogTraits.dogName, requirement)))
+                        
+                        for requirementLog in requirement.logs {
+                            consolidatedLogs.append((dog.dogTraits.dogName, requirement, requirementLog))
                         }
                     }
                 }
@@ -156,46 +68,54 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             else if filterIndexPath!.row == 0{
                 let dog = dogManager.dogs[filterIndexPath!.section]
                 
-                //adds arbitrarylogs
-                for arbitraryLog in dog.dogTraits.arbitraryLogDates{
-                    consolidatedLogDates.append(LogDisplay(arbitraryTuple: (arbitraryLog, dog.dogTraits.dogName)))
+                //adds dog logs
+                for dogLog in dog.dogTraits.logs{
+                    consolidatedLogs.append((dog.dogTraits.dogName, nil, dogLog))
                 }
                 
-                //adds all requirement logDates from dog
+                //adds all requirement logs from dog
                 for requirement in dog.dogRequirments.requirements{
-                    for requirementLog in requirement.logDates {
-                        consolidatedLogDates.append(LogDisplay(traditionalTuple: (requirementLog, dog.dogTraits.dogName, requirement)))
+                    for requirementLog in requirement.logs {
+                        consolidatedLogs.append((dog.dogTraits.dogName, requirement, requirementLog))
                     }
                 }
             }
-            //row is not zero so filtering by a specific requirement or arbitrary
+            //row is not zero so filtering by a specific requirement or dog logs
             else{
                 let dog = dogManager.dogs[filterIndexPath!.section]
                 
-                //arbitrary filter not possible
+                //dog logs filter not possible
                 if filterIsArbitrary == false {
-                    let requirement = dog.dogRequirments.requirements[filterIndexPath!.row-1]
+                    let neededScheduledLogType = dog.dogRequirments.uniqueScheduledLogTypes[filterIndexPath!.row-1]
                     
                     //adds all logs from requirement
-                    for requirementLog in requirement.logDates {
-                        consolidatedLogDates.append(LogDisplay(traditionalTuple: (requirementLog, dog.dogTraits.dogName, requirement)))
+                    for requirement in dog.dogRequirments.requirements {
+                        if requirement.requirementType == neededScheduledLogType {
+                            for requirementLog in requirement.logs{
+                                consolidatedLogs.append((dog.dogTraits.dogName, requirement, requirementLog))
+                            }
+                        }
                     }
                 }
-                //arbitrary filter possible
+                //dog logs filter possible
                 else {
-                    //arbitrary row
+                    //dog logs row
                     if filterIndexPath!.row == 1 {
-                        for arbitraryLog in dog.dogTraits.arbitraryLogDates{
-                            consolidatedLogDates.append(LogDisplay(arbitraryTuple: (arbitraryLog, dog.dogTraits.dogName)))
+                        for dogLog in dog.dogTraits.logs{
+                            consolidatedLogs.append((dog.dogTraits.dogName, nil, dogLog))
                         }
                     }
                     //specific requirement
                     else {
-                        let requirement = dog.dogRequirments.requirements[filterIndexPath!.row-2]
+                        let neededScheduledLogType = dog.dogRequirments.uniqueScheduledLogTypes[filterIndexPath!.row-2]
                         
                         //adds all logs from requirement
-                        for requirementLog in requirement.logDates {
-                            consolidatedLogDates.append(LogDisplay(traditionalTuple: (requirementLog, dog.dogTraits.dogName, requirement)))
+                        for requirement in dog.dogRequirments.requirements {
+                            if requirement.requirementType == neededScheduledLogType {
+                                for requirementLog in requirement.logs{
+                                    consolidatedLogs.append((dog.dogTraits.dogName, requirement, requirementLog))
+                                }
+                            }
                         }
                     }
                 }
@@ -204,9 +124,9 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             
             
             //sorts from earlist in time (e.g. 1970) to most recent (e.g. 2021)
-            consolidatedLogDates.sort { (var1, var2) -> Bool in
-                let log1: RequirementLog = var1.activeLog
-                let log2: RequirementLog! = var2.activeLog
+            consolidatedLogs.sort { (var1, var2) -> Bool in
+                let log1: KnownLog = var1.2
+                let log2: KnownLog = var2.2
                 
                 //returns true if var1's log1 is earlier in time than var2's log2
                 
@@ -220,25 +140,25 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 }
             }
             
-            return consolidatedLogDates
+            return consolidatedLogs
         }
         
         ///Makes an array of unique days (of a given year) which a logging event occured, for every log that happened on a given unique day/year combo, its information (Date, parentDogName, Requirement) is appeneded to the array attached to the unique pair.
-        var calculatedUniqueLogDates: [(Int, Int, [LogDisplay])] {
-            var uniqueLogDates: [(Int, Int, Int, [LogDisplay])] = []
+        var calculatedUniqueLogs: [(Int, Int, [(String, Requirement?, KnownLog)])] {
+            var uniqueLogs: [(Int, Int, Int, [(String, Requirement?, KnownLog)])] = []
             
             //goes through all dates present where a log happened
-            for consolidatedLogDatesIndex in 0..<consolidatedLogDates.count{
+            for consolidatedLogsIndex in 0..<consolidatedLogs.count{
                 
-                let yearMonthDayComponents = Calendar.current.dateComponents([.year,.month,.day,], from: consolidatedLogDates[consolidatedLogDatesIndex].activeLog.date)
+                let yearMonthDayComponents = Calendar.current.dateComponents([.year,.month,.day,], from: consolidatedLogs[consolidatedLogsIndex].2.date)
                 
                 //Checks to make sure the day and year are valid
                 
                 if yearMonthDayComponents.day == nil || yearMonthDayComponents.month == nil || yearMonthDayComponents.year == nil {
-                    fatalError("year, month, or day nil for calculatedUniqueLogDates")
+                    fatalError("year, month, or day nil for calculatedUniqueLogs")
                 }
-                //Checks to see if the uniqueLogDates contains the day & year pair already, if it doesnt then adds it and the corresponding dateLog for that day, if there is more than one they will be added in further recursion
-                else if uniqueLogDates.contains(where: { (arg1) -> Bool in
+                //Checks to see if the uniqueLogs contains the day & year pair already, if it doesnt then adds it and the corresponding dateLog for that day, if there is more than one they will be added in further recursion
+                else if uniqueLogs.contains(where: { (arg1) -> Bool in
                     
                     let (day, month, year, _) = arg1
                     if yearMonthDayComponents.day == day && yearMonthDayComponents.month == month && yearMonthDayComponents.year == year {
@@ -248,15 +168,15 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                         return false
                     }
                 }) == false {
-                    uniqueLogDates.append((yearMonthDayComponents.day!, yearMonthDayComponents.month!, yearMonthDayComponents.year!, [consolidatedLogDates[consolidatedLogDatesIndex]]))
+                    uniqueLogs.append((yearMonthDayComponents.day!, yearMonthDayComponents.month!, yearMonthDayComponents.year!, [consolidatedLogs[consolidatedLogsIndex]]))
                 }
                 //if a day and year pair is already present, then just appends to their corresponding array that stores all logs that happened on that given pair of day & year
                 else {
-                    uniqueLogDates[uniqueLogDates.count-1].3.append(consolidatedLogDates[consolidatedLogDatesIndex])
+                    uniqueLogs[uniqueLogs.count-1].3.append(consolidatedLogs[consolidatedLogsIndex])
                 }
             }
             
-            uniqueLogDates.sort { (arg1, arg2) -> Bool in
+            uniqueLogs.sort { (arg1, arg2) -> Bool in
                 let (day1, month1, year1, _) = arg1
                 let (day2, month2, year2, _) = arg2
                 
@@ -283,21 +203,21 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 }
             }
             
-            var converted: [(Int, Int, [LogDisplay])] = []
-            for uniqueLogDate in uniqueLogDates{
+            var converted: [(Int, Int, [(String, Requirement?, KnownLog)])] = []
+            for uniqueLogDate in uniqueLogs{
                 converted.append((uniqueLogDate.0, uniqueLogDate.2, uniqueLogDate.3))
             }
             
             return converted
         }
         
-        self.consolidatedLogDates = calculatedConsolidatedLogDates
-        self.uniqueLogDates = calculatedUniqueLogDates
+        self.consolidatedLogs = calculatedConsolidatedLogs
+        self.uniqueLogs = calculatedUniqueLogs
         
         
         
         
-        if uniqueLogDates.count == 0 {
+        if uniqueLogs.count == 0 {
             tableView.separatorStyle = .none
         }
         else {
@@ -308,10 +228,10 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     //MARK: - Properties
     
     ///Stores all dates of every time a requirement was logged into a tuple, containing the actual date, the parent dog name, and the requirement,  sorted chronologically, first to last.
-    var consolidatedLogDates: [LogDisplay] = []
+    var consolidatedLogs: [(String, Requirement?, KnownLog)] = []
     
     ///Stores an array of unique days (of a given year) which a logging event occured. E.g. you logged twice on january 1st 2020& once on january 4th 2020, so the array would be [(1,2020),(4,2020)]
-    private var uniqueLogDates: [(Int, Int, [LogDisplay])] = []
+    private var uniqueLogs: [(Int, Int, [(String, Requirement?, KnownLog)])] = []
     
     ///IndexPath of current filtering scheme
     private var filterIndexPath: IndexPath? = nil
@@ -321,7 +241,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     var delegate: LogsMainScreenTableViewControllerDelegate! = nil
     
     //MARK: - Main
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.allowsSelection = true
@@ -345,44 +265,44 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         filterIndexPath = indexPath
         
-        //filtering by arbitraryLogs
-        if filterIndexPath?.row == 1 && getDogManager().dogs[indexPath!.section].dogTraits.arbitraryLogDates.isEmpty == false {
+        //filtering by dog logs
+        if filterIndexPath?.row == 1 && getDogManager().dogs[indexPath!.section].dogTraits.logs.isEmpty == false {
             filterIsArbitrary = true
         }
-        //not filtering by arbitraryLogs
+        //not filtering by dog logs
         else {
             filterIsArbitrary = false
         }
         
         reloadTable()
     }
-
+    
     // MARK: - Table View Data Source
-
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
-        if uniqueLogDates.count == 0 {
+        if uniqueLogs.count == 0 {
             return 1
         }
         else {
-            return uniqueLogDates.count
+            return uniqueLogs.count
         }
     }
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        if uniqueLogDates.count == 0 {
+        if uniqueLogs.count == 0 {
             return 1
             
         }
         else {
-            return uniqueLogDates[section].2.count + 1
+            return uniqueLogs[section].2.count + 1
         }
     }
-
+    
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //no logs present
-        if uniqueLogDates.count == 0 {
+        if uniqueLogs.count == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeader", for: indexPath)
             
             let customCell = cell as! LogsMainScreenTableViewCellHeader
@@ -395,7 +315,8 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeader", for: indexPath)
             
             let customCell = cell as! LogsMainScreenTableViewCellHeader
-            customCell.setup(log: uniqueLogDates[indexPath.section].2[0].activeLog)
+            
+            customCell.setup(log: uniqueLogs[indexPath.section].2[0].2)
             
             return cell
         }
@@ -404,24 +325,15 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBody", for: indexPath)
             
             let customCell = cell as! LogsMainScreenTableViewCellBody
-            let logDisplay = uniqueLogDates[indexPath.section].2[indexPath.row-1]
+            let logDisplay = uniqueLogs[indexPath.section].2[indexPath.row-1]
             
-            var logName: String {
-                if logDisplay.activeLog is ArbitraryLog{
-                    return (logDisplay.activeLog as! ArbitraryLog).logName
-                }
-                else {
-                    return logDisplay.traditionalLog!.2.requirementName
-                }
-            }
+            customCell.setup(parentDogName: logDisplay.0, requirement: logDisplay.1, log: logDisplay.2)
             
-            customCell.setup(isArbitrary: logDisplay.isArbitrary, log: logDisplay.activeLog, parentDogName: logDisplay.activeDogName, logName: logName)
-
             return cell
         }
     }
     
-
+    
     
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -434,7 +346,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         }
     }
     
-
+    
     
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -443,16 +355,16 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 // Delete the row from the data source
                 let newDogManager = getDogManager()
                 
-                let originalNumberOfSections = uniqueLogDates.count
+                let originalNumberOfSections = uniqueLogs.count
                 
-                let cellToDelete = uniqueLogDates[indexPath.section].2[indexPath.row-1]
+                let cellToDelete = uniqueLogs[indexPath.section].2[indexPath.row-1]
                 
-                //if cell is a traditonal log, uses traditonal method
-                if cellToDelete.isArbitrary == false {
-                    let requirement = try! newDogManager.findDog(dogName: cellToDelete.activeDogName).dogRequirments.findRequirement(requirementName: cellToDelete.activeRequirement!.requirementName)
+                //if cell is a requirement log
+                if cellToDelete.1 != nil {
+                    let requirement = try! newDogManager.findDog(dogName: cellToDelete.0).dogRequirments.findRequirement(forUUID: cellToDelete.1!.uuid)
                     
-                    let firstIndex = requirement.logDates.firstIndex { (arg0) -> Bool in
-                        if arg0.date == cellToDelete.activeLog.date{
+                    let firstIndex = requirement.logs.firstIndex { (arg0) -> Bool in
+                        if arg0.date == cellToDelete.2.date{
                             return true
                         }
                         else {
@@ -460,14 +372,14 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                         }
                     }
                     
-                    requirement.logDates.remove(at: firstIndex!)
+                    requirement.logs.remove(at: firstIndex!)
                 }
-                //if cell isArbitrary uses arbitrary method of finding what to delete
+                //if cell is a dog log
                 else {
-                    let dog = try! newDogManager.findDog(dogName: cellToDelete.activeDogName)
-                    for arbitraryLogIndex in 0..<dog.dogTraits.arbitraryLogDates.count {
-                        if dog.dogTraits.arbitraryLogDates[arbitraryLogIndex].uuid == cellToDelete.arbitraryLog!.0.uuid{
-                            dog.dogTraits.arbitraryLogDates.remove(at: arbitraryLogIndex)
+                    let dog = try! newDogManager.findDog(dogName: cellToDelete.0)
+                    for dogLogIndex in 0..<dog.dogTraits.logs.count {
+                        if dog.dogTraits.logs[dogLogIndex].uuid == cellToDelete.2.uuid{
+                            dog.dogTraits.logs.remove(at: dogLogIndex)
                             break
                         }
                     }
@@ -481,17 +393,17 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 tableView.deleteRows(at: [indexPath], with: .fade)
                 
                 //removed final log and must update header (no logs are left at all)
-                if uniqueLogDates.count == 0 {
+                if uniqueLogs.count == 0 {
                     let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsMainScreenTableViewCellHeader
                     headerCell.setup(log: nil)
                 }
                 //removed final log of a given section and must delete all headers and body in that now gone-from-the-data section
-                else if originalNumberOfSections != uniqueLogDates.count{
+                else if originalNumberOfSections != uniqueLogs.count{
                     tableView.deleteSections(IndexSet(integer: indexPath.section), with: .automatic)
                 }
             } completion: { (completed) in
             }
-
+            
             
             
             
@@ -501,48 +413,11 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.tableView.deselectRow(at: indexPath, animated: true)
         
-        //shows alertcontroller with a textfield to edit or delete the comment present for a given log
+        let selectedLogDisplay = uniqueLogs[indexPath.section].2[indexPath.row-1]
         
-        let selectedLog = uniqueLogDates[indexPath.section].2[indexPath.row-1]
+        delegate.didSelectLog(parentDogName: selectedLogDisplay.0, requirement: selectedLogDisplay.1, log: selectedLogDisplay.2)
         
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)
-        let formattedDate: String = dateFormatter.string(from: selectedLog.activeLog.date)
-        
-        let alertController = GeneralAlertController(title: "Edit Note", message: "\(selectedLog.activeDogName) \(selectedLog.activeLogName) \(formattedDate)", preferredStyle: .alert)
-        
-        alertController.addTextField { (UITextField) in
-            UITextField.text = selectedLog.activeLog.note
-            UITextField.clearButtonMode = .always
-            UITextField.autocapitalizationType = .sentences
-            UITextField.placeholder = "Note about \(selectedLog.activeDogName)'s \(selectedLog.activeLogName)"
-            UITextField.returnKeyType = .done
-        }
-        //alertController
-        
-        let alertActionSubmit = UIAlertAction(title: "Submit", style: .default) { (UIAlertAction) in
-            selectedLog.activeLog.changeNote(newNote: alertController.textFields![0].text ?? "")
-            self.delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: self.getDogManager())
-            self.reloadTable()
-        }
-        
-        let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        
-        alertController.addAction(alertActionSubmit)
-        alertController.addAction(alertActionCancel)
-        
-        AlertPresenter.shared.enqueueAlertForPresentation(alertController)
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+    
 }

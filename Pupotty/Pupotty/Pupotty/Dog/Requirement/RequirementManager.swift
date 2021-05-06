@@ -13,7 +13,7 @@ enum RequirementManagerError: Error {
    case requirementAlreadyPresent
     case requirementNotPresent
     case requirementInvalid
-    case requirementNameNotPresent
+    case requirementUUIDNotPresent
 }
 
 protocol RequirementManagerProtocol {
@@ -23,27 +23,34 @@ protocol RequirementManagerProtocol {
     
     init(initRequirements: [Requirement])
     
+    ///checks to see if a requirement with the same name is present, if not then adds new requirement, if one is then throws error
     mutating func addRequirement(newRequirement: Requirement) throws
     
     mutating func addRequirement(newRequirements: [Requirement]) throws
     
-    mutating func removeRequirement(requirementName: String) throws
-    mutating func changeRequirement(requirementToBeChanged: String, newRequirement: Requirement) throws
+    ///removes trys to find a requirement whos name (capitals don't matter) matches requirement name given, if found removes requirement, if not found throws error
+    mutating func removeRequirement(forUUID uuid: String) throws
+    mutating func changeRequirement(forUUID uuid: String, newRequirement: Requirement) throws
     
-    func findRequirement(requirementName requirementToFind: String) throws -> Requirement
+    ///finds and returns the reference of a requirement matching the given uuid
+    func findRequirement(forUUID uuid: String) throws -> Requirement
     
-    func findIndex(requirementName requirementToFind: String) throws -> Int
+    ///finds and returns the index of a requirement with a uuid in terms of the requirement: [Requirement] array
+    func findIndex(forUUID uuid: String) throws -> Int
+    
+    ///Returns an array of each unique occurance of a requirement type in all of the requirements
+    var uniqueScheduledLogTypes: [ScheduledLogType] { get }
     
 }
 
 extension RequirementManagerProtocol {
     
-    ///checks to see if a requirement with the same name is present, if not then adds new requirement, if one is then throws error
+    
     mutating func addRequirement(newRequirement: Requirement) throws {
         var requirementAlreadyPresent = false
         
         requirements.forEach { (req) in
-            if (req.requirementName.lowercased()) == (newRequirement.requirementName.lowercased()){
+            if (req.uuid == newRequirement.uuid){
                 requirementAlreadyPresent = true
             }
         }
@@ -51,29 +58,28 @@ extension RequirementManagerProtocol {
         if requirementAlreadyPresent == true{
             throw RequirementManagerError.requirementAlreadyPresent
         }
-        
         else {
             //RequirementEfficencyImprovements requirements.append(newRequirement.copy() as! Requirement)
             requirements.append(newRequirement)
         }
-        
+        sortRequirements()
     }
     
     mutating func addRequirement(newRequirements: [Requirement]) throws {
         for requirement in newRequirements {
             try addRequirement(newRequirement: requirement)
         }
+        sortRequirements()
     }
     
-    ///removes trys to find a requirement whos name (capitals don't matter) matches requirement name given, if found removes requirement, if not found throws error
-    mutating func removeRequirement(requirementName: String) throws{
+    
+    mutating func removeRequirement(forUUID uuid: String) throws{
         var requirementNotPresent = true
         
         //goes through requirements to see if the given requirement name (aka requirement name) is in the array of requirments
         requirements.forEach { (req) in
-            if (req.requirementName.lowercased()) == (requirementName.lowercased()){
+            if req.uuid == uuid{
                 requirementNotPresent = false
-                
             }
         }
         
@@ -87,7 +93,7 @@ extension RequirementManagerProtocol {
             //finds index of given requirement (through requirement name), returns nil if not found but it should be if code is written correctly, code should not be not be able to reach this point if requirement name was not present
             var indexOfRemovalTarget: Int?{
                 for index in 0...Int(requirements.count){
-                    if (requirements[index].requirementName.lowercased()) == requirementName.lowercased(){
+                    if requirements[index].uuid == uuid{
                         return index
                     }
                 }
@@ -98,55 +104,98 @@ extension RequirementManagerProtocol {
         }
     }
     
-    ///
-    mutating func changeRequirement(requirementToBeChanged: String, newRequirement: Requirement) throws {
+    mutating func changeRequirement(forUUID uuid: String, newRequirement: Requirement) throws {
         
         //check to find the index of targetted requirement
         var newRequirementIndex: Int?
+        
         for i in 0..<requirements.count {
-            if requirements[i].requirementName.lowercased() == requirementToBeChanged.lowercased() {
+            if requirements[i].uuid == uuid {
                 newRequirementIndex = i
             }
         }
         
-        //check to see if new name is a duplicate of another requirement name
-        for i in 0..<requirements.count {
-            if requirements[i].requirementName.lowercased() == newRequirement.requirementName.lowercased() {
-                if i != newRequirementIndex {
-                    throw RequirementManagerError.requirementAlreadyPresent
-                }
-            }
-        }
-        
         if newRequirementIndex == nil {
-            throw RequirementManagerError.requirementNameNotPresent
+            throw RequirementManagerError.requirementUUIDNotPresent
         }
         
         else {
             //RequirementEfficencyImprovements requirements[newRequirementIndex!] = newRequirement.copy() as! Requirement
             requirements[newRequirementIndex!] = newRequirement
         }
+        sortRequirements()
     }
     
-    ///finds and returns the reference of a requirement matching the given name
-    func findRequirement(requirementName requirementToFind: String) throws -> Requirement {
+    
+    func findRequirement(forUUID uuid: String) throws -> Requirement {
         for r in 0..<requirements.count{
-            if requirements[r].requirementName.lowercased() == requirementToFind.lowercased() {
+            if requirements[r].uuid == uuid {
                 return requirements[r]
             }
         }
         throw RequirementManagerError.requirementNotPresent
     }
     
-    ///finds and returns the index of a requirement with a name in terms of the requirement: [Requirement] array
-    func findIndex(requirementName requirementToFind: String) throws -> Int {
+    
+    func findIndex(forUUID uuid: String) throws -> Int {
         for r in 0..<requirements.count{
-            if requirements[r].requirementName == requirementToFind {
+            if requirements[r].uuid == uuid {
                 return r
             }
         }
         throw RequirementManagerError.requirementNotPresent
     }
+    
+    var uniqueScheduledLogTypes: [ScheduledLogType] {
+        var requirementTypes: [ScheduledLogType] = []
+        
+        for requirement in requirements{
+            if requirementTypes.contains(requirement.requirementType) == false {
+                requirementTypes.append(requirement.requirementType)
+            }
+        }
+        
+        return requirementTypes
+    }
+    
+    
+     mutating private func sortRequirements(){
+         requirements.sort { (req1, req2) -> Bool in
+             if req1.timingStyle == .countDown && req2.timingStyle == .countDown{
+                 //shorter is listed first
+                 if req1.countDownComponents.executionInterval <= req2.countDownComponents.executionInterval{
+                     return true
+                 }
+                 else {
+                     return false
+                 }
+             }
+             else if req1.timingStyle == .timeOfDay && req2.timingStyle == .timeOfDay{
+                 //earlier in the day is listed first
+                 let req1Hour = req1.timeOfDayComponents.timeOfDayComponent.hour!
+                 let req2Hour = req2.timeOfDayComponents.timeOfDayComponent.hour!
+                 if req1Hour <= req2Hour {
+                     return true
+                 }
+                 else {
+                     return false
+                 }
+             }
+             //different timing styles
+             else {
+                 //req1 is the count down and should be first
+                 if req1.timingStyle == .countDown {
+                     return true
+                 }
+                 //req1 is time of day and should go after req2 which is a count down
+                 else {
+                     return false
+                 }
+             }
+         }
+     }
+     
+    
 }
 
 class RequirementManager: NSObject, NSCoding, NSCopying, RequirementManagerProtocol {

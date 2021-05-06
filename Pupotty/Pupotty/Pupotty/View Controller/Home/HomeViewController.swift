@@ -57,11 +57,6 @@ class HomeViewController: UIViewController, DogManagerControlFlowProtocol {
     
     // MARK: - Navigation
     
-    ///Allows for unwind to this page when back button is clicked in requirement editor
-    @IBAction func unwind(_ seg: UIStoryboardSegue){
-        
-    }
-    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         

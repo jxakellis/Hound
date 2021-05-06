@@ -9,26 +9,32 @@
 import UIKit
 
 protocol DogsMainScreenTableViewCellRequirementDisplayDelegate {
-    func didToggleRequirementSwitch(sender: Sender, parentDogName: String, requirementName: String, isEnabled: Bool)
+    func didToggleRequirementSwitch(sender: Sender, parentDogName: String, requirementUUID: String, isEnabled: Bool)
 }
 
 class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     
     //MARK: - IB
     
-    @IBOutlet weak var requirementName: UILabel!
-    @IBOutlet weak var timeInterval: UILabel!
+    @IBOutlet private weak var requirementChevron: UIImageView!
+    
+    @IBOutlet private weak var requirementIcon: UIImageView!
+    
+    @IBOutlet private weak var requirementType: CustomLabel!
+    @IBOutlet private weak var timeInterval: CustomLabel!
+    
+    @IBOutlet private weak var timeLeft: CustomLabel!
     @IBOutlet weak var requirementToggleSwitch: UISwitch!
     
     //When the on off switch is toggled
-    @IBAction func didToggleRequirementSwitch(_ sender: Any) {
-        delegate.didToggleRequirementSwitch(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, requirementName: requirement.requirementName, isEnabled: self.requirementToggleSwitch.isOn)
+    @IBAction private func didToggleRequirementSwitch(_ sender: Any) {
+        delegate.didToggleRequirementSwitch(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, requirementUUID: requirement.uuid, isEnabled: self.requirementToggleSwitch.isOn)
     }
     
     //MARK: -  Properties
-    var requirement: Requirement = Requirement()
+    private var requirement: Requirement = Requirement()
     
-    var parentDogName: String = ""
+    private var parentDogName: String = ""
     
     var delegate: DogsMainScreenTableViewCellRequirementDisplayDelegate! = nil
     
@@ -36,8 +42,9 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        self.requirementName.adjustsFontSizeToFitWidth = true
-        self.timeInterval.adjustsFontSizeToFitWidth = true
+        //requirementChevron.tintColor = ColorConstant.gray.rawValue
+        //requirementChevron.alpha = 1
+        
         // Initialization code
     }
     
@@ -51,12 +58,14 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     func setup(parentDogName: String, requirementPassed: Requirement){
         self.parentDogName = parentDogName
         self.requirement = requirementPassed
-        self.requirementName.text = requirementPassed.requirementName
+        self.requirementType.text = requirementPassed.requirementType.rawValue
         
         if requirement.timingStyle == .countDown {
+            self.requirementIcon.image = UIImage.init(systemName: "timer")
             self.timeInterval.text = ("Every \(String.convertToReadable(interperateTimeInterval: requirement.countDownComponents.executionInterval))")
         }
         else {
+            self.requirementIcon.image = UIImage.init(systemName: "alarm")
             try! self.timeInterval.text = ("\(String.convertToReadable(interperatedDateComponents: requirement.timeOfDayComponents.timeOfDayComponent))")
             
             if requirement.timeOfDayComponents.weekdays == [1,2,3,4,5,6,7]{
@@ -122,6 +131,46 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
         }
         
         self.requirementToggleSwitch.isOn = requirementPassed.getEnable()
+        
+        configureTimeLeftText()
     }
     
+    
+    func reloadCell(){
+        configureTimeLeftText()
+    }
+    
+    private func configureTimeLeftText(){
+        
+        let timeLeftBodyWeight: UIFont.Weight = .regular
+        let timeLeftImportantWeight: UIFont.Weight = .semibold
+        
+        if requirement.getEnable() == false {
+            timeLeft.attributedText = NSAttributedString(string: "Reminder Disabled", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
+        }
+        else if TimingManager.isPaused == true {
+            
+            timeLeft.attributedText = NSAttributedString(string: "Paused", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
+            
+        }
+        else{
+            let fireDate: Date? = TimingManager.timerDictionary[parentDogName]?[requirement.uuid]?.fireDate
+            
+            if fireDate == nil {
+                timeLeft.attributedText = NSAttributedString(string: "Reminder Disabled", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
+            }
+            else if Date().distance(to: fireDate!) <= 0 {
+                timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
+            }
+            else {
+                let timeLeftText = String.convertToReadable(interperateTimeInterval: Date().distance(to: fireDate!))
+                
+                timeLeft.font = UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftBodyWeight)
+                
+                timeLeft.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftBodyWeight)])
+                
+                timeLeft.attributedText = timeLeft.text!.addingFontToBeginning(text: "Remind in: ", font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight))
+            }
+        }
+    }
 }

@@ -153,16 +153,26 @@ class SettingsViewController: UIViewController, ToolTipable {
         
         private var currentToolTip: ToolTipView?
         
-        @IBOutlet private weak var toolTipButton: UIButton!
-        @IBAction private func toolTip(_ sender: Any) {
-            toolTipButton.isUserInteractionEnabled = false
+        @IBOutlet private weak var followUpNotificationToolTip: UIButton!
+    
+        @IBAction private func didClickFollowUpNotificationToolTip(_ sender: Any) {
+            followUpNotificationToolTip.isUserInteractionEnabled = false
+            
             if currentToolTip != nil {
-                hideToolTip(sourceButton: toolTipButton)
+                hideToolTip(sourceButton: followUpNotificationToolTip)
             }
             else {
-                showToolTip(sourceButton: toolTipButton, message: "Sends a follow up \nnotification if the first one\nis not responded to")
+                showToolTip(sourceButton: followUpNotificationToolTip, message: "Sends a follow up \nnotification if you don't\nrespond to the first one.")
+                //"Sends a follow up \nnotification if the first one\nis not responded to"
             }
         }
+    
+    @IBOutlet private weak var snoozeLengthToolTip: UIButton!
+    
+    @IBAction private func didClickSnoozeLengthToolTip(_ sender: Any) {
+    }
+    
+    
         
         func showToolTip(sourceButton: UIButton, message: String) {
             let tipView = ToolTipView(sourceView: sourceButton, message: message, toolTipPosition: .middle)
@@ -194,9 +204,6 @@ class SettingsViewController: UIViewController, ToolTipable {
     }
     
     //MARK: - Reset
-    
-    @IBOutlet private weak var resetButton: UIButton!
-    
     @IBAction private func willReset(_ sender: Any) {
         
          let alertController = GeneralAlertController(
@@ -252,36 +259,11 @@ class SettingsViewController: UIViewController, ToolTipable {
         followUpDelayInterval.countDownDuration = NotificationConstant.followUpDelay
         snoozeInterval.countDownDuration = TimerConstant.defaultSnooze
         isPaused.isOn = TimingManager.isPaused
-        resetButton.layer.cornerRadius = 8.0
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(willHideToolTip))
         self.view.addGestureRecognizer(tap)
         
-        var followUpReminderLabelWidth: CGFloat {
-            let neededConstraintSpace: CGFloat = 10.0 + 10.0 + 3.0 + 45.0
-            let otherButtonSpace: CGFloat = shouldFollowUp.frame.width + toolTipButton.frame.width
-            let maximumWidth: CGFloat = view.frame.width - otherButtonSpace - neededConstraintSpace
-            
-            let neededLabelSize: CGSize = (followUpReminderLabel.text?.boundingFrom(font: followUpReminderLabel.font, height: followUpReminderLabel.frame.height))!
-            
-            let neededLabelWidth: CGFloat = neededLabelSize.width
-            
-            if neededLabelWidth > maximumWidth {
-                return maximumWidth
-            }
-            else {
-                return neededLabelWidth
-            }
-        }
-        
-        followUpReminderLabel.frame = CGRect(x: followUpReminderLabel.frame.origin.x, y: followUpReminderLabel.frame.origin.y, width: followUpReminderLabelWidth, height: followUpReminderLabel.frame.height)
-        
-        /*
-        let pageTitleSeperatorLine = UIView(frame: CGRect(x: pageTitle.frame.origin.x, y: pageTitle.frame.maxY + 3.0, width: pageTitle.frame.width, height: 4.5))
-        pageTitleSeperatorLine.backgroundColor = .systemBlue
-        pageTitleSeperatorLine.layer.cornerRadius = (pageTitleSeperatorLine.frame.height-1)/2
-        view.addSubview(pageTitleSeperatorLine)
-         */
+        setupConstraints()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -295,5 +277,58 @@ class SettingsViewController: UIViewController, ToolTipable {
     
     override func viewWillDisappear(_ animated: Bool) {
         hideToolTip()
+    }
+    
+    private func setupConstraints(){
+        func setupFollowUpLabelWidth(){
+            var followUpReminderLabelWidth: CGFloat {
+                let neededConstraintSpace: CGFloat = 10.0 + 3.0 + 3.0 + 45.0
+                let otherButtonSpace: CGFloat = shouldFollowUp.frame.width + followUpNotificationToolTip.frame.width
+                let maximumWidth: CGFloat = view.frame.width - otherButtonSpace - neededConstraintSpace
+                
+                let neededLabelSize: CGSize = (followUpReminderLabel.text?.boundingFrom(font: followUpReminderLabel.font, height: followUpReminderLabel.frame.height))!
+                
+                let neededLabelWidth: CGFloat = neededLabelSize.width
+                
+                if neededLabelWidth > maximumWidth {
+                    return maximumWidth
+                }
+                else {
+                    return neededLabelWidth
+                }
+            }
+            
+            let followUpLabelConstraint = NSLayoutConstraint(item: followUpReminderLabel!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: followUpReminderLabelWidth)
+            followUpReminderLabel.addConstraint(followUpLabelConstraint)
+            NSLayoutConstraint.activate([followUpLabelConstraint])
+        }
+        /*
+         func setupSnoozeLengthLabelWidth(){
+             var snoozeLengthLabelWidth: CGFloat {
+                 let neededConstraintSpace: CGFloat = 10.0 + 3.0 + 3.0 + 45.0
+                 let otherButtonSpace: CGFloat = shouldFollowUp.frame.width + followUpNotificationToolTip.frame.width
+                 let maximumWidth: CGFloat = view.frame.width - otherButtonSpace - neededConstraintSpace
+                 
+                 let neededLabelSize: CGSize = (followUpReminderLabel.text?.boundingFrom(font: followUpReminderLabel.font, height: followUpReminderLabel.frame.height))!
+                 
+                 let neededLabelWidth: CGFloat = neededLabelSize.width
+                 
+                 if neededLabelWidth > maximumWidth {
+                     return maximumWidth
+                 }
+                 else {
+                     return neededLabelWidth
+                 }
+             }
+             
+             let followUpLabelConstraint = NSLayoutConstraint(item: followUpReminderLabel!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: followUpReminderLabelWidth)
+             followUpReminderLabel.addConstraint(followUpLabelConstraint)
+             NSLayoutConstraint.activate([followUpLabelConstraint])
+         }
+         */
+        
+       
+        
+        setupFollowUpLabelWidth()
     }
 }

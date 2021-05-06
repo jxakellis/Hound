@@ -16,6 +16,9 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
     
     //MARK: - IB
     
+    
+    @IBOutlet weak var dogIcon: UIImageView!
+    
     @IBOutlet weak var dogName: UILabel!
     
     @IBOutlet weak var dogToggleSwitch: UISwitch!
@@ -49,7 +52,15 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
     //Function used externally to setup dog
     func setup(dogPassed: Dog){
         dog = dogPassed
+        
+        dogIcon.image = dogPassed.dogTraits.icon
+        dogIcon.layer.masksToBounds = true
+        if dogIcon.image != DogConstant.defaultIcon{
+            dogIcon.layer.cornerRadius = dogIcon.frame.width/2
+        }
+        
         self.dogName.text = dogPassed.dogTraits.dogName
+        
         self.dogToggleSwitch.isOn = dogPassed.getEnable()
     }
     

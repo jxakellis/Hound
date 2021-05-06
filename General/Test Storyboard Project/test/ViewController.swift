@@ -12,16 +12,18 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var but: UIButton!
     
+    @IBOutlet weak var label: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+            but.layer.masksToBounds = true
+            but.layer.cornerRadius = but.frame.width/2
         
-        DispatchQueue.main.asyncAfter(deadline: .now()+5.0) {
-            self.but.layer.cornerRadius = self.but.frame.size.width
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now()+8.0) {
-            self.but.setImage(nil, for: .normal)
-        }
         
+        label.text = "Choose\nImage"
+        label.layer.masksToBounds = true
+      //  label.layer.cornerRadius = label.frame.width/2
+        //label.layer.masksToBounds = true
     }
     
 

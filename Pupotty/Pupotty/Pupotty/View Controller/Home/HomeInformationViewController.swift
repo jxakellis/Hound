@@ -19,7 +19,8 @@ class HomeInformationViewController: UIViewController {
     @IBOutlet weak var howToUseBody: CustomLabel!
     
     @IBAction func willGoBack(_ sender: Any) {
-        self.performSegue(withIdentifier: "unwindToHomeViewController", sender: self)
+        //self.performSegue(withIdentifier: "unwindToHomeViewController", sender: self)
+        self.navigationController?.popViewController(animated: true)
     }
     
     

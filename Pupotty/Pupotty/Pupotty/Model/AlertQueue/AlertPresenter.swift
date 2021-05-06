@@ -38,11 +38,14 @@ class AlertPresenter: NSObject, NSCoding{
     
     func enqueueAlertForPresentation(_ alertController: GeneralAlertController) {
         
-        if let popoverController = alertController.popoverPresentationController {
-            popoverController.sourceView = Utils.presenter.view
-            popoverController.sourceRect = Utils.presenter.view.bounds
-          popoverController.permittedArrowDirections = []
-        }
+        /*
+         if let popoverController = alertController.popoverPresentationController {
+             popoverController.sourceView = Utils.presenter.view
+             popoverController.sourceRect = Utils.presenter.view.bounds
+           popoverController.permittedArrowDirections = []
+         }
+         */
+        
         
         alertQueue.enqueue(alertController)
         

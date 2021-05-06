@@ -14,12 +14,13 @@ protocol DogsRequirementTableViewControllerDelegate {
 }
 
 class DogsRequirementTableViewController: UITableViewController, RequirementManagerControlFlowProtocol, DogsInstantiateRequirementViewControllerDelegate, DogsRequirementTableViewCellDelegate {
+    
     //MARK: - Dogs Requirement Table View Cell
     
-    func didToggleEnable(sender: Sender, requirementName: String, newEnableStatus: Bool) {
+    func didToggleEnable(sender: Sender, requirementUUID: String, newEnableStatus: Bool) {
         let sudoRequirementManager = getRequirementManager()
         do {
-            try sudoRequirementManager.findRequirement(requirementName: requirementName).setEnable(newEnableStatus: newEnableStatus)
+            try sudoRequirementManager.findRequirement(forUUID: requirementUUID).setEnable(newEnableStatus: newEnableStatus)
             setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
         }
         catch {
@@ -40,21 +41,16 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
         setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
     }
     
-    func didUpdateRequirement(sender: Sender, formerName: String, updatedRequirement: Requirement) throws {
+    func didUpdateRequirement(sender: Sender, updatedRequirement: Requirement) throws {
         var sudoRequirementManager = getRequirementManager()
-        try sudoRequirementManager.changeRequirement(requirementToBeChanged: formerName, newRequirement: updatedRequirement)
+        try sudoRequirementManager.changeRequirement(forUUID: updatedRequirement.uuid, newRequirement: updatedRequirement)
         setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
     }
     
-    func didRemoveRequirement(sender: Sender, removedRequirementName: String) {
+    func didRemoveRequirement(sender: Sender, removedRequirementUUID: String) {
         var sudoRequirementManager = getRequirementManager()
-        try! sudoRequirementManager.removeRequirement(requirementName: removedRequirementName)
+        try! sudoRequirementManager.removeRequirement(forUUID: removedRequirementUUID)
         setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
-    }
-    
-    ///Allows for unwind to this page when back button is clicked in requirement editor
-    @IBAction func unwind(_ seg: UIStoryboardSegue){
-        
     }
     
     //MARK: - Requirement Manager Control Flow Protocol
@@ -78,11 +74,11 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
             updateRequirementManagerDependents()
         }
         
-        updateTableConstraints()
+        reloadTableConstraints()
         
     }
     
-    private func updateTableConstraints(){
+    private func reloadTableConstraints(){
         if getRequirementManager().requirements.count > 0{
             self.tableView.rowHeight = -1
         }
@@ -92,7 +88,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     }
     
     func updateRequirementManagerDependents() {
-        self.updateTable()
+        self.reloadTable()
     }
     
     //MARK: - Properties
@@ -156,7 +152,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     }
     
     ///Reloads table data when it is updated, if you change the data w/o calling this, the data display to the user will not be updated
-    private func updateTable(){
+    private func reloadTable(){
         
         if self.getRequirementManager().requirements.count == 0 {
             self.tableView.allowsSelection = false

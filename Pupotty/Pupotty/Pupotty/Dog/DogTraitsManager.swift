@@ -17,8 +17,14 @@ enum DogTraitManagerError: Error{
 
 protocol DogTraitManagerProtocol{
     
-    ///logDates that aren't attached to a requirement object, free standing with no timing involved
-    var arbitraryLogDates: [ArbitraryLog] { get set }
+    ///Icon for dog, default paw but can be picture from camera roll
+    var icon: UIImage { get set }
+    
+    ///Resets to default
+    mutating func resetIcon()
+    
+    ///logs that aren't attached to a requirement object, free standing with no timing involved
+    var logs: [KnownLog] { get set }
     
     ///The dog's name
     var dogName: String { get }
@@ -35,20 +41,23 @@ class DogTraitManager: NSObject, NSCoding, NSCopying, DogTraitManagerProtocol {
     
     //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
+        icon = aDecoder.decodeObject(forKey: "icon") as! UIImage
         storedDogName = aDecoder.decodeObject(forKey: "dogName") as! String
-        arbitraryLogDates = aDecoder.decodeObject(forKey: "arbitraryLogDates") as! [ArbitraryLog]
+        logs = aDecoder.decodeObject(forKey: "logs") as! [KnownLog]
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(storedDogName, forKey: "dogName")
-        aCoder.encode(arbitraryLogDates, forKey: "arbitraryLogDates")
+        aCoder.encode(logs, forKey: "logs")
+        aCoder.encode(icon, forKey: "icon")
     }
     
     //MARK: - NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = DogTraitManager()
+        copy.icon = self.icon
         copy.storedDogName = self.storedDogName
-        copy.arbitraryLogDates = self.arbitraryLogDates
+        copy.logs = self.logs
         return copy
     }
     
@@ -57,7 +66,13 @@ class DogTraitManager: NSObject, NSCoding, NSCopying, DogTraitManagerProtocol {
         super.init()
     }
     
-    var arbitraryLogDates: [ArbitraryLog] = []
+    var icon: UIImage = UIImage.init(named: "pawFullResolutionWhite")!
+    
+    func resetIcon(){
+        icon = UIImage.init(named: "pawFullResolutionWhite")!
+    }
+    
+    var logs: [KnownLog] = []
     
     private var storedDogName: String = DogConstant.defaultName
     var dogName: String { return storedDogName }

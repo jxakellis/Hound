@@ -10,6 +10,7 @@ import UIKit
 
 protocol DogsRequirementTimeOfDayViewControllerDelegate {
     func willDismissKeyboard()
+    func didUpdateInformation()
 }
 
 class DogsRequirementTimeOfDayViewController: UIViewController, UIGestureRecognizerDelegate {
@@ -34,6 +35,7 @@ class DogsRequirementTimeOfDayViewController: UIViewController, UIGestureRecogni
     
     @IBAction private func toggleWeekdayButton(_ sender: Any) {
         delegate.willDismissKeyboard()
+        delegate.didUpdateInformation()
         let senderButton = sender as! ScaledButton
         var targetColor: UIColor!
         
@@ -56,6 +58,7 @@ class DogsRequirementTimeOfDayViewController: UIViewController, UIGestureRecogni
     @IBOutlet weak var timeOfDay: UIDatePicker!
     
     @IBAction private func willUpdateTimeOfDay(_ sender: Any) {
+        delegate.didUpdateInformation()
         delegate.willDismissKeyboard()
     }
     
@@ -74,12 +77,25 @@ class DogsRequirementTimeOfDayViewController: UIViewController, UIGestureRecogni
         
         synchronizeWeekdays()
         
-        if passedTimeOfDay != nil {
-            timeOfDay.date = passedTimeOfDay!
+        //keep duplicate as without it the user can see the .asyncafter visual scroll, but this duplicate stops a value changed not being called on first value change bug
+        if self.passedTimeOfDay != nil {
+            self.timeOfDay.date = self.passedTimeOfDay!
         }
         else{
-            timeOfDay.date = Date.roundDate(targetDate: Date(), roundingInterval: 60.0*5, roundingMethod: .up)
+            self.timeOfDay.date = Date.roundDate(targetDate: Date(), roundingInterval: 60.0*5, roundingMethod: .up)
         }
+        
+        //fix bug with datePicker value changed not triggering on first go
+        DispatchQueue.main.asyncAfter(deadline: .now()){
+            if self.passedTimeOfDay != nil {
+                self.timeOfDay.date = self.passedTimeOfDay!
+            }
+            else{
+                self.timeOfDay.date = Date.roundDate(targetDate: Date(), roundingInterval: 60.0*5, roundingMethod: .up)
+            }
+        }
+        
+        
     }
     
     private func synchronizeWeekdays(){

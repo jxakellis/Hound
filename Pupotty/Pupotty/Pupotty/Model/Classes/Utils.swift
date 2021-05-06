@@ -34,7 +34,7 @@ class Utils
         
     }
     
-    static func willCreateFollowUpUNUserNotification(dogName: String, requirementName: String, executionDate: Date){
+    static func willCreateFollowUpUNUserNotification(dogName: String, requirementUUID: String, executionDate: Date){
         //let requirement = try! MainTabBarViewController.staticDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName)
         
          let content = UNMutableNotificationContent()
@@ -59,18 +59,20 @@ class Utils
         }
     }
     
-    static func willCreateUNUserNotification(dogName: String, requirementName: String, executionDate: Date){
+    static func willCreateUNUserNotification(dogName: String, requirementUUID: String, executionDate: Date){
         
-        let requirement = try! MainTabBarViewController.staticDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName)
+        let requirement = try! MainTabBarViewController.staticDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(forUUID: requirementUUID)
          let content = UNMutableNotificationContent()
          content.title = "Reminder for \(dogName)!"
         
+        /*
         if requirement.requirementDescription.trimmingCharacters(in: .whitespaces) != ""{
             content.body = "\(requirementName): \(requirement.requirementDescription)"
         }
         else {
-            content.body = requirementName
-        }
+ */
+        content.body = requirement.requirementType.rawValue
+       // }
         
          content.sound = .default
         
@@ -127,7 +129,7 @@ class ErrorProcessor{
         else  if errorProcessorInstance.handleDogTraitManagerError(sender: sender, error: error) == true {
             return
         }
-        else if errorProcessorInstance.handleArbitraryLogError(sender: sender, error: error) == true {
+        else if errorProcessorInstance.handleKnownLogTypeError(sender: sender, error: error) == true {
             return
         }
         else if errorProcessorInstance.handleRequirementManagerError(sender: sender, error: error) == true {
@@ -241,20 +243,20 @@ class ErrorProcessor{
         }
     }
     
-    ///Returns true if able to find a match in enum ArbitraryLogError to the error provided
-    private func handleArbitraryLogError(sender: Sender, error: Error) -> Bool {
+    ///Returns true if able to find a match in enum KnownLogTypeError to the error provided
+    private func handleKnownLogTypeError(sender: Sender, error: Error) -> Bool {
         /*
-         enum ArbitraryLogError: Error {
-             case nilLogName
-             case blankLogName
+         enum KnownLogTypeError: Error {
+             case nilLogType
+             case blankLogType
          }
          */
-        if case ArbitraryLogError.nilLogName = error {
-            ErrorProcessor.alertForError(message: "Your arbitrary log has no name, try typing something in!")
+        if case KnownLogTypeError.nilLogType = error {
+            ErrorProcessor.alertForError(message: "Your log has no type, try selecting one!")
             return true
         }
-        else if case ArbitraryLogError.blankLogName = error {
-            ErrorProcessor.alertForError(message: "Your arbitrary log has a blank name, try typing something in!")
+        else if case KnownLogTypeError.blankLogType = error {
+            ErrorProcessor.alertForError(message: "Your log has no type, try selecting one!")
             return true
         }
         else{
@@ -284,7 +286,7 @@ class ErrorProcessor{
             ErrorProcessor.alertForError(message: "Your reminder is invalid, please try something different.")
             return true
         }
-        else if case RequirementManagerError.requirementNameNotPresent = error {
+        else if case RequirementManagerError.requirementUUIDNotPresent = error {
             ErrorProcessor.alertForError(message: "Your reminder couldn't be located while attempting to modify its data")
             return true
         }

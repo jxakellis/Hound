@@ -14,7 +14,7 @@ class LogsMainScreenTableViewCellHeader: UITableViewCell {
     
     //MARK: - Properties
     
-    private var logSource: RequirementLog! = nil
+    private var logSource: KnownLog? = nil
     
     //MARK: - Main
     
@@ -29,7 +29,7 @@ class LogsMainScreenTableViewCellHeader: UITableViewCell {
      //https://stackoverflow.com/questions/24100855/set-a-datestyle-in-swift
      */
     
-    func setup(log logSource: RequirementLog?){
+    func setup(log logSource: KnownLog?){
         self.logSource = logSource
         
         if logSource == nil {

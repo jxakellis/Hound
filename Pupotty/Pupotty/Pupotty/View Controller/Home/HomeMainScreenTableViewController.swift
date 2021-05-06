@@ -52,7 +52,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
                 for r in 0..<activeDogManagerCopy.dogs[d].dogRequirments.requirements.count {
     
                     
-                    let fireDate: Date? =  TimingManager.timerDictionary[activeDogManagerCopy.dogs[d].dogTraits.dogName]![activeDogManagerCopy.dogs[d].dogRequirments.requirements[r].requirementName]?.fireDate
+                    let fireDate: Date? =  TimingManager.timerDictionary[activeDogManagerCopy.dogs[d].dogTraits.dogName]![activeDogManagerCopy.dogs[d].dogRequirments.requirements[r].uuid]?.fireDate
                     
                     if fireDate == nil {
                         fatalError("fireDate nil for timerPriority when it should exist, HomeMainScreenTableViewController")
@@ -70,7 +70,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
                 }
             }
             assortedTimers.append(lowestRequirement!)
-            try! activeDogManagerCopy.findDog(dogName: lowestRequirement!.0).dogRequirments.removeRequirement(requirementName: lowestRequirement!.1.requirementName)
+            try! activeDogManagerCopy.findDog(dogName: lowestRequirement!.0).dogRequirments.removeRequirement(forUUID: lowestRequirement!.1.uuid)
         }
         
         return assortedTimers[priorityIndex]
@@ -135,7 +135,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     ///Called when a requirement is clicked by the user, display an action sheet of possible modifcations to the alarm.
     private func willShowSelectedActionSheet(parentDogName: String, requirement: Requirement){
         
-        let alertController = GeneralAlertController(title: "\(requirement.requirementName) for \(parentDogName)", message: nil, preferredStyle: .actionSheet)
+        let alertController = GeneralAlertController(title: "\(requirement.requirementType.rawValue) for \(parentDogName)", message: nil, preferredStyle: .actionSheet)
         
         let alertActionCancel = UIAlertAction(title:"Cancel", style: .cancel, handler: nil)
         
@@ -145,7 +145,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
             handler:
                 {
                     (alert: UIAlertAction!)  in
-                    TimingManager.willDisableTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementName: requirement.requirementName)
+                    //TimingManager.willDisableTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementUUID: requirement.uuid)
                 })
         
         var logTitle: String {
@@ -172,7 +172,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
         handler:
             {
                 (alert: UIAlertAction!)  in
-                TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementName: requirement.requirementName)
+                //TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementUUID: requirement.uuid)
                 
             })
         alertController.addAction(alertActionCancel)

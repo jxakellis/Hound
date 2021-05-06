@@ -92,7 +92,6 @@ extension DogManagerProtocol {
         
         //DogEfficencyImprovement dogs.append(dogAdded.copy() as! Dog)
         dogs.append(dogAdded)
-        
     }
     
     

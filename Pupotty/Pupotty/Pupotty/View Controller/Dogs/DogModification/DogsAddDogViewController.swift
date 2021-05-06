@@ -14,12 +14,46 @@ protocol DogsAddDogViewControllerDelegate{
     func didRemoveDog(sender: Sender, removedDogName: String)
 }
 
-class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewControllerDelegate, UITextFieldDelegate{
+class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewControllerDelegate, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIGestureRecognizerDelegate{
+    
+    
+    
+    //MARK: - UIImagePickerControllerDelegate
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        let image: UIImage!
+        let scaledImageSize = CGSize(width: 90.0, height: 90.0)
+    
+        if let possibleImage = info[.editedImage] as? UIImage {
+            image = possibleImage
+        } else if let possibleImage = info[.originalImage] as? UIImage {
+            image = possibleImage
+        } else {
+            return
+        }
+        
+        let renderer = UIGraphicsImageRenderer(size: scaledImageSize)
+        let scaledImage = renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: scaledImageSize))
+        }
+        
+        dogIcon.image = scaledImage
+
+        dismiss(animated: true)
+    }
+    
+    //MARK: - UIGestureRecognizerDelegate
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
     
     //MARK: - Requirement Table VC Delegate
     
     //assume all requirements are valid due to the fact that they are all checked and validated through DogsRequirementTableViewController
     func didUpdateRequirements(newRequirementList: [Requirement]) {
+        shouldPromptSaveWarning = true
         updatedRequirements = newRequirementList
     }
     
@@ -30,13 +64,12 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         return false
     }
     
-    
-    
-    
     //MARK: - IB
     
+    
+    @IBOutlet weak var dogIcon: UIImageView!
+    
     @IBOutlet private weak var dogName: UITextField!
-    @IBOutlet private weak var dogEnableStatus: UISwitch!
     
     @IBOutlet private weak var embeddedTableView: UIView!
     
@@ -49,8 +82,10 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         
         do{
             try updatedDog.dogTraits.changeDogName(newDogName: dogName.text)
+            if dogIcon.image != DogConstant.chooseIcon{
+                updatedDog.dogTraits.icon = dogIcon.image ?? DogConstant.defaultIcon
+            }
             
-            updatedDog.setEnable(newEnableStatus: dogEnableStatus.isOn)
             
             if updatedRequirements != nil {
                 updatedDog.dogRequirments.requirements.removeAll()
@@ -67,11 +102,13 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         do{
             if isUpdating == true{
                 try delegate.didUpdateDog(sender: Sender(origin: self, localized: self), formerName: targetDog.dogTraits.dogName, updatedDog: updatedDog)
-                self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
+                //self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
+                self.navigationController?.popViewController(animated: true)
             }
             else{
                 try delegate.didAddDog(sender: Sender(origin: self, localized: self), newDog: updatedDog)
-                self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
+                //self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
+                self.navigationController?.popViewController(animated: true)
             }
         }
         catch {
@@ -87,7 +124,8 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { (UIAlertAction) in
             self.delegate.didRemoveDog(sender: Sender(origin: self, localized: self), removedDogName: self.targetDog.dogTraits.dogName)
-            self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
+            //self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
+            self.navigationController?.popViewController(animated: true)
         }
         
         let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -98,24 +136,34 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         AlertPresenter.shared.enqueueAlertForPresentation(removeDogConfirmation)
     }
     
-    
     @IBOutlet private weak var cancelAddDogButton: UIButton!
     @IBOutlet private weak var cancelAddDogButtonBackground: UIButton!
     
     @IBAction private func cancelAddDogButton(_ sender: Any) {
-        //"Any changes you have made won't be saved"
-        let unsavedInformationConfirmation = GeneralAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
-        
-        let alertActionExit = UIAlertAction(title: "Yes, I don't want to save", style: .default) { (UIAlertAction) in
-            self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
+        if dogName.text != targetDog.dogTraits.dogName{
+            shouldPromptSaveWarning = true
         }
         
-        let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        if shouldPromptSaveWarning == true {
+            //"Any changes you have made won't be saved"
+            let unsavedInformationConfirmation = GeneralAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
+            
+            let alertActionExit = UIAlertAction(title: "Yes, I don't want to save", style: .default) { (UIAlertAction) in
+                //self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
+                self.navigationController?.popViewController(animated: true)
+            }
+            
+            let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            
+            unsavedInformationConfirmation.addAction(alertActionExit)
+            unsavedInformationConfirmation.addAction(alertActionCancel)
+            
+            AlertPresenter.shared.enqueueAlertForPresentation(unsavedInformationConfirmation)
+        }
+        else {
+            self.navigationController?.popViewController(animated: true)
+        }
         
-        unsavedInformationConfirmation.addAction(alertActionExit)
-        unsavedInformationConfirmation.addAction(alertActionCancel)
-        
-        AlertPresenter.shared.enqueueAlertForPresentation(unsavedInformationConfirmation)
         
     }
 
@@ -133,12 +181,21 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     private var updatedRequirements: [Requirement]? = nil
     
+    ///Auto save warning will show if true
+    private var shouldPromptSaveWarning: Bool = false
+    
     //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.setupToHideKeyboardOnTapOnView()
+        
+        let iconTap = UITapGestureRecognizer(target: self, action: #selector(didClickIcon))
+        iconTap.delegate = self
+        iconTap.cancelsTouchesInView = false
+        dogIcon.isUserInteractionEnabled = true
+        dogIcon.addGestureRecognizer(iconTap)
         
         self.view.bringSubviewToFront(addDogButtonBackground)
         self.view.bringSubviewToFront(addDogButton)
@@ -156,18 +213,25 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         Utils.presenter = self
     }
     
-    
     ///Called to initalize all data, if a dog is passed then it uses that, otherwise uses default
     private func willInitalize(){
+        if targetDog.dogTraits.icon == DogConstant.defaultIcon {
+            dogIcon.image = DogConstant.chooseIcon
+        }
+        else {
+            dogIcon.image = targetDog.dogTraits.icon
+        }
+        dogIcon.layer.masksToBounds = true
+        dogIcon.layer.cornerRadius = dogIcon.frame.width/2
+        
         dogName.text = targetDog.dogTraits.dogName
-        dogEnableStatus.isOn = targetDog.getEnable()
         //has to copy requirements so changed that arent saved don't use reference data property to make actual modification
         dogsRequirementNavigationViewController.didPassRequirements(sender: Sender(origin: self, localized: self), passedRequirements: targetDog.dogRequirments.copy() as! RequirementManager)
         
         //changes text and performs certain actions if adding a new dog vs updating one
         if isUpdating == true {
             dogRemoveButton.isEnabled = true
-            self.navigationItem.title = "Update Dog"
+            self.navigationItem.title = "Edit Dog"
             if isAddingRequirement == true {
                 dogsRequirementNavigationViewController.dogsRequirementTableViewController.performSegue(withIdentifier: "dogsInstantiateRequirementViewController", sender: self)
             }
@@ -178,6 +242,58 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         }
  
     }
+    
+    @objc private func didClickIcon(){
+        let alert = GeneralAlertController(title: "Choose Image", message: nil, preferredStyle: .actionSheet)
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        
+        alert.addAction(UIAlertAction(title: "Camera", style: .default, handler: { _ in
+            openCamera()
+        }))
+
+        alert.addAction(UIAlertAction(title: "Gallery", style: .default, handler: { _ in
+            openGallary()
+        }))
+
+        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+        
+        func openCamera() {
+            if(UIImagePickerController .isSourceTypeAvailable(UIImagePickerController.SourceType.camera))
+            {
+                imagePicker.sourceType = UIImagePickerController.SourceType.camera
+                imagePicker.allowsEditing = true
+                imagePicker.cameraCaptureMode = .photo
+                imagePicker.cameraDevice = .rear
+                self.present(imagePicker, animated: true, completion: nil)
+            }
+            else
+            {
+                let warningAlert  = GeneralAlertController(title: "Warning", message: "You don't have camera", preferredStyle: .alert)
+                warningAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                AlertPresenter.shared.enqueueAlertForPresentation(warningAlert)
+            }
+        }
+
+        func openGallary() {
+            imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
+            imagePicker.allowsEditing = true
+            self.present(imagePicker, animated: true, completion: nil)
+        }
+        
+        switch UIDevice.current.userInterfaceIdiom {
+        case .pad:
+            alert.popoverPresentationController?.sourceView = dogIcon
+            alert.popoverPresentationController?.sourceRect = dogIcon.bounds
+            alert.popoverPresentationController?.permittedArrowDirections = [.up,.down]
+        default:
+            break
+        }
+        
+        AlertPresenter.shared.enqueueAlertForPresentation(alert)
+    }
+
+    
     
     ///Hides the big gray back button and big blue checkmark, don't want access to them while editting a requirement.
     func willHideButtons(isHidden: Bool){

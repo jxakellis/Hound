@@ -13,17 +13,19 @@ enum DogConstant {
     static let defaultEnable: Bool = true
     static let defaultName: String = "Bella"
     static let defaultDescription: String = "Friendly"
+    static let defaultIcon: UIImage = UIImage.init(named: "pawFullResolutionWhite")!
+    static let chooseIcon: UIImage = UIImage.init(named: "chooseIcon")!
 }
 
 enum RequirementConstant {
-    static let defaultName = "Potty"
-    static let defaultDescription = "Take dog outside"
+    static let defaultType = ScheduledLogType.potty
     static let defaultTimeInterval = (3600*0.5)
     static let defaultEnable: Bool = true
     static var defaultRequirement: Requirement { let req = Requirement()
-        try! req.changeRequirementName(newRequirementName: defaultName)
+        req.requirementType = defaultType
+        //try! req.changeRequirementName(newRequirementName: defaultName)
         req.countDownComponents.changeExecutionInterval(newExecutionInterval: defaultTimeInterval)
-        try! req.changeRequirementDescription(newRequirementDescription: defaultDescription)
+        //try! req.changeRequirementDescription(newRequirementDescription: defaultDescription)
         req.setEnable(newEnableStatus: defaultEnable)
         return req
     }
@@ -48,16 +50,18 @@ enum DogManagerConstant {
         try! userDefaultDog.dogRequirments.addRequirement(newRequirement: RequirementConstant.defaultRequirement)
         
         let userDefaultRequirementTwo = Requirement()
-        try! userDefaultRequirementTwo.changeRequirementName(newRequirementName: "Breakfast")
-        try! userDefaultRequirementTwo.changeRequirementDescription(newRequirementDescription: "Feed the dog")
+        userDefaultRequirementTwo.requirementType = .breakfast
+        //try! userDefaultRequirementTwo.changeRequirementName(newRequirementName: "Breakfast")
+        //try! userDefaultRequirementTwo.changeRequirementDescription(newRequirementDescription: "Feed the dog")
         userDefaultRequirementTwo.changeTimingStyle(newTimingStyle: .timeOfDay)
         try! userDefaultRequirementTwo.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 7)
         try! userDefaultRequirementTwo.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
         try! userDefaultDog.dogRequirments.addRequirement(newRequirement: userDefaultRequirementTwo)
         
         let userDefaultRequirementThree = Requirement()
-        try! userDefaultRequirementThree.changeRequirementName(newRequirementName: "Dinner")
-        try! userDefaultRequirementThree.changeRequirementDescription(newRequirementDescription: "Feed the dog")
+        userDefaultRequirementThree.requirementType = .dinner
+        //try! userDefaultRequirementThree.changeRequirementName(newRequirementName: "Dinner")
+        //try! userDefaultRequirementThree.changeRequirementDescription(newRequirementDescription: "Feed the dog")
         userDefaultRequirementThree.changeTimingStyle(newTimingStyle: .timeOfDay)
         try! userDefaultRequirementThree.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 5+12)
         try! userDefaultRequirementThree.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)

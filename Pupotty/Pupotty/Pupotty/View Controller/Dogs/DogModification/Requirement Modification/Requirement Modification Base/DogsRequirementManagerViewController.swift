@@ -10,10 +10,18 @@ import UIKit
 
 protocol DogsRequirementManagerViewControllerDelegate{
     func didAddRequirement(newRequirement: Requirement)
-    func didUpdateRequirement(formerName: String, updatedRequirement: Requirement)
+    func didUpdateRequirement(updatedRequirement: Requirement)
+    func didUpdateInformation()
 }
 
-class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, DogsRequirementCountDownViewControllerDelegate, DogsRequirementTimeOfDayViewControllerDelegate{
+class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, DogsRequirementCountDownViewControllerDelegate, DogsRequirementTimeOfDayViewControllerDelegate, MakeDropDownDataSourceProtocol{
+    
+    //MARK: Auto Save Trigger
+    
+    func didUpdateInformation(){
+        delegate.didUpdateInformation()
+    }
+    
     
     //MARK: - DogsRequirementCountDownViewControllerDelegate and DogsRequirementTimeOfDayViewControllerDelegate
     
@@ -35,21 +43,66 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         return false
     }
     
+    //MARK: - MakeDropDownDataSourceProtocol
+    
+    func configureCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, makeDropDownIdentifier: String) {
+        if makeDropDownIdentifier == "DROP_DOWN_NEW"{
+            
+            let customCell = cell as! DropDownDefaultTableViewCell
+            customCell.adjustConstraints(newValue: 8.0)
+            
+            if selectedIndexPath == indexPath{
+                customCell.didToggleSelect(newSelectionStatus: true)
+            }
+            else {
+                customCell.didToggleSelect(newSelectionStatus: false)
+            }
+            
+            customCell.label.text = ScheduledLogType.allCases[indexPath.row].rawValue
+        }
+    }
+    
+    func numberOfRows(forSection: Int, makeDropDownIdentifier: String) -> Int {
+        return ScheduledLogType.allCases.count
+    }
+    
+    func numberOfSections(makeDropDownIdentifier: String) -> Int {
+        return 1
+    }
+    
+    func selectItemInDropDown(indexPath: IndexPath, makeDropDownIdentifier: String) {
+        delegate.didUpdateInformation()
+        
+        let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as! DropDownDefaultTableViewCell
+        
+        selectedCell.didToggleSelect(newSelectionStatus: true)
+        self.selectedIndexPath = indexPath
+        
+        requirementAction.text = ScheduledLogType.allCases[indexPath.row].rawValue
+        self.dismissAll()
+    }
+    
     //MARK: - IB
     
     
+    @IBOutlet private weak var containerForAll: UIView!
     
     @IBOutlet private weak var countDownContainerView: UIView!
     
     @IBOutlet private weak var timeOfDayContainerView: UIView!
     
-    @IBOutlet weak var requirementName: UITextField!
-    @IBOutlet private weak var requirementDescription: UITextField!
+    @IBOutlet weak var requirementAction: BorderedLabel!
+    
     @IBOutlet private weak var requirementEnableStatus: UISwitch!
+    
+    @IBAction func didUpdateEnableStatus(_ sender: Any) {
+        delegate.didUpdateInformation()
+    }
     
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     
     @IBAction func segmentedControl(_ sender: UISegmentedControl) {
+        delegate.didUpdateInformation()
         if sender.selectedSegmentIndex == 0 {
             countDownContainerView.isHidden = false
             timeOfDayContainerView.isHidden = true
@@ -70,56 +123,35 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     private var dogsRequirementTimeOfDayViewController = DogsRequirementTimeOfDayViewController()
     
+    private let dropDown = MakeDropDown()
+    
+    private var dropDownRowHeight: CGFloat = 40
+    
+    private var selectedIndexPath: IndexPath? = IndexPath(row: 0, section: 0)
+    
     //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.segmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 15), .foregroundColor: UIColor.white], for: .normal)
-        self.segmentedControl.backgroundColor = ColorConstant.gray.rawValue
         
-        if targetRequirement == nil {
-            segmentedControl.selectedSegmentIndex = 0
-            countDownContainerView.isHidden = false
-            timeOfDayContainerView.isHidden = true
-            
-            requirementName.text = nil
-            
-            requirementDescription.text = nil
-            
-            requirementEnableStatus.isOn = true
-        }
-        else{
-            
-            //Segmented control setup
-            if targetRequirement!.timingStyle == .countDown {
-                segmentedControl.selectedSegmentIndex = 0
-                countDownContainerView.isHidden = false
-                timeOfDayContainerView.isHidden = true
-                
-            }
-            else {
-                segmentedControl.selectedSegmentIndex = 1
-                countDownContainerView.isHidden = true
-                timeOfDayContainerView.isHidden = false
-            }
-            
-            //Data setup
-            requirementName.text = targetRequirement!.requirementName
-            requirementDescription.text = targetRequirement!.requirementDescription
-            requirementEnableStatus.isOn = targetRequirement!.getEnable()
+        setUpGestures()
+        
+        setupSegmentedControl()
+        
+        if targetRequirement != nil {
+            selectedIndexPath = IndexPath(row: ScheduledLogType.allCases.firstIndex(of: targetRequirement!.requirementType)!, section: 0)
         }
         
-        //Keyboard first responder management
-        self.setupToHideKeyboardOnTapOnView()
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tap.delegate = self
-        dogsRequirementCountDownViewController.countDown.addGestureRecognizer(tap)
-        dogsRequirementTimeOfDayViewController.timeOfDay.addGestureRecognizer(tap)
-        requirementName.delegate = self
-        requirementDescription.delegate = self
-        
+        //Data setup
+        requirementAction.text = targetRequirement?.requirementType.rawValue ?? RequirementConstant.defaultType.rawValue
+        requirementEnableStatus.isOn = targetRequirement?.getEnable() ?? RequirementConstant.defaultEnable
         
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        setUpDropDown()
     }
     
     @objc internal override func dismissKeyboard() {
@@ -140,8 +172,9 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         
         
         do {
-            try updatedRequirement.changeRequirementName(newRequirementName: requirementName.text)
-            try updatedRequirement.changeRequirementDescription(newRequirementDescription: requirementDescription.text)
+            updatedRequirement.uuid = targetRequirement?.uuid ?? updatedRequirement.uuid
+            updatedRequirement.requirementType = ScheduledLogType(rawValue: requirementAction.text!)!
+            //try updatedRequirement.changeRequirementDescription(newRequirementDescription: requirementDescription.text)
             updatedRequirement.setEnable(newEnableStatus: requirementEnableStatus.isOn)
             
             //even if TOD is not selected, still saves week days
@@ -173,7 +206,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
                     updatedRequirement.timerReset(shouldLogExecution: false)
                 }
                 
-                delegate.didUpdateRequirement(formerName: targetRequirement!.requirementName, updatedRequirement: updatedRequirement)
+                delegate.didUpdateRequirement(updatedRequirement: updatedRequirement)
             }
         }
         catch {
@@ -181,8 +214,70 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         }
     }
     
+    private func setupSegmentedControl(){
+        self.segmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 15), .foregroundColor: UIColor.white], for: .normal)
+        self.segmentedControl.backgroundColor = ColorConstant.gray.rawValue
+        
+        if targetRequirement == nil {
+            segmentedControl.selectedSegmentIndex = 0
+            countDownContainerView.isHidden = false
+            timeOfDayContainerView.isHidden = true
+            
+            requirementAction.text = RequirementConstant.defaultType.rawValue
+            
+            requirementEnableStatus.isOn = true
+        }
+        else{
+            
+            //Segmented control setup
+            if targetRequirement!.timingStyle == .countDown {
+                segmentedControl.selectedSegmentIndex = 0
+                countDownContainerView.isHidden = false
+                timeOfDayContainerView.isHidden = true
+                
+            }
+            else {
+                segmentedControl.selectedSegmentIndex = 1
+                countDownContainerView.isHidden = true
+                timeOfDayContainerView.isHidden = false
+            }
+        }
+    }
+    
+    //MARK: - Drop Down Functions
+    
+    private func setUpDropDown(){
+        dropDown.makeDropDownIdentifier = "DROP_DOWN_NEW"
+        dropDown.cellReusableIdentifier = "dropDownCell"
+        dropDown.makeDropDownDataSourceProtocol = self
+        dropDown.setUpDropDown(viewPositionReference: requirementAction.frame, offset: 2.0)
+        dropDown.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
+        dropDown.setRowHeight(height: self.dropDownRowHeight)
+        self.view.addSubview(dropDown)
+    }
+    
+    ///Sets up gestureRecognizer for dog selector drop down
+    private func setUpGestures(){
+        self.requirementAction.isUserInteractionEnabled = true
+        let requirementActionTapGesture = UITapGestureRecognizer(target: self, action: #selector(requirementActionTapped))
+        self.requirementAction.addGestureRecognizer(requirementActionTapGesture)
+        
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissAll))
+        tap.delegate = self
+        tap.cancelsTouchesInView = false
+        containerForAll.addGestureRecognizer(tap)
+    }
     
     
+    @objc private func requirementActionTapped(){
+        self.dismissKeyboard()
+        self.dropDown.showDropDown(height: self.dropDownRowHeight * 5.5, selectedIndexPath: selectedIndexPath)
+    }
+    
+    @objc private func dismissAll(){
+        self.dismissKeyboard()
+        self.dropDown.hideDropDown()
+    }
     //MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

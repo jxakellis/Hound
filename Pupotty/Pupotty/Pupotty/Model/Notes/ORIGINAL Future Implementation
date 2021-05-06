@@ -191,4 +191,31 @@ Change entering name of reminder to drop down of types
 
 If creating a reminder then do a prompt to turn on notifications, also give a prompt if they want default reminders
 
+5/6/2021
+
+when adding arbitrary log, make action blank by default
+
+change add arbitrary log to create log, remove UI elements that differentiate arbitrary logs from requirement logs.
+
+get rid of log disclaimer
+
+change from "26 minutes left" change to "remind in: 26 minutes"
+
+change update requirement to update reminder
+
+change "after logging alarm, repeat in:" to "after responding to reminder, repeat again in:"
+
+First time when they click on configure, pop up page. Don't create requirements for dogs until that page is accessed for the first time. Popup first has short description e.g."Use this page to configure reminders to care for your dog", /n "we've created reminders that are useful for most dogs." At bottom, have area asking if they want notifications.
+
+change edit to edit reminder
+change delete to delete reminder
+change did it to "Log Potty" "Log Breakfast"
+
+look into when (for example) logging a potty, being able to log Potty: Pee, Potty: Poo, etc. like an arbitrary log. Possibly chaning data type from requirementType to ArbitraryLogType.
+
+Change Potty: Poop to Potty: poo
+
+change Potty: Pee and poop to Potty: both
+
+change Potty: Neither to Potty: Didn't go
 

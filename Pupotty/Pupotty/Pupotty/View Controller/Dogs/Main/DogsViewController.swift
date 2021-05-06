@@ -16,18 +16,18 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     
     //MARK: - DogsUpdateRequirementViewControllerDelegate
     
-    func didUpdateRequirement(sender: Sender, parentDogName: String, formerName: String, updatedRequirement: Requirement) throws {
+    func didUpdateRequirement(sender: Sender, parentDogName: String, updatedRequirement: Requirement) throws {
         let sudoDogManager = getDogManager()
         
-        try sudoDogManager.findDog(dogName: parentDogName).dogRequirments.changeRequirement(requirementToBeChanged: formerName, newRequirement: updatedRequirement)
+        try sudoDogManager.findDog(dogName: parentDogName).dogRequirments.changeRequirement(forUUID: updatedRequirement.uuid, newRequirement: updatedRequirement)
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     
-    func didRemoveRequirement(sender: Sender, parentDogName: String, removedRequirementName: String) {
+    func didRemoveRequirement(sender: Sender, parentDogName: String, removedRequirementUUID: String) {
         let sudoDogManager = getDogManager()
         
-        try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.removeRequirement(requirementName: removedRequirementName)
+        try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.removeRequirement(forUUID: removedRequirementUUID)
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
@@ -35,19 +35,19 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     //MARK: - DogsMainScreenTableViewControllerDelegate
     
     ///If a dog was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the dogs information
-    func didSelectDog(indexPathSection dogIndex: Int) {
+    func willEditDog(dogName: String) {
         
-        willOpenDog(dogToBeOpened: getDogManager().dogs[dogIndex], isAddingRequirement: false)
+        willOpenDog(dogToBeOpened: try! getDogManager().findDog(dogName: dogName), isAddingRequirement: false)
         
     }
     
     private var selectedTargetRequirement: Requirement!
     private var selectedParentDogName: String!
     ///If a requirement was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the requirements information
-    func didSelectRequirement(indexPathSection dogIndex: Int, indexPathRow requirementIndex: Int) {
+    func willEditRequirement(parentDogName: String, requirementUUID: String) {
         
-        selectedTargetRequirement = getDogManager().dogs[dogIndex].dogRequirments.requirements[requirementIndex]
-        selectedParentDogName = getDogManager().dogs[dogIndex].dogTraits.dogName
+        selectedTargetRequirement = try! getDogManager().findDog(dogName: parentDogName).dogRequirments.findRequirement(forUUID: requirementUUID)
+        selectedParentDogName = parentDogName
         
         self.performSegue(withIdentifier: "dogsUpdateRequirementViewController", sender: DogsMainScreenTableViewController())
         
@@ -238,7 +238,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             //Create white background layered behind original button as middle is see through
             let willAddDogButtonBackground = createAddButtonBackground(willAddDogButton)
             
-            let willAddDogButtonLabel = createAddButtonLabel(willAddDogButton, text: "Add A New Dog")
+            let willAddDogButtonLabel = createAddButtonLabel(willAddDogButton, text: "Create New Dog")
             let willAddDogButtonLabelBackground = createAddButtonLabelBackground(willAddDogButtonLabel)
             
             addButtons.append(willAddDogButton)
@@ -261,7 +261,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                 
                 let willAddRequirementButtonBackground = createAddButtonBackground(willAddRequirementButton)
                 
-                let willAddRequirementButtonLabel = createAddButtonLabel(willAddRequirementButton, text: "Add A Reminder For \(getDogManager().dogs[dogIndex].dogTraits.dogName)")
+                let willAddRequirementButtonLabel = createAddButtonLabel(willAddRequirementButton, text: "Create New Reminder For \(getDogManager().dogs[dogIndex].dogTraits.dogName)")
                 let willAddRequirementButtonLabelBackground = createAddButtonLabelBackground(willAddRequirementButtonLabel)
                 
                 addButtons.append(willAddRequirementButton)
@@ -431,11 +431,6 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     }
     
     // MARK: - Navigation
-    
-    ///Allows for unwind to this page when back button is clicked in requirement editor
-    @IBAction func unwind(_ seg: UIStoryboardSegue){
-        
-    }
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

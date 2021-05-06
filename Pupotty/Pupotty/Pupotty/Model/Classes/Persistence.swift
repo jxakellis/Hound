@@ -31,7 +31,7 @@ class Persistence{
             let encodedData = try! NSKeyedArchiver.archivedData(withRootObject: data, requiringSecureCoding: false)
             UserDefaults.standard.setValue(encodedData, forKey: UserDefaultsKeys.dogManager.rawValue)
             
-            MainTabBarViewController.selectedEntryIndex = 2
+            MainTabBarViewController.selectedEntryIndex = 0
             
             UserDefaults.standard.setValue(TimingManager.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
             UserDefaults.standard.setValue(TimingManager.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
@@ -64,6 +64,21 @@ class Persistence{
     
     ///Called by App or Scene Delegate when entering the background, used to save information, can be called when terminating for a slightly modifed case.
     static func willEnterBackground(isTerminating: Bool = false){
+        
+        func getSizeOfUserDefaults() -> Int? {
+            guard let libraryDir = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.libraryDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).first else {
+                return nil
+            }
+
+            guard let bundleIdentifier = Bundle.main.bundleIdentifier else {
+                return nil
+            }
+
+            let filepath = "\(libraryDir)/Preferences/\(bundleIdentifier).plist"
+            let filesize = try? FileManager.default.attributesOfItem(atPath: filepath)
+            let retVal = filesize?[FileAttributeKey.size]
+            return retVal as? Int
+        }
         
         //dogManager
         //DogManagerEfficencyImprovement OK, Changes are being made that might not apply to the rest of the system, might be invalid, or might affect finding something
@@ -108,14 +123,14 @@ class Persistence{
             if NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled && !TimingManager.isPaused {
                 for dogKey in TimingManager.timerDictionary.keys{
                     
-                    for requirementKey in TimingManager.timerDictionary[dogKey]!.keys{
-                        guard TimingManager.timerDictionary[dogKey]![requirementKey]!.isValid else{
+                    for requirementUUID in TimingManager.timerDictionary[dogKey]!.keys{
+                        guard TimingManager.timerDictionary[dogKey]![requirementUUID]!.isValid else{
                             continue
                         }
+                        Utils.willCreateUNUserNotification(dogName: dogKey, requirementUUID: requirementUUID, executionDate: TimingManager.timerDictionary[dogKey]![requirementUUID]!.fireDate)
                         
-                        Utils.willCreateUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!.fireDate)
                         if NotificationConstant.shouldFollowUp == true {
-                            Utils.willCreateFollowUpUNUserNotification(dogName: dogKey, requirementName: requirementKey, executionDate: TimingManager.timerDictionary[dogKey]![requirementKey]!.fireDate + NotificationConstant.followUpDelay)
+                            Utils.willCreateFollowUpUNUserNotification(dogName: dogKey, requirementUUID: requirementUUID, executionDate: TimingManager.timerDictionary[dogKey]![requirementUUID]!.fireDate + NotificationConstant.followUpDelay)
                         }
                         
                      }
@@ -131,6 +146,7 @@ class Persistence{
             }
              */
         }
+        
     }
     
     static func willEnterForeground(){

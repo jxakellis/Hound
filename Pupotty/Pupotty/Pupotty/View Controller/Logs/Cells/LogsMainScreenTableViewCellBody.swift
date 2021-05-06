@@ -14,16 +14,15 @@ class LogsMainScreenTableViewCellBody: UITableViewCell {
     //MARK: - IB
     
     @IBOutlet private weak var dogName: CustomLabel!
-    @IBOutlet private weak var logName: CustomLabel!
+    @IBOutlet private weak var logType: CustomLabel!
     @IBOutlet private weak var logDate: CustomLabel!
     @IBOutlet private weak var logNote: CustomLabel!
     
     //MARK: - Properties
     
     private var parentDogNameSource: String! = nil
-    private var logNameSource: String! = nil
-    private var logSource: RequirementLog! = nil
-    private var isArbitrary: Bool! = nil
+    private var requirementSource: Requirement? = nil
+    private var logSource: KnownLog! = nil
     
     //MARK: - Main
     
@@ -31,14 +30,13 @@ class LogsMainScreenTableViewCellBody: UITableViewCell {
         super.awakeFromNib()
     }
     
-    func setup(isArbitrary: Bool, log logSource: RequirementLog, parentDogName: String, logName: String){
-        self.logSource = logSource
-        self.logNameSource = logName
+    func setup(parentDogName: String, requirement: Requirement?, log logSource: KnownLog){
         self.parentDogNameSource = parentDogName
-        self.isArbitrary = isArbitrary
+        self.logSource = logSource
+        self.requirementSource = requirement
         
         self.dogName.text = parentDogName
-        self.logName.text = logName
+        self.logType.text = self.logSource.logType.rawValue
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)
@@ -46,7 +44,7 @@ class LogsMainScreenTableViewCellBody: UITableViewCell {
         
         logNote.text = logSource.note
 
-        for label in [dogName, self.logName, logDate, logNote]{
+        for label in [dogName, self.logType, logDate, logNote]{
             var constraintsToDeactivate: [NSLayoutConstraint] = []
             
             for constraintIndex in 0..<label!.constraints.count{
@@ -64,9 +62,9 @@ class LogsMainScreenTableViewCellBody: UITableViewCell {
         let dogNameWidthConstraint = NSLayoutConstraint.init(item: dogName!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: dogNameTextWidth)
         labelWidthConstraints.append(dogNameWidthConstraint)
         
-        let logNameTextWidth = self.logName.text!.boundingFrom(font: self.logName.font, height: self.logName.frame.height).width
-        let logNameWidthConstaint = NSLayoutConstraint.init(item: self.logName!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: logNameTextWidth)
-        labelWidthConstraints.append(logNameWidthConstaint)
+        let logTypeTextWidth = self.logType.text!.boundingFrom(font: self.logType.font, height: self.logType.frame.height).width
+        let logTypeWidthConstaint = NSLayoutConstraint.init(item: self.logType!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: logTypeTextWidth)
+        labelWidthConstraints.append(logTypeWidthConstaint)
         
         let logDateTextWidth = logDate.text!.boundingFrom(font: logDate.font, height: logDate.frame.height).width
         let logDateWidthConstraint = NSLayoutConstraint.init(item: logDate!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: logDateTextWidth)

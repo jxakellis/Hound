@@ -37,17 +37,14 @@ enum RequirementMode {
 }
 
 protocol RequirementTraitsProtocol {
-    ///name for what the requirement does, set by user, used as main name for requirement, e.g. potty or food, can't be repeated, will throw error if try to add two requirments to same requirement manager with same name
-    var requirementName: String { get }
-    mutating func changeRequirementName(newRequirementName: String?) throws
     
-    ///descripton of reqirement
-    var requirementDescription: String { get }
-    ///if newDescription passes all tests, changes value, if not throws error
-    mutating func changeRequirementDescription(newRequirementDescription: String?) throws
+    var uuid: String { get set }
+    
+    ///Replacement for requirementName, a way for the user to keep track of what the requirement is for
+    var requirementType: ScheduledLogType { get set }
     
     ///An array of all dates that logs when the timer has fired, whether by snooze, regular timing convention, etc. ANY TIME
-    var logDates: [RequirementLog] { get set }
+    var logs: [KnownLog] { get set }
 }
 
 protocol RequirementComponentsProtocol {
@@ -91,8 +88,8 @@ protocol RequirementTimingComponentsProtocol {
     ///Calculated time interval remaining that taking into account factors to produce correct value for conditions and parameters
     var intervalRemaining: TimeInterval? { get }
     
-    ///Called when a timer is fired/executed and an option to deal with it is selected by the user, if the reset is trigger by a user doing an action that constitude a reset, specify as so, but if doing something like changing the value of some component it was did not exeute to user. If didExecuteToUse is true it does the same thing as false except it appends the current date to the array of logDates which keeps tracks of each time a requirement is formally executed.
-    mutating func timerReset(shouldLogExecution: Bool)
+    ///Called when a timer is fired/executed and an option to deal with it is selected by the user, if the reset is trigger by a user doing an action that constitude a reset, specify as so, but if doing something like changing the value of some component it was did not exeute to user. If didExecuteToUse is true it does the same thing as false except it appends the current date to the array of logs which keeps tracks of each time a requirement is formally executed.
+    mutating func timerReset(shouldLogExecution: Bool, knownLogType: KnownLogType?)
 }
 
 class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, RequirementComponentsProtocol, RequirementTimingComponentsProtocol, EnableProtocol {
@@ -102,9 +99,11 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = Requirement()
         
-        try! copy.changeRequirementName(newRequirementName: self.requirementName)
-        try! copy.changeRequirementDescription(newRequirementDescription: self.requirementDescription)
-        copy.logDates = self.logDates
+        //try! copy.changeRequirementName(newRequirementName: self.requirementName)
+        //try! copy.changeRequirementDescription(newRequirementDescription: self.requirementDescription)
+        copy.uuid = self.uuid
+        copy.requirementType = self.requirementType
+        copy.logs = self.logs
         
         copy.countDownComponents = self.countDownComponents.copy() as! CountDownComponents
         copy.timeOfDayComponents = self.timeOfDayComponents.copy() as! TimeOfDayComponents
@@ -131,9 +130,11 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
      required init?(coder aDecoder: NSCoder) {
         super.init()
         
-        self.storedRequirementName = aDecoder.decodeObject(forKey: "requirementName") as! String
-        self.storedRequirementDescription = aDecoder.decodeObject(forKey: "requirementDescription") as! String
-        self.logDates = aDecoder.decodeObject(forKey: "logDates") as! [RequirementLog]
+        //self.storedRequirementName = aDecoder.decodeObject(forKey: "requirementName") as! String
+        //self.storedRequirementDescription = aDecoder.decodeObject(forKey: "requirementDescription") as! String
+        self.uuid = aDecoder.decodeObject(forKey: "uuid") as! String
+        self.requirementType = ScheduledLogType(rawValue: aDecoder.decodeObject(forKey: "requirementType") as! String)!
+        self.logs = aDecoder.decodeObject(forKey: "logs") as! [KnownLog]
         
         self.countDownComponents = aDecoder.decodeObject(forKey: "countDownComponents") as! CountDownComponents
         self.timeOfDayComponents = aDecoder.decodeObject(forKey: "timeOfDayComponents") as! TimeOfDayComponents
@@ -149,9 +150,11 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
      }
      
      func encode(with aCoder: NSCoder) {
-        aCoder.encode(storedRequirementName, forKey: "requirementName")
-        aCoder.encode(storedRequirementDescription, forKey: "requirementDescription")
-        aCoder.encode(logDates, forKey: "logDates")
+        //aCoder.encode(storedRequirementName, forKey: "requirementName")
+        //aCoder.encode(storedRequirementDescription, forKey: "requirementDescription")
+        aCoder.encode(uuid, forKey: "uuid")
+        aCoder.encode(requirementType.rawValue, forKey: "requirementType")
+        aCoder.encode(logs, forKey: "logs")
         
         aCoder.encode(countDownComponents, forKey: "countDownComponents")
         aCoder.encode(timeOfDayComponents, forKey: "timeOfDayComponents")
@@ -167,27 +170,11 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
     
     //MARK: - RequirementTraitsProtocol
     
-    private var storedRequirementName: String = RequirementConstant.defaultName
-    var requirementName: String { return storedRequirementName }
-    func changeRequirementName(newRequirementName: String?) throws {
-        if newRequirementName == nil || newRequirementName == "" {
-            throw RequirementError.nameBlank
-        }
-        storedRequirementName = newRequirementName!
-    }
+    var uuid: String = UUID().uuidString
     
-    ///description set to describe what the requirement should do, should be set by user
-    private var storedRequirementDescription: String = RequirementConstant.defaultDescription
-    var requirementDescription: String { return storedRequirementDescription }
-    func changeRequirementDescription(newRequirementDescription: String?) throws{
-        if newRequirementDescription == nil {
-            throw RequirementError.descriptionInvalid
-        }
-        
-        storedRequirementDescription = newRequirementDescription!
-    }
+    var requirementType: ScheduledLogType = RequirementConstant.defaultType
     
-    var logDates: [RequirementLog] = []
+    var logs: [KnownLog] = []
     
     //MARK: - RequirementComponentsProtocol
     
@@ -253,7 +240,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         if newActiveStatus != storedIsActive{
             //transitioning to active
             if newActiveStatus == true{
-                self.timerReset(shouldLogExecution: true)
+                self.timerReset(shouldLogExecution: false)
             }
             //transitioning to inactive
             else {
@@ -317,7 +304,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         }
     }
     
-    func timerReset(shouldLogExecution: Bool){
+    func timerReset(shouldLogExecution: Bool, knownLogType: KnownLogType? = nil){
         
         //changeActiveStatus already calls timerReset if transitioning from inactive to active so circumvent this by directly accessing storedIsActive
         if isActive == false {
@@ -325,7 +312,10 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         }
         
         if shouldLogExecution == true {
-            self.logDates.append(RequirementLog(date: Date()))
+            if knownLogType == nil {
+                fatalError()
+            }
+            self.logs.append(KnownLog(date: Date(), logType: knownLogType!))
         }
         
         self.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
