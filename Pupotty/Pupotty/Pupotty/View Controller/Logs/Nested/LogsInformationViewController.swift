@@ -28,13 +28,9 @@ class LogsInformationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        configureLabelText()
-        
-        purposeBody.frame.size = (purposeBody.text?.boundingFrom(font: purposeBody.font, width: purposeBody.frame.width))!
+        setupLabelText()
         
         purposeBody.removeConstraint(purposeBody.constraints[0])
-        
-        howToUseBody.frame.size = (howToUseBody.text?.boundingFrom(font: howToUseBody.font, width: howToUseBody.frame.width))!
         
         howToUseBody.removeConstraint(howToUseBody.constraints[0])
     }
@@ -45,7 +41,7 @@ class LogsInformationViewController: UIViewController {
     }
     
     ///Configures the body text to an attributed string, the headers are .semibold and rest is .regular, font size is the one specified in the storyboard
-    private func configureLabelText(){
+    private func setupLabelText(){
         let howToUseBodyAttributedText = NSMutableAttributedString(string: "Logs:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)])
         howToUseBodyAttributedText.append(NSAttributedString(string: "\nLogs keep track of everytime you complete a task and at what time. They have a built-in notes feature which allows you to write anything important that also occured.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
         

@@ -165,6 +165,7 @@ extension String {
     
     }
     
+    ///Only works if the label it is being used on has a single line of text OR has its paragraphs predefined with \n (s).
     func bounding(font: UIFont = UIFont.systemFont(ofSize: 17)) -> CGSize {
         let boundHeight = self.boundingFrom(font: font, width: .greatestFiniteMagnitude)
         let boundWidth = self.boundingFrom(font: font, height: .greatestFiniteMagnitude)

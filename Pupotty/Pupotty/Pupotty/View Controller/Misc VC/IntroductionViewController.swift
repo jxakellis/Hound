@@ -61,8 +61,6 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
     
     @IBOutlet private weak var dogName: UITextField!
     
-    @IBOutlet private weak var notificationsDescription: CustomLabel!
-    
     @IBOutlet private weak var helpDescription: CustomLabel!
     
     @IBOutlet private weak var continueButton: UIButton!
@@ -73,27 +71,6 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
         self.dismiss(animated: true, completion: nil)
     }
     
-    @IBOutlet private weak var isNotificationEnabledSwitch: UISwitch!
-    
-    ///Handles the toggling of the notification switch, if its the first time then it requests notification authorization.
-    @IBAction private func didToggleNotifications(_ sender: Any) {
-        self.dismissKeyboard()
-        
-        if isNotificationEnabledSwitch.isOn == true {
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
-                NotificationConstant.isNotificationAuthorized = isGranted
-                NotificationConstant.isNotificationEnabled = isGranted
-                NotificationConstant.shouldFollowUp = isGranted
-                
-                DispatchQueue.main.async {
-                    self.isNotificationEnabledSwitch.setOn(isGranted, animated: true)
-                    self.isNotificationEnabledSwitch.isEnabled = isGranted
-                }
-                
-            }
-        }
-    }
-    
     //MARK: - Properties
     
     var delegate: IntroductionViewControllerDelegate! = nil
@@ -102,8 +79,6 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        scaleLabelFrames()
         
         continueButton.layer.cornerRadius = 8.0
         
@@ -130,6 +105,11 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
         Utils.presenter = self
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        //setupConstraints()
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
@@ -141,23 +121,6 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
         if dogIcon.image != DogConstant.chooseIcon{
             delegate.didSetDogIcon(sender: Sender(origin: self, localized: self), dogIcon: dogIcon.image!)
         }
-        NotificationConstant.isNotificationEnabled = isNotificationEnabledSwitch.isOn
-        NotificationConstant.shouldFollowUp = isNotificationEnabledSwitch.isOn
-    }
-    
-    ///Scales the frames of different labels so that they fit their text with the set font perfectly.
-    private func scaleLabelFrames(){
-        dogNameDescription.frame.size = (dogNameDescription.text?.boundingFrom(font: dogNameDescription.font, width: dogNameDescription.frame.width))!
-        
-        dogNameDescription.removeConstraint(dogNameDescription.constraints[0])
-        
-        notificationsDescription.frame.size = (notificationsDescription.text?.boundingFrom(font: notificationsDescription.font, width: notificationsDescription.frame.width))!
-        
-        notificationsDescription.removeConstraint(notificationsDescription.constraints[0])
-        
-        helpDescription.frame.size = (helpDescription.text?.boundingFrom(font: helpDescription.font, width: helpDescription.frame.width))!
-        
-        helpDescription.removeConstraint(helpDescription.constraints[0])
     }
     
     @objc private func didClickIcon(){

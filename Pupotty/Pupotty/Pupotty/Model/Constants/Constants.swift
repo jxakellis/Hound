@@ -18,54 +18,38 @@ enum DogConstant {
 }
 
 enum RequirementConstant {
-    static let defaultType = ScheduledLogType.potty
+    static let defaultType = ScheduledLogType.feed
     static let defaultTimeInterval = (3600*0.5)
     static let defaultEnable: Bool = true
-    static var defaultRequirement: Requirement { let req = Requirement()
+    static var defaultRequirementOne: Requirement {
+        let req = Requirement()
         req.requirementType = defaultType
-        //try! req.changeRequirementName(newRequirementName: defaultName)
         req.countDownComponents.changeExecutionInterval(newExecutionInterval: defaultTimeInterval)
-        //try! req.changeRequirementDescription(newRequirementDescription: defaultDescription)
         req.setEnable(newEnableStatus: defaultEnable)
+        return req
+    }
+    static var defaultRequirementTwo: Requirement {
+        let req = Requirement()
+        req.requirementType = .feed
+        req.changeTimingStyle(newTimingStyle: .timeOfDay)
+        try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 7)
+        try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
+        return req
+    }
+    static var defaultRequirementThree: Requirement {
+        let req = Requirement()
+        req.requirementType = .feed
+        req.changeTimingStyle(newTimingStyle: .timeOfDay)
+        try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 5+12)
+        try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
         return req
     }
 }
 
 enum DogManagerConstant {
     
-    static var testingDog: Dog {
-        let testingDog = Dog()
-        
-        try! testingDog.dogRequirments.addRequirement(newRequirement: RequirementConstant.defaultRequirement)
-        testingDog.dogRequirments.requirements[0].countDownComponents.changeExecutionInterval(newExecutionInterval: 30.0)
-        
-        testingDog.setEnable(newEnableStatus: DogConstant.defaultEnable)
-    
-        return testingDog
-    }
-    
     static var userDefaultDog: Dog {
         let userDefaultDog = Dog()
-        
-        try! userDefaultDog.dogRequirments.addRequirement(newRequirement: RequirementConstant.defaultRequirement)
-        
-        let userDefaultRequirementTwo = Requirement()
-        userDefaultRequirementTwo.requirementType = .breakfast
-        //try! userDefaultRequirementTwo.changeRequirementName(newRequirementName: "Breakfast")
-        //try! userDefaultRequirementTwo.changeRequirementDescription(newRequirementDescription: "Feed the dog")
-        userDefaultRequirementTwo.changeTimingStyle(newTimingStyle: .timeOfDay)
-        try! userDefaultRequirementTwo.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 7)
-        try! userDefaultRequirementTwo.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
-        try! userDefaultDog.dogRequirments.addRequirement(newRequirement: userDefaultRequirementTwo)
-        
-        let userDefaultRequirementThree = Requirement()
-        userDefaultRequirementThree.requirementType = .dinner
-        //try! userDefaultRequirementThree.changeRequirementName(newRequirementName: "Dinner")
-        //try! userDefaultRequirementThree.changeRequirementDescription(newRequirementDescription: "Feed the dog")
-        userDefaultRequirementThree.changeTimingStyle(newTimingStyle: .timeOfDay)
-        try! userDefaultRequirementThree.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 5+12)
-        try! userDefaultRequirementThree.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
-        try! userDefaultDog.dogRequirments.addRequirement(newRequirement: userDefaultRequirementThree)
         
         userDefaultDog.setEnable(newEnableStatus: DogConstant.defaultEnable)
     
@@ -74,7 +58,9 @@ enum DogManagerConstant {
     
     static var defaultDogManager: DogManager {
         var dogManager = DogManager()
+        
         try! dogManager.addDog(dogAdded: DogManagerConstant.userDefaultDog)
+        
         return dogManager
     }
 }
@@ -98,6 +84,9 @@ enum UserDefaultsKeys: String{
     case dogManager = "dogManager"
     case alertPresenter = "alertPresenter"
     case shouldPerformCleanInstall = "shouldPerformCleanInstall"
+    
+    //DogsViewController
+    case hasBeenLoadedBefore = "hasBeenLoadedBefore"
     
     //Timing
     case isPaused = "isPaused"

@@ -233,7 +233,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
             dogRemoveButton.isEnabled = true
             self.navigationItem.title = "Edit Dog"
             if isAddingRequirement == true {
-                dogsRequirementNavigationViewController.dogsRequirementTableViewController.performSegue(withIdentifier: "dogsInstantiateRequirementViewController", sender: self)
+                dogsRequirementNavigationViewController.dogsRequirementTableViewController.performSegue(withIdentifier: "dogsNestedRequirementViewController", sender: self)
             }
         }
         else {

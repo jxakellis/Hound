@@ -11,12 +11,11 @@ import UIKit
 
 
 enum ScheduledLogType: String, CaseIterable {
+    case feed = "Feed"
     case potty = "Potty"
-    case breakfast = "Breakfast"
-    case lunch = "Lunch"
-    case dinner = "Dinner"
-    case play = "Play"
+    case walk = "Walk"
     case sleep = "Sleep"
+    case crate = "Crate"
     case other = "Other"
 }
 
@@ -27,21 +26,21 @@ enum KnownLogTypeError: Error {
 
 enum KnownLogType: String, CaseIterable {
     
-    //requirementType
-    //case potty = "Potty"
+    case feed = "Feed"
     
-    case accident = "Accident"
     case pee = "Potty: Pee"
     case poo = "Potty: Poo"
     case both = "Potty: Both"
     case neither = "Potty: Didn't Go"
     
-    case breakfast = "Breakfast"
-    case lunch = "Lunch"
-    case dinner = "Dinner"
-    case play = "Play"
-    case sleep = "Sleep"
+    case accident = "Accident"
     
+    case walk = "Walk"
+    
+    case wakeup = "Wake up"
+    
+    case sleep = "Sleep"
+    case crate = "Crate"
     case other = "Other"
 }
 

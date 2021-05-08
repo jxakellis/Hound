@@ -263,7 +263,7 @@
         <!--Instantiate Dog Requirement -->
         <scene sceneID="8E9-yA-SaW">
             <objects>
-                <viewController title="Instantiate Dog Requirement " id="uJe-nq-2qo" customClass="DogsInstantiateRequirementViewController" customModule="Pupotty" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Instantiate Dog Requirement " id="uJe-nq-2qo" customClass="DogsNestedRequirementViewController" customModule="Pupotty" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="MUR-Wf-RFm">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="625"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -271,7 +271,7 @@
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xpx-kk-0ei">
                                 <rect key="frame" x="0.0" y="88" width="414" height="537"/>
                                 <connections>
-                                    <segue destination="ngF-4H-kgO" kind="embed" identifier="dogsInstantiateRequirementManagerViewController" id="1g9-zQ-LRF"/>
+                                    <segue destination="ngF-4H-kgO" kind="embed" identifier="dogsNestedRequirementManagerViewController" id="1g9-zQ-LRF"/>
                                 </connections>
                             </containerView>
                         </subviews>
@@ -345,7 +345,7 @@
                                             <rect key="frame" x="330" y="17.5" width="51" height="31"/>
                                             <color key="onTintColor" systemColor="systemBlueColor"/>
                                             <connections>
-                                                <action selector="didToggleEnable:" destination="79O-Ma-zM6" eventType="valueChanged" id="6MO-Kf-mAJ"/>
+                                                <action selector="didToggleEnable:" destination="79O-Ma-zM6" eventType="valueChanged" id="C1t-Kn-FyE"/>
                                             </connections>
                                         </switch>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.5" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="noQ-55-Bdw">
@@ -370,7 +370,7 @@
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="requirementDisplay" destination="aZu-Qx-VXW" id="LSF-11-oVw"/>
-                                    <outlet property="requirementEnableStatus" destination="z3r-ut-bXY" id="aj9-Yh-5f4"/>
+                                    <outlet property="requirementToggleSwitch" destination="z3r-ut-bXY" id="Yah-yc-UFx"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -384,7 +384,7 @@
                             <color key="tintColor" systemColor="systemBlueColor"/>
                             <connections>
                                 <action selector="addButton:" destination="Tmz-g7-lDw" id="NVj-fE-tGY"/>
-                                <segue destination="uJe-nq-2qo" kind="show" identifier="dogsInstantiateRequirementViewController" id="bee-G5-zdc"/>
+                                <segue destination="uJe-nq-2qo" kind="show" identifier="dogsNestedRequirementViewController" id="bee-G5-zdc"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -434,7 +434,7 @@
                                 </connections>
                             </datePicker>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="After Responding to Reminder, Repeat Again In:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="OxU-He-Qgo" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="10" y="54" width="394" height="24"/>
+                                <rect key="frame" x="13" y="54" width="388" height="24"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -445,8 +445,8 @@
                         <constraints>
                             <constraint firstItem="Nvt-ES-U6h" firstAttribute="trailing" secondItem="aPZ-Qw-aGi" secondAttribute="trailing" id="3AE-uS-qfv"/>
                             <constraint firstItem="OxU-He-Qgo" firstAttribute="top" secondItem="aPZ-Qw-aGi" secondAttribute="top" constant="10" id="I7e-5d-g4z"/>
-                            <constraint firstItem="OxU-He-Qgo" firstAttribute="leading" secondItem="aPZ-Qw-aGi" secondAttribute="leading" constant="10" id="cvU-d5-KQt"/>
-                            <constraint firstItem="aPZ-Qw-aGi" firstAttribute="trailing" secondItem="OxU-He-Qgo" secondAttribute="trailing" constant="10" id="dpe-Tq-iHy"/>
+                            <constraint firstItem="OxU-He-Qgo" firstAttribute="leading" secondItem="aPZ-Qw-aGi" secondAttribute="leading" constant="13" id="cvU-d5-KQt"/>
+                            <constraint firstItem="aPZ-Qw-aGi" firstAttribute="trailing" secondItem="OxU-He-Qgo" secondAttribute="trailing" constant="13" id="dpe-Tq-iHy"/>
                             <constraint firstItem="Nvt-ES-U6h" firstAttribute="top" secondItem="OxU-He-Qgo" secondAttribute="bottom" id="maJ-oO-70x"/>
                             <constraint firstItem="Nvt-ES-U6h" firstAttribute="leading" secondItem="aPZ-Qw-aGi" secondAttribute="leading" id="mu4-Pt-JKb"/>
                             <constraint firstItem="aPZ-Qw-aGi" firstAttribute="bottom" secondItem="Nvt-ES-U6h" secondAttribute="bottom" id="oea-q0-XKy"/>
@@ -569,7 +569,7 @@
                         <outlet property="containerForAll" destination="8KF-Nk-KXG" id="jDl-eZ-c76"/>
                         <outlet property="countDownContainerView" destination="MhX-Hm-1r1" id="bfp-I7-24p"/>
                         <outlet property="requirementAction" destination="NuX-y6-aex" id="aW2-ov-lha"/>
-                        <outlet property="requirementEnableStatus" destination="je1-CJ-DNf" id="IYH-6A-rzb"/>
+                        <outlet property="requirementToggleSwitch" destination="je1-CJ-DNf" id="nXB-iD-FVB"/>
                         <outlet property="segmentedControl" destination="HGx-qs-bNl" id="zzB-gc-U8D"/>
                         <outlet property="timeOfDayContainerView" destination="XhW-xN-8L1" id="FBC-wr-cy3"/>
                     </connections>
@@ -739,7 +739,7 @@
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" Purpose of Configure Reminders  " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="G8w-FH-Dxf" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" Purpose of Reminders  " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="G8w-FH-Dxf" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="414" height="40"/>
                                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                                 <constraints>
@@ -823,6 +823,135 @@
             </objects>
             <point key="canvasLocation" x="-5483" y="-1604"/>
         </scene>
+        <!--Dogs Introduction View Controller-->
+        <scene sceneID="fHU-gs-i6o">
+            <objects>
+                <viewController id="RBT-bM-2BD" customClass="DogsIntroductionViewController" customModule="Pupotty" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="qvP-Er-QHY">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RQ3-lX-aXC">
+                                <rect key="frame" x="10" y="748" width="394" height="50"/>
+                                <color key="backgroundColor" systemColor="systemBlueColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="UMO-t3-06c"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
+                                <state key="normal" title="All Done!">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="willContinue:" destination="RBT-bM-2BD" eventType="touchUpInside" id="7Om-EO-xUj"/>
+                                    <action selector="willContinue:" destination="w3D-Ib-MEE" eventType="touchUpInside" id="mz9-yV-uai"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Reminders" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Ij3-3R-oyw" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="10" y="10" width="394" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="Y8x-t1-j79"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="50"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Enable Notifications" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="ZZj-yb-cPL" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="276" width="414" height="40"/>
+                                <color key="backgroundColor" systemColor="systemBlueColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="F2l-RU-cdz"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Enable to get notifications when your reminders go off." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="2Ok-63-YGG" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="10" y="336" width="300" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="752" verticalHuggingPriority="752" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="EFh-Uu-yIL">
+                                <rect key="frame" x="320" y="344.5" width="51" height="31"/>
+                                <color key="onTintColor" systemColor="systemBlueColor"/>
+                                <connections>
+                                    <action selector="didToggleNotifications:" destination="RBT-bM-2BD" eventType="valueChanged" id="Jrp-D9-fKC"/>
+                                </connections>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Use this page to configure and manage reminders to care for your dog." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="7yj-fM-UOb" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="10" y="80" width="394" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Defaults" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="vvB-IM-4cz" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="148" width="414" height="40"/>
+                                <color key="backgroundColor" systemColor="systemBlueColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="mhb-KW-W5J"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="We'll create reminders that are useful for most dogs. " textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="iPT-rX-rGQ" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="10" y="208" width="300" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="752" verticalHuggingPriority="752" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OeF-Fp-oLD">
+                                <rect key="frame" x="320" y="216.5" width="51" height="31"/>
+                                <color key="onTintColor" systemColor="systemBlueColor"/>
+                            </switch>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="0xH-m1-i3f"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="2Ok-63-YGG" firstAttribute="top" secondItem="ZZj-yb-cPL" secondAttribute="bottom" constant="20" id="12z-FA-vXo"/>
+                            <constraint firstItem="2Ok-63-YGG" firstAttribute="leading" secondItem="0xH-m1-i3f" secondAttribute="leading" constant="10" id="51w-sb-0Am"/>
+                            <constraint firstItem="EFh-Uu-yIL" firstAttribute="centerY" secondItem="2Ok-63-YGG" secondAttribute="centerY" id="7Ku-ea-rM1"/>
+                            <constraint firstItem="RQ3-lX-aXC" firstAttribute="top" relation="greaterThanOrEqual" secondItem="2Ok-63-YGG" secondAttribute="bottom" constant="10" id="9hW-PO-geC"/>
+                            <constraint firstItem="0xH-m1-i3f" firstAttribute="trailing" secondItem="ZZj-yb-cPL" secondAttribute="trailing" id="Adz-90-wnn"/>
+                            <constraint firstItem="ZZj-yb-cPL" firstAttribute="leading" secondItem="0xH-m1-i3f" secondAttribute="leading" id="CnF-JU-Ivu"/>
+                            <constraint firstItem="ZZj-yb-cPL" firstAttribute="top" secondItem="iPT-rX-rGQ" secondAttribute="bottom" constant="20" id="R2L-9w-hEb"/>
+                            <constraint firstItem="7yj-fM-UOb" firstAttribute="leading" secondItem="0xH-m1-i3f" secondAttribute="leading" constant="10" id="RX9-dd-i1C"/>
+                            <constraint firstItem="0xH-m1-i3f" firstAttribute="trailing" secondItem="EFh-Uu-yIL" secondAttribute="trailing" constant="45" id="Rfc-7d-il3"/>
+                            <constraint firstItem="iPT-rX-rGQ" firstAttribute="leading" secondItem="0xH-m1-i3f" secondAttribute="leading" constant="10" id="SNb-bR-PgY"/>
+                            <constraint firstItem="OeF-Fp-oLD" firstAttribute="leading" secondItem="iPT-rX-rGQ" secondAttribute="trailing" constant="10" id="T4A-9v-z2q"/>
+                            <constraint firstItem="Ij3-3R-oyw" firstAttribute="top" secondItem="0xH-m1-i3f" secondAttribute="top" constant="10" id="TCM-Ga-pWP"/>
+                            <constraint firstItem="vvB-IM-4cz" firstAttribute="trailing" secondItem="0xH-m1-i3f" secondAttribute="trailing" id="TLc-L7-EEW"/>
+                            <constraint firstItem="7yj-fM-UOb" firstAttribute="top" secondItem="Ij3-3R-oyw" secondAttribute="bottom" constant="10" id="WbB-lD-EG0"/>
+                            <constraint firstItem="Ij3-3R-oyw" firstAttribute="leading" secondItem="0xH-m1-i3f" secondAttribute="leading" constant="10" id="YOj-dx-qK4"/>
+                            <constraint firstItem="0xH-m1-i3f" firstAttribute="trailing" secondItem="7yj-fM-UOb" secondAttribute="trailing" constant="10" id="YnL-tF-Og1"/>
+                            <constraint firstItem="0xH-m1-i3f" firstAttribute="trailing" secondItem="OeF-Fp-oLD" secondAttribute="trailing" constant="45" id="cw0-u6-QDe"/>
+                            <constraint firstItem="0xH-m1-i3f" firstAttribute="trailing" secondItem="Ij3-3R-oyw" secondAttribute="trailing" constant="10" id="fI7-TQ-AGc"/>
+                            <constraint firstItem="vvB-IM-4cz" firstAttribute="leading" secondItem="0xH-m1-i3f" secondAttribute="leading" id="gPZ-jD-GI0"/>
+                            <constraint firstItem="OeF-Fp-oLD" firstAttribute="centerY" secondItem="iPT-rX-rGQ" secondAttribute="centerY" id="kA7-81-WrS"/>
+                            <constraint firstItem="0xH-m1-i3f" firstAttribute="bottom" secondItem="RQ3-lX-aXC" secondAttribute="bottom" constant="10" id="kIW-P8-OF1"/>
+                            <constraint firstItem="EFh-Uu-yIL" firstAttribute="leading" secondItem="2Ok-63-YGG" secondAttribute="trailing" constant="10" id="kdi-Hu-6mJ"/>
+                            <constraint firstItem="iPT-rX-rGQ" firstAttribute="top" secondItem="vvB-IM-4cz" secondAttribute="bottom" constant="20" id="lbV-0b-a8Z"/>
+                            <constraint firstItem="ZZj-yb-cPL" firstAttribute="top" relation="greaterThanOrEqual" secondItem="OeF-Fp-oLD" secondAttribute="bottom" constant="20" id="uve-RJ-Pak"/>
+                            <constraint firstItem="RQ3-lX-aXC" firstAttribute="leading" secondItem="0xH-m1-i3f" secondAttribute="leading" constant="10" id="vQl-Ru-gb8"/>
+                            <constraint firstItem="OeF-Fp-oLD" firstAttribute="top" relation="greaterThanOrEqual" secondItem="vvB-IM-4cz" secondAttribute="bottom" constant="20" id="vnN-ft-5Ul"/>
+                            <constraint firstItem="vvB-IM-4cz" firstAttribute="top" secondItem="7yj-fM-UOb" secondAttribute="bottom" constant="20" id="xLF-Il-lFi"/>
+                            <constraint firstItem="0xH-m1-i3f" firstAttribute="trailing" secondItem="RQ3-lX-aXC" secondAttribute="trailing" constant="10" id="yyG-TV-6g6"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="2Op-xb-FnZ"/>
+                    <connections>
+                        <outlet property="continueButton" destination="RQ3-lX-aXC" id="4uL-rI-Fag"/>
+                        <outlet property="introductionBody" destination="7yj-fM-UOb" id="D81-kd-K2y"/>
+                        <outlet property="notificationsBody" destination="2Ok-63-YGG" id="xmY-2r-EdR"/>
+                        <outlet property="notificationsToggleSwitch" destination="EFh-Uu-yIL" id="vB7-if-wKk"/>
+                        <outlet property="remindersBody" destination="iPT-rX-rGQ" id="JZR-l1-fRa"/>
+                        <outlet property="remindersToggleSwitch" destination="OeF-Fp-oLD" id="XkU-lp-xkg"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="D2b-oU-TsG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2078" y="-785"/>
+        </scene>
         <!--Dogs Main Screen-->
         <scene sceneID="wg7-f3-ORb">
             <objects>
@@ -877,7 +1006,7 @@
                             <constraint firstItem="yIK-7w-b7P" firstAttribute="top" secondItem="O1u-W8-tvY" secondAttribute="top" id="zcA-OE-9qz"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Configure Reminders" id="3cK-GK-ZQ2">
+                    <navigationItem key="navigationItem" title="Reminders" id="3cK-GK-ZQ2">
                         <barButtonItem key="rightBarButtonItem" image="info.circle" catalog="system" id="cjC-bn-PB6">
                             <connections>
                                 <segue destination="HpE-Bb-ELa" kind="show" id="jUb-7K-YlV"/>
@@ -887,7 +1016,7 @@
                     <connections>
                         <outlet property="willAddButton" destination="8b5-pw-vvl" id="pTI-mr-SxA"/>
                         <outlet property="willAddButtonBackground" destination="vhe-hX-gRw" id="9Z0-SR-2vW"/>
-                        <segue destination="ihm-KQ-9ZO" kind="show" identifier="dogsUpdateRequirementViewController" id="aHQ-Vp-kOd"/>
+                        <segue destination="ihm-KQ-9ZO" kind="show" identifier="dogsIndependentRequirementViewController" id="aHQ-Vp-kOd"/>
                         <segue destination="yj4-3A-FdI" kind="show" identifier="dogsAddDogViewController" id="ZXp-P8-izA"/>
                     </connections>
                 </viewController>
@@ -1094,7 +1223,7 @@
                                                 </connections>
                                             </button>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Snooze Length" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="TLL-uF-akP" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="470" width="119" height="30"/>
+                                                <rect key="frame" x="10" y="470" width="131.5" height="30"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="30" id="hIS-b0-1Jk"/>
                                                 </constraints>
@@ -1103,7 +1232,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <datePicker contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZJk-3o-CE1">
-                                                <rect key="frame" x="204" y="440" width="200" height="90"/>
+                                                <rect key="frame" x="172.5" y="440" width="231.5" height="90"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="90" id="4N0-4r-MV0"/>
                                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="9yi-bB-fBQ"/>
@@ -1112,7 +1241,7 @@
                                                     <action selector="didUpdateSnoozeInterval:" destination="yOJ-Bd-jVl" eventType="valueChanged" id="QpP-tG-WEf"/>
                                                 </connections>
                                             </datePicker>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Alarm Notifications" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="4D0-gF-bOZ" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Reminder Notifications" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="4D0-gF-bOZ" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
                                                 <rect key="frame" x="10" y="75" width="300" height="30"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="30" id="AQm-GA-VoY"/>
@@ -1161,7 +1290,7 @@
                                                 </connections>
                                             </switch>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Follow Up Delay" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Ci3-tA-FE1" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="235" width="184" height="30"/>
+                                                <rect key="frame" x="10" y="235" width="152.5" height="30"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="30" id="O5c-4m-BDX"/>
                                                 </constraints>
@@ -1170,7 +1299,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <datePicker contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" countDownDuration="300" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aOM-HB-xn3">
-                                                <rect key="frame" x="204" y="205" width="200" height="90"/>
+                                                <rect key="frame" x="172.5" y="205" width="231.5" height="90"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="8FI-nR-Gk0"/>
                                                     <constraint firstAttribute="height" constant="90" id="Iga-ql-dcL"/>
@@ -1201,7 +1330,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rln-bE-UVq">
-                                                <rect key="frame" x="132" y="472.5" width="25" height="25"/>
+                                                <rect key="frame" x="144.5" y="472.5" width="25" height="25"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="25" id="a89-3g-9GE"/>
                                                 </constraints>
@@ -1210,7 +1339,6 @@
                                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="20"/>
                                                 </state>
                                                 <connections>
-                                                    <action selector="didClickFollowUpNotificationToolTip:" destination="yOJ-Bd-jVl" eventType="touchUpInside" id="xLO-W8-uF8"/>
                                                     <action selector="didClickSnoozeLengthToolTip:" destination="yOJ-Bd-jVl" eventType="touchUpInside" id="Xdw-jX-Y9t"/>
                                                 </connections>
                                             </button>
@@ -1228,7 +1356,6 @@
                                             <constraint firstItem="rln-bE-UVq" firstAttribute="width" secondItem="rln-bE-UVq" secondAttribute="height" multiplier="1:1" id="HOL-oo-lXn"/>
                                             <constraint firstItem="TLL-uF-akP" firstAttribute="top" secondItem="l4n-f0-xlb" secondAttribute="bottom" constant="50" id="HXc-ow-Qv3"/>
                                             <constraint firstAttribute="trailing" secondItem="QPX-E7-5mO" secondAttribute="trailing" constant="45" id="JdK-bj-Jxr"/>
-                                            <constraint firstItem="ZJk-3o-CE1" firstAttribute="leading" secondItem="TLL-uF-akP" secondAttribute="trailing" constant="75" id="OSc-T9-6uq"/>
                                             <constraint firstItem="4D0-gF-bOZ" firstAttribute="centerY" secondItem="QPX-E7-5mO" secondAttribute="centerY" id="PYO-aC-YCy"/>
                                             <constraint firstItem="wBZ-D0-bLD" firstAttribute="centerY" secondItem="8Fc-Ih-bii" secondAttribute="centerY" id="PlA-77-evx"/>
                                             <constraint firstItem="gVu-eH-0bi" firstAttribute="width" secondItem="gVu-eH-0bi" secondAttribute="height" multiplier="1:1" id="Qxw-jk-Wce"/>
@@ -1292,11 +1419,12 @@
                         <outlet property="followUpDelayInterval" destination="aOM-HB-xn3" id="SvO-PL-q9j"/>
                         <outlet property="followUpNotificationToolTip" destination="gVu-eH-0bi" id="QU5-JU-UEp"/>
                         <outlet property="followUpReminderLabel" destination="8Fc-Ih-bii" id="t7e-FS-J8B"/>
-                        <outlet property="isNotificationEnabledSwitch" destination="QPX-E7-5mO" id="16O-Zk-tz9"/>
-                        <outlet property="isPaused" destination="Csv-1E-jpJ" id="x9A-PC-9y5"/>
+                        <outlet property="followUpToggleSwitch" destination="wBZ-D0-bLD" id="zgN-3B-grP"/>
+                        <outlet property="notificationToggleSwitch" destination="QPX-E7-5mO" id="evP-iv-VOd"/>
+                        <outlet property="pauseToggleSwitch" destination="Csv-1E-jpJ" id="heP-u4-WmO"/>
                         <outlet property="scrollViewContainerForAll" destination="DGn-uG-1kc" id="Ac8-K5-cQL"/>
-                        <outlet property="shouldFollowUp" destination="wBZ-D0-bLD" id="Bwd-K8-X6c"/>
                         <outlet property="snoozeInterval" destination="ZJk-3o-CE1" id="g0P-cx-3fd"/>
+                        <outlet property="snoozeLengthLabel" destination="TLL-uF-akP" id="twu-e6-H8c"/>
                         <outlet property="snoozeLengthToolTip" destination="rln-bE-UVq" id="gig-RF-NLY"/>
                     </connections>
                 </viewController>
@@ -1686,7 +1814,7 @@
                             <constraint firstItem="cBP-r4-Eki" firstAttribute="top" secondItem="hNI-ck-D64" secondAttribute="top" id="3ru-lG-WoY"/>
                             <constraint firstItem="cBP-r4-Eki" firstAttribute="bottom" secondItem="hNI-ck-D64" secondAttribute="bottom" id="I4T-9M-oU5"/>
                             <constraint firstItem="GGl-n5-nGJ" firstAttribute="top" secondItem="X2i-5S-er5" secondAttribute="top" id="ITJ-BK-WIi"/>
-                            <constraint firstItem="x5G-Ck-EDF" firstAttribute="width" secondItem="zlF-84-edY" secondAttribute="width" multiplier="90/414" id="NQy-f9-3S5"/>
+                            <constraint firstItem="x5G-Ck-EDF" firstAttribute="width" secondItem="zlF-84-edY" secondAttribute="width" multiplier="90/414" priority="999" id="NQy-f9-3S5"/>
                             <constraint firstItem="2IS-0f-Kjf" firstAttribute="bottom" secondItem="zlF-84-edY" secondAttribute="bottom" id="OE2-D9-vSY"/>
                             <constraint firstItem="cBP-r4-Eki" firstAttribute="leading" secondItem="6MF-r3-mug" secondAttribute="leading" id="OLg-lO-zV2"/>
                             <constraint firstItem="zlF-84-edY" firstAttribute="trailing" secondItem="2IS-0f-Kjf" secondAttribute="trailing" id="Sfp-Bh-fV8"/>
@@ -1695,7 +1823,7 @@
                             <constraint firstItem="GGl-n5-nGJ" firstAttribute="bottom" secondItem="X2i-5S-er5" secondAttribute="bottom" id="gX7-5E-KXh"/>
                             <constraint firstItem="zlF-84-edY" firstAttribute="top" secondItem="2IS-0f-Kjf" secondAttribute="top" id="rcv-28-HZp"/>
                             <constraint firstItem="cBP-r4-Eki" firstAttribute="trailing" secondItem="6MF-r3-mug" secondAttribute="trailing" id="tSX-yf-uVR"/>
-                            <constraint firstItem="bLz-mC-dUW" firstAttribute="width" secondItem="zlF-84-edY" secondAttribute="width" multiplier="90/414" id="z2k-iP-9Ia"/>
+                            <constraint firstItem="bLz-mC-dUW" firstAttribute="width" secondItem="zlF-84-edY" secondAttribute="width" multiplier="90/414" priority="999" id="z2k-iP-9Ia"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Create Log" id="PyI-jW-rkK">
@@ -1850,6 +1978,7 @@
                         <segue destination="c3p-F3-kMn" kind="relationship" relationship="viewControllers" id="lzU-1b-eKA"/>
                         <segue destination="t9t-B7-eVe" kind="relationship" relationship="viewControllers" id="CeX-iU-V0j"/>
                         <segue destination="w3D-Ib-MEE" kind="show" identifier="introductionViewController" id="O7H-mK-wdD"/>
+                        <segue destination="RBT-bM-2BD" kind="show" identifier="dogsIntroductionViewController" id="cWf-yg-dvP"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
@@ -1898,31 +2027,21 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="752" verticalHuggingPriority="752" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Bella" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="CXH-t8-W6h">
-                                <rect key="frame" x="110" y="235" width="294" height="40"/>
+                                <rect key="frame" x="110" y="199" width="294" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="aA4-lN-g0r"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES" textContentType="name"/>
                             </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="We will generate a dog with default reminders." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="0FZ-Za-zwc" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="10" y="140" width="394" height="60"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="60" id="E0U-Ti-bZn"/>
-                                </constraints>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="755" verticalCompressionResistancePriority="755" text="We will generate a dog for you." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="0FZ-Za-zwc" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="10" y="140" width="394" height="24"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="752" verticalHuggingPriority="752" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="QGy-Ve-RhM">
-                                <rect key="frame" x="320" y="394.5" width="51" height="31"/>
-                                <color key="onTintColor" systemColor="systemBlueColor"/>
-                                <connections>
-                                    <action selector="didToggleNotifications:" destination="w3D-Ib-MEE" eventType="valueChanged" id="yla-8s-ERR"/>
-                                </connections>
-                            </switch>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Need Help?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="JjD-00-mbp" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="460" width="414" height="40"/>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Need Help?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="JjD-00-mbp" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="284" width="414" height="40"/>
                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="uyb-EQ-yrH"/>
@@ -1931,76 +2050,46 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="To see information about how a page works, click the ⓘ in the top right." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="g1M-ux-eH0" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="10" y="520" width="394" height="60"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="60" id="4lv-5n-cg5"/>
-                                </constraints>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="755" verticalCompressionResistancePriority="755" text="To see information about how a page works, click the ⓘ in the top right." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="g1M-ux-eH0" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="10" y="344" width="394" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="752" verticalHuggingPriority="752" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" translatesAutoresizingMaskIntoConstraints="NO" id="Ykd-OT-vqE">
-                                <rect key="frame" x="10" y="210" width="90" height="90"/>
+                                <rect key="frame" x="10" y="174" width="90" height="90"/>
                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="90" id="Gqp-zt-PKC"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Alarm Notifications" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="gjf-ku-89w" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="320" width="414" height="40"/>
-                                <color key="backgroundColor" systemColor="systemBlueColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="oya-P9-vH5"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Enable to get notifications when your reminders go off." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="GFF-5e-2Jo" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="10" y="380" width="300" height="60"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="60" id="A9s-ql-wbj"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="zOy-im-afc"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="S8N-37-uHI" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" constant="10" id="1tA-Kl-FT3"/>
-                            <constraint firstItem="GFF-5e-2Jo" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" constant="10" id="2PB-fg-cKj"/>
                             <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="0FZ-Za-zwc" secondAttribute="trailing" constant="10" id="315-lh-O1p"/>
                             <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="JjD-00-mbp" secondAttribute="trailing" id="3VK-g4-BLR"/>
                             <constraint firstItem="CXH-t8-W6h" firstAttribute="leading" secondItem="Ykd-OT-vqE" secondAttribute="trailing" constant="10" id="3rU-Ra-DII"/>
                             <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="esp-x0-Cun" secondAttribute="trailing" constant="10" id="5dY-VO-Nxf"/>
                             <constraint firstItem="0FZ-Za-zwc" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" constant="10" id="7cd-xV-s4h"/>
                             <constraint firstItem="Ykd-OT-vqE" firstAttribute="top" secondItem="0FZ-Za-zwc" secondAttribute="bottom" constant="10" id="9Ro-27-MLx"/>
-                            <constraint firstItem="gjf-ku-89w" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" id="DTI-62-1XZ"/>
+                            <constraint firstItem="JjD-00-mbp" firstAttribute="top" secondItem="Ykd-OT-vqE" secondAttribute="bottom" constant="20" id="DCd-4y-Mzc"/>
                             <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="g1M-ux-eH0" secondAttribute="trailing" constant="10" id="EU0-CC-fMB"/>
                             <constraint firstItem="g1M-ux-eH0" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" constant="10" id="Ekg-LW-YxK"/>
                             <constraint firstItem="RY9-6G-ybY" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" id="F3j-eD-vQt"/>
                             <constraint firstItem="Ykd-OT-vqE" firstAttribute="width" secondItem="Ykd-OT-vqE" secondAttribute="height" multiplier="1:1" id="IBo-Iq-dRU"/>
-                            <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="gjf-ku-89w" secondAttribute="trailing" id="JcR-UM-4GU"/>
                             <constraint firstItem="zOy-im-afc" firstAttribute="bottom" secondItem="S8N-37-uHI" secondAttribute="bottom" constant="10" id="JfO-pB-Gl0"/>
                             <constraint firstItem="g1M-ux-eH0" firstAttribute="top" secondItem="JjD-00-mbp" secondAttribute="bottom" constant="20" id="NSn-yv-pTP"/>
                             <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="S8N-37-uHI" secondAttribute="trailing" constant="10" id="PdD-Ur-05W"/>
                             <constraint firstItem="0FZ-Za-zwc" firstAttribute="top" secondItem="RY9-6G-ybY" secondAttribute="bottom" constant="20" id="RwC-vj-HhS"/>
-                            <constraint firstItem="QGy-Ve-RhM" firstAttribute="leading" secondItem="GFF-5e-2Jo" secondAttribute="trailing" constant="10" id="SQQ-CG-giM"/>
-                            <constraint firstItem="GFF-5e-2Jo" firstAttribute="top" secondItem="gjf-ku-89w" secondAttribute="bottom" constant="20" id="TDs-sh-tHz"/>
                             <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="CXH-t8-W6h" secondAttribute="trailing" constant="10" id="Tz7-zX-8hc"/>
                             <constraint firstItem="Ykd-OT-vqE" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" constant="10" id="ZLm-Ut-q2s"/>
-                            <constraint firstItem="gjf-ku-89w" firstAttribute="top" secondItem="Ykd-OT-vqE" secondAttribute="bottom" constant="20" id="aLW-bI-84q"/>
                             <constraint firstItem="esp-x0-Cun" firstAttribute="top" secondItem="zOy-im-afc" secondAttribute="top" constant="10" id="aWC-ia-rJP"/>
-                            <constraint firstItem="JjD-00-mbp" firstAttribute="top" secondItem="GFF-5e-2Jo" secondAttribute="bottom" constant="20" id="ckn-aa-1h9"/>
-                            <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="QGy-Ve-RhM" secondAttribute="trailing" constant="45" id="hCs-WL-WyB"/>
                             <constraint firstItem="CXH-t8-W6h" firstAttribute="centerY" secondItem="Ykd-OT-vqE" secondAttribute="centerY" id="keV-Nu-1zP"/>
                             <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="RY9-6G-ybY" secondAttribute="trailing" id="ntl-O9-0LT"/>
                             <constraint firstItem="RY9-6G-ybY" firstAttribute="top" secondItem="esp-x0-Cun" secondAttribute="bottom" constant="10" id="op7-OX-FV3"/>
                             <constraint firstItem="esp-x0-Cun" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" constant="10" id="qOp-oz-I6e"/>
-                            <constraint firstItem="QGy-Ve-RhM" firstAttribute="centerY" secondItem="GFF-5e-2Jo" secondAttribute="centerY" id="uu3-S3-6IY"/>
                             <constraint firstItem="S8N-37-uHI" firstAttribute="top" relation="greaterThanOrEqual" secondItem="g1M-ux-eH0" secondAttribute="bottom" constant="10" id="zLX-eU-2tA"/>
                             <constraint firstItem="JjD-00-mbp" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" id="zle-gj-hNA"/>
                         </constraints>
@@ -2010,10 +2099,8 @@
                         <outlet property="continueButton" destination="S8N-37-uHI" id="OzP-bk-8T0"/>
                         <outlet property="dogIcon" destination="Ykd-OT-vqE" id="2Ff-Ok-HYM"/>
                         <outlet property="dogName" destination="CXH-t8-W6h" id="N1m-On-Kcn"/>
-                        <outlet property="dogNameDescription" destination="0FZ-Za-zwc" id="9fP-m4-o1j"/>
-                        <outlet property="helpDescription" destination="g1M-ux-eH0" id="03z-Vf-beT"/>
-                        <outlet property="isNotificationEnabledSwitch" destination="QGy-Ve-RhM" id="i4e-a8-VUh"/>
-                        <outlet property="notificationsDescription" destination="GFF-5e-2Jo" id="uBS-d7-jxv"/>
+                        <outlet property="dogNameDescription" destination="0FZ-Za-zwc" id="3Ct-bA-j83"/>
+                        <outlet property="helpDescription" destination="g1M-ux-eH0" id="hXM-1s-6JU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ig9-EO-oHv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -2023,7 +2110,7 @@
         <!--Edit Dog Requirement -->
         <scene sceneID="Kgj-aC-JCD">
             <objects>
-                <viewController title="Edit Dog Requirement " id="ihm-KQ-9ZO" customClass="DogsUpdateRequirementViewController" customModule="Pupotty" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Edit Dog Requirement " id="ihm-KQ-9ZO" customClass="DogsIndependentRequirementViewController" customModule="Pupotty" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="0OB-AJ-Dor">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2041,7 +2128,7 @@
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
                                 </state>
                                 <connections>
-                                    <action selector="willUpdate:" destination="ihm-KQ-9ZO" eventType="touchUpInside" id="QOq-0e-Obd"/>
+                                    <action selector="willSave:" destination="ihm-KQ-9ZO" eventType="touchUpInside" id="ykr-Sg-5l1"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L3p-WY-59A" customClass="ScaledButton" customModule="Pupotty" customModuleProvider="target">
@@ -2118,13 +2205,17 @@
                                 <action selector="willRemoveRequirement:" destination="ihm-KQ-9ZO" id="4EW-eD-ueS"/>
                             </connections>
                         </barButtonItem>
+                        <connections>
+                            <outlet property="rightBarButtonItem" destination="R0e-d4-vPA" id="RoB-F0-pP9"/>
+                        </connections>
                     </navigationItem>
                     <connections>
                         <outlet property="cancelUpdateRequirementButton" destination="L3p-WY-59A" id="iz9-8o-gf8"/>
                         <outlet property="cancelUpdateRequirementButtonBackground" destination="BEQ-Uc-wNM" id="hOh-12-Rpq"/>
+                        <outlet property="pageNavigationBar" destination="1kf-GJ-Ilq" id="cWm-L0-63V"/>
                         <outlet property="requirementRemoveButton" destination="R0e-d4-vPA" id="n8d-oq-LvR"/>
-                        <outlet property="updateRequirementButton" destination="etL-8U-WAh" id="Gde-b7-a4v"/>
-                        <outlet property="updateRequirementButtonBackground" destination="Fyn-yj-60g" id="HnS-tg-nvf"/>
+                        <outlet property="saveRequirementButton" destination="etL-8U-WAh" id="bPJ-xJ-D2e"/>
+                        <outlet property="saveRequirementButtonBackground" destination="Fyn-yj-60g" id="VlW-92-DNZ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wbj-ty-Ibs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -2330,11 +2421,11 @@
             </objects>
             <point key="canvasLocation" x="862" y="1575"/>
         </scene>
-        <!--Configure-->
+        <!--Reminders-->
         <scene sceneID="3cf-I6-Jg6">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="c3p-F3-kMn" customClass="DogsNavigationViewController" customModule="Pupotty" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Configure" image="pawTabBar" selectedImage="pawTabBar" id="cPa-gy-q4n"/>
+                    <tabBarItem key="tabBarItem" title="Reminders" image="pawTabBar" selectedImage="pawTabBar" id="cPa-gy-q4n"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="qxF-gX-J4v">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>

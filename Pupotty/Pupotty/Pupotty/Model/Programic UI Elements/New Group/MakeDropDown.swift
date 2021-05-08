@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 protocol MakeDropDownDataSourceProtocol{
-    func configureCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, makeDropDownIdentifier: String)
+    func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, makeDropDownIdentifier: String)
     ///Returns number of rows in a given section of the dropDownMenu
     func numberOfRows(forSection: Int, makeDropDownIdentifier: String) -> Int
     ///Returns number section in the dropDownMenu
@@ -130,7 +130,7 @@ extension MakeDropDown: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell = (dropDownTableView?.dequeueReusableCell(withIdentifier: self.cellReusableIdentifier) ?? UITableViewCell())
         
-        makeDropDownDataSourceProtocol?.configureCellForDropDown(cell: cell, indexPath: indexPath, makeDropDownIdentifier: self.makeDropDownIdentifier)
+        makeDropDownDataSourceProtocol?.setupCellForDropDown(cell: cell, indexPath: indexPath, makeDropDownIdentifier: self.makeDropDownIdentifier)
         
         return cell
     }

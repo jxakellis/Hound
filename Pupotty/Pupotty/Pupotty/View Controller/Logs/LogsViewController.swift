@@ -132,7 +132,7 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
     private let filterByDogFont: UIFont = UIFont.systemFont(ofSize: 20, weight: .semibold)
     private let filterByLogFont: UIFont = UIFont.systemFont(ofSize: 15, weight: .regular)
     
-    func configureCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, makeDropDownIdentifier: String) {
+    func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, makeDropDownIdentifier: String) {
         if makeDropDownIdentifier == "DROP_DOWN_NEW"{
             
             let sudoDogManager = getDogManager()

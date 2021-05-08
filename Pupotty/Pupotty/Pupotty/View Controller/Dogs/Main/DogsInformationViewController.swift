@@ -27,13 +27,9 @@ class DogsInformationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        configureLabelText()
-        
-        purposeBody.frame.size = (purposeBody.text?.boundingFrom(font: purposeBody.font, width: purposeBody.frame.width))!
+        setupLabelText()
         
         purposeBody.removeConstraint(purposeBody.constraints[0])
-        
-        howToUseBody.frame.size = (howToUseBody.text?.boundingFrom(font: howToUseBody.font, width: howToUseBody.frame.width))!
         
         howToUseBody.removeConstraint(howToUseBody.constraints[0])
     }
@@ -44,7 +40,7 @@ class DogsInformationViewController: UIViewController {
     }
     
     ///Configures the body text to an attributed string, the headers are .semibold and rest is .regular, font size is the one specified in the storyboard
-    private func configureLabelText(){
+    private func setupLabelText(){
         
         let howToUseBodyAttributedText = NSMutableAttributedString(string: "Log Reminder:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)])
         howToUseBodyAttributedText.append(NSAttributedString(string: "\nIf you complete a reminder early (before its alarm sounds) click on it, select \"Did it!\", and Pupotty will handle the rest.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))

@@ -10,9 +10,11 @@ import UIKit
 
 protocol DogsNavigationViewControllerDelegate{
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+    func willShowIntroductionPage()
 }
 
 class DogsNavigationViewController: UINavigationController, DogsViewControllerDelegate {
+
     
     //MARK: - DogsViewControllerDelegate
     
@@ -21,6 +23,8 @@ class DogsNavigationViewController: UINavigationController, DogsViewControllerDe
     }
     
     //MARK: - Properties
+    
+    static var hasBeenLoadedBefore: Bool = false
     
     var passThroughDelegate: DogsNavigationViewControllerDelegate! = nil
     
@@ -34,15 +38,16 @@ class DogsNavigationViewController: UINavigationController, DogsViewControllerDe
         dogsViewController.delegate = self
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if DogsNavigationViewController.hasBeenLoadedBefore == false{
+            passThroughDelegate.willShowIntroductionPage()
+        }
     }
-    */
+    
+
+    
 
 }

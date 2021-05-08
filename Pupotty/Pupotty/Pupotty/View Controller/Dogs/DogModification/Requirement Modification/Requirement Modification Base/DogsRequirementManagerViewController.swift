@@ -45,7 +45,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     //MARK: - MakeDropDownDataSourceProtocol
     
-    func configureCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, makeDropDownIdentifier: String) {
+    func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, makeDropDownIdentifier: String) {
         if makeDropDownIdentifier == "DROP_DOWN_NEW"{
             
             let customCell = cell as! DropDownDefaultTableViewCell
@@ -93,7 +93,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     @IBOutlet weak var requirementAction: BorderedLabel!
     
-    @IBOutlet private weak var requirementEnableStatus: UISwitch!
+    @IBOutlet private weak var requirementToggleSwitch: UISwitch!
     
     @IBAction func didUpdateEnableStatus(_ sender: Any) {
         delegate.didUpdateInformation()
@@ -144,7 +144,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         
         //Data setup
         requirementAction.text = targetRequirement?.requirementType.rawValue ?? RequirementConstant.defaultType.rawValue
-        requirementEnableStatus.isOn = targetRequirement?.getEnable() ?? RequirementConstant.defaultEnable
+        requirementToggleSwitch.isOn = targetRequirement?.getEnable() ?? RequirementConstant.defaultEnable
         
         // Do any additional setup after loading the view.
     }
@@ -175,7 +175,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
             updatedRequirement.uuid = targetRequirement?.uuid ?? updatedRequirement.uuid
             updatedRequirement.requirementType = ScheduledLogType(rawValue: requirementAction.text!)!
             //try updatedRequirement.changeRequirementDescription(newRequirementDescription: requirementDescription.text)
-            updatedRequirement.setEnable(newEnableStatus: requirementEnableStatus.isOn)
+            updatedRequirement.setEnable(newEnableStatus: requirementToggleSwitch.isOn)
             
             //even if TOD is not selected, still saves week days
             try updatedRequirement.timeOfDayComponents.changeWeekdays(newWeekdays: dogsRequirementTimeOfDayViewController.weekdays)
@@ -225,7 +225,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
             
             requirementAction.text = RequirementConstant.defaultType.rawValue
             
-            requirementEnableStatus.isOn = true
+            requirementToggleSwitch.isOn = true
         }
         else{
             

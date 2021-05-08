@@ -132,15 +132,15 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
         
         self.requirementToggleSwitch.isOn = requirementPassed.getEnable()
         
-        configureTimeLeftText()
+        setupTimeLeftText()
     }
     
     
     func reloadCell(){
-        configureTimeLeftText()
+        setupTimeLeftText()
     }
     
-    private func configureTimeLeftText(){
+    private func setupTimeLeftText(){
         
         let timeLeftBodyWeight: UIFont.Weight = .regular
         let timeLeftImportantWeight: UIFont.Weight = .semibold

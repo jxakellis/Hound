@@ -17,10 +17,10 @@ class DogsRequirementTableViewCell: UITableViewCell {
     //MARK: - IB
     
     @IBOutlet private weak var requirementDisplay: UILabel!
-    @IBOutlet private weak var requirementEnableStatus: UISwitch!
+    @IBOutlet private weak var requirementToggleSwitch: UISwitch!
     
     @IBAction func didToggleEnable(_ sender: Any) {
-        delegate.didToggleEnable(sender: Sender(origin: self, localized: self), requirementUUID: requirementSource.uuid, newEnableStatus: self.requirementEnableStatus.isOn)
+        delegate.didToggleEnable(sender: Sender(origin: self, localized: self), requirementUUID: requirementSource.uuid, newEnableStatus: self.requirementToggleSwitch.isOn)
     }
     
     //MARK: - Properties
@@ -115,7 +115,7 @@ class DogsRequirementTableViewCell: UITableViewCell {
         
         requirementDisplay.attributedText = requirementDisplay.text?.addingFontToBeginning(text: requirement.requirementType.rawValue + " -", font: UIFont.systemFont(ofSize: requirementDisplay.font.pointSize, weight: .medium))
         
-        self.requirementEnableStatus.isOn = requirement.getEnable()
+        self.requirementToggleSwitch.isOn = requirement.getEnable()
         
     }
     

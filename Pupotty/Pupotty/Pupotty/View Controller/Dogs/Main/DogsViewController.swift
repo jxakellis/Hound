@@ -12,9 +12,19 @@ protocol DogsViewControllerDelegate {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsAddDogViewControllerDelegate, DogsMainScreenTableViewControllerDelegate, DogsUpdateRequirementViewControllerDelegate{
+class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsAddDogViewControllerDelegate, DogsMainScreenTableViewControllerDelegate, DogsIndependentRequirementViewControllerDelegate{
     
-    //MARK: - DogsUpdateRequirementViewControllerDelegate
+    
+    
+    //MARK: - DogsIndependentRequirementViewControllerDelegate
+    
+    func didAddRequirement(sender: Sender, parentDogName: String, newRequirement: Requirement) {
+        let sudoDogManager = getDogManager()
+        
+        try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.addRequirement(newRequirement: newRequirement)
+        
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
+    }
     
     func didUpdateRequirement(sender: Sender, parentDogName: String, updatedRequirement: Requirement) throws {
         let sudoDogManager = getDogManager()
@@ -40,16 +50,10 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         willOpenDog(dogToBeOpened: try! getDogManager().findDog(dogName: dogName), isAddingRequirement: false)
         
     }
-    
-    private var selectedTargetRequirement: Requirement!
-    private var selectedParentDogName: String!
     ///If a requirement was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the requirements information
     func willEditRequirement(parentDogName: String, requirementUUID: String) {
         
-        selectedTargetRequirement = try! getDogManager().findDog(dogName: parentDogName).dogRequirments.findRequirement(forUUID: requirementUUID)
-        selectedParentDogName = parentDogName
-        
-        self.performSegue(withIdentifier: "dogsUpdateRequirementViewController", sender: DogsMainScreenTableViewController())
+        willOpenRequirement(parentDogName: parentDogName, requirementUUID: requirementUUID)
         
     }
     
@@ -141,7 +145,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     
     var dogsAddDogViewController = DogsAddDogViewController()
     
-    var dogsUpdateRequirementViewController = DogsUpdateRequirementViewController()
+    var dogsIndependentRequirementViewController = DogsIndependentRequirementViewController()
     
     //MARK: - Main
     
@@ -184,21 +188,36 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         
         ///Is opening a dog
         if dogToBeOpened != nil {
-        //Conversion of "DogsAddDogViewController" to update mode
+            //Conversion of "DogsAddDogViewController" to update mode
             
-        dogsAddDogViewController.isAddingRequirement = isAddingRequirement
-        dogsAddDogViewController.isUpdating = true
-        dogsAddDogViewController.targetDog = dogToBeOpened!
+            dogsAddDogViewController.isAddingRequirement = isAddingRequirement
+            dogsAddDogViewController.isUpdating = true
+            dogsAddDogViewController.targetDog = dogToBeOpened!
         }
         
     }
     
-    @objc private func willOpenDog(sender: UIButton) {
+    private func willOpenRequirement(parentDogName: String, requirementUUID: String? = nil){
+        
+        self.performSegue(withIdentifier: "dogsIndependentRequirementViewController", sender: self)
+        dogsIndependentRequirementViewController.parentDogName = parentDogName
+        
+        if requirementUUID != nil {
+            dogsIndependentRequirementViewController.targetRequirement = try! getDogManager().findDog(dogName: parentDogName).dogRequirments.findRequirement(forUUID: requirementUUID!)
+            dogsIndependentRequirementViewController.isUpdating = true
+        }
+        else {
+            dogsIndependentRequirementViewController.isUpdating = false
+        }
+        
+    }
+    
+    @objc private func willCreateNew(sender: UIButton) {
         if sender.tag == 0 {
             self.willOpenDog(dogToBeOpened: nil, isAddingRequirement: false)
         }
         else {
-            self.willOpenDog(dogToBeOpened: getDogManager().dogs[sender.tag-1], isAddingRequirement: true)
+            self.willOpenRequirement(parentDogName: getDogManager().dogs[sender.tag-1].dogTraits.dogName, requirementUUID: nil)
         }
     }
     
@@ -233,7 +252,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             willAddDogButton.setImage(UIImage(systemName: "plus.circle")!, for: .normal)
             willAddDogButton.tintColor = .systemBlue
             willAddDogButton.tag = 0
-            willAddDogButton.addTarget(self, action: #selector(willOpenDog(sender:)), for: .touchUpInside)
+            willAddDogButton.addTarget(self, action: #selector(willCreateNew(sender:)), for: .touchUpInside)
             
             //Create white background layered behind original button as middle is see through
             let willAddDogButtonBackground = createAddButtonBackground(willAddDogButton)
@@ -257,7 +276,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                 willAddRequirementButton.setImage(UIImage(systemName: "plus.circle")!, for: .normal)
                 willAddRequirementButton.tintColor = .systemBlue
                 willAddRequirementButton.tag = dogIndex+1
-                willAddRequirementButton.addTarget(self, action: #selector(willOpenDog(sender:)), for: .touchUpInside)
+                willAddRequirementButton.addTarget(self, action: #selector(willCreateNew(sender:)), for: .touchUpInside)
                 
                 let willAddRequirementButtonBackground = createAddButtonBackground(willAddRequirementButton)
                 
@@ -436,19 +455,15 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "dogsAddDogViewController"{
             dogsAddDogViewController = segue.destination as! DogsAddDogViewController
-            dogsAddDogViewController.modalPresentationStyle = .fullScreen
             dogsAddDogViewController.delegate = self
         }
         if segue.identifier == "dogsMainScreenTableViewController" {
             dogsMainScreenTableViewController = segue.destination as! DogsMainScreenTableViewController
             dogsMainScreenTableViewController.delegate = self
         }
-        if segue.identifier == "dogsUpdateRequirementViewController" {
-            dogsUpdateRequirementViewController = segue.destination as! DogsUpdateRequirementViewController
-            dogsUpdateRequirementViewController.targetRequirement = selectedTargetRequirement
-            dogsUpdateRequirementViewController.parentDogName = selectedParentDogName
-            dogsUpdateRequirementViewController.modalPresentationStyle = .fullScreen
-            dogsUpdateRequirementViewController.delegate = self
+        if segue.identifier == "dogsIndependentRequirementViewController" {
+            dogsIndependentRequirementViewController = segue.destination as! DogsIndependentRequirementViewController
+            dogsIndependentRequirementViewController.delegate = self
         }
     }
     

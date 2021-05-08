@@ -1,5 +1,5 @@
 //
-//  DogsInstantiateRequirementViewController.swift
+//  DogsNestedRequirementViewController.swift
 //  Pupotty
 //
 //  Created by Jonathan Xakellis on 1/20/21.
@@ -9,13 +9,13 @@
 import UIKit
 
 //Delegate to pass setup requirement back to table view
-protocol DogsInstantiateRequirementViewControllerDelegate {
+protocol DogsNestedRequirementViewControllerDelegate {
     func didAddRequirement(sender: Sender, newRequirement: Requirement) throws
     func didUpdateRequirement(sender: Sender, updatedRequirement: Requirement) throws
     func didRemoveRequirement(sender: Sender, removedRequirementUUID: String)
 }
 
-class DogsInstantiateRequirementViewController: UIViewController, DogsRequirementManagerViewControllerDelegate{
+class DogsNestedRequirementViewController: UIViewController, DogsRequirementManagerViewControllerDelegate{
     
     //MARK: - Auto Save Trigger
     
@@ -86,7 +86,7 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
         
     //MARK: - Properties
     
-    var delegate: DogsInstantiateRequirementViewControllerDelegate! = nil
+    var delegate: DogsNestedRequirementViewControllerDelegate! = nil
     
     var dogsRequirementManagerViewController = DogsRequirementManagerViewController()
     
@@ -111,7 +111,7 @@ class DogsInstantiateRequirementViewController: UIViewController, DogsRequiremen
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "dogsInstantiateRequirementManagerViewController"{
+        if segue.identifier == "dogsNestedRequirementManagerViewController"{
             dogsRequirementManagerViewController = segue.destination as! DogsRequirementManagerViewController
             dogsRequirementManagerViewController.delegate = self
             dogsRequirementManagerViewController.targetRequirement = targetRequirement

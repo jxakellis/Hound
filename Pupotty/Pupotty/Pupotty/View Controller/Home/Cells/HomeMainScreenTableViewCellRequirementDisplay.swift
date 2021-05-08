@@ -40,15 +40,15 @@ class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
         requirementType.text = requirementPassed.requirementType.rawValue
         dogName.text = parentDogName
         
-        configureTimeLeftText()
+        setupTimeLeftText()
         
     }
     
     func reloadCell(){
-        configureTimeLeftText()
+        setupTimeLeftText()
     }
     
-    private func configureTimeLeftText(){
+    private func setupTimeLeftText(){
         if TimingManager.isPaused == true {
             timeLeft.text = String.convertToReadable(interperateTimeInterval: requirementSource.countDownComponents.executionInterval - requirementSource.countDownComponents.intervalElapsed)
         }

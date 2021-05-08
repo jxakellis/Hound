@@ -31,7 +31,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIGesture
     
     //MARK: - MakeDropDownDataSourceProtocol
     
-    func configureCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, makeDropDownIdentifier: String) {
+    func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, makeDropDownIdentifier: String) {
         if makeDropDownIdentifier == "dropDownParentDogName"{
             let customCell = cell as! DropDownDefaultTableViewCell
             customCell.adjustConstraints(newValue: 8.0)
@@ -280,8 +280,6 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIGesture
         
         setupValues()
         
-        setupConstraints()
-        
         setUpGestures()
         
         
@@ -296,13 +294,6 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIGesture
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         setUpDropDowns()
-    }
-    
-    ///Adaptable size constraint based on space the text physically take up
-    private func setupConstraints(){
-        //logDisclaimer.frame.size = (logDisclaimer.text?.boundingFrom(font: logDisclaimer.font, width: logDisclaimer.frame.width))!
-        
-        //logDisclaimer.constraints[0].isActive = false
     }
     
     ///Sets up gestureRecognizer for dog selector drop down

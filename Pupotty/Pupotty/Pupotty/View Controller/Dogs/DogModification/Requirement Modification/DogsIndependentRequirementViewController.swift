@@ -1,5 +1,5 @@
 //
-//  DogsUpdateRequirementViewController.swift
+//  DogsIndependentRequirementViewController.swift
 //  Pupotty
 //
 //  Created by Jonathan Xakellis on 2/26/21.
@@ -8,12 +8,13 @@
 
 import UIKit
 
-protocol DogsUpdateRequirementViewControllerDelegate {
+protocol DogsIndependentRequirementViewControllerDelegate {
     func didUpdateRequirement(sender: Sender, parentDogName: String, updatedRequirement: Requirement) throws
+    func didAddRequirement(sender: Sender, parentDogName: String, newRequirement: Requirement)
     func didRemoveRequirement(sender: Sender, parentDogName: String, removedRequirementUUID: String)
 }
 
-class DogsUpdateRequirementViewController: UIViewController, DogsRequirementManagerViewControllerDelegate {
+class DogsIndependentRequirementViewController: UIViewController, DogsRequirementManagerViewControllerDelegate {
     
     //MARK: Auto Save Trigger
     
@@ -30,9 +31,13 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
     
     func didUpdateRequirement(updatedRequirement: Requirement) {
         do {
+            if isUpdating == true {
+                try delegate.didUpdateRequirement(sender: Sender(origin: self, localized: self), parentDogName: parentDogName, updatedRequirement: updatedRequirement)
+            }
+            else {
+                delegate.didAddRequirement(sender: Sender(origin: self, localized: self), parentDogName: parentDogName, newRequirement: updatedRequirement)
+            }
             
-            try delegate.didUpdateRequirement(sender: Sender(origin: self, localized: self), parentDogName: parentDogName, updatedRequirement: updatedRequirement)
-            //self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
             self.navigationController?.popViewController(animated: true)
         }
         catch {
@@ -44,15 +49,18 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
     
     //Buttons to manage the information fate, whether to update or to cancel
     
-    @IBOutlet private weak var updateRequirementButton: UIButton!
-    @IBOutlet private weak var updateRequirementButtonBackground: UIButton!
+    
+    
+    @IBOutlet weak var pageNavigationBar: UINavigationItem!
+    @IBOutlet private weak var saveRequirementButton: UIButton!
+    @IBOutlet private weak var saveRequirementButtonBackground: UIButton!
     
     @IBOutlet private weak var cancelUpdateRequirementButton: UIButton!
     
     @IBOutlet private weak var cancelUpdateRequirementButtonBackground: UIButton!
     
     ///Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured requirement to DogsViewController
-    @IBAction private func willUpdate(_ sender: Any) {
+    @IBAction private func willSave(_ sender: Any) {
         
         dogsRequirementManagerViewController.willSaveRequirement()
         
@@ -103,11 +111,12 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
     
     //MARK: - Properties
     
-    var delegate: DogsUpdateRequirementViewControllerDelegate! = nil
+    var delegate: DogsIndependentRequirementViewControllerDelegate! = nil
     
     var dogsRequirementManagerViewController: DogsRequirementManagerViewController = DogsRequirementManagerViewController()
     
-    var targetRequirement: Requirement! = nil
+    var targetRequirement: Requirement = Requirement()
+    var isUpdating: Bool = false
     
     var parentDogName: String! = nil
     
@@ -119,8 +128,17 @@ class DogsUpdateRequirementViewController: UIViewController, DogsRequirementMana
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.bringSubviewToFront(updateRequirementButtonBackground)
-        self.view.bringSubviewToFront(updateRequirementButton)
+        if isUpdating == true {
+            pageNavigationBar.title = "Edit Reminder"
+            pageNavigationBar.rightBarButtonItem!.isEnabled = true
+        }
+        else {
+            pageNavigationBar.title = "Create Reminder"
+            pageNavigationBar.rightBarButtonItem!.isEnabled = false
+        }
+        
+        self.view.bringSubviewToFront(saveRequirementButtonBackground)
+        self.view.bringSubviewToFront(saveRequirementButton)
         
         self.view.bringSubviewToFront(cancelUpdateRequirementButtonBackground)
         self.view.bringSubviewToFront(cancelUpdateRequirementButton)

@@ -76,6 +76,16 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             self.updateDogManagerDependents()
         }
         
+        //start up loop timer, normally done in view will appear but sometimes view has appeared and doesn't need a loop but then it can get a dogManager update which requires a loop. This happens due to requirement added in DogsIntroduction page.
+        if viewIsBeingViewed == true && loopTimer == nil {
+            guard  getDogManager().hasEnabledDog && getDogManager().hasEnabledRequirement else {
+                return
+            }
+            loopTimer = Timer(fireAt: Date(), interval: 1.0, target: self, selector: #selector(self.loopReload), userInfo: nil, repeats: true)
+            
+            RunLoop.main.add(loopTimer!, forMode: .default)
+        }
+        
         reloadTableConstraints()
     }
     
@@ -117,8 +127,12 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         tableView.separatorInset = UIEdgeInsets.zero
     }
     
+    private var viewIsBeingViewed: Bool = false
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        viewIsBeingViewed = true
+        
         self.reloadTable()
         
         if getDogManager().hasEnabledDog && getDogManager().hasEnabledRequirement{
@@ -134,6 +148,8 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        viewIsBeingViewed = false
+        
         if loopTimer != nil {
             loopTimer!.invalidate()
             loopTimer = nil

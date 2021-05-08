@@ -44,6 +44,7 @@ class LogsMainScreenTableViewCellBody: UITableViewCell {
         
         logNote.text = logSource.note
 
+        //deactivate old
         for label in [dogName, self.logType, logDate, logNote]{
             var constraintsToDeactivate: [NSLayoutConstraint] = []
             
@@ -58,17 +59,12 @@ class LogsMainScreenTableViewCellBody: UITableViewCell {
         
         var labelWidthConstraints: [NSLayoutConstraint] = []
         
-        let dogNameTextWidth = dogName.text!.boundingFrom(font: dogName.font, height: dogName.frame.height).width
-        let dogNameWidthConstraint = NSLayoutConstraint.init(item: dogName!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: dogNameTextWidth)
-        labelWidthConstraints.append(dogNameWidthConstraint)
-        
-        let logTypeTextWidth = self.logType.text!.boundingFrom(font: self.logType.font, height: self.logType.frame.height).width
-        let logTypeWidthConstaint = NSLayoutConstraint.init(item: self.logType!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: logTypeTextWidth)
-        labelWidthConstraints.append(logTypeWidthConstaint)
-        
-        let logDateTextWidth = logDate.text!.boundingFrom(font: logDate.font, height: logDate.frame.height).width
-        let logDateWidthConstraint = NSLayoutConstraint.init(item: logDate!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: logDateTextWidth)
-        labelWidthConstraints.append(logDateWidthConstraint)
+        //create new
+        for label in [dogName, self.logType, logDate]{
+            let labelTextWidth = label!.text!.boundingFrom(font: label!.font, height: label!.frame.height).width
+            let labelWidthConstraint = NSLayoutConstraint.init(item: label!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: labelTextWidth)
+            labelWidthConstraints.append(labelWidthConstraint)
+        }
         
         if logNote.text?.trimmingCharacters(in: .whitespacesAndNewlines) != ""{
             let logNoteWidthConstraint = NSLayoutConstraint.init(item: logNote!, attribute: .width, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 20.0)

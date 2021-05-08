@@ -13,7 +13,7 @@ protocol DogsRequirementTableViewControllerDelegate {
     func didUpdateRequirements(newRequirementList: [Requirement])
 }
 
-class DogsRequirementTableViewController: UITableViewController, RequirementManagerControlFlowProtocol, DogsInstantiateRequirementViewControllerDelegate, DogsRequirementTableViewCellDelegate {
+class DogsRequirementTableViewController: UITableViewController, RequirementManagerControlFlowProtocol, DogsNestedRequirementViewControllerDelegate, DogsRequirementTableViewCellDelegate {
     
     //MARK: - Dogs Requirement Table View Cell
     
@@ -30,9 +30,9 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
         
     }
     
-    //MARK: - Dogs Instantiate Requirement
+    //MARK: - Dogs Nested Requirement
     
-    var dogsInstantiateRequirementViewController = DogsInstantiateRequirementViewController()
+    var dogsNestedRequirementViewController = DogsNestedRequirementViewController()
     
     ///When this function is called through a delegate, it adds the information to the list of requirements and updates the cells to display it
     func didAddRequirement(sender: Sender, newRequirement: Requirement) throws{
@@ -167,7 +167,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         selectedRequirement = getRequirementManager().requirements[indexPath.row]
-        self.performSegue(withIdentifier: "dogsInstantiateRequirementViewController", sender: self)
+        self.performSegue(withIdentifier: "dogsNestedRequirementViewController", sender: self)
         
     }
     
@@ -192,13 +192,13 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     // MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        //Links delegate to instantiateRequirement
-        if segue.identifier == "dogsInstantiateRequirementViewController" {
-            dogsInstantiateRequirementViewController = segue.destination as! DogsInstantiateRequirementViewController
-            dogsInstantiateRequirementViewController.delegate = self
+        //Links delegate to NestedRequirement
+        if segue.identifier == "dogsNestedRequirementViewController" {
+            dogsNestedRequirementViewController = segue.destination as! DogsNestedRequirementViewController
+            dogsNestedRequirementViewController.delegate = self
             
             if selectedRequirement != nil {
-                dogsInstantiateRequirementViewController.targetRequirement = selectedRequirement!
+                dogsNestedRequirementViewController.targetRequirement = selectedRequirement!
                 selectedRequirement = nil
             }
             
