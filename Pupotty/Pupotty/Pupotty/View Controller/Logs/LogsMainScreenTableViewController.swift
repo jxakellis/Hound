@@ -64,7 +64,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     }
                 }
             }
-            //row in zero that that means filtering by every requirement
+            //row in zero that that means filtering by every known log types
             else if filterIndexPath!.row == 0{
                 let dog = dogManager.dogs[filterIndexPath!.section]
                 
@@ -80,44 +80,13 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     }
                 }
             }
-            //row is not zero so filtering by a specific requirement or dog logs
+            //row is not zero so filtering by a specific known log type
             else{
                 let dog = dogManager.dogs[filterIndexPath!.section]
                 
-                //dog logs filter not possible
-                if filterIsArbitrary == false {
-                    let neededScheduledLogType = dog.dogRequirments.uniqueScheduledLogTypes[filterIndexPath!.row-1]
-                    
-                    //adds all logs from requirement
-                    for requirement in dog.dogRequirments.requirements {
-                        if requirement.requirementType == neededScheduledLogType {
-                            for requirementLog in requirement.logs{
-                                consolidatedLogs.append((dog.dogTraits.dogName, requirement, requirementLog))
-                            }
-                        }
-                    }
-                }
-                //dog logs filter possible
-                else {
-                    //dog logs row
-                    if filterIndexPath!.row == 1 {
-                        for dogLog in dog.dogTraits.logs{
-                            consolidatedLogs.append((dog.dogTraits.dogName, nil, dogLog))
-                        }
-                    }
-                    //specific requirement
-                    else {
-                        let neededScheduledLogType = dog.dogRequirments.uniqueScheduledLogTypes[filterIndexPath!.row-2]
-                        
-                        //adds all logs from requirement
-                        for requirement in dog.dogRequirments.requirements {
-                            if requirement.requirementType == neededScheduledLogType {
-                                for requirementLog in requirement.logs{
-                                    consolidatedLogs.append((dog.dogTraits.dogName, requirement, requirementLog))
-                                }
-                            }
-                        }
-                    }
+                //apennds all known logs to consolidated list, some have requirement and some dont as varies depending on source (i.e. was nested under doglogs or requirement logs)
+                for knownLog in dog.catagorizedLogTypes[filterIndexPath!.row-1].1{
+                    consolidatedLogs.append((dog.dogTraits.dogName, knownLog.0, knownLog.1))
                 }
                 
             }

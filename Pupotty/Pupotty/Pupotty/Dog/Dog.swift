@@ -78,8 +78,8 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     ///RequirmentManager that handles all specified requirements for a dog, e.g. being taken to the outside every time interval or being fed.
     var dogRequirments: RequirementManager = RequirementManager()
     
-    var catagorizedLogTypes: [(KnownLogType, [KnownLog])] {
-        var catagorizedLogTypes: [(KnownLogType, [KnownLog])] = []
+    var catagorizedLogTypes: [(KnownLogType, [(Requirement?, KnownLog)])] {
+        var catagorizedLogTypes: [(KnownLogType, [(Requirement?, KnownLog)])] = []
         
         //handles all dog logs and adds to catagorized log types
         for dogLog in dogTraits.logs{
@@ -104,11 +104,11 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
                     }
                 })
                 
-                catagorizedLogTypes[targetIndex].1.append(dogLog)
+                catagorizedLogTypes[targetIndex].1.append((nil, dogLog))
             }
             //does not contain that dog Log's Type
             else {
-                catagorizedLogTypes.append((dogLog.logType, [dogLog]))
+                catagorizedLogTypes.append((dogLog.logType, [(nil, dogLog)]))
             }
         }
         
@@ -137,13 +137,47 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
                         }
                     })
                     
-                    catagorizedLogTypes[targetIndex].1.append(requirementLog)
+                    catagorizedLogTypes[targetIndex].1.append((requirement, requirementLog))
                 }
                 //does not contain that dog Log's Type
                 else {
-                    catagorizedLogTypes.append((requirementLog.logType, [requirementLog]))
+                    catagorizedLogTypes.append((requirementLog.logType, [(requirement, requirementLog)]))
                 }
             }
+        }
+        
+        //sorts by the order defined by the enum, so whatever case is first in the code of the enum that is the order of the catagorizedLogTypes
+        catagorizedLogTypes.sort { arg1, arg2 in
+            let (knownLogType1, _) = arg1
+            let (knownLogType2, _) = arg2
+            
+            //finds corrosponding index
+            let knownLogType1Index: Int! = KnownLogType.allCases.firstIndex { arg1 in
+                if knownLogType1.rawValue == arg1.rawValue{
+                    return true
+                }
+                else {
+                    return false
+                }
+            }
+            //finds corrosponding index
+            let knownLogType2Index: Int! = KnownLogType.allCases.firstIndex { arg1 in
+                if knownLogType2.rawValue == arg1.rawValue{
+                    return true
+                }
+                else {
+                    return false
+                }
+            }
+            
+            if knownLogType1Index <= knownLogType2Index{
+                return true
+            }
+            else {
+                return false
+            }
+            
+            
         }
         
         return catagorizedLogTypes

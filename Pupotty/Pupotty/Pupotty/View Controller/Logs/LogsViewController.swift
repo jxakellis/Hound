@@ -145,20 +145,9 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
             if indexPath.row == 0 {
                 customCell.label.attributedText = NSAttributedString(string: dog.dogTraits.dogName, attributes: [.font: filterByDogFont])
             }
-            //dog log filter neeeded
-            else if dog.dogTraits.logs.isEmpty == false{
-                //where dog log should be
-                if indexPath.row == 1 {
-                    customCell.label.attributedText = NSAttributedString(string: "Arbitrary Logs", attributes: [.font: filterByLogFont])
-                }
-                //where requirement filter should be
-                else {
-                    //customCell.label.attributedText = NSAttributedString(string: dog.dogRequirments.uniqueScheduledLogTypes[indexPath.row-2].rawValue, attributes: [.font: filterByLogFont])
-                }
-            }
-            //dog log filter not neeeded
+            //dog log filter
             else {
-               // customCell.label.attributedText = NSAttributedString(string: dog.dogRequirments.uniqueScheduledLogTypes[indexPath.row-1].rawValue, attributes: [.font: filterByLogFont])
+                customCell.label.attributedText = NSAttributedString(string: dog.catagorizedLogTypes[indexPath.row-1].0.rawValue, attributes: [.font: filterByLogFont])
             }
             
             if indexPath == filterIndexPath{
@@ -176,15 +165,7 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
         guard sudoDogManager.dogs.isEmpty == false else {
             return 1
         }
-        var count = 1
-        
-        if sudoDogManager.dogs[forSection].dogTraits.logs.isEmpty == false {
-            count = count + 1
-        }
-        
-        //count = count + sudoDogManager.dogs[forSection].dogRequirments.uniqueScheduledLogTypes.count
-        return count
-        
+        return sudoDogManager.dogs[forSection].catagorizedLogTypes.count + 1
     }
     
     func numberOfSections(makeDropDownIdentifier: String) -> Int {
@@ -242,30 +223,23 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
         //DogManagerEfficencyImprovement dogManager = newDogManager.copy() as! DogManager
         dogManager = newDogManager
         
-        let cata = dogManager.dogs[0].catagorizedLogTypes
-        for knownLogType in cata{
-            print(knownLogType.0.rawValue)
-            for log in knownLogType.1{
-                print("\(log.logType.rawValue) \(log.date)")
-            }
-        }
-        print(cata)
-        
-        synchronizeFilterIndexPath()
-        
         if sender.localized is MainTabBarViewController{
             logsMainScreenTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
             
+            //can add logs so needs to remove filter
             filterIndexPath = nil
             logsMainScreenTableViewController?.willApplyFiltering(associatedToIndexPath: filterIndexPath)
             logsAddLogViewController?.navigationController?.popViewController(animated: false)
         }
+        //only deletes logs so ok
         if sender.localized is LogsMainScreenTableViewController{
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
         }
+        
         if sender.localized is LogsAddLogViewController {
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
             
+            //can delete or add logs so needs to remove filter
             logsMainScreenTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
             filterIndexPath = nil
             logsMainScreenTableViewController?.willApplyFiltering(associatedToIndexPath: filterIndexPath)
@@ -293,12 +267,7 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
             var totalCount: Int {
                 var count = 0
                 for dog in getDogManager().dogs{
-                    count = count + 1
-                    if dog.dogTraits.logs.isEmpty == false {
-                        count = count + 1
-                    }
-                    
-                    //count = count + dog.dogRequirments.uniqueScheduledLogTypes.count
+                    count = count + dog.catagorizedLogTypes.count + 1
                 }
                 
                 if count == 0{
@@ -329,27 +298,7 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
     private let dropDown = MakeDropDown()
     
     //IndexPath of a filter selected in the dropDown menu, nil if not filtering
-    private var storedFilterIndexPath: IndexPath? = nil
-    private var filterIndexPath: IndexPath? {
-        get {
-            return storedFilterIndexPath
-        }
-        set(newIndexPath){
-            storedFilterIndexPath = newIndexPath
-            
-            if newIndexPath?.row == 1 && getDogManager().dogs[newIndexPath!.section].dogTraits.logs.isEmpty == false {
-                filterIsArbitrary = true
-            }
-            else {
-                filterIsArbitrary = false
-            }
-            
-            
-        }
-    }
-    
-    ///True if the filter selected is filtering by arbitrary logs, false if not filtering at all or not filtering by arbitrary
-    private var filterIsArbitrary: Bool = false
+    private var filterIndexPath: IndexPath? = nil
     
     var logsMainScreenTableViewController: LogsMainScreenTableViewController! = nil
     
@@ -361,7 +310,6 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.view.bringSubviewToFront(willAddLog)
     }
     
@@ -452,19 +400,6 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
         dropDown.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
         dropDown.setRowHeight(height: self.dropDownRowHeight)
         self.view.addSubview(dropDown)
-    }
-    
-    ///If a change was made in the presence of arbitraryLogs, checks to see if there is a disconnect in filterIndexPath and fixes it. If filtering by arbitrary and then all arbitrary logs are deleted, then in the pop down it makes sure that no filters are selected.
-    private func synchronizeFilterIndexPath(){
-        //filtering by arbitrary and arbitrary is selected
-        if filterIsArbitrary && filterIndexPath?.row == 1 {
-            
-            //arbitrary is no longer possible as all arbitrary deleted, aka disconnect
-            if getDogManager().dogs[filterIndexPath!.section].dogTraits.logs.isEmpty == true {
-                filterIsArbitrary = false
-                filterIndexPath = nil
-            }
-        }
     }
     
     // MARK: - Navigation

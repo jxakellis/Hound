@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -160,7 +160,7 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="empty" id="c4V-iB-Jdn" customClass="HomeMainScreenTableViewCellEmpty" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="414" height="105.5"/>
+                                <rect key="frame" x="0.0" y="24.5" width="414" height="105.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="c4V-iB-Jdn" id="mlE-dN-uuI">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="105.5"/>
@@ -188,7 +188,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="homeMainScreenTableViewCellRequirementDisplay" id="C2j-L1-ESl" customClass="HomeMainScreenTableViewCellRequirementDisplay" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="133.5" width="414" height="100.5"/>
+                                <rect key="frame" x="0.0" y="130" width="414" height="100.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="C2j-L1-ESl" id="pda-EH-Ara">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="100.5"/>
@@ -326,7 +326,7 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="dogsRequirementTableViewCell" id="79O-Ma-zM6" customClass="DogsRequirementTableViewCell" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="414" height="65.5"/>
+                                <rect key="frame" x="0.0" y="24.5" width="414" height="65.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="79O-Ma-zM6" id="uZD-xf-ZPI">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="65.5"/>
@@ -1036,7 +1036,7 @@
                         <viewLayoutGuide key="frameLayoutGuide" id="dO0-k2-qcN"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="16" reuseIdentifier="dogsMainScreenTableViewCellDogDisplay" id="tHZ-ho-5tn" customClass="DogsMainScreenTableViewCellDogDisplay" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="414" height="80.5"/>
+                                <rect key="frame" x="0.0" y="24.5" width="414" height="80.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" tableViewCell="tHZ-ho-5tn" id="G9A-nQ-CAR">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="80.5"/>
@@ -1098,7 +1098,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="dogsMainScreenTableViewCellRequirementDisplay" id="Lai-xI-ipQ" customClass="DogsMainScreenTableViewCellRequirementDisplay" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="108.5" width="414" height="94.5"/>
+                                <rect key="frame" x="0.0" y="105" width="414" height="94.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" tableViewCell="Lai-xI-ipQ" id="g9N-na-X20">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="94.5"/>
@@ -1442,7 +1442,7 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellHeader" id="tUb-6f-NwU" customClass="LogsMainScreenTableViewCellHeader" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="414" height="40.5"/>
+                                <rect key="frame" x="0.0" y="24.5" width="414" height="40.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="tUb-6f-NwU" id="bMw-jC-JqT">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="40.5"/>
@@ -1471,7 +1471,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellBody" id="vFK-E5-puQ" customClass="LogsMainScreenTableViewCellBody" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="68.5" width="414" height="40.5"/>
+                                <rect key="frame" x="0.0" y="65" width="414" height="40.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vFK-E5-puQ" id="3L0-6w-EHw">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="40.5"/>
@@ -1614,7 +1614,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Dog Logs" id="mPD-W7-7Ov">
-                        <barButtonItem key="leftBarButtonItem" enabled="NO" title="Filter" id="yUW-46-74D">
+                        <barButtonItem key="leftBarButtonItem" title="Filter" id="yUW-46-74D">
                             <connections>
                                 <action selector="willShowFilter:" destination="xhV-UK-dqn" id="Ssp-a0-wHp"/>
                             </connections>
