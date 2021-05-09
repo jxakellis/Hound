@@ -153,12 +153,12 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
                 }
                 //where requirement filter should be
                 else {
-                    customCell.label.attributedText = NSAttributedString(string: dog.dogRequirments.uniqueScheduledLogTypes[indexPath.row-2].rawValue, attributes: [.font: filterByLogFont])
+                    //customCell.label.attributedText = NSAttributedString(string: dog.dogRequirments.uniqueScheduledLogTypes[indexPath.row-2].rawValue, attributes: [.font: filterByLogFont])
                 }
             }
             //dog log filter not neeeded
             else {
-                customCell.label.attributedText = NSAttributedString(string: dog.dogRequirments.uniqueScheduledLogTypes[indexPath.row-1].rawValue, attributes: [.font: filterByLogFont])
+               // customCell.label.attributedText = NSAttributedString(string: dog.dogRequirments.uniqueScheduledLogTypes[indexPath.row-1].rawValue, attributes: [.font: filterByLogFont])
             }
             
             if indexPath == filterIndexPath{
@@ -182,7 +182,7 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
             count = count + 1
         }
         
-        count = count + sudoDogManager.dogs[forSection].dogRequirments.uniqueScheduledLogTypes.count
+        //count = count + sudoDogManager.dogs[forSection].dogRequirments.uniqueScheduledLogTypes.count
         return count
         
     }
@@ -242,6 +242,15 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
         //DogManagerEfficencyImprovement dogManager = newDogManager.copy() as! DogManager
         dogManager = newDogManager
         
+        let cata = dogManager.dogs[0].catagorizedLogTypes
+        for knownLogType in cata{
+            print(knownLogType.0.rawValue)
+            for log in knownLogType.1{
+                print("\(log.logType.rawValue) \(log.date)")
+            }
+        }
+        print(cata)
+        
         synchronizeFilterIndexPath()
         
         if sender.localized is MainTabBarViewController{
@@ -289,7 +298,7 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
                         count = count + 1
                     }
                     
-                    count = count + dog.dogRequirments.uniqueScheduledLogTypes.count
+                    //count = count + dog.dogRequirments.uniqueScheduledLogTypes.count
                 }
                 
                 if count == 0{

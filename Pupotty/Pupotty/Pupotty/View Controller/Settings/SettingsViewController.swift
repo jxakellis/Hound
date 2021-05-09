@@ -19,6 +19,7 @@ class SettingsViewController: UIViewController, ToolTipable {
     @IBOutlet private weak var notificationToggleSwitch: UISwitch!
     
     @IBAction private func didToggleNotificationEnabled(_ sender: Any) {
+        self.willHideToolTip()
         
         UNUserNotificationCenter.current().getNotificationSettings { (permission) in
             switch permission.authorizationStatus {
@@ -88,25 +89,26 @@ class SettingsViewController: UIViewController, ToolTipable {
     @IBOutlet private weak var followUpToggleSwitch: UISwitch!
     
     @IBAction private func didToggleFollowUp(_ sender: Any) {
+        self.willHideToolTip()
         NotificationConstant.shouldFollowUp = followUpToggleSwitch.isOn
     }
     
     private func synchronizeFollowUpComponents(animated: Bool){
-            //notifications are enabled
-            if NotificationConstant.isNotificationEnabled == true {
-                followUpToggleSwitch.isEnabled = true
-                followUpToggleSwitch.setOn(NotificationConstant.shouldFollowUp, animated: animated)
-                
-                followUpDelayInterval.isEnabled = true
-            }
-            //notifications are disabled
-            else {
-                followUpToggleSwitch.isEnabled = false
-                followUpToggleSwitch.setOn(false, animated: animated)
-                NotificationConstant.shouldFollowUp = false
-                
-                followUpDelayInterval.isEnabled = false
-            }
+        //notifications are enabled
+        if NotificationConstant.isNotificationEnabled == true {
+            followUpToggleSwitch.isEnabled = true
+            followUpToggleSwitch.setOn(NotificationConstant.shouldFollowUp, animated: animated)
+            
+            followUpDelayInterval.isEnabled = true
+        }
+        //notifications are disabled
+        else {
+            followUpToggleSwitch.isEnabled = false
+            followUpToggleSwitch.setOn(false, animated: animated)
+            NotificationConstant.shouldFollowUp = false
+            
+            followUpDelayInterval.isEnabled = false
+        }
     }
     
     //MARK: - Follow Up Delay
@@ -114,6 +116,7 @@ class SettingsViewController: UIViewController, ToolTipable {
     @IBOutlet weak var followUpDelayInterval: UIDatePicker!
     
     @IBAction func didUpdateFollowUpDelay(_ sender: Any) {
+        self.willHideToolTip()
         NotificationConstant.followUpDelay = followUpDelayInterval.countDownDuration
     }
     
@@ -124,6 +127,7 @@ class SettingsViewController: UIViewController, ToolTipable {
     
     ///If the pause all timers switch it triggered, calls thing function
     @IBAction private func didTogglePause(_ sender: Any) {
+        self.willHideToolTip()
         delegate.didTogglePause(newPauseState: pauseToggleSwitch.isOn)
     }
     
@@ -145,93 +149,137 @@ class SettingsViewController: UIViewController, ToolTipable {
     @IBOutlet private weak var snoozeInterval: UIDatePicker!
     
     @IBAction private func didUpdateSnoozeInterval(_ sender: Any) {
+        self.willHideToolTip()
         TimerConstant.defaultSnooze = snoozeInterval.countDownDuration
     }
     
     //MARK: - Tool Tip
     
+    @IBOutlet private weak var followUpNotificationToolTip: UIButton!
     
+    @IBAction private func didClickFollowUpNotificationToolTip(_ sender: Any) {
+        followUpNotificationToolTip.isUserInteractionEnabled = false
         
-        private var currentToolTip: ToolTipView?
-        
-        @IBOutlet private weak var followUpNotificationToolTip: UIButton!
-    
-        @IBAction private func didClickFollowUpNotificationToolTip(_ sender: Any) {
-            followUpNotificationToolTip.isUserInteractionEnabled = false
-            
-            if currentToolTip != nil {
-                hideToolTip(sourceButton: followUpNotificationToolTip)
-            }
-            else {
-                showToolTip(sourceButton: followUpNotificationToolTip, message: "Sends a follow up \nnotification if you don't\nrespond to the first one.")
-                //"Sends a follow up \nnotification if the first one\nis not responded to"
+        //followUpNotificationToolTip tool tip is shown
+        if toolTipViews[0] != nil {
+            hideToolTip(targetTipView: toolTipViews[0]) {
+                self.followUpNotificationToolTip.isUserInteractionEnabled = true
             }
         }
+        //needs to show followUpNotificationToolTip
+        else {
+            showToolTip(sourceButton: followUpNotificationToolTip, message: "Sends a follow up \nnotification if you don't\nrespond to the first one.")
+            //"Sends a follow up \nnotification if the first one\nis not responded to"
+        }
+    }
     
     @IBOutlet private weak var snoozeLengthToolTip: UIButton!
     
     @IBAction private func didClickSnoozeLengthToolTip(_ sender: Any) {
+        
+        snoozeLengthToolTip.isUserInteractionEnabled = false
+        
+        //snoozeLengthToolTip tool tip shown
+        if toolTipViews[1] != nil {
+            hideToolTip(targetTipView: toolTipViews[1]) {
+                self.snoozeLengthToolTip.isUserInteractionEnabled = true
+            }
+        }
+        //needs to show snoozeLengthToolTip
+        else {
+            showToolTip(sourceButton: snoozeLengthToolTip, message: "If an alarm is snoozed,\nthis is the length of time\nuntil it sounds again.")
+            //"Sends a follow up \nnotification if the first one\nis not responded to"
+        }
     }
     
     
+    
+    func showToolTip(sourceButton: UIButton, message: String) {
+        let tipView = ToolTipView(sourceView: sourceButton, message: message, toolTipPosition: .middle)
+        sourceButton.superview?.addSubview(tipView)
+        performToolTipShow(sourceButton: sourceButton, tipView)
         
-        func showToolTip(sourceButton: UIButton, message: String) {
-            let tipView = ToolTipView(sourceView: sourceButton, message: message, toolTipPosition: .middle)
-            sourceButton.superview?.addSubview(tipView)
-            currentToolTip = tipView
-            performToolTipShow(sourceButton: sourceButton, tipView)
+        switch sourceButton {
+            case followUpNotificationToolTip:
+                toolTipViews[0] = tipView
+            case snoozeLengthToolTip:
+                toolTipViews[1] = tipView
+            default:
+                print("fall through showToolTip SettingsViewController")
         }
+    }
+    
+    func hideToolTip(targetTipView: ToolTipView?, completion: (() -> Void)?) {
         
-        func hideToolTip(sourceButton: UIButton? = nil) {
-                if self.currentToolTip != nil{
-                    UIView.animate(withDuration: 0.3, delay: 0.3, options: .curveEaseOut, animations: {
-                        self.currentToolTip!.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-                    }) { finished in
-                        self.currentToolTip?.removeFromSuperview()
-                        self.currentToolTip = nil
-                        if sourceButton != nil {
-                            sourceButton!.isUserInteractionEnabled = true
-                        }
-                        
+        if targetTipView != nil{
+            UIView.animate(withDuration: 0.3, delay: 0.3, options: .curveEaseOut, animations: {
+                targetTipView!.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+            }) { finished in
+                targetTipView?.removeFromSuperview()
+                
+                for tipViewIndex in 0..<self.toolTipViews.count{
+                    if self.toolTipViews[tipViewIndex] == targetTipView!{
+                        self.toolTipViews[tipViewIndex] = nil
                     }
                 }
-            
-            
+                
+                if completion != nil {
+                    completion!()
+                }
+            }
         }
+        else {
+            for tipViewIndex in 0..<self.toolTipViews.count{
+                var tipView = toolTipViews[tipViewIndex]
+                guard tipView != nil else {
+                    continue
+                }
+                UIView.animate(withDuration: 0.3, delay: 0.3, options: .curveEaseOut, animations: {
+                    tipView!.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+                }) { finished in
+                    tipView?.removeFromSuperview()
+                    tipView = nil
+                }
+            }
+        }
+        
+        
+    }
     
     ///If hideToolTip is exposed to objc and used in selector for tap gesture recognizer then for some reason
     @objc private func willHideToolTip(){
-        hideToolTip()
+        hideToolTip(targetTipView: nil, completion: nil)
     }
     
     //MARK: - Reset
     @IBAction private func willReset(_ sender: Any) {
+        self.willHideToolTip()
         
-         let alertController = GeneralAlertController(
-             title: "Are you sure you want to reset?",
-             message: "This action will delete and reset all data to default, in the process restarting the app.",
-             preferredStyle: .alert)
-         
-         let alertReset = UIAlertAction(
-             title:"Reset",
+        let alertController = GeneralAlertController(
+            title: "Are you sure you want to reset?",
+            message: "This action will delete and reset all data to default, in the process restarting the app.",
+            preferredStyle: .alert)
+        
+        let alertReset = UIAlertAction(
+            title:"Reset",
             style: .destructive,
-             handler:
-                 {
-                     (alert: UIAlertAction!)  in
+            handler:
+                {
+                    (alert: UIAlertAction!)  in
                     UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
                     
                     let restartTimer = Timer(fireAt: Date(), interval: -1, target: self, selector: #selector(self.showRestartMessage), userInfo: nil, repeats: false)
                     
                     RunLoop.main.add(restartTimer, forMode: .common)
-                 })
+                })
         
         let alertCancel = UIAlertAction(title:"Cancel", style: .cancel, handler: nil)
-         
-         alertController.addAction(alertReset)
-         alertController.addAction(alertCancel)
-         
-         AlertPresenter.shared.enqueueAlertForPresentation(alertController)
-         
+        
+        alertController.addAction(alertReset)
+        alertController.addAction(alertCancel)
+        
+        AlertPresenter.shared.enqueueAlertForPresentation(alertController)
+        
     }
     
     @objc private func showRestartMessage(){
@@ -252,6 +300,8 @@ class SettingsViewController: UIViewController, ToolTipable {
     var delegate: SettingsViewControllerDelegate! = nil
     
     @IBOutlet weak var scrollViewContainerForAll: UIView!
+    
+    private var toolTipViews: [ToolTipView?] = [nil, nil]
     
     //MARK: - Main
     
@@ -277,7 +327,7 @@ class SettingsViewController: UIViewController, ToolTipable {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        hideToolTip()
+        hideToolTip(targetTipView: nil, completion: nil)
     }
     
     private func setupConstraints(){
@@ -304,31 +354,31 @@ class SettingsViewController: UIViewController, ToolTipable {
             NSLayoutConstraint.activate([followUpLabelConstraint])
         }
         
-         func setupSnoozeLengthLabelWidth(){
-             var snoozeLengthLabelWidth: CGFloat {
-                 let neededConstraintSpace: CGFloat = 10.0 + 3.0 + 3.0 + 45.0
-                 let otherButtonSpace: CGFloat = snoozeLengthLabel.frame.width + snoozeLengthToolTip.frame.width
-                 let maximumWidth: CGFloat = view.frame.width - otherButtonSpace - neededConstraintSpace
-                 
-                 let neededLabelSize: CGSize = (snoozeLengthLabel.text?.boundingFrom(font: snoozeLengthLabel.font, height: snoozeLengthLabel.frame.height))!
-                 
-                 let neededLabelWidth: CGFloat = neededLabelSize.width
-                 
-                 if neededLabelWidth > maximumWidth {
-                     return maximumWidth
-                 }
-                 else {
-                     return neededLabelWidth
-                 }
-             }
-             
-             let snoozeLengthConstraint = NSLayoutConstraint(item: snoozeLengthLabel!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: snoozeLengthLabelWidth)
+        func setupSnoozeLengthLabelWidth(){
+            var snoozeLengthLabelWidth: CGFloat {
+                let neededConstraintSpace: CGFloat = 10.0 + 3.0 + 3.0 + 45.0
+                let otherButtonSpace: CGFloat = snoozeLengthLabel.frame.width + snoozeLengthToolTip.frame.width
+                let maximumWidth: CGFloat = view.frame.width - otherButtonSpace - neededConstraintSpace
+                
+                let neededLabelSize: CGSize = (snoozeLengthLabel.text?.boundingFrom(font: snoozeLengthLabel.font, height: snoozeLengthLabel.frame.height))!
+                
+                let neededLabelWidth: CGFloat = neededLabelSize.width
+                
+                if neededLabelWidth > maximumWidth {
+                    return maximumWidth
+                }
+                else {
+                    return neededLabelWidth
+                }
+            }
+            
+            let snoozeLengthConstraint = NSLayoutConstraint(item: snoozeLengthLabel!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: snoozeLengthLabelWidth)
             snoozeLengthLabel.addConstraint(snoozeLengthConstraint)
-             NSLayoutConstraint.activate([snoozeLengthConstraint])
-         }
-         
+            NSLayoutConstraint.activate([snoozeLengthConstraint])
+        }
         
-       
+        
+        
         
         setupFollowUpLabelWidth()
         setupSnoozeLengthLabelWidth()

@@ -97,7 +97,7 @@ protocol ToolTipable {
     func performToolTipShow(sourceButton: UIButton, _ v: UIView?)
     
     ///Hides the tool tip
-    func hideToolTip(sourceButton: UIButton?)
+    func hideToolTip(targetTipView: ToolTipView?, completion: (() -> Void)?)
 }
 
 extension ToolTipable {

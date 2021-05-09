@@ -43,7 +43,7 @@ class DogsInformationViewController: UIViewController {
     private func setupLabelText(){
         
         let howToUseBodyAttributedText = NSMutableAttributedString(string: "Log Reminder:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)])
-        howToUseBodyAttributedText.append(NSAttributedString(string: "\nIf you complete a reminder early (before its alarm sounds) click on it, select \"Did it!\", and Pupotty will handle the rest.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
+        howToUseBodyAttributedText.append(NSAttributedString(string: "\nIf you complete a reminder early (before its alarm sounds) click on it, select \"Log ...\", and Pupotty will handle the rest.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Create New:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
         howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo create a new dog or reminder, click on the blue ⊕ and then the corresponding option.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
@@ -54,11 +54,11 @@ class DogsInformationViewController: UIViewController {
         
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Edit Current:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
-        howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo modify a dog or reminder, click on the desired one. From there you can see and change all of its information, excluding logs.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
+        howToUseBodyAttributedText.append(NSAttributedString(string: "\nIf you want to modify a dog or reminder, click on it and select \"Edit ...\". From there you can see and change all of its information, excluding logs.\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
         
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Delete Current:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
-        howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo delete a dog or reminder, either swipe left on it or click on it an select \"Delete\".\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
+        howToUseBodyAttributedText.append(NSAttributedString(string: "\nTo delete a dog or reminder, either swipe left on it or click on it and select \"Delete ...\".\n\n", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
         
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Reminder Timing:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))

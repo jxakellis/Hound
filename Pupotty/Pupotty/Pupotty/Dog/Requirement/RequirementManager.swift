@@ -38,9 +38,6 @@ protocol RequirementManagerProtocol {
     ///finds and returns the index of a requirement with a uuid in terms of the requirement: [Requirement] array
     func findIndex(forUUID uuid: String) throws -> Int
     
-    ///Returns an array of each unique occurance of a requirement type in all of the requirements
-    var uniqueScheduledLogTypes: [ScheduledLogType] { get }
-    
 }
 
 extension RequirementManagerProtocol {
@@ -146,19 +143,6 @@ extension RequirementManagerProtocol {
         throw RequirementManagerError.requirementNotPresent
     }
     
-    var uniqueScheduledLogTypes: [ScheduledLogType] {
-        var requirementTypes: [ScheduledLogType] = []
-        
-        for requirement in requirements{
-            if requirementTypes.contains(requirement.requirementType) == false {
-                requirementTypes.append(requirement.requirementType)
-            }
-        }
-        
-        return requirementTypes
-    }
-    
-    
      mutating private func sortRequirements(){
          requirements.sort { (req1, req2) -> Bool in
              if req1.timingStyle == .countDown && req2.timingStyle == .countDown{
@@ -194,7 +178,6 @@ extension RequirementManagerProtocol {
              }
          }
      }
-     
     
 }
 
