@@ -51,7 +51,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         
     }
     ///If a requirement was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the requirements information
-    func willEditRequirement(parentDogName: String, requirementUUID: String) {
+    func willEditRequirement(parentDogName: String, requirementUUID: String?) {
         
         willOpenRequirement(parentDogName: parentDogName, requirementUUID: requirementUUID)
         
@@ -202,10 +202,12 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         self.performSegue(withIdentifier: "dogsIndependentRequirementViewController", sender: self)
         dogsIndependentRequirementViewController.parentDogName = parentDogName
         
+        //updating
         if requirementUUID != nil {
             dogsIndependentRequirementViewController.targetRequirement = try! getDogManager().findDog(dogName: parentDogName).dogRequirments.findRequirement(forUUID: requirementUUID!)
             dogsIndependentRequirementViewController.isUpdating = true
         }
+        //new
         else {
             dogsIndependentRequirementViewController.isUpdating = false
         }

@@ -25,6 +25,7 @@ class Persistence{
             NotificationConstant.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool
             
             DogsNavigationViewController.hasBeenLoadedBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue) as! Bool
+            LogsViewController.isCompactView = UserDefaults.standard.value(forKey: UserDefaultsKeys.isCompactView.rawValue) as! Bool
         }
         
         else {
@@ -60,6 +61,7 @@ class Persistence{
             UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
             
             UserDefaults.standard.setValue(DogsNavigationViewController.hasBeenLoadedBefore, forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue)
+            UserDefaults.standard.setValue(LogsViewController.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
             
             MainTabBarViewController.firstTimeSetup = true
             
@@ -109,6 +111,7 @@ class Persistence{
         UserDefaults.standard.setValue(NotificationConstant.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
         
         UserDefaults.standard.setValue(DogsNavigationViewController.hasBeenLoadedBefore, forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue)
+        UserDefaults.standard.setValue(LogsViewController.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
         
         if isTerminating == true  {
             

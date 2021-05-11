@@ -18,12 +18,12 @@ enum DogConstant {
 }
 
 enum RequirementConstant {
-    static let defaultType = ScheduledLogType.feed
+    static let defaultType = ScheduledLogType.allCases[0]
     static let defaultTimeInterval = (3600*0.5)
     static let defaultEnable: Bool = true
     static var defaultRequirementOne: Requirement {
         let req = Requirement()
-        req.requirementType = defaultType
+        req.requirementType = ScheduledLogType.potty
         req.countDownComponents.changeExecutionInterval(newExecutionInterval: defaultTimeInterval)
         req.setEnable(newEnableStatus: defaultEnable)
         return req
@@ -66,7 +66,7 @@ enum DogManagerConstant {
 }
 
 enum TimerConstant {
-    static var defaultSnooze: TimeInterval = TimeInterval(60*30)
+    static var defaultSnooze: TimeInterval = TimeInterval(60*5)
     static var defaultTimeOfDay: DateComponents = DateComponents(calendar: nil, timeZone: nil, era: nil, year: nil, month: nil, day: nil, hour: 8, minute: 30, second: 0, nanosecond: 0, weekday: nil, weekdayOrdinal: nil, quarter: nil, weekOfMonth: nil, weekOfYear: nil, yearForWeekOfYear: nil)
     static var defaultSkipStatus: Bool = false
     static var defaultSystemSound: SystemSoundID = SystemSoundID(1007)
@@ -87,6 +87,9 @@ enum UserDefaultsKeys: String{
     
     //DogsViewController
     case hasBeenLoadedBefore = "hasBeenLoadedBefore"
+    
+    //LogsViewController
+    case isCompactView = "isCompactView"
     
     //Timing
     case isPaused = "isPaused"

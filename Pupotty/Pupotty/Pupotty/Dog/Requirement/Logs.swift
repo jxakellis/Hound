@@ -14,6 +14,8 @@ enum ScheduledLogType: String, CaseIterable {
     case feed = "Feed"
     case potty = "Potty"
     case walk = "Walk"
+    case medicine = "Medicine"
+    case brush = "Brush"
     case sleep = "Sleep"
     case crate = "Crate"
     case other = "Other"
@@ -36,6 +38,8 @@ enum KnownLogType: String, CaseIterable {
     case accident = "Accident"
     
     case walk = "Walk"
+    case medicine = "Medicine"
+    case brush = "Brush"
     
     case wakeup = "Wake up"
     

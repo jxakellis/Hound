@@ -148,7 +148,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
             //"Any changes you have made won't be saved"
             let unsavedInformationConfirmation = GeneralAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
             
-            let alertActionExit = UIAlertAction(title: "Yes, I don't want to save", style: .default) { (UIAlertAction) in
+            let alertActionExit = UIAlertAction(title: "Yes, I don't want to save my new changes", style: .default) { (UIAlertAction) in
                 //self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
                 self.navigationController?.popViewController(animated: true)
             }

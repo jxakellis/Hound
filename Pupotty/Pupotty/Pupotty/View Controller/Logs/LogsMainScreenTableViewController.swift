@@ -205,7 +205,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     ///IndexPath of current filtering scheme
     private var filterIndexPath: IndexPath? = nil
     
-    private var filterIsArbitrary: Bool = false
+    private var isCompactView: Bool = false
     
     var delegate: LogsMainScreenTableViewControllerDelegate! = nil
     
@@ -234,15 +234,14 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         filterIndexPath = indexPath
         
-        //filtering by dog logs
-        if filterIndexPath?.row == 1 && getDogManager().dogs[indexPath!.section].dogTraits.logs.isEmpty == false {
-            filterIsArbitrary = true
+        reloadTable()
+    }
+    
+    func willChangeViewMode(isCompactView: Bool){
+        guard isCompactView != self.isCompactView else {
+            return
         }
-        //not filtering by dog logs
-        else {
-            filterIsArbitrary = false
-        }
-        
+        self.isCompactView = isCompactView
         reloadTable()
     }
     
@@ -291,14 +290,30 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         }
         //log
         else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBody", for: indexPath)
-            
-            let customCell = cell as! LogsMainScreenTableViewCellBody
             let logDisplay = uniqueLogs[indexPath.section].2[indexPath.row-1]
+            let dog = try! getDogManager().findDog(dogName: logDisplay.0)
+            let icon = dog.dogTraits.icon
             
-            customCell.setup(parentDogName: logDisplay.0, requirement: logDisplay.1, log: logDisplay.2)
+            if icon != DogConstant.defaultIcon && self.isCompactView == false{
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyWithIcon", for: indexPath)
+                
+                let customCell = cell as! LogsMainScreenTableViewCellBodyWithIcon
+                
+                customCell.setup(parentDogName: logDisplay.0, requirement: logDisplay.1, log: logDisplay.2)
+                
+                return cell
+            }
+            else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyWithoutIcon", for: indexPath)
+                
+                let customCell = cell as! LogsMainScreenTableViewCellBodyWithoutIcon
+                
+                
+                customCell.setup(parentDogName: logDisplay.0, requirement: logDisplay.1, log: logDisplay.2)
+                
+                return cell
+            }
             
-            return cell
         }
     }
     

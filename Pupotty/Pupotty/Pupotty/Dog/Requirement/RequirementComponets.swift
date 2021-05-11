@@ -167,7 +167,7 @@ protocol TimeOfDayComponentsProtocol {
     ///Whether or not the next time of day alarm will be skipped
     var isSkipping: Bool { get }
     ///Changes isSkipping and data associated
-    mutating func changeIsSkipping(newSkipStatus: Bool)
+    mutating func changeIsSkipping(newSkipStatus: Bool, shouldRemoveLogDuringPossibleUnskip: Bool?)
     
     ///If is skipping is true, then a certain log date was appended. If unskipped it has to remove that certain logDate, but if logs was modified with the Logs page then you have to figure out if that certain log date is still there and if so then remove it.
     var isSkippingLogDate: Date? { get set }
@@ -264,7 +264,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     
     private var storedIsSkipping: Bool = TimerConstant.defaultSkipStatus
     var isSkipping: Bool { return storedIsSkipping }
-    func changeIsSkipping(newSkipStatus: Bool) {
+    func changeIsSkipping(newSkipStatus: Bool, shouldRemoveLogDuringPossibleUnskip: Bool?) {
         guard newSkipStatus != storedIsSkipping else {
             return
         }
@@ -273,7 +273,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
             isSkippingLogDate = Date()
         }
         else {
-            if isSkippingLogDate != nil{
+            if isSkippingLogDate != nil && shouldRemoveLogDuringPossibleUnskip == true{
                 //if the log added by skipping the reminder is unmodified, finds and removes it in the unskip process
                 for logDateIndex in 0..<masterRequirement.logs.count{
                     if masterRequirement.logs[logDateIndex].date.distance(to: isSkippingLogDate!) < 1 && masterRequirement.logs[logDateIndex].date.distance(to: isSkippingLogDate!) > -1{
@@ -300,7 +300,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         }
         else if storedWeekDays != newWeekdays! {
             storedWeekDays = newWeekdays!
-            changeIsSkipping(newSkipStatus: false)
+            changeIsSkipping(newSkipStatus: false, shouldRemoveLogDuringPossibleUnskip: false)
         }
         else {
         }
@@ -433,7 +433,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     }
     
     func timerReset() {
-        changeIsSkipping(newSkipStatus: false)
+        changeIsSkipping(newSkipStatus: false, shouldRemoveLogDuringPossibleUnskip: false)
     }
     
     

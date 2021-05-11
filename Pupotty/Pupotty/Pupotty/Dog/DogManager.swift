@@ -164,7 +164,7 @@ extension DogManagerProtocol {
                 let unskipDate = requirement.timeOfDayComponents.unskipDate(timerMode: requirement.timerMode, requirementExecutionBasis: requirement.executionBasis)
                 
                 if unskipDate != nil && Date().distance(to: unskipDate!) < 0{
-                    self.dogs[dogIndex].dogRequirments.requirements[requirementIndex].timeOfDayComponents.changeIsSkipping(newSkipStatus: true)
+                    self.dogs[dogIndex].dogRequirments.requirements[requirementIndex].timeOfDayComponents.changeIsSkipping(newSkipStatus: true, shouldRemoveLogDuringPossibleUnskip: nil)
                     self.dogs[dogIndex].dogRequirments.requirements[requirementIndex].changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
                 }
             }

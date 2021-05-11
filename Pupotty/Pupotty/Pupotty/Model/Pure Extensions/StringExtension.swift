@@ -56,11 +56,13 @@ extension String {
             throw StringExtensionError.invalidDateComponents
         }
         
+        
+        
         let hour: Int = interperatedDateComponents.hour!
         let minute: Int = interperatedDateComponents.minute!
         
         var amOrPM: String {
-            if hour <= 12 {
+            if hour < 12 {
                 return "AM"
             }
             else {
@@ -71,6 +73,9 @@ extension String {
         var adjustedHour = hour
         if adjustedHour > 12 {
             adjustedHour = adjustedHour - 12
+        }
+        else if adjustedHour == 0 {
+            adjustedHour = 12
         }
         
         if minute < 10 {

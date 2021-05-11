@@ -592,7 +592,7 @@
                                     <constraint firstAttribute="height" constant="40" id="fYP-CF-N0q"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES" textContentType="name"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                             </textField>
                             <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9Ma-OG-XR6" customClass="ScaledButton" customModule="Pupotty" customModuleProvider="target">
                                 <rect key="frame" x="314" y="713" width="90" height="90"/>
@@ -1007,7 +1007,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Reminders" id="3cK-GK-ZQ2">
-                        <barButtonItem key="rightBarButtonItem" image="info.circle" catalog="system" id="cjC-bn-PB6">
+                        <barButtonItem key="rightBarButtonItem" image="questionmark.circle" catalog="system" id="cjC-bn-PB6">
                             <connections>
                                 <segue destination="HpE-Bb-ELa" kind="show" id="jUb-7K-YlV"/>
                             </connections>
@@ -1210,12 +1210,12 @@
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="550"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gVu-eH-0bi">
-                                                <rect key="frame" x="188.5" y="157.5" width="25" height="25"/>
+                                                <rect key="frame" x="205" y="157.5" width="25" height="25"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="25" id="UXx-e9-Qn5"/>
                                                 </constraints>
                                                 <color key="tintColor" systemColor="labelColor"/>
-                                                <state key="normal" image="info.circle" catalog="system">
+                                                <state key="normal" image="questionmark.circle" catalog="system">
                                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="20"/>
                                                 </state>
                                                 <connections>
@@ -1273,8 +1273,8 @@
                                                     <action selector="didToggleNotificationEnabled:" destination="yOJ-Bd-jVl" eventType="valueChanged" id="TjR-T5-4S3"/>
                                                 </connections>
                                             </switch>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Follow Up Reminder" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="8Fc-Ih-bii" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="155" width="175.5" height="30"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Follow Up Notification" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="8Fc-Ih-bii" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="155" width="192" height="30"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="30" id="Daw-Ce-vvh"/>
                                                 </constraints>
@@ -1335,7 +1335,7 @@
                                                     <constraint firstAttribute="height" constant="25" id="a89-3g-9GE"/>
                                                 </constraints>
                                                 <color key="tintColor" systemColor="labelColor"/>
-                                                <state key="normal" image="info.circle" catalog="system">
+                                                <state key="normal" image="questionmark.circle" catalog="system">
                                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="20"/>
                                                 </state>
                                                 <connections>
@@ -1442,16 +1442,16 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellHeader" id="tUb-6f-NwU" customClass="LogsMainScreenTableViewCellHeader" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="24.5" width="414" height="40.5"/>
+                                <rect key="frame" x="0.0" y="24.5" width="414" height="45.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="tUb-6f-NwU" id="bMw-jC-JqT">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="40.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="45.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Monday, April 19, 2021 (EX)" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Qpg-Gb-NBl" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                            <rect key="frame" x="10" y="5" width="394" height="30.5"/>
+                                            <rect key="frame" x="10" y="5" width="394" height="35.5"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="30" id="dnn-k0-I7N"/>
+                                                <constraint firstAttribute="height" constant="35" id="dnn-k0-I7N"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1470,69 +1470,71 @@
                                     <outlet property="header" destination="Qpg-Gb-NBl" id="1wS-ez-ufa"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellBody" id="vFK-E5-puQ" customClass="LogsMainScreenTableViewCellBody" customModule="Pupotty" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="65" width="414" height="40.5"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellBodyWithIcon" id="vFK-E5-puQ" customClass="LogsMainScreenTableViewCellBodyWithIcon" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="70" width="414" height="55.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vFK-E5-puQ" id="3L0-6w-EHw">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="40.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="55.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Bella (EX)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="I8b-bv-nCs" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                            <rect key="frame" x="10" y="10" width="72" height="20.5"/>
+                                            <rect key="frame" x="56.5" y="10" width="72" height="35.5"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="asK-tU-yM1"/>
+                                                <constraint firstAttribute="height" constant="35" id="asK-tU-yM1"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" text="Potty(EX)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="256-LL-2wv" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                            <rect key="frame" x="92" y="10" width="68" height="20.5"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="1Z6-Vj-lLp"/>
-                                            </constraints>
+                                            <rect key="frame" x="138.5" y="10" width="68" height="35.5"/>
                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="11:11 AM (EX)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="GBf-dW-x4B" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                            <rect key="frame" x="170" y="10" width="91.5" height="20.5"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="hNQ-Us-zDJ"/>
-                                            </constraints>
+                                            <rect key="frame" x="216.5" y="10" width="91.5" height="35.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.5" contentMode="scaleAspectFit" horizontalHuggingPriority="254" verticalHuggingPriority="254" horizontalCompressionResistancePriority="754" verticalCompressionResistancePriority="754" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="ECs-Mb-B4l">
-                                            <rect key="frame" x="387.5" y="10" width="16.5" height="21"/>
+                                            <rect key="frame" x="377.5" y="10" width="26.5" height="36"/>
                                             <color key="tintColor" systemColor="systemGrayColor"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" secondItem="ECs-Mb-B4l" secondAttribute="height" multiplier="1:1.5" id="bHB-Mt-AJD"/>
                                             </constraints>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="NOTE" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="ch9-X0-qjW" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
-                                            <rect key="frame" x="271.5" y="10" width="106" height="20.5"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="bM8-85-rOi"/>
-                                            </constraints>
+                                            <rect key="frame" x="318" y="10" width="49.5" height="35.5"/>
                                             <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="yyV-wd-Cpp">
+                                            <rect key="frame" x="3" y="2.5" width="50.5" height="50.5"/>
+                                            <color key="backgroundColor" systemColor="systemBlueColor"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" secondItem="yyV-wd-Cpp" secondAttribute="height" multiplier="1:1" id="gIs-SE-Zox"/>
+                                                <constraint firstAttribute="height" constant="50" id="h6G-3w-wcy"/>
+                                            </constraints>
+                                        </imageView>
                                     </subviews>
                                     <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="yyV-wd-Cpp" secondAttribute="bottom" constant="2.5" id="4sw-mc-gdz"/>
+                                        <constraint firstItem="yyV-wd-Cpp" firstAttribute="leading" secondItem="3L0-6w-EHw" secondAttribute="leading" constant="3" id="5n9-gu-C7D"/>
                                         <constraint firstAttribute="trailing" secondItem="ECs-Mb-B4l" secondAttribute="trailing" constant="10" id="ABJ-OW-T4y"/>
                                         <constraint firstItem="ECs-Mb-B4l" firstAttribute="top" secondItem="3L0-6w-EHw" secondAttribute="top" constant="8" id="C1S-dG-vkm"/>
                                         <constraint firstItem="ch9-X0-qjW" firstAttribute="top" secondItem="3L0-6w-EHw" secondAttribute="top" constant="10" id="GXg-es-02G"/>
                                         <constraint firstItem="256-LL-2wv" firstAttribute="leading" secondItem="I8b-bv-nCs" secondAttribute="trailing" constant="10" id="HHw-le-lGP"/>
+                                        <constraint firstItem="I8b-bv-nCs" firstAttribute="leading" secondItem="yyV-wd-Cpp" secondAttribute="trailing" constant="3" id="JgZ-aK-iAB"/>
                                         <constraint firstAttribute="bottom" secondItem="256-LL-2wv" secondAttribute="bottom" constant="10" id="Pxj-6g-uUH"/>
                                         <constraint firstAttribute="bottom" secondItem="I8b-bv-nCs" secondAttribute="bottom" constant="10" id="QN1-wp-lRY"/>
                                         <constraint firstAttribute="bottom" secondItem="ch9-X0-qjW" secondAttribute="bottom" constant="10" id="S2X-TX-Y9R"/>
                                         <constraint firstItem="GBf-dW-x4B" firstAttribute="top" secondItem="3L0-6w-EHw" secondAttribute="top" constant="10" id="aGK-PB-Saa"/>
                                         <constraint firstItem="ch9-X0-qjW" firstAttribute="leading" secondItem="GBf-dW-x4B" secondAttribute="trailing" constant="10" id="aeg-2C-1do"/>
+                                        <constraint firstItem="yyV-wd-Cpp" firstAttribute="top" secondItem="3L0-6w-EHw" secondAttribute="top" constant="2.5" id="caL-jN-BwP"/>
                                         <constraint firstItem="GBf-dW-x4B" firstAttribute="leading" secondItem="256-LL-2wv" secondAttribute="trailing" constant="10" id="cqE-U8-O3W"/>
-                                        <constraint firstItem="I8b-bv-nCs" firstAttribute="leading" secondItem="3L0-6w-EHw" secondAttribute="leading" constant="10" id="dNB-Pm-Tlc"/>
                                         <constraint firstItem="I8b-bv-nCs" firstAttribute="top" secondItem="3L0-6w-EHw" secondAttribute="top" constant="10" id="e9g-4G-fki"/>
                                         <constraint firstItem="256-LL-2wv" firstAttribute="top" secondItem="3L0-6w-EHw" secondAttribute="top" constant="10" id="euS-IX-IXk"/>
                                         <constraint firstItem="ECs-Mb-B4l" firstAttribute="leading" secondItem="ch9-X0-qjW" secondAttribute="trailing" constant="10" id="pSK-Go-fzw"/>
@@ -1543,8 +1545,78 @@
                                 <connections>
                                     <outlet property="dogName" destination="I8b-bv-nCs" id="zxx-f7-FSp"/>
                                     <outlet property="logDate" destination="GBf-dW-x4B" id="0Ln-fN-Nue"/>
+                                    <outlet property="logIcon" destination="yyV-wd-Cpp" id="McI-ul-HQp"/>
                                     <outlet property="logNote" destination="ch9-X0-qjW" id="IVL-lC-w9e"/>
                                     <outlet property="logType" destination="256-LL-2wv" id="J21-Yw-NkM"/>
+                                </connections>
+                            </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellBodyWithoutIcon" id="d7b-Lq-gDR" customClass="LogsMainScreenTableViewCellBodyWithoutIcon" customModule="Pupotty" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="125.5" width="414" height="40.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="d7b-Lq-gDR" id="yjP-uX-5gd">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="40.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Bella (EX)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="zpG-pQ-nvH" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                            <rect key="frame" x="10" y="10" width="72" height="20.5"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="20" id="ndI-GT-da4"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" text="Potty(EX)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="nc3-cE-QKc" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                            <rect key="frame" x="92" y="10" width="68" height="20.5"/>
+                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="11:11 AM (EX)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="fXP-uB-qgF" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                            <rect key="frame" x="170" y="10" width="91.5" height="20.5"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.5" contentMode="scaleAspectFit" horizontalHuggingPriority="254" verticalHuggingPriority="254" horizontalCompressionResistancePriority="754" verticalCompressionResistancePriority="754" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="h8Z-By-yYu">
+                                            <rect key="frame" x="387.5" y="10" width="16.5" height="21"/>
+                                            <color key="tintColor" systemColor="systemGrayColor"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" secondItem="h8Z-By-yYu" secondAttribute="height" multiplier="1:1.5" id="UPI-ee-Muf"/>
+                                            </constraints>
+                                        </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="NOTE" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="2TH-Kb-17i" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
+                                            <rect key="frame" x="271.5" y="10" width="106" height="20.5"/>
+                                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="h8Z-By-yYu" firstAttribute="leading" secondItem="2TH-Kb-17i" secondAttribute="trailing" constant="10" id="4Uq-aH-So5"/>
+                                        <constraint firstAttribute="bottom" secondItem="nc3-cE-QKc" secondAttribute="bottom" constant="10" id="7Kx-sF-z1x"/>
+                                        <constraint firstItem="zpG-pQ-nvH" firstAttribute="leading" secondItem="yjP-uX-5gd" secondAttribute="leading" constant="10" id="Ccp-6y-ffW"/>
+                                        <constraint firstItem="nc3-cE-QKc" firstAttribute="top" secondItem="yjP-uX-5gd" secondAttribute="top" constant="10" id="IVd-hr-ZZO"/>
+                                        <constraint firstItem="nc3-cE-QKc" firstAttribute="leading" secondItem="zpG-pQ-nvH" secondAttribute="trailing" constant="10" id="JOb-9o-dU9"/>
+                                        <constraint firstAttribute="trailing" secondItem="h8Z-By-yYu" secondAttribute="trailing" constant="10" id="MA5-qn-8Vk"/>
+                                        <constraint firstItem="2TH-Kb-17i" firstAttribute="leading" secondItem="fXP-uB-qgF" secondAttribute="trailing" constant="10" id="O4N-Kt-xdF"/>
+                                        <constraint firstAttribute="bottom" secondItem="2TH-Kb-17i" secondAttribute="bottom" constant="10" id="PHp-L9-f0g"/>
+                                        <constraint firstAttribute="bottom" secondItem="h8Z-By-yYu" secondAttribute="bottom" constant="8" id="Uhu-Fb-rpO"/>
+                                        <constraint firstItem="fXP-uB-qgF" firstAttribute="leading" secondItem="nc3-cE-QKc" secondAttribute="trailing" constant="10" id="Un6-Hd-KiR"/>
+                                        <constraint firstItem="2TH-Kb-17i" firstAttribute="top" secondItem="yjP-uX-5gd" secondAttribute="top" constant="10" id="XH9-Fd-nT1"/>
+                                        <constraint firstItem="h8Z-By-yYu" firstAttribute="width" secondItem="h8Z-By-yYu" secondAttribute="height" multiplier="1:1.5" id="fIu-bu-PUJ"/>
+                                        <constraint firstItem="zpG-pQ-nvH" firstAttribute="top" secondItem="yjP-uX-5gd" secondAttribute="top" constant="10" id="m3k-kt-3U3"/>
+                                        <constraint firstAttribute="bottom" secondItem="zpG-pQ-nvH" secondAttribute="bottom" constant="10" id="qws-2o-gsA"/>
+                                        <constraint firstAttribute="bottom" secondItem="fXP-uB-qgF" secondAttribute="bottom" constant="10" id="rTs-2k-gQe"/>
+                                        <constraint firstItem="fXP-uB-qgF" firstAttribute="top" secondItem="yjP-uX-5gd" secondAttribute="top" constant="10" id="sad-mH-x4o"/>
+                                        <constraint firstItem="h8Z-By-yYu" firstAttribute="top" secondItem="yjP-uX-5gd" secondAttribute="top" constant="8" id="tai-h4-5DM"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="dogName" destination="zpG-pQ-nvH" id="Ay0-AA-hr1"/>
+                                    <outlet property="logDate" destination="fXP-uB-qgF" id="bJl-hV-n5M"/>
+                                    <outlet property="logNote" destination="2TH-Kb-17i" id="CGs-mY-lAU"/>
+                                    <outlet property="logType" destination="nc3-cE-QKc" id="DtQ-FP-IYQ"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1556,9 +1628,9 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="d7P-bl-1Ue" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-443" y="-2357"/>
+            <point key="canvasLocation" x="-443.47826086956525" y="-2357.4776785714284"/>
         </scene>
-        <!--Dog Logs-->
+        <!--Logs of Care-->
         <scene sceneID="RIc-Ar-beG">
             <objects>
                 <viewController id="xhV-UK-dqn" customClass="LogsViewController" customModule="Pupotty" customModuleProvider="target" sceneMemberID="viewController">
@@ -1613,19 +1685,20 @@
                             <constraint firstItem="HUA-JN-P5v" firstAttribute="trailing" secondItem="2c1-46-nyx" secondAttribute="trailing" id="yaV-RV-s1z"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Dog Logs" id="mPD-W7-7Ov">
+                    <navigationItem key="navigationItem" title="Logs of Care" id="mPD-W7-7Ov">
                         <barButtonItem key="leftBarButtonItem" title="Filter" id="yUW-46-74D">
                             <connections>
                                 <action selector="willShowFilter:" destination="xhV-UK-dqn" id="Ssp-a0-wHp"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" image="info.circle" catalog="system" id="X5X-Ez-1L8">
+                        <barButtonItem key="rightBarButtonItem" image="questionmark.circle" catalog="system" id="X5X-Ez-1L8">
                             <connections>
                                 <segue destination="bft-FI-lsz" kind="show" id="Tm7-sx-6K0"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="filterButton" destination="yUW-46-74D" id="qA2-L1-44V"/>
                         <outlet property="willAddLog" destination="yMB-b6-Ja9" id="5F4-Ee-FIw"/>
                         <outlet property="willAddLogBackground" destination="M9H-R5-vFI" id="hl7-8o-1iP"/>
                     </connections>
@@ -2032,7 +2105,7 @@
                                     <constraint firstAttribute="height" constant="40" id="aA4-lN-g0r"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES" textContentType="name"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="755" verticalCompressionResistancePriority="755" text="We will generate a dog for you." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="0FZ-Za-zwc" customClass="CustomLabel" customModule="Pupotty" customModuleProvider="target">
                                 <rect key="frame" x="10" y="140" width="394" height="24"/>
@@ -2493,6 +2566,7 @@
         <image name="plus" catalog="system" width="128" height="113"/>
         <image name="plus.circle" catalog="system" width="128" height="121"/>
         <image name="plus.circle.fill" catalog="system" width="128" height="121"/>
+        <image name="questionmark.circle" catalog="system" width="128" height="121"/>
         <image name="s.circle.fill" catalog="system" width="128" height="121"/>
         <image name="t.circle.fill" catalog="system" width="128" height="121"/>
         <image name="trash" catalog="system" width="121" height="128"/>

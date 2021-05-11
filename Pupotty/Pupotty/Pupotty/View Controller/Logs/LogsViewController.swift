@@ -136,19 +136,27 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
         if makeDropDownIdentifier == "DROP_DOWN_NEW"{
             
             let sudoDogManager = getDogManager()
-            let dog = sudoDogManager.dogs[indexPath.section]
+            
             
             let customCell = cell as! DropDownDefaultTableViewCell
             customCell.adjustConstraints(newValue: 12.0)
             
-            //header
-            if indexPath.row == 0 {
-                customCell.label.attributedText = NSAttributedString(string: dog.dogTraits.dogName, attributes: [.font: filterByDogFont])
+            //clear filter
+            if indexPath.section == sudoDogManager.dogs.count{
+                customCell.label.attributedText = NSAttributedString(string: "Clear Filter", attributes: [.font: filterByDogFont])
             }
-            //dog log filter
             else {
-                customCell.label.attributedText = NSAttributedString(string: dog.catagorizedLogTypes[indexPath.row-1].0.rawValue, attributes: [.font: filterByLogFont])
+                let dog = sudoDogManager.dogs[indexPath.section]
+                //header
+                if indexPath.row == 0 {
+                    customCell.label.attributedText = NSAttributedString(string: dog.dogTraits.dogName, attributes: [.font: filterByDogFont])
+                }
+                //dog log filter
+                else {
+                    customCell.label.attributedText = NSAttributedString(string: dog.catagorizedLogTypes[indexPath.row-1].0.rawValue, attributes: [.font: filterByLogFont])
+                }
             }
+            
             
             if indexPath == filterIndexPath{
                 customCell.didToggleSelect(newSelectionStatus: true)
@@ -165,7 +173,14 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
         guard sudoDogManager.dogs.isEmpty == false else {
             return 1
         }
-        return sudoDogManager.dogs[forSection].catagorizedLogTypes.count + 1
+        //on additional section used for clear filter
+        if forSection == sudoDogManager.dogs.count{
+            return 1
+        }
+        else {
+            return sudoDogManager.dogs[forSection].catagorizedLogTypes.count + 1
+        }
+        
     }
     
     func numberOfSections(makeDropDownIdentifier: String) -> Int {
@@ -178,15 +193,21 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
             return 1
         }
         else {
-            return count
+            return count + 1
         }
     }
     
     func selectItemInDropDown(indexPath: IndexPath, makeDropDownIdentifier: String) {
         let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as! DropDownDefaultTableViewCell
         
+        //clear filter
+        if indexPath.section == getDogManager().dogs.count{
+            selectedCell.didToggleSelect(newSelectionStatus: true)
+            
+            filterIndexPath = nil
+        }
         //already filtering, now not filtering
-        if filterIndexPath == indexPath {
+        else if filterIndexPath == indexPath {
             selectedCell.didToggleSelect(newSelectionStatus: false)
             
             filterIndexPath = nil
@@ -249,11 +270,15 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
     }
     
     func updateDogManagerDependents() {
+        
+        filterButton.isEnabled = !dogManager.dogs.isEmpty
         willAddLog?.isHidden = dogManager.dogs.isEmpty
         willAddLogBackground?.isHidden = dogManager.dogs.isEmpty
     }
     
     //MARK: - IB
+    
+    @IBOutlet private weak var filterButton: UIBarButtonItem!
     
     @IBOutlet private weak var willAddLog: ScaledButton!
     @IBOutlet private weak var willAddLogBackground: ScaledButton!
@@ -273,7 +298,7 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
                 if count == 0{
                     return 1
                 }
-                return count
+                return count + 1
             }
             
             //finds the total number of rows that can be displayed and makes sure that the needed does not exceed that
@@ -299,6 +324,8 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
     
     //IndexPath of a filter selected in the dropDown menu, nil if not filtering
     private var filterIndexPath: IndexPath? = nil
+    
+    static var isCompactView: Bool = false
     
     var logsMainScreenTableViewController: LogsMainScreenTableViewController! = nil
     
@@ -344,22 +371,7 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
             var largestLabelWidth: CGFloat {
                 
                 let sudoDogManager = getDogManager()
-                var largest: CGFloat!
-                
-                var hasArbitrary: Bool {
-                    for dog in sudoDogManager.dogs{
-                        if dog.dogTraits.logs.isEmpty == false {
-                            return true
-                        }
-                    }
-                    return false
-                }
-                if hasArbitrary == true {
-                    largest = "Arbitrary Logs".boundingFrom(font: filterByLogFont, height: 30.0).width
-                }
-                else {
-                    largest = 0.0
-                }
+                var largest: CGFloat = "Clear Filter".boundingFrom(font: filterByDogFont, height: 30.0).width
                 
                 for dogIndex in 0..<sudoDogManager.dogs.count{
                     let dog = sudoDogManager.dogs[dogIndex]
@@ -369,12 +381,13 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
                         largest = dogNameWidth
                     }
                     
-                    for requirementIndex in 0..<dog.dogRequirments.requirements.count{
-                        let requirement = dog.dogRequirments.requirements[requirementIndex]
-                        let requirementNameWidth = requirement.requirementType.rawValue.boundingFrom(font: filterByLogFont, height: 30.0).width
+                    let catagorizedLogTypes = dog.catagorizedLogTypes
+                    for logIndex in 0..<catagorizedLogTypes.count{
+                        let logType = catagorizedLogTypes[logIndex].0
+                        let logTypeWidth = logType.rawValue.boundingFrom(font: filterByLogFont, height: 30.0).width
                         
-                        if requirementNameWidth > largest {
-                            largest = requirementNameWidth
+                        if logTypeWidth > largest {
+                            largest = logTypeWidth
                         }
                         
                     }

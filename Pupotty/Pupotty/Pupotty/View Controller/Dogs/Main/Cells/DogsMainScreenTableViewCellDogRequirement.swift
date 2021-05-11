@@ -154,13 +154,22 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
             
         }
         else{
-            let fireDate: Date? = TimingManager.timerDictionary[parentDogName]?[requirement.uuid]?.fireDate
+            let fireDate: Date? = requirement.executionDate!
             
             if fireDate == nil {
                 timeLeft.attributedText = NSAttributedString(string: "Reminder Disabled", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
             }
             else if Date().distance(to: fireDate!) <= 0 {
                 timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
+            }
+            else if requirement.snoozeComponents.isSnoozed == true {
+                let timeLeftText = String.convertToReadable(interperateTimeInterval: Date().distance(to: fireDate!))
+                
+                timeLeft.font = UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftBodyWeight)
+                
+                timeLeft.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftBodyWeight)])
+                
+                timeLeft.attributedText = timeLeft.text!.addingFontToBeginning(text: "Done Snoozing In: ", font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight))
             }
             else {
                 let timeLeftText = String.convertToReadable(interperateTimeInterval: Date().distance(to: fireDate!))
@@ -169,7 +178,7 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
                 
                 timeLeft.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftBodyWeight)])
                 
-                timeLeft.attributedText = timeLeft.text!.addingFontToBeginning(text: "Remind in: ", font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight))
+                timeLeft.attributedText = timeLeft.text!.addingFontToBeginning(text: "Remind In: ", font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight))
             }
         }
     }

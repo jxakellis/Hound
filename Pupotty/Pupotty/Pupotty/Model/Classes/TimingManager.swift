@@ -113,7 +113,7 @@ class TimingManager{
                     RunLoop.main.add(timer, forMode: .common)
                 }
                 
-                //inactive, still adds to the runloop as the timer execution date and number of timers is used for many functions
+                //inactive (depreciated/removed?), still adds to the runloop as the timer execution date and number of timers is used for many functions
                 else {
                     timer = Timer(fireAt: requirement.executionDate!,
                                           interval: -1,
@@ -160,7 +160,7 @@ class TimingManager{
         let dogManager = MainTabBarViewController.staticDogManager
         let requirement = try! dogManager.findDog(dogName: dogName).dogRequirments.findRequirement(forUUID: pastRequirement.uuid)
         
-        requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: false)
+        requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: false, shouldRemoveLogDuringPossibleUnskip: false)
         requirement.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
         
         delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
@@ -335,7 +335,8 @@ class TimingManager{
                 {
                     (alert: UIAlertAction!)  in
                     //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                    TimingManager.willInactivateTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementUUID: requirement.uuid)
+                    //TimingManager.willInactivateTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementUUID: requirement.uuid)
+                    TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementUUID: requirement.uuid, knownLogType: nil)
                 })
         
         var alertActionsForLog: [UIAlertAction] = []
@@ -425,22 +426,25 @@ class TimingManager{
             requirement.changeActiveStatus(newActiveStatus: true)
         }
         //Skips next TOD
-        else if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.isSkipping == false && Date().distance(to: TimingManager.timerDictionary[targetDogName]![requirementUUID]!.fireDate) > 0{
+        else if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.isSkipping == false && Date().distance(to: requirement.executionDate!) > 0{
             let executionBasisBackup = requirement.executionBasis
             requirement.timerReset(shouldLogExecution: true, knownLogType: knownLogType)
-            requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: true)
+            requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: true, shouldRemoveLogDuringPossibleUnskip: nil)
             requirement.changeExecutionBasis(newExecutionBasis: executionBasisBackup, shouldResetIntervalsElapsed: false)
         }
         //Unskips next TOD
         else if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.isSkipping == true{
-            requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: false)
-           // if requirement.logs.isEmpty == false {
-             //   requirement.logs.removeLast()
-           // }
+            requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: false, shouldRemoveLogDuringPossibleUnskip: true)
         }
         //Regular reset
         else {
-            requirement.timerReset(shouldLogExecution: true, knownLogType: knownLogType)
+            if knownLogType != nil {
+                requirement.timerReset(shouldLogExecution: true, knownLogType: knownLogType)
+            }
+            else {
+                requirement.timerReset(shouldLogExecution: false, knownLogType: nil)
+            }
+            
         }
         
         delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)

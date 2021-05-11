@@ -35,13 +35,13 @@ class Utils
     }
     
     static func willCreateFollowUpUNUserNotification(dogName: String, requirementUUID: String, executionDate: Date){
-        //let requirement = try! MainTabBarViewController.staticDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(requirementName: requirementName)
+        let requirement = try! MainTabBarViewController.staticDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(forUUID: requirementUUID)
         
          let content = UNMutableNotificationContent()
         
-         content.title = "Follow up reminder for \(dogName)!"
+         content.title = "Follow up notification for \(dogName)!"
         
-        content.body = "It's been \(String.convertToReadable(interperateTimeInterval: NotificationConstant.followUpDelay, capitalizeLetters: false)), give your dog a helping hand!"
+        content.body = "It's been \(String.convertToReadable(interperateTimeInterval: NotificationConstant.followUpDelay, capitalizeLetters: false)), give your dog a helping hand with \(requirement.requirementType.rawValue)!"
         
          content.sound = .default
         
@@ -65,14 +65,8 @@ class Utils
          let content = UNMutableNotificationContent()
          content.title = "Reminder for \(dogName)!"
         
-        /*
-        if requirement.requirementDescription.trimmingCharacters(in: .whitespaces) != ""{
-            content.body = "\(requirementName): \(requirement.requirementDescription)"
-        }
-        else {
- */
         content.body = requirement.requirementType.rawValue
-       // }
+       
         
          content.sound = .default
         

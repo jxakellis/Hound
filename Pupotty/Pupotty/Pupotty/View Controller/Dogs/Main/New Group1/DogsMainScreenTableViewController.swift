@@ -10,7 +10,7 @@ import UIKit
 
 protocol DogsMainScreenTableViewControllerDelegate{
     func willEditDog(dogName: String)
-    func willEditRequirement(parentDogName: String, requirementUUID: String)
+    func willEditRequirement(parentDogName: String, requirementUUID: String?)
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
@@ -183,6 +183,10 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         let dog = try! sudoDogManager.findDog(dogName: dogName)
         let section = try! self.dogManager.findIndex(dogName: dogName)
         
+        let alertActionAdd = UIAlertAction(title: "Add Reminder", style: .default) { UIAlertAction in
+            self.delegate.willEditRequirement(parentDogName: dog.dogTraits.dogName, requirementUUID: nil)
+        }
+        
         var hasEnabledReminder: Bool {
             for requirement in dog.dogRequirments.requirements{
                 if requirement.getEnable() == true {
@@ -248,6 +252,8 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
             self.tableView.deleteSections([section], with: .automatic)
         }
+        
+        alertController.addAction(alertActionAdd)
         
         alertController.addAction(alertActionEdit)
         
