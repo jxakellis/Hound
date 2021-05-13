@@ -7,17 +7,19 @@
 //
 
 import UIKit
+import AVFoundation
 
 class Utils
 {
     ///Default sender used to present, this is necessary if an alert to be shown is called from a non UIViewController class as that is not in the view heirarchy and physically cannot present a view, so this is used instead.
-    static var presenter: UIViewController = UIViewController.init()
+    static var presenter: UIViewController? = nil
     
     ///Function used to present alertController, Utils.presenter is a default sender if non is specified, title and message are specifiable but other information is set to defaults.
     static func willShowAlert(title: String, message: String?)
     {
         var trimmedMessage: String? = message
-        if message!.trimmingCharacters(in: .whitespaces) == ""{
+        
+        if message?.trimmingCharacters(in: .whitespaces) == ""{
             trimmedMessage = nil
         }
         
@@ -43,8 +45,8 @@ class Utils
         
         content.body = "It's been \(String.convertToReadable(interperateTimeInterval: NotificationConstant.followUpDelay, capitalizeLetters: false)), give your dog a helping hand with \(requirement.requirementType.rawValue)!"
         
-         content.sound = .default
-        
+        content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "radar30Loop.wav"))
+       
         let executionDateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: executionDate)
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: executionDateComponents, repeats: false)
@@ -68,9 +70,34 @@ class Utils
         content.body = requirement.requirementType.rawValue
        
         
-         content.sound = .default
+         content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "radar30Loop.wav"))
         
         let executionDateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: executionDate)
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: executionDateComponents, repeats: false)
+        
+        let uuidString = UUID().uuidString
+        let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { (error) in
+            if (error != nil){
+                print("willCreateUNUserNotification error: \(error!.localizedDescription)")
+            }
+        }
+    }
+    
+    static func willCreateUNUserNotification(title: String, body: String?, date: Date){
+        
+         let content = UNMutableNotificationContent()
+         content.title = title
+        
+        if body != nil {
+            content.body = body!
+        }
+        
+         content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "radar30Loop.wav"))
+        
+        let executionDateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: date)
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: executionDateComponents, repeats: false)
         
@@ -326,6 +353,8 @@ class ErrorProcessor{
          enum TimeOfDayComponentsError: Error {
              case invalidCalendarComponent
              case invalidWeekdayArray
+            case invalidDayOfMonth
+            case bothDayIndicatorsNil
          }
          */
         if case TimeOfDayComponentsError.invalidCalendarComponent = error {
@@ -334,6 +363,18 @@ class ErrorProcessor{
         }
         else if case TimeOfDayComponentsError.invalidWeekdayArray = error {
             ErrorProcessor.alertForError(message: "Please select atleast one weekday for the reminder to go off on.")
+            return true
+        }
+        else if case TimeOfDayComponentsError.invalidDayOfMonth = error {
+            ErrorProcessor.alertForError(message: "Please select a valid day of month.")
+            return true
+        }
+        else if case TimeOfDayComponentsError.bothDayIndicatorsNil = error {
+            ErrorProcessor.alertForError(message: "Please select either atleast one weekday or select once a month.")
+            return true
+        }
+        else if case TimeOfDayComponentsError.bothDayIndicatorsActive = error {
+            ErrorProcessor.alertForError(message: "Please select either weekdays or once a month for your reminder.")
             return true
         }
         else {

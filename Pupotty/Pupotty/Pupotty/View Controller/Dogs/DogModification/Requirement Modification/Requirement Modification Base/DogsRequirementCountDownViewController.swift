@@ -10,7 +10,6 @@ import UIKit
 
 protocol DogsRequirementCountDownViewControllerDelegate {
     func willDismissKeyboard()
-    func didUpdateInformation()
 }
 
 class DogsRequirementCountDownViewController: UIViewController, UIGestureRecognizerDelegate {
@@ -28,14 +27,22 @@ class DogsRequirementCountDownViewController: UIViewController, UIGestureRecogni
     
     @IBAction func willUpdateCountDown(_ sender: Any) {
         delegate.willDismissKeyboard()
-        delegate.didUpdateInformation()
     }
     
     //MARK: - Properties
     
    var delegate: DogsRequirementCountDownViewControllerDelegate! = nil
     
-    var passedInterval: TimeInterval?
+    var passedInterval: TimeInterval? = nil
+    
+    var initalValuesChanged: Bool {
+        if countDown.countDownDuration != passedInterval{
+            return true
+        }
+        else {
+            return false
+        }
+    }
     //MARK: - Main
     
     override func viewDidLoad() {
@@ -46,6 +53,7 @@ class DogsRequirementCountDownViewController: UIViewController, UIGestureRecogni
         }
         else {
             self.countDown.countDownDuration = RequirementConstant.defaultTimeInterval
+            passedInterval = countDown.countDownDuration
         }
         
         //fix bug with datePicker value changed not triggering on first go

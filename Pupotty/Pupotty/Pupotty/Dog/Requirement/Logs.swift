@@ -11,13 +11,17 @@ import UIKit
 
 
 enum ScheduledLogType: String, CaseIterable {
+    //common
     case feed = "Feed"
     case potty = "Potty"
     case walk = "Walk"
-    case medicine = "Medicine"
+    //next common
     case brush = "Brush"
+    case bathe = "Bathe"
+    case medicine = "Medicine"
+    //more common than previous but probably used less by user as weird type
     case sleep = "Sleep"
-    case crate = "Crate"
+    case trainingSession = "Training Session"
     case other = "Other"
 }
 
@@ -34,17 +38,20 @@ enum KnownLogType: String, CaseIterable {
     case poo = "Potty: Poo"
     case both = "Potty: Both"
     case neither = "Potty: Didn't Go"
-    
     case accident = "Accident"
     
     case walk = "Walk"
-    case medicine = "Medicine"
     case brush = "Brush"
+    case bathe = "Bathe"
+    case medicine = "Medicine"
     
     case wakeup = "Wake up"
     
     case sleep = "Sleep"
+    
     case crate = "Crate"
+    case trainingSession = "Training Session"
+    
     case other = "Other"
 }
 

@@ -17,6 +17,8 @@ extension String {
     static func convertToReadable(interperateTimeInterval: TimeInterval, capitalizeLetters: Bool = true) -> String {
         let intTime = abs(Int(interperateTimeInterval.rounded()))
         
+        let numWeeks = Int((intTime / (86400))/7)
+        let numDaysUnderAWeek = Int((intTime / (86400))%7)
         let numDays = Int(intTime / (86400))
         let numHours = Int((intTime % (86400))/(3600))
         let numMinutes = Int((intTime % 3600)/60)
@@ -33,9 +35,12 @@ extension String {
         case 3600..<86400:
             readableString.addHours(numHours: numHours)
             readableString.addMinutes(numMinutes: numMinutes)
-        default:
+        case 86400..<604800:
             readableString.addDays(numDays: numDays)
             readableString.addHours(numHours: numHours)
+        default:
+            readableString.addWeeks(numWeeks: numWeeks)
+            readableString.addDays(numDays: numDaysUnderAWeek)
         }
         
         if readableString.last == " "{
@@ -83,6 +88,15 @@ extension String {
         }
         else {
             return "\(adjustedHour):\(minute) \(amOrPM)"
+        }
+    }
+    
+    mutating private func addWeeks(numWeeks: Int){
+        if numWeeks > 1 {
+            self.append("\(numWeeks) Weeks ")
+        }
+        else if numWeeks == 1 {
+            self.append("\(numWeeks) Week ")
         }
     }
     

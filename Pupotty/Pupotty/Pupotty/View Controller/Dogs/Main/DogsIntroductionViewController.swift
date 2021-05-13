@@ -56,7 +56,7 @@ class DogsIntroductionViewController: UIViewController {
 
         continueButton.layer.cornerRadius = 8.0
         
-        notificationsToggleSwitch.isOn = NotificationConstant.isNotificationEnabled
+       // notificationsToggleSwitch.isOn = NotificationConstant.isNotificationEnabled
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -66,8 +66,15 @@ class DogsIntroductionViewController: UIViewController {
         
         delegate.didSetDefaultReminderState(sender: Sender(origin: self, localized: self), newDefaultReminderStatus: remindersToggleSwitch.isOn)
         
-        NotificationConstant.isNotificationEnabled = notificationsToggleSwitch.isOn
-        NotificationConstant.shouldFollowUp = notificationsToggleSwitch.isOn
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
+            NotificationConstant.isNotificationAuthorized = isGranted
+            NotificationConstant.isNotificationEnabled = isGranted
+            NotificationConstant.shouldFollowUp = isGranted
+            
+        }
+        
+       // NotificationConstant.isNotificationEnabled = notificationsToggleSwitch.isOn
+        //NotificationConstant.shouldFollowUp = notificationsToggleSwitch.isOn
     }
 
 }

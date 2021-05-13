@@ -140,11 +140,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     @IBOutlet private weak var cancelAddDogButtonBackground: UIButton!
     
     @IBAction private func cancelAddDogButton(_ sender: Any) {
-        if dogName.text != targetDog.dogTraits.dogName{
-            shouldPromptSaveWarning = true
-        }
-        
-        if shouldPromptSaveWarning == true {
+        if initalValuesChanged == true {
             //"Any changes you have made won't be saved"
             let unsavedInformationConfirmation = GeneralAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
             
@@ -183,6 +179,21 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     ///Auto save warning will show if true
     private var shouldPromptSaveWarning: Bool = false
+    
+    var initalValuesChanged: Bool {
+        if dogName.text != targetDog.dogTraits.dogName{
+            return true
+        }
+        else if dogIcon.image != DogConstant.chooseIcon && dogIcon.image != targetDog.dogTraits.icon{
+            return true
+        }
+        else if shouldPromptSaveWarning == true{
+            return true
+        }
+        else {
+            return false
+        }
+    }
     
     //MARK: - Main
     

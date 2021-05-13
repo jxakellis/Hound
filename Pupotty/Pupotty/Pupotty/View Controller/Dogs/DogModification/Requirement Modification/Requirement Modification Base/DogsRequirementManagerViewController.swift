@@ -11,16 +11,11 @@ import UIKit
 protocol DogsRequirementManagerViewControllerDelegate{
     func didAddRequirement(newRequirement: Requirement)
     func didUpdateRequirement(updatedRequirement: Requirement)
-    func didUpdateInformation()
 }
 
 class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, DogsRequirementCountDownViewControllerDelegate, DogsRequirementTimeOfDayViewControllerDelegate, MakeDropDownDataSourceProtocol{
     
     //MARK: Auto Save Trigger
-    
-    func didUpdateInformation(){
-        delegate.didUpdateInformation()
-    }
     
     
     //MARK: - DogsRequirementCountDownViewControllerDelegate and DogsRequirementTimeOfDayViewControllerDelegate
@@ -71,7 +66,6 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     }
     
     func selectItemInDropDown(indexPath: IndexPath, makeDropDownIdentifier: String) {
-        delegate.didUpdateInformation()
         
         let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as! DropDownDefaultTableViewCell
         
@@ -95,14 +89,10 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     @IBOutlet private weak var requirementToggleSwitch: UISwitch!
     
-    @IBAction func didUpdateEnableStatus(_ sender: Any) {
-        delegate.didUpdateInformation()
-    }
-    
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     
     @IBAction func segmentedControl(_ sender: UISegmentedControl) {
-        delegate.didUpdateInformation()
+        
         if sender.selectedSegmentIndex == 0 {
             countDownContainerView.isHidden = false
             timeOfDayContainerView.isHidden = true
@@ -118,6 +108,31 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     var delegate: DogsRequirementManagerViewControllerDelegate! = nil
     
     var targetRequirement: Requirement? = nil
+    
+    var initalRequirementAction: ScheduledLogType? = nil
+    var initalEnableStatus: Bool? = nil
+    var initalSegmentedIndex: Int? = nil
+    
+    var initalValuesChanged: Bool {
+        if requirementAction.text != initalRequirementAction?.rawValue{
+            return true
+        }
+        else if requirementToggleSwitch.isOn != initalEnableStatus{
+            return true
+        }
+        else if segmentedControl.selectedSegmentIndex != initalSegmentedIndex{
+            return true
+        }
+        else if dogsRequirementCountDownViewController.initalValuesChanged == true{
+            return true
+        }
+        else if dogsRequirementTimeOfDayViewController.initalValuesChanged == true {
+            return true
+        }
+        else {
+            return false
+        }
+    }
     
     private var dogsRequirementCountDownViewController = DogsRequirementCountDownViewController()
     
@@ -144,8 +159,10 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         
         //Data setup
         requirementAction.text = targetRequirement?.requirementType.rawValue ?? RequirementConstant.defaultType.rawValue
-        requirementToggleSwitch.isOn = targetRequirement?.getEnable() ?? RequirementConstant.defaultEnable
+        initalRequirementAction = targetRequirement?.requirementType ?? RequirementConstant.defaultType
         
+        requirementToggleSwitch.isOn = targetRequirement?.getEnable() ?? RequirementConstant.defaultEnable
+        initalEnableStatus = targetRequirement?.getEnable() ?? RequirementConstant.defaultEnable
         // Do any additional setup after loading the view.
     }
     
@@ -172,13 +189,27 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         
         
         do {
+            
             updatedRequirement.uuid = targetRequirement?.uuid ?? updatedRequirement.uuid
             updatedRequirement.requirementType = ScheduledLogType(rawValue: requirementAction.text!)!
             //try updatedRequirement.changeRequirementDescription(newRequirementDescription: requirementDescription.text)
             updatedRequirement.setEnable(newEnableStatus: requirementToggleSwitch.isOn)
             
-            //even if TOD is not selected, still saves week days
-            try updatedRequirement.timeOfDayComponents.changeWeekdays(newWeekdays: dogsRequirementTimeOfDayViewController.weekdays)
+            let selectedWeekdays = dogsRequirementTimeOfDayViewController.weekdays
+            let selectedDayOfMonth = dogsRequirementTimeOfDayViewController.dayOfMonth
+            
+            if selectedWeekdays != nil && selectedDayOfMonth != nil {
+                throw TimeOfDayComponentsError.bothDayIndicatorsActive
+            }
+            else if selectedWeekdays != nil {
+                //even if TOD is not selected, still saves week days
+                try updatedRequirement.timeOfDayComponents.changeWeekdays(newWeekdays: selectedWeekdays)
+            }
+            //day of month
+            else {
+                try updatedRequirement.timeOfDayComponents.changeDayOfMonth(newDayOfMonth: selectedDayOfMonth)
+            }
+            
             
             //only saves countdown if countdown mode is selected
             if segmentedControl.selectedSegmentIndex == 0{
@@ -202,7 +233,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
                 if updatedRequirement.countDownComponents.executionInterval != targetRequirement!.countDownComponents.executionInterval && updatedRequirement.timingStyle == .countDown{
                     updatedRequirement.timerReset(shouldLogExecution: false)
                 }
-                else if updatedRequirement.timingStyle == .timeOfDay &&  (updatedRequirement.timeOfDayComponents.timeOfDayComponent != targetRequirement!.timeOfDayComponents.timeOfDayComponent || updatedRequirement.timeOfDayComponents.weekdays != targetRequirement!.timeOfDayComponents.weekdays){
+                else if updatedRequirement.timingStyle == .timeOfDay &&  (updatedRequirement.timeOfDayComponents.timeOfDayComponent != targetRequirement!.timeOfDayComponents.timeOfDayComponent || updatedRequirement.timeOfDayComponents.weekdays != targetRequirement!.timeOfDayComponents.weekdays || updatedRequirement.timeOfDayComponents.dayOfMonth != targetRequirement!.timeOfDayComponents.dayOfMonth){
                     updatedRequirement.timerReset(shouldLogExecution: false)
                 }
                 
@@ -220,6 +251,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         
         if targetRequirement == nil {
             segmentedControl.selectedSegmentIndex = 0
+            initalSegmentedIndex = 0
             countDownContainerView.isHidden = false
             timeOfDayContainerView.isHidden = true
             
@@ -232,12 +264,14 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
             //Segmented control setup
             if targetRequirement!.timingStyle == .countDown {
                 segmentedControl.selectedSegmentIndex = 0
+                initalSegmentedIndex = 0
                 countDownContainerView.isHidden = false
                 timeOfDayContainerView.isHidden = true
                 
             }
             else {
                 segmentedControl.selectedSegmentIndex = 1
+                initalSegmentedIndex = 1
                 countDownContainerView.isHidden = true
                 timeOfDayContainerView.isHidden = false
             }
@@ -296,6 +330,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
                     dogsRequirementTimeOfDayViewController.passedTimeOfDay = targetRequirement!.timeOfDayComponents.nextTimeOfDay(requirementExecutionBasis: targetRequirement!.executionBasis)
                 }
                 dogsRequirementTimeOfDayViewController.passedWeekDays = targetRequirement!.timeOfDayComponents.weekdays
+                dogsRequirementTimeOfDayViewController.passedDayOfMonth = targetRequirement!.timeOfDayComponents.dayOfMonth
             }
             
             

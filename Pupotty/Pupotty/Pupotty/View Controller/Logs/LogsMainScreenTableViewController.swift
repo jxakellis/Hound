@@ -183,9 +183,6 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         self.consolidatedLogs = calculatedConsolidatedLogs
         self.uniqueLogs = calculatedUniqueLogs
         
-        
-        
-        
         if uniqueLogs.count == 0 {
             tableView.separatorStyle = .none
         }
@@ -205,7 +202,8 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     ///IndexPath of current filtering scheme
     private var filterIndexPath: IndexPath? = nil
     
-    private var isCompactView: Bool = false
+    private var storedIsCompactView: Bool = LogsMainScreenTableViewController.isCompactView
+    static var isCompactView: Bool = false
     
     var delegate: LogsMainScreenTableViewControllerDelegate! = nil
     
@@ -219,6 +217,11 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        if storedIsCompactView != LogsMainScreenTableViewController.isCompactView{
+            storedIsCompactView = LogsMainScreenTableViewController.isCompactView
+            self.reloadTable()
+        }
+        
     }
     
     ///Updates dogManagerDependents then reloads table
@@ -234,14 +237,6 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         filterIndexPath = indexPath
         
-        reloadTable()
-    }
-    
-    func willChangeViewMode(isCompactView: Bool){
-        guard isCompactView != self.isCompactView else {
-            return
-        }
-        self.isCompactView = isCompactView
         reloadTable()
     }
     
@@ -294,7 +289,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             let dog = try! getDogManager().findDog(dogName: logDisplay.0)
             let icon = dog.dogTraits.icon
             
-            if icon != DogConstant.defaultIcon && self.isCompactView == false{
+            if icon != DogConstant.defaultIcon && LogsMainScreenTableViewController.isCompactView == false{
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyWithIcon", for: indexPath)
                 
                 let customCell = cell as! LogsMainScreenTableViewCellBodyWithIcon

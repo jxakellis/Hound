@@ -126,7 +126,7 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountDownProtocol
         if newSnoozeStatus == true {
             storedExecutionInterval = TimerConstant.defaultSnooze
         }
-    
+        
         storedIsSnoozed = newSnoozeStatus
     }
     
@@ -152,6 +152,9 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountDownProtocol
 enum TimeOfDayComponentsError: Error {
     case invalidCalendarComponent
     case invalidWeekdayArray
+    case invalidDayOfMonth
+    case bothDayIndicatorsNil
+    case bothDayIndicatorsActive
 }
 
 protocol TimeOfDayComponentsProtocol {
@@ -171,12 +174,17 @@ protocol TimeOfDayComponentsProtocol {
     
     ///If is skipping is true, then a certain log date was appended. If unskipped it has to remove that certain logDate, but if logs was modified with the Logs page then you have to figure out if that certain log date is still there and if so then remove it.
     var isSkippingLogDate: Date? { get set }
-
-    ///The weekdays on which the requirement should fire
-    var weekdays: [Int] { get }
     
-    ///Changes the weekdays, if empty or nil throws an error due to the fact that there needs to be atleast one time of week
+    ///The weekdays on which the requirement should fire. Nil is dayOfMonth mode
+    var weekdays: [Int]? { get }
+    
+    ///Changes the weekdays, if empty throws an error due to the fact that there needs to be atleast one time of week. Nil is dayOfMonth mode
     mutating func changeWeekdays(newWeekdays: [Int]?) throws
+    
+    ///If the requirement is firing once a month, then this is the day of month it occurs. Nil if weekday mode.
+    var dayOfMonth: Int? { get }
+    ///Changes the day of month that the requirement should fire
+    func changeDayOfMonth(newDayOfMonth: Int?) throws
     
     ///The Date that the alarm should next fire at
     func nextTimeOfDay(requirementExecutionBasis executionBasis: Date) -> Date
@@ -204,7 +212,8 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         copy.storedTimeOfDayComponent = self.storedTimeOfDayComponent
         copy.storedIsSkipping = self.storedIsSkipping
         copy.isSkippingLogDate = self.isSkippingLogDate
-        copy.storedWeekDays = self.storedWeekDays
+        copy.storedWeekdays = self.storedWeekdays
+        copy.storedDayOfMonth = self.storedDayOfMonth
         return copy
     }
     
@@ -218,14 +227,16 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         self.storedTimeOfDayComponent = aDecoder.decodeObject(forKey: "timeOfDayComponent") as! DateComponents
         self.storedIsSkipping = aDecoder.decodeBool(forKey: "isSkipping")
         self.isSkippingLogDate = aDecoder.decodeObject(forKey: "isSkippingLogDate") as? Date
-        self.storedWeekDays = aDecoder.decodeObject(forKey: "storedWeekDays") as! [Int]
+        self.storedWeekdays = aDecoder.decodeObject(forKey: "weekdays") as? [Int]
+        self.storedDayOfMonth = aDecoder.decodeObject(forKey: "dayOfMonth") as? Int
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(storedTimeOfDayComponent, forKey: "timeOfDayComponent")
         aCoder.encode(storedIsSkipping, forKey: "isSkipping")
         aCoder.encode(isSkippingLogDate, forKey: "isSkippingLogDate")
-        aCoder.encode(storedWeekDays, forKey: "storedWeekDays")
+        aCoder.encode(storedWeekdays, forKey: "weekdays")
+        aCoder.encode(storedDayOfMonth, forKey: "dayOfMonth")
     }
     
     
@@ -243,7 +254,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         if newTimeOfDayComponent.minute != nil {
             storedTimeOfDayComponent.minute = newTimeOfDayComponent.minute
         }
-       // if newTimeOfDayComponent.second != nil {
+        // if newTimeOfDayComponent.second != nil {
         //    storedTimeOfDayComponent.second = newTimeOfDayComponent.second
         //}
     }
@@ -254,9 +265,9 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         else if newTimeOfDayComponent == .minute {
             storedTimeOfDayComponent.minute = newValue
         }
-       // else if newTimeOfDayComponent == .second {
+        // else if newTimeOfDayComponent == .second {
         //    storedTimeOfDayComponent.second = newValue
-       // }
+        // }
         else {
             throw TimeOfDayComponentsError.invalidCalendarComponent
         }
@@ -291,25 +302,125 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     
     var isSkippingLogDate: Date? = nil
     
-    private var storedWeekDays: [Int] = [1,2,3,4,5,6,7]
-    var weekdays: [Int] { return storedWeekDays }
-    
+    private var storedWeekdays: [Int]? = [1,2,3,4,5,6,7]
+    var weekdays: [Int]? { return storedWeekdays }
     func changeWeekdays(newWeekdays: [Int]?) throws{
-        if newWeekdays == nil || newWeekdays!.isEmpty{
+        if newWeekdays == nil {
+            if dayOfMonth == nil {
+                throw TimeOfDayComponentsError.bothDayIndicatorsNil
+            }
+            storedWeekdays = newWeekdays
+        }
+        else if newWeekdays!.isEmpty{
             throw TimeOfDayComponentsError.invalidWeekdayArray
         }
-        else if storedWeekDays != newWeekdays! {
-            storedWeekDays = newWeekdays!
+        else if storedWeekdays != newWeekdays! {
+            storedWeekdays = newWeekdays!
+            try! changeDayOfMonth(newDayOfMonth: nil)
             changeIsSkipping(newSkipStatus: false, shouldRemoveLogDuringPossibleUnskip: false)
         }
         else {
         }
     }
     
+    private var storedDayOfMonth: Int? = nil
+    var dayOfMonth: Int? { return storedDayOfMonth }
+    func changeDayOfMonth(newDayOfMonth: Int?) throws{
+        if newDayOfMonth == nil {
+            if weekdays == nil {
+                throw TimeOfDayComponentsError.bothDayIndicatorsNil
+            }
+            storedDayOfMonth = newDayOfMonth
+        }
+        else if newDayOfMonth! <= 0{
+            throw TimeOfDayComponentsError.invalidDayOfMonth
+        }
+        else if newDayOfMonth! >= 32{
+            throw TimeOfDayComponentsError.invalidDayOfMonth
+        }
+        else if storedDayOfMonth != newDayOfMonth!{
+            storedDayOfMonth = newDayOfMonth
+            try! changeWeekdays(newWeekdays: nil)
+            changeIsSkipping(newSkipStatus: false, shouldRemoveLogDuringPossibleUnskip: false)
+        }
+        else {
+        }
+        
+    }
+    
+    ///USE ONLY ON DATES THAT HAVE HAD A MONTH ADDED OR SUBTRACTED. Each month has a different number of days, 28, 29, 30, 31, and if you have a dayOfMonth that might be greater than the amount possible (e.g. dOM is 31 but month only has 30) this will cause a roll over to the next month instead of going ton the last day. Similarly, if you correct this with a roll under by setting it to the last day possible (so day 30 of a 30 day month for 31 dOM) then the next month, which has an additional day, will be one day short. This corrects for that ambiguity.
+    private func rollUnderCorrection(correctingDate: Date) -> Date{
+        var correctedDate = correctingDate
+        
+        //the date cannot be greater that what is needed (e.g. day 17 when you need 15) because this method is used after you use Calendar.current... and add one month, is can only fall short of what is needed
+         let dayOfMonthForDate = Calendar.current.component(.day, from: correctedDate)
+         //when adding a month, the day set fell short of what was needed
+         if dayOfMonth! > dayOfMonthForDate{
+             //maximum possible day of month without rolling over into the next month
+             var calculatedDayOfMonth: Int {
+                 let neededDayOfMonth = dayOfMonth!
+                 let maximumDayOfMonth = Calendar.current.range(of: .day, in: .month, for: correctedDate)!.count
+                 if neededDayOfMonth <= maximumDayOfMonth{
+                     return neededDayOfMonth
+                 }
+                 else {
+                     return maximumDayOfMonth
+                 }
+             }
+             //sets day and time
+            correctedDate = Calendar.current.date(bySetting: .day, value: calculatedDayOfMonth, of: correctedDate)!
+            correctedDate = Calendar.current.date(bySettingHour: timeOfDayComponent.hour!, minute: timeOfDayComponent.minute!, second: 0, of: correctedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)!
+         }
+        return correctedDate
+    }
+    
     ///Produces an array of atleast two with all of the future dates that the requirement will fire given the weekday(s), hour, and minute
-    private func futureExecutionDates(executionBasis: Date) -> [Date] {
+     private func futureExecutionDates(executionBasis: Date) -> [Date] {
+        
         var calculatedDates: [Date] = []
-            for weekday in weekdays{
+        
+        if dayOfMonth != nil && weekdays != nil {
+            fatalError("one has to be nil")
+        }
+        else if dayOfMonth == nil && weekdays == nil{
+            fatalError("both cannot be nil")
+        }
+        //once a month
+        else if dayOfMonth != nil {
+            
+            var calculatedDate = executionBasis
+            
+             //finds number of days in the calculated date's month, used for roll over calculations
+                 let numDaysInExecutionBasisMonth = Calendar.current.range(of: .day, in: .month, for: calculatedDate)!.count
+            
+                 //can apply rollUnderCorrection to get needed date as it is a case where roll over logic is needed
+                 if dayOfMonth! > numDaysInExecutionBasisMonth{
+                     calculatedDate = rollUnderCorrection(correctingDate: calculatedDate)
+                    //calculatedDate = Calendar.current.date(bySetting: .day, value: numDaysInExecutionBasisMonth, of: calculatedDate)!
+                 }
+                 //day of month is less than days available in the current month, so no roll over correction needed and traditional method
+                 else {
+                     calculatedDate = Calendar.current.date(bySetting: .day, value: dayOfMonth!, of: calculatedDate)!
+                    //sets time of day
+                    calculatedDate = Calendar.current.date(bySettingHour: timeOfDayComponent.hour!, minute: timeOfDayComponent.minute!, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)!
+                 }
+             
+             
+             
+            
+            //this is future dates, not past, so if in the past it will correct for future
+            if executionBasis.distance(to: calculatedDate) < 0 {
+                calculatedDate = Calendar.current.date(byAdding: .month, value: 1, to: calculatedDate)!
+                calculatedDate = rollUnderCorrection(correctingDate: calculatedDate)
+            }
+            calculatedDates.append(calculatedDate)
+        }
+        //weekdays instead of once a month
+        else {
+            if weekdays == nil {
+                fatalError("either dayOfMonth or weekdays should be nil, not both")
+            }
+            for weekday in weekdays!{
                 var calculatedDate = executionBasis
                 calculatedDate = Calendar.current.date(bySetting: .weekday, value: weekday, of: calculatedDate)!
                 calculatedDate = Calendar.current.date(bySettingHour: timeOfDayComponent.hour!, minute: timeOfDayComponent.minute!, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)!
@@ -321,13 +432,26 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
                 
                 calculatedDates.append(calculatedDate)
             }
+        }
+        
         
         
         if calculatedDates.count > 1 {
             calculatedDates.sort()
         }
+        //should have atleast two dates
         else if calculatedDates.count == 1{
-            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 7, to: calculatedDates[0])!)
+            //day of month
+            if dayOfMonth != nil {
+                var appendedDate = Calendar.current.date(byAdding: .month, value: 1, to: calculatedDates[0])!
+                appendedDate = rollUnderCorrection(correctingDate: appendedDate)
+                
+                calculatedDates.append(appendedDate)
+            }
+            //weekdays
+            else {
+                calculatedDates.append(Calendar.current.date(byAdding: .day, value: 7, to: calculatedDates[0])!)
+            }
         }
         else {
             fatalError("calculatedDates 0 for futureExecutionDates, RequirementComponents")
@@ -336,37 +460,40 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         
         return calculatedDates
     }
-
+    
     ///Date that is calculated from timeOfDayComponent when the timer should next fire when the requirement is skipping
-    func skippingNextTimeOfDay(executionBasis: Date) -> Date {
+    private func skippingNextTimeOfDay(executionBasis: Date) -> Date {
         
         let traditionalNextTOD = traditionalNextTimeOfDay(executionBasis: executionBasis)
         
-        //If there are multiple dates to be sorted through to find the date that is closer in time to traditionalNextTimeOfDay but still in the future
-        if weekdays.count > 1 {
-            let calculatedDates = futureExecutionDates(executionBasis: executionBasis)
-            var nextSoonestCalculatedDate: Date = calculatedDates.last!
-            
-            for calculatedDate in calculatedDates {
-                //If the calculated date is greater in time (future) that the normal non skipping time and the calculatedDate is closer in time to the trad date, then sets nextSoonest to calculatedDate
-                if traditionalNextTOD.distance(to: calculatedDate) > 0 && traditionalNextTOD.distance(to: calculatedDate) < traditionalNextTOD.distance(to: nextSoonestCalculatedDate){
-                    nextSoonestCalculatedDate = calculatedDate
-                }
-            }
-            
-            return nextSoonestCalculatedDate
+        if dayOfMonth != nil {
+            return futureExecutionDates(executionBasis: executionBasis).last!
         }
-        //If only 1 day of week selected then all you have to do is add 1 week.
         else {
-            return Calendar.current.date(byAdding: .day, value: 7, to: traditionalNextTOD)!
+            //If there are multiple dates to be sorted through to find the date that is closer in time to traditionalNextTimeOfDay but still in the future
+            if weekdays!.count > 1 {
+                let calculatedDates = futureExecutionDates(executionBasis: executionBasis)
+                var nextSoonestCalculatedDate: Date = calculatedDates.last!
+                
+                for calculatedDate in calculatedDates {
+                    //If the calculated date is greater in time (future) that the normal non skipping time and the calculatedDate is closer in time to the trad date, then sets nextSoonest to calculatedDate
+                    if traditionalNextTOD.distance(to: calculatedDate) > 0 && traditionalNextTOD.distance(to: calculatedDate) < traditionalNextTOD.distance(to: nextSoonestCalculatedDate){
+                        nextSoonestCalculatedDate = calculatedDate
+                    }
+                }
+                
+                return nextSoonestCalculatedDate
+            }
+            //If only 1 day of week selected then all you have to do is add 1 week.
+            else {
+                return Calendar.current.date(byAdding: .day, value: 7, to: traditionalNextTOD)!
+            }
         }
-        
-
         
     }
-
+    
     ///Date that is calculated from timeOfDayComponent when the timer should next fire, does not factor in isSkipping
-    func traditionalNextTimeOfDay(executionBasis: Date) -> Date {
+    private func traditionalNextTimeOfDay(executionBasis: Date) -> Date {
         
         let calculatedDates = futureExecutionDates(executionBasis: executionBasis)
         
@@ -379,7 +506,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
                 soonestCalculatedDate = calculatedDate
             }
         }
-
+        
         return soonestCalculatedDate
     }
     
@@ -387,34 +514,46 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         
         let traditionalNextTOD = traditionalNextTimeOfDay(executionBasis: executionBasis)
         
-        if weekdays.count > 1{
-            var preceedingExecutionDates = futureExecutionDates(executionBasis: executionBasis)
-        
-            //Subtracts a week from all futureExecutionDates
-            for futureExecutionDateIndex in 0..<preceedingExecutionDates.count{
-                let preceedingExecutionDate: Date = Calendar.current.date(byAdding: .day, value: -7, to: preceedingExecutionDates[futureExecutionDateIndex])!
-                preceedingExecutionDates[futureExecutionDateIndex] = preceedingExecutionDate
-        }
-            
-        //choose most extreme
-        var closestCalculatedDate: Date = preceedingExecutionDates.first!
-        
-        //Looks for a date that is both before the nextTimeOfDay but closer in time to
-        for preceedingExecutionDate in preceedingExecutionDates {
-            
-            //for the two .distance comparisions after the &&, the distances are going to be negative because it is going in reverse time. This means that the > is in the right direction. Write it out if it doesn't make sense
-            if traditionalNextTOD.distance(to: preceedingExecutionDate) < 0 && traditionalNextTOD.distance(to: preceedingExecutionDate) > traditionalNextTOD.distance(to: closestCalculatedDate){
-                closestCalculatedDate = preceedingExecutionDate
-            }
-        }
-        
-        return closestCalculatedDate
+        if dayOfMonth != nil {
+                //goes back a month in time
+                var preceedingExecutionDate: Date = Calendar.current.date(byAdding: .month, value: -1, to: traditionalNextTOD)!
+                preceedingExecutionDate = rollUnderCorrection(correctingDate: preceedingExecutionDate)
+                return preceedingExecutionDate
         }
         else {
-            return Calendar.current.date(byAdding: .day, value: -7, to: traditionalNextTOD)!
+            //weekdays is known to not be nil as dayOfMonth and weekday nil status was checked
+            //multiple days of week so need to do math to figure out correct
+            if weekdays!.count > 1{
+                var preceedingExecutionDates = futureExecutionDates(executionBasis: executionBasis)
+                
+                //Subtracts a week from all futureExecutionDates
+                for futureExecutionDateIndex in 0..<preceedingExecutionDates.count{
+                    let preceedingExecutionDate: Date = Calendar.current.date(byAdding: .day, value: -7, to: preceedingExecutionDates[futureExecutionDateIndex])!
+                    preceedingExecutionDates[futureExecutionDateIndex] = preceedingExecutionDate
+                }
+                
+                //choose most extreme
+                var closestCalculatedDate: Date = preceedingExecutionDates.first!
+                
+                //Looks for a date that is both before the nextTimeOfDay but closer in time to
+                for preceedingExecutionDate in preceedingExecutionDates {
+                    
+                    //for the two .distance comparisions after the &&, the distances are going to be negative because it is going in reverse time. This means that the > is in the right direction. Write it out if it doesn't make sense
+                    if traditionalNextTOD.distance(to: preceedingExecutionDate) < 0 && traditionalNextTOD.distance(to: preceedingExecutionDate) > traditionalNextTOD.distance(to: closestCalculatedDate){
+                        closestCalculatedDate = preceedingExecutionDate
+                    }
+                }
+                
+                return closestCalculatedDate
+            }
+            //only 1 day of week so all you have to do is subtract a week
+            else {
+                return Calendar.current.date(byAdding: .day, value: -7, to: traditionalNextTOD)!
+            }
         }
     }
     
+    ///Factors in isSkipping to figure out the next time of day
     func nextTimeOfDay(requirementExecutionBasis executionBasis: Date) -> Date {
         if isSkipping == true {
             return skippingNextTimeOfDay(executionBasis: executionBasis)

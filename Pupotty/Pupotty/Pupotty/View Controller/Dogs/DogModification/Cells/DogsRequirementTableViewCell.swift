@@ -51,7 +51,25 @@ class DogsRequirementTableViewCell: UITableViewCell {
         else {
             try! self.requirementDisplay.text?.append(" \(String.convertToReadable(interperatedDateComponents: requirement.timeOfDayComponents.timeOfDayComponent))")
             
-            if requirement.timeOfDayComponents.weekdays == [1,2,3,4,5,6,7]{
+            //day of month
+            if requirement.timeOfDayComponents.dayOfMonth != nil {
+                let dayOfMonth: Int! = requirement.timeOfDayComponents.dayOfMonth
+                requirementDisplay.text?.append(" Every Month on \(dayOfMonth!)")
+                if (dayOfMonth % 10) == 1{
+                    requirementDisplay.text?.append("st")
+                }
+                else if (dayOfMonth % 10) == 2 {
+                    requirementDisplay.text?.append("nd")
+                }
+                else if (dayOfMonth % 10) == 3 {
+                    requirementDisplay.text?.append("rd")
+                }
+                else {
+                    requirementDisplay.text?.append("th")
+                }
+            }
+            //weekdays
+            else if requirement.timeOfDayComponents.weekdays == [1,2,3,4,5,6,7]{
                 requirementDisplay.text?.append(" Everyday")
             }
             else if requirement.timeOfDayComponents.weekdays == [1,7]{
@@ -62,8 +80,8 @@ class DogsRequirementTableViewCell: UITableViewCell {
             }
             else {
                 requirementDisplay.text?.append(" on")
-                if requirement.timeOfDayComponents.weekdays.count == 1 {
-                    for weekdayInt in requirement.timeOfDayComponents.weekdays{
+                if requirement.timeOfDayComponents.weekdays!.count == 1 {
+                    for weekdayInt in requirement.timeOfDayComponents.weekdays!{
                         switch weekdayInt {
                         case 1:
                             requirementDisplay.text?.append(" Sunday")
@@ -85,7 +103,7 @@ class DogsRequirementTableViewCell: UITableViewCell {
                     }
                 }
                 else {
-                    for weekdayInt in requirement.timeOfDayComponents.weekdays{
+                    for weekdayInt in requirement.timeOfDayComponents.weekdays!{
                         switch weekdayInt {
                         case 1:
                             requirementDisplay.text?.append(" Su,")

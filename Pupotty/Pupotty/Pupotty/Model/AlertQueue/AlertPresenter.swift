@@ -56,11 +56,29 @@ class AlertPresenter: NSObject, NSCoding{
         guard halted == false else {
             return
         }
-        if alertQueue.queuePresent() && locked == false{
-            locked = true
-            currentPresentation = alertQueue.elements.first
-            Utils.presenter.present(currentPresentation!, animated: true)
+        
+        if Utils.presenter == nil{
+            func waitLoop(){
+                print("waitLoop checker")
+                if Utils.presenter == nil {
+                    DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
+                        waitLoop()
+                    }
+                }
+                else{
+                    showNextAlert()
+                }
+                
+            }
         }
+        else {
+            if alertQueue.queuePresent() && locked == false{
+                locked = true
+                currentPresentation = alertQueue.elements.first
+                Utils.presenter!.present(currentPresentation!, animated: true)
+            }
+        }
+        
     }
     
     func viewDidComplete() {

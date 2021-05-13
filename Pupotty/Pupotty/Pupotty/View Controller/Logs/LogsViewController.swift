@@ -278,6 +278,8 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
     
     //MARK: - IB
     
+    
+    
     @IBOutlet private weak var filterButton: UIBarButtonItem!
     
     @IBOutlet private weak var willAddLog: ScaledButton!
@@ -324,8 +326,6 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
     
     //IndexPath of a filter selected in the dropDown menu, nil if not filtering
     private var filterIndexPath: IndexPath? = nil
-    
-    static var isCompactView: Bool = false
     
     var logsMainScreenTableViewController: LogsMainScreenTableViewController! = nil
     

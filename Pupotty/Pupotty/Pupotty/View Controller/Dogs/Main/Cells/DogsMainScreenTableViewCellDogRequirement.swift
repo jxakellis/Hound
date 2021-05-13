@@ -68,7 +68,25 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
             self.requirementIcon.image = UIImage.init(systemName: "alarm")
             try! self.timeInterval.text = ("\(String.convertToReadable(interperatedDateComponents: requirement.timeOfDayComponents.timeOfDayComponent))")
             
-            if requirement.timeOfDayComponents.weekdays == [1,2,3,4,5,6,7]{
+            //day of month
+            if requirement.timeOfDayComponents.dayOfMonth != nil {
+                let dayOfMonth: Int! = requirement.timeOfDayComponents.dayOfMonth
+                timeInterval.text?.append(" Every Month on \(dayOfMonth!)")
+                if dayOfMonth == 1{
+                    timeInterval.text?.append("st")
+                }
+                else if dayOfMonth == 2 {
+                    timeInterval.text?.append("nd")
+                }
+                else if dayOfMonth == 3 {
+                    timeInterval.text?.append("rd")
+                }
+                else {
+                    timeInterval.text?.append("th")
+                }
+            }
+            //weekdays
+            else if requirement.timeOfDayComponents.weekdays == [1,2,3,4,5,6,7]{
                 timeInterval.text?.append(" Everyday")
             }
             else if requirement.timeOfDayComponents.weekdays == [1,7]{
@@ -79,8 +97,8 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
             }
             else {
                 timeInterval.text?.append(" on")
-                if requirement.timeOfDayComponents.weekdays.count == 1 {
-                    for weekdayInt in requirement.timeOfDayComponents.weekdays{
+                if requirement.timeOfDayComponents.weekdays!.count == 1 {
+                    for weekdayInt in requirement.timeOfDayComponents.weekdays!{
                         switch weekdayInt {
                         case 1:
                             timeInterval.text?.append(" Sunday")
@@ -102,7 +120,7 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
                     }
                 }
                 else {
-                    for weekdayInt in requirement.timeOfDayComponents.weekdays{
+                    for weekdayInt in requirement.timeOfDayComponents.weekdays!{
                         switch weekdayInt {
                         case 1:
                             timeInterval.text?.append(" Su,")

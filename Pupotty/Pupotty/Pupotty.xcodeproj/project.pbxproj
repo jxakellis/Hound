@@ -59,7 +59,7 @@
 		A2B18E3825E8A4C000951AC3 /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B18E3525E8A4C000951AC3 /* AlertPresenter.swift */; };
 		A2B18E3925E8A4C000951AC3 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B18E3625E8A4C000951AC3 /* Queue.swift */; };
 		A2B2CA2D25F858380095D15B /* HomeMainScreenTableViewCellEmpty.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B2CA2C25F858380095D15B /* HomeMainScreenTableViewCellEmpty.swift */; };
-		A2B9A92726291AD800626FAE /* radar_ios_7.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2B9A92626291AD800626FAE /* radar_ios_7.wav */; };
+		A2B9A92726291AD800626FAE /* radar.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2B9A92626291AD800626FAE /* radar.wav */; };
 		A2B9A92B2629213800626FAE /* AlertControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9A92A2629213800626FAE /* AlertControllers.swift */; };
 		A2B9DAE9262B2DFA00A47D57 /* LogsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9DAE8262B2DFA00A47D57 /* LogsNavigationViewController.swift */; };
 		A2B9DAED262B2E0A00A47D57 /* LogsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9DAEC262B2E0A00A47D57 /* LogsViewController.swift */; };
@@ -74,6 +74,7 @@
 		A2E66CA425534A880068CCA6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A2E66CA225534A880068CCA6 /* Main.storyboard */; };
 		A2E66CA625534A8A0068CCA6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2E66CA525534A8A0068CCA6 /* Assets.xcassets */; };
 		A2E66CA925534A8A0068CCA6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A2E66CA725534A8A0068CCA6 /* LaunchScreen.storyboard */; };
+		A2E7064A264C431200051EE8 /* radar30Loop.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2E70649264C431200051EE8 /* radar30Loop.wav */; };
 		A2EAF17D25C9D45E0022BBDD /* DogsMainScreenTableViewCellDogRequirement.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2EAF17C25C9D45E0022BBDD /* DogsMainScreenTableViewCellDogRequirement.swift */; };
 		A2F1791C263F3E5C006824A7 /* DropDownDefaultTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F1791B263F3E5C006824A7 /* DropDownDefaultTableViewCell.swift */; };
 		A2F1791F263F3FE3006824A7 /* DropDownDefaultTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A2F1791E263F3FE3006824A7 /* DropDownDefaultTableViewCell.xib */; };
@@ -132,7 +133,7 @@
 		A2B18E3525E8A4C000951AC3 /* AlertPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
 		A2B18E3625E8A4C000951AC3 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		A2B2CA2C25F858380095D15B /* HomeMainScreenTableViewCellEmpty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMainScreenTableViewCellEmpty.swift; sourceTree = "<group>"; };
-		A2B9A92626291AD800626FAE /* radar_ios_7.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = radar_ios_7.wav; sourceTree = "<group>"; };
+		A2B9A92626291AD800626FAE /* radar.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = radar.wav; sourceTree = "<group>"; };
 		A2B9A92A2629213800626FAE /* AlertControllers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertControllers.swift; sourceTree = "<group>"; };
 		A2B9DAE8262B2DFA00A47D57 /* LogsNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsNavigationViewController.swift; sourceTree = "<group>"; };
 		A2B9DAEC262B2E0A00A47D57 /* LogsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsViewController.swift; sourceTree = "<group>"; };
@@ -150,6 +151,7 @@
 		A2E66CA525534A8A0068CCA6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A2E66CA825534A8A0068CCA6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A2E66CAA25534A8A0068CCA6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A2E70649264C431200051EE8 /* radar30Loop.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = radar30Loop.wav; sourceTree = "<group>"; };
 		A2EAF17C25C9D45E0022BBDD /* DogsMainScreenTableViewCellDogRequirement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsMainScreenTableViewCellDogRequirement.swift; sourceTree = "<group>"; };
 		A2F1791B263F3E5C006824A7 /* DropDownDefaultTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropDownDefaultTableViewCell.swift; sourceTree = "<group>"; };
 		A2F1791E263F3FE3006824A7 /* DropDownDefaultTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DropDownDefaultTableViewCell.xib; sourceTree = "<group>"; };
@@ -414,7 +416,8 @@
 		A2B9A92526291A6000626FAE /* Sound Effects */ = {
 			isa = PBXGroup;
 			children = (
-				A2B9A92626291AD800626FAE /* radar_ios_7.wav */,
+				A2E70649264C431200051EE8 /* radar30Loop.wav */,
+				A2B9A92626291AD800626FAE /* radar.wav */,
 			);
 			path = "Sound Effects";
 			sourceTree = "<group>";
@@ -556,11 +559,12 @@
 				A2536B4E26083C4E00E2FF6A /* Formatting in Resources */,
 				A263B30E2638AADD00E1DCE6 /* XXXXXDropDownTableViewCell.xib in Resources */,
 				A2E66CA625534A8A0068CCA6 /* Assets.xcassets in Resources */,
+				A2E7064A264C431200051EE8 /* radar30Loop.wav in Resources */,
 				A2E66CA425534A880068CCA6 /* Main.storyboard in Resources */,
 				A265848D25E8128400E8B812 /* CHECKLIST Future Implementation Needed in Resources */,
 				A2F1791F263F3FE3006824A7 /* DropDownDefaultTableViewCell.xib in Resources */,
 				A286934E2576A4CA00C0C06E /* ORIGINAL Future Implementation in Resources */,
-				A2B9A92726291AD800626FAE /* radar_ios_7.wav in Resources */,
+				A2B9A92726291AD800626FAE /* radar.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,26 +1,19 @@
 
 CHECKLIST Future Implementation Needed
 
-Thinks the info pages could be more interactive. Instead of describing, show with pictures.
+Dad Review:
+-New "We will generate..." wording in first time into
+-New "Yes, I dont want to save new changes" wording in auto save confirmation
+-"After responding to reminder..." wording in requirement recurring configuration
+-Check wording for pause all reminders (?) cirlce thing
+
+In progress:
+Termination checker, needs verification that it works properly
+App can now sound for 30 seconds when ringer is on, sounds at system volume and not max, vibrates only once when sent, banner not persistant. Email sent to Alarm team 5/12/2021
+
+Needed:
 Configurable log types
-"We will generate a dog for you" is unclear because she believes she is generating the dog herself
-Add compact/regular mode changer settings page
-Reminders page pop up make shorter, when clicking all done or dismissing pop notification authorization request instead of having a slider that the user could miss
-Add question mark next to pause all reminders
-Month support
-Wording of "After responding to reminder..." change
-When logging event on reminders, add visual confirmation to show it happened.
-Look into permission for making the app ring when closed and when ringer off.
-Look into a termination message as if app is terminated then notifications wont run
-Crashs if trying trying to log while reminders are paused.
-Change follow up notification to a block of text. Change i circle to question marks possibly.
-
-Confused because she created a dog and it opened log page instead of reminder page
-Two layer menu confused her
-
-
-
-
+LogsViewController .catagorizedLogTypes efficency by reducing calls to it
 
 
 Song - Third Period - 5/20 or 5/24

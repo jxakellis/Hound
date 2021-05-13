@@ -88,7 +88,7 @@ enum UserDefaultsKeys: String{
     //DogsViewController
     case hasBeenLoadedBefore = "hasBeenLoadedBefore"
     
-    //LogsViewController
+    //LogsMainScreenTableViewController
     case isCompactView = "isCompactView"
     
     //Timing

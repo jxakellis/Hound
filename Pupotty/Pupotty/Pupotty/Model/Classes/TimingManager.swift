@@ -318,7 +318,7 @@ class TimingManager{
     }
     
     ///Creates alertController to queue for presentation along with information passed along with it to reinitalize the timer once an option is selected (e.g. disable or snooze)
-    static func willShowTimer(sender: Sender = Sender(origin: Utils.presenter, localized: Utils.presenter), dogName: String, requirement: Requirement){
+    static func willShowTimer(sender: Sender = Sender(origin: Utils.presenter!, localized: Utils.presenter!), dogName: String, requirement: Requirement){
         
         let title = "\(requirement.requirementType.rawValue) - \(dogName)"
         //let message = "\(requirement.requirementDescription)"

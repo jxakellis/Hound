@@ -14,6 +14,52 @@ protocol SettingsViewControllerDelegate {
 
 class SettingsViewController: UIViewController, ToolTipable {
     
+    //MARK: - Logs
+    
+    @IBOutlet private weak var logsViewModeSegmentedControl: UISegmentedControl!
+    
+    @IBAction private func didUpdateLogsViewModeSegmentedControl(_ sender: Any) {
+        if logsViewModeSegmentedControl.selectedSegmentIndex == 0{
+            LogsMainScreenTableViewController.isCompactView = true
+        }
+        else {
+            LogsMainScreenTableViewController.isCompactView = false
+        }
+    }
+    
+    //MARK: - Reminders
+    //MARK: Pause
+    ///Switch for pause all timers
+    @IBOutlet private weak var pauseToggleSwitch: UISwitch!
+    
+    ///If the pause all timers switch it triggered, calls thing function
+    @IBAction private func didTogglePause(_ sender: Any) {
+        self.willHideToolTip()
+        delegate.didTogglePause(newPauseState: pauseToggleSwitch.isOn)
+    }
+    
+    ///Synchronizes the isPaused switch enable and isOn variables to reflect that amount of timers active, if non are active then locks user from changing switch
+    private func synchronizeIsPaused(){
+        if MainTabBarViewController.staticDogManager.enabledTimersCount == 0{
+            TimingManager.isPaused = false
+            self.pauseToggleSwitch.isOn = false
+            self.pauseToggleSwitch.isEnabled = false
+        }
+        else {
+            self.pauseToggleSwitch.isEnabled = true
+        }
+    }
+    
+    //MARK: Snooze
+    
+    @IBOutlet private weak var snoozeLengthLabel: CustomLabel!
+    @IBOutlet private weak var snoozeInterval: UIDatePicker!
+    
+    @IBAction private func didUpdateSnoozeInterval(_ sender: Any) {
+        self.willHideToolTip()
+        TimerConstant.defaultSnooze = snoozeInterval.countDownDuration
+    }
+    
     //MARK: - Notifications
     
     @IBOutlet private weak var notificationToggleSwitch: UISwitch!
@@ -82,7 +128,7 @@ class SettingsViewController: UIViewController, ToolTipable {
     }
     
     
-    //MARK: - Follow Up Notification
+    //MARK: Follow Up Notification
     
     @IBOutlet weak var followUpReminderLabel: CustomLabel!
     
@@ -111,7 +157,7 @@ class SettingsViewController: UIViewController, ToolTipable {
         }
     }
     
-    //MARK: - Follow Up Delay
+    //MARK: Follow Up Delay
     
     @IBOutlet weak var followUpDelayInterval: UIDatePicker!
     
@@ -120,40 +166,9 @@ class SettingsViewController: UIViewController, ToolTipable {
         NotificationConstant.followUpDelay = followUpDelayInterval.countDownDuration
     }
     
+    //MARK: - Tool Tips
     
-    //MARK: - Pause
-    ///Switch for pause all timers
-    @IBOutlet private weak var pauseToggleSwitch: UISwitch!
-    
-    ///If the pause all timers switch it triggered, calls thing function
-    @IBAction private func didTogglePause(_ sender: Any) {
-        self.willHideToolTip()
-        delegate.didTogglePause(newPauseState: pauseToggleSwitch.isOn)
-    }
-    
-    ///Synchronizes the isPaused switch enable and isOn variables to reflect that amount of timers active, if non are active then locks user from changing switch
-    private func synchronizeIsPaused(){
-        if MainTabBarViewController.staticDogManager.enabledTimersCount == 0{
-            TimingManager.isPaused = false
-            self.pauseToggleSwitch.isOn = false
-            self.pauseToggleSwitch.isEnabled = false
-        }
-        else {
-            self.pauseToggleSwitch.isEnabled = true
-        }
-    }
-    
-    //MARK: - Snooze
-    
-    @IBOutlet private weak var snoozeLengthLabel: CustomLabel!
-    @IBOutlet private weak var snoozeInterval: UIDatePicker!
-    
-    @IBAction private func didUpdateSnoozeInterval(_ sender: Any) {
-        self.willHideToolTip()
-        TimerConstant.defaultSnooze = snoozeInterval.countDownDuration
-    }
-    
-    //MARK: - Tool Tip
+    //MARK: Follow Up Tool Tip
     
     @IBOutlet private weak var followUpNotificationToolTip: UIButton!
     
@@ -172,6 +187,29 @@ class SettingsViewController: UIViewController, ToolTipable {
             //"Sends a follow up \nnotification if the first one\nis not responded to"
         }
     }
+    
+    //MARK: Pause All Reminders Tool Tip
+    
+    @IBOutlet weak var pauseAllRemindersToolTip: UIButton!
+    
+    @IBAction func didClickPauseAllRemindersToolTip(_ sender: Any) {
+        
+        pauseAllRemindersToolTip.isUserInteractionEnabled = false
+        
+        //pauseAllRemindersToolTip tool tip shown
+        if toolTipViews[2] != nil {
+            hideToolTip(targetTipView: toolTipViews[2]) {
+                self.pauseAllRemindersToolTip.isUserInteractionEnabled = true
+            }
+        }
+        //needs to show pauseAllRemindersToolTip
+        else {
+            showToolTip(sourceButton: pauseAllRemindersToolTip, message: "Freezes all reminders\nso they do not\ncountdown or send\nnotifications.")
+            //"Sends a follow up \nnotification if the first one\nis not responded to"
+        }
+    }
+    
+    //MARK: Snooze Tool Tip
     
     @IBOutlet private weak var snoozeLengthToolTip: UIButton!
     
@@ -192,7 +230,7 @@ class SettingsViewController: UIViewController, ToolTipable {
         }
     }
     
-    
+    //MARK: General Tool Tip
     
     func showToolTip(sourceButton: UIButton, message: String) {
         let tipView = ToolTipView(sourceView: sourceButton, message: message, toolTipPosition: .middle)
@@ -204,6 +242,8 @@ class SettingsViewController: UIViewController, ToolTipable {
                 toolTipViews[0] = tipView
             case snoozeLengthToolTip:
                 toolTipViews[1] = tipView
+            case pauseAllRemindersToolTip:
+                toolTipViews[2] = tipView
             default:
                 print("fall through showToolTip SettingsViewController")
         }
@@ -290,7 +330,7 @@ class SettingsViewController: UIViewController, ToolTipable {
         
         AlertPresenter.shared.enqueueAlertForPresentation(alertController)
         
-        DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + 1.5) {
             exit(-1)
         }
     }
@@ -301,12 +341,23 @@ class SettingsViewController: UIViewController, ToolTipable {
     
     @IBOutlet weak var scrollViewContainerForAll: UIView!
     
-    private var toolTipViews: [ToolTipView?] = [nil, nil]
+    private var toolTipViews: [ToolTipView?] = [nil, nil, nil]
     
     //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.logsViewModeSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 20), .foregroundColor: UIColor.white], for: .normal)
+        self.logsViewModeSegmentedControl.backgroundColor = ColorConstant.gray.rawValue
+        
+        if LogsMainScreenTableViewController.isCompactView == true {
+            logsViewModeSegmentedControl.selectedSegmentIndex = 0
+        }
+        else {
+            logsViewModeSegmentedControl.selectedSegmentIndex = 1
+        }
+        
         followUpDelayInterval.countDownDuration = NotificationConstant.followUpDelay
         snoozeInterval.countDownDuration = TimerConstant.defaultSnooze
         pauseToggleSwitch.isOn = TimingManager.isPaused
@@ -331,28 +382,32 @@ class SettingsViewController: UIViewController, ToolTipable {
     }
     
     private func setupConstraints(){
-        func setupFollowUpLabelWidth(){
-            var followUpReminderLabelWidth: CGFloat {
-                let neededConstraintSpace: CGFloat = 10.0 + 3.0 + 3.0 + 45.0
-                let otherButtonSpace: CGFloat = followUpToggleSwitch.frame.width + followUpNotificationToolTip.frame.width
-                let maximumWidth: CGFloat = view.frame.width - otherButtonSpace - neededConstraintSpace
-                
-                let neededLabelSize: CGSize = (followUpReminderLabel.text?.boundingFrom(font: followUpReminderLabel.font, height: followUpReminderLabel.frame.height))!
-                
-                let neededLabelWidth: CGFloat = neededLabelSize.width
-                
-                if neededLabelWidth > maximumWidth {
-                    return maximumWidth
-                }
-                else {
-                    return neededLabelWidth
-                }
-            }
+       
+            /*
+         func setupFollowUpLabelWidth(){
+             var followUpReminderLabelWidth: CGFloat {
+                 let neededConstraintSpace: CGFloat = 10.0 + 3.0 + 3.0 + 45.0
+                 let otherButtonSpace: CGFloat = followUpToggleSwitch.frame.width + followUpNotificationToolTip.frame.width
+                 let maximumWidth: CGFloat = view.frame.width - otherButtonSpace - neededConstraintSpace
+                 
+                 let neededLabelSize: CGSize = (followUpReminderLabel.text?.boundingFrom(font: followUpReminderLabel.font, height: followUpReminderLabel.frame.height))!
+                 
+                 let neededLabelWidth: CGFloat = neededLabelSize.width
+                 
+                 if neededLabelWidth > maximumWidth {
+                     return maximumWidth
+                 }
+                 else {
+                     return neededLabelWidth
+                 }
+             }
+             
+             let followUpLabelConstraint = NSLayoutConstraint(item: followUpReminderLabel!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: followUpReminderLabelWidth)
+             followUpReminderLabel.addConstraint(followUpLabelConstraint)
+             NSLayoutConstraint.activate([followUpLabelConstraint])
+         }
+             */
             
-            let followUpLabelConstraint = NSLayoutConstraint(item: followUpReminderLabel!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: followUpReminderLabelWidth)
-            followUpReminderLabel.addConstraint(followUpLabelConstraint)
-            NSLayoutConstraint.activate([followUpLabelConstraint])
-        }
         
         func setupSnoozeLengthLabelWidth(){
             var snoozeLengthLabelWidth: CGFloat {
@@ -380,7 +435,7 @@ class SettingsViewController: UIViewController, ToolTipable {
         
         
         
-        setupFollowUpLabelWidth()
+        //setupFollowUpLabelWidth()
         setupSnoozeLengthLabelWidth()
         self.view.setNeedsLayout()
         self.view.layoutIfNeeded()

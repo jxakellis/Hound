@@ -6,6 +6,7 @@
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
 //
 
+import MediaPlayer
 import UIKit
 import AudioToolbox
 import AVFoundation
@@ -20,12 +21,19 @@ class AlarmAlertController: GeneralAlertController {
     
     private var audioPlayer: AVAudioPlayer!
     
+    
+    
     private func loadAlarmSound(){
-        let path = Bundle.main.path(forResource: "radar_ios_7.wav", ofType: nil)!
+        
+        let path = Bundle.main.path(forResource: "radar.wav", ofType: nil)!
         let url = URL(fileURLWithPath: path)
 
         do {
             //create your audioPlayer in your parent class as a property
+            try! AVAudioSession.sharedInstance().setCategory(.playback, options: [.duckOthers])
+            DispatchQueue.main.async {
+               // MPVolumeView.setVolume(1.0)
+            }
             audioPlayer = try AVAudioPlayer(contentsOf: url)
             audioPlayer.numberOfLoops = .max
             
@@ -59,6 +67,17 @@ class AlarmAlertController: GeneralAlertController {
         DispatchQueue.global().async{
             self.audioPlayer.stop()
             self.shouldVibrate = false
+        }
+    }
+}
+
+extension MPVolumeView {
+    static func setVolume(_ volume: Float) {
+        let volumeView = MPVolumeView()
+        let slider = volumeView.subviews.first(where: { $0 is UISlider }) as? UISlider
+
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
+            slider?.value = volume
         }
     }
 }

@@ -25,7 +25,10 @@ class Persistence{
             NotificationConstant.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool
             
             DogsNavigationViewController.hasBeenLoadedBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue) as! Bool
-            LogsViewController.isCompactView = UserDefaults.standard.value(forKey: UserDefaultsKeys.isCompactView.rawValue) as! Bool
+            LogsMainScreenTableViewController.isCompactView = UserDefaults.standard.value(forKey: UserDefaultsKeys.isCompactView.rawValue) as! Bool
+            
+            terminationHandler()
+    
         }
         
         else {
@@ -61,10 +64,40 @@ class Persistence{
             UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
             
             UserDefaults.standard.setValue(DogsNavigationViewController.hasBeenLoadedBefore, forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue)
-            UserDefaults.standard.setValue(LogsViewController.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
+            UserDefaults.standard.setValue(LogsMainScreenTableViewController.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
             
             MainTabBarViewController.firstTimeSetup = true
             
+        }
+        
+        func terminationHandler(){
+            let decoded = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as! Data
+            let dogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
+            guard dogManager.hasEnabledRequirement == true && NotificationConstant.isNotificationEnabled == true else {
+                return
+            }
+            
+                var notificationChecker: Bool {
+                    var hasNotification = false
+                    UNUserNotificationCenter.current().getDeliveredNotifications { notifs in
+                        if notifs.count != 0{
+                            hasNotification = true
+                        }
+                    }
+                    UNUserNotificationCenter.current().getPendingNotificationRequests { notifs in
+                        if notifs.count != 0{
+                            hasNotification = true
+                        }
+                    }
+                    return hasNotification
+                }
+                
+                if notificationChecker == false {
+                    Utils.willShowAlert(title: "Oops, you might have terminated Pupotty!", message: "Leave Pupotty running in the background if you wish to get notifications.")
+                }
+                
+            
+        
         }
     }
     
@@ -111,7 +144,8 @@ class Persistence{
         UserDefaults.standard.setValue(NotificationConstant.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
         
         UserDefaults.standard.setValue(DogsNavigationViewController.hasBeenLoadedBefore, forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue)
-        UserDefaults.standard.setValue(LogsViewController.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
+        UserDefaults.standard.setValue(LogsMainScreenTableViewController.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
+        
         
         if isTerminating == true  {
             
@@ -127,7 +161,6 @@ class Persistence{
             print("isEnabled \(NotificationConstant.isNotificationEnabled) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool)")
             print("isPaused \(TimingManager.isPaused) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool)")
             */
-             
             
             if NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled && !TimingManager.isPaused {
                 for dogKey in TimingManager.timerDictionary.keys{
@@ -213,3 +246,5 @@ class Persistence{
        
     }
 }
+
+

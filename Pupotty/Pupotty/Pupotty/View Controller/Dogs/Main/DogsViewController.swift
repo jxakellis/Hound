@@ -57,6 +57,72 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         
     }
     
+    ///visual indication of log
+    func didLogReminder(){
+        let view: ScaledButton! = didLogEventConfirmation
+        let viewBackground: ScaledButton! = didLogEventConfirmationBackground
+        
+        view.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+        view.alpha = 0.0
+        view.isHidden = false
+        viewBackground.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+        viewBackground.alpha = 0.0
+        viewBackground.isHidden = false
+        
+        let duration: TimeInterval = 0.17
+        
+        //come in from nothing
+        UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut, animations: {
+            
+            view.transform = .identity
+            view.alpha = 1.0
+            viewBackground.transform = .identity
+            viewBackground.alpha = 1.0
+            
+        }) { finished in
+            
+            //begin spin once
+            UIView.animate(withDuration: duration, delay: 0, options: .curveLinear) {
+                
+                view.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+                viewBackground.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+                
+            } completion: { _ in
+                //finished
+            }
+            
+            
+            //end spin
+            UIView.animate(withDuration: duration, delay: (duration*0.85), options: .curveEaseIn) {
+                
+                view.transform = CGAffineTransform(rotationAngle: CGFloat.pi * 2.0)
+                viewBackground.transform = CGAffineTransform(rotationAngle: CGFloat.pi * 2.0)
+                
+            } completion: { _ in
+                
+                //get small and disappear
+                UIView.animate(withDuration: duration, delay: 0, options: .curveEaseIn) {
+                    
+                    view.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+                    view.alpha = 0.0
+                    viewBackground.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+                    viewBackground.alpha = 0.0
+    
+                } completion: { completed in
+                    
+                    //done with everything
+                    view.isHidden = true
+                    view.transform = .identity
+                    viewBackground.isHidden = true
+                    viewBackground.transform = .identity
+                    
+                }
+            }
+
+
+        }
+    }
+    
     //MARK: - DogManagerControlFlowProtocol
     
     ///If the dog manager was updated in DogsMainScreenTableViewController, this function is called to reflect that change here with this dogManager
@@ -129,11 +195,15 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     
     //MARK: - IB
     
-    @IBOutlet weak var willAddButton: UIButton!
+    @IBOutlet private weak var didLogEventConfirmation: ScaledButton!
+    @IBOutlet private weak var didLogEventConfirmationBackground: ScaledButton!
     
-    @IBOutlet weak var willAddButtonBackground: UIButton!
     
-    @IBAction func willAddButton(_ sender: Any) {
+    @IBOutlet private weak var willAddButton: ScaledButton!
+    
+    @IBOutlet private weak var willAddButtonBackground: ScaledButton!
+    
+    @IBAction private func willAddButton(_ sender: Any) {
             self.changeAddStatus(newAddStatus: !addStatus)
         }
 
@@ -165,6 +235,9 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         
         self.view.bringSubviewToFront(willAddButtonBackground)
         self.view.bringSubviewToFront(willAddButton)
+        
+        self.view.bringSubviewToFront(didLogEventConfirmationBackground)
+        self.view.bringSubviewToFront(didLogEventConfirmation)
         
     }
     

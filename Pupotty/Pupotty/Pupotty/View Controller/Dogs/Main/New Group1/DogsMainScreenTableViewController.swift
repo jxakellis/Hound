@@ -12,6 +12,7 @@ protocol DogsMainScreenTableViewControllerDelegate{
     func willEditDog(dogName: String)
     func willEditRequirement(parentDogName: String, requirementUUID: String?)
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+    func didLogReminder()
 }
 
 class DogsMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol, DogsMainScreenTableViewCellDogDisplayDelegate, DogsMainScreenTableViewCellRequirementDisplayDelegate {
@@ -336,6 +337,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     (alert: UIAlertAction!)  in
                     //knownLogType not needed as unskipping alarm does not require that component
                     TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementUUID: requirement.uuid, knownLogType: nil)
+                    self.delegate.didLogReminder()
                     
                 })
             alertActionsForLog.append(alertActionLog)
@@ -353,6 +355,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                                 (_)  in
                                 //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                                 TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementUUID: requirement.uuid, knownLogType: pottyKnownType)
+                                self.delegate.didLogReminder()
                             })
                     alertActionsForLog.append(alertActionLog)
                 }
@@ -365,6 +368,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                             (_)  in
                             //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                             TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementUUID: requirement.uuid, knownLogType: KnownLogType(rawValue: requirement.requirementType.rawValue)!)
+                            self.delegate.didLogReminder()
                         })
                 alertActionsForLog.append(alertActionLog)
             }

@@ -38,6 +38,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         if newDefaultReminderStatus == true {
             let sudoDogManager = dogsViewController.getDogManager()
             try! sudoDogManager.dogs[0].dogRequirments.addRequirement(newRequirements: [RequirementConstant.defaultRequirementOne, RequirementConstant.defaultRequirementTwo, RequirementConstant.defaultRequirementThree])
+            
             setDogManager(sender: sender, newDogManager: sudoDogManager)
         }
     }
@@ -77,8 +78,10 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         
         //DogManagerEfficencyImprovement masterDogManager = newDogManager.copy() as! DogManager
         //DogManagerEfficencyImprovement MainTabBarViewController.staticDogManager = newDogManager.copy() as! DogManager
+        
         masterDogManager = newDogManager
         MainTabBarViewController.staticDogManager = newDogManager
+        
         
         
         

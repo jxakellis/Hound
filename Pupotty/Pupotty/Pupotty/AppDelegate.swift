@@ -34,9 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
             UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                Utils.willShowAlert(title: "🚨Crashed detected🚨", message: "Pupotty crashed during its last launch and had to reset itself to default in order to recover. I am sorry for the inconvenience😢")
-            }
+            Utils.willShowAlert(title: "🚨Crashed detected🚨", message: "Pupotty crashed during its last launch and had to reset itself to default in order to recover. I am sorry for the inconvenience😢")
            
         }
         else if shouldPerformCleanInstall == true {
@@ -76,6 +74,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
+        
         // Called when the user discards a scene session.
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.

@@ -16,12 +16,6 @@ protocol DogsIndependentRequirementViewControllerDelegate {
 
 class DogsIndependentRequirementViewController: UIViewController, DogsRequirementManagerViewControllerDelegate {
     
-    //MARK: Auto Save Trigger
-    
-    func didUpdateInformation() {
-        shouldPromptSaveWarning = true
-    }
-    
     
     //MARK: - DogsRequirementManagerViewControllerDelegate
 
@@ -48,8 +42,6 @@ class DogsIndependentRequirementViewController: UIViewController, DogsRequiremen
     //MARK: - IB
     
     //Buttons to manage the information fate, whether to update or to cancel
-    
-    
     
     @IBOutlet weak var pageNavigationBar: UINavigationItem!
     @IBOutlet private weak var saveRequirementButton: UIButton!
@@ -88,7 +80,7 @@ class DogsIndependentRequirementViewController: UIViewController, DogsRequiremen
     ///The cancel / exit button was pressed, dismisses view to complete intended action
     @IBAction private func willCancel(_ sender: Any) {
         //"Any changes you have made won't be saved"
-        if shouldPromptSaveWarning == true {
+        if dogsRequirementManagerViewController.initalValuesChanged == true {
             let unsavedInformationConfirmation = GeneralAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
             
             let alertActionExit = UIAlertAction(title: "Yes, I don't want to save my new changes", style: .default) { (UIAlertAction) in
@@ -119,9 +111,6 @@ class DogsIndependentRequirementViewController: UIViewController, DogsRequiremen
     var isUpdating: Bool = false
     
     var parentDogName: String! = nil
-    
-    ///Auto save warning will show if true
-    private var shouldPromptSaveWarning: Bool = false
     
     //MARK: - Main
     

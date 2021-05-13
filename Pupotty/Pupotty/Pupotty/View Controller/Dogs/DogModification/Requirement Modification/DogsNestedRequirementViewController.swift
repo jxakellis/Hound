@@ -17,12 +17,6 @@ protocol DogsNestedRequirementViewControllerDelegate {
 
 class DogsNestedRequirementViewController: UIViewController, DogsRequirementManagerViewControllerDelegate{
     
-    //MARK: - Auto Save Trigger
-    
-    func didUpdateInformation() {
-        //do nothing as the only auto save warning should be when the master is exited (this is the sub requirement add field of the super dog updator/adder)
-    }
-    
     
     //MARK: - DogsRequirementManagerViewControllerDelegate
     
