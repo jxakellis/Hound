@@ -13,12 +13,12 @@ protocol DogsRequirementManagerViewControllerDelegate{
     func didUpdateRequirement(updatedRequirement: Requirement)
 }
 
-class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, DogsRequirementCountDownViewControllerDelegate, DogsRequirementTimeOfDayViewControllerDelegate, MakeDropDownDataSourceProtocol{
+class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, DogsRequirementCountDownViewControllerDelegate, DogsRequirementWeeklyViewControllerDelegate, MakeDropDownDataSourceProtocol, DogsRequirementMonthlyViewControllerDelegate{
     
     //MARK: Auto Save Trigger
     
     
-    //MARK: - DogsRequirementCountDownViewControllerDelegate and DogsRequirementTimeOfDayViewControllerDelegate
+    //MARK: - DogsRequirementCountDownViewControllerDelegate and DogsRequirementWeeklyViewControllerDelegate
     
     func willDismissKeyboard() {
         self.dismissKeyboard()
@@ -83,7 +83,9 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     @IBOutlet private weak var countDownContainerView: UIView!
     
-    @IBOutlet private weak var timeOfDayContainerView: UIView!
+    @IBOutlet private weak var weeklyContainerView: UIView!
+    
+    @IBOutlet private weak var monthlyContainerView: UIView!
     
     @IBOutlet weak var requirementAction: BorderedLabel!
     
@@ -91,15 +93,22 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     
-    @IBAction func segmentedControl(_ sender: UISegmentedControl) {
+    @IBAction private func segmentedControl(_ sender: UISegmentedControl) {
         
         if sender.selectedSegmentIndex == 0 {
             countDownContainerView.isHidden = false
-            timeOfDayContainerView.isHidden = true
+            weeklyContainerView.isHidden = true
+            monthlyContainerView.isHidden = true
+        }
+        else if sender.selectedSegmentIndex == 1{
+            countDownContainerView.isHidden = true
+            weeklyContainerView.isHidden = false
+            monthlyContainerView.isHidden = true
         }
         else {
             countDownContainerView.isHidden = true
-            timeOfDayContainerView.isHidden = false
+            weeklyContainerView.isHidden = true
+            monthlyContainerView.isHidden = false
         }
     }
     
@@ -123,20 +132,25 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         else if segmentedControl.selectedSegmentIndex != initalSegmentedIndex{
             return true
         }
-        else if dogsRequirementCountDownViewController.initalValuesChanged == true{
-            return true
-        }
-        else if dogsRequirementTimeOfDayViewController.initalValuesChanged == true {
-            return true
-        }
         else {
-            return false
+            switch segmentedControl.selectedSegmentIndex {
+            case 0:
+                return dogsRequirementCountDownViewController.initalValuesChanged
+            case 1:
+                return dogsRequirementWeeklyViewController.initalValuesChanged
+            case 2:
+                return dogsRequirementMonthlyViewController.initalValuesChanged
+            default:
+                return false
+            }
         }
     }
     
     private var dogsRequirementCountDownViewController = DogsRequirementCountDownViewController()
     
-    private var dogsRequirementTimeOfDayViewController = DogsRequirementTimeOfDayViewController()
+    private var dogsRequirementWeeklyViewController = DogsRequirementWeeklyViewController()
+    
+    private var dogsRequirementMonthlyViewController = DogsRequirementMonthlyViewController()
     
     private let dropDown = MakeDropDown()
     
@@ -192,36 +206,31 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
             
             updatedRequirement.uuid = targetRequirement?.uuid ?? updatedRequirement.uuid
             updatedRequirement.requirementType = ScheduledLogType(rawValue: requirementAction.text!)!
-            //try updatedRequirement.changeRequirementDescription(newRequirementDescription: requirementDescription.text)
             updatedRequirement.setEnable(newEnableStatus: requirementToggleSwitch.isOn)
             
-            let selectedWeekdays = dogsRequirementTimeOfDayViewController.weekdays
-            let selectedDayOfMonth = dogsRequirementTimeOfDayViewController.dayOfMonth
-            
-            if selectedWeekdays != nil && selectedDayOfMonth != nil {
-                throw TimeOfDayComponentsError.bothDayIndicatorsActive
-            }
-            else if selectedWeekdays != nil {
-                //even if TOD is not selected, still saves week days
-                try updatedRequirement.timeOfDayComponents.changeWeekdays(newWeekdays: selectedWeekdays)
-            }
-            //day of month
-            else {
-                try updatedRequirement.timeOfDayComponents.changeDayOfMonth(newDayOfMonth: selectedDayOfMonth)
-            }
-            
-            
-            //only saves countdown if countdown mode is selected
+            //only saves countdown if selected
             if segmentedControl.selectedSegmentIndex == 0{
                 updatedRequirement.changeTimingStyle(newTimingStyle: .countDown)
                 updatedRequirement.countDownComponents.changeExecutionInterval(newExecutionInterval: dogsRequirementCountDownViewController.countDown.countDownDuration)
             }
-            //only saves TOD if TOD mode is selected, this makes it so if the TOD is not configured and selected then the next time it is opened the datePicker time of day is set to the current (rounded up to neared 5 minutes)
+            //only saves weekly if selected
             else if segmentedControl.selectedSegmentIndex == 1{
-                updatedRequirement.changeTimingStyle(newTimingStyle: .timeOfDay)
-                try! updatedRequirement.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: Calendar.current.dateComponents([.hour, .minute], from: dogsRequirementTimeOfDayViewController.timeOfDay.date))
                 
+                let weekdays = dogsRequirementWeeklyViewController.weekdays
                 
+                if weekdays == nil {
+                    throw TimeOfDayComponentsError.invalidWeekdayArray
+                }
+                
+                updatedRequirement.changeTimingStyle(newTimingStyle: .weekly)
+                try updatedRequirement.timeOfDayComponents.changeWeekdays(newWeekdays: weekdays)
+                try updatedRequirement.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: Calendar.current.dateComponents([.hour, .minute], from: dogsRequirementWeeklyViewController.timeOfDay.date))
+            }
+            //only saves monthly if selected
+            else {
+                updatedRequirement.changeTimingStyle(newTimingStyle: .monthly)
+                try! updatedRequirement.timeOfDayComponents.changeDayOfMonth(newDayOfMonth: dogsRequirementMonthlyViewController.dayOfMonth)
+                try! updatedRequirement.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: Calendar.current.dateComponents([.hour, .minute], from: dogsRequirementMonthlyViewController.datePicker.date))
             }
             
             if targetRequirement == nil {
@@ -229,12 +238,29 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
             }
             else {
                 
-                //If the executionInterval (the countdown duration) is changed then is changes its execution interval, this is because (for example) if you were 5 minutes in to a 1 hour countdown but then change it to 30 minutes, you would want to be 0 minutes into the new timer and not 5 minutes in like previously.
-                if updatedRequirement.countDownComponents.executionInterval != targetRequirement!.countDownComponents.executionInterval && updatedRequirement.timingStyle == .countDown{
+                //Checks for differences in time of day, execution interval, weekdays, or time of month.
+                //If you were 5 minutes in to a 1 hour countdown but then change it to 30 minutes, you would want to be 0 minutes into the new timer and not 5 minutes in like previously.
+                
+                if updatedRequirement.timingStyle == .countDown{
+                    //execution interval changed
+                    if updatedRequirement.countDownComponents.executionInterval != targetRequirement!.countDownComponents.executionInterval{
                     updatedRequirement.timerReset(shouldLogExecution: false)
+                    }
                 }
-                else if updatedRequirement.timingStyle == .timeOfDay &&  (updatedRequirement.timeOfDayComponents.timeOfDayComponent != targetRequirement!.timeOfDayComponents.timeOfDayComponent || updatedRequirement.timeOfDayComponents.weekdays != targetRequirement!.timeOfDayComponents.weekdays || updatedRequirement.timeOfDayComponents.dayOfMonth != targetRequirement!.timeOfDayComponents.dayOfMonth){
-                    updatedRequirement.timerReset(shouldLogExecution: false)
+                //weekly
+                else if updatedRequirement.timingStyle == .weekly{
+                    //time of day or weekdays changed
+                    if updatedRequirement.timeOfDayComponents.timeOfDayComponent != targetRequirement!.timeOfDayComponents.timeOfDayComponent || updatedRequirement.timeOfDayComponents.weekdays != targetRequirement!.timeOfDayComponents.weekdays{
+                        updatedRequirement.timerReset(shouldLogExecution: false)
+                    }
+                }
+                //monthly
+                else {
+                    //time of day or day of month changed
+                    if updatedRequirement.timeOfDayComponents.timeOfDayComponent != targetRequirement!.timeOfDayComponents.timeOfDayComponent || updatedRequirement.timeOfDayComponents.dayOfMonth != targetRequirement!.timeOfDayComponents.dayOfMonth{
+                        
+                        updatedRequirement.timerReset(shouldLogExecution: false)
+                    }
                 }
                 
                 delegate.didUpdateRequirement(updatedRequirement: updatedRequirement)
@@ -246,14 +272,15 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     }
     
     private func setupSegmentedControl(){
-        self.segmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 15), .foregroundColor: UIColor.white], for: .normal)
+        self.segmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 13.5), .foregroundColor: UIColor.white], for: .normal)
         self.segmentedControl.backgroundColor = ColorConstant.gray.rawValue
         
         if targetRequirement == nil {
             segmentedControl.selectedSegmentIndex = 0
             initalSegmentedIndex = 0
             countDownContainerView.isHidden = false
-            timeOfDayContainerView.isHidden = true
+            weeklyContainerView.isHidden = true
+            monthlyContainerView.isHidden = true
             
             requirementAction.text = RequirementConstant.defaultType.rawValue
             
@@ -266,14 +293,23 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
                 segmentedControl.selectedSegmentIndex = 0
                 initalSegmentedIndex = 0
                 countDownContainerView.isHidden = false
-                timeOfDayContainerView.isHidden = true
+                weeklyContainerView.isHidden = true
+                monthlyContainerView.isHidden = true
                 
             }
-            else {
+            else if targetRequirement!.timingStyle == .weekly{
                 segmentedControl.selectedSegmentIndex = 1
                 initalSegmentedIndex = 1
                 countDownContainerView.isHidden = true
-                timeOfDayContainerView.isHidden = false
+                weeklyContainerView.isHidden = false
+                monthlyContainerView.isHidden = true
+            }
+            else {
+                segmentedControl.selectedSegmentIndex = 2
+                initalSegmentedIndex = 2
+                countDownContainerView.isHidden = true
+                weeklyContainerView.isHidden = true
+                monthlyContainerView.isHidden = false
             }
         }
     }
@@ -305,7 +341,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     @objc private func requirementActionTapped(){
         self.dismissKeyboard()
-        self.dropDown.showDropDown(height: self.dropDownRowHeight * 5.5, selectedIndexPath: selectedIndexPath)
+        self.dropDown.showDropDown(height: self.dropDownRowHeight * 6.5, selectedIndexPath: selectedIndexPath)
     }
     
     @objc private func dismissAll(){
@@ -321,19 +357,29 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
             dogsRequirementCountDownViewController.passedInterval = targetRequirement?.countDownComponents.executionInterval
             
         }
-        if segue.identifier == "dogsRequirementTimeOfDayViewController"{
-            dogsRequirementTimeOfDayViewController = segue.destination as! DogsRequirementTimeOfDayViewController
-            dogsRequirementTimeOfDayViewController.delegate = self
+        if segue.identifier == "dogsRequirementWeeklyViewController"{
+            dogsRequirementWeeklyViewController = segue.destination as! DogsRequirementWeeklyViewController
+            dogsRequirementWeeklyViewController.delegate = self
             
             if targetRequirement != nil {
                 if targetRequirement!.timeOfDayComponents.timeOfDayComponent.hour != nil{
-                    dogsRequirementTimeOfDayViewController.passedTimeOfDay = targetRequirement!.timeOfDayComponents.nextTimeOfDay(requirementExecutionBasis: targetRequirement!.executionBasis)
+                    dogsRequirementWeeklyViewController.passedTimeOfDay = targetRequirement!.timeOfDayComponents.traditionalNextTimeOfDay(executionBasis: targetRequirement!.executionBasis)
                 }
-                dogsRequirementTimeOfDayViewController.passedWeekDays = targetRequirement!.timeOfDayComponents.weekdays
-                dogsRequirementTimeOfDayViewController.passedDayOfMonth = targetRequirement!.timeOfDayComponents.dayOfMonth
+                dogsRequirementWeeklyViewController.passedWeekDays = targetRequirement!.timeOfDayComponents.weekdays
             }
             
+        }
+        if segue.identifier == "dogsRequirementMonthlyViewController"{
+            dogsRequirementMonthlyViewController = segue.destination as! DogsRequirementMonthlyViewController
+            dogsRequirementMonthlyViewController.delegate = self
             
+            if targetRequirement != nil {
+                if targetRequirement!.timeOfDayComponents.timeOfDayComponent.hour != nil{
+                    dogsRequirementMonthlyViewController.passedTimeOfDay = targetRequirement!.timeOfDayComponents.traditionalNextTimeOfDay(executionBasis: targetRequirement!.executionBasis)
+                }
+                dogsRequirementMonthlyViewController.passedDayOfMonth = targetRequirement!.timeOfDayComponents.dayOfMonth
+                
+            }
         }
         
     }

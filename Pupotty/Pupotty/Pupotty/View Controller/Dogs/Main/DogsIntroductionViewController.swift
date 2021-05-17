@@ -29,6 +29,7 @@ class DogsIntroductionViewController: UIViewController {
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
                 NotificationConstant.isNotificationAuthorized = isGranted
                 NotificationConstant.isNotificationEnabled = isGranted
+                NotificationConstant.shouldLoudNotification = isGranted
                 NotificationConstant.shouldFollowUp = isGranted
                 
                 DispatchQueue.main.async {
@@ -69,6 +70,7 @@ class DogsIntroductionViewController: UIViewController {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
             NotificationConstant.isNotificationAuthorized = isGranted
             NotificationConstant.isNotificationEnabled = isGranted
+            NotificationConstant.shouldLoudNotification = isGranted
             NotificationConstant.shouldFollowUp = isGranted
             
         }

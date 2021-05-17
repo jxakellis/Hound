@@ -13,6 +13,7 @@ import UIKit
 enum ScheduledLogType: String, CaseIterable {
     //common
     case feed = "Feed"
+    case water = "Fresh Water"
     case potty = "Potty"
     case walk = "Walk"
     //next common
@@ -33,6 +34,9 @@ enum KnownLogTypeError: Error {
 enum KnownLogType: String, CaseIterable {
     
     case feed = "Feed"
+    case water = "Fresh Water"
+    
+    case treat = "Treat"
     
     case pee = "Potty: Pee"
     case poo = "Potty: Poo"

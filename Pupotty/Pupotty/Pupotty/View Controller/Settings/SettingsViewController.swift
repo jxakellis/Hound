@@ -27,6 +27,25 @@ class SettingsViewController: UIViewController, ToolTipable {
         }
     }
     
+    private func synchronizeLogsViewMode(){
+        var hasIcon: Bool {
+            let dogManager = MainTabBarViewController.staticDogManager
+            for dog in dogManager.dogs{
+                if dog.dogTraits.icon != DogConstant.defaultIcon{
+                    return true
+                }
+            }
+            return false
+        }
+        
+        if hasIcon == true {
+            logsViewModeSegmentedControl.isEnabled = true
+        }
+        else {
+            logsViewModeSegmentedControl.isEnabled = false
+        }
+    }
+    
     //MARK: - Reminders
     //MARK: Pause
     ///Switch for pause all timers
@@ -79,7 +98,7 @@ class SettingsViewController: UIViewController, ToolTipable {
                     else {
                         NotificationConstant.isNotificationEnabled = true
                     }
-                    self.synchronizeFollowUpComponents(animated: true)
+                    self.synchronizeNotificationsComponents(animated: true)
                 }
             case .denied:
                 DispatchQueue.main.async {
@@ -89,16 +108,18 @@ class SettingsViewController: UIViewController, ToolTipable {
                     
                     RunLoop.main.add(switchDisableTimer, forMode: .common)
                     
-                    self.synchonrizeAllNotificationSwitches(animated: true)
+                    self.synchronizeAllNotificationSwitches(animated: true)
                 }
             case .notDetermined:
                 UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
                     NotificationConstant.isNotificationAuthorized = isGranted
                     NotificationConstant.isNotificationEnabled = isGranted
+                    NotificationConstant.shouldLoudNotification = isGranted
                     NotificationConstant.shouldFollowUp = isGranted
                     
+                    
                     DispatchQueue.main.async {
-                        self.synchonrizeAllNotificationSwitches(animated: true)
+                        self.synchronizeAllNotificationSwitches(animated: true)
                     }
                     
                 }
@@ -119,18 +140,29 @@ class SettingsViewController: UIViewController, ToolTipable {
         self.notificationToggleSwitch.setOn(false, animated: true)
     }
     
-    func synchonrizeAllNotificationSwitches(animated: Bool){
+    func synchronizeAllNotificationSwitches(animated: Bool){
         //If disconnect between stored and displayed
         if notificationToggleSwitch.isOn != NotificationConstant.isNotificationEnabled {
             notificationToggleSwitch.setOn(NotificationConstant.isNotificationEnabled, animated: true)
         }
-        self.synchronizeFollowUpComponents(animated: animated)
+        self.synchronizeNotificationsComponents(animated: animated)
+    }
+    
+    //MARK: Loud Notifications
+    
+    
+    @IBOutlet private weak var loudNotificationsLabel: CustomLabel!
+    
+    @IBOutlet private weak var loudNotificationsToggleSwitch: UISwitch!
+    
+    @IBAction private func didToggleLoudNotifications(_ sender: Any) {
+        NotificationConstant.shouldLoudNotification = loudNotificationsToggleSwitch.isOn
     }
     
     
     //MARK: Follow Up Notification
     
-    @IBOutlet weak var followUpReminderLabel: CustomLabel!
+    @IBOutlet private weak var followUpReminderLabel: CustomLabel!
     
     @IBOutlet private weak var followUpToggleSwitch: UISwitch!
     
@@ -139,9 +171,13 @@ class SettingsViewController: UIViewController, ToolTipable {
         NotificationConstant.shouldFollowUp = followUpToggleSwitch.isOn
     }
     
-    private func synchronizeFollowUpComponents(animated: Bool){
+    private func synchronizeNotificationsComponents(animated: Bool){
         //notifications are enabled
         if NotificationConstant.isNotificationEnabled == true {
+            
+            loudNotificationsToggleSwitch.isEnabled = true
+            loudNotificationsToggleSwitch.setOn(NotificationConstant.shouldLoudNotification, animated: animated)
+            
             followUpToggleSwitch.isEnabled = true
             followUpToggleSwitch.setOn(NotificationConstant.shouldFollowUp, animated: animated)
             
@@ -149,6 +185,10 @@ class SettingsViewController: UIViewController, ToolTipable {
         }
         //notifications are disabled
         else {
+            loudNotificationsToggleSwitch.isEnabled = false
+            loudNotificationsToggleSwitch.setOn(false, animated: animated)
+            NotificationConstant.shouldLoudNotification = false
+            
             followUpToggleSwitch.isEnabled = false
             followUpToggleSwitch.setOn(false, animated: animated)
             NotificationConstant.shouldFollowUp = false
@@ -161,7 +201,7 @@ class SettingsViewController: UIViewController, ToolTipable {
     
     @IBOutlet weak var followUpDelayInterval: UIDatePicker!
     
-    @IBAction func didUpdateFollowUpDelay(_ sender: Any) {
+    @IBAction private func didUpdateFollowUpDelay(_ sender: Any) {
         self.willHideToolTip()
         NotificationConstant.followUpDelay = followUpDelayInterval.countDownDuration
     }
@@ -190,9 +230,9 @@ class SettingsViewController: UIViewController, ToolTipable {
     
     //MARK: Pause All Reminders Tool Tip
     
-    @IBOutlet weak var pauseAllRemindersToolTip: UIButton!
+    @IBOutlet private weak var pauseAllRemindersToolTip: UIButton!
     
-    @IBAction func didClickPauseAllRemindersToolTip(_ sender: Any) {
+    @IBAction private func didClickPauseAllRemindersToolTip(_ sender: Any) {
         
         pauseAllRemindersToolTip.isUserInteractionEnabled = false
         
@@ -230,6 +270,24 @@ class SettingsViewController: UIViewController, ToolTipable {
         }
     }
     
+    //MARK: Loud Notifications Tool Tip
+    @IBOutlet private weak var loudNotificationsToolTip: UIButton!
+    
+    @IBAction private func didClickLoudNotificationsToolTip(_ sender: Any) {
+        loudNotificationsToolTip.isUserInteractionEnabled = false
+        
+        //snoozeLengthToolTip tool tip shown
+        if toolTipViews[3] != nil {
+            hideToolTip(targetTipView: toolTipViews[3]) {
+                self.loudNotificationsToolTip.isUserInteractionEnabled = true
+            }
+        }
+        //needs to show snoozeLengthToolTip
+        else {
+            showToolTip(sourceButton: loudNotificationsToolTip, message: "Notifications will ring\n despite your phone\nbeing silenced, locked,\nor on do not disturb.")
+            //"Sends a follow up \nnotification if the first one\nis not responded to"
+        }
+    }
     //MARK: General Tool Tip
     
     func showToolTip(sourceButton: UIButton, message: String) {
@@ -244,6 +302,8 @@ class SettingsViewController: UIViewController, ToolTipable {
                 toolTipViews[1] = tipView
             case pauseAllRemindersToolTip:
                 toolTipViews[2] = tipView
+            case loudNotificationsToolTip:
+                toolTipViews[3] = tipView
             default:
                 print("fall through showToolTip SettingsViewController")
         }
@@ -339,16 +399,16 @@ class SettingsViewController: UIViewController, ToolTipable {
     
     var delegate: SettingsViewControllerDelegate! = nil
     
-    @IBOutlet weak var scrollViewContainerForAll: UIView!
+    @IBOutlet private weak var scrollViewContainerForAll: UIView!
     
-    private var toolTipViews: [ToolTipView?] = [nil, nil, nil]
+    private var toolTipViews: [ToolTipView?] = [nil, nil, nil, nil]
     
     //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.logsViewModeSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 20), .foregroundColor: UIColor.white], for: .normal)
+        self.logsViewModeSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 15), .foregroundColor: UIColor.white], for: .normal)
         self.logsViewModeSegmentedControl.backgroundColor = ColorConstant.gray.rawValue
         
         if LogsMainScreenTableViewController.isCompactView == true {
@@ -372,8 +432,9 @@ class SettingsViewController: UIViewController, ToolTipable {
         super.viewWillAppear(animated)
         Utils.presenter = self
         
+        synchronizeLogsViewMode()
         notificationToggleSwitch.isOn = NotificationConstant.isNotificationEnabled
-        synchronizeFollowUpComponents(animated: false)
+        synchronizeNotificationsComponents(animated: false)
         synchronizeIsPaused()
     }
     
@@ -432,11 +493,35 @@ class SettingsViewController: UIViewController, ToolTipable {
             NSLayoutConstraint.activate([snoozeLengthConstraint])
         }
         
+        func setupLoudNotificationLabelWidth(){
+            var loudNotificationLabelWidth: CGFloat {
+                let neededConstraintSpace: CGFloat = 10.0 + 3.0 + 3.0 + 45.0
+                let otherButtonSpace: CGFloat = loudNotificationsLabel.frame.width + loudNotificationsToolTip.frame.width
+                let maximumWidth: CGFloat = view.frame.width - otherButtonSpace - neededConstraintSpace
+                
+                let neededLabelSize: CGSize = (loudNotificationsLabel.text?.boundingFrom(font: loudNotificationsLabel.font, height: loudNotificationsLabel.frame.height))!
+                
+                let neededLabelWidth: CGFloat = neededLabelSize.width
+                
+                if neededLabelWidth > maximumWidth {
+                    return maximumWidth
+                }
+                else {
+                    return neededLabelWidth
+                }
+            }
+            
+            let loudNotificationLengthConstraint = NSLayoutConstraint(item: loudNotificationsLabel!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: loudNotificationLabelWidth)
+            loudNotificationsLabel.addConstraint(loudNotificationLengthConstraint)
+            NSLayoutConstraint.activate([loudNotificationLengthConstraint])
+        }
+        
         
         
         
         //setupFollowUpLabelWidth()
         setupSnoozeLengthLabelWidth()
+        //setupLoudNotificationLabelWidth()
         self.view.setNeedsLayout()
         self.view.layoutIfNeeded()
     }

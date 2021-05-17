@@ -7,12 +7,10 @@
 //
 
 import UIKit
-import AudioToolbox
 
 enum DogConstant {
     static let defaultEnable: Bool = true
     static let defaultName: String = "Bella"
-    static let defaultDescription: String = "Friendly"
     static let defaultIcon: UIImage = UIImage.init(named: "pawFullResolutionWhite")!
     static let chooseIcon: UIImage = UIImage.init(named: "chooseIcon")!
 }
@@ -31,7 +29,7 @@ enum RequirementConstant {
     static var defaultRequirementTwo: Requirement {
         let req = Requirement()
         req.requirementType = .feed
-        req.changeTimingStyle(newTimingStyle: .timeOfDay)
+        req.changeTimingStyle(newTimingStyle: .weekly)
         try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 7)
         try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
         return req
@@ -39,9 +37,18 @@ enum RequirementConstant {
     static var defaultRequirementThree: Requirement {
         let req = Requirement()
         req.requirementType = .feed
-        req.changeTimingStyle(newTimingStyle: .timeOfDay)
+        req.changeTimingStyle(newTimingStyle: .weekly)
         try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 5+12)
         try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
+        return req
+    }
+    static var defaultRequirementFour: Requirement {
+        let req = Requirement()
+        req.requirementType = .medicine
+        req.changeTimingStyle(newTimingStyle: .monthly)
+        try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 9)
+        try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
+        try! req.timeOfDayComponents.changeDayOfMonth(newDayOfMonth: 1)
         return req
     }
 }
@@ -52,6 +59,15 @@ enum DogManagerConstant {
         let userDefaultDog = Dog()
         
         userDefaultDog.setEnable(newEnableStatus: DogConstant.defaultEnable)
+        
+        /*
+         let req = Requirement()
+         req.requirementType = .trainingSession
+         req.changeTimingStyle(newTimingStyle: .countDown)
+         req.countDownComponents.changeExecutionInterval(newExecutionInterval: 30.0)
+         try! userDefaultDog.dogRequirments.addRequirement(newRequirement: req)
+         */
+        
     
         return userDefaultDog
     }
@@ -69,14 +85,14 @@ enum TimerConstant {
     static var defaultSnooze: TimeInterval = TimeInterval(60*5)
     static var defaultTimeOfDay: DateComponents = DateComponents(calendar: nil, timeZone: nil, era: nil, year: nil, month: nil, day: nil, hour: 8, minute: 30, second: 0, nanosecond: 0, weekday: nil, weekdayOrdinal: nil, quarter: nil, weekOfMonth: nil, weekOfYear: nil, yearForWeekOfYear: nil)
     static var defaultSkipStatus: Bool = false
-    static var defaultSystemSound: SystemSoundID = SystemSoundID(1007)
 }
 
 enum NotificationConstant {
+    static var isNotificationAuthorized: Bool = false
+    static var isNotificationEnabled: Bool = false
+    static var shouldLoudNotification: Bool = false
     static var shouldFollowUp: Bool = false
     static var followUpDelay: TimeInterval = 5.0 * 60.0
-    static var isNotificationEnabled: Bool = false
-    static var isNotificationAuthorized: Bool = false
 }
 
 enum UserDefaultsKeys: String{
@@ -99,10 +115,11 @@ enum UserDefaultsKeys: String{
     
     
     //Notifications
+    case isNotificationAuthorized = "isNotificationAuthorized"
+    case isNotificationEnabled = "isNotificationEnabled"
+    case shouldLoudNotification = "shouldLoudNotification"
     case shouldFollowUp = "shouldFollowUp"
     case followUpDelay = "followUpDelay"
-    case isNotificationEnabled = "isNotificationEnabled"
-    case isNotificationAuthorized = "isNotificationAuthorized"
 }
 
 enum AnimationConstant: Double{
@@ -114,8 +131,6 @@ enum AnimationConstant: Double{
     case toolTipHide = 0.1000000003
     
     case switchButton = 0.1200000001
-    
-    
 }
 
  

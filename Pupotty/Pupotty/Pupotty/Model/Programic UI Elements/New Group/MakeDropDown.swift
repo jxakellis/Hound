@@ -6,8 +6,8 @@
 //  Copyright © 2019 Majesco. All rights reserved.
 //
 
-import Foundation
 import UIKit
+
 protocol MakeDropDownDataSourceProtocol{
     func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, makeDropDownIdentifier: String)
     ///Returns number of rows in a given section of the dropDownMenu

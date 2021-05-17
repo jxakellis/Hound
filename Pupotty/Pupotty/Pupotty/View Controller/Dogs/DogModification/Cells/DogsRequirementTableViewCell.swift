@@ -55,13 +55,14 @@ class DogsRequirementTableViewCell: UITableViewCell {
             if requirement.timeOfDayComponents.dayOfMonth != nil {
                 let dayOfMonth: Int! = requirement.timeOfDayComponents.dayOfMonth
                 requirementDisplay.text?.append(" Every Month on \(dayOfMonth!)")
-                if (dayOfMonth % 10) == 1{
+            
+                if dayOfMonth == 1{
                     requirementDisplay.text?.append("st")
                 }
-                else if (dayOfMonth % 10) == 2 {
+                else if dayOfMonth == 2 {
                     requirementDisplay.text?.append("nd")
                 }
-                else if (dayOfMonth % 10) == 3 {
+                else if dayOfMonth == 3 {
                     requirementDisplay.text?.append("rd")
                 }
                 else {

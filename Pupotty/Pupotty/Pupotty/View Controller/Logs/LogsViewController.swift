@@ -50,28 +50,23 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
                 }
                 //dog log
                 else {
-                    var dogLogs = try sudoDogManager.findDog(dogName: parentDogName).dogTraits.logs
+                    let dog = try sudoDogManager.findDog(dogName: parentDogName)
                     
-                    for dogLogIndex in 0..<dogLogs.count {
-                        if dogLogs[dogLogIndex].uuid == updatedKnownLog.uuid{
+                    for dogLogIndex in 0..<dog.dogTraits.logs.count {
+                        if dog.dogTraits.logs[dogLogIndex].uuid == updatedKnownLog.uuid{
                             //match
-                            dogLogs[dogLogIndex] = updatedKnownLog
+                            dog.dogTraits.logs[dogLogIndex] = updatedKnownLog
                             break
-                        }
-                        else {
-                            //no match
                         }
                     }
                 }
-                 
-                 
-                 
              }
              catch {
                  ErrorProcessor.alertForError(message: "Unable to update log.")
              }
              
          }
+        
          setDogManager(sender: sender, newDogManager: sudoDogManager)
          
     }
@@ -243,6 +238,7 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
     func setDogManager(sender: Sender, newDogManager: DogManager) {
         //DogManagerEfficencyImprovement dogManager = newDogManager.copy() as! DogManager
         dogManager = newDogManager
+       
         
         if sender.localized is MainTabBarViewController{
             logsMainScreenTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)

@@ -8,14 +8,6 @@
 
 import UIKit
 
-/*
- Find HDLL and interpretate then handle
- TO DO
- 
- Add local handling for timerReset that calls timerReset in all components
- Add local handling so when
- */
-
 ///Enum full of cases of possible errors from Requirement
 enum RequirementError: Error {
     case nameBlank
@@ -26,12 +18,14 @@ enum RequirementError: Error {
 
 enum RequirementStyle: String {
     case countDown = "countDown"
-    case timeOfDay = "timeOfDay"
+    case weekly = "weekly"
+    case monthly = "monthly"
 }
 
 enum RequirementMode {
     case countDown
-    case timeOfDay
+    case weekly
+    case monthly
     case snooze
     case secondaryReminder
 }
@@ -191,8 +185,11 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         else if timingStyle == .countDown {
             return .countDown
         }
-        else if timingStyle == .timeOfDay {
-            return .timeOfDay
+        else if timingStyle == .weekly {
+            return .weekly
+        }
+        else if timingStyle == .monthly {
+            return .monthly
         }
         else {
             //HDLL
@@ -209,12 +206,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         
         self.timerReset(shouldLogExecution: false)
         
-        if newTimingStyle == .countDown {
-            storedTimingStyle = .countDown
-        }
-        else {
-            storedTimingStyle = .timeOfDay
-        }
+        storedTimingStyle = newTimingStyle
     }
     
     //MARK: - RequirementTimingComponentsProtocol
@@ -261,7 +253,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         else if timerMode == .countDown{
             return countDownComponents.executionInterval - countDownComponents.intervalElapsed
         }
-        else if timerMode == .timeOfDay {
+        else if timerMode == .weekly || timerMode == .monthly {
             //if the previousTimeOfDay is closer to the present than executionBasis returns nil, indicates missed alarm
             if self.executionBasis.distance(to: self.timeOfDayComponents.previousTimeOfDay(requirementExecutionBasis: self.executionBasis)) > 0 {
                 return nil
@@ -287,7 +279,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
             return Date.executionDate(lastExecution: executionBasis, interval: intervalRemaining!)
         }
         //Time of Day Alarm
-        else if timerMode == .timeOfDay {
+        else if timerMode == .weekly || timerMode == .monthly {
             //If the intervalRemaining is nil than means there is no time left
             if intervalRemaining == nil {
                 return Date()

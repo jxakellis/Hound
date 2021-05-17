@@ -3,13 +3,15 @@ CHECKLIST Future Implementation Needed
 
 Dad Review:
 -New "We will generate..." wording in first time into
--New "Yes, I dont want to save new changes" wording in auto save confirmation
+-"Yes, I dont want to save changes" wording in auto save confirmation, find screen shot of competitor
 -"After responding to reminder..." wording in requirement recurring configuration
--Check wording for pause all reminders (?) cirlce thing
+-Check wording for all setting (?) info cirles
 
 In progress:
-Termination checker, needs verification that it works properly
-App can now sound for 30 seconds when ringer is on, sounds at system volume and not max, vibrates only once when sent, banner not persistant. Email sent to Alarm team 5/12/2021
+    NOTIFICATIONS
+        Termination verification setting
+    OTHER
+        Investigate compatibility with ipad multiple windows, currently enabled
 
 Needed:
 Configurable log types
@@ -17,3 +19,10 @@ LogsViewController .catagorizedLogTypes efficency by reducing calls to it
 
 
 Song - Third Period - 5/20 or 5/24
+
+In Case Problems Arrive (Solved For Now):
+    NOTIFICATIONS
+        Email sent to Alarm team 5/12/2021
+        https://stackoverflow.com/questions/50644978/how-are-some-alarm-apps-such-as-alarmy-able-to-play-a-sound-on-iphone-when-the-a
+        https://web.archive.org/web/20210226060533/http://andrewmarinov.com/building-an-alarm-app-on-ios/
+        https://stackoverflow   .com/questions/22823126/app-alarmy-is-able-to-play-itunes-song-from-background-state-how

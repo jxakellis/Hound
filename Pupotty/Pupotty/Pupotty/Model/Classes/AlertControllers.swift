@@ -8,8 +8,6 @@
 
 import MediaPlayer
 import UIKit
-import AudioToolbox
-import AVFoundation
 
 class GeneralAlertController: UIAlertController {
     override func viewDidDisappear(_ animated: Bool) {
@@ -18,29 +16,6 @@ class GeneralAlertController: UIAlertController {
 }
 
 class AlarmAlertController: GeneralAlertController {
-    
-    private var audioPlayer: AVAudioPlayer!
-    
-    
-    
-    private func loadAlarmSound(){
-        
-        let path = Bundle.main.path(forResource: "radar.wav", ofType: nil)!
-        let url = URL(fileURLWithPath: path)
-
-        do {
-            //create your audioPlayer in your parent class as a property
-            try! AVAudioSession.sharedInstance().setCategory(.playback, options: [.duckOthers])
-            DispatchQueue.main.async {
-               // MPVolumeView.setVolume(1.0)
-            }
-            audioPlayer = try AVAudioPlayer(contentsOf: url)
-            audioPlayer.numberOfLoops = .max
-            
-        } catch {
-            print("couldn't load file for loadAlarmSound")
-        }
-    }
     
     private var shouldVibrate = true
     private func loopVibrate(){
@@ -55,29 +30,29 @@ class AlarmAlertController: GeneralAlertController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification else {
+            return
+        }
         DispatchQueue.global().async{
-            self.loadAlarmSound()
-            self.loopVibrate()
-            self.audioPlayer.play()
+            print("willAppear")
+                self.loopVibrate()
+                AudioPlayer.loadDefaultAudioPlayer()
+                AudioPlayer.sharedPlayer.play()
+            
         }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification else {
+            return
+        }
         DispatchQueue.global().async{
-            self.audioPlayer.stop()
+            print("disappear")
             self.shouldVibrate = false
+            AudioPlayer.sharedPlayer.stop()
         }
     }
 }
 
-extension MPVolumeView {
-    static func setVolume(_ volume: Float) {
-        let volumeView = MPVolumeView()
-        let slider = volumeView.subviews.first(where: { $0 is UISlider }) as? UISlider
 
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
-            slider?.value = volume
-        }
-    }
-}

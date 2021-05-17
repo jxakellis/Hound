@@ -145,6 +145,7 @@ extension RequirementManagerProtocol {
     
      mutating private func sortRequirements(){
          requirements.sort { (req1, req2) -> Bool in
+            //both countdown
              if req1.timingStyle == .countDown && req2.timingStyle == .countDown{
                  //shorter is listed first
                  if req1.countDownComponents.executionInterval <= req2.countDownComponents.executionInterval{
@@ -154,27 +155,81 @@ extension RequirementManagerProtocol {
                      return false
                  }
              }
-             else if req1.timingStyle == .timeOfDay && req2.timingStyle == .timeOfDay{
+             //both weekly
+             else if req1.timingStyle == .weekly && req2.timingStyle == .weekly{
                  //earlier in the day is listed first
                  let req1Hour = req1.timeOfDayComponents.timeOfDayComponent.hour!
                  let req2Hour = req2.timeOfDayComponents.timeOfDayComponent.hour!
-                 if req1Hour <= req2Hour {
+                if req1Hour == req2Hour{
+                    let req1Minute = req1.timeOfDayComponents.timeOfDayComponent.minute!
+                    let req2Minute = req2.timeOfDayComponents.timeOfDayComponent.minute!
+                    if req1Minute <= req2Minute{
+                        return true
+                    }
+                    else {
+                        return false
+                    }
+                }
+                else if req1Hour <= req2Hour {
                      return true
                  }
                  else {
                      return false
                  }
              }
+             //both monthly
+             else if req1.timingStyle == .monthly && req2.timingStyle == .monthly{
+                let req1Day: Int! = req1.timeOfDayComponents.dayOfMonth
+                let req2Day: Int! = req2.timeOfDayComponents.dayOfMonth
+                //first day of the month comes first
+                if req1Day == req2Day{
+                    //earliest in day comes first if same days
+                    let req1Hour = req1.timeOfDayComponents.timeOfDayComponent.hour!
+                    let req2Hour = req2.timeOfDayComponents.timeOfDayComponent.hour!
+                   if req1Hour == req2Hour{
+                    //earliest in hour comes first if same hour
+                       let req1Minute = req1.timeOfDayComponents.timeOfDayComponent.minute!
+                       let req2Minute = req2.timeOfDayComponents.timeOfDayComponent.minute!
+                       if req1Minute <= req2Minute{
+                           return true
+                       }
+                       else {
+                           return false
+                       }
+                   }
+                   else if req1Hour <= req2Hour {
+                        return true
+                    }
+                    else {
+                        return false
+                    }
+                }
+                else if req1Day < req2Day{
+                    return true
+                }
+                else {
+                    return false
+                }
+             }
              //different timing styles
              else {
-                 //req1 is the count down and should be first
-                 if req1.timingStyle == .countDown {
-                     return true
-                 }
-                 //req1 is time of day and should go after req2 which is a count down
-                 else {
-                     return false
-                 }
+                 
+                //req1 and req2 are known to be different styles
+                switch req1.timingStyle {
+                case .countDown:
+                    //can assume is comes first as countdown always first and different
+                    return true
+                case .weekly:
+                    if req2.timingStyle == .countDown{
+                        return false
+                    }
+                    else {
+                        return true
+                    }
+                case .monthly:
+                    //can assume it is last because different styles and month always last
+                    return false
+                }
              }
          }
      }

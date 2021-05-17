@@ -139,7 +139,6 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountDownProtocol
     private var storedIntervalElapsed: TimeInterval = TimeInterval(0)
     var intervalElapsed: TimeInterval { return storedIntervalElapsed }
     func changeIntervalElapsed(newIntervalElapsed: TimeInterval) {
-        //HDLL
         storedIntervalElapsed = newIntervalElapsed
     }
     
@@ -492,23 +491,23 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         
     }
     
-    ///Date that is calculated from timeOfDayComponent when the timer should next fire, does not factor in isSkipping
-    private func traditionalNextTimeOfDay(executionBasis: Date) -> Date {
-        
-        let calculatedDates = futureExecutionDates(executionBasis: executionBasis)
-        
-        //want to start with the date furthest away in time
-        var soonestCalculatedDate: Date = calculatedDates.last!
-        
-        for calculatedDate in calculatedDates {
-            //if calculated date is in the future (as trad should be) and if its closer to the present that the soonestCalculatedDate, then sets soonest to calculated
-            if executionBasis.distance(to: calculatedDate) > 0 && executionBasis.distance(to: calculatedDate) < executionBasis.distance(to: soonestCalculatedDate){
-                soonestCalculatedDate = calculatedDate
-            }
+    ///DO NOT USE UNLESS EXPLICIT KNOWLEDGE Date that is calculated from timeOfDayComponent when the timer should next fire, does not factor in isSkipping
+    func traditionalNextTimeOfDay(executionBasis: Date) -> Date {
+    
+    let calculatedDates = futureExecutionDates(executionBasis: executionBasis)
+    
+    //want to start with the date furthest away in time
+    var soonestCalculatedDate: Date = calculatedDates.last!
+    
+    for calculatedDate in calculatedDates {
+        //if calculated date is in the future (as trad should be) and if its closer to the present that the soonestCalculatedDate, then sets soonest to calculated
+        if executionBasis.distance(to: calculatedDate) > 0 && executionBasis.distance(to: calculatedDate) < executionBasis.distance(to: soonestCalculatedDate){
+            soonestCalculatedDate = calculatedDate
         }
-        
-        return soonestCalculatedDate
     }
+    
+    return soonestCalculatedDate
+}
     
     func previousTimeOfDay(requirementExecutionBasis executionBasis: Date) -> Date {
         
@@ -564,7 +563,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     }
     
     func unskipDate(timerMode: RequirementMode, requirementExecutionBasis executionBasis: Date) -> Date? {
-        guard timerMode == .timeOfDay && isSkipping == true else {
+        guard (timerMode == .weekly || timerMode == .monthly) && isSkipping == true else {
             return nil
         }
         

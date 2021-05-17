@@ -62,7 +62,7 @@ class DogsInformationViewController: UIViewController {
         
         
         howToUseBodyAttributedText.append(NSAttributedString(string: "Reminder Timing:", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .semibold)]))
-        howToUseBodyAttributedText.append(NSAttributedString(string: "\nA reminder can be either a recurring count down or a time of day alarm. A recurring count down automatically counts down from its set duration and only repeats once you respond to its alarm. A time of day countdown happens at a set time of day for every weekday that is selected.", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
+        howToUseBodyAttributedText.append(NSAttributedString(string: "\nA reminder can be either a recurring count down, a day of week, or a monthly alarm. A recurring count down automatically counts down from its set duration and only repeats once you respond to its alarm. A day of week reminder happens at a set time of day for every weekday that is selected. A monthly reminder happens at a set time of day every month for the day selected.", attributes: [.font:UIFont.systemFont(ofSize: howToUseBody.font.pointSize, weight: .regular)]))
         howToUseBody.attributedText = howToUseBodyAttributedText
     }
 

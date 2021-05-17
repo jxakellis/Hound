@@ -20,7 +20,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         //see if last time setup crashed
-        let didCrashDuringLastSetup = UserDefaults.standard.bool(forKey: "didCrashDuringSetup")
+        var didCrashDuringLastSetup = UserDefaults.standard.bool(forKey: "didCrashDuringSetup")
+        
+        //TEMPORARY
+        didCrashDuringLastSetup = false
         
         //will be set to false if successfully setup
         UserDefaults.standard.setValue(true, forKey: "didCrashDuringSetup")
@@ -82,8 +85,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationWillTerminate(_ application: UIApplication) {
         print("willTerminate")
-        Persistence.willEnterBackground(isTerminating: true)
+        //Persistence.willEnterBackground(isTerminating: true)
+        
     }
 
 }
+
 

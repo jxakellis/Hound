@@ -17,18 +17,28 @@ class Persistence{
             TimingManager.lastPause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastPause.rawValue) as? Date
             TimingManager.lastUnpause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastUnpause.rawValue) as? Date
             
-           TimerConstant.defaultSnooze = UserDefaults.standard.value(forKey: UserDefaultsKeys.defaultSnooze.rawValue) as! TimeInterval
+            TimerConstant.defaultSnooze = UserDefaults.standard.value(forKey: UserDefaultsKeys.defaultSnooze.rawValue) as! TimeInterval
             
-            NotificationConstant.shouldFollowUp = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool
-            NotificationConstant.followUpDelay = UserDefaults.standard.value(forKey: UserDefaultsKeys.followUpDelay.rawValue) as! TimeInterval
+            
             NotificationConstant.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool
             NotificationConstant.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool
+            //TEMPORARY ?? thing
+            NotificationConstant.shouldLoudNotification = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldLoudNotification.rawValue) as? Bool ?? NotificationConstant.isNotificationEnabled
+            NotificationConstant.shouldFollowUp = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool
+            NotificationConstant.followUpDelay = UserDefaults.standard.value(forKey: UserDefaultsKeys.followUpDelay.rawValue) as! TimeInterval
+            
             
             DogsNavigationViewController.hasBeenLoadedBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue) as! Bool
             LogsMainScreenTableViewController.isCompactView = UserDefaults.standard.value(forKey: UserDefaultsKeys.isCompactView.rawValue) as! Bool
             
-            terminationHandler()
-    
+            
+            let decoded = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as! Data
+            let decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
+            
+            if AudioPlayer.sharedPlayer == nil && NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && decodedDogManager.hasEnabledRequirement {
+                Utils.willShowAlert(title: "Oops, you may have terminated Pupotty", message: "Your notifications won't ring properly if the app isn't running.")
+            }
+            
         }
         
         else {
@@ -49,17 +59,18 @@ class Persistence{
             
             
             /*
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
-                UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
-                UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
-                UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
-                NotificationConstant.isNotificationAuthorized = isGranted
-                NotificationConstant.isNotificationEnabled = isGranted
-                NotificationConstant.shouldFollowUp = isGranted
-            }
+             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
+             UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
+             UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+             UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
+             NotificationConstant.isNotificationAuthorized = isGranted
+             NotificationConstant.isNotificationEnabled = isGranted
+             NotificationConstant.shouldFollowUp = isGranted
+             }
              */
             UserDefaults.standard.setValue(NotificationConstant.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+            UserDefaults.standard.setValue(NotificationConstant.shouldLoudNotification, forKey: UserDefaultsKeys.shouldLoudNotification.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.shouldFollowUp, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
             
@@ -68,36 +79,6 @@ class Persistence{
             
             MainTabBarViewController.firstTimeSetup = true
             
-        }
-        
-        func terminationHandler(){
-            let decoded = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as! Data
-            let dogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
-            guard dogManager.hasEnabledRequirement == true && NotificationConstant.isNotificationEnabled == true else {
-                return
-            }
-            
-                var notificationChecker: Bool {
-                    var hasNotification = false
-                    UNUserNotificationCenter.current().getDeliveredNotifications { notifs in
-                        if notifs.count != 0{
-                            hasNotification = true
-                        }
-                    }
-                    UNUserNotificationCenter.current().getPendingNotificationRequests { notifs in
-                        if notifs.count != 0{
-                            hasNotification = true
-                        }
-                    }
-                    return hasNotification
-                }
-                
-                if notificationChecker == false {
-                    Utils.willShowAlert(title: "Oops, you might have terminated Pupotty!", message: "Leave Pupotty running in the background if you wish to get notifications.")
-                }
-                
-            
-        
         }
     }
     
@@ -108,61 +89,66 @@ class Persistence{
             guard let libraryDir = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.libraryDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).first else {
                 return nil
             }
-
+            
             guard let bundleIdentifier = Bundle.main.bundleIdentifier else {
                 return nil
             }
-
+            
             let filepath = "\(libraryDir)/Preferences/\(bundleIdentifier).plist"
             let filesize = try? FileManager.default.attributesOfItem(atPath: filepath)
             let retVal = filesize?[FileAttributeKey.size]
             return retVal as? Int
         }
         
-        //dogManager
-        //DogManagerEfficencyImprovement OK, Changes are being made that might not apply to the rest of the system, might be invalid, or might affect finding something
-        var dataDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
-        dataDogManager.clearAllPresentationHandled()
-        
-        let encodedDataDogManager = try! NSKeyedArchiver.archivedData(withRootObject: dataDogManager, requiringSecureCoding: false)
-         UserDefaults.standard.setValue(encodedDataDogManager, forKey: UserDefaultsKeys.dogManager.rawValue)
-        
-        //Pause State
-        UserDefaults.standard.setValue(TimingManager.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
-        UserDefaults.standard.setValue(TimingManager.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
-        UserDefaults.standard.setValue(TimingManager.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
-        
-        //Snooze interval
-        
-        UserDefaults.standard.setValue(TimerConstant.defaultSnooze, forKey: UserDefaultsKeys.defaultSnooze.rawValue)
-        
-        //Notifications
-        
-        UserDefaults.standard.setValue(NotificationConstant.shouldFollowUp, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
-        UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
-        UserDefaults.standard.setValue(NotificationConstant.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
-        UserDefaults.standard.setValue(NotificationConstant.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
-        
-        UserDefaults.standard.setValue(DogsNavigationViewController.hasBeenLoadedBefore, forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue)
-        UserDefaults.standard.setValue(LogsMainScreenTableViewController.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
-        
-        
-        if isTerminating == true  {
+        //background silence player for loud alarm that bypasses ringer and if phone locker
+        func handleBackgroundSilence(){
+            if AudioPlayer.sharedPlayer != nil {
+                AudioPlayer.sharedPlayer.stop()
+            }
             
+            guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification else {
+                return
+            }
+            
+            AudioPlayer.loadSilenceAudioPlayer()
+            AudioPlayer.sharedPlayer.play()
         }
         
-        else {
+        //saves to user defaults
+        func handleUserDefaults(){
+            //dogManager
+            //DogManagerEfficencyImprovement OK, Changes are being made that might not apply to the rest of the system, might be invalid, or might affect finding something
+            var dataDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
+            dataDogManager.clearAllPresentationHandled()
             
+            let encodedDataDogManager = try! NSKeyedArchiver.archivedData(withRootObject: dataDogManager, requiringSecureCoding: false)
+            UserDefaults.standard.setValue(encodedDataDogManager, forKey: UserDefaultsKeys.dogManager.rawValue)
             
-            /*
-            // Checks for disconnects between what is displayed in the switches, what is stored in static variables and what is stored in user defaults
-            print("shouldFollowUp \(NotificationConstant.shouldFollowUp) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool)")
-            print("isAuthorized \(NotificationConstant.isNotificationAuthorized) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool)")
-            print("isEnabled \(NotificationConstant.isNotificationEnabled) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool)")
-            print("isPaused \(TimingManager.isPaused) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool)")
-            */
+            //Pause State
+            UserDefaults.standard.setValue(TimingManager.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
+            UserDefaults.standard.setValue(TimingManager.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
+            UserDefaults.standard.setValue(TimingManager.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
             
-            if NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled && !TimingManager.isPaused {
+            //Snooze interval
+            
+            UserDefaults.standard.setValue(TimerConstant.defaultSnooze, forKey: UserDefaultsKeys.defaultSnooze.rawValue)
+            
+            //Notifications
+            UserDefaults.standard.setValue(NotificationConstant.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
+            UserDefaults.standard.setValue(NotificationConstant.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+            UserDefaults.standard.setValue(NotificationConstant.shouldLoudNotification, forKey: UserDefaultsKeys.shouldLoudNotification.rawValue)
+            UserDefaults.standard.setValue(NotificationConstant.shouldFollowUp, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
+            UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
+            
+            UserDefaults.standard.setValue(DogsNavigationViewController.hasBeenLoadedBefore, forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue)
+            UserDefaults.standard.setValue(LogsMainScreenTableViewController.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
+        }
+        
+        //ios notifications
+        func handleNotifications(){
+            guard NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled && !TimingManager.isPaused else {
+                return
+            }
                 for dogKey in TimingManager.timerDictionary.keys{
                     
                     for requirementUUID in TimingManager.timerDictionary[dogKey]!.keys{
@@ -175,23 +161,36 @@ class Persistence{
                             Utils.willCreateFollowUpUNUserNotification(dogName: dogKey, requirementUUID: requirementUUID, executionDate: TimingManager.timerDictionary[dogKey]![requirementUUID]!.fireDate + NotificationConstant.followUpDelay)
                         }
                         
-                     }
+                    }
                 }
-            }
+                //Utils.willCreateUNUserNotification(title: "Termination Checker", body: "Test notification to see if the user terminated the app, should never be seen as set 10 years in the future.", date: Date(timeInterval: 10.0*365*24*60*60, since: Date()))
+        }
+        
+        handleBackgroundSilence()
+        
+        handleUserDefaults()
+        
+        handleNotifications()
+        
+        if isTerminating == true  {
+            
+        }
+        
+        else {
+            
             /*
-             pending notif checker
-            print("current date \(Date())")
-             UNUserNotificationCenter.current().getPendingNotificationRequests { (notifs) in
-                for notif in notifs{
-                    print("\(notif.content.title)  \(notif.content.body)   \(notif.trigger?.description)")
-                }
-            }
+             // Checks for disconnects between what is displayed in the switches, what is stored in static variables and what is stored in user defaults
+             print("shouldFollowUp \(NotificationConstant.shouldFollowUp) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool)")
+             print("isAuthorized \(NotificationConstant.isNotificationAuthorized) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool)")
+             print("isEnabled \(NotificationConstant.isNotificationEnabled) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool)")
+             print("isPaused \(TimingManager.isPaused) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool)")
              */
         }
         
     }
     
     static func willEnterForeground(){
+        
         synchronizeNotificationAuthorization()
         
         if NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled == true{
@@ -229,7 +228,7 @@ class Persistence{
                 DispatchQueue.main.async {
                     let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController.settingsViewController
                     if settingsVC != nil && settingsVC!.isViewLoaded {
-                        settingsVC?.synchonrizeAllNotificationSwitches(animated: false)
+                        settingsVC?.synchronizeAllNotificationSwitches(animated: false)
                     }
                 }
             case .notDetermined:
@@ -243,7 +242,7 @@ class Persistence{
             }
         }
         
-       
+        
     }
 }
 

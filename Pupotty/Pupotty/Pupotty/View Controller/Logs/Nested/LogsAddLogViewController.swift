@@ -202,7 +202,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIGesture
         if shouldPromptSaveWarning == true || initalLogNote != logNote.text{
             let unsavedInformationConfirmation = GeneralAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
             
-            let alertActionExit = UIAlertAction(title: "Yes, I don't want to save my new changes", style: .default) { (UIAlertAction) in
+            let alertActionExit = UIAlertAction(title: "Yes, I don't want to save changes", style: .default) { (UIAlertAction) in
                 self.navigationController?.popViewController(animated: true)
             }
             
@@ -357,7 +357,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIGesture
         self.dismissKeyboard()
         self.dropDownParentDogName.hideDropDown()
         
-        self.dropDownLogType.showDropDown(height: self.dropDownRowHeight * 5.5)
+        self.dropDownLogType.showDropDown(height: self.dropDownRowHeight * 6.5)
     }
     
     ///Sets up the values of different variables that is found out from information passed

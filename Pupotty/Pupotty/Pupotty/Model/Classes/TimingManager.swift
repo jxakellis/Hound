@@ -260,7 +260,7 @@ class TimingManager{
                     }
                 }
                 //If requirement is time of day
-                else if requirement.timerMode == .timeOfDay{
+                else if requirement.timerMode == .weekly || requirement.timerMode == .monthly{
                     //nothing as time of day does not utilize interval elapsed
                 }
                 else {
@@ -426,14 +426,14 @@ class TimingManager{
             requirement.changeActiveStatus(newActiveStatus: true)
         }
         //Skips next TOD
-        else if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.isSkipping == false && Date().distance(to: requirement.executionDate!) > 0{
+        else if (requirement.timerMode == .weekly || requirement.timerMode == .monthly) && requirement.timeOfDayComponents.isSkipping == false && Date().distance(to: requirement.executionDate!) > 0{
             let executionBasisBackup = requirement.executionBasis
             requirement.timerReset(shouldLogExecution: true, knownLogType: knownLogType)
             requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: true, shouldRemoveLogDuringPossibleUnskip: nil)
             requirement.changeExecutionBasis(newExecutionBasis: executionBasisBackup, shouldResetIntervalsElapsed: false)
         }
         //Unskips next TOD
-        else if requirement.timerMode == .timeOfDay && requirement.timeOfDayComponents.isSkipping == true{
+        else if (requirement.timerMode == .weekly || requirement.timerMode == .monthly) && requirement.timeOfDayComponents.isSkipping == true{
             requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: false, shouldRemoveLogDuringPossibleUnskip: true)
         }
         //Regular reset
