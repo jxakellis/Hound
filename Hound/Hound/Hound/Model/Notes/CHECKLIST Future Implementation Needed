@@ -2,16 +2,26 @@
 CHECKLIST Future Implementation Needed
 
 Dad Review:
--New "We will generate..." wording in first time into
 -"Yes, I dont want to save changes" wording in auto save confirmation, find screen shot of competitor
--"After responding to reminder..." wording in requirement recurring configuration
--Check wording for all setting (?) info cirles
 
 In progress:
 
 Needed:
 Configurable log types
 LogsViewController .catagorizedLogTypes efficency by reducing calls to it
+schedule one time reminder
+remove reset button from production
+
+Wants:
+Thinks logs alignment could be better so can easily scan through
+Add confirmation for deleting dog/reminder from reminders page
+No filter indication of active filtering
+
+Consider:
+maybe change feed to be breakfast lunch and dinner
+Some pages have save while some don't (logs & reminder vs settings)
+No option for doctor visit
+No prompt to add notes when logging something, can only do at a later point in time
 
 
 Song - Third Period - 5/20 or 5/24

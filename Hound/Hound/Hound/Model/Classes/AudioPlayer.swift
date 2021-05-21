@@ -58,6 +58,8 @@ class AudioPlayer {
             
             AudioPlayer.sharedPlayer = try AVAudioPlayer(contentsOf: url)
             AudioPlayer.sharedPlayer.numberOfLoops = -1
+            AudioPlayer.sharedPlayer.volume = 0
+            
             try loadAVAudioSession(shouldDuck: false)
         } catch {
             NSLog("Audio Session error: \(error)")

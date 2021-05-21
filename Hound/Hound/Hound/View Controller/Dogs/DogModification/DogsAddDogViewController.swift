@@ -167,7 +167,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     var dogsRequirementNavigationViewController: DogsRequirementNavigationViewController! = nil
     
-    var targetDog = Dog()
+    var targetDog: Dog! = nil
     
     var delegate: DogsAddDogViewControllerDelegate! = nil
     
@@ -226,6 +226,12 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     ///Called to initalize all data, if a dog is passed then it uses that, otherwise uses default
     private func willInitalize(){
+        //new dog
+        if targetDog == nil {
+            targetDog = Dog()
+            targetDog!.addDefaultRequirements()
+        }
+        
         if targetDog.dogTraits.icon == DogConstant.defaultIcon {
             dogIcon.image = DogConstant.chooseIcon
         }

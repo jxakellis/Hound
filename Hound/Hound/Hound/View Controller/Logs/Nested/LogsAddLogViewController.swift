@@ -14,13 +14,16 @@ protocol LogsAddLogViewControllerDelegate {
     func didUpdateKnownLog(sender: Sender, parentDogName: String, requirementUUID: String?, updatedKnownLog: KnownLog)
 }
 
-class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, MakeDropDownDataSourceProtocol {
+class LogsAddLogViewController: UIViewController, UITextViewDelegate, UIGestureRecognizerDelegate, MakeDropDownDataSourceProtocol {
     
-    //MARK: - UITextFieldDelegate
     
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        self.view.endEditing(true)
-        return false
+    //MARK: - UITextViewDelegate
+    //if extra space is added, removes it and ends editing, makes done button function like done instead of adding new line
+    func textViewDidChange(_ textView: UITextView) {
+        if textView.text.contains("\n"){
+            textView.text = textView.text.trimmingCharacters(in: .newlines)
+                self.view.endEditing(true)
+        }
     }
     
     //MARK: - UIGestureRecognizerDelegate
@@ -129,7 +132,8 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIGesture
     
     @IBOutlet private weak var logType: BorderedLabel!
     
-    @IBOutlet private weak var logNote: UITextField!
+    //@IBOutlet private weak var logNote: UITextField!
+    @IBOutlet private weak var logNote: UITextView!
     
     @IBOutlet private weak var logDate: UIDatePicker!
     
@@ -284,6 +288,9 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIGesture
         
         
         logNote.delegate = self
+        logNote.layer.borderWidth = 0.2
+        logNote.layer.borderColor = UIColor.lightGray.cgColor
+        logNote.layer.cornerRadius = 5.0
     }
     
     override func viewWillAppear(_ animated: Bool) {

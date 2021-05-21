@@ -59,12 +59,15 @@ class SettingsViewController: UIViewController, ToolTipable {
     
     ///Synchronizes the isPaused switch enable and isOn variables to reflect that amount of timers active, if non are active then locks user from changing switch
     private func synchronizeIsPaused(){
+        
+        
         if MainTabBarViewController.staticDogManager.enabledTimersCount == 0{
             TimingManager.isPaused = false
             self.pauseToggleSwitch.isOn = false
             self.pauseToggleSwitch.isEnabled = false
         }
         else {
+            pauseToggleSwitch.isOn = TimingManager.isPaused
             self.pauseToggleSwitch.isEnabled = true
         }
     }
@@ -425,14 +428,14 @@ class SettingsViewController: UIViewController, ToolTipable {
         let tap = UITapGestureRecognizer(target: self, action: #selector(willHideToolTip))
         self.view.addGestureRecognizer(tap)
         
-        setupConstraints()
+        //setupConstraints()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         Utils.presenter = self
         
-        synchronizeLogsViewMode()
+        //synchronizeLogsViewMode()
         notificationToggleSwitch.isOn = NotificationConstant.isNotificationEnabled
         synchronizeNotificationsComponents(animated: false)
         synchronizeIsPaused()

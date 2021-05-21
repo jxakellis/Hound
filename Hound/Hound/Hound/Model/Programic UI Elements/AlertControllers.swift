@@ -34,7 +34,7 @@ class AlarmAlertController: GeneralAlertController {
             return
         }
         DispatchQueue.global().async{
-            print("willAppear")
+            print("willAppear loadDefaultAudioPlayer")
                 self.loopVibrate()
                 AudioPlayer.loadDefaultAudioPlayer()
                 AudioPlayer.sharedPlayer.play()
@@ -52,7 +52,7 @@ class AlarmAlertController: GeneralAlertController {
         
         
         DispatchQueue.global().async{
-            print("disappear")
+            print("disappear, halting")
             self.shouldVibrate = false
             if AudioPlayer.sharedPlayer != nil {
                 AudioPlayer.sharedPlayer.stop()

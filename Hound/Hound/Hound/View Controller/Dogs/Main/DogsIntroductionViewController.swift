@@ -67,16 +67,15 @@ class DogsIntroductionViewController: UIViewController {
         
         delegate.didSetDefaultReminderState(sender: Sender(origin: self, localized: self), newDefaultReminderStatus: remindersToggleSwitch.isOn)
         
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
-            NotificationConstant.isNotificationAuthorized = isGranted
-            NotificationConstant.isNotificationEnabled = isGranted
-            NotificationConstant.shouldLoudNotification = isGranted
-            NotificationConstant.shouldFollowUp = isGranted
-            
-        }
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
+                NotificationConstant.isNotificationAuthorized = isGranted
+                NotificationConstant.isNotificationEnabled = isGranted
+                NotificationConstant.shouldLoudNotification = isGranted
+                NotificationConstant.shouldFollowUp = isGranted
+                
+            }
         
-       // NotificationConstant.isNotificationEnabled = notificationsToggleSwitch.isOn
-        //NotificationConstant.shouldFollowUp = notificationsToggleSwitch.isOn
+        
     }
 
 }

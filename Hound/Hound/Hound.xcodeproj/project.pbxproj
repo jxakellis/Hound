@@ -18,6 +18,8 @@
 		A226736C25CDC59300904032 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A226736B25CDC59300904032 /* HomeViewController.swift */; };
 		A226737025CDC5D000904032 /* HomeMainScreenTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A226736F25CDC5D000904032 /* HomeMainScreenTableViewController.swift */; };
 		A231ACE525DEEA3B00B11E84 /* UIExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A231ACE425DEEA3B00B11E84 /* UIExtension.swift */; };
+		A239B748265754B500C92837 /* LogsMainScreenTableViewCellHeaderRegular.swift in Sources */ = {isa = PBXBuildFile; fileRef = A239B747265754B500C92837 /* LogsMainScreenTableViewCellHeaderRegular.swift */; };
+		A239B74A2657594F00C92837 /* LogsMainScreenTableViewCellBodyRegularWithoutIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A239B7492657594F00C92837 /* LogsMainScreenTableViewCellBodyRegularWithoutIcon.swift */; };
 		A24725952614F3BF00259691 /* ToolTipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24725942614F3BF00259691 /* ToolTipView.swift */; };
 		A247B96425C87F300017FE66 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A247B96325C87F300017FE66 /* MainTabBarViewController.swift */; };
 		A247B96825C883680017FE66 /* DogsMainScreenTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A247B96725C883680017FE66 /* DogsMainScreenTableViewController.swift */; };
@@ -95,6 +97,8 @@
 		A226736B25CDC59300904032 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		A226736F25CDC5D000904032 /* HomeMainScreenTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMainScreenTableViewController.swift; sourceTree = "<group>"; };
 		A231ACE425DEEA3B00B11E84 /* UIExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIExtension.swift; sourceTree = "<group>"; };
+		A239B747265754B500C92837 /* LogsMainScreenTableViewCellHeaderRegular.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsMainScreenTableViewCellHeaderRegular.swift; sourceTree = "<group>"; };
+		A239B7492657594F00C92837 /* LogsMainScreenTableViewCellBodyRegularWithoutIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsMainScreenTableViewCellBodyRegularWithoutIcon.swift; sourceTree = "<group>"; };
 		A24725942614F3BF00259691 /* ToolTipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ToolTipView.swift; path = "../New Group/ToolTipView.swift"; sourceTree = "<group>"; };
 		A247B96325C87F300017FE66 /* MainTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewController.swift; sourceTree = "<group>"; };
 		A247B96725C883680017FE66 /* DogsMainScreenTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DogsMainScreenTableViewController.swift; path = "../New Group1/DogsMainScreenTableViewController.swift"; sourceTree = "<group>"; };
@@ -276,7 +280,9 @@
 			isa = PBXGroup;
 			children = (
 				A25FC7A8262E6334007AD1B3 /* LogsMainScreenTableViewCellHeader.swift */,
+				A239B747265754B500C92837 /* LogsMainScreenTableViewCellHeaderRegular.swift */,
 				A293E193262F19E80008A9F7 /* LogsMainScreenTableViewCellBody.swift */,
+				A239B7492657594F00C92837 /* LogsMainScreenTableViewCellBodyRegularWithoutIcon.swift */,
 				A25502FD2649EDF500F6F08F /* LogsMainScreenTableViewCellBodyWithoutIcon.swift */,
 			);
 			path = Cells;
@@ -638,6 +644,7 @@
 				A2E66C9B25534A880068CCA6 /* AppDelegate.swift in Sources */,
 				A2536B54260843E900E2FF6A /* Requirement.swift in Sources */,
 				A2F1791C263F3E5C006824A7 /* DropDownDefaultTableViewCell.swift in Sources */,
+				A239B748265754B500C92837 /* LogsMainScreenTableViewCellHeaderRegular.swift in Sources */,
 				A247B96425C87F300017FE66 /* MainTabBarViewController.swift in Sources */,
 				A2B9DAED262B2E0A00A47D57 /* LogsViewController.swift in Sources */,
 				A226736C25CDC59300904032 /* HomeViewController.swift in Sources */,
@@ -648,6 +655,7 @@
 				A293E194262F19E90008A9F7 /* LogsMainScreenTableViewCellBody.swift in Sources */,
 				A2B9A92B2629213800626FAE /* AlertControllers.swift in Sources */,
 				A258AEEF25661580005242E4 /* Dog.swift in Sources */,
+				A239B74A2657594F00C92837 /* LogsMainScreenTableViewCellBodyRegularWithoutIcon.swift in Sources */,
 				A226737025CDC5D000904032 /* HomeMainScreenTableViewController.swift in Sources */,
 				A26A7585263CFF8C0026DE34 /* LogsAddLogViewController.swift in Sources */,
 				A247B96825C883680017FE66 /* DogsMainScreenTableViewController.swift in Sources */,

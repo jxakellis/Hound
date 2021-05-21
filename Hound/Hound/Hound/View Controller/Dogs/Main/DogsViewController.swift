@@ -60,7 +60,81 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     ///visual indication of log
     func didLogReminder(){
         let view: ScaledButton! = didLogEventConfirmation
+        view.setImage(UIImage.init(systemName: "checkmark.circle.fill"), for: .normal)
+        view.tintColor = UIColor.systemGreen
         let viewBackground: ScaledButton! = didLogEventConfirmationBackground
+        viewBackground.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+        
+        
+        
+        view.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+        view.alpha = 0.0
+        view.isHidden = false
+        viewBackground.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+        viewBackground.alpha = 0.0
+        viewBackground.isHidden = false
+        
+        let duration: TimeInterval = 0.17
+        
+        //come in from nothing
+        UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut, animations: {
+            
+            view.transform = .identity
+            view.alpha = 1.0
+            viewBackground.transform = .identity
+            viewBackground.alpha = 1.0
+            
+        }) { finished in
+            
+            //begin spin once
+            UIView.animate(withDuration: duration, delay: 0, options: .curveLinear) {
+                
+                view.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+                viewBackground.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+                
+            } completion: { _ in
+                //finished
+            }
+            
+            
+            //end spin
+            UIView.animate(withDuration: duration, delay: (duration*0.85), options: .curveEaseIn) {
+                
+                view.transform = CGAffineTransform(rotationAngle: CGFloat.pi * 2.0)
+                viewBackground.transform = CGAffineTransform(rotationAngle: CGFloat.pi * 2.0)
+                
+            } completion: { _ in
+                
+                //get small and disappear
+                UIView.animate(withDuration: duration, delay: 0, options: .curveEaseIn) {
+                    
+                    view.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+                    view.alpha = 0.0
+                    viewBackground.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+                    viewBackground.alpha = 0.0
+    
+                } completion: { completed in
+                    
+                    //done with everything
+                    view.isHidden = true
+                    view.transform = .identity
+                    viewBackground.isHidden = true
+                    viewBackground.transform = .identity
+                    
+                }
+            }
+
+
+        }
+    }
+    
+    ///visual indication of unlog
+    func didUnlogReminder() {
+        let view: ScaledButton! = didLogEventConfirmation
+        view.setImage(UIImage.init(systemName: "arrow.uturn.backward.circle.fill"), for: .normal)
+        view.tintColor = UIColor.lightGray
+        let viewBackground: ScaledButton! = didLogEventConfirmationBackground
+        viewBackground.setImage(UIImage.init(systemName: "arrow.uturn.backward.circle"), for: .normal)
         
         view.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
         view.alpha = 0.0
@@ -468,6 +542,13 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         let buttonLabelFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
         let buttonLabelSize = text.bounding(font: buttonLabelFont)
         let buttonLabel = UILabel(frame: CGRect(origin: CGPoint (x: button.frame.origin.x - buttonLabelSize.width, y: button.frame.midY - (buttonLabelSize.height/2)),size: buttonLabelSize ))
+        buttonLabel.minimumScaleFactor = 1.0
+        
+        if buttonLabel.frame.origin.x < 10{
+            let overshootDistance: CGFloat = 10 - buttonLabel.frame.origin.x
+            buttonLabel.frame = CGRect(origin: CGPoint(x: 10, y: buttonLabel.frame.origin.y), size: CGSize(width: buttonLabel.frame.width - overshootDistance, height: buttonLabel.frame.height))
+        }
+        
             
         buttonLabel.attributedText = NSAttributedString(string: text, attributes: [.font: buttonLabelFont])
         buttonLabel.textColor = .white
@@ -486,6 +567,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         buttonLabel.font = label.font
         buttonLabel.text = label.text
         buttonLabel.outline(outlineColor: .systemBlue, insideColor: .systemBlue, outlineWidth: 15)
+        buttonLabel.minimumScaleFactor = 1.0
         
         buttonLabel.isUserInteractionEnabled = false
         buttonLabel.adjustsFontSizeToFitWidth = true

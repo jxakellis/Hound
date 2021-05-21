@@ -20,10 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         //see if last time setup crashed
-        var didCrashDuringLastSetup = UserDefaults.standard.bool(forKey: "didCrashDuringSetup")
-        
-        //TEMPORARY
-        didCrashDuringLastSetup = false
+        let didCrashDuringLastSetup = UserDefaults.standard.bool(forKey: "didCrashDuringSetup")
         
         //will be set to false if successfully setup
         UserDefaults.standard.setValue(true, forKey: "didCrashDuringSetup")

@@ -191,4 +191,14 @@ extension String {
         return CGSize (width: boundWidth.width, height: boundHeight.height)
         
     }
+    
+    subscript(i: Int) -> String {
+        return String(self[index(startIndex, offsetBy: i)])
+    }
+
+        subscript (range: Range<Int>) -> Substring {
+            let startIndex = self.index(self.startIndex, offsetBy: range.startIndex)
+            let stopIndex = self.index(self.startIndex, offsetBy: range.startIndex + range.count)
+            return self[startIndex..<stopIndex]
+        }
 }

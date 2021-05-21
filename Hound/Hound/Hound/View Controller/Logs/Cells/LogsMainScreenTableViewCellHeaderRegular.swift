@@ -1,15 +1,15 @@
 //
-//  LogsMainScreenTableViewCellHeader.swift
+//  LogsMainScreenTableViewCellHeaderRegular.swift
 //  Hound
 //
-//  Created by Jonathan Xakellis on 4/19/21.
+//  Created by Jonathan Xakellis on 5/20/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
 //
 
 import UIKit
 
-class LogsMainScreenTableViewCellHeaderCompact: UITableViewCell {
-    
+class LogsMainScreenTableViewCellHeaderRegular: UITableViewCell {
+
     @IBOutlet private weak var header: CustomLabel!
     
     //MARK: - Properties
@@ -62,5 +62,5 @@ class LogsMainScreenTableViewCellHeaderCompact: UITableViewCell {
             }
         }
     }
-    
+
 }

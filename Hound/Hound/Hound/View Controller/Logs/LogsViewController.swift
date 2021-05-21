@@ -12,7 +12,13 @@ protocol LogsViewControllerDelegate{
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsMainScreenTableViewControllerDelegate, MakeDropDownDataSourceProtocol, LogsAddLogViewControllerDelegate {
+class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogManagerControlFlowProtocol, LogsMainScreenTableViewControllerDelegate, MakeDropDownDataSourceProtocol, LogsAddLogViewControllerDelegate {
+    
+    //MARK: - UIGestureRecognizerDelegate
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
     
     //MARK: - LogsAddLogViewControllerDelegate
     
@@ -275,6 +281,7 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
     //MARK: - IB
     
     
+    @IBOutlet private weak var containerView: UIView!
     
     @IBOutlet private weak var filterButton: UIBarButtonItem!
     
@@ -334,6 +341,12 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.bringSubviewToFront(willAddLog)
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(hideDropDown))
+        tap.delegate = self
+        tap.cancelsTouchesInView = false
+        containerView.addGestureRecognizer(tap)
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -409,6 +422,10 @@ class LogsViewController: UIViewController, DogManagerControlFlowProtocol, LogsM
         dropDown.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
         dropDown.setRowHeight(height: self.dropDownRowHeight)
         self.view.addSubview(dropDown)
+    }
+    
+    @objc private func hideDropDown(){
+        dropDown.hideDropDown()
     }
     
     // MARK: - Navigation

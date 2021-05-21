@@ -72,7 +72,7 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     
     //MARK: - Properties
     
-    ///Traint"
+    ///Traits
     var dogTraits: DogTraitManager = DogTraitManager()
     
     ///RequirmentManager that handles all specified requirements for a dog, e.g. being taken to the outside every time interval or being fed.
@@ -181,6 +181,21 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
         }
         
         return catagorizedLogTypes
+    }
+    
+    ///adds default set of requirements
+    func addDefaultRequirements(){
+        try! dogRequirments.addRequirement(newRequirements: [RequirementConstant.defaultRequirementOne, RequirementConstant.defaultRequirementTwo, RequirementConstant.defaultRequirementThree, RequirementConstant.defaultRequirementFour])
+    }
+    
+    ///returns true if has created a requirement and has atleast one enabled
+    var hasEnabledRequirement: Bool {
+            for requirement in dogRequirments.requirements {
+                if requirement.getEnable() == true {
+                    return true
+                }
+            }
+        return false
     }
     
     override init() {

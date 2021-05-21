@@ -37,7 +37,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     func didSetDefaultReminderState(sender: Sender, newDefaultReminderStatus: Bool) {
         if newDefaultReminderStatus == true {
             let sudoDogManager = dogsViewController.getDogManager()
-            try! sudoDogManager.dogs[0].dogRequirments.addRequirement(newRequirements: [RequirementConstant.defaultRequirementOne, RequirementConstant.defaultRequirementTwo, RequirementConstant.defaultRequirementThree, RequirementConstant.defaultRequirementFour])
+            sudoDogManager.dogs[0].addDefaultRequirements()
             
             setDogManager(sender: sender, newDogManager: sudoDogManager)
         }
@@ -151,7 +151,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         let decoded = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as! Data
         var decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
         decodedDogManager.synchronizeIsSkipping()
-       // decodedDogManager.dogs[0].dogRequirments.requirements[0].countDownComponents.changeExecutionInterval(newExecutionInterval: 15.0)
+       //decodedDogManager.dogs[0].dogRequirments.requirements[0].countDownComponents.changeExecutionInterval(newExecutionInterval: 15.0)
         
         setDogManager(sender: Sender(origin: self, localized: self), newDogManager: decodedDogManager)
         

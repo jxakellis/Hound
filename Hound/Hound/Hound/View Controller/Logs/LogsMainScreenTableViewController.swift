@@ -202,8 +202,10 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     ///IndexPath of current filtering scheme
     private var filterIndexPath: IndexPath? = nil
     
+    ///used for determining if overview mode was changed and if the table view needs reloaded
     private var storedIsCompactView: Bool = LogsMainScreenTableViewController.isCompactView
-    static var isCompactView: Bool = false
+    
+    static var isCompactView: Bool = true
     
     var delegate: LogsMainScreenTableViewControllerDelegate! = nil
     
@@ -266,22 +268,42 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //no logs present
         if uniqueLogs.count == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeader", for: indexPath)
+            if LogsMainScreenTableViewController.isCompactView == true {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderCompact", for: indexPath)
+                
+                let customCell = cell as! LogsMainScreenTableViewCellHeaderCompact
+                customCell.setup(log: nil)
+                
+                return cell
+            }
+            else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderRegular", for: indexPath)
+                
+                let customCell = cell as! LogsMainScreenTableViewCellHeaderRegular
+                customCell.setup(log: nil)
+                
+                return cell
+            }
             
-            let customCell = cell as! LogsMainScreenTableViewCellHeader
-            customCell.setup(log: nil)
-            
-            return cell
         }
         //logs present but header
         else if indexPath.row == 0{
-            let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeader", for: indexPath)
-            
-            let customCell = cell as! LogsMainScreenTableViewCellHeader
-            
-            customCell.setup(log: uniqueLogs[indexPath.section].2[0].2)
-            
-            return cell
+            if LogsMainScreenTableViewController.isCompactView == true {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderCompact", for: indexPath)
+                
+                let customCell = cell as! LogsMainScreenTableViewCellHeaderCompact
+                customCell.setup(log: uniqueLogs[indexPath.section].2[0].2)
+                
+                return cell
+            }
+            else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderRegular", for: indexPath)
+                
+                let customCell = cell as! LogsMainScreenTableViewCellHeaderRegular
+                customCell.setup(log: uniqueLogs[indexPath.section].2[0].2)
+                
+                return cell
+            }
         }
         //log
         else {
@@ -289,19 +311,31 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             let dog = try! getDogManager().findDog(dogName: logDisplay.0)
             let icon = dog.dogTraits.icon
             
-            if icon != DogConstant.defaultIcon && LogsMainScreenTableViewController.isCompactView == false{
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyWithIcon", for: indexPath)
+            if LogsMainScreenTableViewController.isCompactView == true {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyCompact", for: indexPath)
                 
-                let customCell = cell as! LogsMainScreenTableViewCellBodyWithIcon
+                let customCell = cell as! LogsMainScreenTableViewCellBodyCompact
+                
                 
                 customCell.setup(parentDogName: logDisplay.0, requirement: logDisplay.1, log: logDisplay.2)
                 
                 return cell
             }
-            else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyWithoutIcon", for: indexPath)
+            //has icon
+            else if icon != DogConstant.defaultIcon{
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyRegularWithIcon", for: indexPath)
                 
-                let customCell = cell as! LogsMainScreenTableViewCellBodyWithoutIcon
+                let customCell = cell as! LogsMainScreenTableViewCellBodyRegularWithIcon
+                
+                customCell.setup(parentDogName: logDisplay.0, requirement: logDisplay.1, log: logDisplay.2)
+                
+                return cell
+            }
+            //no icon
+            else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyRegularWithoutIcon", for: indexPath)
+                
+                let customCell = cell as! LogsMainScreenTableViewCellBodyRegularWithoutIcon
                 
                 
                 customCell.setup(parentDogName: logDisplay.0, requirement: logDisplay.1, log: logDisplay.2)
@@ -373,8 +407,15 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 
                 //removed final log and must update header (no logs are left at all)
                 if uniqueLogs.count == 0 {
-                    let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsMainScreenTableViewCellHeader
-                    headerCell.setup(log: nil)
+                    if LogsMainScreenTableViewController.isCompactView == true {
+                        let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsMainScreenTableViewCellHeaderCompact
+                        headerCell.setup(log: nil)
+                    }
+                    else {
+                        let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsMainScreenTableViewCellHeaderRegular
+                        headerCell.setup(log: nil)
+                    }
+                    
                 }
                 //removed final log of a given section and must delete all headers and body in that now gone-from-the-data section
                 else if originalNumberOfSections != uniqueLogs.count{

@@ -50,7 +50,7 @@ class CustomLabel: UILabel {
         super.init(frame: frame)
         self.adjustsFontSizeToFitWidth = true
         if self.minimumScaleFactor == 0{
-            self.minimumScaleFactor = 0.5
+            self.minimumScaleFactor = 0.82
         }
     }
     
@@ -58,7 +58,7 @@ class CustomLabel: UILabel {
         super.init(coder: coder)
         self.adjustsFontSizeToFitWidth = true
         if self.minimumScaleFactor == 0{
-            self.minimumScaleFactor = 0.5
+            self.minimumScaleFactor = 0.82
         }
     }
     

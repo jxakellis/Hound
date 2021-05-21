@@ -13,27 +13,10 @@ protocol DogsMainScreenTableViewControllerDelegate{
     func willEditRequirement(parentDogName: String, requirementUUID: String?)
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
     func didLogReminder()
+    func didUnlogReminder()
 }
 
-class DogsMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol, DogsMainScreenTableViewCellDogDisplayDelegate, DogsMainScreenTableViewCellRequirementDisplayDelegate {
-    
-    //MARK: - DogsMainScreenTableViewCellDogDisplayDelegate
-    
-    ///Dog switch is toggled in DogsMainScreenTableViewCellDogDisplay
-    func didToggleDogSwitch(sender: Sender, dogName: String, isEnabled: Bool) {
-        
-        let sudoDogManager = getDogManager()
-        try! sudoDogManager.findDog(dogName: dogName).setEnable(newEnableStatus: isEnabled)
-        
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
-        
-        //This is so the cell animates the changing of the switch properly, if this code wasnt implemented then when the table view is reloaded a new batch of cells is produced and that cell has the new switch state, bypassing the animation as the instantant the old one is switched it produces and shows the new switch
-        let indexPath = try! IndexPath(row: 0, section: getDogManager().findIndex(dogName: dogName))
-        
-        let cell = tableView.cellForRow(at: indexPath) as! DogsMainScreenTableViewCellDogDisplay
-        cell.dogToggleSwitch.isOn = !isEnabled
-        cell.dogToggleSwitch.setOn(isEnabled, animated: true)
-    }
+class DogsMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol, DogsMainScreenTableViewCellRequirementDisplayDelegate {
     
     //MARK: - DogsMainScreenTableViewCellRequirementDelegate
     
@@ -166,7 +149,11 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         }
         else{
             for cell in tableView.visibleCells{
-                if cell is DogsMainScreenTableViewCellRequirementDisplay{
+                if cell is DogsMainScreenTableViewCellDogDisplay{
+                    let sudoCell = cell as! DogsMainScreenTableViewCellDogDisplay
+                    sudoCell.reloadCell()
+                }
+                else {
                     let sudoCell = cell as! DogsMainScreenTableViewCellRequirementDisplay
                     sudoCell.reloadCell()
                 }
@@ -337,7 +324,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     (alert: UIAlertAction!)  in
                     //knownLogType not needed as unskipping alarm does not require that component
                     TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementUUID: requirement.uuid, knownLogType: nil)
-                    self.delegate.didLogReminder()
+                    self.delegate.didUnlogReminder()
                     
                 })
             alertActionsForLog.append(alertActionLog)
@@ -430,7 +417,6 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             
             let customCell = cell as! DogsMainScreenTableViewCellDogDisplay
             customCell.setup(dogPassed: getDogManager().dogs[indexPath.section])
-            customCell.delegate = self
             return cell
         }
         else {
