@@ -30,6 +30,7 @@ class AlarmAlertController: GeneralAlertController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        print("alert will appear")
         guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification else {
             return
         }
@@ -44,12 +45,6 @@ class AlarmAlertController: GeneralAlertController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        /*
-         guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification else {
-             return
-         }
-         */
-        
         
         DispatchQueue.global().async{
             print("disappear, halting")

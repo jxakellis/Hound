@@ -11,6 +11,7 @@ import UIKit
 protocol LogsMainScreenTableViewControllerDelegate{
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
     func didSelectLog(parentDogName: String, requirement: Requirement?, log: KnownLog)
+    func didRemoveLastFilterLog()
 }
 
 class LogsMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol {
@@ -84,10 +85,24 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             else{
                 let dog = dogManager.dogs[filterIndexPath!.section]
                 
-                //apennds all known logs to consolidated list, some have requirement and some dont as varies depending on source (i.e. was nested under doglogs or requirement logs)
-                for knownLog in dog.catagorizedLogTypes[filterIndexPath!.row-1].1{
-                    consolidatedLogs.append((dog.dogTraits.dogName, knownLog.0, knownLog.1))
+                //checks to see if filter type still present
+                if dog.catagorizedLogTypes.contains(where: { (arg1) in
+                    let knownType = arg1.0
+                    if knownType == filterType{
+                        return true
+                    }
+                    else {
+                        return false
+                    }
+                }) == true {//apennds all known logs to consolidated list, some have requirement and some dont as varies depending on source (i.e. was nested under doglogs or requirement logs)
+                    for knownLog in dog.catagorizedLogTypes[filterIndexPath!.row-1].1{
+                        consolidatedLogs.append((dog.dogTraits.dogName, knownLog.0, knownLog.1))
+                    }
                 }
+                else {
+                    delegate.didRemoveLastFilterLog()
+                }
+                
                 
             }
             
@@ -201,6 +216,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     ///IndexPath of current filtering scheme
     private var filterIndexPath: IndexPath? = nil
+    private var filterType: KnownLogType? = nil
     
     ///used for determining if overview mode was changed and if the table view needs reloaded
     private var storedIsCompactView: Bool = LogsMainScreenTableViewController.isCompactView
@@ -235,9 +251,10 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     }
     
     ///Will apply a filtering scheme dependent on indexPath, nil means going to no filtering.
-    func willApplyFiltering(associatedToIndexPath indexPath: IndexPath?){
+    func willApplyFiltering(associatedToIndexPath indexPath: IndexPath?, filterType: KnownLogType?){
         
         filterIndexPath = indexPath
+        self.filterType = filterType
         
         reloadTable()
     }
@@ -397,9 +414,6 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                         }
                     }
                 }
-                
-                
-                
                 
                 setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager)
                 

@@ -138,11 +138,6 @@ class DogsIndependentRequirementViewController: UIViewController, DogsRequiremen
         Utils.presenter = self
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        //Utils.presenter = self
-    }
-    
     // MARK: Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation

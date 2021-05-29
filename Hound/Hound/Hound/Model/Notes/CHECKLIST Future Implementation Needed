@@ -10,7 +10,6 @@ Needed:
 Configurable log types
 LogsViewController .catagorizedLogTypes efficency by reducing calls to it
 schedule one time reminder
-remove reset button from production
 
 Wants:
 Thinks logs alignment could be better so can easily scan through
@@ -24,7 +23,7 @@ No option for doctor visit
 No prompt to add notes when logging something, can only do at a later point in time
 
 
-Song - Third Period - 5/20 or 5/24
+Song - Third Period - 5/24 or 5/27
 
 In Case Problems Arrive (Solved For Now):
     NOTIFICATIONS

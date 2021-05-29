@@ -109,8 +109,10 @@ class Persistence{
                 return
             }
             
+            print("silent load")
             AudioPlayer.loadSilenceAudioPlayer()
             AudioPlayer.sharedPlayer.play()
+            print("silent play")
         }
         
         //saves to user defaults

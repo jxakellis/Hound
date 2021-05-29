@@ -126,6 +126,12 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         selectedLog = nil
     }
     
+    ///If the last log under a dog for a given type was removed while filtering by that type, updates the drop down to reflect this. Does not update table view as it is trigger by the table view.
+    func didRemoveLastFilterLog(){
+        filterIndexPath = nil
+        filterType = nil
+    }
+    
     //MARK: - MakeDropDownDataSourceProtocol
     
     private var dropDownRowHeight: CGFloat = 30
@@ -206,18 +212,27 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             selectedCell.didToggleSelect(newSelectionStatus: true)
             
             filterIndexPath = nil
+            filterType = nil
         }
         //already filtering, now not filtering
         else if filterIndexPath == indexPath {
             selectedCell.didToggleSelect(newSelectionStatus: false)
             
             filterIndexPath = nil
+            filterType = nil
         }
+        
+        
         //not filtering, now will filter
         else if filterIndexPath == nil{
             selectedCell.didToggleSelect(newSelectionStatus: true)
             
             filterIndexPath = indexPath
+            
+            if indexPath.row != 0 {
+                let dog = getDogManager().dogs[indexPath.section]
+                filterType = dog.catagorizedLogTypes[indexPath.row-1].0
+            }
         }
         //switching from one filter to another
         else {
@@ -226,8 +241,12 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             selectedCell.didToggleSelect(newSelectionStatus: true)
             
             filterIndexPath = indexPath
+            if indexPath.row != 0 {
+                let dog = getDogManager().dogs[indexPath.section]
+                filterType = dog.catagorizedLogTypes[indexPath.row-1].0
+            }
         }
-        logsMainScreenTableViewController?.willApplyFiltering(associatedToIndexPath: filterIndexPath)
+        logsMainScreenTableViewController?.willApplyFiltering(associatedToIndexPath: filterIndexPath, filterType: filterType)
         
         self.dropDown.hideDropDown()
     }
@@ -251,7 +270,8 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             
             //can add logs so needs to remove filter
             filterIndexPath = nil
-            logsMainScreenTableViewController?.willApplyFiltering(associatedToIndexPath: filterIndexPath)
+            filterType = nil
+            logsMainScreenTableViewController?.willApplyFiltering(associatedToIndexPath: filterIndexPath, filterType: filterType)
             logsAddLogViewController?.navigationController?.popViewController(animated: false)
         }
         //only deletes logs so ok
@@ -265,7 +285,8 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             //can delete or add logs so needs to remove filter
             logsMainScreenTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
             filterIndexPath = nil
-            logsMainScreenTableViewController?.willApplyFiltering(associatedToIndexPath: filterIndexPath)
+            filterType = nil
+            logsMainScreenTableViewController?.willApplyFiltering(associatedToIndexPath: filterIndexPath, filterType: filterType)
         }
         
         updateDogManagerDependents()
@@ -329,6 +350,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
     
     //IndexPath of a filter selected in the dropDown menu, nil if not filtering
     private var filterIndexPath: IndexPath? = nil
+    private var filterType: KnownLogType? = nil
     
     var logsMainScreenTableViewController: LogsMainScreenTableViewController! = nil
     
@@ -373,10 +395,10 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         
         ///Finds the widthNeeded by the largest label, has a minimum and maximum possible along with subtracting the space taken by leading and trailing constraints.
         var neededWidthForLabel: CGFloat{
-            let maximumWidth: CGFloat = view.safeAreaLayoutGuide.layoutFrame.width - 20.0
-            let minimumWidth: CGFloat = 100.0 - 20.0
+            let maximumWidth: CGFloat = view.safeAreaLayoutGuide.layoutFrame.width - 24.0
+            let minimumWidth: CGFloat = 100.0 - 24.0
             
-            ///Finds the largestWidth taken up by any label, later compared to constraint sizes of min and max
+            ///Finds the largestWidth taken up by any label, later compared to constraint sizes of min and max. Leading and trailing constraints not considered here, that will be adjusted later
             var largestLabelWidth: CGFloat {
                 
                 let sudoDogManager = getDogManager()
@@ -418,7 +440,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         dropDown.makeDropDownIdentifier = "DROP_DOWN_NEW"
         dropDown.cellReusableIdentifier = "dropDownCell"
         dropDown.makeDropDownDataSourceProtocol = self
-        dropDown.setUpDropDown(viewPositionReference: (CGRect(origin: self.view.safeAreaLayoutGuide.layoutFrame.origin, size: CGSize(width: neededWidthForLabel + 20.0, height: 0.0))), offset: 0.0)
+        dropDown.setUpDropDown(viewPositionReference: (CGRect(origin: self.view.safeAreaLayoutGuide.layoutFrame.origin, size: CGSize(width: neededWidthForLabel + 24.0, height: 0.0))), offset: 0.0)
         dropDown.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
         dropDown.setRowHeight(height: self.dropDownRowHeight)
         self.view.addSubview(dropDown)

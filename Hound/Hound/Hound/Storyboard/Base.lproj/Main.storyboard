@@ -1114,7 +1114,7 @@
                                                 <constraint firstAttribute="width" constant="25" id="ieF-kk-hdN"/>
                                             </constraints>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Next Reminder In:" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E6i-Fi-bHd" customClass="CustomLabel" customModule="Hound" customModuleProvider="target">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Next Reminder In:" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="E6i-Fi-bHd" customClass="CustomLabel" customModule="Hound" customModuleProvider="target">
                                             <rect key="frame" x="80" y="65" width="289" height="24.5"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1167,7 +1167,7 @@
                                                 <action selector="didToggleRequirementSwitch:" destination="Lai-xI-ipQ" eventType="valueChanged" id="VnM-MU-e7x"/>
                                             </connections>
                                         </switch>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME INTERVAL" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bK9-8i-YGQ" customClass="CustomLabel" customModule="Hound" customModuleProvider="target">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME INTERVAL" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="bK9-8i-YGQ" customClass="CustomLabel" customModule="Hound" customModuleProvider="target">
                                             <rect key="frame" x="80" y="41.5" width="230" height="20"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="fL5-n7-OUt"/>
@@ -1193,7 +1193,7 @@
                                                 <constraint firstAttribute="width" secondItem="vrP-ae-kTK" secondAttribute="height" multiplier="1:1.5" id="vLO-W2-hfl"/>
                                             </constraints>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME LEFT" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PDj-HF-Z40" customClass="CustomLabel" customModule="Hound" customModuleProvider="target">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME LEFT" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="PDj-HF-Z40" customClass="CustomLabel" customModule="Hound" customModuleProvider="target">
                                             <rect key="frame" x="80" y="64.5" width="230" height="20"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="PfR-w2-cTb"/>
@@ -1537,13 +1537,7 @@
                             <constraint firstItem="3hh-in-rRx" firstAttribute="trailing" secondItem="Tl1-fS-eKQ" secondAttribute="trailing" id="r7c-ek-GXR"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Settings" id="cTz-i4-lSN">
-                        <barButtonItem key="leftBarButtonItem" title="Reset" id="FxQ-TJ-gNu">
-                            <connections>
-                                <action selector="willReset:" destination="yOJ-Bd-jVl" id="B2N-bL-hGU"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Settings" id="cTz-i4-lSN"/>
                     <connections>
                         <outlet property="followUpDelayInterval" destination="aOM-HB-xn3" id="SvO-PL-q9j"/>
                         <outlet property="followUpReminderLabel" destination="8Fc-Ih-bii" id="t7e-FS-J8B"/>
@@ -2411,7 +2405,7 @@
                                     <constraint firstAttribute="height" relation="lessThanOrEqual" constant="90" id="daq-uA-GBP"/>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="oTC-LP-Y97"/>
                                 </constraints>
-                                <color key="tintColor" systemColor="systemGreenColor"/>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
                                 <state key="normal" image="checkmark.circle.fill" catalog="system">
                                     <color key="titleColor" systemColor="systemBackgroundColor"/>
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
