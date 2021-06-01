@@ -17,17 +17,18 @@ enum RequirementError: Error {
 }
 
 enum RequirementStyle: String {
+    case oneTime = "oneTime"
     case countDown = "countDown"
     case weekly = "weekly"
     case monthly = "monthly"
 }
 
 enum RequirementMode {
+    case oneTime
     case countDown
     case weekly
     case monthly
     case snooze
-    case secondaryReminder
 }
 
 protocol RequirementTraitsProtocol {
@@ -36,6 +37,12 @@ protocol RequirementTraitsProtocol {
     
     ///Replacement for requirementName, a way for the user to keep track of what the requirement is for
     var requirementType: ScheduledLogType { get set }
+    
+    ///If the requirement's type is custom, this is the name for it
+    var customTypeName: String? { get set }
+    
+    ///If not .custom type then just .type name, if custom and has customTypeName then its that string
+    var displayTypeName: String { get }
     
     ///An array of all dates that logs when the timer has fired, whether by snooze, regular timing convention, etc. ANY TIME
     var logs: [KnownLog] { get set }
@@ -83,7 +90,7 @@ protocol RequirementTimingComponentsProtocol {
     var intervalRemaining: TimeInterval? { get }
     
     ///Called when a timer is fired/executed and an option to deal with it is selected by the user, if the reset is trigger by a user doing an action that constitude a reset, specify as so, but if doing something like changing the value of some component it was did not exeute to user. If didExecuteToUse is true it does the same thing as false except it appends the current date to the array of logs which keeps tracks of each time a requirement is formally executed.
-    mutating func timerReset(shouldLogExecution: Bool, knownLogType: KnownLogType?)
+    mutating func timerReset(shouldLogExecution: Bool, knownLogType: KnownLogType?, customTypeName: String?)
 }
 
 class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, RequirementComponentsProtocol, RequirementTimingComponentsProtocol, EnableProtocol {
@@ -97,11 +104,14 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         //try! copy.changeRequirementDescription(newRequirementDescription: self.requirementDescription)
         copy.uuid = self.uuid
         copy.requirementType = self.requirementType
+        copy.customTypeName = self.customTypeName
         copy.logs = self.logs
         
         copy.countDownComponents = self.countDownComponents.copy() as! CountDownComponents
         copy.timeOfDayComponents = self.timeOfDayComponents.copy() as! TimeOfDayComponents
         copy.timeOfDayComponents.masterRequirement = copy
+        copy.oneTimeComponents = self.oneTimeComponents.copy() as! OneTimeComponents
+        copy.oneTimeComponents.masterRequirement = copy
         copy.snoozeComponents = self.snoozeComponents.copy() as! SnoozeComponents
         copy.storedTimingStyle = self.timingStyle
         
@@ -119,6 +129,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
     override init() {
         super.init()
         self.timeOfDayComponents.masterRequirement = self
+        self.oneTimeComponents.masterRequirement = self
     }
     
      required init?(coder aDecoder: NSCoder) {
@@ -128,11 +139,14 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         //self.storedRequirementDescription = aDecoder.decodeObject(forKey: "requirementDescription") as! String
         self.uuid = aDecoder.decodeObject(forKey: "uuid") as! String
         self.requirementType = ScheduledLogType(rawValue: aDecoder.decodeObject(forKey: "requirementType") as! String)!
+        self.customTypeName = aDecoder.decodeObject(forKey: "customTypeName") as? String
         self.logs = aDecoder.decodeObject(forKey: "logs") as! [KnownLog]
         
         self.countDownComponents = aDecoder.decodeObject(forKey: "countDownComponents") as! CountDownComponents
         self.timeOfDayComponents = aDecoder.decodeObject(forKey: "timeOfDayComponents") as! TimeOfDayComponents
         self.timeOfDayComponents.masterRequirement = self
+        self.oneTimeComponents = aDecoder.decodeObject(forKey: "oneTimeComponents") as? OneTimeComponents ?? OneTimeComponents()
+        self.oneTimeComponents.masterRequirement = self
         self.snoozeComponents = aDecoder.decodeObject(forKey: "snoozeComponents") as! SnoozeComponents
         self.storedTimingStyle = RequirementStyle(rawValue: aDecoder.decodeObject(forKey: "timingStyle") as! String)!
         
@@ -148,10 +162,12 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         //aCoder.encode(storedRequirementDescription, forKey: "requirementDescription")
         aCoder.encode(uuid, forKey: "uuid")
         aCoder.encode(requirementType.rawValue, forKey: "requirementType")
+        aCoder.encode(customTypeName, forKey: "customTypeName")
         aCoder.encode(logs, forKey: "logs")
         
         aCoder.encode(countDownComponents, forKey: "countDownComponents")
         aCoder.encode(timeOfDayComponents, forKey: "timeOfDayComponents")
+        aCoder.encode(oneTimeComponents, forKey: "oneTimeComponents")
         aCoder.encode(snoozeComponents, forKey: "snoozeComponents")
         aCoder.encode(storedTimingStyle.rawValue, forKey: "timingStyle")
         
@@ -168,6 +184,17 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
     
     var requirementType: ScheduledLogType = RequirementConstant.defaultType
     
+    var customTypeName: String? = nil
+    
+    var displayTypeName: String {
+        if requirementType == .custom && customTypeName != nil {
+            return customTypeName!
+        }
+        else {
+            return requirementType.rawValue
+        }
+    }
+    
     var logs: [KnownLog] = []
     
     //MARK: - RequirementComponentsProtocol
@@ -175,6 +202,8 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
     var countDownComponents: CountDownComponents = CountDownComponents()
     
     var timeOfDayComponents: TimeOfDayComponents = TimeOfDayComponents()
+    
+    var oneTimeComponents: OneTimeComponents = OneTimeComponents()
     
     var snoozeComponents: SnoozeComponents = SnoozeComponents()
     
@@ -191,9 +220,11 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         else if timingStyle == .monthly {
             return .monthly
         }
+        else if timingStyle == .oneTime{
+            return .oneTime
+        }
         else {
-            //HDLL
-            return .secondaryReminder
+            fatalError()
         }
     }
     
@@ -249,6 +280,9 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         if timerMode == .snooze {
             return snoozeComponents.executionInterval - snoozeComponents.intervalElapsed
         }
+        else if timerMode == .oneTime {
+            return Date().distance(to: oneTimeComponents.executionDate!)
+        }
         //countdown
         else if timerMode == .countDown{
             return countDownComponents.executionInterval - countDownComponents.intervalElapsed
@@ -291,12 +325,15 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         else if timerMode == .countDown{
             return Date.executionDate(lastExecution: executionBasis, interval: intervalRemaining!)
         }
+        else if timerMode == .oneTime{
+            return oneTimeComponents.executionDate
+        }
         else {
             fatalError("not implemented timerMode for executionDate, requirement")
         }
     }
     
-    func timerReset(shouldLogExecution: Bool, knownLogType: KnownLogType? = nil){
+    func timerReset(shouldLogExecution: Bool, knownLogType: KnownLogType? = nil, customTypeName: String? = nil){
         
         //changeActiveStatus already calls timerReset if transitioning from inactive to active so circumvent this by directly accessing storedIsActive
         if isActive == false {
@@ -307,7 +344,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
             if knownLogType == nil {
                 fatalError()
             }
-            self.logs.append(KnownLog(date: Date(), logType: knownLogType!))
+            self.logs.append(KnownLog(date: Date(), logType: knownLogType!, customTypeName: customTypeName))
         }
         
         self.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
@@ -319,8 +356,11 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         if timingStyle == .countDown {
             self.countDownComponents.timerReset()
         }
-        else {
+        else if timingStyle == .weekly || timingStyle == .monthly{
             self.timeOfDayComponents.timerReset()
+        }
+        else {
+            self.oneTimeComponents.timerReset()
         }
         
     }

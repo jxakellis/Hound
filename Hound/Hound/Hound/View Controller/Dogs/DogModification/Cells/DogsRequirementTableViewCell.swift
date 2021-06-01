@@ -45,7 +45,10 @@ class DogsRequirementTableViewCell: UITableViewCell {
         
         requirementDisplay.text = ""
         
-        if requirement.timingStyle == .countDown {
+        if requirement.timingStyle == .oneTime {
+            try! self.requirementDisplay.text? = " \(String.convertToReadableNonRepeating(interperatedDateComponents: requirement.oneTimeComponents.dateComponents))"
+        }
+        else if requirement.timingStyle == .countDown {
             self.requirementDisplay.text?.append(" Every \(String.convertToReadable(interperateTimeInterval: requirement.countDownComponents.executionInterval))")
         }
         else {
@@ -56,18 +59,7 @@ class DogsRequirementTableViewCell: UITableViewCell {
                 let dayOfMonth: Int! = requirement.timeOfDayComponents.dayOfMonth
                 requirementDisplay.text?.append(" Every Month on \(dayOfMonth!)")
             
-                if dayOfMonth == 1{
-                    requirementDisplay.text?.append("st")
-                }
-                else if dayOfMonth == 2 {
-                    requirementDisplay.text?.append("nd")
-                }
-                else if dayOfMonth == 3 {
-                    requirementDisplay.text?.append("rd")
-                }
-                else {
-                    requirementDisplay.text?.append("th")
-                }
+                requirementDisplay.text?.append(String.dayOfMonthSuffix(day: dayOfMonth))
             }
             //weekdays
             else if requirement.timeOfDayComponents.weekdays == [1,2,3,4,5,6,7]{
@@ -132,7 +124,7 @@ class DogsRequirementTableViewCell: UITableViewCell {
             }
         }
         
-        requirementDisplay.attributedText = requirementDisplay.text?.addingFontToBeginning(text: requirement.requirementType.rawValue + " -", font: UIFont.systemFont(ofSize: requirementDisplay.font.pointSize, weight: .medium))
+        requirementDisplay.attributedText = requirementDisplay.text?.addingFontToBeginning(text: requirement.displayTypeName + " -", font: UIFont.systemFont(ofSize: requirementDisplay.font.pointSize, weight: .medium))
         
         self.requirementToggleSwitch.isOn = requirement.getEnable()
         

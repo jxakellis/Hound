@@ -270,7 +270,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     ///Called when a requirement is clicked by the user, display an action sheet of possible modifcations to the alarm/requirement.
     private func willShowRequirementActionSheet(sender: UIView, parentDogName: String, requirement: Requirement){
         
-        let alertController = GeneralAlertController(title: "You Selected: \(requirement.requirementType.rawValue) for \(parentDogName)", message: nil, preferredStyle: .actionSheet)
+        let alertController = GeneralAlertController(title: "You Selected: \(requirement.displayTypeName) for \(parentDogName)", message: nil, preferredStyle: .actionSheet)
         
         let alertActionCancel = UIAlertAction(title:"Cancel", style: .cancel, handler: nil)
         
@@ -317,7 +317,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         if shouldUndoLog == true {
             let alertActionLog = UIAlertAction(
-                title: "Undo Log for \(requirement.requirementType.rawValue)",
+                title: "Undo Log for \(requirement.displayTypeName)",
             style: .default,
             handler:
                 {
@@ -348,7 +348,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 }
             default:
                 let alertActionLog = UIAlertAction(
-                    title:"Log \(requirement.requirementType.rawValue)",
+                    title:"Log \(requirement.displayTypeName)",
                     style: .default,
                     handler:
                         {
@@ -449,17 +449,33 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete && getDogManager().dogs.count > 0 {
+            let deleteConfirmation: GeneralAlertController!
             let sudoDogManager = getDogManager()
             if indexPath.row > 0 {
-                sudoDogManager.dogs[indexPath.section].dogRequirments.requirements.remove(at: indexPath.row-1)
-                setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
-                self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                deleteConfirmation = GeneralAlertController(title: "Are you sure you want to delete \(sudoDogManager.dogs[indexPath.section].dogRequirments.requirements[indexPath.row-1].displayTypeName)?", message: nil, preferredStyle: .alert)
+                
+                let alertActionDelete = UIAlertAction(title: "Delete", style: .destructive) { _ in
+                    sudoDogManager.dogs[indexPath.section].dogRequirments.requirements.remove(at: indexPath.row-1)
+                    self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
+                    self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                }
+                let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+                deleteConfirmation.addAction(alertActionDelete)
+                deleteConfirmation.addAction(alertActionCancel)
             }
             else {
-                sudoDogManager.dogs.remove(at: indexPath.section)
-                setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
-                self.tableView.deleteSections([indexPath.section], with: .automatic)
+                deleteConfirmation = GeneralAlertController(title: "Are you sure you want to delete \(sudoDogManager.dogs[indexPath.section].dogTraits.dogName)?", message: nil, preferredStyle: .alert)
+                
+                let alertActionDelete = UIAlertAction(title: "Delete", style: .destructive) { _ in
+                    sudoDogManager.dogs.remove(at: indexPath.section)
+                    self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
+                    self.tableView.deleteSections([indexPath.section], with: .automatic)
+                }
+                let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+                deleteConfirmation.addAction(alertActionDelete)
+                deleteConfirmation.addAction(alertActionCancel)
             }
+            AlertPresenter.shared.enqueueAlertForPresentation(deleteConfirmation)
             
         }
     }

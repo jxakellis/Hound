@@ -130,7 +130,7 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountDownProtocol
         storedIsSnoozed = newSnoozeStatus
     }
     
-    private var storedExecutionInterval = TimeInterval(60*30)
+    private var storedExecutionInterval = TimerConstant.defaultSnooze
     var executionInterval: TimeInterval { return storedExecutionInterval }
     func changeExecutionInterval(newExecutionInterval: TimeInterval){
         storedExecutionInterval = newExecutionInterval
@@ -575,6 +575,102 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     }
     
     
+}
+
+enum OneTimeComponentsError: Error {
+    case invalidDateComponents
+    case invalidCalendarComponent
+    case requirementAlreadyCreated
+}
+
+protocol OneTimeComponentsProtocol {
+    ///Reference to the requirement that holds the oneTimeComponent, required for connectivity.
+    var masterRequirement: Requirement! { get set }
+    
+    ///DateComponent that stores the year, month, day, hour, and minute of the one time requirement
+    var dateComponents: DateComponents { get }
+    mutating func changeTimeOfDayComponent(newOneTimeComponents: DateComponents) throws
+    mutating func changeTimeOfDayComponent(newOneTimeComponent: Calendar.Component, newValue: Int) throws
+    
+    ///The Date that the alarm should fire
+    var executionDate: Date? { get }
+    
+    ///Called when a timer is handled and needs to be reset
+    func timerReset()
+}
+
+class OneTimeComponents: Component, NSCoding, NSCopying, OneTimeComponentsProtocol{
+
+    //MARK: - NSCopying
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        let copy = OneTimeComponents()
+        copy.storedDateComponents = self.dateComponents
+        return copy
+    }
+    
+    //MARK: - NSCoding
+    
+    override init(){
+        super.init()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        self.storedDateComponents = aDecoder.decodeObject(forKey: "dateComponents") as! DateComponents
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(storedDateComponents, forKey: "dateComponents")
+    }
+    
+    //MARK: OneTimeComponentsProtocol
+    
+    var masterRequirement: Requirement! = nil
+    
+    private var storedDateComponents: DateComponents = DateComponents()
+    var dateComponents: DateComponents { return storedDateComponents }
+    
+    func changeTimeOfDayComponent(newOneTimeComponents: DateComponents) throws {
+        if newOneTimeComponents.year != nil {
+            storedDateComponents.year = newOneTimeComponents.year
+        }
+        if newOneTimeComponents.month != nil {
+            storedDateComponents.month = newOneTimeComponents.month
+        }
+        if newOneTimeComponents.day != nil {
+            storedDateComponents.day = newOneTimeComponents.day
+        }
+        if newOneTimeComponents.hour != nil {
+            storedDateComponents.hour = newOneTimeComponents.hour
+        }
+        if newOneTimeComponents.minute != nil {
+            storedDateComponents.minute = newOneTimeComponents.minute
+        }
+    }
+    
+    func changeTimeOfDayComponent(newOneTimeComponent: Calendar.Component, newValue: Int) throws {
+        switch newOneTimeComponent {
+        case .year:
+            storedDateComponents.year = newValue
+        case .month:
+            storedDateComponents.month = newValue
+        case .day:
+            storedDateComponents.day = newValue
+        case .hour:
+            storedDateComponents.hour = newValue
+        case .minute:
+            storedDateComponents.month = newValue
+        default:
+            throw OneTimeComponentsError.invalidCalendarComponent
+        }
+    }
+    
+    var executionDate: Date? {
+        return Calendar.current.date(from: dateComponents)
+    }
+    
+    func timerReset() {
+    }
 }
 
 

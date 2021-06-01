@@ -120,7 +120,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     @IBOutlet weak var dogRemoveButton: UIBarButtonItem!
     
     @IBAction func willRemoveDog(_ sender: Any) {
-        let removeDogConfirmation = GeneralAlertController(title: "Are you sure you want to delete \"\(dogName.text ?? targetDog.dogTraits.dogName)\"", message: nil, preferredStyle: .alert)
+        let removeDogConfirmation = GeneralAlertController(title: "Are you sure you want to delete \(dogName.text ?? targetDog.dogTraits.dogName)?", message: nil, preferredStyle: .alert)
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { (UIAlertAction) in
             self.delegate.didRemoveDog(sender: Sender(origin: self, localized: self), removedDogName: self.targetDog.dogTraits.dogName)

@@ -174,9 +174,17 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         let sudoRequirementManager = getRequirementManager()
         if editingStyle == .delete && sudoRequirementManager.requirements.count > 0{
-            sudoRequirementManager.requirements.remove(at: indexPath.row)
-            setRequirementManager(sender: Sender(origin: self, localized: self), newRequirementManager: sudoRequirementManager)
-            self.tableView.deleteRows(at: [indexPath], with: .automatic)
+            let deleteConfirmation = GeneralAlertController(title: "Are you sure you want to delete \(sudoRequirementManager.requirements[indexPath.row].displayTypeName)?", message: nil, preferredStyle: .alert)
+            
+            let alertActionDelete = UIAlertAction(title: "Delete", style: .destructive) { _ in
+                sudoRequirementManager.requirements.remove(at: indexPath.row)
+                self.setRequirementManager(sender: Sender(origin: self, localized: self), newRequirementManager: sudoRequirementManager)
+                self.tableView.deleteRows(at: [indexPath], with: .automatic)
+            }
+            let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            deleteConfirmation.addAction(alertActionDelete)
+            deleteConfirmation.addAction(alertActionCancel)
+            AlertPresenter.shared.enqueueAlertForPresentation(deleteConfirmation)
         }
     }
     

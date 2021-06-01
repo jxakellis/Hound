@@ -72,17 +72,18 @@ class TimingManager{
             return
         }
         
+        let sudoDogManager = dogManager
         //goes through all dogs
-        for d in 0..<dogManager.dogs.count{
+        for d in 0..<sudoDogManager.dogs.count{
             //makes sure current dog is enabled, as if it isn't then all of its timers arent either
-            guard dogManager.dogs[d].getEnable() == true else {
+            guard sudoDogManager.dogs[d].getEnable() == true else {
                 continue
             }
             
             //goes through all requirements in a dog
-            for r in 0..<dogManager.dogs[d].dogRequirments.requirements.count{
+            for r in 0..<sudoDogManager.dogs[d].dogRequirments.requirements.count{
                 
-                let requirement = dogManager.dogs[d].dogRequirments.requirements[r]
+                let requirement = sudoDogManager.dogs[d].dogRequirments.requirements[r]
                 
                 
                 
@@ -241,8 +242,12 @@ class TimingManager{
                 
                 let requirement = try! dogManager.findDog(dogName: dogKey).dogRequirments.findRequirement(forUUID: requirementUUID)
                 
+                //one time requiremnent
+                if requirement.timerMode == .oneTime{
+                    //nothing
+                }
                 //If requirement is counting down
-                if requirement.timerMode == .countDown {
+                else if requirement.timerMode == .countDown {
                     //If intervalElapsed has not been added to before
                     if requirement.countDownComponents.intervalElapsed <= 0.0001 {
                         requirement.countDownComponents.changeIntervalElapsed(newIntervalElapsed: requirement.executionBasis.distance(to: self.lastPause!))
@@ -325,7 +330,7 @@ class TimingManager{
     ///Creates alertController to queue for presentation along with information passed along with it to reinitalize the timer once an option is selected (e.g. disable or snooze)
     static func willShowTimer(sender: Sender = Sender(origin: Utils.presenter!, localized: Utils.presenter!), dogName: String, requirement: Requirement){
         
-        let title = "\(requirement.requirementType.rawValue) - \(dogName)"
+        let title = "\(requirement.displayTypeName) - \(dogName)"
         //let message = "\(requirement.requirementDescription)"
         
         let alertController = AlarmAlertController(
@@ -363,7 +368,7 @@ class TimingManager{
             }
         default:
             let alertActionLog = UIAlertAction(
-                title:"Log \(requirement.requirementType.rawValue)",
+                title:"Log \(requirement.displayTypeName)",
                 style: .default,
                 handler:
                     {
@@ -381,7 +386,7 @@ class TimingManager{
                 {
                     (alert: UIAlertAction!)  in
                     //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                    TimingManager.willSnoozeTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementUUID: requirement.uuid, isCancellingSnooze: false)
+                    TimingManager.willSnoozeTimer(sender: Sender(origin: self, localized: self), dogName: dogName, requirementUUID: requirement.uuid)
                 })
         
         for alertActionLog in alertActionsForLog {
@@ -405,16 +410,14 @@ class TimingManager{
     }
     
     ///Finishes executing timer and then sets its isSnoozed to true, note passed requirement should be a reference to a requirement in passed dogManager
-    static func willSnoozeTimer(sender: Sender, dogName targetDogName: String, requirementUUID: String, isCancellingSnooze: Bool){
+    static func willSnoozeTimer(sender: Sender, dogName targetDogName: String, requirementUUID: String){
         let dogManager = MainTabBarViewController.staticDogManager
         
         let requirement = try! dogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(forUUID: requirementUUID)
         
-        let newSnoozeStatus = !isCancellingSnooze
-        
         requirement.timerReset(shouldLogExecution: false)
         
-        requirement.snoozeComponents.changeSnooze(newSnoozeStatus: newSnoozeStatus)
+        requirement.snoozeComponents.changeSnooze(newSnoozeStatus: true)
         
         delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
     }
@@ -424,16 +427,26 @@ class TimingManager{
         
         let sudoDogManager = MainTabBarViewController.staticDogManager
         
-        let requirement = try! sudoDogManager.findDog(dogName: targetDogName).dogRequirments.findRequirement(forUUID: requirementUUID)
+        let dog = try! sudoDogManager.findDog(dogName: targetDogName)
+        
+        let requirement = try! dog.dogRequirments.findRequirement(forUUID: requirementUUID)
         
         //inactive to active
         if requirement.isActive == false{
             requirement.changeActiveStatus(newActiveStatus: true)
         }
+        else if requirement.timingStyle == .oneTime{
+            if knownLogType != nil {
+                dog.dogTraits.logs.append(KnownLog(date: Date(), logType: knownLogType!, customTypeName: requirement.customTypeName))
+            }
+            try! dog.dogRequirments.removeRequirement(forUUID: requirementUUID)
+            delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
+            return
+        }
         //Skips next TOD
         else if (requirement.timerMode == .weekly || requirement.timerMode == .monthly) && requirement.timeOfDayComponents.isSkipping == false && Date().distance(to: requirement.executionDate!) > 0{
             let executionBasisBackup = requirement.executionBasis
-            requirement.timerReset(shouldLogExecution: true, knownLogType: knownLogType)
+            requirement.timerReset(shouldLogExecution: true, knownLogType: knownLogType, customTypeName: requirement.customTypeName)
             requirement.timeOfDayComponents.changeIsSkipping(newSkipStatus: true, shouldRemoveLogDuringPossibleUnskip: nil)
             requirement.changeExecutionBasis(newExecutionBasis: executionBasisBackup, shouldResetIntervalsElapsed: false)
         }
@@ -444,10 +457,10 @@ class TimingManager{
         //Regular reset
         else {
             if knownLogType != nil {
-                requirement.timerReset(shouldLogExecution: true, knownLogType: knownLogType)
+                requirement.timerReset(shouldLogExecution: true, knownLogType: knownLogType, customTypeName: requirement.customTypeName)
             }
             else {
-                requirement.timerReset(shouldLogExecution: false, knownLogType: nil)
+                requirement.timerReset(shouldLogExecution: false, knownLogType: nil, customTypeName: requirement.customTypeName)
             }
             
         }

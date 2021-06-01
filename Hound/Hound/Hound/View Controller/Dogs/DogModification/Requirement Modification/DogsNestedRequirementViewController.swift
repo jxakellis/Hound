@@ -55,7 +55,7 @@ class DogsNestedRequirementViewController: UIViewController, DogsRequirementMana
     @IBOutlet weak var requirementRemoveButton: UIBarButtonItem!
     
     @IBAction func willRemoveRequirement(_ sender: Any) {
-        let removeRequirementConfirmation = GeneralAlertController(title: "Are you sure you want to delete \"\(dogsRequirementManagerViewController.requirementAction.text ?? targetRequirement!.requirementType.rawValue)\"", message: nil, preferredStyle: .alert)
+        let removeRequirementConfirmation = GeneralAlertController(title: "Are you sure you want to delete \(dogsRequirementManagerViewController.requirementAction.text ?? targetRequirement!.displayTypeName)?", message: nil, preferredStyle: .alert)
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { (UIAlertAction) in
             self.delegate.didRemoveRequirement(sender: Sender(origin: self, localized: self), removedRequirementUUID: self.targetRequirement!.uuid)

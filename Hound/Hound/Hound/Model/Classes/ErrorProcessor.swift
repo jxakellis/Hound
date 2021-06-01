@@ -57,6 +57,9 @@ class ErrorProcessor{
         else if errorProcessorInstance.handleTimeOfDayComponentsError(sender: sender, error: error) == true {
             return
         }
+        else if errorProcessorInstance.handleOneTimeComponentsError(sender: sender, error: error) == true {
+            return
+        }
         else if errorProcessorInstance.handleStringExtensionError(sender: sender, error: error) == true {
             return
         }
@@ -253,7 +256,7 @@ class ErrorProcessor{
          }
          */
         if case TimeOfDayComponentsError.invalidCalendarComponent = error {
-            ErrorProcessor.alertForError(message: "Invalid Calendar Components")
+            ErrorProcessor.alertForError(message: "Invalid Calendar Components for TimeOfDayComponents")
             return true
         }
         else if case TimeOfDayComponentsError.invalidWeekdayArray = error {
@@ -276,6 +279,34 @@ class ErrorProcessor{
             return false
         }
     }
+    
+    
+    private func handleOneTimeComponentsError(sender: Sender, error: Error) -> Bool{
+        /*
+         enum OneTimeComponentsError: Error {
+             case invalidDateComponents
+             case invalidCalendarComponent
+             case requirementAlreadyCreated
+         }
+         */
+        if case OneTimeComponentsError.invalidDateComponents = error {
+            ErrorProcessor.alertForError(message: "Invalid Date Components for OneTimeComponents")
+            return true
+        }
+        else if case OneTimeComponentsError.invalidCalendarComponent = error {
+            ErrorProcessor.alertForError(message: "Invalid Calendar Component for TimeOfDayComponents")
+            return true
+        }
+        else if case OneTimeComponentsError.requirementAlreadyCreated = error {
+            ErrorProcessor.alertForError(message: "Your reminder cannot be in \"Once\" mode. If you would like to use this mode, please create a new reminder.")
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    
+    
     
     private func handleStringExtensionError(sender: Sender, error: Error) -> Bool{
         /*

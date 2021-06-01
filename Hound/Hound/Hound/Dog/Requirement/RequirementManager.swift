@@ -145,8 +145,16 @@ extension RequirementManagerProtocol {
     
      mutating private func sortRequirements(){
          requirements.sort { (req1, req2) -> Bool in
+            if req1.timingStyle == .oneTime && req2.timingStyle == .oneTime{
+                if Date().distance(to: req1.oneTimeComponents.executionDate!) < Date().distance(to: req2.oneTimeComponents.executionDate!){
+                    return true
+                }
+                else {
+                    return false
+                }
+            }
             //both countdown
-             if req1.timingStyle == .countDown && req2.timingStyle == .countDown{
+             else if req1.timingStyle == .countDown && req2.timingStyle == .countDown{
                  //shorter is listed first
                  if req1.countDownComponents.executionInterval <= req2.countDownComponents.executionInterval{
                      return true
@@ -227,9 +235,16 @@ extension RequirementManagerProtocol {
                         return true
                     }
                 case .monthly:
-                    //can assume it is last because different styles and month always last
+                    if req2.timingStyle == .oneTime{
+                        return true
+                    }
+                    else {
+                        return false
+                    }
+                case .oneTime:
                     return false
                 }
+              
              }
          }
      }

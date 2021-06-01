@@ -42,7 +42,7 @@ class LogsMainScreenTableViewCellBodyRegularWithIcon: UITableViewCell {
         logIcon.layer.cornerRadius = logIcon.frame.width/2
         
         
-        self.logType.text = self.logSource.logType.rawValue
+        self.logType.text = self.logSource.displayTypeName
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)

@@ -37,7 +37,7 @@ class HomeMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     func setup(parentDogName: String, requirementPassed: Requirement) {
         self.requirementSource = requirementPassed
         self.parentDogName = parentDogName
-        requirementType.text = requirementPassed.requirementType.rawValue
+        requirementType.text = requirementPassed.displayTypeName
         dogName.text = parentDogName
         
         setupTimeLeftText()

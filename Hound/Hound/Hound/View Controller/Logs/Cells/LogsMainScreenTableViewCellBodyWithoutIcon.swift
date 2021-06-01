@@ -36,7 +36,7 @@ class LogsMainScreenTableViewCellBodyCompact: UITableViewCell {
         self.requirementSource = requirement
         
         self.dogName.text = parentDogName
-        self.logType.text = self.logSource.logType.rawValue
+        self.logType.text = self.logSource.displayTypeName
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)

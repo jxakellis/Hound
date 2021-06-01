@@ -45,7 +45,7 @@ class Utils
         
          content.title = "Follow up notification for \(dogName)!"
         
-        content.body = "It's been \(String.convertToReadable(interperateTimeInterval: NotificationConstant.followUpDelay, capitalizeLetters: false)), give your dog a helping hand with \(requirement.requirementType.rawValue)!"
+        content.body = "It's been \(String.convertToReadable(interperateTimeInterval: NotificationConstant.followUpDelay, capitalizeLetters: false)), give your dog a helping hand with \(requirement.displayTypeName)!"
         
         if NotificationConstant.shouldLoudNotification == false {
             content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "radar30Loop.wav"))
@@ -70,7 +70,7 @@ class Utils
          let content = UNMutableNotificationContent()
          content.title = "Reminder for \(dogName)!"
         
-        content.body = requirement.requirementType.rawValue
+        content.body = requirement.displayTypeName
         
         if NotificationConstant.shouldLoudNotification == false {
             content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "radar30Loop.wav"))

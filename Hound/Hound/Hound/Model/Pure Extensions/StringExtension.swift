@@ -91,6 +91,60 @@ extension String {
         }
     }
     
+    static func convertToReadableNonRepeating(interperatedDateComponents: DateComponents) throws -> String{
+        if interperatedDateComponents.year == nil || interperatedDateComponents.month == nil || interperatedDateComponents.day == nil || interperatedDateComponents.hour == nil || interperatedDateComponents.minute == nil {
+            throw StringExtensionError.invalidDateComponents
+        }
+        
+        var dateString = ""
+        let targetDate: Date! = Calendar.current.date(from: interperatedDateComponents)
+        let dateFormatter = DateFormatter()
+        
+        dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)
+        dateString = dateFormatter.string(from: targetDate)
+        
+        dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "MMMM d", options: 0, locale: Calendar.current.locale)
+        dateString.append(" \(dateFormatter.string(from: targetDate))")
+        
+        dateString.append(String.dayOfMonthSuffix(day: interperatedDateComponents.day!))
+        
+        if interperatedDateComponents.year != Calendar.current.component(.year, from: Date()){
+            dateString.append(", \(interperatedDateComponents.year!)")
+        }
+        
+        return dateString
+    }
+    
+    static func dayOfMonthSuffix(day dayOfMonth: Int) -> String {
+        switch dayOfMonth {
+        case 1:
+            return "st"
+        case 2:
+            return "nd"
+        case 3:
+            return "rd"
+        case 21:
+            return "st"
+        case 22:
+            return "nd"
+        case 23:
+            return "rd"
+        case 31:
+            return "st"
+        default:
+            return "th"
+        }
+    }
+    
+    mutating private func addMonths(numMonths: Int){
+        if numMonths > 1 {
+            self.append("\(numMonths) Months ")
+        }
+        else if numMonths == 1 {
+            self.append("\(numMonths) Month ")
+        }
+    }
+    
     mutating private func addWeeks(numWeeks: Int){
         if numWeeks > 1 {
             self.append("\(numWeeks) Weeks ")

@@ -20,7 +20,7 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     
     @IBOutlet private weak var requirementIcon: UIImageView!
     
-    @IBOutlet private weak var requirementType: CustomLabel!
+    @IBOutlet private weak var requirementTypeDisplayName: CustomLabel!
     @IBOutlet private weak var timeInterval: CustomLabel!
     
     @IBOutlet private weak var timeLeft: CustomLabel!
@@ -58,9 +58,13 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     func setup(parentDogName: String, requirementPassed: Requirement){
         self.parentDogName = parentDogName
         self.requirement = requirementPassed
-        self.requirementType.text = requirementPassed.requirementType.rawValue
+        self.requirementTypeDisplayName.text = requirementPassed.displayTypeName
         
-        if requirement.timingStyle == .countDown {
+        if requirement.timingStyle == .oneTime {
+            self.requirementIcon.image = UIImage.init(systemName: "calendar")
+            try! self.timeInterval.text = String.convertToReadableNonRepeating(interperatedDateComponents: requirement.oneTimeComponents.dateComponents)
+        }
+        else if requirement.timingStyle == .countDown {
             self.requirementIcon.image = UIImage.init(systemName: "timer")
             self.timeInterval.text = ("Every \(String.convertToReadable(interperateTimeInterval: requirement.countDownComponents.executionInterval))")
         }
@@ -142,18 +146,7 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
                 let dayOfMonth: Int! = requirement.timeOfDayComponents.dayOfMonth
                 timeInterval.text?.append(" Every Month on \(dayOfMonth!)")
             
-                if dayOfMonth == 1{
-                    timeInterval.text?.append("st")
-                }
-                else if dayOfMonth == 2 {
-                    timeInterval.text?.append("nd")
-                }
-                else if dayOfMonth == 3 {
-                    timeInterval.text?.append("rd")
-                }
-                else {
-                    timeInterval.text?.append("th")
-                }
+             timeInterval.text?.append(String.dayOfMonthSuffix(day: dayOfMonth))
         }
         
         self.requirementToggleSwitch.isOn = requirementPassed.getEnable()

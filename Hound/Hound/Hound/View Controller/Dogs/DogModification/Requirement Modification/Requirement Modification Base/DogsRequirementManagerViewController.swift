@@ -13,7 +13,7 @@ protocol DogsRequirementManagerViewControllerDelegate{
     func didUpdateRequirement(updatedRequirement: Requirement)
 }
 
-class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, DogsRequirementCountDownViewControllerDelegate, DogsRequirementWeeklyViewControllerDelegate, MakeDropDownDataSourceProtocol, DogsRequirementMonthlyViewControllerDelegate{
+class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, DogsRequirementCountDownViewControllerDelegate, DogsRequirementWeeklyViewControllerDelegate, MakeDropDownDataSourceProtocol, DogsRequirementMonthlyViewControllerDelegate, DogsRequirementOnceViewControllerDelegate{
     
     //MARK: Auto Save Trigger
     
@@ -74,6 +74,11 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         
         requirementAction.text = ScheduledLogType.allCases[indexPath.row].rawValue
         self.dismissAll()
+        
+        //if log type is custom, then it doesn't hide the special input fields. == -> true -> isHidden: false.
+        toggleCustomLogTypeName(isHidden: !(requirementAction.text == KnownLogType.custom.rawValue))
+        
+        
     }
     
     //MARK: - IB
@@ -81,13 +86,20 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     @IBOutlet private weak var containerForAll: UIView!
     
+    @IBOutlet private weak var onceContainerView: UIView!
+    @IBOutlet private weak var onceWarningLabel: CustomLabel!
     @IBOutlet private weak var countDownContainerView: UIView!
-    
     @IBOutlet private weak var weeklyContainerView: UIView!
-    
     @IBOutlet private weak var monthlyContainerView: UIView!
     
     @IBOutlet weak var requirementAction: BorderedLabel!
+    
+    ///label for customLogType, not used for input
+    @IBOutlet private weak var customRequirementActionName: CustomLabel!
+    ///Used for reconfiguring layout when visability changed
+    @IBOutlet private weak var customRequirementActionNameBottomConstraint: NSLayoutConstraint!
+    ///Text input for customLogTypeName
+    @IBOutlet private weak var customRequirementActionTextField: UITextField!
     
     @IBOutlet private weak var requirementToggleSwitch: UISwitch!
     
@@ -96,19 +108,46 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     @IBAction private func segmentedControl(_ sender: UISegmentedControl) {
         
         if sender.selectedSegmentIndex == 0 {
+            //updating and didn't start as one time, aka one time isnt possible
+            if targetRequirement != nil && targetRequirement!.timingStyle != .oneTime{
+                onceWarningLabel.isHidden = false
+                onceContainerView.isHidden = true
+            }
+            //not updating or is updating but started as one time
+            else {
+                onceWarningLabel.isHidden = true
+                onceContainerView.isHidden = false
+            }
+            countDownContainerView.isHidden = true
+            weeklyContainerView.isHidden = true
+            monthlyContainerView.isHidden = true
+        }
+        else if sender.selectedSegmentIndex == 1 {
+            onceWarningLabel.isHidden = true
+            
+            onceContainerView.isHidden = true
             countDownContainerView.isHidden = false
             weeklyContainerView.isHidden = true
             monthlyContainerView.isHidden = true
         }
-        else if sender.selectedSegmentIndex == 1{
+        else if sender.selectedSegmentIndex == 2{
+            onceWarningLabel.isHidden = true
+            
+            onceContainerView.isHidden = true
             countDownContainerView.isHidden = true
             weeklyContainerView.isHidden = false
             monthlyContainerView.isHidden = true
         }
-        else {
+        else if sender.selectedSegmentIndex == 3{
+            onceWarningLabel.isHidden = true
+            
+            onceContainerView.isHidden = true
             countDownContainerView.isHidden = true
             weeklyContainerView.isHidden = true
             monthlyContainerView.isHidden = false
+        }
+        else {
+            print("Fall Through sender.selectedSegmentIndex 7adn")
         }
     }
     
@@ -118,12 +157,16 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     var targetRequirement: Requirement? = nil
     
-    var initalRequirementAction: ScheduledLogType? = nil
-    var initalEnableStatus: Bool? = nil
-    var initalSegmentedIndex: Int? = nil
+    private var initalRequirementAction: ScheduledLogType? = nil
+    private var initalCustomRequirementAction: String? = nil
+    private var initalEnableStatus: Bool? = nil
+    private var initalSegmentedIndex: Int? = nil
     
     var initalValuesChanged: Bool {
         if requirementAction.text != initalRequirementAction?.rawValue{
+            return true
+        }
+        else if requirementAction.text == KnownLogType.custom.rawValue && initalCustomRequirementAction != customRequirementActionTextField.text{
             return true
         }
         else if requirementToggleSwitch.isOn != initalEnableStatus{
@@ -135,16 +178,19 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         else {
             switch segmentedControl.selectedSegmentIndex {
             case 0:
-                return dogsRequirementCountDownViewController.initalValuesChanged
+                return dogsRequirementOnceViewController.initalValuesChanged
             case 1:
-                return dogsRequirementWeeklyViewController.initalValuesChanged
+                return dogsRequirementCountDownViewController.initalValuesChanged
             case 2:
+                return dogsRequirementWeeklyViewController.initalValuesChanged
+            case 3:
                 return dogsRequirementMonthlyViewController.initalValuesChanged
             default:
                 return false
             }
         }
     }
+    private var dogsRequirementOnceViewController = DogsRequirementOnceViewController()
     
     private var dogsRequirementCountDownViewController = DogsRequirementCountDownViewController()
     
@@ -167,17 +213,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         
         setupSegmentedControl()
         
-        if targetRequirement != nil {
-            selectedIndexPath = IndexPath(row: ScheduledLogType.allCases.firstIndex(of: targetRequirement!.requirementType)!, section: 0)
-        }
-        
-        //Data setup
-        requirementAction.text = targetRequirement?.requirementType.rawValue ?? RequirementConstant.defaultType.rawValue
-        initalRequirementAction = targetRequirement?.requirementType ?? RequirementConstant.defaultType
-        
-        requirementToggleSwitch.isOn = targetRequirement?.getEnable() ?? RequirementConstant.defaultEnable
-        initalEnableStatus = targetRequirement?.getEnable() ?? RequirementConstant.defaultEnable
-        // Do any additional setup after loading the view.
+        setupValues()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -204,17 +240,38 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         
         do {
             
+            var trimmedCustomRequirementAction: String? {
+                if customRequirementActionTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+                    return nil
+                }
+                else {
+                    return customRequirementActionTextField.text
+                }
+            }
+            
             updatedRequirement.uuid = targetRequirement?.uuid ?? updatedRequirement.uuid
             updatedRequirement.requirementType = ScheduledLogType(rawValue: requirementAction.text!)!
+            
+            if requirementAction.text == KnownLogType.custom.rawValue{
+                updatedRequirement.customTypeName = trimmedCustomRequirementAction
+            }
             updatedRequirement.setEnable(newEnableStatus: requirementToggleSwitch.isOn)
             
+            if segmentedControl.selectedSegmentIndex == 0 {
+                //cannot switch an already created requirement to one time, can possible delete its past logs when one time alarm completes and self destructures
+                if targetRequirement != nil && targetRequirement!.timingStyle != .oneTime{
+                    throw OneTimeComponentsError.requirementAlreadyCreated
+                }
+                updatedRequirement.changeTimingStyle(newTimingStyle: .oneTime)
+                try! updatedRequirement.oneTimeComponents.changeTimeOfDayComponent(newOneTimeComponents: dogsRequirementOnceViewController.dateComponents!)
+            }
             //only saves countdown if selected
-            if segmentedControl.selectedSegmentIndex == 0{
+            else if segmentedControl.selectedSegmentIndex == 1{
                 updatedRequirement.changeTimingStyle(newTimingStyle: .countDown)
                 updatedRequirement.countDownComponents.changeExecutionInterval(newExecutionInterval: dogsRequirementCountDownViewController.countDown.countDownDuration)
             }
             //only saves weekly if selected
-            else if segmentedControl.selectedSegmentIndex == 1{
+            else if segmentedControl.selectedSegmentIndex == 2{
                 
                 let weekdays = dogsRequirementWeeklyViewController.weekdays
                 
@@ -241,7 +298,12 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
                 //Checks for differences in time of day, execution interval, weekdays, or time of month.
                 //If you were 5 minutes in to a 1 hour countdown but then change it to 30 minutes, you would want to be 0 minutes into the new timer and not 5 minutes in like previously.
                 
-                if updatedRequirement.timingStyle == .countDown{
+                if updatedRequirement.timingStyle == .oneTime{
+                    if updatedRequirement.oneTimeComponents.dateComponents != targetRequirement!.oneTimeComponents.dateComponents{
+                        updatedRequirement.timerReset(shouldLogExecution: false)
+                    }
+                }
+                else if updatedRequirement.timingStyle == .countDown{
                     //execution interval changed
                     if updatedRequirement.countDownComponents.executionInterval != targetRequirement!.countDownComponents.executionInterval{
                     updatedRequirement.timerReset(shouldLogExecution: false)
@@ -271,13 +333,64 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         }
     }
     
+    ///Toggles visability of optional custom log type components, used for a custom name for it
+    private func toggleCustomLogTypeName(isHidden: Bool){
+        if isHidden == false {
+            for constraint in customRequirementActionName.constraints{
+                if constraint.firstAttribute == .height{
+                    constraint.constant = 40.0
+                }
+            }
+            customRequirementActionNameBottomConstraint.constant = 10.0
+            customRequirementActionName.isHidden = false
+            customRequirementActionTextField.isHidden = false
+            self.containerForAll.setNeedsLayout()
+            self.containerForAll.layoutIfNeeded()
+        }
+        else {
+            for constraint in customRequirementActionName.constraints{
+                if constraint.firstAttribute == .height{
+                    constraint.constant = 0.0
+                }
+            }
+            customRequirementActionNameBottomConstraint.constant = 0.0
+            customRequirementActionName.isHidden = true
+            customRequirementActionTextField.isHidden = true
+            self.containerForAll.setNeedsLayout()
+            self.containerForAll.layoutIfNeeded()
+        }
+    }
+    
+    ///Sets up the values of different variables that is found out from information passed
+    private func setupValues(){
+        
+        if targetRequirement != nil {
+            selectedIndexPath = IndexPath(row: ScheduledLogType.allCases.firstIndex(of: targetRequirement!.requirementType)!, section: 0)
+        }
+        
+        //Data setup
+        requirementAction.text = targetRequirement?.requirementType.rawValue ?? RequirementConstant.defaultType.rawValue
+        initalRequirementAction = targetRequirement?.requirementType ?? RequirementConstant.defaultType
+        
+        customRequirementActionTextField.text = targetRequirement?.customTypeName ?? ""
+        initalCustomRequirementAction = customRequirementActionTextField.text
+        customRequirementActionTextField.delegate = self
+        //if == is true, that means it is custom, which means it shouldn't hide so ! reverses to input isHidden: false, reverse for if type is not custom. This is because this text input field is only used for custom types.
+        toggleCustomLogTypeName(isHidden: !(targetRequirement?.requirementType == .custom))
+        
+        requirementToggleSwitch.isOn = targetRequirement?.getEnable() ?? RequirementConstant.defaultEnable
+        initalEnableStatus = targetRequirement?.getEnable() ?? RequirementConstant.defaultEnable
+    }
+    
     private func setupSegmentedControl(){
-        self.segmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 13.5), .foregroundColor: UIColor.white], for: .normal)
+        self.segmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.white], for: .normal)
         self.segmentedControl.backgroundColor = ColorConstant.gray.rawValue
         
+        //creating new
         if targetRequirement == nil {
-            segmentedControl.selectedSegmentIndex = 0
-            initalSegmentedIndex = 0
+            segmentedControl.selectedSegmentIndex = 1
+            initalSegmentedIndex = 1
+            onceContainerView.isHidden = true
             countDownContainerView.isHidden = false
             weeklyContainerView.isHidden = true
             monthlyContainerView.isHidden = true
@@ -286,27 +399,38 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
             
             requirementToggleSwitch.isOn = true
         }
+        //editing current
         else{
-            
-            //Segmented control setup
-            if targetRequirement!.timingStyle == .countDown {
+            if targetRequirement!.timingStyle == .oneTime {
                 segmentedControl.selectedSegmentIndex = 0
                 initalSegmentedIndex = 0
+                onceContainerView.isHidden = false
+                countDownContainerView.isHidden = true
+                weeklyContainerView.isHidden = true
+                monthlyContainerView.isHidden = true
+            }
+            //Segmented control setup
+            else if targetRequirement!.timingStyle == .countDown {
+                segmentedControl.selectedSegmentIndex = 1
+                initalSegmentedIndex = 1
+                onceContainerView.isHidden = true
                 countDownContainerView.isHidden = false
                 weeklyContainerView.isHidden = true
                 monthlyContainerView.isHidden = true
                 
             }
             else if targetRequirement!.timingStyle == .weekly{
-                segmentedControl.selectedSegmentIndex = 1
-                initalSegmentedIndex = 1
+                segmentedControl.selectedSegmentIndex = 2
+                initalSegmentedIndex = 2
+                onceContainerView.isHidden = true
                 countDownContainerView.isHidden = true
                 weeklyContainerView.isHidden = false
                 monthlyContainerView.isHidden = true
             }
             else {
-                segmentedControl.selectedSegmentIndex = 2
-                initalSegmentedIndex = 2
+                segmentedControl.selectedSegmentIndex = 3
+                initalSegmentedIndex = 3
+                onceContainerView.isHidden = true
                 countDownContainerView.isHidden = true
                 weeklyContainerView.isHidden = true
                 monthlyContainerView.isHidden = false
@@ -351,6 +475,11 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     //MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "dogsRequirementOnceViewController"{
+            dogsRequirementOnceViewController = segue.destination as! DogsRequirementOnceViewController
+            dogsRequirementOnceViewController.delegate = self
+            dogsRequirementOnceViewController.passedDate = targetRequirement?.oneTimeComponents.executionDate
+        }
         if segue.identifier == "dogsRequirementCountDownViewController"{
             dogsRequirementCountDownViewController = segue.destination as! DogsRequirementCountDownViewController
             dogsRequirementCountDownViewController.delegate = self

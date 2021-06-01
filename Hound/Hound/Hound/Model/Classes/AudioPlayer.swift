@@ -27,6 +27,7 @@ class AudioPlayer {
     }
     
     static func loadDefaultAudioPlayer(){
+        print("loadDefaultAudioPlayer")
         let path = Bundle.main.path(forResource: "radar.wav", ofType: nil)!
         let url = URL(fileURLWithPath: path)
         
@@ -48,6 +49,7 @@ class AudioPlayer {
     }
     
     static func loadSilenceAudioPlayer(){
+        print("loadSilenceAudioPlayer")
         let path = Bundle.main.path(forResource: "silence.mp3", ofType: nil)!
         let url = URL(fileURLWithPath: path)
         

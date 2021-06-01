@@ -91,6 +91,7 @@ enum NotificationConstant {
     static var isNotificationAuthorized: Bool = false
     static var isNotificationEnabled: Bool = false
     static var shouldLoudNotification: Bool = false
+    static var shouldShowTerminationAlert: Bool = true
     static var shouldFollowUp: Bool = false
     static var followUpDelay: TimeInterval = 5.0 * 60.0
 }
@@ -118,6 +119,7 @@ enum UserDefaultsKeys: String{
     case isNotificationAuthorized = "isNotificationAuthorized"
     case isNotificationEnabled = "isNotificationEnabled"
     case shouldLoudNotification = "shouldLoudNotification"
+    case shouldShowTerminationAlert = "shouldShowTerminationAlert"
     case shouldFollowUp = "shouldFollowUp"
     case followUpDelay = "followUpDelay"
 }

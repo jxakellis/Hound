@@ -135,7 +135,7 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     ///Called when a requirement is clicked by the user, display an action sheet of possible modifcations to the alarm.
     private func willShowSelectedActionSheet(parentDogName: String, requirement: Requirement){
         
-        let alertController = GeneralAlertController(title: "\(requirement.requirementType.rawValue) for \(parentDogName)", message: nil, preferredStyle: .actionSheet)
+        let alertController = GeneralAlertController(title: "\(requirement.displayTypeName) for \(parentDogName)", message: nil, preferredStyle: .actionSheet)
         
         let alertActionCancel = UIAlertAction(title:"Cancel", style: .cancel, handler: nil)
         

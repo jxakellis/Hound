@@ -22,8 +22,8 @@ class Persistence{
             
             NotificationConstant.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool
             NotificationConstant.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool
-            //TEMPORARY ?? thing
-            NotificationConstant.shouldLoudNotification = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldLoudNotification.rawValue) as? Bool ?? NotificationConstant.isNotificationEnabled
+            NotificationConstant.shouldLoudNotification = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldLoudNotification.rawValue) as! Bool
+            NotificationConstant.shouldShowTerminationAlert = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldShowTerminationAlert.rawValue) as? Bool ?? NotificationConstant.shouldShowTerminationAlert
             NotificationConstant.shouldFollowUp = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool
             NotificationConstant.followUpDelay = UserDefaults.standard.value(forKey: UserDefaultsKeys.followUpDelay.rawValue) as! TimeInterval
             
@@ -34,9 +34,22 @@ class Persistence{
             let decoded = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as! Data
             let decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
             
-            if AudioPlayer.sharedPlayer == nil && NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && decodedDogManager.hasEnabledRequirement {
-                Utils.willShowAlert(title: "Oops, you may have terminated Hound", message: "Your notifications won't ring properly if the app isn't running.")
+            //termination checker
+            if NotificationConstant.shouldShowTerminationAlert == true {
+                //correct conditions
+                if AudioPlayer.sharedPlayer == nil && NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && decodedDogManager.hasEnabledRequirement && !TimingManager.isPaused {
+                    let terminationAlertController = GeneralAlertController(title: "Oops, you may have terminated Hound", message: "Your notifications won't ring properly if the app isn't running.", preferredStyle: .alert)
+                    let acceptAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    let understandAlertAction = UIAlertAction(title: "Don't Show Again", style: .default) { _ in
+                        NotificationConstant.shouldShowTerminationAlert = false
+                    }
+                    
+                    terminationAlertController.addAction(acceptAlertAction)
+                    terminationAlertController.addAction(understandAlertAction)
+                    AlertPresenter.shared.enqueueAlertForPresentation(terminationAlertController)
+                }
             }
+            
             
         }
         
@@ -56,20 +69,10 @@ class Persistence{
             
             UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
             
-            
-            /*
-             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
-             UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
-             UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
-             UserDefaults.standard.setValue(isGranted, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
-             NotificationConstant.isNotificationAuthorized = isGranted
-             NotificationConstant.isNotificationEnabled = isGranted
-             NotificationConstant.shouldFollowUp = isGranted
-             }
-             */
             UserDefaults.standard.setValue(NotificationConstant.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.shouldLoudNotification, forKey: UserDefaultsKeys.shouldLoudNotification.rawValue)
+            UserDefaults.standard.setValue(NotificationConstant.shouldShowTerminationAlert, forKey: UserDefaultsKeys.shouldShowTerminationAlert.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.shouldFollowUp, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
             
@@ -99,13 +102,13 @@ class Persistence{
             return retVal as? Int
         }
         
-        //background silence player for loud alarm that bypasses ringer and if phone locker
+        //background silence player for loud alarm that bypasses ringer and if phone locked
         func handleBackgroundSilence(){
             if AudioPlayer.sharedPlayer != nil {
                 AudioPlayer.sharedPlayer.stop()
             }
             
-            guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification else {
+            guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && MainTabBarViewController.staticDogManager.hasEnabledRequirement && !TimingManager.isPaused else{
                 return
             }
             
@@ -138,6 +141,7 @@ class Persistence{
             UserDefaults.standard.setValue(NotificationConstant.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.shouldLoudNotification, forKey: UserDefaultsKeys.shouldLoudNotification.rawValue)
+            UserDefaults.standard.setValue(NotificationConstant.shouldShowTerminationAlert, forKey: UserDefaultsKeys.shouldShowTerminationAlert.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.shouldFollowUp, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
             

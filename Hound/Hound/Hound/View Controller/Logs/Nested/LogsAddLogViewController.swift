@@ -14,8 +14,14 @@ protocol LogsAddLogViewControllerDelegate {
     func didUpdateKnownLog(sender: Sender, parentDogName: String, requirementUUID: String?, updatedKnownLog: KnownLog)
 }
 
-class LogsAddLogViewController: UIViewController, UITextViewDelegate, UIGestureRecognizerDelegate, MakeDropDownDataSourceProtocol {
+class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, MakeDropDownDataSourceProtocol {
     
+    //MARK: - UITextFieldDelegate
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.dismissKeyboard()
+        return false
+    }
     
     //MARK: - UITextViewDelegate
     //if extra space is added, removes it and ends editing, makes done button function like done instead of adding new line
@@ -95,9 +101,6 @@ class LogsAddLogViewController: UIViewController, UITextViewDelegate, UIGestureR
             let selectedCell = dropDownParentDogName.dropDownTableView!.cellForRow(at: indexPath) as! DropDownDefaultTableViewCell
             selectedCell.didToggleSelect(newSelectionStatus: true)
             
-            if selectedParentDogIndexPath != indexPath{
-                shouldPromptSaveWarning = true
-            }
             self.selectedParentDogIndexPath = indexPath
             
             parentDogName.text = dogManager.dogs[indexPath.row].dogTraits.dogName
@@ -107,13 +110,13 @@ class LogsAddLogViewController: UIViewController, UITextViewDelegate, UIGestureR
             let selectedCell = dropDownLogType.dropDownTableView!.cellForRow(at: indexPath) as! DropDownDefaultTableViewCell
             selectedCell.didToggleSelect(newSelectionStatus: true)
             
-            if selectedLogTypeIndexPath != indexPath{
-                shouldPromptSaveWarning = true
-            }
             self.selectedLogTypeIndexPath = indexPath
             
             logType.text = KnownLogType.allCases[indexPath.row].rawValue
             self.dropDownLogType.hideDropDown()
+            
+            //if log type is custom, then it doesn't hide the special input fields. == -> true -> isHidden: false.
+            toggleCustomLogTypeName(isHidden: !(logType.text == KnownLogType.custom.rawValue))
         }
         else {
             fatalError()
@@ -132,7 +135,16 @@ class LogsAddLogViewController: UIViewController, UITextViewDelegate, UIGestureR
     
     @IBOutlet private weak var logType: BorderedLabel!
     
-    //@IBOutlet private weak var logNote: UITextField!
+    ///label for customLogType, not used for input
+    @IBOutlet private weak var customLogTypeName: CustomLabel!
+    
+    ///Used for reconfiguring layout when visability changed
+    @IBOutlet private weak var customLogTypeNameBottomConstraint: NSLayoutConstraint!
+    
+    ///Text input for customLogTypeName
+    @IBOutlet private weak var customLogTypeTextField: UITextField!
+    
+    
     @IBOutlet private weak var logNote: UITextView!
     
     @IBOutlet private weak var logDate: UIDatePicker!
@@ -164,6 +176,14 @@ class LogsAddLogViewController: UIViewController, UITextViewDelegate, UIGestureR
     @IBAction private func willAddLog(_ sender: Any) {
         self.dismissKeyboard()
         
+        var trimmedCustomLogTypeName: String? {
+            if customLogTypeTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+                return nil
+            }
+            else {
+                return customLogTypeTextField.text
+            }
+        }
         
         //updating log
         if updatingKnownLogInformation != nil{
@@ -172,6 +192,11 @@ class LogsAddLogViewController: UIViewController, UITextViewDelegate, UIGestureR
             updatedLog.date = logDate.date
             updatedLog.note = logNote.text ?? ""
             updatedLog.logType = KnownLogType(rawValue: logType.text!)!
+            
+            if logType.text == KnownLogType.custom.rawValue{
+                updatedLog.customTypeName = trimmedCustomLogTypeName
+            }
+            
             updatedLog.creationDate = Date()
             
             delegate.didUpdateKnownLog(sender: Sender(origin: self, localized: self), parentDogName: parentDogName.text!, requirementUUID: updatingKnownLogInformation?.1?.uuid ?? nil, updatedKnownLog: updatedLog)
@@ -184,7 +209,7 @@ class LogsAddLogViewController: UIViewController, UITextViewDelegate, UIGestureR
                     throw KnownLogTypeError.blankLogType
                 }
                 else {
-                    let newLog = KnownLog(date: logDate.date, note: logNote.text ?? "", logType: KnownLogType(rawValue: logType.text!)!)
+                    let newLog = KnownLog(date: logDate.date, note: logNote.text ?? "", logType: KnownLogType(rawValue: logType.text!)!, customTypeName: trimmedCustomLogTypeName)
                     delegate.didAddKnownLog(sender: Sender(origin: self, localized: self), parentDogName: parentDogName.text!, newKnownLog: newLog)
                     self.navigationController?.popViewController(animated: true)
                 }
@@ -203,7 +228,7 @@ class LogsAddLogViewController: UIViewController, UITextViewDelegate, UIGestureR
         
         self.dismissKeyboard()
         
-        if shouldPromptSaveWarning == true || initalLogNote != logNote.text{
+        if initalValuesChanged == true{
             let unsavedInformationConfirmation = GeneralAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
             
             let alertActionExit = UIAlertAction(title: "Yes, I don't want to save changes", style: .default) { (UIAlertAction) in
@@ -224,7 +249,6 @@ class LogsAddLogViewController: UIViewController, UITextViewDelegate, UIGestureR
     
     @IBAction private func didUpdateDatePicker(_ sender: Any) {
         self.dismissKeyboard()
-        shouldPromptSaveWarning = true
     }
     
     
@@ -238,9 +262,44 @@ class LogsAddLogViewController: UIViewController, UITextViewDelegate, UIGestureR
     
     var delegate: LogsAddLogViewControllerDelegate! = nil
     
-    ///will show warning about information not being saved by hitting cancel button
-    private var shouldPromptSaveWarning: Bool = false
-    private var initalLogNote: String? = nil
+    private var initalParentDog: String! = nil
+    private var initalCustomLogType: String? = nil
+    private var initalLogNote: String! = nil
+    private var initalDate: Date! = nil
+    
+    var initalValuesChanged: Bool {
+        //updating
+        if updatingKnownLogInformation != nil {
+            //not equal it inital
+            if logType.text != updatingKnownLogInformation!.2.logType.rawValue {
+                return true
+            }
+        }
+        //new
+        else {
+            //starts blank by default
+            if logType.text?.trimmingCharacters(in: .whitespaces) != "" {
+                return true
+            }
+        }
+        
+        //not equal it inital
+        if logType.text == KnownLogType.custom.rawValue && initalCustomLogType != customLogTypeTextField.text{
+            return true
+        }
+        else if logNote.text != initalLogNote{
+            return true
+        }
+        else if initalDate != logDate.date {
+            return true
+        }
+        else if initalParentDog != parentDogName.text{
+            return true
+        }
+        else {
+            return false
+        }
+    }
     
     ///drop down for changing the parent dog name
     private let dropDownParentDogName = MakeDropDown()
@@ -286,6 +345,7 @@ class LogsAddLogViewController: UIViewController, UITextViewDelegate, UIGestureR
         
         setUpGestures()
         
+        customLogTypeTextField.delegate = self
         
         logNote.delegate = self
         logNote.layer.borderWidth = 0.2
@@ -367,40 +427,83 @@ class LogsAddLogViewController: UIViewController, UITextViewDelegate, UIGestureR
         self.dropDownLogType.showDropDown(height: self.dropDownRowHeight * 6.5)
     }
     
+    ///Toggles visability of optional custom log type components, used for a custom name for it
+    private func toggleCustomLogTypeName(isHidden: Bool){
+        if isHidden == false {
+            for constraint in customLogTypeName.constraints{
+                if constraint.firstAttribute == .height{
+                    constraint.constant = 40.0
+                }
+            }
+            customLogTypeNameBottomConstraint.constant = 10.0
+            customLogTypeName.isHidden = false
+            customLogTypeTextField.isHidden = false
+            self.containerForAll.setNeedsLayout()
+            self.containerForAll.layoutIfNeeded()
+        }
+        else {
+            for constraint in customLogTypeName.constraints{
+                if constraint.firstAttribute == .height{
+                    constraint.constant = 0.0
+                }
+            }
+            customLogTypeNameBottomConstraint.constant = 0.0
+            customLogTypeName.isHidden = true
+            customLogTypeTextField.isHidden = true
+            self.containerForAll.setNeedsLayout()
+            self.containerForAll.layoutIfNeeded()
+        }
+    }
+    
     ///Sets up the values of different variables that is found out from information passed
     private func setupValues(){
+        
+        func setupInitalValues(){
+            initalParentDog = parentDogName.text
+            initalCustomLogType = customLogTypeTextField.text
+            initalDate = logDate.date
+            initalLogNote = logNote.text
+        }
+        
         //updating log
         if updatingKnownLogInformation != nil{
             pageTitle!.title = "Edit Log"
             trashIcon.isEnabled = true
-            
             parentDogName.text = updatingKnownLogInformation!.0
             
             logType.text = updatingKnownLogInformation!.2.logType.rawValue
             logType.isEnabled = true
+            customLogTypeTextField.text = updatingKnownLogInformation!.2.customTypeName
+            //if == is true, that means it is custom, which means it shouldn't hide so ! reverses to input isHidden: false, reverse for if type is not custom. This is because this text input field is only used for custom types.
+            toggleCustomLogTypeName(isHidden: !(updatingKnownLogInformation!.2.logType == .custom))
             
             selectedLogTypeIndexPath = IndexPath(row: KnownLogType.allCases.firstIndex(of: KnownLogType(rawValue: logType.text!)!)!, section: 0)
             
             logDate.date = updatingKnownLogInformation!.2.date
-            
             logNote.text = updatingKnownLogInformation!.2.note
-            initalLogNote = logNote.text
+            
         }
         //not updating
         else {
             parentDogName.text = dogManager.dogs[0].dogTraits.dogName
             parentDogName.isEnabled = true
+            
             trashIcon.isEnabled = false
             
             logType.text = ""
             logType.isEnabled = true
             
+            customLogTypeTextField.text = ""
+            initalCustomLogType = customLogTypeTextField.text
+            
+            toggleCustomLogTypeName(isHidden: true)
+            
             selectedLogTypeIndexPath = nil
             
             logDate.date = Date.roundDate(targetDate: Date(), roundingInterval: 60.0*5, roundingMethod: .up)
-            
-            initalLogNote = logNote.text
         }
+        
+        setupInitalValues()
         
     }
     

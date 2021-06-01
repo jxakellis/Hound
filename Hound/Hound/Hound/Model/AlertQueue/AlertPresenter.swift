@@ -38,15 +38,6 @@ class AlertPresenter: NSObject, NSCoding{
     
     func enqueueAlertForPresentation(_ alertController: GeneralAlertController) {
         
-        /*
-         if let popoverController = alertController.popoverPresentationController {
-             popoverController.sourceView = Utils.presenter.view
-             popoverController.sourceRect = Utils.presenter.view.bounds
-           popoverController.permittedArrowDirections = []
-         }
-         */
-        
-        
         alertQueue.enqueue(alertController)
         
         showNextAlert()
@@ -57,19 +48,34 @@ class AlertPresenter: NSObject, NSCoding{
             return
         }
         
-        if Utils.presenter == nil{
-            func waitLoop(){
-                print("waitLoop checker")
-                if Utils.presenter == nil {
-                    DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
-                        waitLoop()
-                    }
+        
+        
+        
+        func waitLoop(){
+            print("waitLoop checker")
+            if Utils.presenter == nil {
+                DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
+                    waitLoop()
                 }
-                else{
-                    showNextAlert()
-                }
-                
             }
+            else if Utils.presenter!.isBeingDismissed{
+                DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
+                    waitLoop()
+                }
+            }
+            else{
+                showNextAlert()
+            }
+            
+        }
+        if Utils.presenter == nil {
+            print("presenter nil")
+            waitLoop()
+            
+        }
+        else if Utils.presenter!.isBeingDismissed{
+            print("being dismissed")
+            waitLoop()
         }
         else {
             if alertQueue.queuePresent() && locked == false{

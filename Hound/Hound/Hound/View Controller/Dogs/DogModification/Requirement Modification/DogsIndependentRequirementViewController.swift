@@ -20,7 +20,8 @@ class DogsIndependentRequirementViewController: UIViewController, DogsRequiremen
     //MARK: - DogsRequirementManagerViewControllerDelegate
 
     func didAddRequirement(newRequirement: Requirement) {
-        fatalError("shouldn't be possible")
+        delegate.didAddRequirement(sender: Sender(origin: self, localized: self), parentDogName: parentDogName, newRequirement: newRequirement)
+        self.navigationController?.popViewController(animated: true)
     }
     
     func didUpdateRequirement(updatedRequirement: Requirement) {
@@ -61,10 +62,13 @@ class DogsIndependentRequirementViewController: UIViewController, DogsRequiremen
     @IBOutlet weak var requirementRemoveButton: UIBarButtonItem!
     
     @IBAction func willRemoveRequirement(_ sender: Any) {
-        let removeRequirementConfirmation = GeneralAlertController(title: "Are you sure you want to delete \"\(dogsRequirementManagerViewController.requirementAction.text ?? targetRequirement.requirementType.rawValue)\"", message: nil, preferredStyle: .alert)
+        guard targetRequirement != nil else {
+            return
+        }
+        let removeRequirementConfirmation = GeneralAlertController(title: "Are you sure you want to delete \(dogsRequirementManagerViewController.requirementAction.text ?? targetRequirement!.displayTypeName)?", message: nil, preferredStyle: .alert)
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { (UIAlertAction) in
-            self.delegate.didRemoveRequirement(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, removedRequirementUUID: self.targetRequirement.uuid)
+            self.delegate.didRemoveRequirement(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, removedRequirementUUID: self.targetRequirement!.uuid)
             //self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
             self.navigationController?.popViewController(animated: true)
         }
@@ -107,7 +111,7 @@ class DogsIndependentRequirementViewController: UIViewController, DogsRequiremen
     
     var dogsRequirementManagerViewController: DogsRequirementManagerViewController = DogsRequirementManagerViewController()
     
-    var targetRequirement: Requirement = Requirement()
+    var targetRequirement: Requirement? = nil
     var isUpdating: Bool = false
     
     var parentDogName: String! = nil

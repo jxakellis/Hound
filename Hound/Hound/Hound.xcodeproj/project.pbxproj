@@ -14,6 +14,7 @@
 		A20C87E72636630B00CC6AEF /* Logs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C87E62636630B00CC6AEF /* Logs.swift */; };
 		A20C99972568671F00E2C9C8 /* RequirementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C99962568671F00E2C9C8 /* RequirementManager.swift */; };
 		A20C999925686B7600E2C9C8 /* TimingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C999825686B7600E2C9C8 /* TimingManager.swift */; };
+		A2121DBD26649C7E00647682 /* DogsRequirementOnceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2121DBC26649C7E00647682 /* DogsRequirementOnceViewController.swift */; };
 		A226736225CDC36800904032 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A226736125CDC36800904032 /* StringExtension.swift */; };
 		A226736C25CDC59300904032 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A226736B25CDC59300904032 /* HomeViewController.swift */; };
 		A226737025CDC5D000904032 /* HomeMainScreenTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A226736F25CDC5D000904032 /* HomeMainScreenTableViewController.swift */; };
@@ -93,6 +94,7 @@
 		A20C87E62636630B00CC6AEF /* Logs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logs.swift; sourceTree = "<group>"; };
 		A20C99962568671F00E2C9C8 /* RequirementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementManager.swift; sourceTree = "<group>"; };
 		A20C999825686B7600E2C9C8 /* TimingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimingManager.swift; sourceTree = "<group>"; };
+		A2121DBC26649C7E00647682 /* DogsRequirementOnceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsRequirementOnceViewController.swift; sourceTree = "<group>"; };
 		A226736125CDC36800904032 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		A226736B25CDC59300904032 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		A226736F25CDC5D000904032 /* HomeMainScreenTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMainScreenTableViewController.swift; sourceTree = "<group>"; };
@@ -344,6 +346,7 @@
 			isa = PBXGroup;
 			children = (
 				A278ED872610FF05000575FC /* DogsRequirementManagerViewController.swift */,
+				A2121DBC26649C7E00647682 /* DogsRequirementOnceViewController.swift */,
 				A278ED8B2610FF3D000575FC /* DogsRequirementCountDownViewController.swift */,
 				A278ED932610FF89000575FC /* DogsRequirementWeeklyViewController.swift */,
 				A2DC23A7264D822F00EB287A /* DogsRequirementMonthlyViewController.swift */,
@@ -619,6 +622,7 @@
 				A2A45CCF2644914A0050E5A1 /* DogsIntroductionViewController.swift in Sources */,
 				A2B9DAF1262B2F2D00A47D57 /* LogsMainScreenTableViewController.swift in Sources */,
 				A263B2FB2638A59700E1DCE6 /* Storyboard Subclasses.swift in Sources */,
+				A2121DBD26649C7E00647682 /* DogsRequirementOnceViewController.swift in Sources */,
 				A20C87DE263633C300CC6AEF /* HomeInformationViewController.swift in Sources */,
 				A231ACE525DEEA3B00B11E84 /* UIExtension.swift in Sources */,
 				A29390732608480800879C79 /* DogManager.swift in Sources */,
