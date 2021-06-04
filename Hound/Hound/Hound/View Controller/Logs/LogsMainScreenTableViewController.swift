@@ -55,14 +55,18 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                         consolidatedLogs.append((dog.dogTraits.dogName, nil, dogLog))
                     }
                     
-                    //adds all requirement logs from dog
-                    for requirementIndex in 0..<dogManager.dogs[dogIndex].dogRequirments.requirements.count{
-                        let requirement = dogManager.dogs[dogIndex].dogRequirments.requirements[requirementIndex]
-                        
-                        for requirementLog in requirement.logs {
-                            consolidatedLogs.append((dog.dogTraits.dogName, requirement, requirementLog))
-                        }
-                    }
+                    /*
+                     //REQ UPDATE
+                     //adds all requirement logs from dog
+                     for requirementIndex in 0..<dogManager.dogs[dogIndex].dogRequirments.requirements.count{
+                         let requirement = dogManager.dogs[dogIndex].dogRequirments.requirements[requirementIndex]
+                         
+                         for requirementLog in requirement.logs {
+                             consolidatedLogs.append((dog.dogTraits.dogName, requirement, requirementLog))
+                         }
+                     }
+                     */
+                    
                 }
             }
             //row in zero that that means filtering by every known log types
@@ -74,12 +78,16 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     consolidatedLogs.append((dog.dogTraits.dogName, nil, dogLog))
                 }
                 
-                //adds all requirement logs from dog
-                for requirement in dog.dogRequirments.requirements{
-                    for requirementLog in requirement.logs {
-                        consolidatedLogs.append((dog.dogTraits.dogName, requirement, requirementLog))
-                    }
-                }
+                /*
+                 //REQ UPDATE
+                 //adds all requirement logs from dog
+                 for requirement in dog.dogRequirments.requirements{
+                     for requirementLog in requirement.logs {
+                         consolidatedLogs.append((dog.dogTraits.dogName, requirement, requirementLog))
+                     }
+                 }
+                 */
+                
             }
             //row is not zero so filtering by a specific known log type
             else{
@@ -231,6 +239,10 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         super.viewDidLoad()
         self.tableView.allowsSelection = true
         self.tableView.separatorInset = UIEdgeInsets.zero
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.reloadTable()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -389,31 +401,42 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 
                 let cellToDelete = uniqueLogs[indexPath.section].2[indexPath.row-1]
                 
-                //if cell is a requirement log
-                if cellToDelete.1 != nil {
-                    let requirement = try! newDogManager.findDog(dogName: cellToDelete.0).dogRequirments.findRequirement(forUUID: cellToDelete.1!.uuid)
-                    
-                    let firstIndex = requirement.logs.firstIndex { (arg0) -> Bool in
-                        if arg0.date == cellToDelete.2.date{
-                            return true
-                        }
-                        else {
-                            return false
-                        }
-                    }
-                    
-                    requirement.logs.remove(at: firstIndex!)
-                }
-                //if cell is a dog log
-                else {
-                    let dog = try! newDogManager.findDog(dogName: cellToDelete.0)
-                    for dogLogIndex in 0..<dog.dogTraits.logs.count {
-                        if dog.dogTraits.logs[dogLogIndex].uuid == cellToDelete.2.uuid{
-                            dog.dogTraits.logs.remove(at: dogLogIndex)
-                            break
-                        }
+                let dog = try! newDogManager.findDog(dogName: cellToDelete.0)
+                for dogLogIndex in 0..<dog.dogTraits.logs.count {
+                    if dog.dogTraits.logs[dogLogIndex].uuid == cellToDelete.2.uuid{
+                        dog.dogTraits.logs.remove(at: dogLogIndex)
+                        break
                     }
                 }
+                
+                /*
+                 //if cell is a requirement log
+                 if cellToDelete.1 != nil {
+                     let requirement = try! newDogManager.findDog(dogName: cellToDelete.0).dogRequirments.findRequirement(forUUID: cellToDelete.1!.uuid)
+                     
+                     let firstIndex = requirement.logs.firstIndex { (arg0) -> Bool in
+                         if arg0.date == cellToDelete.2.date{
+                             return true
+                         }
+                         else {
+                             return false
+                         }
+                     }
+                     
+                     requirement.logs.remove(at: firstIndex!)
+                 }
+                 //if cell is a dog log
+                 else {
+                     let dog = try! newDogManager.findDog(dogName: cellToDelete.0)
+                     for dogLogIndex in 0..<dog.dogTraits.logs.count {
+                         if dog.dogTraits.logs[dogLogIndex].uuid == cellToDelete.2.uuid{
+                             dog.dogTraits.logs.remove(at: dogLogIndex)
+                             break
+                         }
+                     }
+                 }
+                 */
+                
                 
                 setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager)
                 

@@ -101,6 +101,7 @@ enum UserDefaultsKeys: String{
     case dogManager = "dogManager"
     case alertPresenter = "alertPresenter"
     case shouldPerformCleanInstall = "shouldPerformCleanInstall"
+    case appBuild = "appBuild"
     
     //DogsViewController
     case hasBeenLoadedBefore = "hasBeenLoadedBefore"

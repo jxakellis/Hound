@@ -33,6 +33,9 @@ enum RequirementMode {
 
 protocol RequirementTraitsProtocol {
     
+    ///Dog that hold this requirement, used for logs
+    var masterDog: Dog? { get set }
+    
     var uuid: String { get set }
     
     ///Replacement for requirementName, a way for the user to keep track of what the requirement is for
@@ -45,7 +48,7 @@ protocol RequirementTraitsProtocol {
     var displayTypeName: String { get }
     
     ///An array of all dates that logs when the timer has fired, whether by snooze, regular timing convention, etc. ANY TIME
-    var logs: [KnownLog] { get set }
+    //var logs: [KnownLog] { get set }
 }
 
 protocol RequirementComponentsProtocol {
@@ -100,12 +103,10 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = Requirement()
         
-        //try! copy.changeRequirementName(newRequirementName: self.requirementName)
-        //try! copy.changeRequirementDescription(newRequirementDescription: self.requirementDescription)
         copy.uuid = self.uuid
         copy.requirementType = self.requirementType
         copy.customTypeName = self.customTypeName
-        copy.logs = self.logs
+        //copy.logs = self.logs
         
         copy.countDownComponents = self.countDownComponents.copy() as! CountDownComponents
         copy.timeOfDayComponents = self.timeOfDayComponents.copy() as! TimeOfDayComponents
@@ -124,7 +125,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         return copy
     }
     
-     //MARK: - NSCoding
+    //MARK: - NSCoding
     
     override init() {
         super.init()
@@ -132,15 +133,35 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         self.oneTimeComponents.masterRequirement = self
     }
     
-     required init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init()
         
-        //self.storedRequirementName = aDecoder.decodeObject(forKey: "requirementName") as! String
-        //self.storedRequirementDescription = aDecoder.decodeObject(forKey: "requirementDescription") as! String
         self.uuid = aDecoder.decodeObject(forKey: "uuid") as! String
         self.requirementType = ScheduledLogType(rawValue: aDecoder.decodeObject(forKey: "requirementType") as! String)!
         self.customTypeName = aDecoder.decodeObject(forKey: "customTypeName") as? String
-        self.logs = aDecoder.decodeObject(forKey: "logs") as! [KnownLog]
+        
+        
+        if UIApplication.previousAppBuild <= 1228{
+            //print("grandfather in depreciated")
+            let depreciatedLogs: [KnownLog] = aDecoder.decodeObject(forKey: "logs") as? [KnownLog] ?? []
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                if self.masterDog != nil && depreciatedLogs.count > 0{
+                    //print("requirement logs decode success")
+                    for log in depreciatedLogs{
+                        self.masterDog?.dogTraits.logs.append(log)
+                    }
+                }
+                else {
+                    //print("requirement logs decode fail")
+                }
+            }
+        }
+        else {
+            //print("too new")
+            print(UIApplication.previousAppBuild)
+        }
+        
         
         self.countDownComponents = aDecoder.decodeObject(forKey: "countDownComponents") as! CountDownComponents
         self.timeOfDayComponents = aDecoder.decodeObject(forKey: "timeOfDayComponents") as! TimeOfDayComponents
@@ -155,15 +176,14 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         self.storedExecutionBasis = aDecoder.decodeObject(forKey: "executionBasis") as! Date
         
         self.isEnabled = aDecoder.decodeBool(forKey: "isEnabled")
-     }
-     
-     func encode(with aCoder: NSCoder) {
-        //aCoder.encode(storedRequirementName, forKey: "requirementName")
-        //aCoder.encode(storedRequirementDescription, forKey: "requirementDescription")
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        
         aCoder.encode(uuid, forKey: "uuid")
         aCoder.encode(requirementType.rawValue, forKey: "requirementType")
         aCoder.encode(customTypeName, forKey: "customTypeName")
-        aCoder.encode(logs, forKey: "logs")
+        //aCoder.encode(logs, forKey: "logs")
         
         aCoder.encode(countDownComponents, forKey: "countDownComponents")
         aCoder.encode(timeOfDayComponents, forKey: "timeOfDayComponents")
@@ -176,9 +196,11 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         aCoder.encode(storedExecutionBasis, forKey: "executionBasis")
         
         aCoder.encode(isEnabled, forKey: "isEnabled")
-     }
+    }
     
     //MARK: - RequirementTraitsProtocol
+    
+    var masterDog: Dog? = nil
     
     var uuid: String = UUID().uuidString
     
@@ -195,7 +217,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         }
     }
     
-    var logs: [KnownLog] = []
+    //var logs: [KnownLog] = []
     
     //MARK: - RequirementComponentsProtocol
     
@@ -344,7 +366,11 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
             if knownLogType == nil {
                 fatalError()
             }
-            self.logs.append(KnownLog(date: Date(), logType: knownLogType!, customTypeName: customTypeName))
+            masterDog?.dogTraits.logs.append(KnownLog(date: Date(), logType: knownLogType!, customTypeName: customTypeName))
+            
+            if masterDog == nil {
+                print("masterDog nil, couldn't log")
+            }
         }
         
         self.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)

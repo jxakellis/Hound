@@ -500,7 +500,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
             
             selectedLogTypeIndexPath = nil
             
-            logDate.date = Date.roundDate(targetDate: Date(), roundingInterval: 60.0*5, roundingMethod: .up)
+            logDate.date = Date.roundDate(targetDate: Date(), roundingInterval: 60.0*1, roundingMethod: .up)
         }
         
         setupInitalValues()

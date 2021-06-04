@@ -11,6 +11,7 @@ import UIKit
 class Persistence{
     ///Called by App or Scene Delegate when setting up in didFinishLaunchingWithOptions, can be either the first time setup or a recurring setup (i.e. not the app isnt being opened for the first time)
     static func willSetup(isRecurringSetup: Bool = false){
+        
         if isRecurringSetup == true{
             //not first time setup
             TimingManager.isPaused = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool
@@ -35,7 +36,9 @@ class Persistence{
             let decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
             
             //termination checker
-            if NotificationConstant.shouldShowTerminationAlert == true {
+            if NotificationConstant.shouldShowTerminationAlert == true && UIApplication.previousAppBuild == UIApplication.appBuild{
+                print("App has not updated")
+                
                 //correct conditions
                 if AudioPlayer.sharedPlayer == nil && NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && decodedDogManager.hasEnabledRequirement && !TimingManager.isPaused {
                     let terminationAlertController = GeneralAlertController(title: "Oops, you may have terminated Hound", message: "Your notifications won't ring properly if the app isn't running.", preferredStyle: .alert)

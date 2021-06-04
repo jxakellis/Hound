@@ -88,7 +88,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
             
             
             if updatedRequirements != nil {
-                updatedDog.dogRequirments.requirements.removeAll()
+                updatedDog.dogRequirments.removeAllRequirements()
                 try! updatedDog.dogRequirments.addRequirement(newRequirements: self.updatedRequirements!)
             }
             

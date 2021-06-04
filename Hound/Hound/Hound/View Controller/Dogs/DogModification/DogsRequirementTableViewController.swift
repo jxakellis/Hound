@@ -36,26 +36,26 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     
     ///When this function is called through a delegate, it adds the information to the list of requirements and updates the cells to display it
     func didAddRequirement(sender: Sender, newRequirement: Requirement) throws{
-        var sudoRequirementManager = getRequirementManager()
+        let sudoRequirementManager = getRequirementManager()
         try sudoRequirementManager.addRequirement(newRequirement: newRequirement)
         setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
     }
     
     func didUpdateRequirement(sender: Sender, updatedRequirement: Requirement) throws {
-        var sudoRequirementManager = getRequirementManager()
+        let sudoRequirementManager = getRequirementManager()
         try sudoRequirementManager.changeRequirement(forUUID: updatedRequirement.uuid, newRequirement: updatedRequirement)
         setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
     }
     
     func didRemoveRequirement(sender: Sender, removedRequirementUUID: String) {
-        var sudoRequirementManager = getRequirementManager()
+        let sudoRequirementManager = getRequirementManager()
         try! sudoRequirementManager.removeRequirement(forUUID: removedRequirementUUID)
         setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
     }
     
     //MARK: - Requirement Manager Control Flow Protocol
     
-    private var requirementManager = RequirementManager()
+    private var requirementManager = RequirementManager(masterDog: nil)
     
     func getRequirementManager() -> RequirementManager {
         //RequirementManagerEfficencyImprovements return requirementManager.copy() as! RequirementManager
@@ -177,7 +177,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
             let deleteConfirmation = GeneralAlertController(title: "Are you sure you want to delete \(sudoRequirementManager.requirements[indexPath.row].displayTypeName)?", message: nil, preferredStyle: .alert)
             
             let alertActionDelete = UIAlertAction(title: "Delete", style: .destructive) { _ in
-                sudoRequirementManager.requirements.remove(at: indexPath.row)
+                sudoRequirementManager.removeRequirement(forIndex: indexPath.row)
                 self.setRequirementManager(sender: Sender(origin: self, localized: self), newRequirementManager: sudoRequirementManager)
                 self.tableView.deleteRows(at: [indexPath], with: .automatic)
             }

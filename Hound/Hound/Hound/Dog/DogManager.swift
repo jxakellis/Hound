@@ -296,7 +296,7 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
             }
             
             let dogAdd = self.dogs[d].copy() as! Dog
-            dogAdd.dogRequirments.requirements.removeAll()
+            dogAdd.dogRequirments.removeAllRequirements()
             
             for r in 0..<self.dogs[d].dogRequirments.requirements.count {
                 guard self.dogs[d].dogRequirments.requirements[r].getEnable() == true else{

@@ -40,23 +40,26 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         
          let sudoDogManager = getDogManager()
          if sudoDogManager.dogs.isEmpty == false {
-             do {
                 let dog = try! sudoDogManager.findDog(dogName: parentDogName)
                 
-                //requirement log
-                if requirementUUID != nil {
-                    let requirement = try! dog.dogRequirments.findRequirement(forUUID: requirementUUID!)
-                    
-                    for logIndex in 0..<requirement.logs.count{
-                        if requirement.logs[logIndex].uuid == updatedKnownLog.uuid{
-                            requirement.logs[logIndex] = updatedKnownLog
-                            break
-                        }
-                    }
-                }
+                /*
+                 //REQ LOG UPDATE
+                 //requirement log
+                 if requirementUUID != nil {
+                     let requirement = try! dog.dogRequirments.findRequirement(forUUID: requirementUUID!)
+                     
+                     for logIndex in 0..<requirement.logs.count{
+                         if requirement.logs[logIndex].uuid == updatedKnownLog.uuid{
+                             requirement.logs[logIndex] = updatedKnownLog
+                             break
+                         }
+                     }
+                 }
+                 */
+                
                 //dog log
-                else {
-                    let dog = try sudoDogManager.findDog(dogName: parentDogName)
+                //else {
+                    //let dog = try sudoDogManager.findDog(dogName: parentDogName)
                     
                     for dogLogIndex in 0..<dog.dogTraits.logs.count {
                         if dog.dogTraits.logs[dogLogIndex].uuid == updatedKnownLog.uuid{
@@ -65,11 +68,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
                             break
                         }
                     }
-                }
-             }
-             catch {
-                 ErrorProcessor.alertForError(message: "Unable to update log.")
-             }
+                //}
              
          }
         
@@ -81,34 +80,44 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         let sudoDogManager = getDogManager()
         let dog = try! sudoDogManager.findDog(dogName: parentDogName)
         
-        //dog log
-        if requirementUUID == nil {
-            for dogLogIndex in 0..<dog.dogTraits.logs.count{
-                if dog.dogTraits.logs[dogLogIndex].uuid == logUUID{
-                    dog.dogTraits.logs.remove(at: dogLogIndex)
-                    break
-                }
+        for dogLogIndex in 0..<dog.dogTraits.logs.count{
+            if dog.dogTraits.logs[dogLogIndex].uuid == logUUID{
+                dog.dogTraits.logs.remove(at: dogLogIndex)
+                break
             }
         }
-        //requirement log
-        else {
-            var logFound = false
-            
-            for requirement in dog.dogRequirments.requirements{
-                guard logFound == false else {
-                    break
-                }
-                for requirementLogIndex in 0..<requirement.logs.count{
-                    guard logFound == false else {
-                        break
-                    }
-                    if requirement.logs[requirementLogIndex].uuid == logUUID{
-                        requirement.logs.remove(at: requirementLogIndex)
-                        logFound = true
-                    }
-                }
-            }
-        }
+        
+        /*
+         //dog log
+         if requirementUUID == nil {
+             for dogLogIndex in 0..<dog.dogTraits.logs.count{
+                 if dog.dogTraits.logs[dogLogIndex].uuid == logUUID{
+                     dog.dogTraits.logs.remove(at: dogLogIndex)
+                     break
+                 }
+             }
+         }
+         //requirement log
+         else {
+             var logFound = false
+             
+             for requirement in dog.dogRequirments.requirements{
+                 guard logFound == false else {
+                     break
+                 }
+                 for requirementLogIndex in 0..<requirement.logs.count{
+                     guard logFound == false else {
+                         break
+                     }
+                     if requirement.logs[requirementLogIndex].uuid == logUUID{
+                         requirement.logs.remove(at: requirementLogIndex)
+                         logFound = true
+                     }
+                 }
+             }
+         }
+         */
+        
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }

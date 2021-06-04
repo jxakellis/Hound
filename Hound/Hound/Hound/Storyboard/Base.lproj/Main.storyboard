@@ -2103,7 +2103,7 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="5" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="0FN-6L-oEu">
+                                    <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="0FN-6L-oEu">
                                         <rect key="frame" x="0.0" y="300" width="414" height="425"/>
                                         <connections>
                                             <action selector="didUpdateDatePicker:" destination="SZm-Ec-oLW" eventType="valueChanged" id="pFf-A0-31r"/>

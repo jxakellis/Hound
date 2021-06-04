@@ -455,7 +455,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 deleteConfirmation = GeneralAlertController(title: "Are you sure you want to delete \(sudoDogManager.dogs[indexPath.section].dogRequirments.requirements[indexPath.row-1].displayTypeName)?", message: nil, preferredStyle: .alert)
                 
                 let alertActionDelete = UIAlertAction(title: "Delete", style: .destructive) { _ in
-                    sudoDogManager.dogs[indexPath.section].dogRequirments.requirements.remove(at: indexPath.row-1)
+                    sudoDogManager.dogs[indexPath.section].dogRequirments.removeRequirement(forIndex: indexPath.row-1)
                     self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
                     self.tableView.deleteRows(at: [indexPath], with: .automatic)
                 }

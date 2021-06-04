@@ -68,6 +68,7 @@
 		A2B9DAE9262B2DFA00A47D57 /* LogsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9DAE8262B2DFA00A47D57 /* LogsNavigationViewController.swift */; };
 		A2B9DAED262B2E0A00A47D57 /* LogsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9DAEC262B2E0A00A47D57 /* LogsViewController.swift */; };
 		A2B9DAF1262B2F2D00A47D57 /* LogsMainScreenTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9DAF0262B2F2D00A47D57 /* LogsMainScreenTableViewController.swift */; };
+		A2BD897C2669A8D200E7BBE5 /* UIApplicationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2BD897B2669A8D200E7BBE5 /* UIApplicationExtension.swift */; };
 		A2C014C92628ABA500DDE288 /* HomeNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C014C82628ABA500DDE288 /* HomeNavigationViewController.swift */; };
 		A2C014D52628AEEE00DDE288 /* DogsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C014D42628AEEE00DDE288 /* DogsNavigationViewController.swift */; };
 		A2DC23A8264D822F00EB287A /* DogsRequirementMonthlyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DC23A7264D822F00EB287A /* DogsRequirementMonthlyViewController.swift */; };
@@ -148,6 +149,7 @@
 		A2B9DAE8262B2DFA00A47D57 /* LogsNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsNavigationViewController.swift; sourceTree = "<group>"; };
 		A2B9DAEC262B2E0A00A47D57 /* LogsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsViewController.swift; sourceTree = "<group>"; };
 		A2B9DAF0262B2F2D00A47D57 /* LogsMainScreenTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsMainScreenTableViewController.swift; sourceTree = "<group>"; };
+		A2BD897B2669A8D200E7BBE5 /* UIApplicationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationExtension.swift; sourceTree = "<group>"; };
 		A2BE1EA32634C6D800A36C57 /* HoundDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HoundDebug.entitlements; sourceTree = "<group>"; };
 		A2C014C82628ABA500DDE288 /* HomeNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNavigationViewController.swift; sourceTree = "<group>"; };
 		A2C014D42628AEEE00DDE288 /* DogsNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsNavigationViewController.swift; sourceTree = "<group>"; };
@@ -328,6 +330,7 @@
 				A26AF36D25807887005D5DAB /* DateExtension.swift */,
 				A226736125CDC36800904032 /* StringExtension.swift */,
 				A231ACE425DEEA3B00B11E84 /* UIExtension.swift */,
+				A2BD897B2669A8D200E7BBE5 /* UIApplicationExtension.swift */,
 			);
 			path = "Pure Extensions";
 			sourceTree = "<group>";
@@ -524,7 +527,7 @@
 				A2E66C9325534A880068CCA6 /* Sources */,
 				A2E66C9425534A880068CCA6 /* Frameworks */,
 				A2E66C9525534A880068CCA6 /* Resources */,
-				A2F4C0192635D17F001E05D0 /* ShellScript */,
+				A23884472669B37E009EBF3F /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -590,7 +593,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		A2F4C0192635D17F001E05D0 /* ShellScript */ = {
+		A23884472669B37E009EBF3F /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -605,7 +608,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"$INFOPLIST_FILE\")\nbuildNumber=$(($buildNumber + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"$INFOPLIST_FILE\"\n";
+			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"$PRODUCT_SETTINGS_PATH\")\nbuildNumber=$(($buildNumber + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"$PRODUCT_SETTINGS_PATH\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -614,6 +617,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A2BD897C2669A8D200E7BBE5 /* UIApplicationExtension.swift in Sources */,
 				A28AF46D25E9C7C80018B575 /* DogsIndependentRequirementViewController.swift in Sources */,
 				A2853D8F25CFB4AD0068AEE3 /* GeneralManagementProtocols.swift in Sources */,
 				A24725952614F3BF00259691 /* ToolTipView.swift in Sources */,
@@ -739,6 +743,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1245;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -800,6 +805,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1245;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -827,7 +833,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Hound/HoundDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 993;
+				CURRENT_PROJECT_VERSION = 1245;
 				DEVELOPMENT_TEAM = 9L3M99FST5;
 				INFOPLIST_FILE = "$(SRCROOT)/Hound/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
@@ -835,11 +841,12 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.3;
+				MARKETING_VERSION = 1.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.Pupotty;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
@@ -849,7 +856,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Hound/HoundDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 993;
+				CURRENT_PROJECT_VERSION = 1245;
 				DEVELOPMENT_TEAM = 9L3M99FST5;
 				INFOPLIST_FILE = "$(SRCROOT)/Hound/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
@@ -857,11 +864,12 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.3;
+				MARKETING_VERSION = 1.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.Pupotty;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
 		};

@@ -285,9 +285,10 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         else {
             if isSkippingLogDate != nil && shouldRemoveLogDuringPossibleUnskip == true{
                 //if the log added by skipping the reminder is unmodified, finds and removes it in the unskip process
-                for logDateIndex in 0..<masterRequirement.logs.count{
-                    if masterRequirement.logs[logDateIndex].date.distance(to: isSkippingLogDate!) < 1 && masterRequirement.logs[logDateIndex].date.distance(to: isSkippingLogDate!) > -1{
-                        masterRequirement.logs.remove(at: logDateIndex)
+                let dogLogs = masterRequirement.masterDog!.dogTraits.logs
+                for logDateIndex in 0..<dogLogs.count{
+                    if dogLogs[logDateIndex].date.distance(to: isSkippingLogDate!) < 0.01 && dogLogs[logDateIndex].date.distance(to: isSkippingLogDate!) > -0.01{
+                        masterRequirement.masterDog!.dogTraits.logs.remove(at: logDateIndex)
                         break
                     }
                 }

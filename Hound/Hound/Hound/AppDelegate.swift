@@ -11,21 +11,23 @@ import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    
-    var hasSetup: Bool!
-    
-    var shouldPerformCleanInstall: Bool!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
+        let decodedPreviousAppBuild: Int? = UserDefaults.standard.object(forKey: UserDefaultsKeys.appBuild.rawValue) as? Int ?? nil
+        var previousAppBuild: Int {
+            return decodedPreviousAppBuild ?? 1228
+        }
+        UIApplication.previousAppBuild = previousAppBuild
+        UserDefaults.standard.setValue(UIApplication.appBuild, forKey: UserDefaultsKeys.appBuild.rawValue)
+        
         //see if last time setup crashed
         let didCrashDuringLastSetup = UserDefaults.standard.bool(forKey: "didCrashDuringSetup")
-        
         //will be set to false if successfully setup
         UserDefaults.standard.setValue(true, forKey: "didCrashDuringSetup")
         
-        shouldPerformCleanInstall = UserDefaults.standard.bool(forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
+        let shouldPerformCleanInstall = UserDefaults.standard.bool(forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
         
         if didCrashDuringLastSetup == true {
             print("crashedDuringLastSetup")
@@ -46,7 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         else {
             //retrieve value from local store, if value doesn't exist then false is returned
-            hasSetup = UserDefaults.standard.bool(forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
+            var hasSetup = UserDefaults.standard.bool(forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
             
             if hasSetup{
                 print("recurringSetup")
