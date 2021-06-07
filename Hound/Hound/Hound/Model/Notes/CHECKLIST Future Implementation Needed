@@ -2,7 +2,7 @@
 CHECKLIST Future Implementation Needed
 
 Dad Review:
--"Yes, I dont want to save changes" wording in auto save confirmation, find screen shot of competitor
+-"Yes, I dont want to save changes" wording in auto save confirmation, show screen shot of competitor
 
 In progress:
 
@@ -11,9 +11,7 @@ LogsViewController .catagorizedLogTypes efficency by reducing calls to it
 
 Wants:
 Thinks logs alignment could be better so can easily scan through
-No filter indication of active filtering
 
 Consider:
-Some pages have save while some don't (logs & reminder vs settings)
 No prompt to add notes when logging something, can only do at a later point in time
 

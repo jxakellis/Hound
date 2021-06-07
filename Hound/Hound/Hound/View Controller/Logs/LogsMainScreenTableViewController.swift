@@ -240,9 +240,15 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         self.tableView.allowsSelection = true
         self.tableView.separatorInset = UIEdgeInsets.zero
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            self.reloadTable()
+        if UIApplication.previousAppBuild <= 1228 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.reloadTable()
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                self.reloadTable()
+            }
         }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -295,13 +301,22 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        var shouldShowFilterIndicator: Bool {
+            if indexPath.section == 0 && self.filterIndexPath != nil {
+                return true
+            }
+            else {
+                return false
+            }
+        }
         //no logs present
         if uniqueLogs.count == 0 {
             if LogsMainScreenTableViewController.isCompactView == true {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderCompact", for: indexPath)
                 
                 let customCell = cell as! LogsMainScreenTableViewCellHeaderCompact
-                customCell.setup(log: nil)
+                customCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
                 
                 return cell
             }
@@ -309,7 +324,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderRegular", for: indexPath)
                 
                 let customCell = cell as! LogsMainScreenTableViewCellHeaderRegular
-                customCell.setup(log: nil)
+                customCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
                 
                 return cell
             }
@@ -321,7 +336,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderCompact", for: indexPath)
                 
                 let customCell = cell as! LogsMainScreenTableViewCellHeaderCompact
-                customCell.setup(log: uniqueLogs[indexPath.section].2[0].2)
+                customCell.setup(log: uniqueLogs[indexPath.section].2[0].2, showFilterIndicator: shouldShowFilterIndicator)
                 
                 return cell
             }
@@ -329,7 +344,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderRegular", for: indexPath)
                 
                 let customCell = cell as! LogsMainScreenTableViewCellHeaderRegular
-                customCell.setup(log: uniqueLogs[indexPath.section].2[0].2)
+                customCell.setup(log: uniqueLogs[indexPath.section].2[0].2, showFilterIndicator: shouldShowFilterIndicator)
                 
                 return cell
             }
@@ -442,21 +457,45 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 
                 tableView.deleteRows(at: [indexPath], with: .fade)
                 
+                var shouldShowFilterIndicator: Bool {
+                    if indexPath.section == 0 && self.filterIndexPath != nil {
+                        return true
+                    }
+                    else {
+                        return false
+                    }
+                }
+                
                 //removed final log and must update header (no logs are left at all)
                 if uniqueLogs.count == 0 {
+                    
                     if LogsMainScreenTableViewController.isCompactView == true {
                         let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsMainScreenTableViewCellHeaderCompact
-                        headerCell.setup(log: nil)
+                        headerCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
                     }
                     else {
                         let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsMainScreenTableViewCellHeaderRegular
-                        headerCell.setup(log: nil)
+                        headerCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
                     }
                     
                 }
                 //removed final log of a given section and must delete all headers and body in that now gone-from-the-data section
                 else if originalNumberOfSections != uniqueLogs.count{
                     tableView.deleteSections(IndexSet(integer: indexPath.section), with: .automatic)
+                    
+                    //removed section that has filter indicator
+                    if indexPath.section == 0 && uniqueLogs.count >= 1{
+                        //for whatever header will be at the top (section 1 currently but will soon be section 0) the filter indicator will be shown if calculated shouldShowFilterIndicator returnd true (! converts to proper isHidden:)
+                        if LogsMainScreenTableViewController.isCompactView == true {
+                            let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LogsMainScreenTableViewCellHeaderCompact
+                            headerCell.willShowFilterIndicator(isHidden: !shouldShowFilterIndicator)
+                        }
+                        else {
+                            let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LogsMainScreenTableViewCellHeaderRegular
+                            headerCell.willShowFilterIndicator(isHidden: !shouldShowFilterIndicator)
+                        }
+                    }
+                    
                 }
             } completion: { (completed) in
             }

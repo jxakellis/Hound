@@ -209,6 +209,9 @@ class SettingsViewController: UIViewController, ToolTipable {
         NotificationConstant.followUpDelay = followUpDelayInterval.countDownDuration
     }
     
+    //MARK: - App Info
+    
+    @IBOutlet private weak var buildNumber: CustomLabel!
     //MARK: - Tool Tips
     
     //MARK: Follow Up Tool Tip
@@ -427,6 +430,8 @@ class SettingsViewController: UIViewController, ToolTipable {
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(willHideToolTip))
         self.view.addGestureRecognizer(tap)
+        
+        self.buildNumber.text = "Version \(UIApplication.appVersion ?? "nil") - Build \(UIApplication.appBuild)"
         
         //setupConstraints()
     }

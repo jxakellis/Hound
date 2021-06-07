@@ -332,7 +332,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         else {
             switch requirement.requirementType {
             case .potty:
-                let pottyKnownTypes: [KnownLogType] = [.pee, .poo, .both, .neither]
+                let pottyKnownTypes: [KnownLogType] = [.pee, .poo, .both, .neither, .accident]
                 for pottyKnownType in pottyKnownTypes {
                     let alertActionLog = UIAlertAction(
                         title:"Log \(pottyKnownType.rawValue)",

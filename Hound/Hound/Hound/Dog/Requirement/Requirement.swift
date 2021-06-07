@@ -142,24 +142,39 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         
         
         if UIApplication.previousAppBuild <= 1228{
-            //print("grandfather in depreciated")
+            print("grandfather in depreciated requirements logs")
             let depreciatedLogs: [KnownLog] = aDecoder.decodeObject(forKey: "logs") as? [KnownLog] ?? []
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                if self.masterDog != nil && depreciatedLogs.count > 0{
-                    //print("requirement logs decode success")
-                    for log in depreciatedLogs{
-                        self.masterDog?.dogTraits.logs.append(log)
+        
+            if depreciatedLogs.count > 0 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    if self.masterDog == nil {
+                        print("master dog nil")
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0){
+                            if self.masterDog != nil {
+                                print("backup requirement logs decode success")
+                                for log in depreciatedLogs{
+                                    self.masterDog?.dogTraits.logs.append(log)
+                                }
+                            }
+                            else {
+                                print("backup requirement logs decode fail")
+                            }
+                        }
+                    }
+                    else {
+                        print("primary requirement logs decode success")
+                        for log in depreciatedLogs{
+                            self.masterDog?.dogTraits.logs.append(log)
+                        }
                     }
                 }
-                else {
-                    //print("requirement logs decode fail")
-                }
             }
+           
         }
         else {
             //print("too new")
-            print(UIApplication.previousAppBuild)
+            //print(UIApplication.previousAppBuild)
         }
         
         

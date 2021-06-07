@@ -10,7 +10,10 @@ import UIKit
 
 class LogsMainScreenTableViewCellHeaderCompact: UITableViewCell {
     
-    @IBOutlet private weak var header: CustomLabel!
+    @IBOutlet weak var header: CustomLabel!
+    
+    @IBOutlet private weak var filterIndicator: UIImageView!
+    
     
     //MARK: - Properties
     
@@ -29,7 +32,52 @@ class LogsMainScreenTableViewCellHeaderCompact: UITableViewCell {
      //https://stackoverflow.com/questions/24100855/set-a-datestyle-in-swift
      */
     
-    func setup(log logSource: KnownLog?){
+    func willShowFilterIndicator(isHidden: Bool){
+        if isHidden == false{
+            for constraint in filterIndicator.constraints{
+                if constraint.firstAttribute == .height{
+                    constraint.constant = 30
+                }
+            }
+            //filterIndicator.image = filterIndicator.image?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 30.0))
+            filterIndicator.isHidden = false
+        }
+        else {
+            for constraint in filterIndicator.constraints{
+                if constraint.firstAttribute == .height{
+                    constraint.constant = 0
+                }
+            }
+            //filterIndicator.image = filterIndicator.image?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 0.0))
+            filterIndicator.isHidden = true
+        }
+    }
+    
+    func setup(log logSource: KnownLog?, showFilterIndicator: Bool){
+        
+        willShowFilterIndicator(isHidden: !showFilterIndicator)
+        
+        if showFilterIndicator{
+            for constraint in filterIndicator.constraints{
+                if constraint.firstAttribute == .height{
+                    constraint.constant = 30
+                }
+            }
+            //filterIndicator.image = filterIndicator.image?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 30.0))
+            filterIndicator.isHidden = false
+        }
+        else {
+            for constraint in filterIndicator.constraints{
+                if constraint.firstAttribute == .height{
+                    constraint.constant = 0
+                }
+            }
+            //filterIndicator.image = filterIndicator.image?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 0.0))
+            filterIndicator.isHidden = true
+        }
+        self.contentView.setNeedsLayout()
+        self.contentView.layoutIfNeeded()
+        
         self.logSource = logSource
                 if logSource == nil {
             header.text = "No Logs Recorded"
@@ -47,6 +95,9 @@ class LogsMainScreenTableViewCellHeaderCompact: UITableViewCell {
             //yesterday
             else if Calendar.current.isDateInYesterday(dateSource){
                 header.text = "Yesterday"
+            }
+            else if Calendar.current.isDateInTomorrow(dateSource){
+                header.text = "Tomorrow"
             }
             //this year
             else if currentYearComponent == dateSourceYearComponent{
