@@ -162,7 +162,6 @@ class TimingManager{
         let dogName: String = parsedDictionary["dogName"]! as! String
         let pastRequirement: Requirement = parsedDictionary["requirement"]! as! Requirement
         
-        //DogManagerEfficencyImprovement let sudoDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
         let dogManager = MainTabBarViewController.staticDogManager
         let requirement = try! dogManager.findDog(dogName: dogName).dogRequirments.findRequirement(forUUID: pastRequirement.uuid)
         
@@ -396,7 +395,6 @@ class TimingManager{
         alertController.addAction(alertActionDismiss)
         
     
-        //DogManagerEfficencyImprovement let sudoDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
         let dogManager = MainTabBarViewController.staticDogManager
         let requirement = try! dogManager.findDog(dogName: dogName).dogRequirments.findRequirement(forUUID: requirement.uuid)
         

@@ -21,6 +21,9 @@ class DogsIntroductionViewController: UIViewController {
     @IBOutlet private weak var remindersBody: CustomLabel!
     @IBOutlet private weak var remindersToggleSwitch: UISwitch!
     
+    /*
+     
+    
     @IBOutlet private weak var notificationsBody: CustomLabel!
     @IBOutlet private weak var notificationsToggleSwitch: UISwitch!
     ///Handles the toggling of the notification switch, if its the first time then it requests notification authorization.
@@ -40,7 +43,7 @@ class DogsIntroductionViewController: UIViewController {
             }
         }
     }
-    
+     */
     @IBOutlet private weak var continueButton: UIButton!
     @IBAction private func willContinue(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)

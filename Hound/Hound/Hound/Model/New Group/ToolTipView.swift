@@ -67,7 +67,6 @@ class ToolTipView: UIView {
     private func createShapeLayer(_ path : CGPath) -> CAShapeLayer{
        let shape = CAShapeLayer()
        shape.path = path
-        //shape.fillColor = UIColor.systemGray5.cgColor
         shape.fillColor = UIColor.systemBlue.cgColor
        shape.shadowColor = UIColor.black.withAlphaComponent(0.60).cgColor
        shape.shadowOffset = CGSize(width: 0, height: 2)
@@ -79,8 +78,7 @@ class ToolTipView: UIView {
     private func createLabel(_ text : String){
        let label = UILabel(frame: CGRect(x: toolTipLabelWidthInset, y: toolTipLabelHeightInset, width: frame.width - (2 * toolTipLabelWidthInset), height: frame.height - toolTipOffset - (2 * toolTipLabelHeightInset)))
        label.text = text
-       // label.textColor = .black
-       label.textColor = .white
+       label.textColor = .systemBackground
        label.textAlignment = .center
        label.numberOfLines = 0
        label.lineBreakMode = .byWordWrapping

@@ -33,7 +33,7 @@ class DropDownDefaultTableViewCell: UITableViewCell {
             label.textColor = .white
         }
         else {
-            contentView.backgroundColor = .white
+            contentView.backgroundColor = .systemBackground
             label.textColor = .label
         }
         

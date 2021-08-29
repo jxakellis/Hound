@@ -90,7 +90,6 @@ extension DogManagerProtocol {
             }
         }
         
-        //DogEfficencyImprovement dogs.append(dogAdded.copy() as! Dog)
         dogs.append(dogAdded)
     }
     
@@ -149,7 +148,6 @@ extension DogManagerProtocol {
         }
         
         else{
-            //DogEfficencyImprovement dogs[newDogIndex!] = newDog.copy() as! Dog
             dogs[newDogIndex!] = newDog
         }
     }

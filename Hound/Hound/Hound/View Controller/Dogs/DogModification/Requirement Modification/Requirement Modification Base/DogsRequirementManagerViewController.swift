@@ -87,7 +87,6 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     @IBOutlet private weak var containerForAll: UIView!
     
     @IBOutlet private weak var onceContainerView: UIView!
-    @IBOutlet private weak var onceWarningLabel: CustomLabel!
     @IBOutlet private weak var countDownContainerView: UIView!
     @IBOutlet private weak var weeklyContainerView: UIView!
     @IBOutlet private weak var monthlyContainerView: UIView!
@@ -106,49 +105,10 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     
     @IBAction private func segmentedControl(_ sender: UISegmentedControl) {
-        
-        if sender.selectedSegmentIndex == 0 {
-            //updating and didn't start as one time, aka one time isnt possible
-            if targetRequirement != nil && targetRequirement!.timingStyle != .oneTime{
-                onceWarningLabel.isHidden = false
-                onceContainerView.isHidden = true
-            }
-            //not updating or is updating but started as one time
-            else {
-                onceWarningLabel.isHidden = true
-                onceContainerView.isHidden = false
-            }
-            countDownContainerView.isHidden = true
-            weeklyContainerView.isHidden = true
-            monthlyContainerView.isHidden = true
-        }
-        else if sender.selectedSegmentIndex == 1 {
-            onceWarningLabel.isHidden = true
-            
-            onceContainerView.isHidden = true
-            countDownContainerView.isHidden = false
-            weeklyContainerView.isHidden = true
-            monthlyContainerView.isHidden = true
-        }
-        else if sender.selectedSegmentIndex == 2{
-            onceWarningLabel.isHidden = true
-            
-            onceContainerView.isHidden = true
-            countDownContainerView.isHidden = true
-            weeklyContainerView.isHidden = false
-            monthlyContainerView.isHidden = true
-        }
-        else if sender.selectedSegmentIndex == 3{
-            onceWarningLabel.isHidden = true
-            
-            onceContainerView.isHidden = true
-            countDownContainerView.isHidden = true
-            weeklyContainerView.isHidden = true
-            monthlyContainerView.isHidden = false
-        }
-        else {
-            print("Fall Through sender.selectedSegmentIndex 7adn")
-        }
+        onceContainerView.isHidden = !(sender.selectedSegmentIndex == 0)
+        countDownContainerView.isHidden = !(sender.selectedSegmentIndex == 1)
+        weeklyContainerView.isHidden = !(sender.selectedSegmentIndex == 2)
+        monthlyContainerView.isHidden = !(sender.selectedSegmentIndex == 3)
     }
     
     //MARK: - Properties
@@ -259,9 +219,9 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
             
             if segmentedControl.selectedSegmentIndex == 0 {
                 //cannot switch an already created requirement to one time, can possible delete its past logs when one time alarm completes and self destructures
-                if targetRequirement != nil && targetRequirement!.timingStyle != .oneTime{
-                    throw OneTimeComponentsError.requirementAlreadyCreated
-                }
+                //if targetRequirement != nil && targetRequirement!.timingStyle != .oneTime{
+                //    throw OneTimeComponentsError.requirementAlreadyCreated
+               // }
                 updatedRequirement.changeTimingStyle(newTimingStyle: .oneTime)
                 try! updatedRequirement.oneTimeComponents.changeTimeOfDayComponent(newOneTimeComponents: dogsRequirementOnceViewController.dateComponents!)
             }
@@ -384,7 +344,7 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
     
     private func setupSegmentedControl(){
         self.segmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.white], for: .normal)
-        self.segmentedControl.backgroundColor = ColorConstant.gray.rawValue
+        self.segmentedControl.backgroundColor = .systemGray4
         
         //creating new
         if targetRequirement == nil {
@@ -478,7 +438,18 @@ class DogsRequirementManagerViewController: UIViewController, UITextFieldDelegat
         if segue.identifier == "dogsRequirementOnceViewController"{
             dogsRequirementOnceViewController = segue.destination as! DogsRequirementOnceViewController
             dogsRequirementOnceViewController.delegate = self
-            dogsRequirementOnceViewController.passedDate = targetRequirement?.oneTimeComponents.executionDate
+            var calculatedPassedDate: Date? {
+                if targetRequirement == nil || targetRequirement!.oneTimeComponents.executionDate == nil{
+                    return nil
+                }
+                else if Date().distance(to: targetRequirement!.oneTimeComponents.executionDate!) < 0{
+                    return nil
+                }
+                else {
+                    return targetRequirement!.oneTimeComponents.executionDate!
+                }
+            }
+            dogsRequirementOnceViewController.passedDate = calculatedPassedDate
         }
         if segue.identifier == "dogsRequirementCountDownViewController"{
             dogsRequirementCountDownViewController = segue.destination as! DogsRequirementCountDownViewController

@@ -16,33 +16,40 @@ class SettingsViewController: UIViewController, ToolTipable {
     
     //MARK: - Logs
     
+    //MARK: Dark Mode
+    
+    @IBOutlet private weak var darkModeSegmentedControl: UISegmentedControl!
+    
+    @IBAction private func segmentedControl(_ sender: Any) {
+        switch darkModeSegmentedControl.selectedSegmentIndex {
+        case 0:
+            for window in UIApplication.shared.windows{
+                window.overrideUserInterfaceStyle = .light
+                AppearanceConstant.darkModeStyle = .light
+            }
+        case 1:
+            for window in UIApplication.shared.windows{
+                window.overrideUserInterfaceStyle = .dark
+                AppearanceConstant.darkModeStyle = .dark
+            }
+        default:
+            for window in UIApplication.shared.windows{
+                window.overrideUserInterfaceStyle = .unspecified
+                AppearanceConstant.darkModeStyle = .unspecified
+            }
+        }
+    }
+    
+    //MARK: Logs Overview Mode
+    
     @IBOutlet private weak var logsViewModeSegmentedControl: UISegmentedControl!
     
     @IBAction private func didUpdateLogsViewModeSegmentedControl(_ sender: Any) {
         if logsViewModeSegmentedControl.selectedSegmentIndex == 0{
-            LogsMainScreenTableViewController.isCompactView = true
+            AppearanceConstant.isCompactView = true
         }
         else {
-            LogsMainScreenTableViewController.isCompactView = false
-        }
-    }
-    
-    private func synchronizeLogsViewMode(){
-        var hasIcon: Bool {
-            let dogManager = MainTabBarViewController.staticDogManager
-            for dog in dogManager.dogs{
-                if dog.dogTraits.icon != DogConstant.defaultIcon{
-                    return true
-                }
-            }
-            return false
-        }
-        
-        if hasIcon == true {
-            logsViewModeSegmentedControl.isEnabled = true
-        }
-        else {
-            logsViewModeSegmentedControl.isEnabled = false
+            AppearanceConstant.isCompactView = false
         }
     }
     
@@ -414,18 +421,31 @@ class SettingsViewController: UIViewController, ToolTipable {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.logsViewModeSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 15), .foregroundColor: UIColor.white], for: .normal)
-        self.logsViewModeSegmentedControl.backgroundColor = ColorConstant.gray.rawValue
+        //DARK MODE
+        darkModeSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.white], for: .normal)
+        darkModeSegmentedControl.backgroundColor = .systemGray4
         
-        if LogsMainScreenTableViewController.isCompactView == true {
+        //LOGS OVERVIEW MODE
+        self.logsViewModeSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 15), .foregroundColor: UIColor.white], for: .normal)
+        self.logsViewModeSegmentedControl.backgroundColor = .systemGray4
+        
+        if AppearanceConstant.isCompactView == true {
             logsViewModeSegmentedControl.selectedSegmentIndex = 0
         }
         else {
             logsViewModeSegmentedControl.selectedSegmentIndex = 1
         }
         
+        
         followUpDelayInterval.countDownDuration = NotificationConstant.followUpDelay
         snoozeInterval.countDownDuration = TimerConstant.defaultSnooze
+        
+        //fixes issue with first time datepicker updates not triggering function
+        DispatchQueue.main.asyncAfter(deadline: .now()){
+            self.followUpDelayInterval.countDownDuration = NotificationConstant.followUpDelay
+            self.snoozeInterval.countDownDuration = TimerConstant.defaultSnooze
+        }
+        
         pauseToggleSwitch.isOn = TimingManager.isPaused
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(willHideToolTip))
@@ -440,7 +460,24 @@ class SettingsViewController: UIViewController, ToolTipable {
         super.viewWillAppear(animated)
         Utils.presenter = self
         
-        //synchronizeLogsViewMode()
+        //DARK MODE
+        switch AppearanceConstant.darkModeStyle.rawValue {
+        //system/unspecified
+        case 0:
+            darkModeSegmentedControl.selectedSegmentIndex = 2
+        //light
+        case 1:
+            darkModeSegmentedControl.selectedSegmentIndex = 0
+        //dark
+        case 2:
+            darkModeSegmentedControl.selectedSegmentIndex = 1
+        default:
+            darkModeSegmentedControl.selectedSegmentIndex = 2
+        }
+     
+        
+        
+        //ELSE
         notificationToggleSwitch.isOn = NotificationConstant.isNotificationEnabled
         synchronizeNotificationsComponents(animated: false)
         synchronizeIsPaused()

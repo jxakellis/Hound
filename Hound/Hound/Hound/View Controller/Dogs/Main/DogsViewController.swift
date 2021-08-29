@@ -63,7 +63,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         view.setImage(UIImage.init(systemName: "checkmark.circle.fill"), for: .normal)
         view.tintColor = UIColor.systemGreen
         let viewBackground: ScaledButton! = didLogEventConfirmationBackground
-        viewBackground.setImage(UIImage.init(systemName: "checkmark.circle"), for: .normal)
+        viewBackground.setImage(UIImage.init(systemName: "circle.fill"), for: .normal)
         
         
         
@@ -132,9 +132,10 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     func didUnlogReminder() {
         let view: ScaledButton! = didLogEventConfirmation
         view.setImage(UIImage.init(systemName: "arrow.uturn.backward.circle.fill"), for: .normal)
-        view.tintColor = UIColor.lightGray
+        //view.tintColor = UIColor.lightGray
+        view.tintColor = UIColor.systemGray2
         let viewBackground: ScaledButton! = didLogEventConfirmationBackground
-        viewBackground.setImage(UIImage.init(systemName: "arrow.uturn.backward.circle"), for: .normal)
+        viewBackground.setImage(UIImage.init(systemName: "circle.fill"), for: .normal)
         
         view.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
         view.alpha = 0.0
@@ -238,12 +239,10 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     private var dogManager = DogManager()
     
     func getDogManager() -> DogManager {
-        //DogManagerEfficencyImprovement return dogManager.copy() as! DogManager
         return dogManager
     }
     
     func setDogManager(sender: Sender, newDogManager: DogManager) {
-        //DogManagerEfficencyImprovement dogManager = newDogManager.copy() as! DogManager
         dogManager = newDogManager
         
         

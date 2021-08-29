@@ -76,13 +76,13 @@ class RequirementManager: NSObject, NSCoding, NSCopying, RequirementManagerProto
     
     //MARK: - NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
-        let copy = RequirementManager(masterDog: nil, initRequirements: self.requirements)
+        let copy = RequirementManager(masterDog: masterDog, initRequirements: self.requirements)
         return copy
     }
     
     init(masterDog: Dog?, initRequirements: [Requirement] = []){
+        self.storedMasterDog = masterDog
         super.init()
-        self.masterDog = masterDog
         try! addRequirement(newRequirements: initRequirements)
     }
     
@@ -95,7 +95,7 @@ class RequirementManager: NSObject, NSCoding, NSCopying, RequirementManagerProto
         set (newMasterDog){
             self.storedMasterDog = newMasterDog
             for req in requirements{
-                req.masterDog = self.masterDog
+                req.masterDog = newMasterDog
             }
         }
     }
@@ -105,6 +105,7 @@ class RequirementManager: NSObject, NSCoding, NSCopying, RequirementManagerProto
     var requirements: [Requirement] { return storedRequirements }
     
     func addRequirement(newRequirement: Requirement) throws {
+        
         var requirementAlreadyPresent = false
         
         requirements.forEach { (req) in
@@ -117,7 +118,6 @@ class RequirementManager: NSObject, NSCoding, NSCopying, RequirementManagerProto
             throw RequirementManagerError.requirementAlreadyPresent
         }
         else {
-            //RequirementEfficencyImprovements requirements.append(newRequirement.copy() as! Requirement)
             newRequirement.masterDog = self.masterDog
             storedRequirements.append(newRequirement)
         }
@@ -187,7 +187,6 @@ class RequirementManager: NSObject, NSCoding, NSCopying, RequirementManagerProto
         }
         
         else {
-            //RequirementEfficencyImprovements requirements[newRequirementIndex!] = newRequirement.copy() as! Requirement
             newRequirement.masterDog = self.masterDog
             storedRequirements[newRequirementIndex!] = newRequirement
         }

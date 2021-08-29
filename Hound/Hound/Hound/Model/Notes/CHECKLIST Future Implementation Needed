@@ -15,3 +15,5 @@ Thinks logs alignment could be better so can easily scan through
 Consider:
 No prompt to add notes when logging something, can only do at a later point in time
 
+CFBundleVersion $(CURRENT_PROJECT_VERSION)
+

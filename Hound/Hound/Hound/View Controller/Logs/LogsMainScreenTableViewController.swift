@@ -21,12 +21,10 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     private var dogManager: DogManager = DogManager()
     
     func getDogManager() -> DogManager {
-        //DogManagerEfficencyImprovement return dogManager.copy() as! DogManager
         return dogManager
     }
     
     func setDogManager(sender: Sender, newDogManager: DogManager) {
-        //DogManagerEfficencyImprovement dogManager = newDogManager.copy() as! DogManager
         dogManager = newDogManager
         
         if !(sender.localized is LogsMainScreenTableViewController) {
@@ -227,9 +225,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     private var filterType: KnownLogType? = nil
     
     ///used for determining if overview mode was changed and if the table view needs reloaded
-    private var storedIsCompactView: Bool = LogsMainScreenTableViewController.isCompactView
-    
-    static var isCompactView: Bool = true
+    private var storedIsCompactView: Bool = AppearanceConstant.isCompactView
     
     var delegate: LogsMainScreenTableViewControllerDelegate! = nil
     
@@ -253,8 +249,8 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if storedIsCompactView != LogsMainScreenTableViewController.isCompactView{
-            storedIsCompactView = LogsMainScreenTableViewController.isCompactView
+        if storedIsCompactView != AppearanceConstant.isCompactView{
+            storedIsCompactView = AppearanceConstant.isCompactView
             self.reloadTable()
         }
         
@@ -312,7 +308,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         }
         //no logs present
         if uniqueLogs.count == 0 {
-            if LogsMainScreenTableViewController.isCompactView == true {
+            if AppearanceConstant.isCompactView == true {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderCompact", for: indexPath)
                 
                 let customCell = cell as! LogsMainScreenTableViewCellHeaderCompact
@@ -332,7 +328,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         }
         //logs present but header
         else if indexPath.row == 0{
-            if LogsMainScreenTableViewController.isCompactView == true {
+            if AppearanceConstant.isCompactView == true {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderCompact", for: indexPath)
                 
                 let customCell = cell as! LogsMainScreenTableViewCellHeaderCompact
@@ -355,7 +351,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             let dog = try! getDogManager().findDog(dogName: logDisplay.0)
             let icon = dog.dogTraits.icon
             
-            if LogsMainScreenTableViewController.isCompactView == true {
+            if AppearanceConstant.isCompactView == true {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyCompact", for: indexPath)
                 
                 let customCell = cell as! LogsMainScreenTableViewCellBodyCompact
@@ -366,7 +362,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 return cell
             }
             //has icon
-            else if icon != DogConstant.defaultIcon{
+            else if !(icon.isEqualToImage(image: DogConstant.defaultIcon)){
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyRegularWithIcon", for: indexPath)
                 
                 let customCell = cell as! LogsMainScreenTableViewCellBodyRegularWithIcon
@@ -469,7 +465,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 //removed final log and must update header (no logs are left at all)
                 if uniqueLogs.count == 0 {
                     
-                    if LogsMainScreenTableViewController.isCompactView == true {
+                    if AppearanceConstant.isCompactView == true {
                         let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsMainScreenTableViewCellHeaderCompact
                         headerCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
                     }
@@ -486,7 +482,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     //removed section that has filter indicator
                     if indexPath.section == 0 && uniqueLogs.count >= 1{
                         //for whatever header will be at the top (section 1 currently but will soon be section 0) the filter indicator will be shown if calculated shouldShowFilterIndicator returnd true (! converts to proper isHidden:)
-                        if LogsMainScreenTableViewController.isCompactView == true {
+                        if AppearanceConstant.isCompactView == true {
                             let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LogsMainScreenTableViewCellHeaderCompact
                             headerCell.willShowFilterIndicator(isHidden: !shouldShowFilterIndicator)
                         }

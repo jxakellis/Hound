@@ -21,7 +21,7 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
     
     //MARK: - Properties
     
-    var dog: Dog = Dog()
+    var dog: Dog! = nil
     
     //MARK: - Main
     
@@ -42,9 +42,13 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
         dog = dogPassed
         
         dogIcon.image = dogPassed.dogTraits.icon
-        dogIcon.layer.masksToBounds = true
-        if dogIcon.image != DogConstant.defaultIcon{
+        
+        if dogIcon.image != nil && !(dogIcon.image!.isEqualToImage(image: DogConstant.defaultIcon)){
+            dogIcon.layer.masksToBounds = true
             dogIcon.layer.cornerRadius = dogIcon.frame.width/2
+        }
+        else {
+            dogIcon.layer.masksToBounds = false
         }
         
         self.dogName.text = dogPassed.dogTraits.dogName

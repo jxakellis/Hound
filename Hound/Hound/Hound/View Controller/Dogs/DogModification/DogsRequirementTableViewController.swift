@@ -58,12 +58,10 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     private var requirementManager = RequirementManager(masterDog: nil)
     
     func getRequirementManager() -> RequirementManager {
-        //RequirementManagerEfficencyImprovements return requirementManager.copy() as! RequirementManager
         return requirementManager
     }
     
     func setRequirementManager(sender: Sender, newRequirementManager: RequirementManager) {
-        //RequirementManagerEfficencyImprovements requirementManager = newRequirementManager.copy() as! RequirementManager
         requirementManager = newRequirementManager
         
         if !(sender.localized is DogsRequirementNavigationViewController){

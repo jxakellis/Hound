@@ -67,7 +67,7 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = Dog()
         copy.dogRequirments = self.dogRequirments.copy() as? RequirementManager
-        copy.dogRequirments.masterDog = self
+        copy.dogRequirments.masterDog = copy
         copy.dogTraits = self.dogTraits.copy() as! DogTraitManager
         copy.isEnabled = self.isEnabled
         return copy
@@ -76,7 +76,6 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     //MARK: - Properties
     
     override init() {
-        self.dogRequirments = RequirementManager(masterDog: nil)
         super.init()
         self.dogRequirments = RequirementManager(masterDog: self)
     }
@@ -120,42 +119,6 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
                 catagorizedLogTypes.append((dogLog.logType, [(nil, dogLog)]))
             }
         }
-        
-        //go through all requirements
-        /*
-         for requirement in dogRequirments.requirements{
-             //go through all requirement logs
-             for requirementLog in requirement.logs{
-                 //already contains that requirementLog type, needs to append
-                 if catagorizedLogTypes.contains(where: { (arg1) -> Bool in
-                     let knownLogType = arg1.0
-                     if requirementLog.logType == knownLogType{
-                         return true
-                     }
-                     else {
-                         return false
-                     }
-                 }) == true {
-                     //since knownLogType is already present, append on requirementLog that is of that same type to the arry of logs with the given knownLogType
-                     let targetIndex: Int! = catagorizedLogTypes.firstIndex(where: { (arg1) -> Bool in
-                         let knownLogType = arg1.0
-                         if knownLogType == requirementLog.logType{
-                             return true
-                         }
-                         else {
-                             return false
-                         }
-                     })
-                     
-                     catagorizedLogTypes[targetIndex].1.append((requirement, requirementLog))
-                 }
-                 //does not contain that dog Log's Type
-                 else {
-                     catagorizedLogTypes.append((requirementLog.logType, [(requirement, requirementLog)]))
-                 }
-             }
-         }
-         */
         
         
         //sorts by the order defined by the enum, so whatever case is first in the code of the enum that is the order of the catagorizedLogTypes

@@ -96,6 +96,11 @@ enum NotificationConstant {
     static var followUpDelay: TimeInterval = 5.0 * 60.0
 }
 
+enum AppearanceConstant {
+    static var isCompactView: Bool = true
+    static var darkModeStyle: UIUserInterfaceStyle = .unspecified
+}
+
 enum UserDefaultsKeys: String{
     case didFirstTimeSetup = "didFirstTimeSetup"
     case dogManager = "dogManager"
@@ -106,15 +111,11 @@ enum UserDefaultsKeys: String{
     //DogsViewController
     case hasBeenLoadedBefore = "hasBeenLoadedBefore"
     
-    //LogsMainScreenTableViewController
-    case isCompactView = "isCompactView"
-    
     //Timing
     case isPaused = "isPaused"
     case lastPause = "lastPause"
     case lastUnpause = "lastUnpause"
     case defaultSnooze = "defaultSnooze"
-    
     
     //Notifications
     case isNotificationAuthorized = "isNotificationAuthorized"
@@ -123,6 +124,10 @@ enum UserDefaultsKeys: String{
     case shouldShowTerminationAlert = "shouldShowTerminationAlert"
     case shouldFollowUp = "shouldFollowUp"
     case followUpDelay = "followUpDelay"
+    
+    //Appearance
+    case isCompactView = "isCompactView"
+    case darkModeStyle = "darkModeStyle"
 }
 
 enum AnimationConstant: Double{
@@ -134,31 +139,4 @@ enum AnimationConstant: Double{
     case toolTipHide = 0.1000000003
     
     case switchButton = 0.1200000001
-}
-
- 
- 
-enum ColorConstant {
-    case gray
-}
-
-extension ColorConstant: RawRepresentable {
-    typealias RawValue = UIColor
-    
-    init?(rawValue: RawValue) {
-        switch rawValue {
-        case UIColor.systemGray.withAlphaComponent(0.30):
-            self = .gray
-        default:
-            print("ColorConstant nil while init")
-            return nil
-        }
-    }
-    
-    var rawValue: RawValue {
-        switch self {
-        case .gray:
-            return UIColor.systemGray.withAlphaComponent(0.30)
-        }
-    }
 }

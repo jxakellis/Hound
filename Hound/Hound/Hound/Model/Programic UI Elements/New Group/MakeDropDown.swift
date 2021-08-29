@@ -54,7 +54,7 @@ class MakeDropDown: UIView{
         self.viewPositionRef = viewPositionReference
         dropDownTableView?.showsVerticalScrollIndicator = false
         dropDownTableView?.showsHorizontalScrollIndicator = false
-        dropDownTableView?.backgroundColor = .white
+        dropDownTableView?.backgroundColor = .systemBackground
         dropDownTableView?.separatorStyle = .none
         dropDownTableView?.delegate = self
         dropDownTableView?.dataSource = self
@@ -88,6 +88,7 @@ class MakeDropDown: UIView{
     ///Reloads table view data
     private func reloadDropDownData(){
         self.dropDownTableView?.reloadData()
+        reloadBorderShadowColor()
     }
     
     ///Sets Row Height of your Custom XIB
@@ -142,13 +143,21 @@ extension MakeDropDown: UITableViewDelegate, UITableViewDataSource{
 }
 //MARK: - UIView Extension
 extension UIView{
-    func addBorders(borderWidth: CGFloat = 0.2, borderColor: CGColor = UIColor.lightGray.cgColor){
+    
+    func reloadBorderShadowColor(){
+        self.addBorders()
+        self.addShadowToView()
+    }
+    
+    //func addBorders(borderWidth: CGFloat = 0.2, borderColor: CGColor = UIColor.lightGray.cgColor){
+    func addBorders(borderWidth: CGFloat = 0.2, borderColor: CGColor = UIColor.systemGray2.cgColor){
         self.layer.borderWidth = borderWidth
         self.layer.borderColor = borderColor
     }
     
-    func addShadowToView(shadowRadius: CGFloat = 2, alphaComponent: CGFloat = 0.6) {
-        self.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: alphaComponent).cgColor
+    func addShadowToView(shadowRadius: CGFloat = 2, alphaComponent: CGFloat = 0.4) {
+        //self.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: alphaComponent).cgColor
+        self.layer.shadowColor = UIColor.label.withAlphaComponent(alphaComponent).cgColor
         self.layer.shadowOffset = CGSize(width: -1, height: 2)
         self.layer.shadowRadius = shadowRadius
         self.layer.shadowOpacity = 1

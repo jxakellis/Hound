@@ -79,7 +79,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     @IBAction private func willAddDog(_ sender: Any) {
         
         let updatedDog = targetDog.copy() as! Dog
-        
+        //updatedDog.dogRequirments.masterDog = updatedDog
         do{
             try updatedDog.dogTraits.changeDogName(newDogName: dogName.text)
             if dogIcon.image != DogConstant.chooseIcon{
@@ -102,12 +102,10 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         do{
             if isUpdating == true{
                 try delegate.didUpdateDog(sender: Sender(origin: self, localized: self), formerName: targetDog.dogTraits.dogName, updatedDog: updatedDog)
-                //self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
                 self.navigationController?.popViewController(animated: true)
             }
             else{
                 try delegate.didAddDog(sender: Sender(origin: self, localized: self), newDog: updatedDog)
-                //self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
                 self.navigationController?.popViewController(animated: true)
             }
         }
@@ -232,7 +230,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
             targetDog!.addDefaultRequirements()
         }
         
-        if targetDog.dogTraits.icon == DogConstant.defaultIcon {
+        if targetDog.dogTraits.icon.isEqualToImage(image: DogConstant.defaultIcon) {
             dogIcon.image = DogConstant.chooseIcon
         }
         else {

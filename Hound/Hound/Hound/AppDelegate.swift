@@ -84,7 +84,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationWillTerminate(_ application: UIApplication) {
         print("willTerminate")
-        //Persistence.willEnterBackground(isTerminating: true)
+        Persistence.willEnterBackground(isTerminating: true)
         
     }
 

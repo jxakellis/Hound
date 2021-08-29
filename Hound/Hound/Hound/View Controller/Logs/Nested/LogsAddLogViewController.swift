@@ -349,7 +349,8 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         
         logNote.delegate = self
         logNote.layer.borderWidth = 0.2
-        logNote.layer.borderColor = UIColor.lightGray.cgColor
+        //logNote.layer.borderColor = UIColor.lightGray.cgColor
+        logNote.layer.borderColor = UIColor.systemGray2.cgColor
         logNote.layer.cornerRadius = 5.0
     }
     

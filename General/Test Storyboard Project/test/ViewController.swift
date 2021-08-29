@@ -9,21 +9,26 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
     
-    @IBOutlet weak var but: UIButton!
-    
-    @IBOutlet weak var label: UILabel!
-    
+    @IBAction func didUpdateSegmentedControl(_ sender: Any) {
+        switch segmentedControl.selectedSegmentIndex {
+        case 0:
+            for window in UIApplication.shared.windows{
+                window.overrideUserInterfaceStyle = .light
+            }
+        case 1:
+            for window in UIApplication.shared.windows{
+                window.overrideUserInterfaceStyle = .dark
+            }
+        default:
+            for window in UIApplication.shared.windows{
+                window.overrideUserInterfaceStyle = .unspecified
+            }
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
-            but.layer.masksToBounds = true
-            but.layer.cornerRadius = but.frame.width/2
-        
-        
-        label.text = "Choose\nImage"
-        label.layer.masksToBounds = true
-      //  label.layer.cornerRadius = label.frame.width/2
-        //label.layer.masksToBounds = true
     }
     
 

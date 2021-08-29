@@ -13,14 +13,16 @@ class BorderedLabel: CustomLabel {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.layer.borderWidth = 0.2
-        self.layer.borderColor = UIColor.lightGray.cgColor
+        //self.layer.borderColor = UIColor.lightGray.cgColor
+        self.layer.borderColor = UIColor.systemGray2.cgColor
         self.layer.cornerRadius = 5.0
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         self.layer.borderWidth = 0.2
-        self.layer.borderColor = UIColor.lightGray.cgColor
+        //self.layer.borderColor = UIColor.lightGray.cgColor
+        self.layer.borderColor = UIColor.systemGray2.cgColor
         self.layer.cornerRadius = 5.0
     }
     

@@ -371,7 +371,6 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
     }
     
     func timerReset(shouldLogExecution: Bool, knownLogType: KnownLogType? = nil, customTypeName: String? = nil){
-        
         //changeActiveStatus already calls timerReset if transitioning from inactive to active so circumvent this by directly accessing storedIsActive
         if isActive == false {
             storedIsActive = true

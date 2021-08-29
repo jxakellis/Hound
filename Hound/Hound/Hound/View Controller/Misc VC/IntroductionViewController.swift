@@ -61,7 +61,28 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
     
     @IBOutlet private weak var dogName: UITextField!
     
-    @IBOutlet private weak var helpDescription: CustomLabel!
+    
+    @IBOutlet private weak var darkModeSegmentedControl: UISegmentedControl!
+    
+    @IBAction private func segmentedControl(_ sender: Any) {
+        switch darkModeSegmentedControl.selectedSegmentIndex {
+        case 0:
+            for window in UIApplication.shared.windows{
+                window.overrideUserInterfaceStyle = .light
+                AppearanceConstant.darkModeStyle = .light
+            }
+        case 1:
+            for window in UIApplication.shared.windows{
+                window.overrideUserInterfaceStyle = .dark
+                AppearanceConstant.darkModeStyle = .dark
+            }
+        default:
+            for window in UIApplication.shared.windows{
+                window.overrideUserInterfaceStyle = .unspecified
+                AppearanceConstant.darkModeStyle = .unspecified
+            }
+        }
+    }
     
     @IBOutlet private weak var continueButton: UIButton!
     
@@ -94,6 +115,15 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
         dogIcon.addGestureRecognizer(iconTap)
         
         dogName.delegate = self
+        
+        for window in UIApplication.shared.windows{
+            window.overrideUserInterfaceStyle = .unspecified
+        }
+        AppearanceConstant.darkModeStyle = .unspecified
+        
+        darkModeSegmentedControl.selectedSegmentIndex = 2
+        darkModeSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.white], for: .normal)
+        darkModeSegmentedControl.backgroundColor = .systemGray4
         
         self.setupToHideKeyboardOnTapOnView()
 

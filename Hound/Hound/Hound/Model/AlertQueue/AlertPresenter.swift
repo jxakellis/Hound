@@ -96,7 +96,6 @@ class AlertPresenter: NSObject, NSCoding{
     
     func refresh(dogManager: DogManager){
         halted = true
-        //DogManagerEfficencyImprovement let sudoDogManager = dogManager.copy() as! DogManager
         if currentPresentation == nil {
             for d in dogManager.dogs{
                 for r in d.dogRequirments.requirements{

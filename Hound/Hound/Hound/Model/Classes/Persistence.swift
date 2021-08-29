@@ -20,7 +20,6 @@ class Persistence{
             
             TimerConstant.defaultSnooze = UserDefaults.standard.value(forKey: UserDefaultsKeys.defaultSnooze.rawValue) as! TimeInterval
             
-            
             NotificationConstant.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool
             NotificationConstant.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool
             NotificationConstant.shouldLoudNotification = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldLoudNotification.rawValue) as! Bool
@@ -30,7 +29,9 @@ class Persistence{
             
             
             DogsNavigationViewController.hasBeenLoadedBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue) as! Bool
-            LogsMainScreenTableViewController.isCompactView = UserDefaults.standard.value(forKey: UserDefaultsKeys.isCompactView.rawValue) as! Bool
+            AppearanceConstant.isCompactView = UserDefaults.standard.value(forKey: UserDefaultsKeys.isCompactView.rawValue) as! Bool
+            
+            AppearanceConstant.darkModeStyle = UIUserInterfaceStyle(rawValue: UserDefaults.standard.value(forKey: UserDefaultsKeys.darkModeStyle.rawValue) as? Int ?? UIUserInterfaceStyle.unspecified.rawValue)!
             
             let decoded = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as! Data
             let decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
@@ -80,7 +81,8 @@ class Persistence{
             UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
             
             UserDefaults.standard.setValue(DogsNavigationViewController.hasBeenLoadedBefore, forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue)
-            UserDefaults.standard.setValue(LogsMainScreenTableViewController.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
+            UserDefaults.standard.setValue(AppearanceConstant.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
+            UserDefaults.standard.setValue(AppearanceConstant.darkModeStyle.rawValue, forKey: UserDefaultsKeys.darkModeStyle.rawValue)
             
             MainTabBarViewController.firstTimeSetup = true
             
@@ -115,10 +117,8 @@ class Persistence{
                 return
             }
             
-            print("silent load")
             AudioPlayer.loadSilenceAudioPlayer()
             AudioPlayer.sharedPlayer.play()
-            print("silent play")
         }
         
         //saves to user defaults
@@ -149,7 +149,8 @@ class Persistence{
             UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
             
             UserDefaults.standard.setValue(DogsNavigationViewController.hasBeenLoadedBefore, forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue)
-            UserDefaults.standard.setValue(LogsMainScreenTableViewController.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
+            UserDefaults.standard.setValue(AppearanceConstant.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
+            UserDefaults.standard.setValue(AppearanceConstant.darkModeStyle.rawValue, forKey: UserDefaultsKeys.darkModeStyle.rawValue)
         }
         
         //ios notifications
@@ -157,6 +158,12 @@ class Persistence{
             guard NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled && !TimingManager.isPaused else {
                 return
             }
+            
+            //remove duplicate notifications if app is backgrounded then terminated
+            
+               UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+                UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+            
                 for dogKey in TimingManager.timerDictionary.keys{
                     
                     for requirementUUID in TimingManager.timerDictionary[dogKey]!.keys{

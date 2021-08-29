@@ -64,7 +64,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     
     //Get method, returns a copy of dogManager to remove possible editting of dog manager through class reference type
     func getDogManager() -> DogManager {
-        //DogManagerEfficencyImprovement return masterDogManager.copy() as! DogManager
         return masterDogManager
     }
     
@@ -76,8 +75,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         //TimingManager
         //DogsViewController
         
-        //DogManagerEfficencyImprovement masterDogManager = newDogManager.copy() as! DogManager
-        //DogManagerEfficencyImprovement MainTabBarViewController.staticDogManager = newDogManager.copy() as! DogManager
         
         masterDogManager = newDogManager
         MainTabBarViewController.staticDogManager = newDogManager
@@ -91,23 +88,19 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         }
         
         if sender.localized is TimingManager.Type || sender.localized is TimingManager{
-            //homeViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
         
         else if sender.localized is DogsViewController {
-            //homeViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
         
         else if sender.localized is LogsViewController {
-            //homeViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
         
         else if sender.localized is IntroductionViewController || sender.localized is DogsIntroductionViewController{
-            //homeViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
@@ -148,6 +141,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        print(UIApplication.appBuild)
+        
         let decoded = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as! Data
         var decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
         decodedDogManager.synchronizeIsSkipping()
@@ -156,12 +151,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         setDogManager(sender: Sender(origin: self, localized: self), newDogManager: decodedDogManager)
         
         self.selectedIndex = MainTabBarViewController.selectedEntryIndex
-        
-        /*
-         homeNavigationViewController = self.viewControllers![0] as? HomeNavigationViewController
-         homeViewController = homeNavigationViewController.viewControllers[0] as? HomeViewController
-         homeViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
-         */
         
         logsNavigationViewController = self.viewControllers![0] as? LogsNavigationViewController
         logsNavigationViewController.passThroughDelegate = self
@@ -189,6 +178,10 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         //Called before the view is added to the windows’ view hierarchy
         super.viewWillAppear(animated)
         Utils.presenter = self
+        
+        for window in UIApplication.shared.windows{
+            window.overrideUserInterfaceStyle = AppearanceConstant.darkModeStyle
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -210,8 +203,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     override open var supportedInterfaceOrientations: UIInterfaceOrientationMask{
         return .portrait
     }
-    
-    
     
      // MARK: - Navigation
      

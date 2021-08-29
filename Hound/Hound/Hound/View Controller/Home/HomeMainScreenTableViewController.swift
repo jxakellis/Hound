@@ -15,12 +15,10 @@ class HomeMainScreenTableViewController: UITableViewController, DogManagerContro
     private var dogManager: DogManager = DogManager()
     
     func getDogManager() -> DogManager {
-        //DogManagerEfficencyImprovement return dogManager.copy() as! DogManager
         return dogManager
     }
     
     func setDogManager(sender: Sender, newDogManager: DogManager) {
-        //DogManagerEfficencyImprovement self.dogManager = newDogManager.copy() as! DogManager
         dogManager = newDogManager
         if sender.localized is HomeViewController {
             self.updateDogManagerDependents()

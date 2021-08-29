@@ -32,6 +32,9 @@ class DogsRequirementWeeklyViewController: UIViewController, UIGestureRecognizer
     @IBOutlet private weak var friday: ScaledButton!
     @IBOutlet private weak var saturday: ScaledButton!
     
+    @IBOutlet private var dayOfWeekBackgrounds: [ScaledButton]!
+    
+    
     @IBAction private func toggleWeekdayButton(_ sender: Any) {
         delegate.willDismissKeyboard()
         
@@ -39,7 +42,7 @@ class DogsRequirementWeeklyViewController: UIViewController, UIGestureRecognizer
         var targetColor: UIColor!
         
         if senderButton.tintColor == UIColor.systemBlue{
-            targetColor = ColorConstant.gray.rawValue
+            targetColor = UIColor.systemGray4
         }
         else {
             targetColor = UIColor.systemBlue
@@ -98,13 +101,23 @@ class DogsRequirementWeeklyViewController: UIViewController, UIGestureRecognizer
         DispatchQueue.main.asyncAfter(deadline: .now()){
             self.timeOfDay.date = self.timeOfDay.date
         }
+        
+        dayOfWeekBackgrounds.forEach { background in
+            self.view.insertSubview(background, belowSubview: saturday)
+            self.view.insertSubview(background, belowSubview: monday)
+            self.view.insertSubview(background, belowSubview: tuesday)
+            self.view.insertSubview(background, belowSubview: wednesday)
+            self.view.insertSubview(background, belowSubview: thursday)
+            self.view.insertSubview(background, belowSubview: friday)
+            self.view.insertSubview(background, belowSubview: sunday)
+        }
     }
     
     private func synchronizeWeekdays(){
         let dayOfWeekButtons = [self.sunday, self.monday, self.tuesday, self.wednesday, self.thursday, self.friday, self.saturday]
         
         for dayOfWeekButton in dayOfWeekButtons {
-            dayOfWeekButton!.tintColor = ColorConstant.gray.rawValue
+            dayOfWeekButton!.tintColor = UIColor.systemGray4
         }
         
         if passedWeekDays != nil {
