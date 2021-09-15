@@ -94,8 +94,8 @@ class RequirementManager: NSObject, NSCoding, NSCopying, RequirementManagerProto
         }
         set (newMasterDog){
             self.storedMasterDog = newMasterDog
-            for req in requirements{
-                req.masterDog = newMasterDog
+            for req in storedRequirements{
+                req.masterDog = storedMasterDog
             }
         }
     }
@@ -118,8 +118,11 @@ class RequirementManager: NSObject, NSCoding, NSCopying, RequirementManagerProto
             throw RequirementManagerError.requirementAlreadyPresent
         }
         else {
-            newRequirement.masterDog = self.masterDog
-            storedRequirements.append(newRequirement)
+            //copying needed for master dog to work, is just newReq.masterDog = self.masterDog it for some reason does not work
+            let newReqTest = newRequirement.copy() as! Requirement
+           newReqTest.masterDog = self.masterDog
+           storedRequirements.append(newReqTest)
+            
         }
         sortRequirements()
     }

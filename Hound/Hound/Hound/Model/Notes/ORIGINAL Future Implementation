@@ -340,5 +340,15 @@ Thought reset button only reset settings and not whole app
 Likes name Hound
 
 
+8/30/2021
+
+Changelog // 1.2
+
+-Added Dark Mode 🌙, customize this by visiting the "Appearance" section of the settings page, selecting one of the options under "Theme"
+-Fixed bug where manually logged reminders sometimes didn't save
+-Fixed bug where drop down menus sometimes wouldn't close
+-Improved responsiveness when changing the icon for your dog
+-Improved descriptions of certain settings
+
 
 

@@ -106,7 +106,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         copy.uuid = self.uuid
         copy.requirementType = self.requirementType
         copy.customTypeName = self.customTypeName
-        //copy.logs = self.logs
+        copy.masterDog = self.masterDog
         
         copy.countDownComponents = self.countDownComponents.copy() as! CountDownComponents
         copy.timeOfDayComponents = self.timeOfDayComponents.copy() as! TimeOfDayComponents

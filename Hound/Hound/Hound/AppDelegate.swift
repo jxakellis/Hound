@@ -31,7 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if didCrashDuringLastSetup == true {
             print("crashedDuringLastSetup")
-            Persistence.willSetup()
+            PersistenceManager.willSetup()
             
             UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
             UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
@@ -41,7 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         else if shouldPerformCleanInstall == true {
             print("cleanInstall (used for when the user wants to reset the app)")
-            Persistence.willSetup()
+            PersistenceManager.willSetup()
             
             UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
             UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
@@ -52,13 +52,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             if hasSetup{
                 print("recurringSetup")
-                Persistence.willSetup(isRecurringSetup: true)
+                PersistenceManager.willSetup(isRecurringSetup: true)
                 
                 hasSetup = true
             }
             else {
                 print("firstTimeSetup")
-                Persistence.willSetup()
+                PersistenceManager.willSetup()
                 
                 UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
             }
@@ -84,7 +84,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationWillTerminate(_ application: UIApplication) {
         print("willTerminate")
-        Persistence.willEnterBackground(isTerminating: true)
+        PersistenceManager.willEnterBackground(isTerminating: true)
         
     }
 
