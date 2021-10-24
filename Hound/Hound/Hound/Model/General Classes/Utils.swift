@@ -42,6 +42,11 @@ class Utils
         let requirement = try! MainTabBarViewController.staticDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(forUUID: requirementUUID)
         
          let content = UNMutableNotificationContent()
+        if #available(iOS 15.0, *) {
+            content.interruptionLevel = .timeSensitive
+        } else {
+            // Fallback on earlier versions
+        }
         
          content.title = "Follow up notification for \(dogName)!"
         
@@ -68,6 +73,12 @@ class Utils
     static func willCreateUNUserNotification(dogName: String, requirementUUID: String, executionDate: Date){
         let requirement = try! MainTabBarViewController.staticDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(forUUID: requirementUUID)
          let content = UNMutableNotificationContent()
+        if #available(iOS 15.0, *) {
+            content.interruptionLevel = .timeSensitive
+        } else {
+            // Fallback on earlier versions
+        }
+        
          content.title = "Reminder for \(dogName)!"
         
         content.body = requirement.displayTypeName
