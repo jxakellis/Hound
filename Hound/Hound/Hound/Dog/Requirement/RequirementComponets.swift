@@ -124,13 +124,13 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountDownProtocol
     var isSnoozed: Bool { return storedIsSnoozed }
     func changeSnooze(newSnoozeStatus: Bool) {
         if newSnoozeStatus == true {
-            storedExecutionInterval = TimerConstant.defaultSnooze
+            storedExecutionInterval = TimerConstant.defaultSnoozeLength
         }
         
         storedIsSnoozed = newSnoozeStatus
     }
     
-    private var storedExecutionInterval = TimerConstant.defaultSnooze
+    private var storedExecutionInterval = TimerConstant.defaultSnoozeLength
     var executionInterval: TimeInterval { return storedExecutionInterval }
     func changeExecutionInterval(newExecutionInterval: TimeInterval){
         storedExecutionInterval = newExecutionInterval

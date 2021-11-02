@@ -86,7 +86,7 @@ class SettingsViewController: UIViewController, ToolTipable {
     
     @IBAction private func didUpdateSnoozeInterval(_ sender: Any) {
         self.willHideToolTip()
-        TimerConstant.defaultSnooze = snoozeInterval.countDownDuration
+        TimerConstant.defaultSnoozeLength = snoozeInterval.countDownDuration
     }
     
     //MARK: - Notifications
@@ -438,12 +438,12 @@ class SettingsViewController: UIViewController, ToolTipable {
         
         
         followUpDelayInterval.countDownDuration = NotificationConstant.followUpDelay
-        snoozeInterval.countDownDuration = TimerConstant.defaultSnooze
+        snoozeInterval.countDownDuration = TimerConstant.defaultSnoozeLength
         
         //fixes issue with first time datepicker updates not triggering function
         DispatchQueue.main.asyncAfter(deadline: .now()){
             self.followUpDelayInterval.countDownDuration = NotificationConstant.followUpDelay
-            self.snoozeInterval.countDownDuration = TimerConstant.defaultSnooze
+            self.snoozeInterval.countDownDuration = TimerConstant.defaultSnoozeLength
         }
         
         pauseToggleSwitch.isOn = TimingManager.isPaused

@@ -17,7 +17,7 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         super.init()
-        dogTraits = aDecoder.decodeObject(forKey: "dogTraits") as! DogTraitManager
+        dogTraits = aDecoder.decodeObject(forKey: "dogTraits") as! TraitManager
         dogRequirments = aDecoder.decodeObject(forKey: "dogRequirments") as? RequirementManager
         dogRequirments.masterDog = self
         isEnabled = aDecoder.decodeBool(forKey: "isEnabled")
@@ -68,7 +68,7 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
         let copy = Dog()
         copy.dogRequirments = self.dogRequirments.copy() as? RequirementManager
         copy.dogRequirments.masterDog = copy
-        copy.dogTraits = self.dogTraits.copy() as! DogTraitManager
+        copy.dogTraits = self.dogTraits.copy() as! TraitManager
         copy.isEnabled = self.isEnabled
         return copy
     }
@@ -81,7 +81,7 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     }
     
     ///Traits
-    var dogTraits: DogTraitManager = DogTraitManager()
+    var dogTraits: TraitManager = TraitManager()
     
     ///RequirmentManager that handles all specified requirements for a dog, e.g. being taken to the outside every time interval or being fed.
     var dogRequirments: RequirementManager! = nil

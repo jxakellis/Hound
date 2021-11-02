@@ -67,11 +67,11 @@ class RequirementManager: NSObject, NSCoding, NSCopying, RequirementManagerProto
     
     //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
-        storedRequirements = aDecoder.decodeObject(forKey: "requirements") as! [Requirement]
+        storedRequirements = aDecoder.decodeObject(forKey: "reminders") as? [Requirement] ?? aDecoder.decodeObject(forKey: "requirements") as! [Requirement]
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(storedRequirements, forKey: "requirements")
+        aCoder.encode(storedRequirements, forKey: "reminders")
     }
     
     //MARK: - NSCopying

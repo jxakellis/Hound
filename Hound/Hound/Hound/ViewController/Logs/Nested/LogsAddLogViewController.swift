@@ -197,8 +197,6 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 updatedLog.customTypeName = trimmedCustomLogTypeName
             }
             
-            updatedLog.creationDate = Date()
-            
             delegate.didUpdateKnownLog(sender: Sender(origin: self, localized: self), parentDogName: parentDogName.text!, requirementUUID: updatingKnownLogInformation?.1?.uuid ?? nil, updatedKnownLog: updatedLog)
             self.navigationController?.popViewController(animated: true)
         }

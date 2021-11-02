@@ -18,7 +18,7 @@ class PersistenceManager{
             TimingManager.lastPause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastPause.rawValue) as? Date
             TimingManager.lastUnpause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastUnpause.rawValue) as? Date
             
-            TimerConstant.defaultSnooze = UserDefaults.standard.value(forKey: UserDefaultsKeys.defaultSnooze.rawValue) as! TimeInterval
+            TimerConstant.defaultSnoozeLength = UserDefaults.standard.value(forKey: UserDefaultsKeys.defaultSnoozeLength.rawValue) as! TimeInterval
             
             NotificationConstant.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool
             NotificationConstant.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool
@@ -70,7 +70,7 @@ class PersistenceManager{
             UserDefaults.standard.setValue(TimingManager.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
             UserDefaults.standard.setValue(TimingManager.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
             
-            UserDefaults.standard.setValue(TimerConstant.defaultSnooze, forKey: UserDefaultsKeys.defaultSnooze.rawValue)
+            UserDefaults.standard.setValue(TimerConstant.defaultSnoozeLength, forKey: UserDefaultsKeys.defaultSnoozeLength.rawValue)
             
             UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
             
@@ -139,7 +139,7 @@ class PersistenceManager{
             
             //Snooze interval
             
-            UserDefaults.standard.setValue(TimerConstant.defaultSnooze, forKey: UserDefaultsKeys.defaultSnooze.rawValue)
+            UserDefaults.standard.setValue(TimerConstant.defaultSnoozeLength, forKey: UserDefaultsKeys.defaultSnoozeLength.rawValue)
             
             //Notifications
             UserDefaults.standard.setValue(NotificationConstant.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)

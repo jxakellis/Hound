@@ -42,7 +42,7 @@ class ErrorProcessor{
         else if errorProcessorInstance.handleDogError(sender: sender, error: error) == true{
             return
         }
-        else  if errorProcessorInstance.handleDogTraitManagerError(sender: sender, error: error) == true {
+        else  if errorProcessorInstance.handleTraitManagerError(sender: sender, error: error) == true {
             return
         }
         else if errorProcessorInstance.handleKnownLogTypeError(sender: sender, error: error) == true {
@@ -136,24 +136,24 @@ class ErrorProcessor{
         }
     }
     
-    ///Returns true if able to find a match in enum DogTraitManagerError to the error provided
-    private func handleDogTraitManagerError(sender: Sender, error: Error) -> Bool{
+    ///Returns true if able to find a match in enum TraitManagerError to the error provided
+    private func handleTraitManagerError(sender: Sender, error: Error) -> Bool{
         /*
-         enum DogTraitManagerError: Error{
+         enum TraitManagerError: Error{
              case nilName
              case blankName
              case invalidName
          }
          */
-        if case DogTraitManagerError.nilName = error {
+        if case TraitManagerError.nilName = error {
             ErrorProcessor.alertForError(message: "Your dog has an invalid name, try typing something else in!")
             return true
         }
-        else if case DogTraitManagerError.blankName = error {
+        else if case TraitManagerError.blankName = error {
             ErrorProcessor.alertForError(message: "Your dog has a blank name, try typing something in!")
             return true
         }
-        else if case DogTraitManagerError.invalidName = error {
+        else if case TraitManagerError.invalidName = error {
             ErrorProcessor.alertForError(message: "Your dog has a invalid name, try typing something else in!")
             return true
         }

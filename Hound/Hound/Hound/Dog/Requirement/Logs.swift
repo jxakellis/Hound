@@ -117,8 +117,6 @@ protocol KnownLogProtocol{
     
     var uuid: String { get set }
     
-    ///Physical creation date of the log
-    var creationDate: Date { get set }
     
 }
 
@@ -128,7 +126,7 @@ class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol{
     //MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
-        let copy = KnownLog(date: self.date, note: self.note, logType: self.logType, customTypeName: self.customTypeName, creationDate: self.creationDate, uuid: self.uuid)
+        let copy = KnownLog(date: self.date, note: self.note, logType: self.logType, customTypeName: self.customTypeName, uuid: self.uuid)
         return copy
     }
     
@@ -139,7 +137,6 @@ class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol{
         self.note = aDecoder.decodeObject(forKey: "note") as! String
         self.logType = KnownLogType(rawValue: aDecoder.decodeObject(forKey: "logType") as! String)!
         self.customTypeName = aDecoder.decodeObject(forKey: "customTypeName") as? String
-        self.creationDate = aDecoder.decodeObject(forKey: "creationDate") as! Date
         self.uuid = aDecoder.decodeObject(forKey: "uuid") as! String
     }
     
@@ -148,18 +145,16 @@ class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol{
         aCoder.encode(note, forKey: "note")
         aCoder.encode(logType.rawValue, forKey: "logType")
         aCoder.encode(customTypeName, forKey: "customTypeName")
-        aCoder.encode(creationDate, forKey: "creationDate")
         aCoder.encode(uuid, forKey: "uuid")
     }
     
     //MARK: - RequirementLogProtocol
     
-    init(date: Date, note: String = "", logType: KnownLogType, customTypeName: String?, creationDate: Date = Date(), uuid: String? = nil){
+    init(date: Date, note: String = "", logType: KnownLogType, customTypeName: String?, uuid: String? = nil){
         self.date = date
         self.note = note
         self.logType = logType
         self.customTypeName = customTypeName
-        self.creationDate = creationDate
         if uuid != nil {
             self.uuid = uuid!
         }
@@ -182,8 +177,6 @@ class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol{
             return logType.rawValue
         }
     }
-    
-    var creationDate: Date
     
     var uuid: String = UUID().uuidString
 }
