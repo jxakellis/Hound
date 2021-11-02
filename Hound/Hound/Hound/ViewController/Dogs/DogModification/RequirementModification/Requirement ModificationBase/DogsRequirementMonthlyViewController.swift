@@ -1,5 +1,5 @@
 //
-//  DogsRequirementMonthlyViewController.swift
+//  DogsReminderMonthlyViewController.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 5/13/21.
@@ -8,11 +8,11 @@
 
 import UIKit
 
-protocol DogsRequirementMonthlyViewControllerDelegate {
+protocol DogsReminderMonthlyViewControllerDelegate {
     func willDismissKeyboard()
 }
 
-class DogsRequirementMonthlyViewController: UIViewController, UIGestureRecognizerDelegate {
+class DogsReminderMonthlyViewController: UIViewController, UIGestureRecognizerDelegate {
     
     //MARK: - UIGestureRecognizerDelegate
     
@@ -29,7 +29,7 @@ class DogsRequirementMonthlyViewController: UIViewController, UIGestureRecognize
     
     //MARK: - Properties
     
-    var delegate: DogsRequirementMonthlyViewControllerDelegate! = nil
+    var delegate: DogsReminderMonthlyViewControllerDelegate! = nil
     
     var passedTimeOfDay: Date? = nil
     

@@ -15,36 +15,36 @@ enum DogConstant {
     static let chooseIcon: UIImage = UIImage.init(named: "chooseIcon")!
 }
 
-enum RequirementConstant {
+enum ReminderConstant {
     static let defaultType = ScheduledLogType.allCases[0]
     static let defaultTimeInterval = (3600*0.5)
     static let defaultEnable: Bool = true
-    static var defaultRequirementOne: Requirement {
-        let req = Requirement()
-        req.requirementType = ScheduledLogType.potty
+    static var defaultReminderOne: Reminder {
+        let req = Reminder()
+        req.reminderType = ScheduledLogType.potty
         req.countDownComponents.changeExecutionInterval(newExecutionInterval: defaultTimeInterval)
         req.setEnable(newEnableStatus: defaultEnable)
         return req
     }
-    static var defaultRequirementTwo: Requirement {
-        let req = Requirement()
-        req.requirementType = .feed
+    static var defaultReminderTwo: Reminder {
+        let req = Reminder()
+        req.reminderType = .feed
         req.changeTimingStyle(newTimingStyle: .weekly)
         try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 7)
         try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
         return req
     }
-    static var defaultRequirementThree: Requirement {
-        let req = Requirement()
-        req.requirementType = .feed
+    static var defaultReminderThree: Reminder {
+        let req = Reminder()
+        req.reminderType = .feed
         req.changeTimingStyle(newTimingStyle: .weekly)
         try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 5+12)
         try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
         return req
     }
-    static var defaultRequirementFour: Requirement {
-        let req = Requirement()
-        req.requirementType = .medicine
+    static var defaultReminderFour: Reminder {
+        let req = Reminder()
+        req.reminderType = .medicine
         req.changeTimingStyle(newTimingStyle: .monthly)
         try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 9)
         try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
@@ -61,11 +61,11 @@ enum DogManagerConstant {
         userDefaultDog.setEnable(newEnableStatus: DogConstant.defaultEnable)
         
         /*
-         let req = Requirement()
-         req.requirementType = .trainingSession
+         let req = Reminder()
+         req.reminderType = .trainingSession
          req.changeTimingStyle(newTimingStyle: .countDown)
          req.countDownComponents.changeExecutionInterval(newExecutionInterval: 30.0)
-         try! userDefaultDog.dogRequirments.addRequirement(newRequirement: req)
+         try! userDefaultDog.dogReminders.addReminder(newReminder: req)
          */
         
     

@@ -42,7 +42,7 @@ class PersistenceManager{
                 let decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
                 
                 //correct conditions
-                if AudioPlayer.sharedPlayer == nil && NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && decodedDogManager.hasEnabledRequirement && !TimingManager.isPaused {
+                if AudioPlayer.sharedPlayer == nil && NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && decodedDogManager.hasEnabledReminder && !TimingManager.isPaused {
                     let terminationAlertController = GeneralUIAlertController(title: "Oops, you may have terminated Hound", message: "Your notifications won't ring properly if the app isn't running.", preferredStyle: .alert)
                     let acceptAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
                     let understandAlertAction = UIAlertAction(title: "Don't Show Again", style: .default) { _ in
@@ -114,7 +114,7 @@ class PersistenceManager{
                 AudioPlayer.sharedPlayer.stop()
             }
             
-            guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && MainTabBarViewController.staticDogManager.hasEnabledRequirement && !TimingManager.isPaused else{
+            guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && MainTabBarViewController.staticDogManager.hasEnabledReminder && !TimingManager.isPaused else{
                 return
             }
             
@@ -167,14 +167,14 @@ class PersistenceManager{
             
                 for dogKey in TimingManager.timerDictionary.keys{
                     
-                    for requirementUUID in TimingManager.timerDictionary[dogKey]!.keys{
-                        guard TimingManager.timerDictionary[dogKey]![requirementUUID]!.isValid else{
+                    for reminderUUID in TimingManager.timerDictionary[dogKey]!.keys{
+                        guard TimingManager.timerDictionary[dogKey]![reminderUUID]!.isValid else{
                             continue
                         }
-                        Utils.willCreateUNUserNotification(dogName: dogKey, requirementUUID: requirementUUID, executionDate: TimingManager.timerDictionary[dogKey]![requirementUUID]!.fireDate)
+                        Utils.willCreateUNUserNotification(dogName: dogKey, reminderUUID: reminderUUID, executionDate: TimingManager.timerDictionary[dogKey]![reminderUUID]!.fireDate)
                         
                         if NotificationConstant.shouldFollowUp == true {
-                            Utils.willCreateFollowUpUNUserNotification(dogName: dogKey, requirementUUID: requirementUUID, executionDate: TimingManager.timerDictionary[dogKey]![requirementUUID]!.fireDate + NotificationConstant.followUpDelay)
+                            Utils.willCreateFollowUpUNUserNotification(dogName: dogKey, reminderUUID: reminderUUID, executionDate: TimingManager.timerDictionary[dogKey]![reminderUUID]!.fireDate + NotificationConstant.followUpDelay)
                         }
                         
                     }

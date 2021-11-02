@@ -9,9 +9,9 @@
 import UIKit
 
 protocol LogsAddLogViewControllerDelegate {
-    func didDeleteKnownLog(sender: Sender, parentDogName: String, requirementUUID: String?, logUUID: String)
+    func didDeleteKnownLog(sender: Sender, parentDogName: String, reminderUUID: String?, logUUID: String)
     func didAddKnownLog(sender: Sender, parentDogName: String, newKnownLog: KnownLog)
-    func didUpdateKnownLog(sender: Sender, parentDogName: String, requirementUUID: String?, updatedKnownLog: KnownLog)
+    func didUpdateKnownLog(sender: Sender, parentDogName: String, reminderUUID: String?, updatedKnownLog: KnownLog)
 }
 
 class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, DropDownUIViewDataSourceProtocol {
@@ -161,7 +161,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete this log?", message: nil, preferredStyle: .alert)
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { (UIAlertAction) in
-            self.delegate.didDeleteKnownLog(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName.text!, requirementUUID: self.updatingKnownLogInformation!.1?.uuid ?? nil, logUUID: self.updatingKnownLogInformation!.2.uuid)
+            self.delegate.didDeleteKnownLog(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName.text!, reminderUUID: self.updatingKnownLogInformation!.1?.uuid ?? nil, logUUID: self.updatingKnownLogInformation!.2.uuid)
             self.navigationController?.popViewController(animated: true)
         }
         
@@ -197,7 +197,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 updatedLog.customTypeName = trimmedCustomLogTypeName
             }
             
-            delegate.didUpdateKnownLog(sender: Sender(origin: self, localized: self), parentDogName: parentDogName.text!, requirementUUID: updatingKnownLogInformation?.1?.uuid ?? nil, updatedKnownLog: updatedLog)
+            delegate.didUpdateKnownLog(sender: Sender(origin: self, localized: self), parentDogName: parentDogName.text!, reminderUUID: updatingKnownLogInformation?.1?.uuid ?? nil, updatedKnownLog: updatedLog)
             self.navigationController?.popViewController(animated: true)
         }
         //adding log
@@ -255,8 +255,8 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
     
     var dogManager: DogManager! = nil
     
-    ///information for updating log, parentDogName, requirement?, knownLog
-    var updatingKnownLogInformation: (String, Requirement?, KnownLog)? = nil
+    ///information for updating log, parentDogName, reminder?, knownLog
+    var updatingKnownLogInformation: (String, Reminder?, KnownLog)? = nil
     
     var delegate: LogsAddLogViewControllerDelegate! = nil
     

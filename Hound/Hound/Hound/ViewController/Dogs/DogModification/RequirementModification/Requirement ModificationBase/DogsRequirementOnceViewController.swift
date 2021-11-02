@@ -1,5 +1,5 @@
 //
-//  DogsRequirementOnceViewController.swift
+//  DogsReminderOnceViewController.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 5/30/21.
@@ -8,11 +8,11 @@
 
 import UIKit
 
-protocol DogsRequirementOnceViewControllerDelegate {
+protocol DogsReminderOnceViewControllerDelegate {
     func willDismissKeyboard()
 }
 
-class DogsRequirementOnceViewController: UIViewController, UIGestureRecognizerDelegate {
+class DogsReminderOnceViewController: UIViewController, UIGestureRecognizerDelegate {
 
     //MARK: - UIGestureRecognizerDelegate
     
@@ -29,7 +29,7 @@ class DogsRequirementOnceViewController: UIViewController, UIGestureRecognizerDe
     
     //MARK: - Properties
     
-    var delegate: DogsRequirementOnceViewControllerDelegate! = nil
+    var delegate: DogsReminderOnceViewControllerDelegate! = nil
     
     var passedDate: Date? = nil
     

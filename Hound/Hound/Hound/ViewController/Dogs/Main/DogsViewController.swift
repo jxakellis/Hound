@@ -12,32 +12,32 @@ protocol DogsViewControllerDelegate {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsAddDogViewControllerDelegate, DogsMainScreenTableViewControllerDelegate, DogsIndependentRequirementViewControllerDelegate{
+class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsAddDogViewControllerDelegate, DogsMainScreenTableViewControllerDelegate, DogsIndependentReminderViewControllerDelegate{
     
     
     
-    //MARK: - DogsIndependentRequirementViewControllerDelegate
+    //MARK: - DogsIndependentReminderViewControllerDelegate
     
-    func didAddRequirement(sender: Sender, parentDogName: String, newRequirement: Requirement) {
+    func didAddReminder(sender: Sender, parentDogName: String, newReminder: Reminder) {
         let sudoDogManager = getDogManager()
         
-        try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.addRequirement(newRequirement: newRequirement)
+        try! sudoDogManager.findDog(dogName: parentDogName).dogReminders.addReminder(newReminder: newReminder)
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     
-    func didUpdateRequirement(sender: Sender, parentDogName: String, updatedRequirement: Requirement) throws {
+    func didUpdateReminder(sender: Sender, parentDogName: String, updatedReminder: Reminder) throws {
         let sudoDogManager = getDogManager()
         
-        try sudoDogManager.findDog(dogName: parentDogName).dogRequirments.changeRequirement(forUUID: updatedRequirement.uuid, newRequirement: updatedRequirement)
+        try sudoDogManager.findDog(dogName: parentDogName).dogReminders.changeReminder(forUUID: updatedReminder.uuid, newReminder: updatedReminder)
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     
-    func didRemoveRequirement(sender: Sender, parentDogName: String, removedRequirementUUID: String) {
+    func didRemoveReminder(sender: Sender, parentDogName: String, removedReminderUUID: String) {
         let sudoDogManager = getDogManager()
         
-        try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.removeRequirement(forUUID: removedRequirementUUID)
+        try! sudoDogManager.findDog(dogName: parentDogName).dogReminders.removeReminder(forUUID: removedReminderUUID)
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
@@ -47,13 +47,13 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     ///If a dog was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the dogs information
     func willEditDog(dogName: String) {
         
-        willOpenDog(dogToBeOpened: try! getDogManager().findDog(dogName: dogName), isAddingRequirement: false)
+        willOpenDog(dogToBeOpened: try! getDogManager().findDog(dogName: dogName), isAddingReminder: false)
         
     }
-    ///If a requirement was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the requirements information
-    func willEditRequirement(parentDogName: String, requirementUUID: String?) {
+    ///If a reminder was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the reminders information
+    func willEditReminder(parentDogName: String, reminderUUID: String?) {
         
-        willOpenRequirement(parentDogName: parentDogName, requirementUUID: requirementUUID)
+        willOpenReminder(parentDogName: parentDogName, reminderUUID: reminderUUID)
         
     }
     
@@ -210,9 +210,9 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     ///If a dog was added by the subview, this function is called with a delegate and is incorporated into the dog manager here
     func didAddDog(sender: Sender, newDog: Dog) throws {
         
-        //This makes it so when a dog is added all of its requirements start counting down at the same time (b/c same last execution) instead counting down from when the requirement was added to the dog.
-        for requirementIndex in 0..<newDog.dogRequirments.requirements.count{
-            newDog.dogRequirments.requirements[requirementIndex].changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
+        //This makes it so when a dog is added all of its reminders start counting down at the same time (b/c same last execution) instead counting down from when the reminder was added to the dog.
+        for reminderIndex in 0..<newDog.dogReminders.reminders.count{
+            newDog.dogReminders.reminders[reminderIndex].changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
         }
         
         var sudoDogManager = getDogManager()
@@ -288,7 +288,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     
     var dogsAddDogViewController = DogsAddDogViewController()
     
-    var dogsIndependentRequirementViewController = DogsIndependentRequirementViewController()
+    var dogsIndependentReminderViewController = DogsIndependentReminderViewController()
     
     //MARK: - Main
     
@@ -327,7 +327,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     //MARK: - Navigation To Dog Addition and Modification
     
     ///Opens the dogsAddDogViewController, if a dog is passed (which is required) then instead of opening a fresh add dog page, opens up the corrosponding one for the dog
-    private func willOpenDog(dogToBeOpened: Dog? = nil, isAddingRequirement: Bool = false){
+    private func willOpenDog(dogToBeOpened: Dog? = nil, isAddingReminder: Bool = false){
         
         self.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
         
@@ -336,40 +336,40 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         if dogToBeOpened != nil {
             //Conversion of "DogsAddDogViewController" to update mode
             
-            dogsAddDogViewController.isAddingRequirement = isAddingRequirement
+            dogsAddDogViewController.isAddingReminder = isAddingReminder
             dogsAddDogViewController.isUpdating = true
             dogsAddDogViewController.targetDog = dogToBeOpened!
         }
         
     }
     
-    private func willOpenRequirement(parentDogName: String, requirementUUID: String? = nil){
+    private func willOpenReminder(parentDogName: String, reminderUUID: String? = nil){
         
-        self.performSegue(withIdentifier: "dogsIndependentRequirementViewController", sender: self)
-        dogsIndependentRequirementViewController.parentDogName = parentDogName
+        self.performSegue(withIdentifier: "dogsIndependentReminderViewController", sender: self)
+        dogsIndependentReminderViewController.parentDogName = parentDogName
         
         //updating
-        if requirementUUID != nil {
-            dogsIndependentRequirementViewController.targetRequirement = try! getDogManager().findDog(dogName: parentDogName).dogRequirments.findRequirement(forUUID: requirementUUID!)
-            dogsIndependentRequirementViewController.isUpdating = true
+        if reminderUUID != nil {
+            dogsIndependentReminderViewController.targetReminder = try! getDogManager().findDog(dogName: parentDogName).dogReminders.findReminder(forUUID: reminderUUID!)
+            dogsIndependentReminderViewController.isUpdating = true
         }
         //new
         else {
-            dogsIndependentRequirementViewController.isUpdating = false
+            dogsIndependentReminderViewController.isUpdating = false
         }
         
     }
     
     @objc private func willCreateNew(sender: UIButton) {
         if sender.tag == 0 {
-            self.willOpenDog(dogToBeOpened: nil, isAddingRequirement: false)
+            self.willOpenDog(dogToBeOpened: nil, isAddingReminder: false)
         }
         else {
-            self.willOpenRequirement(parentDogName: getDogManager().dogs[sender.tag-1].dogTraits.dogName, requirementUUID: nil)
+            self.willOpenReminder(parentDogName: getDogManager().dogs[sender.tag-1].dogTraits.dogName, reminderUUID: nil)
         }
     }
     
-    //MARK: - Programmically Added Add Requirement To Dog / Add Dog Buttons
+    //MARK: - Programmically Added Add Reminder To Dog / Add Dog Buttons
     
     private var universalTapGesture: UITapGestureRecognizer!
     private var dimScreenView: UIView!
@@ -387,7 +387,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         changeAddStatus(newAddStatus: false)
     }
     
-    ///Changes the status of the subAddButtons which navigate to add a dog, add a requirement for "DOG NAME", add a requirement for "DOG NAME 2" etc, from present and active to hidden, includes animation
+    ///Changes the status of the subAddButtons which navigate to add a dog, add a reminder for "DOG NAME", add a reminder for "DOG NAME 2" etc, from present and active to hidden, includes animation
     private func changeAddStatus(newAddStatus: Bool){
         
         ///Toggles to adding
@@ -420,21 +420,21 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                 }
                 
                 //creates clickable button with a position that it relative to the subbutton below it
-                let willAddRequirementButton = ScaledUIButton(frame: CGRect(origin: CGPoint(x: addButtons.last!.frame.origin.x, y: addButtons.last!.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
-                willAddRequirementButton.setImage(UIImage(systemName: "plus.circle")!, for: .normal)
-                willAddRequirementButton.tintColor = .systemBlue
-                willAddRequirementButton.tag = dogIndex+1
-                willAddRequirementButton.addTarget(self, action: #selector(willCreateNew(sender:)), for: .touchUpInside)
+                let willAddReminderButton = ScaledUIButton(frame: CGRect(origin: CGPoint(x: addButtons.last!.frame.origin.x, y: addButtons.last!.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
+                willAddReminderButton.setImage(UIImage(systemName: "plus.circle")!, for: .normal)
+                willAddReminderButton.tintColor = .systemBlue
+                willAddReminderButton.tag = dogIndex+1
+                willAddReminderButton.addTarget(self, action: #selector(willCreateNew(sender:)), for: .touchUpInside)
                 
-                let willAddRequirementButtonBackground = createAddButtonBackground(willAddRequirementButton)
+                let willAddReminderButtonBackground = createAddButtonBackground(willAddReminderButton)
                 
-                let willAddRequirementButtonLabel = createAddButtonLabel(willAddRequirementButton, text: "Create New Reminder For \(getDogManager().dogs[dogIndex].dogTraits.dogName)")
-                let willAddRequirementButtonLabelBackground = createAddButtonLabelBackground(willAddRequirementButtonLabel)
+                let willAddReminderButtonLabel = createAddButtonLabel(willAddReminderButton, text: "Create New Reminder For \(getDogManager().dogs[dogIndex].dogTraits.dogName)")
+                let willAddReminderButtonLabelBackground = createAddButtonLabelBackground(willAddReminderButtonLabel)
                 
-                addButtons.append(willAddRequirementButton)
-                addButtonsBackground.append(willAddRequirementButtonBackground)
-                addButtonsLabel.append(willAddRequirementButtonLabel)
-                addButtonsLabelBackground.append(willAddRequirementButtonLabelBackground)
+                addButtons.append(willAddReminderButton)
+                addButtonsBackground.append(willAddReminderButtonBackground)
+                addButtonsLabel.append(willAddReminderButtonLabel)
+                addButtonsLabelBackground.append(willAddReminderButtonLabelBackground)
             }
             //goes through all buttons, labels, and their background and animates them to their correct position
             for buttonIndex in 0..<addButtons.count{
@@ -617,9 +617,9 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             dogsMainScreenTableViewController = segue.destination as! DogsMainScreenTableViewController
             dogsMainScreenTableViewController.delegate = self
         }
-        if segue.identifier == "dogsIndependentRequirementViewController" {
-            dogsIndependentRequirementViewController = segue.destination as! DogsIndependentRequirementViewController
-            dogsIndependentRequirementViewController.delegate = self
+        if segue.identifier == "dogsIndependentReminderViewController" {
+            dogsIndependentReminderViewController = segue.destination as! DogsIndependentReminderViewController
+            dogsIndependentReminderViewController.delegate = self
         }
     }
     

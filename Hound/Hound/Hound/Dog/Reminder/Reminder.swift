@@ -1,5 +1,5 @@
 //
-//  Requirementt.swift
+//  Remindert.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 3/21/21.
@@ -8,22 +8,26 @@
 
 import UIKit
 
-///Enum full of cases of possible errors from Requirement
-enum RequirementError: Error {
+///Enum full of cases of possible errors from Reminder
+enum ReminderError: Error {
     case nameBlank
     case nameInvalid
     case descriptionInvalid
     case intervalInvalid
 }
 
-enum RequirementStyle: String {
-    case oneTime = "oneTime"
-    case countDown = "countDown"
-    case weekly = "weekly"
-    case monthly = "monthly"
+enum ReminderStyle: Int {
+    //case oneTime = "oneTime"
+    //case countDown = "countDown"
+    //case weekly = "weekly"
+    //case monthly = "monthly"
+    case oneTime = 0
+    case countDown = 1
+    case weekly = 2
+    case monthly = 3
 }
 
-enum RequirementMode {
+enum ReminderMode {
     case oneTime
     case countDown
     case weekly
@@ -31,17 +35,17 @@ enum RequirementMode {
     case snooze
 }
 
-protocol RequirementTraitsProtocol {
+protocol ReminderTraitsProtocol {
     
-    ///Dog that hold this requirement, used for logs
+    ///Dog that hold this reminder, used for logs
     var masterDog: Dog? { get set }
     
     var uuid: String { get set }
     
-    ///Replacement for requirementName, a way for the user to keep track of what the requirement is for
-    var requirementType: ScheduledLogType { get set }
+    ///Replacement for reminderName, a way for the user to keep track of what the reminder is for
+    var reminderType: ScheduledLogType { get set }
     
-    ///If the requirement's type is custom, this is the name for it
+    ///If the reminder's type is custom, this is the name for it
     var customTypeName: String? { get set }
     
     ///If not .custom type then just .type name, if custom and has customTypeName then its that string
@@ -51,7 +55,7 @@ protocol RequirementTraitsProtocol {
     //var logs: [KnownLog] { get set }
 }
 
-protocol RequirementComponentsProtocol {
+protocol ReminderComponentsProtocol {
     ///The components needed for a countdown based timer
     var countDownComponents: CountDownComponents { get set }
     
@@ -61,23 +65,23 @@ protocol RequirementComponentsProtocol {
     ///The components needed if for time of day based timer
     var timeOfDayComponents: TimeOfDayComponents { get set }
     
-    ///Figures out whether the requirement is in snooze, count down, time of day, or another timer mode. Returns enum case corrosponding
-    var timerMode: RequirementMode { get }
+    ///Figures out whether the reminder is in snooze, count down, time of day, or another timer mode. Returns enum case corrosponding
+    var timerMode: ReminderMode { get }
     
-    ///An enum that indicates whether the requirement is in countdown format or time of day format
-    var timingStyle: RequirementStyle { get }
+    ///An enum that indicates whether the reminder is in countdown format or time of day format
+    var timingStyle: ReminderStyle { get }
     ///Function to change timing style and adjust data corrosponding accordingly.
-    mutating func changeTimingStyle(newTimingStyle: RequirementStyle)
+    mutating func changeTimingStyle(newTimingStyle: ReminderStyle)
 }
 
-protocol RequirementTimingComponentsProtocol {
+protocol ReminderTimingComponentsProtocol {
     ///Similar to executionDate but instead of being a log of everytime the time has fired it is either the date the timer has last fired or the date it should be basing its execution off of, e.g. 5 minutes into the timer you change the countdown from 30 minutes to 15, you don't want to log an execution as there was no one but you want to start the timer fresh and have it count down from the moment it was changed.
     var executionBasis: Date { get }
     
     ///Changes executionBasis to the specified value, note if the Date is equal to the current date (i.e. newExecutionBasis == Date()) then resets all components intervals elapsed to zero.
     mutating func changeExecutionBasis(newExecutionBasis: Date, shouldResetIntervalsElapsed: Bool)
     
-    ///If an timer is dismissed when it fires and alerts the user, the requirement will remain inactive until interacted with again. Similar to being disabled except it will sit on the home screen just doing nothing
+    ///If an timer is dismissed when it fires and alerts the user, the reminder will remain inactive until interacted with again. Similar to being disabled except it will sit on the home screen just doing nothing
     var isActive: Bool { get }
     
     ///Changes the active status and accompanying information
@@ -86,33 +90,33 @@ protocol RequirementTimingComponentsProtocol {
     ///True if the presentation of the timer (when it is time to present) has been handled and sent to the presentation handler, prevents repeats of the timer being sent to the presenation handler over and over.
     var isPresentationHandled: Bool { get set }
     
-    ///The date at which the requirement should fire, i.e. go off to the user and display an alert
+    ///The date at which the reminder should fire, i.e. go off to the user and display an alert
     var executionDate: Date? { get }
     
     ///Calculated time interval remaining that taking into account factors to produce correct value for conditions and parameters
     var intervalRemaining: TimeInterval? { get }
     
-    ///Called when a timer is fired/executed and an option to deal with it is selected by the user, if the reset is trigger by a user doing an action that constitude a reset, specify as so, but if doing something like changing the value of some component it was did not exeute to user. If didExecuteToUse is true it does the same thing as false except it appends the current date to the array of logs which keeps tracks of each time a requirement is formally executed.
+    ///Called when a timer is fired/executed and an option to deal with it is selected by the user, if the reset is trigger by a user doing an action that constitude a reset, specify as so, but if doing something like changing the value of some component it was did not exeute to user. If didExecuteToUse is true it does the same thing as false except it appends the current date to the array of logs which keeps tracks of each time a reminder is formally executed.
     mutating func timerReset(shouldLogExecution: Bool, knownLogType: KnownLogType?, customTypeName: String?)
 }
 
-class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, RequirementComponentsProtocol, RequirementTimingComponentsProtocol, EnableProtocol {
+class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderComponentsProtocol, ReminderTimingComponentsProtocol, EnableProtocol {
     
     //MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
-        let copy = Requirement()
+        let copy = Reminder()
         
         copy.uuid = self.uuid
-        copy.requirementType = self.requirementType
+        copy.reminderType = self.reminderType
         copy.customTypeName = self.customTypeName
         copy.masterDog = self.masterDog
         
         copy.countDownComponents = self.countDownComponents.copy() as! CountDownComponents
         copy.timeOfDayComponents = self.timeOfDayComponents.copy() as! TimeOfDayComponents
-        copy.timeOfDayComponents.masterRequirement = copy
+        copy.timeOfDayComponents.masterReminder = copy
         copy.oneTimeComponents = self.oneTimeComponents.copy() as! OneTimeComponents
-        copy.oneTimeComponents.masterRequirement = copy
+        copy.oneTimeComponents.masterReminder = copy
         copy.snoozeComponents = self.snoozeComponents.copy() as! SnoozeComponents
         copy.storedTimingStyle = self.timingStyle
         
@@ -129,20 +133,20 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
     
     override init() {
         super.init()
-        self.timeOfDayComponents.masterRequirement = self
-        self.oneTimeComponents.masterRequirement = self
+        self.timeOfDayComponents.masterReminder = self
+        self.oneTimeComponents.masterReminder = self
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init()
         
         self.uuid = aDecoder.decodeObject(forKey: "uuid") as! String
-        self.requirementType = ScheduledLogType(rawValue: aDecoder.decodeObject(forKey: "requirementType") as! String)!
+        self.reminderType = ScheduledLogType(rawValue: aDecoder.decodeObject(forKey: "reminderType") as? String ?? aDecoder.decodeObject(forKey: "requirement") as? String ?? aDecoder.decodeObject(forKey: "requirment") as! String)!
         self.customTypeName = aDecoder.decodeObject(forKey: "customTypeName") as? String
         
         
         if UIApplication.previousAppBuild <= 1228{
-            print("grandfather in depreciated requirements logs")
+            print("grandfather in depreciated reminders logs")
             let depreciatedLogs: [KnownLog] = aDecoder.decodeObject(forKey: "logs") as? [KnownLog] ?? []
             
         
@@ -152,18 +156,18 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
                         print("master dog nil")
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0){
                             if self.masterDog != nil {
-                                print("backup requirement logs decode success")
+                                print("backup reminder logs decode success")
                                 for log in depreciatedLogs{
                                     self.masterDog?.dogTraits.logs.append(log)
                                 }
                             }
                             else {
-                                print("backup requirement logs decode fail")
+                                print("backup reminder logs decode fail")
                             }
                         }
                     }
                     else {
-                        print("primary requirement logs decode success")
+                        print("primary reminder logs decode success")
                         for log in depreciatedLogs{
                             self.masterDog?.dogTraits.logs.append(log)
                         }
@@ -180,11 +184,38 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         
         self.countDownComponents = aDecoder.decodeObject(forKey: "countDownComponents") as! CountDownComponents
         self.timeOfDayComponents = aDecoder.decodeObject(forKey: "timeOfDayComponents") as! TimeOfDayComponents
-        self.timeOfDayComponents.masterRequirement = self
+        self.timeOfDayComponents.masterReminder = self
         self.oneTimeComponents = aDecoder.decodeObject(forKey: "oneTimeComponents") as? OneTimeComponents ?? OneTimeComponents()
-        self.oneTimeComponents.masterRequirement = self
+        self.oneTimeComponents.masterReminder = self
         self.snoozeComponents = aDecoder.decodeObject(forKey: "snoozeComponents") as! SnoozeComponents
-        self.storedTimingStyle = RequirementStyle(rawValue: aDecoder.decodeObject(forKey: "timingStyle") as! String)!
+        
+        var decodedTimingStyle: Int {
+            let decodedInteger: Int? = aDecoder.decodeObject(forKey: "timingStyle") as? Int
+            if decodedInteger != nil {
+                return decodedInteger!
+            }
+            else {
+                //for builds <=1513, used to be stored as string
+                let decodedString: String = aDecoder.decodeObject(forKey: "timingStyle") as! String
+                
+                switch decodedString {
+                case "oneTime":
+                    return 0
+                case "countDown":
+                    return 1
+                case "weekly":
+                    return 2
+                case "monthly":
+                    return 3
+                default:
+                    fatalError()
+                }
+            }
+            
+            
+        }
+        
+        self.storedTimingStyle = ReminderStyle(rawValue: decodedTimingStyle)!
         
         self.storedIsActive = aDecoder.decodeBool(forKey: "isActive")
         self.isPresentationHandled = aDecoder.decodeBool(forKey: "isPresentationHandled")
@@ -196,7 +227,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
     func encode(with aCoder: NSCoder) {
         
         aCoder.encode(uuid, forKey: "uuid")
-        aCoder.encode(requirementType.rawValue, forKey: "requirementType")
+        aCoder.encode(reminderType.rawValue, forKey: "reminderType")
         aCoder.encode(customTypeName, forKey: "customTypeName")
         //aCoder.encode(logs, forKey: "logs")
         
@@ -213,28 +244,28 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         aCoder.encode(isEnabled, forKey: "isEnabled")
     }
     
-    //MARK: - RequirementTraitsProtocol
+    //MARK: - ReminderTraitsProtocol
     
     var masterDog: Dog? = nil
     
     var uuid: String = UUID().uuidString
     
-    var requirementType: ScheduledLogType = RequirementConstant.defaultType
+    var reminderType: ScheduledLogType = ReminderConstant.defaultType
     
     var customTypeName: String? = nil
     
     var displayTypeName: String {
-        if requirementType == .custom && customTypeName != nil {
+        if reminderType == .custom && customTypeName != nil {
             return customTypeName!
         }
         else {
-            return requirementType.rawValue
+            return reminderType.rawValue
         }
     }
     
     //var logs: [KnownLog] = []
     
-    //MARK: - RequirementComponentsProtocol
+    //MARK: - ReminderComponentsProtocol
     
     var countDownComponents: CountDownComponents = CountDownComponents()
     
@@ -244,7 +275,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
     
     var snoozeComponents: SnoozeComponents = SnoozeComponents()
     
-    var timerMode: RequirementMode {
+    var timerMode: ReminderMode {
         if snoozeComponents.isSnoozed == true{
             return .snooze
         }
@@ -265,9 +296,9 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         }
     }
     
-    private var storedTimingStyle: RequirementStyle = .countDown
-    var timingStyle: RequirementStyle { return storedTimingStyle }
-    func changeTimingStyle(newTimingStyle: RequirementStyle){
+    private var storedTimingStyle: ReminderStyle = .countDown
+    var timingStyle: ReminderStyle { return storedTimingStyle }
+    func changeTimingStyle(newTimingStyle: ReminderStyle){
         guard newTimingStyle != storedTimingStyle else {
             return
         }
@@ -277,14 +308,14 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         storedTimingStyle = newTimingStyle
     }
     
-    //MARK: - RequirementTimingComponentsProtocol
+    //MARK: - ReminderTimingComponentsProtocol
     
     private var storedExecutionBasis: Date = Date()
     var executionBasis: Date { return storedExecutionBasis }
     func changeExecutionBasis(newExecutionBasis: Date, shouldResetIntervalsElapsed: Bool){
         storedExecutionBasis = newExecutionBasis
         
-        //If resetting the executionBasis to the current time (and not changing it to another executionBasis of some other requirement) then resets interval elasped as timers would have to be fresh
+        //If resetting the executionBasis to the current time (and not changing it to another executionBasis of some other reminder) then resets interval elasped as timers would have to be fresh
         if shouldResetIntervalsElapsed == true {
             snoozeComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
             countDownComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
@@ -326,16 +357,16 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
         }
         else if timerMode == .weekly || timerMode == .monthly {
             //if the previousTimeOfDay is closer to the present than executionBasis returns nil, indicates missed alarm
-            if self.executionBasis.distance(to: self.timeOfDayComponents.previousTimeOfDay(requirementExecutionBasis: self.executionBasis)) > 0 {
+            if self.executionBasis.distance(to: self.timeOfDayComponents.previousTimeOfDay(reminderExecutionBasis: self.executionBasis)) > 0 {
                 return nil
             }
             else{
-                return Date().distance(to: self.timeOfDayComponents.nextTimeOfDay(requirementExecutionBasis: self.executionBasis))
+                return Date().distance(to: self.timeOfDayComponents.nextTimeOfDay(reminderExecutionBasis: self.executionBasis))
             }
         }
         else {
             //HDLL
-            fatalError("not implemented timerMode for intervalRemaining, Requirement")
+            fatalError("not implemented timerMode for intervalRemaining, Reminder")
             //return -1
         }
     }
@@ -356,7 +387,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
                 return Date()
             }
             else {
-                return timeOfDayComponents.nextTimeOfDay(requirementExecutionBasis: self.executionBasis)
+                return timeOfDayComponents.nextTimeOfDay(reminderExecutionBasis: self.executionBasis)
             }
         }
         else if timerMode == .countDown{
@@ -366,7 +397,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
             return oneTimeComponents.executionDate
         }
         else {
-            fatalError("not implemented timerMode for executionDate, requirement")
+            fatalError("not implemented timerMode for executionDate, reminder")
         }
     }
     
@@ -407,7 +438,7 @@ class Requirement: NSObject, NSCoding, NSCopying, RequirementTraitsProtocol, Req
     
     //MARK: - EnableProtocol
     
-    ///Whether or not the requirement  is enabled, if disabled all requirements will not fire, if parentDog isEnabled == false will not fire
+    ///Whether or not the reminder  is enabled, if disabled all reminders will not fire, if parentDog isEnabled == false will not fire
     private var isEnabled: Bool = DogConstant.defaultEnable
     
     ///Changes isEnabled to newEnableStatus, note if toggling from false to true the execution basis is changed to the current Date()

@@ -14,7 +14,7 @@ protocol DogsAddDogViewControllerDelegate{
     func didRemoveDog(sender: Sender, removedDogName: String)
 }
 
-class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewControllerDelegate, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIGestureRecognizerDelegate{
+class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewControllerDelegate, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIGestureRecognizerDelegate{
     
     
     
@@ -49,12 +49,12 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         return true
     }
     
-    //MARK: - Requirement Table VC Delegate
+    //MARK: - Reminder Table VC Delegate
     
-    //assume all requirements are valid due to the fact that they are all checked and validated through DogsRequirementTableViewController
-    func didUpdateRequirements(newRequirementList: [Requirement]) {
+    //assume all reminders are valid due to the fact that they are all checked and validated through DogsReminderTableViewController
+    func didUpdateReminders(newReminderList: [Reminder]) {
         shouldPromptSaveWarning = true
-        updatedRequirements = newRequirementList
+        updatedReminders = newReminderList
     }
     
     //MARK: - UITextFieldDelegate
@@ -122,7 +122,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     @IBAction private func willAddDog(_ sender: Any) {
         
         let updatedDog = targetDog.copy() as! Dog
-        //updatedDog.dogRequirments.masterDog = updatedDog
+        //updatedDog.dogReminders.masterDog = updatedDog
         do{
             try updatedDog.dogTraits.changeDogName(newDogName: dogName.text)
             if dogIcon.imageView!.image != DogConstant.chooseIcon{
@@ -130,9 +130,9 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
             }
             
             
-            if updatedRequirements != nil {
-                updatedDog.dogRequirments.removeAllRequirements()
-                try! updatedDog.dogRequirments.addRequirement(newRequirements: self.updatedRequirements!)
+            if updatedReminders != nil {
+                updatedDog.dogReminders.removeAllReminders()
+                try! updatedDog.dogReminders.addReminder(newReminders: self.updatedReminders!)
             }
             
         }
@@ -206,7 +206,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
 
     //MARK: - Properties
     
-    var dogsRequirementNavigationViewController: DogsRequirementNavigationViewController! = nil
+    var dogsReminderNavigationViewController: DogsReminderNavigationViewController! = nil
     
     var targetDog: Dog! = nil
     
@@ -214,9 +214,9 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     var isUpdating: Bool = false
     
-    var isAddingRequirement: Bool = false
+    var isAddingReminder: Bool = false
     
-    private var updatedRequirements: [Requirement]? = nil
+    private var updatedReminders: [Reminder]? = nil
     
     ///Auto save warning will show if true
     private var shouldPromptSaveWarning: Bool = false
@@ -264,7 +264,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         //new dog
         if targetDog == nil {
             targetDog = Dog()
-            targetDog!.addDefaultRequirements()
+            targetDog!.addDefaultReminders()
         }
         
         if targetDog.dogTraits.icon.isEqualToImage(image: DogConstant.defaultIcon) {
@@ -277,15 +277,15 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
         dogIcon.layer.cornerRadius = dogIcon.frame.width/2
         
         dogName.text = targetDog.dogTraits.dogName
-        //has to copy requirements so changed that arent saved don't use reference data property to make actual modification
-        dogsRequirementNavigationViewController.didPassRequirements(sender: Sender(origin: self, localized: self), passedRequirements: targetDog.dogRequirments.copy() as! RequirementManager)
+        //has to copy reminders so changed that arent saved don't use reference data property to make actual modification
+        dogsReminderNavigationViewController.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: targetDog.dogReminders.copy() as! ReminderManager)
         
         //changes text and performs certain actions if adding a new dog vs updating one
         if isUpdating == true {
             dogRemoveButton.isEnabled = true
             self.navigationItem.title = "Edit Dog"
-            if isAddingRequirement == true {
-                dogsRequirementNavigationViewController.dogsRequirementTableViewController.performSegue(withIdentifier: "dogsNestedRequirementViewController", sender: self)
+            if isAddingReminder == true {
+                dogsReminderNavigationViewController.dogsReminderTableViewController.performSegue(withIdentifier: "dogsNestedReminderViewController", sender: self)
             }
         }
         else {
@@ -296,7 +296,7 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     }
     
     
-    ///Hides the big gray back button and big blue checkmark, don't want access to them while editting a requirement.
+    ///Hides the big gray back button and big blue checkmark, don't want access to them while editting a reminder.
     func willHideButtons(isHidden: Bool){
         if isHidden == false {
             addDogButton.isHidden = false
@@ -316,9 +316,9 @@ class DogsAddDogViewController: UIViewController, DogsRequirementNavigationViewC
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "dogRequirementNavigationController"{
-            dogsRequirementNavigationViewController = segue.destination as? DogsRequirementNavigationViewController
-            dogsRequirementNavigationViewController.passThroughDelegate = self
+        if segue.identifier == "dogReminderNavigationController"{
+            dogsReminderNavigationViewController = segue.destination as? DogsReminderNavigationViewController
+            dogsReminderNavigationViewController.passThroughDelegate = self
         }
         
         

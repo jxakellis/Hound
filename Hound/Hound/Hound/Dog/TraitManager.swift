@@ -23,7 +23,7 @@ protocol TraitManagerProtocol{
     ///Resets to default
     mutating func resetIcon()
     
-    ///logs that aren't attached to a requirement object, free standing with no timing involved
+    ///logs that aren't attached to a reminder object, free standing with no timing involved
     var logs: [KnownLog] { get set }
     
     ///The dog's name

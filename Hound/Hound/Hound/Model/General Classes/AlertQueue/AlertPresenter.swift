@@ -122,9 +122,9 @@ class AlertPresenter: NSObject, NSCoding{
         halted = true
         if currentPresentation == nil {
             for d in dogManager.dogs{
-                for r in d.dogRequirments.requirements{
+                for r in d.dogReminders.reminders{
                     if r.isPresentationHandled == true {
-                        TimingManager.willShowTimer(dogName: d.dogTraits.dogName, requirement: r)
+                        TimingManager.willShowTimer(dogName: d.dogTraits.dogName, reminder: r)
                     }
                 }
             }

@@ -9,7 +9,7 @@
 import UIKit
 
 enum DogError: Error {
-    case noRequirementsPresent
+    case noRemindersPresent
 }
 
 class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
@@ -18,25 +18,26 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     required init?(coder aDecoder: NSCoder) {
         super.init()
         dogTraits = aDecoder.decodeObject(forKey: "dogTraits") as! TraitManager
-        dogRequirments = aDecoder.decodeObject(forKey: "dogRequirments") as? RequirementManager
-        dogRequirments.masterDog = self
+        //for build versions <= 1513
+        dogReminders = aDecoder.decodeObject(forKey: "dogReminders") as? ReminderManager ?? aDecoder.decodeObject(forKey: "dogRequirements") as? ReminderManager ?? aDecoder.decodeObject(forKey: "dogRequirments") as? ReminderManager
+        dogReminders.masterDog = self
         isEnabled = aDecoder.decodeBool(forKey: "isEnabled")
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(dogTraits, forKey: "dogTraits")
-        aCoder.encode(dogRequirments, forKey: "dogRequirments")
+        aCoder.encode(dogReminders, forKey: "dogReminders")
         aCoder.encode(isEnabled, forKey: "isEnabled")
     }
     
     //MARK: - Conformation EnableProtocol
     
-    ///Whether or not the dog is enabled, if disabled all requirements under this will not fire (but have their own independent isEnabled state)
+    ///Whether or not the dog is enabled, if disabled all reminders under this will not fire (but have their own independent isEnabled state)
     private var isEnabled: Bool = DogConstant.defaultEnable
     
     func setEnable(newEnableStatus: Bool) {
         if isEnabled == false && newEnableStatus == true {
-            for r in dogRequirments.requirements {
+            for r in dogReminders.reminders {
                 guard r.getEnable() == true else {
                     continue
                 }
@@ -45,7 +46,7 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
         }
         
         if newEnableStatus == false{
-            for r in dogRequirments.requirements{
+            for r in dogReminders.reminders{
                 r.setEnable(newEnableStatus: false)
             }
         }
@@ -66,8 +67,8 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = Dog()
-        copy.dogRequirments = self.dogRequirments.copy() as? RequirementManager
-        copy.dogRequirments.masterDog = copy
+        copy.dogReminders = self.dogReminders.copy() as? ReminderManager
+        copy.dogReminders.masterDog = copy
         copy.dogTraits = self.dogTraits.copy() as! TraitManager
         copy.isEnabled = self.isEnabled
         return copy
@@ -77,17 +78,17 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
     
     override init() {
         super.init()
-        self.dogRequirments = RequirementManager(masterDog: self)
+        self.dogReminders = ReminderManager(masterDog: self)
     }
     
     ///Traits
     var dogTraits: TraitManager = TraitManager()
     
-    ///RequirmentManager that handles all specified requirements for a dog, e.g. being taken to the outside every time interval or being fed.
-    var dogRequirments: RequirementManager! = nil
+    ///ReminderManager that handles all specified reminders for a dog, e.g. being taken to the outside every time interval or being fed.
+    var dogReminders: ReminderManager! = nil
     
-    var catagorizedLogTypes: [(KnownLogType, [(Requirement?, KnownLog)])] {
-        var catagorizedLogTypes: [(KnownLogType, [(Requirement?, KnownLog)])] = []
+    var catagorizedLogTypes: [(KnownLogType, [(Reminder?, KnownLog)])] {
+        var catagorizedLogTypes: [(KnownLogType, [(Reminder?, KnownLog)])] = []
         
         //handles all dog logs and adds to catagorized log types
         for dogLog in dogTraits.logs{
@@ -158,15 +159,15 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
         return catagorizedLogTypes
     }
     
-    ///adds default set of requirements
-    func addDefaultRequirements(){
-        try! dogRequirments.addRequirement(newRequirements: [RequirementConstant.defaultRequirementOne, RequirementConstant.defaultRequirementTwo, RequirementConstant.defaultRequirementThree, RequirementConstant.defaultRequirementFour])
+    ///adds default set of reminders
+    func addDefaultReminders(){
+        try! dogReminders.addReminder(newReminders: [ReminderConstant.defaultReminderOne, ReminderConstant.defaultReminderTwo, ReminderConstant.defaultReminderThree, ReminderConstant.defaultReminderFour])
     }
     
-    ///returns true if has created a requirement and has atleast one enabled
-    var hasEnabledRequirement: Bool {
-            for requirement in dogRequirments.requirements {
-                if requirement.getEnable() == true {
+    ///returns true if has created a reminder and has atleast one enabled
+    var hasEnabledReminder: Bool {
+            for reminder in dogReminders.reminders {
+                if reminder.getEnable() == true {
                     return true
                 }
             }

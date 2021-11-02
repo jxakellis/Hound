@@ -11,7 +11,7 @@
 		A20C87D92636312000CC6AEF /* LogsInformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C87D82636312000CC6AEF /* LogsInformationViewController.swift */; };
 		A20C87E32636358D00CC6AEF /* DogsInformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C87E22636358D00CC6AEF /* DogsInformationViewController.swift */; };
 		A20C87E72636630B00CC6AEF /* Logs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C87E62636630B00CC6AEF /* Logs.swift */; };
-		A20C99972568671F00E2C9C8 /* RequirementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C99962568671F00E2C9C8 /* RequirementManager.swift */; };
+		A20C99972568671F00E2C9C8 /* ReminderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C99962568671F00E2C9C8 /* ReminderManager.swift */; };
 		A20C999925686B7600E2C9C8 /* TimingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C999825686B7600E2C9C8 /* TimingManager.swift */; };
 		A2121DBD26649C7E00647682 /* DogsRequirementOnceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2121DBC26649C7E00647682 /* DogsRequirementOnceViewController.swift */; };
 		A226736225CDC36800904032 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A226736125CDC36800904032 /* StringExtension.swift */; };
@@ -28,9 +28,9 @@
 		A25070E726DD9DC50056CFC4 /* UILabelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25070E626DD9DC50056CFC4 /* UILabelExtension.swift */; };
 		A25070E926DD9DDD0056CFC4 /* UIColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25070E826DD9DDD0056CFC4 /* UIColorExtension.swift */; };
 		A25070EB26DD9DF50056CFC4 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25070EA26DD9DF50056CFC4 /* UIImageExtension.swift */; };
-		A2536B3C2608364F00E2FF6A /* RequirementComponets.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2536B3B2608364F00E2FF6A /* RequirementComponets.swift */; };
+		A2536B3C2608364F00E2FF6A /* ReminderComponets.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2536B3B2608364F00E2FF6A /* ReminderComponets.swift */; };
 		A2536B4E26083C4E00E2FF6A /* Formatting in Resources */ = {isa = PBXBuildFile; fileRef = A2536B4D26083C4E00E2FF6A /* Formatting */; };
-		A2536B54260843E900E2FF6A /* Requirement.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2536B53260843E900E2FF6A /* Requirement.swift */; };
+		A2536B54260843E900E2FF6A /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2536B53260843E900E2FF6A /* Reminder.swift */; };
 		A25502FE2649EDF500F6F08F /* LogsMainScreenTableViewCellBodyWithoutIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25502FD2649EDF500F6F08F /* LogsMainScreenTableViewCellBodyWithoutIcon.swift */; };
 		A258AEEF25661580005242E4 /* Dog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A258AEEE25661580005242E4 /* Dog.swift */; };
 		A25FC7A9262E6334007AD1B3 /* LogsMainScreenTableViewCellHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25FC7A8262E6334007AD1B3 /* LogsMainScreenTableViewCellHeader.swift */; };
@@ -90,7 +90,7 @@
 		A20C87D82636312000CC6AEF /* LogsInformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsInformationViewController.swift; sourceTree = "<group>"; };
 		A20C87E22636358D00CC6AEF /* DogsInformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DogsInformationViewController.swift; path = "../New Group1/DogsInformationViewController.swift"; sourceTree = "<group>"; };
 		A20C87E62636630B00CC6AEF /* Logs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logs.swift; sourceTree = "<group>"; };
-		A20C99962568671F00E2C9C8 /* RequirementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementManager.swift; sourceTree = "<group>"; };
+		A20C99962568671F00E2C9C8 /* ReminderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderManager.swift; sourceTree = "<group>"; };
 		A20C999825686B7600E2C9C8 /* TimingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimingManager.swift; sourceTree = "<group>"; };
 		A2121DBC26649C7E00647682 /* DogsRequirementOnceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsRequirementOnceViewController.swift; sourceTree = "<group>"; };
 		A226736125CDC36800904032 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
@@ -107,9 +107,9 @@
 		A25070E626DD9DC50056CFC4 /* UILabelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UILabelExtension.swift; sourceTree = "<group>"; };
 		A25070E826DD9DDD0056CFC4 /* UIColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorExtension.swift; sourceTree = "<group>"; };
 		A25070EA26DD9DF50056CFC4 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
-		A2536B3B2608364F00E2FF6A /* RequirementComponets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementComponets.swift; sourceTree = "<group>"; };
+		A2536B3B2608364F00E2FF6A /* ReminderComponets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderComponets.swift; sourceTree = "<group>"; };
 		A2536B4D26083C4E00E2FF6A /* Formatting */ = {isa = PBXFileReference; lastKnownFileType = text; path = Formatting; sourceTree = "<group>"; };
-		A2536B53260843E900E2FF6A /* Requirement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Requirement.swift; sourceTree = "<group>"; };
+		A2536B53260843E900E2FF6A /* Reminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminder.swift; sourceTree = "<group>"; };
 		A25502FD2649EDF500F6F08F /* LogsMainScreenTableViewCellBodyWithoutIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsMainScreenTableViewCellBodyWithoutIcon.swift; sourceTree = "<group>"; };
 		A258AEEE25661580005242E4 /* Dog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dog.swift; sourceTree = "<group>"; };
 		A25C075826DC525C00D6E4C2 /* HoundDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HoundDebug.entitlements; sourceTree = "<group>"; };
@@ -391,15 +391,15 @@
 			path = Notes;
 			sourceTree = "<group>";
 		};
-		A29390762608491100879C79 /* Requirement */ = {
+		A29390762608491100879C79 /* Reminder */ = {
 			isa = PBXGroup;
 			children = (
-				A20C99962568671F00E2C9C8 /* RequirementManager.swift */,
-				A2536B53260843E900E2FF6A /* Requirement.swift */,
+				A20C99962568671F00E2C9C8 /* ReminderManager.swift */,
+				A2536B53260843E900E2FF6A /* Reminder.swift */,
 				A20C87E62636630B00CC6AEF /* Logs.swift */,
-				A2536B3B2608364F00E2FF6A /* RequirementComponets.swift */,
+				A2536B3B2608364F00E2FF6A /* ReminderComponets.swift */,
 			);
-			path = Requirement;
+			path = Reminder;
 			sourceTree = "<group>";
 		};
 		A2B18E3325E8A4C000951AC3 /* AlertQueue */ = {
@@ -448,7 +448,7 @@
 				A29390722608480800879C79 /* DogManager.swift */,
 				A258AEEE25661580005242E4 /* Dog.swift */,
 				A2AA423125C337C700EAE129 /* TraitManager.swift */,
-				A29390762608491100879C79 /* Requirement */,
+				A29390762608491100879C79 /* Reminder */,
 			);
 			path = Dog;
 			sourceTree = "<group>";
@@ -607,7 +607,7 @@
 				A2121DBD26649C7E00647682 /* DogsRequirementOnceViewController.swift in Sources */,
 				A29390732608480800879C79 /* DogManager.swift in Sources */,
 				A2EBFB9E264F6A1A001AAF18 /* AudioPlayer.swift in Sources */,
-				A2536B3C2608364F00E2FF6A /* RequirementComponets.swift in Sources */,
+				A2536B3C2608364F00E2FF6A /* ReminderComponets.swift in Sources */,
 				A25502FE2649EDF500F6F08F /* LogsMainScreenTableViewCellBodyWithoutIcon.swift in Sources */,
 				A28A0B4C25B923BA0057BEC7 /* DogsRequirementNavigationViewController.swift in Sources */,
 				A27C3D8B25B781B4005F46BA /* DogsAddDogViewController.swift in Sources */,
@@ -625,7 +625,7 @@
 				A2E44707263701A90087B1A3 /* IntroductionViewController.swift in Sources */,
 				A263B2F72638A54F00E1DCE6 /* Sender.swift in Sources */,
 				A2E66C9B25534A880068CCA6 /* AppDelegate.swift in Sources */,
-				A2536B54260843E900E2FF6A /* Requirement.swift in Sources */,
+				A2536B54260843E900E2FF6A /* Reminder.swift in Sources */,
 				A2F1791C263F3E5C006824A7 /* DropDownDefaultTableViewCell.swift in Sources */,
 				A239B748265754B500C92837 /* LogsMainScreenTableViewCellHeaderRegular.swift in Sources */,
 				A247B96425C87F300017FE66 /* MainTabBarViewController.swift in Sources */,
@@ -649,7 +649,7 @@
 				A290F38A25D4B10400429C9D /* Utils.swift in Sources */,
 				A2EBFB9C264F69ED001AAF18 /* ErrorProcessor.swift in Sources */,
 				A25070E926DD9DDD0056CFC4 /* UIColorExtension.swift in Sources */,
-				A20C99972568671F00E2C9C8 /* RequirementManager.swift in Sources */,
+				A20C99972568671F00E2C9C8 /* ReminderManager.swift in Sources */,
 				A25070E726DD9DC50056CFC4 /* UILabelExtension.swift in Sources */,
 				A278ED882610FF05000575FC /* DogsRequirementManagerViewController.swift in Sources */,
 				A2B18E3925E8A4C000951AC3 /* Queue.swift in Sources */,
@@ -810,7 +810,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Hound/HoundDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1513;
+				CURRENT_PROJECT_VERSION = 1574;
 				DEVELOPMENT_TEAM = 9L3M99FST5;
 				INFOPLIST_FILE = "$(SRCROOT)/Hound/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
@@ -818,7 +818,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.1;
+				MARKETING_VERSION = 1.2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.Pupotty;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -833,7 +833,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Hound/HoundDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1513;
+				CURRENT_PROJECT_VERSION = 1574;
 				DEVELOPMENT_TEAM = 9L3M99FST5;
 				INFOPLIST_FILE = "$(SRCROOT)/Hound/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
@@ -841,7 +841,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.1;
+				MARKETING_VERSION = 1.2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.Pupotty;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

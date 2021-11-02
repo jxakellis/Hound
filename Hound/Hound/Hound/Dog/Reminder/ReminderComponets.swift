@@ -18,7 +18,7 @@ class Component: NSObject {
 
 protocol GeneralCountDownProtocol {
     
-    ///Interval at which a timer should be triggered for requirement
+    ///Interval at which a timer should be triggered for reminder
     var executionInterval: TimeInterval { get }
     mutating func changeExecutionInterval(newExecutionInterval: TimeInterval)
     
@@ -59,7 +59,7 @@ class CountDownComponents: Component, NSCoding, NSCopying, GeneralCountDownProto
     
     //MARK: - CountDownComponentsProtocol
     
-    private var storedExecutionInterval: TimeInterval = TimeInterval(RequirementConstant.defaultTimeInterval)
+    private var storedExecutionInterval: TimeInterval = TimeInterval(ReminderConstant.defaultTimeInterval)
     var executionInterval: TimeInterval { return storedExecutionInterval }
     func changeExecutionInterval(newExecutionInterval: TimeInterval) {
         storedExecutionInterval = newExecutionInterval
@@ -81,7 +81,7 @@ class CountDownComponents: Component, NSCoding, NSCopying, GeneralCountDownProto
 
 protocol SnoozeComponentsProtocol {
     
-    ///Bool on whether or not the parent requirement is snoozed
+    ///Bool on whether or not the parent reminder is snoozed
     var isSnoozed: Bool { get }
     ///Change isSnoozed to new status and does accompanying changes
     mutating func changeSnooze(newSnoozeStatus: Bool)
@@ -158,8 +158,8 @@ enum TimeOfDayComponentsError: Error {
 
 protocol TimeOfDayComponentsProtocol {
     
-    ///Reference to the requirement that holds the timeOfDayComponent, required for connectivity.
-    var masterRequirement: Requirement! { get set }
+    ///Reference to the reminder that holds the timeOfDayComponent, required for connectivity.
+    var masterReminder: Reminder! { get set }
     
     ///DateComponent that stores the hour and minute specified (e.g. 8:26 am) of the time of day timer
     var timeOfDayComponent: DateComponents { get }
@@ -174,32 +174,32 @@ protocol TimeOfDayComponentsProtocol {
     ///If is skipping is true, then a certain log date was appended. If unskipped it has to remove that certain logDate, but if logs was modified with the Logs page then you have to figure out if that certain log date is still there and if so then remove it.
     var isSkippingLogDate: Date? { get set }
     
-    ///The weekdays on which the requirement should fire. Nil is dayOfMonth mode
+    ///The weekdays on which the reminder should fire. Nil is dayOfMonth mode
     var weekdays: [Int]? { get }
     
     ///Changes the weekdays, if empty throws an error due to the fact that there needs to be atleast one time of week. Nil is dayOfMonth mode
     mutating func changeWeekdays(newWeekdays: [Int]?) throws
     
-    ///If the requirement is firing once a month, then this is the day of month it occurs. Nil if weekday mode.
+    ///If the reminder is firing once a month, then this is the day of month it occurs. Nil if weekday mode.
     var dayOfMonth: Int? { get }
-    ///Changes the day of month that the requirement should fire
+    ///Changes the day of month that the reminder should fire
     func changeDayOfMonth(newDayOfMonth: Int?) throws
     
     ///The Date that the alarm should next fire at
-    func nextTimeOfDay(requirementExecutionBasis executionBasis: Date) -> Date
+    func nextTimeOfDay(reminderExecutionBasis executionBasis: Date) -> Date
     
     ///The Date that the alarm should have last fired at
-    func previousTimeOfDay(requirementExecutionBasis executionBasis: Date) -> Date
+    func previousTimeOfDay(reminderExecutionBasis executionBasis: Date) -> Date
     
     ///If the next timeOfDay alarm is skipped then at some point the time will pass where it transfers from being skipped to regular mode, this is that date at which is should transition back
-    func unskipDate(timerMode: RequirementMode, requirementExecutionBasis executionBasis: Date) -> Date?
+    func unskipDate(timerMode: ReminderMode, reminderExecutionBasis executionBasis: Date) -> Date?
     
     ///Called when a timer is handled and needs to be reset
     func timerReset()
 }
 
 protocol TimeOfDayComponentsDelegate{
-    func willUnskipRequirement()
+    func willUnskipReminder()
 }
 
 class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsProtocol {
@@ -241,7 +241,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     
     //MARK: - TimeOfDayComponentsProtocol
     
-    var masterRequirement: Requirement! = nil
+    var masterReminder: Reminder! = nil
     
     private var storedTimeOfDayComponent: DateComponents = DateComponents()
     var timeOfDayComponent: DateComponents { return storedTimeOfDayComponent }
@@ -285,10 +285,10 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         else {
             if isSkippingLogDate != nil && shouldRemoveLogDuringPossibleUnskip == true{
                 //if the log added by skipping the reminder is unmodified, finds and removes it in the unskip process
-                let dogLogs = masterRequirement.masterDog!.dogTraits.logs
+                let dogLogs = masterReminder.masterDog!.dogTraits.logs
                 for logDateIndex in 0..<dogLogs.count{
                     if dogLogs[logDateIndex].date.distance(to: isSkippingLogDate!) < 0.01 && dogLogs[logDateIndex].date.distance(to: isSkippingLogDate!) > -0.01{
-                        masterRequirement.masterDog!.dogTraits.logs.remove(at: logDateIndex)
+                        masterReminder.masterDog!.dogTraits.logs.remove(at: logDateIndex)
                         break
                     }
                 }
@@ -374,7 +374,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         return correctedDate
     }
     
-    ///Produces an array of atleast two with all of the future dates that the requirement will fire given the weekday(s), hour, and minute
+    ///Produces an array of atleast two with all of the future dates that the reminder will fire given the weekday(s), hour, and minute
      private func futureExecutionDates(executionBasis: Date) -> [Date] {
         
         var calculatedDates: [Date] = []
@@ -454,14 +454,14 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
             }
         }
         else {
-            fatalError("calculatedDates 0 for futureExecutionDates, RequirementComponents")
+            fatalError("calculatedDates 0 for futureExecutionDates, ReminderComponents")
         }
         
         
         return calculatedDates
     }
     
-    ///Date that is calculated from timeOfDayComponent when the timer should next fire when the requirement is skipping
+    ///Date that is calculated from timeOfDayComponent when the timer should next fire when the reminder is skipping
     private func skippingNextTimeOfDay(executionBasis: Date) -> Date {
         
         let traditionalNextTOD = traditionalNextTimeOfDay(executionBasis: executionBasis)
@@ -510,7 +510,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     return soonestCalculatedDate
 }
     
-    func previousTimeOfDay(requirementExecutionBasis executionBasis: Date) -> Date {
+    func previousTimeOfDay(reminderExecutionBasis executionBasis: Date) -> Date {
         
         let traditionalNextTOD = traditionalNextTimeOfDay(executionBasis: executionBasis)
         
@@ -554,7 +554,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     }
     
     ///Factors in isSkipping to figure out the next time of day
-    func nextTimeOfDay(requirementExecutionBasis executionBasis: Date) -> Date {
+    func nextTimeOfDay(reminderExecutionBasis executionBasis: Date) -> Date {
         if isSkipping == true {
             return skippingNextTimeOfDay(executionBasis: executionBasis)
         }
@@ -563,7 +563,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         }
     }
     
-    func unskipDate(timerMode: RequirementMode, requirementExecutionBasis executionBasis: Date) -> Date? {
+    func unskipDate(timerMode: ReminderMode, reminderExecutionBasis executionBasis: Date) -> Date? {
         guard (timerMode == .weekly || timerMode == .monthly) && isSkipping == true else {
             return nil
         }
@@ -581,14 +581,14 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
 enum OneTimeComponentsError: Error {
     case invalidDateComponents
     case invalidCalendarComponent
-    case requirementAlreadyCreated
+    case reminderAlreadyCreated
 }
 
 protocol OneTimeComponentsProtocol {
-    ///Reference to the requirement that holds the oneTimeComponent, required for connectivity.
-    var masterRequirement: Requirement! { get set }
+    ///Reference to the reminder that holds the oneTimeComponent, required for connectivity.
+    var masterReminder: Reminder! { get set }
     
-    ///DateComponent that stores the year, month, day, hour, and minute of the one time requirement
+    ///DateComponent that stores the year, month, day, hour, and minute of the one time reminder
     var dateComponents: DateComponents { get }
     mutating func changeTimeOfDayComponent(newOneTimeComponents: DateComponents) throws
     mutating func changeTimeOfDayComponent(newOneTimeComponent: Calendar.Component, newValue: Int) throws
@@ -626,7 +626,7 @@ class OneTimeComponents: Component, NSCoding, NSCopying, OneTimeComponentsProtoc
     
     //MARK: OneTimeComponentsProtocol
     
-    var masterRequirement: Requirement! = nil
+    var masterReminder: Reminder! = nil
     
     private var storedDateComponents: DateComponents = DateComponents()
     var dateComponents: DateComponents { return storedDateComponents }

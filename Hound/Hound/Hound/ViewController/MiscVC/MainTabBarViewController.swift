@@ -37,7 +37,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     func didSetDefaultReminderState(sender: Sender, newDefaultReminderStatus: Bool) {
         if newDefaultReminderStatus == true {
             let sudoDogManager = dogsViewController.getDogManager()
-            sudoDogManager.dogs[0].addDefaultRequirements()
+            sudoDogManager.dogs[0].addDefaultReminders()
             
             setDogManager(sender: sender, newDogManager: sudoDogManager)
         }
@@ -79,8 +79,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         masterDogManager = newDogManager
         MainTabBarViewController.staticDogManager = newDogManager
         
-        //Updates isPaused to reflect any changes in data, if there are no enabled/creaed requirements or no enabled/created dogs then turns isPaused off as there is nothing to pause
-        if getDogManager().hasCreatedRequirement == false || getDogManager().hasEnabledRequirement == false || getDogManager().hasEnabledDog == false {
+        //Updates isPaused to reflect any changes in data, if there are no enabled/creaed reminders or no enabled/created dogs then turns isPaused off as there is nothing to pause
+        if getDogManager().hasCreatedReminder == false || getDogManager().hasEnabledReminder == false || getDogManager().hasEnabledDog == false {
             TimingManager.isPaused = false
         }
         
@@ -143,7 +143,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         let decoded = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as! Data
         var decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
         decodedDogManager.synchronizeIsSkipping()
-       //decodedDogManager.dogs[0].dogRequirments.requirements[0].countDownComponents.changeExecutionInterval(newExecutionInterval: 15.0)
+       //decodedDogManager.dogs[0].dogReminders.reminders[0].countDownComponents.changeExecutionInterval(newExecutionInterval: 15.0)
         
         setDogManager(sender: Sender(origin: self, localized: self), newDogManager: decodedDogManager)
         

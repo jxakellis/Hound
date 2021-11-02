@@ -22,7 +22,7 @@ class LogsMainScreenTableViewCellBodyRegularWithoutIcon: UITableViewCell {
     //MARK: - Properties
     
     private var parentDogNameSource: String! = nil
-    private var requirementSource: Requirement? = nil
+    private var reminderSource: Reminder? = nil
     private var logSource: KnownLog! = nil
     
     //MARK: - Main
@@ -31,10 +31,10 @@ class LogsMainScreenTableViewCellBodyRegularWithoutIcon: UITableViewCell {
         super.awakeFromNib()
     }
     
-    func setup(parentDogName: String, requirement: Requirement?, log logSource: KnownLog){
+    func setup(parentDogName: String, reminder: Reminder?, log logSource: KnownLog){
         self.parentDogNameSource = parentDogName
         self.logSource = logSource
-        self.requirementSource = requirement
+        self.reminderSource = reminder
         
         
         dogName.text = parentDogName

@@ -10,7 +10,7 @@ import UIKit
 
 protocol LogsMainScreenTableViewControllerDelegate{
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
-    func didSelectLog(parentDogName: String, requirement: Requirement?, log: KnownLog)
+    func didSelectLog(parentDogName: String, reminder: Reminder?, log: KnownLog)
     func didRemoveLastFilterLog()
 }
 
@@ -39,10 +39,10 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     func updateDogManagerDependents() {
         
-        ///Sorts all dates of every time a requirement was logged into a tuple, containing the actual date, the parent dog name, and the requirement, theb sorts is chronologically from last (closet to present) to first (the first event that happened, so it is the oldest).
-        var calculatedConsolidatedLogs: [(String, Requirement?, KnownLog)] {
+        ///Sorts all dates of every time a reminder was logged into a tuple, containing the actual date, the parent dog name, and the reminder, theb sorts is chronologically from last (closet to present) to first (the first event that happened, so it is the oldest).
+        var calculatedConsolidatedLogs: [(String, Reminder?, KnownLog)] {
             let dogManager = getDogManager()
-            var consolidatedLogs: [(String, Requirement?, KnownLog)] = []
+            var consolidatedLogs: [(String, Reminder?, KnownLog)] = []
             
             //not filtering
             if filterIndexPath == nil {
@@ -55,12 +55,12 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     
                     /*
                      //REQ UPDATE
-                     //adds all requirement logs from dog
-                     for requirementIndex in 0..<dogManager.dogs[dogIndex].dogRequirments.requirements.count{
-                         let requirement = dogManager.dogs[dogIndex].dogRequirments.requirements[requirementIndex]
+                     //adds all reminder logs from dog
+                     for reminderIndex in 0..<dogManager.dogs[dogIndex].dogReminders.reminders.count{
+                         let reminder = dogManager.dogs[dogIndex].dogReminders.reminders[reminderIndex]
                          
-                         for requirementLog in requirement.logs {
-                             consolidatedLogs.append((dog.dogTraits.dogName, requirement, requirementLog))
+                         for reminderLog in reminder.logs {
+                             consolidatedLogs.append((dog.dogTraits.dogName, reminder, reminderLog))
                          }
                      }
                      */
@@ -78,10 +78,10 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 
                 /*
                  //REQ UPDATE
-                 //adds all requirement logs from dog
-                 for requirement in dog.dogRequirments.requirements{
-                     for requirementLog in requirement.logs {
-                         consolidatedLogs.append((dog.dogTraits.dogName, requirement, requirementLog))
+                 //adds all reminder logs from dog
+                 for reminder in dog.dogReminders.reminders{
+                     for reminderLog in reminder.logs {
+                         consolidatedLogs.append((dog.dogTraits.dogName, reminder, reminderLog))
                      }
                  }
                  */
@@ -100,7 +100,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     else {
                         return false
                     }
-                }) == true {//apennds all known logs to consolidated list, some have requirement and some dont as varies depending on source (i.e. was nested under doglogs or requirement logs)
+                }) == true {//apennds all known logs to consolidated list, some have reminder and some dont as varies depending on source (i.e. was nested under doglogs or reminder logs)
                     for knownLog in dog.catagorizedLogTypes[filterIndexPath!.row-1].1{
                         consolidatedLogs.append((dog.dogTraits.dogName, knownLog.0, knownLog.1))
                     }
@@ -133,9 +133,9 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             return consolidatedLogs
         }
         
-        ///Makes an array of unique days (of a given year) which a logging event occured, for every log that happened on a given unique day/year combo, its information (Date, parentDogName, Requirement) is appeneded to the array attached to the unique pair.
-        var calculatedUniqueLogs: [(Int, Int, [(String, Requirement?, KnownLog)])] {
-            var uniqueLogs: [(Int, Int, Int, [(String, Requirement?, KnownLog)])] = []
+        ///Makes an array of unique days (of a given year) which a logging event occured, for every log that happened on a given unique day/year combo, its information (Date, parentDogName, Reminder) is appeneded to the array attached to the unique pair.
+        var calculatedUniqueLogs: [(Int, Int, [(String, Reminder?, KnownLog)])] {
+            var uniqueLogs: [(Int, Int, Int, [(String, Reminder?, KnownLog)])] = []
             
             //goes through all dates present where a log happened
             for consolidatedLogsIndex in 0..<consolidatedLogs.count{
@@ -193,7 +193,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 }
             }
             
-            var converted: [(Int, Int, [(String, Requirement?, KnownLog)])] = []
+            var converted: [(Int, Int, [(String, Reminder?, KnownLog)])] = []
             for uniqueLogDate in uniqueLogs{
                 converted.append((uniqueLogDate.0, uniqueLogDate.2, uniqueLogDate.3))
             }
@@ -214,11 +214,11 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     //MARK: - Properties
     
-    ///Stores all dates of every time a requirement was logged into a tuple, containing the actual date, the parent dog name, and the requirement,  sorted chronologically, first to last.
-    var consolidatedLogs: [(String, Requirement?, KnownLog)] = []
+    ///Stores all dates of every time a reminder was logged into a tuple, containing the actual date, the parent dog name, and the reminder,  sorted chronologically, first to last.
+    var consolidatedLogs: [(String, Reminder?, KnownLog)] = []
     
     ///Stores an array of unique days (of a given year) which a logging event occured. E.g. you logged twice on january 1st 2020& once on january 4th 2020, so the array would be [(1,2020),(4,2020)]
-    private var uniqueLogs: [(Int, Int, [(String, Requirement?, KnownLog)])] = []
+    private var uniqueLogs: [(Int, Int, [(String, Reminder?, KnownLog)])] = []
     
     ///IndexPath of current filtering scheme
     private var filterIndexPath: IndexPath? = nil
@@ -357,7 +357,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 let customCell = cell as! LogsMainScreenTableViewCellBodyCompact
                 
                 
-                customCell.setup(parentDogName: logDisplay.0, requirement: logDisplay.1, log: logDisplay.2)
+                customCell.setup(parentDogName: logDisplay.0, reminder: logDisplay.1, log: logDisplay.2)
                 
                 return cell
             }
@@ -367,7 +367,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 
                 let customCell = cell as! LogsMainScreenTableViewCellBodyRegularWithIcon
                 
-                customCell.setup(parentDogName: logDisplay.0, requirement: logDisplay.1, log: logDisplay.2)
+                customCell.setup(parentDogName: logDisplay.0, reminder: logDisplay.1, log: logDisplay.2)
                 
                 return cell
             }
@@ -378,7 +378,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 let customCell = cell as! LogsMainScreenTableViewCellBodyRegularWithoutIcon
                 
                 
-                customCell.setup(parentDogName: logDisplay.0, requirement: logDisplay.1, log: logDisplay.2)
+                customCell.setup(parentDogName: logDisplay.0, reminder: logDisplay.1, log: logDisplay.2)
                 
                 return cell
             }
@@ -421,11 +421,11 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 }
                 
                 /*
-                 //if cell is a requirement log
+                 //if cell is a reminder log
                  if cellToDelete.1 != nil {
-                     let requirement = try! newDogManager.findDog(dogName: cellToDelete.0).dogRequirments.findRequirement(forUUID: cellToDelete.1!.uuid)
+                     let reminder = try! newDogManager.findDog(dogName: cellToDelete.0).dogReminders.findReminder(forUUID: cellToDelete.1!.uuid)
                      
-                     let firstIndex = requirement.logs.firstIndex { (arg0) -> Bool in
+                     let firstIndex = reminder.logs.firstIndex { (arg0) -> Bool in
                          if arg0.date == cellToDelete.2.date{
                              return true
                          }
@@ -434,7 +434,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                          }
                      }
                      
-                     requirement.logs.remove(at: firstIndex!)
+                     reminder.logs.remove(at: firstIndex!)
                  }
                  //if cell is a dog log
                  else {
@@ -507,7 +507,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         let selectedLogDisplay = uniqueLogs[indexPath.section].2[indexPath.row-1]
         
-        delegate.didSelectLog(parentDogName: selectedLogDisplay.0, requirement: selectedLogDisplay.1, log: selectedLogDisplay.2)
+        delegate.didSelectLog(parentDogName: selectedLogDisplay.0, reminder: selectedLogDisplay.1, log: selectedLogDisplay.2)
         
     }
     

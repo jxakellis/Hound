@@ -1,5 +1,5 @@
 //
-//  DogsRequirementCountDownViewController.swift
+//  DogsReminderCountDownViewController.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 3/28/21.
@@ -8,11 +8,11 @@
 
 import UIKit
 
-protocol DogsRequirementCountDownViewControllerDelegate {
+protocol DogsReminderCountDownViewControllerDelegate {
     func willDismissKeyboard()
 }
 
-class DogsRequirementCountDownViewController: UIViewController, UIGestureRecognizerDelegate {
+class DogsReminderCountDownViewController: UIViewController, UIGestureRecognizerDelegate {
     
     //MARK: - UIGestureRecognizerDelegate
     
@@ -31,7 +31,7 @@ class DogsRequirementCountDownViewController: UIViewController, UIGestureRecogni
     
     //MARK: - Properties
     
-   var delegate: DogsRequirementCountDownViewControllerDelegate! = nil
+   var delegate: DogsReminderCountDownViewControllerDelegate! = nil
     
     var passedInterval: TimeInterval? = nil
     
@@ -52,7 +52,7 @@ class DogsRequirementCountDownViewController: UIViewController, UIGestureRecogni
             self.countDown.countDownDuration = self.passedInterval!
         }
         else {
-            self.countDown.countDownDuration = RequirementConstant.defaultTimeInterval
+            self.countDown.countDownDuration = ReminderConstant.defaultTimeInterval
             passedInterval = countDown.countDownDuration
         }
         
@@ -62,7 +62,7 @@ class DogsRequirementCountDownViewController: UIViewController, UIGestureRecogni
                 self.countDown.countDownDuration = self.passedInterval!
             }
             else {
-                self.countDown.countDownDuration = RequirementConstant.defaultTimeInterval
+                self.countDown.countDownDuration = ReminderConstant.defaultTimeInterval
             }
         }
         

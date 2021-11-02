@@ -48,10 +48,10 @@ class ErrorProcessor{
         else if errorProcessorInstance.handleKnownLogTypeError(sender: sender, error: error) == true {
             return
         }
-        else if errorProcessorInstance.handleRequirementManagerError(sender: sender, error: error) == true {
+        else if errorProcessorInstance.handleReminderManagerError(sender: sender, error: error) == true {
             return
         }
-        else if errorProcessorInstance.handleRequirementError(sender: sender, error: error) == true {
+        else if errorProcessorInstance.handleReminderError(sender: sender, error: error) == true {
             return
         }
         else if errorProcessorInstance.handleTimeOfDayComponentsError(sender: sender, error: error) == true {
@@ -124,10 +124,10 @@ class ErrorProcessor{
     private func handleDogError(sender: Sender, error: Error) -> Bool{
         /*
          enum DogError: Error {
-             case noRequirementsPresent
+             case noRemindersPresent
          }
          */
-        if case DogError.noRequirementsPresent = error {
+        if case DogError.noRemindersPresent = error {
             ErrorProcessor.alertForError(message: "Your dog has no reminders, please try adding one.")
             return true
         }
@@ -183,29 +183,29 @@ class ErrorProcessor{
         }
     }
     
-    ///Returns true if able to find a match in enum RequirementManagerError to the error provided
-    private func handleRequirementManagerError(sender: Sender, error: Error) -> Bool{
+    ///Returns true if able to find a match in enum ReminderManagerError to the error provided
+    private func handleReminderManagerError(sender: Sender, error: Error) -> Bool{
         /*
-         enum RequirementManagerError: Error {
-            case requirementAlreadyPresent
-             case requirementNotPresent
-             case requirementInvalid
-             case requirementNameNotPresent
+         enum ReminderManagerError: Error {
+            case reminderAlreadyPresent
+             case reminderNotPresent
+             case reminderInvalid
+             case reminderNameNotPresent
          }
          */
-        if case RequirementManagerError.requirementAlreadyPresent = error {
+        if case ReminderManagerError.reminderAlreadyPresent = error {
             ErrorProcessor.alertForError(message: "Your reminder's name is already present, please try a different one.")
             return true
         }
-        else if case RequirementManagerError.requirementNotPresent = error{
+        else if case ReminderManagerError.reminderNotPresent = error{
             ErrorProcessor.alertForError(message: "Could not find a match for your reminder!")
             return true
         }
-        else if case RequirementManagerError.requirementInvalid = error {
+        else if case ReminderManagerError.reminderInvalid = error {
             ErrorProcessor.alertForError(message: "Your reminder is invalid, please try something different.")
             return true
         }
-        else if case RequirementManagerError.requirementUUIDNotPresent = error {
+        else if case ReminderManagerError.reminderUUIDNotPresent = error {
             ErrorProcessor.alertForError(message: "Your reminder couldn't be located while attempting to modify its data")
             return true
         }
@@ -214,29 +214,29 @@ class ErrorProcessor{
         }
     }
     
-    ///Returns true if able to find a match in enum RequirementError to the error provided
-    private func handleRequirementError(sender: Sender, error: Error) -> Bool{
+    ///Returns true if able to find a match in enum ReminderError to the error provided
+    private func handleReminderError(sender: Sender, error: Error) -> Bool{
         /*
-         enum RequirementError: Error {
+         enum ReminderError: Error {
              case nameBlank
              case nameInvalid
              case descriptionInvalid
              case intervalInvalid
          }
          */
-        if case RequirementError.nameInvalid = error {
+        if case ReminderError.nameInvalid = error {
             ErrorProcessor.alertForError(message: "Your dog's reminder name is invalid, please try a different one.")
             return true
         }
-        else if case RequirementError.nameBlank = error {
+        else if case ReminderError.nameBlank = error {
             ErrorProcessor.alertForError(message: "Your reminder's name is blank, try typing something in.")
             return true
         }
-        else if case RequirementError.descriptionInvalid = error {
+        else if case ReminderError.descriptionInvalid = error {
             ErrorProcessor.alertForError(message: "Your dog's reminder description is invalid, please try a different one.")
             return true
         }
-        else if case RequirementError.intervalInvalid = error {
+        else if case ReminderError.intervalInvalid = error {
             ErrorProcessor.alertForError(message: "Your dog's reminder countdown time is invalid, please try a different one.")
             return true
         }
@@ -286,7 +286,7 @@ class ErrorProcessor{
          enum OneTimeComponentsError: Error {
              case invalidDateComponents
              case invalidCalendarComponent
-             case requirementAlreadyCreated
+             case reminderAlreadyCreated
          }
          */
         if case OneTimeComponentsError.invalidDateComponents = error {
@@ -297,7 +297,7 @@ class ErrorProcessor{
             ErrorProcessor.alertForError(message: "Invalid Calendar Component for TimeOfDayComponents")
             return true
         }
-        else if case OneTimeComponentsError.requirementAlreadyCreated = error {
+        else if case OneTimeComponentsError.reminderAlreadyCreated = error {
             ErrorProcessor.alertForError(message: "Your reminder cannot be in \"Once\" mode. If you would like to use this mode, please create a new reminder.")
             return true
         }

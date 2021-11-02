@@ -1,5 +1,5 @@
 //
-//  DogsRequirementTableViewController.swift
+//  DogsReminderTableViewController.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 1/20/21.
@@ -8,68 +8,68 @@
 
 import UIKit
 
-protocol DogsRequirementTableViewControllerDelegate {
-    ///When the requirement list is updated, the whole list is pushed through to the DogsAddDogVC, this is much simplier than updating one item at a time, easier for consistant arrays
-    func didUpdateRequirements(newRequirementList: [Requirement])
+protocol DogsReminderTableViewControllerDelegate {
+    ///When the reminder list is updated, the whole list is pushed through to the DogsAddDogVC, this is much simplier than updating one item at a time, easier for consistant arrays
+    func didUpdateReminders(newReminderList: [Reminder])
 }
 
-class DogsRequirementTableViewController: UITableViewController, RequirementManagerControlFlowProtocol, DogsNestedRequirementViewControllerDelegate, DogsRequirementTableViewCellDelegate {
+class DogsReminderTableViewController: UITableViewController, ReminderManagerControlFlowProtocol, DogsNestedReminderViewControllerDelegate, DogsReminderTableViewCellDelegate {
     
-    //MARK: - Dogs Requirement Table View Cell
+    //MARK: - Dogs Reminder Table View Cell
     
-    func didToggleEnable(sender: Sender, requirementUUID: String, newEnableStatus: Bool) {
-        let sudoRequirementManager = getRequirementManager()
+    func didToggleEnable(sender: Sender, reminderUUID: String, newEnableStatus: Bool) {
+        let sudoReminderManager = getReminderManager()
         do {
-            try sudoRequirementManager.findRequirement(forUUID: requirementUUID).setEnable(newEnableStatus: newEnableStatus)
-            setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
+            try sudoReminderManager.findReminder(forUUID: reminderUUID).setEnable(newEnableStatus: newEnableStatus)
+            setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
         }
         catch {
-            fatalError("DogsRequirementTableViewController func didToggleEnable(requirementName: String, newEnableStatus: Bool) error")
+            fatalError("DogsReminderTableViewController func didToggleEnable(reminderName: String, newEnableStatus: Bool) error")
         }
         
         
     }
     
-    //MARK: - Dogs Nested Requirement
+    //MARK: - Dogs Nested Reminder
     
-    var dogsNestedRequirementViewController = DogsNestedRequirementViewController()
+    var dogsNestedReminderViewController = DogsNestedReminderViewController()
     
-    ///When this function is called through a delegate, it adds the information to the list of requirements and updates the cells to display it
-    func didAddRequirement(sender: Sender, newRequirement: Requirement) throws{
-        let sudoRequirementManager = getRequirementManager()
-        try sudoRequirementManager.addRequirement(newRequirement: newRequirement)
-        setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
+    ///When this function is called through a delegate, it adds the information to the list of reminders and updates the cells to display it
+    func didAddReminder(sender: Sender, newReminder: Reminder) throws{
+        let sudoReminderManager = getReminderManager()
+        try sudoReminderManager.addReminder(newReminder: newReminder)
+        setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
     }
     
-    func didUpdateRequirement(sender: Sender, updatedRequirement: Requirement) throws {
-        let sudoRequirementManager = getRequirementManager()
-        try sudoRequirementManager.changeRequirement(forUUID: updatedRequirement.uuid, newRequirement: updatedRequirement)
-        setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
+    func didUpdateReminder(sender: Sender, updatedReminder: Reminder) throws {
+        let sudoReminderManager = getReminderManager()
+        try sudoReminderManager.changeReminder(forUUID: updatedReminder.uuid, newReminder: updatedReminder)
+        setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
     }
     
-    func didRemoveRequirement(sender: Sender, removedRequirementUUID: String) {
-        let sudoRequirementManager = getRequirementManager()
-        try! sudoRequirementManager.removeRequirement(forUUID: removedRequirementUUID)
-        setRequirementManager(sender: sender, newRequirementManager: sudoRequirementManager)
+    func didRemoveReminder(sender: Sender, removedReminderUUID: String) {
+        let sudoReminderManager = getReminderManager()
+        try! sudoReminderManager.removeReminder(forUUID: removedReminderUUID)
+        setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
     }
     
-    //MARK: - Requirement Manager Control Flow Protocol
+    //MARK: - Reminder Manager Control Flow Protocol
     
-    private var requirementManager = RequirementManager(masterDog: nil)
+    private var reminderManager = ReminderManager(masterDog: nil)
     
-    func getRequirementManager() -> RequirementManager {
-        return requirementManager
+    func getReminderManager() -> ReminderManager {
+        return reminderManager
     }
     
-    func setRequirementManager(sender: Sender, newRequirementManager: RequirementManager) {
-        requirementManager = newRequirementManager
+    func setReminderManager(sender: Sender, newReminderManager: ReminderManager) {
+        reminderManager = newReminderManager
         
-        if !(sender.localized is DogsRequirementNavigationViewController){
-            delegate.didUpdateRequirements(newRequirementList: getRequirementManager().requirements)
+        if !(sender.localized is DogsReminderNavigationViewController){
+            delegate.didUpdateReminders(newReminderList: getReminderManager().reminders)
         }
         
-        if !(sender.origin is DogsRequirementTableViewCell) && !(sender.origin is DogsRequirementTableViewController){
-            updateRequirementManagerDependents()
+        if !(sender.origin is DogsReminderTableViewCell) && !(sender.origin is DogsReminderTableViewController){
+            updateReminderManagerDependents()
         }
         
         reloadTableConstraints()
@@ -77,7 +77,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     }
     
     private func reloadTableConstraints(){
-        if getRequirementManager().requirements.count > 0{
+        if getReminderManager().reminders.count > 0{
             self.tableView.rowHeight = -1
         }
         else {
@@ -85,16 +85,16 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
         }
     }
     
-    func updateRequirementManagerDependents() {
+    func updateReminderManagerDependents() {
         self.reloadTable()
     }
     
     //MARK: - Properties
     
-    ///Used for when a requirement is selected (aka clicked) on the table view in order to pass information to open the editing page for the requirement
-    private var selectedRequirement: Requirement?
+    ///Used for when a reminder is selected (aka clicked) on the table view in order to pass information to open the editing page for the reminder
+    private var selectedReminder: Reminder?
     
-    var delegate: DogsRequirementTableViewControllerDelegate! = nil
+    var delegate: DogsReminderTableViewControllerDelegate! = nil
     
     //MARK: - Main
     
@@ -106,7 +106,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if self.getRequirementManager().requirements.count == 0 {
+        if self.getReminderManager().reminders.count == 0 {
             self.tableView.allowsSelection = false
         }
         else {
@@ -131,20 +131,20 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     ///Returns the number of cells present in section (currently only 1 section)
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        //if getRequirementManager().requirements.count == 0{
+        //if getReminderManager().reminders.count == 0{
         //    return 1
         //}
-        return getRequirementManager().requirements.count
+        return getReminderManager().reminders.count
     }
     
-    ///Configures cells at the given index path, pulls from requirement manager requirements to get configuration parameters for each cell, corrosponding cell goes to corrosponding index of requirement manager requirement e.g. cell 1 at [0]
+    ///Configures cells at the given index path, pulls from reminder manager reminders to get configuration parameters for each cell, corrosponding cell goes to corrosponding index of reminder manager reminder e.g. cell 1 at [0]
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "dogsRequirementTableViewCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "dogsReminderTableViewCell", for: indexPath)
         
-        let castCell = cell as! DogsRequirementTableViewCell
+        let castCell = cell as! DogsReminderTableViewCell
         castCell.delegate = self
-        castCell.setup(requirement: getRequirementManager().requirements[indexPath.row])
+        castCell.setup(reminder: getReminderManager().reminders[indexPath.row])
         
         return cell
     }
@@ -152,7 +152,7 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     ///Reloads table data when it is updated, if you change the data w/o calling this, the data display to the user will not be updated
     private func reloadTable(){
         
-        if self.getRequirementManager().requirements.count == 0 {
+        if self.getReminderManager().reminders.count == 0 {
             self.tableView.allowsSelection = false
         }
         else {
@@ -164,30 +164,30 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        selectedRequirement = getRequirementManager().requirements[indexPath.row]
-        self.performSegue(withIdentifier: "dogsNestedRequirementViewController", sender: self)
+        selectedReminder = getReminderManager().reminders[indexPath.row]
+        self.performSegue(withIdentifier: "dogsNestedReminderViewController", sender: self)
         
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        let sudoRequirementManager = getRequirementManager()
-        if editingStyle == .delete && sudoRequirementManager.requirements.count > 0{
-            let removeRequirementConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(sudoRequirementManager.requirements[indexPath.row].displayTypeName)?", message: nil, preferredStyle: .alert)
+        let sudoReminderManager = getReminderManager()
+        if editingStyle == .delete && sudoReminderManager.reminders.count > 0{
+            let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(sudoReminderManager.reminders[indexPath.row].displayTypeName)?", message: nil, preferredStyle: .alert)
             
             let alertActionDelete = UIAlertAction(title: "Delete", style: .destructive) { _ in
-                sudoRequirementManager.removeRequirement(forIndex: indexPath.row)
-                self.setRequirementManager(sender: Sender(origin: self, localized: self), newRequirementManager: sudoRequirementManager)
+                sudoReminderManager.removeReminder(forIndex: indexPath.row)
+                self.setReminderManager(sender: Sender(origin: self, localized: self), newReminderManager: sudoReminderManager)
                 self.tableView.deleteRows(at: [indexPath], with: .automatic)
             }
             let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-            removeRequirementConfirmation.addAction(alertActionDelete)
-            removeRequirementConfirmation.addAction(alertActionCancel)
-            AlertPresenter.shared.enqueueAlertForPresentation(removeRequirementConfirmation)
+            removeReminderConfirmation.addAction(alertActionDelete)
+            removeReminderConfirmation.addAction(alertActionCancel)
+            AlertPresenter.shared.enqueueAlertForPresentation(removeReminderConfirmation)
         }
     }
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        if self.getRequirementManager().requirements.count == 0 {
+        if self.getReminderManager().reminders.count == 0 {
             return false
         }
         else {
@@ -198,14 +198,14 @@ class DogsRequirementTableViewController: UITableViewController, RequirementMana
     // MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        //Links delegate to NestedRequirement
-        if segue.identifier == "dogsNestedRequirementViewController" {
-            dogsNestedRequirementViewController = segue.destination as! DogsNestedRequirementViewController
-            dogsNestedRequirementViewController.delegate = self
+        //Links delegate to NestedReminder
+        if segue.identifier == "dogsNestedReminderViewController" {
+            dogsNestedReminderViewController = segue.destination as! DogsNestedReminderViewController
+            dogsNestedReminderViewController.delegate = self
             
-            if selectedRequirement != nil {
-                dogsNestedRequirementViewController.targetRequirement = selectedRequirement!
-                selectedRequirement = nil
+            if selectedReminder != nil {
+                dogsNestedReminderViewController.targetReminder = selectedReminder!
+                selectedReminder = nil
             }
             
         }

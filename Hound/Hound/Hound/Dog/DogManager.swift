@@ -21,25 +21,25 @@ protocol DogManagerProtocol {
     
     var dogs: [Dog] { get set }
     
-    ///Returns true if any the dogs present has atleast 1 requirement, if there is no requirement present under any of the dogs (e.g. 0 requirements total) return false
-    var hasCreatedRequirement: Bool { get }
+    ///Returns true if any the dogs present has atleast 1 reminder, if there is no reminder present under any of the dogs (e.g. 0 reminders total) return false
+    var hasCreatedReminder: Bool { get }
     
     ///Returns true if any dogs are present, if there is dogs present/created then returns false
     var hasCreatedDog: Bool { get }
     
-    ///Returns true if any the dogs present has atleast 1 enabled requirement, if there is no enabled requirement present under any of the dogs (e.g. 0  enabled requirements total) return false
-    var hasEnabledRequirement: Bool { get }
+    ///Returns true if any the dogs present has atleast 1 enabled reminder, if there is no enabled reminder present under any of the dogs (e.g. 0  enabled reminders total) return false
+    var hasEnabledReminder: Bool { get }
     
     ///Returns true if any the dogs present  are enabled, if there is no enabled dogs presen return false
     var hasEnabledDog: Bool { get }
     
-    ///Counts up all enabled requirements under all enabled dogs, does not factor in isPaused, purely self
+    ///Counts up all enabled reminders under all enabled dogs, does not factor in isPaused, purely self
     var enabledTimersCount: Int { get }
     
-    ///returns self but with only enabled dogs with enabled requirements
+    ///returns self but with only enabled dogs with enabled reminders
     var activeDogManager: DogManager { get }
     
-    ///Checks dog name to see if its valid and checks to see if it is valid in context of other dog names already present, assumes requirements and traits are already validiated
+    ///Checks dog name to see if its valid and checks to see if it is valid in context of other dog names already present, assumes reminders and traits are already validiated
      mutating func addDog(dogAdded: Dog) throws
     
     ///Adds array of dog to dogs
@@ -156,14 +156,14 @@ extension DogManagerProtocol {
         let activeDogManager = self.activeDogManager
         
         for dogIndex in 0..<activeDogManager.dogs.count{
-            for requirementIndex in 0..<activeDogManager.dogs[dogIndex].dogRequirments.requirements.count{
-                let requirement = activeDogManager.dogs[dogIndex].dogRequirments.requirements[requirementIndex]
+            for reminderIndex in 0..<activeDogManager.dogs[dogIndex].dogReminders.reminders.count{
+                let reminder = activeDogManager.dogs[dogIndex].dogReminders.reminders[reminderIndex]
                 
-                let unskipDate = requirement.timeOfDayComponents.unskipDate(timerMode: requirement.timerMode, requirementExecutionBasis: requirement.executionBasis)
+                let unskipDate = reminder.timeOfDayComponents.unskipDate(timerMode: reminder.timerMode, reminderExecutionBasis: reminder.executionBasis)
                 
                 if unskipDate != nil && Date().distance(to: unskipDate!) < 0{
-                    self.dogs[dogIndex].dogRequirments.requirements[requirementIndex].timeOfDayComponents.changeIsSkipping(newSkipStatus: true, shouldRemoveLogDuringPossibleUnskip: nil)
-                    self.dogs[dogIndex].dogRequirments.requirements[requirementIndex].changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
+                    self.dogs[dogIndex].dogReminders.reminders[reminderIndex].timeOfDayComponents.changeIsSkipping(newSkipStatus: true, shouldRemoveLogDuringPossibleUnskip: nil)
+                    self.dogs[dogIndex].dogReminders.reminders[reminderIndex].changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
                 }
             }
         }
@@ -190,9 +190,9 @@ extension DogManagerProtocol {
         throw DogManagerError.dogNameNotPresent
     }
     
-    var hasCreatedRequirement: Bool {
+    var hasCreatedReminder: Bool {
         for dog in 0..<dogs.count {
-            if dogs[dog].dogRequirments.requirements.count > 0 {
+            if dogs[dog].dogReminders.reminders.count > 0 {
                 return true
             }
         }
@@ -206,10 +206,10 @@ extension DogManagerProtocol {
         return false
     }
     
-    var hasEnabledRequirement: Bool {
+    var hasEnabledReminder: Bool {
         for dog in dogs {
-            for requirement in dog.dogRequirments.requirements {
-                if requirement.getEnable() == true {
+            for reminder in dog.dogReminders.reminders {
+                if reminder.getEnable() == true {
                     return true
                 }
             }
@@ -233,8 +233,8 @@ extension DogManagerProtocol {
                 continue
             }
             
-            for r in 0..<MainTabBarViewController.staticDogManager.dogs[d].dogRequirments.requirements.count {
-                guard MainTabBarViewController.staticDogManager.dogs[d].dogRequirments.requirements[r].getEnable() == true else{
+            for r in 0..<MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders.count {
+                guard MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders[r].getEnable() == true else{
                     continue
                 }
                 
@@ -246,8 +246,8 @@ extension DogManagerProtocol {
     
     mutating func clearAllPresentationHandled(){
         for dog in dogs{
-            for requirement in dog.dogRequirments.requirements{
-                requirement.isPresentationHandled = false
+            for reminder in dog.dogReminders.reminders{
+                reminder.isPresentationHandled = false
             }
         }
     }
@@ -294,14 +294,14 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
             }
             
             let dogAdd = self.dogs[d].copy() as! Dog
-            dogAdd.dogRequirments.removeAllRequirements()
+            dogAdd.dogReminders.removeAllReminders()
             
-            for r in 0..<self.dogs[d].dogRequirments.requirements.count {
-                guard self.dogs[d].dogRequirments.requirements[r].getEnable() == true else{
+            for r in 0..<self.dogs[d].dogReminders.reminders.count {
+                guard self.dogs[d].dogReminders.reminders[r].getEnable() == true else{
                     continue
                 }
                 
-                try! dogAdd.dogRequirments.addRequirement(newRequirement: self.dogs[d].dogRequirments.requirements[r].copy() as! Requirement)
+                try! dogAdd.dogReminders.addReminder(newReminder: self.dogs[d].dogReminders.reminders[r].copy() as! Reminder)
             }
             
             try! activeDogManager.addDog(dogAdded: dogAdd)

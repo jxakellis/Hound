@@ -1,5 +1,5 @@
 //
-//  DogsMainScreenTableViewCellRequirement.swift
+//  DogsMainScreenTableViewCellReminder.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 2/2/21.
@@ -8,42 +8,42 @@
 
 import UIKit
 
-protocol DogsMainScreenTableViewCellRequirementDisplayDelegate {
-    func didToggleRequirementSwitch(sender: Sender, parentDogName: String, requirementUUID: String, isEnabled: Bool)
+protocol DogsMainScreenTableViewCellReminderDisplayDelegate {
+    func didToggleReminderSwitch(sender: Sender, parentDogName: String, reminderUUID: String, isEnabled: Bool)
 }
 
-class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
+class DogsMainScreenTableViewCellReminderDisplay: UITableViewCell {
     
     //MARK: - IB
     
-    @IBOutlet private weak var requirementChevron: UIImageView!
+    @IBOutlet private weak var reminderChevron: UIImageView!
     
-    @IBOutlet private weak var requirementIcon: UIImageView!
+    @IBOutlet private weak var reminderIcon: UIImageView!
     
-    @IBOutlet private weak var requirementTypeDisplayName: ScaledUILabel!
+    @IBOutlet private weak var reminderTypeDisplayName: ScaledUILabel!
     @IBOutlet private weak var timeInterval: ScaledUILabel!
     
     @IBOutlet private weak var timeLeft: ScaledUILabel!
-    @IBOutlet weak var requirementToggleSwitch: UISwitch!
+    @IBOutlet weak var reminderToggleSwitch: UISwitch!
     
     //When the on off switch is toggled
-    @IBAction private func didToggleRequirementSwitch(_ sender: Any) {
-        delegate.didToggleRequirementSwitch(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, requirementUUID: requirement.uuid, isEnabled: self.requirementToggleSwitch.isOn)
+    @IBAction private func didToggleReminderSwitch(_ sender: Any) {
+        delegate.didToggleReminderSwitch(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, reminderUUID: reminder.uuid, isEnabled: self.reminderToggleSwitch.isOn)
     }
     
     //MARK: -  Properties
-    private var requirement: Requirement = Requirement()
+    private var reminder: Reminder = Reminder()
     
     private var parentDogName: String = ""
     
-    var delegate: DogsMainScreenTableViewCellRequirementDisplayDelegate! = nil
+    var delegate: DogsMainScreenTableViewCellReminderDisplayDelegate! = nil
     
     //MARK: - Main
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        //requirementChevron.tintColor = ColorConstant.gray.rawValue
-        //requirementChevron.alpha = 1
+        //reminderChevron.tintColor = ColorConstant.gray.rawValue
+        //reminderChevron.alpha = 1
         
         // Initialization code
     }
@@ -55,39 +55,39 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
     }
     
     //Setup function that sets up the different IBOutlet properties
-    func setup(parentDogName: String, requirementPassed: Requirement){
+    func setup(parentDogName: String, reminderPassed: Reminder){
         self.parentDogName = parentDogName
-        self.requirement = requirementPassed
-        self.requirementTypeDisplayName.text = requirementPassed.displayTypeName
+        self.reminder = reminderPassed
+        self.reminderTypeDisplayName.text = reminderPassed.displayTypeName
         
-        if requirement.timingStyle == .oneTime {
-            self.requirementIcon.image = UIImage.init(systemName: "calendar")
-            try! self.timeInterval.text = String.convertToReadableNonRepeating(interperatedDateComponents: requirement.oneTimeComponents.dateComponents)
+        if reminder.timingStyle == .oneTime {
+            self.reminderIcon.image = UIImage.init(systemName: "calendar")
+            try! self.timeInterval.text = String.convertToReadableNonRepeating(interperatedDateComponents: reminder.oneTimeComponents.dateComponents)
         }
-        else if requirement.timingStyle == .countDown {
-            self.requirementIcon.image = UIImage.init(systemName: "timer")
-            self.timeInterval.text = ("Every \(String.convertToReadable(interperateTimeInterval: requirement.countDownComponents.executionInterval))")
+        else if reminder.timingStyle == .countDown {
+            self.reminderIcon.image = UIImage.init(systemName: "timer")
+            self.timeInterval.text = ("Every \(String.convertToReadable(interperateTimeInterval: reminder.countDownComponents.executionInterval))")
         }
         //weekdays
-        else if requirement.timingStyle == .weekly{
-            self.requirementIcon.image = UIImage.init(systemName: "alarm")
-            try! self.timeInterval.text = ("\(String.convertToReadable(interperatedDateComponents: requirement.timeOfDayComponents.timeOfDayComponent))")
+        else if reminder.timingStyle == .weekly{
+            self.reminderIcon.image = UIImage.init(systemName: "alarm")
+            try! self.timeInterval.text = ("\(String.convertToReadable(interperatedDateComponents: reminder.timeOfDayComponents.timeOfDayComponent))")
             
             
             //weekdays
-            if requirement.timeOfDayComponents.weekdays == [1,2,3,4,5,6,7]{
+            if reminder.timeOfDayComponents.weekdays == [1,2,3,4,5,6,7]{
                 timeInterval.text?.append(" Everyday")
             }
-            else if requirement.timeOfDayComponents.weekdays == [1,7]{
+            else if reminder.timeOfDayComponents.weekdays == [1,7]{
                 timeInterval.text?.append(" on Weekends")
             }
-            else if requirement.timeOfDayComponents.weekdays == [2,3,4,5,6]{
+            else if reminder.timeOfDayComponents.weekdays == [2,3,4,5,6]{
                 timeInterval.text?.append(" on Weekdays")
             }
             else {
                 timeInterval.text?.append(" on")
-                if requirement.timeOfDayComponents.weekdays!.count == 1 {
-                    for weekdayInt in requirement.timeOfDayComponents.weekdays!{
+                if reminder.timeOfDayComponents.weekdays!.count == 1 {
+                    for weekdayInt in reminder.timeOfDayComponents.weekdays!{
                         switch weekdayInt {
                         case 1:
                             timeInterval.text?.append(" Sunday")
@@ -109,7 +109,7 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
                     }
                 }
                 else {
-                    for weekdayInt in requirement.timeOfDayComponents.weekdays!{
+                    for weekdayInt in reminder.timeOfDayComponents.weekdays!{
                         switch weekdayInt {
                         case 1:
                             timeInterval.text?.append(" Su,")
@@ -138,18 +138,18 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
         }
         //monthly
         else {
-            self.requirementIcon.image = UIImage.init(systemName: "calendar")
-            try! self.timeInterval.text = ("\(String.convertToReadable(interperatedDateComponents: requirement.timeOfDayComponents.timeOfDayComponent))")
+            self.reminderIcon.image = UIImage.init(systemName: "calendar")
+            try! self.timeInterval.text = ("\(String.convertToReadable(interperatedDateComponents: reminder.timeOfDayComponents.timeOfDayComponent))")
             
             
             //day of month
-                let dayOfMonth: Int! = requirement.timeOfDayComponents.dayOfMonth
+                let dayOfMonth: Int! = reminder.timeOfDayComponents.dayOfMonth
                 timeInterval.text?.append(" Every Month on \(dayOfMonth!)")
             
              timeInterval.text?.append(String.dayOfMonthSuffix(day: dayOfMonth))
         }
         
-        self.requirementToggleSwitch.isOn = requirementPassed.getEnable()
+        self.reminderToggleSwitch.isOn = reminderPassed.getEnable()
         
         setupTimeLeftText()
     }
@@ -164,7 +164,7 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
         let timeLeftBodyWeight: UIFont.Weight = .regular
         let timeLeftImportantWeight: UIFont.Weight = .semibold
         
-        if requirement.getEnable() == false {
+        if reminder.getEnable() == false {
             timeLeft.attributedText = NSAttributedString(string: "Reminder Disabled", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
         }
         else if TimingManager.isPaused == true {
@@ -173,7 +173,7 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
             
         }
         else{
-            let fireDate: Date? = requirement.executionDate!
+            let fireDate: Date? = reminder.executionDate!
             
             if fireDate == nil {
                 timeLeft.attributedText = NSAttributedString(string: "Reminder Disabled", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
@@ -181,7 +181,7 @@ class DogsMainScreenTableViewCellRequirementDisplay: UITableViewCell {
             else if Date().distance(to: fireDate!) <= 0 {
                 timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
             }
-            else if requirement.snoozeComponents.isSnoozed == true {
+            else if reminder.snoozeComponents.isSnoozed == true {
                 let timeLeftText = String.convertToReadable(interperateTimeInterval: Date().distance(to: fireDate!))
                 
                 timeLeft.font = UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftBodyWeight)

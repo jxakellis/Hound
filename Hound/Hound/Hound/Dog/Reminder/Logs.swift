@@ -1,5 +1,5 @@
 //
-//  RequirementLog.swift
+//  ReminderLog.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 4/25/21.
@@ -109,7 +109,7 @@ protocol KnownLogProtocol{
     
     var logType: KnownLogType { get set }
     
-    ///If the requirement's type is custom, this is the name for it
+    ///If the reminder's type is custom, this is the name for it
     var customTypeName: String? { get set }
     
     ///If not .custom type then just .type name, if custom and has customTypeName then its that string
@@ -148,7 +148,7 @@ class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol{
         aCoder.encode(uuid, forKey: "uuid")
     }
     
-    //MARK: - RequirementLogProtocol
+    //MARK: - ReminderLogProtocol
     
     init(date: Date, note: String = "", logType: KnownLogType, customTypeName: String?, uuid: String? = nil){
         self.date = date

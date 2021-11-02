@@ -1,5 +1,5 @@
 //
-//  DogsRequirementWeeklyViewController.swift
+//  DogsReminderWeeklyViewController.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 3/28/21.
@@ -8,11 +8,11 @@
 
 import UIKit
 
-protocol DogsRequirementWeeklyViewControllerDelegate {
+protocol DogsReminderWeeklyViewControllerDelegate {
     func willDismissKeyboard()
 }
 
-class DogsRequirementWeeklyViewController: UIViewController, UIGestureRecognizerDelegate {
+class DogsReminderWeeklyViewController: UIViewController, UIGestureRecognizerDelegate {
     
     //MARK: - UIGestureRecognizerDelegate
     
@@ -65,7 +65,7 @@ class DogsRequirementWeeklyViewController: UIViewController, UIGestureRecognizer
     
     //MARK: - Properties
     
-    var delegate: DogsRequirementWeeklyViewControllerDelegate! = nil
+    var delegate: DogsReminderWeeklyViewControllerDelegate! = nil
     
     var passedTimeOfDay: Date? = nil
     
@@ -138,7 +138,7 @@ class DogsRequirementWeeklyViewController: UIViewController, UIGestureRecognizer
                 case 7:
                     saturday.tintColor = .systemBlue
                 default:
-                    print("unknown day of week: \(dayOfWeek) while synchronizeWeekdays for DogsRequirementWeeklyViewController")
+                    print("unknown day of week: \(dayOfWeek) while synchronizeWeekdays for DogsReminderWeeklyViewController")
                 }
             }
         }

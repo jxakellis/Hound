@@ -36,7 +36,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     
-    func didUpdateKnownLog(sender: Sender, parentDogName: String, requirementUUID: String?, updatedKnownLog: KnownLog) {
+    func didUpdateKnownLog(sender: Sender, parentDogName: String, reminderUUID: String?, updatedKnownLog: KnownLog) {
         
          let sudoDogManager = getDogManager()
          if sudoDogManager.dogs.isEmpty == false {
@@ -44,13 +44,13 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
                 
                 /*
                  //REQ LOG UPDATE
-                 //requirement log
-                 if requirementUUID != nil {
-                     let requirement = try! dog.dogRequirments.findRequirement(forUUID: requirementUUID!)
+                 //reminder log
+                 if reminderUUID != nil {
+                     let reminder = try! dog.dogReminders.findReminder(forUUID: reminderUUID!)
                      
-                     for logIndex in 0..<requirement.logs.count{
-                         if requirement.logs[logIndex].uuid == updatedKnownLog.uuid{
-                             requirement.logs[logIndex] = updatedKnownLog
+                     for logIndex in 0..<reminder.logs.count{
+                         if reminder.logs[logIndex].uuid == updatedKnownLog.uuid{
+                             reminder.logs[logIndex] = updatedKnownLog
                              break
                          }
                      }
@@ -76,7 +76,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
          
     }
     
-    func didDeleteKnownLog(sender: Sender, parentDogName: String, requirementUUID: String?, logUUID: String) {
+    func didDeleteKnownLog(sender: Sender, parentDogName: String, reminderUUID: String?, logUUID: String) {
         let sudoDogManager = getDogManager()
         let dog = try! sudoDogManager.findDog(dogName: parentDogName)
         
@@ -89,7 +89,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         
         /*
          //dog log
-         if requirementUUID == nil {
+         if reminderUUID == nil {
              for dogLogIndex in 0..<dog.dogTraits.logs.count{
                  if dog.dogTraits.logs[dogLogIndex].uuid == logUUID{
                      dog.dogTraits.logs.remove(at: dogLogIndex)
@@ -97,20 +97,20 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
                  }
              }
          }
-         //requirement log
+         //reminder log
          else {
              var logFound = false
              
-             for requirement in dog.dogRequirments.requirements{
+             for reminder in dog.dogReminders.reminders{
                  guard logFound == false else {
                      break
                  }
-                 for requirementLogIndex in 0..<requirement.logs.count{
+                 for reminderLogIndex in 0..<reminder.logs.count{
                      guard logFound == false else {
                          break
                      }
-                     if requirement.logs[requirementLogIndex].uuid == logUUID{
-                         requirement.logs.remove(at: requirementLogIndex)
+                     if reminder.logs[reminderLogIndex].uuid == logUUID{
+                         reminder.logs.remove(at: reminderLogIndex)
                          logFound = true
                      }
                  }
@@ -128,9 +128,9 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         setDogManager(sender: sender, newDogManager: newDogManager)
     }
     
-    private var selectedLog: (String, Requirement?, KnownLog)? = nil
-    func didSelectLog(parentDogName: String, requirement: Requirement?, log: KnownLog) {
-        selectedLog = (parentDogName, requirement, log)
+    private var selectedLog: (String, Reminder?, KnownLog)? = nil
+    func didSelectLog(parentDogName: String, reminder: Reminder?, log: KnownLog) {
+        selectedLog = (parentDogName, reminder, log)
         performSegue(withIdentifier: "logsAddLogViewController", sender: self)
         selectedLog = nil
     }

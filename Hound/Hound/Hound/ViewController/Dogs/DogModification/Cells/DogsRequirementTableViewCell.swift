@@ -1,5 +1,5 @@
 //
-//  DogsRequirementTableViewCell.swift
+//  DogsReminderTableViewCell.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 1/20/21.
@@ -7,126 +7,126 @@
 //
 
 import UIKit
-protocol DogsRequirementTableViewCellDelegate {
-    func didToggleEnable(sender: Sender, requirementUUID: String, newEnableStatus: Bool)
+protocol DogsReminderTableViewCellDelegate {
+    func didToggleEnable(sender: Sender, reminderUUID: String, newEnableStatus: Bool)
 }
 
 
-class DogsRequirementTableViewCell: UITableViewCell {
+class DogsReminderTableViewCell: UITableViewCell {
     
     //MARK: - IB
     
-    @IBOutlet private weak var requirementDisplay: UILabel!
-    @IBOutlet private weak var requirementToggleSwitch: UISwitch!
+    @IBOutlet private weak var reminderDisplay: UILabel!
+    @IBOutlet private weak var reminderToggleSwitch: UISwitch!
     
     @IBAction func didToggleEnable(_ sender: Any) {
-        delegate.didToggleEnable(sender: Sender(origin: self, localized: self), requirementUUID: requirementSource.uuid, newEnableStatus: self.requirementToggleSwitch.isOn)
+        delegate.didToggleEnable(sender: Sender(origin: self, localized: self), reminderUUID: reminderSource.uuid, newEnableStatus: self.reminderToggleSwitch.isOn)
     }
     
     //MARK: - Properties
     
-    var delegate: DogsRequirementTableViewCellDelegate! = nil
+    var delegate: DogsReminderTableViewCellDelegate! = nil
     
-    var requirementSource: Requirement! = nil
+    var reminderSource: Reminder! = nil
     
     //MARK: - Main
     
     //when cell is awoken / init, this is executed
     override func awakeFromNib() {
         super.awakeFromNib()
-        requirementDisplay.adjustsFontSizeToFitWidth = true
+        reminderDisplay.adjustsFontSizeToFitWidth = true
         
         //self.contentMode = .center
         //self.imageView?.contentMode = .center
     }
     
-    func setup(requirement: Requirement){
-        requirementSource = requirement
+    func setup(reminder: Reminder){
+        reminderSource = reminder
         
-        requirementDisplay.text = ""
+        reminderDisplay.text = ""
         
-        if requirement.timingStyle == .oneTime {
-            try! self.requirementDisplay.text? = " \(String.convertToReadableNonRepeating(interperatedDateComponents: requirement.oneTimeComponents.dateComponents))"
+        if reminder.timingStyle == .oneTime {
+            try! self.reminderDisplay.text? = " \(String.convertToReadableNonRepeating(interperatedDateComponents: reminder.oneTimeComponents.dateComponents))"
         }
-        else if requirement.timingStyle == .countDown {
-            self.requirementDisplay.text?.append(" Every \(String.convertToReadable(interperateTimeInterval: requirement.countDownComponents.executionInterval))")
+        else if reminder.timingStyle == .countDown {
+            self.reminderDisplay.text?.append(" Every \(String.convertToReadable(interperateTimeInterval: reminder.countDownComponents.executionInterval))")
         }
         else {
-            try! self.requirementDisplay.text?.append(" \(String.convertToReadable(interperatedDateComponents: requirement.timeOfDayComponents.timeOfDayComponent))")
+            try! self.reminderDisplay.text?.append(" \(String.convertToReadable(interperatedDateComponents: reminder.timeOfDayComponents.timeOfDayComponent))")
             
             //day of month
-            if requirement.timeOfDayComponents.dayOfMonth != nil {
-                let dayOfMonth: Int! = requirement.timeOfDayComponents.dayOfMonth
-                requirementDisplay.text?.append(" Every Month on \(dayOfMonth!)")
+            if reminder.timeOfDayComponents.dayOfMonth != nil {
+                let dayOfMonth: Int! = reminder.timeOfDayComponents.dayOfMonth
+                reminderDisplay.text?.append(" Every Month on \(dayOfMonth!)")
             
-                requirementDisplay.text?.append(String.dayOfMonthSuffix(day: dayOfMonth))
+                reminderDisplay.text?.append(String.dayOfMonthSuffix(day: dayOfMonth))
             }
             //weekdays
-            else if requirement.timeOfDayComponents.weekdays == [1,2,3,4,5,6,7]{
-                requirementDisplay.text?.append(" Everyday")
+            else if reminder.timeOfDayComponents.weekdays == [1,2,3,4,5,6,7]{
+                reminderDisplay.text?.append(" Everyday")
             }
-            else if requirement.timeOfDayComponents.weekdays == [1,7]{
-                requirementDisplay.text?.append(" on Weekends")
+            else if reminder.timeOfDayComponents.weekdays == [1,7]{
+                reminderDisplay.text?.append(" on Weekends")
             }
-            else if requirement.timeOfDayComponents.weekdays == [2,3,4,5,6]{
-                requirementDisplay.text?.append(" on Weekdays")
+            else if reminder.timeOfDayComponents.weekdays == [2,3,4,5,6]{
+                reminderDisplay.text?.append(" on Weekdays")
             }
             else {
-                requirementDisplay.text?.append(" on")
-                if requirement.timeOfDayComponents.weekdays!.count == 1 {
-                    for weekdayInt in requirement.timeOfDayComponents.weekdays!{
+                reminderDisplay.text?.append(" on")
+                if reminder.timeOfDayComponents.weekdays!.count == 1 {
+                    for weekdayInt in reminder.timeOfDayComponents.weekdays!{
                         switch weekdayInt {
                         case 1:
-                            requirementDisplay.text?.append(" Sunday")
+                            reminderDisplay.text?.append(" Sunday")
                         case 2:
-                            requirementDisplay.text?.append(" Monday")
+                            reminderDisplay.text?.append(" Monday")
                         case 3:
-                            requirementDisplay.text?.append(" Tuesday")
+                            reminderDisplay.text?.append(" Tuesday")
                         case 4:
-                            requirementDisplay.text?.append(" Wednesday")
+                            reminderDisplay.text?.append(" Wednesday")
                         case 5:
-                            requirementDisplay.text?.append(" Thursday")
+                            reminderDisplay.text?.append(" Thursday")
                         case 6:
-                            requirementDisplay.text?.append(" Friday")
+                            reminderDisplay.text?.append(" Friday")
                         case 7:
-                            requirementDisplay.text?.append(" Saturday")
+                            reminderDisplay.text?.append(" Saturday")
                         default:
-                            requirementDisplay.text?.append("unknown")
+                            reminderDisplay.text?.append("unknown")
                         }
                     }
                 }
                 else {
-                    for weekdayInt in requirement.timeOfDayComponents.weekdays!{
+                    for weekdayInt in reminder.timeOfDayComponents.weekdays!{
                         switch weekdayInt {
                         case 1:
-                            requirementDisplay.text?.append(" Su,")
+                            reminderDisplay.text?.append(" Su,")
                         case 2:
-                            requirementDisplay.text?.append(" M,")
+                            reminderDisplay.text?.append(" M,")
                         case 3:
-                            requirementDisplay.text?.append(" Tu,")
+                            reminderDisplay.text?.append(" Tu,")
                         case 4:
-                            requirementDisplay.text?.append(" W,")
+                            reminderDisplay.text?.append(" W,")
                         case 5:
-                            requirementDisplay.text?.append(" Th,")
+                            reminderDisplay.text?.append(" Th,")
                         case 6:
-                            requirementDisplay.text?.append(" F,")
+                            reminderDisplay.text?.append(" F,")
                         case 7:
-                            requirementDisplay.text?.append(" Sa,")
+                            reminderDisplay.text?.append(" Sa,")
                         default:
-                            requirementDisplay.text?.append("unknown")
+                            reminderDisplay.text?.append("unknown")
                         }
                     }
                 }
                 //checks if extra comma, then removes
-                if requirementDisplay.text?.last == ","{
-                    requirementDisplay.text?.removeLast()
+                if reminderDisplay.text?.last == ","{
+                    reminderDisplay.text?.removeLast()
                 }
             }
         }
         
-        requirementDisplay.attributedText = requirementDisplay.text?.addingFontToBeginning(text: requirement.displayTypeName + " -", font: UIFont.systemFont(ofSize: requirementDisplay.font.pointSize, weight: .medium))
+        reminderDisplay.attributedText = reminderDisplay.text?.addingFontToBeginning(text: reminder.displayTypeName + " -", font: UIFont.systemFont(ofSize: reminderDisplay.font.pointSize, weight: .medium))
         
-        self.requirementToggleSwitch.isOn = requirement.getEnable()
+        self.reminderToggleSwitch.isOn = reminder.getEnable()
         
     }
     

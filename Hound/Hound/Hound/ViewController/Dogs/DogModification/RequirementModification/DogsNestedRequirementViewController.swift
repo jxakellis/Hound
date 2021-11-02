@@ -1,5 +1,5 @@
 //
-//  DogsNestedRequirementViewController.swift
+//  DogsNestedReminderViewController.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 1/20/21.
@@ -8,21 +8,21 @@
 
 import UIKit
 
-//Delegate to pass setup requirement back to table view
-protocol DogsNestedRequirementViewControllerDelegate {
-    func didAddRequirement(sender: Sender, newRequirement: Requirement) throws
-    func didUpdateRequirement(sender: Sender, updatedRequirement: Requirement) throws
-    func didRemoveRequirement(sender: Sender, removedRequirementUUID: String)
+//Delegate to pass setup reminder back to table view
+protocol DogsNestedReminderViewControllerDelegate {
+    func didAddReminder(sender: Sender, newReminder: Reminder) throws
+    func didUpdateReminder(sender: Sender, updatedReminder: Reminder) throws
+    func didRemoveReminder(sender: Sender, removedReminderUUID: String)
 }
 
-class DogsNestedRequirementViewController: UIViewController, DogsRequirementManagerViewControllerDelegate{
+class DogsNestedReminderViewController: UIViewController, DogsReminderManagerViewControllerDelegate{
     
     
-    //MARK: - DogsRequirementManagerViewControllerDelegate
+    //MARK: - DogsReminderManagerViewControllerDelegate
     
-    func didAddRequirement(newRequirement: Requirement) {
+    func didAddReminder(newReminder: Reminder) {
         do {
-            try delegate.didAddRequirement(sender: Sender(origin: self, localized: self), newRequirement: newRequirement)
+            try delegate.didAddReminder(sender: Sender(origin: self, localized: self), newReminder: newReminder)
             navigationController?.popViewController(animated: true)
         }
         catch {
@@ -31,9 +31,9 @@ class DogsNestedRequirementViewController: UIViewController, DogsRequirementMana
         
     }
     
-    func didUpdateRequirement(updatedRequirement: Requirement) {
+    func didUpdateReminder(updatedReminder: Reminder) {
         do {
-            try delegate.didUpdateRequirement(sender: Sender(origin: self, localized: self), updatedRequirement: updatedRequirement)
+            try delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), updatedReminder: updatedReminder)
             navigationController?.popViewController(animated: true)
         }
         catch {
@@ -48,56 +48,56 @@ class DogsNestedRequirementViewController: UIViewController, DogsRequirementMana
     @IBOutlet private weak var saveButton: UIBarButtonItem!
         
     @IBAction private func backButton(_ sender: Any) {
-        //self.performSegue(withIdentifier: "unwindToAddDogRequirementTableView", sender: self)
+        //self.performSegue(withIdentifier: "unwindToAddDogReminderTableView", sender: self)
         self.navigationController?.popViewController(animated: true)
         }
     
-    @IBOutlet weak var requirementRemoveButton: UIBarButtonItem!
+    @IBOutlet weak var reminderRemoveButton: UIBarButtonItem!
     
-    @IBAction func willRemoveRequirement(_ sender: Any) {
-        let removeRequirementConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsRequirementManagerViewController.requirementAction.text ?? targetRequirement!.displayTypeName)?", message: nil, preferredStyle: .alert)
+    @IBAction func willRemoveReminder(_ sender: Any) {
+        let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.reminderAction.text ?? targetReminder!.displayTypeName)?", message: nil, preferredStyle: .alert)
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { (UIAlertAction) in
-            self.delegate.didRemoveRequirement(sender: Sender(origin: self, localized: self), removedRequirementUUID: self.targetRequirement!.uuid)
-            //self.performSegue(withIdentifier: "unwindToAddDogRequirementTableView", sender: self)
+            self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), removedReminderUUID: self.targetReminder!.uuid)
+            //self.performSegue(withIdentifier: "unwindToAddDogReminderTableView", sender: self)
             self.navigationController?.popViewController(animated: true)
         }
         
         let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
-        removeRequirementConfirmation.addAction(alertActionRemove)
-        removeRequirementConfirmation.addAction(alertActionCancel)
+        removeReminderConfirmation.addAction(alertActionRemove)
+        removeReminderConfirmation.addAction(alertActionCancel)
         
-        AlertPresenter.shared.enqueueAlertForPresentation(removeRequirementConfirmation)
+        AlertPresenter.shared.enqueueAlertForPresentation(removeReminderConfirmation)
     }
     
-    //Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured requirement back to table view.
+    //Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured reminder back to table view.
         @IBAction private func willSave(_ sender: Any) {
             
-            dogsRequirementManagerViewController.willSaveRequirement()
+            dogsReminderManagerViewController.willSaveReminder()
           
         }
         
     //MARK: - Properties
     
-    var delegate: DogsNestedRequirementViewControllerDelegate! = nil
+    var delegate: DogsNestedReminderViewControllerDelegate! = nil
     
-    var dogsRequirementManagerViewController = DogsRequirementManagerViewController()
+    var dogsReminderManagerViewController = DogsReminderManagerViewController()
     
-    var targetRequirement: Requirement?
+    var targetReminder: Reminder?
     
     //MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if targetRequirement != nil {
-            requirementRemoveButton.isEnabled = true
+        if targetReminder != nil {
+            reminderRemoveButton.isEnabled = true
             saveButton.title = "Save"
             pageNavigationBar.title = "Edit Reminder"
         }
         else {
-            requirementRemoveButton.isEnabled = false
+            reminderRemoveButton.isEnabled = false
             saveButton.title = "Add"
             pageNavigationBar.title = "Create Reminder"
         }
@@ -105,10 +105,10 @@ class DogsNestedRequirementViewController: UIViewController, DogsRequirementMana
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "dogsNestedRequirementManagerViewController"{
-            dogsRequirementManagerViewController = segue.destination as! DogsRequirementManagerViewController
-            dogsRequirementManagerViewController.delegate = self
-            dogsRequirementManagerViewController.targetRequirement = targetRequirement
+        if segue.identifier == "dogsNestedReminderManagerViewController"{
+            dogsReminderManagerViewController = segue.destination as! DogsReminderManagerViewController
+            dogsReminderManagerViewController.delegate = self
+            dogsReminderManagerViewController.targetReminder = targetReminder
         }
     }
     

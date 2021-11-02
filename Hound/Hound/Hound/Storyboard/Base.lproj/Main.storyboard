@@ -10,10 +10,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Instantiate Dog Requirement -->
+        <!--Instantiate Dog Reminder -->
         <scene sceneID="8E9-yA-SaW">
             <objects>
-                <viewController title="Instantiate Dog Requirement " id="uJe-nq-2qo" customClass="DogsNestedRequirementViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Instantiate Dog Reminder " id="uJe-nq-2qo" customClass="DogsNestedReminderViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="MUR-Wf-RFm">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="537"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -21,7 +21,7 @@
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xpx-kk-0ei">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="537"/>
                                 <connections>
-                                    <segue destination="ngF-4H-kgO" kind="embed" identifier="dogsNestedRequirementManagerViewController" id="1g9-zQ-LRF"/>
+                                    <segue destination="ngF-4H-kgO" kind="embed" identifier="dogsNestedReminderManagerViewController" id="1g9-zQ-LRF"/>
                                 </connections>
                             </containerView>
                         </subviews>
@@ -51,14 +51,14 @@
                             </barButtonItem>
                             <barButtonItem image="trash" catalog="system" id="RdW-39-CXf">
                                 <connections>
-                                    <action selector="willRemoveRequirement:" destination="uJe-nq-2qo" id="w4V-y7-zJB"/>
+                                    <action selector="willRemoveReminder:" destination="uJe-nq-2qo" id="w4V-y7-zJB"/>
                                 </connections>
                             </barButtonItem>
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="pageNavigationBar" destination="8G7-vl-UY2" id="uha-YY-d8J"/>
-                        <outlet property="requirementRemoveButton" destination="RdW-39-CXf" id="Qlr-yS-xhy"/>
+                        <outlet property="reminderRemoveButton" destination="RdW-39-CXf" id="Qlr-yS-xhy"/>
                         <outlet property="saveButton" destination="Zkj-fw-kwu" id="jYu-bs-4EZ"/>
                     </connections>
                 </viewController>
@@ -66,16 +66,16 @@
             </objects>
             <point key="canvasLocation" x="-6628" y="1710"/>
         </scene>
-        <!--Add Dog Requirement Table View-->
+        <!--Add Dog Reminder Table View-->
         <scene sceneID="dyF-rW-vve">
             <objects>
-                <tableViewController title="Add Dog Requirement Table View" id="Tmz-g7-lDw" customClass="DogsRequirementTableViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Add Dog Reminder Table View" id="Tmz-g7-lDw" customClass="DogsReminderTableViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="lYX-m1-L14">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="537"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="dogsRequirementTableViewCell" id="79O-Ma-zM6" customClass="DogsRequirementTableViewCell" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="dogsReminderTableViewCell" id="79O-Ma-zM6" customClass="DogsReminderTableViewCell" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="44.5" width="414" height="65.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="79O-Ma-zM6" id="uZD-xf-ZPI">
@@ -120,8 +120,8 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="requirementDisplay" destination="aZu-Qx-VXW" id="LSF-11-oVw"/>
-                                    <outlet property="requirementToggleSwitch" destination="z3r-ut-bXY" id="Yah-yc-UFx"/>
+                                    <outlet property="reminderDisplay" destination="aZu-Qx-VXW" id="LSF-11-oVw"/>
+                                    <outlet property="reminderToggleSwitch" destination="z3r-ut-bXY" id="Yah-yc-UFx"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -135,7 +135,7 @@
                             <color key="tintColor" systemColor="systemBlueColor"/>
                             <connections>
                                 <action selector="addButton:" destination="Tmz-g7-lDw" id="NVj-fE-tGY"/>
-                                <segue destination="uJe-nq-2qo" kind="show" identifier="dogsNestedRequirementViewController" id="bee-G5-zdc"/>
+                                <segue destination="uJe-nq-2qo" kind="show" identifier="dogsNestedReminderViewController" id="bee-G5-zdc"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -145,10 +145,10 @@
             </objects>
             <point key="canvasLocation" x="-5486" y="1710"/>
         </scene>
-        <!--Add Dog Requirement Navigation Controller-->
+        <!--Add Dog Reminder Navigation Controller-->
         <scene sceneID="jno-57-8Ma">
             <objects>
-                <navigationController title="Add Dog Requirement Navigation Controller" id="eFt-4z-qcU" customClass="DogsRequirementNavigationViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController title="Add Dog Reminder Navigation Controller" id="eFt-4z-qcU" customClass="DogsReminderNavigationViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="8o7-wh-P2A">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -169,10 +169,10 @@
             </objects>
             <point key="canvasLocation" x="-5483" y="1159"/>
         </scene>
-        <!--Dog Requirement Count Down-->
+        <!--Dog Reminder Count Down-->
         <scene sceneID="igG-O6-rrf">
             <objects>
-                <viewController title="Dog Requirement Count Down" id="gRX-vW-PrI" customClass="DogsRequirementCountDownViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Dog Reminder Count Down" id="gRX-vW-PrI" customClass="DogsReminderCountDownViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1dJ-c5-zaj">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="481"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -211,10 +211,10 @@
             </objects>
             <point key="canvasLocation" x="-7846" y="-148"/>
         </scene>
-        <!--Dog Requirement Editor-->
+        <!--Dog Reminder Editor-->
         <scene sceneID="XfX-La-uZ0">
             <objects>
-                <viewController title="Dog Requirement Editor" id="ngF-4H-kgO" customClass="DogsRequirementManagerViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Dog Reminder Editor" id="ngF-4H-kgO" customClass="DogsReminderManagerViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wCA-tV-nak">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="725"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -225,7 +225,7 @@
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3lK-XC-aXM">
                                         <rect key="frame" x="0.0" y="200" width="414" height="481"/>
                                         <connections>
-                                            <segue destination="Kec-u3-YCz" kind="embed" identifier="dogsRequirementOnceViewController" id="1Lf-u6-k6g"/>
+                                            <segue destination="Kec-u3-YCz" kind="embed" identifier="dogsReminderOnceViewController" id="1Lf-u6-k6g"/>
                                         </connections>
                                     </containerView>
                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="je1-CJ-DNf">
@@ -251,13 +251,13 @@
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MhX-Hm-1r1">
                                         <rect key="frame" x="0.0" y="200" width="414" height="481"/>
                                         <connections>
-                                            <segue destination="gRX-vW-PrI" kind="embed" identifier="dogsRequirementCountDownViewController" id="wbe-5J-4CA"/>
+                                            <segue destination="gRX-vW-PrI" kind="embed" identifier="dogsReminderCountDownViewController" id="wbe-5J-4CA"/>
                                         </connections>
                                     </containerView>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XhW-xN-8L1">
                                         <rect key="frame" x="0.0" y="200" width="414" height="481"/>
                                         <connections>
-                                            <segue destination="Zjt-y9-htp" kind="embed" identifier="dogsRequirementWeeklyViewController" id="FIA-mJ-bsf"/>
+                                            <segue destination="Zjt-y9-htp" kind="embed" identifier="dogsReminderWeeklyViewController" id="FIA-mJ-bsf"/>
                                         </connections>
                                     </containerView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Action:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="txX-Vb-DvX" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
@@ -281,7 +281,7 @@
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="o5c-qK-6d7">
                                         <rect key="frame" x="0.0" y="200" width="414" height="481"/>
                                         <connections>
-                                            <segue destination="Xze-9B-CGF" kind="embed" identifier="dogsRequirementMonthlyViewController" id="eqG-zf-IyY"/>
+                                            <segue destination="Xze-9B-CGF" kind="embed" identifier="dogsReminderMonthlyViewController" id="eqG-zf-IyY"/>
                                         </connections>
                                     </containerView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jxr-D5-mYc" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
@@ -361,13 +361,13 @@
                     <connections>
                         <outlet property="containerForAll" destination="8KF-Nk-KXG" id="jDl-eZ-c76"/>
                         <outlet property="countDownContainerView" destination="MhX-Hm-1r1" id="bfp-I7-24p"/>
-                        <outlet property="customRequirementActionName" destination="jxr-D5-mYc" id="frO-90-fOS"/>
-                        <outlet property="customRequirementActionNameBottomConstraint" destination="TRX-Lt-NfM" id="gzu-b3-yBF"/>
-                        <outlet property="customRequirementActionTextField" destination="WfV-Xu-CGv" id="fZh-jn-QFE"/>
+                        <outlet property="customReminderActionName" destination="jxr-D5-mYc" id="frO-90-fOS"/>
+                        <outlet property="customReminderActionNameBottomConstraint" destination="TRX-Lt-NfM" id="gzu-b3-yBF"/>
+                        <outlet property="customReminderActionTextField" destination="WfV-Xu-CGv" id="fZh-jn-QFE"/>
                         <outlet property="monthlyContainerView" destination="o5c-qK-6d7" id="7d6-Tr-h8C"/>
                         <outlet property="onceContainerView" destination="3lK-XC-aXM" id="xwp-uh-MsJ"/>
-                        <outlet property="requirementAction" destination="NuX-y6-aex" id="aW2-ov-lha"/>
-                        <outlet property="requirementToggleSwitch" destination="je1-CJ-DNf" id="nXB-iD-FVB"/>
+                        <outlet property="reminderAction" destination="NuX-y6-aex" id="aW2-ov-lha"/>
+                        <outlet property="reminderToggleSwitch" destination="je1-CJ-DNf" id="nXB-iD-FVB"/>
                         <outlet property="segmentedControl" destination="HGx-qs-bNl" id="zzB-gc-U8D"/>
                         <outlet property="weeklyContainerView" destination="XhW-xN-8L1" id="gsI-Gb-tmu"/>
                     </connections>
@@ -422,7 +422,7 @@
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6MT-az-4bi">
                                 <rect key="frame" x="0.0" y="188" width="414" height="625"/>
                                 <connections>
-                                    <segue destination="eFt-4z-qcU" kind="embed" identifier="dogRequirementNavigationController" id="E3d-ML-4L4"/>
+                                    <segue destination="eFt-4z-qcU" kind="embed" identifier="dogReminderNavigationController" id="E3d-ML-4L4"/>
                                 </connections>
                             </containerView>
                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iWI-X8-QFy" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
@@ -819,7 +819,7 @@
                         <outlet property="didLogEventConfirmationBackground" destination="upa-lb-hyr" id="vxf-1s-hcs"/>
                         <outlet property="willAddButton" destination="8b5-pw-vvl" id="Wv6-nC-Pwc"/>
                         <outlet property="willAddButtonBackground" destination="vhe-hX-gRw" id="hfX-Dv-kK8"/>
-                        <segue destination="ihm-KQ-9ZO" kind="show" identifier="dogsIndependentRequirementViewController" id="aHQ-Vp-kOd"/>
+                        <segue destination="ihm-KQ-9ZO" kind="show" identifier="dogsIndependentReminderViewController" id="aHQ-Vp-kOd"/>
                         <segue destination="yj4-3A-FdI" kind="show" identifier="dogsAddDogViewController" id="ZXp-P8-izA"/>
                     </connections>
                 </viewController>
@@ -901,7 +901,7 @@
                                     <outlet property="nextReminder" destination="E6i-Fi-bHd" id="uQI-KZ-1MK"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="dogsMainScreenTableViewCellRequirementDisplay" id="Lai-xI-ipQ" customClass="DogsMainScreenTableViewCellRequirementDisplay" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="dogsMainScreenTableViewCellReminderDisplay" id="Lai-xI-ipQ" customClass="DogsMainScreenTableViewCellReminderDisplay" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="144" width="414" height="94.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" tableViewCell="Lai-xI-ipQ" id="g9N-na-X20">
@@ -921,7 +921,7 @@
                                             <rect key="frame" x="320" y="32" width="51" height="31"/>
                                             <color key="onTintColor" systemColor="systemBlueColor"/>
                                             <connections>
-                                                <action selector="didToggleRequirementSwitch:" destination="Lai-xI-ipQ" eventType="valueChanged" id="VnM-MU-e7x"/>
+                                                <action selector="didToggleReminderSwitch:" destination="Lai-xI-ipQ" eventType="valueChanged" id="VnM-MU-e7x"/>
                                             </connections>
                                         </switch>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME INTERVAL" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="bK9-8i-YGQ" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
@@ -980,10 +980,10 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="requirementChevron" destination="vrP-ae-kTK" id="DGm-9a-Gyn"/>
-                                    <outlet property="requirementIcon" destination="WQo-kb-4po" id="ShX-SG-V8I"/>
-                                    <outlet property="requirementToggleSwitch" destination="bhe-v6-mKx" id="pBZ-5o-cNj"/>
-                                    <outlet property="requirementTypeDisplayName" destination="9Re-8c-KHz" id="Nzw-uM-Dmr"/>
+                                    <outlet property="reminderChevron" destination="vrP-ae-kTK" id="DGm-9a-Gyn"/>
+                                    <outlet property="reminderIcon" destination="WQo-kb-4po" id="ShX-SG-V8I"/>
+                                    <outlet property="reminderToggleSwitch" destination="bhe-v6-mKx" id="pBZ-5o-cNj"/>
+                                    <outlet property="reminderTypeDisplayName" destination="9Re-8c-KHz" id="Nzw-uM-Dmr"/>
                                     <outlet property="timeInterval" destination="bK9-8i-YGQ" id="uSV-dg-5ai"/>
                                     <outlet property="timeLeft" destination="PDj-HF-Z40" id="858-hM-ZKH"/>
                                 </connections>
@@ -2285,10 +2285,10 @@
             </objects>
             <point key="canvasLocation" x="1634.7826086956522" y="771.42857142857144"/>
         </scene>
-        <!--Edit Dog Requirement -->
+        <!--Edit Dog Reminder -->
         <scene sceneID="Kgj-aC-JCD">
             <objects>
-                <viewController title="Edit Dog Requirement " id="ihm-KQ-9ZO" customClass="DogsIndependentRequirementViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Edit Dog Reminder " id="ihm-KQ-9ZO" customClass="DogsIndependentReminderViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="0OB-AJ-Dor">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2344,7 +2344,7 @@
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="M3d-rJ-te8">
                                 <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <connections>
-                                    <segue destination="ngF-4H-kgO" kind="embed" identifier="dogsUpdateRequirementManagerViewController" id="GZX-3R-sVV"/>
+                                    <segue destination="ngF-4H-kgO" kind="embed" identifier="dogsUpdateReminderManagerViewController" id="GZX-3R-sVV"/>
                                 </connections>
                             </containerView>
                         </subviews>
@@ -2380,7 +2380,7 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" image="trash" catalog="system" id="R0e-d4-vPA">
                             <connections>
-                                <action selector="willRemoveRequirement:" destination="ihm-KQ-9ZO" id="4EW-eD-ueS"/>
+                                <action selector="willRemoveReminder:" destination="ihm-KQ-9ZO" id="4EW-eD-ueS"/>
                             </connections>
                         </barButtonItem>
                         <connections>
@@ -2388,22 +2388,22 @@
                         </connections>
                     </navigationItem>
                     <connections>
-                        <outlet property="cancelUpdateRequirementButton" destination="L3p-WY-59A" id="iz9-8o-gf8"/>
-                        <outlet property="cancelUpdateRequirementButtonBackground" destination="BEQ-Uc-wNM" id="hOh-12-Rpq"/>
+                        <outlet property="cancelUpdateReminderButton" destination="L3p-WY-59A" id="iz9-8o-gf8"/>
+                        <outlet property="cancelUpdateReminderButtonBackground" destination="BEQ-Uc-wNM" id="hOh-12-Rpq"/>
                         <outlet property="pageNavigationBar" destination="1kf-GJ-Ilq" id="cWm-L0-63V"/>
-                        <outlet property="requirementRemoveButton" destination="R0e-d4-vPA" id="n8d-oq-LvR"/>
-                        <outlet property="saveRequirementButton" destination="etL-8U-WAh" id="bPJ-xJ-D2e"/>
-                        <outlet property="saveRequirementButtonBackground" destination="Fyn-yj-60g" id="VlW-92-DNZ"/>
+                        <outlet property="reminderRemoveButton" destination="R0e-d4-vPA" id="n8d-oq-LvR"/>
+                        <outlet property="saveReminderButton" destination="etL-8U-WAh" id="bPJ-xJ-D2e"/>
+                        <outlet property="saveReminderButtonBackground" destination="Fyn-yj-60g" id="VlW-92-DNZ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wbj-ty-Ibs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-5484" y="-522"/>
         </scene>
-        <!--Dog Requirement Weekly-->
+        <!--Dog Reminder Weekly-->
         <scene sceneID="ErY-O8-nZd">
             <objects>
-                <viewController title="Dog Requirement Weekly" id="Zjt-y9-htp" customClass="DogsRequirementWeeklyViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Dog Reminder Weekly" id="Zjt-y9-htp" customClass="DogsReminderWeeklyViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="87k-Ug-zEc">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="481"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2714,10 +2714,10 @@
             </objects>
             <point key="canvasLocation" x="861" y="-1560"/>
         </scene>
-        <!--Dog Requirement Monthly-->
+        <!--Dog Reminder Monthly-->
         <scene sceneID="k6T-fO-lLL">
             <objects>
-                <viewController title="Dog Requirement Monthly" id="Xze-9B-CGF" customClass="DogsRequirementMonthlyViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Dog Reminder Monthly" id="Xze-9B-CGF" customClass="DogsReminderMonthlyViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="kVk-E3-URR">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="481"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2746,10 +2746,10 @@
             </objects>
             <point key="canvasLocation" x="-7845" y="-1091"/>
         </scene>
-        <!--Dogs Requirement Once View Controller-->
+        <!--Dogs Reminder Once View Controller-->
         <scene sceneID="SFA-wa-jqD">
             <objects>
-                <viewController id="Kec-u3-YCz" customClass="DogsRequirementOnceViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Kec-u3-YCz" customClass="DogsReminderOnceViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Vi5-vu-bH5">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="481"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

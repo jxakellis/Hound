@@ -65,21 +65,21 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
         let nextReminderBodyWeight: UIFont.Weight = .regular
         let nextReminderImportantWeight: UIFont.Weight = .semibold
         
-        if dog.dogRequirments.requirements.count == 0{
+        if dog.dogReminders.reminders.count == 0{
             nextReminder.attributedText = NSAttributedString(string: "No Reminders Created", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: nextReminder.font.pointSize, weight: nextReminderImportantWeight)])
         }
-        //if paused but has an enabled requirement...
-        else if TimingManager.isPaused == true && dog.hasEnabledRequirement == true {
-            var allRequirementsEnabled: Bool{
-                for requirement in dog.dogRequirments.requirements{
-                    if requirement.getEnable() == false {
+        //if paused but has an enabled reminder...
+        else if TimingManager.isPaused == true && dog.hasEnabledReminder == true {
+            var allRemindersEnabled: Bool{
+                for reminder in dog.dogReminders.reminders{
+                    if reminder.getEnable() == false {
                         return false
                     }
                 }
                 return true
             }
             //no disabled reminders, all are enabled
-            if allRequirementsEnabled == true {
+            if allRemindersEnabled == true {
                 nextReminder.attributedText = NSAttributedString(string: "All Reminders Paused", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: nextReminder.font.pointSize, weight: nextReminderImportantWeight)])
             }
             //mix of disabled and enabled reminders
@@ -88,7 +88,7 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
             }
             
         }
-        else if dog.hasEnabledRequirement == false {
+        else if dog.hasEnabledReminder == false {
             nextReminder.attributedText = NSAttributedString(string: "All Reminders Disabled", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: nextReminder.font.pointSize, weight: nextReminderImportantWeight)])
         }
         else if TimingManager.isPaused == true {
@@ -97,18 +97,18 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
             
         }
         else{
-            //has atleast once enabled requirement so soonsetFireDate won't be nil by the end
+            //has atleast once enabled reminder so soonsetFireDate won't be nil by the end
             var soonestFireDate: Date! = nil
-            for requirement in dog.dogRequirments.requirements{
-                guard requirement.getEnable() else {
+            for reminder in dog.dogReminders.reminders{
+                guard reminder.getEnable() else {
                     continue
                 }
                 if soonestFireDate == nil {
-                    soonestFireDate = requirement.executionDate!
+                    soonestFireDate = reminder.executionDate!
                 }
                 else {
-                    if Date().distance(to: requirement.executionDate!) < Date().distance(to: soonestFireDate){
-                        soonestFireDate = requirement.executionDate!
+                    if Date().distance(to: reminder.executionDate!) < Date().distance(to: soonestFireDate){
+                        soonestFireDate = reminder.executionDate!
                     }
                 }
             }

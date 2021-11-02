@@ -38,8 +38,8 @@ class Utils
         
     }
     
-    static func willCreateFollowUpUNUserNotification(dogName: String, requirementUUID: String, executionDate: Date){
-        let requirement = try! MainTabBarViewController.staticDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(forUUID: requirementUUID)
+    static func willCreateFollowUpUNUserNotification(dogName: String, reminderUUID: String, executionDate: Date){
+        let reminder = try! MainTabBarViewController.staticDogManager.findDog(dogName: dogName).dogReminders.findReminder(forUUID: reminderUUID)
         
          let content = UNMutableNotificationContent()
         if #available(iOS 15.0, *) {
@@ -50,7 +50,7 @@ class Utils
         
          content.title = "Follow up notification for \(dogName)!"
         
-        content.body = "It's been \(String.convertToReadable(interperateTimeInterval: NotificationConstant.followUpDelay, capitalizeLetters: false)), give your dog a helping hand with \(requirement.displayTypeName)!"
+        content.body = "It's been \(String.convertToReadable(interperateTimeInterval: NotificationConstant.followUpDelay, capitalizeLetters: false)), give your dog a helping hand with \(reminder.displayTypeName)!"
         
         if NotificationConstant.shouldLoudNotification == false {
             content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "radar30Loop.wav"))
@@ -70,8 +70,8 @@ class Utils
         }
     }
     
-    static func willCreateUNUserNotification(dogName: String, requirementUUID: String, executionDate: Date){
-        let requirement = try! MainTabBarViewController.staticDogManager.findDog(dogName: dogName).dogRequirments.findRequirement(forUUID: requirementUUID)
+    static func willCreateUNUserNotification(dogName: String, reminderUUID: String, executionDate: Date){
+        let reminder = try! MainTabBarViewController.staticDogManager.findDog(dogName: dogName).dogReminders.findReminder(forUUID: reminderUUID)
          let content = UNMutableNotificationContent()
         if #available(iOS 15.0, *) {
             content.interruptionLevel = .timeSensitive
@@ -81,7 +81,7 @@ class Utils
         
          content.title = "Reminder for \(dogName)!"
         
-        content.body = requirement.displayTypeName
+        content.body = reminder.displayTypeName
         
         if NotificationConstant.shouldLoudNotification == false {
             content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "radar30Loop.wav"))

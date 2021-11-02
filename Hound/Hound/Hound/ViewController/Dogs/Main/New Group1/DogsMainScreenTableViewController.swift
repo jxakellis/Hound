@@ -10,30 +10,30 @@ import UIKit
 
 protocol DogsMainScreenTableViewControllerDelegate{
     func willEditDog(dogName: String)
-    func willEditRequirement(parentDogName: String, requirementUUID: String?)
+    func willEditReminder(parentDogName: String, reminderUUID: String?)
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
     func didLogReminder()
     func didUnlogReminder()
 }
 
-class DogsMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol, DogsMainScreenTableViewCellRequirementDisplayDelegate {
+class DogsMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol, DogsMainScreenTableViewCellReminderDisplayDelegate {
     
-    //MARK: - DogsMainScreenTableViewCellRequirementDelegate
+    //MARK: - DogsMainScreenTableViewCellReminderDelegate
     
-    ///Requirement switch is toggled in DogsMainScreenTableViewCellRequirement
-    func didToggleRequirementSwitch(sender: Sender, parentDogName: String, requirementUUID: String, isEnabled: Bool) {
+    ///Reminder switch is toggled in DogsMainScreenTableViewCellReminder
+    func didToggleReminderSwitch(sender: Sender, parentDogName: String, reminderUUID: String, isEnabled: Bool) {
         
         let sudoDogManager = getDogManager()
-        try! sudoDogManager.findDog(dogName: parentDogName).dogRequirments.findRequirement(forUUID: requirementUUID).setEnable(newEnableStatus: isEnabled)
+        try! sudoDogManager.findDog(dogName: parentDogName).dogReminders.findReminder(forUUID: reminderUUID).setEnable(newEnableStatus: isEnabled)
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
         
         //This is so the cell animates the changing of the switch properly, if this code wasnt implemented then when the table view is reloaded a new batch of cells is produced and that cell has the new switch state, bypassing the animation as the instantant the old one is switched it produces and shows the new switch
-        let indexPath = try! IndexPath(row: getDogManager().findDog(dogName: parentDogName).dogRequirments.findIndex(forUUID: requirementUUID)+1, section: getDogManager().findIndex(dogName: parentDogName))
+        let indexPath = try! IndexPath(row: getDogManager().findDog(dogName: parentDogName).dogReminders.findIndex(forUUID: reminderUUID)+1, section: getDogManager().findIndex(dogName: parentDogName))
         
-        let cell = tableView.cellForRow(at: indexPath) as! DogsMainScreenTableViewCellRequirementDisplay
-        cell.requirementToggleSwitch.isOn = !isEnabled
-        cell.requirementToggleSwitch.setOn(isEnabled, animated: true)
+        let cell = tableView.cellForRow(at: indexPath) as! DogsMainScreenTableViewCellReminderDisplay
+        cell.reminderToggleSwitch.isOn = !isEnabled
+        cell.reminderToggleSwitch.setOn(isEnabled, animated: true)
     }
     
     //MARK: - DogManagerControlFlowProtocol
@@ -48,7 +48,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         dogManager = newDogManager
         
         //possible senders
-        //DogsRequirementTableViewCell
+        //DogsReminderTableViewCell
         //DogsMainScreenTableViewCellDogDisplay
         //DogsViewController
         if !(sender.localized is DogsViewController){
@@ -58,9 +58,9 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             self.updateDogManagerDependents()
         }
         
-        //start up loop timer, normally done in view will appear but sometimes view has appeared and doesn't need a loop but then it can get a dogManager update which requires a loop. This happens due to requirement added in DogsIntroduction page.
+        //start up loop timer, normally done in view will appear but sometimes view has appeared and doesn't need a loop but then it can get a dogManager update which requires a loop. This happens due to reminder added in DogsIntroduction page.
         if viewIsBeingViewed == true && loopTimer == nil {
-            guard  getDogManager().hasEnabledDog && getDogManager().hasEnabledRequirement else {
+            guard  getDogManager().hasEnabledDog && getDogManager().hasEnabledReminder else {
                 return
             }
             loopTimer = Timer(fireAt: Date(), interval: 1.0, target: self, selector: #selector(self.loopReload), userInfo: nil, repeats: true)
@@ -117,7 +117,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         self.reloadTable()
         
-        if getDogManager().hasEnabledDog && getDogManager().hasEnabledRequirement{
+        if getDogManager().hasEnabledDog && getDogManager().hasEnabledReminder{
             loopTimer = Timer(fireAt: Date(), interval: 1.0, target: self, selector: #selector(self.loopReload), userInfo: nil, repeats: true)
             
             RunLoop.main.add(loopTimer!, forMode: .default)
@@ -152,7 +152,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     sudoCell.reloadCell()
                 }
                 else {
-                    let sudoCell = cell as! DogsMainScreenTableViewCellRequirementDisplay
+                    let sudoCell = cell as! DogsMainScreenTableViewCellReminderDisplay
                     sudoCell.reloadCell()
                 }
             }
@@ -170,12 +170,12 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         let section = try! self.dogManager.findIndex(dogName: dogName)
         
         let alertActionAdd = UIAlertAction(title: "Add Reminder", style: .default) { UIAlertAction in
-            self.delegate.willEditRequirement(parentDogName: dog.dogTraits.dogName, requirementUUID: nil)
+            self.delegate.willEditReminder(parentDogName: dog.dogTraits.dogName, reminderUUID: nil)
         }
         
         var hasEnabledReminder: Bool {
-            for requirement in dog.dogRequirments.requirements{
-                if requirement.getEnable() == true {
+            for reminder in dog.dogReminders.reminders{
+                if reminder.getEnable() == true {
                     return true
                 }
             }
@@ -201,22 +201,22 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     
                     //disabling all
                     if hasEnabledReminder == true {
-                        for requirement in dog.dogRequirments.requirements{
-                            requirement.setEnable(newEnableStatus: false)
+                        for reminder in dog.dogReminders.reminders{
+                            reminder.setEnable(newEnableStatus: false)
                             
-                            let requirementCell = self.tableView.cellForRow(at: IndexPath(row: try! dog.dogRequirments.findIndex(forUUID: requirement.uuid)+1, section: section)) as! DogsMainScreenTableViewCellRequirementDisplay
-                            requirementCell.requirementToggleSwitch.setOn(false, animated: true)
+                            let reminderCell = self.tableView.cellForRow(at: IndexPath(row: try! dog.dogReminders.findIndex(forUUID: reminder.uuid)+1, section: section)) as! DogsMainScreenTableViewCellReminderDisplay
+                            reminderCell.reminderToggleSwitch.setOn(false, animated: true)
                         }
                         
                         
                     }
                     //enabling all
                     else {
-                        for requirement in dog.dogRequirments.requirements{
-                            requirement.setEnable(newEnableStatus: true)
+                        for reminder in dog.dogReminders.reminders{
+                            reminder.setEnable(newEnableStatus: true)
                             
-                            let requirementCell = self.tableView.cellForRow(at: IndexPath(row: try! dog.dogRequirments.findIndex(forUUID: requirement.uuid)+1, section: try! self.dogManager.findIndex(dogName: dogName))) as! DogsMainScreenTableViewCellRequirementDisplay
-                            requirementCell.requirementToggleSwitch.setOn(true, animated: true)
+                            let reminderCell = self.tableView.cellForRow(at: IndexPath(row: try! dog.dogReminders.findIndex(forUUID: reminder.uuid)+1, section: try! self.dogManager.findIndex(dogName: dogName))) as! DogsMainScreenTableViewCellReminderDisplay
+                            reminderCell.reminderToggleSwitch.setOn(true, animated: true)
                         }
                     }
                     
@@ -256,7 +256,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         alertController.addAction(alertActionEdit)
         
-        if dog.dogRequirments.requirements.count != 0 {
+        if dog.dogReminders.reminders.count != 0 {
             alertController.addAction(alertActionDisable)
         }
         
@@ -267,40 +267,40 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         AlertPresenter.shared.enqueueActionSheetForPresentation(alertController, sourceView: sender, permittedArrowDirections: [.up,.down])
     }
     
-    ///Called when a requirement is clicked by the user, display an action sheet of possible modifcations to the alarm/requirement.
-    private func willShowRequirementActionSheet(sender: UIView, parentDogName: String, requirement: Requirement){
+    ///Called when a reminder is clicked by the user, display an action sheet of possible modifcations to the alarm/reminder.
+    private func willShowReminderActionSheet(sender: UIView, parentDogName: String, reminder: Reminder){
         
-        let selectedRequirementAlertController = GeneralUIAlertController(title: "You Selected: \(requirement.displayTypeName) for \(parentDogName)", message: nil, preferredStyle: .actionSheet)
+        let selectedReminderAlertController = GeneralUIAlertController(title: "You Selected: \(reminder.displayTypeName) for \(parentDogName)", message: nil, preferredStyle: .actionSheet)
         
         let alertActionCancel = UIAlertAction(title:"Cancel", style: .cancel, handler: nil)
         
         let alertActionEdit = UIAlertAction(title: "Edit Reminder", style: .default) { (UIAlertAction) in
-            self.delegate.willEditRequirement(parentDogName: parentDogName, requirementUUID: requirement.uuid)
+            self.delegate.willEditReminder(parentDogName: parentDogName, reminderUUID: reminder.uuid)
         }
         
         //DELETE BUTTON
         let alertActionDelete = UIAlertAction(title: "Delete Reminder", style: .destructive) { (action) in
             
             //DELETE CONFIRMATION
-            let deleteRequirementConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(requirement.displayTypeName)?", message: nil, preferredStyle: .alert)
+            let deleteReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(reminder.displayTypeName)?", message: nil, preferredStyle: .alert)
             
-            let deleteRequirementConfirmationDelete = UIAlertAction(title: "Delete", style: .destructive) { _ in
+            let deleteReminderConfirmationDelete = UIAlertAction(title: "Delete", style: .destructive) { _ in
                 let sudoDogManager = self.getDogManager()
                 let dog = try! sudoDogManager.findDog(dogName: parentDogName)
-                let indexPath = IndexPath(row: try! dog.dogRequirments.findIndex(forUUID: requirement.uuid)+1, section: try! sudoDogManager.findIndex(dogName: parentDogName))
+                let indexPath = IndexPath(row: try! dog.dogReminders.findIndex(forUUID: reminder.uuid)+1, section: try! sudoDogManager.findIndex(dogName: parentDogName))
                 
-                try! dog.dogRequirments.removeRequirement(forUUID: requirement.uuid)
+                try! dog.dogReminders.removeReminder(forUUID: reminder.uuid)
                 self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
                 
                 self.tableView.deleteRows(at: [indexPath], with: .automatic)
             }
             
-            let deleteRequirementConfirmationCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            let deleteReminderConfirmationCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
             
-            deleteRequirementConfirmation.addAction(deleteRequirementConfirmationDelete)
-            deleteRequirementConfirmation.addAction(deleteRequirementConfirmationCancel)
+            deleteReminderConfirmation.addAction(deleteReminderConfirmationDelete)
+            deleteReminderConfirmation.addAction(deleteReminderConfirmationCancel)
 
-            AlertPresenter.shared.enqueueAlertForPresentation(deleteRequirementConfirmation)
+            AlertPresenter.shared.enqueueAlertForPresentation(deleteReminderConfirmation)
             
             
         }
@@ -308,14 +308,14 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         //DETERMINES IF ITS A LOG BUTTON OR UNDO LOG BUTTON
         var shouldUndoLog: Bool {
             //Yes I know these if statements are redundent and terrible coding but it's whatever, used to do something different but has to modify
-            if requirement.isActive == false {
+            if reminder.isActive == false {
                 return false
             }
-            else if requirement.timerMode == .snooze || requirement.timerMode == .countDown {
+            else if reminder.timerMode == .snooze || reminder.timerMode == .countDown {
                 return false
             }
             else {
-                if requirement.timeOfDayComponents.isSkipping == true {
+                if reminder.timeOfDayComponents.isSkipping == true {
                     return true
                 }
                 else {
@@ -330,20 +330,20 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         //ADD LOG BUTTONS (MULTIPLE IF POTTY OR OTHER SPECIAL CASE)
         if shouldUndoLog == true {
             let alertActionLog = UIAlertAction(
-                title: "Undo Log for \(requirement.displayTypeName)",
+                title: "Undo Log for \(reminder.displayTypeName)",
             style: .default,
             handler:
                 {
                     (alert: UIAlertAction!)  in
                     //knownLogType not needed as unskipping alarm does not require that component
-                    TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementUUID: requirement.uuid, knownLogType: nil)
+                    TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, reminderUUID: reminder.uuid, knownLogType: nil)
                     self.delegate.didUnlogReminder()
                     
                 })
             alertActionsForLog.append(alertActionLog)
         }
         else {
-            switch requirement.requirementType {
+            switch reminder.reminderType {
             case .potty:
                 let pottyKnownTypes: [KnownLogType] = [.pee, .poo, .both, .neither, .accident]
                 for pottyKnownType in pottyKnownTypes {
@@ -354,39 +354,39 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                             {
                                 (_)  in
                                 //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                                TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementUUID: requirement.uuid, knownLogType: pottyKnownType)
+                                TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, reminderUUID: reminder.uuid, knownLogType: pottyKnownType)
                                 self.delegate.didLogReminder()
                             })
                     alertActionsForLog.append(alertActionLog)
                 }
             default:
                 let alertActionLog = UIAlertAction(
-                    title:"Log \(requirement.displayTypeName)",
+                    title:"Log \(reminder.displayTypeName)",
                     style: .default,
                     handler:
                         {
                             (_)  in
                             //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                            TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, requirementUUID: requirement.uuid, knownLogType: KnownLogType(rawValue: requirement.requirementType.rawValue)!)
+                            TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: parentDogName, reminderUUID: reminder.uuid, knownLogType: KnownLogType(rawValue: reminder.reminderType.rawValue)!)
                             self.delegate.didLogReminder()
                         })
                 alertActionsForLog.append(alertActionLog)
             }
         }
         
-        if requirement.getEnable() == true {
+        if reminder.getEnable() == true {
             for alertActionLog in alertActionsForLog{
-                selectedRequirementAlertController.addAction(alertActionLog)
+                selectedReminderAlertController.addAction(alertActionLog)
             }
         }
         
-        selectedRequirementAlertController.addAction(alertActionEdit)
+        selectedReminderAlertController.addAction(alertActionEdit)
         
-        selectedRequirementAlertController.addAction(alertActionDelete)
+        selectedReminderAlertController.addAction(alertActionDelete)
         
-        selectedRequirementAlertController.addAction(alertActionCancel)
+        selectedReminderAlertController.addAction(alertActionCancel)
         
-        AlertPresenter.shared.enqueueActionSheetForPresentation(selectedRequirementAlertController, sourceView: sender, permittedArrowDirections: [.up,.down])
+        AlertPresenter.shared.enqueueActionSheetForPresentation(selectedReminderAlertController, sourceView: sender, permittedArrowDirections: [.up,.down])
         
     }
     
@@ -406,7 +406,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             return 1
         }
         
-        return getDogManager().dogs[section].dogRequirments.requirements.count+1
+        return getDogManager().dogs[section].dogReminders.reminders.count+1
     }
     
     
@@ -420,10 +420,10 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             return cell
         }
         else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "dogsMainScreenTableViewCellRequirementDisplay", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: "dogsMainScreenTableViewCellReminderDisplay", for: indexPath)
             
-            let customCell = cell as! DogsMainScreenTableViewCellRequirementDisplay
-            customCell.setup(parentDogName: getDogManager().dogs[indexPath.section].dogTraits.dogName, requirementPassed: getDogManager().dogs[indexPath.section].dogRequirments.requirements[indexPath.row-1])
+            let customCell = cell as! DogsMainScreenTableViewCellReminderDisplay
+            customCell.setup(parentDogName: getDogManager().dogs[indexPath.section].dogTraits.dogName, reminderPassed: getDogManager().dogs[indexPath.section].dogReminders.reminders[indexPath.row-1])
             customCell.delegate = self
             return cell
         }
@@ -439,7 +439,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             }
             else if indexPath.row > 0 {
                 
-                willShowRequirementActionSheet(sender: tableView.cellForRow(at: indexPath)!, parentDogName: dog.dogTraits.dogName, requirement: dog.dogRequirments.requirements[indexPath.row-1])
+                willShowReminderActionSheet(sender: tableView.cellForRow(at: indexPath)!, parentDogName: dog.dogTraits.dogName, reminder: dog.dogReminders.reminders[indexPath.row-1])
             }
             
         }
@@ -452,10 +452,10 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             let deleteConfirmation: GeneralUIAlertController!
             let sudoDogManager = getDogManager()
             if indexPath.row > 0 {
-                deleteConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(sudoDogManager.dogs[indexPath.section].dogRequirments.requirements[indexPath.row-1].displayTypeName)?", message: nil, preferredStyle: .alert)
+                deleteConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(sudoDogManager.dogs[indexPath.section].dogReminders.reminders[indexPath.row-1].displayTypeName)?", message: nil, preferredStyle: .alert)
                 
                 let alertActionDelete = UIAlertAction(title: "Delete", style: .destructive) { _ in
-                    sudoDogManager.dogs[indexPath.section].dogRequirments.removeRequirement(forIndex: indexPath.row-1)
+                    sudoDogManager.dogs[indexPath.section].dogReminders.removeReminder(forIndex: indexPath.row-1)
                     self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
                     self.tableView.deleteRows(at: [indexPath], with: .automatic)
                 }
