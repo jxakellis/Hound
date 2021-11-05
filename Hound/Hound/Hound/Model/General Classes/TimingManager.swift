@@ -38,9 +38,6 @@ class TimingManager{
         
         var count = 0
         for d in 0..<MainTabBarViewController.staticDogManager.dogs.count {
-            guard MainTabBarViewController.staticDogManager.dogs[d].getEnable() == true else{
-                continue
-            }
             
             for r in 0..<MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders.count {
                 guard MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders[r].getEnable() == true else{
@@ -76,9 +73,6 @@ class TimingManager{
         //goes through all dogs
         for d in 0..<sudoDogManager.dogs.count{
             //makes sure current dog is enabled, as if it isn't then all of its timers arent either
-            guard sudoDogManager.dogs[d].getEnable() == true else {
-                continue
-            }
             
             //goes through all reminders in a dog
             for r in 0..<sudoDogManager.dogs[d].dogReminders.reminders.count{
@@ -106,28 +100,13 @@ class TimingManager{
                     RunLoop.main.add(isSkippingDisabler, forMode: .common)
                 }
                 
-                var timer: Timer!
-                
-                //active
-                if reminder.isActive == true {
-                    timer = Timer(fireAt: reminder.executionDate!,
+                let timer = Timer(fireAt: reminder.executionDate!,
                                           interval: -1,
                                           target: self,
                                           selector: #selector(self.didExecuteTimer(sender:)),
                                           userInfo: ["dogName": dogManager.dogs[d].dogTraits.dogName, "reminder": reminder],
                                           repeats: false)
                     RunLoop.main.add(timer, forMode: .common)
-                }
-                
-                //inactive (depreciated/removed?), still adds to the runloop as the timer execution date and number of timers is used for many functions
-                else {
-                    timer = Timer(fireAt: reminder.executionDate!,
-                                          interval: -1,
-                                          target: self,
-                                          selector: #selector(self.sudoSelector),
-                                          userInfo: nil,
-                                          repeats: false)
-                }
                 
                 
                 //Updates timerDictionary to reflect new timer added, this is so a reference to the created timer can be referenced later and invalidated if needed.
@@ -289,15 +268,7 @@ class TimingManager{
         
         //Goes through all enabled dogs and all their enabled reminders
         for dog in dogManager.dogs{
-            guard dog.getEnable() == true else {
-                continue
-            }
             for reminder in dog.dogReminders.reminders {
-                
-                guard reminder.getEnable() == true else {
-                    continue
-                }
-                
                 //Changes the execution basis to the current time of unpause, if the execution basis is not changed then the interval remaining will go off a earlier point in time and have an overall earlier execution date, making the timer fire too early
                 reminder.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: false)
                 
@@ -429,11 +400,7 @@ class TimingManager{
         
         let reminder = try! dog.dogReminders.findReminder(forUUID: reminderUUID)
         
-        //inactive to active
-        if reminder.isActive == false{
-            reminder.changeActiveStatus(newActiveStatus: true)
-        }
-        else if reminder.timingStyle == .oneTime{
+        if reminder.timingStyle == .oneTime{
             if knownLogType != nil {
                 dog.dogTraits.logs.append(KnownLog(date: Date(), logType: knownLogType!, customTypeName: reminder.customTypeName))
             }
@@ -464,16 +431,6 @@ class TimingManager{
         }
         
         delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
-    }
-    
-    ///If dismiss is clicked when a timer fires and its pop of choices shows, it puts the timer into a disable like state. It still shows on the home screen and can be clicked on but remains inactive with no future timers.
-    static func willInactivateTimer(sender: Sender, dogName targetDogName: String, reminderUUID: String){
-        let dogManager = MainTabBarViewController.staticDogManager
-        
-        let reminder = try! dogManager.findDog(dogName: targetDogName).dogReminders.findReminder(forUUID: reminderUUID)
-        
-        reminder.changeActiveStatus(newActiveStatus: false)
-        
     }
     
     

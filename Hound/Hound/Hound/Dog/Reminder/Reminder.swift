@@ -81,12 +81,6 @@ protocol ReminderTimingComponentsProtocol {
     ///Changes executionBasis to the specified value, note if the Date is equal to the current date (i.e. newExecutionBasis == Date()) then resets all components intervals elapsed to zero.
     mutating func changeExecutionBasis(newExecutionBasis: Date, shouldResetIntervalsElapsed: Bool)
     
-    ///If an timer is dismissed when it fires and alerts the user, the reminder will remain inactive until interacted with again. Similar to being disabled except it will sit on the home screen just doing nothing
-    var isActive: Bool { get }
-    
-    ///Changes the active status and accompanying information
-    mutating func changeActiveStatus(newActiveStatus: Bool)
-    
     ///True if the presentation of the timer (when it is time to present) has been handled and sent to the presentation handler, prevents repeats of the timer being sent to the presenation handler over and over.
     var isPresentationHandled: Bool { get set }
     
@@ -120,7 +114,6 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         copy.snoozeComponents = self.snoozeComponents.copy() as! SnoozeComponents
         copy.storedTimingStyle = self.timingStyle
         
-        copy.storedIsActive = self.isActive
         copy.isPresentationHandled = self.isPresentationHandled
         copy.storedExecutionBasis = self.executionBasis
         
@@ -190,13 +183,14 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         self.snoozeComponents = aDecoder.decodeObject(forKey: "snoozeComponents") as! SnoozeComponents
         
         var decodedTimingStyle: Int {
-            let decodedInteger: Int? = aDecoder.decodeObject(forKey: "timingStyle") as? Int
+            let decodedInteger: Int? = aDecoder.decodeInteger(forKey: "timingStyle")
+            
             if decodedInteger != nil {
                 return decodedInteger!
             }
             else {
+                let decodedString: String? = aDecoder.decodeObject(forKey: "timingStyle") as? String
                 //for builds <=1513, used to be stored as string
-                let decodedString: String = aDecoder.decodeObject(forKey: "timingStyle") as! String
                 
                 switch decodedString {
                 case "oneTime":
@@ -217,8 +211,7 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         
         self.storedTimingStyle = ReminderStyle(rawValue: decodedTimingStyle)!
         
-        self.storedIsActive = aDecoder.decodeBool(forKey: "isActive")
-        self.isPresentationHandled = aDecoder.decodeBool(forKey: "isPresentationHandled")
+        //self.isPresentationHandled = aDecoder.decodeBool(forKey: "isPresentationHandled")
         self.storedExecutionBasis = aDecoder.decodeObject(forKey: "executionBasis") as! Date
         
         self.isEnabled = aDecoder.decodeBool(forKey: "isEnabled")
@@ -229,7 +222,6 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         aCoder.encode(uuid, forKey: "uuid")
         aCoder.encode(reminderType.rawValue, forKey: "reminderType")
         aCoder.encode(customTypeName, forKey: "customTypeName")
-        //aCoder.encode(logs, forKey: "logs")
         
         aCoder.encode(countDownComponents, forKey: "countDownComponents")
         aCoder.encode(timeOfDayComponents, forKey: "timeOfDayComponents")
@@ -237,8 +229,7 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         aCoder.encode(snoozeComponents, forKey: "snoozeComponents")
         aCoder.encode(storedTimingStyle.rawValue, forKey: "timingStyle")
         
-        aCoder.encode(storedIsActive, forKey: "isActive")
-        aCoder.encode(isPresentationHandled, forKey: "isPresentationHandled")
+        //aCoder.encode(isPresentationHandled, forKey: "isPresentationHandled")
         aCoder.encode(storedExecutionBasis, forKey: "executionBasis")
         
         aCoder.encode(isEnabled, forKey: "isEnabled")
@@ -323,24 +314,6 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         
     }
     
-    private var storedIsActive: Bool = true
-    var isActive: Bool { return storedIsActive }
-    
-    func changeActiveStatus(newActiveStatus: Bool){
-        //newActiveStatus different from the one stored
-        if newActiveStatus != storedIsActive{
-            //transitioning to active
-            if newActiveStatus == true{
-                self.timerReset(shouldLogExecution: false)
-            }
-            //transitioning to inactive
-            else {
-                isPresentationHandled = false
-                storedIsActive = false
-            }
-        }
-    }
-    
     var isPresentationHandled: Bool = false
     
     var intervalRemaining: TimeInterval? {
@@ -402,10 +375,6 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
     }
     
     func timerReset(shouldLogExecution: Bool, knownLogType: KnownLogType? = nil, customTypeName: String? = nil){
-        //changeActiveStatus already calls timerReset if transitioning from inactive to active so circumvent this by directly accessing storedIsActive
-        if isActive == false {
-            storedIsActive = true
-        }
         
         if shouldLogExecution == true {
             if knownLogType == nil {

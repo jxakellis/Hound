@@ -30,9 +30,6 @@ protocol DogManagerProtocol {
     ///Returns true if any the dogs present has atleast 1 enabled reminder, if there is no enabled reminder present under any of the dogs (e.g. 0  enabled reminders total) return false
     var hasEnabledReminder: Bool { get }
     
-    ///Returns true if any the dogs present  are enabled, if there is no enabled dogs presen return false
-    var hasEnabledDog: Bool { get }
-    
     ///Counts up all enabled reminders under all enabled dogs, does not factor in isPaused, purely self
     var enabledTimersCount: Int { get }
     
@@ -217,21 +214,9 @@ extension DogManagerProtocol {
         return false
     }
     
-    var hasEnabledDog: Bool {
-        for dog in dogs {
-            if dog.getEnable() == true {
-                return true
-            }
-        }
-        return false
-    }
-    
     var enabledTimersCount: Int {
         var count = 0
         for d in 0..<MainTabBarViewController.staticDogManager.dogs.count {
-            guard MainTabBarViewController.staticDogManager.dogs[d].getEnable() == true else{
-                continue
-            }
             
             for r in 0..<MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders.count {
                 guard MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders[r].getEnable() == true else{
@@ -256,6 +241,7 @@ extension DogManagerProtocol {
 }
 
 class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
+    
     
     //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
@@ -289,9 +275,6 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         activeDogManager.dogs.removeAll()
         
         for d in 0..<self.dogs.count {
-            guard self.dogs[d].getEnable() == true else{
-                continue
-            }
             
             let dogAdd = self.dogs[d].copy() as! Dog
             dogAdd.dogReminders.removeAllReminders()

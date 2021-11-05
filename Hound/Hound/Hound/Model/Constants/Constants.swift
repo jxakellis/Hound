@@ -58,8 +58,6 @@ enum DogManagerConstant {
     static var userDefaultDog: Dog {
         let userDefaultDog = Dog()
         
-        userDefaultDog.setEnable(newEnableStatus: DogConstant.defaultEnable)
-        
         /*
          let req = Reminder()
          req.reminderType = .trainingSession

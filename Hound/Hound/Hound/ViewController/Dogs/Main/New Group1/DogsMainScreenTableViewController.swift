@@ -60,7 +60,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         //start up loop timer, normally done in view will appear but sometimes view has appeared and doesn't need a loop but then it can get a dogManager update which requires a loop. This happens due to reminder added in DogsIntroduction page.
         if viewIsBeingViewed == true && loopTimer == nil {
-            guard  getDogManager().hasEnabledDog && getDogManager().hasEnabledReminder else {
+            guard  getDogManager().hasEnabledReminder else {
                 return
             }
             loopTimer = Timer(fireAt: Date(), interval: 1.0, target: self, selector: #selector(self.loopReload), userInfo: nil, repeats: true)
@@ -117,7 +117,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         self.reloadTable()
         
-        if getDogManager().hasEnabledDog && getDogManager().hasEnabledReminder{
+        if getDogManager().hasEnabledReminder{
             loopTimer = Timer(fireAt: Date(), interval: 1.0, target: self, selector: #selector(self.loopReload), userInfo: nil, repeats: true)
             
             RunLoop.main.add(loopTimer!, forMode: .default)
@@ -308,10 +308,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         //DETERMINES IF ITS A LOG BUTTON OR UNDO LOG BUTTON
         var shouldUndoLog: Bool {
             //Yes I know these if statements are redundent and terrible coding but it's whatever, used to do something different but has to modify
-            if reminder.isActive == false {
-                return false
-            }
-            else if reminder.timerMode == .snooze || reminder.timerMode == .countDown {
+            if reminder.timerMode == .snooze || reminder.timerMode == .countDown {
                 return false
             }
             else {

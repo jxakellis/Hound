@@ -80,7 +80,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         MainTabBarViewController.staticDogManager = newDogManager
         
         //Updates isPaused to reflect any changes in data, if there are no enabled/creaed reminders or no enabled/created dogs then turns isPaused off as there is nothing to pause
-        if getDogManager().hasCreatedReminder == false || getDogManager().hasEnabledReminder == false || getDogManager().hasEnabledDog == false {
+        if getDogManager().hasCreatedReminder == false || getDogManager().hasEnabledReminder == false {
             TimingManager.isPaused = false
         }
         
@@ -113,9 +113,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     }
     
     //MARK: - Properties
-    
-    var homeNavigationViewController: HomeNavigationViewController? = nil
-    var homeViewController: HomeViewController? = nil
     
     var logsNavigationViewController: LogsNavigationViewController! = nil
     var logsViewController: LogsViewController! = nil

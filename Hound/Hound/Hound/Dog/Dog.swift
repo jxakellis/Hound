@@ -12,7 +12,7 @@ enum DogError: Error {
     case noRemindersPresent
 }
 
-class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
+class Dog: NSObject, NSCoding, NSCopying {
     
     //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
@@ -21,45 +21,12 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
         //for build versions <= 1513
         dogReminders = aDecoder.decodeObject(forKey: "dogReminders") as? ReminderManager ?? aDecoder.decodeObject(forKey: "dogRequirements") as? ReminderManager ?? aDecoder.decodeObject(forKey: "dogRequirments") as? ReminderManager
         dogReminders.masterDog = self
-        isEnabled = aDecoder.decodeBool(forKey: "isEnabled")
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(dogTraits, forKey: "dogTraits")
         aCoder.encode(dogReminders, forKey: "dogReminders")
-        aCoder.encode(isEnabled, forKey: "isEnabled")
-    }
-    
-    //MARK: - Conformation EnableProtocol
-    
-    ///Whether or not the dog is enabled, if disabled all reminders under this will not fire (but have their own independent isEnabled state)
-    private var isEnabled: Bool = DogConstant.defaultEnable
-    
-    func setEnable(newEnableStatus: Bool) {
-        if isEnabled == false && newEnableStatus == true {
-            for r in dogReminders.reminders {
-                guard r.getEnable() == true else {
-                    continue
-                }
-                r.timerReset(shouldLogExecution: false)
-            }
-        }
-        
-        if newEnableStatus == false{
-            for r in dogReminders.reminders{
-                r.setEnable(newEnableStatus: false)
-            }
-        }
-        
-        isEnabled = newEnableStatus
-    }
-    
-    func willToggle() {
-        isEnabled.toggle()
-    }
-    
-    func getEnable() -> Bool{
-        return isEnabled
+        //aCoder.encode(isEnabled, forKey: "isEnabled")
     }
     
     
@@ -70,7 +37,6 @@ class Dog: NSObject, NSCoding, NSCopying, EnableProtocol {
         copy.dogReminders = self.dogReminders.copy() as? ReminderManager
         copy.dogReminders.masterDog = copy
         copy.dogTraits = self.dogTraits.copy() as! TraitManager
-        copy.isEnabled = self.isEnabled
         return copy
     }
     

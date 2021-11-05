@@ -174,11 +174,11 @@
             <objects>
                 <viewController title="Dog Reminder Count Down" id="gRX-vW-PrI" customClass="DogsReminderCountDownViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1dJ-c5-zaj">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="481"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="293"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="748" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" countDownDuration="5400" minuteInterval="5" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nvt-ES-U6h">
-                                <rect key="frame" x="0.0" y="90" width="414" height="391"/>
+                                <rect key="frame" x="0.0" y="90" width="414" height="203"/>
                                 <connections>
                                     <action selector="willUpdateCountDown:" destination="gRX-vW-PrI" eventType="editingChanged" id="Qt9-8F-KfP"/>
                                     <action selector="willUpdateCountDown:" destination="gRX-vW-PrI" eventType="valueChanged" id="xZo-V2-zDP"/>
@@ -216,14 +216,14 @@
             <objects>
                 <viewController title="Dog Reminder Editor" id="ngF-4H-kgO" customClass="DogsReminderManagerViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wCA-tV-nak">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="725"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="537"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8KF-Nk-KXG" userLabel="Container">
-                                <rect key="frame" x="0.0" y="44" width="414" height="681"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="493"/>
                                 <subviews>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3lK-XC-aXM">
-                                        <rect key="frame" x="0.0" y="200" width="414" height="481"/>
+                                        <rect key="frame" x="0.0" y="200" width="414" height="293"/>
                                         <connections>
                                             <segue destination="Kec-u3-YCz" kind="embed" identifier="dogsReminderOnceViewController" id="1Lf-u6-k6g"/>
                                         </connections>
@@ -249,13 +249,13 @@
                                         </connections>
                                     </segmentedControl>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MhX-Hm-1r1">
-                                        <rect key="frame" x="0.0" y="200" width="414" height="481"/>
+                                        <rect key="frame" x="0.0" y="200" width="414" height="293"/>
                                         <connections>
                                             <segue destination="gRX-vW-PrI" kind="embed" identifier="dogsReminderCountDownViewController" id="wbe-5J-4CA"/>
                                         </connections>
                                     </containerView>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XhW-xN-8L1">
-                                        <rect key="frame" x="0.0" y="200" width="414" height="481"/>
+                                        <rect key="frame" x="0.0" y="200" width="414" height="293"/>
                                         <connections>
                                             <segue destination="Zjt-y9-htp" kind="embed" identifier="dogsReminderWeeklyViewController" id="FIA-mJ-bsf"/>
                                         </connections>
@@ -279,7 +279,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="o5c-qK-6d7">
-                                        <rect key="frame" x="0.0" y="200" width="414" height="481"/>
+                                        <rect key="frame" x="0.0" y="200" width="414" height="293"/>
                                         <connections>
                                             <segue destination="Xze-9B-CGF" kind="embed" identifier="dogsReminderMonthlyViewController" id="eqG-zf-IyY"/>
                                         </connections>
@@ -832,21 +832,21 @@
             <objects>
                 <tableViewController storyboardIdentifier="Dogs Main Screen Embedded Table View" title="Dogs Main Screen Table View" id="AEi-KZ-cSf" customClass="DogsMainScreenTableViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" contentViewInsetsToSafeArea="NO" id="DkK-Io-vlc">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="725"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="507"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <viewLayoutGuide key="contentLayoutGuide" id="kT8-53-Cu8"/>
                         <viewLayoutGuide key="frameLayoutGuide" id="dO0-k2-qcN"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="16" reuseIdentifier="dogsMainScreenTableViewCellDogDisplay" id="tHZ-ho-5tn" customClass="DogsMainScreenTableViewCellDogDisplay" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="44.5" width="414" height="99.5"/>
+                                <rect key="frame" x="0.0" y="44.5" width="600" height="99.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" tableViewCell="tHZ-ho-5tn" id="G9A-nQ-CAR">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="99.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="99.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="NAME" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8pH-6H-VGW" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                            <rect key="frame" x="80" y="10" width="289" height="50"/>
+                                            <rect key="frame" x="80" y="10" width="475" height="50"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="50" id="FFb-3B-q8F"/>
                                             </constraints>
@@ -864,7 +864,7 @@
                                             <imageReference key="image" image="pawFullResolutionWhite" symbolScale="large"/>
                                         </imageView>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.75" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="2Cv-gS-fE5">
-                                            <rect key="frame" x="379" y="33" width="25" height="34"/>
+                                            <rect key="frame" x="565" y="33" width="25" height="34"/>
                                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" secondItem="2Cv-gS-fE5" secondAttribute="height" multiplier="1:1.5" id="ZR9-p4-xpa"/>
@@ -872,7 +872,7 @@
                                             </constraints>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Next Reminder In:" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="E6i-Fi-bHd" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                            <rect key="frame" x="80" y="65" width="289" height="24.5"/>
+                                            <rect key="frame" x="80" y="65" width="475" height="24.5"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
@@ -902,14 +902,14 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="dogsMainScreenTableViewCellReminderDisplay" id="Lai-xI-ipQ" customClass="DogsMainScreenTableViewCellReminderDisplay" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="144" width="414" height="94.5"/>
+                                <rect key="frame" x="0.0" y="144" width="600" height="94.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" tableViewCell="Lai-xI-ipQ" id="g9N-na-X20">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="94.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="94.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="REQ NAME" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Re-8c-KHz" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                            <rect key="frame" x="80" y="10" width="230" height="28.5"/>
+                                            <rect key="frame" x="80" y="10" width="416" height="28.5"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="28" id="3Ro-r0-kbC"/>
                                             </constraints>
@@ -918,14 +918,14 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bhe-v6-mKx">
-                                            <rect key="frame" x="320" y="32" width="51" height="31"/>
+                                            <rect key="frame" x="506" y="32" width="51" height="31"/>
                                             <color key="onTintColor" systemColor="systemBlueColor"/>
                                             <connections>
                                                 <action selector="didToggleReminderSwitch:" destination="Lai-xI-ipQ" eventType="valueChanged" id="VnM-MU-e7x"/>
                                             </connections>
                                         </switch>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME INTERVAL" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="bK9-8i-YGQ" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                            <rect key="frame" x="80" y="41.5" width="230" height="20"/>
+                                            <rect key="frame" x="80" y="41.5" width="416" height="20"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="fL5-n7-OUt"/>
                                             </constraints>
@@ -943,7 +943,7 @@
                                             <imageReference key="image" image="alarm" catalog="system" symbolScale="large"/>
                                         </imageView>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="vrP-ae-kTK">
-                                            <rect key="frame" x="379" y="30.5" width="25" height="34"/>
+                                            <rect key="frame" x="565" y="30.5" width="25" height="34"/>
                                             <color key="tintColor" systemColor="systemGray4Color"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="25" id="6wB-Uo-VKK"/>
@@ -951,7 +951,7 @@
                                             </constraints>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME LEFT" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="PDj-HF-Z40" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                            <rect key="frame" x="80" y="64.5" width="230" height="20"/>
+                                            <rect key="frame" x="80" y="64.5" width="416" height="20"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="PfR-w2-cTb"/>
                                             </constraints>
@@ -1408,8 +1408,8 @@
                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" image="line.horizontal.3.decrease.circle" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Thk-Xg-qcG">
-                                            <rect key="frame" x="374" y="8.5" width="30" height="29"/>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" image="line.horizontal.3.decrease.circle" translatesAutoresizingMaskIntoConstraints="NO" id="Thk-Xg-qcG">
+                                            <rect key="frame" x="374" y="8" width="30" height="30"/>
                                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <accessibility key="accessibilityConfiguration">
                                                 <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
@@ -1453,8 +1453,8 @@
                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" image="line.horizontal.3.decrease.circle" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="NS2-dM-9nk">
-                                            <rect key="frame" x="364" y="8.5" width="40" height="39"/>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" image="line.horizontal.3.decrease.circle" translatesAutoresizingMaskIntoConstraints="NO" id="NS2-dM-9nk">
+                                            <rect key="frame" x="364" y="8" width="40" height="40"/>
                                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <accessibility key="accessibilityConfiguration">
                                                 <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
@@ -2405,11 +2405,11 @@
             <objects>
                 <viewController title="Dog Reminder Weekly" id="Zjt-y9-htp" customClass="DogsReminderWeeklyViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="87k-Ug-zEc">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="481"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="293"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="1" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="KE9-sW-ERX">
-                                <rect key="frame" x="0.0" y="113.5" width="414" height="367.5"/>
+                                <rect key="frame" x="0.0" y="113.5" width="414" height="179.5"/>
                                 <connections>
                                     <action selector="willUpdateTimeOfDay:" destination="Zjt-y9-htp" eventType="editingChanged" id="jsA-DP-FU5"/>
                                     <action selector="willUpdateTimeOfDay:" destination="Zjt-y9-htp" eventType="valueChanged" id="lIe-ee-oaT"/>
@@ -2719,11 +2719,11 @@
             <objects>
                 <viewController title="Dog Reminder Monthly" id="Xze-9B-CGF" customClass="DogsReminderMonthlyViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="kVk-E3-URR">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="481"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="293"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="5" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="9v0-8g-D5f">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="481"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="293"/>
                                 <connections>
                                     <action selector="didUpdateDatePicker:" destination="Xze-9B-CGF" eventType="valueChanged" id="H68-mU-C9a"/>
                                 </connections>
@@ -2751,11 +2751,11 @@
             <objects>
                 <viewController id="Kec-u3-YCz" customClass="DogsReminderOnceViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Vi5-vu-bH5">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="481"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="293"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="5" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="zll-Bn-jIA">
-                                <rect key="frame" x="0.0" y="90" width="414" height="391"/>
+                                <rect key="frame" x="0.0" y="90" width="414" height="203"/>
                                 <connections>
                                     <action selector="didUpdateDatePicker:" destination="Kec-u3-YCz" eventType="valueChanged" id="QTg-ax-iEK"/>
                                 </connections>
@@ -2789,7 +2789,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="GZX-3R-sVV"/>
+        <segue reference="1g9-zQ-LRF"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="alarm" catalog="system" width="124" height="128"/>
@@ -2802,7 +2802,7 @@
         <image name="circle.fill" catalog="system" width="128" height="121"/>
         <image name="f.circle.fill" catalog="system" width="128" height="121"/>
         <image name="gearshape" catalog="system" width="128" height="121"/>
-        <image name="line.horizontal.3.decrease.circle" catalog="system" width="128" height="121"/>
+        <image name="line.horizontal.3.decrease.circle" width="128" height="128"/>
         <image name="list.bullet.rectangle" catalog="system" width="128" height="93"/>
         <image name="m.circle.fill" catalog="system" width="128" height="121"/>
         <image name="pawFullResolutionWhite" width="490" height="490.5"/>

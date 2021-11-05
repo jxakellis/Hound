@@ -574,8 +574,6 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     func timerReset() {
         changeIsSkipping(newSkipStatus: false, shouldRemoveLogDuringPossibleUnskip: false)
     }
-    
-    
 }
 
 enum OneTimeComponentsError: Error {
