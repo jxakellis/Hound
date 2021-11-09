@@ -417,12 +417,13 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         if isEnabled == false && newEnableStatus == true {
             timerReset(shouldLogExecution: false)
         }
-        print("ENDPOINT Update Reminder (enable)")
         isEnabled = newEnableStatus
+        print("ENDPOINT Update Reminder (enable)")
     }
     
     func willToggle() {
         isEnabled.toggle()
+        print("ENDPOINT Update Reminder (enable)")
     }
     
     func getEnable() -> Bool{

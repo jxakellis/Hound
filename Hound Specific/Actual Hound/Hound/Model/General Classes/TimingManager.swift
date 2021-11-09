@@ -142,7 +142,7 @@ class TimingManager{
         let pastReminder: Reminder = parsedDictionary["reminder"]! as! Reminder
         
         let dogManager = MainTabBarViewController.staticDogManager
-        let reminder = try! dogManager.findDog(dogName: dogName).dogReminders.findReminder(forUUID: pastReminder.uuid)
+        let reminder = try! dogManager.findDog(forName: dogName).dogReminders.findReminder(forUUID: pastReminder.uuid)
         
         reminder.timeOfDayComponents.changeIsSkipping(newSkipStatus: false, shouldRemoveLogDuringPossibleUnskip: false)
         reminder.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
@@ -218,7 +218,7 @@ class TimingManager{
                     continue
                 }
                 
-                let reminder = try! dogManager.findDog(dogName: dogKey).dogReminders.findReminder(forUUID: reminderUUID)
+                let reminder = try! dogManager.findDog(forName: dogKey).dogReminders.findReminder(forUUID: reminderUUID)
                 
                 //one time requiremnent
                 if reminder.timerMode == .oneTime{
@@ -367,7 +367,7 @@ class TimingManager{
         
     
         let dogManager = MainTabBarViewController.staticDogManager
-        let reminder = try! dogManager.findDog(dogName: dogName).dogReminders.findReminder(forUUID: reminder.uuid)
+        let reminder = try! dogManager.findDog(forName: dogName).dogReminders.findReminder(forUUID: reminder.uuid)
         
         if reminder.isPresentationHandled == false {
             reminder.isPresentationHandled = true
@@ -382,7 +382,7 @@ class TimingManager{
     static func willSnoozeTimer(sender: Sender, dogName targetDogName: String, reminderUUID: String){
         let dogManager = MainTabBarViewController.staticDogManager
         
-        let reminder = try! dogManager.findDog(dogName: targetDogName).dogReminders.findReminder(forUUID: reminderUUID)
+        let reminder = try! dogManager.findDog(forName: targetDogName).dogReminders.findReminder(forUUID: reminderUUID)
         
         reminder.timerReset(shouldLogExecution: false)
         
@@ -396,7 +396,7 @@ class TimingManager{
         
         let sudoDogManager = MainTabBarViewController.staticDogManager
         
-        let dog = try! sudoDogManager.findDog(dogName: targetDogName)
+        let dog = try! sudoDogManager.findDog(forName: targetDogName)
         
         let reminder = try! dog.dogReminders.findReminder(forUUID: reminderUUID)
         

@@ -39,7 +39,7 @@ class Utils
     }
     
     static func willCreateFollowUpUNUserNotification(dogName: String, reminderUUID: String, executionDate: Date){
-        let reminder = try! MainTabBarViewController.staticDogManager.findDog(dogName: dogName).dogReminders.findReminder(forUUID: reminderUUID)
+        let reminder = try! MainTabBarViewController.staticDogManager.findDog(forName: dogName).dogReminders.findReminder(forUUID: reminderUUID)
         
          let content = UNMutableNotificationContent()
         if #available(iOS 15.0, *) {
@@ -71,7 +71,7 @@ class Utils
     }
     
     static func willCreateUNUserNotification(dogName: String, reminderUUID: String, executionDate: Date){
-        let reminder = try! MainTabBarViewController.staticDogManager.findDog(dogName: dogName).dogReminders.findReminder(forUUID: reminderUUID)
+        let reminder = try! MainTabBarViewController.staticDogManager.findDog(forName: dogName).dogReminders.findReminder(forUUID: reminderUUID)
          let content = UNMutableNotificationContent()
         if #available(iOS 15.0, *) {
             content.interruptionLevel = .timeSensitive

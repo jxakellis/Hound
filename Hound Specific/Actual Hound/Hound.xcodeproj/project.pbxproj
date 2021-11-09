@@ -70,6 +70,7 @@
 		A2BD897C2669A8D200E7BBE5 /* UIApplicationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2BD897B2669A8D200E7BBE5 /* UIApplicationExtension.swift */; };
 		A2C014D52628AEEE00DDE288 /* DogsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C014D42628AEEE00DDE288 /* DogsNavigationViewController.swift */; };
 		A2DC23A8264D822F00EB287A /* DogsRequirementMonthlyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DC23A7264D822F00EB287A /* DogsRequirementMonthlyViewController.swift */; };
+		A2DE45FD273AD842002F28B9 /* SQL Statements in Resources */ = {isa = PBXBuildFile; fileRef = A2DE45FC273AD842002F28B9 /* SQL Statements */; };
 		A2E44707263701A90087B1A3 /* IntroductionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E44706263701A90087B1A3 /* IntroductionViewController.swift */; };
 		A2E66C9B25534A880068CCA6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E66C9A25534A880068CCA6 /* AppDelegate.swift */; };
 		A2E66C9D25534A880068CCA6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E66C9C25534A880068CCA6 /* SceneDelegate.swift */; };
@@ -151,6 +152,7 @@
 		A2BD897B2669A8D200E7BBE5 /* UIApplicationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationExtension.swift; sourceTree = "<group>"; };
 		A2C014D42628AEEE00DDE288 /* DogsNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsNavigationViewController.swift; sourceTree = "<group>"; };
 		A2DC23A7264D822F00EB287A /* DogsRequirementMonthlyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsRequirementMonthlyViewController.swift; sourceTree = "<group>"; };
+		A2DE45FC273AD842002F28B9 /* SQL Statements */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SQL Statements"; sourceTree = "<group>"; };
 		A2E44706263701A90087B1A3 /* IntroductionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroductionViewController.swift; sourceTree = "<group>"; };
 		A2E66C9725534A880068CCA6 /* Hound.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hound.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2E66C9A25534A880068CCA6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -390,6 +392,7 @@
 				A265848C25E8128400E8B812 /* CHECKLIST Future Implementation Needed */,
 				A2536B4D26083C4E00E2FF6A /* Formatting */,
 				A2E7A5FA27399A1800BAA9AD /* Endpoints */,
+				A2DE45FC273AD842002F28B9 /* SQL Statements */,
 			);
 			path = Notes;
 			sourceTree = "<group>";
@@ -558,6 +561,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A2E66CA925534A8A0068CCA6 /* LaunchScreen.storyboard in Resources */,
+				A2DE45FD273AD842002F28B9 /* SQL Statements in Resources */,
 				A2536B4E26083C4E00E2FF6A /* Formatting in Resources */,
 				A2E66CA625534A8A0068CCA6 /* Assets.xcassets in Resources */,
 				A2E7A5FB27399A1800BAA9AD /* Endpoints in Resources */,

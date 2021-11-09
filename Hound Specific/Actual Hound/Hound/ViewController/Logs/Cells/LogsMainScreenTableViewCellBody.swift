@@ -36,7 +36,7 @@ class LogsMainScreenTableViewCellBodyRegularWithIcon: UITableViewCell {
         self.logSource = logSource
         self.reminderSource = reminder
         
-        let dog = try! MainTabBarViewController.staticDogManager.findDog(dogName: parentDogName)
+        let dog = try! MainTabBarViewController.staticDogManager.findDog(forName: parentDogName)
         logIcon.image = dog.dogTraits.icon
         logIcon.layer.masksToBounds = true
         logIcon.layer.cornerRadius = logIcon.frame.width/2

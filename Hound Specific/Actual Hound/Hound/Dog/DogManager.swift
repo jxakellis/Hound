@@ -19,7 +19,7 @@ enum DogManagerError: Error{
 ///Protocol outlining functionality of DogManger
 protocol DogManagerProtocol {
     
-    var dogs: [Dog] { get set }
+    var dogs: [Dog] { get }
     
     ///Returns true if any the dogs present has atleast 1 reminder, if there is no reminder present under any of the dogs (e.g. 0 reminders total) return false
     var hasCreatedReminder: Bool { get }
@@ -33,143 +33,41 @@ protocol DogManagerProtocol {
     ///Counts up all enabled reminders under all enabled dogs, does not factor in isPaused, purely self
     var enabledTimersCount: Int { get }
     
-    ///returns self but with only enabled dogs with enabled reminders
-    var activeDogManager: DogManager { get }
-    
     ///Checks dog name to see if its valid and checks to see if it is valid in context of other dog names already present, assumes reminders and traits are already validiated
-     mutating func addDog(dogAdded: Dog) throws
+     mutating func addDog(newDog: Dog) throws
     
     ///Adds array of dog to dogs
-    mutating func addDog(dogsAdded: [Dog]) throws
-    
-    ///clears and sets dogs equal to dogsSet
-    mutating func setDog(dogsSet: [Dog]) throws
+    mutating func addDogs(newDogs: [Dog]) throws
     
     ///removes a dog with the given name
-    mutating func removeDog(name dogRemoved: String) throws
+    mutating func removeDog(forName name: String) throws
+    
+    ///removes dog at the given index
+    mutating func removeDog(forIndex index: Int)
     
     ///removes all dogs from dogs
     mutating func clearDogs()
     
     ///Changes a dog, takes a dog name and finds the corropsonding dog then replaces it with a new, different dog reference
-    mutating func changeDog(dogNameToBeChanged: String, newDog: Dog) throws
+    mutating func changeDog(forName name: String, newDog: Dog) throws
     
     ///If a time of day alarm was skipping, looks and sees if it has passed said skipped time and should go back to normal
     mutating func synchronizeIsSkipping()
     
     ///finds and returns a reference to a dog matching the given name
-    func findDog(dogName dogToBeFound: String) throws -> Dog
+    func findDog(forName name: String) throws -> Dog
     
     ///finds and returns the index of a dog with a given name in terms of the dogs: [Dog] array
-    func findIndex(dogName dogToBeFound: String) throws -> Int
+    func findIndex(forName name: String) throws -> Int
     
     mutating func clearAllPresentationHandled()
 }
 
 extension DogManagerProtocol {
     
-    mutating func addDog(dogAdded: Dog) throws {
-        /*
-         if try! dogAdded.dogTraits.dogName == nil{
-         throw DogManagerError.dogNameInvalid
-         }
-         */
-        
-        if dogAdded.dogTraits.dogName == ""{
-            throw DogManagerError.dogNameBlank
-        }
-        
-        else{
-            try dogs.forEach { (dog) in
-                if dog.dogTraits.dogName.lowercased() == dogAdded.dogTraits.dogName.lowercased(){
-                    throw DogManagerError.dogNameAlreadyPresent
-                }
-            }
-        }
-        
-        dogs.append(dogAdded)
-    }
-    
-    
-    mutating func addDog(dogsAdded: [Dog]) throws{
-        for i in 0..<dogsAdded.count{
-            try addDog(dogAdded: dogsAdded[i])
-        }
-    }
-    
-    
-    mutating func setDog(dogsSet: [Dog]) throws{
-        clearDogs()
-        try addDog(dogsAdded: dogsSet)
-    }
-    
-   
-    mutating func removeDog(name dogRemovedName: String) throws {
-        var matchingDog: (Bool, Int?) = (false, nil)
-        
-        if dogRemovedName == "" {
-            throw DogManagerError.dogNameInvalid
-        }
-        
-        for (index, dog) in dogs.enumerated(){
-            if dog.dogTraits.dogName.lowercased() == dogRemovedName.lowercased(){
-                matchingDog = (true, index)
-            }
-        }
-        
-        if matchingDog.0 == false {
-            throw DogManagerError.dogNameNotPresent
-        }
-        else {
-            dogs.remove(at: matchingDog.1!)
-        }
-    }
-    
-    
-    mutating func clearDogs(){
-        dogs.removeAll()
-    }
-    
-    
-    mutating func changeDog(dogNameToBeChanged: String, newDog: Dog) throws{
-        var newDogIndex: Int?
-        
-        for i in 0..<dogs.count{
-            if dogs[i].dogTraits.dogName == dogNameToBeChanged {
-                newDogIndex = i
-            }
-        }
-        
-        if newDogIndex == nil{
-            throw DogManagerError.dogNameNotPresent
-        }
-        
-        else{
-            dogs[newDogIndex!] = newDog
-        }
-    }
-    
-    mutating func synchronizeIsSkipping(){
-        let activeDogManager = self.activeDogManager
-        
-        for dogIndex in 0..<activeDogManager.dogs.count{
-            for reminderIndex in 0..<activeDogManager.dogs[dogIndex].dogReminders.reminders.count{
-                let reminder = activeDogManager.dogs[dogIndex].dogReminders.reminders[reminderIndex]
-                
-                let unskipDate = reminder.timeOfDayComponents.unskipDate(timerMode: reminder.timerMode, reminderExecutionBasis: reminder.executionBasis)
-                
-                if unskipDate != nil && Date().distance(to: unskipDate!) < 0{
-                    self.dogs[dogIndex].dogReminders.reminders[reminderIndex].timeOfDayComponents.changeIsSkipping(newSkipStatus: true, shouldRemoveLogDuringPossibleUnskip: nil)
-                    self.dogs[dogIndex].dogReminders.reminders[reminderIndex].changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
-                }
-            }
-        }
-    }
-    
-    
-    func findDog(dogName dogToBeFound: String) throws -> Dog {
+    func findDog(forName name: String) throws -> Dog {
         for d in 0..<dogs.count{
-            if dogs[d].dogTraits.dogName == dogToBeFound{
+            if dogs[d].dogTraits.dogName == name{
                 return dogs[d]
             }
         }
@@ -178,9 +76,9 @@ extension DogManagerProtocol {
     }
     
     
-    func findIndex(dogName dogToBeFound: String) throws -> Int{
+    func findIndex(forName name: String) throws -> Int{
         for d in 0..<dogs.count{
-            if dogs[d].dogTraits.dogName == dogToBeFound {
+            if dogs[d].dogTraits.dogName == name {
                 return d
             }
         }
@@ -246,7 +144,7 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = DogManager()
         for i in 0..<dogs.count{
-            copy.dogs.append(dogs[i].copy() as! Dog)
+            copy.storedDogs.append(dogs[i].copy() as! Dog)
         }
         return copy
     }
@@ -256,47 +154,123 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
        // let decoded: Data = aDecoder.decodeData()!
       //  let unarchived = try! NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: decoded)! as! [Dog]
        // dogs = unarchived
-        dogs = aDecoder.decodeObject(forKey: "dogs") as! [Dog]
+        storedDogs = aDecoder.decodeObject(forKey: "dogs") as! [Dog]
     }
     
     func encode(with aCoder: NSCoder) {
        // let encoded = try! NSKeyedArchiver.archivedData(withRootObject: dogs, requiringSecureCoding: false)
       //  aCoder.encode(encoded)
-        aCoder.encode(dogs, forKey: "dogs")
+        aCoder.encode(storedDogs, forKey: "dogs")
     }
     
     //static var supportsSecureCoding: Bool = true
     
-    ///Array of dogs
-    var dogs: [Dog]
+   
     
     ///initalizes, sets dogs to []
     override init(){
-        dogs = []
+        storedDogs = []
         super.init()
     }
     
-    var activeDogManager: DogManager{
-        var activeDogManager = DogManager()
-        activeDogManager.dogs.removeAll()
+    func synchronizeIsSkipping(){
         
-        for d in 0..<self.dogs.count {
-            
-            let dogAdd = self.dogs[d].copy() as! Dog
-            dogAdd.dogReminders.removeAllReminders()
-            
-            for r in 0..<self.dogs[d].dogReminders.reminders.count {
-                guard self.dogs[d].dogReminders.reminders[r].getEnable() == true else{
+        for dogIndex in 0..<dogs.count{
+            for reminderIndex in 0..<dogs[dogIndex].dogReminders.reminders.count{
+                let reminder: Reminder = dogs[dogIndex].dogReminders.reminders[reminderIndex]
+                
+                guard reminder.getEnable() == true else {
                     continue
                 }
                 
-                try! dogAdd.dogReminders.addReminder(newReminder: self.dogs[d].dogReminders.reminders[r].copy() as! Reminder)
+                let unskipDate = reminder.timeOfDayComponents.unskipDate(timerMode: reminder.timerMode, reminderExecutionBasis: reminder.executionBasis)
+                
+                if unskipDate != nil && Date().distance(to: unskipDate!) < 0{
+                    self.dogs[dogIndex].dogReminders.reminders[reminderIndex].timeOfDayComponents.changeIsSkipping(newSkipStatus: true, shouldRemoveLogDuringPossibleUnskip: nil)
+                    self.dogs[dogIndex].dogReminders.reminders[reminderIndex].changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
+                }
             }
-            
-            try! activeDogManager.addDog(dogAdded: dogAdd)
+        }
+    }
+    
+    private var storedDogs: [Dog]
+    ///Array of dogs
+    var dogs: [Dog] { return storedDogs}
+    
+    func addDog(newDog: Dog) throws {
+        
+        if newDog.dogTraits.dogName == ""{
+            throw DogManagerError.dogNameBlank
         }
         
-        return activeDogManager
+        else{
+            try dogs.forEach { (dog) in
+                if dog.dogTraits.dogName.lowercased() == newDog.dogTraits.dogName.lowercased(){
+                    throw DogManagerError.dogNameAlreadyPresent
+                }
+            }
+        }
+        
+        storedDogs.append(newDog)
+        print("ENDPOINT Add Dog")
+    }
+    
+    
+    func addDogs(newDogs: [Dog]) throws{
+        for i in 0..<newDogs.count{
+            try addDog(newDog: newDogs[i])
+        }
+    }
+    
+    func changeDog(forName name: String, newDog: Dog) throws{
+        var newDogIndex: Int?
+        
+        for i in 0..<dogs.count{
+            if dogs[i].dogTraits.dogName == name {
+                newDogIndex = i
+            }
+        }
+        
+        if newDogIndex == nil{
+            throw DogManagerError.dogNameNotPresent
+        }
+        
+        else{
+            storedDogs[newDogIndex!] = newDog
+            print("ENDPOINT Update Dog")
+        }
+    }
+    
+    func removeDog(forName name: String) throws {
+        var matchingDog: (Bool, Int?) = (false, nil)
+        
+        if name == "" {
+            throw DogManagerError.dogNameInvalid
+        }
+        
+        for (index, dog) in dogs.enumerated(){
+            if dog.dogTraits.dogName.lowercased() == name.lowercased(){
+                matchingDog = (true, index)
+            }
+        }
+        
+        if matchingDog.0 == false {
+            throw DogManagerError.dogNameNotPresent
+        }
+        else {
+            storedDogs.remove(at: matchingDog.1!)
+            print("ENDPOINT Remove Dog (via name)")
+        }
+    }
+    
+    func removeDog(forIndex index: Int) {
+        storedDogs.remove(at: index)
+        print("ENDPOINT Remove Dog (via index)")
+    }
+    
+    func clearDogs(){
+        storedDogs.removeAll()
+        print("ENDPOINT Remove All Dogs (ignore)")
     }
     
 }

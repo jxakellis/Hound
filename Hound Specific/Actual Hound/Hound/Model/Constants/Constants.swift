@@ -20,36 +20,35 @@ enum ReminderConstant {
     static let defaultTimeInterval = (3600*0.5)
     static let defaultEnable: Bool = true
     static var defaultReminderOne: Reminder {
-        let req = Reminder()
-        req.reminderType = ScheduledLogType.potty
-        req.countDownComponents.changeExecutionInterval(newExecutionInterval: defaultTimeInterval)
-        req.setEnable(newEnableStatus: defaultEnable)
-        return req
+        let reminder = Reminder()
+        reminder.reminderType = ScheduledLogType.potty
+        reminder.countDownComponents.changeExecutionInterval(newExecutionInterval: defaultTimeInterval)
+        return reminder
     }
     static var defaultReminderTwo: Reminder {
-        let req = Reminder()
-        req.reminderType = .feed
-        req.changeTimingStyle(newTimingStyle: .weekly)
-        try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 7)
-        try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
-        return req
+        let reminder = Reminder()
+        reminder.reminderType = .feed
+        reminder.changeTimingStyle(newTimingStyle: .weekly)
+        try! reminder.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 7)
+        try! reminder.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
+        return reminder
     }
     static var defaultReminderThree: Reminder {
-        let req = Reminder()
-        req.reminderType = .feed
-        req.changeTimingStyle(newTimingStyle: .weekly)
-        try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 5+12)
-        try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
-        return req
+        let reminder = Reminder()
+        reminder.reminderType = .feed
+        reminder.changeTimingStyle(newTimingStyle: .weekly)
+        try! reminder.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 5+12)
+        try! reminder.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
+        return reminder
     }
     static var defaultReminderFour: Reminder {
-        let req = Reminder()
-        req.reminderType = .medicine
-        req.changeTimingStyle(newTimingStyle: .monthly)
-        try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 9)
-        try! req.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
-        try! req.timeOfDayComponents.changeDayOfMonth(newDayOfMonth: 1)
-        return req
+        let reminder = Reminder()
+        reminder.reminderType = .medicine
+        reminder.changeTimingStyle(newTimingStyle: .monthly)
+        try! reminder.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 9)
+        try! reminder.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
+        try! reminder.timeOfDayComponents.changeDayOfMonth(newDayOfMonth: 1)
+        return reminder
     }
 }
 
@@ -59,11 +58,11 @@ enum DogManagerConstant {
         let userDefaultDog = Dog()
         
         /*
-         let req = Reminder()
-         req.reminderType = .trainingSession
-         req.changeTimingStyle(newTimingStyle: .countDown)
-         req.countDownComponents.changeExecutionInterval(newExecutionInterval: 30.0)
-         try! userDefaultDog.dogReminders.addReminder(newReminder: req)
+         let reminder = Reminder()
+         reminder.reminderType = .trainingSession
+         reminder.changeTimingStyle(newTimingStyle: .countDown)
+         reminder.countDownComponents.changeExecutionInterval(newExecutionInterval: 30.0)
+         try! userDefaultDog.dogReminders.addReminder(newReminder: reminder)
          */
         
     
@@ -71,9 +70,9 @@ enum DogManagerConstant {
     }
     
     static var defaultDogManager: DogManager {
-        var dogManager = DogManager()
+        let dogManager = DogManager()
         
-        try! dogManager.addDog(dogAdded: DogManagerConstant.userDefaultDog)
+        try! dogManager.addDog(newDog: DogManagerConstant.userDefaultDog)
         
         return dogManager
     }

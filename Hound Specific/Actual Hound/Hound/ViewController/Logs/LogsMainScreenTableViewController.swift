@@ -348,7 +348,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         //log
         else {
             let logDisplay = uniqueLogs[indexPath.section].2[indexPath.row-1]
-            let dog = try! getDogManager().findDog(dogName: logDisplay.0)
+            let dog = try! getDogManager().findDog(forName: logDisplay.0)
             let icon = dog.dogTraits.icon
             
             if AppearanceConstant.isCompactView == true {
@@ -412,7 +412,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 
                 let cellToRemove = uniqueLogs[indexPath.section].2[indexPath.row-1]
                 
-                let dog = try! newDogManager.findDog(dogName: cellToRemove.0)
+                let dog = try! newDogManager.findDog(forName: cellToRemove.0)
                 for dogLogIndex in 0..<dog.dogTraits.logs.count {
                     if dog.dogTraits.logs[dogLogIndex].uuid == cellToRemove.2.uuid{
                         dog.dogTraits.removeLog(forIndex: dogLogIndex)

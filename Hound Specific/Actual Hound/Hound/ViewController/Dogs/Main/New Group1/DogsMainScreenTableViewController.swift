@@ -24,12 +24,12 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     func didToggleReminderSwitch(sender: Sender, parentDogName: String, reminderUUID: String, isEnabled: Bool) {
         
         let sudoDogManager = getDogManager()
-        try! sudoDogManager.findDog(dogName: parentDogName).dogReminders.findReminder(forUUID: reminderUUID).setEnable(newEnableStatus: isEnabled)
+        try! sudoDogManager.findDog(forName: parentDogName).dogReminders.findReminder(forUUID: reminderUUID).setEnable(newEnableStatus: isEnabled)
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
         
         //This is so the cell animates the changing of the switch properly, if this code wasnt implemented then when the table view is reloaded a new batch of cells is produced and that cell has the new switch state, bypassing the animation as the instantant the old one is switched it produces and shows the new switch
-        let indexPath = try! IndexPath(row: getDogManager().findDog(dogName: parentDogName).dogReminders.findIndex(forUUID: reminderUUID)+1, section: getDogManager().findIndex(dogName: parentDogName))
+        let indexPath = try! IndexPath(row: getDogManager().findDog(forName: parentDogName).dogReminders.findIndex(forUUID: reminderUUID)+1, section: getDogManager().findIndex(forName: parentDogName))
         
         let cell = tableView.cellForRow(at: indexPath) as! DogsMainScreenTableViewCellReminderDisplay
         cell.reminderToggleSwitch.isOn = !isEnabled
@@ -165,9 +165,9 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         let alertActionCancel = UIAlertAction(title:"Cancel", style: .cancel, handler: nil)
         
-        var sudoDogManager = self.getDogManager()
-        let dog = try! sudoDogManager.findDog(dogName: dogName)
-        let section = try! self.dogManager.findIndex(dogName: dogName)
+        let sudoDogManager = self.getDogManager()
+        let dog = try! sudoDogManager.findDog(forName: dogName)
+        let section = try! self.dogManager.findIndex(forName: dogName)
         
         let alertActionAdd = UIAlertAction(title: "Add Reminder", style: .default) { UIAlertAction in
             self.delegate.willEditReminder(parentDogName: dog.dogTraits.dogName, reminderUUID: nil)
@@ -215,7 +215,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                         for reminder in dog.dogReminders.reminders{
                             reminder.setEnable(newEnableStatus: true)
                             
-                            let reminderCell = self.tableView.cellForRow(at: IndexPath(row: try! dog.dogReminders.findIndex(forUUID: reminder.uuid)+1, section: try! self.dogManager.findIndex(dogName: dogName))) as! DogsMainScreenTableViewCellReminderDisplay
+                            let reminderCell = self.tableView.cellForRow(at: IndexPath(row: try! dog.dogReminders.findIndex(forUUID: reminder.uuid)+1, section: try! self.dogManager.findIndex(forName: dogName))) as! DogsMainScreenTableViewCellReminderDisplay
                             reminderCell.reminderToggleSwitch.setOn(true, animated: true)
                         }
                     }
@@ -239,7 +239,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogName)?", message: nil, preferredStyle: .alert)
             
             let removeDogConfirmationRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-                try! sudoDogManager.removeDog(name: dogName)
+                try! sudoDogManager.removeDog(forName: dogName)
                 self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
                 self.tableView.deleteSections([section], with: .automatic)
             }
@@ -286,8 +286,8 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             
             let removeReminderConfirmationRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                 let sudoDogManager = self.getDogManager()
-                let dog = try! sudoDogManager.findDog(dogName: parentDogName)
-                let indexPath = IndexPath(row: try! dog.dogReminders.findIndex(forUUID: reminder.uuid)+1, section: try! sudoDogManager.findIndex(dogName: parentDogName))
+                let dog = try! sudoDogManager.findDog(forName: parentDogName)
+                let indexPath = IndexPath(row: try! dog.dogReminders.findIndex(forUUID: reminder.uuid)+1, section: try! sudoDogManager.findIndex(forName: parentDogName))
                 
                 try! dog.dogReminders.removeReminder(forUUID: reminder.uuid)
                 self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
@@ -464,7 +464,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 removeConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(sudoDogManager.dogs[indexPath.section].dogTraits.dogName)?", message: nil, preferredStyle: .alert)
                 
                 let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-                    sudoDogManager.dogs.remove(at: indexPath.section)
+                    sudoDogManager.removeDog(forIndex: indexPath.section)
                     self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
                     self.tableView.deleteSections([indexPath.section], with: .automatic)
                 }

@@ -43,7 +43,6 @@ class AlertPresenter: NSObject, NSCoding{
             fatalError("use enqueueActionSheetForPresentation instead")
         }
         
-        print("enqueueAlertForPresentation")
         alertQueue.enqueue(alertController)
         
         showNextAlert()

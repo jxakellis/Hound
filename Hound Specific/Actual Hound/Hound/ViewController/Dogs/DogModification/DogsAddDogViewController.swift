@@ -292,7 +292,6 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             dogRemoveButton.isEnabled = false
             self.navigationItem.title = "Create Dog"
         }
- 
     }
     
     

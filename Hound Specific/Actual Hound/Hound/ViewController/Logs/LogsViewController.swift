@@ -26,7 +26,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         let sudoDogManager = getDogManager()
         if sudoDogManager.dogs.isEmpty == false {
             do {
-                try sudoDogManager.findDog(dogName: parentDogName).dogTraits.addLog(newLog: newKnownLog)
+                try sudoDogManager.findDog(forName: parentDogName).dogTraits.addLog(newLog: newKnownLog)
             }
             catch {
                 ErrorProcessor.alertForError(message: "Unable to add log.")
@@ -40,7 +40,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         
          let sudoDogManager = getDogManager()
          if sudoDogManager.dogs.isEmpty == false {
-                let dog = try! sudoDogManager.findDog(dogName: parentDogName)
+                let dog = try! sudoDogManager.findDog(forName: parentDogName)
              
              try! dog.dogTraits.changeLog(forUUID: updatedKnownLog.uuid, newLog: updatedKnownLog)
                     
@@ -63,7 +63,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
     
     func didRemoveKnownLog(sender: Sender, parentDogName: String, reminderUUID: String?, logUUID: String) {
         let sudoDogManager = getDogManager()
-        let dog = try! sudoDogManager.findDog(dogName: parentDogName)
+        let dog = try! sudoDogManager.findDog(forName: parentDogName)
         
         for dogLogIndex in 0..<dog.dogTraits.logs.count{
             if dog.dogTraits.logs[dogLogIndex].uuid == logUUID{

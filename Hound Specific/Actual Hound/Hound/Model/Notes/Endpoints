@@ -13,24 +13,29 @@ Configuration
 Dogs
     Add Dog
         Dog itself
-        NO Reminders (invoke Add Reminder)
+        NO Reminders in actual ping (invoke Add Reminder)
     Update Dog
     Remove Dog
+        Dog identifier
+        All other components will be identified by server and automatically removed as well
 
 Reminders
     Add Reminder
         Reminder itself
-        All Components
+        NO Components in actual ping (invoke Add Component)
+        If reminder is not present in the masterDogManager, then don't send ping to server. This means a reminder was added to a dog that hasn't been created yet (e.g. default reminders added when create dog menu opened). Once the dog is created then the reminders can be sent to the server
     Update Reminder
         Reminder itself
-        NO Components
+        NO Components in actual ping (invoke Update Componet)
     Remove Reminder
         Reminder identifier
+        Components will be identified by server and automatically removed as well
     
 Reminder Components
-    NO ADD (componets created when reminder is added)
+    Add Component (invoked only when Add Reminder is invoked)
     Update Component
     NO REMOVE (components removed only if reminder is removed)
+            Components will be identified by server and automatically removed when a reminder is removed
     
 Logs
     Add Log
