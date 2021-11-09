@@ -151,7 +151,7 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
                             if self.masterDog != nil {
                                 print("backup reminder logs decode success")
                                 for log in depreciatedLogs{
-                                    self.masterDog?.dogTraits.logs.append(log)
+                                    try! self.masterDog?.dogTraits.addLog(newLog: log)
                                 }
                             }
                             else {
@@ -162,7 +162,7 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
                     else {
                         print("primary reminder logs decode success")
                         for log in depreciatedLogs{
-                            self.masterDog?.dogTraits.logs.append(log)
+                            try! self.masterDog?.dogTraits.addLog(newLog: log)
                         }
                     }
                 }
@@ -234,6 +234,8 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         
         aCoder.encode(isEnabled, forKey: "isEnabled")
     }
+    
+    //static var supportsSecureCoding: Bool = true
     
     //MARK: - ReminderTraitsProtocol
     
@@ -380,7 +382,7 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
             if knownLogType == nil {
                 fatalError()
             }
-            masterDog?.dogTraits.logs.append(KnownLog(date: Date(), logType: knownLogType!, customTypeName: customTypeName))
+            try! masterDog?.dogTraits.addLog(newLog: KnownLog(date: Date(), logType: knownLogType!, customTypeName: customTypeName))
             
             if masterDog == nil {
                 print("masterDog nil, couldn't log")
@@ -415,6 +417,7 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         if isEnabled == false && newEnableStatus == true {
             timerReset(shouldLogExecution: false)
         }
+        print("ENDPOINT Update Reminder (enable)")
         isEnabled = newEnableStatus
     }
     

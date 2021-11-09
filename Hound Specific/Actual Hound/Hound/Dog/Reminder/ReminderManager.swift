@@ -31,6 +31,8 @@ protocol ReminderManagerProtocol {
     
     ///removes trys to find a reminder whos name (capitals don't matter) matches reminder name given, if found removes reminder, if not found throws error
     mutating func removeReminder(forUUID uuid: String) throws
+    mutating func removeReminder(forIndex index: Int)
+    
     mutating func changeReminder(forUUID uuid: String, newReminder: Reminder) throws
     
     ///finds and returns the reference of a reminder matching the given uuid
@@ -65,6 +67,12 @@ extension ReminderManagerProtocol {
 
 class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
     
+    //MARK: - NSCopying
+    func copy(with zone: NSZone? = nil) -> Any {
+        let copy = ReminderManager(masterDog: masterDog, initReminders: self.reminders)
+        return copy
+    }
+    
     //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         storedReminders = aDecoder.decodeObject(forKey: "reminders") as? [Reminder] ?? aDecoder.decodeObject(forKey: "requirements") as? [Reminder] ?? aDecoder.decodeObject(forKey: "requirments") as! [Reminder]
@@ -74,11 +82,7 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
         aCoder.encode(storedReminders, forKey: "reminders")
     }
     
-    //MARK: - NSCopying
-    func copy(with zone: NSZone? = nil) -> Any {
-        let copy = ReminderManager(masterDog: masterDog, initReminders: self.reminders)
-        return copy
-    }
+    //static var supportsSecureCoding: Bool = true
     
     init(masterDog: Dog?, initReminders: [Reminder] = []){
         self.storedMasterDog = masterDog
@@ -119,10 +123,11 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
         }
         else {
             //copying needed for master dog to work, is just newReq.masterDog = self.masterDog it for some reason does not work
+            
             let newReqTest = newReminder.copy() as! Reminder
            newReqTest.masterDog = self.masterDog
            storedReminders.append(newReqTest)
-            
+            print("ENDPOINT Add Reminder")
         }
         sortReminders()
     }
@@ -163,14 +168,17 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
             }
             
         storedReminders.remove(at: indexOfRemovalTarget ?? -1)
+        print("ENDPOINT Remove Reminder (via uuid)")
         }
     }
     
     func removeReminder(forIndex index: Int){
         storedReminders.remove(at: index)
+        print("ENDPOINT Remove Reminder (via index)")
     }
     
     func removeAllReminders(){
+        print("ENDPOINT Remove All Reminder (ignore)")
         self.storedReminders.removeAll()
     }
     
@@ -192,6 +200,7 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
         else {
             newReminder.masterDog = self.masterDog
             storedReminders[newReminderIndex!] = newReminder
+            print("ENDPOINT Update Reminder (trait)")
         }
         sortReminders()
     }

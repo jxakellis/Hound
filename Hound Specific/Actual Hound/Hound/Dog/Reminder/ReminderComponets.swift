@@ -57,6 +57,8 @@ class CountDownComponents: Component, NSCoding, NSCopying, GeneralCountDownProto
         aCoder.encode(intervalElapsed, forKey: "intervalElapsed")
     }
     
+    //static var supportsSecureCoding: Bool = true
+    
     //MARK: - CountDownComponentsProtocol
     
     private var storedExecutionInterval: TimeInterval = TimeInterval(ReminderConstant.defaultTimeInterval)
@@ -117,6 +119,8 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountDownProtocol
         aCoder.encode(storedExecutionInterval, forKey: "executionInterval")
         aCoder.encode(storedIntervalElapsed, forKey: "intervalElapsed")
     }
+    
+    //static var supportsSecureCoding: Bool = true
     
     //MARK: - SnoozeComponentsProtocol
     
@@ -238,6 +242,8 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         aCoder.encode(storedDayOfMonth, forKey: "dayOfMonth")
     }
     
+    //static var supportsSecureCoding: Bool = true
+    
     
     //MARK: - TimeOfDayComponentsProtocol
     
@@ -288,7 +294,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
                 let dogLogs = masterReminder.masterDog!.dogTraits.logs
                 for logDateIndex in 0..<dogLogs.count{
                     if dogLogs[logDateIndex].date.distance(to: isSkippingLogDate!) < 0.01 && dogLogs[logDateIndex].date.distance(to: isSkippingLogDate!) > -0.01{
-                        masterReminder.masterDog!.dogTraits.logs.remove(at: logDateIndex)
+                        masterReminder.masterDog!.dogTraits.removeLog(forIndex: logDateIndex)
                         break
                     }
                 }
@@ -621,6 +627,8 @@ class OneTimeComponents: Component, NSCoding, NSCopying, OneTimeComponentsProtoc
     func encode(with aCoder: NSCoder) {
         aCoder.encode(storedDateComponents, forKey: "dateComponents")
     }
+    
+    //static var supportsSecureCoding: Bool = true
     
     //MARK: OneTimeComponentsProtocol
     

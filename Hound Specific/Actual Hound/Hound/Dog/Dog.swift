@@ -14,6 +14,16 @@ enum DogError: Error {
 
 class Dog: NSObject, NSCoding, NSCopying {
     
+    //MARK: - NSCopying
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        let copy = Dog()
+        copy.dogReminders = self.dogReminders.copy() as? ReminderManager
+        copy.dogReminders.masterDog = copy
+        copy.dogTraits = self.dogTraits.copy() as! TraitManager
+        return copy
+    }
+    
     //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         super.init()
@@ -29,16 +39,8 @@ class Dog: NSObject, NSCoding, NSCopying {
         //aCoder.encode(isEnabled, forKey: "isEnabled")
     }
     
+    //static var supportsSecureCoding: Bool = true
     
-    //MARK: - NSCopying
-    
-    func copy(with zone: NSZone? = nil) -> Any {
-        let copy = Dog()
-        copy.dogReminders = self.dogReminders.copy() as? ReminderManager
-        copy.dogReminders.masterDog = copy
-        copy.dogTraits = self.dogTraits.copy() as! TraitManager
-        return copy
-    }
     
     //MARK: - Properties
     

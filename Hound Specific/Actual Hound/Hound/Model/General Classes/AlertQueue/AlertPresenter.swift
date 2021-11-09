@@ -23,6 +23,8 @@ class AlertPresenter: NSObject, NSCoding{
         aCoder.encode(locked, forKey: "locked")
     }
     
+    //static var supportsSecureCoding: Bool = true
+    
     override init(){
         super.init()
     }
@@ -52,7 +54,6 @@ class AlertPresenter: NSObject, NSCoding{
             fatalError("use enqueueAlertForPresentation instead")
         }
         
-        print("enqueueActionSheetForPresentation")
         switch UIDevice.current.userInterfaceIdiom {
         case .pad:
             alertController.popoverPresentationController?.sourceView = sourceView

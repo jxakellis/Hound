@@ -75,7 +75,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         //TimingManager
         //DogsViewController
         
-        
         masterDogManager = newDogManager
         MainTabBarViewController.staticDogManager = newDogManager
         
@@ -138,7 +137,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         print(UIApplication.appBuild)
         
         let decoded = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as! Data
-        var decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
+        var decodedDogManager: DogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
         decodedDogManager.synchronizeIsSkipping()
        //decodedDogManager.dogs[0].dogReminders.reminders[0].countDownComponents.changeExecutionInterval(newExecutionInterval: 15.0)
         

@@ -9,7 +9,7 @@
 import UIKit
 
 protocol LogsAddLogViewControllerDelegate {
-    func didDeleteKnownLog(sender: Sender, parentDogName: String, reminderUUID: String?, logUUID: String)
+    func didRemoveKnownLog(sender: Sender, parentDogName: String, reminderUUID: String?, logUUID: String)
     func didAddKnownLog(sender: Sender, parentDogName: String, newKnownLog: KnownLog)
     func didUpdateKnownLog(sender: Sender, parentDogName: String, reminderUUID: String?, updatedKnownLog: KnownLog)
 }
@@ -157,11 +157,11 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
     
     @IBOutlet private weak var cancelAddLogButtonBackground: ScaledUIButton!
     
-    @IBAction private func willDeleteLog(_ sender: Any) {
+    @IBAction private func willRemoveLog(_ sender: Any) {
         let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete this log?", message: nil, preferredStyle: .alert)
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { (UIAlertAction) in
-            self.delegate.didDeleteKnownLog(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName.text!, reminderUUID: self.updatingKnownLogInformation!.1?.uuid ?? nil, logUUID: self.updatingKnownLogInformation!.2.uuid)
+            self.delegate.didRemoveKnownLog(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName.text!, reminderUUID: self.updatingKnownLogInformation!.1?.uuid ?? nil, logUUID: self.updatingKnownLogInformation!.2.uuid)
             self.navigationController?.popViewController(animated: true)
         }
         

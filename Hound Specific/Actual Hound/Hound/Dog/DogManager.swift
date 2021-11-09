@@ -242,16 +242,6 @@ extension DogManagerProtocol {
 
 class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
     
-    
-    //MARK: - NSCoding
-    required init?(coder aDecoder: NSCoder) {
-        dogs = aDecoder.decodeObject(forKey: "dogs") as! [Dog]
-    }
-    
-    func encode(with aCoder: NSCoder) {
-        aCoder.encode(dogs, forKey: "dogs")
-    }
-    
     //MARK: - NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = DogManager()
@@ -260,6 +250,22 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         }
         return copy
     }
+    
+    //MARK: - NSCoding
+    required init?(coder aDecoder: NSCoder) {
+       // let decoded: Data = aDecoder.decodeData()!
+      //  let unarchived = try! NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: decoded)! as! [Dog]
+       // dogs = unarchived
+        dogs = aDecoder.decodeObject(forKey: "dogs") as! [Dog]
+    }
+    
+    func encode(with aCoder: NSCoder) {
+       // let encoded = try! NSKeyedArchiver.archivedData(withRootObject: dogs, requiringSecureCoding: false)
+      //  aCoder.encode(encoded)
+        aCoder.encode(dogs, forKey: "dogs")
+    }
+    
+    //static var supportsSecureCoding: Bool = true
     
     ///Array of dogs
     var dogs: [Dog]

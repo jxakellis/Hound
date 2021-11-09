@@ -12,12 +12,12 @@ import Foundation
 
 class Queue<Element>: NSObject, NSCoding {
     
-    func encode(with aCoder: NSCoder) {
-        aCoder.encode(elements, forKey: "elements")
-    }
-    
     required init?(coder aDecoder: NSCoder) {
         elements = aDecoder.decodeObject(forKey: "elements") as! [Element]
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(elements, forKey: "elements")
     }
     
     override init(){

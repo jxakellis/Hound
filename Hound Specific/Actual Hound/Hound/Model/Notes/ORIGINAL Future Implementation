@@ -97,7 +97,7 @@ Usability Test 1 - Andrew
 
 Dog switch doesn't properly indicate subalarm disable (e.g. disabling bella doesnt show sub alarms are disabled)
 
-Can't find delete to remove Bella
+Can't find remove to remove Bella
 
 User wants to enter a reminder every two hours, didn't know that countdown was recurring
 
@@ -208,7 +208,7 @@ change "after logging alarm, repeat in:" to "after responding to reminder, repea
 First time when they click on configure, pop up page. Don't create reminders for dogs until that page is accessed for the first time. Popup first has short description e.g."Use this page to configure reminders to care for your dog", /n "we've created reminders that are useful for most dogs." At bottom, have area asking if they want notifications.
 
 change edit to edit reminder
-change delete to delete reminder
+change remove to remove reminder
 change did it to "Log Potty" "Log Breakfast"
 
 look into when (for example) logging a potty, being able to log Potty: Pee, Potty: Poo, etc. like an arbitrary log. Possibly chaning data type from reminderType to ArbitraryLogType.

@@ -86,7 +86,6 @@ class PersistenceManager{
             UserDefaults.standard.setValue(AppearanceConstant.darkModeStyle.rawValue, forKey: UserDefaultsKeys.darkModeStyle.rawValue)
             
             MainTabBarViewController.firstTimeSetup = true
-            
         }
     }
     
@@ -131,7 +130,7 @@ class PersistenceManager{
             
             let encodedDataDogManager = try! NSKeyedArchiver.archivedData(withRootObject: dataDogManager, requiringSecureCoding: false)
             UserDefaults.standard.setValue(encodedDataDogManager, forKey: UserDefaultsKeys.dogManager.rawValue)
-            
+                        
             //Pause State
             UserDefaults.standard.setValue(TimingManager.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
             UserDefaults.standard.setValue(TimingManager.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)

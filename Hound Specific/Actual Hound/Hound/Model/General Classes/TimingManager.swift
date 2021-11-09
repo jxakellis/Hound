@@ -402,7 +402,7 @@ class TimingManager{
         
         if reminder.timingStyle == .oneTime{
             if knownLogType != nil {
-                dog.dogTraits.logs.append(KnownLog(date: Date(), logType: knownLogType!, customTypeName: reminder.customTypeName))
+                try! dog.dogTraits.addLog(newLog: KnownLog(date: Date(), logType: knownLogType!, customTypeName: reminder.customTypeName))
             }
             try! dog.dogReminders.removeReminder(forUUID: reminderUUID)
             delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)

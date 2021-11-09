@@ -122,13 +122,13 @@ protocol KnownLogProtocol{
 
 class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol{
     
-    
     //MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = KnownLog(date: self.date, note: self.note, logType: self.logType, customTypeName: self.customTypeName, uuid: self.uuid)
         return copy
     }
+    
     
     //MARK: - NSCoding
     
@@ -147,6 +147,9 @@ class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol{
         aCoder.encode(customTypeName, forKey: "customTypeName")
         aCoder.encode(uuid, forKey: "uuid")
     }
+    
+    //static var supportsSecureCoding: Bool = true
+    
     
     //MARK: - ReminderLogProtocol
     

@@ -233,23 +233,23 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 self.delegate.willEditDog(dogName: dogName)
             })
         
-        let alertActionDelete = UIAlertAction(title: "Delete Dog", style: .destructive) { (alert) in
+        let alertActionRemove = UIAlertAction(title: "Delete Dog", style: .destructive) { (alert) in
             
-            //DELETE CONFIRMATION
-            let deleteDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogName)?", message: nil, preferredStyle: .alert)
+            //REMOVE CONFIRMATION
+            let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogName)?", message: nil, preferredStyle: .alert)
             
-            let deleteDogConfirmationDelete = UIAlertAction(title: "Delete", style: .destructive) { _ in
+            let removeDogConfirmationRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                 try! sudoDogManager.removeDog(name: dogName)
                 self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
                 self.tableView.deleteSections([section], with: .automatic)
             }
             
-            let deleteDogConfirmationCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            let removeDogConfirmationCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
             
-            deleteDogConfirmation.addAction(deleteDogConfirmationDelete)
-            deleteDogConfirmation.addAction(deleteDogConfirmationCancel)
+            removeDogConfirmation.addAction(removeDogConfirmationRemove)
+            removeDogConfirmation.addAction(removeDogConfirmationCancel)
 
-            AlertPresenter.shared.enqueueAlertForPresentation(deleteDogConfirmation)
+            AlertPresenter.shared.enqueueAlertForPresentation(removeDogConfirmation)
         }
         
         alertController.addAction(alertActionAdd)
@@ -260,7 +260,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             alertController.addAction(alertActionDisable)
         }
         
-        alertController.addAction(alertActionDelete)
+        alertController.addAction(alertActionRemove)
         
         alertController.addAction(alertActionCancel)
         
@@ -278,13 +278,13 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             self.delegate.willEditReminder(parentDogName: parentDogName, reminderUUID: reminder.uuid)
         }
         
-        //DELETE BUTTON
-        let alertActionDelete = UIAlertAction(title: "Delete Reminder", style: .destructive) { (action) in
+        //REMOVE BUTTON
+        let alertActionRemove = UIAlertAction(title: "Delete Reminder", style: .destructive) { (action) in
             
-            //DELETE CONFIRMATION
-            let deleteReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(reminder.displayTypeName)?", message: nil, preferredStyle: .alert)
+            //REMOVE CONFIRMATION
+            let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(reminder.displayTypeName)?", message: nil, preferredStyle: .alert)
             
-            let deleteReminderConfirmationDelete = UIAlertAction(title: "Delete", style: .destructive) { _ in
+            let removeReminderConfirmationRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                 let sudoDogManager = self.getDogManager()
                 let dog = try! sudoDogManager.findDog(dogName: parentDogName)
                 let indexPath = IndexPath(row: try! dog.dogReminders.findIndex(forUUID: reminder.uuid)+1, section: try! sudoDogManager.findIndex(dogName: parentDogName))
@@ -295,12 +295,12 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 self.tableView.deleteRows(at: [indexPath], with: .automatic)
             }
             
-            let deleteReminderConfirmationCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            let removeReminderConfirmationCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
             
-            deleteReminderConfirmation.addAction(deleteReminderConfirmationDelete)
-            deleteReminderConfirmation.addAction(deleteReminderConfirmationCancel)
+            removeReminderConfirmation.addAction(removeReminderConfirmationRemove)
+            removeReminderConfirmation.addAction(removeReminderConfirmationCancel)
 
-            AlertPresenter.shared.enqueueAlertForPresentation(deleteReminderConfirmation)
+            AlertPresenter.shared.enqueueAlertForPresentation(removeReminderConfirmation)
             
             
         }
@@ -379,7 +379,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         selectedReminderAlertController.addAction(alertActionEdit)
         
-        selectedReminderAlertController.addAction(alertActionDelete)
+        selectedReminderAlertController.addAction(alertActionRemove)
         
         selectedReminderAlertController.addAction(alertActionCancel)
         
@@ -446,33 +446,33 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete && getDogManager().dogs.count > 0 {
-            let deleteConfirmation: GeneralUIAlertController!
+            let removeConfirmation: GeneralUIAlertController!
             let sudoDogManager = getDogManager()
             if indexPath.row > 0 {
-                deleteConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(sudoDogManager.dogs[indexPath.section].dogReminders.reminders[indexPath.row-1].displayTypeName)?", message: nil, preferredStyle: .alert)
+                removeConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(sudoDogManager.dogs[indexPath.section].dogReminders.reminders[indexPath.row-1].displayTypeName)?", message: nil, preferredStyle: .alert)
                 
-                let alertActionDelete = UIAlertAction(title: "Delete", style: .destructive) { _ in
+                let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                     sudoDogManager.dogs[indexPath.section].dogReminders.removeReminder(forIndex: indexPath.row-1)
                     self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
                     self.tableView.deleteRows(at: [indexPath], with: .automatic)
                 }
                 let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-                deleteConfirmation.addAction(alertActionDelete)
-                deleteConfirmation.addAction(alertActionCancel)
+                removeConfirmation.addAction(alertActionRemove)
+                removeConfirmation.addAction(alertActionCancel)
             }
             else {
-                deleteConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(sudoDogManager.dogs[indexPath.section].dogTraits.dogName)?", message: nil, preferredStyle: .alert)
+                removeConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(sudoDogManager.dogs[indexPath.section].dogTraits.dogName)?", message: nil, preferredStyle: .alert)
                 
-                let alertActionDelete = UIAlertAction(title: "Delete", style: .destructive) { _ in
+                let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                     sudoDogManager.dogs.remove(at: indexPath.section)
                     self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
                     self.tableView.deleteSections([indexPath.section], with: .automatic)
                 }
                 let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-                deleteConfirmation.addAction(alertActionDelete)
-                deleteConfirmation.addAction(alertActionCancel)
+                removeConfirmation.addAction(alertActionRemove)
+                removeConfirmation.addAction(alertActionCancel)
             }
-            AlertPresenter.shared.enqueueAlertForPresentation(deleteConfirmation)
+            AlertPresenter.shared.enqueueAlertForPresentation(removeConfirmation)
             
         }
     }

@@ -37,18 +37,24 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
     ///When this function is called through a delegate, it adds the information to the list of reminders and updates the cells to display it
     func didAddReminder(sender: Sender, newReminder: Reminder) throws{
         let sudoReminderManager = getReminderManager()
+        
+        
         try sudoReminderManager.addReminder(newReminder: newReminder)
         setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
     }
     
     func didUpdateReminder(sender: Sender, updatedReminder: Reminder) throws {
         let sudoReminderManager = getReminderManager()
+        
+        
         try sudoReminderManager.changeReminder(forUUID: updatedReminder.uuid, newReminder: updatedReminder)
         setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
     }
     
     func didRemoveReminder(sender: Sender, removedReminderUUID: String) {
         let sudoReminderManager = getReminderManager()
+        
+        
         try! sudoReminderManager.removeReminder(forUUID: removedReminderUUID)
         setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
     }
@@ -174,13 +180,13 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
         if editingStyle == .delete && sudoReminderManager.reminders.count > 0{
             let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(sudoReminderManager.reminders[indexPath.row].displayTypeName)?", message: nil, preferredStyle: .alert)
             
-            let alertActionDelete = UIAlertAction(title: "Delete", style: .destructive) { _ in
+            let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                 sudoReminderManager.removeReminder(forIndex: indexPath.row)
                 self.setReminderManager(sender: Sender(origin: self, localized: self), newReminderManager: sudoReminderManager)
                 self.tableView.deleteRows(at: [indexPath], with: .automatic)
             }
             let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-            removeReminderConfirmation.addAction(alertActionDelete)
+            removeReminderConfirmation.addAction(alertActionRemove)
             removeReminderConfirmation.addAction(alertActionCancel)
             AlertPresenter.shared.enqueueAlertForPresentation(removeReminderConfirmation)
         }

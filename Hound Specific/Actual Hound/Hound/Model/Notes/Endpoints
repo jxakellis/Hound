@@ -1,0 +1,38 @@
+
+Users
+    Add User
+        First Name
+        Last Name
+        Email
+
+Configuration
+    Update Config
+        Configuration Name (STRING)
+        Value (BOOL, INT, DATE)
+
+Dogs
+    Add Dog
+        Dog itself
+        NO Reminders (invoke Add Reminder)
+    Update Dog
+    Remove Dog
+
+Reminders
+    Add Reminder
+        Reminder itself
+        All Components
+    Update Reminder
+        Reminder itself
+        NO Components
+    Remove Reminder
+        Reminder identifier
+    
+Reminder Components
+    NO ADD (componets created when reminder is added)
+    Update Component
+    NO REMOVE (components removed only if reminder is removed)
+    
+Logs
+    Add Log
+    Update Log
+    Remove Log

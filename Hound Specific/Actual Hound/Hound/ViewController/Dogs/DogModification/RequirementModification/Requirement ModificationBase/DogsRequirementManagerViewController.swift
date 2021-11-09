@@ -223,7 +223,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             updatedReminder.setEnable(newEnableStatus: reminderToggleSwitch.isOn)
             
             if segmentedControl.selectedSegmentIndex == 0 {
-                //cannot switch an already created reminder to one time, can possible delete its past logs when one time alarm completes and self destructures
+                //cannot switch an already created reminder to one time, can possible remove its past logs when one time alarm completes and self destructures
                 //if targetReminder != nil && targetReminder!.timingStyle != .oneTime{
                 //    throw OneTimeComponentsError.reminderAlreadyCreated
                // }

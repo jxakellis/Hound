@@ -77,11 +77,11 @@ class ErrorProcessor{
          }
          */
         if case TimingManagerError.invalidateFailed = error {
-            ErrorProcessor.alertForError(message: "Unable to invalidate the timer handling a certain reminder")
+            ErrorProcessor.alertForError(message: "Something went wrong. Please reload and try again! (TME.iF)")
             return true
         }
         else if case TimingManagerError.parseSenderInfoFailed = error {
-            ErrorProcessor.alertForError(message: "Unable to parse sender info in TimingManager")
+            ErrorProcessor.alertForError(message: "Something went wrong. Please reload and try again! (TME.pSIF)")
             return true
         }
         else {
@@ -100,7 +100,7 @@ class ErrorProcessor{
          }
          */
         if case DogManagerError.dogNameNotPresent = error {
-            ErrorProcessor.alertForError(message: "Could not find a match for a dog matching your name!")
+            ErrorProcessor.alertForError(message: "Couldn't find a match for a dog with that name. Please reload and try again!")
             return true
         }
         else if case DogManagerError.dogNameAlreadyPresent = error {
@@ -143,6 +143,8 @@ class ErrorProcessor{
              case nilName
              case blankName
              case invalidName
+            case logUUIDPresent
+            case logUUIDNotPresent
          }
          */
         if case TraitManagerError.nilName = error {
@@ -155,6 +157,14 @@ class ErrorProcessor{
         }
         else if case TraitManagerError.invalidName = error {
             ErrorProcessor.alertForError(message: "Your dog has a invalid name, try typing something else in!")
+            return true
+        }
+        else if case TraitManagerError.logUUIDPresent = error {
+            ErrorProcessor.alertForError(message: "Something went wrong when trying modify your log, please try again! (TME.lUP)")
+            return true
+        }
+        else if case TraitManagerError.logUUIDNotPresent = error {
+            ErrorProcessor.alertForError(message: "Something went wrong when trying modify your log, please try again! (TME.lUNP)")
             return true
         }
         else {
@@ -194,19 +204,19 @@ class ErrorProcessor{
          }
          */
         if case ReminderManagerError.reminderAlreadyPresent = error {
-            ErrorProcessor.alertForError(message: "Your reminder's name is already present, please try a different one.")
+            ErrorProcessor.alertForError(message: "Your reminder seems to already exist. Please reload and try again! (RME.rAP)")
             return true
         }
         else if case ReminderManagerError.reminderNotPresent = error{
-            ErrorProcessor.alertForError(message: "Could not find a match for your reminder!")
+            ErrorProcessor.alertForError(message: "Something went wrong when trying to modify your reminder. Please reload and try again! (RME.rNP)")
             return true
         }
         else if case ReminderManagerError.reminderInvalid = error {
-            ErrorProcessor.alertForError(message: "Your reminder is invalid, please try something different.")
+            ErrorProcessor.alertForError(message: "Something went wrong when trying to modify your reminder. Please reload and try again! (RME.rI)")
             return true
         }
         else if case ReminderManagerError.reminderUUIDNotPresent = error {
-            ErrorProcessor.alertForError(message: "Your reminder couldn't be located while attempting to modify its data")
+            ErrorProcessor.alertForError(message: "Something went wrong when trying to modify your reminder. Please reload and try again! (RME.rUNP)")
             return true
         }
         else{
@@ -256,7 +266,7 @@ class ErrorProcessor{
          }
          */
         if case TimeOfDayComponentsError.invalidCalendarComponent = error {
-            ErrorProcessor.alertForError(message: "Invalid Calendar Components for TimeOfDayComponents")
+            ErrorProcessor.alertForError(message: "Something went wrong with your reminder. Please reload and try again! (TODCE.iCC)")
             return true
         }
         else if case TimeOfDayComponentsError.invalidWeekdayArray = error {
@@ -290,15 +300,16 @@ class ErrorProcessor{
          }
          */
         if case OneTimeComponentsError.invalidDateComponents = error {
-            ErrorProcessor.alertForError(message: "Invalid Date Components for OneTimeComponents")
+            ErrorProcessor.alertForError(message: "Something went wrong when trying to modify your reminder. Please reload and try again! (OTCE.iDC)")
             return true
         }
         else if case OneTimeComponentsError.invalidCalendarComponent = error {
-            ErrorProcessor.alertForError(message: "Invalid Calendar Component for TimeOfDayComponents")
+            ErrorProcessor.alertForError(message: "Something went wrong when trying to modify your reminder. Please reload and try again! (OTCE.iCC)")
             return true
         }
         else if case OneTimeComponentsError.reminderAlreadyCreated = error {
-            ErrorProcessor.alertForError(message: "Your reminder cannot be in \"Once\" mode. If you would like to use this mode, please create a new reminder.")
+            //no longer occurs
+            ErrorProcessor.alertForError(message: "Your reminder cannot be changed into \"Once\" mode. If you would like to use this mode, please create a new reminder.")
             return true
         }
         else {
@@ -315,7 +326,7 @@ class ErrorProcessor{
          }
          */
         if case StringExtensionError.invalidDateComponents = error {
-            ErrorProcessor.alertForError(message: "Invalid dateComponent passed to String extension.")
+            ErrorProcessor.alertForError(message: "Something went wrong. Please reload and try again! (SEE.iDC)")
             return true
         }
         else {

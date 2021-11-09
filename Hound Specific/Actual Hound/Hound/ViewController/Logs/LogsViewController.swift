@@ -26,7 +26,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         let sudoDogManager = getDogManager()
         if sudoDogManager.dogs.isEmpty == false {
             do {
-                try sudoDogManager.findDog(dogName: parentDogName).dogTraits.logs.append(newKnownLog)
+                try sudoDogManager.findDog(dogName: parentDogName).dogTraits.addLog(newLog: newKnownLog)
             }
             catch {
                 ErrorProcessor.alertForError(message: "Unable to add log.")
@@ -41,34 +41,19 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
          let sudoDogManager = getDogManager()
          if sudoDogManager.dogs.isEmpty == false {
                 let dog = try! sudoDogManager.findDog(dogName: parentDogName)
-                
-                /*
-                 //REQ LOG UPDATE
-                 //reminder log
-                 if reminderUUID != nil {
-                     let reminder = try! dog.dogReminders.findReminder(forUUID: reminderUUID!)
-                     
-                     for logIndex in 0..<reminder.logs.count{
-                         if reminder.logs[logIndex].uuid == updatedKnownLog.uuid{
-                             reminder.logs[logIndex] = updatedKnownLog
-                             break
-                         }
-                     }
-                 }
-                 */
-                
-                //dog log
-                //else {
-                    //let dog = try sudoDogManager.findDog(dogName: parentDogName)
+             
+             try! dog.dogTraits.changeLog(forUUID: updatedKnownLog.uuid, newLog: updatedKnownLog)
                     
+             /*
                     for dogLogIndex in 0..<dog.dogTraits.logs.count {
+                        dog.dogTraits.changeLog(forUUID: dog.dogTraits.logs[dogLogIndex].uuid, newLog: updatedKnownLog)
                         if dog.dogTraits.logs[dogLogIndex].uuid == updatedKnownLog.uuid{
                             //match
                             dog.dogTraits.logs[dogLogIndex] = updatedKnownLog
                             break
                         }
                     }
-                //}
+              */
              
          }
         
@@ -76,13 +61,13 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
          
     }
     
-    func didDeleteKnownLog(sender: Sender, parentDogName: String, reminderUUID: String?, logUUID: String) {
+    func didRemoveKnownLog(sender: Sender, parentDogName: String, reminderUUID: String?, logUUID: String) {
         let sudoDogManager = getDogManager()
         let dog = try! sudoDogManager.findDog(dogName: parentDogName)
         
         for dogLogIndex in 0..<dog.dogTraits.logs.count{
             if dog.dogTraits.logs[dogLogIndex].uuid == logUUID{
-                dog.dogTraits.logs.remove(at: dogLogIndex)
+                dog.dogTraits.removeLog(forIndex: dogLogIndex)
                 break
             }
         }
@@ -281,7 +266,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             logsMainScreenTableViewController?.willApplyFiltering(associatedToIndexPath: filterIndexPath, filterType: filterType)
             logsAddLogViewController?.navigationController?.popViewController(animated: false)
         }
-        //only deletes logs so ok
+        //only removes logs so ok
         if sender.localized is LogsMainScreenTableViewController{
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
         }
@@ -289,7 +274,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         if sender.localized is LogsAddLogViewController {
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
             
-            //can delete or add logs so needs to remove filter
+            //can remove or add logs so needs to remove filter
             logsMainScreenTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
             filterIndexPath = nil
             filterType = nil

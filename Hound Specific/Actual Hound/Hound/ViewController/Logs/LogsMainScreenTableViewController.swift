@@ -405,48 +405,20 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             tableView.performBatchUpdates {
-                // Delete the row from the data source
+                // Remove the row from the data source
                 let newDogManager = getDogManager()
                 
                 let originalNumberOfSections = uniqueLogs.count
                 
-                let cellToDelete = uniqueLogs[indexPath.section].2[indexPath.row-1]
+                let cellToRemove = uniqueLogs[indexPath.section].2[indexPath.row-1]
                 
-                let dog = try! newDogManager.findDog(dogName: cellToDelete.0)
+                let dog = try! newDogManager.findDog(dogName: cellToRemove.0)
                 for dogLogIndex in 0..<dog.dogTraits.logs.count {
-                    if dog.dogTraits.logs[dogLogIndex].uuid == cellToDelete.2.uuid{
-                        dog.dogTraits.logs.remove(at: dogLogIndex)
+                    if dog.dogTraits.logs[dogLogIndex].uuid == cellToRemove.2.uuid{
+                        dog.dogTraits.removeLog(forIndex: dogLogIndex)
                         break
                     }
                 }
-                
-                /*
-                 //if cell is a reminder log
-                 if cellToDelete.1 != nil {
-                     let reminder = try! newDogManager.findDog(dogName: cellToDelete.0).dogReminders.findReminder(forUUID: cellToDelete.1!.uuid)
-                     
-                     let firstIndex = reminder.logs.firstIndex { (arg0) -> Bool in
-                         if arg0.date == cellToDelete.2.date{
-                             return true
-                         }
-                         else {
-                             return false
-                         }
-                     }
-                     
-                     reminder.logs.remove(at: firstIndex!)
-                 }
-                 //if cell is a dog log
-                 else {
-                     let dog = try! newDogManager.findDog(dogName: cellToDelete.0)
-                     for dogLogIndex in 0..<dog.dogTraits.logs.count {
-                         if dog.dogTraits.logs[dogLogIndex].uuid == cellToDelete.2.uuid{
-                             dog.dogTraits.logs.remove(at: dogLogIndex)
-                             break
-                         }
-                     }
-                 }
-                 */
                 
                 
                 setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager)
@@ -475,7 +447,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     }
                     
                 }
-                //removed final log of a given section and must delete all headers and body in that now gone-from-the-data section
+                //removed final log of a given section and must remove all headers and body in that now gone-from-the-data section
                 else if originalNumberOfSections != uniqueLogs.count{
                     tableView.deleteSections(IndexSet(integer: indexPath.section), with: .automatic)
                     
