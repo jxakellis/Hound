@@ -62,7 +62,7 @@ enum KnownLogType: String, CaseIterable {
         }
         //regular
         for type in KnownLogType.allCases{
-            if type.rawValue == rawValue{
+            if type.rawValue.lowercased() == rawValue.lowercased(){
                 self = type
                 return
             }
@@ -88,7 +88,7 @@ enum KnownLogType: String, CaseIterable {
     case bathe = "Bathe"
     case medicine = "Medicine"
     
-    case wakeup = "Wake up"
+    case wakeup = "Wake Up"
     
     case sleep = "Sleep"
     
