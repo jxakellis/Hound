@@ -270,7 +270,7 @@ class ErrorProcessor{
             return true
         }
         else if case TimeOfDayComponentsError.invalidWeekdayArray = error {
-            ErrorProcessor.alertForError(message: "Please select atleast one weekday for the reminder to go off on.")
+            ErrorProcessor.alertForError(message: "Please select atleast one day of the week for your reminder")
             return true
         }
         else if case TimeOfDayComponentsError.invalidDayOfMonth = error {

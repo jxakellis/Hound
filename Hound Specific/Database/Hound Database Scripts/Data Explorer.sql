@@ -10,4 +10,5 @@ SELECT * FROM dog_reminders;
 SELECT * FROM reminder_types;
 SELECT * FROM reminder_countdown_components;
 SELECT * FROM reminder_snooze_components;
+SELECT * FROM reminder_time_of_day_components;
 

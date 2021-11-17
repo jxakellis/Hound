@@ -114,11 +114,12 @@ class SettingsViewController: UIViewController, ToolTipable {
                 DispatchQueue.main.async {
                     Utils.willShowAlert(title: "Notifcations Disabled", message: "To enable notifications go to the Settings App -> Notifications -> Hound and enable \"Allow Notifications\"")
                     
-                    let switchDisableTimer = Timer(fireAt: Date().addingTimeInterval(0.15), interval: -1, target: self, selector: #selector(self.disableIsNotificationEnabledSwitch), userInfo: nil, repeats: false)
+                    let switchDisableTimer = Timer(fire: Date().addingTimeInterval(0.22), interval: -1, repeats: false) { Timer in
+                        self.synchronizeAllNotificationSwitches(animated: true)
+                    }
                     
                     RunLoop.main.add(switchDisableTimer, forMode: .common)
                     
-                    self.synchronizeAllNotificationSwitches(animated: true)
                 }
             case .notDetermined:
                 UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
@@ -145,11 +146,7 @@ class SettingsViewController: UIViewController, ToolTipable {
         
         
     }
-    
-    @objc private func disableIsNotificationEnabledSwitch(){
-        self.notificationToggleSwitch.setOn(false, animated: true)
-    }
-    
+    ///If disconnect between stored and displayed
     func synchronizeAllNotificationSwitches(animated: Bool){
         //If disconnect between stored and displayed
         if notificationToggleSwitch.isOn != NotificationConstant.isNotificationEnabled {

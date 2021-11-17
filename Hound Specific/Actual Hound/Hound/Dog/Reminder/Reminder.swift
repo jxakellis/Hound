@@ -16,15 +16,27 @@ enum ReminderError: Error {
     case intervalInvalid
 }
 
-enum ReminderStyle: Int {
+enum ReminderStyle: String, CaseIterable {
+    
+    init?(rawValue: String) {
+        for type in ReminderStyle.allCases{
+            if type.rawValue.lowercased() == rawValue.lowercased(){
+                self = type
+                return
+            }
+        }
+        
+        print("reminderStyle Not Found")
+        self = .oneTime
+    }
     //case oneTime = "oneTime"
     //case countDown = "countDown"
     //case weekly = "weekly"
     //case monthly = "monthly"
-    case oneTime = 0
-    case countDown = 1
-    case weekly = 2
-    case monthly = 3
+    case oneTime = "oneTime"
+    case countDown = "countdown"
+    case weekly = "weekly"
+    case monthly = "monthly"
 }
 
 enum ReminderMode {
@@ -134,7 +146,8 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         super.init()
         
         self.uuid = aDecoder.decodeObject(forKey: "uuid") as! String
-        self.reminderType = ScheduledLogType(rawValue: aDecoder.decodeObject(forKey: "reminderType") as? String ?? aDecoder.decodeObject(forKey: "requirement") as? String ?? aDecoder.decodeObject(forKey: "requirment") as! String)!
+        self.reminderType = ScheduledLogType(rawValue: aDecoder.decodeObject(forKey: "reminderType") as? String ?? aDecoder.decodeObject(forKey: "requirement") as? String ?? aDecoder.decodeObject(forKey: "requirment") as? String ?? aDecoder.decodeObject(forKey: "requirementType") as? String ?? aDecoder.decodeObject(forKey: "requirmentType") as! String)!
+        
         self.customTypeName = aDecoder.decodeObject(forKey: "customTypeName") as? String
         
         
@@ -182,34 +195,7 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         self.oneTimeComponents.masterReminder = self
         self.snoozeComponents = aDecoder.decodeObject(forKey: "snoozeComponents") as! SnoozeComponents
         
-        var decodedTimingStyle: Int {
-            let decodedInteger: Int? = aDecoder.decodeInteger(forKey: "timingStyle")
-            
-            if decodedInteger != nil {
-                return decodedInteger!
-            }
-            else {
-                let decodedString: String? = aDecoder.decodeObject(forKey: "timingStyle") as? String
-                //for builds <=1513, used to be stored as string
-                
-                switch decodedString {
-                case "oneTime":
-                    return 0
-                case "countDown":
-                    return 1
-                case "weekly":
-                    return 2
-                case "monthly":
-                    return 3
-                default:
-                    fatalError()
-                }
-            }
-            
-            
-        }
-        
-        self.storedTimingStyle = ReminderStyle(rawValue: decodedTimingStyle)!
+        self.storedTimingStyle = ReminderStyle(rawValue: aDecoder.decodeObject(forKey: "timingStyle") as! String)!
         
         //self.isPresentationHandled = aDecoder.decodeBool(forKey: "isPresentationHandled")
         self.storedExecutionBasis = aDecoder.decodeObject(forKey: "executionBasis") as! Date

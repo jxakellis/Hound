@@ -220,7 +220,7 @@ class TimingManager{
                 
                 let reminder = try! dogManager.findDog(forName: dogKey).dogReminders.findReminder(forUUID: reminderUUID)
                 
-                //one time requiremnent
+                //one time reminder
                 if reminder.timerMode == .oneTime{
                     //nothing
                 }

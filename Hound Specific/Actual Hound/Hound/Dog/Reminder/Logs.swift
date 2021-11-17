@@ -20,7 +20,7 @@ enum ScheduledLogType: String, CaseIterable {
         }
         //regular
         for type in ScheduledLogType.allCases{
-            if type.rawValue == rawValue{
+            if type.rawValue.lowercased() == rawValue.lowercased(){
                 self = type
                 return
             }

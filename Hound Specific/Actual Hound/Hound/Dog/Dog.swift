@@ -129,6 +129,7 @@ class Dog: NSObject, NSCoding, NSCopying {
     
     ///adds default set of reminders
     func addDefaultReminders(){
+        
         try! dogReminders.addReminder(newReminders: [ReminderConstant.defaultReminderOne, ReminderConstant.defaultReminderTwo, ReminderConstant.defaultReminderThree, ReminderConstant.defaultReminderFour])
     }
     

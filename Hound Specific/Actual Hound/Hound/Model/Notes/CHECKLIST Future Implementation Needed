@@ -17,3 +17,8 @@ No prompt to add notes when logging something, can only do at a later point in t
 
 CFBundleVersion $(CURRENT_PROJECT_VERSION)
 
+DATABASE
+
+When wiping data
+  -Rename TraitManager to TraitManager (conflicts with decoding currently so unable to)
+

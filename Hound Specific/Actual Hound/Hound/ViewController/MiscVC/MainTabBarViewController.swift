@@ -137,6 +137,9 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         print(UIApplication.appBuild)
         
         let decoded = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as! Data
+        NSKeyedUnarchiver.setClass(ReminderManager.self, forClassName: "Hound.RequirementManager")
+        NSKeyedUnarchiver.setClass(TraitManager.self, forClassName: "Hound.DogTraitManager")
+        NSKeyedUnarchiver.setClass(Reminder.self, forClassName: "Hound.Requirement")
         let decodedDogManager: DogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
         decodedDogManager.synchronizeIsSkipping()
        //decodedDogManager.dogs[0].dogReminders.reminders[0].countDownComponents.changeExecutionInterval(newExecutionInterval: 15.0)

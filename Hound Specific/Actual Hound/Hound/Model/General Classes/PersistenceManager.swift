@@ -222,10 +222,12 @@ class PersistenceManager{
                 
                 //going from off to on, meaning the user has gone into the settings app and turned notifications from disabled to enabled
                 if UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool == false {
-                    UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
-                    UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
-                    NotificationConstant.isNotificationEnabled = true
-                    NotificationConstant.shouldFollowUp = true
+                    //originally set notifications enabled for the user but decided against. let the user do it themself
+                    
+                    //UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+                    //UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
+                    //NotificationConstant.isNotificationEnabled = true
+                    //NotificationConstant.shouldFollowUp = true
                 }
                 
                 UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
