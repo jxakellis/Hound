@@ -1,0 +1,41 @@
+
+
+Add conformance to ToolTipable
+
+    //MARK: General Tool Tip
+    
+    func showToolTip(sourceButton: UIButton, message: String) {
+        let tipView = ToolTipView(sourceView: sourceButton, message: message, toolTipPosition: .middle)
+        sourceButton.superview?.addSubview(tipView)
+        performToolTipShow(sourceButton: sourceButton, tipView)
+    }
+    
+    func hideToolTip(targetTipView: ToolTipView?, completion: (() -> Void)?) {
+        
+        if targetTipView != nil{
+            UIView.animate(withDuration: 0.3, delay: 0.3, options: .curveEaseOut, animations: {
+                targetTipView!.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+            }) { finished in
+                targetTipView!.removeFromSuperview()
+            }
+        }
+        
+    }
+    
+    @objc private func willHideToolTip(){
+        hideToolTip(targetTipView: nil, completion: nil)
+    }
+    
+    //MARK: - MAIN
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        hideToolTip(targetTipView: nil, completion: nil)
+    }
+    
+    //use these for when an action is taken. You want the tool tip to close if you click somewhere else
+    
+        self.willHideToolTip()
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(willHideToolTip))
+        self.view.addGestureRecognizer(tap)

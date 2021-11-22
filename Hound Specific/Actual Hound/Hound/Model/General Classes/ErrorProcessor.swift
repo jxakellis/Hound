@@ -13,7 +13,7 @@ class ErrorProcessor{
     ///Alerts for an error, just calls Utils.willShowAlert currently with a specified title of "Error"
     static func alertForError(message: String){
         
-        Utils.willShowAlert(title: "🚨Error🚨", message: message)
+        Utils.willShowAlert(title: "Uh oh! There seems to be an error.", message: message)
         
     }
     

@@ -14,11 +14,11 @@ class PersistenceManager{
         
         if isRecurringSetup == true{
             //not first time setup
-            TimingManager.isPaused = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool
-            TimingManager.lastPause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastPause.rawValue) as? Date
-            TimingManager.lastUnpause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastUnpause.rawValue) as? Date
+            TimingConstant.isPaused = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool
+            TimingConstant.lastPause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastPause.rawValue) as? Date
+            TimingConstant.lastUnpause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastUnpause.rawValue) as? Date
             
-            TimerConstant.defaultSnoozeLength = UserDefaults.standard.value(forKey: UserDefaultsKeys.defaultSnoozeLength.rawValue) as! TimeInterval
+            TimingConstant.defaultSnoozeLength = UserDefaults.standard.value(forKey: UserDefaultsKeys.defaultSnoozeLength.rawValue) as! TimeInterval
             
             NotificationConstant.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool
             NotificationConstant.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool
@@ -26,6 +26,7 @@ class PersistenceManager{
             NotificationConstant.shouldShowTerminationAlert = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldShowTerminationAlert.rawValue) as? Bool ?? NotificationConstant.shouldShowTerminationAlert
             NotificationConstant.shouldFollowUp = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool
             NotificationConstant.followUpDelay = UserDefaults.standard.value(forKey: UserDefaultsKeys.followUpDelay.rawValue) as! TimeInterval
+            NotificationConstant.notificationSound = NotificationSound(rawValue: UserDefaults.standard.value(forKey: UserDefaultsKeys.notificationSound.rawValue) as? String ?? NotificationSound.radar.rawValue)!
             
             
             DogsNavigationViewController.hasBeenLoadedBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue) as! Bool
@@ -42,7 +43,7 @@ class PersistenceManager{
                 let decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
                 
                 //correct conditions
-                if AudioPlayer.sharedPlayer == nil && NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && decodedDogManager.hasEnabledReminder && !TimingManager.isPaused {
+                if AudioPlayer.sharedPlayer == nil && NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && decodedDogManager.hasEnabledReminder && !TimingConstant.isPaused {
                     let terminationAlertController = GeneralUIAlertController(title: "Oops, you may have terminated Hound", message: "Your notifications won't ring properly if the app isn't running.", preferredStyle: .alert)
                     let acceptAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
                     let understandAlertAction = UIAlertAction(title: "Don't Show Again", style: .default) { _ in
@@ -66,11 +67,11 @@ class PersistenceManager{
             
             MainTabBarViewController.selectedEntryIndex = 0
             
-            UserDefaults.standard.setValue(TimingManager.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
-            UserDefaults.standard.setValue(TimingManager.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
-            UserDefaults.standard.setValue(TimingManager.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
+            UserDefaults.standard.setValue(TimingConstant.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
+            UserDefaults.standard.setValue(TimingConstant.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
+            UserDefaults.standard.setValue(TimingConstant.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
             
-            UserDefaults.standard.setValue(TimerConstant.defaultSnoozeLength, forKey: UserDefaultsKeys.defaultSnoozeLength.rawValue)
+            UserDefaults.standard.setValue(TimingConstant.defaultSnoozeLength, forKey: UserDefaultsKeys.defaultSnoozeLength.rawValue)
             
             UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
             
@@ -80,6 +81,7 @@ class PersistenceManager{
             UserDefaults.standard.setValue(NotificationConstant.shouldShowTerminationAlert, forKey: UserDefaultsKeys.shouldShowTerminationAlert.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.shouldFollowUp, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
+            UserDefaults.standard.setValue(NotificationConstant.notificationSound.rawValue, forKey: UserDefaultsKeys.notificationSound.rawValue)
             
             UserDefaults.standard.setValue(DogsNavigationViewController.hasBeenLoadedBefore, forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue)
             UserDefaults.standard.setValue(AppearanceConstant.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
@@ -109,16 +111,13 @@ class PersistenceManager{
         
         //background silence player for loud alarm that bypasses ringer and if phone locked
         func handleBackgroundSilence(){
-            if AudioPlayer.sharedPlayer != nil {
-                AudioPlayer.sharedPlayer.stop()
-            }
+            AudioPlayer.stopAudio()
             
-            guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && MainTabBarViewController.staticDogManager.hasEnabledReminder && !TimingManager.isPaused else{
+            guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && MainTabBarViewController.staticDogManager.hasEnabledReminder && !TimingConstant.isPaused else{
                 return
             }
             
-            AudioPlayer.loadSilenceAudioPlayer()
-            AudioPlayer.sharedPlayer.play()
+            AudioPlayer.playSilenceAudio()
         }
         
         //saves to user defaults
@@ -132,13 +131,13 @@ class PersistenceManager{
             UserDefaults.standard.setValue(encodedDataDogManager, forKey: UserDefaultsKeys.dogManager.rawValue)
                         
             //Pause State
-            UserDefaults.standard.setValue(TimingManager.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
-            UserDefaults.standard.setValue(TimingManager.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
-            UserDefaults.standard.setValue(TimingManager.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
+            UserDefaults.standard.setValue(TimingConstant.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
+            UserDefaults.standard.setValue(TimingConstant.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
+            UserDefaults.standard.setValue(TimingConstant.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
             
             //Snooze interval
             
-            UserDefaults.standard.setValue(TimerConstant.defaultSnoozeLength, forKey: UserDefaultsKeys.defaultSnoozeLength.rawValue)
+            UserDefaults.standard.setValue(TimingConstant.defaultSnoozeLength, forKey: UserDefaultsKeys.defaultSnoozeLength.rawValue)
             
             //Notifications
             UserDefaults.standard.setValue(NotificationConstant.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
@@ -147,6 +146,7 @@ class PersistenceManager{
             UserDefaults.standard.setValue(NotificationConstant.shouldShowTerminationAlert, forKey: UserDefaultsKeys.shouldShowTerminationAlert.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.shouldFollowUp, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
+            UserDefaults.standard.setValue(NotificationConstant.notificationSound.rawValue, forKey: UserDefaultsKeys.notificationSound.rawValue)
             
             UserDefaults.standard.setValue(DogsNavigationViewController.hasBeenLoadedBefore, forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue)
             UserDefaults.standard.setValue(AppearanceConstant.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
@@ -155,7 +155,7 @@ class PersistenceManager{
         
         //ios notifications
         func handleNotifications(){
-            guard NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled && !TimingManager.isPaused else {
+            guard NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled && !TimingConstant.isPaused else {
                 return
             }
             
@@ -164,41 +164,57 @@ class PersistenceManager{
                UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
                 UNUserNotificationCenter.current().removeAllDeliveredNotifications()
             
-                for dogKey in TimingManager.timerDictionary.keys{
+            for dog in MainTabBarViewController.staticDogManager.dogs{
+                for reminder in dog.dogReminders.reminders{
+                    guard reminder.timer?.isValid == true else{
+                        continue
+                    }
+                    Utils.willCreateUNUserNotification(dogName: dog.dogTraits.dogName, reminder: reminder)
                     
-                    for reminderUUID in TimingManager.timerDictionary[dogKey]!.keys{
-                        guard TimingManager.timerDictionary[dogKey]![reminderUUID]!.isValid else{
-                            continue
-                        }
-                        Utils.willCreateUNUserNotification(dogName: dogKey, reminderUUID: reminderUUID, executionDate: TimingManager.timerDictionary[dogKey]![reminderUUID]!.fireDate)
-                        
-                        if NotificationConstant.shouldFollowUp == true {
-                            Utils.willCreateFollowUpUNUserNotification(dogName: dogKey, reminderUUID: reminderUUID, executionDate: TimingManager.timerDictionary[dogKey]![reminderUUID]!.fireDate + NotificationConstant.followUpDelay)
-                        }
-                        
+                    if NotificationConstant.shouldFollowUp == true {
+                        Utils.willCreateFollowUpUNUserNotification(dogName: dog.dogTraits.dogName, reminder: reminder)
                     }
                 }
-                //Utils.willCreateUNUserNotification(title: "Termination Checker", body: "Test notification to see if the user terminated the app, should never be seen as set 10 years in the future.", date: Date(timeInterval: 10.0*365*24*60*60, since: Date()))
+            }
+            /*
+             for dogKey in TimingManager.timerDictionary.keys{
+                 
+                 for reminderUUID in TimingManager.timerDictionary[dogKey]!.keys{
+                     guard TimingManager.timerDictionary[dogKey]![reminderUUID]!.isValid else{
+                         continue
+                     }
+                     Utils.willCreateUNUserNotification(dogName: dogKey, reminderUUID: reminderUUID, executionDate: TimingManager.timerDictionary[dogKey]![reminderUUID]!.fireDate)
+                     
+                     if NotificationConstant.shouldFollowUp == true {
+                         Utils.willCreateFollowUpUNUserNotification(dogName: dogKey, reminderUUID: reminderUUID, executionDate: TimingManager.timerDictionary[dogKey]![reminderUUID]!.fireDate + NotificationConstant.followUpDelay)
+                     }
+                     
+                 }
+             }
+             */
+                
         }
         
-        handleBackgroundSilence()
-        
-        handleUserDefaults()
-        
-        handleNotifications()
-        
         if isTerminating == true  {
+            //this is only called if the app is DIRECTlY terminated (not background then terminated). If this happens then we can just skips background silence (termination kills it anyways)
+            handleUserDefaults()
             
+            handleNotifications()
         }
         
         else {
+            handleBackgroundSilence()
+            
+            handleUserDefaults()
+            
+            handleNotifications()
             
             /*
              // Checks for disconnects between what is displayed in the switches, what is stored in static variables and what is stored in user defaults
              print("shouldFollowUp \(NotificationConstant.shouldFollowUp) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool)")
              print("isAuthorized \(NotificationConstant.isNotificationAuthorized) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool)")
              print("isEnabled \(NotificationConstant.isNotificationEnabled) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool)")
-             print("isPaused \(TimingManager.isPaused) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool)")
+             print("isPaused \(TimingConstant.isPaused) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool)")
              */
         }
         

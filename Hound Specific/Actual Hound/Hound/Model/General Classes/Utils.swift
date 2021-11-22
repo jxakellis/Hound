@@ -38,8 +38,13 @@ class Utils
         
     }
     
-    static func willCreateFollowUpUNUserNotification(dogName: String, reminderUUID: String, executionDate: Date){
-        let reminder = try! MainTabBarViewController.staticDogManager.findDog(forName: dogName).dogReminders.findReminder(forUUID: reminderUUID)
+    static func willCreateFollowUpUNUserNotification(dogName: String, reminder: Reminder){
+        
+        guard reminder.executionDate != nil else {
+            print("willCreateFollowUpUNUserNotification executionDate nil")
+            return
+        }
+        //let reminder = try! MainTabBarViewController.staticDogManager.findDog(forName: dogName).dogReminders.findReminder(forUUID: reminderUUID)
         
          let content = UNMutableNotificationContent()
         if #available(iOS 15.0, *) {
@@ -53,10 +58,10 @@ class Utils
         content.body = "It's been \(String.convertToReadable(interperateTimeInterval: NotificationConstant.followUpDelay, capitalizeLetters: false)), give your dog a helping hand with \(reminder.displayTypeName)!"
         
         if NotificationConstant.shouldLoudNotification == false {
-            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "radar30Loop.wav"))
+            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "radar30.wav"))
         }
        
-        let executionDateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: executionDate)
+        let executionDateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: reminder.executionDate! + NotificationConstant.followUpDelay)
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: executionDateComponents, repeats: false)
         
@@ -70,9 +75,14 @@ class Utils
         }
     }
     
-    static func willCreateUNUserNotification(dogName: String, reminderUUID: String, executionDate: Date){
-        let reminder = try! MainTabBarViewController.staticDogManager.findDog(forName: dogName).dogReminders.findReminder(forUUID: reminderUUID)
+    static func willCreateUNUserNotification(dogName: String, reminder: Reminder){
+        guard reminder.executionDate != nil else {
+            print("willCreateUNUserNotification executionDate nil")
+            return
+        }
+        //let reminder = try! MainTabBarViewController.staticDogManager.findDog(forName: dogName).dogReminders.findReminder(forUUID: reminderUUID)
          let content = UNMutableNotificationContent()
+        
         if #available(iOS 15.0, *) {
             content.interruptionLevel = .timeSensitive
         } else {
@@ -84,10 +94,10 @@ class Utils
         content.body = reminder.displayTypeName
         
         if NotificationConstant.shouldLoudNotification == false {
-            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "radar30Loop.wav"))
+            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "radar30.wav"))
         }
         
-        let executionDateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: executionDate)
+        let executionDateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: reminder.executionDate!)
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: executionDateComponents, repeats: false)
         
@@ -110,8 +120,7 @@ class Utils
             content.body = body!
         }
         
-         //content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "radar30Loop.wav"))
-        
+         //content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "radar30.wav"))
         let executionDateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: date)
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: executionDateComponents, repeats: false)

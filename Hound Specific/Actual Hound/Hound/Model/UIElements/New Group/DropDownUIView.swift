@@ -39,6 +39,7 @@ class DropDownUIView: UIView{
     // Other Variables
     private var viewPositionRef: CGRect?
     private var isDropDownPresent: Bool = false
+    var isDown: Bool { get { return isDropDownPresent } }
     ///The style of the dropDown last time it was shown
     private var dropDownStyle: UIUserInterfaceStyle! = nil
    

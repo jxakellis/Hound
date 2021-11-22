@@ -15,6 +15,7 @@ class AudioPlayer {
     
     static var sharedPlayer: AVAudioPlayer!
     
+    ///Sets up the audio player to be of the right type. shouldDuck true means it will overtake others and be as loud as possible. shouldDuck false means it will be in the background and try to be incognito
     static private func loadAVAudioSession(shouldDuck: Bool) throws{
         if shouldDuck == true {
             try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [.duckOthers, .defaultToSpeaker, .allowBluetooth, .allowAirPlay, .allowBluetoothA2DP])
@@ -26,67 +27,85 @@ class AudioPlayer {
         try AVAudioSession.sharedInstance().setActive(true)
     }
     
-    static func loadDefaultAudioPlayer(){
-        print("loadDefaultAudioPlayer")
-        let path = Bundle.main.path(forResource: "radar.wav", ofType: nil)!
-        let url = URL(fileURLWithPath: path)
-        
-        do {
-            if AudioPlayer.sharedPlayer != nil {
-                AudioPlayer.sharedPlayer.stop()
+    static func playLoudNotificationAudio(){
+        DispatchQueue.global().async {
+            print("playLoudNotificationAudio")
+            let path = Bundle.main.path(forResource: "\(NotificationConstant.notificationSound.rawValue.lowercased()).wav", ofType: nil)!
+            let url = URL(fileURLWithPath: path)
+            
+            do {
+                stopAudio()
+                
+                AudioPlayer.sharedPlayer = try AVAudioPlayer(contentsOf: url)
+                AudioPlayer.sharedPlayer.numberOfLoops = -1
+                AudioPlayer.sharedPlayer.volume = 1.0
+                
+                MPVolumeView.setVolume(1.0)
+                
+                try loadAVAudioSession(shouldDuck: true)
+                
+                AudioPlayer.sharedPlayer.play()
+            } catch {
+                NSLog("Audio Session error: \(error)")
             }
-            
-            AudioPlayer.sharedPlayer = try AVAudioPlayer(contentsOf: url)
-            AudioPlayer.sharedPlayer.numberOfLoops = -1
-            AudioPlayer.sharedPlayer.volume = 1.0
-            
-            MPVolumeView.setVolume(1.0)
-            
-            try loadAVAudioSession(shouldDuck: true)
-        } catch {
-            NSLog("Audio Session error: \(error)")
         }
     }
     
-    static func loadSilenceAudioPlayer(){
-        print("loadSilenceAudioPlayer")
-        let path = Bundle.main.path(forResource: "silence.mp3", ofType: nil)!
-        let url = URL(fileURLWithPath: path)
-        
-        do {
-            if AudioPlayer.sharedPlayer != nil {
-                AudioPlayer.sharedPlayer.stop()
+    static func playSilenceAudio(){
+        DispatchQueue.global().async {
+            print("playSilenceAudio")
+            let path = Bundle.main.path(forResource: "silence.wav", ofType: nil)!
+            let url = URL(fileURLWithPath: path)
+            
+            do {
+                stopAudio()
+                
+                AudioPlayer.sharedPlayer = try AVAudioPlayer(contentsOf: url)
+                AudioPlayer.sharedPlayer.numberOfLoops = -1
+                AudioPlayer.sharedPlayer.volume = 0
+                
+                try loadAVAudioSession(shouldDuck: false)
+                
+                AudioPlayer.sharedPlayer.play()
+            } catch {
+                NSLog("Audio Session error: \(error)")
             }
-            
-            AudioPlayer.sharedPlayer = try AVAudioPlayer(contentsOf: url)
-            AudioPlayer.sharedPlayer.numberOfLoops = -1
-            AudioPlayer.sharedPlayer.volume = 0
-            
-            try loadAVAudioSession(shouldDuck: false)
-        } catch {
-            NSLog("Audio Session error: \(error)")
+
         }
     }
     
-    static func loadAudio(forAudioPath audioPath: String, atVolume volume: Float?){
-        let path = Bundle.main.path(forResource: audioPath, ofType: nil)!
-        let url = URL(fileURLWithPath: path)
-        
-        do {
+    static func playAudio(forAudioPath audioPath: String, atVolume volume: Float?){
+        DispatchQueue.global().async {
+            print("playAudio: \(audioPath)")
+            let path = Bundle.main.path(forResource: audioPath, ofType: nil)!
+            let url = URL(fileURLWithPath: path)
+            
+            do {
+                stopAudio()
+                
+                AudioPlayer.sharedPlayer = try AVAudioPlayer(contentsOf: url)
+                AudioPlayer.sharedPlayer.numberOfLoops = -1
+                if volume != nil {
+                    AudioPlayer.sharedPlayer.volume = volume!
+                    MPVolumeView.setVolume(volume!)
+                }
+                try loadAVAudioSession(shouldDuck: true)
+                
+                AudioPlayer.sharedPlayer.play()
+            } catch {
+                NSLog("Audio Session error: \(error)")
+            }
+        }
+    }
+    
+    static func stopAudio(){
+        DispatchQueue.global().async {
+            print("stopAudio")
             if AudioPlayer.sharedPlayer != nil {
                 AudioPlayer.sharedPlayer.stop()
             }
-            
-            AudioPlayer.sharedPlayer = try AVAudioPlayer(contentsOf: url)
-            AudioPlayer.sharedPlayer.numberOfLoops = -1
-            if volume != nil {
-                AudioPlayer.sharedPlayer.volume = volume!
-                MPVolumeView.setVolume(volume!)
-            }
-            try loadAVAudioSession(shouldDuck: true)
-        } catch {
-            NSLog("Audio Session error: \(error)")
         }
+        
     }
     
 }

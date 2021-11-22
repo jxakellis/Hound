@@ -28,11 +28,11 @@ protocol TraitManagerProtocol{
     ///logs that aren't attached to a reminder object, free standing with no timing involved
     var logs: [KnownLog] { get }
     
-    ///adds a log to logs, used for source control so all logs are handled through this path
+    ///adds a log to logs. If the log uuid is already present, it overrides and replaces the old one. Used for source control so all logs are handled through this path.
     mutating func addLog(newLog: KnownLog) throws
     
     ///updates a log in logs, used for source control so all logs are handled through this path
-    mutating func changeLog(forUUID uuid: String, newLog: KnownLog) throws
+    //mutating func changeLog(forUUID uuid: String, newLog: KnownLog) throws
     
     ///removes a log in logs, used for source control so all logs are handled through this path
     mutating func removeLog(forUUID uuid: String) throws
@@ -91,36 +91,63 @@ class TraitManager: NSObject, NSCoding, NSCopying, TraitManagerProtocol {
     var logs: [KnownLog] { return storedLogs }
     
     func addLog(newLog: KnownLog) throws {
-        for log in logs{
-            //makes sure log uuid isn't repeat
-            if log.uuid == newLog.uuid{
-                throw TraitManagerError.logUUIDPresent
-            }
-        }
-        storedLogs.append(newLog)
-        print("ENDPOINT Add Log")
-    }
-    
-    func changeLog(forUUID uuid: String, newLog: KnownLog) throws {
-        //check to find the index of targetted log
-        var newLogIndex: Int?
+        
+        var logIndex: Int? = nil
         
         for i in 0..<logs.count {
-            if logs[i].uuid == uuid {
-                newLogIndex = i
+            if logs[i].uuid == newLog.uuid {
+                logIndex = i
                 break
             }
         }
         
-        if newLogIndex == nil {
-            throw TraitManagerError.logUUIDNotPresent
-        }
-        
-        else {
-            storedLogs[newLogIndex!] = newLog
+        if logIndex != nil{
+            //updating / changing existing log
+            storedLogs[logIndex!] = newLog
             print("ENDPOINT Update Log")
         }
+        else {
+            //adding new log
+            storedLogs.append(newLog)
+            print("ENDPOINT Add Log")
+        }
+        
+        /*
+         for log in logs{
+             //makes sure log uuid isn't repeat
+             if log.uuid == newLog.uuid{
+                 throw TraitManagerError.logUUIDPresent
+             }
+         }
+         storedLogs.append(newLog)
+         print("ENDPOINT Add Log")
+         */
+        
     }
+    
+    /*
+     func changeLog(forUUID uuid: String, newLog: KnownLog) throws {
+         //check to find the index of targetted log
+         var newLogIndex: Int?
+         
+         for i in 0..<logs.count {
+             if logs[i].uuid == uuid {
+                 newLogIndex = i
+                 break
+             }
+         }
+         
+         if newLogIndex == nil {
+             throw TraitManagerError.logUUIDNotPresent
+         }
+         
+         else {
+             storedLogs[newLogIndex!] = newLog
+             print("ENDPOINT Update Log")
+         }
+     }
+     */
+    
     
     func removeLog(forUUID uuid: String) throws {
         //check to find the index of targetted log

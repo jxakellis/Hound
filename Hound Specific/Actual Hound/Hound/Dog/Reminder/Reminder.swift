@@ -102,6 +102,9 @@ protocol ReminderTimingComponentsProtocol {
     ///Calculated time interval remaining that taking into account factors to produce correct value for conditions and parameters
     var intervalRemaining: TimeInterval? { get }
     
+    ///DO NOT DUPLICATE OR ENCODE, WILL CAUSE TIMER TO FIRE TWICE. This is the timer that is used to make the reminder function. It triggers the events for the reminder. Without this then when it was time for the reminder, nothing would happen.
+    var timer: Timer? { get set }
+    
     ///Called when a timer is fired/executed and an option to deal with it is selected by the user, if the reset is trigger by a user doing an action that constitude a reset, specify as so, but if doing something like changing the value of some component it was did not exeute to user. If didExecuteToUse is true it does the same thing as false except it appends the current date to the array of logs which keeps tracks of each time a reminder is formally executed.
     mutating func timerReset(shouldLogExecution: Bool, knownLogType: KnownLogType?, customTypeName: String?)
 }
@@ -128,6 +131,7 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         
         copy.isPresentationHandled = self.isPresentationHandled
         copy.storedExecutionBasis = self.executionBasis
+        copy.timer = self.timer
         
         copy.isEnabled = self.isEnabled
         
@@ -362,6 +366,10 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         }
     }
     
+    var timer: Timer? = nil
+    
+    //private func updateTimer
+    
     func timerReset(shouldLogExecution: Bool, knownLogType: KnownLogType? = nil, customTypeName: String? = nil){
         
         if shouldLogExecution == true {
@@ -402,6 +410,10 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
     func setEnable(newEnableStatus: Bool) {
         if isEnabled == false && newEnableStatus == true {
             timerReset(shouldLogExecution: false)
+        }
+        else if newEnableStatus == false {
+            timer?.invalidate()
+            timer = nil
         }
         isEnabled = newEnableStatus
         print("ENDPOINT Update Reminder (enable)")

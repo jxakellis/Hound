@@ -55,7 +55,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         PersistenceManager.willEnterBackground()
         
     }
-    
 
 
 }

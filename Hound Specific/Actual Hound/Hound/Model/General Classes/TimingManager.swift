@@ -23,16 +23,9 @@ class TimingManager{
     
     static var delegate: TimingManagerDelegate! = nil
     
-    ///Saves state isPaused, self.isPaused can be modified by SettingsViewController but this is only when there are no active timers and pause is automatically set to unpaused
-    static var isPaused: Bool = false
-    ///Saves date of last pause (if there was one)
-    static var lastPause: Date? = nil
-    ///Saves date of last unpause (if there was one)
-    static var lastUnpause: Date? = nil
-    
     ///Returns number of active timers, returns nil if paused
     static var currentlyActiveTimersCount: Int? {
-        guard isPaused == false else {
+        guard TimingConstant.isPaused == false else {
             return nil
         }
         
@@ -53,8 +46,8 @@ class TimingManager{
     ///Corrolates to dogManager: "
     ///Dictionary<dogName: String, Dictionary<reminderName: String, associatedTimer: Timer>>"
     
-    /// IMPORTANT NOTE: DO NOT COPY, WILL MAKE MULTIPLE TIMERS WHICH WILL FIRE SIMULTANIOUSLY
-    static var timerDictionary: Dictionary<String,Dictionary<String,Timer>> = Dictionary<String,Dictionary<String,Timer>>()
+    /// IMPORTANT NOTE: DO NOT COPY, WILL MAKE MULTIPLE TIMERS WHICH WILL FIRE SIMULTANIOUSLY. This is depreciated as of 11/19/2021, added a timer variable to the remidners to simplify the process
+   // static var timerDictionary: Dictionary<String,Dictionary<String,Timer>> = Dictionary<String,Dictionary<String,Timer>>()
     
     ///If a timeOfDay alarm is being skipped, this array stores all the timers that are responsible for unskipping the alarm when it goes from 1 Day -> 23 Hours 59 Minutes
     private static var isSkippingDisablers: [Timer] = []
@@ -62,10 +55,11 @@ class TimingManager{
     
     ///Initalizes all timers according to the dogManager passed, assumes no timers currently active and if transitioning from Paused to Unpaused (didUnpuase = true) handles logic differently
     static func willInitalize(dogManager: DogManager){
+        
         ///Takes a DogManager and potentially a Bool of if all timers were unpaused, goes through the dog manager and finds all enabled reminders under all enabled dogs and sets a timer to fire.
         
         //Makes sure isPaused is false, don't want to instantiate timers when they should be paused
-        guard self.isPaused == false else {
+        guard TimingConstant.isPaused == false else {
             return
         }
         
@@ -96,7 +90,9 @@ class TimingManager{
                                                  selector: #selector(self.willUpdateIsSkipping(sender:)),
                                                  userInfo: ["dogName": dogManager.dogs[d].dogTraits.dogName, "reminder": reminder, "dogManager": dogManager],
                                                  repeats: false)
+                    
                     isSkippingDisablers.append(isSkippingDisabler)
+                    
                     RunLoop.main.add(isSkippingDisabler, forMode: .common)
                 }
                 
@@ -108,13 +104,18 @@ class TimingManager{
                                           repeats: false)
                     RunLoop.main.add(timer, forMode: .common)
                 
+                reminder.timer?.invalidate()
+                reminder.timer = timer
                 
-                //Updates timerDictionary to reflect new timer added, this is so a reference to the created timer can be referenced later and invalidated if needed.
-                var nestedtimerDictionary: Dictionary<String, Timer> = timerDictionary[dogManager.dogs[d].dogTraits.dogName] ?? Dictionary<String,Timer>()
+                /*
+                 //Updates timerDictionary to reflect new timer added, this is so a reference to the created timer can be referenced later and invalidated if needed.
+                 var nestedtimerDictionary: Dictionary<String, Timer> = timerDictionary[dogManager.dogs[d].dogTraits.dogName] ?? Dictionary<String,Timer>()
+                 
+                 nestedtimerDictionary[reminder.uuid] = timer
+                 
+                 timerDictionary[dogManager.dogs[d].dogTraits.dogName] = nestedtimerDictionary
+                 */
                 
-                nestedtimerDictionary[reminder.uuid] = timer
-                
-                timerDictionary[dogManager.dogs[d].dogTraits.dogName] = nestedtimerDictionary
             }
         }
     }
@@ -126,7 +127,7 @@ class TimingManager{
     ///Invalidates all current timers then calls willInitalize, makes it a clean slate then re sets everything up
     static func willReinitalize(dogManager: DogManager) {
         ///Reinitalizes all timers when a new dogManager is sent
-        self.invalidateAll()
+        self.invalidateAll(dogManager: dogManager)
         self.willInitalize(dogManager: dogManager)
     }
     
@@ -157,59 +158,63 @@ class TimingManager{
         
         //self.isPaused can be modified by SettingsViewController but this is only when there are no active timers and pause is automatically set to unpaused
         
-        guard newPauseStatus != self.isPaused else {
+        guard newPauseStatus != TimingConstant.isPaused else {
             return
         }
         
         ///Toggles pause status of timers, called when pauseAllTimers in settings is switched to a new state
         if newPauseStatus == true {
-            self.lastPause = Date()
-            self.isPaused = true
+            TimingConstant.lastPause = Date()
+            TimingConstant.isPaused = true
             
             willPause(dogManager: dogManager)
             
-            invalidateAll()
+            invalidateAll(dogManager: dogManager)
             
         }
         else {
-            self.lastUnpause = Date()
-            self.isPaused = false
+            TimingConstant.lastUnpause = Date()
+            TimingConstant.isPaused = false
             willUnpause(dogManager: dogManager)
         }
     }
     
     
-    ///Invalidates all timers
-    private static func invalidateAll() {
-        ///Invalidates all timers
-        for dogKey in timerDictionary.keys{
-            for reminderKey in timerDictionary[dogKey]!.keys {
-                    timerDictionary[dogKey]![reminderKey]!.invalidate()
+    
+     ///Invalidates the isSkippingDisablers so it's fresh when time to reinitalize
+    private static func invalidateAll(dogManager: DogManager) {
+         /*
+          ///Invalidates all timers
+          for dogKey in timerDictionary.keys{
+              for reminderKey in timerDictionary[dogKey]!.keys {
+                      timerDictionary[dogKey]![reminderKey]!.invalidate()
+              }
+              timerDictionary[dogKey]!.removeAll()
+          }
+          timerDictionary.removeAll()
+          */
+        
+        for dog in dogManager.dogs{
+            for reminder in dog.dogReminders.reminders{
+                reminder.timer?.invalidate()
+                reminder.timer = nil
             }
         }
-        
-        for timerIndex in 0..<isSkippingDisablers.count {
-            isSkippingDisablers[timerIndex].invalidate()
-        }
-        
-        isSkippingDisablers.removeAll()
-        
-    }
+         
+         
+         for timerIndex in 0..<isSkippingDisablers.count {
+             isSkippingDisablers[timerIndex].invalidate()
+         }
+         
+         isSkippingDisablers.removeAll()
+         
+     }
+     
     
-    ///Invalidates a given timer, located using dogName and reminderName, can throw if timer not found
-    private static func invalidate(dogName: String, reminderName: String) throws {
-        ///Invalidates a specific timer
-        if timerDictionary[dogName] == nil{
-            throw TimingManagerError.invalidateFailed
-        }
-        if timerDictionary[dogName]![reminderName] == nil {
-            throw TimingManagerError.invalidateFailed
-        }
-        timerDictionary[dogName]![reminderName]!.invalidate()
-    }
     
     ///Updates dogManager to reflect the changes in intervalElapsed as if everything is paused the amount of time elapsed by each timer must to saved so when unpaused the new timers can be properly calculated
     private static func willPause(dogManager: DogManager){
+        /*
         for dogKey in timerDictionary.keys{
             for reminderUUID in timerDictionary[dogKey]!.keys {
                 
@@ -219,6 +224,14 @@ class TimingManager{
                 }
                 
                 let reminder = try! dogManager.findDog(forName: dogKey).dogReminders.findReminder(forUUID: reminderUUID)
+         */
+        for dog in dogManager.dogs{
+            for reminder in dog.dogReminders.reminders {
+                
+                //checks to make sure the enabled timer found is still valid (invalid ones are just ones from the past, left in the data)
+                guard reminder.timer?.isValid == true else {
+                    continue
+                }
                 
                 //one time reminder
                 if reminder.timerMode == .oneTime{
@@ -228,23 +241,23 @@ class TimingManager{
                 else if reminder.timerMode == .countDown {
                     //If intervalElapsed has not been added to before
                     if reminder.countDownComponents.intervalElapsed <= 0.0001 {
-                        reminder.countDownComponents.changeIntervalElapsed(newIntervalElapsed: reminder.executionBasis.distance(to: self.lastPause!))
+                        reminder.countDownComponents.changeIntervalElapsed(newIntervalElapsed: reminder.executionBasis.distance(to: TimingConstant.lastPause!))
                     }
                     //If intervalElapsed has been added to before
                     else{
                         
-                        reminder.countDownComponents.changeIntervalElapsed(newIntervalElapsed: (reminder.countDownComponents.intervalElapsed + self.lastUnpause!.distance(to: (self.lastPause!))))
+                        reminder.countDownComponents.changeIntervalElapsed(newIntervalElapsed: (reminder.countDownComponents.intervalElapsed + TimingConstant.lastUnpause!.distance(to: (TimingConstant.lastPause!))))
                     }
                 }
                 //If reminder is snoozed
                 else if reminder.timerMode == .snooze {
                     //If intervalElapsed has not been added to before
                     if reminder.snoozeComponents.intervalElapsed <= 0.0001 {
-                        reminder.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: reminder.executionBasis.distance(to: self.lastPause!))
+                        reminder.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: reminder.executionBasis.distance(to: TimingConstant.lastPause!))
                     }
                     //If intervalElapsed has been added to before
                     else{
-                        reminder.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: (reminder.snoozeComponents.intervalElapsed + self.lastUnpause!.distance(to: (self.lastPause!))))
+                        reminder.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: (reminder.snoozeComponents.intervalElapsed + TimingConstant.lastUnpause!.distance(to: (TimingConstant.lastPause!))))
                     }
                 }
                 //If reminder is time of day

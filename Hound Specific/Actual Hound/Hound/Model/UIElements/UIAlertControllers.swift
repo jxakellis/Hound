@@ -37,26 +37,24 @@ class AlarmUIAlertController: GeneralUIAlertController {
         guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification else {
             return
         }
-        DispatchQueue.global().async{
-            print("willAppear loadDefaultAudioPlayer")
+        //DispatchQueue.global().async{
+            print("willAppear playLoudNotificationAudio")
                 self.loopVibrate()
-                AudioPlayer.loadDefaultAudioPlayer()
-                AudioPlayer.sharedPlayer.play()
+                AudioPlayer.playLoudNotificationAudio()
             
-        }
+       // }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        DispatchQueue.global().async{
+        //DispatchQueue.global().async{
             print("disappear, halting")
             self.shouldVibrate = false
-            if AudioPlayer.sharedPlayer != nil {
-                AudioPlayer.sharedPlayer.stop()
-            }
             
-        }
+            AudioPlayer.stopAudio()
+            
+       // }
     }
 }
 

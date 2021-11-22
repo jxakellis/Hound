@@ -49,6 +49,13 @@ class Dog: NSObject, NSCoding, NSCopying {
         self.dogReminders = ReminderManager(masterDog: self)
     }
     
+    convenience init(defaultReminders: Bool){
+        self.init()
+        if defaultReminders == true {
+            self.dogReminders.addDefaultReminders()
+        }
+    }
+    
     ///Traits
     var dogTraits: TraitManager = TraitManager()
     
@@ -125,12 +132,6 @@ class Dog: NSObject, NSCoding, NSCopying {
         }
         
         return catagorizedLogTypes
-    }
-    
-    ///adds default set of reminders
-    func addDefaultReminders(){
-        
-        try! dogReminders.addReminder(newReminders: [ReminderConstant.defaultReminderOne, ReminderConstant.defaultReminderTwo, ReminderConstant.defaultReminderThree, ReminderConstant.defaultReminderFour])
     }
     
     ///returns true if has created a reminder and has atleast one enabled

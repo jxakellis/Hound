@@ -19,45 +19,43 @@ enum DogManagerError: Error{
 ///Protocol outlining functionality of DogManger
 protocol DogManagerProtocol {
     
+    ///Stores all the dogs. This is get only to make sure integrite of dogs added is kept
     var dogs: [Dog] { get }
     
-    ///Returns true if any the dogs present has atleast 1 reminder, if there is no reminder present under any of the dogs (e.g. 0 reminders total) return false
+    ///Returns true if ANY the dogs present has atleast 1 CREATED reminder
     var hasCreatedReminder: Bool { get }
     
-    ///Returns true if any dogs are present, if there is dogs present/created then returns false
+    ///Returns true if dogs.count > 0
     var hasCreatedDog: Bool { get }
     
-    ///Returns true if any the dogs present has atleast 1 enabled reminder, if there is no enabled reminder present under any of the dogs (e.g. 0  enabled reminders total) return false
+    ///Returns true if ANY the dogs present has atleast 1 ENABLED reminder
     var hasEnabledReminder: Bool { get }
     
-    ///Counts up all enabled reminders under all enabled dogs, does not factor in isPaused, purely self
+    ///Returns number of reminders that are enabled and therefore have a timer. Does not factor in isPaused.
     var enabledTimersCount: Int { get }
     
-    ///Checks dog name to see if its valid and checks to see if it is valid in context of other dog names already present, assumes reminders and traits are already validiated
+    ///Adds a dog to dogs, checks to see if the dog itself is valid, e.g. its name is unique. Currently does NOT override other dogs
      mutating func addDog(newDog: Dog) throws
     
-    ///Adds array of dog to dogs
+    ///Adds array of dogs with addDog(newDog: Dog) repition
     mutating func addDogs(newDogs: [Dog]) throws
     
-    ///removes a dog with the given name
+    ///Removes a dog with the given name
     mutating func removeDog(forName name: String) throws
     
-    ///removes dog at the given index
+    ///Removes a dog at the given index
     mutating func removeDog(forIndex index: Int)
     
-    ///removes all dogs from dogs
-    mutating func clearDogs()
-    
-    ///Changes a dog, takes a dog name and finds the corropsonding dog then replaces it with a new, different dog reference
+    ///Finds dog with the provided name then replaces it with the newDog
     mutating func changeDog(forName name: String, newDog: Dog) throws
     
-    ///If a time of day alarm was skipping, looks and sees if it has passed said skipped time and should go back to normal
+    ///Synchronizes the skip status of weekly and monthly reminders. If one of these reminders was skipping, it looks to see if the skip date has passed and it should revert to normal. E.g. Its Monday night and I skip my daily morning alarm, when the app loads up Tuesday afternoon this method will remove the skip status from the alarm (as Tuesday morning was skipped and passed) and allow it to execute on the next morning (Wednesday morning).
     mutating func synchronizeIsSkipping()
     
-    ///finds and returns a reference to a dog matching the given name
+    ///Returns reference of a dog with the given name
     func findDog(forName name: String) throws -> Dog
     
-    ///finds and returns the index of a dog with a given name in terms of the dogs: [Dog] array
+    ///Returns the index of a dog with the given name
     func findIndex(forName name: String) throws -> Int
     
     mutating func clearAllPresentationHandled()
@@ -266,11 +264,6 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
     func removeDog(forIndex index: Int) {
         storedDogs.remove(at: index)
         print("ENDPOINT Remove Dog (via index)")
-    }
-    
-    func clearDogs(){
-        storedDogs.removeAll()
-        print("ENDPOINT Remove All Dogs (ignore)")
     }
     
 }
