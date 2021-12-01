@@ -134,7 +134,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        print(UIApplication.appBuild)
+        NSLog("Application build is \(UIApplication.appBuild)")
         
         let decoded = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as! Data
         //Pre version 1.2.2 uses different names so needs this here to properly adapt to new class names

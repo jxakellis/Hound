@@ -26,7 +26,7 @@ enum ReminderStyle: String, CaseIterable {
             }
         }
         
-        print("reminderStyle Not Found")
+        NSLog("reminderStyle Not Found")
         self = .oneTime
     }
     //case oneTime = "oneTime"
@@ -156,28 +156,28 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         
         
         if UIApplication.previousAppBuild <= 1228{
-            print("grandfather in depreciated reminders logs")
+            NSLog("grandfather in depreciated reminders logs")
             let depreciatedLogs: [KnownLog] = aDecoder.decodeObject(forKey: "logs") as? [KnownLog] ?? []
             
         
             if depreciatedLogs.count > 0 {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     if self.masterDog == nil {
-                        print("master dog nil")
+                        NSLog("master dog nil")
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0){
                             if self.masterDog != nil {
-                                print("backup reminder logs decode success")
+                                NSLog("backup reminder logs decode success")
                                 for log in depreciatedLogs{
                                     try! self.masterDog?.dogTraits.addLog(newLog: log)
                                 }
                             }
                             else {
-                                print("backup reminder logs decode fail")
+                                NSLog("backup reminder logs decode fail")
                             }
                         }
                     }
                     else {
-                        print("primary reminder logs decode success")
+                        NSLog("primary reminder logs decode success")
                         for log in depreciatedLogs{
                             try! self.masterDog?.dogTraits.addLog(newLog: log)
                         }
@@ -187,8 +187,8 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
            
         }
         else {
-            //print("too new")
-            //print(UIApplication.previousAppBuild)
+            //NSLog("too new")
+            //NSLog(UIApplication.previousAppBuild)
         }
         
         
@@ -379,7 +379,7 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
             try! masterDog?.dogTraits.addLog(newLog: KnownLog(date: Date(), logType: knownLogType!, customTypeName: customTypeName))
             
             if masterDog == nil {
-                print("masterDog nil, couldn't log")
+                NSLog("masterDog nil, couldn't log")
             }
         }
         
@@ -416,12 +416,12 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
             timer = nil
         }
         isEnabled = newEnableStatus
-        print("ENDPOINT Update Reminder (enable)")
+        NSLog("ENDPOINT Update Reminder (enable)")
     }
     
     func willToggle() {
         isEnabled.toggle()
-        print("ENDPOINT Update Reminder (enable)")
+        NSLog("ENDPOINT Update Reminder (enable)")
     }
     
     func getEnable() -> Bool{

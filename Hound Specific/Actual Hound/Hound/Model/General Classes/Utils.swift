@@ -41,7 +41,7 @@ class Utils
     static func willCreateFollowUpUNUserNotification(dogName: String, reminder: Reminder){
         
         guard reminder.executionDate != nil else {
-            print("willCreateFollowUpUNUserNotification executionDate nil")
+            NSLog("willCreateFollowUpUNUserNotification executionDate nil")
             return
         }
         //let reminder = try! MainTabBarViewController.staticDogManager.findDog(forName: dogName).dogReminders.findReminder(forUUID: reminderUUID)
@@ -58,7 +58,7 @@ class Utils
         content.body = "It's been \(String.convertToReadable(interperateTimeInterval: NotificationConstant.followUpDelay, capitalizeLetters: false)), give your dog a helping hand with \(reminder.displayTypeName)!"
         
         if NotificationConstant.shouldLoudNotification == false {
-            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "radar30.wav"))
+            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(NotificationConstant.notificationSound.rawValue.lowercased())30.wav"))
         }
        
         let executionDateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: reminder.executionDate! + NotificationConstant.followUpDelay)
@@ -70,14 +70,14 @@ class Utils
         
         UNUserNotificationCenter.current().add(request) { (error) in
             if (error != nil){
-                print("willCreateUNUserNotification error: \(error!.localizedDescription)")
+                NSLog("willCreateUNUserNotification error: \(error!.localizedDescription)")
             }
         }
     }
     
     static func willCreateUNUserNotification(dogName: String, reminder: Reminder){
         guard reminder.executionDate != nil else {
-            print("willCreateUNUserNotification executionDate nil")
+            NSLog("willCreateUNUserNotification executionDate nil")
             return
         }
         //let reminder = try! MainTabBarViewController.staticDogManager.findDog(forName: dogName).dogReminders.findReminder(forUUID: reminderUUID)
@@ -94,7 +94,7 @@ class Utils
         content.body = reminder.displayTypeName
         
         if NotificationConstant.shouldLoudNotification == false {
-            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "radar30.wav"))
+            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(NotificationConstant.notificationSound.rawValue.lowercased())30.wav"))
         }
         
         let executionDateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: reminder.executionDate!)
@@ -106,11 +106,12 @@ class Utils
         
         UNUserNotificationCenter.current().add(request) { (error) in
             if (error != nil){
-                print("willCreateUNUserNotification error: \(error!.localizedDescription)")
+                NSLog("willCreateUNUserNotification error: \(error!.localizedDescription)")
             }
         }
     }
     
+    /*
     static func willCreateUNUserNotification(title: String, body: String?, date: Date){
         
          let content = UNMutableNotificationContent()
@@ -120,7 +121,7 @@ class Utils
             content.body = body!
         }
         
-         //content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "radar30.wav"))
+         //content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(NotificationConstant.notificationSound.rawValue.lowercased())30.wav"))
         let executionDateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: date)
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: executionDateComponents, repeats: false)
@@ -130,10 +131,11 @@ class Utils
         
         UNUserNotificationCenter.current().add(request) { (error) in
             if (error != nil){
-                print("willCreateUNUserNotification error: \(error!.localizedDescription)")
+                NSLog("willCreateUNUserNotification error: \(error!.localizedDescription)")
             }
         }
     }
+     */
 }
 
 

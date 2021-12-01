@@ -150,11 +150,11 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
                     
                 }
             case .provisional:
-                print(".provisional")
+                NSLog(".provisional")
             case .ephemeral:
-                print(".ephemeral")
+                NSLog(".ephemeral")
             @unknown default:
-                print("unknown auth status")
+                NSLog("unknown auth status")
             }
         }
         
@@ -235,7 +235,6 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
         if selectedNotificationSound != NotificationConstant.notificationSound {
             
             let unselectedCellIndexPath: IndexPath! = IndexPath(row: NotificationSound.allCases.firstIndex(of: NotificationConstant.notificationSound)!, section: 0)
-            print(dropDown.tableView(dropDown.dropDownTableView!, numberOfRowsInSection: 0))
             let unselectedCell = dropDown.dropDownTableView!.cellForRow(at: unselectedCellIndexPath) as? DropDownDefaultTableViewCell
             unselectedCell?.didToggleSelect(newSelectionStatus: false)
             
@@ -244,7 +243,7 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
             notificationSound.text = selectedNotificationSound.rawValue
             
             DispatchQueue.global().async {
-                AudioPlayer.playAudio(forAudioPath: "\(NotificationConstant.notificationSound.rawValue.lowercased()).wav", atVolume: nil)
+                AudioPlayer.playAudio(forAudioPath: "\(NotificationConstant.notificationSound.rawValue.lowercased())", isLoud: false)
 
             }
                         
@@ -254,7 +253,7 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
         //cell selected is the same as the current sound saved, do nothing
         else {
             DispatchQueue.global().async {
-                AudioPlayer.playAudio(forAudioPath: "\(NotificationConstant.notificationSound.rawValue.lowercased()).wav", atVolume: nil)
+                AudioPlayer.playAudio(forAudioPath: "\(NotificationConstant.notificationSound.rawValue.lowercased())", isLoud: false)
             }
             
         }

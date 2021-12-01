@@ -33,12 +33,12 @@ class AlarmUIAlertController: GeneralUIAlertController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("alert will appear")
+        //NSLog("alert will appear")
         guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification else {
             return
         }
         //DispatchQueue.global().async{
-            print("willAppear playLoudNotificationAudio")
+            NSLog("AlarmUIAlertController will appear")
                 self.loopVibrate()
                 AudioPlayer.playLoudNotificationAudio()
             
@@ -49,7 +49,7 @@ class AlarmUIAlertController: GeneralUIAlertController {
         super.viewWillDisappear(animated)
         
         //DispatchQueue.global().async{
-            print("disappear, halting")
+            NSLog("AlarmUIAlertController will disappear")
             self.shouldVibrate = false
             
             AudioPlayer.stopAudio()

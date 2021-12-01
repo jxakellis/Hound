@@ -140,13 +140,13 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
              //uuid is known valid due to above loop
              try! removeReminder(forUUID: newReminder.uuid)
              appendReminder(newReminder: newReminder)
-             print("ENDPOINT Add Reminder")
+             NSLog("ENDPOINT Add Reminder")
          }
          else {
              //copying needed for master dog to work, is just newReq.masterDog = self.masterDog it for some reason does not work
              
              appendReminder(newReminder: newReminder)
-             print("ENDPOINT Add Reminder")
+             NSLog("ENDPOINT Add Reminder")
          }
          */
         
@@ -164,12 +164,12 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
             //instead of crashing, replace the reminder. UUIDs secure enough where overlap is impossible for all practical purposes.
             storedReminders[reminderIndex!].timer?.invalidate()
             storedReminders[reminderIndex!] = newReminder
-            print("ENDPOINT Update Reminder")
+            NSLog("ENDPOINT Update Reminder")
         }
         else {
             //adding new, not replacing
             appendReminder(newReminder: newReminder)
-            print("ENDPOINT Add Reminder")
+            NSLog("ENDPOINT Add Reminder")
         }
         
         
@@ -216,14 +216,14 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
         
         storedReminders[indexOfRemovalTarget ?? -1].timer?.invalidate()
         storedReminders.remove(at: indexOfRemovalTarget ?? -1)
-        print("ENDPOINT Remove Reminder (via uuid)")
+        NSLog("ENDPOINT Remove Reminder (via uuid)")
         }
     }
     
     func removeReminder(forIndex index: Int){
         storedReminders[index].timer?.invalidate()
         storedReminders.remove(at: index)
-        print("ENDPOINT Remove Reminder (via index)")
+        NSLog("ENDPOINT Remove Reminder (via index)")
     }
     
     ///adds default set of reminders
@@ -257,7 +257,7 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
          else {
              newReminder.masterDog = self.masterDog
              storedReminders[newReminderIndex!] = newReminder
-             print("ENDPOINT Update Reminder (trait)")
+             NSLog("ENDPOINT Update Reminder (trait)")
          }
          sortReminders()
      }

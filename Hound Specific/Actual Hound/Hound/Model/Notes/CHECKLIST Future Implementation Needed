@@ -22,7 +22,7 @@ CURRENT CHECKLIST, SENIOR YEAR
 
 MAIN
 
-Do final check of timer firing, notification firing, updating reminders, and deleting reminders before publishing any new version. All seems to be fine though after switching from timerDictionary to reminder stored timers.
+
 
 DATABASE
 

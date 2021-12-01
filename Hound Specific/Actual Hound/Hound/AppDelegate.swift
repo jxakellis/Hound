@@ -30,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let shouldPerformCleanInstall = UserDefaults.standard.bool(forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
         
         if didCrashDuringLastSetup == true {
-            print("crashedDuringLastSetup")
+            NSLog("Recovery setup for app data, crashed during last setup")
             PersistenceManager.willSetup()
             
             UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
@@ -40,7 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
            
         }
         else if shouldPerformCleanInstall == true {
-            print("cleanInstall (used for when the user wants to reset the app)")
+            NSLog("Clean install setup for app data")
             PersistenceManager.willSetup()
             
             UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
@@ -51,13 +51,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             var hasSetup = UserDefaults.standard.bool(forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
             
             if hasSetup{
-                print("recurringSetup")
+                NSLog("Recurring setup for app data")
                 PersistenceManager.willSetup(isRecurringSetup: true)
                 
                 hasSetup = true
             }
             else {
-                print("firstTimeSetup")
+                NSLog("First time setup for app data")
                 PersistenceManager.willSetup()
                 
                 UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
@@ -83,7 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
-        print("willTerminate")
+        NSLog("applicationWillTerminate")
         PersistenceManager.willEnterBackground(isTerminating: true)
         
     }

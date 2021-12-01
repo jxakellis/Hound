@@ -29,7 +29,6 @@
 		A25070E926DD9DDD0056CFC4 /* UIColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25070E826DD9DDD0056CFC4 /* UIColorExtension.swift */; };
 		A25070EB26DD9DF50056CFC4 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25070EA26DD9DF50056CFC4 /* UIImageExtension.swift */; };
 		A2536B3C2608364F00E2FF6A /* ReminderComponets.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2536B3B2608364F00E2FF6A /* ReminderComponets.swift */; };
-		A2536B4E26083C4E00E2FF6A /* Formatting in Resources */ = {isa = PBXBuildFile; fileRef = A2536B4D26083C4E00E2FF6A /* Formatting */; };
 		A2536B54260843E900E2FF6A /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2536B53260843E900E2FF6A /* Reminder.swift */; };
 		A25502FE2649EDF500F6F08F /* LogsMainScreenTableViewCellBodyWithoutIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25502FD2649EDF500F6F08F /* LogsMainScreenTableViewCellBodyWithoutIcon.swift */; };
 		A258AEEF25661580005242E4 /* Dog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A258AEEE25661580005242E4 /* Dog.swift */; };
@@ -39,6 +38,34 @@
 		A265848D25E8128400E8B812 /* CHECKLIST Future Implementation Needed in Resources */ = {isa = PBXBuildFile; fileRef = A265848C25E8128400E8B812 /* CHECKLIST Future Implementation Needed */; };
 		A26A7585263CFF8C0026DE34 /* LogsAddLogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26A7584263CFF8C0026DE34 /* LogsAddLogViewController.swift */; };
 		A26AF36E25807887005D5DAB /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26AF36D25807887005D5DAB /* DateExtension.swift */; };
+		A26CFCE027545EF9001C92D8 /* stargaze30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCC427545EF9001C92D8 /* stargaze30.wav */; };
+		A26CFCE127545EF9001C92D8 /* radar30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCC527545EF9001C92D8 /* radar30.wav */; };
+		A26CFCE227545EF9001C92D8 /* illuminate30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCC627545EF9001C92D8 /* illuminate30.wav */; };
+		A26CFCE327545EF9001C92D8 /* cosmic30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCC727545EF9001C92D8 /* cosmic30.wav */; };
+		A26CFCE427545EF9001C92D8 /* by the seaside30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCC827545EF9001C92D8 /* by the seaside30.wav */; };
+		A26CFCE527545EF9001C92D8 /* presto30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCC927545EF9001C92D8 /* presto30.wav */; };
+		A26CFCE627545EF9001C92D8 /* chimes30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCCA27545EF9001C92D8 /* chimes30.wav */; };
+		A26CFCE727545EF9001C92D8 /* sencha30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCCB27545EF9001C92D8 /* sencha30.wav */; };
+		A26CFCE827545EF9001C92D8 /* reflection30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCCC27545EF9001C92D8 /* reflection30.wav */; };
+		A26CFCE927545EF9001C92D8 /* night owl30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCCD27545EF9001C92D8 /* night owl30.wav */; };
+		A26CFCEA27545EF9001C92D8 /* apex30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCCE27545EF9001C92D8 /* apex30.wav */; };
+		A26CFCEB27545EF9001C92D8 /* waves30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCCF27545EF9001C92D8 /* waves30.wav */; };
+		A26CFCEC27545EF9001C92D8 /* signal30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD027545EF9001C92D8 /* signal30.wav */; };
+		A26CFCED27545EF9001C92D8 /* ripples30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD127545EF9001C92D8 /* ripples30.wav */; };
+		A26CFCEE27545EF9001C92D8 /* opening30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD227545EF9001C92D8 /* opening30.wav */; };
+		A26CFCEF27545EF9001C92D8 /* hillside30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD327545EF9001C92D8 /* hillside30.wav */; };
+		A26CFCF027545EF9001C92D8 /* summit30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD427545EF9001C92D8 /* summit30.wav */; };
+		A26CFCF127545EF9001C92D8 /* crystals30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD527545EF9001C92D8 /* crystals30.wav */; };
+		A26CFCF227545EF9001C92D8 /* constellation30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD627545EF9001C92D8 /* constellation30.wav */; };
+		A26CFCF327545EF9001C92D8 /* twinkle30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD727545EF9001C92D8 /* twinkle30.wav */; };
+		A26CFCF427545EF9001C92D8 /* bulletin30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD827545EF9001C92D8 /* bulletin30.wav */; };
+		A26CFCF527545EF9001C92D8 /* playtime30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD927545EF9001C92D8 /* playtime30.wav */; };
+		A26CFCF627545EF9001C92D8 /* beacon30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCDA27545EF9001C92D8 /* beacon30.wav */; };
+		A26CFCF727545EF9001C92D8 /* silk30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCDB27545EF9001C92D8 /* silk30.wav */; };
+		A26CFCF827545EF9001C92D8 /* slow rise30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCDC27545EF9001C92D8 /* slow rise30.wav */; };
+		A26CFCF927545EF9001C92D8 /* uplift30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCDD27545EF9001C92D8 /* uplift30.wav */; };
+		A26CFCFA27545EF9001C92D8 /* radiate30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCDE27545EF9001C92D8 /* radiate30.wav */; };
+		A26CFCFB27545EF9001C92D8 /* circuit30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCDF27545EF9001C92D8 /* circuit30.wav */; };
 		A278ED882610FF05000575FC /* DogsRequirementManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278ED872610FF05000575FC /* DogsRequirementManagerViewController.swift */; };
 		A278ED8C2610FF3D000575FC /* DogsRequirementCountDownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278ED8B2610FF3D000575FC /* DogsRequirementCountDownViewController.swift */; };
 		A278ED942610FF89000575FC /* DogsRequirementWeeklyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278ED932610FF89000575FC /* DogsRequirementWeeklyViewController.swift */; };
@@ -59,7 +86,6 @@
 		A29400AD2652DA2700725F1C /* SettingsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29400AC2652DA2600725F1C /* SettingsNavigationViewController.swift */; };
 		A2A45CCF2644914A0050E5A1 /* DogsIntroductionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A45CCE2644914A0050E5A1 /* DogsIntroductionViewController.swift */; };
 		A2AA423225C337C700EAE129 /* TraitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA423125C337C700EAE129 /* TraitManager.swift */; };
-		A2AFE080274BF25B00EFC8DA /* radar30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2AFE07E274BF23B00EFC8DA /* radar30.wav */; };
 		A2B18E3825E8A4C000951AC3 /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B18E3525E8A4C000951AC3 /* AlertPresenter.swift */; };
 		A2B18E3925E8A4C000951AC3 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B18E3625E8A4C000951AC3 /* Queue.swift */; };
 		A2B9A92B2629213800626FAE /* UIAlertControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9A92A2629213800626FAE /* UIAlertControllers.swift */; };
@@ -83,38 +109,38 @@
 		A2EBFB9E264F6A1A001AAF18 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2EBFB9D264F6A1A001AAF18 /* AudioPlayer.swift */; };
 		A2F1791C263F3E5C006824A7 /* DropDownDefaultTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F1791B263F3E5C006824A7 /* DropDownDefaultTableViewCell.swift */; };
 		A2F1791F263F3FE3006824A7 /* DropDownDefaultTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A2F1791E263F3FE3006824A7 /* DropDownDefaultTableViewCell.xib */; };
+		A2F996C027569F4400605D03 /* apex.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996A327569F4400605D03 /* apex.mp3 */; };
+		A2F996C127569F4400605D03 /* silence.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996A427569F4400605D03 /* silence.mp3 */; };
+		A2F996C227569F4400605D03 /* constellation.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996A527569F4400605D03 /* constellation.mp3 */; };
+		A2F996C327569F4400605D03 /* uplift.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996A627569F4400605D03 /* uplift.mp3 */; };
+		A2F996C427569F4400605D03 /* crystals.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996A727569F4400605D03 /* crystals.mp3 */; };
+		A2F996C527569F4400605D03 /* opening.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996A827569F4400605D03 /* opening.mp3 */; };
+		A2F996C627569F4400605D03 /* illuminate.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996A927569F4400605D03 /* illuminate.mp3 */; };
+		A2F996C727569F4400605D03 /* by the seaside.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996AA27569F4400605D03 /* by the seaside.mp3 */; };
+		A2F996C827569F4400605D03 /* slow rise.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996AB27569F4400605D03 /* slow rise.mp3 */; };
+		A2F996C927569F4400605D03 /* sencha.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996AC27569F4400605D03 /* sencha.mp3 */; };
+		A2F996CA27569F4400605D03 /* waves.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996AD27569F4400605D03 /* waves.mp3 */; };
+		A2F996CB27569F4400605D03 /* chimes.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996AE27569F4400605D03 /* chimes.mp3 */; };
+		A2F996CC27569F4400605D03 /* circuit.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996AF27569F4400605D03 /* circuit.mp3 */; };
+		A2F996CD27569F4400605D03 /* playtime.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B027569F4400605D03 /* playtime.mp3 */; };
+		A2F996CE27569F4400605D03 /* radar.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B127569F4400605D03 /* radar.mp3 */; };
+		A2F996CF27569F4400605D03 /* bulletin.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B227569F4400605D03 /* bulletin.mp3 */; };
+		A2F996D027569F4400605D03 /* radiate.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B327569F4400605D03 /* radiate.mp3 */; };
+		A2F996D127569F4400605D03 /* signal.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B427569F4400605D03 /* signal.mp3 */; };
+		A2F996D227569F4400605D03 /* hillside.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B527569F4400605D03 /* hillside.mp3 */; };
+		A2F996D327569F4400605D03 /* presto.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B627569F4400605D03 /* presto.mp3 */; };
+		A2F996D427569F4400605D03 /* ripples.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B727569F4400605D03 /* ripples.mp3 */; };
+		A2F996D527569F4400605D03 /* reflection.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B827569F4400605D03 /* reflection.mp3 */; };
+		A2F996D627569F4400605D03 /* beacon.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B927569F4400605D03 /* beacon.mp3 */; };
+		A2F996D727569F4400605D03 /* twinkle.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996BA27569F4400605D03 /* twinkle.mp3 */; };
+		A2F996D827569F4400605D03 /* stargaze.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996BB27569F4400605D03 /* stargaze.mp3 */; };
+		A2F996D927569F4400605D03 /* silk.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996BC27569F4400605D03 /* silk.mp3 */; };
+		A2F996DA27569F4400605D03 /* cosmic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996BD27569F4400605D03 /* cosmic.mp3 */; };
+		A2F996DB27569F4400605D03 /* night owl.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996BE27569F4400605D03 /* night owl.mp3 */; };
+		A2F996DC27569F4400605D03 /* summit.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996BF27569F4400605D03 /* summit.mp3 */; };
 		A2FC4EBD274AF59F006A872F /* Add Drop Down in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4EBC274AF59F006A872F /* Add Drop Down */; };
 		A2FC4EBF274AF980006A872F /* Add Tool Tip in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4EBE274AF980006A872F /* Add Tool Tip */; };
 		A2FC4EC1274AFC82006A872F /* Immutable Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2FC4EC0274AFC82006A872F /* Immutable Constants.swift */; };
-		A2FC4EE1274B7D10006A872F /* circuit.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4EC4274B7D0F006A872F /* circuit.wav */; };
-		A2FC4EE2274B7D10006A872F /* radiate.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4EC5274B7D0F006A872F /* radiate.wav */; };
-		A2FC4EE3274B7D10006A872F /* signal.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4EC6274B7D0F006A872F /* signal.wav */; };
-		A2FC4EE4274B7D10006A872F /* bulletin.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4EC7274B7D0F006A872F /* bulletin.wav */; };
-		A2FC4EE5274B7D10006A872F /* radar.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4EC8274B7D0F006A872F /* radar.wav */; };
-		A2FC4EE6274B7D10006A872F /* playtime.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4EC9274B7D0F006A872F /* playtime.wav */; };
-		A2FC4EE7274B7D10006A872F /* presto.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4ECA274B7D0F006A872F /* presto.wav */; };
-		A2FC4EE8274B7D10006A872F /* ripples.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4ECB274B7D0F006A872F /* ripples.wav */; };
-		A2FC4EE9274B7D10006A872F /* hillside.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4ECC274B7D0F006A872F /* hillside.wav */; };
-		A2FC4EEA274B7D10006A872F /* beacon.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4ECD274B7D0F006A872F /* beacon.wav */; };
-		A2FC4EEB274B7D10006A872F /* reflection.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4ECE274B7D0F006A872F /* reflection.wav */; };
-		A2FC4EEC274B7D10006A872F /* twinkle.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4ECF274B7D0F006A872F /* twinkle.wav */; };
-		A2FC4EED274B7D10006A872F /* stargaze.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4ED0274B7D0F006A872F /* stargaze.wav */; };
-		A2FC4EEE274B7D10006A872F /* silk.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4ED1274B7D0F006A872F /* silk.wav */; };
-		A2FC4EEF274B7D10006A872F /* cosmic.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4ED2274B7D0F006A872F /* cosmic.wav */; };
-		A2FC4EF0274B7D10006A872F /* summit.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4ED3274B7D0F006A872F /* summit.wav */; };
-		A2FC4EF1274B7D10006A872F /* night owl.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4ED4274B7D0F006A872F /* night owl.wav */; };
-		A2FC4EF2274B7D10006A872F /* constellation.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4ED5274B7D0F006A872F /* constellation.wav */; };
-		A2FC4EF3274B7D10006A872F /* uplift.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4ED6274B7D0F006A872F /* uplift.wav */; };
-		A2FC4EF4274B7D10006A872F /* silence.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4ED7274B7D0F006A872F /* silence.wav */; };
-		A2FC4EF5274B7D10006A872F /* apex.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4ED8274B7D0F006A872F /* apex.wav */; };
-		A2FC4EF6274B7D10006A872F /* illuminate.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4ED9274B7D0F006A872F /* illuminate.wav */; };
-		A2FC4EF7274B7D10006A872F /* opening.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4EDA274B7D0F006A872F /* opening.wav */; };
-		A2FC4EF8274B7D10006A872F /* crystals.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4EDB274B7D0F006A872F /* crystals.wav */; };
-		A2FC4EF9274B7D10006A872F /* waves.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4EDC274B7D0F006A872F /* waves.wav */; };
-		A2FC4EFA274B7D10006A872F /* sencha.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4EDD274B7D0F006A872F /* sencha.wav */; };
-		A2FC4EFB274B7D10006A872F /* by the seaside.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4EDE274B7D0F006A872F /* by the seaside.wav */; };
-		A2FC4EFC274B7D10006A872F /* slow rise.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4EDF274B7D0F006A872F /* slow rise.wav */; };
-		A2FC4EFD274B7D10006A872F /* chimes.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2FC4EE0274B7D0F006A872F /* chimes.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -140,7 +166,6 @@
 		A25070E826DD9DDD0056CFC4 /* UIColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorExtension.swift; sourceTree = "<group>"; };
 		A25070EA26DD9DF50056CFC4 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
 		A2536B3B2608364F00E2FF6A /* ReminderComponets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderComponets.swift; sourceTree = "<group>"; };
-		A2536B4D26083C4E00E2FF6A /* Formatting */ = {isa = PBXFileReference; lastKnownFileType = text; path = Formatting; sourceTree = "<group>"; };
 		A2536B53260843E900E2FF6A /* Reminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminder.swift; sourceTree = "<group>"; };
 		A25502FD2649EDF500F6F08F /* LogsMainScreenTableViewCellBodyWithoutIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsMainScreenTableViewCellBodyWithoutIcon.swift; sourceTree = "<group>"; };
 		A258AEEE25661580005242E4 /* Dog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dog.swift; sourceTree = "<group>"; };
@@ -151,6 +176,34 @@
 		A265848C25E8128400E8B812 /* CHECKLIST Future Implementation Needed */ = {isa = PBXFileReference; lastKnownFileType = text; path = "CHECKLIST Future Implementation Needed"; sourceTree = "<group>"; };
 		A26A7584263CFF8C0026DE34 /* LogsAddLogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsAddLogViewController.swift; sourceTree = "<group>"; };
 		A26AF36D25807887005D5DAB /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
+		A26CFCC427545EF9001C92D8 /* stargaze30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = stargaze30.wav; sourceTree = "<group>"; };
+		A26CFCC527545EF9001C92D8 /* radar30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = radar30.wav; sourceTree = "<group>"; };
+		A26CFCC627545EF9001C92D8 /* illuminate30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = illuminate30.wav; sourceTree = "<group>"; };
+		A26CFCC727545EF9001C92D8 /* cosmic30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cosmic30.wav; sourceTree = "<group>"; };
+		A26CFCC827545EF9001C92D8 /* by the seaside30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "by the seaside30.wav"; sourceTree = "<group>"; };
+		A26CFCC927545EF9001C92D8 /* presto30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = presto30.wav; sourceTree = "<group>"; };
+		A26CFCCA27545EF9001C92D8 /* chimes30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = chimes30.wav; sourceTree = "<group>"; };
+		A26CFCCB27545EF9001C92D8 /* sencha30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = sencha30.wav; sourceTree = "<group>"; };
+		A26CFCCC27545EF9001C92D8 /* reflection30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = reflection30.wav; sourceTree = "<group>"; };
+		A26CFCCD27545EF9001C92D8 /* night owl30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "night owl30.wav"; sourceTree = "<group>"; };
+		A26CFCCE27545EF9001C92D8 /* apex30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = apex30.wav; sourceTree = "<group>"; };
+		A26CFCCF27545EF9001C92D8 /* waves30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = waves30.wav; sourceTree = "<group>"; };
+		A26CFCD027545EF9001C92D8 /* signal30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = signal30.wav; sourceTree = "<group>"; };
+		A26CFCD127545EF9001C92D8 /* ripples30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ripples30.wav; sourceTree = "<group>"; };
+		A26CFCD227545EF9001C92D8 /* opening30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = opening30.wav; sourceTree = "<group>"; };
+		A26CFCD327545EF9001C92D8 /* hillside30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hillside30.wav; sourceTree = "<group>"; };
+		A26CFCD427545EF9001C92D8 /* summit30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = summit30.wav; sourceTree = "<group>"; };
+		A26CFCD527545EF9001C92D8 /* crystals30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crystals30.wav; sourceTree = "<group>"; };
+		A26CFCD627545EF9001C92D8 /* constellation30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = constellation30.wav; sourceTree = "<group>"; };
+		A26CFCD727545EF9001C92D8 /* twinkle30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = twinkle30.wav; sourceTree = "<group>"; };
+		A26CFCD827545EF9001C92D8 /* bulletin30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bulletin30.wav; sourceTree = "<group>"; };
+		A26CFCD927545EF9001C92D8 /* playtime30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = playtime30.wav; sourceTree = "<group>"; };
+		A26CFCDA27545EF9001C92D8 /* beacon30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = beacon30.wav; sourceTree = "<group>"; };
+		A26CFCDB27545EF9001C92D8 /* silk30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = silk30.wav; sourceTree = "<group>"; };
+		A26CFCDC27545EF9001C92D8 /* slow rise30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "slow rise30.wav"; sourceTree = "<group>"; };
+		A26CFCDD27545EF9001C92D8 /* uplift30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = uplift30.wav; sourceTree = "<group>"; };
+		A26CFCDE27545EF9001C92D8 /* radiate30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = radiate30.wav; sourceTree = "<group>"; };
+		A26CFCDF27545EF9001C92D8 /* circuit30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = circuit30.wav; sourceTree = "<group>"; };
 		A278ED872610FF05000575FC /* DogsRequirementManagerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsRequirementManagerViewController.swift; sourceTree = "<group>"; };
 		A278ED8B2610FF3D000575FC /* DogsRequirementCountDownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsRequirementCountDownViewController.swift; sourceTree = "<group>"; };
 		A278ED932610FF89000575FC /* DogsRequirementWeeklyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsRequirementWeeklyViewController.swift; sourceTree = "<group>"; };
@@ -171,7 +224,6 @@
 		A29400AC2652DA2600725F1C /* SettingsNavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsNavigationViewController.swift; sourceTree = "<group>"; };
 		A2A45CCE2644914A0050E5A1 /* DogsIntroductionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsIntroductionViewController.swift; sourceTree = "<group>"; };
 		A2AA423125C337C700EAE129 /* TraitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraitManager.swift; sourceTree = "<group>"; };
-		A2AFE07E274BF23B00EFC8DA /* radar30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = radar30.wav; sourceTree = "<group>"; };
 		A2B18E3525E8A4C000951AC3 /* AlertPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
 		A2B18E3625E8A4C000951AC3 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		A2B9A92A2629213800626FAE /* UIAlertControllers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIAlertControllers.swift; sourceTree = "<group>"; };
@@ -197,38 +249,38 @@
 		A2EBFB9D264F6A1A001AAF18 /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
 		A2F1791B263F3E5C006824A7 /* DropDownDefaultTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropDownDefaultTableViewCell.swift; sourceTree = "<group>"; };
 		A2F1791E263F3FE3006824A7 /* DropDownDefaultTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DropDownDefaultTableViewCell.xib; sourceTree = "<group>"; };
+		A2F996A327569F4400605D03 /* apex.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = apex.mp3; sourceTree = "<group>"; };
+		A2F996A427569F4400605D03 /* silence.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = silence.mp3; sourceTree = "<group>"; };
+		A2F996A527569F4400605D03 /* constellation.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = constellation.mp3; sourceTree = "<group>"; };
+		A2F996A627569F4400605D03 /* uplift.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = uplift.mp3; sourceTree = "<group>"; };
+		A2F996A727569F4400605D03 /* crystals.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = crystals.mp3; sourceTree = "<group>"; };
+		A2F996A827569F4400605D03 /* opening.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = opening.mp3; sourceTree = "<group>"; };
+		A2F996A927569F4400605D03 /* illuminate.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = illuminate.mp3; sourceTree = "<group>"; };
+		A2F996AA27569F4400605D03 /* by the seaside.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "by the seaside.mp3"; sourceTree = "<group>"; };
+		A2F996AB27569F4400605D03 /* slow rise.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "slow rise.mp3"; sourceTree = "<group>"; };
+		A2F996AC27569F4400605D03 /* sencha.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = sencha.mp3; sourceTree = "<group>"; };
+		A2F996AD27569F4400605D03 /* waves.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = waves.mp3; sourceTree = "<group>"; };
+		A2F996AE27569F4400605D03 /* chimes.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = chimes.mp3; sourceTree = "<group>"; };
+		A2F996AF27569F4400605D03 /* circuit.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = circuit.mp3; sourceTree = "<group>"; };
+		A2F996B027569F4400605D03 /* playtime.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = playtime.mp3; sourceTree = "<group>"; };
+		A2F996B127569F4400605D03 /* radar.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = radar.mp3; sourceTree = "<group>"; };
+		A2F996B227569F4400605D03 /* bulletin.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bulletin.mp3; sourceTree = "<group>"; };
+		A2F996B327569F4400605D03 /* radiate.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = radiate.mp3; sourceTree = "<group>"; };
+		A2F996B427569F4400605D03 /* signal.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = signal.mp3; sourceTree = "<group>"; };
+		A2F996B527569F4400605D03 /* hillside.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = hillside.mp3; sourceTree = "<group>"; };
+		A2F996B627569F4400605D03 /* presto.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = presto.mp3; sourceTree = "<group>"; };
+		A2F996B727569F4400605D03 /* ripples.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ripples.mp3; sourceTree = "<group>"; };
+		A2F996B827569F4400605D03 /* reflection.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = reflection.mp3; sourceTree = "<group>"; };
+		A2F996B927569F4400605D03 /* beacon.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = beacon.mp3; sourceTree = "<group>"; };
+		A2F996BA27569F4400605D03 /* twinkle.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = twinkle.mp3; sourceTree = "<group>"; };
+		A2F996BB27569F4400605D03 /* stargaze.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = stargaze.mp3; sourceTree = "<group>"; };
+		A2F996BC27569F4400605D03 /* silk.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = silk.mp3; sourceTree = "<group>"; };
+		A2F996BD27569F4400605D03 /* cosmic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = cosmic.mp3; sourceTree = "<group>"; };
+		A2F996BE27569F4400605D03 /* night owl.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "night owl.mp3"; sourceTree = "<group>"; };
+		A2F996BF27569F4400605D03 /* summit.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = summit.mp3; sourceTree = "<group>"; };
 		A2FC4EBC274AF59F006A872F /* Add Drop Down */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Add Drop Down"; sourceTree = "<group>"; };
 		A2FC4EBE274AF980006A872F /* Add Tool Tip */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Add Tool Tip"; sourceTree = "<group>"; };
 		A2FC4EC0274AFC82006A872F /* Immutable Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Immutable Constants.swift"; sourceTree = "<group>"; };
-		A2FC4EC4274B7D0F006A872F /* circuit.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = circuit.wav; sourceTree = "<group>"; };
-		A2FC4EC5274B7D0F006A872F /* radiate.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = radiate.wav; sourceTree = "<group>"; };
-		A2FC4EC6274B7D0F006A872F /* signal.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = signal.wav; sourceTree = "<group>"; };
-		A2FC4EC7274B7D0F006A872F /* bulletin.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bulletin.wav; sourceTree = "<group>"; };
-		A2FC4EC8274B7D0F006A872F /* radar.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = radar.wav; sourceTree = "<group>"; };
-		A2FC4EC9274B7D0F006A872F /* playtime.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = playtime.wav; sourceTree = "<group>"; };
-		A2FC4ECA274B7D0F006A872F /* presto.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = presto.wav; sourceTree = "<group>"; };
-		A2FC4ECB274B7D0F006A872F /* ripples.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ripples.wav; sourceTree = "<group>"; };
-		A2FC4ECC274B7D0F006A872F /* hillside.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hillside.wav; sourceTree = "<group>"; };
-		A2FC4ECD274B7D0F006A872F /* beacon.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = beacon.wav; sourceTree = "<group>"; };
-		A2FC4ECE274B7D0F006A872F /* reflection.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = reflection.wav; sourceTree = "<group>"; };
-		A2FC4ECF274B7D0F006A872F /* twinkle.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = twinkle.wav; sourceTree = "<group>"; };
-		A2FC4ED0274B7D0F006A872F /* stargaze.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = stargaze.wav; sourceTree = "<group>"; };
-		A2FC4ED1274B7D0F006A872F /* silk.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = silk.wav; sourceTree = "<group>"; };
-		A2FC4ED2274B7D0F006A872F /* cosmic.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cosmic.wav; sourceTree = "<group>"; };
-		A2FC4ED3274B7D0F006A872F /* summit.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = summit.wav; sourceTree = "<group>"; };
-		A2FC4ED4274B7D0F006A872F /* night owl.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "night owl.wav"; sourceTree = "<group>"; };
-		A2FC4ED5274B7D0F006A872F /* constellation.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = constellation.wav; sourceTree = "<group>"; };
-		A2FC4ED6274B7D0F006A872F /* uplift.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = uplift.wav; sourceTree = "<group>"; };
-		A2FC4ED7274B7D0F006A872F /* silence.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = silence.wav; sourceTree = "<group>"; };
-		A2FC4ED8274B7D0F006A872F /* apex.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = apex.wav; sourceTree = "<group>"; };
-		A2FC4ED9274B7D0F006A872F /* illuminate.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = illuminate.wav; sourceTree = "<group>"; };
-		A2FC4EDA274B7D0F006A872F /* opening.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = opening.wav; sourceTree = "<group>"; };
-		A2FC4EDB274B7D0F006A872F /* crystals.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crystals.wav; sourceTree = "<group>"; };
-		A2FC4EDC274B7D0F006A872F /* waves.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = waves.wav; sourceTree = "<group>"; };
-		A2FC4EDD274B7D0F006A872F /* sencha.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = sencha.wav; sourceTree = "<group>"; };
-		A2FC4EDE274B7D0F006A872F /* by the seaside.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "by the seaside.wav"; sourceTree = "<group>"; };
-		A2FC4EDF274B7D0F006A872F /* slow rise.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "slow rise.wav"; sourceTree = "<group>"; };
-		A2FC4EE0274B7D0F006A872F /* chimes.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = chimes.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -389,6 +441,41 @@
 			path = "Pure Extensions";
 			sourceTree = "<group>";
 		};
+		A26CFCC327545EF9001C92D8 /* wav30 */ = {
+			isa = PBXGroup;
+			children = (
+				A26CFCC427545EF9001C92D8 /* stargaze30.wav */,
+				A26CFCC527545EF9001C92D8 /* radar30.wav */,
+				A26CFCC627545EF9001C92D8 /* illuminate30.wav */,
+				A26CFCC727545EF9001C92D8 /* cosmic30.wav */,
+				A26CFCC827545EF9001C92D8 /* by the seaside30.wav */,
+				A26CFCC927545EF9001C92D8 /* presto30.wav */,
+				A26CFCCA27545EF9001C92D8 /* chimes30.wav */,
+				A26CFCCB27545EF9001C92D8 /* sencha30.wav */,
+				A26CFCCC27545EF9001C92D8 /* reflection30.wav */,
+				A26CFCCD27545EF9001C92D8 /* night owl30.wav */,
+				A26CFCCE27545EF9001C92D8 /* apex30.wav */,
+				A26CFCCF27545EF9001C92D8 /* waves30.wav */,
+				A26CFCD027545EF9001C92D8 /* signal30.wav */,
+				A26CFCD127545EF9001C92D8 /* ripples30.wav */,
+				A26CFCD227545EF9001C92D8 /* opening30.wav */,
+				A26CFCD327545EF9001C92D8 /* hillside30.wav */,
+				A26CFCD427545EF9001C92D8 /* summit30.wav */,
+				A26CFCD527545EF9001C92D8 /* crystals30.wav */,
+				A26CFCD627545EF9001C92D8 /* constellation30.wav */,
+				A26CFCD727545EF9001C92D8 /* twinkle30.wav */,
+				A26CFCD827545EF9001C92D8 /* bulletin30.wav */,
+				A26CFCD927545EF9001C92D8 /* playtime30.wav */,
+				A26CFCDA27545EF9001C92D8 /* beacon30.wav */,
+				A26CFCDB27545EF9001C92D8 /* silk30.wav */,
+				A26CFCDC27545EF9001C92D8 /* slow rise30.wav */,
+				A26CFCDD27545EF9001C92D8 /* uplift30.wav */,
+				A26CFCDE27545EF9001C92D8 /* radiate30.wav */,
+				A26CFCDF27545EF9001C92D8 /* circuit30.wav */,
+			);
+			path = wav30;
+			sourceTree = "<group>";
+		};
 		A278ED912610FF45000575FC /* Reminder Modification */ = {
 			isa = PBXGroup;
 			children = (
@@ -449,7 +536,6 @@
 		A286934A2576A2B900C0C06E /* Notes */ = {
 			isa = PBXGroup;
 			children = (
-				A2536B4D26083C4E00E2FF6A /* Formatting */,
 				A286934D2576A4CA00C0C06E /* ORIGINAL Future Implementation */,
 				A265848C25E8128400E8B812 /* CHECKLIST Future Implementation Needed */,
 				A2E7A5FA27399A1800BAA9AD /* Endpoints */,
@@ -483,8 +569,8 @@
 		A2B9A92526291A6000626FAE /* Sound Effects */ = {
 			isa = PBXGroup;
 			children = (
-				A2FC4EC3274B7D0F006A872F /* wav */,
-				A2FC4EFE274B7D28006A872F /* wav30 */,
+				A2F996A227569F4400605D03 /* mp3 */,
+				A26CFCC327545EF9001C92D8 /* wav30 */,
 			);
 			path = "Sound Effects";
 			sourceTree = "<group>";
@@ -563,50 +649,41 @@
 			path = Hound;
 			sourceTree = "<group>";
 		};
-		A2FC4EC3274B7D0F006A872F /* wav */ = {
+		A2F996A227569F4400605D03 /* mp3 */ = {
 			isa = PBXGroup;
 			children = (
-				A2FC4EC4274B7D0F006A872F /* circuit.wav */,
-				A2FC4EC5274B7D0F006A872F /* radiate.wav */,
-				A2FC4EC6274B7D0F006A872F /* signal.wav */,
-				A2FC4EC7274B7D0F006A872F /* bulletin.wav */,
-				A2FC4EC8274B7D0F006A872F /* radar.wav */,
-				A2FC4EC9274B7D0F006A872F /* playtime.wav */,
-				A2FC4ECA274B7D0F006A872F /* presto.wav */,
-				A2FC4ECB274B7D0F006A872F /* ripples.wav */,
-				A2FC4ECC274B7D0F006A872F /* hillside.wav */,
-				A2FC4ECD274B7D0F006A872F /* beacon.wav */,
-				A2FC4ECE274B7D0F006A872F /* reflection.wav */,
-				A2FC4ECF274B7D0F006A872F /* twinkle.wav */,
-				A2FC4ED0274B7D0F006A872F /* stargaze.wav */,
-				A2FC4ED1274B7D0F006A872F /* silk.wav */,
-				A2FC4ED2274B7D0F006A872F /* cosmic.wav */,
-				A2FC4ED3274B7D0F006A872F /* summit.wav */,
-				A2FC4ED4274B7D0F006A872F /* night owl.wav */,
-				A2FC4ED5274B7D0F006A872F /* constellation.wav */,
-				A2FC4ED6274B7D0F006A872F /* uplift.wav */,
-				A2FC4ED7274B7D0F006A872F /* silence.wav */,
-				A2FC4ED8274B7D0F006A872F /* apex.wav */,
-				A2FC4ED9274B7D0F006A872F /* illuminate.wav */,
-				A2FC4EDA274B7D0F006A872F /* opening.wav */,
-				A2FC4EDB274B7D0F006A872F /* crystals.wav */,
-				A2FC4EDC274B7D0F006A872F /* waves.wav */,
-				A2FC4EDD274B7D0F006A872F /* sencha.wav */,
-				A2FC4EDE274B7D0F006A872F /* by the seaside.wav */,
-				A2FC4EDF274B7D0F006A872F /* slow rise.wav */,
-				A2FC4EE0274B7D0F006A872F /* chimes.wav */,
+				A2F996A327569F4400605D03 /* apex.mp3 */,
+				A2F996A427569F4400605D03 /* silence.mp3 */,
+				A2F996A527569F4400605D03 /* constellation.mp3 */,
+				A2F996A627569F4400605D03 /* uplift.mp3 */,
+				A2F996A727569F4400605D03 /* crystals.mp3 */,
+				A2F996A827569F4400605D03 /* opening.mp3 */,
+				A2F996A927569F4400605D03 /* illuminate.mp3 */,
+				A2F996AA27569F4400605D03 /* by the seaside.mp3 */,
+				A2F996AB27569F4400605D03 /* slow rise.mp3 */,
+				A2F996AC27569F4400605D03 /* sencha.mp3 */,
+				A2F996AD27569F4400605D03 /* waves.mp3 */,
+				A2F996AE27569F4400605D03 /* chimes.mp3 */,
+				A2F996AF27569F4400605D03 /* circuit.mp3 */,
+				A2F996B027569F4400605D03 /* playtime.mp3 */,
+				A2F996B127569F4400605D03 /* radar.mp3 */,
+				A2F996B227569F4400605D03 /* bulletin.mp3 */,
+				A2F996B327569F4400605D03 /* radiate.mp3 */,
+				A2F996B427569F4400605D03 /* signal.mp3 */,
+				A2F996B527569F4400605D03 /* hillside.mp3 */,
+				A2F996B627569F4400605D03 /* presto.mp3 */,
+				A2F996B727569F4400605D03 /* ripples.mp3 */,
+				A2F996B827569F4400605D03 /* reflection.mp3 */,
+				A2F996B927569F4400605D03 /* beacon.mp3 */,
+				A2F996BA27569F4400605D03 /* twinkle.mp3 */,
+				A2F996BB27569F4400605D03 /* stargaze.mp3 */,
+				A2F996BC27569F4400605D03 /* silk.mp3 */,
+				A2F996BD27569F4400605D03 /* cosmic.mp3 */,
+				A2F996BE27569F4400605D03 /* night owl.mp3 */,
+				A2F996BF27569F4400605D03 /* summit.mp3 */,
 			);
-			path = wav;
+			path = mp3;
 			sourceTree = "<group>";
-		};
-		A2FC4EFE274B7D28006A872F /* wav30 */ = {
-			isa = PBXGroup;
-			children = (
-				A2AFE07E274BF23B00EFC8DA /* radar30.wav */,
-			);
-			name = wav30;
-			path = "Hound/Sound Effects/wav30";
-			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
@@ -667,47 +744,73 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A2AFE080274BF25B00EFC8DA /* radar30.wav in Resources */,
-				A2FC4EFC274B7D10006A872F /* slow rise.wav in Resources */,
-				A2FC4EF6274B7D10006A872F /* illuminate.wav in Resources */,
-				A2FC4EE3274B7D10006A872F /* signal.wav in Resources */,
-				A2FC4EED274B7D10006A872F /* stargaze.wav in Resources */,
-				A2FC4EEA274B7D10006A872F /* beacon.wav in Resources */,
+				A2F996C727569F4400605D03 /* by the seaside.mp3 in Resources */,
+				A26CFCE427545EF9001C92D8 /* by the seaside30.wav in Resources */,
+				A26CFCE927545EF9001C92D8 /* night owl30.wav in Resources */,
+				A2F996CA27569F4400605D03 /* waves.mp3 in Resources */,
+				A26CFCF927545EF9001C92D8 /* uplift30.wav in Resources */,
+				A26CFCED27545EF9001C92D8 /* ripples30.wav in Resources */,
+				A2F996DC27569F4400605D03 /* summit.mp3 in Resources */,
+				A26CFCE327545EF9001C92D8 /* cosmic30.wav in Resources */,
+				A2F996C627569F4400605D03 /* illuminate.mp3 in Resources */,
+				A2F996D227569F4400605D03 /* hillside.mp3 in Resources */,
+				A2F996D727569F4400605D03 /* twinkle.mp3 in Resources */,
+				A2F996D027569F4400605D03 /* radiate.mp3 in Resources */,
 				A2E66CA925534A8A0068CCA6 /* LaunchScreen.storyboard in Resources */,
-				A2FC4EE9274B7D10006A872F /* hillside.wav in Resources */,
 				A2DE45FD273AD842002F28B9 /* SQL Statements in Resources */,
-				A2FC4EE7274B7D10006A872F /* presto.wav in Resources */,
-				A2536B4E26083C4E00E2FF6A /* Formatting in Resources */,
-				A2FC4EF3274B7D10006A872F /* uplift.wav in Resources */,
-				A2FC4EEB274B7D10006A872F /* reflection.wav in Resources */,
-				A2FC4EF9274B7D10006A872F /* waves.wav in Resources */,
+				A26CFCE727545EF9001C92D8 /* sencha30.wav in Resources */,
 				A2E66CA625534A8A0068CCA6 /* Assets.xcassets in Resources */,
+				A2F996D427569F4400605D03 /* ripples.mp3 in Resources */,
+				A26CFCEE27545EF9001C92D8 /* opening30.wav in Resources */,
+				A2F996C827569F4400605D03 /* slow rise.mp3 in Resources */,
+				A26CFCE827545EF9001C92D8 /* reflection30.wav in Resources */,
 				A2E7A5FB27399A1800BAA9AD /* Endpoints in Resources */,
+				A26CFCEB27545EF9001C92D8 /* waves30.wav in Resources */,
 				A2FC4EBF274AF980006A872F /* Add Tool Tip in Resources */,
-				A2FC4EE1274B7D10006A872F /* circuit.wav in Resources */,
-				A2FC4EFB274B7D10006A872F /* by the seaside.wav in Resources */,
-				A2FC4EE2274B7D10006A872F /* radiate.wav in Resources */,
-				A2FC4EE6274B7D10006A872F /* playtime.wav in Resources */,
-				A2FC4EEE274B7D10006A872F /* silk.wav in Resources */,
-				A2FC4EF8274B7D10006A872F /* crystals.wav in Resources */,
-				A2FC4EFA274B7D10006A872F /* sencha.wav in Resources */,
+				A2F996C027569F4400605D03 /* apex.mp3 in Resources */,
+				A26CFCE027545EF9001C92D8 /* stargaze30.wav in Resources */,
+				A26CFCF127545EF9001C92D8 /* crystals30.wav in Resources */,
+				A2F996C527569F4400605D03 /* opening.mp3 in Resources */,
+				A26CFCF727545EF9001C92D8 /* silk30.wav in Resources */,
+				A2F996D327569F4400605D03 /* presto.mp3 in Resources */,
+				A26CFCEC27545EF9001C92D8 /* signal30.wav in Resources */,
+				A2F996C427569F4400605D03 /* crystals.mp3 in Resources */,
+				A2F996D627569F4400605D03 /* beacon.mp3 in Resources */,
+				A26CFCE227545EF9001C92D8 /* illuminate30.wav in Resources */,
+				A2F996C127569F4400605D03 /* silence.mp3 in Resources */,
+				A2F996CC27569F4400605D03 /* circuit.mp3 in Resources */,
+				A26CFCF327545EF9001C92D8 /* twinkle30.wav in Resources */,
+				A2F996D127569F4400605D03 /* signal.mp3 in Resources */,
+				A2F996CE27569F4400605D03 /* radar.mp3 in Resources */,
+				A26CFCF627545EF9001C92D8 /* beacon30.wav in Resources */,
+				A26CFCFB27545EF9001C92D8 /* circuit30.wav in Resources */,
+				A26CFCF527545EF9001C92D8 /* playtime30.wav in Resources */,
+				A2F996CF27569F4400605D03 /* bulletin.mp3 in Resources */,
+				A2F996DB27569F4400605D03 /* night owl.mp3 in Resources */,
+				A2F996D527569F4400605D03 /* reflection.mp3 in Resources */,
 				A2E66CA425534A880068CCA6 /* Main.storyboard in Resources */,
-				A2FC4EF5274B7D10006A872F /* apex.wav in Resources */,
-				A2FC4EEC274B7D10006A872F /* twinkle.wav in Resources */,
-				A2FC4EF7274B7D10006A872F /* opening.wav in Resources */,
-				A2FC4EF0274B7D10006A872F /* summit.wav in Resources */,
-				A2FC4EE4274B7D10006A872F /* bulletin.wav in Resources */,
+				A26CFCE527545EF9001C92D8 /* presto30.wav in Resources */,
+				A26CFCE627545EF9001C92D8 /* chimes30.wav in Resources */,
+				A26CFCF027545EF9001C92D8 /* summit30.wav in Resources */,
+				A26CFCE127545EF9001C92D8 /* radar30.wav in Resources */,
+				A26CFCEA27545EF9001C92D8 /* apex30.wav in Resources */,
+				A26CFCF827545EF9001C92D8 /* slow rise30.wav in Resources */,
+				A2F996DA27569F4400605D03 /* cosmic.mp3 in Resources */,
+				A2F996C227569F4400605D03 /* constellation.mp3 in Resources */,
+				A26CFCEF27545EF9001C92D8 /* hillside30.wav in Resources */,
+				A2F996C327569F4400605D03 /* uplift.mp3 in Resources */,
 				A265848D25E8128400E8B812 /* CHECKLIST Future Implementation Needed in Resources */,
-				A2FC4EF1274B7D10006A872F /* night owl.wav in Resources */,
-				A2FC4EE8274B7D10006A872F /* ripples.wav in Resources */,
+				A26CFCF227545EF9001C92D8 /* constellation30.wav in Resources */,
+				A2F996D827569F4400605D03 /* stargaze.mp3 in Resources */,
+				A2F996C927569F4400605D03 /* sencha.mp3 in Resources */,
 				A2F1791F263F3FE3006824A7 /* DropDownDefaultTableViewCell.xib in Resources */,
-				A2FC4EF2274B7D10006A872F /* constellation.wav in Resources */,
-				A2FC4EEF274B7D10006A872F /* cosmic.wav in Resources */,
+				A2F996D927569F4400605D03 /* silk.mp3 in Resources */,
+				A26CFCFA27545EF9001C92D8 /* radiate30.wav in Resources */,
+				A2F996CD27569F4400605D03 /* playtime.mp3 in Resources */,
 				A2FC4EBD274AF59F006A872F /* Add Drop Down in Resources */,
 				A286934E2576A4CA00C0C06E /* ORIGINAL Future Implementation in Resources */,
-				A2FC4EF4274B7D10006A872F /* silence.wav in Resources */,
-				A2FC4EE5274B7D10006A872F /* radar.wav in Resources */,
-				A2FC4EFD274B7D10006A872F /* chimes.wav in Resources */,
+				A26CFCF427545EF9001C92D8 /* bulletin30.wav in Resources */,
+				A2F996CB27569F4400605D03 /* chimes.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -955,7 +1058,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Hound/HoundDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2274;
+				CURRENT_PROJECT_VERSION = 2831;
 				DEVELOPMENT_TEAM = 9L3M99FST5;
 				INFOPLIST_FILE = "$(SRCROOT)/Hound/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
@@ -963,7 +1066,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.3;
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.Pupotty;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -978,7 +1081,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Hound/HoundDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2274;
+				CURRENT_PROJECT_VERSION = 2831;
 				DEVELOPMENT_TEAM = 9L3M99FST5;
 				INFOPLIST_FILE = "$(SRCROOT)/Hound/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
@@ -986,7 +1089,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.3;
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.Pupotty;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

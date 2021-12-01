@@ -120,6 +120,7 @@ enum AnimationConstant: Double{
 }
 
 enum NotificationSound: String, CaseIterable {
+    //ENUM('Radar','Apex','Beacon','Bulletin','By The Seaside','Chimes','Circuit','Constellation','Cosmic','Crystals','Hillside','Illuminate','Night Owl','Opening','Playtime','Presto','Radiate','Reflection','Ripplies','Sencha','Signal','Silk','Slow Rise','Stargaze','Summit','Twinkle','Uplift','Waves')
     case radar = "Radar"
     case apex = "Apex"
     case beacon = "Beacon"

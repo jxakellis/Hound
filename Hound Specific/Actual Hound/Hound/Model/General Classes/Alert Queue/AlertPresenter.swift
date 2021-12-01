@@ -76,7 +76,7 @@ class AlertPresenter: NSObject, NSCoding{
         
         
         func waitLoop(){
-            print("waitLoop checker")
+            NSLog("waitLoop due to being unable to present UIAlertController")
             if Utils.presenter == nil {
                 DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
                     waitLoop()
@@ -93,12 +93,12 @@ class AlertPresenter: NSObject, NSCoding{
             
         }
         if Utils.presenter == nil {
-            print("presenter nil")
+            NSLog("Presenter is nil, initiating waitLoop")
             waitLoop()
             
         }
         else if Utils.presenter!.isBeingDismissed{
-            print("being dismissed")
+            NSLog("Presenter is being dismissed, initiating waitLoop")
             waitLoop()
         }
         else {

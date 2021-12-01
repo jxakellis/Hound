@@ -26,7 +26,7 @@ enum TimingConstant {
                 return
             }
             storedDefaultSnoozeLength = newDefaultSnoozeLength
-            print("ENDPOINT Update defaultSnoozeLength")
+            NSLog("ENDPOINT Update defaultSnoozeLength")
         }
     }
     
@@ -41,7 +41,7 @@ enum TimingConstant {
                 return
             }
             storedIsPaused = newIsPaused
-            print("ENDPOINT Update isPaused")
+            NSLog("ENDPOINT Update isPaused")
         }
     }
     
@@ -57,7 +57,7 @@ enum TimingConstant {
                 return
             }
             storedLastPause = newLastPause
-            print("ENDPOINT Update lastPause")
+            NSLog("ENDPOINT Update lastPause")
         }
     }
     
@@ -73,7 +73,7 @@ enum TimingConstant {
                 return
             }
             storedLastUnpause = newLastUnpause
-            print("ENDPOINT Update lastUnpause")
+            NSLog("ENDPOINT Update lastUnpause")
         }
     }
 }
@@ -89,7 +89,7 @@ enum NotificationConstant {
                 return
             }
             storedIsNotificationAuthorized = newIsNotificationAuthorized
-            print("ENDPOINT Update isNotificationAuthorized")
+            NSLog("ENDPOINT Update isNotificationAuthorized")
         }
     }
     
@@ -104,7 +104,7 @@ enum NotificationConstant {
                 return
             }
             storedIsNotificationEnabled = newIsNotificationEnabled
-            print("ENDPOINT Update isNotificationEnabled")
+            NSLog("ENDPOINT Update isNotificationEnabled")
         }
     }
     
@@ -119,7 +119,7 @@ enum NotificationConstant {
                 return
             }
             storedShouldLoudNotification = newShouldLoudNotification
-            print("ENDPOINT Update shouldLoudNotification")
+            NSLog("ENDPOINT Update shouldLoudNotification")
         }
     }
     
@@ -134,7 +134,7 @@ enum NotificationConstant {
                 return
             }
             storedShouldShowTerminationAlert = newShouldShowTerminationAlert
-            print("ENDPOINT Update shouldShowTerminationAlert")
+            NSLog("ENDPOINT Update shouldShowTerminationAlert")
         }
     }
     
@@ -149,7 +149,7 @@ enum NotificationConstant {
                 return
             }
             storedShouldFollowUp = newShouldFollowUp
-            print("ENDPOINT Update storedShouldFollowUp")
+            NSLog("ENDPOINT Update storedShouldFollowUp")
         }
     }
     
@@ -164,7 +164,7 @@ enum NotificationConstant {
                 return
             }
             storedFollowUpDelay = newFollowUpDelay
-            print("ENDPOINT Update followUpDelay")
+            NSLog("ENDPOINT Update followUpDelay")
         }
     }
     
@@ -178,7 +178,7 @@ enum NotificationConstant {
                 return
             }
             storedNotificationSound = newNotificationSound
-            print("ENDPOINT Update notificationSound")
+            NSLog("ENDPOINT Update notificationSound")
         }
     }
 }
@@ -194,7 +194,7 @@ enum AppearanceConstant {
                 return
             }
             storedIsCompactView = newIsCompactView
-            print("ENDPOINT Update isCompactView")
+            NSLog("ENDPOINT Update isCompactView")
         }
     }
     
@@ -208,7 +208,7 @@ enum AppearanceConstant {
                 return
             }
             storedDarkModeStyle = newDarkModeStyle
-            print("ENDPOINT Update darkModeStyle")
+            NSLog("ENDPOINT Update darkModeStyle")
         }
     }
 }

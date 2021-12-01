@@ -70,6 +70,8 @@ class DogsIntroductionViewController: UIViewController {
         
         delegate.didSetDefaultReminderState(sender: Sender(origin: self, localized: self), newDefaultReminderStatus: remindersToggleSwitch.isOn)
         
+        if NotificationConstant.isNotificationAuthorized == false {
+            
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
                 NotificationConstant.isNotificationAuthorized = isGranted
                 NotificationConstant.isNotificationEnabled = isGranted
@@ -77,6 +79,10 @@ class DogsIntroductionViewController: UIViewController {
                 NotificationConstant.shouldFollowUp = isGranted
                 
             }
+            
+        }
+        
+            
         
         
     }

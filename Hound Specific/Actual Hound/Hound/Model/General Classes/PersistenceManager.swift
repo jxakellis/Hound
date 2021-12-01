@@ -37,7 +37,7 @@ class PersistenceManager{
             
             //termination checker
             if NotificationConstant.shouldShowTerminationAlert == true && UIApplication.previousAppBuild == UIApplication.appBuild{
-                print("App has not updated")
+                NSLog("App has not updated")
                 
                 let decoded = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as! Data
                 let decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
@@ -111,6 +111,7 @@ class PersistenceManager{
         
         //background silence player for loud alarm that bypasses ringer and if phone locked
         func handleBackgroundSilence(){
+            NSLog("handleBackgroundSilence")
             AudioPlayer.stopAudio()
             
             guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && MainTabBarViewController.staticDogManager.hasEnabledReminder && !TimingConstant.isPaused else{
@@ -118,10 +119,12 @@ class PersistenceManager{
             }
             
             AudioPlayer.playSilenceAudio()
+
         }
         
         //saves to user defaults
         func handleUserDefaults(){
+            NSLog("handleUserDefaults")
             //dogManager
             //DogManagerEfficencyImprovement OK, Changes are being made that might not apply to the rest of the system, might be invalid, or might affect finding something
             var dataDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
@@ -155,9 +158,11 @@ class PersistenceManager{
         
         //ios notifications
         func handleNotifications(){
+            NSLog("handleNotifications")
             guard NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled && !TimingConstant.isPaused else {
                 return
             }
+            NSLog("handleNotifications passed guard statement")
             
             //remove duplicate notifications if app is backgrounded then terminated
             
@@ -192,7 +197,6 @@ class PersistenceManager{
                  }
              }
              */
-                
         }
         
         if isTerminating == true  {
@@ -211,10 +215,10 @@ class PersistenceManager{
             
             /*
              // Checks for disconnects between what is displayed in the switches, what is stored in static variables and what is stored in user defaults
-             print("shouldFollowUp \(NotificationConstant.shouldFollowUp) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool)")
-             print("isAuthorized \(NotificationConstant.isNotificationAuthorized) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool)")
-             print("isEnabled \(NotificationConstant.isNotificationEnabled) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool)")
-             print("isPaused \(TimingConstant.isPaused) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool)")
+             NSLog("shouldFollowUp \(NotificationConstant.shouldFollowUp) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool)")
+             NSLog("isAuthorized \(NotificationConstant.isNotificationAuthorized) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool)")
+             NSLog("isEnabled \(NotificationConstant.isNotificationEnabled) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool)")
+             NSLog("isPaused \(TimingConstant.isPaused) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool)")
              */
         }
         
@@ -265,13 +269,13 @@ class PersistenceManager{
                     }
                 }
             case .notDetermined:
-                print(".notDetermined")
+                NSLog(".notDetermined")
             case .provisional:
-                print(".provisional")
+                NSLog(".provisional")
             case .ephemeral:
-                print(".ephemeral")
+                NSLog(".ephemeral")
             @unknown default:
-                print("unknown auth status")
+                NSLog("unknown auth status")
             }
         }
         

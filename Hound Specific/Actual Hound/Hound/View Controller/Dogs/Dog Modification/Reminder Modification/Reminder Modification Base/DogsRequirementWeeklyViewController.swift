@@ -138,7 +138,7 @@ class DogsReminderWeeklyViewController: UIViewController, UIGestureRecognizerDel
                 case 7:
                     saturday.tintColor = .systemBlue
                 default:
-                    print("unknown day of week: \(dayOfWeek) while synchronizeWeekdays for DogsReminderWeeklyViewController")
+                    NSLog("unknown day of week: \(dayOfWeek) while synchronizeWeekdays for DogsReminderWeeklyViewController")
                 }
             }
         }

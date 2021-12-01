@@ -26,7 +26,7 @@ enum ScheduledLogType: String, CaseIterable {
             }
         }
         
-        print("scheduledLogType Not Found")
+        NSLog("scheduledLogType Not Found")
         self = .custom
     }
     //common
@@ -68,7 +68,7 @@ enum KnownLogType: String, CaseIterable {
             }
         }
         
-        print("knownLogType Not Found")
+        NSLog("knownLogType Not Found")
         self = .custom
     }
     

@@ -41,7 +41,7 @@ class DropDownUIView: UIView{
     private var isDropDownPresent: Bool = false
     var isDown: Bool { get { return isDropDownPresent } }
     ///The style of the dropDown last time it was shown
-    private var dropDownStyle: UIUserInterfaceStyle! = nil
+    //private var dropDownStyle: UIUserInterfaceStyle! = nil
    
     
     //MARK: - DropDown Methods
@@ -50,6 +50,7 @@ class DropDownUIView: UIView{
     func setUpDropDown(viewPositionReference: CGRect,  offset: CGFloat){
         self.addBorders()
         self.addShadowToView()
+       // dropDownStyle = AppearanceConstant.darkModeStyle
         self.frame = CGRect(x: viewPositionReference.minX, y: viewPositionReference.maxY + offset, width: 0, height: 0)
         dropDownTableView = UITableView(frame: CGRect(x: self.frame.minX, y: self.frame.minY, width: 0, height: 0))
         self.width = viewPositionReference.width
@@ -95,13 +96,14 @@ class DropDownUIView: UIView{
         self.dropDownTableView?.reloadData()
     }
     
-    ///If switched from light to dark mode or vise versa, cgColor based border and shadow do not update on their own, must do manually.
+    ///If switched from light to dark mode or vise versa, cgColor based border and shadow do not update on their own, must do manually. Must be called whenever dropdown is shown
     private func reloadBorderShadowColor(){
-        if dropDownStyle != nil && dropDownStyle != UIApplication.shared.windows[0].overrideUserInterfaceStyle{
+        //We have to update the borderShadowColor every time we show due to .unspecified for dark mode style. In this mode, if the user uses the control center to switch from dark to light (or vise versa), we have no way of knowing that our app switched colors. There fore must reload always
+       // if dropDownStyle != nil && dropDownStyle != AppearanceConstant.darkModeStyle{
             self.addBorders()
             self.addShadowToView()
-        }
-        dropDownStyle = UIApplication.shared.windows[0].overrideUserInterfaceStyle
+       // }
+        //dropDownStyle = AppearanceConstant.darkModeStyle
     }
     
     ///Sets Row Height of your Custom XIB

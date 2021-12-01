@@ -210,7 +210,7 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         }
         
         storedDogs.append(newDog)
-        print("ENDPOINT Add Dog")
+        NSLog("ENDPOINT Add Dog")
     }
     
     
@@ -235,7 +235,7 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         
         else{
             storedDogs[newDogIndex!] = newDog
-            print("ENDPOINT Update Dog")
+            NSLog("ENDPOINT Update Dog")
         }
     }
     
@@ -257,13 +257,13 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         }
         else {
             storedDogs.remove(at: matchingDog.1!)
-            print("ENDPOINT Remove Dog (via name)")
+            NSLog("ENDPOINT Remove Dog (via name)")
         }
     }
     
     func removeDog(forIndex index: Int) {
         storedDogs.remove(at: index)
-        print("ENDPOINT Remove Dog (via index)")
+        NSLog("ENDPOINT Remove Dog (via index)")
     }
     
 }
