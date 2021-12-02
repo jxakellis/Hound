@@ -160,7 +160,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
     @IBAction private func willRemoveLog(_ sender: Any) {
         let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete this log?", message: nil, preferredStyle: .alert)
         
-        let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { (UIAlertAction) in
+        let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             self.delegate.didRemoveKnownLog(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName.text!, reminderUUID: self.updatingKnownLogInformation!.1?.uuid ?? nil, logUUID: self.updatingKnownLogInformation!.2.uuid)
             self.navigationController?.popViewController(animated: true)
         }
@@ -232,7 +232,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
          if initalValuesChanged == true{
              let unsavedInformationConfirmation = GeneralUIAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
              
-             let alertActionExit = UIAlertAction(title: "Yes, I don't want to save changes", style: .default) { (UIAlertAction) in
+             let alertActionExit = UIAlertAction(title: "Yes, I don't want to save changes", style: .default) { _ in
                  self.navigationController?.popViewController(animated: true)
              }
              

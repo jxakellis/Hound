@@ -57,7 +57,7 @@ class DogsNestedReminderViewController: UIViewController, DogsReminderManagerVie
     @IBAction func willRemoveReminder(_ sender: Any) {
         let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.reminderAction.text ?? targetReminder!.displayTypeName)?", message: nil, preferredStyle: .alert)
         
-        let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { (UIAlertAction) in
+        let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), removedReminderUUID: self.targetReminder!.uuid)
             //self.performSegue(withIdentifier: "unwindToAddDogReminderTableView", sender: self)
             self.navigationController?.popViewController(animated: true)

@@ -138,6 +138,20 @@ enum NotificationConstant {
         }
     }
     
+    static private var storedShouldShowReleaseNotes: Bool = true
+    static var shouldShowReleaseNotes: Bool {
+        get {
+            return storedShouldShowReleaseNotes
+        }
+        set (newShouldShowReleaseNotes) {
+            guard newShouldShowReleaseNotes != storedShouldShowReleaseNotes else {
+                return
+            }
+            storedShouldShowReleaseNotes = newShouldShowReleaseNotes
+            NSLog("ENDPOINT Update shouldShowReleaseNotes")
+        }
+    }
+    
     
     static private var storedShouldFollowUp: Bool = false
     static var shouldFollowUp: Bool {

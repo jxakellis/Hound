@@ -23,22 +23,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UserDefaults.standard.setValue(UIApplication.appBuild, forKey: UserDefaultsKeys.appBuild.rawValue)
         
         //see if last time setup crashed
-        let didCrashDuringLastSetup = UserDefaults.standard.bool(forKey: "didCrashDuringSetup")
+        var didCrashDuringLastSetup = UserDefaults.standard.bool(forKey: "didCrashDuringSetup")
         //will be set to false if successfully setup
         UserDefaults.standard.setValue(true, forKey: "didCrashDuringSetup")
         
-        let shouldPerformCleanInstall = UserDefaults.standard.bool(forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
+        //let shouldPerformCleanInstall = UserDefaults.standard.bool(forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
         
+        //MARK: DISABLING OF didCrashDuringLastSetup
         if didCrashDuringLastSetup == true {
+            NSLog("Override didCrashDuringLastSetup, not wiping data and recovering")
+            
+            didCrashDuringLastSetup = false
+            UserDefaults.standard.setValue(false, forKey: "didCrashDuringSetup")
+            
+            //UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
+        }
+        
+        
+       if didCrashDuringLastSetup == true {
             NSLog("Recovery setup for app data, crashed during last setup")
             PersistenceManager.willSetup()
             
-            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
-            UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
+           UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
+            //UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
             
             Utils.willShowAlert(title: "🚨Crashed detected🚨", message: "Hound crashed during its last launch and had to reset itself to default in order to recover. I am sorry for the inconvenience😢")
            
         }
+         
+        /*
         else if shouldPerformCleanInstall == true {
             NSLog("Clean install setup for app data")
             PersistenceManager.willSetup()
@@ -46,6 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
             UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
         }
+         */
         else {
             //retrieve value from local store, if value doesn't exist then false is returned
             var hasSetup = UserDefaults.standard.bool(forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)

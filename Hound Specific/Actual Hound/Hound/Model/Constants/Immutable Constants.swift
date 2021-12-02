@@ -82,7 +82,7 @@ enum UserDefaultsKeys: String{
     case didFirstTimeSetup = "didFirstTimeSetup"
     case dogManager = "dogManager"
     case alertPresenter = "alertPresenter"
-    case shouldPerformCleanInstall = "shouldPerformCleanInstall"
+    //case shouldPerformCleanInstall = "shouldPerformCleanInstall"
     case appBuild = "appBuild"
     
     //DogsViewController
@@ -99,6 +99,7 @@ enum UserDefaultsKeys: String{
     case isNotificationEnabled = "isNotificationEnabled"
     case shouldLoudNotification = "shouldLoudNotification"
     case shouldShowTerminationAlert = "shouldShowTerminationAlert"
+    case shouldShowReleaseNotes = "shouldShowReleaseNotes"
     case shouldFollowUp = "shouldFollowUp"
     case followUpDelay = "followUpDelay"
     case notificationSound = "notificationSound"
@@ -120,7 +121,25 @@ enum AnimationConstant: Double{
 }
 
 enum NotificationSound: String, CaseIterable {
-    //ENUM('Radar','Apex','Beacon','Bulletin','By The Seaside','Chimes','Circuit','Constellation','Cosmic','Crystals','Hillside','Illuminate','Night Owl','Opening','Playtime','Presto','Radiate','Reflection','Ripplies','Sencha','Signal','Silk','Slow Rise','Stargaze','Summit','Twinkle','Uplift','Waves')
+    //ENUM('Radar','Apex','Beacon','Bulletin','By The Seaside','Chimes','Circuit','Constellation','Cosmic','Crystals','Hillside','Illuminate','Night Owl','Opening','Presto','Reflection','Ripplies','Sencha','Signal','Silk','Stargaze','Twinkle','Waves')
+    init?(rawValue: String) {
+        for sound in NotificationSound.allCases{
+            if sound.rawValue == rawValue{
+                self = sound
+                return
+            }
+        }
+        NSLog("Depreciated NotificationSound \(rawValue), resetting value to default")
+        self = .radar
+        return
+         
+        
+        //case playtime = "Playtime"
+        //case radiate = "Radiate"
+        //case slowRise = "Slow Rise"
+        //case summit = "Summit"
+        //case uplift = "Uplift"
+    }
     case radar = "Radar"
     case apex = "Apex"
     case beacon = "Beacon"
@@ -135,19 +154,19 @@ enum NotificationSound: String, CaseIterable {
     case illuminate = "Illuminate"
     case nightOwl = "Night Owl"
     case opening = "Opening"
-    case playtime = "Playtime"
+    //case playtime = "Playtime"
     case presto = "Presto"
-    case radiate = "Radiate"
+    //case radiate = "Radiate"
     case reflection = "Reflection"
     case ripples = "Ripples"
     case sencha = "Sencha"
     case signal = "Signal"
     case silk = "Silk"
-    case slowRise = "Slow Rise"
+    //case slowRise = "Slow Rise"
     case stargaze = "Stargaze"
-    case summit = "Summit"
+    //case summit = "Summit"
     case twinkle = "Twinkle"
-    case uplift = "Uplift"
+    //case uplift = "Uplift"
     case waves = "Waves"
 }
 

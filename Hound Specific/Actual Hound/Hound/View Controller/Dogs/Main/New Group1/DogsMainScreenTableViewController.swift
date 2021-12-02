@@ -274,7 +274,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         let alertActionCancel = UIAlertAction(title:"Cancel", style: .cancel, handler: nil)
         
-        let alertActionEdit = UIAlertAction(title: "Edit Reminder", style: .default) { (UIAlertAction) in
+        let alertActionEdit = UIAlertAction(title: "Edit Reminder", style: .default) { _ in
             self.delegate.willEditReminder(parentDogName: parentDogName, reminderUUID: reminder.uuid)
         }
         

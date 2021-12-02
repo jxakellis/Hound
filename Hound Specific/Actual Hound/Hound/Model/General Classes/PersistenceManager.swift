@@ -24,6 +24,7 @@ class PersistenceManager{
             NotificationConstant.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool
             NotificationConstant.shouldLoudNotification = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldLoudNotification.rawValue) as! Bool
             NotificationConstant.shouldShowTerminationAlert = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldShowTerminationAlert.rawValue) as? Bool ?? NotificationConstant.shouldShowTerminationAlert
+            NotificationConstant.shouldShowReleaseNotes = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue) as? Bool ?? NotificationConstant.shouldShowReleaseNotes
             NotificationConstant.shouldFollowUp = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool
             NotificationConstant.followUpDelay = UserDefaults.standard.value(forKey: UserDefaultsKeys.followUpDelay.rawValue) as! TimeInterval
             NotificationConstant.notificationSound = NotificationSound(rawValue: UserDefaults.standard.value(forKey: UserDefaultsKeys.notificationSound.rawValue) as? String ?? NotificationSound.radar.rawValue)!
@@ -44,16 +45,45 @@ class PersistenceManager{
                 
                 //correct conditions
                 if AudioPlayer.sharedPlayer == nil && NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && decodedDogManager.hasEnabledReminder && !TimingConstant.isPaused {
+                    NSLog("Showing Termionation Alert")
                     let terminationAlertController = GeneralUIAlertController(title: "Oops, you may have terminated Hound", message: "Your notifications won't ring properly if the app isn't running.", preferredStyle: .alert)
-                    let acceptAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-                    let understandAlertAction = UIAlertAction(title: "Don't Show Again", style: .default) { _ in
+                    let understandAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    let stopAlertAction = UIAlertAction(title: "Don't Show Again", style: .default) { _ in
                         NotificationConstant.shouldShowTerminationAlert = false
                     }
                     
-                    terminationAlertController.addAction(acceptAlertAction)
                     terminationAlertController.addAction(understandAlertAction)
+                    terminationAlertController.addAction(stopAlertAction)
                     AlertPresenter.shared.enqueueAlertForPresentation(terminationAlertController)
                 }
+            }
+            
+            
+            //new update, mutally exclusive from termnating alert
+            if UIApplication.previousAppBuild != UIApplication.appBuild && NotificationConstant.shouldShowReleaseNotes == true{
+                NSLog("Showing Release Notes")
+                var message: String? = nil
+                
+                switch UIApplication.appBuild {
+                case 3048:
+                    message = "--Added in-app, update release notes\n--Revised notification sound options (28->23). If your sound was removed then your sound choice was reset to the default\n--In the event of an app crash during the launch process, app data no longer resets\n--Expanded Settings page logic\n--Improved performance"
+                default:
+                    message = nil
+                }
+                
+                guard message != nil else {
+                    return
+                }
+                
+                let updateAlertController = GeneralUIAlertController(title: "Release Notes For Hound \(UIApplication.appVersion ?? String(UIApplication.appBuild))", message: message, preferredStyle: .alert)
+                let understandAlertAction = UIAlertAction(title: "Ok, sounds great!", style: .default, handler: nil)
+                let stopAlertAction = UIAlertAction(title: "Don't show release notes again", style: .default) { _ in
+                    NotificationConstant.shouldShowReleaseNotes = false
+                }
+                
+                updateAlertController.addAction(understandAlertAction)
+                updateAlertController.addAction(stopAlertAction)
+                AlertPresenter.shared.enqueueAlertForPresentation(updateAlertController)
             }
             
             
@@ -79,6 +109,7 @@ class PersistenceManager{
             UserDefaults.standard.setValue(NotificationConstant.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.shouldLoudNotification, forKey: UserDefaultsKeys.shouldLoudNotification.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.shouldShowTerminationAlert, forKey: UserDefaultsKeys.shouldShowTerminationAlert.rawValue)
+            UserDefaults.standard.setValue(NotificationConstant.shouldShowReleaseNotes, forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.shouldFollowUp, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.notificationSound.rawValue, forKey: UserDefaultsKeys.notificationSound.rawValue)
@@ -147,6 +178,7 @@ class PersistenceManager{
             UserDefaults.standard.setValue(NotificationConstant.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.shouldLoudNotification, forKey: UserDefaultsKeys.shouldLoudNotification.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.shouldShowTerminationAlert, forKey: UserDefaultsKeys.shouldShowTerminationAlert.rawValue)
+            UserDefaults.standard.setValue(NotificationConstant.shouldShowReleaseNotes, forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.shouldFollowUp, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
             UserDefaults.standard.setValue(NotificationConstant.notificationSound.rawValue, forKey: UserDefaultsKeys.notificationSound.rawValue)

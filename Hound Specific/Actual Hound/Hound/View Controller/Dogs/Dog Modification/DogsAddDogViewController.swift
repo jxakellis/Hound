@@ -176,7 +176,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
     @IBAction func willRemoveDog(_ sender: Any) {
         let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogName.text ?? targetDog.dogTraits.dogName)?", message: nil, preferredStyle: .alert)
         
-        let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { (UIAlertAction) in
+        let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             self.delegate.didRemoveDog(sender: Sender(origin: self, localized: self), removedDogName: self.targetDog.dogTraits.dogName)
             //self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
             self.navigationController?.popViewController(animated: true)
@@ -203,7 +203,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             //"Any changes you have made won't be saved"
             let unsavedInformationConfirmation = GeneralUIAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
             
-            let alertActionExit = UIAlertAction(title: "Yes, I don't want to save changes", style: .default) { (UIAlertAction) in
+            let alertActionExit = UIAlertAction(title: "Yes, I don't want to save changes", style: .default) { _ in
                 //self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
                 self.delegate.didCancel(sender: Sender(origin: self, localized: self))
                 self.navigationController?.popViewController(animated: true)

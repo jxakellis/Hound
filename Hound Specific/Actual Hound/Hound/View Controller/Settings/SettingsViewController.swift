@@ -302,6 +302,13 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
         self.hideDropDown()
         
         NotificationConstant.shouldFollowUp = followUpToggleSwitch.isOn
+        
+        if followUpToggleSwitch.isOn == true {
+            followUpDelayInterval.isEnabled = true
+        }
+        else {
+            followUpDelayInterval.isEnabled = false
+        }
     }
     
     private func synchronizeNotificationsComponents(animated: Bool){
@@ -317,7 +324,12 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
             followUpToggleSwitch.isEnabled = true
             followUpToggleSwitch.setOn(NotificationConstant.shouldFollowUp, animated: animated)
             
-            followUpDelayInterval.isEnabled = true
+            if followUpToggleSwitch.isOn == true {
+                followUpDelayInterval.isEnabled = true
+            }
+            else {
+                followUpDelayInterval.isEnabled = false
+            }
         }
         //notifications are disabled
         else {
@@ -355,34 +367,37 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
     @IBOutlet private weak var buildNumber: ScaledUILabel!
     
     //MARK: - Reset
-    @IBAction private func willReset(_ sender: Any) {
-        
-        let alertController = GeneralUIAlertController(
-            title: "Are you sure you want to reset?",
-            message: "This action will delete and reset all data to default, in the process restarting the app.",
-            preferredStyle: .alert)
-        
-        let alertReset = UIAlertAction(
-            title:"Reset",
-            style: .destructive,
-            handler:
-                {
-                    (alert: UIAlertAction!)  in
-                    UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
-                    
-                    let restartTimer = Timer(fireAt: Date(), interval: -1, target: self, selector: #selector(self.showRestartMessage), userInfo: nil, repeats: false)
-                    
-                    RunLoop.main.add(restartTimer, forMode: .common)
-                })
-        
-        let alertCancel = UIAlertAction(title:"Cancel", style: .cancel, handler: nil)
-        
-        alertController.addAction(alertReset)
-        alertController.addAction(alertCancel)
-        
-        AlertPresenter.shared.enqueueAlertForPresentation(alertController)
-        
-    }
+    /*\
+     @IBAction private func willReset(_ sender: Any) {
+         
+         let alertController = GeneralUIAlertController(
+             title: "Are you sure you want to reset?",
+             message: "This action will delete and reset all data to default, in the process restarting the app.",
+             preferredStyle: .alert)
+         
+         let alertReset = UIAlertAction(
+             title:"Reset",
+             style: .destructive,
+             handler:
+                 {
+                     (alert: UIAlertAction!)  in
+                     UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
+                     
+                     let restartTimer = Timer(fireAt: Date(), interval: -1, target: self, selector: #selector(self.showRestartMessage), userInfo: nil, repeats: false)
+                     
+                     RunLoop.main.add(restartTimer, forMode: .common)
+                 })
+         
+         let alertCancel = UIAlertAction(title:"Cancel", style: .cancel, handler: nil)
+         
+         alertController.addAction(alertReset)
+         alertController.addAction(alertCancel)
+         
+         AlertPresenter.shared.enqueueAlertForPresentation(alertController)
+         
+     }
+     */
+    
     
     @objc private func showRestartMessage(){
         let alertController = GeneralUIAlertController(

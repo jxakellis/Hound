@@ -167,6 +167,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         
         TimingManager.delegate = self
         TimingManager.willInitalize(dogManager: getDogManager())
+        //fatalError()
         
         UserDefaults.standard.setValue(false, forKey: "didCrashDuringSetup")
     }

@@ -69,7 +69,7 @@ class DogsIndependentReminderViewController: UIViewController, DogsReminderManag
         }
         let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.reminderAction.text ?? targetReminder!.displayTypeName)?", message: nil, preferredStyle: .alert)
         
-        let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { (UIAlertAction) in
+        let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, removedReminderUUID: self.targetReminder!.uuid)
             //self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
             self.navigationController?.popViewController(animated: true)
@@ -91,7 +91,7 @@ class DogsIndependentReminderViewController: UIViewController, DogsReminderManag
         if dogsReminderManagerViewController.initalValuesChanged == true {
             let unsavedInformationConfirmation = GeneralUIAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
             
-            let alertActionExit = UIAlertAction(title: "Yes, I don't want to save changes", style: .default) { (UIAlertAction) in
+            let alertActionExit = UIAlertAction(title: "Yes, I don't want to save changes", style: .default) { _ in
                 //self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
                 self.delegate.didCancel(sender: Sender(origin: self, localized: self))
                 self.navigationController?.popViewController(animated: true)
