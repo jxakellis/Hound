@@ -139,16 +139,27 @@ class TimingManager{
             ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: TimingManagerError.parseSenderInfoFailed)
             return
         }
+        
         let dogName: String = parsedDictionary["dogName"]! as! String
         let pastReminder: Reminder = parsedDictionary["reminder"]! as! Reminder
-        
         let dogManager = MainTabBarViewController.staticDogManager
-        let reminder = try! dogManager.findDog(forName: dogName).dogReminders.findReminder(forUUID: pastReminder.uuid)
         
-        reminder.timeOfDayComponents.changeIsSkipping(newSkipStatus: false, shouldRemoveLogDuringPossibleUnskip: false)
-        reminder.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
+        do {
+            let dog = try dogManager.findDog(forName: dogName)
+            let reminder = try dog.dogReminders.findReminder(forUUID: pastReminder.uuid)
+            
+            reminder.timeOfDayComponents.changeIsSkipping(newSkipStatus: false, shouldRemoveLogDuringPossibleUnskip: false)
+            reminder.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
+            
+            delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
+            
+        } catch {
+            NSLog("willUpdateIsSkipping failure in finding dog or reminder")
+            ErrorProcessor.alertForError(message: "Something went wrong trying to unskip your reminder's timing. If your reminder appears stuck, try: disabling it then re-enabling it, deleting it, or restarting the app.")
+        }
         
-        delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
+        
+        
     }
     
     //MARK: - Pause Control
@@ -311,7 +322,7 @@ class TimingManager{
     }
     
     ///Creates alertController to queue for presentation along with information passed along with it to reinitalize the timer once an option is selected (e.g. disable or snooze)
-    static func willShowTimer(sender: Sender = Sender(origin: Utils.presenter!, localized: Utils.presenter!), dogName: String, reminder: Reminder){
+    static func willShowTimer(dogName: String, reminder: Reminder){
         
         let title = "\(reminder.displayTypeName) - \(dogName)"
         //let message = "\(reminder.reminderDescription)"
@@ -380,14 +391,23 @@ class TimingManager{
         
     
         let dogManager = MainTabBarViewController.staticDogManager
-        let reminder = try! dogManager.findDog(forName: dogName).dogReminders.findReminder(forUUID: reminder.uuid)
-        
-        if reminder.isPresentationHandled == false {
-            reminder.isPresentationHandled = true
-            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
+        do {
+            let dog = try dogManager.findDog(forName: dogName)
+            //NSLog("willShowTimer success in finding dog")
+            let reminder = try dog.dogReminders.findReminder(forUUID: reminder.uuid)
+            //NSLog("willShowTimer success in finding reminder")
+            
+            if reminder.isPresentationHandled == false {
+                reminder.isPresentationHandled = true
+                delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
+            }
+            
+            AlertPresenter.shared.enqueueAlertForPresentation(alertController)
+        } catch {
+            NSLog("willShowTimer failure in finding dog or reminder")
+            ErrorProcessor.alertForError(message: "Something went wrong trying to present your reminder's alarm. If your reminder appears stuck, disable it then re-enable it to fix.")
         }
         
-        AlertPresenter.shared.enqueueAlertForPresentation(alertController)
         
     }
     

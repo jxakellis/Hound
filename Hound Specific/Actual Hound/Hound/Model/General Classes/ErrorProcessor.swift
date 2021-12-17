@@ -270,7 +270,7 @@ class ErrorProcessor{
             return true
         }
         else if case TimeOfDayComponentsError.invalidWeekdayArray = error {
-            ErrorProcessor.alertForError(message: "Please select atleast one day of the week for your reminder")
+            ErrorProcessor.alertForError(message: "Please select at least one day of the week for your reminder. You can do this by clicking on the grey S, M, T, W, T, F, or S. A blue letter means that your reminder will be enabled on that day. You can select all seven or only choose one.")
             return true
         }
         else if case TimeOfDayComponentsError.invalidDayOfMonth = error {
@@ -278,7 +278,7 @@ class ErrorProcessor{
             return true
         }
         else if case TimeOfDayComponentsError.bothDayIndicatorsNil = error {
-            ErrorProcessor.alertForError(message: "Please select either atleast one weekday or select once a month.")
+            ErrorProcessor.alertForError(message: "Please select either at least one weekday or select once a month.")
             return true
         }
         else if case TimeOfDayComponentsError.bothDayIndicatorsActive = error {

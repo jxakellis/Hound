@@ -181,7 +181,7 @@ protocol TimeOfDayComponentsProtocol {
     ///The weekdays on which the reminder should fire. Nil is dayOfMonth mode
     var weekdays: [Int]? { get }
     
-    ///Changes the weekdays, if empty throws an error due to the fact that there needs to be atleast one time of week. Nil is dayOfMonth mode
+    ///Changes the weekdays, if empty throws an error due to the fact that there needs to be at least one time of week. Nil is dayOfMonth mode
     mutating func changeWeekdays(newWeekdays: [Int]?) throws
     
     ///If the reminder is firing once a month, then this is the day of month it occurs. Nil if weekday mode.
@@ -380,7 +380,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         return correctedDate
     }
     
-    ///Produces an array of atleast two with all of the future dates that the reminder will fire given the weekday(s), hour, and minute
+    ///Produces an array of at least two with all of the future dates that the reminder will fire given the weekday(s), hour, and minute
      private func futureExecutionDates(executionBasis: Date) -> [Date] {
         
         var calculatedDates: [Date] = []
@@ -445,7 +445,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         if calculatedDates.count > 1 {
             calculatedDates.sort()
         }
-        //should have atleast two dates
+        //should have at least two dates
         else if calculatedDates.count == 1{
             //day of month
             if dayOfMonth != nil {

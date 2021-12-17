@@ -22,13 +22,13 @@ protocol DogManagerProtocol {
     ///Stores all the dogs. This is get only to make sure integrite of dogs added is kept
     var dogs: [Dog] { get }
     
-    ///Returns true if ANY the dogs present has atleast 1 CREATED reminder
+    ///Returns true if ANY the dogs present has at least 1 CREATED reminder
     var hasCreatedReminder: Bool { get }
     
     ///Returns true if dogs.count > 0
     var hasCreatedDog: Bool { get }
     
-    ///Returns true if ANY the dogs present has atleast 1 ENABLED reminder
+    ///Returns true if ANY the dogs present has at least 1 ENABLED reminder
     var hasEnabledReminder: Bool { get }
     
     ///Returns number of reminders that are enabled and therefore have a timer. Does not factor in isPaused.
@@ -149,19 +149,12 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
     
     //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
-       // let decoded: Data = aDecoder.decodeData()!
-      //  let unarchived = try! NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: decoded)! as! [Dog]
-       // dogs = unarchived
         storedDogs = aDecoder.decodeObject(forKey: "dogs") as! [Dog]
     }
     
     func encode(with aCoder: NSCoder) {
-       // let encoded = try! NSKeyedArchiver.archivedData(withRootObject: dogs, requiringSecureCoding: false)
-      //  aCoder.encode(encoded)
         aCoder.encode(storedDogs, forKey: "dogs")
     }
-    
-    //static var supportsSecureCoding: Bool = true
     
    
     

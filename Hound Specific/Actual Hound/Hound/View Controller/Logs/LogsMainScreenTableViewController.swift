@@ -28,6 +28,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         dogManager = newDogManager
         
         if !(sender.localized is LogsMainScreenTableViewController) {
+            //updateDogManagerDependents and reloads table visual
             self.reloadTable()
         }
         else {
@@ -38,7 +39,6 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     }
     
     func updateDogManagerDependents() {
-        
         ///Sorts all dates of every time a reminder was logged into a tuple, containing the actual date, the parent dog name, and the reminder, theb sorts is chronologically from last (closet to present) to first (the first event that happened, so it is the oldest).
         var calculatedConsolidatedLogs: [(String, Reminder?, KnownLog)] {
             let dogManager = getDogManager()
@@ -477,10 +477,14 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.tableView.deselectRow(at: indexPath, animated: true)
         
-        let selectedLogDisplay = uniqueLogs[indexPath.section].2[indexPath.row-1]
-        
-        delegate.didSelectLog(parentDogName: selectedLogDisplay.0, reminder: selectedLogDisplay.1, log: selectedLogDisplay.2)
-        
+        if indexPath.section > (uniqueLogs.count - 1) || (indexPath.row - 1) > (uniqueLogs[indexPath.section].2.count - 1) {
+            ErrorProcessor.alertForError(message: "You selected a row that was unable to be decifered. Please restart Hound to fix. If interested, email HoundOrganizer@gmail.com screenshots of your logs and a short description of any actions you did prior to this message. Thanks for the help!")
+        }
+        else {
+            let selectedLogDisplay = uniqueLogs[indexPath.section].2[indexPath.row-1]
+            
+            delegate.didSelectLog(parentDogName: selectedLogDisplay.0, reminder: selectedLogDisplay.1, log: selectedLogDisplay.2)
+        }
     }
     
     

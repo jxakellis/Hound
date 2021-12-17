@@ -97,7 +97,7 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
             
         }
         else{
-            //has atleast once enabled reminder so soonsetFireDate won't be nil by the end
+            //has at least once enabled reminder so soonsetFireDate won't be nil by the end
             var soonestFireDate: Date! = nil
             for reminder in dog.dogReminders.reminders{
                 guard reminder.getEnable() else {

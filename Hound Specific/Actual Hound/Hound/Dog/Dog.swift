@@ -134,7 +134,7 @@ class Dog: NSObject, NSCoding, NSCopying {
         return catagorizedLogTypes
     }
     
-    ///returns true if has created a reminder and has atleast one enabled
+    ///returns true if has created a reminder and has at least one enabled
     var hasEnabledReminder: Bool {
             for reminder in dogReminders.reminders {
                 if reminder.getEnable() == true {

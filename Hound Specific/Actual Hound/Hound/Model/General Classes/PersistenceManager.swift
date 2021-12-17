@@ -14,48 +14,57 @@ class PersistenceManager{
         
         if isRecurringSetup == true{
             //not first time setup
-            TimingConstant.isPaused = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool
+            TimingConstant.isPaused = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as? Bool ?? TimingConstant.isPaused
             TimingConstant.lastPause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastPause.rawValue) as? Date
             TimingConstant.lastUnpause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastUnpause.rawValue) as? Date
             
-            TimingConstant.defaultSnoozeLength = UserDefaults.standard.value(forKey: UserDefaultsKeys.defaultSnoozeLength.rawValue) as! TimeInterval
+            TimingConstant.defaultSnoozeLength = UserDefaults.standard.value(forKey: UserDefaultsKeys.defaultSnoozeLength.rawValue) as? TimeInterval ?? TimingConstant.defaultSnoozeLength
             
-            NotificationConstant.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool
-            NotificationConstant.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool
-            NotificationConstant.shouldLoudNotification = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldLoudNotification.rawValue) as! Bool
+            NotificationConstant.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as? Bool ?? NotificationConstant.isNotificationAuthorized
+            NotificationConstant.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as? Bool ?? NotificationConstant.isNotificationEnabled
+            NotificationConstant.shouldLoudNotification = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldLoudNotification.rawValue) as? Bool ?? NotificationConstant.shouldLoudNotification
             NotificationConstant.shouldShowTerminationAlert = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldShowTerminationAlert.rawValue) as? Bool ?? NotificationConstant.shouldShowTerminationAlert
             NotificationConstant.shouldShowReleaseNotes = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue) as? Bool ?? NotificationConstant.shouldShowReleaseNotes
-            NotificationConstant.shouldFollowUp = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool
-            NotificationConstant.followUpDelay = UserDefaults.standard.value(forKey: UserDefaultsKeys.followUpDelay.rawValue) as! TimeInterval
+            NotificationConstant.shouldFollowUp = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as? Bool ?? NotificationConstant.shouldFollowUp
+            NotificationConstant.followUpDelay = UserDefaults.standard.value(forKey: UserDefaultsKeys.followUpDelay.rawValue) as? TimeInterval ?? NotificationConstant.followUpDelay
             NotificationConstant.notificationSound = NotificationSound(rawValue: UserDefaults.standard.value(forKey: UserDefaultsKeys.notificationSound.rawValue) as? String ?? NotificationSound.radar.rawValue)!
             
             
-            DogsNavigationViewController.hasBeenLoadedBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue) as! Bool
-            AppearanceConstant.isCompactView = UserDefaults.standard.value(forKey: UserDefaultsKeys.isCompactView.rawValue) as! Bool
+            DogsNavigationViewController.hasBeenLoadedBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue) as? Bool ?? DogsNavigationViewController.hasBeenLoadedBefore
+            AppearanceConstant.isCompactView = UserDefaults.standard.value(forKey: UserDefaultsKeys.isCompactView.rawValue) as? Bool ?? AppearanceConstant.isCompactView
             
             AppearanceConstant.darkModeStyle = UIUserInterfaceStyle(rawValue: UserDefaults.standard.value(forKey: UserDefaultsKeys.darkModeStyle.rawValue) as? Int ?? UIUserInterfaceStyle.unspecified.rawValue)!
             
             
             //termination checker
             if NotificationConstant.shouldShowTerminationAlert == true && UIApplication.previousAppBuild == UIApplication.appBuild{
+                
                 NSLog("App has not updated")
                 
-                let decoded = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as! Data
-                let decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded) as! DogManager
+                let decoded: Data? = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as? Data
                 
-                //correct conditions
-                if AudioPlayer.sharedPlayer == nil && NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && decodedDogManager.hasEnabledReminder && !TimingConstant.isPaused {
-                    NSLog("Showing Termionation Alert")
-                    let terminationAlertController = GeneralUIAlertController(title: "Oops, you may have terminated Hound", message: "Your notifications won't ring properly if the app isn't running.", preferredStyle: .alert)
-                    let understandAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-                    let stopAlertAction = UIAlertAction(title: "Don't Show Again", style: .default) { _ in
-                        NotificationConstant.shouldShowTerminationAlert = false
-                    }
+                if decoded != nil {
+                    NSLog("Decoded dogManager for termination checker")
+                    let decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded!) as! DogManager
                     
-                    terminationAlertController.addAction(understandAlertAction)
-                    terminationAlertController.addAction(stopAlertAction)
-                    AlertPresenter.shared.enqueueAlertForPresentation(terminationAlertController)
+                    //correct conditions
+                    if AudioPlayer.sharedPlayer == nil && NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && decodedDogManager.hasEnabledReminder && !TimingConstant.isPaused {
+                        NSLog("Showing Termionation Alert")
+                        let terminationAlertController = GeneralUIAlertController(title: "Oops, you may have terminated Hound", message: "Your notifications won't ring properly if the app isn't running.", preferredStyle: .alert)
+                        let understandAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                        let stopAlertAction = UIAlertAction(title: "Don't Show Again", style: .default) { _ in
+                            NotificationConstant.shouldShowTerminationAlert = false
+                        }
+                        
+                        terminationAlertController.addAction(understandAlertAction)
+                        terminationAlertController.addAction(stopAlertAction)
+                        AlertPresenter.shared.enqueueAlertForPresentation(terminationAlertController)
+                    }
                 }
+                else {
+                    NSLog("Failed to decode dogManager for termination checker")
+                }
+                
             }
             
             
@@ -67,6 +76,8 @@ class PersistenceManager{
                 switch UIApplication.appBuild {
                 case 3048:
                     message = "--Added in-app, update release notes\n--Revised notification sound options (28->23). If your sound was removed then your sound choice was reset to the default\n--In the event of an app crash during the launch process, app data no longer resets\n--Expanded Settings page logic\n--Improved performance"
+                case 3163:
+                    message = "--If corrupted data is discovered while loading Hound, Hound now recovers itself instead of crashing\n--Improved crashes, Hound now displays error messages where previous crashes existed\n--Clarified certain error messages\n--Fixed certain spelling errors\n--Added this message!"
                 default:
                     message = nil
                 }
