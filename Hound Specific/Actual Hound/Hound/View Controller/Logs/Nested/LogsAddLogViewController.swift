@@ -327,10 +327,10 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         super.viewDidLoad()
         guard dogManager != nil && dogManager.dogs.count != 0 else {
             if dogManager == nil{
-                NSLog("dogManager can't be nil for LogsAddLogViewController")
+                AppDelegate.generalLogger.fault("dogManager can't be nil for LogsAddLogViewController")
             }
             else if dogManager.dogs.count == 0{
-                NSLog("dogManager has to have a dog for LogsAddLogViewController")
+                AppDelegate.generalLogger.fault("dogManager has to have a dog for LogsAddLogViewController")
             }
             //self.performSegue(withIdentifier: "unwindToLogsViewController", sender: self)
             self.navigationController?.popViewController(animated: true)

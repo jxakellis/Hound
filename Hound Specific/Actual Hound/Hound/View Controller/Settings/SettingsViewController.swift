@@ -150,11 +150,11 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
                     
                 }
             case .provisional:
-                NSLog(".provisional")
+                AppDelegate.generalLogger.fault(".provisional")
             case .ephemeral:
-                NSLog(".ephemeral")
+                AppDelegate.generalLogger.fault(".ephemeral")
             @unknown default:
-                NSLog("unknown auth status")
+                AppDelegate.generalLogger.fault("unknown auth status")
             }
         }
         

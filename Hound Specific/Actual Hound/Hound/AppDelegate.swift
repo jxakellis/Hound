@@ -8,12 +8,20 @@
 
 import UIKit
 import UserNotifications
+import os.log
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    
+    static var generalLogger = Logger(subsystem: "com.example.Pupotty", category: "General")
+    static var endpointLogger = Logger(subsystem: "com.example.Pupotty", category: "Endpoints")
+    static var lifeCycleLogger = Logger(subsystem: "com.example.Pupotty", category: "Life Cycle")
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        AppDelegate.lifeCycleLogger.notice("Application did finish launching with options")
+        AppDelegate.generalLogger.notice("\n-----Device Info-----\n Model: \(UIDevice.current.model) \n Name: \(UIDevice.current.name) \n System Name: \(UIDevice.current.systemName) \n System Version: \(UIDevice.current.systemVersion)")
         
         let decodedPreviousAppBuild: Int? = UserDefaults.standard.object(forKey: UserDefaultsKeys.appBuild.rawValue) as? Int ?? nil
         var previousAppBuild: Int {
@@ -31,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         //MARK: DISABLING OF didCrashDuringLastSetup
         if didCrashDuringLastSetup == true {
-            NSLog("Override didCrashDuringLastSetup, not wiping data and recovering")
+            AppDelegate.generalLogger.notice("Override didCrashDuringLastSetup, not wiping data and recovering")
             
             didCrashDuringLastSetup = false
             UserDefaults.standard.setValue(false, forKey: "didCrashDuringSetup")
@@ -41,7 +49,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
        if didCrashDuringLastSetup == true {
-            NSLog("Recovery setup for app data, crashed during last setup")
+            AppDelegate.generalLogger.fault("Recovery setup for app data, crashed during last setup")
             PersistenceManager.willSetup()
             
            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
@@ -53,7 +61,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          
         /*
         else if shouldPerformCleanInstall == true {
-            NSLog("Clean install setup for app data")
+            AppDelegate.generalLogger.notice("Clean install setup for app data")
             PersistenceManager.willSetup()
             
             UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
@@ -65,19 +73,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             var hasSetup = UserDefaults.standard.bool(forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
             
             if hasSetup{
-                NSLog("Recurring setup for app data")
+                AppDelegate.generalLogger.notice("Recurring setup for app data")
                 PersistenceManager.willSetup(isRecurringSetup: true)
                 
                 hasSetup = true
             }
             else {
-                NSLog("First time setup for app data")
+                AppDelegate.generalLogger.notice("First time setup for app data")
                 PersistenceManager.willSetup()
                 
                 UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
             }
         }
         
+        //AppDelegate.generalLogger.notice("application end \(UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as? Data)")
         return true
     }
 
@@ -97,7 +106,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
-        NSLog("applicationWillTerminate")
+        AppDelegate.lifeCycleLogger.notice("Application will terminate")
         PersistenceManager.willEnterBackground(isTerminating: true)
         
     }

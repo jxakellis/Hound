@@ -107,6 +107,7 @@ enum UserDefaultsKeys: String{
     //Appearance
     case isCompactView = "isCompactView"
     case darkModeStyle = "darkModeStyle"
+    case reviewRequestDates = "reviewRequestDates"
 }
 
 enum AnimationConstant: Double{
@@ -129,7 +130,8 @@ enum NotificationSound: String, CaseIterable {
                 return
             }
         }
-        NSLog("Depreciated NotificationSound \(rawValue), resetting value to default")
+        
+        AppDelegate.generalLogger.fault("Depreciated NotificationSound \(rawValue), resetting value to default")
         self = .radar
         return
          

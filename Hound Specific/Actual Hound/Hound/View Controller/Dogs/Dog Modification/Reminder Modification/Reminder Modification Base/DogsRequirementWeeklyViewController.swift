@@ -41,11 +41,13 @@ class DogsReminderWeeklyViewController: UIViewController, UIGestureRecognizerDel
         let senderButton = sender as! ScaledUIButton
         var targetColor: UIColor!
         
-        if senderButton.tintColor == UIColor.systemBlue{
+        if senderButton.tag == 1{
             targetColor = UIColor.systemGray4
+            senderButton.tag = 0
         }
         else {
             targetColor = UIColor.systemBlue
+            senderButton.tag = 1
         }
         
         senderButton.isUserInteractionEnabled = false
@@ -118,6 +120,7 @@ class DogsReminderWeeklyViewController: UIViewController, UIGestureRecognizerDel
         
         for dayOfWeekButton in dayOfWeekButtons {
             dayOfWeekButton!.tintColor = UIColor.systemGray4
+            dayOfWeekButton!.tag = 0
         }
         
         if passedWeekDays != nil {
@@ -125,20 +128,27 @@ class DogsReminderWeeklyViewController: UIViewController, UIGestureRecognizerDel
                 switch dayOfWeek {
                 case 1:
                     sunday.tintColor = .systemBlue
+                    sunday.tag = 1
                 case 2:
                     monday.tintColor = .systemBlue
+                    monday.tag = 1
                 case 3:
                     tuesday.tintColor = .systemBlue
+                    tuesday.tag = 1
                 case 4:
                     wednesday.tintColor = .systemBlue
+                    wednesday.tag = 1
                 case 5:
                     thursday.tintColor = .systemBlue
+                    thursday.tag = 1
                 case 6:
                     friday.tintColor = .systemBlue
+                    friday.tag = 1
                 case 7:
                     saturday.tintColor = .systemBlue
+                    saturday.tag = 1
                 default:
-                    NSLog("unknown day of week: \(dayOfWeek) while synchronizeWeekdays for DogsReminderWeeklyViewController")
+                    AppDelegate.generalLogger.fault("unknown day of week: \(dayOfWeek) while synchronizeWeekdays for DogsReminderWeeklyViewController")
                 }
             }
         }
@@ -153,7 +163,7 @@ class DogsReminderWeeklyViewController: UIViewController, UIGestureRecognizerDel
             let dayOfWeekButtons = [self.sunday, self.monday, self.tuesday, self.wednesday, self.thursday, self.friday, self.saturday]
             
             for dayOfWeekIndex in 0..<dayOfWeekButtons.count{
-                if dayOfWeekButtons[dayOfWeekIndex]?.tintColor == .systemBlue{
+                if dayOfWeekButtons[dayOfWeekIndex]?.tag == 1{
                     days.append(dayOfWeekIndex+1)
                 }
             }

@@ -26,7 +26,7 @@ enum ReminderStyle: String, CaseIterable {
             }
         }
         
-        NSLog("reminderStyle Not Found")
+        AppDelegate.generalLogger.fault("ReminderStyle not found during init")
         self = .oneTime
     }
     //case oneTime = "oneTime"
@@ -153,44 +153,6 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         self.reminderType = ScheduledLogType(rawValue: aDecoder.decodeObject(forKey: "reminderType") as? String ?? aDecoder.decodeObject(forKey: "requirement") as? String ?? aDecoder.decodeObject(forKey: "requirment") as? String ?? aDecoder.decodeObject(forKey: "requirementType") as? String ?? aDecoder.decodeObject(forKey: "requirmentType") as! String)!
         
         self.customTypeName = aDecoder.decodeObject(forKey: "customTypeName") as? String
-        
-        
-        if UIApplication.previousAppBuild <= 1228{
-            NSLog("grandfather in depreciated reminders logs")
-            let depreciatedLogs: [KnownLog] = aDecoder.decodeObject(forKey: "logs") as? [KnownLog] ?? []
-            
-        
-            if depreciatedLogs.count > 0 {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    if self.masterDog == nil {
-                        NSLog("master dog nil")
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0){
-                            if self.masterDog != nil {
-                                NSLog("backup reminder logs decode success")
-                                for log in depreciatedLogs{
-                                    try! self.masterDog?.dogTraits.addLog(newLog: log)
-                                }
-                            }
-                            else {
-                                NSLog("backup reminder logs decode fail")
-                            }
-                        }
-                    }
-                    else {
-                        NSLog("primary reminder logs decode success")
-                        for log in depreciatedLogs{
-                            try! self.masterDog?.dogTraits.addLog(newLog: log)
-                        }
-                    }
-                }
-            }
-           
-        }
-        else {
-            //NSLog("too new")
-            //NSLog(UIApplication.previousAppBuild)
-        }
-        
         
         self.countDownComponents = aDecoder.decodeObject(forKey: "countDownComponents") as! CountDownComponents
         self.timeOfDayComponents = aDecoder.decodeObject(forKey: "timeOfDayComponents") as! TimeOfDayComponents
@@ -379,7 +341,7 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
             try! masterDog?.dogTraits.addLog(newLog: KnownLog(date: Date(), logType: knownLogType!, customTypeName: customTypeName))
             
             if masterDog == nil {
-                NSLog("masterDog nil, couldn't log")
+                AppDelegate.generalLogger.fault("masterDog nil, couldn't log")
             }
         }
         
@@ -416,12 +378,12 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
             timer = nil
         }
         isEnabled = newEnableStatus
-        NSLog("ENDPOINT Update Reminder (enable)")
+        AppDelegate.endpointLogger.notice("ENDPOINT Update Reminder (enable)")
     }
     
     func willToggle() {
         isEnabled.toggle()
-        NSLog("ENDPOINT Update Reminder (enable)")
+        AppDelegate.endpointLogger.notice("ENDPOINT Update Reminder (enable)")
     }
     
     func getEnable() -> Bool{

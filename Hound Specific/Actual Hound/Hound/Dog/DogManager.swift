@@ -149,7 +149,7 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
     
     //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
-        storedDogs = aDecoder.decodeObject(forKey: "dogs") as! [Dog]
+        storedDogs = aDecoder.decodeObject(forKey: "dogs") as? [Dog] ?? []
     }
     
     func encode(with aCoder: NSCoder) {
@@ -203,7 +203,7 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         }
         
         storedDogs.append(newDog)
-        NSLog("ENDPOINT Add Dog")
+        AppDelegate.endpointLogger.notice("ENDPOINT Add Dog")
     }
     
     
@@ -228,7 +228,7 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         
         else{
             storedDogs[newDogIndex!] = newDog
-            NSLog("ENDPOINT Update Dog")
+            AppDelegate.endpointLogger.notice("ENDPOINT Update Dog")
         }
     }
     
@@ -250,13 +250,13 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         }
         else {
             storedDogs.remove(at: matchingDog.1!)
-            NSLog("ENDPOINT Remove Dog (via name)")
+            AppDelegate.endpointLogger.notice("ENDPOINT Remove Dog (via name)")
         }
     }
     
     func removeDog(forIndex index: Int) {
         storedDogs.remove(at: index)
-        NSLog("ENDPOINT Remove Dog (via index)")
+        AppDelegate.endpointLogger.notice("ENDPOINT Remove Dog (via index)")
     }
     
 }

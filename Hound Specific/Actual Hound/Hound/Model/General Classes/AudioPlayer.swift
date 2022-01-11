@@ -22,21 +22,21 @@ class AudioPlayer {
                 //duck others isn't optimal. It makes it so our audio mixes with others but is louder than them. Want to stop their audio completely.
                 //try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [.duckOthers, .defaultToSpeaker, .allowBluetooth, .allowAirPlay, .allowBluetoothA2DP])
             do {
-                NSLog("Trying loud AVAudioSession")
+                AppDelegate.generalLogger.notice("Attempting to load loud AVAudioSession")
                 try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [.defaultToSpeaker, .allowBluetooth, .allowAirPlay, .allowBluetoothA2DP])
-                NSLog("Success loud AVAudioSession")
+                AppDelegate.generalLogger.notice("Success in loading loud AVAudioSession")
             }
             catch {
-                NSLog("Trying backup loud AVAudioSession")
+                AppDelegate.generalLogger.notice("Attempting to load backup loud AVAudioSession")
                 try AVAudioSession.sharedInstance().setCategory(.playback, options: [])
-                NSLog("Success backup loud AVAudioSession")
+                AppDelegate.generalLogger.notice("Success in loading backup loud AVAudioSession")
             }
                // try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [ .defaultToSpeaker, .allowBluetooth, .allowAirPlay, .allowBluetoothA2DP])
         }
         else {
-            NSLog("Trying quiet AVAudioSession")
+            AppDelegate.generalLogger.notice("Attempting to load quiet AVAudioSession")
             try! AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
-            NSLog("Success quiet AVAudioSession")
+            AppDelegate.generalLogger.notice("Success in loading quiet AVAudioSession")
         }
         
         try AVAudioSession.sharedInstance().setActive(true)
@@ -44,7 +44,7 @@ class AudioPlayer {
     
     static func playLoudNotificationAudio(){
          DispatchQueue.global().async {
-             NSLog("playLoudNotificationAudio")
+             AppDelegate.generalLogger.notice("playLoudNotificationAudio")
              let path = Bundle.main.path(forResource: "\(NotificationConstant.notificationSound.rawValue.lowercased())", ofType: "mp3")!
              let url = URL(fileURLWithPath: path)
              
@@ -63,7 +63,7 @@ class AudioPlayer {
                  
                 
              } catch {
-                 NSLog("Audio Session error: \(error)")
+                 AppDelegate.generalLogger.error("playLoudNotificationAudio error: \(error.localizedDescription)")
              }
          }
          
@@ -72,14 +72,14 @@ class AudioPlayer {
     
     static func playSilenceAudio(){
         DispatchQueue.global().async {
-            NSLog("playSilenceAudio")
+            AppDelegate.generalLogger.notice("playSilenceAudio")
             let path = Bundle.main.path(forResource: "silence", ofType: "mp3")!
             let url = URL(fileURLWithPath: path)
             
             do {
                 stopAudio()
                 
-                AudioPlayer.sharedPlayer = try! AVAudioPlayer(contentsOf: url)
+                AudioPlayer.sharedPlayer = try AVAudioPlayer(contentsOf: url)
                 AudioPlayer.sharedPlayer.numberOfLoops = -1
                 AudioPlayer.sharedPlayer.volume = 0
                 
@@ -88,7 +88,7 @@ class AudioPlayer {
                 AudioPlayer.sharedPlayer.play()
                 
             } catch {
-                NSLog("Audio Session error: \(error)")
+                AppDelegate.generalLogger.notice("playSilenceAudio error: \(error.localizedDescription)")
             }
 
         }
@@ -96,7 +96,7 @@ class AudioPlayer {
     
     static func playAudio(forAudioPath audioPath: String, isLoud: Bool){
         DispatchQueue.global().async {
-            NSLog("playAudio: \(audioPath)")
+            AppDelegate.generalLogger.notice("playAudio: \(audioPath)")
             let path = Bundle.main.path(forResource: audioPath, ofType: "mp3")!
             let url = URL(fileURLWithPath: path)
             
@@ -115,14 +115,14 @@ class AudioPlayer {
                 
                 AudioPlayer.sharedPlayer.play()
             } catch {
-                NSLog("Audio Session error: \(error)")
+                AppDelegate.generalLogger.error("playAudio error: \(error.localizedDescription)")
             }
         }
     }
     
     static func stopAudio(){
         DispatchQueue.global().async {
-            //NSLog("stopAudio")
+            //AppDelegate.generalLogger.notice("stopAudio")
             if AudioPlayer.sharedPlayer != nil {
                 AudioPlayer.sharedPlayer.stop()
             }

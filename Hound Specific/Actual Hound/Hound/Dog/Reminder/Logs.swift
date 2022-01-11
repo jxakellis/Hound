@@ -26,7 +26,7 @@ enum ScheduledLogType: String, CaseIterable {
             }
         }
         
-        NSLog("scheduledLogType Not Found")
+        AppDelegate.generalLogger.fault("scheduledLogType Not Found")
         self = .custom
     }
     //common
@@ -68,7 +68,7 @@ enum KnownLogType: String, CaseIterable {
             }
         }
         
-        NSLog("knownLogType Not Found")
+        AppDelegate.generalLogger.fault("knownLogType Not Found")
         self = .custom
     }
     

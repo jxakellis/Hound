@@ -28,6 +28,8 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         try! sudoDogManager.findDog(forName: parentDogName).dogReminders.addReminder(newReminder: newReminder)
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
+        
+        Utils.checkForReview()
     }
     
     func didUpdateReminder(sender: Sender, parentDogName: String, updatedReminder: Reminder) throws {
@@ -36,6 +38,8 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         try sudoDogManager.findDog(forName: parentDogName).dogReminders.addReminder(newReminder: updatedReminder)
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
+        
+        Utils.checkForReview()
     }
     
     func didRemoveReminder(sender: Sender, parentDogName: String, removedReminderUUID: String) {
@@ -44,6 +48,8 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         try! sudoDogManager.findDog(forName: parentDogName).dogReminders.removeReminder(forUUID: removedReminderUUID)
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
+        
+        Utils.checkForReview()
     }
     
     //MARK: - DogsMainScreenTableViewControllerDelegate

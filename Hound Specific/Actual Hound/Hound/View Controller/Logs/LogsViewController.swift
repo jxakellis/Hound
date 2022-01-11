@@ -34,6 +34,8 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             
         }
         setDogManager(sender: sender, newDogManager: sudoDogManager)
+        
+        Utils.checkForReview()
     }
     
     func didUpdateKnownLog(sender: Sender, parentDogName: String, reminderUUID: String?, updatedKnownLog: KnownLog) {
@@ -42,22 +44,12 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
          if sudoDogManager.dogs.isEmpty == false {
                 let dog = try! sudoDogManager.findDog(forName: parentDogName)
              try! dog.dogTraits.addLog(newLog: updatedKnownLog)
-             //try! dog.dogTraits.changeLog(forUUID: updatedKnownLog.uuid, newLog: updatedKnownLog)
-                    
-             /*
-                    for dogLogIndex in 0..<dog.dogTraits.logs.count {
-                        dog.dogTraits.changeLog(forUUID: dog.dogTraits.logs[dogLogIndex].uuid, newLog: updatedKnownLog)
-                        if dog.dogTraits.logs[dogLogIndex].uuid == updatedKnownLog.uuid{
-                            //match
-                            dog.dogTraits.logs[dogLogIndex] = updatedKnownLog
-                            break
-                        }
-                    }
-              */
              
          }
         
          setDogManager(sender: sender, newDogManager: sudoDogManager)
+        
+        Utils.checkForReview()
          
     }
     
@@ -72,39 +64,10 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             }
         }
         
-        /*
-         //dog log
-         if reminderUUID == nil {
-             for dogLogIndex in 0..<dog.dogTraits.logs.count{
-                 if dog.dogTraits.logs[dogLogIndex].uuid == logUUID{
-                     dog.dogTraits.logs.remove(at: dogLogIndex)
-                     break
-                 }
-             }
-         }
-         //reminder log
-         else {
-             var logFound = false
-             
-             for reminder in dog.dogReminders.reminders{
-                 guard logFound == false else {
-                     break
-                 }
-                 for reminderLogIndex in 0..<reminder.logs.count{
-                     guard logFound == false else {
-                         break
-                     }
-                     if reminder.logs[reminderLogIndex].uuid == logUUID{
-                         reminder.logs.remove(at: reminderLogIndex)
-                         logFound = true
-                     }
-                 }
-             }
-         }
-         */
-        
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
+        
+        Utils.checkForReview()
     }
     
     //MARK: - LogsMainScreenTableViewControllerDelegate

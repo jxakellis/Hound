@@ -34,43 +34,53 @@ class PersistenceManager{
             AppearanceConstant.isCompactView = UserDefaults.standard.value(forKey: UserDefaultsKeys.isCompactView.rawValue) as? Bool ?? AppearanceConstant.isCompactView
             
             AppearanceConstant.darkModeStyle = UIUserInterfaceStyle(rawValue: UserDefaults.standard.value(forKey: UserDefaultsKeys.darkModeStyle.rawValue) as? Int ?? UIUserInterfaceStyle.unspecified.rawValue)!
+            AppearanceConstant.reviewRequestDates = UserDefaults.standard.value(forKey: UserDefaultsKeys.reviewRequestDates.rawValue) as? [Date] ?? AppearanceConstant.reviewRequestDates
             
             
             //termination checker
             if NotificationConstant.shouldShowTerminationAlert == true && UIApplication.previousAppBuild == UIApplication.appBuild{
                 
-                NSLog("App has not updated")
+                AppDelegate.generalLogger.notice("App has not updated")
                 
-                let decoded: Data? = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as? Data
-                
-                if decoded != nil {
-                    NSLog("Decoded dogManager for termination checker")
-                    let decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded!) as! DogManager
-                    
-                    //correct conditions
-                    if AudioPlayer.sharedPlayer == nil && NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && decodedDogManager.hasEnabledReminder && !TimingConstant.isPaused {
-                        NSLog("Showing Termionation Alert")
-                        let terminationAlertController = GeneralUIAlertController(title: "Oops, you may have terminated Hound", message: "Your notifications won't ring properly if the app isn't running.", preferredStyle: .alert)
-                        let understandAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-                        let stopAlertAction = UIAlertAction(title: "Don't Show Again", style: .default) { _ in
-                            NotificationConstant.shouldShowTerminationAlert = false
-                        }
+                do {
+                    if let decoded: Data = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as? Data {
+                        AppDelegate.generalLogger.notice("Decoded dogManager for termination checker")
                         
-                        terminationAlertController.addAction(understandAlertAction)
-                        terminationAlertController.addAction(stopAlertAction)
-                        AlertPresenter.shared.enqueueAlertForPresentation(terminationAlertController)
+                        let unarchiver = try NSKeyedUnarchiver.init(forReadingFrom: decoded)
+                        unarchiver.requiresSecureCoding = false
+                        let decodedDogManager: DogManager = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! DogManager
+                        
+                        //NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded!) as! DogManager
+                        
+                        if AudioPlayer.sharedPlayer == nil && NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && decodedDogManager.hasEnabledReminder && !TimingConstant.isPaused {
+                            AppDelegate.generalLogger.notice("Showing Termionation Alert")
+                            let terminationAlertController = GeneralUIAlertController(title: "Oops, you may have terminated Hound", message: "Your notifications won't ring properly if the app isn't running.", preferredStyle: .alert)
+                            let understandAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                            let stopAlertAction = UIAlertAction(title: "Don't Show Again", style: .default) { _ in
+                                NotificationConstant.shouldShowTerminationAlert = false
+                            }
+                            
+                            terminationAlertController.addAction(understandAlertAction)
+                            terminationAlertController.addAction(stopAlertAction)
+                            AlertPresenter.shared.enqueueAlertForPresentation(terminationAlertController)
+                        }
+                        //}
+                        
                     }
+                    else {
+                        AppDelegate.generalLogger.error("Failed to decode dogManager for termination checker")
+                    }
+                } catch {
+                    AppDelegate.generalLogger.error("Failed to unarchive dogManager for termination checker \(error.localizedDescription)")
                 }
-                else {
-                    NSLog("Failed to decode dogManager for termination checker")
-                }
+                
                 
             }
             
             
             //new update, mutally exclusive from termnating alert
             if UIApplication.previousAppBuild != UIApplication.appBuild && NotificationConstant.shouldShowReleaseNotes == true{
-                NSLog("Showing Release Notes")
+                AppDelegate.generalLogger.notice("Showing Release Notes")
                 var message: String? = nil
                 
                 switch UIApplication.appBuild {
@@ -78,6 +88,10 @@ class PersistenceManager{
                     message = "--Added in-app, update release notes\n--Revised notification sound options (28->23). If your sound was removed then your sound choice was reset to the default\n--In the event of an app crash during the launch process, app data no longer resets\n--Expanded Settings page logic\n--Improved performance"
                 case 3163:
                     message = "--If corrupted data is discovered while loading Hound, Hound now recovers itself instead of crashing\n--Improved crashes, Hound now displays error messages where previous crashes existed\n--Clarified certain error messages\n--Fixed certain spelling errors\n--Added this message!"
+                case 3193:
+                    message = "--Fixed days of week menu bug\n--Further improved crashes, converting them into error messages instead. No crashes have been detected as of version 1.3.2"
+                case 3451:
+                    message = "--Revised unarchiving of stored data, hopefully reducing corruption, data resets, and crashes.\nAdded intermittent pop-up to review Hound"
                 default:
                     message = nil
                 }
@@ -128,6 +142,7 @@ class PersistenceManager{
             UserDefaults.standard.setValue(DogsNavigationViewController.hasBeenLoadedBefore, forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue)
             UserDefaults.standard.setValue(AppearanceConstant.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
             UserDefaults.standard.setValue(AppearanceConstant.darkModeStyle.rawValue, forKey: UserDefaultsKeys.darkModeStyle.rawValue)
+            UserDefaults.standard.setValue(AppearanceConstant.reviewRequestDates, forKeyPath: UserDefaultsKeys.reviewRequestDates.rawValue)
             
             MainTabBarViewController.firstTimeSetup = true
         }
@@ -153,7 +168,7 @@ class PersistenceManager{
         
         //background silence player for loud alarm that bypasses ringer and if phone locked
         func handleBackgroundSilence(){
-            NSLog("handleBackgroundSilence")
+            AppDelegate.generalLogger.notice("handleBackgroundSilence")
             AudioPlayer.stopAudio()
             
             guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && MainTabBarViewController.staticDogManager.hasEnabledReminder && !TimingConstant.isPaused else{
@@ -161,12 +176,12 @@ class PersistenceManager{
             }
             
             AudioPlayer.playSilenceAudio()
-
+            
         }
         
         //saves to user defaults
         func handleUserDefaults(){
-            NSLog("handleUserDefaults")
+            AppDelegate.generalLogger.notice("handleUserDefaults")
             //dogManager
             //DogManagerEfficencyImprovement OK, Changes are being made that might not apply to the rest of the system, might be invalid, or might affect finding something
             var dataDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
@@ -174,7 +189,7 @@ class PersistenceManager{
             
             let encodedDataDogManager = try! NSKeyedArchiver.archivedData(withRootObject: dataDogManager, requiringSecureCoding: false)
             UserDefaults.standard.setValue(encodedDataDogManager, forKey: UserDefaultsKeys.dogManager.rawValue)
-                        
+            
             //Pause State
             UserDefaults.standard.setValue(TimingConstant.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
             UserDefaults.standard.setValue(TimingConstant.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
@@ -197,20 +212,21 @@ class PersistenceManager{
             UserDefaults.standard.setValue(DogsNavigationViewController.hasBeenLoadedBefore, forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue)
             UserDefaults.standard.setValue(AppearanceConstant.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
             UserDefaults.standard.setValue(AppearanceConstant.darkModeStyle.rawValue, forKey: UserDefaultsKeys.darkModeStyle.rawValue)
+            UserDefaults.standard.setValue(AppearanceConstant.reviewRequestDates, forKeyPath: UserDefaultsKeys.reviewRequestDates.rawValue)
         }
         
         //ios notifications
         func handleNotifications(){
-            NSLog("handleNotifications")
+            AppDelegate.generalLogger.notice("handleNotifications")
             guard NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled && !TimingConstant.isPaused else {
                 return
             }
-            NSLog("handleNotifications passed guard statement")
+            AppDelegate.generalLogger.notice("handleNotifications passed guard statement")
             
             //remove duplicate notifications if app is backgrounded then terminated
             
-               UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-                UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+            UNUserNotificationCenter.current().removeAllDeliveredNotifications()
             
             for dog in MainTabBarViewController.staticDogManager.dogs{
                 for reminder in dog.dogReminders.reminders{
@@ -226,18 +242,18 @@ class PersistenceManager{
             }
             /*
              for dogKey in TimingManager.timerDictionary.keys{
-                 
-                 for reminderUUID in TimingManager.timerDictionary[dogKey]!.keys{
-                     guard TimingManager.timerDictionary[dogKey]![reminderUUID]!.isValid else{
-                         continue
-                     }
-                     Utils.willCreateUNUserNotification(dogName: dogKey, reminderUUID: reminderUUID, executionDate: TimingManager.timerDictionary[dogKey]![reminderUUID]!.fireDate)
-                     
-                     if NotificationConstant.shouldFollowUp == true {
-                         Utils.willCreateFollowUpUNUserNotification(dogName: dogKey, reminderUUID: reminderUUID, executionDate: TimingManager.timerDictionary[dogKey]![reminderUUID]!.fireDate + NotificationConstant.followUpDelay)
-                     }
-                     
-                 }
+             
+             for reminderUUID in TimingManager.timerDictionary[dogKey]!.keys{
+             guard TimingManager.timerDictionary[dogKey]![reminderUUID]!.isValid else{
+             continue
+             }
+             Utils.willCreateUNUserNotification(dogName: dogKey, reminderUUID: reminderUUID, executionDate: TimingManager.timerDictionary[dogKey]![reminderUUID]!.fireDate)
+             
+             if NotificationConstant.shouldFollowUp == true {
+             Utils.willCreateFollowUpUNUserNotification(dogName: dogKey, reminderUUID: reminderUUID, executionDate: TimingManager.timerDictionary[dogKey]![reminderUUID]!.fireDate + NotificationConstant.followUpDelay)
+             }
+             
+             }
              }
              */
         }
@@ -258,10 +274,10 @@ class PersistenceManager{
             
             /*
              // Checks for disconnects between what is displayed in the switches, what is stored in static variables and what is stored in user defaults
-             NSLog("shouldFollowUp \(NotificationConstant.shouldFollowUp) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool)")
-             NSLog("isAuthorized \(NotificationConstant.isNotificationAuthorized) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool)")
-             NSLog("isEnabled \(NotificationConstant.isNotificationEnabled) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool)")
-             NSLog("isPaused \(TimingConstant.isPaused) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool)")
+             AppDelegate.generalLogger.notice("shouldFollowUp \(NotificationConstant.shouldFollowUp) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool)")
+             AppDelegate.generalLogger.notice("isAuthorized \(NotificationConstant.isNotificationAuthorized) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool)")
+             AppDelegate.generalLogger.notice("isEnabled \(NotificationConstant.isNotificationEnabled) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool)")
+             AppDelegate.generalLogger.notice("isPaused \(TimingConstant.isPaused) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool)")
              */
         }
         
@@ -312,13 +328,13 @@ class PersistenceManager{
                     }
                 }
             case .notDetermined:
-                NSLog(".notDetermined")
+                AppDelegate.generalLogger.notice(".notDetermined")
             case .provisional:
-                NSLog(".provisional")
+                AppDelegate.generalLogger.notice(".provisional")
             case .ephemeral:
-                NSLog(".ephemeral")
+                AppDelegate.generalLogger.notice(".ephemeral")
             @unknown default:
-                NSLog("unknown auth status")
+                AppDelegate.generalLogger.notice("unknown auth status")
             }
         }
         

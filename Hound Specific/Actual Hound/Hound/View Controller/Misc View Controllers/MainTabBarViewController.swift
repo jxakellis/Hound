@@ -75,7 +75,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         //TimingManager
         //DogsViewController
         
-        print("reached MainTabBarViewController")
+        //print("reached MainTabBarViewController")
         
         masterDogManager = newDogManager
         MainTabBarViewController.staticDogManager = newDogManager
@@ -136,9 +136,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NSLog("Application build is \(UIApplication.appBuild)")
+        AppDelegate.generalLogger.notice("Application build is \(UIApplication.appBuild)")
         
-        let decoded = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as? Data
         //Pre version 1.2.2 uses different names so needs this here to properly adapt to new class names
         NSKeyedUnarchiver.setClass(ReminderManager.self, forClassName: "Hound.RequirementManager")
         NSKeyedUnarchiver.setClass(TraitManager.self, forClassName: "Hound.DogTraitManager")
@@ -146,19 +145,35 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         
         var decodedDogManager: DogManager! = nil
         
-        //checks to see if data decoded sucessfully
-        if decoded != nil {
-            decodedDogManager = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded!) as! DogManager
-            decodedDogManager.synchronizeIsSkipping()
-        }
-        else {
-            NSLog("Failed to decode dogManager in MainTabBarViewController")
+        do {
+            //checks to see if data decoded sucessfully
+            if let decoded: Data = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as? Data {
+                
+                let unarchiver = try NSKeyedUnarchiver.init(forReadingFrom: decoded)
+                unarchiver.requiresSecureCoding = false
+                decodedDogManager = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? DogManager
+                decodedDogManager.synchronizeIsSkipping()
+            }
+            else {
+                AppDelegate.generalLogger.error("Failed to decode dogManager in MainTabBarViewController")
+                
+                decodedDogManager = DogManagerConstant.defaultDogManager
+                let dogManagerResetAlertController = GeneralUIAlertController(title: "Your data was corrupted", message: "The data you had stored for Hound was corrupted, making it unusable. In order to recover from the catastrophic failure, your data was reset to default. Apologies for any inconvenience this caused you :(", preferredStyle: .alert)
+                let acceptAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                dogManagerResetAlertController.addAction(acceptAlertAction)
+                AlertPresenter.shared.enqueueAlertForPresentation(dogManagerResetAlertController)
+            }
+        } catch  {
+            AppDelegate.generalLogger.error("Failed to unarchive dogManager in MainTabBarViewController \(error.localizedDescription)")
+            
             decodedDogManager = DogManagerConstant.defaultDogManager
             let dogManagerResetAlertController = GeneralUIAlertController(title: "Your data was corrupted", message: "The data you had stored for Hound was corrupted, making it unusable. In order to recover from the catastrophic failure, your data was reset to default. Apologies for any inconvenience this caused you :(", preferredStyle: .alert)
             let acceptAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             dogManagerResetAlertController.addAction(acceptAlertAction)
             AlertPresenter.shared.enqueueAlertForPresentation(dogManagerResetAlertController)
         }
+        
+        
         
        //decodedDogManager.dogs[0].dogReminders.reminders[0].countDownComponents.changeExecutionInterval(newExecutionInterval: 15.0)
         

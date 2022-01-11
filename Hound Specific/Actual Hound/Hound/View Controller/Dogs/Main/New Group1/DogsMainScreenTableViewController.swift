@@ -29,11 +29,12 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         setDogManager(sender: sender, newDogManager: sudoDogManager)
         
         //This is so the cell animates the changing of the switch properly, if this code wasnt implemented then when the table view is reloaded a new batch of cells is produced and that cell has the new switch state, bypassing the animation as the instantant the old one is switched it produces and shows the new switch
-        let indexPath = try! IndexPath(row: getDogManager().findDog(forName: parentDogName).dogReminders.findIndex(forUUID: reminderUUID)+1, section: getDogManager().findIndex(forName: parentDogName))
+        //let indexPath = try! IndexPath(row: getDogManager().findDog(forName: parentDogName).dogReminders.findIndex(forUUID: reminderUUID)+1, section: getDogManager().findIndex(forName: parentDogName))
         
-        let cell = tableView.cellForRow(at: indexPath) as! DogsMainScreenTableViewCellReminderDisplay
-        cell.reminderToggleSwitch.isOn = !isEnabled
-        cell.reminderToggleSwitch.setOn(isEnabled, animated: true)
+       //let cell = tableView.cellForRow(at: indexPath) as! DogsMainScreenTableViewCellReminderDisplay
+        //cell.reloadCell()
+        //cell.reminderToggleSwitch.isOn = !isEnabled
+        //cell.reminderToggleSwitch.setOn(isEnabled, animated: true)
     }
     
     //MARK: - DogManagerControlFlowProtocol
@@ -54,8 +55,11 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         if !(sender.localized is DogsViewController){
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
-        if !(sender.origin is DogsMainScreenTableViewController){
+        if !(sender.localized is DogsMainScreenTableViewCellReminderDisplay) && !(sender.origin is DogsMainScreenTableViewController){
             self.updateDogManagerDependents()
+        }
+        if sender.localized is DogsMainScreenTableViewCellReminderDisplay {
+            self.reloadVisibleCellsTimeLeftLabel()
         }
         
         //start up loop timer, normally done in view will appear but sometimes view has appeared and doesn't need a loop but then it can get a dogManager update which requires a loop. This happens due to reminder added in DogsIntroduction page.
@@ -146,15 +150,19 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             }
         }
         else{
-            for cell in tableView.visibleCells{
-                if cell is DogsMainScreenTableViewCellDogDisplay{
-                    let sudoCell = cell as! DogsMainScreenTableViewCellDogDisplay
-                    sudoCell.reloadCell()
-                }
-                else {
-                    let sudoCell = cell as! DogsMainScreenTableViewCellReminderDisplay
-                    sudoCell.reloadCell()
-                }
+            reloadVisibleCellsTimeLeftLabel()
+        }
+    }
+    
+    private func reloadVisibleCellsTimeLeftLabel(){
+        for cell in tableView.visibleCells{
+            if cell is DogsMainScreenTableViewCellDogDisplay{
+                let sudoCell = cell as! DogsMainScreenTableViewCellDogDisplay
+                sudoCell.reloadCell()
+            }
+            else {
+                let sudoCell = cell as! DogsMainScreenTableViewCellReminderDisplay
+                sudoCell.reloadCell()
             }
         }
     }

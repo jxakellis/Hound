@@ -154,7 +154,7 @@ class TimingManager{
             delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
             
         } catch {
-            NSLog("willUpdateIsSkipping failure in finding dog or reminder")
+            AppDelegate.generalLogger.notice("willUpdateIsSkipping failure in finding dog or reminder")
             ErrorProcessor.alertForError(message: "Something went wrong trying to unskip your reminder's timing. If your reminder appears stuck, try: disabling it then re-enabling it, deleting it, or restarting the app.")
         }
         
@@ -341,6 +341,7 @@ class TimingManager{
                     //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                     //TimingManager.willInactivateTimer(sender: Sender(origin: self, localized: self), dogName: dogName, reminderUUID: reminder.uuid)
                     TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: dogName, reminderUUID: reminder.uuid, knownLogType: nil)
+                    Utils.checkForReview()
                 })
         
         var alertActionsForLog: [UIAlertAction] = []
@@ -357,6 +358,7 @@ class TimingManager{
                             (_)  in
                             //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                             TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: dogName, reminderUUID: reminder.uuid, knownLogType: pottyKnownType)
+                            Utils.checkForReview()
                         })
                 alertActionsForLog.append(alertActionLog)
             }
@@ -369,6 +371,7 @@ class TimingManager{
                         (_)  in
                         //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                         TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: dogName, reminderUUID: reminder.uuid, knownLogType: KnownLogType(rawValue: reminder.reminderType.rawValue)!)
+                        Utils.checkForReview()
                     })
             alertActionsForLog.append(alertActionLog)
         }
@@ -381,6 +384,7 @@ class TimingManager{
                     (alert: UIAlertAction!)  in
                     //Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                     TimingManager.willSnoozeTimer(sender: Sender(origin: self, localized: self), dogName: dogName, reminderUUID: reminder.uuid)
+                    Utils.checkForReview()
                 })
         
         for alertActionLog in alertActionsForLog {
@@ -393,9 +397,9 @@ class TimingManager{
         let dogManager = MainTabBarViewController.staticDogManager
         do {
             let dog = try dogManager.findDog(forName: dogName)
-            //NSLog("willShowTimer success in finding dog")
+            //AppDelegate.generalLogger.notice("willShowTimer success in finding dog")
             let reminder = try dog.dogReminders.findReminder(forUUID: reminder.uuid)
-            //NSLog("willShowTimer success in finding reminder")
+            //AppDelegate.generalLogger.notice("willShowTimer success in finding reminder")
             
             if reminder.isPresentationHandled == false {
                 reminder.isPresentationHandled = true
@@ -404,7 +408,7 @@ class TimingManager{
             
             AlertPresenter.shared.enqueueAlertForPresentation(alertController)
         } catch {
-            NSLog("willShowTimer failure in finding dog or reminder")
+            AppDelegate.generalLogger.error("willShowTimer failure in finding dog or reminder")
             ErrorProcessor.alertForError(message: "Something went wrong trying to present your reminder's alarm. If your reminder appears stuck, disable it then re-enable it to fix.")
         }
         

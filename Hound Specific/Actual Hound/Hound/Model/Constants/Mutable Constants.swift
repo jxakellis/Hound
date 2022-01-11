@@ -26,7 +26,7 @@ enum TimingConstant {
                 return
             }
             storedDefaultSnoozeLength = newDefaultSnoozeLength
-            NSLog("ENDPOINT Update defaultSnoozeLength")
+            AppDelegate.endpointLogger.notice("ENDPOINT Update defaultSnoozeLength")
         }
     }
     
@@ -41,7 +41,7 @@ enum TimingConstant {
                 return
             }
             storedIsPaused = newIsPaused
-            NSLog("ENDPOINT Update isPaused")
+            AppDelegate.endpointLogger.notice("ENDPOINT Update isPaused")
         }
     }
     
@@ -57,7 +57,7 @@ enum TimingConstant {
                 return
             }
             storedLastPause = newLastPause
-            NSLog("ENDPOINT Update lastPause")
+            AppDelegate.endpointLogger.notice("ENDPOINT Update lastPause")
         }
     }
     
@@ -73,7 +73,7 @@ enum TimingConstant {
                 return
             }
             storedLastUnpause = newLastUnpause
-            NSLog("ENDPOINT Update lastUnpause")
+            AppDelegate.endpointLogger.notice("ENDPOINT Update lastUnpause")
         }
     }
 }
@@ -89,7 +89,7 @@ enum NotificationConstant {
                 return
             }
             storedIsNotificationAuthorized = newIsNotificationAuthorized
-            NSLog("ENDPOINT Update isNotificationAuthorized")
+            AppDelegate.endpointLogger.notice("ENDPOINT Update isNotificationAuthorized")
         }
     }
     
@@ -104,7 +104,7 @@ enum NotificationConstant {
                 return
             }
             storedIsNotificationEnabled = newIsNotificationEnabled
-            NSLog("ENDPOINT Update isNotificationEnabled")
+            AppDelegate.endpointLogger.notice("ENDPOINT Update isNotificationEnabled")
         }
     }
     
@@ -119,7 +119,7 @@ enum NotificationConstant {
                 return
             }
             storedShouldLoudNotification = newShouldLoudNotification
-            NSLog("ENDPOINT Update shouldLoudNotification")
+            AppDelegate.endpointLogger.notice("ENDPOINT Update shouldLoudNotification")
         }
     }
     
@@ -134,7 +134,7 @@ enum NotificationConstant {
                 return
             }
             storedShouldShowTerminationAlert = newShouldShowTerminationAlert
-            NSLog("ENDPOINT Update shouldShowTerminationAlert")
+            AppDelegate.endpointLogger.notice("ENDPOINT Update shouldShowTerminationAlert")
         }
     }
     
@@ -148,7 +148,7 @@ enum NotificationConstant {
                 return
             }
             storedShouldShowReleaseNotes = newShouldShowReleaseNotes
-            NSLog("ENDPOINT Update shouldShowReleaseNotes")
+            AppDelegate.endpointLogger.notice("ENDPOINT Update shouldShowReleaseNotes")
         }
     }
     
@@ -163,7 +163,7 @@ enum NotificationConstant {
                 return
             }
             storedShouldFollowUp = newShouldFollowUp
-            NSLog("ENDPOINT Update storedShouldFollowUp")
+            AppDelegate.endpointLogger.notice("ENDPOINT Update storedShouldFollowUp")
         }
     }
     
@@ -178,7 +178,7 @@ enum NotificationConstant {
                 return
             }
             storedFollowUpDelay = newFollowUpDelay
-            NSLog("ENDPOINT Update followUpDelay")
+            AppDelegate.endpointLogger.notice("ENDPOINT Update followUpDelay")
         }
     }
     
@@ -192,7 +192,7 @@ enum NotificationConstant {
                 return
             }
             storedNotificationSound = newNotificationSound
-            NSLog("ENDPOINT Update notificationSound")
+            AppDelegate.endpointLogger.notice("ENDPOINT Update notificationSound")
         }
     }
 }
@@ -208,7 +208,7 @@ enum AppearanceConstant {
                 return
             }
             storedIsCompactView = newIsCompactView
-            NSLog("ENDPOINT Update isCompactView")
+            AppDelegate.endpointLogger.notice("ENDPOINT Update isCompactView")
         }
     }
     
@@ -222,7 +222,20 @@ enum AppearanceConstant {
                 return
             }
             storedDarkModeStyle = newDarkModeStyle
-            NSLog("ENDPOINT Update darkModeStyle")
+            AppDelegate.endpointLogger.notice("ENDPOINT Update darkModeStyle")
+        }
+    }
+    
+    static private var storeReviewRequestDates: [Date] = [Date()]
+    static var reviewRequestDates: [Date] {
+        get {
+            return storeReviewRequestDates
+        }
+        set (newReviewRequestDates) {
+            guard newReviewRequestDates != storeReviewRequestDates else {
+                return
+            }
+            storeReviewRequestDates = newReviewRequestDates
         }
     }
 }

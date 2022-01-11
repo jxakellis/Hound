@@ -104,12 +104,12 @@ class TraitManager: NSObject, NSCoding, NSCopying, TraitManagerProtocol {
         if logIndex != nil{
             //updating / changing existing log
             storedLogs[logIndex!] = newLog
-            NSLog("ENDPOINT Update Log")
+            AppDelegate.endpointLogger.notice("ENDPOINT Update Log")
         }
         else {
             //adding new log
             storedLogs.append(newLog)
-            NSLog("ENDPOINT Add Log")
+            AppDelegate.endpointLogger.notice("ENDPOINT Add Log")
         }
         
         /*
@@ -120,7 +120,7 @@ class TraitManager: NSObject, NSCoding, NSCopying, TraitManagerProtocol {
              }
          }
          storedLogs.append(newLog)
-         NSLog("ENDPOINT Add Log")
+         AppDelegate.endpointLogger.notice("ENDPOINT Add Log")
          */
         
     }
@@ -143,7 +143,7 @@ class TraitManager: NSObject, NSCoding, NSCopying, TraitManagerProtocol {
          
          else {
              storedLogs[newLogIndex!] = newLog
-             NSLog("ENDPOINT Update Log")
+             AppDelegate.endpointLogger.notice("ENDPOINT Update Log")
          }
      }
      */
@@ -166,13 +166,13 @@ class TraitManager: NSObject, NSCoding, NSCopying, TraitManagerProtocol {
         
         else {
             storedLogs.remove(at: logIndex ?? -1)
-            NSLog("ENDPOINT Remove Log (uuid)")
+            AppDelegate.endpointLogger.notice("ENDPOINT Remove Log (uuid)")
         }
     }
     
     func removeLog(forIndex index: Int){
         storedLogs.remove(at: index)
-        NSLog("ENDPOINT Remove Log (index)")
+        AppDelegate.endpointLogger.notice("ENDPOINT Remove Log (index)")
     }
     
     private var storedDogName: String = DogConstant.defaultName
