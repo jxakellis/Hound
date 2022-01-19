@@ -91,7 +91,7 @@ class PersistenceManager{
                 case 3193:
                     message = "--Fixed days of week menu bug\n--Further improved crashes, converting them into error messages instead. No crashes have been detected as of version 1.3.2"
                 case 3451:
-                    message = "--Revised unarchiving of stored data, hopefully reducing corruption, data resets, and crashes.\nAdded intermittent pop-up to review Hound"
+                    message = "--Revised unarchiving of stored data, hopefully reducing corruption, data resets, and crashes.\n--Added intermittent pop-up to review Hound.\n--Integrated event logs to provide insight into crashes reports."
                 default:
                     message = nil
                 }

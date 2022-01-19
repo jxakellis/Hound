@@ -1,10 +1,11 @@
-const { readFile, writeFile } = require('fs')
+const {createReadStream} = require('fs');
 
-readFile('./first.txt', 'utf-8', (err, result) => {
-    if (err) {
-        console.log(err)
-        return
-    }
-    console.log(result)
-    
+const stream = createReadStream('./big.txt', {highWaterMark: 90000, encoding: 'utf8'})
+
+stream.on('data', (chunk) => {
+    console.log(chunk)
+})
+
+stream.on('error', (err) => {
+    console.log(err)
 })
