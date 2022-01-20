@@ -10,9 +10,10 @@
 
 import UIKit
 
-class AlertPresenter: NSObject, NSCoding{
+class AlertPresenter: NSObject{
     
     //MARK: - NSCoding
+    /*
     required init?(coder aDecoder: NSCoder) {
         alertQueue = aDecoder.decodeObject(forKey: "alertQueue") as! Queue<GeneralUIAlertController>
         locked = aDecoder.decodeBool(forKey: "locked")
@@ -22,6 +23,7 @@ class AlertPresenter: NSObject, NSCoding{
         aCoder.encode(alertQueue, forKey: "alertQueue")
         aCoder.encode(locked, forKey: "locked")
     }
+     */
     
     //static var supportsSecureCoding: Bool = true
     

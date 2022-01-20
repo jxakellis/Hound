@@ -10,8 +10,9 @@
 
 import Foundation
 
-class Queue<Element>: NSObject, NSCoding {
+class Queue<Element>: NSObject {
     
+    /*
     required init?(coder aDecoder: NSCoder) {
         elements = aDecoder.decodeObject(forKey: "elements") as! [Element]
     }
@@ -19,6 +20,7 @@ class Queue<Element>: NSObject, NSCoding {
     func encode(with aCoder: NSCoder) {
         aCoder.encode(elements, forKey: "elements")
     }
+     */
     
     override init(){
         super.init()

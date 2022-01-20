@@ -64,9 +64,9 @@ class TraitManager: NSObject, NSCoding, NSCopying, TraitManagerProtocol {
     
     //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
-        icon = aDecoder.decodeObject(forKey: "icon") as! UIImage
-        storedDogName = aDecoder.decodeObject(forKey: "dogName") as! String
-        storedLogs = aDecoder.decodeObject(forKey: "logs") as! [KnownLog]
+        icon = aDecoder.decodeObject(forKey: "icon") as? UIImage ??  DogConstant.defaultIcon
+        storedDogName = aDecoder.decodeObject(forKey: "dogName") as? String ?? UUID().uuidString
+        storedLogs = aDecoder.decodeObject(forKey: "logs") as? [KnownLog] ?? []
     }
     
     func encode(with aCoder: NSCoder) {
@@ -81,10 +81,10 @@ class TraitManager: NSObject, NSCoding, NSCopying, TraitManagerProtocol {
         super.init()
     }
     
-    var icon: UIImage = UIImage.init(named: "pawFullResolutionWhite")!
+    var icon: UIImage = DogConstant.defaultIcon
     
     func resetIcon(){
-        icon = UIImage.init(named: "pawFullResolutionWhite")!
+        icon = DogConstant.defaultIcon
     }
     
     private var storedLogs: [KnownLog] = []

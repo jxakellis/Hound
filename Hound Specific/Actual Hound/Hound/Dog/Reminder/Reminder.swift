@@ -149,22 +149,21 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
     required init?(coder aDecoder: NSCoder) {
         super.init()
         
-        self.uuid = aDecoder.decodeObject(forKey: "uuid") as! String
-        self.reminderType = ScheduledLogType(rawValue: aDecoder.decodeObject(forKey: "reminderType") as? String ?? aDecoder.decodeObject(forKey: "requirement") as? String ?? aDecoder.decodeObject(forKey: "requirment") as? String ?? aDecoder.decodeObject(forKey: "requirementType") as? String ?? aDecoder.decodeObject(forKey: "requirmentType") as! String)!
+        self.uuid = aDecoder.decodeObject(forKey: "uuid") as? String ?? UUID().uuidString
+        self.reminderType = ScheduledLogType(rawValue: aDecoder.decodeObject(forKey: "reminderType") as? String ?? aDecoder.decodeObject(forKey: "requirement") as? String ?? aDecoder.decodeObject(forKey: "requirment") as? String ?? aDecoder.decodeObject(forKey: "requirementType") as? String ?? aDecoder.decodeObject(forKey: "requirmentType") as? String ?? ReminderConstant.defaultType.rawValue)!
         
         self.customTypeName = aDecoder.decodeObject(forKey: "customTypeName") as? String
         
-        self.countDownComponents = aDecoder.decodeObject(forKey: "countDownComponents") as! CountDownComponents
-        self.timeOfDayComponents = aDecoder.decodeObject(forKey: "timeOfDayComponents") as! TimeOfDayComponents
+        self.countDownComponents = aDecoder.decodeObject(forKey: "countDownComponents") as? CountDownComponents ?? CountDownComponents()
+        self.timeOfDayComponents = aDecoder.decodeObject(forKey: "timeOfDayComponents") as?  TimeOfDayComponents ?? TimeOfDayComponents()
         self.timeOfDayComponents.masterReminder = self
         self.oneTimeComponents = aDecoder.decodeObject(forKey: "oneTimeComponents") as? OneTimeComponents ?? OneTimeComponents()
         self.oneTimeComponents.masterReminder = self
-        self.snoozeComponents = aDecoder.decodeObject(forKey: "snoozeComponents") as! SnoozeComponents
+        self.snoozeComponents = aDecoder.decodeObject(forKey: "snoozeComponents") as? SnoozeComponents ?? SnoozeComponents()
         
-        self.storedTimingStyle = ReminderStyle(rawValue: aDecoder.decodeObject(forKey: "timingStyle") as! String)!
+        self.storedTimingStyle = ReminderStyle(rawValue: aDecoder.decodeObject(forKey: "timingStyle") as? String ?? ReminderStyle.countDown.rawValue)!
         
-        //self.isPresentationHandled = aDecoder.decodeBool(forKey: "isPresentationHandled")
-        self.storedExecutionBasis = aDecoder.decodeObject(forKey: "executionBasis") as! Date
+        self.storedExecutionBasis = aDecoder.decodeObject(forKey: "executionBasis") as? Date ?? Date()
         
         self.isEnabled = aDecoder.decodeBool(forKey: "isEnabled")
     }

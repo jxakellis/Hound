@@ -227,7 +227,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
     }
     
     required init?(coder aDecoder: NSCoder) {
-        self.storedTimeOfDayComponent = aDecoder.decodeObject(forKey: "timeOfDayComponent") as! DateComponents
+        self.storedTimeOfDayComponent = aDecoder.decodeObject(forKey: "timeOfDayComponent") as? DateComponents ?? DateComponents()
         self.storedIsSkipping = aDecoder.decodeBool(forKey: "isSkipping")
         self.isSkippingLogDate = aDecoder.decodeObject(forKey: "isSkippingLogDate") as? Date
         self.storedWeekdays = aDecoder.decodeObject(forKey: "weekdays") as? [Int]
@@ -621,8 +621,8 @@ class OneTimeComponents: Component, NSCoding, NSCopying, OneTimeComponentsProtoc
     }
     
     required init?(coder aDecoder: NSCoder) {
-        self.storedDateComponents = aDecoder.decodeObject(forKey: "dateComponents") as! DateComponents
-    }
+        self.storedDateComponents = aDecoder.decodeObject(forKey: "dateComponents") as? DateComponents ?? DateComponents()
+     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(storedDateComponents, forKey: "dateComponents")

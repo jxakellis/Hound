@@ -30,8 +30,6 @@ protocol ReminderManagerProtocol {
     ///Invokes addReminder(newReminder: Reminder) for newReminder.count times
     mutating func addReminder(newReminders: [Reminder]) throws
     
-    ///Removes current reminds and then
-    //mutating func setReminders(newReminders: [Reminder])
     ///removes trys to find a reminder whos name (capitals don't matter) matches reminder name given, if found removes reminder, if not found throws error
     mutating func removeReminder(forUUID uuid: String) throws
     mutating func removeReminder(forIndex index: Int)
@@ -79,7 +77,7 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
     
     //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
-        storedReminders = aDecoder.decodeObject(forKey: "reminders") as? [Reminder] ?? aDecoder.decodeObject(forKey: "requirements") as? [Reminder] ?? aDecoder.decodeObject(forKey: "requirments") as! [Reminder]
+        storedReminders = aDecoder.decodeObject(forKey: "reminders") as? [Reminder] ?? aDecoder.decodeObject(forKey: "requirements") as? [Reminder] ?? aDecoder.decodeObject(forKey: "requirments") as? [Reminder] ?? []
     }
     
     func encode(with aCoder: NSCoder) {
@@ -123,34 +121,6 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
     
     func addReminder(newReminder: Reminder) throws {
         
-        /*
-        var reminderAlreadyPresent = false
-        
-        reminders.forEach { (reminder) in
-            if (reminder.uuid == newReminder.uuid){
-                reminderAlreadyPresent = true
-            }
-        }
-        
-        
-         if reminderAlreadyPresent == true{
-             //instead of crashing, replace the reminder
-             //throw ReminderManagerError.reminderAlreadyPresent
-             
-             //uuid is known valid due to above loop
-             try! removeReminder(forUUID: newReminder.uuid)
-             appendReminder(newReminder: newReminder)
-             AppDelegate.endpointLogger.notice("ENDPOINT Add Reminder")
-         }
-         else {
-             //copying needed for master dog to work, is just newReq.masterDog = self.masterDog it for some reason does not work
-             
-             appendReminder(newReminder: newReminder)
-             AppDelegate.endpointLogger.notice("ENDPOINT Add Reminder")
-         }
-         */
-        
-        
         //Index of the reminder, nil if it isn't present and not nil if it already exists. A non nil value means we replace the reminder and a nil value means we simply add
         var reminderIndex: Int? = nil
         for i in 0..<reminders.count{
@@ -181,10 +151,6 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
             try addReminder(newReminder: reminder)
         }
         sortReminders()
-    }
-    
-    func setReminder(newReminders: [Reminder]) {
-        
     }
     
     func removeReminder(forUUID uuid: String) throws{
@@ -228,10 +194,6 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
     
     ///adds default set of reminders
     func addDefaultReminders(){
-        //appendReminder(newReminder: ReminderConstant.defaultReminderOne)
-        //appendReminder(newReminder: ReminderConstant.defaultReminderTwo)
-        //appendReminder(newReminder: ReminderConstant.defaultReminderThree)
-        //appendReminder(newReminder: ReminderConstant.defaultReminderFour)
         try! addReminder(newReminder: ReminderConstant.defaultReminderOne)
         try! addReminder(newReminder: ReminderConstant.defaultReminderTwo)
         try! addReminder(newReminder: ReminderConstant.defaultReminderThree)

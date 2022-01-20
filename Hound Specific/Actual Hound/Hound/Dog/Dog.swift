@@ -27,9 +27,9 @@ class Dog: NSObject, NSCoding, NSCopying {
     //MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         super.init()
-        dogTraits = aDecoder.decodeObject(forKey: "dogTraits") as! TraitManager
+        dogTraits = aDecoder.decodeObject(forKey: "dogTraits") as? TraitManager ?? TraitManager()
         //for build versions <= 1513
-        dogReminders = aDecoder.decodeObject(forKey: "dogReminders") as? ReminderManager ?? aDecoder.decodeObject(forKey: "dogRequirements") as? ReminderManager ?? aDecoder.decodeObject(forKey: "dogRequirments") as? ReminderManager
+        dogReminders = aDecoder.decodeObject(forKey: "dogReminders") as? ReminderManager ?? aDecoder.decodeObject(forKey: "dogRequirements") as? ReminderManager ?? aDecoder.decodeObject(forKey: "dogRequirments") as? ReminderManager ?? ReminderManager(masterDog: self)
         dogReminders.masterDog = self
     }
     
