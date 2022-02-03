@@ -1,135 +1,86 @@
-const database = require('../databaseConnection')
+const { queryPromise } = require('../middleware/queryPromise')
 
-//known: userId and dogId have been validated
+/*
+Known:
+- userId formatted correctly and request has sufficient permissions to use
+- (if appliciable to controller) dogId formatted correctly and request has sufficient permissions to use
+*/
 
-const getDogs = (req, res) => {
 
-    const userId = req.params.userId
+const getDogs = async (req, res) => {
 
-    database.query('SELECT dogs.dogId, dogs.icon, dogs.name FROM dogs WHERE dogs.userId = ?',
-        [userId], (err, result, fields) => {
-            if (err) {
-                //error when trying to do query to database
-                res.status(400).json({ message: 'Invalid Syntax' })
-            }
-            else if (result.length === 0) {
-                //empty array
-                res.status(204).json(result)
-            }
-            else {
-                //array has items, meaning there were dogs found, successful!
-                res.status(200).json(result)
-            }
+    const userId = Number(req.params.userId)
 
-        })
-}
+    try {
+        const result = await queryPromise('SELECT dogs.dogId, dogs.icon, dogs.name FROM dogs WHERE dogs.userId = ?',
+        [userId])
 
-const createDog = (req, res) => {
+        if (result.length === 0) {
+            //successful but empty array, not dogs to return
+            return res.status(204).json(result)
+        }
+        else {
+            //array has items, meaning there were dogs found, successful!
+            return res.status(200).json(result)
+        }
 
-    //check that dogName is defined
-    if (!req.body.dogName) {
-        //dogName is undefined
-        return res.status(400).json({ message: 'Invalid Body'})
+    } catch (error) {
+        //error when trying to do query to database
+        return res.status(400).json({ message: 'Invalid Parameters; Database Query Failed' })
     }
+} 
 
-    const userId = req.params.userId
+const createDog = async (req, res) => {
 
-    //allow a user to have multiple dogs by the same name 
-    database.query('INSERT INTO dogs(userId, icon, name) VALUES (?,?,?)',
-                        [Number(req.params.userId), undefined, req.body.dogName],
-                        (err, result, fields) => {
-                            if (err) {
-                                //error when trying to do query to database
-                                return res.status(400).json({ message: 'Invalid Syntax'})
-                            }
-                            else {
-                                //success
-                                return res.status(200).json()
-                            }
-                        })
+    //dogName format validated with middleware
 
-    //dont allow user to have more that one dog of a specific name (IF CHANGED BACK TO THIS SETUP THEN updateDog MUST BE MODIFIED TO CHECK FOR DUPLICATES AS WELL)
-
-    /* //query to check that dog name is not a repeat, after which it will properly insert the vlaues
-    database.query('SELECT dogs.name FROM dogs WHERE dogs.userId = ?',
-        [userId],
-        (err, result, fields) => {
-            if (err) {
-                //error when trying to do query to database to check for repeat dogName
-                return res.status(400).json({ message: 'Invalid Syntax' })
-            }
-            else {
-                if (result.some(item => item.name === req.body.dogName)) {
-                    //the database already has a dog by that name for that user so dog creation is invalid
-                    return res.status(400).json({ message: 'Invalid Body' })
-                }
-                else {
-                    //no dog by that name exists for the given user meaning new dog name is unique
-                    database.query('INSERT INTO dogs(userId, icon, name) VALUES (?,?,?)',
-                        [Number(req.params.userId), undefined, req.body.dogName],
-                        (err, result, fields) => {
-                            if (err) {
-                                //error when trying to do query to database
-                                return res.status(400).json({ message: 'Invalid Syntax' })
-                            }
-                            else {
-                                //success
-                                return res.status(200).json()
-                            }
-                        })
-                }
-            }
-
-        }) */
-
-}
-
-const updateDog = (req, res) => {
-    //could be updating dogName or icon
-
-    const userId = req.params.userId
-    const dogId = req.params.dogId
     const dogName = req.body.dogName
 
-    //finds what dogId (s) the user has linked to their userId
+    const userId = Number(req.params.userId)
 
-    //turn into promises
-
-    database.query('SELECT dogs.dogId FROM dogs WHERE dogs.userId = ?',
-        [userId], (err, result, fields) => {
-            if (err) {
-                //error when trying to do query to database
-                return res.status(400).json({ message: 'Invalid Syntax'})
-            }
-            else if (result.some(item => item.dogId === req.params.dogId)) {
-                //the user is permitted to access their provided dogId (one of the results of dogId (s) attached to their userId matched the provided dogId)
-                
-                //dogName defined
-                if (dogName){
-                    database.query('UPDATE dogs SET dogName = ? WHERE dogId = ?',
-                    [dogName,dogId],
-                    (err, result, fields) => {
-                        if (err){
-                            //DOESNT WORK
-                            return res.status(400).json({ message: 'Invalid Dog Name'})
-                        }
-                    })
-                }
-                //icon defined
-                if (icon){
-                    //implement later
-                }
-            }
-            else {
-                //the dogId does not exist and/or the user does not have access to that dogId
-                return res.status(400).json({ message: 'Invalid Syntax'})
-            }
-
-        })
+    //allow a user to have multiple dogs by the same name 
+    return queryPromise( 'INSERT INTO dogs(userId, icon, name) VALUES (?,?,?)',
+    [userId, undefined, dogName])
+    .then((result) => res.status(200).json({message: "Success"}))
+    .catch((err) => res.status(400).json({ message: 'Invalid Body or Parameters; Database Query Failed' }))
 }
 
-const deleteDog = (req, res) => {
-    res.status(200).json()
+const updateDog = async (req, res) => {
+
+    //could be updating dogName or icon
+
+    const userId = Number(req.params.userId)
+    const dogId = Number(req.params.dogId)
+    const dogName = req.body.dogName
+    const icon = req.body.icon
+
+    //if dogName and icon are both undefined, then there is nothing to update
+    if (!dogName && !icon) {
+        return res.status(400).json({ message: 'Invalid Body; No dogName Or icon Provided' })
+    }
+
+    try {
+        if (dogName) {
+            //updates the dogName for the dogId provided, overship of this dog for the user have been verifiied
+            queryPromise('UPDATE dogs SET name = ? WHERE dogId = ?',[dogName,dogId])
+          }
+        if (icon) {
+            //implement later
+        }
+        return res.status(200).json({message: "Success"})
+    } catch (error) {
+        return res.status(400).json({ message: 'Invalid Body or Parameters; Database Query Failed' })
+    }
+}
+
+const deleteDog = async (req, res) => {
+
+    const userId = Number(req.params.userId)
+    const dogId = Number(req.params.dogId)
+
+    return queryPromise('DELETE FROM dogs WHERE dogId = ?', [dogId])
+            .then((result)=>res.status(200).json({message: "Success"}))
+            .catch((err)=>res.status(400).json({ message: 'Invalid Parameters; Database Query Failed' }))
 }
 
 module.exports = { getDogs, createDog, updateDog, deleteDog }
