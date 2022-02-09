@@ -33,22 +33,15 @@ app.use((req, res, next) => {
 
 /*
 /api/v1/login/:userId (OPT)
-/api/v1/configuration/:userId
-/api/v1/dogs/:userId/:dogId (OPT)
-/api/v1/dogs/:userId/:dogId/logs/:logId (OPT)
-/api/v1/dogs/:userId/:dogId/reminders/:reminderId (OPT)
-
-To use path params from base path in nested router
-https://stackoverflow.com/questions/28612822/node-js-get-url-params-from-original-base-url
-router.get('/', function(req, res, next) {
-  req.params.xyz = req.xyz;
-});
-
+/api/v1/:userId/configuration
+/api/v1/:userId/dogs/:dogId (OPT)
+/api/v1/:userId/dogs/:dogId/logs/:logId (OPT)
+/api/v1/:userId/dogs/:dogId/reminders/:reminderId (OPT)
 */
 
 
 app.use('/api/v1/login', loginRouter)
-app.use('/api/v1/dogs', dogsRouter)
+app.use('/api/v1/:userId/dogs', dogsRouter)
 
 app.listen(5000, () => {
     console.log(`Listening on port 5000`)

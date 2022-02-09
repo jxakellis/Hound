@@ -2,32 +2,55 @@ const express = require('express')
 const router = express.Router({mergeParams: true})
 
 const {getDogs, createDog, updateDog, deleteDog} = require('../controllers/dogs') 
-const {validateUserId, validateDogId, validateDogNameFormat} = require('../middleware/validate')
+const {validateUserId, validateDogId} = require('../middleware/validateId')
 
 //validation that params are formatted correctly and have adequate permissions
-router.use('/:userId',validateUserId)
-router.use('/:userId/:dogId', validateDogId)
+router.use('/',validateUserId)
+router.use('/:dogId', validateDogId)
 
-//logs
+
+
+//logs: /api/v1/dog/:userId/:dogId/logs
 const logsRouter = require('./logs')
-router.use('/:userId/:dogId/logs', logsRouter)
+router.use('/:dogId/logs', logsRouter)
+
+//reminders: /api/v1/dog/:userId/:dogId/reminders
+const reminderRouter = require('./reminders')
+router.use('/:dogId/reminders', reminderRouter)
 
 
-// /api/v1/dog/...
+// BASE PATH /api/v1/dog/:userId
 
 //gets all dogs
-router.get('/:userId',getDogs)
+router.get('/',getDogs)
+//no body
+
+
 //gets specific dog
-router.get('/:userId/:dogId',getDogs)
+router.get('/:dogId',getDogs)
+//no body
 
-router.post('/:userId',validateDogNameFormat,createDog)
-//{"dogName": "nameOfNewDog", "icon": iconOfNewDog}
-//dogName required, icon optional
 
-router.put('/:userId/:dogId',updateDog)
-//{"dogName": "foo", "icon": foo}
-//dogName optional, icon option, but AT LEAST ONE required
+//creates dog
+router.post('/',createDog)
+/* BODY:
+{"dogName": "requiredString", 
+"icon": optionalImage}
+*/
 
-router.delete('/:userId/:dogId',deleteDog)
+
+
+//updates dog
+router.put('/:dogId',updateDog)
+/* BODY:
+{"dogName": "optionalString", 
+"icon": optionalImage}
+NOTE: At least one item to update, from all the optionals, must be provided.
+*/
+
+
+//deletes dog
+router.delete('/:dogId',deleteDog)
+//no body
 
 module.exports = router

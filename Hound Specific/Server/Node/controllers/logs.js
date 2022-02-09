@@ -1,4 +1,5 @@
 const { queryPromise } = require('../middleware/queryPromise')
+const { formatDate } = require('../middleware/validateFormat')
 
 /*
 Known:
@@ -42,7 +43,7 @@ const getLogs = async (req, res) => {
 
 const createLog = async (req, res) => {
     const dogId = Number(req.params.dogId)
-    const logDate = req.body.date
+    const logDate = formatDate(req.body.date)
     const note = req.body.note
     const logType = req.body.logType
     const customTypeName = req.body.customTypeName
@@ -50,25 +51,35 @@ const createLog = async (req, res) => {
     if (!logDate || !logType){
         return res.status(400).json({ message: 'Invalid Body; Missing date or logType' })
     }
+    //see if logType is being updated to custom and tell the user to provide customTypeName if so.
+    else if (logType === "Custom" && !customTypeName){
+        return res.status(400).json({ message: 'Invalid Body; No customTypeName Provided for "Custom" logType' })
+    
+    }
 
     return queryPromise('INSERT INTO dogLogs(dogId, date, note, logType, customTypeName) VALUES (?, ?, ?, ?, ?)',
     [dogId, logDate, note, logType, customTypeName])
     .then((result) => res.status(200).json({message: "Success"}))
-    .catch((err) => res.status(400).json({ message: 'Invalid Parameters; Database Query Failed; Check Date Format' }))
+    .catch((err) => res.status(400).json({ message: 'Invalid Parameters; Database Query Failed; Check date Or logType Format' }))
 
 }
 
 const updateLog = async (req, res) => {
 
     const logId = Number(req.params.logId)
-    const logDate = req.body.date
+    const logDate = formatDate(req.body.date)
     const note = req.body.note
     const logType = req.body.logType
     const customTypeName = req.body.customTypeName
 
-    //if dogName and icon are both undefined, then there is nothing to update
+    //if all undefined, then there is nothing to update
     if (!logDate && !note && !logType && !customTypeName) {
         return res.status(400).json({ message: 'Invalid Body; No date Or note Or logType Or customTypeName Provided' })
+    }
+    //proper stuff is defined, then check to see customTypeName provided
+    else if (logType === "Custom" && !customTypeName){
+        return res.status(400).json({ message: 'Invalid Body; No customTypeName Provided for "Custom" logType' })
+    
     }
 
     try {
@@ -86,16 +97,16 @@ const updateLog = async (req, res) => {
         }
         return res.status(200).json({message: "Success"})
     } catch (error) {
-        return res.status(400).json({ message: 'Invalid Body or Parameters; Database Query Failed' })
+        return res.status(400).json({ message: 'Invalid Body or Parameters; Database Query Failed; Check date Or logType Format' })
     }
 }
 
+
+const delLog = require('../middleware/delete').deleteLog
 const deleteLog = async (req, res) => {
-    const logId = Number(req.params.dogId)
+    const logId = Number(req.params.logId)
 
-    const {deleteLog} = require('../middleware/delete')
-
-    return deleteLog(logId)
+    return delLog(logId)
         .then((result) => res.status(200).json({ message: "Success" }))
         .catch((err) => res.status(400).json({ message: 'Invalid Syntax; Database Query Failed' }))
 }

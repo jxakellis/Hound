@@ -1,6 +1,6 @@
 const database = require('../databaseConnection')
 const { queryPromise } = require('../middleware/queryPromise')
-const { isEmailValid } = require('../middleware/validate')
+const { isEmailValid } = require('../middleware/validateFormat')
 
 /*
 Known:

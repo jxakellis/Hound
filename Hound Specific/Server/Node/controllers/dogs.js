@@ -43,9 +43,7 @@ const getDogs = async (req, res) => {
 
 const createDog = async (req, res) => {
 
-    //dogName format validated with middleware
-
-    const dogName = req.body.dogName
+     const dogName = req.body.dogName
 
     const userId = Number(req.params.userId)
 

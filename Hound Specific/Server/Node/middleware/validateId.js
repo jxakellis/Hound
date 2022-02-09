@@ -1,6 +1,7 @@
 const database = require('../databaseConnection')
 const { queryPromise } = require('./queryPromise')
 
+//checks to see that userId is defined, is a number, and exists in the database. TO DO: add authentication to use userId
 const validateUserId = async (req, res, next) => {
 
     //later on use a token here to validate that they have permission to use the userId
@@ -33,6 +34,8 @@ const validateUserId = async (req, res, next) => {
     }
 }
 
+//checks to see that dogId is defined and is a number. and exists in the database. 
+//checks to see if dogId exists in the database for the validated userId provided, if it does then the user owns that dog
 const validateDogId = async (req, res, next) => {
 
     //userId should be validated already
@@ -68,9 +71,10 @@ const validateDogId = async (req, res, next) => {
     }
 }
 
+//checks to see that logId is defined and is a number. and exists in the database. 
+//checks to see if logId exists in the database for the validated dogId provided, if it does then the dog owns that log
 const validateLogId = async (req, res, next) => {
 
-    //userId should be validated already
     //dogId should be validated already
 
     const dogId = Number(req.params.dogId)
@@ -105,50 +109,40 @@ const validateLogId = async (req, res, next) => {
     }
 }
 
-const validateDogNameFormat = async (req, res, next) => {
-    const dogName = req.body.dogName
+//checks to see that reminderId is defined and is a number. and exists in the database. 
+//checks to see if reminderId exists in the database for the validated dogId provided, if it does then the dog owns that reminder
+const validateReminderId = async (req, res, next) => {
+    //dogId should be validated already
 
-    if (dogName) {
-        //if dogName is defined so can continue
-        next()
+    const dogId = Number(req.params.dogId)
+    const reminderId = Number(req.params.reminderId)
+
+    //if reminderId is defined and it is a number then continue
+    if (reminderId) {
+        //query database to find out if user has permission for that reminderId
+        try {
+            //finds what reminderId (s) the user has linked to their dogId
+            const dogReminderIds = await queryPromise('SELECT reminderId FROM dogReminders WHERE dogId = ?', [dogId])
+
+            // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
+
+             if (dogReminderIds.some(item => item.reminderId === reminderId)) {
+                 //the reminderId exists and it is linked to the dogId, valid!
+                next()
+            }
+            else {
+                //the reminderId does not exist and/or the dog does not have access to that reminderId
+                return res.status(404).json({ message: 'Couldn\'t Find Resource; No Reminders Found or Invalid Permissions' })
+            }
+        } catch (err) {
+            return res.status(400).json({ message: 'Invalid Parameters; Database Query Failed' })
+        }
+       
     }
     else {
-        //dogName was not provided
-        return res.status(400).json({ message: 'Invalid Body; No dogName Provided' })
+        //reminderId was not provided or is invalid
+        return res.status(400).json({ message: 'Invalid Parameters; reminderId Invalid' })
     }
 }
 
-
-
-
-const isEmailValid =  (email) => {
-
-    var emailRegex = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
-
-    if (!email){
-        return false
-    }
-    if(email.length>254){
-        return false
-    }
-        
-
-    var valid = emailRegex.test(email)
-    if(!valid){
-        return false
-    }
-
-    // Further checking of some things regex can't handle
-    var parts = email.split("@")
-    if(parts[0].length>64){
-        return false
-    }
-    var domainParts = parts[1].split(".")
-    if(domainParts.some(function(part) { return part.length>63 })){
-        return false
-    }
-    
-    return true
-}
-
-module.exports = { validateUserId, validateDogId, validateDogNameFormat, validateLogId, isEmailValid }
+module.exports = { validateUserId, validateDogId, validateLogId, validateReminderId }
