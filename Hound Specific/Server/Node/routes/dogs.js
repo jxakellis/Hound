@@ -1,11 +1,11 @@
 const express = require('express')
-const router = express.Router({mergeParams: true})
+const router = express.Router({ mergeParams: true })
 
-const {getDogs, createDog, updateDog, deleteDog} = require('../controllers/dogs') 
-const {validateUserId, validateDogId} = require('../middleware/validateId')
+const { getDogs, createDog, updateDog, deleteDog } = require('../controllers/dogs')
+const { validateUserId, validateDogId } = require('../middleware/validateId')
 
 //validation that params are formatted correctly and have adequate permissions
-router.use('/',validateUserId)
+router.use('/', validateUserId)
 router.use('/:dogId', validateDogId)
 
 
@@ -22,17 +22,17 @@ router.use('/:dogId/reminders', reminderRouter)
 // BASE PATH /api/v1/dog/:userId
 
 //gets all dogs
-router.get('/',getDogs)
+router.get('/', getDogs)
 //no body
 
 
 //gets specific dog
-router.get('/:dogId',getDogs)
+router.get('/:dogId', getDogs)
 //no body
 
 
 //creates dog
-router.post('/',createDog)
+router.post('/', createDog)
 /* BODY:
 {"dogName": "requiredString", 
 "icon": optionalImage}
@@ -41,7 +41,7 @@ router.post('/',createDog)
 
 
 //updates dog
-router.put('/:dogId',updateDog)
+router.put('/:dogId', updateDog)
 /* BODY:
 {"dogName": "optionalString", 
 "icon": optionalImage}
@@ -50,7 +50,7 @@ NOTE: At least one item to update, from all the optionals, must be provided.
 
 
 //deletes dog
-router.delete('/:dogId',deleteDog)
+router.delete('/:dogId', deleteDog)
 //no body
 
 module.exports = router

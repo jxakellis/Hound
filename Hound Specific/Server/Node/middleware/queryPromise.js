@@ -11,12 +11,12 @@ const queryPromise = (sqlString, sqlVariables = undefined) => {
             reject('Undefined sqlString for queryPromise')
         }
         //no variables for sql statement provided; this is acceptable
-        else if (!sqlVariables){
+        else if (!sqlVariables) {
             database.query(sqlString,
-                (err, result, fields) => {
-                    if (err) {
+                (error, result, fields) => {
+                    if (error) {
                         //error when trying to do query to database
-                        reject(err)
+                        reject(error)
                     }
                     else {
                         //database queried successfully
@@ -33,10 +33,10 @@ const queryPromise = (sqlString, sqlVariables = undefined) => {
             else {
                 database.query(sqlString,
                     sqlVariables,
-                    (err, result, fields) => {
-                        if (err) {
+                    (error, result, fields) => {
+                        if (error) {
                             //error when trying to do query to database
-                            reject(err)
+                            reject(error)
                         }
                         else {
                             //database queried successfully

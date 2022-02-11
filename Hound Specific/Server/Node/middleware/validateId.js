@@ -23,7 +23,7 @@ const validateUserId = async (req, res, next) => {
                 //userId does not exist in the table
                 return res.status(400).json({ message: 'Invalid Parameters; userId Not Found' })
             }
-        } catch (err) {
+        } catch (error) {
             //couldn't query database to find userId
             return res.status(400).json({ message: 'Invalid Parameters; userId Invalid' })
         }
@@ -52,18 +52,18 @@ const validateDogId = async (req, res, next) => {
 
             // search query result to find if the dogIds linked to the userId match the dogId provided, match means the user owns that dogId
 
-             if (userDogIds.some(item => item.dogId === dogId)) {
-                 //the dogId exists and it is linked to the userId, valid!
+            if (userDogIds.some(item => item.dogId === dogId)) {
+                //the dogId exists and it is linked to the userId, valid!
                 next()
             }
             else {
                 //the dogId does not exist and/or the user does not have access to that dogId
                 return res.status(404).json({ message: 'Couldn\'t Find Resource; No Dogs Found or Invalid Permissions' })
             }
-        } catch (err) {
+        } catch (error) {
             return res.status(400).json({ message: 'Invalid Parameters; Database Query Failed' })
         }
-       
+
     }
     else {
         //dogId was not provided or is invalid
@@ -90,18 +90,18 @@ const validateLogId = async (req, res, next) => {
 
             // search query result to find if the logIds linked to the dogIds match the logId provided, match means the user owns that logId
 
-             if (dogLogIds.some(item => item.logId === logId)) {
-                 //the logId exists and it is linked to the dogId, valid!
+            if (dogLogIds.some(item => item.logId === logId)) {
+                //the logId exists and it is linked to the dogId, valid!
                 next()
             }
             else {
                 //the logId does not exist and/or the dog does not have access to that logId
                 return res.status(404).json({ message: 'Couldn\'t Find Resource; No Logs Found or Invalid Permissions' })
             }
-        } catch (err) {
+        } catch (error) {
             return res.status(400).json({ message: 'Invalid Parameters; Database Query Failed' })
         }
-       
+
     }
     else {
         //logId was not provided or is invalid
@@ -126,18 +126,18 @@ const validateReminderId = async (req, res, next) => {
 
             // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 
-             if (dogReminderIds.some(item => item.reminderId === reminderId)) {
-                 //the reminderId exists and it is linked to the dogId, valid!
+            if (dogReminderIds.some(item => item.reminderId === reminderId)) {
+                //the reminderId exists and it is linked to the dogId, valid!
                 next()
             }
             else {
                 //the reminderId does not exist and/or the dog does not have access to that reminderId
                 return res.status(404).json({ message: 'Couldn\'t Find Resource; No Reminders Found or Invalid Permissions' })
             }
-        } catch (err) {
+        } catch (error) {
             return res.status(400).json({ message: 'Invalid Parameters; Database Query Failed' })
         }
-       
+
     }
     else {
         //reminderId was not provided or is invalid

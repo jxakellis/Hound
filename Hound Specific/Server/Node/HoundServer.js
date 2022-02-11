@@ -8,9 +8,9 @@ const dogsRouter = require('./routes/dogs')
 
 // parse form data
 app.use((req, res, next) => {
-    bodyParser.urlencoded({ extended: true })(req, res, err => {
-        if (err) {
-            return res.status(400).json({message:"Invalid Body; Unable To Parse"})
+    bodyParser.urlencoded({ extended: true })(req, res, (error) => {
+        if (error) {
+            return res.status(400).json({ message: "Invalid Body; Unable To Parse", error: error })
         }
 
         next()
@@ -20,9 +20,9 @@ app.use(express.urlencoded({ extended: false }))
 
 // parse json
 app.use((req, res, next) => {
-    bodyParser.json()(req, res, err => {
-        if (err) {
-            return res.status(400).json({message:"Invalid Body; Unable To Parse"})
+    bodyParser.json()(req, res, (error) => {
+        if (error) {
+            return res.status(400).json({ message: "Invalid Body; Unable To Parse", error: error })
         }
 
         next()

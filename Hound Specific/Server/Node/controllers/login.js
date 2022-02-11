@@ -24,11 +24,11 @@ const getLogin = async (req, res) => {
         return queryPromise('SELECT * FROM users WHERE userId = ?',
             [userId])
             .then((result) => res.status(200).json(result))
-            .catch((err) => res.status(400).json({ message: 'Invalid Parameters; userId Not Found' }))
+            .catch((error) => res.status(400).json({ message: 'Invalid Parameters; userId Not Found' }))
     }
     //email method of finding corresponding user(s)
     else {
-        
+
         if (isEmailValid(email) === false) {
             return res.status(400).json({ message: 'Invalid Body; Invalid email' })
         }
@@ -50,7 +50,7 @@ const getLogin = async (req, res) => {
                 return res.status(404).json({ message: 'Invalid Body; No User Found' })
             }
 
-        } catch (err) {
+        } catch (error) {
             //query to database failed
             return res.status(400).json({ message: 'Invalid Body; Database Query Failed' })
         }
@@ -83,9 +83,9 @@ const createLogin = async (req, res) => {
         queryPromise('INSERT INTO users(userFirstName, userLastName, userEmail) VALUES (?,?,?)',
             [firstName, lastName, email])
             //everything worked
-            .then((result) => res.status(200).json({ message: "Success" }))
+            .then((result) => res.status(200).json({ message: "Success", userId: result.insertId }))
             //something went wrong; the only reasonable option is that the email is a duplicate (possible others like varchar limit but unlikely) 
-            .catch((err) => res.status(400).json({ message: 'Invalid Body; Database Query Failed; Possible Duplicate Email' }))
+            .catch((error) => res.status(400).json({ message: 'Invalid Body; Database Query Failed; Possible Duplicate Email' }))
     }
 }
 
@@ -103,7 +103,7 @@ const updateLogin = async (req, res) => {
     else {
         try {
             if (email) {
-                
+
                 if (isEmailValid(email) === false) {
                     return res.status(400).json({ message: 'Invalid Body; Invalid email' })
                 }
@@ -122,7 +122,7 @@ const updateLogin = async (req, res) => {
                     [lastName, userId])
             }
             return res.status(200).json({ message: "Success" })
-        } catch (err) {
+        } catch (error) {
             return res.status(400).json({ message: 'Invalid Body; Database Query Failed; Possible Duplicate Email' })
         }
     }
@@ -134,11 +134,11 @@ const deleteLogin = async (req, res) => {
 
     const userId = Number(req.params.userId)
 
-    const {deleteUser} = require('../middleware/delete')
+    const { deleteUser } = require('../middleware/delete')
 
     return deleteUser(userId)
         .then((result) => res.status(200).json({ message: "Success" }))
-        .catch((err) => res.status(400).json({ message: 'Invalid Syntax; Database Query Failed' }))
+        .catch((error) => res.status(400).json({ message: 'Invalid Syntax; Database Query Failed' }))
 }
 
 

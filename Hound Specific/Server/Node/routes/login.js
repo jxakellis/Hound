@@ -1,12 +1,12 @@
 const express = require('express')
 const router = express.Router()
 
-const {getLogin, createLogin, updateLogin, deleteLogin} = require('../controllers/login') 
+const { getLogin, createLogin, updateLogin, deleteLogin } = require('../controllers/login')
 
-const {validateUserId} = require('../middleware/validateId')
+const { validateUserId } = require('../middleware/validateId')
 
 //validation that params are formatted correctly and have adequate permissions
-router.use('/:userId',validateUserId)
+router.use('/:userId', validateUserId)
 
 
 
@@ -19,12 +19,12 @@ router.get('/', getLogin)
 */
 
 //login user with userId and password then return information from users table
-router.get('/:userId',getLogin)
+router.get('/:userId', getLogin)
 // no body
 
 
 //creates login
-router.post('/',createLogin)
+router.post('/', createLogin)
 /* BODY:
 {"email":"requiredEmail",
 "firstName":"requiredString",
@@ -32,7 +32,7 @@ router.post('/',createLogin)
 */
 
 //updates login
-router.put('/:userId',updateLogin)
+router.put('/:userId', updateLogin)
 /* BODY:
 {"email":"optionalEmail",
 "firstName":"optionalString",
@@ -41,7 +41,7 @@ NOTE: At least one item to update, from all the optionals, must be provided.
 */
 
 //deletes login
-router.delete('/:userId',deleteLogin)
+router.delete('/:userId', deleteLogin)
 // no body
 
 module.exports = router

@@ -1,8 +1,8 @@
 const express = require('express')
-const router = express.Router({mergeParams: true})
+const router = express.Router({ mergeParams: true })
 
-const {getLogs, createLog, updateLog, deleteLog} = require('../controllers/logs') 
-const {validateLogId} = require('../middleware/validateId')
+const { getLogs, createLog, updateLog, deleteLog } = require('../controllers/logs')
+const { validateLogId } = require('../middleware/validateId')
 
 
 //validation that params are formatted correctly and have adequate permissions
@@ -13,19 +13,19 @@ router.use('/:logId', validateLogId)
 // BASE PATH /api/v1/dog/:userId/:dogId/logs/....
 
 //gets all logs
-router.get('/',getLogs)
+router.get('/', getLogs)
 //no body
 
 
 //gets specific logs
-router.get('/:logId',getLogs)
+router.get('/:logId', getLogs)
 //no body
 
 
 //create log
-router.post('/',createLog)
+router.post('/', createLog)
 /* BODY:
-{"logDate":"requiredDate",
+{"date":"requiredDate",
 "note" : "optionalString",
 "logType": "requiredString",
 "customTypeName":"optionalString"
@@ -35,9 +35,9 @@ NOTE: If logType is "Custom", then customTypeName must be provided
 
 
 //updates log
-router.put('/:logId',updateLog)
+router.put('/:logId', updateLog)
 /* BODY:
-{"logDate":"optionalDate",
+{"date":"optionalDate",
 "note" : "optionalString",
 "logType": "optionalString",
 "customTypeName":"optionalString"
@@ -48,7 +48,7 @@ NOTE: If logType is "Custom", then customTypeName must be provided
 
 
 //deletes log
-router.delete('/:logId',deleteLog)
+router.delete('/:logId', deleteLog)
 //no body
 
 

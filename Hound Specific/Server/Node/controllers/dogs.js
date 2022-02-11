@@ -16,15 +16,15 @@ const getDogs = async (req, res) => {
     if (dogId) {
 
         queryPromise('SELECT dogId, name, icon FROM dogs WHERE dogs.dogId = ?', [dogId])
-        .then((result) => res.status(200).json(result))
-        .catch((err) => res.status(400).json({ message: 'Invalid Parameters; Database Query Failed' }))
-       
+            .then((result) => res.status(200).json(result))
+            .catch((error) => res.status(400).json({ message: 'Invalid Parameters; Database Query Failed', error: error }))
+
     }
     else {
         try {
             const result = await queryPromise('SELECT dogs.dogId, dogs.icon, dogs.name FROM dogs WHERE dogs.userId = ?',
-            [userId])
-    
+                [userId])
+
             if (result.length === 0) {
                 //successful but empty array, not dogs to return
                 return res.status(204).json(result)
@@ -33,25 +33,25 @@ const getDogs = async (req, res) => {
                 //array has items, meaning there were dogs found, successful!
                 return res.status(200).json(result)
             }
-    
+
         } catch (error) {
             //error when trying to do query to database
-            return res.status(400).json({ message: 'Invalid Parameters; Database Query Failed' })
+            return res.status(400).json({ message: 'Invalid Parameters; Database Query Failed', error: error })
         }
     }
-} 
+}
 
 const createDog = async (req, res) => {
 
-     const dogName = req.body.dogName
+    const dogName = req.body.dogName
 
     const userId = Number(req.params.userId)
 
     //allow a user to have multiple dogs by the same name 
-    return queryPromise( 'INSERT INTO dogs(userId, icon, name) VALUES (?,?,?)',
-    [userId, undefined, dogName])
-    .then((result) => res.status(200).json({message: "Success"}))
-    .catch((err) => res.status(400).json({ message: 'Invalid Body or Parameters; Database Query Failed' }))
+    return queryPromise('INSERT INTO dogs(userId, icon, name) VALUES (?,?,?)',
+        [userId, undefined, dogName])
+        .then((result) => res.status(200).json({ message: "Success", dogId: result.insertId }))
+        .catch((error) => res.status(400).json({ message: 'Invalid Body or Parameters; Database Query Failed', error: error }))
 }
 
 const updateDog = async (req, res) => {
@@ -70,14 +70,14 @@ const updateDog = async (req, res) => {
     try {
         if (dogName) {
             //updates the dogName for the dogId provided, overship of this dog for the user have been verifiied
-            await queryPromise('UPDATE dogs SET name = ? WHERE dogId = ?',[dogName,dogId])
-          }
+            await queryPromise('UPDATE dogs SET name = ? WHERE dogId = ?', [dogName, dogId])
+        }
         if (icon) {
             //implement later
         }
-        return res.status(200).json({message: "Success"})
+        return res.status(200).json({ message: "Success" })
     } catch (error) {
-        return res.status(400).json({ message: 'Invalid Body or Parameters; Database Query Failed' })
+        return res.status(400).json({ message: 'Invalid Body or Parameters; Database Query Failed', error: error })
     }
 }
 
@@ -86,11 +86,10 @@ const updateDog = async (req, res) => {
 const deleteDog = async (req, res) => {
 
     const dogId = Number(req.params.dogId)
-
-    const {deleteDog} = require('../middleware/delete')
+    const { deleteDog } = require('../middleware/delete')
     return deleteDog(dogId)
-    .then((result)=>res.status(200).json({message: "Success"}))
-    .catch((err)=>res.status(400).json({ message: 'Invalid Parameters; Database Query Failed' }))
+        .then((result) => res.status(200).json({ message: "Success" }))
+        .catch((error) => res.status(400).json({ message: 'Invalid Parameters; Database Query Failed', error: error }))
 }
 
 module.exports = { getDogs, createDog, updateDog, deleteDog }
