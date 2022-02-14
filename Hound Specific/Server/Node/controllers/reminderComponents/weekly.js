@@ -12,12 +12,14 @@ const createWeeklyComponents = async (reminderId, req) => {
     const friday = formatBoolean(req.body.friday)
     const saturday = formatBoolean(req.body.saturday)
 
-    //if there is an error, it is uncaught to intentionally be caught by invocation from reminders
+    //Errors intentionally uncaught so they are passed to invocation in reminders
+    //Newly created weekly reminder cant be skipping, so no need for skip data
     await queryPromise('INSERT INTO reminderWeeklyComponents(reminderId, hour, minute, sunday, monday, tuesday, wednesday, thursday, friday, saturday) VALUES (?,?,?,?,?,?,?,?,?,?)'
         , [reminderId, hour, minute, sunday, monday, tuesday, wednesday, thursday, friday, saturday])
     return
 }
 
+//Attempts to first add the new components to the table. iI this fails then it is known the reminder is already present or components are invalid. If the update statement fails then it is know the components are invalid, error passed to invocer.
 const updateWeeklyComponents = async (reminderId, req) => {
     const hour = Number(req.body.hour)
     const minute = Number(req.body.minute)
@@ -31,6 +33,29 @@ const updateWeeklyComponents = async (reminderId, req) => {
     const skipping = formatBoolean(req.body.skipping)
     const skipDate = formatDate(req.body.skipDate)
 
+    try {
+        //If this succeeds: Reminder was not present in the weekly table and the timingStyle was changed. The old components will be deleted from the other table by reminders
+        //If this fails: The components provided are invalid or reminder already present in table (reminderId UNIQUE in DB)
+        await queryPromise('INSERT INTO reminderWeeklyComponents(reminderId, hour, minute, sunday, monday, tuesday, wednesday, thursday, friday, saturday) VALUES (?,?,?,?,?,?,?,?,?,?)'
+        , [reminderId, hour, minute, sunday, monday, tuesday, wednesday, thursday, friday, saturday])
+        return
+    } catch (error) {
+        
+        //If this succeeds: Reminder was present in the weekly table, timingStyle didn't change, and the components were successfully updated
+        //If this fails: The components provided are invalid. It is uncaught here to intentionally be caught by invocation from reminders.
+        if (skipping === true){
+            await queryPromise(
+                'UPDATE reminderWeeklyComponents SET hour = ?, minute = ?, sunday = ?, monday = ?, tuesday = ?, wednesday = ?, thursday = ?, friday = ?, saturday = ?, skipping = ?, skipDate = ? WHERE reminderId = ?',
+            [hour, minute, sunday, monday, tuesday, wednesday, thursday, friday, saturday, skipping, skipDate, reminderId])
+        }
+        else {
+            await queryPromise(
+                'UPDATE reminderWeeklyComponents SET hour = ?, minute = ?, sunday = ?, monday = ?, tuesday = ?, wednesday = ?, thursday = ?, friday = ?, saturday = ?, skipping = ? WHERE reminderId = ?',
+            [hour, minute, sunday, monday, tuesday, wednesday, thursday, friday, saturday, skipping, reminderId])
+        }
+    }
+   
+/*
     //there is no value to update, so there is a problem
     if (!hour && !minute 
     && typeof sunday === 'undefined' && typeof monday === 'undefined' 
@@ -83,17 +108,18 @@ const updateWeeklyComponents = async (reminderId, req) => {
         if (typeof skipping !== 'undefined') {
             //need skipdate if skipping turning true
             if (skipping === true) {
-                await queryPromise('UPDATE reminderWeeklyComponents SET skipping = ? AND skipDate = ? WHERE reminderId = ?',
+                await queryPromise('UPDATE reminderWeeklyComponents SET skipping = ?, skipDate = ? WHERE reminderId = ?',
                     [skipping, skipDate, reminderId])
             }
             //no need for skipdate if skipping turning false
             else {
-                await queryPromise('UPDATE reminderWeeklyComponents SET skipping = ? AND skipDate = ? WHERE reminderId = ?',
+                await queryPromise('UPDATE reminderWeeklyComponents SET skipping = ?, skipDate = ? WHERE reminderId = ?',
                     [skipping, undefined, reminderId])
             }
         }
         return
     }
+    */
 
 }
 

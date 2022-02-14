@@ -34,7 +34,7 @@ INSERT INTO dogReminders (dogId, reminderType, timingStyle, executionBasis, enab
 (2, 'Potty', 'countdown', '2021-11-16 15:00:00', true),
 (3, 'Feed', 'weekly', '2021-11-16 12:00:00', true),
 (4, 'Doctor Visit', 'oneTime', '2021-11-10 6:00:00', true),
-(5, 'Feed', 'countdown', '2021-11-16 12:00:00', true),
+(5, 'Feed', 'monthly', '2021-11-16 12:00:00', true),
 (6, 'Feed', 'countdown', '2021-11-16 12:00:00', true);
 
 INSERT INTO reminderCountdownComponents (reminderId, executionInterval, intervalElapsed) VALUES 
@@ -42,40 +42,26 @@ INSERT INTO reminderCountdownComponents (reminderId, executionInterval, interval
 (2, 7200, 0),
 (3, 18000, 0),
 (4, 3600, 0),
-(5, NULL, NULL),
-(6, NULL, NULL),
-(7, 18000, 0),
 (8, 18000, 0);
 
-INSERT INTO reminderSnoozeComponents (reminderId) VALUES
-(1),
-(2),
-(3),
-(4),
-(5),
-(6),
-(7),
-(8);
+INSERT INTO reminderSnoozeComponents (reminderId, executionInterval) VALUES
+(1, 3600),
+(2, 3600),
+(3, 3600),
+(4, 3600),
+(5, 3600),
+(6, 3600),
+(7, 3600),
+(8, 3600);
 
 
-INSERT INTO reminderTimeOfDayComponents (reminderId) VALUES
-(1),
-(2),
-(3),
-(4),
-(5),
-(6),
-(7),
-(8);
+INSERT INTO reminderWeeklyComponents (reminderId, hour, minute, sunday, monday, tuesday, wednesday, thursday, friday, saturday) VALUES
+(5, 10, 10, true, false, false, false, false, false, false);
 
-INSERT INTO reminderOneTimeComponents (reminderId) VALUES 
-(1),
-(2),
-(3),
-(4),
-(5),
-(6),
-(7),
-(8);
+INSERT INTO reminderMonthlyComponents (reminderId, hour, minute, dayOfMonth) VALUES
+(7, 15, 15, 20);
+
+INSERT INTO reminderOneTimeComponents (reminderId, date) VALUES 
+(6, '2021-11-16 17:00:00');
 
 

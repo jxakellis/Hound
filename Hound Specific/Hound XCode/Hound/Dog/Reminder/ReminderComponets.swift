@@ -140,7 +140,9 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountDownProtocol
         storedExecutionInterval = newExecutionInterval
     }
     
+    
     private var storedIntervalElapsed: TimeInterval = TimeInterval(0)
+    //this is necessary due to the pause feature. If you snooze an alarm then pause all alarms, you want the alarm to pick up where it left off, without storing this and just storing 5 minutes (default snooze length) after the executionBasis then the alarm couldn't have progress
     var intervalElapsed: TimeInterval { return storedIntervalElapsed }
     func changeIntervalElapsed(newIntervalElapsed: TimeInterval) {
         storedIntervalElapsed = newIntervalElapsed

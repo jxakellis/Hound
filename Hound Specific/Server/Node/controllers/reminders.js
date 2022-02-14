@@ -155,9 +155,11 @@ const createReminder = async (req, res) => {
     }
 }
 
+const delLeftOverReminderComponents = require('../middleware/delete').deleteLeftoverReminderComponents
+
 const updateReminder = async (req, res) => {
 
-    //FIX ME, need to delete from other databases when reminder is switched
+    //FIX ME, if updating to a new timingStyle, need to create data instead of just updating. current implementation doesn't add data to a the new table for timingStyle so update queries go nowhere
 
     const reminderId = Number(req.params.reminderId)
     const reminderType = req.body.reminderType
@@ -183,15 +185,55 @@ const updateReminder = async (req, res) => {
             }
 
         }
-        if (timingStyle) {
-            await queryPromise('UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId])
-        }
+
         if (executionBasis) {
             await queryPromise('UPDATE dogReminders SET executionBasis = ? WHERE reminderId = ?', [executionBasis, reminderId])
         }
         if (typeof enabled !== 'undefined') {
             await queryPromise('UPDATE dogReminders SET enabled = ? WHERE reminderId = ?', [enabled, reminderId])
         }
+        //save me for last since I have a high chance of failing
+        if (timingStyle) {
+            
+            if (timingStyle === "countdown"){
+                    //add new
+                await updateCountdownComponents(reminderId, req)
+                //switch reminder to new mode
+                await queryPromise('UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId])
+                //delete old components since reminder is successfully switched to new mode
+                await delLeftOverReminderComponents(reminderId, timingStyle)
+                
+            }
+            else if (timingStyle === "weekly"){
+                //add new
+                await updateWeeklyComponents(reminderId, req)
+                //switch reminder to new mode
+                await queryPromise('UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId])
+                //delete old components since reminder is successfully switched to new mode
+                await delLeftOverReminderComponents(reminderId, timingStyle)
+
+            }
+            else if (timingStyle === "monthly"){
+                //add new
+                await updateMonthlyComponents(reminderId, req)
+                //switch reminder to new mode
+                await queryPromise('UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId])
+                //delete old components since reminder is successfully switched to new mode
+                await delLeftOverReminderComponents(reminderId, timingStyle)
+            }
+            else if (timingStyle === "oneTime"){
+                //add new
+                await updateOneTimeComponents(reminderId, req)
+                //switch reminder to new mode
+                await queryPromise('UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId])
+                //delete old components since reminder is successfully switched to new mode
+                await delLeftOverReminderComponents(reminderId, timingStyle)
+            }
+            else {
+                return res.status(400).json({ message: 'Invalid Body; timingStyle Invalid'})
+            }
+        }
+
 
         //to do, update reminder components
         return res.status(200).json({ message: "Success" })

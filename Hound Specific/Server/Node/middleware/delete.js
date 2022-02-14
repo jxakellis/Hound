@@ -68,7 +68,46 @@ const deleteReminder = async (reminderId) => {
 
 }
 
-module.exports = { deleteUser, deleteDog, deleteLog, deleteReminder }
+//If a reminder is updated, its timingStyle can be updated and switch between modes. 
+//This means we make an entry into a new component table and this also means the components from the old timingStyle are left over in another table
+//This remove the extraneous compoents
+const deleteLeftoverReminderComponents = async (reminderId, newTimingStyle) => {
+     if (newTimingStyle === "countdown"){
+        await queryPromise('DELETE FROM reminderWeeklyComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise('DELETE FROM reminderMonthlyComponents WHERE reminderId = ?', [reminderId])
+        //updated reminder can't be snoozed so delete. 
+        //possible optimization here, since the reminder could be snoozed in the future we could just update isSnoozed to false instead of deleting the data
+        await queryPromise('DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise('DELETE FROM reminderOneTimeComponents WHERE reminderId = ?', [reminderId])
+
+    }
+    else if (newTimingStyle === "weekly"){
+        await queryPromise('DELETE FROM reminderCountdownComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise('DELETE FROM reminderMonthlyComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise('DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise('DELETE FROM reminderOneTimeComponents WHERE reminderId = ?', [reminderId])
+
+    }
+    else if (newTimingStyle === "monthly"){
+        await queryPromise('DELETE FROM reminderCountdownComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise('DELETE FROM reminderWeeklyComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise('DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise('DELETE FROM reminderOneTimeComponents WHERE reminderId = ?', [reminderId])
+    }
+    else if (newTimingStyle === "oneTime"){
+        await queryPromise('DELETE FROM reminderCountdownComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise('DELETE FROM reminderWeeklyComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise('DELETE FROM reminderMonthlyComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise('DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
+
+    }
+    else {
+        throw Error("Invalid timingStyle")
+    }
+
+}
+
+module.exports = { deleteUser, deleteDog, deleteLog, deleteReminder, deleteLeftoverReminderComponents }
 
 
 
