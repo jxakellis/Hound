@@ -3,8 +3,7 @@ const bodyParser = require('body-parser')
 const express = require('express');
 const app = express()
 
-const loginRouter = require('./routes/login')
-const dogsRouter = require('./routes/dogs')
+const userRouter = require('./routes/user')
 
 // parse form data
 app.use((req, res, next) => {
@@ -29,19 +28,18 @@ app.use((req, res, next) => {
     })
 })
 
-//router for login requests
+//router for user requests
 
 /*
-/api/v1/login/:userId (OPT)
-/api/v1/:userId/configuration
-/api/v1/:userId/dogs/:dogId (OPT)
-/api/v1/:userId/dogs/:dogId/logs/:logId (OPT)
-/api/v1/:userId/dogs/:dogId/reminders/:reminderId (OPT)
+/api/v1/user/:userId (OPT)
+/api/v1/user/:userId/configuration
+/api/v1/user/:userId/dogs/:dogId (OPT)
+/api/v1/user/:userId/dogs/:dogId/logs/:logId (OPT)
+/api/v1/user/:userId/dogs/:dogId/reminders/:reminderId (OPT)
 */
 
 
-app.use('/api/v1/login', loginRouter)
-app.use('/api/v1/:userId/dogs', dogsRouter)
+app.use('/api/v1/user', userRouter)
 
 app.listen(5000, () => {
     console.log(`Listening on port 5000`)

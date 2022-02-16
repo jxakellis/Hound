@@ -1,13 +1,14 @@
 const database = require('../databaseConnection')
 const { queryPromise } = require('../middleware/queryPromise')
 const { isEmailValid } = require('../middleware/validateFormat')
+const { getConfiguration, createConfiguration, updateConfiguration } = require('./configuration')
 
 /*
 Known:
 - (if appliciable to controller) userId formatted correctly and request has sufficient permissions to use
 */
 
-const getLogin = async (req, res) => {
+const getUser = async (req, res) => {
 
     let email = req.body.email
     const userId = Number(req.params.userId)
@@ -20,11 +21,21 @@ const getLogin = async (req, res) => {
     else if (userId) {
         //in theory no authentication needed as /:userId triggers authentication middleware
         //in addition, only one user should exist for any userId otherwise the table is broken
+        try {
+            const userInformation = await queryPromise('SELECT * FROM users LEFT JOIN userConfiguration ON users.userId = userConfiguration.userId WHERE users.userId = ?',
+                [userId])
 
-        return queryPromise('SELECT * FROM users WHERE userId = ?',
-            [userId])
-            .then((result) => res.status(200).json(result))
-            .catch((error) => res.status(400).json({ message: 'Invalid Parameters; userId Not Found' }))
+            if (userInformation.length === 0) {
+                //successful but empty array, no user to return
+                return res.status(204).json(userInformation)
+            }
+            else {
+                //array has item(s), meaning there was a user found, successful!
+                return res.status(200).json(userInformation)
+            }
+        } catch (error) {
+            return res.status(400).json({ message: 'Invalid Parameters; user Not Found', error: error })
+        }
     }
     //email method of finding corresponding user(s)
     else {
@@ -37,29 +48,28 @@ const getLogin = async (req, res) => {
 
         //const password = req.body.password
 
-        try {
-            //query database to see if email is in it
-            const userInformation = await queryPromise('SELECT * FROM users WHERE userEmail = ?', [email.toLowerCase()])
 
-            if (userInformation.some(item => item.userEmail === email)) {
-                //the userEmail exists, return all user data
-                return res.status(200).json(userInformation)
+        try {
+            const userInformation = await queryPromise('SELECT * FROM users LEFT JOIN userConfiguration ON users.userId = userConfiguration.userId WHERE users.userEmail = ?',
+                [email.toLowerCase()])
+
+            if (userInformation.length === 0) {
+                //successful but empty array, no user to return
+                return res.status(204).json(result)
             }
             else {
-                //the email does not exist
-                return res.status(404).json({ message: 'Invalid Body; No User Found' })
+                //array has item(s), meaning there was a user found, successful!
+                return res.status(200).json(userInformation)
             }
-
         } catch (error) {
-            //query to database failed
-            return res.status(400).json({ message: 'Invalid Body; Database Query Failed' })
+            return res.status(400).json({ message: 'Invalid Body; Database Query Failed', error: error })
         }
     }
 
 
 }
 
-const createLogin = async (req, res) => {
+const createUser = async (req, res) => {
 
     let email = req.body.email
 
@@ -70,7 +80,6 @@ const createLogin = async (req, res) => {
     email = req.body.email.toLowerCase()
 
 
-    //const password = req.body.password
     const firstName = req.body.firstName
     const lastName = req.body.lastName
 
@@ -79,17 +88,29 @@ const createLogin = async (req, res) => {
         return res.status(400).json({ message: 'Invalid Body; Missing firstName or lastName' })
     }
     else {
-        //insert values into database
-        queryPromise('INSERT INTO users(userFirstName, userLastName, userEmail) VALUES (?,?,?)',
-            [firstName, lastName, email])
-            //everything worked
-            .then((result) => res.status(200).json({ message: "Success", userId: result.insertId }))
-            //something went wrong; the only reasonable option is that the email is a duplicate (possible others like varchar limit but unlikely) 
-            .catch((error) => res.status(400).json({ message: 'Invalid Body; Database Query Failed; Possible Duplicate Email' }))
+        let userId = undefined
+        try {
+            //insert values into database
+            await queryPromise('INSERT INTO users(userFirstName, userLastName, userEmail) VALUES (?,?,?)',
+                [firstName, lastName, email])
+                //everything worked
+                .then((result) => userId = result.insertId)
+            await createConfiguration(userId, req)
+
+            return res.status(200).json({ message: "Success", userId: userId })
+        } catch (error) {
+            if (typeof userId !== 'undefined'){
+                await delUser(userId)
+                .catch((error)=>"do nothing")
+            }
+            //something went wrong; the most likely option is that the email is a duplicate
+            return res.status(400).json({ message: 'Invalid Body; Database Query Failed; Possible duplicate email or missing userConfiguration values', error: error })
+        }
+
     }
 }
 
-const updateLogin = async (req, res) => {
+const updateUser = async (req, res) => {
 
     const userId = Number(req.params.userId)
     let email = req.body.email
@@ -123,23 +144,23 @@ const updateLogin = async (req, res) => {
             }
             return res.status(200).json({ message: "Success" })
         } catch (error) {
-            return res.status(400).json({ message: 'Invalid Body; Database Query Failed; Possible Duplicate Email' })
+            return res.status(400).json({ message: 'Invalid Body; Database Query Failed; Possible Duplicate Email', error: error })
         }
     }
 
 
 }
 
-const deleteLogin = async (req, res) => {
+const delUser  = require('../middleware/delete').deleteUser
+
+const deleteUser = async (req, res) => {
 
     const userId = Number(req.params.userId)
 
-    const { deleteUser } = require('../middleware/delete')
-
-    return deleteUser(userId)
+    return delUser(userId)
         .then((result) => res.status(200).json({ message: "Success" }))
-        .catch((error) => res.status(400).json({ message: 'Invalid Syntax; Database Query Failed' }))
+        .catch((error) => res.status(400).json({ message: 'Invalid Syntax; Database Query Failed', error: error }))
 }
 
 
-module.exports = { getLogin, createLogin, updateLogin, deleteLogin }
+module.exports = { getUser, createUser, updateUser, deleteUser }

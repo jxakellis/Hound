@@ -9,7 +9,7 @@ router.use('/:reminderId', validateReminderId)
 
 
 
-// BASE PATH /api/v1/dog/:userId/:dogId/reminders/....
+// BASE PATH /api/v1/user/:userId/dogs/:dogId/reminders/....
 
 //gets all reminders
 router.get('/', getReminders)

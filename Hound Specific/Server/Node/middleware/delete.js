@@ -10,16 +10,24 @@ Known:
 
 const deleteUser = async (userId) => {
     try {
-
         const dogIds = await queryPromise('SELECT dogId FROM dogs WHERE userId = ?', [userId])
         //deletes all dogs
         for (let i = 0; i < dogIds.length; i++) {
             await deleteDog(dogIds[i].dogId)
         }
-        //deletes user config
-        await queryPromise('DELETE FROM userConfiguration WHERE userId = ?', [userId])
+        //delete userConfiguration
+        await deleteUserConfiguration(userId)
         //deletes user
         await queryPromise('DELETE FROM users WHERE userId = ?', [userId])
+    } catch (error) {
+        throw error
+    }
+}
+
+const deleteUserConfiguration = async (userId) => {
+    try {
+        //deletes user config
+        await queryPromise('DELETE FROM userConfiguration WHERE userId = ?', [userId])
     } catch (error) {
         throw error
     }
@@ -107,7 +115,7 @@ const deleteLeftoverReminderComponents = async (reminderId, newTimingStyle) => {
 
 }
 
-module.exports = { deleteUser, deleteDog, deleteLog, deleteReminder, deleteLeftoverReminderComponents }
+module.exports = { deleteUser, deleteUserConfiguration, deleteDog, deleteLog, deleteReminder, deleteLeftoverReminderComponents }
 
 
 

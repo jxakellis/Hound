@@ -10,7 +10,7 @@ router.use('/:logId', validateLogId)
 
 
 
-// BASE PATH /api/v1/dog/:userId/:dogId/logs/....
+// BASE PATH /api/v1/user/:userId/dogs/:dogId/logs/....
 
 //gets all logs
 router.get('/', getLogs)

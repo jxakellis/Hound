@@ -15,15 +15,17 @@ const getLogs = async (req, res) => {
 
     //if logId is defined and it is a number then continue
     if (logId) {
-        queryPromise('SELECT logId, date, note, logType, customTypeName FROM dogLogs WHERE logId = ?', [logId])
+        //queryPromise('SELECT logId, date, note, logType, customTypeName FROM dogLogs WHERE logId = ?', [logId])
+        queryPromise('SELECT * FROM dogLogs WHERE logId = ?', [logId])
             .then((result) => res.status(200).json(result))
             .catch((error) => res.status(400).json({ message: 'Invalid Parameters; Database Query Failed', error: error }))
 
     }
     else {
         try {
-            const result = await queryPromise('SELECT logId, date, note, logType, customTypeName FROM dogLogs WHERE dogId = ?',
-                [dogId])
+            //const result = await queryPromise('SELECT logId, date, note, logType, customTypeName FROM dogLogs WHERE dogId = ?',
+            const result = await queryPromise('SELECT * FROM dogLogs WHERE dogId = ?',
+            [dogId])
 
             if (result.length === 0) {
                 //successful but empty array, not logs to return

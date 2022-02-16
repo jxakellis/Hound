@@ -9,7 +9,6 @@ router.use('/', validateUserId)
 router.use('/:dogId', validateDogId)
 
 
-
 //logs: /api/v1/dog/:userId/:dogId/logs
 const logsRouter = require('./logs')
 router.use('/:dogId/logs', logsRouter)
@@ -19,7 +18,7 @@ const reminderRouter = require('./reminders')
 router.use('/:dogId/reminders', reminderRouter)
 
 
-// BASE PATH /api/v1/dog/:userId
+// BASE PATH /api/v1/user/:userId/dogs/
 
 //gets all dogs
 router.get('/', getDogs)

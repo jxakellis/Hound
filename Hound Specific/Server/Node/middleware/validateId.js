@@ -25,7 +25,7 @@ const validateUserId = async (req, res, next) => {
             }
         } catch (error) {
             //couldn't query database to find userId
-            return res.status(400).json({ message: 'Invalid Parameters; userId Invalid' })
+            return res.status(400).json({ message: 'Invalid Parameters; userId Invalid', error: error })
         }
     }
     else {
@@ -61,7 +61,7 @@ const validateDogId = async (req, res, next) => {
                 return res.status(404).json({ message: 'Couldn\'t Find Resource; No Dogs Found or Invalid Permissions' })
             }
         } catch (error) {
-            return res.status(400).json({ message: 'Invalid Parameters; Database Query Failed' })
+            return res.status(400).json({ message: 'Invalid Parameters; Database Query Failed', error: error })
         }
 
     }
@@ -99,7 +99,7 @@ const validateLogId = async (req, res, next) => {
                 return res.status(404).json({ message: 'Couldn\'t Find Resource; No Logs Found or Invalid Permissions' })
             }
         } catch (error) {
-            return res.status(400).json({ message: 'Invalid Parameters; Database Query Failed' })
+            return res.status(400).json({ message: 'Invalid Parameters; Database Query Failed', error: error })
         }
 
     }
@@ -135,7 +135,7 @@ const validateReminderId = async (req, res, next) => {
                 return res.status(404).json({ message: 'Couldn\'t Find Resource; No Reminders Found or Invalid Permissions' })
             }
         } catch (error) {
-            return res.status(400).json({ message: 'Invalid Parameters; Database Query Failed' })
+            return res.status(400).json({ message: 'Invalid Parameters; Database Query Failed', error: error })
         }
 
     }

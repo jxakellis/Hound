@@ -141,15 +141,16 @@ const createReminder = async (req, res) => {
         //was able to successfully create components for a certain timing style
         return res.status(200).json({ message: "Success", reminderId: reminderId })
 
-    } catch (error) {
+    } catch (errorOne) {
         //something went wrong, delete anything that possibly got added
         if (reminderId) {
+            //in both cases, give the user errorOne. This is the error their request generated. errorTwo is internal.
             delReminder(reminderId)
-                .then((result) => res.status(400).json({ message: 'Invalid Body; Database Query Failed', error: error }))
-                .catch((err) => res.status(400).json({ message: 'Invalid Body; Database Query Failed', error: error }))
+                .then((result) => res.status(400).json({ message: 'Invalid Body; Database Query Failed', error: errorOne }))
+                .catch((errorTwo) => res.status(400).json({ message: 'Invalid Body; Database Query Failed', error: errorOne }))
         }
         else {
-            return res.status(400).json({ message: 'Invalid Body; Database Query Failed', error: error })
+            return res.status(400).json({ message: 'Invalid Body; Database Query Failed', error: errorOne })
         }
 
     }

@@ -15,14 +15,16 @@ const getDogs = async (req, res) => {
     //if dogId is defined and it is a number then continue
     if (dogId) {
 
-        queryPromise('SELECT dogId, name, icon FROM dogs WHERE dogs.dogId = ?', [dogId])
+        //queryPromise('SELECT dogId, name, icon FROM dogs WHERE dogs.dogId = ?', [dogId])
+        queryPromise('SELECT * FROM dogs WHERE dogs.dogId = ?', [dogId])
             .then((result) => res.status(200).json(result))
             .catch((error) => res.status(400).json({ message: 'Invalid Parameters; Database Query Failed', error: error }))
 
     }
     else {
         try {
-            const result = await queryPromise('SELECT dogs.dogId, dogs.icon, dogs.name FROM dogs WHERE dogs.userId = ?',
+            //const result = await queryPromise('SELECT dogId, icon, name FROM dogs WHERE dogs.userId = ?',
+            const result = await queryPromise('SELECT * FROM dogs WHERE dogs.userId = ?',
                 [userId])
 
             if (result.length === 0) {
