@@ -1,4 +1,4 @@
-const database = require('../databaseConnection')
+//const database = require('../databaseConnection')
 
 /**
  * Queries the predefined database connection with the given sqlString
@@ -6,19 +6,20 @@ const database = require('../databaseConnection')
  * @param sqlVariables an optional array of objects to fill in placeholder values ('?') in sqlString
  * @returns 
  */
-const queryPromise = (sqlString, sqlVariables = undefined) => {
+const queryPromise = (request, sqlString, sqlVariables = undefined) => {
     return new Promise((resolve, reject) => {
+        const poolConnection = request.connection
         //need a database to query
-        //if (!database) {
-        //    reject('Undefined database for queryPromise')
-        //}
-        //need a sqlString to query
-        if (!sqlString) {
+
+        if (!poolConnection){
+            reject('Undefined poolConnection for query promise')
+        }
+        else if (!sqlString) {
             reject('Undefined sqlString for queryPromise')
         }
         //no variables for sql statement provided; this is acceptable
         else if (!sqlVariables) {
-            database.query(sqlString,
+            poolConnection.query(sqlString,
                 (error, result, fields) => {
                     if (error) {
                         //error when trying to do query to database
@@ -37,7 +38,7 @@ const queryPromise = (sqlString, sqlVariables = undefined) => {
                 reject('sqlVariables must be array for queryPromise')
             }
             else {
-                database.query(sqlString,
+                poolConnection.query(sqlString,
                     sqlVariables,
                     (error, result, fields) => {
                         if (error) {

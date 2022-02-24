@@ -24,7 +24,7 @@ const getReminders = async (req, res) => {
         try {
             //left joins dogReminders and component tables so that a reminder has all of its components attached
             //tables where the dogReminder isn't present (i.e. its timingStyle is different) will just append lots of null values to result
-            let result = await queryPromise('SELECT *, dogReminders.reminderId as reminderId FROM dogReminders LEFT JOIN reminderCountdownComponents ON dogReminders.reminderId = reminderCountdownComponents.reminderId LEFT JOIN reminderWeeklyComponents ON dogReminders.reminderId = reminderWeeklyComponents.reminderId LEFT JOIN reminderMonthlyComponents ON dogReminders.reminderId = reminderMonthlyComponents.reminderId LEFT JOIN reminderOneTimeComponents ON dogReminders.reminderId = reminderOneTimeComponents.reminderId LEFT JOIN reminderSnoozeComponents ON dogReminders.reminderId = reminderSnoozeComponents.reminderId WHERE dogReminders.reminderId = ?',
+            let result = await queryPromise(req, 'SELECT *, dogReminders.reminderId as reminderId FROM dogReminders LEFT JOIN reminderCountdownComponents ON dogReminders.reminderId = reminderCountdownComponents.reminderId LEFT JOIN reminderWeeklyComponents ON dogReminders.reminderId = reminderWeeklyComponents.reminderId LEFT JOIN reminderMonthlyComponents ON dogReminders.reminderId = reminderMonthlyComponents.reminderId LEFT JOIN reminderOneTimeComponents ON dogReminders.reminderId = reminderOneTimeComponents.reminderId LEFT JOIN reminderSnoozeComponents ON dogReminders.reminderId = reminderSnoozeComponents.reminderId WHERE dogReminders.reminderId = ?',
                 [reminderId])
 
             //there will be only one result so just take first item in array
@@ -37,10 +37,11 @@ const getReminders = async (req, res) => {
                     delete result[key]
                 }
             }
-
+            req.commitQueries(req)
             return res.status(200).json({ message: 'Success', result: result })
 
         } catch (error) {
+            req.rollbackQueries(req)
             return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message })
         }
     }
@@ -48,11 +49,12 @@ const getReminders = async (req, res) => {
     else {
         try {
             //get all reminders for the dogId, then left join to all reminder components table so each reminder has compoents attached
-            let result = await queryPromise('SELECT *, dogReminders.reminderId as reminderId FROM dogReminders LEFT JOIN reminderCountdownComponents ON dogReminders.reminderId = reminderCountdownComponents.reminderId LEFT JOIN reminderWeeklyComponents ON dogReminders.reminderId = reminderWeeklyComponents.reminderId LEFT JOIN reminderMonthlyComponents ON dogReminders.reminderId = reminderMonthlyComponents.reminderId LEFT JOIN reminderOneTimeComponents ON dogReminders.reminderId = reminderOneTimeComponents.reminderId LEFT JOIN reminderSnoozeComponents ON dogReminders.reminderId = reminderSnoozeComponents.reminderId WHERE dogReminders.dogId = ?',
+            let result = await queryPromise(req, 'SELECT *, dogReminders.reminderId as reminderId FROM dogReminders LEFT JOIN reminderCountdownComponents ON dogReminders.reminderId = reminderCountdownComponents.reminderId LEFT JOIN reminderWeeklyComponents ON dogReminders.reminderId = reminderWeeklyComponents.reminderId LEFT JOIN reminderMonthlyComponents ON dogReminders.reminderId = reminderMonthlyComponents.reminderId LEFT JOIN reminderOneTimeComponents ON dogReminders.reminderId = reminderOneTimeComponents.reminderId LEFT JOIN reminderSnoozeComponents ON dogReminders.reminderId = reminderSnoozeComponents.reminderId WHERE dogReminders.dogId = ?',
                 [dogId])
 
             if (result.length === 0) {
                 //successful but empty array, not reminders to return
+                req.commitQueries(req)
                 return res.status(204).json({ message: 'Success', result: result })
             }
             else {
@@ -68,6 +70,7 @@ const getReminders = async (req, res) => {
                 }
 
                 //array has items, meaning there were reminders found, successful!
+                req.commitQueries(req)
                 return res.status(200).json({ message: 'Success', result: result })
             }
 
@@ -76,6 +79,7 @@ const getReminders = async (req, res) => {
 
         } catch (error) {
             //error when trying to do query to database
+            req.rollbackQueries(req)
             return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message })
         }
     }
@@ -94,10 +98,12 @@ const createReminder = async (req, res) => {
     //check to see that necessary generic reminder componetns are present
     if (areAllDefined([reminderType, customTypeName, timingStyle, executionBasis, isEnabled]) === false) {
         //>= 1 of the objects are undefined
+        req.rollbackQueries(req)
         return res.status(400).json({ message: 'Invalid Body; reminderType, timingStyle, executionBasis, or isEnabled missing ' })
     }
     //if the reminder is custom, then it needs its custom name
     else if (reminderType === "Custom" && !customTypeName) {
+        req.rollbackQueries(req)
         return res.status(400).json({ message: 'Invalid Body; No customTypeName provided for "Custom" reminderType' })
     }
 
@@ -111,50 +117,46 @@ const createReminder = async (req, res) => {
         //no need to check for snooze components as a newly created reminder cant be snoozed, it can only be updated to be snoozing
         if (timingStyle === "countdown") {
             //first insert to main reminder table to get reminderId, then insert to other tables
-            await queryPromise('INSERT INTO dogReminders(dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
+            await queryPromise(req, 'INSERT INTO dogReminders(dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
                 [dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled])
                 .then((result) => reminderId = formatNumber(result.insertId))
-            await createCountdownComponents(reminderId, req)
+            await createCountdownComponents(req, reminderId)
         }
         else if (timingStyle === "weekly") {
             //first insert to main reminder table to get reminderId, then insert to other tables
-            await queryPromise('INSERT INTO dogReminders(dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
+            await queryPromise(req, 'INSERT INTO dogReminders(dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
                 [dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled])
                 .then((result) => reminderId = formatNumber(result.insertId))
-            await createWeeklyComponents(reminderId, req)
+            await createWeeklyComponents(req, reminderId)
         }
         else if (timingStyle === "monthly") {
             //first insert to main reminder table to get reminderId, then insert to other tables
-            await queryPromise('INSERT INTO dogReminders(dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
+            await queryPromise(req, 'INSERT INTO dogReminders(dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
                 [dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled])
                 .then((result) => reminderId = formatNumber(result.insertId))
-            await createMonthlyComponents(reminderId, req)
+            await createMonthlyComponents(req, reminderId)
         }
         else if (timingStyle === "oneTime") {
             //first insert to main reminder table to get reminderId, then insert to other tables
-            await queryPromise('INSERT INTO dogReminders(dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
+            await queryPromise(req, 'INSERT INTO dogReminders(dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
                 [dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled])
                 .then((result) => reminderId = formatNumber(result.insertId))
-            await createOneTimeComponents(reminderId, req)
+            await createOneTimeComponents(req, reminderId)
         }
         else {
             //nothing matched timingStyle
+            req.rollbackQueries(req)
             return res.status(400).json({ message: "Invalid Body; timingStyle Invalid" })
         }
         //was able to successfully create components for a certain timing style
+        req.commitQueries(req)
         return res.status(200).json({ message: 'Success', reminderId: reminderId })
 
-    } catch (errorOne) {
+    } catch (error) {
         //something went wrong, delete anything that possibly got added
-        if (reminderId) {
-            //in both cases, give the user errorOne. This is the error their request generated. errorTwo is internal.
-            delReminder(reminderId)
-                .then((result) => res.status(400).json({ message: 'Invalid Body; Database query failed', error: errorOne.message }))
-                .catch((errorTwo) => res.status(400).json({ message: 'Invalid Body; Database query failed', error: errorOne.message }))
-        }
-        else {
-            return res.status(400).json({ message: 'Invalid Body; Database query failed', error: errorOne.message })
-        }
+        //WE NO LONGER MANUALLY DELETE, WE HAVE THE POWER OF TRANSACTIONS ON OUR SIDE 
+        req.rollbackQueries(req)
+        return res.status(400).json({ message: 'Invalid Body; Database query failed', error: error.message })
 
     }
 }
@@ -174,67 +176,74 @@ const updateReminder = async (req, res) => {
     const isSnoozed = formatBoolean(req.body.isSnoozed)
 
     if (atLeastOneDefined([reminderType, timingStyle, executionBasis, isEnabled, isSnoozed]) === false){
+        req.rollbackQueries(req)
         return res.status(400).json({ message: 'Invalid Body; No reminderId, reminderType, timingStyle, executionBasis, isEnabled, or isSnoozed provided' })
     }
     else if (reminderType === "Custom" && !customTypeName) {
+        req.rollbackQueries(req)
         return res.status(400).json({ message: 'Invalid Body; No customTypeName provided for "Custom" reminderType' })
     }
 
     try {
         if (reminderType) {
             if (reminderType === "Custom") {
-                await queryPromise('UPDATE dogReminders SET reminderType = ?, customTypeName = ?  WHERE reminderId = ?', [reminderType, customTypeName, reminderId])
+                await queryPromise(req, 'UPDATE dogReminders SET reminderType = ?, customTypeName = ?  WHERE reminderId = ?', [reminderType, customTypeName, reminderId])
             }
             else {
-                await queryPromise('UPDATE dogReminders SET reminderType = ? WHERE reminderId = ?', [reminderType, reminderId])
+                await queryPromise(req, 'UPDATE dogReminders SET reminderType = ? WHERE reminderId = ?', [reminderType, reminderId])
             }
 
         }
 
         if (executionBasis) {
-            await queryPromise('UPDATE dogReminders SET executionBasis = ? WHERE reminderId = ?', [executionBasis, reminderId])
+            await queryPromise(req, 'UPDATE dogReminders SET executionBasis = ? WHERE reminderId = ?', [executionBasis, reminderId])
         }
         if (typeof isEnabled !== 'undefined') {
-            await queryPromise('UPDATE dogReminders SET isEnabled = ? WHERE reminderId = ?', [isEnabled, reminderId])
+            await queryPromise(req, 'UPDATE dogReminders SET isEnabled = ? WHERE reminderId = ?', [isEnabled, reminderId])
         }
         //save me for second to last since I have a high chance of failing
         if (timingStyle) {
 
             if (timingStyle === "countdown") {
+                console.log('1')
                 //add new
-                await updateCountdownComponents(reminderId, req)
+                await updateCountdownComponents(req, reminderId)
+                console.log('2')
                 //switch reminder to new mode
-                await queryPromise('UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId])
+                await queryPromise(req, 'UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId])
+                console.log('3')
                 //delete old components since reminder is successfully switched to new mode
-                await delLeftOverReminderComponents(reminderId, timingStyle)
+                await delLeftOverReminderComponents(req, reminderId, timingStyle)
+                console.log('4')
 
             }
             else if (timingStyle === "weekly") {
                 //add new
-                await updateWeeklyComponents(reminderId, req)
+                await updateWeeklyComponents(req, reminderId)
                 //switch reminder to new mode
-                await queryPromise('UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId])
+                await queryPromise(req, 'UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId])
                 //delete old components since reminder is successfully switched to new mode
-                await delLeftOverReminderComponents(reminderId, timingStyle)
+                await delLeftOverReminderComponents(req, reminderId, timingStyle)
 
             }
             else if (timingStyle === "monthly") {
                 //add new
-                await updateMonthlyComponents(reminderId, req)
+                await updateMonthlyComponents(req, reminderId)
                 //switch reminder to new mode
-                await queryPromise('UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId])
+                await queryPromise(req, 'UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId])
                 //delete old components since reminder is successfully switched to new mode
-                await delLeftOverReminderComponents(reminderId, timingStyle)
+                await delLeftOverReminderComponents(req, reminderId, timingStyle)
             }
             else if (timingStyle === "oneTime") {
                 //add new
-                await updateOneTimeComponents(reminderId, req)
+                await updateOneTimeComponents(req, reminderId)
                 //switch reminder to new mode
-                await queryPromise('UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId])
+                await queryPromise(req, 'UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId])
                 //delete old components since reminder is successfully switched to new mode
-                await delLeftOverReminderComponents(reminderId, timingStyle)
+                await delLeftOverReminderComponents(req, reminderId, timingStyle)
             }
             else {
+                req.rollbackQueries(req)
                 return res.status(400).json({ message: 'Invalid Body; timingStyle Invalid' })
             }
 
@@ -247,8 +256,10 @@ const updateReminder = async (req, res) => {
 
 
         //to do, update reminder components
+        req.commitQueries(req)
         return res.status(200).json({ message: 'Success' })
     } catch (error) {
+        req.rollbackQueries(req)
         return res.status(400).json({ message: 'Invalid Body or Parameters; Database query failed', error: error.message })
     }
 }
@@ -257,9 +268,14 @@ const delReminder = require('../utils/delete').deleteReminder
 const deleteReminder = async (req, res) => {
     const reminderId = formatNumber(req.params.reminderId)
 
-    return delReminder(reminderId)
-        .then((result) => res.status(200).json({ message: 'Success' }))
-        .catch((error) => res.status(400).json({ message: 'Invalid Syntax; Database query failed', error: error.message }))
+    try {
+        await delReminder(req, reminderId)
+        req.commitQueries(req)
+        return res.status(200).json({ message: 'Success' })
+    } catch (error) {
+        req.rollbackQueries(req)
+        return res.status(400).json({ message: 'Invalid Syntax; Database query failed', error: error.message })
+    }
 }
 
 module.exports = { getReminders, createReminder, updateReminder, deleteReminder }

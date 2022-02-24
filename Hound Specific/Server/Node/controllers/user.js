@@ -1,6 +1,6 @@
 const database = require('../databaseConnection')
 const { queryPromise } = require('../utils/queryPromise')
-const { isEmailValid, areAllDefined, atLeastOneDefined, formatBoolean, formatDate, formatNumber } = require('../utils/validateFormat')
+const { isEmailValid, areAllDefined, atLeastOneDefined, formatBoolean, formatNumber } = require('../utils/validateFormat')
 
 /*
 Known:
@@ -14,6 +14,7 @@ const getUser = async (req, res) => {
 
     //if the users provides an email and a userId then there is a problem. We don't know what to look for as those could be linked to different accounts
     if (email && userId) {
+        req.rollbackQueries(req)
         return res.status(400).json({ message: "Invalid Parameters or Body; email and userId provided, only provide one." })
     }
 
@@ -21,18 +22,22 @@ const getUser = async (req, res) => {
     else if (userId) {
         //only one user should exist for any userId otherwise the table is broken
         try {
-            const userInformation = await queryPromise('SELECT * FROM users LEFT JOIN userConfiguration ON users.userId = userConfiguration.userId WHERE users.userId = ?',
+            const userInformation = await queryPromise(req, 
+                'SELECT * FROM users LEFT JOIN userConfiguration ON users.userId = userConfiguration.userId WHERE users.userId = ?',
                 [userId])
 
             if (userInformation.length === 0) {
                 //successful but empty array, no user to return
-                return res.status(204).json({message: 'Success', result: userInformation})
+                req.commitQueries(req)
+                return res.status(204).json({ message: 'Success', result: userInformation })
             }
             else {
                 //array has item(s), meaning there was a user found, successful!
-                return res.status(200).json({message: 'Success', result: userInformation})
+                req.commitQueries(req)
+                return res.status(200).json({ message: 'Success', result: userInformation })
             }
         } catch (error) {
+            req.rollbackQueries(req)
             return res.status(400).json({ message: 'Invalid Parameters; user not found', error: error.message })
         }
     }
@@ -40,6 +45,7 @@ const getUser = async (req, res) => {
     else {
 
         if (isEmailValid(email) === false) {
+            req.rollbackQueries(req)
             return res.status(400).json({ message: 'Invalid Body; email Invalid' })
         }
         //email valid, can convert to lower case without producing error
@@ -47,18 +53,22 @@ const getUser = async (req, res) => {
 
 
         try {
-            const userInformation = await queryPromise('SELECT * FROM users LEFT JOIN userConfiguration ON users.userId = userConfiguration.userId WHERE users.userEmail = ?',
+            const userInformation = await queryPromise(req, 
+                'SELECT * FROM users LEFT JOIN userConfiguration ON users.userId = userConfiguration.userId WHERE users.userEmail = ?',
                 [email.toLowerCase()])
 
             if (userInformation.length === 0) {
                 //successful but empty array, no user to return
+                req.commitQueries(req)
                 return res.status(204).json(userInformation)
             }
             else {
                 //array has item(s), meaning there was a user found, successful!
+                req.commitQueries(req)
                 return res.status(200).json(userInformation)
             }
         } catch (error) {
+            req.rollbackQueries(req)
             return res.status(400).json({ message: 'Invalid Body; Database query failed', error: error.message })
         }
     }
@@ -68,10 +78,12 @@ const getUser = async (req, res) => {
 
 const createUser = async (req, res) => {
 
+
     let email = req.body.email
 
     if (isEmailValid(email) === false) {
         //email NEEDs to be valid, so throw error if it is invalid
+        req.rollbackQueries(req)
         return res.status(400).json({ message: 'Invalid Body; email Invalid' })
     }
     //email valid, can convert to lower case without producing error
@@ -96,30 +108,34 @@ const createUser = async (req, res) => {
         [email, firstName, lastName, notificationAuthorized, notificationEnabled,
             loudNotifications, showTerminationAlert, followUp, followUpDelay,
             isPaused, compactView, darkModeStyle, snoozeLength, notificationSound]) === false) {
-                //>=1 of the items is undefined
+        //>=1 of the items is undefined
+        req.rollbackQueries(req)
         return res.status(400).json({ message: 'Invalid Body; email, firstName, lastName, notificationAuthorized, notificationEnabled, loudNotifications, showTerminationAlert, followUp, followUpDelay, isPaused, compactView, darkModeStyle, snoozeLength, or notificationSound missing' })
     }
     else {
         let userId = undefined
 
         try {
-            await queryPromise('INSERT INTO users(userFirstName, userLastName, userEmail) VALUES (?,?,?)',
+            await queryPromise(req,
+                'INSERT INTO users(userFirstName, userLastName, userEmail) VALUES (?,?,?)',
                 [firstName, lastName, email])
                 //everything worked
                 .then((result) => userId = result.insertId)
 
-            await queryPromise(
+            await queryPromise(req,
                 'INSERT INTO userConfiguration(userId, notificationAuthorized, notificationEnabled, loudNotifications, showTerminationAlert, followUp, followUpDelay, isPaused, compactView, darkModeStyle, snoozeLength, notificationSound) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
                 [userId, notificationAuthorized, notificationEnabled, loudNotifications, showTerminationAlert, followUp, followUpDelay, isPaused, compactView, darkModeStyle, snoozeLength, notificationSound])
 
+            req.commitQueries(req)
             return res.status(200).json({ message: 'Success', userId: userId })
         } catch (errorOne) {
             //if something went wrong when creating the user configuration, then we must delete the user from both the users table and the user configuration table
-            if (typeof userId !== 'undefined') {
-                await delUser(userId)
-                    .catch((errorTwo) => { return })
-            }
+            //if (typeof userId !== 'undefined') {
+            //    await delUser(userId)
+            //        .catch((errorTwo) => { return })
+            //}
             //something went wrong; the most likely option is that the email is a duplicate
+            req.rollbackQueries(req)
             return res.status(400).json({ message: 'Invalid Body; Database query failed', error: errorOne.message })
         }
     }
@@ -146,9 +162,10 @@ const updateUser = async (req, res) => {
     const notificationSound = req.body.notificationSound
 
     //checks to see that all needed components are provided
-    if (atLeastOneDefined([email, firstName, lastName, notificationAuthorized, notificationEnabled, 
+    if (atLeastOneDefined([email, firstName, lastName, notificationAuthorized, notificationEnabled,
         loudNotifications, showTerminationAlert, followUp, followUpDelay, isPaused, compactView,
-        darkModeStyle, snoozeLength, notificationSound]) === false ){
+        darkModeStyle, snoozeLength, notificationSound]) === false) {
+            req.rollbackQueries(req)
         return res.status(400).json({ message: 'Invalid Body; No email, firstName, lastName, notificationAuthorized, notificationEnabled, loudNotifications, showTerminationAlert, followUp, followUpDelay, isPaused, compactView, darkModeStyle, snoozeLength, or notificationSound provided' })
     }
     else {
@@ -157,69 +174,85 @@ const updateUser = async (req, res) => {
                 //email only needs to be valid if its provided, therefore check here
 
                 if (isEmailValid(email) === false) {
+                    req.rollbackQueries(req)
                     return res.status(400).json({ message: 'Invalid Body; email Invalid' })
                 }
                 //email valid, can convert to lower case without producing error
                 email = req.body.email.toLowerCase()
 
-                await queryPromise('UPDATE users SET userEmail = ? WHERE userId = ?',
+                await queryPromise(req,
+                    'UPDATE users SET userEmail = ? WHERE userId = ?',
                     [email, userId])
             }
             if (areAllDefined(firstName)) {
-                await queryPromise('UPDATE users SET userFirstName = ? WHERE userId = ?',
+                await queryPromise(req,
+                    'UPDATE users SET userFirstName = ? WHERE userId = ?',
                     [firstName, userId])
             }
             if (areAllDefined(lastName)) {
-                await queryPromise('UPDATE users SET userLastName = ? WHERE userId = ?',
+                await queryPromise(req,
+                    'UPDATE users SET userLastName = ? WHERE userId = ?',
                     [lastName, userId])
             }
             if (areAllDefined(notificationAuthorized)) {
-                console.log("enter")
-                await queryPromise('UPDATE userConfiguration SET notificationAuthorized = ? WHERE userId = ?',
-                    [notificationAuthorized, userId]).then((result)=>console.log(result))
+                await queryPromise(req,
+                    'UPDATE userConfiguration SET notificationAuthorized = ? WHERE userId = ?',
+                    [notificationAuthorized, userId])
             }
             if (areAllDefined(notificationEnabled)) {
-                await queryPromise('UPDATE userConfiguration SET notificationEnabled = ? WHERE userId = ?',
+                await queryPromise(req,
+                    'UPDATE userConfiguration SET notificationEnabled = ? WHERE userId = ?',
                     [notificationEnabled, userId])
             }
             if (areAllDefined(loudNotifications)) {
-                await queryPromise('UPDATE userConfiguration SET loudNotifications = ? WHERE userId = ?',
+                await queryPromise(req,
+                    'UPDATE userConfiguration SET loudNotifications = ? WHERE userId = ?',
                     [loudNotifications, userId])
             }
             if (areAllDefined(showTerminationAlert)) {
-                await queryPromise('UPDATE userConfiguration SET showTerminationAlert = ? WHERE userId = ?',
+                await queryPromise(req,
+                    'UPDATE userConfiguration SET showTerminationAlert = ? WHERE userId = ?',
                     [showTerminationAlert, userId])
             }
             if (areAllDefined(followUp)) {
-                await queryPromise('UPDATE userConfiguration SET followUp = ? WHERE userId = ?',
+                await queryPromise(req,
+                    'UPDATE userConfiguration SET followUp = ? WHERE userId = ?',
                     [followUp, userId])
             }
             if (areAllDefined(followUpDelay)) {
-                await queryPromise('UPDATE userConfiguration SET followUpDelay = ? WHERE userId = ?',
+                await queryPromise(req,
+                    'UPDATE userConfiguration SET followUpDelay = ? WHERE userId = ?',
                     [followUpDelay, userId])
             }
             if (areAllDefined(isPaused)) {
-                await queryPromise('UPDATE userConfiguration SET isPaused = ? WHERE userId = ?',
+                await queryPromise(req,
+                    'UPDATE userConfiguration SET isPaused = ? WHERE userId = ?',
                     [isPaused, userId])
             }
             if (areAllDefined(compactView)) {
-                await queryPromise('UPDATE userConfiguration SET compactView = ? WHERE userId = ?',
+                await queryPromise(req,
+                    'UPDATE userConfiguration SET compactView = ? WHERE userId = ?',
                     [compactView, userId])
             }
             if (areAllDefined(darkModeStyle)) {
-                await queryPromise('UPDATE userConfiguration SET darkModeStyle = ? WHERE userId = ?',
+                await queryPromise(req,
+                    'UPDATE userConfiguration SET darkModeStyle = ? WHERE userId = ?',
                     [darkModeStyle, userId])
             }
             if (areAllDefined(snoozeLength)) {
-                await queryPromise('UPDATE userConfiguration SET snoozeLength = ? WHERE userId = ?',
+                await queryPromise(req,
+                    'UPDATE userConfiguration SET snoozeLength = ? WHERE userId = ?',
                     [snoozeLength, userId])
             }
             if (areAllDefined(notificationSound)) {
-                await queryPromise('UPDATE userConfiguration SET notificationSound = ? WHERE userId = ?',
+                await queryPromise(req,
+                    'UPDATE userConfiguration SET notificationSound = ? WHERE userId = ?',
                     [notificationSound, userId])
             }
+            req.commitQueries(req)
             return res.status(200).json({ message: 'Success' })
         } catch (error) {
+            req.rollbackQueries(req)
             return res.status(400).json({ message: 'Invalid Body; Database query failed', error: error.message })
         }
     }
@@ -233,9 +266,14 @@ const deleteUser = async (req, res) => {
 
     const userId = formatNumber(req.params.userId)
 
-    return delUser(userId)
-        .then((result) => res.status(200).json({ message: 'Success' }))
-        .catch((error) => res.status(400).json({ message: 'Invalid Syntax; Database query failed', error: error.message }))
+    try {
+        await delUser(req, userId)
+        req.commitQueries(req)
+        return res.status(200).json({ message: 'Success' })
+    } catch (error) {
+        req.rollbackQueries(req)
+        return res.status(400).json({ message: 'Invalid Syntax; Database query failed', error: error.message })
+    }
 }
 
 

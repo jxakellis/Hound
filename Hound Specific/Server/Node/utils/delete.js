@@ -12,102 +12,48 @@ Known:
  * Deletes a user from the users table and all other associated data from all other tables.
  * @param {*} userId 
  */
-const deleteUser = async (userId) => {
+const deleteUser = async (req, userId) => {
 
-    //Don't do a try catch statement as we want as many delete statements to execute as possible. Use .catch() to ignore errors
+   
+    const dogIds = await queryPromise(req, 'SELECT dogId FROM dogs WHERE userId = ?', [userId])
 
-    let dogIds = await queryPromise('SELECT dogId FROM dogs WHERE userId = ?', [userId])
-        .catch((error) => dogIds = [])
     //deletes all dogs
     for (let i = 0; i < dogIds.length; i++) {
-        await deleteDog(dogIds[i].dogId)
-            .catch((error) => { return })
+        await deleteDog(req, dogIds[i].dogId)
     }
     //delete userConfiguration
-    await deleteUserConfiguration(userId)
-        .catch((error) => { return })
+    await deleteUserConfiguration(req, userId)
     //deletes user
-    await queryPromise('DELETE FROM users WHERE userId = ?', [userId])
-        .catch((error) => { return })
-
-    /*
-    try {
-        const dogIds = await queryPromise('SELECT dogId FROM dogs WHERE userId = ?', [userId])
-        //deletes all dogs
-        for (let i = 0; i < dogIds.length; i++) {
-            await deleteDog(dogIds[i].dogId)
-        }
-        //delete userConfiguration
-        await deleteUserConfiguration(userId)
-        //deletes user
-        await queryPromise('DELETE FROM users WHERE userId = ?', [userId])
-    } catch (error) {
-        throw error
-    }
-    
-    */
+    await queryPromise(req, 'DELETE FROM users WHERE userId = ?', [userId])
 }
 
 /**
  * Deletes userConfiguration from the userConfiguration table 
  * @param {*} userId 
  */
-const deleteUserConfiguration = async (userId) => {
-
-     //Don't do a try catch statement as we want as many delete statements to execute as possible. Use .catch() to ignore errors
+const deleteUserConfiguration = async (req, userId) => {
 
     //deletes user config
-    await queryPromise('DELETE FROM userConfiguration WHERE userId = ?', [userId])
-        .catch((error) => { return })
-
-    /*
-    try {
-        //deletes user config
-        await queryPromise('DELETE FROM userConfiguration WHERE userId = ?', [userId])
-    } catch (error) {
-        throw error
-    }
-   
-    */
+    await queryPromise(req, 'DELETE FROM userConfiguration WHERE userId = ?', [userId])
 }
 
 /**
  * Deletes dog from dogs table, logs from dogLogs table, and invokes deleteReminder for all reminderIds to handle removing reminders
  * @param {*} dogId 
  */
-const deleteDog = async (dogId) => {
+const deleteDog = async (req, dogId) => {
 
-     //Don't do a try catch statement as we want as many delete statements to execute as possible. Use .catch() to ignore errors
+        const reminderIds = await queryPromise(req, 
+            'SELECT reminderId FROM dogReminders WHERE dogId = ?', [dogId])
 
-        const reminderIds = await queryPromise('SELECT reminderId FROM dogReminders WHERE dogId = ?', [dogId])
-        .catch((error)=>{return})
         //deletes all reminders
         for (let i = 0; i < reminderIds.length; i++) {
-            await deleteReminder(reminderIds[i].reminderId)
-            .catch((error)=>{return})
+            await deleteReminder(req, reminderIds[i].reminderId)
         }
         //deletes all logs
-        await queryPromise('DELETE FROM dogLogs WHERE dogId = ?', [dogId])
-        .catch((error)=>{return})
+        await queryPromise(req, 'DELETE FROM dogLogs WHERE dogId = ?', [dogId])
         //deletes dog
-        await queryPromise('DELETE FROM dogs WHERE dogId = ?', [dogId])
-        .catch((error)=>{return})
-
-    /*
-    try {
-        const reminderIds = await queryPromise('SELECT reminderId FROM dogReminders WHERE dogId = ?', [dogId])
-        //deletes all reminders
-        for (let i = 0; i < reminderIds.length; i++) {
-            await deleteReminder(reminderIds[i].reminderId)
-        }
-        //deletes all logs
-        await queryPromise('DELETE FROM dogLogs WHERE dogId = ?', [dogId])
-        //deletes dog
-        await queryPromise('DELETE FROM dogs WHERE dogId = ?', [dogId])
-    } catch (error) {
-        throw error
-    }
-    */
+        await queryPromise(req, 'DELETE FROM dogs WHERE dogId = ?', [dogId])
 
 }
 
@@ -115,61 +61,33 @@ const deleteDog = async (dogId) => {
  * Deletes a log from dogLogs table
  * @param {*} logId 
  */
-const deleteLog = async (logId) => {
+const deleteLog = async (req, logId) => {
 
-     //Don't do a try catch statement as we want as many delete statements to execute as possible. Use .catch() to ignore errors
-
-        await queryPromise('DELETE FROM dogLogs WHERE logId = ?', [logId])
-        .catch((error)=>{return})
-
-    /*
-    try {
-        await queryPromise('DELETE FROM dogLogs WHERE logId = ?', [logId])
-    } catch (error) {
-        throw error
-    }
-    */
-
+        await queryPromise(req, 
+            'DELETE FROM dogLogs WHERE logId = ?', [logId])
 }
 
 /**
  * Deletes a reminder from dogReminder table and any component that may exist for it in any component table
  * @param {*} reminderId 
  */
-const deleteReminder = async (reminderId) => {
+const deleteReminder = async (req, reminderId) => {
 
-     //Don't do a try catch statement as we want as many delete statements to execute as possible. Use .catch() to ignore errors
 
         //deletes all components
-        await queryPromise('DELETE FROM reminderCountdownComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-        await queryPromise('DELETE FROM reminderWeeklyComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-        await queryPromise('DELETE FROM reminderMonthlyComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-        await queryPromise('DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-        await queryPromise('DELETE FROM reminderOneTimeComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
+        await queryPromise(req, 
+            'DELETE FROM reminderCountdownComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise(req, 
+            'DELETE FROM reminderWeeklyComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise(req, 
+            'DELETE FROM reminderMonthlyComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise(req, 
+            'DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise(req, 
+            'DELETE FROM reminderOneTimeComponents WHERE reminderId = ?', [reminderId])
         //deletes reminder
-        await queryPromise('DELETE FROM dogReminders WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-
-    /* 
-    try {
-        //deletes all components
-        await queryPromise('DELETE FROM reminderCountdownComponents WHERE reminderId = ?', [reminderId])
-        await queryPromise('DELETE FROM reminderWeeklyComponents WHERE reminderId = ?', [reminderId])
-        await queryPromise('DELETE FROM reminderMonthlyComponents WHERE reminderId = ?', [reminderId])
-        await queryPromise('DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
-        await queryPromise('DELETE FROM reminderOneTimeComponents WHERE reminderId = ?', [reminderId])
-        //deletes reminder
-        await queryPromise('DELETE FROM dogReminders WHERE reminderId = ?', [reminderId])
-    } catch (error) {
-        throw error
-    } 
-    */
-
+        await queryPromise(req, 
+            'DELETE FROM dogReminders WHERE reminderId = ?', [reminderId])
 
 }
 
@@ -181,91 +99,58 @@ const deleteReminder = async (reminderId) => {
  * @param {*} reminderId 
  * @param {*} newTimingStyle 
  */
-const deleteLeftoverReminderComponents = async (reminderId, newTimingStyle) => {
+const deleteLeftoverReminderComponents = async (req, reminderId, newTimingStyle) => {
 
      //Don't do a try catch statement as we want as many delete statements to execute as possible. Use .catch() to ignore errors
 
     if (newTimingStyle === "countdown") {
-        await queryPromise('DELETE FROM reminderWeeklyComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-        await queryPromise('DELETE FROM reminderMonthlyComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-        //updated reminder can't be snoozed so delete. 
+         await queryPromise(req, 
+            'DELETE FROM reminderWeeklyComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise(req, 
+            'DELETE FROM reminderMonthlyComponents WHERE reminderId = ?', [reminderId])
+            //updated reminder can't be snoozed so delete. 
         //possible optimization here, since the reminder could be snoozed in the future we could just update isSnoozed to false instead of deleting the data
-        await queryPromise('DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-        await queryPromise('DELETE FROM reminderOneTimeComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
+        await queryPromise(req, 
+            'DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise(req, 
+            'DELETE FROM reminderOneTimeComponents WHERE reminderId = ?', [reminderId])
 
     }
     else if (newTimingStyle === "weekly") {
-        await queryPromise('DELETE FROM reminderCountdownComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-        await queryPromise('DELETE FROM reminderMonthlyComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-        await queryPromise('DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-        await queryPromise('DELETE FROM reminderOneTimeComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
+        await queryPromise(req, 
+            'DELETE FROM reminderCountdownComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise(req, 
+            'DELETE FROM reminderMonthlyComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise(req, 
+            'DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise(req, 
+            'DELETE FROM reminderOneTimeComponents WHERE reminderId = ?', [reminderId])
 
     }
     else if (newTimingStyle === "monthly") {
-        await queryPromise('DELETE FROM reminderCountdownComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-        await queryPromise('DELETE FROM reminderWeeklyComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-        await queryPromise('DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-        await queryPromise('DELETE FROM reminderOneTimeComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
+        await queryPromise(req, 
+            'DELETE FROM reminderCountdownComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise(req, 
+            'DELETE FROM reminderWeeklyComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise(req, 
+            'DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise(req, 
+            'DELETE FROM reminderOneTimeComponents WHERE reminderId = ?', [reminderId])
     }
     else if (newTimingStyle === "oneTime") {
-        await queryPromise('DELETE FROM reminderCountdownComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-        await queryPromise('DELETE FROM reminderWeeklyComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-        await queryPromise('DELETE FROM reminderMonthlyComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
-        await queryPromise('DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
-        .catch((error)=>{return})
+        await queryPromise(req, 
+            'DELETE FROM reminderCountdownComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise(req, 
+            'DELETE FROM reminderWeeklyComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise(req, 
+            'DELETE FROM reminderMonthlyComponents WHERE reminderId = ?', [reminderId])
+        await queryPromise(req, 
+            'DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
 
     }
     else {
         throw Error("Invalid timingStyle")
     }
-
-    /* if (newTimingStyle === "countdown") {
-        await queryPromise('DELETE FROM reminderWeeklyComponents WHERE reminderId = ?', [reminderId])
-        await queryPromise('DELETE FROM reminderMonthlyComponents WHERE reminderId = ?', [reminderId])
-        //updated reminder can't be snoozed so delete. 
-        //possible optimization here, since the reminder could be snoozed in the future we could just update isSnoozed to false instead of deleting the data
-        await queryPromise('DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
-        await queryPromise('DELETE FROM reminderOneTimeComponents WHERE reminderId = ?', [reminderId])
-
-    }
-    else if (newTimingStyle === "weekly") {
-        await queryPromise('DELETE FROM reminderCountdownComponents WHERE reminderId = ?', [reminderId])
-        await queryPromise('DELETE FROM reminderMonthlyComponents WHERE reminderId = ?', [reminderId])
-        await queryPromise('DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
-        await queryPromise('DELETE FROM reminderOneTimeComponents WHERE reminderId = ?', [reminderId])
-
-    }
-    else if (newTimingStyle === "monthly") {
-        await queryPromise('DELETE FROM reminderCountdownComponents WHERE reminderId = ?', [reminderId])
-        await queryPromise('DELETE FROM reminderWeeklyComponents WHERE reminderId = ?', [reminderId])
-        await queryPromise('DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
-        await queryPromise('DELETE FROM reminderOneTimeComponents WHERE reminderId = ?', [reminderId])
-    }
-    else if (newTimingStyle === "oneTime") {
-        await queryPromise('DELETE FROM reminderCountdownComponents WHERE reminderId = ?', [reminderId])
-        await queryPromise('DELETE FROM reminderWeeklyComponents WHERE reminderId = ?', [reminderId])
-        await queryPromise('DELETE FROM reminderMonthlyComponents WHERE reminderId = ?', [reminderId])
-        await queryPromise('DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId])
-
-    }
-    else {
-        throw Error("Invalid timingStyle")
-    } */
 
 }
 

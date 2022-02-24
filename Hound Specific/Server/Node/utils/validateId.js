@@ -19,7 +19,7 @@ const validateUserId = async (req, res, next) => {
         //if userId is defined and it is a number then continue
         try {
             //queries the database to find if the users table contains a user with the provided ID
-            const result = await queryPromise('SELECT userId FROM users WHERE userId = ?', [userId])
+            const result = await queryPromise(req, 'SELECT userId FROM users WHERE userId = ?', [userId])
 
             //checks array of JSON from query to find if userId is contained
             if (result.some(item => item.userId === userId)) {
@@ -28,15 +28,18 @@ const validateUserId = async (req, res, next) => {
             }
             else {
                 //userId does not exist in the table
+                req.rollbackQueries(req)
                 return res.status(404).json({ message: 'Invalid Parameters; No user found or invalid permissions' })
             }
         } catch (error) {
             //couldn't query database to find userId
+            req.rollbackQueries(req)
             return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message })
         }
     }
     else {
         //userId was not provided or is invalid format
+        req.rollbackQueries(req)
         return res.status(400).json({ message: 'Invalid Parameters; userId Invalid' })
     }
 }
@@ -60,7 +63,7 @@ const validateDogId = async (req, res, next) => {
         //query database to find out if user has permission for that dogId
         try {
             //finds what dogId (s) the user has linked to their userId
-            const userDogIds = await queryPromise('SELECT dogs.dogId FROM dogs WHERE dogs.userId = ?', [userId])
+            const userDogIds = await queryPromise(req, 'SELECT dogs.dogId FROM dogs WHERE dogs.userId = ?', [userId])
 
             // search query result to find if the dogIds linked to the userId match the dogId provided, match means the user owns that dogId
 
@@ -70,15 +73,18 @@ const validateDogId = async (req, res, next) => {
             }
             else {
                 //the dogId does not exist and/or the user does not have access to that dogId
+                req.rollbackQueries(req)
                 return res.status(404).json({ message: 'Couldn\'t Find Resource; No dogs found or invalid permissions' })
             }
         } catch (error) {
+            req.rollbackQueries(req)
             return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message })
         }
 
     }
     else {
         //dogId was not provided or is invalid
+        req.rollbackQueries(req)
         return res.status(400).json({ message: 'Invalid Parameters; dogId Invalid' })
     }
 }
@@ -103,7 +109,7 @@ const validateLogId = async (req, res, next) => {
         //query database to find out if user has permission for that logId
         try {
             //finds what logId (s) the user has linked to their dogId
-            const dogLogIds = await queryPromise('SELECT logId FROM dogLogs WHERE dogId = ?', [dogId])
+            const dogLogIds = await queryPromise(req, 'SELECT logId FROM dogLogs WHERE dogId = ?', [dogId])
 
             // search query result to find if the logIds linked to the dogIds match the logId provided, match means the user owns that logId
 
@@ -113,15 +119,18 @@ const validateLogId = async (req, res, next) => {
             }
             else {
                 //the logId does not exist and/or the dog does not have access to that logId
+                req.rollbackQueries(req)
                 return res.status(404).json({ message: 'Couldn\'t Find Resource; No logs found or invalid permissions' })
             }
         } catch (error) {
+            req.rollbackQueries(req)
             return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message })
         }
 
     }
     else {
         //logId was not provided or is invalid
+        req.rollbackQueries(req)
         return res.status(400).json({ message: 'Invalid Parameters; logId Invalid' })
     }
 }
@@ -144,7 +153,7 @@ const validateReminderId = async (req, res, next) => {
         //query database to find out if user has permission for that reminderId
         try {
             //finds what reminderId (s) the user has linked to their dogId
-            const dogReminderIds = await queryPromise('SELECT reminderId FROM dogReminders WHERE dogId = ?', [dogId])
+            const dogReminderIds = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ?', [dogId])
 
             // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 
@@ -154,15 +163,18 @@ const validateReminderId = async (req, res, next) => {
             }
             else {
                 //the reminderId does not exist and/or the dog does not have access to that reminderId
+                req.rollbackQueries(req)
                 return res.status(404).json({ message: 'Couldn\'t Find Resource; No reminders found or invalid permissions' })
             }
         } catch (error) {
+            req.rollbackQueries(req)
             return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message })
         }
 
     }
     else {
         //reminderId was not provided or is invalid
+        req.rollbackQueries(req)
         return res.status(400).json({ message: 'Invalid Parameters; reminderId Invalid' })
     }
 }
