@@ -3,7 +3,7 @@ const router = express.Router({ mergeParams: true })
 
 const { getUser, createUser, updateUser, deleteUser } = require('../controllers/user')
 
-const { validateUserId } = require('../middleware/validateId')
+const { validateUserId } = require('../utils/validateId')
 
 //validation that params are formatted correctly and have adequate permissions
 router.use('/:userId', validateUserId)
@@ -12,28 +12,27 @@ router.use('/:userId', validateUserId)
 const dogsRouter = require('./dogs')
 router.use('/:userId/dogs', dogsRouter)
 
-//configuration: /api/v1/user/:userId/configuration
-//const configurationRouter = require('./configuration')
-//router.use('/:userId/configuration', configurationRouter)
 
+// BASE PATH /api/v1/user/...
 
-// BASE PATH /api/v1/user/
-
-//user user with email and password then return information from users table
+//gets user with email then return information from users and userConfiguration table
 router.get('/', getUser)
 /* BODY:
-{"email":"foo@gmail.com"}
+{
+"email":"requiredString"
+}
 */
 
-//user user with userId and password then return information from users table
+//gets user with userId then return information from users and userConfiguration table
 router.get('/:userId', getUser)
 // no body
 
 
-//creates user
+//creates user and userConfiguration
 router.post('/', createUser)
 /* BODY:
-{"email":"requiredEmail",
+{
+"email":"requiredEmail",
 "firstName":"requiredString",
 "lastName":"requiredString",
 "notificationAuthorized":"requiredBool",
@@ -42,17 +41,24 @@ router.post('/', createUser)
 "showTerminationAlert":"requiredBool",
 "followUp":"requiredBool",
 "followUpDelay":"requiredInt",
-"paused":"requiredBool",
+"isPaused":"requiredBool",
 "compactView":"requiredBool",
 "darkModeStyle":"requiredString",
 "snoozeLength":"requiredInt",
-"notificationSound":"requiredString"}
+"notificationSound":"requiredString"
+}
 */
 
 //updates user
 router.put('/:userId', updateUser)
 /* BODY:
-{"email":"optionalEmail",
+
+//At least one of the following must be defined: email, firstName, lastName, notificationAuthorized, notificationEnabled, 
+        loudNotifications, showTerminationAlert, followUp, followUpDelay, isPaused, compactView,
+        darkModeStyle, snoozeLength, or notificationSound
+
+{
+"email":"optionalEmail",
 "firstName":"optionalString",
 "lastName":"optionalString",
 "notificationAuthorized":"optionalBool",
@@ -61,12 +67,12 @@ router.put('/:userId', updateUser)
 "showTerminationAlert":"optionalBool",
 "followUp":"optionalBool",
 "followUpDelay":"optionalInt",
-"paused":"optionalBool",
+"isPaused":"optionalBool",
 "compactView":"optionalBool",
 "darkModeStyle":"optionalString",
 "snoozeLength":"optionalInt",
-"notificationSound":"optionalString"}
-NOTE: At least one item to update, from all the optionals, must be provided.
+"notificationSound":"optionalString"
+}
 */
 
 //deletes user

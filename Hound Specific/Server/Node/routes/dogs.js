@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router({ mergeParams: true })
 
 const { getDogs, createDog, updateDog, deleteDog } = require('../controllers/dogs')
-const { validateUserId, validateDogId } = require('../middleware/validateId')
+const { validateUserId, validateDogId } = require('../utils/validateId')
 
 //validation that params are formatted correctly and have adequate permissions
 router.use('/', validateUserId)
@@ -33,8 +33,10 @@ router.get('/:dogId', getDogs)
 //creates dog
 router.post('/', createDog)
 /* BODY:
-{"dogName": "requiredString", 
-"icon": optionalImage}
+{
+ "dogName": "requiredString", 
+"icon": optionalImage //icon only provided if user adds a custom icon, don't store default icon.
+}
 */
 
 
@@ -42,9 +44,13 @@ router.post('/', createDog)
 //updates dog
 router.put('/:dogId', updateDog)
 /* BODY:
-{"dogName": "optionalString", 
-"icon": optionalImage}
-NOTE: At least one item to update, from all the optionals, must be provided.
+
+//At least one of the following must be defined: dogName or icon
+
+{
+"dogName": "optionalString", 
+"icon": optionalImage
+}
 */
 
 

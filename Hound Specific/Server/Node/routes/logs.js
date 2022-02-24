@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router({ mergeParams: true })
 
 const { getLogs, createLog, updateLog, deleteLog } = require('../controllers/logs')
-const { validateLogId } = require('../middleware/validateId')
+const { validateLogId } = require('../utils/validateId')
 
 
 //validation that params are formatted correctly and have adequate permissions
@@ -10,7 +10,7 @@ router.use('/:logId', validateLogId)
 
 
 
-// BASE PATH /api/v1/user/:userId/dogs/:dogId/logs/....
+// BASE PATH /api/v1/user/:userId/dogs/:dogId/logs/...
 
 //gets all logs
 router.get('/', getLogs)
@@ -25,25 +25,27 @@ router.get('/:logId', getLogs)
 //create log
 router.post('/', createLog)
 /* BODY:
-{"date":"requiredDate",
+{
+"date":"requiredDate",
 "note" : "optionalString",
-"logType": "requiredString",
+"logType": "requiredString", // If logType is "Custom", then customTypeName must be provided
 "customTypeName":"optionalString"
 }
-NOTE: If logType is "Custom", then customTypeName must be provided
 */
 
 
 //updates log
 router.put('/:logId', updateLog)
 /* BODY:
-{"date":"optionalDate",
+
+//At least one of the following must be defined: date, note, or logType
+
+{
+"date":"optionalDate",
 "note" : "optionalString",
-"logType": "optionalString",
+"logType": "optionalString", // If logType is "Custom", then customTypeName must be provided
 "customTypeName":"optionalString"
 }
-NOTE: At least one item to update, from all the optionals, must be provided.
-NOTE: If logType is "Custom", then customTypeName must be provided
 */
 
 

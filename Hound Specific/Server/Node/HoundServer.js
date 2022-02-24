@@ -9,7 +9,7 @@ const userRouter = require('./routes/user')
 app.use((req, res, next) => {
     bodyParser.urlencoded({ extended: true })(req, res, (error) => {
         if (error) {
-            return res.status(400).json({ message: "Invalid Body; Unable To Parse", error: error })
+            return res.status(400).json({ message: "Invalid Body; Unable to parse", error: error.message })
         }
 
         next()
@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use((req, res, next) => {
     bodyParser.json()(req, res, (error) => {
         if (error) {
-            return res.status(400).json({ message: "Invalid Body; Unable To Parse", error: error })
+            return res.status(400).json({ message: "Invalid Body; Unable to parse", error: error.message })
         }
 
         next()
@@ -32,7 +32,6 @@ app.use((req, res, next) => {
 
 /*
 /api/v1/user/:userId (OPT)
-/api/v1/user/:userId/configuration
 /api/v1/user/:userId/dogs/:dogId (OPT)
 /api/v1/user/:userId/dogs/:dogId/logs/:logId (OPT)
 /api/v1/user/:userId/dogs/:dogId/reminders/:reminderId (OPT)

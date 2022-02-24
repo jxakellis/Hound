@@ -1,5 +1,11 @@
 const database = require('../databaseConnection')
 
+/**
+ * Queries the predefined database connection with the given sqlString
+ * @param {*} sqlString 
+ * @param sqlVariables an optional array of objects to fill in placeholder values ('?') in sqlString
+ * @returns 
+ */
 const queryPromise = (sqlString, sqlVariables = undefined) => {
     return new Promise((resolve, reject) => {
         //need a database to query

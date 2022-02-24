@@ -1,12 +1,19 @@
 const database = require('../databaseConnection')
 const { queryPromise } = require('./queryPromise')
+const {formatNumber} = require('./validateFormat')
 
-//checks to see that userId is defined, is a number, and exists in the database. TO DO: add authentication to use userId
+/**
+ * Checks to see that userId is defined, is a number, and exists in the database. TO DO: add authentication to use userId
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 const validateUserId = async (req, res, next) => {
 
     //later on use a token here to validate that they have permission to use the userId
 
-    const userId = Number(req.params.userId)
+    const userId = formatNumber(req.params.userId)
 
     if (userId) {
         //if userId is defined and it is a number then continue
@@ -21,11 +28,11 @@ const validateUserId = async (req, res, next) => {
             }
             else {
                 //userId does not exist in the table
-                return res.status(400).json({ message: 'Invalid Parameters; userId Not Found' })
+                return res.status(404).json({ message: 'Invalid Parameters; No user found or invalid permissions' })
             }
         } catch (error) {
             //couldn't query database to find userId
-            return res.status(400).json({ message: 'Invalid Parameters; userId Invalid', error: error })
+            return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message })
         }
     }
     else {
@@ -34,14 +41,19 @@ const validateUserId = async (req, res, next) => {
     }
 }
 
-//checks to see that dogId is defined and is a number. and exists in the database. 
-//checks to see if dogId exists in the database for the validated userId provided, if it does then the user owns that dog
+/**
+ * Checks to see that dogId is defined, a number, and exists in the database under userId provided. If it does then the user owns the dog and invokes next(). 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 const validateDogId = async (req, res, next) => {
 
     //userId should be validated already
 
-    const userId = Number(req.params.userId)
-    const dogId = Number(req.params.dogId)
+    const userId = formatNumber(req.params.userId)
+    const dogId = formatNumber(req.params.dogId)
 
     //if dogId is defined and it is a number then continue
     if (dogId) {
@@ -58,10 +70,10 @@ const validateDogId = async (req, res, next) => {
             }
             else {
                 //the dogId does not exist and/or the user does not have access to that dogId
-                return res.status(404).json({ message: 'Couldn\'t Find Resource; No Dogs Found or Invalid Permissions' })
+                return res.status(404).json({ message: 'Couldn\'t Find Resource; No dogs found or invalid permissions' })
             }
         } catch (error) {
-            return res.status(400).json({ message: 'Invalid Parameters; Database Query Failed', error: error })
+            return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message })
         }
 
     }
@@ -71,14 +83,19 @@ const validateDogId = async (req, res, next) => {
     }
 }
 
-//checks to see that logId is defined and is a number. and exists in the database. 
-//checks to see if logId exists in the database for the validated dogId provided, if it does then the dog owns that log
+/**
+ * Checks to see that logId is defined, a number. and exists in the database under dogId provided. If it does then the dog owns that log and invokes next().
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 const validateLogId = async (req, res, next) => {
 
     //dogId should be validated already
 
-    const dogId = Number(req.params.dogId)
-    const logId = Number(req.params.logId)
+    const dogId = formatNumber(req.params.dogId)
+    const logId = formatNumber(req.params.logId)
 
 
     //if logId is defined and it is a number then continue
@@ -96,10 +113,10 @@ const validateLogId = async (req, res, next) => {
             }
             else {
                 //the logId does not exist and/or the dog does not have access to that logId
-                return res.status(404).json({ message: 'Couldn\'t Find Resource; No Logs Found or Invalid Permissions' })
+                return res.status(404).json({ message: 'Couldn\'t Find Resource; No logs found or invalid permissions' })
             }
         } catch (error) {
-            return res.status(400).json({ message: 'Invalid Parameters; Database Query Failed', error: error })
+            return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message })
         }
 
     }
@@ -109,13 +126,18 @@ const validateLogId = async (req, res, next) => {
     }
 }
 
-//checks to see that reminderId is defined and is a number. and exists in the database. 
-//checks to see if reminderId exists in the database for the validated dogId provided, if it does then the dog owns that reminder
+/**
+ * Checks to see that reminderId is defined, a number, and exists in the database under the dogId provided. If it does then the dog owns that reminder and invokes next().
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 const validateReminderId = async (req, res, next) => {
     //dogId should be validated already
 
-    const dogId = Number(req.params.dogId)
-    const reminderId = Number(req.params.reminderId)
+    const dogId = formatNumber(req.params.dogId)
+    const reminderId = formatNumber(req.params.reminderId)
 
     //if reminderId is defined and it is a number then continue
     if (reminderId) {
@@ -132,10 +154,10 @@ const validateReminderId = async (req, res, next) => {
             }
             else {
                 //the reminderId does not exist and/or the dog does not have access to that reminderId
-                return res.status(404).json({ message: 'Couldn\'t Find Resource; No Reminders Found or Invalid Permissions' })
+                return res.status(404).json({ message: 'Couldn\'t Find Resource; No reminders found or invalid permissions' })
             }
         } catch (error) {
-            return res.status(400).json({ message: 'Invalid Parameters; Database Query Failed', error: error })
+            return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message })
         }
 
     }

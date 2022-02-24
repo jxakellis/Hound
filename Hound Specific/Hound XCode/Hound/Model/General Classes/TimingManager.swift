@@ -43,12 +43,6 @@ class TimingManager{
         return count
     }
     
-    ///Corrolates to dogManager: "
-    ///Dictionary<dogName: String, Dictionary<reminderName: String, associatedTimer: Timer>>"
-    
-    /// IMPORTANT NOTE: DO NOT COPY, WILL MAKE MULTIPLE TIMERS WHICH WILL FIRE SIMULTANIOUSLY. This is depreciated as of 11/19/2021, added a timer variable to the remidners to simplify the process
-   // static var timerDictionary: Dictionary<String,Dictionary<String,Timer>> = Dictionary<String,Dictionary<String,Timer>>()
-    
     ///If a timeOfDay alarm is being skipped, this array stores all the timers that are responsible for unskipping the alarm when it goes from 1 Day -> 23 Hours 59 Minutes
     private static var isSkippingDisablers: [Timer] = []
     //MARK: - Main
@@ -73,8 +67,6 @@ class TimingManager{
                 
                 let reminder = sudoDogManager.dogs[d].dogReminders.reminders[r]
                 
-                
-                
                 //makes sure a reminder is enabled and its presentation is not being handled
                 guard reminder.getEnable() == true && reminder.isPresentationHandled == false
                 else{
@@ -83,6 +75,8 @@ class TimingManager{
                 
                 //Sets a timer that executes when the timer should go from isSkipping true -> false, e.g. 1 Day left on a timer that is skipping and when it hits 23 hours and 59 minutes it turns into a regular nonskipping timer
                 let unskipDate = reminder.timeOfDayComponents.unskipDate(timerMode: reminder.timerMode, reminderExecutionBasis: reminder.executionBasis)
+                
+                //if the a date to unskip exists, then creates a timer to do so when it is time
                 if unskipDate != nil {
                     let isSkippingDisabler = Timer(fireAt: unskipDate!,
                                                  interval: -1,
@@ -106,22 +100,8 @@ class TimingManager{
                 
                 reminder.timer?.invalidate()
                 reminder.timer = timer
-                
-                /*
-                 //Updates timerDictionary to reflect new timer added, this is so a reference to the created timer can be referenced later and invalidated if needed.
-                 var nestedtimerDictionary: Dictionary<String, Timer> = timerDictionary[dogManager.dogs[d].dogTraits.dogName] ?? Dictionary<String,Timer>()
-                 
-                 nestedtimerDictionary[reminder.uuid] = timer
-                 
-                 timerDictionary[dogManager.dogs[d].dogTraits.dogName] = nestedtimerDictionary
-                 */
-                
             }
         }
-    }
-    
-    ///Dummy selector sent to an inactive timer, an inactive timer (due to the way the infrastructure is built) still needs to be added to the timer dictionary so dependent components can display information properly
-    @objc static private func sudoSelector(){
     }
     
     ///Invalidates all current timers then calls willInitalize, makes it a clean slate then re sets everything up
@@ -194,16 +174,6 @@ class TimingManager{
     
      ///Invalidates the isSkippingDisablers so it's fresh when time to reinitalize
     private static func invalidateAll(dogManager: DogManager) {
-         /*
-          ///Invalidates all timers
-          for dogKey in timerDictionary.keys{
-              for reminderKey in timerDictionary[dogKey]!.keys {
-                      timerDictionary[dogKey]![reminderKey]!.invalidate()
-              }
-              timerDictionary[dogKey]!.removeAll()
-          }
-          timerDictionary.removeAll()
-          */
         
         for dog in dogManager.dogs{
             for reminder in dog.dogReminders.reminders{
@@ -225,17 +195,7 @@ class TimingManager{
     
     ///Updates dogManager to reflect the changes in intervalElapsed as if everything is paused the amount of time elapsed by each timer must to saved so when unpaused the new timers can be properly calculated
     private static func willPause(dogManager: DogManager){
-        /*
-        for dogKey in timerDictionary.keys{
-            for reminderUUID in timerDictionary[dogKey]!.keys {
-                
-                //checks to make sure the enabled timer found is still valid (invalid ones are just ones from the past, left in the data)
-                guard timerDictionary[dogKey]![reminderUUID]!.isValid else {
-                    continue
-                }
-                
-                let reminder = try! dogManager.findDog(forName: dogKey).dogReminders.findReminder(forUUID: reminderUUID)
-         */
+        
         for dog in dogManager.dogs{
             for reminder in dog.dogReminders.reminders {
                 

@@ -1,5 +1,5 @@
-const { queryPromise } = require('../../middleware/queryPromise')
-const { formatDate } = require('../../middleware/validateFormat')
+const { queryPromise } = require('../../utils/queryPromise')
+const { formatDate } = require('../../utils/validateFormat')
 
 const createOneTimeComponents = async (reminderId, req) => {
     const date = formatDate(req.body.date)
@@ -26,21 +26,6 @@ const updateOneTimeComponents = async (reminderId, req) => {
         await queryPromise('UPDATE reminderOneTimeComponents SET date = ? WHERE reminderId = ?',
      [date,reminderId])
     }
-
-     //if there is an error, it is uncaught to intentionally be caught by invocation from reminders
-    
-
-   
-    /*
-    if (!date){
-        throw Error("Invalid Body; No date Provided")
-    }
-    else {
-        await queryPromise('UPDATE reminderOneTimeComponents SET date = ? WHERE reminderId = ?',
-   [date,reminderId])
-    }
-    return
-    */
     
 }
 

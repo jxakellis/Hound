@@ -2,14 +2,14 @@ const express = require('express')
 const router = express.Router({ mergeParams: true })
 
 const { getReminders, createReminder, updateReminder, deleteReminder } = require('../controllers/reminders')
-const { validateReminderId } = require('../middleware/validateId')
+const { validateReminderId } = require('../utils/validateId')
 
 //validation that params are formatted correctly and have adequate permissions
 router.use('/:reminderId', validateReminderId)
 
 
 
-// BASE PATH /api/v1/user/:userId/dogs/:dogId/reminders/....
+// BASE PATH /api/v1/user/:userId/dogs/:dogId/reminders/...
 
 //gets all reminders
 router.get('/', getReminders)
@@ -24,15 +24,16 @@ router.get('/:reminderId', getReminders)
 //create reminder: 
 router.post('/', createReminder)
 /* BODY:
-{"reminderType": "requiredString", 
+{
+"reminderType": "requiredString", // If reminderType is "Custom", then customTypeName must be provided
 "customTypeName": "optionalString", 
-"timingStyle": "requiredString", 
+"timingStyle": "requiredString", //Only components for timingStyle type specified must be provided
 "executionBasis": "requiredDate",
-"enabled":"requiredBool",
+"isEnabled":"requiredBool",
 
     //FOR countdown
-    "executionInterval":"requiredInt",
-    "intervalElapsed":"requiredInt"
+    "countdownExecutionInterval":"requiredInt",
+    "countdownIntervalElapsed":"requiredInt"
 
     //FOR weekly, NOTE: skipping date omitted as a reminder cant be skipping when its created
     "hour":"requiredInt",
@@ -52,52 +53,62 @@ router.post('/', createReminder)
 
     //FOR oneTime
     "date":"requiredDate"
+
+    //FOR snooze
+    no snooze components in creation, only when actually snoozed
 }
 }
-NOTE: If reminderType is "Custom", then customTypeName must be provided
 */
 
 
 //update reminder
 router.put('/:reminderId', updateReminder)
 /* BODY:
-{"reminderType": "optional", 
+
+//At least one of the following must be defined: reminderType, timingStyle, executionBasis, isEnabled, or isSnoozed 
+
+{
+"reminderType": "optionalString", // If reminderType is "Custom", then customTypeName must be provided
 "customTypeName": "optionalString", 
-"timingStyle": "optional", 
+"timingStyle": "optionalString", //If timingStyle provided, then all components for timingStyle type must be provided
 "executionBasis": "optionalDate",
-"enabled":"optionalBool",
+"isEnabled":"optionalBool",
+
+    //components only required if timingStyle provided
 
     //FOR countdown
-    "executionInterval":"optionalInt",
-    "intervalElapsed":"optionalInt"
+    "countdownExecutionInterval":"requiredInt",
+    "countdownIntervalElapsed":"requiredInt"
 
     //FOR weekly
-    "hour":"optionalInt",
-    "minute":"optionalInt",
-    "sunday":"optionalBool",
-    "monday":"optionalBool",
-    "tuesday":"optionalBool",
-    "wednesday":"optionalBool",
-    "thursday":"optionalBool",
-    "friday":"optionalBool",
-    "saturday":"optionalBool",
-    "skipping":"optionalBool",
+    "hour":"requiredInt",
+    "minute":"requiredInt",
+    "sunday":"requiredBool",
+    "monday":"requiredBool",
+    "tuesday":"requiredBool",
+    "wednesday":"requiredBool",
+    "thursday":"requiredBool",
+    "friday":"requiredBool",
+    "saturday":"requiredBool",
+    "skipping":"optionalBool", //if skipping is provided, then skipDate is required
     "skipDate":"optionalDate"
 
     //FOR monthly
-    "hour":"optionalInt",
-    "minute":"optionalInt",
-    "dayOfMonth":"optionalInt",
-    skipping":"optionalBool",
+    "hour":"requiredInt",
+    "minute":"requiredInt",
+    "dayOfMonth":"requiredInt"
+    "skipping":"optionalBool", //if skipping is provided, then skipDate is required
     "skipDate":"optionalDate"
 
     //FOR oneTime
-    "date":"optionalDate"
+    "date":"requiredDate"
+
+    //FOR snooze
+    "isSnoozed":"requiredBool",
+    "snoozeExecutionInterval":"optionalInt", //if isSnoozed is true, then snoozeExecutionInterval and snoozeIntervalElapsed are required
+    "snoozeIntervalElapsed":"optionalInt"
 }
 }
-NOTE: At least one item to update, from all the optionals, must be provided.
-NOTE: If reminderType is being updated to "Custom", then customTypeName must be provided
-NOTE: If timingStyle is being updated, then ALL reminderComponents required for timingStyle from POST must be provided.
 */
 
 

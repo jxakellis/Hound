@@ -1,10 +1,10 @@
-const { queryPromise } = require('../../middleware/queryPromise')
-const { formatDate, formatBoolean } = require('../../middleware/validateFormat')
+const { queryPromise } = require('../../utils/queryPromise')
+const { formatDate, formatBoolean, formatNumber } = require('../../utils/validateFormat')
 
 const createMonthlyComponents = async (reminderId, req) => {
-    const hour = Number(req.body.hour)
-    const minute = Number(req.body.minute)
-    const dayOfMonth = Number(req.body.dayOfMonth)
+    const hour = formatNumber(req.body.hour)
+    const minute = formatNumber(req.body.minute)
+    const dayOfMonth = formatNumber(req.body.dayOfMonth)
 
     //Errors intentionally uncaught so they are passed to invocation in reminders
     //Newly created monthly reminder cant be skipping, so no need for skip data
@@ -15,9 +15,9 @@ const createMonthlyComponents = async (reminderId, req) => {
 
 //Attempts to first add the new components to the table. iI this fails then it is known the reminder is already present or components are invalid. If the update statement fails then it is know the components are invalid, error passed to invocer.
 const updateMonthlyComponents = async (reminderId, req) => {
-    const hour = Number(req.body.hour)
-    const minute = Number(req.body.minute)
-    const dayOfMonth = Number(req.body.dayOfMonth)
+    const hour = formatNumber(req.body.hour)
+    const minute = formatNumber(req.body.minute)
+    const dayOfMonth = formatNumber(req.body.dayOfMonth)
     const skipping = formatBoolean(req.body.skipping)
     const skipDate = formatDate(req.body.skipDate)
 
@@ -40,54 +40,6 @@ const updateMonthlyComponents = async (reminderId, req) => {
             [hour, minute, dayOfMonth, skipping, reminderId])
         }
     }
-
-
-    //if (skipping === true && !skipDate){
-        //throw Error("skipDate invalid or not provided")
-    //}
-   // else {
-
-    //if there is an error, it is uncaught to intentionally be caught by invocation from reminders
-        
- //   }
-
-    /*
-    //there is no value to update, so there is a problem
-    if (!hour||!minute||!dayOfMonth|| typeof skipping === 'undefined'){
-        throw Error("No hour, minute, dayOfMonth, or skipping provided")
-    }
-    //if the reminder is turning into skipping mode, then it needs a skipDate to define when it was skipped
-    else if (skipping === true && !skipDate){
-        throw Error("skipDate invalid or not provided")
-    }
-    else {
-        if (hour){
-            await queryPromise('UPDATE reminderMonthlyComponents SET hour = ? WHERE reminderId = ?',
-            [hour, reminderId])
-        }
-        if (minute){
-            await queryPromise('UPDATE reminderMonthlyComponents SET minute = ? WHERE reminderId = ?',
-            [minute, reminderId])
-        }
-        if (dayOfMonth){
-            await queryPromise('UPDATE reminderMonthlyComponents SET dayOfMonth = ? WHERE reminderId = ?',
-            [dayOfMonth, reminderId])
-        }
-        if (typeof skipping !== 'undefined'){
-            //need skipdate if skipping turning true
-            if (skipping === true){
-                await queryPromise('UPDATE reminderMonthlyComponents SET skipping = ?, skipDate = ? WHERE reminderId = ?',
-            [skipping, skipDate, reminderId])
-            }
-            //no need for skipdate if skipping turning false
-            else {
-                await queryPromise('UPDATE reminderMonthlyComponents SET skipping = ?, skipDate = ? WHERE reminderId = ?',
-            [skipping, undefined, reminderId])
-            }
-        }
-        return
-    }
-    */
 }
 
 module.exports = { createMonthlyComponents, updateMonthlyComponents }
