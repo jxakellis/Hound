@@ -126,15 +126,10 @@ const createUser = async (req, res) => {
                 'INSERT INTO userConfiguration(userId, notificationAuthorized, notificationEnabled, loudNotifications, showTerminationAlert, followUp, followUpDelay, isPaused, compactView, darkModeStyle, snoozeLength, notificationSound) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
                 [userId, notificationAuthorized, notificationEnabled, loudNotifications, showTerminationAlert, followUp, followUpDelay, isPaused, compactView, darkModeStyle, snoozeLength, notificationSound])
 
-            req.commitQueries(req)
-            return res.status(200).json({ message: 'Success', userId: userId })
+                req.commitQueries(req)
+                return res.status(200).json({ message: 'Success', userId: userId })
+            
         } catch (errorOne) {
-            //if something went wrong when creating the user configuration, then we must delete the user from both the users table and the user configuration table
-            //if (typeof userId !== 'undefined') {
-            //    await delUser(userId)
-            //        .catch((errorTwo) => { return })
-            //}
-            //something went wrong; the most likely option is that the email is a duplicate
             req.rollbackQueries(req)
             return res.status(400).json({ message: 'Invalid Body; Database query failed', error: errorOne.message })
         }
