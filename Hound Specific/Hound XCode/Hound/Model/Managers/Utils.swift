@@ -13,31 +13,7 @@ import StoreKit
 
 class Utils
 {
-    ///Default sender used to present, this is necessary if an alert to be shown is called from a non UIViewController class as that is not in the view heirarchy and physically cannot present a view, so this is used instead.
-    static var presenter: UIViewController? = nil
     
-    
-    ///Function used to present alertController, Utils.presenter is a default sender if non is specified, title and message are specifiable but other information is set to defaults.
-    static func willShowAlert(title: String, message: String?)
-    {
-        var trimmedMessage: String? = message
-        
-        if message?.trimmingCharacters(in: .whitespaces) == ""{
-            trimmedMessage = nil
-        }
-        
-        let alertController = GeneralUIAlertController(
-            title: title,
-            message: trimmedMessage,
-            preferredStyle: .alert)
-        
-        let alertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-        
-        alertController.addAction(alertAction)
-        
-        AlertPresenter.shared.enqueueAlertForPresentation(alertController)
-        
-    }
     
     static func willCreateFollowUpUNUserNotification(dogName: String, reminder: Reminder){
         

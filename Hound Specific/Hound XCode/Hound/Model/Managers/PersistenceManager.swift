@@ -52,7 +52,7 @@ class PersistenceManager{
                         
                         //NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded!) as! DogManager
                         
-                        if AudioPlayer.sharedPlayer == nil && NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && decodedDogManager.hasEnabledReminder && !TimingConstant.isPaused {
+                        if AudioManager.sharedPlayer == nil && NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && decodedDogManager.hasEnabledReminder && !TimingConstant.isPaused {
                             AppDelegate.generalLogger.notice("Showing Termionation Alert")
                             let terminationAlertController = GeneralUIAlertController(title: "Oops, you may have terminated Hound", message: "Your notifications won't ring properly if the app isn't running.", preferredStyle: .alert)
                             let understandAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
@@ -62,7 +62,7 @@ class PersistenceManager{
                             
                             terminationAlertController.addAction(understandAlertAction)
                             terminationAlertController.addAction(stopAlertAction)
-                            AlertPresenter.shared.enqueueAlertForPresentation(terminationAlertController)
+                            AlertManager.shared.enqueueAlertForPresentation(terminationAlertController)
                         }
                         //}
                         
@@ -110,7 +110,7 @@ class PersistenceManager{
                 
                 updateAlertController.addAction(understandAlertAction)
                 updateAlertController.addAction(stopAlertAction)
-                AlertPresenter.shared.enqueueAlertForPresentation(updateAlertController)
+                AlertManager.shared.enqueueAlertForPresentation(updateAlertController)
             }
             
             
@@ -171,13 +171,13 @@ class PersistenceManager{
         //background silence player for loud alarm that bypasses ringer and if phone locked
         func handleBackgroundSilence(){
             AppDelegate.generalLogger.notice("handleBackgroundSilence")
-            AudioPlayer.stopAudio()
+            AudioManager.stopAudio()
             
             guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && MainTabBarViewController.staticDogManager.hasEnabledReminder && !TimingConstant.isPaused else{
                 return
             }
             
-            AudioPlayer.playSilenceAudio()
+            AudioManager.playSilenceAudio()
             
         }
         

@@ -127,7 +127,7 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
                 }
             case .denied:
                 DispatchQueue.main.async {
-                    Utils.willShowAlert(title: "Notifcations Disabled", message: "To enable notifications go to the Settings App -> Notifications -> Hound and enable \"Allow Notifications\"")
+                    AlertManager.willShowAlert(title: "Notifcations Disabled", message: "To enable notifications go to the Settings App -> Notifications -> Hound and enable \"Allow Notifications\"")
                     
                     let switchDisableTimer = Timer(fire: Date().addingTimeInterval(0.22), interval: -1, repeats: false) { Timer in
                         self.synchronizeAllNotificationSwitches(animated: true)
@@ -243,17 +243,17 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
             notificationSound.text = selectedNotificationSound.rawValue
             
             DispatchQueue.global().async {
-                AudioPlayer.playAudio(forAudioPath: "\(NotificationConstant.notificationSound.rawValue.lowercased())", isLoud: false)
+                AudioManager.playAudio(forAudioPath: "\(NotificationConstant.notificationSound.rawValue.lowercased())", isLoud: false)
 
             }
                         
-            //AudioPlayer.stopAudio()
+            //AudioManager.stopAudio()
             //self.dropDown.hideDropDown()
         }
         //cell selected is the same as the current sound saved, do nothing
         else {
             DispatchQueue.global().async {
-                AudioPlayer.playAudio(forAudioPath: "\(NotificationConstant.notificationSound.rawValue.lowercased())", isLoud: false)
+                AudioManager.playAudio(forAudioPath: "\(NotificationConstant.notificationSound.rawValue.lowercased())", isLoud: false)
             }
             
         }
@@ -274,7 +274,7 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
     }
     
     @objc private func hideDropDown(){
-        AudioPlayer.stopAudio()
+        AudioManager.stopAudio()
         dropDown.hideDropDown()
     }
     
@@ -395,7 +395,7 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
          alertController.addAction(alertReset)
          alertController.addAction(alertCancel)
          
-         AlertPresenter.shared.enqueueAlertForPresentation(alertController)
+         AlertManager.shared.enqueueAlertForPresentation(alertController)
          
      }
      */
@@ -407,7 +407,7 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
             message: nil,
             preferredStyle: .alert)
         
-        AlertPresenter.shared.enqueueAlertForPresentation(alertController)
+        AlertManager.shared.enqueueAlertForPresentation(alertController)
         
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.5) {
             exit(-1)
@@ -483,7 +483,7 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        Utils.presenter = self
+        AlertManager.globalPresenter = self
         
         //DARK MODE
         switch AppearanceConstant.darkModeStyle.rawValue {
@@ -599,7 +599,7 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         //cant use self.hideDropDown
-        AudioPlayer.stopAudio()
+        AudioManager.stopAudio()
         dropDown.hideDropDown(removeFromSuperview: true)
     }
 }

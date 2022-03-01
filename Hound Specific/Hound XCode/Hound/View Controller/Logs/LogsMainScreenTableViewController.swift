@@ -478,7 +478,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         self.tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.section > (uniqueLogs.count - 1) || (indexPath.row - 1) > (uniqueLogs[indexPath.section].2.count - 1) || (indexPath.row - 1) < 0 {
-            ErrorProcessor.alertForError(message: "You selected a row that was unable to be decifered. Please restart Hound to fix. If interested, email HoundOrganizer@gmail.com screenshots of your logs and a short description of any actions you did prior to this message. Thanks for the help!")
+            ErrorManager.alertForError(message: "You selected a row that was unable to be decifered. Please restart Hound to fix. If interested, email HoundOrganizer@gmail.com screenshots of your logs and a short description of any actions you did prior to this message. Thanks for the help!")
         }
         else {
             let selectedLogDisplay = uniqueLogs[indexPath.section].2[indexPath.row-1]

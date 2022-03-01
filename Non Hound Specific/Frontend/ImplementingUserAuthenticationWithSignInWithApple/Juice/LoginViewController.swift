@@ -32,6 +32,7 @@ class LoginViewController: UIViewController {
     // - Tag: perform_appleid_password_request
     /// Prompts the user if an existing iCloud Keychain credential or Apple ID credential is found.
     func performExistingAccountSetupFlows() {
+        print("performExistingAccountSetupFlows() begin")
         // Prepare requests for both Apple ID and password providers.
         let requests = [ASAuthorizationAppleIDProvider().createRequest(),
                         ASAuthorizationPasswordProvider().createRequest()]
@@ -41,11 +42,13 @@ class LoginViewController: UIViewController {
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = self
         authorizationController.performRequests()
+        print("performExistingAccountSetupFlows() end")
     }
     
     /// - Tag: perform_appleid_request
     @objc
     func handleAuthorizationAppleIDButtonPress() {
+        print("handleAuthorizationAppleIDButtonPress() begin")
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
         request.requestedScopes = [.fullName, .email]
@@ -54,31 +57,39 @@ class LoginViewController: UIViewController {
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = self
         authorizationController.performRequests()
+        print("handleAuthorizationAppleIDButtonPress() end")
     }
 }
 
 extension LoginViewController: ASAuthorizationControllerDelegate {
     /// - Tag: did_complete_authorization
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        print("authorizationController() begin")
         switch authorization.credential {
-        case let appleIDCredential as ASAuthorizationAppleIDCredential:
             
+        case let appleIDCredential as ASAuthorizationAppleIDCredential:
+            print("appleIDCredential")
             // Create an account in your system.
             let userIdentifier = appleIDCredential.user
             let fullName = appleIDCredential.fullName
             let email = appleIDCredential.email
+            print("userIdentifier: \(appleIDCredential.user)")
+            print("fullName: \(appleIDCredential.fullName)")
+            print("email: \(appleIDCredential.email)")
             
             // For the purpose of this demo app, store the `userIdentifier` in the keychain.
             self.saveUserInKeychain(userIdentifier)
             
             // For the purpose of this demo app, show the Apple ID credential information in the `ResultViewController`.
             self.showResultViewController(userIdentifier: userIdentifier, fullName: fullName, email: email)
-        
+    
         case let passwordCredential as ASPasswordCredential:
-        
+            print("passwordCredential")
             // Sign in using an existing iCloud Keychain credential.
             let username = passwordCredential.user
             let password = passwordCredential.password
+            print("username: \(passwordCredential.user)")
+            print("password: \(passwordCredential.password)")
             
             // For the purpose of this demo app, show the password credential as an alert.
             DispatchQueue.main.async {
@@ -86,13 +97,15 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             }
             
         default:
+            print("authorizationController default case")
             break
         }
+        print("authorizationController() end")
     }
     
     private func saveUserInKeychain(_ userIdentifier: String) {
         do {
-            try KeychainItem(service: "com.example.apple-samplecode.juice", account: "userIdentifier").saveItem(userIdentifier)
+            try KeychainItem(service: "com.example.Pupotty.juice", account: "userIdentifier").saveItem(userIdentifier)
         } catch {
             print("Unable to save userIdentifier to keychain.")
         }

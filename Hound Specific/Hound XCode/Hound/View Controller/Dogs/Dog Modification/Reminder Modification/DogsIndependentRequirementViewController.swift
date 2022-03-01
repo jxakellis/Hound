@@ -38,7 +38,7 @@ class DogsIndependentReminderViewController: UIViewController, DogsReminderManag
             self.navigationController?.popViewController(animated: true)
         }
         catch {
-            ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: error)
+            ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: error)
         }
     }
     
@@ -80,7 +80,7 @@ class DogsIndependentReminderViewController: UIViewController, DogsReminderManag
         removeReminderConfirmation.addAction(alertActionRemove)
         removeReminderConfirmation.addAction(alertActionCancel)
         
-        AlertPresenter.shared.enqueueAlertForPresentation(removeReminderConfirmation)
+        AlertManager.shared.enqueueAlertForPresentation(removeReminderConfirmation)
     }
     
     ///The cancel / exit button was pressed, dismisses view to complete intended action
@@ -102,7 +102,7 @@ class DogsIndependentReminderViewController: UIViewController, DogsReminderManag
             unsavedInformationConfirmation.addAction(alertActionExit)
             unsavedInformationConfirmation.addAction(alertActionCancel)
             
-            AlertPresenter.shared.enqueueAlertForPresentation(unsavedInformationConfirmation)
+            AlertManager.shared.enqueueAlertForPresentation(unsavedInformationConfirmation)
         }
         else {
             self.navigationController?.popViewController(animated: true)
@@ -144,7 +144,7 @@ class DogsIndependentReminderViewController: UIViewController, DogsReminderManag
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        Utils.presenter = self
+        AlertManager.globalPresenter = self
     }
     
     // MARK: Navigation

@@ -12,7 +12,7 @@ import UIKit
 class GeneralUIAlertController: UIAlertController {
     
     override func viewDidDisappear(_ animated: Bool) {
-        AlertPresenter.shared.viewDidComplete()
+        AlertManager.shared.alertDidComplete()
     }
     
     
@@ -38,7 +38,7 @@ class AlarmUIAlertController: GeneralUIAlertController {
         }
             AppDelegate.lifeCycleLogger.notice("AlarmUIAlertController will appear")
                 self.loopVibrate()
-                AudioPlayer.playLoudNotificationAudio()
+                AudioManager.playLoudNotificationAudio()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -48,7 +48,7 @@ class AlarmUIAlertController: GeneralUIAlertController {
             AppDelegate.lifeCycleLogger.notice("AlarmUIAlertController will disappear")
             self.shouldVibrate = false
             
-            AudioPlayer.stopAudio()
+            AudioManager.stopAudio()
             
        // }
     }

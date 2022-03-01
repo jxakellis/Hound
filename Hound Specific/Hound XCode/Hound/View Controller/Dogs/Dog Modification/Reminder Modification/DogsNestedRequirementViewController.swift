@@ -26,7 +26,7 @@ class DogsNestedReminderViewController: UIViewController, DogsReminderManagerVie
             navigationController?.popViewController(animated: true)
         }
         catch {
-            ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: error)
+            ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: error)
         }
         
     }
@@ -37,7 +37,7 @@ class DogsNestedReminderViewController: UIViewController, DogsReminderManagerVie
             navigationController?.popViewController(animated: true)
         }
         catch {
-            ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: error)
+            ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: error)
         }
     }
     
@@ -68,7 +68,7 @@ class DogsNestedReminderViewController: UIViewController, DogsReminderManagerVie
         removeReminderConfirmation.addAction(alertActionRemove)
         removeReminderConfirmation.addAction(alertActionCancel)
         
-        AlertPresenter.shared.enqueueAlertForPresentation(removeReminderConfirmation)
+        AlertManager.shared.enqueueAlertForPresentation(removeReminderConfirmation)
     }
     
     //Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured reminder back to table view.

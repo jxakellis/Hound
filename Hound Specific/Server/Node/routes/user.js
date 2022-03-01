@@ -1,40 +1,42 @@
-const express = require('express')
-const router = express.Router({ mergeParams: true })
+const express = require('express');
 
-const { getUser, createUser, updateUser, deleteUser } = require('../controllers/user')
+const router = express.Router({ mergeParams: true });
 
-const { validateUserId } = require('../utils/validateId')
+const {
+  getUser, createUser, updateUser, deleteUser,
+} = require('../controllers/user');
 
-//validation that params are formatted correctly and have adequate permissions
-router.use('/:userId', validateUserId)
+const { validateUserId } = require('../utils/validateId');
 
-//dogs: /api/v1/user/:userId/dogs
-const dogsRouter = require('./dogs')
-router.use('/:userId/dogs', dogsRouter)
+// validation that params are formatted correctly and have adequate permissions
+router.use('/:userId', validateUserId);
 
+// dogs: /api/v1/user/:userId/dogs
+const dogsRouter = require('./dogs');
+
+router.use('/:userId/dogs', dogsRouter);
 
 // BASE PATH /api/v1/user/...
 
-//gets user with email then return information from users and userConfiguration table
-router.get('/', getUser)
+// gets user with userEmail then return information from users and userConfiguration table
+router.get('/', getUser);
 /* BODY:
 {
-"email":"requiredString"
+"userEmail":"requiredString"
 }
 */
 
-//gets user with userId then return information from users and userConfiguration table
-router.get('/:userId', getUser)
+// gets user with userId then return information from users and userConfiguration table
+router.get('/:userId', getUser);
 // no body
 
-
-//creates user and userConfiguration
-router.post('/', createUser)
+// creates user and userConfiguration
+router.post('/', createUser);
 /* BODY:
 {
-"email":"requiredEmail",
-"firstName":"requiredString",
-"lastName":"requiredString",
+"userEmail":"requiredEmail",
+"userFirstName":"requiredString",
+"userLastName":"requiredString",
 "notificationAuthorized":"requiredBool",
 "notificationEnabled":"requiredBool",
 "loudNotifications":"requiredBool",
@@ -49,16 +51,16 @@ router.post('/', createUser)
 }
 */
 
-//updates user
-router.put('/:userId', updateUser)
+// updates user
+router.put('/:userId', updateUser);
 /* BODY:
 
-//At least one of the following must be defined: email, firstName, lastName, notificationAuthorized, notificationEnabled, 
+//At least one of the following must be defined: userEmail, firstName, lastName, notificationAuthorized, notificationEnabled,
         loudNotifications, showTerminationAlert, followUp, followUpDelay, isPaused, compactView,
         darkModeStyle, snoozeLength, or notificationSound
 
 {
-"email":"optionalEmail",
+"userEmail":"optionalEmail",
 "firstName":"optionalString",
 "lastName":"optionalString",
 "notificationAuthorized":"optionalBool",
@@ -75,8 +77,8 @@ router.put('/:userId', updateUser)
 }
 */
 
-//deletes user
-router.delete('/:userId', deleteUser)
+// deletes user
+router.delete('/:userId', deleteUser);
 // no body
 
-module.exports = router
+module.exports = router;

@@ -120,7 +120,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             {
                 let noCameraAlertController  = GeneralUIAlertController(title: "Warning", message: "You don't have camera", preferredStyle: .alert)
                 noCameraAlertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                AlertPresenter.shared.enqueueAlertForPresentation(noCameraAlertController)
+                AlertManager.shared.enqueueAlertForPresentation(noCameraAlertController)
             }
         }
 
@@ -130,7 +130,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             self.present(imagePicker, animated: true, completion: nil)
         }
         
-        AlertPresenter.shared.enqueueActionSheetForPresentation(imagePickMethodAlertController, sourceView: dogIcon, permittedArrowDirections: [.up,.down])
+        AlertManager.shared.enqueueActionSheetForPresentation(imagePickMethodAlertController, sourceView: dogIcon, permittedArrowDirections: [.up,.down])
     }
     
     //When the add button is clicked, runs a series of checks. Makes sure the name and description of the dog is valid, and if so then passes information up chain of view controllers to DogsViewController.
@@ -150,7 +150,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             
         }
         catch {
-            ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: error)
+            ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: error)
             return
         }
         
@@ -166,7 +166,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             }
         }
         catch {
-            ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: error)
+            ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: error)
         }
         
     }
@@ -187,7 +187,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
         removeDogConfirmation.addAction(alertActionRemove)
         removeDogConfirmation.addAction(alertActionCancel)
         
-        AlertPresenter.shared.enqueueAlertForPresentation(removeDogConfirmation)
+        AlertManager.shared.enqueueAlertForPresentation(removeDogConfirmation)
     }
     
     @IBOutlet private weak var cancelAddDogButton: UIButton!
@@ -214,7 +214,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             unsavedInformationConfirmation.addAction(alertActionExit)
             unsavedInformationConfirmation.addAction(alertActionCancel)
             
-            AlertPresenter.shared.enqueueAlertForPresentation(unsavedInformationConfirmation)
+            AlertManager.shared.enqueueAlertForPresentation(unsavedInformationConfirmation)
         }
         else {
             self.navigationController?.popViewController(animated: true)
@@ -276,7 +276,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        Utils.presenter = self
+        AlertManager.globalPresenter = self
     }
     
     ///Called to initalize all data, if a dog is passed then it uses that, otherwise uses default

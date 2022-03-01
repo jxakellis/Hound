@@ -116,7 +116,7 @@ class TimingManager{
     @objc private static func willUpdateIsSkipping(sender: Timer){
         guard let parsedDictionary = sender.userInfo as? [String: Any]
         else{
-            ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: TimingManagerError.parseSenderInfoFailed)
+            ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: TimingManagerError.parseSenderInfoFailed)
             return
         }
         
@@ -135,7 +135,7 @@ class TimingManager{
             
         } catch {
             AppDelegate.generalLogger.notice("willUpdateIsSkipping failure in finding dog or reminder")
-            ErrorProcessor.alertForError(message: "Something went wrong trying to unskip your reminder's timing. If your reminder appears stuck, try: disabling it then re-enabling it, deleting it, or restarting the app.")
+            ErrorManager.alertForError(message: "Something went wrong trying to unskip your reminder's timing. If your reminder appears stuck, try: disabling it then re-enabling it, deleting it, or restarting the app.")
         }
         
         
@@ -271,7 +271,7 @@ class TimingManager{
         //Parses the sender info needed to figure out which reminder's timer fired
         guard let parsedDictionary = sender.userInfo as? [String: Any]
         else{
-            ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: TimingManagerError.parseSenderInfoFailed)
+            ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: TimingManagerError.parseSenderInfoFailed)
             return
         }
         
@@ -366,10 +366,10 @@ class TimingManager{
                 delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
             }
             
-            AlertPresenter.shared.enqueueAlertForPresentation(alertController)
+            AlertManager.shared.enqueueAlertForPresentation(alertController)
         } catch {
             AppDelegate.generalLogger.error("willShowTimer failure in finding dog or reminder")
-            ErrorProcessor.alertForError(message: "Something went wrong trying to present your reminder's alarm. If your reminder appears stuck, disable it then re-enable it to fix.")
+            ErrorManager.alertForError(message: "Something went wrong trying to present your reminder's alarm. If your reminder appears stuck, disable it then re-enable it to fix.")
         }
         
         

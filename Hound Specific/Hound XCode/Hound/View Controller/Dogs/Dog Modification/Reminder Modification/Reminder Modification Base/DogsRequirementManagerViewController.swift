@@ -294,7 +294,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             }
         }
         catch {
-            ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: error)
+            ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: error)
         }
     }
     

@@ -331,7 +331,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        Utils.presenter = self
+        AlertManager.globalPresenter = self
     }
     
     //MARK: - Navigation To Dog Addition and Modification

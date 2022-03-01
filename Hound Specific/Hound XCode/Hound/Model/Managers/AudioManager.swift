@@ -1,5 +1,5 @@
 //
-//  AudioPlayer.swift
+//  AudioManager.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 5/14/21.
@@ -11,7 +11,7 @@ import AVFoundation
 import AudioToolbox
 import MediaPlayer
 
-class AudioPlayer {
+class AudioManager {
     
     static var sharedPlayer: AVAudioPlayer!
     
@@ -51,15 +51,15 @@ class AudioPlayer {
              do {
                  stopAudio()
                  
-                 AudioPlayer.sharedPlayer = try AVAudioPlayer(contentsOf: url)
-                 AudioPlayer.sharedPlayer.numberOfLoops = -1
-                 AudioPlayer.sharedPlayer.volume = 1.0
+                 AudioManager.sharedPlayer = try AVAudioPlayer(contentsOf: url)
+                 AudioManager.sharedPlayer.numberOfLoops = -1
+                 AudioManager.sharedPlayer.volume = 1.0
                  
                  MPVolumeView.setVolume(1.0)
                  
                  try loadAVAudioSession(isLoud: true)
                  
-                 AudioPlayer.sharedPlayer.play()
+                 AudioManager.sharedPlayer.play()
                  
                 
              } catch {
@@ -79,13 +79,13 @@ class AudioPlayer {
             do {
                 stopAudio()
                 
-                AudioPlayer.sharedPlayer = try AVAudioPlayer(contentsOf: url)
-                AudioPlayer.sharedPlayer.numberOfLoops = -1
-                AudioPlayer.sharedPlayer.volume = 0
+                AudioManager.sharedPlayer = try AVAudioPlayer(contentsOf: url)
+                AudioManager.sharedPlayer.numberOfLoops = -1
+                AudioManager.sharedPlayer.volume = 0
                 
                 try loadAVAudioSession(isLoud: false)
                 
-                AudioPlayer.sharedPlayer.play()
+                AudioManager.sharedPlayer.play()
                 
             } catch {
                 AppDelegate.generalLogger.notice("playSilenceAudio error: \(error.localizedDescription)")
@@ -103,9 +103,9 @@ class AudioPlayer {
             do {
                 stopAudio()
                 
-                AudioPlayer.sharedPlayer = try AVAudioPlayer(contentsOf: url)
-                AudioPlayer.sharedPlayer.numberOfLoops = -1
-                AudioPlayer.sharedPlayer.volume = 1.0
+                AudioManager.sharedPlayer = try AVAudioPlayer(contentsOf: url)
+                AudioManager.sharedPlayer.numberOfLoops = -1
+                AudioManager.sharedPlayer.volume = 1.0
                 
                 if isLoud == true {
                     MPVolumeView.setVolume(1.0)
@@ -113,7 +113,7 @@ class AudioPlayer {
                 
                 try loadAVAudioSession(isLoud: isLoud)
                 
-                AudioPlayer.sharedPlayer.play()
+                AudioManager.sharedPlayer.play()
             } catch {
                 AppDelegate.generalLogger.error("playAudio error: \(error.localizedDescription)")
             }
@@ -123,8 +123,8 @@ class AudioPlayer {
     static func stopAudio(){
         DispatchQueue.global().async {
             //AppDelegate.generalLogger.notice("stopAudio")
-            if AudioPlayer.sharedPlayer != nil {
-                AudioPlayer.sharedPlayer.stop()
+            if AudioManager.sharedPlayer != nil {
+                AudioManager.sharedPlayer.stop()
             }
         }
         

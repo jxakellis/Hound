@@ -122,7 +122,7 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
             {
                 let warningAlert  = GeneralUIAlertController(title: "Warning", message: "You don't have camera", preferredStyle: .alert)
                 warningAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                AlertPresenter.shared.enqueueAlertForPresentation(warningAlert)
+                AlertManager.shared.enqueueAlertForPresentation(warningAlert)
             }
         }
 
@@ -133,7 +133,7 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
             
         }
         
-        AlertPresenter.shared.enqueueActionSheetForPresentation(imagePickMethodAlertController, sourceView: dogIcon, permittedArrowDirections: [.up,.down])
+        AlertManager.shared.enqueueActionSheetForPresentation(imagePickMethodAlertController, sourceView: dogIcon, permittedArrowDirections: [.up,.down])
     }
     
     //MARK: - Properties
@@ -182,7 +182,7 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        Utils.presenter = self
+        AlertManager.globalPresenter = self
     }
     
     override func viewDidAppear(_ animated: Bool) {

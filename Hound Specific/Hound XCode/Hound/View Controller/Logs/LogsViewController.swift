@@ -29,7 +29,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
                 try sudoDogManager.findDog(forName: parentDogName).dogTraits.addLog(newLog: newKnownLog)
             }
             catch {
-                ErrorProcessor.alertForError(message: "Unable to add log.")
+                ErrorManager.alertForError(message: "Unable to add log.")
             }
             
         }
@@ -328,7 +328,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        Utils.presenter = self
+        AlertManager.globalPresenter = self
         
         updateDogManagerDependents()
     }

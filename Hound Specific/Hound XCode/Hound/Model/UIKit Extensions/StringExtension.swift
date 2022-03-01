@@ -9,7 +9,7 @@
 import UIKit
 
 enum StringExtensionError: Error {
-    case invalidDateComponents
+    case dateComponentsInvalid
 }
 
 extension String {
@@ -58,7 +58,7 @@ extension String {
     static func convertToReadable(interperatedDateComponents: DateComponents) throws -> String {
         
         if interperatedDateComponents.hour == nil || interperatedDateComponents.minute == nil {
-            throw StringExtensionError.invalidDateComponents
+            throw StringExtensionError.dateComponentsInvalid
         }
         
         
@@ -93,7 +93,7 @@ extension String {
     
     static func convertToReadableNonRepeating(interperatedDateComponents: DateComponents) throws -> String{
         if interperatedDateComponents.year == nil || interperatedDateComponents.month == nil || interperatedDateComponents.day == nil || interperatedDateComponents.hour == nil || interperatedDateComponents.minute == nil {
-            throw StringExtensionError.invalidDateComponents
+            throw StringExtensionError.dateComponentsInvalid
         }
         
         var dateString = ""

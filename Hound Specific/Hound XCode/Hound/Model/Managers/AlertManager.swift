@@ -1,5 +1,5 @@
 //
-//  AlertPresenter.swift
+//  AlertManager.swift
 //  AlertQueue-Example
 //
 //  Created by William Boles on 26/05/2019.
@@ -10,22 +10,7 @@
 
 import UIKit
 
-class AlertPresenter: NSObject{
-    
-    //MARK: - NSCoding
-    /*
-    required init?(coder aDecoder: NSCoder) {
-        alertQueue = aDecoder.decodeObject(forKey: "alertQueue") as! Queue<GeneralUIAlertController>
-        locked = aDecoder.decodeBool(forKey: "locked")
-    }
-    
-    func encode(with aCoder: NSCoder) {
-        aCoder.encode(alertQueue, forKey: "alertQueue")
-        aCoder.encode(locked, forKey: "locked")
-    }
-     */
-    
-    //static var supportsSecureCoding: Bool = true
+class AlertManager: NSObject{
     
     override init(){
         super.init()
@@ -34,11 +19,41 @@ class AlertPresenter: NSObject{
     private var alertQueue = Queue<GeneralUIAlertController>()
     private var locked = false
     private var halted = false
-    var currentPresentation: GeneralUIAlertController?
+    private var currentAlertPresented: GeneralUIAlertController?
     
-    static var shared = AlertPresenter()
+    static var shared = AlertManager()
     
-    // MARK: - Present
+    ///Default sender used to present, this is necessary if an alert to be shown is called from a non UIViewController class as that is not in the view heirarchy and physically cannot present a view, so this is used instead.
+    static var globalPresenter: UIViewController? = nil
+    
+    //MARK: -
+    
+    
+    
+    
+    ///Function used to present alertController
+    static func willShowAlert(title: String, message: String?)
+    {
+        var trimmedMessage: String? = message
+        
+        if message?.trimmingCharacters(in: .whitespaces) == ""{
+            trimmedMessage = nil
+        }
+        
+        let alertController = GeneralUIAlertController(
+            title: title,
+            message: trimmedMessage,
+            preferredStyle: .alert)
+        
+        let alertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        
+        alertController.addAction(alertAction)
+        
+        shared.enqueueAlertForPresentation(alertController)
+        
+    }
+    
+    // MARK: - Alert Queue Management
     
     func enqueueAlertForPresentation(_ alertController: GeneralUIAlertController) {
         guard alertController.preferredStyle == .alert else {
@@ -76,12 +91,12 @@ class AlertPresenter: NSObject{
         
         func waitLoop(){
             AppDelegate.generalLogger.notice("waitLoop due to being unable to present UIAlertController")
-            if Utils.presenter == nil {
+            if AlertManager.globalPresenter == nil {
                 DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
                     waitLoop()
                 }
             }
-            else if Utils.presenter!.isBeingDismissed{
+            else if AlertManager.globalPresenter!.isBeingDismissed{
                 DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
                     waitLoop()
                 }
@@ -91,35 +106,37 @@ class AlertPresenter: NSObject{
             }
             
         }
-        if Utils.presenter == nil {
-            AppDelegate.generalLogger.notice("Utils.presenter is nil, initiating waitLoop")
+        if AlertManager.globalPresenter == nil {
+            AppDelegate.generalLogger.notice("AlertManager.globalPresenter is nil, initiating waitLoop")
             waitLoop()
             
         }
-        else if Utils.presenter!.isBeingDismissed{
-            AppDelegate.generalLogger.notice("Util.presenter is being dismissed, initiating waitLoop")
+        else if AlertManager.globalPresenter!.isBeingDismissed{
+            AppDelegate.generalLogger.notice("AlertManager.globalPresenter is being dismissed, initiating waitLoop")
             waitLoop()
         }
         else {
             if alertQueue.queuePresent() && locked == false{
                 locked = true
-                currentPresentation = alertQueue.elements.first
-                Utils.presenter!.present(currentPresentation!, animated: true)
+                currentAlertPresented = alertQueue.elements.first
+                AlertManager.globalPresenter!.present(currentAlertPresented!, animated: true)
             }
         }
         
     }
     
-    func viewDidComplete() {
+    ///Invoke when the alert has finished being presented and a new alert is able to take its place
+    func alertDidComplete() {
         locked = false
-        currentPresentation = nil
+        currentAlertPresented = nil
         alertQueue.elements.removeFirst()
         showNextAlert()
     }
     
-    func refresh(dogManager: DogManager){
+    
+    func refreshAlerts(dogManager: DogManager){
         halted = true
-        if currentPresentation == nil {
+        if currentAlertPresented == nil {
             for d in dogManager.dogs{
                 for r in d.dogReminders.reminders{
                     if r.isPresentationHandled == true {
@@ -132,4 +149,33 @@ class AlertPresenter: NSObject{
         showNextAlert()
     }
 }
+
+class Queue<Element>: NSObject {
+    
+    override init(){
+        super.init()
+    }
+    
+    var elements = [Element]()
+    
+    // MARK: - Operations
+    
+    func enqueue(_ element: Element) {
+        elements.append(element)
+    }
+    
+    func queuePresent() -> Bool {
+        return !(elements.isEmpty)
+    }
+    
+    func dequeue() -> Element? {
+        guard !elements.isEmpty else {
+            return nil
+        }
+        
+        return elements.removeFirst()
+        
+    }
+}
+
 

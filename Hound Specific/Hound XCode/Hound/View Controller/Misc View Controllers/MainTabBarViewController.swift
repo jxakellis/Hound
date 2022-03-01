@@ -161,7 +161,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
                 let dogManagerResetAlertController = GeneralUIAlertController(title: "Your data was corrupted", message: "The data you had stored for Hound was corrupted, making it unusable. In order to recover from the catastrophic failure, your data was reset to default. Apologies for any inconvenience this caused you :(", preferredStyle: .alert)
                 let acceptAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
                 dogManagerResetAlertController.addAction(acceptAlertAction)
-                AlertPresenter.shared.enqueueAlertForPresentation(dogManagerResetAlertController)
+                AlertManager.shared.enqueueAlertForPresentation(dogManagerResetAlertController)
             }
         } catch  {
             AppDelegate.generalLogger.error("Failed to unarchive dogManager in MainTabBarViewController \(error.localizedDescription)")
@@ -170,7 +170,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
             let dogManagerResetAlertController = GeneralUIAlertController(title: "Your data was corrupted", message: "The data you had stored for Hound was corrupted, making it unusable. In order to recover from the catastrophic failure, your data was reset to default. Apologies for any inconvenience this caused you :(", preferredStyle: .alert)
             let acceptAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             dogManagerResetAlertController.addAction(acceptAlertAction)
-            AlertPresenter.shared.enqueueAlertForPresentation(dogManagerResetAlertController)
+            AlertManager.shared.enqueueAlertForPresentation(dogManagerResetAlertController)
         }
         
         
@@ -207,7 +207,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     override func viewWillAppear(_ animated: Bool) {
         //Called before the view is added to the windows’ view hierarchy
         super.viewWillAppear(animated)
-        Utils.presenter = self
+        AlertManager.globalPresenter = self
         
         for window in UIApplication.shared.windows{
             window.overrideUserInterfaceStyle = AppearanceConstant.darkModeStyle
@@ -217,8 +217,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     override func viewDidAppear(_ animated: Bool) {
         //Called after the view is added to the view hierarchy
         super.viewDidAppear(animated)
-        Utils.presenter = self
-        AlertPresenter.shared.refresh(dogManager: getDogManager())
+        AlertManager.globalPresenter = self
+        AlertManager.shared.refreshAlerts(dogManager: getDogManager())
         
         if MainTabBarViewController.firstTimeSetup == true {
             MainTabBarViewController.firstTimeSetup = false

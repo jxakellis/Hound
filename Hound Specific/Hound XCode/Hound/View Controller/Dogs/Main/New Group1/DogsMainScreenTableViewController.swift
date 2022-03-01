@@ -257,7 +257,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             removeDogConfirmation.addAction(removeDogConfirmationRemove)
             removeDogConfirmation.addAction(removeDogConfirmationCancel)
 
-            AlertPresenter.shared.enqueueAlertForPresentation(removeDogConfirmation)
+            AlertManager.shared.enqueueAlertForPresentation(removeDogConfirmation)
         }
         
         alertController.addAction(alertActionAdd)
@@ -272,7 +272,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         alertController.addAction(alertActionCancel)
         
-        AlertPresenter.shared.enqueueActionSheetForPresentation(alertController, sourceView: sender, permittedArrowDirections: [.up,.down])
+        AlertManager.shared.enqueueActionSheetForPresentation(alertController, sourceView: sender, permittedArrowDirections: [.up,.down])
     }
     
     ///Called when a reminder is clicked by the user, display an action sheet of possible modifcations to the alarm/reminder.
@@ -308,7 +308,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
             removeReminderConfirmation.addAction(removeReminderConfirmationRemove)
             removeReminderConfirmation.addAction(removeReminderConfirmationCancel)
 
-            AlertPresenter.shared.enqueueAlertForPresentation(removeReminderConfirmation)
+            AlertManager.shared.enqueueAlertForPresentation(removeReminderConfirmation)
             
             
         }
@@ -391,7 +391,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         
         selectedReminderAlertController.addAction(alertActionCancel)
         
-        AlertPresenter.shared.enqueueActionSheetForPresentation(selectedReminderAlertController, sourceView: sender, permittedArrowDirections: [.up,.down])
+        AlertManager.shared.enqueueActionSheetForPresentation(selectedReminderAlertController, sourceView: sender, permittedArrowDirections: [.up,.down])
         
     }
     
@@ -480,7 +480,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 removeConfirmation.addAction(alertActionRemove)
                 removeConfirmation.addAction(alertActionCancel)
             }
-            AlertPresenter.shared.enqueueAlertForPresentation(removeConfirmation)
+            AlertManager.shared.enqueueAlertForPresentation(removeConfirmation)
             
         }
     }

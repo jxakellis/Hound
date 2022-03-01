@@ -199,7 +199,7 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
             let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
             removeReminderConfirmation.addAction(alertActionRemove)
             removeReminderConfirmation.addAction(alertActionCancel)
-            AlertPresenter.shared.enqueueAlertForPresentation(removeReminderConfirmation)
+            AlertManager.shared.enqueueAlertForPresentation(removeReminderConfirmation)
         }
     }
     

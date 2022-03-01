@@ -55,7 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
             //UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
             
-            Utils.willShowAlert(title: "🚨Crashed detected🚨", message: "Hound crashed during its last launch and had to reset itself to default in order to recover. I am sorry for the inconvenience😢")
+            AlertManager.willShowAlert(title: "🚨Crashed detected🚨", message: "Hound crashed during its last launch and had to reset itself to default in order to recover. I am sorry for the inconvenience😢")
            
         }
          

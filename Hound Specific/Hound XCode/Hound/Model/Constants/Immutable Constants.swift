@@ -81,8 +81,6 @@ enum DogManagerConstant {
 enum UserDefaultsKeys: String{
     case didFirstTimeSetup = "didFirstTimeSetup"
     case dogManager = "dogManager"
-    case alertPresenter = "alertPresenter"
-    //case shouldPerformCleanInstall = "shouldPerformCleanInstall"
     case appBuild = "appBuild"
     
     //DogsViewController

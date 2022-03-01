@@ -170,7 +170,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         removeDogConfirmation.addAction(alertActionRemove)
         removeDogConfirmation.addAction(alertActionCancel)
         
-        AlertPresenter.shared.enqueueAlertForPresentation(removeDogConfirmation)
+        AlertManager.shared.enqueueAlertForPresentation(removeDogConfirmation)
     }
     
     @IBAction private func willAddLog(_ sender: Any) {
@@ -213,7 +213,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 }
             }
             catch {
-                ErrorProcessor.handleError(sender: Sender(origin: self, localized: self), error: error)
+                ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: error)
             }
            
         }
@@ -241,7 +241,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
              unsavedInformationConfirmation.addAction(alertActionExit)
              unsavedInformationConfirmation.addAction(alertActionCancel)
              
-             AlertPresenter.shared.enqueueAlertForPresentation(unsavedInformationConfirmation)
+             AlertManager.shared.enqueueAlertForPresentation(unsavedInformationConfirmation)
          }
          else {
              self.navigationController?.popViewController(animated: true)
@@ -359,7 +359,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        Utils.presenter = self
+        AlertManager.globalPresenter = self
     }
     
     override func viewDidAppear(_ animated: Bool) {
