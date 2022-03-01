@@ -8,7 +8,6 @@
 
 import UIKit
 
-
 extension UIImage {
     func isEqualToImage(image: UIImage) -> Bool {
         let data1 = self.pngData()

@@ -8,147 +8,140 @@
 import UIKit
 
 class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, SettingsNavigationViewControllerDelegate, LogsNavigationViewControllerDelegate, IntroductionViewControllerDelegate, DogsIntroductionViewControllerDelegate {
-    
-    
-   
-    
-    //MARK: - IntroductionViewControllerDelegate
-    
+
+    // MARK: - IntroductionViewControllerDelegate
+
     func didSetDogName(sender: Sender, dogName: String) {
         let sudoDogManager = getDogManager()
         try! sudoDogManager.dogs[0].dogTraits.changeDogName(newDogName: dogName)
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
-    
+
     func didSetDogIcon(sender: Sender, dogIcon: UIImage) {
         let sudoDogManager = getDogManager()
         sudoDogManager.dogs[0].dogTraits.icon = dogIcon
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
-     
-     //MARK: - DogsNavigationViewControllerDelegate
-    
+
+     // MARK: - DogsNavigationViewControllerDelegate
+
     func willShowIntroductionPage() {
         self.performSegue(withIdentifier: "dogsIntroductionViewController", sender: self)
     }
-    
-    //MARK: - DogsIntroductionViewControllerDelegate
-    
+
+    // MARK: - DogsIntroductionViewControllerDelegate
+
     func didSetDefaultReminderState(sender: Sender, newDefaultReminderStatus: Bool) {
         if newDefaultReminderStatus == true {
             let sudoDogManager = dogsViewController.getDogManager()
             sudoDogManager.dogs[0].dogReminders.addDefaultReminders()
-            
+
             setDogManager(sender: sender, newDogManager: sudoDogManager)
         }
     }
-    
-    
-    //MARK: - SettingsViewControllerDelegate
-    
+
+    // MARK: - SettingsViewControllerDelegate
+
     func didTogglePause(newPauseState: Bool) {
         TimingManager.willTogglePause(dogManager: getDogManager(), newPauseStatus: newPauseState)
     }
-    
-    //MARK: - TimingManagerDelegate && DogsViewControllerDelegate
-    
+
+    // MARK: - TimingManagerDelegate && DogsViewControllerDelegate
+
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
         setDogManager(sender: sender, newDogManager: newDogManager)
     }
-    
-    //MARK: - DogManagerControlFlowProtocol + MasterDogManager
-    
+
+    // MARK: - DogManagerControlFlowProtocol + MasterDogManager
+
     private var masterDogManager: DogManager = DogManager()
-    
+
     static var staticDogManager: DogManager = DogManager()
-    
-    //Get method, returns a copy of dogManager to remove possible editting of dog manager through class reference type
+
+    // Get method, returns a copy of dogManager to remove possible editting of dog manager through class reference type
     func getDogManager() -> DogManager {
         return masterDogManager
     }
-    
-    //Sets dog manager, when the value of dog manager is changed it not only changes the variable but calls other needed functions to reflect the change
-    func setDogManager(sender: Sender, newDogManager: DogManager){
-        
-        //possible senders
-        //MainTabBarViewController
-        //TimingManager
-        //DogsViewController
-        
-        //print("reached MainTabBarViewController")
-        
+
+    // Sets dog manager, when the value of dog manager is changed it not only changes the variable but calls other needed functions to reflect the change
+    func setDogManager(sender: Sender, newDogManager: DogManager) {
+
+        // possible senders
+        // MainTabBarViewController
+        // TimingManager
+        // DogsViewController
+
+        // print("reached MainTabBarViewController")
+
         masterDogManager = newDogManager
         MainTabBarViewController.staticDogManager = newDogManager
-        
-        //Updates isPaused to reflect any changes in data, if there are no enabled/creaed reminders or no enabled/created dogs then turns isPaused off as there is nothing to pause
+
+        // Updates isPaused to reflect any changes in data, if there are no enabled/creaed reminders or no enabled/created dogs then turns isPaused off as there is nothing to pause
         if getDogManager().hasCreatedReminder == false || getDogManager().hasEnabledReminder == false {
             TimingConstant.isPaused = false
         }
-        
-        if sender.localized is TimingManager.Type || sender.localized is TimingManager{
+
+        if sender.localized is TimingManager.Type || sender.localized is TimingManager {
             logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
-        
         else if sender.localized is DogsViewController {
             logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
-        
         else if sender.localized is LogsViewController {
             dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
-        
-        else if sender.localized is IntroductionViewController || sender.localized is DogsIntroductionViewController{
+        else if sender.localized is IntroductionViewController || sender.localized is DogsIntroductionViewController {
             logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
-        
-        if !(sender.localized is MainTabBarViewController){
+
+        if !(sender.localized is MainTabBarViewController) {
             self.updateDogManagerDependents()
         }
-        
+
     }
-    
+
     func updateDogManagerDependents() {
         TimingManager.willReinitalize(dogManager: getDogManager())
     }
-    
-    //MARK: - Properties
-    
+
+    // MARK: - Properties
+
     var logsNavigationViewController: LogsNavigationViewController! = nil
     var logsViewController: LogsViewController! = nil
-    
+
     var dogsNavigationViewController: DogsNavigationViewController! = nil
     var dogsViewController: DogsViewController! = nil
-    
+
     var settingsNavigationViewController: SettingsNavigationViewController! = nil
     var settingsViewController: SettingsViewController! = nil
-    
+
     static var firstTimeSetup: Bool = false
-    
+
     static var mainTabBarViewController: MainTabBarViewController! = nil
-    
-    ///The tab on the tab bar that the app should open to, if its the first time openning the app then go the the second tab (setup dogs) which is index 1 as index starts at 0
+
+    /// The tab on the tab bar that the app should open to, if its the first time openning the app then go the the second tab (setup dogs) which is index 1 as index starts at 0
     static var selectedEntryIndex: Int = 0
-    
-    //MARK: - Main
-    
+
+    // MARK: - Main
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         AppDelegate.generalLogger.notice("Application build is \(UIApplication.appBuild)")
-        
-        //Pre version 1.2.2 uses different names so needs this here to properly adapt to new class names
+
+        // Pre version 1.2.2 uses different names so needs this here to properly adapt to new class names
         NSKeyedUnarchiver.setClass(ReminderManager.self, forClassName: "Hound.RequirementManager")
         NSKeyedUnarchiver.setClass(TraitManager.self, forClassName: "Hound.DogTraitManager")
         NSKeyedUnarchiver.setClass(Reminder.self, forClassName: "Hound.Requirement")
-        
+
         var decodedDogManager: DogManager! = nil
-        
+
         do {
-            //checks to see if data decoded sucessfully
+            // checks to see if data decoded sucessfully
             if let decoded: Data = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as? Data {
-                
+
                 let unarchiver = try NSKeyedUnarchiver.init(forReadingFrom: decoded)
                 unarchiver.requiresSecureCoding = false
                 decodedDogManager = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? DogManager
@@ -156,86 +149,85 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
             }
             else {
                 AppDelegate.generalLogger.error("Failed to decode dogManager in MainTabBarViewController")
-                
+
                 decodedDogManager = DogManagerConstant.defaultDogManager
                 let dogManagerResetAlertController = GeneralUIAlertController(title: "Your data was corrupted", message: "The data you had stored for Hound was corrupted, making it unusable. In order to recover from the catastrophic failure, your data was reset to default. Apologies for any inconvenience this caused you :(", preferredStyle: .alert)
                 let acceptAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
                 dogManagerResetAlertController.addAction(acceptAlertAction)
                 AlertManager.shared.enqueueAlertForPresentation(dogManagerResetAlertController)
             }
-        } catch  {
+        }
+        catch {
             AppDelegate.generalLogger.error("Failed to unarchive dogManager in MainTabBarViewController \(error.localizedDescription)")
-            
+
             decodedDogManager = DogManagerConstant.defaultDogManager
             let dogManagerResetAlertController = GeneralUIAlertController(title: "Your data was corrupted", message: "The data you had stored for Hound was corrupted, making it unusable. In order to recover from the catastrophic failure, your data was reset to default. Apologies for any inconvenience this caused you :(", preferredStyle: .alert)
             let acceptAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             dogManagerResetAlertController.addAction(acceptAlertAction)
             AlertManager.shared.enqueueAlertForPresentation(dogManagerResetAlertController)
         }
-        
-        
-        
-       //decodedDogManager.dogs[0].dogReminders.reminders[0].countDownComponents.changeExecutionInterval(newExecutionInterval: 15.0)
-        
+
+       // decodedDogManager.dogs[0].dogReminders.reminders[0].countDownComponents.changeExecutionInterval(newExecutionInterval: 15.0)
+
         setDogManager(sender: Sender(origin: self, localized: self), newDogManager: decodedDogManager)
-        
+
         self.selectedIndex = MainTabBarViewController.selectedEntryIndex
-        
+
         logsNavigationViewController = self.viewControllers![0] as? LogsNavigationViewController
         logsNavigationViewController.passThroughDelegate = self
         logsViewController = logsNavigationViewController.viewControllers[0] as? LogsViewController
         logsViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
-       
+
         dogsNavigationViewController = self.viewControllers![1] as? DogsNavigationViewController
         dogsNavigationViewController.passThroughDelegate = self
         dogsViewController = dogsNavigationViewController.viewControllers[0] as? DogsViewController
         dogsViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
-        
+
         settingsNavigationViewController = self.viewControllers![2] as? SettingsNavigationViewController
         settingsNavigationViewController.passThroughDelegate = self
         settingsViewController = settingsNavigationViewController.viewControllers[0] as? SettingsViewController
-        
+
         MainTabBarViewController.mainTabBarViewController = self
-        
+
         TimingManager.delegate = self
         TimingManager.willInitalize(dogManager: getDogManager())
-        //fatalError()
-        
+        // fatalError()
+
         UserDefaults.standard.setValue(false, forKey: "didCrashDuringSetup")
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
-        //Called before the view is added to the windows’ view hierarchy
+        // Called before the view is added to the windows’ view hierarchy
         super.viewWillAppear(animated)
         AlertManager.globalPresenter = self
-        
-        for window in UIApplication.shared.windows{
+
+        for window in UIApplication.shared.windows {
             window.overrideUserInterfaceStyle = AppearanceConstant.darkModeStyle
         }
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
-        //Called after the view is added to the view hierarchy
+        // Called after the view is added to the view hierarchy
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
         AlertManager.shared.refreshAlerts(dogManager: getDogManager())
-        
+
         if MainTabBarViewController.firstTimeSetup == true {
             MainTabBarViewController.firstTimeSetup = false
             self.performSegue(withIdentifier: "introductionViewController", sender: self)
         }
     }
-    
+
     override open var shouldAutorotate: Bool {
         return false
     }
-    
-    override open var supportedInterfaceOrientations: UIInterfaceOrientationMask{
+
+    override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .portrait
     }
-    
+
      // MARK: - Navigation
-     
+
      // In a storyboard-based application, you will often want to do a little preparation before navigation
      override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "introductionViewController"{
@@ -247,6 +239,5 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
             dogsIntroductionViewController.delegate = self
         }
      }
-     
-    
+
 }

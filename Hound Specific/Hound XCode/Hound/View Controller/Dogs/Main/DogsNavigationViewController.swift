@@ -8,46 +8,41 @@
 
 import UIKit
 
-protocol DogsNavigationViewControllerDelegate{
+protocol DogsNavigationViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
     func willShowIntroductionPage()
 }
 
 class DogsNavigationViewController: UINavigationController, DogsViewControllerDelegate {
 
-    
-    //MARK: - DogsViewControllerDelegate
-    
+    // MARK: - DogsViewControllerDelegate
+
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
         passThroughDelegate.didUpdateDogManager(sender: sender, newDogManager: newDogManager)
     }
-    
-    //MARK: - Properties
-    
+
+    // MARK: - Properties
+
     static var hasBeenLoadedBefore: Bool = false
-    
-    var passThroughDelegate: DogsNavigationViewControllerDelegate! = nil
-    
+
+    weak var passThroughDelegate: DogsNavigationViewControllerDelegate! = nil
+
     var dogsViewController: DogsViewController!
-    
-    //MARK: - Main
-    
+
+    // MARK: - Main
+
     override func viewDidLoad() {
         super.viewDidLoad()
         dogsViewController = self.viewControllers[0] as? DogsViewController
         dogsViewController.delegate = self
     }
-    
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        if DogsNavigationViewController.hasBeenLoadedBefore == false{
+
+        if DogsNavigationViewController.hasBeenLoadedBefore == false {
             passThroughDelegate.willShowIntroductionPage()
         }
     }
-    
-
-    
 
 }

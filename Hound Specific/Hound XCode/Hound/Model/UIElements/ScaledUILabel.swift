@@ -12,17 +12,17 @@ class ScaledUILabel: UILabel {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.adjustsFontSizeToFitWidth = true
-        if self.minimumScaleFactor == 0{
+        if self.minimumScaleFactor == 0 {
             self.minimumScaleFactor = 0.82
         }
     }
-    
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         self.adjustsFontSizeToFitWidth = true
-        if self.minimumScaleFactor == 0{
+        if self.minimumScaleFactor == 0 {
             self.minimumScaleFactor = 0.82
         }
     }
-    
+
 }

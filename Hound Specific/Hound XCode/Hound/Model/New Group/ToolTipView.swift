@@ -15,56 +15,56 @@ enum ToolTipPosition: Int {
  }
 
 class ToolTipView: UIView {
-    
-    private var toolTipLabelBackground:CGRect!
-    
-    ///Inset of text from edge of rounded rectangle background, its value is applied to both the left and right side so total inset will be 2x
-    private var toolTipLabelWidthInset : CGFloat = 8.0
-    
-    ///Inset of text from edge of rounded rectangle background, its value is applied to both the left and right side so total inset will be 2x
-    private var toolTipLabelHeightInset : CGFloat = 8.0
-    
-    ///Offset of the rectangle from the sourceView (aka button)
+
+    private var toolTipLabelBackground: CGRect!
+
+    /// Inset of text from edge of rounded rectangle background, its value is applied to both the left and right side so total inset will be 2x
+    private var toolTipLabelWidthInset: CGFloat = 8.0
+
+    /// Inset of text from edge of rounded rectangle background, its value is applied to both the left and right side so total inset will be 2x
+    private var toolTipLabelHeightInset: CGFloat = 8.0
+
+    /// Offset of the rectangle from the sourceView (aka button)
     private var toolTipOffset: CGFloat  = 10.0
-    
-    private var toolTipPosition : ToolTipPosition = .middle
-    
-    convenience init(sourceView: UIView, message: String, toolTipPosition: ToolTipPosition){
-       
+
+    private var toolTipPosition: ToolTipPosition = .middle
+
+    convenience init(sourceView: UIView, message: String, toolTipPosition: ToolTipPosition) {
+
         self.init()
-        
+
         let messageBounds = message.bounding()
-        
+
         let sourceCenter = sourceView.center
-        
+
         let frameX = (sourceCenter.x - (messageBounds.width/2) - toolTipLabelWidthInset)
         let frameY = sourceView.frame.origin.y - messageBounds.height - (toolTipLabelHeightInset * 2) - toolTipOffset
         let frameWidth = messageBounds.width + (toolTipLabelWidthInset * 2)
         let frameHeight = messageBounds.height + (toolTipLabelHeightInset * 2) + toolTipOffset
-        
+
         let frameNeeded = CGRect(x: frameX, y: frameY, width: frameWidth, height: frameHeight)
-        
+
         self.frame = frameNeeded
-        
+
        self.toolTipPosition = toolTipPosition
-        
+
         createLabel(message)
     }
-    
+
     override func draw(_ rect: CGRect) {
        super.draw(rect)
-        
+
        drawToolTip(rect)
     }
-    
-    private func drawToolTip(_ rect : CGRect){
+
+    private func drawToolTip(_ rect: CGRect) {
        toolTipLabelBackground = CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height - toolTipOffset)
        let toolTipLabelBackgroundBez = UIBezierPath(roundedRect: toolTipLabelBackground, cornerRadius: 5.0)
        let shape = createShapeLayer(toolTipLabelBackgroundBez.cgPath)
        self.layer.insertSublayer(shape, at: 0)
     }
-    
-    private func createShapeLayer(_ path : CGPath) -> CAShapeLayer{
+
+    private func createShapeLayer(_ path: CGPath) -> CAShapeLayer {
        let shape = CAShapeLayer()
        shape.path = path
         shape.fillColor = UIColor.systemBlue.cgColor
@@ -74,8 +74,8 @@ class ToolTipView: UIView {
        shape.shadowOpacity = 0.8
        return shape
     }
-    
-    private func createLabel(_ text : String){
+
+    private func createLabel(_ text: String) {
        let label = UILabel(frame: CGRect(x: toolTipLabelWidthInset, y: toolTipLabelHeightInset, width: frame.width - (2 * toolTipLabelWidthInset), height: frame.height - toolTipOffset - (2 * toolTipLabelHeightInset)))
        label.text = text
        label.textColor = .systemBackground
@@ -88,22 +88,22 @@ class ToolTipView: UIView {
 }
 
 protocol ToolTipable {
-    ///Creates and shows a tool tip for a given button
+    /// Creates and shows a tool tip for a given button
     func showToolTip(sourceButton: UIButton, message: String)
-    
-    ///Does the animation to show the tool tip popping up
+
+    /// Does the animation to show the tool tip popping up
     func performToolTipShow(sourceButton: UIButton, _ v: UIView?)
-    
-    ///Hides the tool tip
+
+    /// Hides the tool tip
     func hideToolTip(targetTipView: ToolTipView?, completion: (() -> Void)?)
 }
 
 extension ToolTipable {
-    func performToolTipShow(sourceButton: UIButton, _ v: UIView?){
+    func performToolTipShow(sourceButton: UIButton, _ v: UIView?) {
         v?.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
         UIView.animate(withDuration: 0.3, delay: 0.3, options: .curveEaseOut, animations: {
             v?.transform = .identity
-        }) { finished in
+        }) { _ in
             sourceButton.isUserInteractionEnabled = true
         }
     }

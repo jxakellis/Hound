@@ -8,46 +8,45 @@
 
 import UIKit
 
-protocol DogsReminderCountDownViewControllerDelegate {
+protocol DogsReminderCountDownViewControllerDelegate: AnyObject {
     func willDismissKeyboard()
 }
 
 class DogsReminderCountDownViewController: UIViewController, UIGestureRecognizerDelegate {
-    
-    //MARK: - UIGestureRecognizerDelegate
-    
+
+    // MARK: - UIGestureRecognizerDelegate
+
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
-    
 
-    //MARK: - IB
-    
+    // MARK: - IB
+
     @IBOutlet weak var countDown: UIDatePicker!
-    
+
     @IBAction func willUpdateCountDown(_ sender: Any) {
         delegate.willDismissKeyboard()
     }
-    
-    //MARK: - Properties
-    
-   var delegate: DogsReminderCountDownViewControllerDelegate! = nil
-    
-    var passedInterval: TimeInterval? = nil
-    
+
+    // MARK: - Properties
+
+   weak var delegate: DogsReminderCountDownViewControllerDelegate! = nil
+
+    var passedInterval: TimeInterval?
+
     var initalValuesChanged: Bool {
-        if countDown.countDownDuration != passedInterval{
+        if countDown.countDownDuration != passedInterval {
             return true
         }
         else {
             return false
         }
     }
-    //MARK: - Main
-    
+    // MARK: - Main
+
     override func viewDidLoad() {
-        
-        //keep duplicate as without it the user can see the .asyncafter visual scroll, but this duplicate stops a value changed not being called on first value change bug
+
+        // keep duplicate as without it the user can see the .asyncafter visual scroll, but this duplicate stops a value changed not being called on first value change bug
         if self.passedInterval != nil {
             self.countDown.countDownDuration = self.passedInterval!
         }
@@ -55,8 +54,8 @@ class DogsReminderCountDownViewController: UIViewController, UIGestureRecognizer
             self.countDown.countDownDuration = ReminderConstant.defaultTimeInterval
             passedInterval = countDown.countDownDuration
         }
-        
-        //fix bug with datePicker value changed not triggering on first go
+
+        // fix bug with datePicker value changed not triggering on first go
         DispatchQueue.main.asyncAfter(deadline: .now()) {
             if self.passedInterval != nil {
                 self.countDown.countDownDuration = self.passedInterval!
@@ -65,9 +64,8 @@ class DogsReminderCountDownViewController: UIViewController, UIGestureRecognizer
                 self.countDown.countDownDuration = ReminderConstant.defaultTimeInterval
             }
         }
-        
+
     }
-    
 
     /*
     // MARK: - Navigation

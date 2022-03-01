@@ -8,96 +8,96 @@
 
 import UIKit
 
-protocol IntroductionViewControllerDelegate {
+protocol IntroductionViewControllerDelegate: AnyObject {
     func didSetDogName(sender: Sender, dogName: String)
     func didSetDogIcon(sender: Sender, dogIcon: UIImage)
 }
 
 class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
-    
-    //MARK: - UIGestureRecognizerDelegate
-    
+
+    // MARK: - UIGestureRecognizerDelegate
+
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
-    
-    //MARK: - UIImagePickerControllerDelegate
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
+
+    // MARK: - UIImagePickerControllerDelegate
+
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+
         let image: UIImage!
         let scaledImageSize = CGSize(width: 90.0, height: 90.0)
-    
+
         if let possibleImage = info[.editedImage] as? UIImage {
             image = possibleImage
-        } else if let possibleImage = info[.originalImage] as? UIImage {
+        }
+        else if let possibleImage = info[.originalImage] as? UIImage {
             image = possibleImage
-        } else {
+        }
+        else {
             return
         }
-        
+
         let renderer = UIGraphicsImageRenderer(size: scaledImageSize)
         let scaledImage = renderer.image { _ in
             image.draw(in: CGRect(origin: .zero, size: scaledImageSize))
         }
-        
+
         dogIcon.setImage(scaledImage, for: .normal)
 
         dismiss(animated: true)
     }
-    
-    //MARK: - UITextFieldDelegate
-    
+
+    // MARK: - UITextFieldDelegate
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.dismissKeyboard()
         return false
     }
-    
-    //MARK: - IB
-    
+
+    // MARK: - IB
+
     @IBOutlet private weak var dogNameDescription: ScaledUILabel!
-    
+
     @IBOutlet private weak var dogIcon: ScaledUIButton!
-    
+
     @IBOutlet private weak var dogName: UITextField!
-    
-    
+
     @IBOutlet private weak var darkModeSegmentedControl: UISegmentedControl!
-    
+
     @IBAction private func segmentedControl(_ sender: Any) {
         switch darkModeSegmentedControl.selectedSegmentIndex {
         case 0:
-            for window in UIApplication.shared.windows{
+            for window in UIApplication.shared.windows {
                 window.overrideUserInterfaceStyle = .light
                 AppearanceConstant.darkModeStyle = .light
             }
         case 1:
-            for window in UIApplication.shared.windows{
+            for window in UIApplication.shared.windows {
                 window.overrideUserInterfaceStyle = .dark
                 AppearanceConstant.darkModeStyle = .dark
             }
         default:
-            for window in UIApplication.shared.windows{
+            for window in UIApplication.shared.windows {
                 window.overrideUserInterfaceStyle = .unspecified
                 AppearanceConstant.darkModeStyle = .unspecified
             }
         }
     }
-    
+
     @IBOutlet private weak var continueButton: UIButton!
-    
-    ///Clicked continues button at the bottom to dismiss
+
+    /// Clicked continues button at the bottom to dismiss
     @IBAction private func willContinue(_ sender: Any) {
-        //data passage handled in view will disappear as the view can also be swiped down instead of hitting the continue button.
+        // data passage handled in view will disappear as the view can also be swiped down instead of hitting the continue button.
         self.dismiss(animated: true, completion: nil)
     }
-    
-    
+
     @IBAction private func didClickIcon(_ sender: Any) {
         let imagePickMethodAlertController = GeneralUIAlertController(title: "Choose Image", message: nil, preferredStyle: .actionSheet)
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
-        
+
         imagePickMethodAlertController.addAction(UIAlertAction(title: "Camera", style: .default, handler: { _ in
                 openCamera()
         }))
@@ -107,19 +107,17 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
         }))
 
         imagePickMethodAlertController.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
-        
+
         func openCamera() {
-            if(UIImagePickerController .isSourceTypeAvailable(UIImagePickerController.SourceType.camera))
-            {
+            if UIImagePickerController .isSourceTypeAvailable(UIImagePickerController.SourceType.camera) {
                 imagePicker.sourceType = UIImagePickerController.SourceType.camera
                 imagePicker.allowsEditing = true
                 imagePicker.cameraCaptureMode = .photo
                 imagePicker.cameraDevice = .rear
                 self.present(imagePicker, animated: true, completion: nil)
-                
+
             }
-            else
-            {
+            else {
                 let warningAlert  = GeneralUIAlertController(title: "Warning", message: "You don't have camera", preferredStyle: .alert)
                 warningAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                 AlertManager.shared.enqueueAlertForPresentation(warningAlert)
@@ -130,23 +128,23 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
             imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
             imagePicker.allowsEditing = true
             self.present(imagePicker, animated: true, completion: nil)
-            
+
         }
-        
-        AlertManager.shared.enqueueActionSheetForPresentation(imagePickMethodAlertController, sourceView: dogIcon, permittedArrowDirections: [.up,.down])
+
+        AlertManager.shared.enqueueActionSheetForPresentation(imagePickMethodAlertController, sourceView: dogIcon, permittedArrowDirections: [.up, .down])
     }
-    
-    //MARK: - Properties
-    
-    var delegate: IntroductionViewControllerDelegate! = nil
-    
-    //MARK: - Main
+
+    // MARK: - Properties
+
+    weak var delegate: IntroductionViewControllerDelegate! = nil
+
+    // MARK: - Main
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         continueButton.layer.cornerRadius = 8.0
-        
+
         /*
          dogIcon.image = DogConstant.chooseIcon
          dogIcon.layer.masksToBounds = true
@@ -159,46 +157,46 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
          dogIcon.isUserInteractionEnabled = true
          dogIcon.addGestureRecognizer(iconTap)
          */
-        
+
         dogIcon.setImage(DogConstant.chooseIcon, for: .normal)
         dogIcon.imageView!.layer.masksToBounds = true
         dogIcon.imageView!.layer.cornerRadius = dogIcon.frame.width/2
-        
+
         dogName.delegate = self
-        
-        for window in UIApplication.shared.windows{
+
+        for window in UIApplication.shared.windows {
             window.overrideUserInterfaceStyle = .unspecified
         }
         AppearanceConstant.darkModeStyle = .unspecified
-        
+
         darkModeSegmentedControl.selectedSegmentIndex = 2
         darkModeSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.white], for: .normal)
         darkModeSegmentedControl.backgroundColor = .systemGray4
-        
+
         self.setupToHideKeyboardOnTapOnView()
 
         // Do any additional setup after loading the view.
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         AlertManager.globalPresenter = self
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        //setupConstraints()
+        // setupConstraints()
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        //synchronizes data when setup is done (aka disappearing)
+
+        // synchronizes data when setup is done (aka disappearing)
         if dogName.text != nil && dogName.text?.trimmingCharacters(in: .whitespacesAndNewlines) != ""{
             delegate.didSetDogName(sender: Sender(origin: self, localized: self), dogName: dogName.text!)
-            
+
         }
-        if dogIcon.imageView!.image != DogConstant.chooseIcon{
+        if dogIcon.imageView!.image != DogConstant.chooseIcon {
             delegate.didSetDogIcon(sender: Sender(origin: self, localized: self), dogIcon: dogIcon.imageView!.image!)
         }
     }

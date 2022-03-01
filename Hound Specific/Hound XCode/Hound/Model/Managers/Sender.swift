@@ -9,12 +9,12 @@
 import UIKit
 
 class Sender {
-    
+
     let origin: AnyObject?
     var localized: AnyObject?
-    
-    init(origin: AnyObject, localized: AnyObject){
-        if origin is Sender{
+
+    init(origin: AnyObject, localized: AnyObject) {
+        if origin is Sender {
             let castedSender = origin as! Sender
             self.origin = castedSender.origin
         }
@@ -24,9 +24,9 @@ class Sender {
         if localized is Sender {
             fatalError("localized cannot be sender")
         }
-        else{
+        else {
             self.localized = localized
         }
     }
-    
+
 }

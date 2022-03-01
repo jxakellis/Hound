@@ -9,13 +9,13 @@
 import UIKit
 
 enum TimingConstant {
-    
-    //Immutable
+
+    // Immutable
     static var defaultTimeOfDay: DateComponents = DateComponents(calendar: nil, timeZone: nil, era: nil, year: nil, month: nil, day: nil, hour: 8, minute: 30, second: 0, nanosecond: 0, weekday: nil, weekdayOrdinal: nil, quarter: nil, weekOfMonth: nil, weekOfYear: nil, yearForWeekOfYear: nil)
     static var defaultSkipStatus: Bool = false
-    
-    //Mutable
-    
+
+    // Mutable
+
     static var storedDefaultSnoozeLength: TimeInterval = TimeInterval(60*5)
     static var defaultSnoozeLength: TimeInterval {
         get {
@@ -29,8 +29,8 @@ enum TimingConstant {
             AppDelegate.endpointLogger.notice("ENDPOINT Update defaultSnoozeLength")
         }
     }
-    
-    ///Saves state isPaused, self.isPaused can be modified by SettingsViewController but this is only when there are no active timers and pause is automatically set to unpaused
+
+    /// Saves state isPaused, self.isPaused can be modified by SettingsViewController but this is only when there are no active timers and pause is automatically set to unpaused
     static private var storedIsPaused: Bool = false
     static var isPaused: Bool {
         get {
@@ -44,10 +44,9 @@ enum TimingConstant {
             AppDelegate.endpointLogger.notice("ENDPOINT Update isPaused")
         }
     }
-    
-    
-    ///Saves date of last pause (if there was one)
-    static private var storedLastPause: Date? = nil
+
+    /// Saves date of last pause (if there was one)
+    static private var storedLastPause: Date?
     static var lastPause: Date? {
         get {
             return storedLastPause
@@ -60,10 +59,9 @@ enum TimingConstant {
             AppDelegate.endpointLogger.notice("ENDPOINT Update lastPause")
         }
     }
-    
-    
-    ///Saves date of last unpause (if there was one)
-    static private var storedLastUnpause: Date? = nil
+
+    /// Saves date of last unpause (if there was one)
+    static private var storedLastUnpause: Date?
     static var lastUnpause: Date? {
         get {
             return storedLastUnpause
@@ -92,8 +90,7 @@ enum NotificationConstant {
             AppDelegate.endpointLogger.notice("ENDPOINT Update isNotificationAuthorized")
         }
     }
-    
-    
+
     static private var storedIsNotificationEnabled: Bool = false
     static var isNotificationEnabled: Bool {
         get {
@@ -107,8 +104,7 @@ enum NotificationConstant {
             AppDelegate.endpointLogger.notice("ENDPOINT Update isNotificationEnabled")
         }
     }
-    
-    
+
     static private var storedShouldLoudNotification: Bool = false
     static var shouldLoudNotification: Bool {
         get {
@@ -122,8 +118,7 @@ enum NotificationConstant {
             AppDelegate.endpointLogger.notice("ENDPOINT Update shouldLoudNotification")
         }
     }
-    
-    
+
     static private var storedShouldShowTerminationAlert: Bool = true
     static var shouldShowTerminationAlert: Bool {
         get {
@@ -137,7 +132,7 @@ enum NotificationConstant {
             AppDelegate.endpointLogger.notice("ENDPOINT Update shouldShowTerminationAlert")
         }
     }
-    
+
     static private var storedShouldShowReleaseNotes: Bool = true
     static var shouldShowReleaseNotes: Bool {
         get {
@@ -151,8 +146,7 @@ enum NotificationConstant {
             AppDelegate.endpointLogger.notice("ENDPOINT Update shouldShowReleaseNotes")
         }
     }
-    
-    
+
     static private var storedShouldFollowUp: Bool = false
     static var shouldFollowUp: Bool {
         get {
@@ -166,8 +160,7 @@ enum NotificationConstant {
             AppDelegate.endpointLogger.notice("ENDPOINT Update storedShouldFollowUp")
         }
     }
-    
-    
+
     static private var storedFollowUpDelay: TimeInterval = 5.0 * 60.0
     static var followUpDelay: TimeInterval {
         get {
@@ -181,7 +174,7 @@ enum NotificationConstant {
             AppDelegate.endpointLogger.notice("ENDPOINT Update followUpDelay")
         }
     }
-    
+
     static private var storedNotificationSound: NotificationSound = NotificationSound.radar
     static var notificationSound: NotificationSound {
         get {
@@ -211,7 +204,7 @@ enum AppearanceConstant {
             AppDelegate.endpointLogger.notice("ENDPOINT Update isCompactView")
         }
     }
-    
+
     static private var storedDarkModeStyle: UIUserInterfaceStyle = .unspecified
     static var darkModeStyle: UIUserInterfaceStyle {
         get {
@@ -225,7 +218,7 @@ enum AppearanceConstant {
             AppDelegate.endpointLogger.notice("ENDPOINT Update darkModeStyle")
         }
     }
-    
+
     static private var storeReviewRequestDates: [Date] = [Date()]
     static var reviewRequestDates: [Date] {
         get {
@@ -239,4 +232,3 @@ enum AppearanceConstant {
         }
     }
 }
-

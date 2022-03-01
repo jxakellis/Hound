@@ -9,26 +9,25 @@
 import UIKit
 
 class DropDownDefaultTableViewCell: UITableViewCell {
-    
+
     @IBOutlet weak var label: UILabel!
-    
+
     @IBOutlet private weak var leading: NSLayoutConstraint!
-    
+
     @IBOutlet private weak var trailing: NSLayoutConstraint!
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        
+
     }
-    
-    
-    func adjustLeadingTrailing(newConstant: CGFloat){
+
+    func adjustLeadingTrailing(newConstant: CGFloat) {
         leading.constant = newConstant
         trailing.constant = newConstant
     }
-    
-    func didToggleSelect(newSelectionStatus: Bool){
+
+    func didToggleSelect(newSelectionStatus: Bool) {
         if newSelectionStatus == true {
             contentView.backgroundColor = .systemBlue
             label.textColor = .white
@@ -37,7 +36,7 @@ class DropDownDefaultTableViewCell: UITableViewCell {
             contentView.backgroundColor = .systemBackground
             label.textColor = .label
         }
-        
+
     }
 
 }

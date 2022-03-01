@@ -8,69 +8,69 @@
 
 import UIKit
 
-protocol DogsReminderOnceViewControllerDelegate {
+protocol DogsReminderOnceViewControllerDelegate: AnyObject {
     func willDismissKeyboard()
 }
 
 class DogsReminderOnceViewController: UIViewController, UIGestureRecognizerDelegate {
 
-    //MARK: - UIGestureRecognizerDelegate
-    
+    // MARK: - UIGestureRecognizerDelegate
+
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
-    
-    //MARK: - IB
+
+    // MARK: - IB
     @IBOutlet private weak var datePicker: UIDatePicker!
-    
+
     @IBAction private func didUpdateDatePicker(_ sender: Any) {
         delegate.willDismissKeyboard()
     }
-    
-    //MARK: - Properties
-    
-    var delegate: DogsReminderOnceViewControllerDelegate! = nil
-    
-    var passedDate: Date? = nil
-    
+
+    // MARK: - Properties
+
+    weak var delegate: DogsReminderOnceViewControllerDelegate! = nil
+
+    var passedDate: Date?
+
     var initalValuesChanged: Bool {
-        if passedDate != datePicker.date{
+        if passedDate != datePicker.date {
             return true
         }
         else {
             return false
         }
     }
-    
-    //MARK: - Main
-    
+
+    // MARK: - Main
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        //keep duplicate as without it the user can see the .asyncafter visual scroll, but this duplicate stops a value changed not being called on first value change bug
+
+        // keep duplicate as without it the user can see the .asyncafter visual scroll, but this duplicate stops a value changed not being called on first value change bug
         if self.passedDate != nil {
             self.datePicker.date = self.passedDate!
         }
-        else{
+        else {
             self.datePicker.date = Date.roundDate(targetDate: Date(), roundingInterval: 60.0*5, roundingMethod: .up)
             passedDate = datePicker.date
         }
-        
-        //fix bug with datePicker value changed not triggering on first go
-        DispatchQueue.main.asyncAfter(deadline: .now()){
+
+        // fix bug with datePicker value changed not triggering on first go
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
             self.datePicker.date = self.datePicker.date
         }
-        
+
         datePicker.minimumDate = datePicker.date
-        
+
     }
-    
-    ///Returns the datecomponets  selected
+
+    /// Returns the datecomponets  selected
     var dateComponents: DateComponents? {
-        if Date().distance(to: datePicker.date) < 0{
+        if Date().distance(to: datePicker.date) < 0 {
             datePicker.date = datePicker.date.addingTimeInterval(5.0*60.0)
         }
-        return Calendar.current.dateComponents([.year,.month,.day,.hour,.minute], from: datePicker.date)
+        return Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: datePicker.date)
     }
 
 }

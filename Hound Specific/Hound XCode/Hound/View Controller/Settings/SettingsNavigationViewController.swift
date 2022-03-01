@@ -8,33 +8,32 @@
 
 import UIKit
 
-protocol SettingsNavigationViewControllerDelegate{
+protocol SettingsNavigationViewControllerDelegate: AnyObject {
     func didTogglePause(newPauseState: Bool)
 }
 
 class SettingsNavigationViewController: UINavigationController, SettingsViewControllerDelegate {
-    
-    //MARK: - SettingsViewControllerDelegate
-    
+
+    // MARK: - SettingsViewControllerDelegate
+
     func didTogglePause(newPauseState: Bool) {
         passThroughDelegate.didTogglePause(newPauseState: newPauseState)
     }
-    
-    //MARK: - Properties
-    
-    var passThroughDelegate: SettingsNavigationViewControllerDelegate! = nil
-    
+
+    // MARK: - Properties
+
+    weak var passThroughDelegate: SettingsNavigationViewControllerDelegate! = nil
+
     var settingsViewController: SettingsViewController! = nil
-    
-    //MARK: - Main
-    
+
+    // MARK: - Main
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         settingsViewController = self.viewControllers[0] as? SettingsViewController
         settingsViewController.delegate = self
     }
-    
 
     /*
     // MARK: - Navigation

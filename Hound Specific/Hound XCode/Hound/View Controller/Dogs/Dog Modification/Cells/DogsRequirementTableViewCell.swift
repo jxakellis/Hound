@@ -7,44 +7,44 @@
 //
 
 import UIKit
-protocol DogsReminderTableViewCellDelegate {
+
+protocol DogsReminderTableViewCellDelegate: AnyObject {
     func didToggleEnable(sender: Sender, reminderUUID: String, newEnableStatus: Bool)
 }
 
-
 class DogsReminderTableViewCell: UITableViewCell {
-    
-    //MARK: - IB
-    
+
+    // MARK: - IB
+
     @IBOutlet private weak var reminderDisplay: UILabel!
     @IBOutlet private weak var reminderToggleSwitch: UISwitch!
-    
+
     @IBAction func didToggleEnable(_ sender: Any) {
         delegate.didToggleEnable(sender: Sender(origin: self, localized: self), reminderUUID: reminderSource.uuid, newEnableStatus: self.reminderToggleSwitch.isOn)
     }
-    
-    //MARK: - Properties
-    
-    var delegate: DogsReminderTableViewCellDelegate! = nil
-    
+
+    // MARK: - Properties
+
+    weak var delegate: DogsReminderTableViewCellDelegate! = nil
+
     var reminderSource: Reminder! = nil
-    
-    //MARK: - Main
-    
-    //when cell is awoken / init, this is executed
+
+    // MARK: - Main
+
+    // when cell is awoken / init, this is executed
     override func awakeFromNib() {
         super.awakeFromNib()
         reminderDisplay.adjustsFontSizeToFitWidth = true
-        
-        //self.contentMode = .center
-        //self.imageView?.contentMode = .center
+
+        // self.contentMode = .center
+        // self.imageView?.contentMode = .center
     }
-    
-    func setup(reminder: Reminder){
+
+    func setup(reminder: Reminder) {
         reminderSource = reminder
-        
+
         reminderDisplay.text = ""
-        
+
         if reminder.timingStyle == .oneTime {
             try! self.reminderDisplay.text? = " \(String.convertToReadableNonRepeating(interperatedDateComponents: reminder.oneTimeComponents.dateComponents))"
         }
@@ -53,28 +53,28 @@ class DogsReminderTableViewCell: UITableViewCell {
         }
         else {
             try! self.reminderDisplay.text?.append(" \(String.convertToReadable(interperatedDateComponents: reminder.timeOfDayComponents.timeOfDayComponent))")
-            
-            //day of month
+
+            // day of month
             if reminder.timeOfDayComponents.dayOfMonth != nil {
                 let dayOfMonth: Int! = reminder.timeOfDayComponents.dayOfMonth
                 reminderDisplay.text?.append(" Every Month on \(dayOfMonth!)")
-            
+
                 reminderDisplay.text?.append(String.dayOfMonthSuffix(day: dayOfMonth))
             }
-            //weekdays
-            else if reminder.timeOfDayComponents.weekdays == [1,2,3,4,5,6,7]{
+            // weekdays
+            else if reminder.timeOfDayComponents.weekdays == [1, 2, 3, 4, 5, 6, 7] {
                 reminderDisplay.text?.append(" Everyday")
             }
-            else if reminder.timeOfDayComponents.weekdays == [1,7]{
+            else if reminder.timeOfDayComponents.weekdays == [1, 7] {
                 reminderDisplay.text?.append(" on Weekends")
             }
-            else if reminder.timeOfDayComponents.weekdays == [2,3,4,5,6]{
+            else if reminder.timeOfDayComponents.weekdays == [2, 3, 4, 5, 6] {
                 reminderDisplay.text?.append(" on Weekdays")
             }
             else {
                 reminderDisplay.text?.append(" on")
                 if reminder.timeOfDayComponents.weekdays!.count == 1 {
-                    for weekdayInt in reminder.timeOfDayComponents.weekdays!{
+                    for weekdayInt in reminder.timeOfDayComponents.weekdays! {
                         switch weekdayInt {
                         case 1:
                             reminderDisplay.text?.append(" Sunday")
@@ -96,7 +96,7 @@ class DogsReminderTableViewCell: UITableViewCell {
                     }
                 }
                 else {
-                    for weekdayInt in reminder.timeOfDayComponents.weekdays!{
+                    for weekdayInt in reminder.timeOfDayComponents.weekdays! {
                         switch weekdayInt {
                         case 1:
                             reminderDisplay.text?.append(" Su,")
@@ -117,17 +117,17 @@ class DogsReminderTableViewCell: UITableViewCell {
                         }
                     }
                 }
-                //checks if extra comma, then removes
+                // checks if extra comma, then removes
                 if reminderDisplay.text?.last == ","{
                     reminderDisplay.text?.removeLast()
                 }
             }
         }
-        
+
         reminderDisplay.attributedText = reminderDisplay.text?.addingFontToBeginning(text: reminder.displayTypeName + " -", font: UIFont.systemFont(ofSize: reminderDisplay.font.pointSize, weight: .medium))
-        
+
         self.reminderToggleSwitch.isOn = reminder.getEnable()
-        
+
     }
-    
+
 }

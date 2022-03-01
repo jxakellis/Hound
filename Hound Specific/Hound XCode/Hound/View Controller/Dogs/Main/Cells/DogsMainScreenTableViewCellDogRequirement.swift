@@ -8,58 +8,58 @@
 
 import UIKit
 
-protocol DogsMainScreenTableViewCellReminderDisplayDelegate {
+protocol DogsMainScreenTableViewCellReminderDisplayDelegate: AnyObject {
     func didToggleReminderSwitch(sender: Sender, parentDogName: String, reminderUUID: String, isEnabled: Bool)
 }
 
 class DogsMainScreenTableViewCellReminderDisplay: UITableViewCell {
-    
-    //MARK: - IB
-    
+
+    // MARK: - IB
+
     @IBOutlet private weak var reminderChevron: UIImageView!
-    
+
     @IBOutlet private weak var reminderIcon: UIImageView!
-    
+
     @IBOutlet private weak var reminderTypeDisplayName: ScaledUILabel!
     @IBOutlet private weak var timeInterval: ScaledUILabel!
-    
+
     @IBOutlet private weak var timeLeft: ScaledUILabel!
     @IBOutlet weak var reminderToggleSwitch: UISwitch!
-    
-    //When the on off switch is toggled
+
+    // When the on off switch is toggled
     @IBAction private func didToggleReminderSwitch(_ sender: Any) {
         delegate.didToggleReminderSwitch(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, reminderUUID: reminder.uuid, isEnabled: self.reminderToggleSwitch.isOn)
     }
-    
-    //MARK: -  Properties
+
+    // MARK: - Properties
     private var reminder: Reminder = Reminder()
-    
+
     private var parentDogName: String = ""
-    
-    var delegate: DogsMainScreenTableViewCellReminderDisplayDelegate! = nil
-    
-    //MARK: - Main
-    
+
+    weak var delegate: DogsMainScreenTableViewCellReminderDisplayDelegate! = nil
+
+    // MARK: - Main
+
     override func awakeFromNib() {
         super.awakeFromNib()
-        //reminderChevron.tintColor = ColorConstant.gray.rawValue
-        //reminderChevron.alpha = 1
-        
+        // reminderChevron.tintColor = ColorConstant.gray.rawValue
+        // reminderChevron.alpha = 1
+
         // Initialization code
     }
-    
+
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        
+
         // Configure the view for the selected state
     }
-    
-    //Setup function that sets up the different IBOutlet properties
-    func setup(parentDogName: String, reminderPassed: Reminder){
+
+    // Setup function that sets up the different IBOutlet properties
+    func setup(parentDogName: String, reminderPassed: Reminder) {
         self.parentDogName = parentDogName
         self.reminder = reminderPassed
         self.reminderTypeDisplayName.text = reminderPassed.displayTypeName
-        
+
         if reminder.timingStyle == .oneTime {
             self.reminderIcon.image = UIImage.init(systemName: "calendar")
             try! self.timeInterval.text = String.convertToReadableNonRepeating(interperatedDateComponents: reminder.oneTimeComponents.dateComponents)
@@ -68,26 +68,25 @@ class DogsMainScreenTableViewCellReminderDisplay: UITableViewCell {
             self.reminderIcon.image = UIImage.init(systemName: "timer")
             self.timeInterval.text = ("Every \(String.convertToReadable(interperateTimeInterval: reminder.countDownComponents.executionInterval))")
         }
-        //weekdays
-        else if reminder.timingStyle == .weekly{
+        // weekdays
+        else if reminder.timingStyle == .weekly {
             self.reminderIcon.image = UIImage.init(systemName: "alarm")
             try! self.timeInterval.text = ("\(String.convertToReadable(interperatedDateComponents: reminder.timeOfDayComponents.timeOfDayComponent))")
-            
-            
-            //weekdays
-            if reminder.timeOfDayComponents.weekdays == [1,2,3,4,5,6,7]{
+
+            // weekdays
+            if reminder.timeOfDayComponents.weekdays == [1, 2, 3, 4, 5, 6, 7] {
                 timeInterval.text?.append(" Everyday")
             }
-            else if reminder.timeOfDayComponents.weekdays == [1,7]{
+            else if reminder.timeOfDayComponents.weekdays == [1, 7] {
                 timeInterval.text?.append(" on Weekends")
             }
-            else if reminder.timeOfDayComponents.weekdays == [2,3,4,5,6]{
+            else if reminder.timeOfDayComponents.weekdays == [2, 3, 4, 5, 6] {
                 timeInterval.text?.append(" on Weekdays")
             }
             else {
                 timeInterval.text?.append(" on")
                 if reminder.timeOfDayComponents.weekdays!.count == 1 {
-                    for weekdayInt in reminder.timeOfDayComponents.weekdays!{
+                    for weekdayInt in reminder.timeOfDayComponents.weekdays! {
                         switch weekdayInt {
                         case 1:
                             timeInterval.text?.append(" Sunday")
@@ -109,7 +108,7 @@ class DogsMainScreenTableViewCellReminderDisplay: UITableViewCell {
                     }
                 }
                 else {
-                    for weekdayInt in reminder.timeOfDayComponents.weekdays!{
+                    for weekdayInt in reminder.timeOfDayComponents.weekdays! {
                         switch weekdayInt {
                         case 1:
                             timeInterval.text?.append(" Su,")
@@ -130,73 +129,71 @@ class DogsMainScreenTableViewCellReminderDisplay: UITableViewCell {
                         }
                     }
                 }
-                //checks if extra comma, then removes
+                // checks if extra comma, then removes
                 if timeInterval.text?.last == ","{
                     timeInterval.text?.removeLast()
                 }
             }
         }
-        //monthly
+        // monthly
         else {
             self.reminderIcon.image = UIImage.init(systemName: "calendar")
             try! self.timeInterval.text = ("\(String.convertToReadable(interperatedDateComponents: reminder.timeOfDayComponents.timeOfDayComponent))")
-            
-            
-            //day of month
+
+            // day of month
                 let dayOfMonth: Int! = reminder.timeOfDayComponents.dayOfMonth
                 timeInterval.text?.append(" Every Month on \(dayOfMonth!)")
-            
+
              timeInterval.text?.append(String.dayOfMonthSuffix(day: dayOfMonth))
         }
-        
+
         self.reminderToggleSwitch.isOn = reminderPassed.getEnable()
-        
+
         setupTimeLeftText()
     }
-    
-    
-    func reloadCell(){
+
+    func reloadCell() {
         setupTimeLeftText()
     }
-    
-    private func setupTimeLeftText(){
-        
+
+    private func setupTimeLeftText() {
+
         let timeLeftBodyWeight: UIFont.Weight = .regular
         let timeLeftImportantWeight: UIFont.Weight = .semibold
-        
+
         if reminder.getEnable() == false {
-            timeLeft.attributedText = NSAttributedString(string: "Reminder Disabled", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
+            timeLeft.attributedText = NSAttributedString(string: "Reminder Disabled", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
         }
         else if TimingConstant.isPaused == true {
-            
-            timeLeft.attributedText = NSAttributedString(string: "Paused", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
-            
+
+            timeLeft.attributedText = NSAttributedString(string: "Paused", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
+
         }
-        else{
+        else {
             let fireDate: Date? = reminder.executionDate!
-            
+
             if fireDate == nil {
-                timeLeft.attributedText = NSAttributedString(string: "Reminder Disabled", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
+                timeLeft.attributedText = NSAttributedString(string: "Reminder Disabled", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
             }
             else if Date().distance(to: fireDate!) <= 0 {
-                timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
+                timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
             }
             else if reminder.snoozeComponents.isSnoozed == true {
                 let timeLeftText = String.convertToReadable(interperateTimeInterval: Date().distance(to: fireDate!))
-                
+
                 timeLeft.font = UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftBodyWeight)
-                
-                timeLeft.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftBodyWeight)])
-                
+
+                timeLeft.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftBodyWeight)])
+
                 timeLeft.attributedText = timeLeft.text!.addingFontToBeginning(text: "Done Snoozing In: ", font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight))
             }
             else {
                 let timeLeftText = String.convertToReadable(interperateTimeInterval: Date().distance(to: fireDate!))
-                
+
                 timeLeft.font = UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftBodyWeight)
-                
-                timeLeft.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftBodyWeight)])
-                
+
+                timeLeft.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftBodyWeight)])
+
                 timeLeft.attributedText = timeLeft.text!.addingFontToBeginning(text: "Remind In: ", font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight))
             }
         }

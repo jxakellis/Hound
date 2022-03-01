@@ -10,79 +10,73 @@ import UIKit
 
 class LogsMainScreenTableViewCellBodyRegularWithIcon: UITableViewCell {
 
-    
-    //MARK: - IB
-    
-    
+    // MARK: - IB
+
     @IBOutlet private weak var logIcon: UIImageView!
     @IBOutlet private weak var logType: ScaledUILabel!
     @IBOutlet private weak var logDate: ScaledUILabel!
     @IBOutlet private weak var logNote: ScaledUILabel!
-    
-    //MARK: - Properties
-    
+
+    // MARK: - Properties
+
     private var parentDogNameSource: String! = nil
-    private var reminderSource: Reminder? = nil
+    private var reminderSource: Reminder?
     private var logSource: KnownLog! = nil
-    
-    //MARK: - Main
-    
+
+    // MARK: - Main
+
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-    
-    func setup(parentDogName: String, reminder: Reminder?, log logSource: KnownLog){
+
+    func setup(parentDogName: String, reminder: Reminder?, log logSource: KnownLog) {
         self.parentDogNameSource = parentDogName
         self.logSource = logSource
         self.reminderSource = reminder
-        
+
         let dog = try! MainTabBarViewController.staticDogManager.findDog(forName: parentDogName)
         logIcon.image = dog.dogTraits.icon
         logIcon.layer.masksToBounds = true
         logIcon.layer.cornerRadius = logIcon.frame.width/2
-        
-        
+
         self.logType.text = self.logSource.displayTypeName
-        
+
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)
         logDate.text = dateFormatter.string(from: logSource.date)
-        
+
         logNote.text = logSource.note
 
-        //deactivate old
-        for label in [self.logType, logDate, logNote]{
+        // deactivate old
+        for label in [self.logType, logDate, logNote] {
             var constraintsToDeactivate: [NSLayoutConstraint] = []
-            
-            for constraintIndex in 0..<label!.constraints.count{
-                if label!.constraints[constraintIndex].firstAttribute == .width{
-                    constraintsToDeactivate.append(label!.constraints[constraintIndex])
-                }
+
+            for constraintIndex in 0..<label!.constraints.count where label!.constraints[constraintIndex].firstAttribute == .width {
+                constraintsToDeactivate.append(label!.constraints[constraintIndex])
             }
-            
+
             NSLayoutConstraint.deactivate(constraintsToDeactivate)
         }
-        
+
         var labelWidthConstraints: [NSLayoutConstraint] = []
-        
-        //create new
-        for label in [self.logType, logDate]{
+
+        // create new
+        for label in [self.logType, logDate] {
             let labelTextWidth = label!.text!.boundingFrom(font: label!.font, height: label!.frame.height).width
             let labelWidthConstraint = NSLayoutConstraint.init(item: label!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: labelTextWidth)
             labelWidthConstraints.append(labelWidthConstraint)
         }
-        
+
         if logNote.text?.trimmingCharacters(in: .whitespacesAndNewlines) != ""{
             let logNoteWidthConstraint = NSLayoutConstraint.init(item: logNote!, attribute: .width, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 35.0)
             labelWidthConstraints.append(logNoteWidthConstraint)
         }
-        
+
         NSLayoutConstraint.activate(labelWidthConstraints)
-        
+
         self.contentView.setNeedsLayout()
         self.contentView.layoutIfNeeded()
-        
+
     }
 
-    
 }

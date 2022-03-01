@@ -9,8 +9,8 @@
 import UIKit
 
 extension UIApplication {
-    
-    ///Special keyWindow
+
+    /// Special keyWindow
     var keyWindow: UIWindow? {
             // Get connected scenes
             return UIApplication.shared.connectedScenes
@@ -23,9 +23,7 @@ extension UIApplication {
                 // Finally, keep only the key window
                 .first(where: \.isKeyWindow)
     }
-        
-    
-    
+
     static var previousAppBuild: Int = 0
     /*
      buildNumber=$(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" "$INFOPLIST_FILE")
@@ -33,13 +31,13 @@ extension UIApplication {
      /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $buildNumber" "$INFOPLIST_FILE"
 
      */
-    
+
     static var appVersion: String? {
         return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
     }
-    
+
     static var appBuild: Int {
-        
+
         return Int((Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String) ?? "1228") ?? 1228
     }
 }

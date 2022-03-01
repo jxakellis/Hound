@@ -53,10 +53,10 @@ enum ReminderConstant {
 }
 
 enum DogManagerConstant {
-    
+
     static var userDefaultDog: Dog {
         let userDefaultDog = Dog()
-        
+
         /*
          let reminder = Reminder()
          reminder.reminderType = .trainingSession
@@ -64,35 +64,34 @@ enum DogManagerConstant {
          reminder.countDownComponents.changeExecutionInterval(newExecutionInterval: 30.0)
          try! userDefaultDog.dogReminders.addReminder(newReminder: reminder)
          */
-        
-    
+
         return userDefaultDog
     }
-    
+
     static var defaultDogManager: DogManager {
         let dogManager = DogManager()
-        
+
         try! dogManager.addDog(newDog: DogManagerConstant.userDefaultDog)
-        
+
         return dogManager
     }
 }
 
-enum UserDefaultsKeys: String{
+enum UserDefaultsKeys: String {
     case didFirstTimeSetup = "didFirstTimeSetup"
     case dogManager = "dogManager"
     case appBuild = "appBuild"
-    
-    //DogsViewController
+
+    // DogsViewController
     case hasBeenLoadedBefore = "hasBeenLoadedBefore"
-    
-    //Timing
+
+    // Timing
     case isPaused = "isPaused"
     case lastPause = "lastPause"
     case lastUnpause = "lastUnpause"
     case defaultSnoozeLength = "defaultSnooze"
-    
-    //Notifications
+
+    // Notifications
     case isNotificationAuthorized = "isNotificationAuthorized"
     case isNotificationEnabled = "isNotificationEnabled"
     case shouldLoudNotification = "shouldLoudNotification"
@@ -101,44 +100,41 @@ enum UserDefaultsKeys: String{
     case shouldFollowUp = "shouldFollowUp"
     case followUpDelay = "followUpDelay"
     case notificationSound = "notificationSound"
-    
-    //Appearance
+
+    // Appearance
     case isCompactView = "isCompactView"
     case darkModeStyle = "darkModeStyle"
     case reviewRequestDates = "reviewRequestDates"
 }
 
-enum AnimationConstant: Double{
-    
+enum AnimationConstant: Double {
+
     case largeButtonShow = 0.30
     case largeButtonHide = 0.1500000001
-    
+
     case toolTipShow = 0.1000000002
     case toolTipHide = 0.1000000003
-    
+
     case switchButton = 0.1200000001
 }
 
 enum NotificationSound: String, CaseIterable {
-    //ENUM('Radar','Apex','Beacon','Bulletin','By The Seaside','Chimes','Circuit','Constellation','Cosmic','Crystals','Hillside','Illuminate','Night Owl','Opening','Presto','Reflection','Ripplies','Sencha','Signal','Silk','Stargaze','Twinkle','Waves')
+    // ENUM('Radar','Apex','Beacon','Bulletin','By The Seaside','Chimes','Circuit','Constellation','Cosmic','Crystals','Hillside','Illuminate','Night Owl','Opening','Presto','Reflection','Ripplies','Sencha','Signal','Silk','Stargaze','Twinkle','Waves')
     init?(rawValue: String) {
-        for sound in NotificationSound.allCases{
-            if sound.rawValue == rawValue{
-                self = sound
-                return
-            }
+        for sound in NotificationSound.allCases where sound.rawValue == rawValue {
+            self = sound
+            return
         }
-        
+
         AppDelegate.generalLogger.fault("Depreciated NotificationSound \(rawValue), resetting value to default")
         self = .radar
         return
-         
-        
-        //case playtime = "Playtime"
-        //case radiate = "Radiate"
-        //case slowRise = "Slow Rise"
-        //case summit = "Summit"
-        //case uplift = "Uplift"
+
+        // case playtime = "Playtime"
+        // case radiate = "Radiate"
+        // case slowRise = "Slow Rise"
+        // case summit = "Summit"
+        // case uplift = "Uplift"
     }
     case radar = "Radar"
     case apex = "Apex"
@@ -154,19 +150,18 @@ enum NotificationSound: String, CaseIterable {
     case illuminate = "Illuminate"
     case nightOwl = "Night Owl"
     case opening = "Opening"
-    //case playtime = "Playtime"
+    // case playtime = "Playtime"
     case presto = "Presto"
-    //case radiate = "Radiate"
+    // case radiate = "Radiate"
     case reflection = "Reflection"
     case ripples = "Ripples"
     case sencha = "Sencha"
     case signal = "Signal"
     case silk = "Silk"
-    //case slowRise = "Slow Rise"
+    // case slowRise = "Slow Rise"
     case stargaze = "Stargaze"
-    //case summit = "Summit"
+    // case summit = "Summit"
     case twinkle = "Twinkle"
-    //case uplift = "Uplift"
+    // case uplift = "Uplift"
     case waves = "Waves"
 }
-

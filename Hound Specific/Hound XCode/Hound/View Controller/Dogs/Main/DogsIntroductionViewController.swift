@@ -8,19 +8,19 @@
 
 import UIKit
 
-protocol DogsIntroductionViewControllerDelegate{
+protocol DogsIntroductionViewControllerDelegate: AnyObject {
     func didSetDefaultReminderState(sender: Sender, newDefaultReminderStatus: Bool)
 }
 
 class DogsIntroductionViewController: UIViewController {
-    
-    //MARK: - IB
-    
+
+    // MARK: - IB
+
     @IBOutlet private weak var introductionBody: ScaledUILabel!
-    
+
     @IBOutlet private weak var remindersBody: ScaledUILabel!
     @IBOutlet private weak var remindersToggleSwitch: UISwitch!
-    
+
     /*
      
     
@@ -48,43 +48,40 @@ class DogsIntroductionViewController: UIViewController {
     @IBAction private func willContinue(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
-    
-    //MARK: - Properties
-    
-    var delegate: DogsIntroductionViewControllerDelegate! = nil
-    
-    //MARK: - Main
+
+    // MARK: - Properties
+
+    weak var delegate: DogsIntroductionViewControllerDelegate! = nil
+
+    // MARK: - Main
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         continueButton.layer.cornerRadius = 8.0
-        
+
        // notificationsToggleSwitch.isOn = NotificationConstant.isNotificationEnabled
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
         DogsNavigationViewController.hasBeenLoadedBefore = true
-        
+
         delegate.didSetDefaultReminderState(sender: Sender(origin: self, localized: self), newDefaultReminderStatus: remindersToggleSwitch.isOn)
-        
+
         if NotificationConstant.isNotificationAuthorized == false {
-            
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
+
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, _) in
                 NotificationConstant.isNotificationAuthorized = isGranted
                 NotificationConstant.isNotificationEnabled = isGranted
                 NotificationConstant.shouldLoudNotification = isGranted
                 NotificationConstant.shouldFollowUp = isGranted
-                
+
             }
-            
+
         }
-        
-            
-        
-        
+
     }
 
 }

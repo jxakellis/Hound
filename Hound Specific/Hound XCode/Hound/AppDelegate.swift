@@ -12,53 +12,52 @@ import os.log
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    
+
     static var generalLogger = Logger(subsystem: "com.example.Pupotty", category: "General")
     static var endpointLogger = Logger(subsystem: "com.example.Pupotty", category: "Endpoints")
     static var lifeCycleLogger = Logger(subsystem: "com.example.Pupotty", category: "Life Cycle")
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
+
         AppDelegate.lifeCycleLogger.notice("Application did finish launching with options")
         AppDelegate.generalLogger.notice("\n-----Device Info-----\n Model: \(UIDevice.current.model) \n Name: \(UIDevice.current.name) \n System Name: \(UIDevice.current.systemName) \n System Version: \(UIDevice.current.systemVersion)")
-        
+
         let decodedPreviousAppBuild: Int? = UserDefaults.standard.object(forKey: UserDefaultsKeys.appBuild.rawValue) as? Int ?? nil
         var previousAppBuild: Int {
             return decodedPreviousAppBuild ?? 1228
         }
         UIApplication.previousAppBuild = previousAppBuild
         UserDefaults.standard.setValue(UIApplication.appBuild, forKey: UserDefaultsKeys.appBuild.rawValue)
-        
-        //see if last time setup crashed
+
+        // see if last time setup crashed
         var didCrashDuringLastSetup = UserDefaults.standard.bool(forKey: "didCrashDuringSetup")
-        //will be set to false if successfully setup
+        // will be set to false if successfully setup
         UserDefaults.standard.setValue(true, forKey: "didCrashDuringSetup")
-        
-        //let shouldPerformCleanInstall = UserDefaults.standard.bool(forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
-        
-        //MARK: DISABLING OF didCrashDuringLastSetup
+
+        // let shouldPerformCleanInstall = UserDefaults.standard.bool(forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
+
+        // MARK: DISABLING OF didCrashDuringLastSetup
         if didCrashDuringLastSetup == true {
             AppDelegate.generalLogger.notice("Override didCrashDuringLastSetup, not wiping data and recovering")
-            
+
             didCrashDuringLastSetup = false
             UserDefaults.standard.setValue(false, forKey: "didCrashDuringSetup")
-            
-            //UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
+
+            // UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
         }
-        
-        
+
        if didCrashDuringLastSetup == true {
             AppDelegate.generalLogger.fault("Recovery setup for app data, crashed during last setup")
             PersistenceManager.willSetup()
-            
+
            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
-            //UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
-            
+            // UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
+
             AlertManager.willShowAlert(title: "🚨Crashed detected🚨", message: "Hound crashed during its last launch and had to reset itself to default in order to recover. I am sorry for the inconvenience😢")
-           
+
         }
-         
+
         /*
         else if shouldPerformCleanInstall == true {
             AppDelegate.generalLogger.notice("Clean install setup for app data")
@@ -69,24 +68,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
          */
         else {
-            //retrieve value from local store, if value doesn't exist then false is returned
+            // retrieve value from local store, if value doesn't exist then false is returned
             var hasSetup = UserDefaults.standard.bool(forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
-            
-            if hasSetup{
+
+            if hasSetup {
                 AppDelegate.generalLogger.notice("Recurring setup for app data")
                 PersistenceManager.willSetup(isRecurringSetup: true)
-                
+
                 hasSetup = true
             }
             else {
                 AppDelegate.generalLogger.notice("First time setup for app data")
                 PersistenceManager.willSetup()
-                
+
                 UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
             }
         }
-        
-        //AppDelegate.generalLogger.notice("application end \(UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as? Data)")
+
+        // AppDelegate.generalLogger.notice("application end \(UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as? Data)")
         return true
     }
 
@@ -99,18 +98,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        
+
         // Called when the user discards a scene session.
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
-    
+
     func applicationWillTerminate(_ application: UIApplication) {
         AppDelegate.lifeCycleLogger.notice("Application will terminate")
         PersistenceManager.willEnterBackground(isTerminating: true)
-        
+
     }
 
 }
-
-

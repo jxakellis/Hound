@@ -8,38 +8,38 @@
 
 import UIKit
 
-class ErrorManager{
-    
-    ///Alerts for an error, just calls AlertManager.willShowAlert currently with a specified title of "Error"
-    static func alertForError(message: String){
-        
+class ErrorManager {
+
+    /// Alerts for an error, just calls AlertManager.willShowAlert currently with a specified title of "Error"
+    static func alertForError(message: String) {
+
         AlertManager.willShowAlert(title: "Uh oh! There seems to be an error.", message: message)
-        
+
     }
-    
-    private static func alertForErrorManager(sender: Sender, message: String){
+
+    private static func alertForErrorManager(sender: Sender, message: String) {
         let originTest = sender.origin
-        if originTest != nil{
+        if originTest != nil {
             AlertManager.willShowAlert(title: "🚨Error from \(NSStringFromClass(originTest!.classForCoder))🚨", message: message)
         }
         else {
             AlertManager.willShowAlert(title: "🚨Error from unknown class🚨", message: message)
         }
-        
+
     }
-    
-    ///Handles a given error, uses helper functions to compare against all known (custom) error types
-    static func handleError(sender: Sender, error: Error){
-        
+
+    /// Handles a given error, uses helper functions to compare against all known (custom) error types
+    static func handleError(sender: Sender, error: Error) {
+
         let errorManagerInstance = ErrorManager()
-        
+
         if errorManagerInstance.handleTimingManagerError(sender: sender, error: error) == true {
             return
         }
-        else if errorManagerInstance.handleDogManagerError(sender: sender, error: error) == true{
+        else if errorManagerInstance.handleDogManagerError(sender: sender, error: error) == true {
             return
         }
-        else if errorManagerInstance.handleDogError(sender: sender, error: error) == true{
+        else if errorManagerInstance.handleDogError(sender: sender, error: error) == true {
             return
         }
         else  if errorManagerInstance.handleTraitManagerError(sender: sender, error: error) == true {
@@ -67,9 +67,9 @@ class ErrorManager{
             ErrorManager.alertForErrorManager(sender: sender, message: "Unable to desifer error of description: \(error.localizedDescription)")
         }
     }
-    
-    ///Returns true if able to find a match in enum TimingManagerError to the error provided
-    private func handleTimingManagerError(sender: Sender, error: Error) -> Bool{
+
+    /// Returns true if able to find a match in enum TimingManagerError to the error provided
+    private func handleTimingManagerError(sender: Sender, error: Error) -> Bool {
         /*
          enum TimingManagerError: Error{
              case parseSenderInfoFailed
@@ -88,9 +88,9 @@ class ErrorManager{
             return false
         }
     }
-    
-    ///Returns true if able to find a match in enum DogManagerError to the error provided
-    private func handleDogManagerError(sender: Sender, error: Error) -> Bool{
+
+    /// Returns true if able to find a match in enum DogManagerError to the error provided
+    private func handleDogManagerError(sender: Sender, error: Error) -> Bool {
         /*
          enum DogManagerError: Error{
              case dogNameBlank
@@ -115,13 +115,13 @@ class ErrorManager{
             ErrorManager.alertForError(message: "Your dog's name is blank, try typing something in.")
             return true
         }
-        else{
+        else {
             return false
         }
     }
-    
-    ///Returns true if able to find a match in enum DogError to the error provided
-    private func handleDogError(sender: Sender, error: Error) -> Bool{
+
+    /// Returns true if able to find a match in enum DogError to the error provided
+    private func handleDogError(sender: Sender, error: Error) -> Bool {
         /*
          enum DogError: Error {
              case noRemindersPresent
@@ -131,13 +131,13 @@ class ErrorManager{
             ErrorManager.alertForError(message: "Your dog has no reminders, please try adding one.")
             return true
         }
-        else{
+        else {
             return false
         }
     }
-    
-    ///Returns true if able to find a match in enum TraitManagerError to the error provided
-    private func handleTraitManagerError(sender: Sender, error: Error) -> Bool{
+
+    /// Returns true if able to find a match in enum TraitManagerError to the error provided
+    private func handleTraitManagerError(sender: Sender, error: Error) -> Bool {
         /*
          enum TraitManagerError: Error{
              case nilName
@@ -171,8 +171,8 @@ class ErrorManager{
             return false
         }
     }
-    
-    ///Returns true if able to find a match in enum KnownLogTypeError to the error provided
+
+    /// Returns true if able to find a match in enum KnownLogTypeError to the error provided
     private func handleKnownLogTypeError(sender: Sender, error: Error) -> Bool {
         /*
          enum KnownLogTypeError: Error {
@@ -188,13 +188,13 @@ class ErrorManager{
             ErrorManager.alertForError(message: "Your log has no type, try selecting one!")
             return true
         }
-        else{
+        else {
             return false
         }
     }
-    
-    ///Returns true if able to find a match in enum ReminderManagerError to the error provided
-    private func handleReminderManagerError(sender: Sender, error: Error) -> Bool{
+
+    /// Returns true if able to find a match in enum ReminderManagerError to the error provided
+    private func handleReminderManagerError(sender: Sender, error: Error) -> Bool {
         /*
          enum ReminderManagerError: Error {
             case reminderAlreadyPresent
@@ -207,7 +207,7 @@ class ErrorManager{
             ErrorManager.alertForError(message: "Your reminder seems to already exist. Please reload and try again! (RME.rAP)")
             return true
         }
-        else if case ReminderManagerError.reminderNotPresent = error{
+        else if case ReminderManagerError.reminderNotPresent = error {
             ErrorManager.alertForError(message: "Something went wrong when trying to modify your reminder. Please reload and try again! (RME.rNP)")
             return true
         }
@@ -219,13 +219,13 @@ class ErrorManager{
             ErrorManager.alertForError(message: "Something went wrong when trying to modify your reminder. Please reload and try again! (RME.rUNP)")
             return true
         }
-        else{
+        else {
             return false
         }
     }
-    
-    ///Returns true if able to find a match in enum ReminderError to the error provided
-    private func handleReminderError(sender: Sender, error: Error) -> Bool{
+
+    /// Returns true if able to find a match in enum ReminderError to the error provided
+    private func handleReminderError(sender: Sender, error: Error) -> Bool {
         /*
          enum ReminderError: Error {
              case nameBlank
@@ -250,13 +250,13 @@ class ErrorManager{
             ErrorManager.alertForError(message: "Your dog's reminder countdown time is invalid, please try a different one.")
             return true
         }
-        else{
+        else {
             return false
         }
     }
-    
-    ///Returns true if able to find a match in enum TimeOfDayComponentsError to the error provided
-    private func handleTimeOfDayComponentsError(sender: Sender, error: Error) -> Bool{
+
+    /// Returns true if able to find a match in enum TimeOfDayComponentsError to the error provided
+    private func handleTimeOfDayComponentsError(sender: Sender, error: Error) -> Bool {
         /*
          enum TimeOfDayComponentsError: Error {
              case invalidCalendarComponent
@@ -289,9 +289,8 @@ class ErrorManager{
             return false
         }
     }
-    
-    
-    private func handleOneTimeComponentsError(sender: Sender, error: Error) -> Bool{
+
+    private func handleOneTimeComponentsError(sender: Sender, error: Error) -> Bool {
         /*
          enum OneTimeComponentsError: Error {
              case invalidDateComponents
@@ -308,7 +307,7 @@ class ErrorManager{
             return true
         }
         else if case OneTimeComponentsError.reminderAlreadyCreated = error {
-            //no longer occurs
+            // no longer occurs
             ErrorManager.alertForError(message: "Your reminder cannot be changed into \"Once\" mode. If you would like to use this mode, please create a new reminder.")
             return true
         }
@@ -316,16 +315,14 @@ class ErrorManager{
             return false
         }
     }
-    
-    
-    
-    private func handleStringExtensionError(sender: Sender, error: Error) -> Bool{
+
+    private func handleStringExtensionError(sender: Sender, error: Error) -> Bool {
         /*
          enum StringExtensionError: Error {
              case invalidDateComponents
          }
          */
-        if case StringExtensionError.invalidDateComponents = error {
+        if case StringExtensionError.dateComponentsInvalid = error {
             ErrorManager.alertForError(message: "Something went wrong. Please reload and try again! (SEE.iDC)")
             return true
         }
@@ -333,5 +330,5 @@ class ErrorManager{
             return false
         }
     }
-    
+
 }
