@@ -33,17 +33,17 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
         case 0:
             for window in UIApplication.shared.windows {
                 window.overrideUserInterfaceStyle = .light
-                AppearanceConstant.darkModeStyle = .light
+                UserConfiguration.darkModeStyle = .light
             }
         case 1:
             for window in UIApplication.shared.windows {
                 window.overrideUserInterfaceStyle = .dark
-                AppearanceConstant.darkModeStyle = .dark
+                UserConfiguration.darkModeStyle = .dark
             }
         default:
             for window in UIApplication.shared.windows {
                 window.overrideUserInterfaceStyle = .unspecified
-                AppearanceConstant.darkModeStyle = .unspecified
+                UserConfiguration.darkModeStyle = .unspecified
             }
         }
     }
@@ -56,10 +56,10 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
         self.hideDropDown()
 
         if logsViewModeSegmentedControl.selectedSegmentIndex == 0 {
-            AppearanceConstant.isCompactView = true
+            UserConfiguration.isCompactView = true
         }
         else {
-            AppearanceConstant.isCompactView = false
+            UserConfiguration.isCompactView = false
         }
     }
 
@@ -80,12 +80,12 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
     private func synchronizeIsPaused() {
 
         if MainTabBarViewController.staticDogManager.enabledTimersCount == 0 {
-            TimingConstant.isPaused = false
+            UserConfiguration.isPaused = false
             self.pauseToggleSwitch.isOn = false
             self.pauseToggleSwitch.isEnabled = false
         }
         else {
-            pauseToggleSwitch.isOn = TimingConstant.isPaused
+            pauseToggleSwitch.isOn = UserConfiguration.isPaused
             self.pauseToggleSwitch.isEnabled = true
         }
     }
@@ -98,7 +98,7 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
     @IBAction private func didUpdateSnoozeInterval(_ sender: Any) {
         self.hideDropDown()
 
-        TimingConstant.defaultSnoozeLength = snoozeInterval.countDownDuration
+        UserConfiguration.snoozeLength = snoozeInterval.countDownDuration
     }
 
     // MARK: - Notifications
@@ -115,12 +115,12 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
             case .authorized:
                 DispatchQueue.main.async {
                     // notications enabled, going from on to off
-                    if NotificationConstant.isNotificationEnabled == true {
-                        NotificationConstant.isNotificationEnabled = false
+                    if UserConfiguration.isNotificationEnabled == true {
+                        UserConfiguration.isNotificationEnabled = false
                     }
                     // notifications disabled, going from off to on
                     else {
-                        NotificationConstant.isNotificationEnabled = true
+                        UserConfiguration.isNotificationEnabled = true
                     }
                     self.synchronizeNotificationsComponents(animated: true)
                 }
@@ -137,10 +137,10 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
                 }
             case .notDetermined:
                 UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, _) in
-                    NotificationConstant.isNotificationAuthorized = isGranted
-                    NotificationConstant.isNotificationEnabled = isGranted
-                    NotificationConstant.shouldLoudNotification = isGranted
-                    NotificationConstant.shouldFollowUp = isGranted
+                    UserConfiguration.isNotificationAuthorized = isGranted
+                    UserConfiguration.isNotificationEnabled = isGranted
+                    UserConfiguration.isLoudNotification = isGranted
+                    UserConfiguration.isFollowUpEnabled = isGranted
 
                     DispatchQueue.main.async {
                         self.synchronizeAllNotificationSwitches(animated: true)
@@ -160,8 +160,8 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
     /// If disconnect between stored and displayed
     func synchronizeAllNotificationSwitches(animated: Bool) {
         // If disconnect between stored and displayed
-        if notificationToggleSwitch.isOn != NotificationConstant.isNotificationEnabled {
-            notificationToggleSwitch.setOn(NotificationConstant.isNotificationEnabled, animated: animated)
+        if notificationToggleSwitch.isOn != UserConfiguration.isNotificationEnabled {
+            notificationToggleSwitch.setOn(UserConfiguration.isNotificationEnabled, animated: animated)
         }
         self.synchronizeNotificationsComponents(animated: animated)
     }
@@ -174,7 +174,7 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
 
     @objc private func willShowNotificationSound(_ sender: Any) {
         if dropDown.isDown == false {
-            self.dropDown.showDropDown(height: dropDownRowHeight * 6.5, selectedIndexPath: IndexPath(row: NotificationSound.allCases.firstIndex(of: NotificationConstant.notificationSound)!, section: 1))
+            self.dropDown.showDropDown(height: dropDownRowHeight * 6.5, selectedIndexPath: IndexPath(row: NotificationSound.allCases.firstIndex(of: UserConfiguration.notificationSound)!, section: 1))
         }
         else {
             self.hideDropDown()
@@ -194,7 +194,7 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
 
         customCell.label.text = NotificationSound.allCases[indexPath.row].rawValue
 
-        if NotificationSound.allCases[indexPath.row] == NotificationConstant.notificationSound {
+        if NotificationSound.allCases[indexPath.row] == UserConfiguration.notificationSound {
             customCell.didToggleSelect(newSelectionStatus: true)
         }
         else {
@@ -227,18 +227,18 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
         let selectedNotificationSound = NotificationSound.allCases[indexPath.row]
 
         // the new cell selected is different that the current sound saved
-        if selectedNotificationSound != NotificationConstant.notificationSound {
+        if selectedNotificationSound != UserConfiguration.notificationSound {
 
-            let unselectedCellIndexPath: IndexPath! = IndexPath(row: NotificationSound.allCases.firstIndex(of: NotificationConstant.notificationSound)!, section: 0)
+            let unselectedCellIndexPath: IndexPath! = IndexPath(row: NotificationSound.allCases.firstIndex(of: UserConfiguration.notificationSound)!, section: 0)
             let unselectedCell = dropDown.dropDownTableView!.cellForRow(at: unselectedCellIndexPath) as? DropDownDefaultTableViewCell
             unselectedCell?.didToggleSelect(newSelectionStatus: false)
 
             selectedCell.didToggleSelect(newSelectionStatus: true)
-            NotificationConstant.notificationSound = selectedNotificationSound
+            UserConfiguration.notificationSound = selectedNotificationSound
             notificationSound.text = selectedNotificationSound.rawValue
 
             DispatchQueue.global().async {
-                AudioManager.playAudio(forAudioPath: "\(NotificationConstant.notificationSound.rawValue.lowercased())", isLoud: false)
+                AudioManager.playAudio(forAudioPath: "\(UserConfiguration.notificationSound.rawValue.lowercased())", isLoud: false)
 
             }
 
@@ -248,7 +248,7 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
         // cell selected is the same as the current sound saved, do nothing
         else {
             DispatchQueue.global().async {
-                AudioManager.playAudio(forAudioPath: "\(NotificationConstant.notificationSound.rawValue.lowercased())", isLoud: false)
+                AudioManager.playAudio(forAudioPath: "\(UserConfiguration.notificationSound.rawValue.lowercased())", isLoud: false)
             }
 
         }
@@ -281,7 +281,7 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
     @IBAction private func didToggleLoudNotifications(_ sender: Any) {
         self.hideDropDown()
 
-        NotificationConstant.shouldLoudNotification = loudNotificationsToggleSwitch.isOn
+        UserConfiguration.isLoudNotification = loudNotificationsToggleSwitch.isOn
     }
 
     // MARK: - Follow Up Notification
@@ -293,7 +293,7 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
     @IBAction private func didToggleFollowUp(_ sender: Any) {
         self.hideDropDown()
 
-        NotificationConstant.shouldFollowUp = followUpToggleSwitch.isOn
+        UserConfiguration.isFollowUpEnabled = followUpToggleSwitch.isOn
 
         if followUpToggleSwitch.isOn == true {
             followUpDelayInterval.isEnabled = true
@@ -305,16 +305,16 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
 
     private func synchronizeNotificationsComponents(animated: Bool) {
         // notifications are enabled
-        if NotificationConstant.isNotificationEnabled == true {
+        if UserConfiguration.isNotificationEnabled == true {
 
             notificationSound.isUserInteractionEnabled = true
             notificationSound.isEnabled = true
 
             loudNotificationsToggleSwitch.isEnabled = true
-            loudNotificationsToggleSwitch.setOn(NotificationConstant.shouldLoudNotification, animated: animated)
+            loudNotificationsToggleSwitch.setOn(UserConfiguration.isLoudNotification, animated: animated)
 
             followUpToggleSwitch.isEnabled = true
-            followUpToggleSwitch.setOn(NotificationConstant.shouldFollowUp, animated: animated)
+            followUpToggleSwitch.setOn(UserConfiguration.isFollowUpEnabled, animated: animated)
 
             if followUpToggleSwitch.isOn == true {
                 followUpDelayInterval.isEnabled = true
@@ -333,11 +333,11 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
 
                 loudNotificationsToggleSwitch.isEnabled = false
                 loudNotificationsToggleSwitch.setOn(false, animated: animated)
-                NotificationConstant.shouldLoudNotification = false
+                UserConfiguration.isLoudNotification = false
 
                 followUpToggleSwitch.isEnabled = false
                 followUpToggleSwitch.setOn(false, animated: animated)
-                NotificationConstant.shouldFollowUp = false
+                UserConfiguration.isFollowUpEnabled = false
 
             followUpDelayInterval.isEnabled = false
         }
@@ -350,7 +350,7 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
     @IBAction private func didUpdateFollowUpDelay(_ sender: Any) {
         self.hideDropDown()
 
-        NotificationConstant.followUpDelay = followUpDelayInterval.countDownDuration
+        UserConfiguration.followUpDelay = followUpDelayInterval.countDownDuration
     }
 
     // MARK: - App Info
@@ -432,25 +432,25 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
     }
 
     private func setUpValues() {
-        if AppearanceConstant.isCompactView == true {
+        if UserConfiguration.isCompactView == true {
             logsViewModeSegmentedControl.selectedSegmentIndex = 0
         }
         else {
             logsViewModeSegmentedControl.selectedSegmentIndex = 1
         }
 
-        followUpDelayInterval.countDownDuration = NotificationConstant.followUpDelay
-        snoozeInterval.countDownDuration = TimingConstant.defaultSnoozeLength
+        followUpDelayInterval.countDownDuration = UserConfiguration.followUpDelay
+        snoozeInterval.countDownDuration = UserConfiguration.snoozeLength
 
         // fixes issue with first time datepicker updates not triggering function
         DispatchQueue.main.asyncAfter(deadline: .now()) {
-            self.followUpDelayInterval.countDownDuration = NotificationConstant.followUpDelay
-            self.snoozeInterval.countDownDuration = TimingConstant.defaultSnoozeLength
+            self.followUpDelayInterval.countDownDuration = UserConfiguration.followUpDelay
+            self.snoozeInterval.countDownDuration = UserConfiguration.snoozeLength
         }
 
-        pauseToggleSwitch.isOn = TimingConstant.isPaused
+        pauseToggleSwitch.isOn = UserConfiguration.isPaused
 
-        notificationSound.text = NotificationConstant.notificationSound.rawValue
+        notificationSound.text = UserConfiguration.notificationSound.rawValue
 
         self.buildNumber.text = "Version \(UIApplication.appVersion ?? "nil") - Build \(UIApplication.appBuild)"
         self.copyright.text = "© \(Calendar.current.component(.year, from: Date())) Jonathan Xakellis"
@@ -475,7 +475,7 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
         AlertManager.globalPresenter = self
 
         // DARK MODE
-        switch AppearanceConstant.darkModeStyle.rawValue {
+        switch UserConfiguration.darkModeStyle.rawValue {
         // system/unspecified
         case 0:
             darkModeSegmentedControl.selectedSegmentIndex = 2

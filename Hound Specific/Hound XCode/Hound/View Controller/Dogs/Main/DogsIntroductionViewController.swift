@@ -30,10 +30,10 @@ class DogsIntroductionViewController: UIViewController {
     @IBAction private func didToggleNotifications(_ sender: Any) {
         if notificationsToggleSwitch.isOn == true {
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
-                NotificationConstant.isNotificationAuthorized = isGranted
-                NotificationConstant.isNotificationEnabled = isGranted
-                NotificationConstant.shouldLoudNotification = isGranted
-                NotificationConstant.shouldFollowUp = isGranted
+                UserConfiguration.isNotificationAuthorized = isGranted
+                UserConfiguration.isNotificationEnabled = isGranted
+                UserConfiguration.isLoudNotification = isGranted
+                UserConfiguration.isFollowUpEnabled = isGranted
                 
                 DispatchQueue.main.async {
                     self.notificationsToggleSwitch.setOn(isGranted, animated: true)
@@ -60,23 +60,23 @@ class DogsIntroductionViewController: UIViewController {
 
         continueButton.layer.cornerRadius = 8.0
 
-       // notificationsToggleSwitch.isOn = NotificationConstant.isNotificationEnabled
+       // notificationsToggleSwitch.isOn = UserConfiguration.isNotificationEnabled
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        DogsNavigationViewController.hasBeenLoadedBefore = true
+        LocalConfiguration.hasLoadedIntroductionViewControllerBefore = true
 
         delegate.didSetDefaultReminderState(sender: Sender(origin: self, localized: self), newDefaultReminderStatus: remindersToggleSwitch.isOn)
 
-        if NotificationConstant.isNotificationAuthorized == false {
+        if UserConfiguration.isNotificationAuthorized == false {
 
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, _) in
-                NotificationConstant.isNotificationAuthorized = isGranted
-                NotificationConstant.isNotificationEnabled = isGranted
-                NotificationConstant.shouldLoudNotification = isGranted
-                NotificationConstant.shouldFollowUp = isGranted
+                UserConfiguration.isNotificationAuthorized = isGranted
+                UserConfiguration.isNotificationEnabled = isGranted
+                UserConfiguration.isLoudNotification = isGranted
+                UserConfiguration.isFollowUpEnabled = isGranted
 
             }
 

@@ -10,7 +10,7 @@ import UIKit
 
 protocol LogsMainScreenTableViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
-    func didSelectLog(parentDogName: String, reminder: Reminder?, log: KnownLog)
+    func didSelectLog(parentDogId: Int, reminder: Reminder?, log: KnownLog)
     func didRemoveLastFilterLog()
 }
 
@@ -223,7 +223,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     private var filterType: KnownLogType?
 
     /// used for determining if overview mode was changed and if the table view needs reloaded
-    private var storedIsCompactView: Bool = AppearanceConstant.isCompactView
+    private var storedIsCompactView: Bool = UserConfiguration.isCompactView
 
     weak var delegate: LogsMainScreenTableViewControllerDelegate! = nil
 
@@ -247,8 +247,8 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if storedIsCompactView != AppearanceConstant.isCompactView {
-            storedIsCompactView = AppearanceConstant.isCompactView
+        if storedIsCompactView != UserConfiguration.isCompactView {
+            storedIsCompactView = UserConfiguration.isCompactView
             self.reloadTable()
         }
 
@@ -305,7 +305,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         }
         // no logs present
         if uniqueLogs.count == 0 {
-            if AppearanceConstant.isCompactView == true {
+            if UserConfiguration.isCompactView == true {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderCompact", for: indexPath)
 
                 let customCell = cell as! LogsMainScreenTableViewCellHeaderCompact
@@ -325,7 +325,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         }
         // logs present but header
         else if indexPath.row == 0 {
-            if AppearanceConstant.isCompactView == true {
+            if UserConfiguration.isCompactView == true {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderCompact", for: indexPath)
 
                 let customCell = cell as! LogsMainScreenTableViewCellHeaderCompact
@@ -348,7 +348,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             let dog = try! getDogManager().findDog(forName: logDisplay.0)
             let icon = dog.dogTraits.icon
 
-            if AppearanceConstant.isCompactView == true {
+            if UserConfiguration.isCompactView == true {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyCompact", for: indexPath)
 
                 let customCell = cell as! LogsMainScreenTableViewCellBodyCompact
@@ -425,7 +425,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 // removed final log and must update header (no logs are left at all)
                 if uniqueLogs.count == 0 {
 
-                    if AppearanceConstant.isCompactView == true {
+                    if UserConfiguration.isCompactView == true {
                         let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsMainScreenTableViewCellHeaderCompact
                         headerCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
                     }
@@ -442,7 +442,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     // removed section that has filter indicator
                     if indexPath.section == 0 && uniqueLogs.count >= 1 {
                         // for whatever header will be at the top (section 1 currently but will soon be section 0) the filter indicator will be shown if calculated shouldShowFilterIndicator returnd true (! converts to proper isHidden:)
-                        if AppearanceConstant.isCompactView == true {
+                        if UserConfiguration.isCompactView == true {
                             let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LogsMainScreenTableViewCellHeaderCompact
                             headerCell.willShowFilterIndicator(isHidden: !shouldShowFilterIndicator)
                         }

@@ -23,8 +23,6 @@ class DogsNavigationViewController: UINavigationController, DogsViewControllerDe
 
     // MARK: - Properties
 
-    static var hasBeenLoadedBefore: Bool = false
-
     weak var passThroughDelegate: DogsNavigationViewControllerDelegate! = nil
 
     var dogsViewController: DogsViewController!
@@ -40,7 +38,7 @@ class DogsNavigationViewController: UINavigationController, DogsViewControllerDe
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if DogsNavigationViewController.hasBeenLoadedBefore == false {
+        if LocalConfiguration.hasLoadedIntroductionViewControllerBefore == false {
             passThroughDelegate.willShowIntroductionPage()
         }
     }

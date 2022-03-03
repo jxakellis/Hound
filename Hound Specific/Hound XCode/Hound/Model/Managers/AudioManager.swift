@@ -45,7 +45,7 @@ class AudioManager {
     static func playLoudNotificationAudio() {
          DispatchQueue.global().async {
              AppDelegate.generalLogger.notice("playLoudNotificationAudio")
-             let path = Bundle.main.path(forResource: "\(NotificationConstant.notificationSound.rawValue.lowercased())", ofType: "mp3")!
+             let path = Bundle.main.path(forResource: "\(UserConfiguration.notificationSound.rawValue.lowercased())", ofType: "mp3")!
              let url = URL(fileURLWithPath: path)
 
              do {

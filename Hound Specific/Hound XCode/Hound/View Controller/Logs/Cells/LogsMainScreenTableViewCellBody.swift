@@ -29,7 +29,7 @@ class LogsMainScreenTableViewCellBodyRegularWithIcon: UITableViewCell {
         super.awakeFromNib()
     }
 
-    func setup(parentDogName: String, reminder: Reminder?, log logSource: KnownLog) {
+    func setup(parentDogId: Int, reminder: Reminder?, log logSource: KnownLog) {
         self.parentDogNameSource = parentDogName
         self.logSource = logSource
         self.reminderSource = reminder

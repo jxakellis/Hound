@@ -113,7 +113,7 @@ protocol KnownLogProtocol {
     /// If not .custom type then just .type name, if custom and has customTypeName then its that string
     var displayTypeName: String { get }
 
-    var uuid: String { get set }
+    var logId: Int? { get set }
 
 }
 
@@ -122,7 +122,7 @@ class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol {
     // MARK: - NSCopying
 
     func copy(with zone: NSZone? = nil) -> Any {
-        let copy = KnownLog(date: self.date, note: self.note, logType: self.logType, customTypeName: self.customTypeName, uuid: self.uuid)
+        let copy = KnownLog(date: self.date, note: self.note, logType: self.logType, customTypeName: self.customTypeName, logId: self.logId)
         return copy
     }
 
@@ -133,7 +133,7 @@ class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol {
         self.note = aDecoder.decodeObject(forKey: "note") as! String
         self.logType = KnownLogType(rawValue: aDecoder.decodeObject(forKey: "logType") as! String)!
         self.customTypeName = aDecoder.decodeObject(forKey: "customTypeName") as? String
-        self.uuid = aDecoder.decodeObject(forKey: "uuid") as! String
+        self.logId = aDecoder.decodeObject(forKey: "logId") as? Int
     }
 
     func encode(with aCoder: NSCoder) {
@@ -141,21 +141,19 @@ class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol {
         aCoder.encode(note, forKey: "note")
         aCoder.encode(logType.rawValue, forKey: "logType")
         aCoder.encode(customTypeName, forKey: "customTypeName")
-        aCoder.encode(uuid, forKey: "uuid")
+        aCoder.encode(logId, forKey: "logId")
     }
 
     // static var supportsSecureCoding: Bool = true
 
     // MARK: - ReminderLogProtocol
 
-    init(date: Date, note: String = "", logType: KnownLogType, customTypeName: String?, uuid: String? = nil) {
+    init(date: Date, note: String = "", logType: KnownLogType, customTypeName: String?, logId: Int? = nil) {
         self.date = date
         self.note = note
         self.logType = logType
         self.customTypeName = customTypeName
-        if uuid != nil {
-            self.uuid = uuid!
-        }
+        self.logId = logId
         super.init()
     }
 
@@ -176,5 +174,5 @@ class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol {
         }
     }
 
-    var uuid: String = UUID().uuidString
+    var logId: Int?
 }

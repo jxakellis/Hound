@@ -37,14 +37,13 @@ router.post('/', createUser);
 "userEmail":"requiredEmail",
 "userFirstName":"requiredString",
 "userLastName":"requiredString",
-"notificationAuthorized":"requiredBool",
-"notificationEnabled":"requiredBool",
-"loudNotifications":"requiredBool",
-"showTerminationAlert":"requiredBool",
-"followUp":"requiredBool",
+"isNotificationAuthorized":"requiredBool",
+"isNotificationEnabled":"requiredBool",
+"isLoudNotification":"requiredBool",
+"isFollowUpEnabled":"requiredBool",
 "followUpDelay":"requiredInt",
 "isPaused":"requiredBool",
-"compactView":"requiredBool",
+"isCompactView":"requiredBool",
 "darkModeStyle":"requiredString",
 "snoozeLength":"requiredInt",
 "notificationSound":"requiredString"
@@ -55,22 +54,21 @@ router.post('/', createUser);
 router.put('/:userId', updateUser);
 /* BODY:
 
-//At least one of the following must be defined: userEmail, firstName, lastName, notificationAuthorized, notificationEnabled,
-        loudNotifications, showTerminationAlert, followUp, followUpDelay, isPaused, compactView,
+//At least one of the following must be defined: userEmail, userFirstName, userLastName, isNotificationAuthorized, isNotificationEnabled,
+        isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView,
         darkModeStyle, snoozeLength, or notificationSound
 
 {
 "userEmail":"optionalEmail",
-"firstName":"optionalString",
-"lastName":"optionalString",
-"notificationAuthorized":"optionalBool",
-"notificationEnabled":"optionalBool",
-"loudNotifications":"optionalBool",
-"showTerminationAlert":"optionalBool",
-"followUp":"optionalBool",
+"userFirstName":"optionalString",
+"userLastName":"optionalString",
+"isNotificationAuthorized":"optionalBool",
+"isNotificationEnabled":"optionalBool",
+"isLoudNotification":"optionalBool",
+"isFollowUpEnabled":"optionalBool",
 "followUpDelay":"optionalInt",
 "isPaused":"optionalBool",
-"compactView":"optionalBool",
+"isCompactView":"optionalBool",
 "darkModeStyle":"optionalString",
 "snoozeLength":"optionalInt",
 "notificationSound":"optionalString"

@@ -31,13 +31,13 @@ class Utils {
 
          content.title = "Follow up notification for \(dogName)!"
 
-        content.body = "It's been \(String.convertToReadable(interperateTimeInterval: NotificationConstant.followUpDelay, capitalizeLetters: false)), give your dog a helping hand with \(reminder.displayTypeName)!"
+        content.body = "It's been \(String.convertToReadable(interperateTimeInterval: UserConfiguration.followUpDelay, capitalizeLetters: false)), give your dog a helping hand with \(reminder.displayTypeName)!"
 
-        if NotificationConstant.shouldLoudNotification == false {
-            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(NotificationConstant.notificationSound.rawValue.lowercased())30.wav"))
+        if UserConfiguration.isLoudNotification == false {
+            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(UserConfiguration.notificationSound.rawValue.lowercased())30.wav"))
         }
 
-        let executionDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminder.executionDate! + NotificationConstant.followUpDelay)
+        let executionDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminder.executionDate! + UserConfiguration.followUpDelay)
 
         let trigger = UNCalendarNotificationTrigger(dateMatching: executionDateComponents, repeats: false)
 
@@ -71,8 +71,8 @@ class Utils {
 
         content.body = reminder.displayTypeName
 
-        if NotificationConstant.shouldLoudNotification == false {
-            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(NotificationConstant.notificationSound.rawValue.lowercased())30.wav"))
+        if UserConfiguration.isLoudNotification == false {
+            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(UserConfiguration.notificationSound.rawValue.lowercased())30.wav"))
         }
 
         let executionDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminder.executionDate!)
@@ -96,49 +96,49 @@ class Utils {
                     if let window = UIApplication.shared.keyWindow?.windowScene {
                         AppDelegate.generalLogger.notice("Asking user to review Hound")
                         SKStoreReviewController.requestReview(in: window)
-                        AppearanceConstant.reviewRequestDates.append(Date())
+                        LocalConfiguration.reviewRequestDates.append(Date())
                     }
                     else {
                         AppDelegate.generalLogger.fault("checkForReview unable to fire, window not established")
                     }
                 }
 
-                switch AppearanceConstant.reviewRequestDates.count {
+                switch LocalConfiguration.reviewRequestDates.count {
                 // never reviewed before (first date is just put as a placeholder, not actual ask date)
                 case 1:
                     // been a 5 days since installed app or got update to add review feature
-                    if AppearanceConstant.reviewRequestDates.last!.distance(to: Date()) > (60*60*24*5) {
+                    if LocalConfiguration.reviewRequestDates.last!.distance(to: Date()) > (60*60*24*5) {
                         requestReview()
                     }
                     else {
-                        AppDelegate.generalLogger.notice("Too soon to ask user for another review \nCount: \(AppearanceConstant.reviewRequestDates.count)\nCurrent date: \(Date())\nLast date \(AppearanceConstant.reviewRequestDates.last!.description)\nCurrent distance \(AppearanceConstant.reviewRequestDates.last!.distance(to: Date()))\nDistance left \((60*60*24*5)-AppearanceConstant.reviewRequestDates.last!.distance(to: Date()))")
+                        AppDelegate.generalLogger.notice("Too soon to ask user for another review \nCount: \(LocalConfiguration.reviewRequestDates.count)\nCurrent date: \(Date())\nLast date \(LocalConfiguration.reviewRequestDates.last!.description)\nCurrent distance \(LocalConfiguration.reviewRequestDates.last!.distance(to: Date()))\nDistance left \((60*60*24*5)-LocalConfiguration.reviewRequestDates.last!.distance(to: Date()))")
                     }
                 // been asked once before
                 case 2:
                     // been 10 days since last ask (15 days since beginning)
-                    if AppearanceConstant.reviewRequestDates.last!.distance(to: Date()) > (60*60*24*10) {
+                    if LocalConfiguration.reviewRequestDates.last!.distance(to: Date()) > (60*60*24*10) {
                         requestReview()
                     }
                     else {
-                        AppDelegate.generalLogger.notice("Too soon to ask user for another review - count: \(AppearanceConstant.reviewRequestDates.count) - current date: \(Date()) - last date \(AppearanceConstant.reviewRequestDates.last!.description) - current distance \(AppearanceConstant.reviewRequestDates.last!.distance(to: Date())) - distance left \((60*60*24*10)-AppearanceConstant.reviewRequestDates.last!.distance(to: Date()))")
+                        AppDelegate.generalLogger.notice("Too soon to ask user for another review - count: \(LocalConfiguration.reviewRequestDates.count) - current date: \(Date()) - last date \(LocalConfiguration.reviewRequestDates.last!.description) - current distance \(LocalConfiguration.reviewRequestDates.last!.distance(to: Date())) - distance left \((60*60*24*10)-LocalConfiguration.reviewRequestDates.last!.distance(to: Date()))")
                     }
                 // been asked twice before
                 case 3:
                     // been 20 days since last ask (35 days total)
-                    if AppearanceConstant.reviewRequestDates.last!.distance(to: Date()) > (60*60*24*20) {
+                    if LocalConfiguration.reviewRequestDates.last!.distance(to: Date()) > (60*60*24*20) {
                         requestReview()
                     }
                     else {
-                        AppDelegate.generalLogger.notice("Too soon to ask user for another review - count: \(AppearanceConstant.reviewRequestDates.count) - current date: \(Date()) - last date \(AppearanceConstant.reviewRequestDates.last!.description) - current distance \(AppearanceConstant.reviewRequestDates.last!.distance(to: Date())) - distance left \((60*60*24*20)-AppearanceConstant.reviewRequestDates.last!.distance(to: Date()))")
+                        AppDelegate.generalLogger.notice("Too soon to ask user for another review - count: \(LocalConfiguration.reviewRequestDates.count) - current date: \(Date()) - last date \(LocalConfiguration.reviewRequestDates.last!.description) - current distance \(LocalConfiguration.reviewRequestDates.last!.distance(to: Date())) - distance left \((60*60*24*20)-LocalConfiguration.reviewRequestDates.last!.distance(to: Date()))")
                     }
                 // been asked three times before
                 case 4:
                     // been 40 days since last ask (75 days total)
-                    if AppearanceConstant.reviewRequestDates.last!.distance(to: Date()) > (60*60*24*40) {
+                    if LocalConfiguration.reviewRequestDates.last!.distance(to: Date()) > (60*60*24*40) {
                         requestReview()
                     }
                     else {
-                        AppDelegate.generalLogger.notice("Too soon to ask user for another review - count: \(AppearanceConstant.reviewRequestDates.count) - current date: \(Date()) - last date \(AppearanceConstant.reviewRequestDates.last!.description) - current distance \(AppearanceConstant.reviewRequestDates.last!.distance(to: Date())) - distance left \((60*60*24*40)-AppearanceConstant.reviewRequestDates.last!.distance(to: Date()))")
+                        AppDelegate.generalLogger.notice("Too soon to ask user for another review - count: \(LocalConfiguration.reviewRequestDates.count) - current date: \(Date()) - last date \(LocalConfiguration.reviewRequestDates.last!.description) - current distance \(LocalConfiguration.reviewRequestDates.last!.distance(to: Date())) - distance left \((60*60*24*40)-LocalConfiguration.reviewRequestDates.last!.distance(to: Date()))")
                     }
                     // out of asks
                 case 5:

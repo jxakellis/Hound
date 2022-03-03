@@ -96,18 +96,18 @@ class ErrorManager {
              case dogNameBlank
              case dogNameInvalid
              case dogNameNotPresent
-             case dogNameAlreadyPresent
+             case dogIdAlreadyPresent
          }
          */
-        if case DogManagerError.dogNameNotPresent = error {
+        if case DogManagerError.dogIdNotPresent = error {
             ErrorManager.alertForError(message: "Couldn't find a match for a dog with that name. Please reload and try again!")
             return true
         }
-        else if case DogManagerError.dogNameAlreadyPresent = error {
+        else if case DogManagerError.dogIdAlreadyPresent = error {
             ErrorManager.alertForError(message: "Your dog's name is already present, please try a different one.")
             return true
         }
-        else if case DogManagerError.dogNameInvalid = error {
+        else if case DogManagerError.dogIdInvalid = error {
             ErrorManager.alertForError(message: "Your dog's name is invalid, please try a different one.")
             return true
         }
@@ -159,12 +159,12 @@ class ErrorManager {
             ErrorManager.alertForError(message: "Your dog has a invalid name, try typing something else in!")
             return true
         }
-        else if case TraitManagerError.logUUIDPresent = error {
-            ErrorManager.alertForError(message: "Something went wrong when trying modify your log, please try again! (TME.lUP)")
+        else if case TraitManagerError.logIdPresent = error {
+            ErrorManager.alertForError(message: "Something went wrong when trying modify your log, please try again! (TME.lIP)")
             return true
         }
-        else if case TraitManagerError.logUUIDNotPresent = error {
-            ErrorManager.alertForError(message: "Something went wrong when trying modify your log, please try again! (TME.lUNP)")
+        else if case TraitManagerError.logIdNotPresent = error {
+            ErrorManager.alertForError(message: "Something went wrong when trying modify your log, please try again! (TME.lINP)")
             return true
         }
         else {
@@ -203,20 +203,12 @@ class ErrorManager {
              case reminderNameNotPresent
          }
          */
-        if case ReminderManagerError.reminderAlreadyPresent = error {
-            ErrorManager.alertForError(message: "Your reminder seems to already exist. Please reload and try again! (RME.rAP)")
+        if case ReminderManagerError.reminderIdAlreadyPresent = error {
+            ErrorManager.alertForError(message: "Your reminder seems to already exist. Please reload and try again! (RME.rIAP)")
             return true
         }
-        else if case ReminderManagerError.reminderNotPresent = error {
-            ErrorManager.alertForError(message: "Something went wrong when trying to modify your reminder. Please reload and try again! (RME.rNP)")
-            return true
-        }
-        else if case ReminderManagerError.reminderInvalid = error {
-            ErrorManager.alertForError(message: "Something went wrong when trying to modify your reminder. Please reload and try again! (RME.rI)")
-            return true
-        }
-        else if case ReminderManagerError.reminderUUIDNotPresent = error {
-            ErrorManager.alertForError(message: "Something went wrong when trying to modify your reminder. Please reload and try again! (RME.rUNP)")
+        else if case ReminderManagerError.reminderIdNotPresent = error {
+            ErrorManager.alertForError(message: "Something went wrong when trying to modify your reminder. Please reload and try again! (RME.rINP)")
             return true
         }
         else {

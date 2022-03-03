@@ -14,29 +14,45 @@ class PersistenceManager {
 
         if isRecurringSetup == true {
             // not first time setup
-            TimingConstant.isPaused = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as? Bool ?? TimingConstant.isPaused
-            TimingConstant.lastPause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastPause.rawValue) as? Date
-            TimingConstant.lastUnpause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastUnpause.rawValue) as? Date
 
-            TimingConstant.defaultSnoozeLength = UserDefaults.standard.value(forKey: UserDefaultsKeys.defaultSnoozeLength.rawValue) as? TimeInterval ?? TimingConstant.defaultSnoozeLength
+            // MARK: User Configuration
 
-            NotificationConstant.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as? Bool ?? NotificationConstant.isNotificationAuthorized
-            NotificationConstant.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as? Bool ?? NotificationConstant.isNotificationEnabled
-            NotificationConstant.shouldLoudNotification = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldLoudNotification.rawValue) as? Bool ?? NotificationConstant.shouldLoudNotification
-            NotificationConstant.shouldShowTerminationAlert = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldShowTerminationAlert.rawValue) as? Bool ?? NotificationConstant.shouldShowTerminationAlert
-            NotificationConstant.shouldShowReleaseNotes = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue) as? Bool ?? NotificationConstant.shouldShowReleaseNotes
-            NotificationConstant.shouldFollowUp = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as? Bool ?? NotificationConstant.shouldFollowUp
-            NotificationConstant.followUpDelay = UserDefaults.standard.value(forKey: UserDefaultsKeys.followUpDelay.rawValue) as? TimeInterval ?? NotificationConstant.followUpDelay
-            NotificationConstant.notificationSound = NotificationSound(rawValue: UserDefaults.standard.value(forKey: UserDefaultsKeys.notificationSound.rawValue) as? String ?? NotificationSound.radar.rawValue)!
+            UserConfiguration.isPaused = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as? Bool ?? UserConfiguration.isPaused
 
-            DogsNavigationViewController.hasBeenLoadedBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue) as? Bool ?? DogsNavigationViewController.hasBeenLoadedBefore
-            AppearanceConstant.isCompactView = UserDefaults.standard.value(forKey: UserDefaultsKeys.isCompactView.rawValue) as? Bool ?? AppearanceConstant.isCompactView
+            UserConfiguration.snoozeLength = UserDefaults.standard.value(forKey: UserDefaultsKeys.snoozeLength.rawValue) as? TimeInterval ?? UserConfiguration.snoozeLength
 
-            AppearanceConstant.darkModeStyle = UIUserInterfaceStyle(rawValue: UserDefaults.standard.value(forKey: UserDefaultsKeys.darkModeStyle.rawValue) as? Int ?? UIUserInterfaceStyle.unspecified.rawValue)!
-            AppearanceConstant.reviewRequestDates = UserDefaults.standard.value(forKey: UserDefaultsKeys.reviewRequestDates.rawValue) as? [Date] ?? AppearanceConstant.reviewRequestDates
+            UserConfiguration.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as? Bool ?? UserConfiguration.isNotificationAuthorized
+
+            UserConfiguration.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as? Bool ?? UserConfiguration.isNotificationEnabled
+
+            UserConfiguration.isLoudNotification = UserDefaults.standard.value(forKey: UserDefaultsKeys.isLoudNotification.rawValue) as? Bool ?? UserConfiguration.isLoudNotification
+
+            UserConfiguration.isFollowUpEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isFollowUpEnabled.rawValue) as? Bool ?? UserConfiguration.isFollowUpEnabled
+
+            UserConfiguration.followUpDelay = UserDefaults.standard.value(forKey: UserDefaultsKeys.followUpDelay.rawValue) as? TimeInterval ?? UserConfiguration.followUpDelay
+
+            UserConfiguration.notificationSound = NotificationSound(rawValue: UserDefaults.standard.value(forKey: UserDefaultsKeys.notificationSound.rawValue) as? String ?? NotificationSound.radar.rawValue)!
+
+            UserConfiguration.isCompactView = UserDefaults.standard.value(forKey: UserDefaultsKeys.isCompactView.rawValue) as? Bool ?? UserConfiguration.isCompactView
+
+            UserConfiguration.darkModeStyle = UIUserInterfaceStyle(rawValue: UserDefaults.standard.value(forKey: UserDefaultsKeys.darkModeStyle.rawValue) as? Int ?? UIUserInterfaceStyle.unspecified.rawValue)!
+
+            // MARK: Local Configuration
+
+            LocalConfiguration.lastPause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastPause.rawValue) as? Date
+
+            LocalConfiguration.lastUnpause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastUnpause.rawValue) as? Date
+
+            LocalConfiguration.hasLoadedIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedIntroductionViewControllerBefore
+
+            LocalConfiguration.reviewRequestDates = UserDefaults.standard.value(forKey: UserDefaultsKeys.reviewRequestDates.rawValue) as? [Date] ?? LocalConfiguration.reviewRequestDates
+
+            LocalConfiguration.isShowTerminationAlert = UserDefaults.standard.value(forKey: UserDefaultsKeys.isShowTerminationAlert.rawValue) as? Bool ?? LocalConfiguration.isShowTerminationAlert
+
+            LocalConfiguration.isShowReleaseNotes = UserDefaults.standard.value(forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue) as? Bool ?? LocalConfiguration.isShowReleaseNotes
 
             // termination checker
-            if NotificationConstant.shouldShowTerminationAlert == true && UIApplication.previousAppBuild == UIApplication.appBuild {
+            if LocalConfiguration.isShowTerminationAlert == true && UIApplication.previousAppBuild == UIApplication.appBuild {
 
                 AppDelegate.generalLogger.notice("App has not updated")
 
@@ -48,14 +64,16 @@ class PersistenceManager {
                         unarchiver.requiresSecureCoding = false
                         let decodedDogManager: DogManager = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! DogManager
 
-                        // NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(decoded!) as! DogManager
+                        // sharedPlayer nil indicates the background silence is absent
+                        // From there we perform checks to make sure the background silence should have been there
+                        // If those check pass, it means the background silence's absense is due to the app terminating
+                        if AudioManager.sharedPlayer == nil && UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification && decodedDogManager.hasEnabledReminder && !UserConfiguration.isPaused {
 
-                        if AudioManager.sharedPlayer == nil && NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && decodedDogManager.hasEnabledReminder && !TimingConstant.isPaused {
                             AppDelegate.generalLogger.notice("Showing Termionation Alert")
                             let terminationAlertController = GeneralUIAlertController(title: "Oops, you may have terminated Hound", message: "Your notifications won't ring properly if the app isn't running.", preferredStyle: .alert)
                             let understandAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
                             let stopAlertAction = UIAlertAction(title: "Don't Show Again", style: .default) { _ in
-                                NotificationConstant.shouldShowTerminationAlert = false
+                                LocalConfiguration.isShowTerminationAlert = false
                             }
 
                             terminationAlertController.addAction(understandAlertAction)
@@ -76,7 +94,7 @@ class PersistenceManager {
             }
 
             // new update, mutally exclusive from termnating alert
-            if UIApplication.previousAppBuild != UIApplication.appBuild && NotificationConstant.shouldShowReleaseNotes == true {
+            if UIApplication.previousAppBuild != UIApplication.appBuild && LocalConfiguration.isShowReleaseNotes == true {
                 AppDelegate.generalLogger.notice("Showing Release Notes")
                 var message: String?
 
@@ -102,7 +120,7 @@ class PersistenceManager {
                 let updateAlertController = GeneralUIAlertController(title: "Release Notes For Hound \(UIApplication.appVersion ?? String(UIApplication.appBuild))", message: message, preferredStyle: .alert)
                 let understandAlertAction = UIAlertAction(title: "Ok, sounds great!", style: .default, handler: nil)
                 let stopAlertAction = UIAlertAction(title: "Don't show release notes again", style: .default) { _ in
-                    NotificationConstant.shouldShowReleaseNotes = false
+                    LocalConfiguration.isShowReleaseNotes = false
                 }
 
                 updateAlertController.addAction(understandAlertAction)
@@ -119,27 +137,32 @@ class PersistenceManager {
 
             MainTabBarViewController.selectedEntryIndex = 0
 
-            UserDefaults.standard.setValue(TimingConstant.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
-            UserDefaults.standard.setValue(TimingConstant.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
-            UserDefaults.standard.setValue(TimingConstant.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
-
-            UserDefaults.standard.setValue(TimingConstant.defaultSnoozeLength, forKey: UserDefaultsKeys.defaultSnoozeLength.rawValue)
-
             UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
 
-            UserDefaults.standard.setValue(NotificationConstant.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
-            UserDefaults.standard.setValue(NotificationConstant.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
-            UserDefaults.standard.setValue(NotificationConstant.shouldLoudNotification, forKey: UserDefaultsKeys.shouldLoudNotification.rawValue)
-            UserDefaults.standard.setValue(NotificationConstant.shouldShowTerminationAlert, forKey: UserDefaultsKeys.shouldShowTerminationAlert.rawValue)
-            UserDefaults.standard.setValue(NotificationConstant.shouldShowReleaseNotes, forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue)
-            UserDefaults.standard.setValue(NotificationConstant.shouldFollowUp, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
-            UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
-            UserDefaults.standard.setValue(NotificationConstant.notificationSound.rawValue, forKey: UserDefaultsKeys.notificationSound.rawValue)
+            // MARK: User Configuration
 
-            UserDefaults.standard.setValue(DogsNavigationViewController.hasBeenLoadedBefore, forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue)
-            UserDefaults.standard.setValue(AppearanceConstant.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
-            UserDefaults.standard.setValue(AppearanceConstant.darkModeStyle.rawValue, forKey: UserDefaultsKeys.darkModeStyle.rawValue)
-            UserDefaults.standard.setValue(AppearanceConstant.reviewRequestDates, forKeyPath: UserDefaultsKeys.reviewRequestDates.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
+
+            UserDefaults.standard.setValue(UserConfiguration.snoozeLength, forKey: UserDefaultsKeys.snoozeLength.rawValue)
+
+            UserDefaults.standard.setValue(UserConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.isLoudNotification, forKey: UserDefaultsKeys.isLoudNotification.rawValue)
+
+            UserDefaults.standard.setValue(UserConfiguration.isFollowUpEnabled, forKey: UserDefaultsKeys.isFollowUpEnabled.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.notificationSound.rawValue, forKey: UserDefaultsKeys.notificationSound.rawValue)
+
+            UserDefaults.standard.setValue(UserConfiguration.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.darkModeStyle.rawValue, forKey: UserDefaultsKeys.darkModeStyle.rawValue)
+
+            // MARK: Local Configuration
+            UserDefaults.standard.setValue(LocalConfiguration.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
+            UserDefaults.standard.setValue(LocalConfiguration.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
+            UserDefaults.standard.setValue(LocalConfiguration.hasLoadedIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedIntroductionViewControllerBefore.rawValue)
+            UserDefaults.standard.setValue(LocalConfiguration.isShowTerminationAlert, forKey: UserDefaultsKeys.isShowTerminationAlert.rawValue)
+            UserDefaults.standard.setValue(LocalConfiguration.isShowReleaseNotes, forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue)
+            UserDefaults.standard.setValue(LocalConfiguration.reviewRequestDates, forKeyPath: UserDefaultsKeys.reviewRequestDates.rawValue)
 
             MainTabBarViewController.firstTimeSetup = true
         }
@@ -168,7 +191,7 @@ class PersistenceManager {
             AppDelegate.generalLogger.notice("handleBackgroundSilence")
             AudioManager.stopAudio()
 
-            guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification && MainTabBarViewController.staticDogManager.hasEnabledReminder && !TimingConstant.isPaused else {
+            guard UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification && MainTabBarViewController.staticDogManager.hasEnabledReminder && !UserConfiguration.isPaused else {
                 return
             }
 
@@ -188,34 +211,35 @@ class PersistenceManager {
             UserDefaults.standard.setValue(encodedDataDogManager, forKey: UserDefaultsKeys.dogManager.rawValue)
 
             // Pause State
-            UserDefaults.standard.setValue(TimingConstant.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
-            UserDefaults.standard.setValue(TimingConstant.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
-            UserDefaults.standard.setValue(TimingConstant.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
 
             // Snooze interval
 
-            UserDefaults.standard.setValue(TimingConstant.defaultSnoozeLength, forKey: UserDefaultsKeys.defaultSnoozeLength.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.snoozeLength, forKey: UserDefaultsKeys.snoozeLength.rawValue)
 
             // Notifications
-            UserDefaults.standard.setValue(NotificationConstant.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
-            UserDefaults.standard.setValue(NotificationConstant.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
-            UserDefaults.standard.setValue(NotificationConstant.shouldLoudNotification, forKey: UserDefaultsKeys.shouldLoudNotification.rawValue)
-            UserDefaults.standard.setValue(NotificationConstant.shouldShowTerminationAlert, forKey: UserDefaultsKeys.shouldShowTerminationAlert.rawValue)
-            UserDefaults.standard.setValue(NotificationConstant.shouldShowReleaseNotes, forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue)
-            UserDefaults.standard.setValue(NotificationConstant.shouldFollowUp, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
-            UserDefaults.standard.setValue(NotificationConstant.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
-            UserDefaults.standard.setValue(NotificationConstant.notificationSound.rawValue, forKey: UserDefaultsKeys.notificationSound.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.isLoudNotification, forKey: UserDefaultsKeys.isLoudNotification.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.isFollowUpEnabled, forKey: UserDefaultsKeys.isFollowUpEnabled.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.notificationSound.rawValue, forKey: UserDefaultsKeys.notificationSound.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.darkModeStyle.rawValue, forKey: UserDefaultsKeys.darkModeStyle.rawValue)
 
-            UserDefaults.standard.setValue(DogsNavigationViewController.hasBeenLoadedBefore, forKey: UserDefaultsKeys.hasBeenLoadedBefore.rawValue)
-            UserDefaults.standard.setValue(AppearanceConstant.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
-            UserDefaults.standard.setValue(AppearanceConstant.darkModeStyle.rawValue, forKey: UserDefaultsKeys.darkModeStyle.rawValue)
-            UserDefaults.standard.setValue(AppearanceConstant.reviewRequestDates, forKeyPath: UserDefaultsKeys.reviewRequestDates.rawValue)
+            // Local
+            UserDefaults.standard.setValue(LocalConfiguration.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
+            UserDefaults.standard.setValue(LocalConfiguration.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
+            UserDefaults.standard.setValue(LocalConfiguration.isShowTerminationAlert, forKey: UserDefaultsKeys.isShowTerminationAlert.rawValue)
+            UserDefaults.standard.setValue(LocalConfiguration.isShowReleaseNotes, forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue)
+            UserDefaults.standard.setValue(LocalConfiguration.hasLoadedIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedIntroductionViewControllerBefore.rawValue)
+            UserDefaults.standard.setValue(LocalConfiguration.reviewRequestDates, forKeyPath: UserDefaultsKeys.reviewRequestDates.rawValue)
         }
 
         // ios notifications
         func handleNotifications() {
             AppDelegate.generalLogger.notice("handleNotifications")
-            guard NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled && !TimingConstant.isPaused else {
+            guard UserConfiguration.isNotificationAuthorized && UserConfiguration.isNotificationEnabled && !UserConfiguration.isPaused else {
                 return
             }
             AppDelegate.generalLogger.notice("handleNotifications passed guard statement")
@@ -232,27 +256,11 @@ class PersistenceManager {
                     }
                     Utils.willCreateUNUserNotification(dogName: dog.dogTraits.dogName, reminder: reminder)
 
-                    if NotificationConstant.shouldFollowUp == true {
+                    if UserConfiguration.isFollowUpEnabled == true {
                         Utils.willCreateFollowUpUNUserNotification(dogName: dog.dogTraits.dogName, reminder: reminder)
                     }
                 }
             }
-            /*
-             for dogKey in TimingManager.timerDictionary.keys{
-             
-             for reminderUUID in TimingManager.timerDictionary[dogKey]!.keys{
-             guard TimingManager.timerDictionary[dogKey]![reminderUUID]!.isValid else{
-             continue
-             }
-             Utils.willCreateUNUserNotification(dogName: dogKey, reminderUUID: reminderUUID, executionDate: TimingManager.timerDictionary[dogKey]![reminderUUID]!.fireDate)
-             
-             if NotificationConstant.shouldFollowUp == true {
-             Utils.willCreateFollowUpUNUserNotification(dogName: dogKey, reminderUUID: reminderUUID, executionDate: TimingManager.timerDictionary[dogKey]![reminderUUID]!.fireDate + NotificationConstant.followUpDelay)
-             }
-             
-             }
-             }
-             */
         }
 
         if isTerminating == true {
@@ -267,14 +275,6 @@ class PersistenceManager {
             handleUserDefaults()
 
             handleNotifications()
-
-            /*
-             // Checks for disconnects between what is displayed in the switches, what is stored in static variables and what is stored in user defaults
-             AppDelegate.generalLogger.notice("shouldFollowUp \(NotificationConstant.shouldFollowUp) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldFollowUp.rawValue) as! Bool)")
-             AppDelegate.generalLogger.notice("isAuthorized \(NotificationConstant.isNotificationAuthorized) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool)")
-             AppDelegate.generalLogger.notice("isEnabled \(NotificationConstant.isNotificationEnabled) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as! Bool)")
-             AppDelegate.generalLogger.notice("isPaused \(TimingConstant.isPaused) \(UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as! Bool)")
-             */
         }
 
     }
@@ -283,7 +283,7 @@ class PersistenceManager {
 
         synchronizeNotificationAuthorization()
 
-        if NotificationConstant.isNotificationAuthorized && NotificationConstant.isNotificationEnabled == true {
+        if UserConfiguration.isNotificationAuthorized && UserConfiguration.isNotificationEnabled == true {
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
             UNUserNotificationCenter.current().removeAllDeliveredNotifications()
         }
@@ -296,25 +296,16 @@ class PersistenceManager {
             case .authorized:
 
                 // going from off to on, meaning the user has gone into the settings app and turned notifications from disabled to enabled
-                if UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as! Bool == false {
-                    // originally set notifications enabled for the user but decided against. let the user do it themself
-
-                    // UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
-                    // UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
-                    // NotificationConstant.isNotificationEnabled = true
-                    // NotificationConstant.shouldFollowUp = true
-                }
-
                 UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
-                NotificationConstant.isNotificationAuthorized = true
+                UserConfiguration.isNotificationAuthorized = true
 
             case .denied:
                 UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
                 UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
-                UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldFollowUp.rawValue)
-                NotificationConstant.isNotificationAuthorized = false
-                NotificationConstant.isNotificationEnabled = false
-                NotificationConstant.shouldFollowUp = false
+                UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isFollowUpEnabled.rawValue)
+                UserConfiguration.isNotificationAuthorized = false
+                UserConfiguration.isNotificationEnabled = false
+                UserConfiguration.isFollowUpEnabled = false
                 // Updates switch to reflect change, if the last view open was the settings page then the app is exitted and property changed in the settings app then this app is reopened, VWL will not be called as the settings page was already opened, weird edge case.
                 DispatchQueue.main.async {
                     let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController.settingsViewController

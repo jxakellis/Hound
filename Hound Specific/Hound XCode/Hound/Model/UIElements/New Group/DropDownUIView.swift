@@ -49,7 +49,7 @@ class DropDownUIView: UIView {
     func setUpDropDown(viewPositionReference: CGRect, offset: CGFloat) {
         self.addBorders()
         self.addShadowToView()
-       // dropDownStyle = AppearanceConstant.darkModeStyle
+       // dropDownStyle = UserConfiguration.darkModeStyle
         self.frame = CGRect(x: viewPositionReference.minX, y: viewPositionReference.maxY + offset, width: 0, height: 0)
         dropDownTableView = UITableView(frame: CGRect(x: self.frame.minX, y: self.frame.minY, width: 0, height: 0))
         self.width = viewPositionReference.width
@@ -97,11 +97,11 @@ class DropDownUIView: UIView {
     /// If switched from light to dark mode or vise versa, cgColor based border and shadow do not update on their own, must do manually. Must be called whenever dropdown is shown
     private func reloadBorderShadowColor() {
         // We have to update the borderShadowColor every time we show due to .unspecified for dark mode style. In this mode, if the user uses the control center to switch from dark to light (or vise versa), we have no way of knowing that our app switched colors. There fore must reload always
-       // if dropDownStyle != nil && dropDownStyle != AppearanceConstant.darkModeStyle{
+       // if dropDownStyle != nil && dropDownStyle != UserConfiguration.darkModeStyle{
             self.addBorders()
             self.addShadowToView()
        // }
-        // dropDownStyle = AppearanceConstant.darkModeStyle
+        // dropDownStyle = UserConfiguration.darkModeStyle
     }
 
     /// Sets Row Height of your Custom XIB

@@ -1,5 +1,5 @@
 //
-//  Endpoint.swift
+//  InternalEndpointUtils.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 2/25/22.
@@ -8,8 +8,9 @@
 
 import Foundation
 
-enum EndpointUtils {
-    static let basePath: URL = URL(string: "http://localhost:5000/api/v1")!
+/// abstractions used by other endpoint classes to make their request to the server, not used anywhere else in hound so therefore internal to endpoints and api requests.
+enum InternalEndpointUtils {
+    static let basePathWithoutParams: URL = URL(string: "http://localhost:5000/api/v1")!
     static let session = URLSession.shared
 
     /// Takes an already constructed URLRequest and executes it, returning it in a compeltion handler. This is the basis to all URL requests
@@ -48,7 +49,7 @@ enum EndpointUtils {
     }
 }
 
-extension EndpointUtils {
+extension InternalEndpointUtils {
 
     /// Perform a generic get request at the specified url, assuming path params are already provided. No body needed for request. No throws as request creating cannot fail
     static func genericGetRequest(path: URL, completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) {
@@ -119,59 +120,59 @@ extension EndpointUtils {
         }
 
     }
+
+    /// returns an array that contains the user's personal information and userConfiguration and is suitable to be a http request body
+    static func createFullUserBody() -> [String: Any] {
+        var body: [String: Any] = createUserConfigurationBody()
+        body[UserDefaultsKeys.userEmail.rawValue] = UserInformation.userEmail
+        body[UserDefaultsKeys.userFirstName.rawValue] = UserInformation.userFirstName
+        body[UserDefaultsKeys.userLastName.rawValue] = UserInformation.userLastName
+    }
+
+    /// returns an array that only contains the user's userConfiguration and is that is suitable to be a http request body
+    static func createUserConfigurationBody() -> [String: Any] {
+        var body: [String: Any] = [:]
+        // isCompactView
+        // darkModeStyle
+        // snoozeLength
+        // isPaused
+        // isNotificationAuthorized
+        // isNotificationEnabled
+        // isLoudNotification
+        // isFollowUpEnabled
+        // followUpDelay
+        // notificationSound
+
+        body[UserDefaultsKeys.isCompactView.rawValue] = UserConfiguration.isCompactView
+        body[UserDefaultsKeys.darkModeStyle.rawValue] = UserConfiguration.darkModeStyle
+        body[UserDefaultsKeys.snoozeLength.rawValue] = UserConfiguration.snoozeLength
+        body[UserDefaultsKeys.isPaused.rawValue] = UserConfiguration.isPaused
+        body[UserDefaultsKeys.isNotificationAuthorized.rawValue] = UserConfiguration.isNotificationAuthorized
+        body[UserDefaultsKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
+        body[UserDefaultsKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
+        body[UserDefaultsKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
+        body[UserDefaultsKeys.followUpDelay.rawValue] = UserConfiguration.followUpDelay
+        body[UserDefaultsKeys.notificationSound.rawValue] = UserConfiguration.notificationSound
+        return body
+    }
+
+    /// returns an array that is suitable to be a http request body
+    static func createDogBody(dog: Dog) -> [String: Any] {
+
+    }
+
+    /// returns an array that is suitable to be a http request body
+    static func createLogBody(log: KnownLogType) -> [String: Any] {
+
+    }
+
+    /// returns an array that is suitable to be a http request body
+    static func createReminderBody(reminder: Reminder) -> [String: Any] {
+
+    }
+
 }
 
-protocol EndpointProtocol {
-    /// base path for given endpoint where all the requests will be sent
-    static var basePath: URL { get }
+enum EndpointUtils {
 
-    // MARK: - HTTP Methods
-
-    /*
-     Two Types of Response Format
-     
-     
-     Type 1 - Success:
-     {
-     "result":
-     [
-        {"propertyOne":"data",
-         "propertyTwo":"data
-     ]
-     }
-     
-     Type 2 - Failure:
-     {
-     "message":"failure message",
-     "error":"error code"
-     }
-     */
-
-    /**
-        If a path param is required for request, then provide it otherwise an error will be thrown. userId sourced from already stored value. Note: path param of target endpoint can be omitted if you want to recieve all entries (e.g. omit forReminderId if you want to recieve all of a dog's reminders)
-        completionHandler returns dictionary of response, the status code, and any error that occured when request sent.
-        Throws if necessary path param is not provided
-     */
-    static func get(forDogId dogId: Int?, forReminderId reminderId: Int?, forLogId: Int?, completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) throws
-
-    /**
-     If creating a user or dog, forDogId is not needed. Only specify if creating a reminder or log.
-     completionHandler returns dictionary of response, the status code, and any error that occured when request sent.
-     Throws if body fails to be converted and attached to request or necessary path param is not provided
-     */
-    static func create(forDogId dogId: Int?, body: [String: Any], completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) throws
-
-    /**
-     If a path param is required for request, then provide it otherwise an error will be thrown. userId sourced from already stored value.
-     completionHandler returns dictionary of response, the status code, and any error that occured when request sent.
-     Throws if body fails to be converted and attached to request or necessary path param is not provided
-     */
-    static func update(forDogId dogId: Int?, forReminderId reminderId: Int?, forLogId: Int?, body: [String: Any], completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) throws
-
-    /**
-     If a path param is required for request, then provide it otherwise an error will be thrown. userId sourced from already stored value.
-     completionHandler returns dictionary of response, the status code, and any error that occured when request sent.
-     Throws if necessary path param is not provided
-     */
-    static func delete(forDogId dogId: Int?, forReminderId reminderId: Int?, forLogId: Int?, completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) throws
 }

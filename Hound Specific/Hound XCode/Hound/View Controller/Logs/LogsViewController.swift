@@ -22,7 +22,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
 
     // MARK: - LogsAddLogViewControllerDelegate
 
-    func didAddKnownLog(sender: Sender, parentDogName: String, newKnownLog: KnownLog) {
+    func didAddKnownLog(sender: Sender, parentDogId: Int, newKnownLog: KnownLog) {
         let sudoDogManager = getDogManager()
         if sudoDogManager.dogs.isEmpty == false {
             do {
@@ -38,7 +38,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         Utils.checkForReview()
     }
 
-    func didUpdateKnownLog(sender: Sender, parentDogName: String, reminderUUID: String?, updatedKnownLog: KnownLog) {
+    func didUpdateKnownLog(sender: Sender, parentDogId: Int, reminderUUID: String?, updatedKnownLog: KnownLog) {
 
          let sudoDogManager = getDogManager()
          if sudoDogManager.dogs.isEmpty == false {
@@ -53,9 +53,9 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
 
     }
 
-    func didRemoveKnownLog(sender: Sender, parentDogName: String, reminderUUID: String?, logUUID: String) {
+    func didRemoveKnownLog(sender: Sender, parentDogId: Int, reminderUUID: String?, logUUID: String) {
         let sudoDogManager = getDogManager()
-        let dog = try! sudoDogManager.findDog(forName: parentDogName)
+        let dog = try! sudoDogManager.findDog(forDogId: parentDogId)
 
         for dogLogIndex in 0..<dog.dogTraits.logs.count where dog.dogTraits.logs[dogLogIndex].uuid == logUUID {
             dog.dogTraits.removeLog(forIndex: dogLogIndex)
@@ -74,8 +74,8 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
     }
 
     private var selectedLog: (String, Reminder?, KnownLog)?
-    func didSelectLog(parentDogName: String, reminder: Reminder?, log: KnownLog) {
-        selectedLog = (parentDogName, reminder, log)
+    func didSelectLog(parentDogId: Int, reminder: Reminder?, log: KnownLog) {
+        selectedLog = (parentDogId, reminder, log)
         performSegue(withIdentifier: "logsAddLogViewController", sender: self)
         selectedLog = nil
     }

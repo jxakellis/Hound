@@ -10,7 +10,7 @@ import UIKit
 
 protocol DogsMainScreenTableViewControllerDelegate: AnyObject {
     func willEditDog(dogName: String)
-    func willEditReminder(parentDogName: String, reminderUUID: String?)
+    func willEditReminder(parentDogId: Int, reminderUUID: String?)
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
     func didLogReminder()
     func didUnlogReminder()
@@ -21,7 +21,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     // MARK: - DogsMainScreenTableViewCellReminderDelegate
 
     /// Reminder switch is toggled in DogsMainScreenTableViewCellReminder
-    func didToggleReminderSwitch(sender: Sender, parentDogName: String, reminderUUID: String, isEnabled: Bool) {
+    func didToggleReminderSwitch(sender: Sender, parentDogId: Int, reminderUUID: String, isEnabled: Bool) {
 
         let sudoDogManager = getDogManager()
         try! sudoDogManager.findDog(forName: parentDogName).dogReminders.findReminder(forUUID: reminderUUID).setEnable(newEnableStatus: isEnabled)
@@ -270,7 +270,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     }
 
     /// Called when a reminder is clicked by the user, display an action sheet of possible modifcations to the alarm/reminder.
-    private func willShowReminderActionSheet(sender: UIView, parentDogName: String, reminder: Reminder) {
+    private func willShowReminderActionSheet(sender: UIView, parentDogId: Int, reminder: Reminder) {
 
         let selectedReminderAlertController = GeneralUIAlertController(title: "You Selected: \(reminder.displayTypeName) for \(parentDogName)", message: nil, preferredStyle: .actionSheet)
 

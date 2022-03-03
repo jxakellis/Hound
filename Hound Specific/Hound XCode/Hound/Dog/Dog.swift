@@ -52,6 +52,8 @@ class Dog: NSObject, NSCoding, NSCopying {
         }
     }
 
+    var dogId: Int?
+
     /// Traits
     var dogTraits: TraitManager = TraitManager()
 

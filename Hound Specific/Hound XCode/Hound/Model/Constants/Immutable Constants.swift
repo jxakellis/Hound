@@ -78,33 +78,44 @@ enum DogManagerConstant {
 }
 
 enum UserDefaultsKeys: String {
-    case didFirstTimeSetup = "didFirstTimeSetup"
-    case dogManager = "dogManager"
-    case appBuild = "appBuild"
 
-    // DogsViewController
-    case hasBeenLoadedBefore = "hasBeenLoadedBefore"
+    // MARK: User Information
 
-    // Timing
-    case isPaused = "isPaused"
-    case lastPause = "lastPause"
-    case lastUnpause = "lastUnpause"
-    case defaultSnoozeLength = "defaultSnooze"
+    case userEmail
+    case userFirstName
+    case userLastName
 
-    // Notifications
-    case isNotificationAuthorized = "isNotificationAuthorized"
-    case isNotificationEnabled = "isNotificationEnabled"
-    case shouldLoudNotification = "shouldLoudNotification"
-    case shouldShowTerminationAlert = "shouldShowTerminationAlert"
-    case shouldShowReleaseNotes = "shouldShowReleaseNotes"
-    case shouldFollowUp = "shouldFollowUp"
-    case followUpDelay = "followUpDelay"
-    case notificationSound = "notificationSound"
+    // MARK: User Configuration
 
     // Appearance
-    case isCompactView = "isCompactView"
-    case darkModeStyle = "darkModeStyle"
-    case reviewRequestDates = "reviewRequestDates"
+    case isCompactView
+    case darkModeStyle
+
+    // Timing
+    case isPaused
+    case snoozeLength
+
+    // Notifications
+    case isNotificationAuthorized
+    case isNotificationEnabled
+    case isLoudNotification
+    case isFollowUpEnabled
+    case followUpDelay
+    case notificationSound
+
+    // MARK: Local Configuration
+
+    case lastPause
+    case lastUnpause
+    case reviewRequestDates
+    case isShowTerminationAlert
+    case isShowReleaseNotes
+    case hasLoadedIntroductionViewControllerBefore
+
+    // MARK: Other
+    case didFirstTimeSetup
+    case dogManager
+    case appBuild
 }
 
 enum AnimationConstant: Double {

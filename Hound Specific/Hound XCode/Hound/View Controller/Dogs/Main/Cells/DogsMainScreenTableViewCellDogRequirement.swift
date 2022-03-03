@@ -9,7 +9,7 @@
 import UIKit
 
 protocol DogsMainScreenTableViewCellReminderDisplayDelegate: AnyObject {
-    func didToggleReminderSwitch(sender: Sender, parentDogName: String, reminderUUID: String, isEnabled: Bool)
+    func didToggleReminderSwitch(sender: Sender, parentDogId: Int, reminderUUID: String, isEnabled: Bool)
 }
 
 class DogsMainScreenTableViewCellReminderDisplay: UITableViewCell {
@@ -34,7 +34,7 @@ class DogsMainScreenTableViewCellReminderDisplay: UITableViewCell {
     // MARK: - Properties
     private var reminder: Reminder = Reminder()
 
-    private var parentDogName: String = ""
+    private var parentDogId: Int = ""
 
     weak var delegate: DogsMainScreenTableViewCellReminderDisplayDelegate! = nil
 
@@ -55,7 +55,7 @@ class DogsMainScreenTableViewCellReminderDisplay: UITableViewCell {
     }
 
     // Setup function that sets up the different IBOutlet properties
-    func setup(parentDogName: String, reminderPassed: Reminder) {
+    func setup(parentDogId: Int, reminderPassed: Reminder) {
         self.parentDogName = parentDogName
         self.reminder = reminderPassed
         self.reminderTypeDisplayName.text = reminderPassed.displayTypeName
@@ -164,7 +164,7 @@ class DogsMainScreenTableViewCellReminderDisplay: UITableViewCell {
         if reminder.getEnable() == false {
             timeLeft.attributedText = NSAttributedString(string: "Reminder Disabled", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
         }
-        else if TimingConstant.isPaused == true {
+        else if UserConfiguration.isPaused == true {
 
             timeLeft.attributedText = NSAttributedString(string: "Paused", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
 

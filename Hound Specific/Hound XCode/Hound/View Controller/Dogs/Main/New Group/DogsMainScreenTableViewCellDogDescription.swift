@@ -68,7 +68,7 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
             nextReminder.attributedText = NSAttributedString(string: "No Reminders Created", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: nextReminder.font.pointSize, weight: nextReminderImportantWeight)])
         }
         // if paused but has an enabled reminder...
-        else if TimingConstant.isPaused == true && dog.hasEnabledReminder == true {
+        else if UserConfiguration.isPaused == true && dog.hasEnabledReminder == true {
             var allRemindersEnabled: Bool {
                 for reminder in dog.dogReminders.reminders {
                     if reminder.getEnable() == false {
@@ -90,7 +90,7 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
         else if dog.hasEnabledReminder == false {
             nextReminder.attributedText = NSAttributedString(string: "All Reminders Disabled", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: nextReminder.font.pointSize, weight: nextReminderImportantWeight)])
         }
-        else if TimingConstant.isPaused == true {
+        else if UserConfiguration.isPaused == true {
 
             nextReminder.attributedText = NSAttributedString(string: "All Reminders Paused", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: nextReminder.font.pointSize, weight: nextReminderImportantWeight)])
 

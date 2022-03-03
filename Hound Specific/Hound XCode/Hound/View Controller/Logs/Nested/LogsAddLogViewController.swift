@@ -9,9 +9,9 @@
 import UIKit
 
 protocol LogsAddLogViewControllerDelegate: AnyObject {
-    func didRemoveKnownLog(sender: Sender, parentDogName: String, reminderUUID: String?, logUUID: String)
-    func didAddKnownLog(sender: Sender, parentDogName: String, newKnownLog: KnownLog)
-    func didUpdateKnownLog(sender: Sender, parentDogName: String, reminderUUID: String?, updatedKnownLog: KnownLog)
+    func didRemoveKnownLog(sender: Sender, parentDogId: Int, reminderUUID: String?, logUUID: String)
+    func didAddKnownLog(sender: Sender, parentDogId: Int, newKnownLog: KnownLog)
+    func didUpdateKnownLog(sender: Sender, parentDogId: Int, reminderUUID: String?, updatedKnownLog: KnownLog)
 }
 
 class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, DropDownUIViewDataSourceProtocol {

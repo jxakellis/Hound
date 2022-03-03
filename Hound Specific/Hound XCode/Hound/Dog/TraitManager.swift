@@ -13,8 +13,8 @@ enum TraitManagerError: Error {
     case nilName
     case blankName
     case invalidName
-    case logUUIDPresent
-    case logUUIDNotPresent
+    case logIdPresent
+    case logIdNotPresent
 }
 
 protocol TraitManagerProtocol {
@@ -28,14 +28,14 @@ protocol TraitManagerProtocol {
     /// logs that aren't attached to a reminder object, free standing with no timing involved
     var logs: [KnownLog] { get }
 
-    /// adds a log to logs. If the log uuid is already present, it overrides and replaces the old one. Used for source control so all logs are handled through this path.
+    /// adds a log to logs. If the log logId is already present, it overrides and replaces the old one. Used for source control so all logs are handled through this path.
     mutating func addLog(newLog: KnownLog) throws
 
     /// updates a log in logs, used for source control so all logs are handled through this path
-    // mutating func changeLog(forUUID uuid: String, newLog: KnownLog) throws
+    // mutating func changeLog(forLogId logId: String, newLog: KnownLog) throws
 
     /// removes a log in logs, used for source control so all logs are handled through this path
-    mutating func removeLog(forUUID uuid: String) throws
+    mutating func removeLog(forLogId logId: Int) throws
 
     mutating func removeLog(forIndex index: Int)
 
@@ -93,7 +93,7 @@ class TraitManager: NSObject, NSCoding, NSCopying, TraitManagerProtocol {
 
         var logIndex: Int?
 
-        for i in 0..<logs.count where logs[i].uuid == newLog.uuid {
+        for i in 0..<logs.count where logs[i].logId == newLog.logId {
                 logIndex = i
                 break
         }
@@ -111,8 +111,8 @@ class TraitManager: NSObject, NSCoding, NSCopying, TraitManagerProtocol {
 
         /*
          for log in logs{
-             //makes sure log uuid isn't repeat
-             if log.uuid == newLog.uuid{
+             //makes sure log logId isn't repeat
+             if log.logId == newLog.logId{
                  throw TraitManagerError.logUUIDPresent
              }
          }
@@ -123,12 +123,12 @@ class TraitManager: NSObject, NSCoding, NSCopying, TraitManagerProtocol {
     }
 
     /*
-     func changeLog(forUUID uuid: String, newLog: KnownLog) throws {
+     func changeLog(forLogId logId: String, newLog: KnownLog) throws {
          //check to find the index of targetted log
          var newLogIndex: Int?
          
          for i in 0..<logs.count {
-             if logs[i].uuid == uuid {
+             if logs[i].logId == logId {
                  newLogIndex = i
                  break
              }
@@ -145,11 +145,11 @@ class TraitManager: NSObject, NSCoding, NSCopying, TraitManagerProtocol {
      }
      */
 
-    func removeLog(forUUID uuid: String) throws {
+    func removeLog(forLogId logId: Int) throws {
         // check to find the index of targetted log
         var logIndex: Int?
 
-        for i in 0..<logs.count where logs[i].uuid == uuid {
+        for i in 0..<logs.count where logs[i].logId == logId {
             logIndex = i
             break
         }
@@ -159,7 +159,7 @@ class TraitManager: NSObject, NSCoding, NSCopying, TraitManagerProtocol {
         }
         else {
             storedLogs.remove(at: logIndex ?? -1)
-            AppDelegate.endpointLogger.notice("ENDPOINT Remove Log (uuid)")
+            AppDelegate.endpointLogger.notice("ENDPOINT Remove Log (logId)")
         }
     }
 

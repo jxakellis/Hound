@@ -25,7 +25,7 @@ class TimingManager {
 
     /// Returns number of active timers, returns nil if paused
     static var currentlyActiveTimersCount: Int? {
-        guard TimingConstant.isPaused == false else {
+        guard UserConfiguration.isPaused == false else {
             return nil
         }
 
@@ -53,7 +53,7 @@ class TimingManager {
         /// Takes a DogManager and potentially a Bool of if all timers were unpaused, goes through the dog manager and finds all enabled reminders under all enabled dogs and sets a timer to fire.
 
         // Makes sure isPaused is false, don't want to instantiate timers when they should be paused
-        guard TimingConstant.isPaused == false else {
+        guard UserConfiguration.isPaused == false else {
             return
         }
 
@@ -147,14 +147,14 @@ class TimingManager {
 
         // self.isPaused can be modified by SettingsViewController but this is only when there are no active timers and pause is automatically set to unpaused
 
-        guard newPauseStatus != TimingConstant.isPaused else {
+        guard newPauseStatus != UserConfiguration.isPaused else {
             return
         }
 
         /// Toggles pause status of timers, called when pauseAllTimers in settings is switched to a new state
         if newPauseStatus == true {
-            TimingConstant.lastPause = Date()
-            TimingConstant.isPaused = true
+            LocalConfiguration.lastPause = Date()
+            UserConfiguration.isPaused = true
 
             willPause(dogManager: dogManager)
 
@@ -162,8 +162,8 @@ class TimingManager {
 
         }
         else {
-            TimingConstant.lastUnpause = Date()
-            TimingConstant.isPaused = false
+            LocalConfiguration.lastUnpause = Date()
+            UserConfiguration.isPaused = false
             willUnpause(dogManager: dogManager)
         }
     }
@@ -205,23 +205,23 @@ class TimingManager {
                 else if reminder.timerMode == .countDown {
                     // If intervalElapsed has not been added to before
                     if reminder.countDownComponents.intervalElapsed <= 0.0001 {
-                        reminder.countDownComponents.changeIntervalElapsed(newIntervalElapsed: reminder.executionBasis.distance(to: TimingConstant.lastPause!))
+                        reminder.countDownComponents.changeIntervalElapsed(newIntervalElapsed: reminder.executionBasis.distance(to: LocalConfiguration.lastPause!))
                     }
                     // If intervalElapsed has been added to before
                     else {
 
-                        reminder.countDownComponents.changeIntervalElapsed(newIntervalElapsed: (reminder.countDownComponents.intervalElapsed + TimingConstant.lastUnpause!.distance(to: (TimingConstant.lastPause!))))
+                        reminder.countDownComponents.changeIntervalElapsed(newIntervalElapsed: (reminder.countDownComponents.intervalElapsed + LocalConfiguration.lastUnpause!.distance(to: (LocalConfiguration.lastPause!))))
                     }
                 }
                 // If reminder is snoozed
                 else if reminder.timerMode == .snooze {
                     // If intervalElapsed has not been added to before
                     if reminder.snoozeComponents.intervalElapsed <= 0.0001 {
-                        reminder.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: reminder.executionBasis.distance(to: TimingConstant.lastPause!))
+                        reminder.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: reminder.executionBasis.distance(to: LocalConfiguration.lastPause!))
                     }
                     // If intervalElapsed has been added to before
                     else {
-                        reminder.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: (reminder.snoozeComponents.intervalElapsed + TimingConstant.lastUnpause!.distance(to: (TimingConstant.lastPause!))))
+                        reminder.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: (reminder.snoozeComponents.intervalElapsed + LocalConfiguration.lastUnpause!.distance(to: (LocalConfiguration.lastPause!))))
                     }
                 }
                 // If reminder is time of day

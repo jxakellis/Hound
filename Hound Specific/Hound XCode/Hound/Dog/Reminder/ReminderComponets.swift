@@ -127,13 +127,13 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountDownProtocol
     var isSnoozed: Bool { return storedIsSnoozed }
     func changeSnooze(newSnoozeStatus: Bool) {
         if newSnoozeStatus == true {
-            storedExecutionInterval = TimingConstant.defaultSnoozeLength
+            storedExecutionInterval = UserConfiguration.snoozeLength
         }
 
         storedIsSnoozed = newSnoozeStatus
     }
 
-    private var storedExecutionInterval = TimingConstant.defaultSnoozeLength
+    private var storedExecutionInterval = UserConfiguration.snoozeLength
     var executionInterval: TimeInterval { return storedExecutionInterval }
     func changeExecutionInterval(newExecutionInterval: TimeInterval) {
         storedExecutionInterval = newExecutionInterval
@@ -277,7 +277,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         }
     }
 
-    private var storedIsSkipping: Bool = TimingConstant.defaultSkipStatus
+    private var storedIsSkipping: Bool = false
     var isSkipping: Bool { return storedIsSkipping }
     func changeIsSkipping(newSkipStatus: Bool, shouldRemoveLogDuringPossibleUnskip: Bool?) {
         guard newSkipStatus != storedIsSkipping else {

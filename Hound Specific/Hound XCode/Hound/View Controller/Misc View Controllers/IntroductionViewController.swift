@@ -70,17 +70,17 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
         case 0:
             for window in UIApplication.shared.windows {
                 window.overrideUserInterfaceStyle = .light
-                AppearanceConstant.darkModeStyle = .light
+                UserConfiguration.darkModeStyle = .light
             }
         case 1:
             for window in UIApplication.shared.windows {
                 window.overrideUserInterfaceStyle = .dark
-                AppearanceConstant.darkModeStyle = .dark
+                UserConfiguration.darkModeStyle = .dark
             }
         default:
             for window in UIApplication.shared.windows {
                 window.overrideUserInterfaceStyle = .unspecified
-                AppearanceConstant.darkModeStyle = .unspecified
+                UserConfiguration.darkModeStyle = .unspecified
             }
         }
     }
@@ -167,7 +167,7 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
         for window in UIApplication.shared.windows {
             window.overrideUserInterfaceStyle = .unspecified
         }
-        AppearanceConstant.darkModeStyle = .unspecified
+        UserConfiguration.darkModeStyle = .unspecified
 
         darkModeSegmentedControl.selectedSegmentIndex = 2
         darkModeSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.white], for: .normal)

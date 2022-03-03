@@ -32,7 +32,7 @@ class AlarmUIAlertController: GeneralUIAlertController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        guard NotificationConstant.isNotificationEnabled && NotificationConstant.shouldLoudNotification else {
+        guard UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification else {
             return
         }
             AppDelegate.lifeCycleLogger.notice("AlarmUIAlertController will appear")

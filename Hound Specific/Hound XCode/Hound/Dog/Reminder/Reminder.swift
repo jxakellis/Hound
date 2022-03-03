@@ -52,7 +52,7 @@ protocol ReminderTraitsProtocol {
     /// Dog that hold this reminder, used for logs
     var masterDog: Dog? { get set }
 
-    var uuid: String { get set }
+    var reminderId: Int? { get set }
 
     /// Replacement for reminderName, a way for the user to keep track of what the reminder is for
     var reminderType: ScheduledLogType { get set }
@@ -116,7 +116,7 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = Reminder()
 
-        copy.uuid = self.uuid
+        copy.reminderId = self.reminderId
         copy.reminderType = self.reminderType
         copy.customTypeName = self.customTypeName
         copy.masterDog = self.masterDog
@@ -149,7 +149,7 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
     required init?(coder aDecoder: NSCoder) {
         super.init()
 
-        self.uuid = aDecoder.decodeObject(forKey: "uuid") as? String ?? UUID().uuidString
+        self.reminderId = aDecoder.decodeObject(forKey: "reminderId") as? Int
         self.reminderType = ScheduledLogType(rawValue: aDecoder.decodeObject(forKey: "reminderType") as? String ?? aDecoder.decodeObject(forKey: "requirement") as? String ?? aDecoder.decodeObject(forKey: "requirment") as? String ?? aDecoder.decodeObject(forKey: "requirementType") as? String ?? aDecoder.decodeObject(forKey: "requirmentType") as? String ?? ReminderConstant.defaultType.rawValue)!
 
         self.customTypeName = aDecoder.decodeObject(forKey: "customTypeName") as? String
@@ -170,7 +170,7 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
 
     func encode(with aCoder: NSCoder) {
 
-        aCoder.encode(uuid, forKey: "uuid")
+        aCoder.encode(reminderId, forKey: "reminderId")
         aCoder.encode(reminderType.rawValue, forKey: "reminderType")
         aCoder.encode(customTypeName, forKey: "customTypeName")
 
@@ -192,7 +192,7 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
 
     var masterDog: Dog?
 
-    var uuid: String = UUID().uuidString
+    var reminderId: Int?
 
     var reminderType: ScheduledLogType = ReminderConstant.defaultType
 

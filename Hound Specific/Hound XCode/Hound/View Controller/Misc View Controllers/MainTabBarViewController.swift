@@ -78,7 +78,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
 
         // Updates isPaused to reflect any changes in data, if there are no enabled/creaed reminders or no enabled/created dogs then turns isPaused off as there is nothing to pause
         if getDogManager().hasCreatedReminder == false || getDogManager().hasEnabledReminder == false {
-            TimingConstant.isPaused = false
+            UserConfiguration.isPaused = false
         }
 
         if sender.localized is TimingManager.Type || sender.localized is TimingManager {
@@ -202,7 +202,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         AlertManager.globalPresenter = self
 
         for window in UIApplication.shared.windows {
-            window.overrideUserInterfaceStyle = AppearanceConstant.darkModeStyle
+            window.overrideUserInterfaceStyle = UserConfiguration.darkModeStyle
         }
     }
 

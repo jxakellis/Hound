@@ -10,10 +10,8 @@ import UIKit
 
 /// Enum full of cases of possible errors from ReminderManager
 enum ReminderManagerError: Error {
-   case reminderAlreadyPresent
-    case reminderNotPresent
-    case reminderInvalid
-    case reminderUUIDNotPresent
+    case reminderIdAlreadyPresent
+    case reminderIdNotPresent
 }
 
 protocol ReminderManagerProtocol {
@@ -24,42 +22,42 @@ protocol ReminderManagerProtocol {
     // array of reminders, a dog should contain one of these to specify all of its reminders
     var reminders: [Reminder] { get }
 
-    /// Checks to see if a reminder is already present. If its uuid is, then is removes the old one and replaces it with the new
+    /// Checks to see if a reminder is already present. If its reminderId is, then is removes the old one and replaces it with the new
     mutating func addReminder(newReminder: Reminder) throws
 
     /// Invokes addReminder(newReminder: Reminder) for newReminder.count times
     mutating func addReminder(newReminders: [Reminder]) throws
 
     /// removes trys to find a reminder whos name (capitals don't matter) matches reminder name given, if found removes reminder, if not found throws error
-    mutating func removeReminder(forUUID uuid: String) throws
+    mutating func removeReminder(forReminderId reminderId: Int) throws
     mutating func removeReminder(forIndex index: Int)
 
     /// Removed as addReminer can serve this purpose (replaces old one if already present)
-    // mutating func changeReminder(forUUID uuid: String, newReminder: Reminder) throws
+    // mutating func changeReminder(forReminderId reminderId: String, newReminder: Reminder) throws
 
-    /// finds and returns the reference of a reminder matching the given uuid
-    func findReminder(forUUID uuid: String) throws -> Reminder
+    /// finds and returns the reference of a reminder matching the given reminderId
+    func findReminder(forReminderId reminderId: Int) throws -> Reminder
 
-    /// finds and returns the index of a reminder with a uuid in terms of the reminder: [Reminder] array
-    func findIndex(forUUID uuid: String) throws -> Int
+    /// finds and returns the index of a reminder with a reminderId in terms of the reminder: [Reminder] array
+    func findIndex(forReminderId reminderId: Int) throws -> Int
 
 }
 
 extension ReminderManagerProtocol {
 
-    func findReminder(forUUID uuid: String) throws -> Reminder {
+    func findReminder(forReminderId reminderId: Int) throws -> Reminder {
 
-        for r in 0..<reminders.count where reminders[r].uuid == uuid {
+        for r in 0..<reminders.count where reminders[r].reminderId == reminderId {
             return reminders[r]
         }
-        throw ReminderManagerError.reminderNotPresent
+        throw ReminderManagerError.reminderIdNotPresent
     }
 
-    func findIndex(forUUID uuid: String) throws -> Int {
-        for r in 0..<reminders.count where reminders[r].uuid == uuid {
+    func findIndex(forReminderId reminderId: Int) throws -> Int {
+        for r in 0..<reminders.count where reminders[r].reminderId == reminderId {
             return r
         }
-        throw ReminderManagerError.reminderNotPresent
+        throw ReminderManagerError.reminderIdNotPresent
     }
 
 }
@@ -120,13 +118,13 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
 
         // Index of the reminder, nil if it isn't present and not nil if it already exists. A non nil value means we replace the reminder and a nil value means we simply add
         var reminderIndex: Int?
-        for i in 0..<reminders.count where reminders[i].uuid == newReminder.uuid {
+        for i in 0..<reminders.count where reminders[i].reminderId == newReminder.reminderId {
             reminderIndex = i
             break
         }
 
         if reminderIndex != nil {
-            // instead of crashing, replace the reminder. UUIDs secure enough where overlap is impossible for all practical purposes.
+            // instead of crashing, replace the reminder.
             storedReminders[reminderIndex!].timer?.invalidate()
             storedReminders[reminderIndex!] = newReminder
             AppDelegate.endpointLogger.notice("ENDPOINT Update Reminder")
@@ -147,26 +145,25 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
         sortReminders()
     }
 
-    func removeReminder(forUUID uuid: String) throws {
+    func removeReminder(forReminderId reminderId: Int) throws {
         var reminderNotPresent = true
 
         // goes through reminders to see if the given reminder name (aka reminder name) is in the array of reminders
-        reminders.forEach { (reminder) in
-            if reminder.uuid == uuid {
-                reminderNotPresent = false
-            }
+        for reminder in reminders where reminder.reminderId == reminderId {
+            reminderNotPresent = false
+            break
         }
 
         // if provided reminder is not present, throws error
 
         if reminderNotPresent == true {
-            throw ReminderManagerError.reminderNotPresent
+            throw ReminderManagerError.reminderIdNotPresent
         }
         // if provided reminder is present, proceeds
         else {
             // finds index of given reminder (through reminder name), returns nil if not found but it should be if code is written correctly, code should not be not be able to reach this point if reminder name was not present
             var indexOfRemovalTarget: Int? {
-                for index in 0...Int(reminders.count) where reminders[index].uuid == uuid {
+                for index in 0...Int(reminders.count) where reminders[index].reminderId == reminderId {
                     return index
                 }
                 return nil
@@ -174,7 +171,7 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
 
         storedReminders[indexOfRemovalTarget ?? -1].timer?.invalidate()
         storedReminders.remove(at: indexOfRemovalTarget ?? -1)
-        AppDelegate.endpointLogger.notice("ENDPOINT Remove Reminder (via uuid)")
+        AppDelegate.endpointLogger.notice("ENDPOINT Remove Reminder (via reminderId)")
         }
     }
 
@@ -193,13 +190,13 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
     }
 
     /*
-     func changeReminder(forUUID uuid: String, newReminder: Reminder) throws {
+     func changeReminder(forReminderId reminderId: String, newReminder: Reminder) throws {
          
          //check to find the index of targetted reminder
          var newReminderIndex: Int?
          
          for i in 0..<reminders.count {
-             if reminders[i].uuid == uuid {
+             if reminders[i].reminderId == reminderId {
                  newReminderIndex = i
              }
          }
