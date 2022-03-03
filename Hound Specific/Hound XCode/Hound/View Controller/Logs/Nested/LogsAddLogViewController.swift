@@ -9,9 +9,9 @@
 import UIKit
 
 protocol LogsAddLogViewControllerDelegate: AnyObject {
-    func didRemoveKnownLog(sender: Sender, parentDogId: Int, reminderUUID: String?, logUUID: String)
+    func didRemoveKnownLog(sender: Sender, parentDogId: Int, logId: Int)
     func didAddKnownLog(sender: Sender, parentDogId: Int, newKnownLog: KnownLog)
-    func didUpdateKnownLog(sender: Sender, parentDogId: Int, reminderUUID: String?, updatedKnownLog: KnownLog)
+    func didUpdateKnownLog(sender: Sender, parentDogId: Int, updatedKnownLog: KnownLog)
 }
 
 class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, DropDownUIViewDataSourceProtocol {
@@ -129,8 +129,6 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
     @IBOutlet private weak var pageTitle: UINavigationItem!
     @IBOutlet private weak var trashIcon: UIBarButtonItem!
 
-    // @IBOutlet private weak var logDisclaimer: ScaledUILabel!
-
     @IBOutlet weak var parentDogName: BorderedUILabel!
 
     @IBOutlet private weak var logType: BorderedUILabel!
@@ -160,7 +158,9 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete this log?", message: nil, preferredStyle: .alert)
 
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-            self.delegate.didRemoveKnownLog(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName.text!, reminderUUID: self.updatingKnownLogInformation!.1?.uuid ?? nil, logUUID: self.updatingKnownLogInformation!.2.uuid)
+            self.delegate.didRemoveKnownLog(sender: Sender(origin: self, localized: self),
+                                            parentDogId: self.updatingKnownLogInformation.0,
+                                            logId: self.updatingKnownLogInformation.1.logId)
             self.navigationController?.popViewController(animated: true)
         }
 
@@ -186,7 +186,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
 
         // updating log
         if updatingKnownLogInformation != nil {
-            let exsistingLog = updatingKnownLogInformation!.2
+            let exsistingLog = updatingKnownLogInformation!.1
             let updatedLog = exsistingLog.copy() as! KnownLog
             updatedLog.date = logDate.date
             updatedLog.note = logNote.text ?? ""
@@ -196,7 +196,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 updatedLog.customTypeName = trimmedCustomLogTypeName
             }
 
-            delegate.didUpdateKnownLog(sender: Sender(origin: self, localized: self), parentDogName: parentDogName.text!, reminderUUID: updatingKnownLogInformation?.1?.uuid ?? nil, updatedKnownLog: updatedLog)
+            delegate.didUpdateKnownLog(sender: Sender(origin: self, localized: self), parentDogId: updatingKnownLogInformation.0, updatedKnownLog: updatedLog)
             self.navigationController?.popViewController(animated: true)
         }
         // adding log
@@ -207,7 +207,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 }
                 else {
                     let newLog = KnownLog(date: logDate.date, note: logNote.text ?? "", logType: KnownLogType(rawValue: logType.text!)!, customTypeName: trimmedCustomLogTypeName)
-                    delegate.didAddKnownLog(sender: Sender(origin: self, localized: self), parentDogName: parentDogName.text!, newKnownLog: newLog)
+                    delegate.didAddKnownLog(sender: Sender(origin: self, localized: self), parentDogId: updatingKnownLogInformation.0, newKnownLog: newLog)
                     self.navigationController?.popViewController(animated: true)
                 }
             }
@@ -253,21 +253,21 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
 
     var dogManager: DogManager! = nil
 
-    /// information for updating log, parentDogName, reminder?, knownLog
-    var updatingKnownLogInformation: (String, Reminder?, KnownLog)?
+    /// information for updating log, parentDogId, knownLog
+    var updatingKnownLogInformation: (Int, KnownLog)!
 
     weak var delegate: LogsAddLogViewControllerDelegate! = nil
 
-    private var initalParentDog: String! = nil
+    private var initalParentDogName: String!
     private var initalCustomLogType: String?
-    private var initalLogNote: String! = nil
-    private var initalDate: Date! = nil
+    private var initalLogNote: String!
+    private var initalDate: Date!
 
     var initalValuesChanged: Bool {
         // updating
         if updatingKnownLogInformation != nil {
             // not equal it inital
-            if logType.text != updatingKnownLogInformation!.2.logType.rawValue {
+            if logType.text != updatingKnownLogInformation!.1.logType.rawValue {
                 return true
             }
         }
@@ -289,7 +289,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         else if initalDate != logDate.date {
             return true
         }
-        else if initalParentDog != parentDogName.text {
+        else if initalParentDogName != parentDogName.text {
             return true
         }
         else {
@@ -454,7 +454,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
     private func setupValues() {
 
         func setupInitalValues() {
-            initalParentDog = parentDogName.text
+            initalParentDogName = parentDogName.text
             initalCustomLogType = customLogTypeTextField.text
             initalDate = logDate.date
             initalLogNote = logNote.text
@@ -464,18 +464,18 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         if updatingKnownLogInformation != nil {
             pageTitle!.title = "Edit Log"
             trashIcon.isEnabled = true
-            parentDogName.text = updatingKnownLogInformation!.0
+            parentDogName.text = try! dogManager.findDog(forDogId: updatingKnownLogInformation.0).dogTraits.dogName
 
-            logType.text = updatingKnownLogInformation!.2.logType.rawValue
+            logType.text = updatingKnownLogInformation.1.logType.rawValue
             logType.isEnabled = true
-            customLogTypeTextField.text = updatingKnownLogInformation!.2.customTypeName
+            customLogTypeTextField.text = updatingKnownLogInformation.1.customTypeName
             // if == is true, that means it is custom, which means it shouldn't hide so ! reverses to input isHidden: false, reverse for if type is not custom. This is because this text input field is only used for custom types.
-            toggleCustomLogTypeName(isHidden: !(updatingKnownLogInformation!.2.logType == .custom))
+            toggleCustomLogTypeName(isHidden: !(updatingKnownLogInformation.1.logType == .custom))
 
             selectedLogTypeIndexPath = IndexPath(row: KnownLogType.allCases.firstIndex(of: KnownLogType(rawValue: logType.text!)!)!, section: 0)
 
-            logDate.date = updatingKnownLogInformation!.2.date
-            logNote.text = updatingKnownLogInformation!.2.note
+            logDate.date = updatingKnownLogInformation.1.date
+            logNote.text = updatingKnownLogInformation.1.note
 
         }
         // not updating

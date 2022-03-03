@@ -82,7 +82,7 @@ class TimingManager {
                                                  interval: -1,
                                                  target: self,
                                                  selector: #selector(self.willUpdateIsSkipping(sender:)),
-                                                 userInfo: ["dogName": dogManager.dogs[d].dogTraits.dogName, "reminder": reminder, "dogManager": dogManager],
+                                                   userInfo: ["dogId": dogManager.dogs[d].dogId, "reminderId": reminder.reminderId],
                                                  repeats: false)
 
                     isSkippingDisablers.append(isSkippingDisabler)
@@ -94,7 +94,7 @@ class TimingManager {
                                           interval: -1,
                                           target: self,
                                           selector: #selector(self.didExecuteTimer(sender:)),
-                                          userInfo: ["dogName": dogManager.dogs[d].dogTraits.dogName, "reminder": reminder],
+                                  userInfo: ["dogId": dogManager.dogs[d].dogId, "dogName": dogManager.dogs[d].dogTraits.dogName, "reminder": reminder],
                                           repeats: false)
                     RunLoop.main.add(timer, forMode: .common)
 
@@ -119,13 +119,13 @@ class TimingManager {
             return
         }
 
-        let dogName: String = parsedDictionary["dogName"]! as! String
-        let pastReminder: Reminder = parsedDictionary["reminder"]! as! Reminder
+        let dogId: Int = parsedDictionary["dogId"]! as! Int
+        let passedReminderId: Int = parsedDictionary["reminderId"]! as! Int
         let dogManager = MainTabBarViewController.staticDogManager
 
         do {
-            let dog = try dogManager.findDog(forName: dogName)
-            let reminder = try dog.dogReminders.findReminder(forUUID: pastReminder.uuid)
+            let dog = try dogManager.findDog(forDogId: dogId)
+            let reminder = try dog.dogReminders.findReminder(forReminderId: passedReminderId)
 
             reminder.timeOfDayComponents.changeIsSkipping(newSkipStatus: false, shouldRemoveLogDuringPossibleUnskip: false)
             reminder.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
@@ -266,13 +266,14 @@ class TimingManager {
         }
 
         let dogName: String = parsedDictionary["dogName"]! as! String
+        let dogId: Int = parsedDictionary["dogId"]! as! Int
         let reminder: Reminder = parsedDictionary["reminder"]! as! Reminder
 
-        TimingManager.willShowTimer(dogName: dogName, reminder: reminder)
+        TimingManager.willShowTimer(dogName: dogName, dogId: dogId, reminder: reminder)
     }
 
     /// Creates alertController to queue for presentation along with information passed along with it to reinitalize the timer once an option is selected (e.g. disable or snooze)
-    static func willShowTimer(dogName: String, reminder: Reminder) {
+    static func willShowTimer(dogName: String, dogId: Int, reminder: Reminder) {
 
         let title = "\(reminder.displayTypeName) - \(dogName)"
         // let message = "\(reminder.reminderDescription)"
@@ -287,8 +288,8 @@ class TimingManager {
             style: .cancel,
             handler: { (_: UIAlertAction!)  in
                     // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                    // TimingManager.willInactivateTimer(sender: Sender(origin: self, localized: self), dogName: dogName, reminderUUID: reminder.uuid)
-                    TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: dogName, reminderUUID: reminder.uuid, knownLogType: nil)
+                    // TimingManager.willInactivateTimer(sender: Sender(origin: self, localized: self), dogName: dogName, reminderId: reminder.reminderId)
+                    TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, knownLogType: nil)
                     Utils.checkForReview()
                 })
 
@@ -303,7 +304,7 @@ class TimingManager {
                     style: .default,
                     handler: { (_)  in
                             // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                            TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: dogName, reminderUUID: reminder.uuid, knownLogType: pottyKnownType)
+                            TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, knownLogType: pottyKnownType)
                             Utils.checkForReview()
                         })
                 alertActionsForLog.append(alertActionLog)
@@ -314,7 +315,7 @@ class TimingManager {
                 style: .default,
                 handler: { (_)  in
                         // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                        TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogName: dogName, reminderUUID: reminder.uuid, knownLogType: KnownLogType(rawValue: reminder.reminderType.rawValue)!)
+                        TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, knownLogType: KnownLogType(rawValue: reminder.reminderType.rawValue)!)
                         Utils.checkForReview()
                     })
             alertActionsForLog.append(alertActionLog)
@@ -325,7 +326,7 @@ class TimingManager {
             style: .default,
             handler: { (_: UIAlertAction!)  in
                     // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                    TimingManager.willSnoozeTimer(sender: Sender(origin: self, localized: self), dogName: dogName, reminderUUID: reminder.uuid)
+                    TimingManager.willSnoozeTimer(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId)
                     Utils.checkForReview()
                 })
 
@@ -337,9 +338,9 @@ class TimingManager {
 
         let dogManager = MainTabBarViewController.staticDogManager
         do {
-            let dog = try dogManager.findDog(forName: dogName)
+            let dog = try dogManager.findDog(forDogId: dogId)
             // AppDelegate.generalLogger.notice("willShowTimer success in finding dog")
-            let reminder = try dog.dogReminders.findReminder(forUUID: reminder.uuid)
+            let reminder = try dog.dogReminders.findReminder(forReminderId: reminder.reminderId)
             // AppDelegate.generalLogger.notice("willShowTimer success in finding reminder")
 
             if reminder.isPresentationHandled == false {
@@ -357,10 +358,10 @@ class TimingManager {
     }
 
     /// Finishes executing timer and then sets its isSnoozed to true, note passed reminder should be a reference to a reminder in passed dogManager
-    static func willSnoozeTimer(sender: Sender, dogName targetDogName: String, reminderUUID: String) {
+    static func willSnoozeTimer(sender: Sender, dogId: Int, reminderId: Int) {
         let dogManager = MainTabBarViewController.staticDogManager
 
-        let reminder = try! dogManager.findDog(forName: targetDogName).dogReminders.findReminder(forUUID: reminderUUID)
+        let reminder = try! dogManager.findDog(forDogId: dogId).dogReminders.findReminder(forReminderId: reminderId)
 
         reminder.timerReset(shouldLogExecution: false)
 
@@ -370,19 +371,19 @@ class TimingManager {
     }
 
     /// Finishs executing timer then just resets it to countdown again
-    static func willResetTimer(sender: Sender, dogName targetDogName: String, reminderUUID: String, knownLogType: KnownLogType?) {
+    static func willResetTimer(sender: Sender, dogId: Int, reminderId: Int, knownLogType: KnownLogType?) {
 
         let sudoDogManager = MainTabBarViewController.staticDogManager
 
-        let dog = try! sudoDogManager.findDog(forName: targetDogName)
+        let dog = try! sudoDogManager.findDog(forDogId: dogId)
 
-        let reminder = try! dog.dogReminders.findReminder(forUUID: reminderUUID)
+        let reminder = try! dog.dogReminders.findReminder(forReminderId: reminderId)
 
         if reminder.timingStyle == .oneTime {
             if knownLogType != nil {
                 try! dog.dogTraits.addLog(newLog: KnownLog(date: Date(), logType: knownLogType!, customTypeName: reminder.customTypeName))
             }
-            try! dog.dogReminders.removeReminder(forUUID: reminderUUID)
+            try! dog.dogReminders.removeReminder(forReminderId: reminderId)
             delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
             return
         }

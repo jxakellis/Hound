@@ -20,30 +20,6 @@ class DogsIntroductionViewController: UIViewController {
 
     @IBOutlet private weak var remindersBody: ScaledUILabel!
     @IBOutlet private weak var remindersToggleSwitch: UISwitch!
-
-    /*
-     
-    
-    @IBOutlet private weak var notificationsBody: ScaledUILabel!
-    @IBOutlet private weak var notificationsToggleSwitch: UISwitch!
-    ///Handles the toggling of the notification switch, if its the first time then it requests notification authorization.
-    @IBAction private func didToggleNotifications(_ sender: Any) {
-        if notificationsToggleSwitch.isOn == true {
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
-                UserConfiguration.isNotificationAuthorized = isGranted
-                UserConfiguration.isNotificationEnabled = isGranted
-                UserConfiguration.isLoudNotification = isGranted
-                UserConfiguration.isFollowUpEnabled = isGranted
-                
-                DispatchQueue.main.async {
-                    self.notificationsToggleSwitch.setOn(isGranted, animated: true)
-                    self.notificationsToggleSwitch.isEnabled = isGranted
-                }
-                
-            }
-        }
-    }
-     */
     @IBOutlet private weak var continueButton: UIButton!
     @IBAction private func willContinue(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)

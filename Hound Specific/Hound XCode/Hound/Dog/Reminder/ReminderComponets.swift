@@ -163,7 +163,7 @@ enum TimeOfDayComponentsError: Error {
 protocol TimeOfDayComponentsProtocol {
 
     /// Reference to the reminder that holds the timeOfDayComponent, required for connectivity.
-    var masterReminder: Reminder! { get set }
+    var parentReminder: Reminder! { get set }
 
     /// DateComponent that stores the hour and minute specified (e.g. 8:26 am) of the time of day timer
     var timeOfDayComponent: DateComponents { get }
@@ -246,7 +246,7 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
 
     // MARK: - TimeOfDayComponentsProtocol
 
-    var masterReminder: Reminder! = nil
+    var parentReminder: Reminder! = nil
 
     private var storedTimeOfDayComponent: DateComponents = DateComponents()
     var timeOfDayComponent: DateComponents { return storedTimeOfDayComponent }
@@ -290,10 +290,10 @@ class TimeOfDayComponents: Component, NSCoding, NSCopying, TimeOfDayComponentsPr
         else {
             if isSkippingLogDate != nil && shouldRemoveLogDuringPossibleUnskip == true {
                 // if the log added by skipping the reminder is unmodified, finds and removes it in the unskip process
-                let dogLogs = masterReminder.masterDog!.dogTraits.logs
+                let dogLogs = parentReminder.parentDog!.dogTraits.logs
                 for logDateIndex in 0..<dogLogs.count {
                     if dogLogs[logDateIndex].date.distance(to: isSkippingLogDate!) < 0.01 && dogLogs[logDateIndex].date.distance(to: isSkippingLogDate!) > -0.01 {
-                        masterReminder.masterDog!.dogTraits.removeLog(forIndex: logDateIndex)
+                        parentReminder.parentDog!.dogTraits.removeLog(forIndex: logDateIndex)
                         break
                     }
                 }
@@ -583,7 +583,7 @@ enum OneTimeComponentsError: Error {
 
 protocol OneTimeComponentsProtocol {
     /// Reference to the reminder that holds the oneTimeComponent, required for connectivity.
-    var masterReminder: Reminder! { get set }
+    var parentReminder: Reminder! { get set }
 
     /// DateComponent that stores the year, month, day, hour, and minute of the one time reminder
     var dateComponents: DateComponents { get }
@@ -625,7 +625,7 @@ class OneTimeComponents: Component, NSCoding, NSCopying, OneTimeComponentsProtoc
 
     // MARK: OneTimeComponentsProtocol
 
-    var masterReminder: Reminder! = nil
+    var parentReminder: Reminder! = nil
 
     private var storedDateComponents: DateComponents = DateComponents()
     var dateComponents: DateComponents { return storedDateComponents }

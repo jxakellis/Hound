@@ -50,9 +50,9 @@ enum ReminderMode {
 protocol ReminderTraitsProtocol {
 
     /// Dog that hold this reminder, used for logs
-    var masterDog: Dog? { get set }
+    var parentDog: Dog? { get set }
 
-    var reminderId: Int? { get set }
+    var reminderId: Int { get set }
 
     /// Replacement for reminderName, a way for the user to keep track of what the reminder is for
     var reminderType: ScheduledLogType { get set }
@@ -119,13 +119,13 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         copy.reminderId = self.reminderId
         copy.reminderType = self.reminderType
         copy.customTypeName = self.customTypeName
-        copy.masterDog = self.masterDog
+        copy.parentDog = self.parentDog
 
         copy.countDownComponents = self.countDownComponents.copy() as! CountDownComponents
         copy.timeOfDayComponents = self.timeOfDayComponents.copy() as! TimeOfDayComponents
-        copy.timeOfDayComponents.masterReminder = copy
+        copy.timeOfDayComponents.parentReminder = copy
         copy.oneTimeComponents = self.oneTimeComponents.copy() as! OneTimeComponents
-        copy.oneTimeComponents.masterReminder = copy
+        copy.oneTimeComponents.parentReminder = copy
         copy.snoozeComponents = self.snoozeComponents.copy() as! SnoozeComponents
         copy.storedTimingStyle = self.timingStyle
 
@@ -142,23 +142,23 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
 
     override init() {
         super.init()
-        self.timeOfDayComponents.masterReminder = self
-        self.oneTimeComponents.masterReminder = self
+        self.timeOfDayComponents.parentReminder = self
+        self.oneTimeComponents.parentReminder = self
     }
 
     required init?(coder aDecoder: NSCoder) {
         super.init()
 
-        self.reminderId = aDecoder.decodeObject(forKey: "reminderId") as? Int
+        self.reminderId = aDecoder.decodeObject(forKey: "reminderId") as? Int ?? -1
         self.reminderType = ScheduledLogType(rawValue: aDecoder.decodeObject(forKey: "reminderType") as? String ?? aDecoder.decodeObject(forKey: "requirement") as? String ?? aDecoder.decodeObject(forKey: "requirment") as? String ?? aDecoder.decodeObject(forKey: "requirementType") as? String ?? aDecoder.decodeObject(forKey: "requirmentType") as? String ?? ReminderConstant.defaultType.rawValue)!
 
         self.customTypeName = aDecoder.decodeObject(forKey: "customTypeName") as? String
 
         self.countDownComponents = aDecoder.decodeObject(forKey: "countDownComponents") as? CountDownComponents ?? CountDownComponents()
         self.timeOfDayComponents = aDecoder.decodeObject(forKey: "timeOfDayComponents") as?  TimeOfDayComponents ?? TimeOfDayComponents()
-        self.timeOfDayComponents.masterReminder = self
+        self.timeOfDayComponents.parentReminder = self
         self.oneTimeComponents = aDecoder.decodeObject(forKey: "oneTimeComponents") as? OneTimeComponents ?? OneTimeComponents()
-        self.oneTimeComponents.masterReminder = self
+        self.oneTimeComponents.parentReminder = self
         self.snoozeComponents = aDecoder.decodeObject(forKey: "snoozeComponents") as? SnoozeComponents ?? SnoozeComponents()
 
         self.storedTimingStyle = ReminderStyle(rawValue: aDecoder.decodeObject(forKey: "timingStyle") as? String ?? ReminderStyle.countDown.rawValue)!
@@ -190,9 +190,9 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
 
     // MARK: - ReminderTraitsProtocol
 
-    var masterDog: Dog?
+    var parentDog: Dog?
 
-    var reminderId: Int?
+    var reminderId: Int = -1
 
     var reminderType: ScheduledLogType = ReminderConstant.defaultType
 
@@ -337,10 +337,10 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
             if knownLogType == nil {
                 fatalError()
             }
-            try! masterDog?.dogTraits.addLog(newLog: KnownLog(date: Date(), logType: knownLogType!, customTypeName: customTypeName))
+            try! parentDog?.dogTraits.addLog(newLog: KnownLog(date: Date(), logType: knownLogType!, customTypeName: customTypeName))
 
-            if masterDog == nil {
-                AppDelegate.generalLogger.fault("masterDog nil, couldn't log")
+            if parentDog == nil {
+                AppDelegate.generalLogger.fault("parentDog nil, couldn't log")
             }
         }
 

@@ -113,7 +113,7 @@ protocol KnownLogProtocol {
     /// If not .custom type then just .type name, if custom and has customTypeName then its that string
     var displayTypeName: String { get }
 
-    var logId: Int? { get set }
+    var logId: Int { get set }
 
 }
 
@@ -129,11 +129,11 @@ class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol {
     // MARK: - NSCoding
 
     required init?(coder aDecoder: NSCoder) {
-        self.date = aDecoder.decodeObject(forKey: "date") as! Date
-        self.note = aDecoder.decodeObject(forKey: "note") as! String
-        self.logType = KnownLogType(rawValue: aDecoder.decodeObject(forKey: "logType") as! String)!
+        self.date = aDecoder.decodeObject(forKey: "date") as? Date ?? Date()
+        self.note = aDecoder.decodeObject(forKey: "note") as? String ?? ""
+        self.logType = KnownLogType(rawValue: aDecoder.decodeObject(forKey: "logType") as? String ?? LogConstant.defaultType.rawValue) ?? LogConstant.defaultType
         self.customTypeName = aDecoder.decodeObject(forKey: "customTypeName") as? String
-        self.logId = aDecoder.decodeObject(forKey: "logId") as? Int
+        self.logId = aDecoder.decodeObject(forKey: "logId") as? Int ?? -1
     }
 
     func encode(with aCoder: NSCoder) {
@@ -148,7 +148,7 @@ class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol {
 
     // MARK: - ReminderLogProtocol
 
-    init(date: Date, note: String = "", logType: KnownLogType, customTypeName: String?, logId: Int? = nil) {
+    init(date: Date, note: String = "", logType: KnownLogType, customTypeName: String?, logId: Int = -1) {
         self.date = date
         self.note = note
         self.logType = logType
@@ -174,5 +174,5 @@ class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol {
         }
     }
 
-    var logId: Int?
+    var logId: Int = -1
 }

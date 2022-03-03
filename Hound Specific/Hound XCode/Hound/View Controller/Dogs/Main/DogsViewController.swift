@@ -25,7 +25,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     func didAddReminder(sender: Sender, parentDogId: Int, newReminder: Reminder) {
         let sudoDogManager = getDogManager()
 
-        try! sudoDogManager.findDog(forName: parentDogName).dogReminders.addReminder(newReminder: newReminder)
+        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.addReminder(newReminder: newReminder)
 
         setDogManager(sender: sender, newDogManager: sudoDogManager)
 
@@ -35,17 +35,17 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     func didUpdateReminder(sender: Sender, parentDogId: Int, updatedReminder: Reminder) throws {
         let sudoDogManager = getDogManager()
 
-        try sudoDogManager.findDog(forName: parentDogName).dogReminders.addReminder(newReminder: updatedReminder)
+        try sudoDogManager.findDog(forDogId: parentDogId).dogReminders.addReminder(newReminder: updatedReminder)
 
         setDogManager(sender: sender, newDogManager: sudoDogManager)
 
         Utils.checkForReview()
     }
 
-    func didRemoveReminder(sender: Sender, parentDogId: Int, removedReminderUUID: String) {
+    func didRemoveReminder(sender: Sender, parentDogId: Int, reminderId: Int) {
         let sudoDogManager = getDogManager()
 
-        try! sudoDogManager.findDog(forName: parentDogName).dogReminders.removeReminder(forUUID: removedReminderUUID)
+        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.removeReminder(forReminderId: reminderId)
 
         setDogManager(sender: sender, newDogManager: sudoDogManager)
 
@@ -55,15 +55,15 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     // MARK: - DogsMainScreenTableViewControllerDelegate
 
     /// If a dog was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the dogs information
-    func willEditDog(dogName: String) {
+    func willEditDog(dogId: Int) {
 
-        willOpenDog(dogToBeOpened: try! getDogManager().findDog(forName: dogName), isAddingReminder: false)
+        willOpenDog(dogToBeOpened: try! getDogManager().findDog(forDogId: dogId), isAddingReminder: false)
 
     }
     /// If a reminder was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the reminders information
-    func willEditReminder(parentDogId: Int, reminderUUID: String?) {
+    func willEditReminder(parentDogId: Int, reminderId: Int?) {
 
-        willOpenReminder(parentDogName: parentDogName, reminderUUID: reminderUUID)
+        willOpenReminder(parentDogId: parentDogId, reminderId: reminderId)
 
     }
 
@@ -226,15 +226,15 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     }
 
     /// If a dog was updated, its former name (as its name could have been changed) and new dog instance is passed here, matching old dog is found and replaced with new
-    func didUpdateDog(sender: Sender, formerName: String, updatedDog: Dog) throws {
+    func didUpdateDog(sender: Sender, dogId: Int, updatedDog: Dog) throws {
         let sudoDogManager = getDogManager()
-        try sudoDogManager.changeDog(forName: formerName, newDog: updatedDog)
+        try sudoDogManager.changeDog(forDogId: dogId, newDog: updatedDog)
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
 
-    func didRemoveDog(sender: Sender, removedDogName: String) {
+    func didRemoveDog(sender: Sender, dogId: Int) {
         let sudoDogManager = getDogManager()
-        try! sudoDogManager.removeDog(forName: removedDogName)
+        try! sudoDogManager.removeDog(forDogId: dogId)
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
 
@@ -344,14 +344,14 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
 
     }
 
-    private func willOpenReminder(parentDogId: Int, reminderUUID: String? = nil) {
+    private func willOpenReminder(parentDogId: Int, reminderId: Int? = nil) {
 
         self.performSegue(withIdentifier: "dogsIndependentReminderViewController", sender: self)
-        dogsIndependentReminderViewController.parentDogName = parentDogName
+        dogsIndependentReminderViewController.parentDogId = parentDogId
 
         // updating
-        if reminderUUID != nil {
-            dogsIndependentReminderViewController.targetReminder = try! getDogManager().findDog(forName: parentDogName).dogReminders.findReminder(forUUID: reminderUUID!)
+        if reminderId != nil {
+            dogsIndependentReminderViewController.targetReminder = try! getDogManager().findDog(forDogId: parentDogId).dogReminders.findReminder(forReminderId: reminderId!)
             dogsIndependentReminderViewController.isUpdating = true
         }
         // new
@@ -366,7 +366,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             self.willOpenDog(dogToBeOpened: nil, isAddingReminder: false)
         }
         else {
-            self.willOpenReminder(parentDogName: getDogManager().dogs[sender.tag-1].dogTraits.dogName, reminderUUID: nil)
+            self.willOpenReminder(parentDogId: getDogManager().dogs[sender.tag-1].dogId, reminderId: nil)
         }
     }
 

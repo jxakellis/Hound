@@ -127,6 +127,7 @@ extension InternalEndpointUtils {
         body[UserDefaultsKeys.userEmail.rawValue] = UserInformation.userEmail
         body[UserDefaultsKeys.userFirstName.rawValue] = UserInformation.userFirstName
         body[UserDefaultsKeys.userLastName.rawValue] = UserInformation.userLastName
+        return body
     }
 
     /// returns an array that only contains the user's userConfiguration and is that is suitable to be a http request body
@@ -158,17 +159,17 @@ extension InternalEndpointUtils {
 
     /// returns an array that is suitable to be a http request body
     static func createDogBody(dog: Dog) -> [String: Any] {
-
+        return [:]
     }
 
     /// returns an array that is suitable to be a http request body
     static func createLogBody(log: KnownLogType) -> [String: Any] {
-
+        return [:]
     }
 
     /// returns an array that is suitable to be a http request body
     static func createReminderBody(reminder: Reminder) -> [String: Any] {
-
+        return [:]
     }
 
 }

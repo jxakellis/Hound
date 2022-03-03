@@ -15,6 +15,10 @@ enum DogConstant {
     static let chooseIcon: UIImage = UIImage.init(named: "chooseIcon")!
 }
 
+enum LogConstant {
+    static let defaultType = KnownLogType.allCases[0]
+}
+
 enum ReminderConstant {
     static let defaultType = ScheduledLogType.allCases[0]
     static let defaultTimeInterval = (3600*0.5)

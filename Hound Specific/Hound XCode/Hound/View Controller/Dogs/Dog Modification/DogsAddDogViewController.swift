@@ -10,8 +10,8 @@ import UIKit
 
 protocol DogsAddDogViewControllerDelegate: AnyObject {
     func didAddDog(sender: Sender, newDog: Dog) throws
-    func didUpdateDog(sender: Sender, formerName: String, updatedDog: Dog) throws
-    func didRemoveDog(sender: Sender, removedDogName: String)
+    func didUpdateDog(sender: Sender, dogId: Int, updatedDog: Dog) throws
+    func didRemoveDog(sender: Sender, dogId: Int)
     /// Reinitalizes timers that were possibly destroyed
     func didCancel(sender: Sender)
 }
@@ -63,9 +63,9 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
         try! targetDog.dogReminders.addReminder(newReminder: updatedReminder)
     }
 
-    func didRemoveReminder(removedReminderUUID: String) {
+    func didRemoveReminder(reminderId: Int) {
         shouldPromptSaveWarning = true
-        try! targetDog.dogReminders.removeReminder(forUUID: removedReminderUUID)
+        try! targetDog.dogReminders.removeReminder(forReminderId: reminderId)
     }
 
     // assume all reminders are valid due to the fact that they are all checked and validated through DogsReminderTableViewController
@@ -134,7 +134,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
     // When the add button is clicked, runs a series of checks. Makes sure the name and description of the dog is valid, and if so then passes information up chain of view controllers to DogsViewController.
     @IBAction private func willAddDog(_ sender: Any) {
         let updatedDog = targetDog.copy() as! Dog
-        // updatedDog.dogReminders.masterDog = updatedDog
+        // updatedDog.dogReminders.parentDog = updatedDog
         do {
             try updatedDog.dogTraits.changeDogName(newDogName: dogName.text)
             if dogIcon.imageView!.image != DogConstant.chooseIcon {
@@ -153,7 +153,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
 
         do {
             if isUpdating == true {
-                try delegate.didUpdateDog(sender: Sender(origin: self, localized: self), formerName: targetDog.dogTraits.dogName, updatedDog: updatedDog)
+                try delegate.didUpdateDog(sender: Sender(origin: self, localized: self), dogId: targetDog.dogId, updatedDog: updatedDog)
                 self.navigationController?.popViewController(animated: true)
             }
             else {
@@ -173,7 +173,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
         let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogName.text ?? targetDog.dogTraits.dogName)?", message: nil, preferredStyle: .alert)
 
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-            self.delegate.didRemoveDog(sender: Sender(origin: self, localized: self), removedDogName: self.targetDog.dogTraits.dogName)
+            self.delegate.didRemoveDog(sender: Sender(origin: self, localized: self), dogId: self.targetDog.dogId)
             // self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
             self.navigationController?.popViewController(animated: true)
         }

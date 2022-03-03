@@ -23,7 +23,7 @@ Reminders
     Add Reminder
         Reminder itself
         NO Components in actual ping (invoke Add Component)
-        If reminder is not present in the masterDogManager, then don't send ping to server. This means a reminder was added to a dog that hasn't been created yet (e.g. default reminders added when create dog menu opened). Once the dog is created then the reminders can be sent to the server
+        If reminder is not present in the parentDogManager, then don't send ping to server. This means a reminder was added to a dog that hasn't been created yet (e.g. default reminders added when create dog menu opened). Once the dog is created then the reminders can be sent to the server
     Update Reminder
         Reminder itself
         NO Components in actual ping (invoke Update Componet)

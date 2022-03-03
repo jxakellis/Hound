@@ -11,17 +11,17 @@ import UIKit
 protocol DogsReminderTableViewControllerDelegate: AnyObject {
     func didAddReminder(newReminder: Reminder)
     func didUpdateReminder(updatedReminder: Reminder)
-    func didRemoveReminder(removedReminderUUID: String)
+    func didRemoveReminder(reminderId: Int)
 }
 
 class DogsReminderTableViewController: UITableViewController, ReminderManagerControlFlowProtocol, DogsNestedReminderViewControllerDelegate, DogsReminderTableViewCellDelegate {
 
     // MARK: - Dogs Reminder Table View Cell
 
-    func didToggleEnable(sender: Sender, reminderUUID: String, newEnableStatus: Bool) {
+    func didToggleEnable(sender: Sender, reminderId: Int, newEnableStatus: Bool) {
         let sudoReminderManager = getReminderManager()
         do {
-            let reminder = try sudoReminderManager.findReminder(forUUID: reminderUUID)
+            let reminder = try sudoReminderManager.findReminder(forReminderId: reminderId)
             reminder.setEnable(newEnableStatus: newEnableStatus)
             setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
 
@@ -54,17 +54,17 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
         delegate.didUpdateReminder(updatedReminder: updatedReminder)
     }
 
-    func didRemoveReminder(sender: Sender, removedReminderUUID: String) {
+    func didRemoveReminder(sender: Sender, reminderId: Int) {
         let sudoReminderManager = getReminderManager()
-        try! sudoReminderManager.removeReminder(forUUID: removedReminderUUID)
+        try! sudoReminderManager.removeReminder(forReminderId: reminderId)
         setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
 
-        delegate.didRemoveReminder(removedReminderUUID: removedReminderUUID)
+        delegate.didRemoveReminder(reminderId: reminderId)
     }
 
     // MARK: - Reminder Manager Control Flow Protocol
 
-    private var reminderManager = ReminderManager(masterDog: nil)
+    private var reminderManager = ReminderManager(parentDog: nil)
 
     func getReminderManager() -> ReminderManager {
         return reminderManager
@@ -185,12 +185,12 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
 
             let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
 
-                let reminderUUID = self.getReminderManager().reminders[indexPath.row].uuid
+                let reminderId = self.getReminderManager().reminders[indexPath.row].reminderId
                 let sudoReminderManager = self.getReminderManager()
                 sudoReminderManager.removeReminder(forIndex: indexPath.row)
                 self.setReminderManager(sender: Sender(origin: self, localized: self), newReminderManager: sudoReminderManager)
 
-                self.delegate.didRemoveReminder(removedReminderUUID: reminderUUID)
+                self.delegate.didRemoveReminder(reminderId: reminderId)
                 self.tableView.deleteRows(at: [indexPath], with: .automatic)
             }
             let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)

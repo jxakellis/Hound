@@ -134,7 +134,7 @@ class AlertManager: NSObject {
         if currentAlertPresented == nil {
             for d in dogManager.dogs {
                 for r in d.dogReminders.reminders where r.isPresentationHandled == true {
-                    TimingManager.willShowTimer(dogName: d.dogTraits.dogName, reminder: r)
+                    TimingManager.willShowTimer(dogName: d.dogTraits.dogName, dogId: d.dogId, reminder: r)
                 }
             }
         }

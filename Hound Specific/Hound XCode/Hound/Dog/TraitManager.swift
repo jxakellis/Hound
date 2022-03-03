@@ -113,7 +113,7 @@ class TraitManager: NSObject, NSCoding, NSCopying, TraitManagerProtocol {
          for log in logs{
              //makes sure log logId isn't repeat
              if log.logId == newLog.logId{
-                 throw TraitManagerError.logUUIDPresent
+                 throw TraitManagerError.logIdPresent
              }
          }
          storedLogs.append(newLog)
@@ -135,7 +135,7 @@ class TraitManager: NSObject, NSCoding, NSCopying, TraitManagerProtocol {
          }
          
          if newLogIndex == nil {
-             throw TraitManagerError.logUUIDNotPresent
+             throw TraitManagerError.logIdNotPresent
          }
          
          else {
@@ -155,7 +155,7 @@ class TraitManager: NSObject, NSCoding, NSCopying, TraitManagerProtocol {
         }
 
         if logIndex == nil {
-            throw TraitManagerError.logUUIDNotPresent
+            throw TraitManagerError.logIdNotPresent
         }
         else {
             storedLogs.remove(at: logIndex ?? -1)

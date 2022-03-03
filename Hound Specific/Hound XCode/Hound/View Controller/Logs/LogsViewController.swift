@@ -26,7 +26,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         let sudoDogManager = getDogManager()
         if sudoDogManager.dogs.isEmpty == false {
             do {
-                try sudoDogManager.findDog(forName: parentDogName).dogTraits.addLog(newLog: newKnownLog)
+                try sudoDogManager.findDog(forDogId: parentDogId).dogTraits.addLog(newLog: newKnownLog)
             }
             catch {
                 ErrorManager.alertForError(message: "Unable to add log.")
@@ -38,11 +38,12 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         Utils.checkForReview()
     }
 
-    func didUpdateKnownLog(sender: Sender, parentDogId: Int, reminderUUID: String?, updatedKnownLog: KnownLog) {
+    func didUpdateKnownLog(sender: Sender, parentDogId: Int, updatedKnownLog: KnownLog) {
 
          let sudoDogManager = getDogManager()
+
          if sudoDogManager.dogs.isEmpty == false {
-                let dog = try! sudoDogManager.findDog(forName: parentDogName)
+                let dog = try! sudoDogManager.findDog(forDogId: parentDogId)
              try! dog.dogTraits.addLog(newLog: updatedKnownLog)
 
          }
@@ -53,11 +54,11 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
 
     }
 
-    func didRemoveKnownLog(sender: Sender, parentDogId: Int, reminderUUID: String?, logUUID: String) {
+    func didRemoveKnownLog(sender: Sender, parentDogId: Int, logId: Int) {
         let sudoDogManager = getDogManager()
         let dog = try! sudoDogManager.findDog(forDogId: parentDogId)
 
-        for dogLogIndex in 0..<dog.dogTraits.logs.count where dog.dogTraits.logs[dogLogIndex].uuid == logUUID {
+        for dogLogIndex in 0..<dog.dogTraits.logs.count where dog.dogTraits.logs[dogLogIndex].logId == logId {
             dog.dogTraits.removeLog(forIndex: dogLogIndex)
             break
         }
@@ -73,9 +74,9 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         setDogManager(sender: sender, newDogManager: newDogManager)
     }
 
-    private var selectedLog: (String, Reminder?, KnownLog)?
-    func didSelectLog(parentDogId: Int, reminder: Reminder?, log: KnownLog) {
-        selectedLog = (parentDogId, reminder, log)
+    private var selectedLog: (Int, KnownLog)?
+    func didSelectLog(parentDogId: Int, log: KnownLog) {
+        selectedLog = (parentDogId, log)
         performSegue(withIdentifier: "logsAddLogViewController", sender: self)
         selectedLog = nil
     }

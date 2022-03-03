@@ -11,7 +11,7 @@ import UIKit
 protocol DogsReminderNavigationViewControllerDelegate: AnyObject {
     func didAddReminder(newReminder: Reminder)
     func didUpdateReminder(updatedReminder: Reminder)
-    func didRemoveReminder(removedReminderUUID: String)
+    func didRemoveReminder(reminderId: Int)
 }
 
 class DogsReminderNavigationViewController: UINavigationController, DogsReminderTableViewControllerDelegate {
@@ -26,17 +26,13 @@ class DogsReminderNavigationViewController: UINavigationController, DogsReminder
         passThroughDelegate.didUpdateReminder(updatedReminder: updatedReminder)
     }
 
-    func didRemoveReminder(removedReminderUUID: String) {
-        passThroughDelegate.didRemoveReminder(removedReminderUUID: removedReminderUUID)
+    func didRemoveReminder(reminderId: Int) {
+        passThroughDelegate.didRemoveReminder(reminderId: reminderId)
     }
-
-   // func didUpdateReminders(newReminderList: [Reminder]) {
-   //     passThroughDelegate.didUpdateReminders(newReminderList: newReminderList)
-   // }
 
     // MARK: - Properties
 
-    // This delegate is used in order to connect the delegate from the sub table view to the master embedded view, i.e. connect DogsReminderTableViewController delegate to DogsAddDogViewController
+    // This delegate is used in order to connect the delegate from the sub table view to the parent embedded view, i.e. connect DogsReminderTableViewController delegate to DogsAddDogViewController
     weak var passThroughDelegate: DogsReminderNavigationViewControllerDelegate! = nil
 
     var dogsReminderTableViewController: DogsReminderTableViewController! = nil

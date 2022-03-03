@@ -19,8 +19,7 @@ class LogsMainScreenTableViewCellBodyCompact: UITableViewCell {
 
     // MARK: - Properties
 
-    private var parentDogNameSource: String! = nil
-    private var reminderSource: Reminder?
+    private var parentDogIdSource: Int! = nil
     private var logSource: KnownLog! = nil
 
     // MARK: - Main
@@ -29,12 +28,12 @@ class LogsMainScreenTableViewCellBodyCompact: UITableViewCell {
         super.awakeFromNib()
     }
 
-    func setup(parentDogId: Int, reminder: Reminder?, log logSource: KnownLog) {
-        self.parentDogNameSource = parentDogName
+    func setup(parentDogId: Int, log logSource: KnownLog) {
+        self.parentDogIdSource = parentDogId
         self.logSource = logSource
-        self.reminderSource = reminder
 
-        self.dogName.text = parentDogName
+        let dog = try! MainTabBarViewController.staticDogManager.findDog(forDogId: parentDogIdSource)
+        self.dogName.text = dog.dogTraits.dogName
         self.logType.text = self.logSource.displayTypeName
 
         let dateFormatter = DateFormatter()

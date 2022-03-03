@@ -52,15 +52,15 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         setDogManager(sender: sender, newDogManager: newDogManager)
     }
 
-    // MARK: - DogManagerControlFlowProtocol + MasterDogManager
+    // MARK: - DogManagerControlFlowProtocol + ParentDogManager
 
-    private var masterDogManager: DogManager = DogManager()
+    private var parentDogManager: DogManager = DogManager()
 
     static var staticDogManager: DogManager = DogManager()
 
     // Get method, returns a copy of dogManager to remove possible editting of dog manager through class reference type
     func getDogManager() -> DogManager {
-        return masterDogManager
+        return parentDogManager
     }
 
     // Sets dog manager, when the value of dog manager is changed it not only changes the variable but calls other needed functions to reflect the change
@@ -73,7 +73,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
 
         // print("reached MainTabBarViewController")
 
-        masterDogManager = newDogManager
+        parentDogManager = newDogManager
         MainTabBarViewController.staticDogManager = newDogManager
 
         // Updates isPaused to reflect any changes in data, if there are no enabled/creaed reminders or no enabled/created dogs then turns isPaused off as there is nothing to pause

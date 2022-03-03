@@ -19,7 +19,7 @@ class Utils {
             AppDelegate.generalLogger.fault("willCreateFollowUpUNUserNotification executionDate nil")
             return
         }
-        // let reminder = try! MainTabBarViewController.staticDogManager.findDog(forName: dogName).dogReminders.findReminder(forUUID: reminderUUID)
+        // let reminder = try! MainTabBarViewController.staticDogManager.findDog(forDogId: dogName).dogReminders.findReminder(forReminderId: reminderUUID)
 
          let content = UNMutableNotificationContent()
         if #available(iOS 15.0, *) {
@@ -57,7 +57,7 @@ class Utils {
             AppDelegate.generalLogger.fault("willCreateUNUserNotification executionDate nil")
             return
         }
-        // let reminder = try! MainTabBarViewController.staticDogManager.findDog(forName: dogName).dogReminders.findReminder(forUUID: reminderUUID)
+        // let reminder = try! MainTabBarViewController.staticDogManager.findDog(forDogId: dogName).dogReminders.findReminder(forReminderId: reminderUUID)
          let content = UNMutableNotificationContent()
 
         if #available(iOS 15.0, *) {

@@ -9,7 +9,7 @@
 import UIKit
 
 protocol DogsReminderTableViewCellDelegate: AnyObject {
-    func didToggleEnable(sender: Sender, reminderUUID: String, newEnableStatus: Bool)
+    func didToggleEnable(sender: Sender, reminderId: Int, newEnableStatus: Bool)
 }
 
 class DogsReminderTableViewCell: UITableViewCell {
@@ -20,7 +20,7 @@ class DogsReminderTableViewCell: UITableViewCell {
     @IBOutlet private weak var reminderToggleSwitch: UISwitch!
 
     @IBAction func didToggleEnable(_ sender: Any) {
-        delegate.didToggleEnable(sender: Sender(origin: self, localized: self), reminderUUID: reminderSource.uuid, newEnableStatus: self.reminderToggleSwitch.isOn)
+        delegate.didToggleEnable(sender: Sender(origin: self, localized: self), reminderId: reminderSource.reminderId, newEnableStatus: self.reminderToggleSwitch.isOn)
     }
 
     // MARK: - Properties

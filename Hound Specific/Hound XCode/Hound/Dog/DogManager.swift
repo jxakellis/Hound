@@ -192,7 +192,6 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         //        }
         //    }
         // }
-        try DogsEndpoint.create(body: <#T##[String : Any]#>, completionHandler: <#T##([String : Any]?, Int?, Error?) -> Void#>)
         storedDogs.append(newDog)
         AppDelegate.endpointLogger.notice("ENDPOINT Add Dog")
     }

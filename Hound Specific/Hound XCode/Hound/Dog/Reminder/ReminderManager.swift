@@ -17,7 +17,7 @@ enum ReminderManagerError: Error {
 protocol ReminderManagerProtocol {
 
     // dog that holds the reminders
-    var masterDog: Dog? { get set }
+    var parentDog: Dog? { get set }
 
     // array of reminders, a dog should contain one of these to specify all of its reminders
     var reminders: [Reminder] { get }
@@ -66,7 +66,7 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
 
     // MARK: - NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
-        let copy = ReminderManager(masterDog: masterDog, initReminders: self.reminders)
+        let copy = ReminderManager(parentDog: parentDog, initReminders: self.reminders)
         return copy
     }
 
@@ -81,24 +81,24 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
 
     // static var supportsSecureCoding: Bool = true
 
-    init(masterDog: Dog?, initReminders: [Reminder] = []) {
-        self.storedMasterDog = masterDog
+    init(parentDog: Dog?, initReminders: [Reminder] = []) {
+        self.storedParentDog = parentDog
         super.init()
         for reminder in initReminders {
             appendReminder(newReminder: reminder)
         }
     }
 
-    private var storedMasterDog: Dog?
+    private var storedParentDog: Dog?
 
-    var masterDog: Dog? {
+    var parentDog: Dog? {
         get {
-            return storedMasterDog
+            return storedParentDog
         }
-        set (newMasterDog) {
-            self.storedMasterDog = newMasterDog
+        set (newParentDog) {
+            self.storedParentDog = newParentDog
             for reminder in storedReminders {
-                reminder.masterDog = storedMasterDog
+                reminder.parentDog = storedParentDog
             }
         }
     }
@@ -110,7 +110,7 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
     /// This handles the proper appending of a reminder. This function assumes an already checked reminder and its purpose is to bypass the add reminder endpoint
     private func appendReminder(newReminder: Reminder) {
         let newReminderCopy = newReminder.copy() as! Reminder
-        newReminderCopy.masterDog = self.masterDog
+        newReminderCopy.parentDog = self.parentDog
        storedReminders.append(newReminderCopy)
     }
 
@@ -188,31 +188,6 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
         try! addReminder(newReminder: ReminderConstant.defaultReminderThree)
         try! addReminder(newReminder: ReminderConstant.defaultReminderFour)
     }
-
-    /*
-     func changeReminder(forReminderId reminderId: String, newReminder: Reminder) throws {
-         
-         //check to find the index of targetted reminder
-         var newReminderIndex: Int?
-         
-         for i in 0..<reminders.count {
-             if reminders[i].reminderId == reminderId {
-                 newReminderIndex = i
-             }
-         }
-         
-         if newReminderIndex == nil {
-             throw ReminderManagerError.reminderUUIDNotPresent
-         }
-         
-         else {
-             newReminder.masterDog = self.masterDog
-             storedReminders[newReminderIndex!] = newReminder
-             AppDelegate.endpointLogger.notice("ENDPOINT Update Reminder (trait)")
-         }
-         sortReminders()
-     }
-     */
 
     private func sortReminders() {
     storedReminders.sort { (reminder1, reminder2) -> Bool in

@@ -143,8 +143,8 @@ class ErrorManager {
              case nilName
              case blankName
              case invalidName
-            case logUUIDPresent
-            case logUUIDNotPresent
+            case logIdPresent
+            case logIdNotPresent
          }
          */
         if case TraitManagerError.nilName = error {

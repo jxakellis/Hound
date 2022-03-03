@@ -11,7 +11,7 @@ import UIKit
 protocol DogsIndependentReminderViewControllerDelegate: AnyObject {
     func didUpdateReminder(sender: Sender, parentDogId: Int, updatedReminder: Reminder) throws
     func didAddReminder(sender: Sender, parentDogId: Int, newReminder: Reminder)
-    func didRemoveReminder(sender: Sender, parentDogId: Int, removedReminderUUID: String)
+    func didRemoveReminder(sender: Sender, parentDogId: Int, reminderId: Int)
     /// Reinitalizes timers that were possibly destroyed
     func didCancel(sender: Sender)
 }
@@ -69,7 +69,7 @@ class DogsIndependentReminderViewController: UIViewController, DogsReminderManag
         let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.reminderAction.text ?? targetReminder!.displayTypeName)?", message: nil, preferredStyle: .alert)
 
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-            self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, removedReminderUUID: self.targetReminder!.uuid)
+            self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, reminderId: self.targetReminder!.reminderId)
             // self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
             self.navigationController?.popViewController(animated: true)
         }

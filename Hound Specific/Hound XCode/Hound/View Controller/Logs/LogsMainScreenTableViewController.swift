@@ -10,7 +10,7 @@ import UIKit
 
 protocol LogsMainScreenTableViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
-    func didSelectLog(parentDogId: Int, reminder: Reminder?, log: KnownLog)
+    func didSelectLog(parentDogId: Int, log: KnownLog)
     func didRemoveLastFilterLog()
 }
 
@@ -39,10 +39,11 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     }
 
     func updateDogManagerDependents() {
-        /// Sorts all dates of every time a reminder was logged into a tuple, containing the actual date, the parent dog name, and the reminder, theb sorts is chronologically from last (closet to present) to first (the first event that happened, so it is the oldest).
-        var calculatedConsolidatedLogs: [(String, Reminder?, KnownLog)] {
+        /// Sorts all dates of every time a reminder was logged into a tuple.
+        /// This tuple containing the parentDogId and the KnownLog. Dates are then extracted at a later date to sort this whole list chronologically from last (closet to present) to first (the first event that happened, so it is the oldest).
+        var calculatedConsolidatedLogs: [(Int, KnownLog)] {
             let dogManager = getDogManager()
-            var consolidatedLogs: [(String, Reminder?, KnownLog)] = []
+            var consolidatedLogs: [(Int, KnownLog)] = []
 
             // not filtering
             if filterIndexPath == nil {
@@ -50,20 +51,8 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     // adds dog logs
                     let dog = dogManager.dogs[dogIndex]
                     for dogLog in dog.dogTraits.logs {
-                        consolidatedLogs.append((dog.dogTraits.dogName, nil, dogLog))
+                        consolidatedLogs.append((dog.dogId, dogLog))
                     }
-
-                    /*
-                     //REQ UPDATE
-                     //adds all reminder logs from dog
-                     for reminderIndex in 0..<dogManager.dogs[dogIndex].dogReminders.reminders.count{
-                         let reminder = dogManager.dogs[dogIndex].dogReminders.reminders[reminderIndex]
-                         
-                         for reminderLog in reminder.logs {
-                             consolidatedLogs.append((dog.dogTraits.dogName, reminder, reminderLog))
-                         }
-                     }
-                     */
 
                 }
             }
@@ -73,18 +62,8 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
 
                 // adds dog logs
                 for dogLog in dog.dogTraits.logs {
-                    consolidatedLogs.append((dog.dogTraits.dogName, nil, dogLog))
+                    consolidatedLogs.append((dog.dogId, dogLog))
                 }
-
-                /*
-                 //REQ UPDATE
-                 //adds all reminder logs from dog
-                 for reminder in dog.dogReminders.reminders{
-                     for reminderLog in reminder.logs {
-                         consolidatedLogs.append((dog.dogTraits.dogName, reminder, reminderLog))
-                     }
-                 }
-                 */
 
             }
             // row is not zero so filtering by a specific known log type
@@ -102,7 +81,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     }
                 }) == true {// apennds all known logs to consolidated list, some have reminder and some dont as varies depending on source (i.e. was nested under doglogs or reminder logs)
                     for knownLog in dog.catagorizedLogTypes[filterIndexPath!.row-1].1 {
-                        consolidatedLogs.append((dog.dogTraits.dogName, knownLog.0, knownLog.1))
+                        consolidatedLogs.append((dog.dogId, knownLog))
                     }
                 }
                 else {
@@ -113,8 +92,8 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
 
             // sorts from earlist in time (e.g. 1970) to most recent (e.g. 2021)
             consolidatedLogs.sort { (var1, var2) -> Bool in
-                let log1: KnownLog = var1.2
-                let log2: KnownLog = var2.2
+                let log1: KnownLog = var1.1
+                let log2: KnownLog = var2.1
 
                 // returns true if var1's log1 is earlier in time than var2's log2
 
@@ -131,14 +110,17 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             return consolidatedLogs
         }
 
-        /// Makes an array of unique days (of a given year) which a logging event occured, for every log that happened on a given unique day/year combo, its information (Date, parentDogName, Reminder) is appeneded to the array attached to the unique pair.
-        var calculatedUniqueLogs: [(Int, Int, [(String, Reminder?, KnownLog)])] {
-            var uniqueLogs: [(Int, Int, Int, [(String, Reminder?, KnownLog)])] = []
+        /// Returns an array tuples which has another array of tuples [month, year, [(parentDogId,KnownLog)].
+        var calculatedUniqueLogs: [(Int, Int, [(Int, KnownLog)])] {
+
+            // Method finds unique days (of a given year) which a logging event occured
+            //  For every log that happened on a given unique day/year combo, its information (parentDogId, KnownLog) is appeneded to the array attached to the unique pair.
+            var uniqueLogs: [(Int, Int, Int, [(Int, KnownLog)])] = []
 
             // goes through all dates present where a log happened
             for consolidatedLogsIndex in 0..<consolidatedLogs.count {
 
-                let yearMonthDayComponents = Calendar.current.dateComponents([.year, .month, .day ], from: consolidatedLogs[consolidatedLogsIndex].2.date)
+                let yearMonthDayComponents = Calendar.current.dateComponents([.year, .month, .day ], from: consolidatedLogs[consolidatedLogsIndex].1.date)
 
                 // Checks to make sure the day and year are valid
 
@@ -170,10 +152,12 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
 
                 // if the year is bigger and the day is bigger then that comes first (e.g.  (4, 2020) comes first in the array and (2,2020) comes second, so most recent is first)
                 if year1 >= year2 {
+                    // if month is bigger then it comes first (a bigger month will always be closer to the future)
                     if month1 > month2 {
                         return true
                     }
                     else if month1 == month2 {
+                        // if day is bigger then it comes first (a bigger day will always be closer to the future than a smaller one)
                         if day1 >= day2 {
                             return true
                         }
@@ -191,7 +175,8 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 }
             }
 
-            var converted: [(Int, Int, [(String, Reminder?, KnownLog)])] = []
+            // converts from day, month, year, [logs] into day, year, [logs] so it can be returned. month not needed
+            var converted: [(Int, Int, [(Int, KnownLog)])] = []
             for uniqueLogDate in uniqueLogs {
                 converted.append((uniqueLogDate.0, uniqueLogDate.2, uniqueLogDate.3))
             }
@@ -212,11 +197,11 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
 
     // MARK: - Properties
 
-    /// Stores all dates of every time a reminder was logged into a tuple, containing the actual date, the parent dog name, and the reminder,  sorted chronologically, first to last.
-    var consolidatedLogs: [(String, Reminder?, KnownLog)] = []
+    /// Stores an array of tuples. Each tuple has a log and the id of the parent dog. Sorted chronologically, first to last.
+    var consolidatedLogs: [(Int, KnownLog)] = []
 
-    /// Stores an array of unique days (of a given year) which a logging event occured. E.g. you logged twice on january 1st 2020& once on january 4th 2020, so the array would be [(1,2020),(4,2020)]
-    private var uniqueLogs: [(Int, Int, [(String, Reminder?, KnownLog)])] = []
+    /// Stores an array of (unique days, unique years, [(parentDogId, logs). Identifies unique day and year combos in which a logging event occured. E.g. you logged twice on january 1st 2020& once on january 4th 2020, so the array would be [(1,2020),(4,2020)] Tuple inside the nested array is (parentDogId, log)
+    private var uniqueLogs: [(Int, Int, [(Int, KnownLog)])] = []
 
     /// IndexPath of current filtering scheme
     private var filterIndexPath: IndexPath?
@@ -303,6 +288,10 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 return false
             }
         }
+
+        // indexPath.section dictates how far into the first array, everything is already sorted so thats all we need to know. Then  we take the .2 entry as that is the nested array of the tuple of logs and parentDogIds
+        let targetUniqueLogsNestedArray: [(Int, KnownLog)]! = uniqueLogs[indexPath.section].2
+
         // no logs present
         if uniqueLogs.count == 0 {
             if UserConfiguration.isCompactView == true {
@@ -323,13 +312,15 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             }
 
         }
-        // logs present but header
+        // logs are present and need a header (row being zero indicates that the cell is a header)
         else if indexPath.row == 0 {
+            // For the given parent array, we will take the first log in the nested array. The header will extract the date information from that log. It doesn't matter which log we take as all logs will have the same day, month, and year since they were already sorted to be in that array.
+
             if UserConfiguration.isCompactView == true {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderCompact", for: indexPath)
 
                 let customCell = cell as! LogsMainScreenTableViewCellHeaderCompact
-                customCell.setup(log: uniqueLogs[indexPath.section].2[0].2, showFilterIndicator: shouldShowFilterIndicator)
+                customCell.setup(log: targetUniqueLogsNestedArray[0].1, showFilterIndicator: shouldShowFilterIndicator)
 
                 return cell
             }
@@ -337,15 +328,16 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderRegular", for: indexPath)
 
                 let customCell = cell as! LogsMainScreenTableViewCellHeaderRegular
-                customCell.setup(log: uniqueLogs[indexPath.section].2[0].2, showFilterIndicator: shouldShowFilterIndicator)
+                customCell.setup(log: targetUniqueLogsNestedArray[0].1, showFilterIndicator: shouldShowFilterIndicator)
 
                 return cell
             }
         }
         // log
         else {
-            let logDisplay = uniqueLogs[indexPath.section].2[indexPath.row-1]
-            let dog = try! getDogManager().findDog(forName: logDisplay.0)
+            // indexPath.row -1 corrects for the first row in the section being the header
+            let logToDisplay = targetUniqueLogsNestedArray[indexPath.row-1]
+            let dog = try! getDogManager().findDog(forDogId: logToDisplay.0)
             let icon = dog.dogTraits.icon
 
             if UserConfiguration.isCompactView == true {
@@ -353,7 +345,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
 
                 let customCell = cell as! LogsMainScreenTableViewCellBodyCompact
 
-                customCell.setup(parentDogName: logDisplay.0, reminder: logDisplay.1, log: logDisplay.2)
+                customCell.setup(parentDogId: logToDisplay.0, log: logToDisplay.1)
 
                 return cell
             }
@@ -363,7 +355,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
 
                 let customCell = cell as! LogsMainScreenTableViewCellBodyRegularWithIcon
 
-                customCell.setup(parentDogName: logDisplay.0, reminder: logDisplay.1, log: logDisplay.2)
+                customCell.setup(parentDogId: logToDisplay.0, log: logToDisplay.1)
 
                 return cell
             }
@@ -373,7 +365,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
 
                 let customCell = cell as! LogsMainScreenTableViewCellBodyRegularWithoutIcon
 
-                customCell.setup(parentDogName: logDisplay.0, reminder: logDisplay.1, log: logDisplay.2)
+                customCell.setup(parentDogId: logToDisplay.0, log: logToDisplay.1)
 
                 return cell
             }
@@ -401,10 +393,11 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
 
                 let originalNumberOfSections = uniqueLogs.count
 
-                let cellToRemove = uniqueLogs[indexPath.section].2[indexPath.row-1]
+                let targetUniqueLogsNestedArray = uniqueLogs[indexPath.section].2
+                let cellToRemove = targetUniqueLogsNestedArray[indexPath.row-1]
 
-                let dog = try! newDogManager.findDog(forName: cellToRemove.0)
-                for dogLogIndex in 0..<dog.dogTraits.logs.count where dog.dogTraits.logs[dogLogIndex].uuid == cellToRemove.2.uuid {
+                let dog = try! newDogManager.findDog(forDogId: cellToRemove.0)
+                for dogLogIndex in 0..<dog.dogTraits.logs.count where dog.dogTraits.logs[dogLogIndex].logId == cellToRemove.1.logId {
                     dog.dogTraits.removeLog(forIndex: dogLogIndex)
                     break
                 }
@@ -463,12 +456,13 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         self.tableView.deselectRow(at: indexPath, animated: true)
 
         if indexPath.section > (uniqueLogs.count - 1) || (indexPath.row - 1) > (uniqueLogs[indexPath.section].2.count - 1) || (indexPath.row - 1) < 0 {
-            ErrorManager.alertForError(message: "You selected a row that was unable to be decifered. Please restart Hound to fix. If interested, email HoundOrganizer@gmail.com screenshots of your logs and a short description of any actions you did prior to this message. Thanks for the help!")
+            ErrorManager.alertForError(message: "You selected a row that was unable to be decifered. Please restart Hound to fix.")
         }
         else {
-            let selectedLogDisplay = uniqueLogs[indexPath.section].2[indexPath.row-1]
+            let targetUniqueLogsNestedArray = uniqueLogs[indexPath.section].2
+            let selectedLogToDisplay = targetUniqueLogsNestedArray[indexPath.row-1]
 
-            delegate.didSelectLog(parentDogName: selectedLogDisplay.0, reminder: selectedLogDisplay.1, log: selectedLogDisplay.2)
+            delegate.didSelectLog(parentDogId: selectedLogToDisplay.0, log: selectedLogToDisplay.1)
         }
     }
 

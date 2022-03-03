@@ -19,7 +19,7 @@ class Dog: NSObject, NSCoding, NSCopying {
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = Dog()
         copy.dogReminders = self.dogReminders.copy() as? ReminderManager
-        copy.dogReminders.masterDog = copy
+        copy.dogReminders.parentDog = copy
         copy.dogTraits = self.dogTraits.copy() as! TraitManager
         return copy
     }
@@ -29,8 +29,8 @@ class Dog: NSObject, NSCoding, NSCopying {
         super.init()
         dogTraits = aDecoder.decodeObject(forKey: "dogTraits") as? TraitManager ?? TraitManager()
         // for build versions <= 1513
-        dogReminders = aDecoder.decodeObject(forKey: "dogReminders") as? ReminderManager ?? aDecoder.decodeObject(forKey: "dogRequirements") as? ReminderManager ?? aDecoder.decodeObject(forKey: "dogRequirments") as? ReminderManager ?? ReminderManager(masterDog: self)
-        dogReminders.masterDog = self
+        dogReminders = aDecoder.decodeObject(forKey: "dogReminders") as? ReminderManager ?? aDecoder.decodeObject(forKey: "dogRequirements") as? ReminderManager ?? aDecoder.decodeObject(forKey: "dogRequirments") as? ReminderManager ?? ReminderManager(parentDog: self)
+        dogReminders.parentDog = self
     }
 
     func encode(with aCoder: NSCoder) {
@@ -42,7 +42,7 @@ class Dog: NSObject, NSCoding, NSCopying {
 
     override init() {
         super.init()
-        self.dogReminders = ReminderManager(masterDog: self)
+        self.dogReminders = ReminderManager(parentDog: self)
     }
 
     convenience init(defaultReminders: Bool) {
@@ -52,7 +52,7 @@ class Dog: NSObject, NSCoding, NSCopying {
         }
     }
 
-    var dogId: Int?
+    var dogId: Int = -1
 
     /// Traits
     var dogTraits: TraitManager = TraitManager()
@@ -60,8 +60,9 @@ class Dog: NSObject, NSCoding, NSCopying {
     /// ReminderManager that handles all specified reminders for a dog, e.g. being taken to the outside every time interval or being fed.
     var dogReminders: ReminderManager! = nil
 
-    var catagorizedLogTypes: [(KnownLogType, [(Reminder?, KnownLog)])] {
-        var catagorizedLogTypes: [(KnownLogType, [(Reminder?, KnownLog)])] = []
+    /// Returns an array of known log types. Each known log type has an array of logs attached to it. This means you can find every log for a given log type
+    var catagorizedLogTypes: [(KnownLogType, [KnownLog])] {
+        var catagorizedLogTypes: [(KnownLogType, [KnownLog])] = []
 
         // handles all dog logs and adds to catagorized log types
         for dogLog in dogTraits.logs {
@@ -86,11 +87,11 @@ class Dog: NSObject, NSCoding, NSCopying {
                     }
                 })
 
-                catagorizedLogTypes[targetIndex].1.append((nil, dogLog))
+                catagorizedLogTypes[targetIndex].1.append(dogLog)
             }
             // does not contain that dog Log's Type
             else {
-                catagorizedLogTypes.append((dogLog.logType, [(nil, dogLog)]))
+                catagorizedLogTypes.append((dogLog.logType, [dogLog]))
             }
         }
 

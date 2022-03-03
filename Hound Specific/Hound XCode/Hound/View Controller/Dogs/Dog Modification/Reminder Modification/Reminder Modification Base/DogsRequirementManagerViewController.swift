@@ -209,7 +209,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
                 }
             }
 
-            updatedReminder.uuid = targetReminder?.uuid ?? updatedReminder.uuid
+            updatedReminder.reminderId = targetReminder?.reminderId ?? updatedReminder.reminderId
             updatedReminder.reminderType = ScheduledLogType(rawValue: reminderAction.text!)!
 
             if reminderAction.text == KnownLogType.custom.rawValue {

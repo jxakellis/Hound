@@ -9,7 +9,7 @@
 import UIKit
 
 protocol DogsMainScreenTableViewCellReminderDisplayDelegate: AnyObject {
-    func didToggleReminderSwitch(sender: Sender, parentDogId: Int, reminderUUID: String, isEnabled: Bool)
+    func didToggleReminderSwitch(sender: Sender, parentDogId: Int, reminderId: Int, isEnabled: Bool)
 }
 
 class DogsMainScreenTableViewCellReminderDisplay: UITableViewCell {
@@ -28,13 +28,13 @@ class DogsMainScreenTableViewCellReminderDisplay: UITableViewCell {
 
     // When the on off switch is toggled
     @IBAction private func didToggleReminderSwitch(_ sender: Any) {
-        delegate.didToggleReminderSwitch(sender: Sender(origin: self, localized: self), parentDogName: self.parentDogName, reminderUUID: reminder.uuid, isEnabled: self.reminderToggleSwitch.isOn)
+        delegate.didToggleReminderSwitch(sender: Sender(origin: self, localized: self), parentDogId: parentDogId, reminderId: reminder.reminderId, isEnabled: reminderToggleSwitch.isOn)
     }
 
     // MARK: - Properties
     private var reminder: Reminder = Reminder()
 
-    private var parentDogId: Int = ""
+    private var parentDogId: Int!
 
     weak var delegate: DogsMainScreenTableViewCellReminderDisplayDelegate! = nil
 
@@ -42,8 +42,6 @@ class DogsMainScreenTableViewCellReminderDisplay: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        // reminderChevron.tintColor = ColorConstant.gray.rawValue
-        // reminderChevron.alpha = 1
 
         // Initialization code
     }
@@ -56,7 +54,7 @@ class DogsMainScreenTableViewCellReminderDisplay: UITableViewCell {
 
     // Setup function that sets up the different IBOutlet properties
     func setup(parentDogId: Int, reminderPassed: Reminder) {
-        self.parentDogName = parentDogName
+        self.parentDogId = parentDogId
         self.reminder = reminderPassed
         self.reminderTypeDisplayName.text = reminderPassed.displayTypeName
 
