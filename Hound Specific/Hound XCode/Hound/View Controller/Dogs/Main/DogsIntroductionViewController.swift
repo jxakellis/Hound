@@ -42,7 +42,7 @@ class DogsIntroductionViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        LocalConfiguration.hasLoadedIntroductionViewControllerBefore = true
+        LocalConfiguration.hasLoadedDogsIntroductionViewControllerBefore = true
 
         delegate.didSetDefaultReminderState(sender: Sender(origin: self, localized: self), newDefaultReminderStatus: remindersToggleSwitch.isOn)
 

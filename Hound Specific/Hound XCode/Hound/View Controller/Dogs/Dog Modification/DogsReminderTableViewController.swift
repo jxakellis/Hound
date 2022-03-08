@@ -22,7 +22,7 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
         let sudoReminderManager = getReminderManager()
         do {
             let reminder = try sudoReminderManager.findReminder(forReminderId: reminderId)
-            reminder.setEnable(newEnableStatus: newEnableStatus)
+            reminder.isEnabled = newEnableStatus
             setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
 
             delegate.didUpdateReminder(updatedReminder: reminder)
@@ -38,17 +38,17 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
     var dogsNestedReminderViewController = DogsNestedReminderViewController()
 
     /// When this function is called through a delegate, it adds the information to the list of reminders and updates the cells to display it
-    func didAddReminder(sender: Sender, newReminder: Reminder) throws {
+    func didAddReminder(sender: Sender, newReminder: Reminder) {
         let sudoReminderManager = getReminderManager()
-        try sudoReminderManager.addReminder(newReminder: newReminder)
+        sudoReminderManager.addReminder(newReminder: newReminder)
         setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
 
         delegate.didAddReminder(newReminder: newReminder)
     }
 
-    func didUpdateReminder(sender: Sender, updatedReminder: Reminder) throws {
+    func didUpdateReminder(sender: Sender, updatedReminder: Reminder) {
         let sudoReminderManager = getReminderManager()
-        try sudoReminderManager.addReminder(newReminder: updatedReminder)
+        sudoReminderManager.addReminder(newReminder: updatedReminder)
         setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
 
         delegate.didUpdateReminder(updatedReminder: updatedReminder)

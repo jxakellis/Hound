@@ -24,7 +24,7 @@ const getReminders = async (req, res) => {
   if (reminderId) {
     try {
       // left joins dogReminders and component tables so that a reminder has all of its components attached
-      // tables where the dogReminder isn't present (i.e. its timingStyle is different) will just append lots of null values to result
+      // tables where the dogReminder isn't present (i.e. its reminderType is different) will just append lots of null values to result
       let result = await queryPromise(
         req,
         'SELECT *, dogReminders.reminderId as reminderId FROM dogReminders LEFT JOIN reminderCountdownComponents ON dogReminders.reminderId = reminderCountdownComponents.reminderId LEFT JOIN reminderWeeklyComponents ON dogReminders.reminderId = reminderWeeklyComponents.reminderId LEFT JOIN reminderMonthlyComponents ON dogReminders.reminderId = reminderMonthlyComponents.reminderId LEFT JOIN reminderOneTimeComponents ON dogReminders.reminderId = reminderOneTimeComponents.reminderId LEFT JOIN reminderSnoozeComponents ON dogReminders.reminderId = reminderSnoozeComponents.reminderId WHERE dogReminders.reminderId = ?',
@@ -34,7 +34,7 @@ const getReminders = async (req, res) => {
       // there will be only one result so just take first item in array
       result = result[0];
 
-      // because of all the null values from left join, since only one component table (for the corresponding timingStyle) will have the reminder, we need to remve
+      // because of all the null values from left join, since only one component table (for the corresponding reminderType) will have the reminder, we need to remve
       // eslint-disable-next-line no-restricted-syntax
       for (const [key, value] of Object.entries(result)) {
         // checks for null json values, if json value is null then removes the key
@@ -47,7 +47,7 @@ const getReminders = async (req, res) => {
     }
     catch (error) {
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message });
+      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
     }
   }
   // no reminderId
@@ -68,7 +68,7 @@ const getReminders = async (req, res) => {
 
       // iterate through all the reminders returned
       for (let i = 0; i < result.length; i += 1) {
-        // because of all the null values from left join, since only one component table (for the corresponding timingStyle) will have the reminder, we need to remve
+        // because of all the null values from left join, since only one component table (for the corresponding reminderType) will have the reminder, we need to remve
         // eslint-disable-next-line no-restricted-syntax
         for (const [key, value] of Object.entries(result[i])) {
           // checks for null json values, if json value is null then removes the key
@@ -85,82 +85,82 @@ const getReminders = async (req, res) => {
     catch (error) {
       // error when trying to do query to database
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message });
+      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
     }
   }
 };
 
 const createReminder = async (req, res) => {
   const dogId = formatNumber(req.params.dogId);
-  const { reminderType } = req.body;
+  const { reminderAction } = req.body;
   const { customTypeName } = req.body;
-  const { timingStyle } = req.body;
+  const { reminderType } = req.body;
   const executionBasis = formatDate(req.body.executionBasis);
   const isEnabled = formatBoolean(req.body.isEnabled);
 
   // check to see that necessary generic reminder componetns are present
-  if (areAllDefined([reminderType, customTypeName, timingStyle, executionBasis, isEnabled]) === false) {
+  if (areAllDefined([reminderAction, customTypeName, reminderType, executionBasis, isEnabled]) === false) {
     // >= 1 of the objects are undefined
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; reminderType, timingStyle, executionBasis, or isEnabled missing ' });
+    return res.status(400).json({ message: 'Invalid Body; reminderAction, reminderType, executionBasis, or isEnabled missing ' });
   }
   // if the reminder is custom, then it needs its custom name
-  if (reminderType === 'Custom' && !customTypeName) {
+  if (reminderAction === 'Custom' && !customTypeName) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; No customTypeName provided for "Custom" reminderType' });
+    return res.status(400).json({ message: 'Invalid Body; No customTypeName provided for "Custom" reminderAction' });
   }
 
   // define out here so reminderId can be accessed in catch block to delete entries
   let reminderId;
 
   try {
-    // need to check timingStyle before querying because a partially correct timing style can have the query data added to the database but kick back a warning, we only want exact matches
+    // need to check reminderType before querying because a partially correct timing style can have the query data added to the database but kick back a warning, we only want exact matches
 
     // no need to check for snooze components as a newly created reminder cant be snoozed, it can only be updated to be snoozing
-    if (timingStyle === 'countdown') {
+    if (reminderType === 'countdown') {
       // first insert to main reminder table to get reminderId, then insert to other tables
       const result = await queryPromise(
         req,
-        'INSERT INTO dogReminders(dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
-        [dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled],
+        'INSERT INTO dogReminders(dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
+        [dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled],
       );
       reminderId = formatNumber(result.insertId);
       await createCountdownComponents(req, reminderId);
     }
-    else if (timingStyle === 'weekly') {
+    else if (reminderType === 'weekly') {
       // first insert to main reminder table to get reminderId, then insert to other tables
       const result = await queryPromise(
         req,
-        'INSERT INTO dogReminders(dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
-        [dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled],
+        'INSERT INTO dogReminders(dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
+        [dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled],
       );
       reminderId = formatNumber(result.insertId);
       await createWeeklyComponents(req, reminderId);
     }
-    else if (timingStyle === 'monthly') {
+    else if (reminderType === 'monthly') {
       // first insert to main reminder table to get reminderId, then insert to other tables
       const result = await queryPromise(
         req,
-        'INSERT INTO dogReminders(dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
-        [dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled],
+        'INSERT INTO dogReminders(dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
+        [dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled],
       );
       reminderId = formatNumber(result.insertId);
       await createMonthlyComponents(req, reminderId);
     }
-    else if (timingStyle === 'oneTime') {
+    else if (reminderType === 'oneTime') {
       // first insert to main reminder table to get reminderId, then insert to other tables
       const result = await queryPromise(
         req,
-        'INSERT INTO dogReminders(dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
-        [dogId, reminderType, customTypeName, timingStyle, executionBasis, isEnabled],
+        'INSERT INTO dogReminders(dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
+        [dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled],
       );
       reminderId = formatNumber(result.insertId);
       await createOneTimeComponents(req, reminderId);
     }
     else {
-      // nothing matched timingStyle
+      // nothing matched reminderType
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Body; timingStyle Invalid' });
+      return res.status(400).json({ message: 'Invalid Body; reminderType Invalid' });
     }
     // was able to successfully create components for a certain timing style
     req.commitQueries(req);
@@ -168,39 +168,39 @@ const createReminder = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; Database query failed', error: error.message });
+    return res.status(400).json({ message: 'Invalid Body; Database query failed', error: error.code });
   }
 };
 
 const delLeftOverReminderComponents = require('../utils/delete').deleteLeftoverReminderComponents;
 
 const updateReminder = async (req, res) => {
-  // FIX ME, if updating to a new timingStyle, need to create data instead of just updating. current implementation doesn't add data to a the new table for timingStyle so update queries go nowhere
+  // FIX ME, if updating to a new reminderType, need to create data instead of just updating. current implementation doesn't add data to a the new table for reminderType so update queries go nowhere
 
   const reminderId = formatNumber(req.params.reminderId);
-  const { reminderType } = req.body;
+  const { reminderAction } = req.body;
   const { customTypeName } = req.body;
-  const { timingStyle } = req.body;
+  const { reminderType } = req.body;
   const executionBasis = formatDate(req.body.executionBasis);
   const isEnabled = formatBoolean(req.body.isEnabled);
   const isSnoozed = formatBoolean(req.body.isSnoozed);
 
-  if (atLeastOneDefined([reminderType, timingStyle, executionBasis, isEnabled, isSnoozed]) === false) {
+  if (atLeastOneDefined([reminderAction, reminderType, executionBasis, isEnabled, isSnoozed]) === false) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; No reminderId, reminderType, timingStyle, executionBasis, isEnabled, or isSnoozed provided' });
+    return res.status(400).json({ message: 'Invalid Body; No reminderId, reminderAction, reminderType, executionBasis, isEnabled, or isSnoozed provided' });
   }
-  if (reminderType === 'Custom' && !customTypeName) {
+  if (reminderAction === 'Custom' && !customTypeName) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; No customTypeName provided for "Custom" reminderType' });
+    return res.status(400).json({ message: 'Invalid Body; No customTypeName provided for "Custom" reminderAction' });
   }
 
   try {
-    if (reminderType) {
-      if (reminderType === 'Custom') {
-        await queryPromise(req, 'UPDATE dogReminders SET reminderType = ?, customTypeName = ?  WHERE reminderId = ?', [reminderType, customTypeName, reminderId]);
+    if (reminderAction) {
+      if (reminderAction === 'Custom') {
+        await queryPromise(req, 'UPDATE dogReminders SET reminderAction = ?, customTypeName = ?  WHERE reminderId = ?', [reminderAction, customTypeName, reminderId]);
       }
       else {
-        await queryPromise(req, 'UPDATE dogReminders SET reminderType = ? WHERE reminderId = ?', [reminderType, reminderId]);
+        await queryPromise(req, 'UPDATE dogReminders SET reminderAction = ? WHERE reminderId = ?', [reminderAction, reminderId]);
       }
     }
 
@@ -211,49 +211,49 @@ const updateReminder = async (req, res) => {
       await queryPromise(req, 'UPDATE dogReminders SET isEnabled = ? WHERE reminderId = ?', [isEnabled, reminderId]);
     }
     // save me for second to last since I have a high chance of failing
-    if (timingStyle) {
-      if (timingStyle === 'countdown') {
+    if (reminderType) {
+      if (reminderType === 'countdown') {
         console.log('1');
         // add new
         await updateCountdownComponents(req, reminderId);
         console.log('2');
         // switch reminder to new mode
-        await queryPromise(req, 'UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId]);
+        await queryPromise(req, 'UPDATE dogReminders SET reminderType = ? WHERE reminderId = ?', [reminderType, reminderId]);
         console.log('3');
         // delete old components since reminder is successfully switched to new mode
-        await delLeftOverReminderComponents(req, reminderId, timingStyle);
+        await delLeftOverReminderComponents(req, reminderId, reminderType);
         console.log('4');
       }
-      else if (timingStyle === 'weekly') {
+      else if (reminderType === 'weekly') {
         // add new
         await updateWeeklyComponents(req, reminderId);
         // switch reminder to new mode
-        await queryPromise(req, 'UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId]);
+        await queryPromise(req, 'UPDATE dogReminders SET reminderType = ? WHERE reminderId = ?', [reminderType, reminderId]);
         // delete old components since reminder is successfully switched to new mode
-        await delLeftOverReminderComponents(req, reminderId, timingStyle);
+        await delLeftOverReminderComponents(req, reminderId, reminderType);
       }
-      else if (timingStyle === 'monthly') {
+      else if (reminderType === 'monthly') {
         // add new
         await updateMonthlyComponents(req, reminderId);
         // switch reminder to new mode
-        await queryPromise(req, 'UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId]);
+        await queryPromise(req, 'UPDATE dogReminders SET reminderType = ? WHERE reminderId = ?', [reminderType, reminderId]);
         // delete old components since reminder is successfully switched to new mode
-        await delLeftOverReminderComponents(req, reminderId, timingStyle);
+        await delLeftOverReminderComponents(req, reminderId, reminderType);
       }
-      else if (timingStyle === 'oneTime') {
+      else if (reminderType === 'oneTime') {
         // add new
         await updateOneTimeComponents(req, reminderId);
         // switch reminder to new mode
-        await queryPromise(req, 'UPDATE dogReminders SET timingStyle = ? WHERE reminderId = ?', [timingStyle, reminderId]);
+        await queryPromise(req, 'UPDATE dogReminders SET reminderType = ? WHERE reminderId = ?', [reminderType, reminderId]);
         // delete old components since reminder is successfully switched to new mode
-        await delLeftOverReminderComponents(req, reminderId, timingStyle);
+        await delLeftOverReminderComponents(req, reminderId, reminderType);
       }
       else {
         req.rollbackQueries(req);
-        return res.status(400).json({ message: 'Invalid Body; timingStyle Invalid' });
+        return res.status(400).json({ message: 'Invalid Body; reminderType Invalid' });
       }
     }
-    // do last since timingStyle will delete snooze components
+    // do last since reminderType will delete snooze components
     if (typeof isSnoozed !== 'undefined') {
       await updateSnoozeComponents(reminderId, req);
       // no need to invoke anything else as the snoozeComponents are self contained and the function handles deleting snoozeComponents if isSnoozed is changing to false
@@ -265,7 +265,7 @@ const updateReminder = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body or Parameters; Database query failed', error: error.message });
+    return res.status(400).json({ message: 'Invalid Body or Parameters; Database query failed', error: error.code });
   }
 };
 const delReminder = require('../utils/delete').deleteReminder;
@@ -280,7 +280,7 @@ const deleteReminder = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Syntax; Database query failed', error: error.message });
+    return res.status(400).json({ message: 'Invalid Syntax; Database query failed', error: error.code });
   }
 };
 

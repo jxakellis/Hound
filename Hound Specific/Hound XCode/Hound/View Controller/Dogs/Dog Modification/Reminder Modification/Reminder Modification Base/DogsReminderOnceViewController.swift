@@ -66,11 +66,8 @@ class DogsReminderOnceViewController: UIViewController, UIGestureRecognizerDeleg
     }
 
     /// Returns the datecomponets  selected
-    var dateComponents: DateComponents? {
-        if Date().distance(to: datePicker.date) < 0 {
-            datePicker.date = datePicker.date.addingTimeInterval(5.0*60.0)
-        }
-        return Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: datePicker.date)
+    var executionDate: Date {
+        return datePicker.date
     }
 
 }

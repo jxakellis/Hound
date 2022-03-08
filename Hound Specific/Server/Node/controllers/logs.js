@@ -23,7 +23,7 @@ const getLogs = async (req, res) => {
     }
     catch (error) {
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message });
+      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
     }
   }
   else {
@@ -48,7 +48,7 @@ const getLogs = async (req, res) => {
     catch (error) {
       // error when trying to do query to database
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message });
+      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
     }
   }
 };
@@ -81,7 +81,7 @@ const createLog = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Parameters; Database query failed; Check date or logType format', error: error.message });
+    return res.status(400).json({ message: 'Invalid Parameters; Database query failed; Check date or logType format', error: error.code });
   }
 };
 
@@ -121,7 +121,7 @@ const updateLog = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body or Parameters; Database query failed; Check date or logType format', error: error.message });
+    return res.status(400).json({ message: 'Invalid Body or Parameters; Database query failed; Check date or logType format', error: error.code });
   }
 };
 
@@ -137,7 +137,7 @@ const deleteLog = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Syntax; Database query failed', error: error.message });
+    return res.status(400).json({ message: 'Invalid Syntax; Database query failed', error: error.code });
   }
 };
 

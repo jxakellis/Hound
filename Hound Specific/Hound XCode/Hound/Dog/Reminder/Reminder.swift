@@ -16,100 +16,34 @@ enum ReminderError: Error {
     case intervalInvalid
 }
 
-enum ReminderStyle: String, CaseIterable {
+enum ReminderType: String, CaseIterable {
 
     init?(rawValue: String) {
-        for type in ReminderStyle.allCases {
+        for type in ReminderType.allCases {
             if type.rawValue.lowercased() == rawValue.lowercased() {
                 self = type
                 return
             }
         }
 
-        AppDelegate.generalLogger.fault("ReminderStyle not found during init")
+        AppDelegate.generalLogger.fault("ReminderType not found during init")
         self = .oneTime
     }
-    // case oneTime = "oneTime"
-    // case countDown = "countDown"
-    // case weekly = "weekly"
-    // case monthly = "monthly"
-    case oneTime = "oneTime"
-    case countDown = "countdown"
-    case weekly = "weekly"
-    case monthly = "monthly"
+    case oneTime
+    case countdown
+    case weekly
+    case monthly
 }
 
 enum ReminderMode {
     case oneTime
-    case countDown
+    case countdown
     case weekly
     case monthly
     case snooze
 }
 
-protocol ReminderTraitsProtocol {
-
-    /// Dog that hold this reminder, used for logs
-    var parentDog: Dog? { get set }
-
-    var reminderId: Int { get set }
-
-    /// Replacement for reminderName, a way for the user to keep track of what the reminder is for
-    var reminderType: ScheduledLogType { get set }
-
-    /// If the reminder's type is custom, this is the name for it
-    var customTypeName: String? { get set }
-
-    /// If not .custom type then just .type name, if custom and has customTypeName then its that string
-    var displayTypeName: String { get }
-
-    /// An array of all dates that logs when the timer has fired, whether by snooze, regular timing convention, etc. ANY TIME
-    // var logs: [KnownLog] { get set }
-}
-
-protocol ReminderComponentsProtocol {
-    /// The components needed for a countdown based timer
-    var countDownComponents: CountDownComponents { get set }
-
-    /// The components needed if an timer is snoozed
-    var snoozeComponents: SnoozeComponents { get set }
-
-    /// The components needed if for time of day based timer
-    var timeOfDayComponents: TimeOfDayComponents { get set }
-
-    /// Figures out whether the reminder is in snooze, count down, time of day, or another timer mode. Returns enum case corrosponding
-    var timerMode: ReminderMode { get }
-
-    /// An enum that indicates whether the reminder is in countdown format or time of day format
-    var timingStyle: ReminderStyle { get }
-    /// Function to change timing style and adjust data corrosponding accordingly.
-    mutating func changeTimingStyle(newTimingStyle: ReminderStyle)
-}
-
-protocol ReminderTimingComponentsProtocol {
-    /// Similar to executionDate but instead of being a log of everytime the time has fired it is either the date the timer has last fired or the date it should be basing its execution off of, e.g. 5 minutes into the timer you change the countdown from 30 minutes to 15, you don't want to log an execution as there was no one but you want to start the timer fresh and have it count down from the moment it was changed.
-    var executionBasis: Date { get }
-
-    /// Changes executionBasis to the specified value, note if the Date is equal to the current date (i.e. newExecutionBasis == Date()) then resets all components intervals elapsed to zero.
-    mutating func changeExecutionBasis(newExecutionBasis: Date, shouldResetIntervalsElapsed: Bool)
-
-    /// True if the presentation of the timer (when it is time to present) has been handled and sent to the presentation handler, prevents repeats of the timer being sent to the presenation handler over and over.
-    var isPresentationHandled: Bool { get set }
-
-    /// The date at which the reminder should fire, i.e. go off to the user and display an alert
-    var executionDate: Date? { get }
-
-    /// Calculated time interval remaining that taking into account factors to produce correct value for conditions and parameters
-    var intervalRemaining: TimeInterval? { get }
-
-    /// DO NOT DUPLICATE OR ENCODE, WILL CAUSE TIMER TO FIRE TWICE. This is the timer that is used to make the reminder function. It triggers the events for the reminder. Without this then when it was time for the reminder, nothing would happen.
-    var timer: Timer? { get set }
-
-    /// Called when a timer is fired/executed and an option to deal with it is selected by the user, if the reset is trigger by a user doing an action that constitude a reset, specify as so, but if doing something like changing the value of some component it was did not exeute to user. If didExecuteToUse is true it does the same thing as false except it appends the current date to the array of logs which keeps tracks of each time a reminder is formally executed.
-    mutating func timerReset(shouldLogExecution: Bool, knownLogType: KnownLogType?, customTypeName: String?)
-}
-
-class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderComponentsProtocol, ReminderTimingComponentsProtocol, EnableProtocol {
+class Reminder: NSObject, NSCoding, NSCopying {
 
     // MARK: - NSCopying
 
@@ -117,17 +51,18 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         let copy = Reminder()
 
         copy.reminderId = self.reminderId
-        copy.reminderType = self.reminderType
+        copy.reminderAction = self.reminderAction
         copy.customTypeName = self.customTypeName
         copy.parentDog = self.parentDog
 
-        copy.countDownComponents = self.countDownComponents.copy() as! CountDownComponents
-        copy.timeOfDayComponents = self.timeOfDayComponents.copy() as! TimeOfDayComponents
-        copy.timeOfDayComponents.parentReminder = copy
+        copy.countdownComponents = self.countdownComponents.copy() as! CountdownComponents
+        copy.weeklyComponents = self.weeklyComponents.copy() as! WeeklyComponents
+        copy.weeklyComponents.parentReminder = copy
+        copy.monthlyComponents = self.monthlyComponents.copy() as! MonthlyComponents
+        copy.monthlyComponents.parentReminder = copy
         copy.oneTimeComponents = self.oneTimeComponents.copy() as! OneTimeComponents
-        copy.oneTimeComponents.parentReminder = copy
         copy.snoozeComponents = self.snoozeComponents.copy() as! SnoozeComponents
-        copy.storedTimingStyle = self.timingStyle
+        copy.storedReminderType = self.reminderType
 
         copy.isPresentationHandled = self.isPresentationHandled
         copy.storedExecutionBasis = self.executionBasis
@@ -140,28 +75,23 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
 
     // MARK: - NSCoding
 
-    override init() {
-        super.init()
-        self.timeOfDayComponents.parentReminder = self
-        self.oneTimeComponents.parentReminder = self
-    }
-
     required init?(coder aDecoder: NSCoder) {
         super.init()
 
-        self.reminderId = aDecoder.decodeObject(forKey: "reminderId") as? Int ?? -1
-        self.reminderType = ScheduledLogType(rawValue: aDecoder.decodeObject(forKey: "reminderType") as? String ?? aDecoder.decodeObject(forKey: "requirement") as? String ?? aDecoder.decodeObject(forKey: "requirment") as? String ?? aDecoder.decodeObject(forKey: "requirementType") as? String ?? aDecoder.decodeObject(forKey: "requirmentType") as? String ?? ReminderConstant.defaultType.rawValue)!
+        self.reminderId = aDecoder.decodeInteger(forKey: "reminderId")
+        self.reminderAction = ReminderAction(rawValue: aDecoder.decodeObject(forKey: "reminderAction") as? String ?? ReminderConstant.defaultAction.rawValue)!
 
         self.customTypeName = aDecoder.decodeObject(forKey: "customTypeName") as? String
 
-        self.countDownComponents = aDecoder.decodeObject(forKey: "countDownComponents") as? CountDownComponents ?? CountDownComponents()
-        self.timeOfDayComponents = aDecoder.decodeObject(forKey: "timeOfDayComponents") as?  TimeOfDayComponents ?? TimeOfDayComponents()
-        self.timeOfDayComponents.parentReminder = self
+        self.countdownComponents = aDecoder.decodeObject(forKey: "countdownComponents") as? CountdownComponents ?? CountdownComponents()
+        self.weeklyComponents = aDecoder.decodeObject(forKey: "weeklyComponents") as?  WeeklyComponents ?? WeeklyComponents()
+        self.weeklyComponents.parentReminder = self
+        self.monthlyComponents = aDecoder.decodeObject(forKey: "monthlyComponents") as?  MonthlyComponents ?? MonthlyComponents()
+        self.monthlyComponents.parentReminder = self
         self.oneTimeComponents = aDecoder.decodeObject(forKey: "oneTimeComponents") as? OneTimeComponents ?? OneTimeComponents()
-        self.oneTimeComponents.parentReminder = self
         self.snoozeComponents = aDecoder.decodeObject(forKey: "snoozeComponents") as? SnoozeComponents ?? SnoozeComponents()
 
-        self.storedTimingStyle = ReminderStyle(rawValue: aDecoder.decodeObject(forKey: "timingStyle") as? String ?? ReminderStyle.countDown.rawValue)!
+        self.storedReminderType = ReminderType(rawValue: aDecoder.decodeObject(forKey: "reminderType") as? String ?? ReminderType.countdown.rawValue)!
 
         self.storedExecutionBasis = aDecoder.decodeObject(forKey: "executionBasis") as? Date ?? Date()
 
@@ -171,90 +101,172 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
     func encode(with aCoder: NSCoder) {
 
         aCoder.encode(reminderId, forKey: "reminderId")
-        aCoder.encode(reminderType.rawValue, forKey: "reminderType")
+        aCoder.encode(reminderAction.rawValue, forKey: "reminderAction")
         aCoder.encode(customTypeName, forKey: "customTypeName")
 
-        aCoder.encode(countDownComponents, forKey: "countDownComponents")
-        aCoder.encode(timeOfDayComponents, forKey: "timeOfDayComponents")
+        aCoder.encode(countdownComponents, forKey: "countdownComponents")
+        aCoder.encode(weeklyComponents, forKey: "weeklyComponents")
+        aCoder.encode(monthlyComponents, forKey: "monthlyComponents")
         aCoder.encode(oneTimeComponents, forKey: "oneTimeComponents")
         aCoder.encode(snoozeComponents, forKey: "snoozeComponents")
-        aCoder.encode(storedTimingStyle.rawValue, forKey: "timingStyle")
+        aCoder.encode(storedReminderType.rawValue, forKey: "reminderType")
 
-        // aCoder.encode(isPresentationHandled, forKey: "isPresentationHandled")
         aCoder.encode(storedExecutionBasis, forKey: "executionBasis")
 
         aCoder.encode(isEnabled, forKey: "isEnabled")
     }
 
-    // static var supportsSecureCoding: Bool = true
+    // MARK: Main
 
-    // MARK: - ReminderTraitsProtocol
+    override init() {
+        super.init()
+        self.weeklyComponents.parentReminder = self
+        self.monthlyComponents.parentReminder = self
+    }
 
+    convenience init(parentDog: Dog, fromBody body: [String: Any]) {
+        self.init()
+
+        self.parentDog = parentDog
+
+        if let reminderId = body["reminderId"] as? Int {
+            self.reminderId = reminderId
+        }
+
+        reminderAction = ReminderAction(rawValue: body["reminderAction"] as? String ?? ReminderConstant.defaultType.rawValue)!
+        customTypeName = body["customTypeName"] as? String
+        storedReminderType = ReminderType(rawValue: body["reminderType"] as? String ?? ReminderConstant.defaultType.rawValue)!
+
+        if let executionBasis = body["executionBasis"] as? String {
+            storedExecutionBasis = ISO8601DateFormatter().date(from: executionBasis) ?? Date()
+        }
+
+        if let isEnabled = body["isEnabled"] as? Bool {
+            storedIsEnabled = isEnabled
+        }
+
+        snoozeComponents = SnoozeComponents(isSnoozed: body["isSnoozed"] as? Bool, executionInterval: body["snoozeExecutionInterval"] as? TimeInterval, intervalElapsed: body["snoozeIntervalElapsed"] as? TimeInterval)
+
+        switch reminderType {
+        case .countdown:
+            countdownComponents = CountdownComponents(
+                executionInterval: body["countdownExecutionInterval"] as? TimeInterval,
+                intervalElapsed: body["countdownIntervalElapsed"] as? TimeInterval)
+        case .weekly:
+
+            var skipDate = Date()
+            if let dateString = body["skipDate"] as? String {
+                skipDate = ISO8601DateFormatter().date(from: dateString) ?? Date()
+            }
+
+            weeklyComponents = WeeklyComponents(
+                parentReminder: self,
+                hour: body["hour"] as? Int,
+                minute: body["minute"] as? Int,
+                skipping: body["skipping"] as? Bool,
+                skipDate: skipDate,
+                sunday: body["sunday"] as? Bool,
+                monday: body["monday"] as? Bool,
+                tuesday: body["tuesday"] as? Bool,
+                wednesday: body["wednesday"] as? Bool,
+                thursday: body["thursday"] as? Bool,
+                friday: body["friday"] as? Bool,
+                saturday: body["saturday"] as? Bool)
+        case .monthly:
+            var skipDate = Date()
+            if let dateString = body["skipDate"] as? String {
+                skipDate = ISO8601DateFormatter().date(from: dateString) ?? Date()
+            }
+
+            monthlyComponents = MonthlyComponents(
+                parentReminder: self,
+                hour: body["hour"] as? Int,
+                minute: body["minute"] as? Int,
+                skipping: body["skipping"] as? Bool,
+                skipDate: skipDate,
+                dayOfMonth: body["dayOfMonth"] as? Int)
+        case .oneTime:
+            var executionDate = Date()
+            if let dateString = body["skipDate"] as? String {
+                executionDate = ISO8601DateFormatter().date(from: dateString) ?? Date()
+            }
+
+            oneTimeComponents = OneTimeComponents(date: executionDate)
+        }
+    }
+
+    // MARK: - Properties
+
+    /// Dog that hold this reminder, used for when something is logged and it needs to be added to the dog
     var parentDog: Dog?
 
     var reminderId: Int = -1
 
-    var reminderType: ScheduledLogType = ReminderConstant.defaultType
+    /// This is a user selected label for the reminder. It dictates the name that is displayed in the UI for this reminder.
+    var reminderAction: ReminderAction = ReminderConstant.defaultAction
 
+    /// If the reminder's type is custom, this is the name for it.
     var customTypeName: String?
 
+    /// Use me if displaying the reminder's name. This handles customTypeName along with regular reminder types.
     var displayTypeName: String {
-        if reminderType == .custom && customTypeName != nil {
+        if reminderAction == .custom && customTypeName != nil {
             return customTypeName!
         }
         else {
-            return reminderType.rawValue
+            return reminderAction.rawValue
         }
     }
 
-    // var logs: [KnownLog] = []
+    // MARK: - Reminder Components
 
-    // MARK: - ReminderComponentsProtocol
+    var countdownComponents: CountdownComponents = CountdownComponents()
 
-    var countDownComponents: CountDownComponents = CountDownComponents()
+    var weeklyComponents: WeeklyComponents = WeeklyComponents()
 
-    var timeOfDayComponents: TimeOfDayComponents = TimeOfDayComponents()
+    var monthlyComponents: MonthlyComponents = MonthlyComponents()
 
     var oneTimeComponents: OneTimeComponents = OneTimeComponents()
 
     var snoozeComponents: SnoozeComponents = SnoozeComponents()
 
-    var timerMode: ReminderMode {
-        if snoozeComponents.isSnoozed == true {
-            return .snooze
-        }
-        else if timingStyle == .countDown {
-            return .countDown
-        }
-        else if timingStyle == .weekly {
-            return .weekly
-        }
-        else if timingStyle == .monthly {
-            return .monthly
-        }
-        else if timingStyle == .oneTime {
-            return .oneTime
-        }
-        else {
-            fatalError()
-        }
-    }
-
-    private var storedTimingStyle: ReminderStyle = .countDown
-    var timingStyle: ReminderStyle { return storedTimingStyle }
-    func changeTimingStyle(newTimingStyle: ReminderStyle) {
-        guard newTimingStyle != storedTimingStyle else {
+    private var storedReminderType: ReminderType = .countdown
+    /// Tells the reminder what components to use to make sure its in the correct timing style. Changing this changes between countdown, weekly, monthly, and oneTime mode.
+    var reminderType: ReminderType { return storedReminderType }
+    func changeReminderType(newReminderType: ReminderType) {
+        guard newReminderType != storedReminderType else {
             return
         }
 
         self.timerReset(shouldLogExecution: false)
 
-        storedTimingStyle = newTimingStyle
+        storedReminderType = newReminderType
     }
 
-    // MARK: - ReminderTimingComponentsProtocol
+    /// Factors in isSnoozed into reminderType to produce a current mode. For example, a reminder might be countdown but if its snoozed then this will return .snooze
+    var currentReminderMode: ReminderMode {
+        if snoozeComponents.isSnoozed == true {
+            return .snooze
+        }
+        else if reminderType == .countdown {
+            return .countdown
+        }
+        else if reminderType == .weekly {
+            return .weekly
+        }
+        else if reminderType == .monthly {
+            return .monthly
+        }
+        // else if reminderType == .oneTime {
+        else {
+            return .oneTime
+        }
+    }
+
+    // MARK: - Timing
 
     private var storedExecutionBasis: Date = Date()
+    /// This is what the reminder should base its timing off it. This is either the last time a user responded to a reminder alarm or the last time a user changed a timing related property of the reminder. For example, 5 minutes into the timer you change the countdown from 30 minutes to 15. To start the timer fresh, having it count down from the moment it was changed, reset executionBasis to Date()
     var executionBasis: Date { return storedExecutionBasis }
     func changeExecutionBasis(newExecutionBasis: Date, shouldResetIntervalsElapsed: Bool) {
         storedExecutionBasis = newExecutionBasis
@@ -262,82 +274,93 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
         // If resetting the executionBasis to the current time (and not changing it to another executionBasis of some other reminder) then resets interval elasped as timers would have to be fresh
         if shouldResetIntervalsElapsed == true {
             snoozeComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
-            countDownComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
+            countdownComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
         }
 
     }
 
+    /// When an alert from this reminder is enqueued to be presented, this property is true. This prevents multiple alerts for the same reminder being requeued everytime timing manager refreshes.
     var isPresentationHandled: Bool = false
 
     var intervalRemaining: TimeInterval? {
         // snooze
-        if timerMode == .snooze {
+        if currentReminderMode == .snooze {
+            // the time is supposed to countdown for minus the time it has countdown
             return snoozeComponents.executionInterval - snoozeComponents.intervalElapsed
         }
-        else if timerMode == .oneTime {
-            return Date().distance(to: oneTimeComponents.executionDate!)
+        else if currentReminderMode == .countdown {
+            // the time is supposed to countdown for minus the time it has countdown
+            return countdownComponents.executionInterval - countdownComponents.intervalElapsed
         }
-        // countdown
-        else if timerMode == .countDown {
-            return countDownComponents.executionInterval - countDownComponents.intervalElapsed
-        }
-        else if timerMode == .weekly || timerMode == .monthly {
-            // if the previousTimeOfDay is closer to the present than executionBasis returns nil, indicates missed alarm
-            if self.executionBasis.distance(to: self.timeOfDayComponents.previousTimeOfDay(reminderExecutionBasis: self.executionBasis)) > 0 {
+        else if currentReminderMode == .weekly {
+            if self.executionBasis.distance(to: self.weeklyComponents.previousExecutionDate(reminderExecutionBasis: self.executionBasis)) > 0 {
                 return nil
             }
             else {
-                return Date().distance(to: self.timeOfDayComponents.nextTimeOfDay(reminderExecutionBasis: self.executionBasis))
+                return Date().distance(to: self.weeklyComponents.nextExecutionDate(reminderExecutionBasis: self.executionBasis))
             }
         }
+        else if currentReminderMode == .monthly {
+            if self.executionBasis.distance(to:
+                self.monthlyComponents.previousExecutionDate(reminderExecutionBasis: self.executionBasis)) > 0 {
+                return nil
+            }
+            else {
+                return Date().distance(to: self.monthlyComponents.nextExecutionDate(reminderExecutionBasis: self.executionBasis))
+            }
+        }
+        // else if currentReminderMode == .oneTime {
         else {
-            // HDLL
-            fatalError("not implemented timerMode for intervalRemaining, Reminder")
-            // return -1
+            return Date().distance(to: oneTimeComponents.executionDate)
         }
     }
 
     var executionDate: Date? {
-        guard self.getEnable() == true else {
+        guard self.isEnabled == true else {
             return nil
         }
 
         // Snoozing
-        if self.timerMode == .snooze {
+        if self.currentReminderMode == .snooze {
             return Date.executionDate(lastExecution: executionBasis, interval: intervalRemaining!)
         }
-        // Time of Day Alarm
-        else if timerMode == .weekly || timerMode == .monthly {
+        else if currentReminderMode == .countdown {
+            return Date.executionDate(lastExecution: executionBasis, interval: intervalRemaining!)
+        }
+        else if currentReminderMode == .weekly {
             // If the intervalRemaining is nil than means there is no time left
             if intervalRemaining == nil {
                 return Date()
             }
             else {
-                return timeOfDayComponents.nextTimeOfDay(reminderExecutionBasis: self.executionBasis)
+                return weeklyComponents.nextExecutionDate(reminderExecutionBasis: self.executionBasis)
             }
         }
-        else if timerMode == .countDown {
-            return Date.executionDate(lastExecution: executionBasis, interval: intervalRemaining!)
+        else if currentReminderMode == .monthly {
+            // If the intervalRemaining is nil than means there is no time left
+            if intervalRemaining == nil {
+                return Date()
+            }
+            else {
+                return monthlyComponents.nextExecutionDate(reminderExecutionBasis: self.executionBasis)
+            }
         }
-        else if timerMode == .oneTime {
-            return oneTimeComponents.executionDate
-        }
+        // else if currentReminderMode == .oneTime {
         else {
-            fatalError("not implemented timerMode for executionDate, reminder")
+            return oneTimeComponents.executionDate
         }
     }
 
+    /// This is the timer that is used to make the reminder function. It triggers the events for the reminder. If getting rid of or replacing a reminder, invalidate this timer
     var timer: Timer?
 
-    // private func updateTimer
-
-    func timerReset(shouldLogExecution: Bool, knownLogType: KnownLogType? = nil, customTypeName: String? = nil) {
+    func timerReset(shouldLogExecution: Bool, logType: LogType? = nil, customTypeName: String? = nil) {
 
         if shouldLogExecution == true {
-            if knownLogType == nil {
+            if logType == nil {
                 fatalError()
             }
-            try! parentDog?.dogTraits.addLog(newLog: KnownLog(date: Date(), logType: knownLogType!, customTypeName: customTypeName))
+            parentDog?.dogLogs.addLog(newLog: Log(date: Date(), logType: logType!, customTypeName: customTypeName))
 
             if parentDog == nil {
                 AppDelegate.generalLogger.fault("parentDog nil, couldn't log")
@@ -350,43 +373,132 @@ class Reminder: NSObject, NSCoding, NSCopying, ReminderTraitsProtocol, ReminderC
 
         snoozeComponents.timerReset()
 
-        if timingStyle == .countDown {
-            self.countDownComponents.timerReset()
+        if reminderType == .countdown {
+            self.countdownComponents.timerReset()
         }
-        else if timingStyle == .weekly || timingStyle == .monthly {
-            self.timeOfDayComponents.timerReset()
+        else if reminderType == .weekly {
+            weeklyComponents.timerReset()
+        }
+        else if reminderType == .monthly {
+            monthlyComponents.timerReset()
+        }
+
+    }
+
+    /// Finds the date which the reminder should be transformed from isSkipping to not isSkipping. This is the date at which the skipped reminder would have occured.
+    func unskipDate() -> Date? {
+        if currentReminderMode == .monthly && monthlyComponents.isSkipping == true {
+            return monthlyComponents.notSkippingExecutionDate(reminderExecutionBasis: executionBasis)
+        }
+        else if currentReminderMode == .weekly && weeklyComponents.isSkipping == true {
+            return weeklyComponents.notSkippingExecutionDate(reminderExecutionBasis: executionBasis)
         }
         else {
-            self.oneTimeComponents.timerReset()
+            return nil
+        }
+    }
+
+    /// Typically call this function when a user driven action directly intends to change the skip status of the weekly or monthy components. This function handles both isSkipping and the logs related to isSkipping. If the newSkipStatus is false, then it will remove the log added by setting isSkipping to true, provided the log's date hasn't been modified
+    func changeIsSkipping(newSkipStatus: Bool) {
+        if reminderType == .weekly {
+            guard newSkipStatus != weeklyComponents.isSkipping else {
+                return
+            }
+
+            if newSkipStatus == true {
+                // track this date so if the isSkipping is undone by the user, then we can remove the log
+                weeklyComponents.isSkippingLogDate = Date()
+            }
+            else {
+                // the user decided to remove isSkipping from the reminder, that means we must removed the log that was added.
+                if weeklyComponents.isSkippingLogDate != nil {
+                    // if the log added by skipping the reminder is unmodified, finds and removes it in the unskip process
+                    let dogLogs = parentDog!.dogLogs.logs
+                    for logDateIndex in 0..<dogLogs.count {
+                        if dogLogs[logDateIndex].date.distance(to: weeklyComponents.isSkippingLogDate!) < 0.01
+                            && dogLogs[logDateIndex].date.distance(to: weeklyComponents.isSkippingLogDate!) > -0.01 {
+                            parentDog!.dogLogs.removeLog(forIndex: logDateIndex)
+                            break
+                        }
+                    }
+                }
+
+                weeklyComponents.isSkippingLogDate = nil
+            }
+
+            weeklyComponents.isSkipping = newSkipStatus
+        }
+        else if reminderType == .monthly {
+            guard newSkipStatus != monthlyComponents.isSkipping else {
+                return
+            }
+
+            if newSkipStatus == true {
+                // track this date so if the isSkipping is undone by the user, then we can remove the log
+                monthlyComponents.isSkippingLogDate = Date()
+            }
+            else {
+                // the user decided to remove isSkipping from the reminder, that means we must removed the log that was added.
+                if monthlyComponents.isSkippingLogDate != nil {
+                    // if the log added by skipping the reminder is unmodified, finds and removes it in the unskip process
+                    let dogLogs = parentDog!.dogLogs.logs
+                    for logDateIndex in 0..<dogLogs.count {
+                        if dogLogs[logDateIndex].date.distance(to: monthlyComponents.isSkippingLogDate!) < 0.01
+                            && dogLogs[logDateIndex].date.distance(to: monthlyComponents.isSkippingLogDate!) > -0.01 {
+                            parentDog!.dogLogs.removeLog(forIndex: logDateIndex)
+                            break
+                        }
+                    }
+                }
+
+                monthlyComponents.isSkippingLogDate = nil
+            }
+
+            monthlyComponents.isSkipping = newSkipStatus
+        }
+        else {
+            // do nothing
         }
 
     }
 
-    // MARK: - EnableProtocol
+    /// Typically call this function when a time driven action changes the skip status to false, or otherwise an action where we don't want to remove the log added by setting isSkipping to true. This function should be called at the time the reminder's alarm, that is currently being skipped, should have triggered. If this is not called, then the reminder will skip every single alarm. For example, take a daily alarm that is skipped. At 1 Day left on the reminder, its currently isSkipping true.  When it hits 23 hours and 59 minutes it should turn into a regular nonskipping timer.
 
+    func disableIsSkipping() {
+        if reminderType == .weekly {
+            weeklyComponents.isSkippingLogDate = nil
+            weeklyComponents.isSkipping = false
+        }
+        else if reminderType == .monthly {
+            monthlyComponents.isSkippingLogDate = nil
+            monthlyComponents.isSkipping = false
+        }
+        else {
+            // do nothing
+        }
+    }
+
+    // MARK: - Enable
+
+    private var storedIsEnabled: Bool = true
     /// Whether or not the reminder  is enabled, if disabled all reminders will not fire, if parentDog isEnabled == false will not fire
-    private var isEnabled: Bool = DogConstant.defaultEnable
-
-    /// Changes isEnabled to newEnableStatus, note if toggling from false to true the execution basis is changed to the current Date()
-    func setEnable(newEnableStatus: Bool) {
-        if isEnabled == false && newEnableStatus == true {
-            timerReset(shouldLogExecution: false)
+    var isEnabled: Bool {
+        get {
+            return storedIsEnabled
         }
-        else if newEnableStatus == false {
-            timer?.invalidate()
-            timer = nil
+        set (newEnableStatus) {
+            if storedIsEnabled == false && newEnableStatus == true {
+                timerReset(shouldLogExecution: false)
+            }
+
+            else if newEnableStatus == false {
+                timer?.invalidate()
+                timer = nil
+            }
+
+            storedIsEnabled = newEnableStatus
+            AppDelegate.endpointLogger.notice("ENDPOINT Update Reminder (enable)")
         }
-        isEnabled = newEnableStatus
-        AppDelegate.endpointLogger.notice("ENDPOINT Update Reminder (enable)")
-    }
-
-    func willToggle() {
-        isEnabled.toggle()
-        AppDelegate.endpointLogger.notice("ENDPOINT Update Reminder (enable)")
-    }
-
-    func getEnable() -> Bool {
-        return isEnabled
     }
 
 }

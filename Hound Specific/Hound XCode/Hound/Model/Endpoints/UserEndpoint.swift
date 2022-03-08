@@ -10,6 +10,7 @@ import Foundation
 
 enum UserEndpointError: Error {
     case userIdMissing
+    case userEmailMissing
     case bodyInvalid
 }
 
@@ -18,11 +19,9 @@ enum UserEndpoint: EndpointProtocol {
 
     static let basePathWithoutParams: URL = InternalEndpointUtils.basePathWithoutParams.appendingPathComponent("/user")
     // UserEndpoint basePath with the userId path param appended on
-    static var basePathWithUserId: URL { return UserEndpoint.basePathWithoutParams.appendingPathComponent("/\(userId)") }
-    static let userId: Int = -1
+    static var basePathWithUserId: URL { return UserEndpoint.basePathWithoutParams.appendingPathComponent("/\(UserInformation.userId)") }
 
     static func get(forDogId dogId: Int? = nil, forReminderId reminderId: Int? = nil, forLogId logId: Int? = nil, completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) throws {
-
         // let pathWithParams: URL
 
         // need userId to get a specific user
@@ -33,11 +32,31 @@ enum UserEndpoint: EndpointProtocol {
         //    throw UserEndpointError.userIdMissing
         // }
 
-    InternalEndpointUtils.genericGetRequest(path: basePathWithUserId) { dictionary, status, error in
+        // at this point in time, an error can only occur if there is a invalid body provided. Since there is no body, there is no risk of an error.
+    try! InternalEndpointUtils.genericGetRequest(path: basePathWithUserId) { dictionary, status, error in
         completionHandler(dictionary, status, error)
     }
 
 }
+    static func get(forUserEmail: String? = nil, completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) throws {
+
+        // need user email to do a get request based off said userEmail
+        if forUserEmail != nil {
+            do {
+                // manually construct body to do get request. Can throw if body invalid (shouldn't be though?)
+                try InternalEndpointUtils.genericGetRequest(path: basePathWithoutParams, body: ["userEmail": forUserEmail!]) { dictionary, status, error in
+                    completionHandler(dictionary, status, error)
+                }
+            }
+            catch {
+                throw UserEndpointError.bodyInvalid
+            }
+        }
+        else {
+            throw UserEndpointError.userEmailMissing
+        }
+
+    }
 
     static func create(forDogId dogId: Int? = nil, body: [String: Any]? = nil, completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) throws {
 
@@ -48,7 +67,7 @@ enum UserEndpoint: EndpointProtocol {
             }
         }
         catch {
-            // only reason to fail immediately is if there was an invalid body
+            // only reason to fail immediately is if there was an invalid body, body is provided by a static inside source so it should never fail
             throw UserEndpointError.bodyInvalid
         }
 

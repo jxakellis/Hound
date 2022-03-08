@@ -8,7 +8,7 @@
 
 import UIKit
 
-enum ScheduledLogType: String, CaseIterable {
+enum ReminderAction: String, CaseIterable {
 
     init?(rawValue: String) {
         // backwards compatible
@@ -17,14 +17,14 @@ enum ScheduledLogType: String, CaseIterable {
             return
         }
         // regular
-        for type in ScheduledLogType.allCases {
+        for type in ReminderAction.allCases {
             if type.rawValue.lowercased() == rawValue.lowercased() {
                 self = type
                 return
             }
         }
 
-        AppDelegate.generalLogger.fault("scheduledLogType Not Found")
+        AppDelegate.generalLogger.fault("reminderType Not Found")
         self = .custom
     }
     // common
@@ -45,12 +45,12 @@ enum ScheduledLogType: String, CaseIterable {
     case custom = "Custom"
 }
 
-enum KnownLogTypeError: Error {
+enum LogTypeError: Error {
     case nilLogType
     case blankLogType
 }
 
-enum KnownLogType: String, CaseIterable {
+enum LogType: String, CaseIterable {
 
     init?(rawValue: String) {
         // backwards compatible
@@ -59,14 +59,14 @@ enum KnownLogType: String, CaseIterable {
             return
         }
         // regular
-        for type in KnownLogType.allCases {
+        for type in LogType.allCases {
             if type.rawValue.lowercased() == rawValue.lowercased() {
                 self = type
                 return
             }
         }
 
-        AppDelegate.generalLogger.fault("knownLogType Not Found")
+        AppDelegate.generalLogger.fault("logType Not Found")
         self = .custom
     }
 
@@ -97,7 +97,7 @@ enum KnownLogType: String, CaseIterable {
     case custom = "Custom"
 }
 
-protocol KnownLogProtocol {
+protocol LogProtocol {
 
     /// Date at which the log is assigned
     var date: Date { get set }
@@ -105,7 +105,7 @@ protocol KnownLogProtocol {
     /// Note attached to the log
     var note: String { get set }
 
-    var logType: KnownLogType { get set }
+    var logType: LogType { get set }
 
     /// If the reminder's type is custom, this is the name for it
     var customTypeName: String? { get set }
@@ -117,12 +117,12 @@ protocol KnownLogProtocol {
 
 }
 
-class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol {
+class Log: NSObject, NSCoding, NSCopying, LogProtocol {
 
     // MARK: - NSCopying
 
     func copy(with zone: NSZone? = nil) -> Any {
-        let copy = KnownLog(date: self.date, note: self.note, logType: self.logType, customTypeName: self.customTypeName, logId: self.logId)
+        let copy = Log(date: self.date, note: self.note, logType: self.logType, customTypeName: self.customTypeName, logId: self.logId)
         return copy
     }
 
@@ -131,9 +131,9 @@ class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol {
     required init?(coder aDecoder: NSCoder) {
         self.date = aDecoder.decodeObject(forKey: "date") as? Date ?? Date()
         self.note = aDecoder.decodeObject(forKey: "note") as? String ?? ""
-        self.logType = KnownLogType(rawValue: aDecoder.decodeObject(forKey: "logType") as? String ?? LogConstant.defaultType.rawValue) ?? LogConstant.defaultType
+        self.logType = LogType(rawValue: aDecoder.decodeObject(forKey: "logType") as? String ?? LogConstant.defaultType.rawValue) ?? LogConstant.defaultType
         self.customTypeName = aDecoder.decodeObject(forKey: "customTypeName") as? String
-        self.logId = aDecoder.decodeObject(forKey: "logId") as? Int ?? -1
+        self.logId = aDecoder.decodeInteger(forKey: "logId")
     }
 
     func encode(with aCoder: NSCoder) {
@@ -146,9 +146,9 @@ class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol {
 
     // static var supportsSecureCoding: Bool = true
 
-    // MARK: - ReminderLogProtocol
+    // MARK: - Main
 
-    init(date: Date, note: String = "", logType: KnownLogType, customTypeName: String?, logId: Int = -1) {
+    init(date: Date, note: String = "", logType: LogType, customTypeName: String? = nil, logId: Int = -1) {
         self.date = date
         self.note = note
         self.logType = logType
@@ -157,11 +157,29 @@ class KnownLog: NSObject, NSCoding, NSCopying, KnownLogProtocol {
         super.init()
     }
 
+    convenience init(fromBody body: [String: Any]) {
+
+        var formattedDate: Date = Date()
+
+        if let dateString = body["date"] as? String {
+            formattedDate = ISO8601DateFormatter().date(from: dateString) ?? Date()
+        }
+
+        let note: String = body["note"] as? String ?? ""
+        let logType: LogType = LogType(rawValue: body["logType"] as? String ?? LogConstant.defaultType.rawValue)!
+        let customTypeName: String? = body["customTypeName"] as? String
+        let logId: Int = body["logId"] as? Int ?? -1
+
+        self.init(date: formattedDate, note: note, logType: logType, customTypeName: customTypeName, logId: logId)
+    }
+
+    // MARK: Properties
+
     var date: Date
 
     var note: String
 
-    var logType: KnownLogType
+    var logType: LogType
 
     var customTypeName: String?
 

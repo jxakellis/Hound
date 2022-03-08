@@ -68,20 +68,14 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
     @IBAction private func segmentedControl(_ sender: Any) {
         switch darkModeSegmentedControl.selectedSegmentIndex {
         case 0:
-            for window in UIApplication.shared.windows {
-                window.overrideUserInterfaceStyle = .light
-                UserConfiguration.darkModeStyle = .light
-            }
+            UIApplication.keyWindow?.overrideUserInterfaceStyle = .light
+            UserConfiguration.darkModeStyle = .light
         case 1:
-            for window in UIApplication.shared.windows {
-                window.overrideUserInterfaceStyle = .dark
-                UserConfiguration.darkModeStyle = .dark
-            }
+            UIApplication.keyWindow?.overrideUserInterfaceStyle = .dark
+            UserConfiguration.darkModeStyle = .dark
         default:
-            for window in UIApplication.shared.windows {
-                window.overrideUserInterfaceStyle = .unspecified
-                UserConfiguration.darkModeStyle = .unspecified
-            }
+            UIApplication.keyWindow?.overrideUserInterfaceStyle = .unspecified
+            UserConfiguration.darkModeStyle = .unspecified
         }
     }
 
@@ -164,9 +158,7 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
 
         dogName.delegate = self
 
-        for window in UIApplication.shared.windows {
-            window.overrideUserInterfaceStyle = .unspecified
-        }
+        UIApplication.keyWindow?.overrideUserInterfaceStyle = .unspecified
         UserConfiguration.darkModeStyle = .unspecified
 
         darkModeSegmentedControl.selectedSegmentIndex = 2
@@ -199,5 +191,8 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
         if dogIcon.imageView!.image != DogConstant.chooseIcon {
             delegate.didSetDogIcon(sender: Sender(origin: self, localized: self), dogIcon: dogIcon.imageView!.image!)
         }
+
+        // once this view has completed (user swiped it away or hit continue) then we can say its been compelete.
+        LocalConfiguration.hasLoadedIntroductionViewControllerBefore = false
     }
 }

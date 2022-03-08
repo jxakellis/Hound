@@ -16,7 +16,7 @@ class LogsMainScreenTableViewCellHeaderCompact: UITableViewCell {
 
     // MARK: - Properties
 
-    private var logSource: KnownLog?
+    private var logSource: Log?
 
     // MARK: - Main
 
@@ -48,7 +48,7 @@ class LogsMainScreenTableViewCellHeaderCompact: UITableViewCell {
         }
     }
 
-    func setup(log logSource: KnownLog?, showFilterIndicator: Bool) {
+    func setup(log logSource: Log?, showFilterIndicator: Bool) {
 
         willShowFilterIndicator(isHidden: !showFilterIndicator)
 

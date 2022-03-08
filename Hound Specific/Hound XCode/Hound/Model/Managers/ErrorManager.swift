@@ -42,10 +42,10 @@ class ErrorManager {
         else if errorManagerInstance.handleDogError(sender: sender, error: error) == true {
             return
         }
-        else  if errorManagerInstance.handleTraitManagerError(sender: sender, error: error) == true {
+        else  if errorManagerInstance.handleLogManagerError(sender: sender, error: error) == true {
             return
         }
-        else if errorManagerInstance.handleKnownLogTypeError(sender: sender, error: error) == true {
+        else if errorManagerInstance.handleLogTypeError(sender: sender, error: error) == true {
             return
         }
         else if errorManagerInstance.handleReminderManagerError(sender: sender, error: error) == true {
@@ -54,10 +54,10 @@ class ErrorManager {
         else if errorManagerInstance.handleReminderError(sender: sender, error: error) == true {
             return
         }
-        else if errorManagerInstance.handleTimeOfDayComponentsError(sender: sender, error: error) == true {
+        else if errorManagerInstance.handleWeeklyComponentsError(sender: sender, error: error) == true {
             return
         }
-        else if errorManagerInstance.handleOneTimeComponentsError(sender: sender, error: error) == true {
+        else if errorManagerInstance.handleMonthlyComponentsError(sender: sender, error: error) == true {
             return
         }
         else if errorManagerInstance.handleStringExtensionError(sender: sender, error: error) == true {
@@ -124,11 +124,16 @@ class ErrorManager {
     private func handleDogError(sender: Sender, error: Error) -> Bool {
         /*
          enum DogError: Error {
-             case noRemindersPresent
+             case nilName
+             case blankName
          }
          */
-        if case DogError.noRemindersPresent = error {
-            ErrorManager.alertForError(message: "Your dog has no reminders, please try adding one.")
+        if case DogError.nilName = error {
+            ErrorManager.alertForError(message: "Your dog's name is invalid, please try a different one.")
+            return true
+        }
+        else if case DogError.blankName = error {
+            ErrorManager.alertForError(message: "Your dog's name is blank, try typing something in.")
             return true
         }
         else {
@@ -137,34 +142,19 @@ class ErrorManager {
     }
 
     /// Returns true if able to find a match in enum TraitManagerError to the error provided
-    private func handleTraitManagerError(sender: Sender, error: Error) -> Bool {
+    private func handleLogManagerError(sender: Sender, error: Error) -> Bool {
         /*
-         enum TraitManagerError: Error{
-             case nilName
-             case blankName
-             case invalidName
-            case logIdPresent
-            case logIdNotPresent
+         enum LogManagerError: Error {
+             case logIdPresent
+             case logIdNotPresent
          }
          */
-        if case TraitManagerError.nilName = error {
-            ErrorManager.alertForError(message: "Your dog has an invalid name, try typing something else in!")
+        if case LogManagerError.logIdPresent = error {
+            ErrorManager.alertForError(message: "Something went wrong when trying modify your log, please try again! (LME.lIP)")
             return true
         }
-        else if case TraitManagerError.blankName = error {
-            ErrorManager.alertForError(message: "Your dog has a blank name, try typing something in!")
-            return true
-        }
-        else if case TraitManagerError.invalidName = error {
-            ErrorManager.alertForError(message: "Your dog has a invalid name, try typing something else in!")
-            return true
-        }
-        else if case TraitManagerError.logIdPresent = error {
-            ErrorManager.alertForError(message: "Something went wrong when trying modify your log, please try again! (TME.lIP)")
-            return true
-        }
-        else if case TraitManagerError.logIdNotPresent = error {
-            ErrorManager.alertForError(message: "Something went wrong when trying modify your log, please try again! (TME.lINP)")
+        else if case LogManagerError.logIdNotPresent = error {
+            ErrorManager.alertForError(message: "Something went wrong when trying modify your log, please try again! (LME.lINP)")
             return true
         }
         else {
@@ -172,19 +162,19 @@ class ErrorManager {
         }
     }
 
-    /// Returns true if able to find a match in enum KnownLogTypeError to the error provided
-    private func handleKnownLogTypeError(sender: Sender, error: Error) -> Bool {
+    /// Returns true if able to find a match in enum LogTypeError to the error provided
+    private func handleLogTypeError(sender: Sender, error: Error) -> Bool {
         /*
-         enum KnownLogTypeError: Error {
+         enum LogTypeError: Error {
              case nilLogType
              case blankLogType
          }
          */
-        if case KnownLogTypeError.nilLogType = error {
+        if case LogTypeError.nilLogType = error {
             ErrorManager.alertForError(message: "Your log has no type, try selecting one!")
             return true
         }
-        else if case KnownLogTypeError.blankLogType = error {
+        else if case LogTypeError.blankLogType = error {
             ErrorManager.alertForError(message: "Your log has no type, try selecting one!")
             return true
         }
@@ -248,33 +238,14 @@ class ErrorManager {
     }
 
     /// Returns true if able to find a match in enum TimeOfDayComponentsError to the error provided
-    private func handleTimeOfDayComponentsError(sender: Sender, error: Error) -> Bool {
+    private func handleWeeklyComponentsError(sender: Sender, error: Error) -> Bool {
         /*
          enum TimeOfDayComponentsError: Error {
-             case invalidCalendarComponent
-             case invalidWeekdayArray
-            case invalidDayOfMonth
-            case bothDayIndicatorsNil
+         case weekdayArrayInvalid
          }
          */
-        if case TimeOfDayComponentsError.invalidCalendarComponent = error {
-            ErrorManager.alertForError(message: "Something went wrong with your reminder. Please reload and try again! (TODCE.iCC)")
-            return true
-        }
-        else if case TimeOfDayComponentsError.invalidWeekdayArray = error {
-            ErrorManager.alertForError(message: "Please select at least one day of the week for your reminder. You can do this by clicking on the grey S, M, T, W, T, F, or S. A blue letter means that your reminder will be enabled on that day. You can select all seven or only choose one.")
-            return true
-        }
-        else if case TimeOfDayComponentsError.invalidDayOfMonth = error {
-            ErrorManager.alertForError(message: "Please select a valid day of month.")
-            return true
-        }
-        else if case TimeOfDayComponentsError.bothDayIndicatorsNil = error {
-            ErrorManager.alertForError(message: "Please select either at least one weekday or select once a month.")
-            return true
-        }
-        else if case TimeOfDayComponentsError.bothDayIndicatorsActive = error {
-            ErrorManager.alertForError(message: "Please select either weekdays or once a month for your reminder.")
+        if case WeeklyComponentsError.weekdayArrayInvalid = error {
+            ErrorManager.alertForError(message: "Please select at least one day of the week for your reminder. You can do this by clicking on the grey S, M, T, W, T, F, or S. A blue letter means that your reminder will be enabled on that day.")
             return true
         }
         else {
@@ -282,25 +253,15 @@ class ErrorManager {
         }
     }
 
-    private func handleOneTimeComponentsError(sender: Sender, error: Error) -> Bool {
+    private func handleMonthlyComponentsError(sender: Sender, error: Error) -> Bool {
         /*
-         enum OneTimeComponentsError: Error {
-             case invalidDateComponents
-             case invalidCalendarComponent
-             case reminderAlreadyCreated
+         enum MonthlyComponentsError: Error {
+             case dayOfMonthInvalid
          }
          */
-        if case OneTimeComponentsError.invalidDateComponents = error {
-            ErrorManager.alertForError(message: "Something went wrong when trying to modify your reminder. Please reload and try again! (OTCE.iDC)")
-            return true
-        }
-        else if case OneTimeComponentsError.invalidCalendarComponent = error {
-            ErrorManager.alertForError(message: "Something went wrong when trying to modify your reminder. Please reload and try again! (OTCE.iCC)")
-            return true
-        }
-        else if case OneTimeComponentsError.reminderAlreadyCreated = error {
-            // no longer occurs
-            ErrorManager.alertForError(message: "Your reminder cannot be changed into \"Once\" mode. If you would like to use this mode, please create a new reminder.")
+
+        if case MonthlyComponentsError.dayOfMonthInvalid = error {
+            ErrorManager.alertForError(message: "Please select a day of month for your reminder.")
             return true
         }
         else {

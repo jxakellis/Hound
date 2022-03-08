@@ -16,42 +16,43 @@ enum DogConstant {
 }
 
 enum LogConstant {
-    static let defaultType = KnownLogType.allCases[0]
+    static let defaultType = LogType.allCases[0]
 }
 
 enum ReminderConstant {
-    static let defaultType = ScheduledLogType.allCases[0]
+    static let defaultAction = ReminderAction.allCases[0]
+    static let defaultType = ReminderType.allCases[0]
     static let defaultTimeInterval = (3600*0.5)
     static let defaultEnable: Bool = true
     static var defaultReminderOne: Reminder {
         let reminder = Reminder()
-        reminder.reminderType = ScheduledLogType.potty
-        reminder.countDownComponents.changeExecutionInterval(newExecutionInterval: defaultTimeInterval)
+        reminder.reminderAction = ReminderAction.potty
+        reminder.countdownComponents.changeExecutionInterval(newExecutionInterval: defaultTimeInterval)
         return reminder
     }
     static var defaultReminderTwo: Reminder {
         let reminder = Reminder()
-        reminder.reminderType = .feed
-        reminder.changeTimingStyle(newTimingStyle: .weekly)
-        try! reminder.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 7)
-        try! reminder.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
+        reminder.reminderAction = .feed
+        reminder.changeReminderType(newReminderType: .weekly)
+        reminder.weeklyComponents.changeDateComponents(newDateComponent: .hour, newValue: 7)
+        reminder.weeklyComponents.changeDateComponents(newDateComponent: .minute, newValue: 0)
         return reminder
     }
     static var defaultReminderThree: Reminder {
         let reminder = Reminder()
-        reminder.reminderType = .feed
-        reminder.changeTimingStyle(newTimingStyle: .weekly)
-        try! reminder.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 5+12)
-        try! reminder.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
+        reminder.reminderAction = .feed
+        reminder.changeReminderType(newReminderType: .weekly)
+        reminder.weeklyComponents.changeDateComponents(newDateComponent: .hour, newValue: 5+12)
+        reminder.weeklyComponents.changeDateComponents(newDateComponent: .minute, newValue: 0)
         return reminder
     }
     static var defaultReminderFour: Reminder {
         let reminder = Reminder()
-        reminder.reminderType = .medicine
-        reminder.changeTimingStyle(newTimingStyle: .monthly)
-        try! reminder.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .hour, newValue: 9)
-        try! reminder.timeOfDayComponents.changeTimeOfDayComponent(newTimeOfDayComponent: .minute, newValue: 0)
-        try! reminder.timeOfDayComponents.changeDayOfMonth(newDayOfMonth: 1)
+        reminder.reminderAction = .medicine
+        reminder.changeReminderType(newReminderType: .monthly)
+        reminder.monthlyComponents.changeDateComponents(newDateComponent: .hour, newValue: 9)
+        reminder.monthlyComponents.changeDateComponents(newDateComponent: .minute, newValue: 0)
+        try! reminder.monthlyComponents.changeDayOfMonth(newDayOfMonth: 1)
         return reminder
     }
 }
@@ -63,9 +64,9 @@ enum DogManagerConstant {
 
         /*
          let reminder = Reminder()
-         reminder.reminderType = .trainingSession
-         reminder.changeTimingStyle(newTimingStyle: .countDown)
-         reminder.countDownComponents.changeExecutionInterval(newExecutionInterval: 30.0)
+         reminder.reminderAction = .trainingSession
+         reminder.changeReminderType(newReminderType: .countdown)
+         reminder.countdownComponents.changeExecutionInterval(newExecutionInterval: 30.0)
          try! userDefaultDog.dogReminders.addReminder(newReminder: reminder)
          */
 
@@ -115,6 +116,7 @@ enum UserDefaultsKeys: String {
     case isShowTerminationAlert
     case isShowReleaseNotes
     case hasLoadedIntroductionViewControllerBefore
+    case hasLoadedDogsIntroductionViewControllerBefore
 
     // MARK: Other
     case didFirstTimeSetup

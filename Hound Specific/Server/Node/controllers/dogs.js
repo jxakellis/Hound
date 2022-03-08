@@ -13,7 +13,7 @@ const getDogs = async (req, res) => {
 
   // if dogId is defined and it is a number then continue
   if (dogId) {
-    // queryPromise(req, 'SELECT dogId, name, icon FROM dogs WHERE dogs.dogId = ?', [dogId])
+    // queryPromise(req, 'SELECT dogId, dogName, icon FROM dogs WHERE dogs.dogId = ?', [dogId])
     try {
       const result = await queryPromise(req, 'SELECT * FROM dogs WHERE dogs.dogId = ?', [dogId]);
       req.commitQueries(req);
@@ -21,7 +21,7 @@ const getDogs = async (req, res) => {
     }
     catch (error) {
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message });
+      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
     }
   }
   else {
@@ -46,7 +46,7 @@ const getDogs = async (req, res) => {
     catch (error) {
       // error when trying to do query to database
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message });
+      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
     }
   }
 };
@@ -61,11 +61,11 @@ const createDog = async (req, res) => {
     return res.status(400).json({ message: 'Invalid Body; dogName missing' });
   }
 
-  // allow a user to have multiple dogs by the same name
+  // allow a user to have multiple dogs by the same dogName
   try {
     const result = await queryPromise(
       req,
-      'INSERT INTO dogs(userId, icon, name) VALUES (?,?,?)',
+      'INSERT INTO dogs(userId, icon, dogName) VALUES (?,?,?)',
       [userId, undefined, dogName],
     );
     req.commitQueries(req);
@@ -73,7 +73,7 @@ const createDog = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body or Parameters; Database query failed', error: error.message });
+    return res.status(400).json({ message: 'Invalid Body or Parameters; Database query failed', error: error.code });
   }
 };
 
@@ -93,7 +93,7 @@ const updateDog = async (req, res) => {
   try {
     if (dogName) {
       // updates the dogName for the dogId provided, overship of this dog for the user have been verifiied
-      await queryPromise(req, 'UPDATE dogs SET name = ? WHERE dogId = ?', [dogName, dogId]);
+      await queryPromise(req, 'UPDATE dogs SET dogName = ? WHERE dogId = ?', [dogName, dogId]);
     }
     if (icon) {
       // implement later
@@ -103,7 +103,7 @@ const updateDog = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body or Parameters; Database query failed', error: error.message });
+    return res.status(400).json({ message: 'Invalid Body or Parameters; Database query failed', error: error.code });
   }
 };
 
@@ -119,7 +119,7 @@ const deleteDog = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message });
+    return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
   }
 };
 

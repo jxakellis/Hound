@@ -45,7 +45,7 @@ const getUser = async (req, res) => {
     }
     catch (error) {
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; user not found', error: error.message });
+      return res.status(400).json({ message: 'Invalid Parameters; user not found', error: error.code });
     }
   }
   else {
@@ -76,7 +76,7 @@ const getUser = async (req, res) => {
     }
     catch (error) {
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Body; Database query failed', error: error.message });
+      return res.status(400).json({ message: 'Invalid Body; Database query failed', error: error.code });
     }
   }
 };
@@ -84,16 +84,31 @@ const getUser = async (req, res) => {
 const createUser = async (req, res) => {
   let { userEmail } = req.body;
 
-  if (isEmailValid(userEmail) === false) {
+  if (userEmail === '') {
+    // userEmail cannot be blank. The else if after will catch this but this statement is to genereate a new, different error.
+    req.rollbackQueries(req);
+    return res.status(400).json({ message: 'Invalid Body; userEmail Invalid', error: 'ER_EMAIL_BLANK' });
+  }
+  else if (isEmailValid(userEmail) === false) {
     // userEmail NEEDs to be valid, so throw error if it is invalid
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; userEmail Invalid' });
+    return res.status(400).json({ message: 'Invalid Body; userEmail Invalid', error: 'ER_EMAIL_INVALID' });
   }
   // userEmail valid, can convert to lower case without producing error
   userEmail = req.body.userEmail.toLowerCase();
 
   const { userFirstName } = req.body;
   const { userLastName } = req.body;
+  // userFirstName or userLastName can't be blank. Database catches this but this statement generates a new, different error
+  if (userFirstName === '') {
+    req.rollbackQueries(req);
+    return res.status(400).json({ message: 'Invalid Body; userFirstName Blank', error: 'ER_FIRST_NAME_BLANK' });
+  }
+  else if (userLastName === '') {
+    req.rollbackQueries(req);
+    return res.status(400).json({ message: 'Invalid Body; userFirstName Blank', error: 'ER_LAST_NAME_BLANK' });
+  }
+
   const isNotificationAuthorized = formatBoolean(req.body.isNotificationAuthorized);
   const isNotificationEnabled = formatBoolean(req.body.isNotificationEnabled);
   const isLoudNotification = formatBoolean(req.body.isLoudNotification);
@@ -101,10 +116,11 @@ const createUser = async (req, res) => {
   const followUpDelay = formatNumber(req.body.followUpDelay);
   const isPaused = formatBoolean(req.body.isPaused);
   const isCompactView = formatBoolean(req.body.isCompactView);
-  const { darkModeStyle } = req.body;
+  let { darkModeStyle } = req.body;
+  // MariaDB starts at 1 for enums, not 0 based so must correct.
+  darkModeStyle += 1;
   const snoozeLength = formatNumber(req.body.snoozeLength);
   const { notificationSound } = req.body;
-
   // component of the body is missing or invalid
   if (areAllDefined(
     [userEmail, userFirstName, userLastName, isNotificationAuthorized, isNotificationEnabled,
@@ -128,16 +144,16 @@ const createUser = async (req, res) => {
 
     await queryPromise(
       req,
-      'INSERT INTO userConfiguration(userId, isNotificationAuthorized, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, darkModeStyle, snoozeLength, notificationSound) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
+      'INSERT INTO userConfiguration(userId, isNotificationAuthorized, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, darkModeStyle, snoozeLength, notificationSound) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
       [userId, isNotificationAuthorized, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, darkModeStyle, snoozeLength, notificationSound],
     );
 
     req.commitQueries(req);
     return res.status(200).json({ result: userId });
   }
-  catch (errorOne) {
+  catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; Database query failed', error: errorOne.message });
+    return res.status(400).json({ message: 'Invalid Body; Database query failed', error: error.code });
   }
 };
 
@@ -272,7 +288,7 @@ const updateUser = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; Database query failed', error: error.message });
+    return res.status(400).json({ message: 'Invalid Body; Database query failed', error: error.code });
   }
 };
 
@@ -288,7 +304,7 @@ const deleteUser = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Syntax; Database query failed', error: error.message });
+    return res.status(400).json({ message: 'Invalid Syntax; Database query failed', error: error.code });
   }
 };
 

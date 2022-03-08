@@ -72,14 +72,14 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
 
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
-        storedReminders = aDecoder.decodeObject(forKey: "reminders") as? [Reminder] ?? aDecoder.decodeObject(forKey: "requirements") as? [Reminder] ?? aDecoder.decodeObject(forKey: "requirments") as? [Reminder] ?? []
+        storedReminders = aDecoder.decodeObject(forKey: "reminders") as? [Reminder] ?? []
     }
 
     func encode(with aCoder: NSCoder) {
         aCoder.encode(storedReminders, forKey: "reminders")
     }
 
-    // static var supportsSecureCoding: Bool = true
+    // MARK: - Main
 
     init(parentDog: Dog?, initReminders: [Reminder] = []) {
         self.storedParentDog = parentDog
@@ -89,8 +89,13 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
         }
     }
 
-    private var storedParentDog: Dog?
+    // MARK: Properties
 
+    /// Array of reminders
+    private var storedReminders: [Reminder] = []
+    var reminders: [Reminder] { return storedReminders }
+
+    private var storedParentDog: Dog?
     var parentDog: Dog? {
         get {
             return storedParentDog
@@ -103,9 +108,7 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
         }
     }
 
-    /// Array of reminders
-    private var storedReminders: [Reminder] = []
-    var reminders: [Reminder] { return storedReminders }
+    // MARK: Add Reminders
 
     /// This handles the proper appending of a reminder. This function assumes an already checked reminder and its purpose is to bypass the add reminder endpoint
     private func appendReminder(newReminder: Reminder) {
@@ -114,36 +117,42 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
        storedReminders.append(newReminderCopy)
     }
 
-    func addReminder(newReminder: Reminder) throws {
+    func addReminder(newReminder: Reminder) {
 
-        // Index of the reminder, nil if it isn't present and not nil if it already exists. A non nil value means we replace the reminder and a nil value means we simply add
-        var reminderIndex: Int?
-        for i in 0..<reminders.count where reminders[i].reminderId == newReminder.reminderId {
-            reminderIndex = i
-            break
-        }
-
-        if reminderIndex != nil {
+        // removes any existing reminders that have the same reminderId as they would cause problems. .reversed() is needed to make it work, without it there will be an index of out bounds error.
+        for (reminderIndex, reminder) in reminders.enumerated().reversed() where reminder.reminderId == newReminder.reminderId {
             // instead of crashing, replace the reminder.
-            storedReminders[reminderIndex!].timer?.invalidate()
-            storedReminders[reminderIndex!] = newReminder
+            reminder.timer?.invalidate()
+            storedReminders.remove(at: reminderIndex)
+            storedReminders.append(newReminder)
             AppDelegate.endpointLogger.notice("ENDPOINT Update Reminder")
+
+            sortReminders()
+            return
         }
-        else {
-            // adding new, not replacing
-            appendReminder(newReminder: newReminder)
-            AppDelegate.endpointLogger.notice("ENDPOINT Add Reminder")
-        }
+
+        appendReminder(newReminder: newReminder)
+        AppDelegate.endpointLogger.notice("ENDPOINT Add Reminder")
 
         sortReminders()
     }
 
-    func addReminder(newReminders: [Reminder]) throws {
+    func addReminder(newReminders: [Reminder]) {
         for reminder in newReminders {
-            try addReminder(newReminder: reminder)
+            addReminder(newReminder: reminder)
         }
         sortReminders()
     }
+
+    /// adds default set of reminders
+    func addDefaultReminders() {
+        addReminder(newReminder: ReminderConstant.defaultReminderOne)
+        addReminder(newReminder: ReminderConstant.defaultReminderTwo)
+        addReminder(newReminder: ReminderConstant.defaultReminderThree)
+        addReminder(newReminder: ReminderConstant.defaultReminderFour)
+    }
+
+    // MARK: Remove Reminders
 
     func removeReminder(forReminderId reminderId: Int) throws {
         var reminderNotPresent = true
@@ -181,18 +190,20 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
         AppDelegate.endpointLogger.notice("ENDPOINT Remove Reminder (via index)")
     }
 
-    /// adds default set of reminders
-    func addDefaultReminders() {
-        try! addReminder(newReminder: ReminderConstant.defaultReminderOne)
-        try! addReminder(newReminder: ReminderConstant.defaultReminderTwo)
-        try! addReminder(newReminder: ReminderConstant.defaultReminderThree)
-        try! addReminder(newReminder: ReminderConstant.defaultReminderFour)
+    // MARK: Manipulate Reminders
+
+    /// returns true if has created a reminder and has at least one enabled
+    var hasEnabledReminder: Bool {
+        for reminder in reminders where reminder.isEnabled == true {
+            return true
+            }
+        return false
     }
 
     private func sortReminders() {
     storedReminders.sort { (reminder1, reminder2) -> Bool in
-        if reminder1.timingStyle == .oneTime && reminder2.timingStyle == .oneTime {
-            if Date().distance(to: reminder1.oneTimeComponents.executionDate!) < Date().distance(to: reminder2.oneTimeComponents.executionDate!) {
+        if reminder1.reminderType == .oneTime && reminder2.reminderType == .oneTime {
+            if Date().distance(to: reminder1.oneTimeComponents.executionDate) < Date().distance(to: reminder2.oneTimeComponents.executionDate) {
                 return true
             }
             else {
@@ -200,9 +211,9 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
             }
         }
         // both countdown
-        else if reminder1.timingStyle == .countDown && reminder2.timingStyle == .countDown {
+        else if reminder1.reminderType == .countdown && reminder2.reminderType == .countdown {
             // shorter is listed first
-            if reminder1.countDownComponents.executionInterval <= reminder2.countDownComponents.executionInterval {
+            if reminder1.countdownComponents.executionInterval <= reminder2.countdownComponents.executionInterval {
                 return true
             }
             else {
@@ -210,13 +221,13 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
             }
         }
         // both weekly
-        else if reminder1.timingStyle == .weekly && reminder2.timingStyle == .weekly {
+        else if reminder1.reminderType == .weekly && reminder2.reminderType == .weekly {
             // earlier in the day is listed first
-            let reminder1Hour = reminder1.timeOfDayComponents.timeOfDayComponent.hour!
-            let reminder2Hour = reminder2.timeOfDayComponents.timeOfDayComponent.hour!
+            let reminder1Hour = reminder1.weeklyComponents.dateComponents.hour!
+            let reminder2Hour = reminder2.weeklyComponents.dateComponents.hour!
             if reminder1Hour == reminder2Hour {
-                let reminder1Minute = reminder1.timeOfDayComponents.timeOfDayComponent.minute!
-                let reminder2Minute = reminder2.timeOfDayComponents.timeOfDayComponent.minute!
+                let reminder1Minute = reminder1.weeklyComponents.dateComponents.minute!
+                let reminder2Minute = reminder2.weeklyComponents.dateComponents.minute!
                 if reminder1Minute <= reminder2Minute {
                     return true
                 }
@@ -232,18 +243,18 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
             }
         }
         // both monthly
-        else if reminder1.timingStyle == .monthly && reminder2.timingStyle == .monthly {
-            let reminder1Day: Int! = reminder1.timeOfDayComponents.dayOfMonth
-            let reminder2Day: Int! = reminder2.timeOfDayComponents.dayOfMonth
+        else if reminder1.reminderType == .monthly && reminder2.reminderType == .monthly {
+            let reminder1Day: Int! = reminder1.monthlyComponents.dayOfMonth
+            let reminder2Day: Int! = reminder2.monthlyComponents.dayOfMonth
             // first day of the month comes first
             if reminder1Day == reminder2Day {
                 // earliest in day comes first if same days
-                let reminder1Hour = reminder1.timeOfDayComponents.timeOfDayComponent.hour!
-                let reminder2Hour = reminder2.timeOfDayComponents.timeOfDayComponent.hour!
+                let reminder1Hour = reminder1.monthlyComponents.dateComponents.hour!
+                let reminder2Hour = reminder2.monthlyComponents.dateComponents.hour!
                 if reminder1Hour == reminder2Hour {
                 // earliest in hour comes first if same hour
-                    let reminder1Minute = reminder1.timeOfDayComponents.timeOfDayComponent.minute!
-                    let reminder2Minute = reminder2.timeOfDayComponents.timeOfDayComponent.minute!
+                    let reminder1Minute = reminder1.monthlyComponents.dateComponents.minute!
+                    let reminder2Minute = reminder2.monthlyComponents.dateComponents.minute!
                     if reminder1Minute <= reminder2Minute {
                         return true
                     }
@@ -269,19 +280,19 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
         else {
 
             // reminder1 and reminder2 are known to be different styles
-            switch reminder1.timingStyle {
-            case .countDown:
+            switch reminder1.reminderType {
+            case .countdown:
                 // can assume is comes first as countdown always first and different
                 return true
             case .weekly:
-                if reminder2.timingStyle == .countDown {
+                if reminder2.reminderType == .countdown {
                     return false
                 }
                 else {
                     return true
                 }
             case .monthly:
-                if reminder2.timingStyle == .oneTime {
+                if reminder2.reminderType == .oneTime {
                     return true
                 }
                 else {

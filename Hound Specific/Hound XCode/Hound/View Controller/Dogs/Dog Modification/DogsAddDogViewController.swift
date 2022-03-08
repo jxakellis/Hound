@@ -55,12 +55,12 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
 
     func didAddReminder(newReminder: Reminder) {
         shouldPromptSaveWarning = true
-        try! targetDog.dogReminders.addReminder(newReminder: newReminder)
+        targetDog.dogReminders.addReminder(newReminder: newReminder)
     }
 
     func didUpdateReminder(updatedReminder: Reminder) {
         shouldPromptSaveWarning = true
-        try! targetDog.dogReminders.addReminder(newReminder: updatedReminder)
+        targetDog.dogReminders.addReminder(newReminder: updatedReminder)
     }
 
     func didRemoveReminder(reminderId: Int) {
@@ -136,9 +136,9 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
         let updatedDog = targetDog.copy() as! Dog
         // updatedDog.dogReminders.parentDog = updatedDog
         do {
-            try updatedDog.dogTraits.changeDogName(newDogName: dogName.text)
+            try updatedDog.changeDogName(newDogName: dogName.text)
             if dogIcon.imageView!.image != DogConstant.chooseIcon {
-                updatedDog.dogTraits.icon = dogIcon.imageView?.image ?? DogConstant.defaultIcon
+                updatedDog.icon = dogIcon.imageView?.image ?? DogConstant.defaultIcon
             }
 
            // if updatedReminders != nil {
@@ -170,7 +170,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
     @IBOutlet weak var dogRemoveButton: UIBarButtonItem!
 
     @IBAction func willRemoveDog(_ sender: Any) {
-        let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogName.text ?? targetDog.dogTraits.dogName)?", message: nil, preferredStyle: .alert)
+        let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogName.text ?? targetDog.dogName)?", message: nil, preferredStyle: .alert)
 
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             self.delegate.didRemoveDog(sender: Sender(origin: self, localized: self), dogId: self.targetDog.dogId)
@@ -233,10 +233,10 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
     private var shouldPromptSaveWarning: Bool = false
 
     var initalValuesChanged: Bool {
-        if dogName.text != targetDog.dogTraits.dogName {
+        if dogName.text != targetDog.dogName {
             return true
         }
-        else if dogIcon.imageView!.image != DogConstant.chooseIcon && dogIcon.imageView!.image != targetDog.dogTraits.icon {
+        else if dogIcon.imageView!.image != DogConstant.chooseIcon && dogIcon.imageView!.image != targetDog.icon {
             return true
         }
         else if shouldPromptSaveWarning == true {
@@ -277,16 +277,16 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             targetDog = Dog(defaultReminders: true)
         }
 
-        if targetDog.dogTraits.icon.isEqualToImage(image: DogConstant.defaultIcon) {
+        if targetDog.icon.isEqualToImage(image: DogConstant.defaultIcon) {
             dogIcon.setImage(DogConstant.chooseIcon, for: .normal)
         }
         else {
-            dogIcon.setImage(targetDog.dogTraits.icon, for: .normal)
+            dogIcon.setImage(targetDog.icon, for: .normal)
         }
         dogIcon.layer.masksToBounds = true
         dogIcon.layer.cornerRadius = dogIcon.frame.width/2
 
-        dogName.text = targetDog.dogTraits.dogName
+        dogName.text = targetDog.dogName
         // has to copy reminders so changed that arent saved don't use reference data property to make actual modification
         dogsReminderNavigationViewController.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: targetDog.dogReminders.copy() as! ReminderManager)
 

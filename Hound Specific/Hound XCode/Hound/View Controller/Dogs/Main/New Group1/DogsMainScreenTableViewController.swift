@@ -24,7 +24,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
     func didToggleReminderSwitch(sender: Sender, parentDogId: Int, reminderId: Int, isEnabled: Bool) {
 
         let sudoDogManager = getDogManager()
-        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.findReminder(forReminderId: reminderId).setEnable(newEnableStatus: isEnabled)
+        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.findReminder(forReminderId: reminderId).isEnabled = isEnabled
 
         setDogManager(sender: sender, newDogManager: sudoDogManager)
 
@@ -181,10 +181,8 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         }
 
         var hasEnabledReminder: Bool {
-            for reminder in dog.dogReminders.reminders {
-                if reminder.getEnable() == true {
-                    return true
-                }
+            for reminder in dog.dogReminders.reminders where reminder.isEnabled == true {
+                return true
             }
 
             return false
@@ -208,7 +206,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     if hasEnabledReminder == true {
                         for reminder in dog.dogReminders.reminders {
 
-                            reminder.setEnable(newEnableStatus: false)
+                            reminder.isEnabled = false
 
                             let reminderCell = self.tableView.cellForRow(
                                 at: IndexPath(
@@ -223,7 +221,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     // enabling all
                     else {
                         for reminder in dog.dogReminders.reminders {
-                            reminder.setEnable(newEnableStatus: true)
+                            reminder.isEnabled = true
 
                             let reminderCell = self.tableView.cellForRow(at:
                             IndexPath(
@@ -322,11 +320,14 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         // DETERMINES IF ITS A LOG BUTTON OR UNDO LOG BUTTON
         var shouldUndoLog: Bool {
             // Yes I know these if statements are redundent and terrible coding but it's whatever, used to do something different but has to modify
-            if reminder.timerMode == .snooze || reminder.timerMode == .countDown {
+            if reminder.currentReminderMode == .snooze || reminder.currentReminderMode == .countdown {
                 return false
             }
             else {
-                if reminder.timeOfDayComponents.isSkipping == true {
+                if reminder.reminderType == .weekly && reminder.weeklyComponents.isSkipping == true {
+                    return true
+                }
+                else if reminder.reminderType == .monthly && reminder.monthlyComponents.isSkipping == true {
                     return true
                 }
                 else {
@@ -344,26 +345,26 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 title: "Undo Log for \(reminder.displayTypeName)",
             style: .default,
             handler: { (_: UIAlertAction!)  in
-                    // knownLogType not needed as unskipping alarm does not require that component
+                    // logType not needed as unskipping alarm does not require that component
                     TimingManager.willResetTimer(
                         sender: Sender(origin: self, localized: self),
-                        dogId: parentDogId, reminderId: reminder.reminderId, knownLogType: nil)
+                        dogId: parentDogId, reminderId: reminder.reminderId, logType: nil)
                     self.delegate.didUnlogReminder()
 
                 })
             alertActionsForLog.append(alertActionLog)
         }
         else {
-            switch reminder.reminderType {
+            switch reminder.reminderAction {
             case .potty:
-                let pottyKnownTypes: [KnownLogType] = [.pee, .poo, .both, .neither, .accident]
+                let pottyKnownTypes: [LogType] = [.pee, .poo, .both, .neither, .accident]
                 for pottyKnownType in pottyKnownTypes {
                     let alertActionLog = UIAlertAction(
                         title: "Log \(pottyKnownType.rawValue)",
                         style: .default,
                         handler: { (_)  in
                                 // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                                TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: parentDogId, reminderId: reminder.reminderId, knownLogType: pottyKnownType)
+                                TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: parentDogId, reminderId: reminder.reminderId, logType: pottyKnownType)
                                 self.delegate.didLogReminder()
                             })
                     alertActionsForLog.append(alertActionLog)
@@ -374,14 +375,14 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     style: .default,
                     handler: { (_)  in
                             // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                            TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: parentDogId, reminderId: reminder.reminderId, knownLogType: KnownLogType(rawValue: reminder.reminderType.rawValue)!)
+                            TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: parentDogId, reminderId: reminder.reminderId, logType: LogType(rawValue: reminder.reminderAction.rawValue)!)
                             self.delegate.didLogReminder()
                         })
                 alertActionsForLog.append(alertActionLog)
             }
         }
 
-        if reminder.getEnable() == true {
+        if reminder.isEnabled == true {
             for alertActionLog in alertActionsForLog {
                 selectedReminderAlertController.addAction(alertActionLog)
             }
@@ -440,11 +441,11 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
         if getDogManager().dogs.count > 0 {
             let dog = getDogManager().dogs[indexPath.section]
             if indexPath.row == 0 {
-                willShowDogActionSheet(sender: tableView.cellForRow(at: indexPath)!, dogName: dog.dogTraits.dogName, dogId: dog.dogId)
+                willShowDogActionSheet(sender: tableView.cellForRow(at: indexPath)!, dogName: dog.dogName, dogId: dog.dogId)
             }
             else if indexPath.row > 0 {
 
-                willShowReminderActionSheet(sender: tableView.cellForRow(at: indexPath)!, parentDogName: dog.dogTraits.dogName, parentDogId: dog.dogId, reminder: dog.dogReminders.reminders[indexPath.row-1])
+                willShowReminderActionSheet(sender: tableView.cellForRow(at: indexPath)!, parentDogName: dog.dogName, parentDogId: dog.dogId, reminder: dog.dogReminders.reminders[indexPath.row-1])
             }
 
         }
@@ -469,7 +470,7 @@ class DogsMainScreenTableViewController: UITableViewController, DogManagerContro
                 removeConfirmation.addAction(alertActionCancel)
             }
             else {
-                removeConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(sudoDogManager.dogs[indexPath.section].dogTraits.dogName)?", message: nil, preferredStyle: .alert)
+                removeConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(sudoDogManager.dogs[indexPath.section].dogName)?", message: nil, preferredStyle: .alert)
 
                 let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                     sudoDogManager.removeDog(forIndex: indexPath.section)

@@ -11,7 +11,7 @@ import UIKit
 extension UIApplication {
 
     /// Special keyWindow
-    var keyWindow: UIWindow? {
+    static var keyWindow: UIWindow? {
             // Get connected scenes
             return UIApplication.shared.connectedScenes
                 // Keep only active scenes, onscreen and visible to the user

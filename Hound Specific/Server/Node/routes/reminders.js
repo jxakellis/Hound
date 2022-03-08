@@ -24,9 +24,9 @@ router.get('/:reminderId', getReminders);
 router.post('/', createReminder);
 /* BODY:
 {
-"reminderType": "requiredString", // If reminderType is "Custom", then customTypeName must be provided
+"reminderAction": "requiredString", // If reminderAction is "Custom", then customTypeName must be provided
 "customTypeName": "optionalString",
-"timingStyle": "requiredString", //Only components for timingStyle type specified must be provided
+"reminderType": "requiredString", //Only components for reminderType type specified must be provided
 "executionBasis": "requiredDate",
 "isEnabled":"requiredBool",
 
@@ -63,16 +63,16 @@ router.post('/', createReminder);
 router.put('/:reminderId', updateReminder);
 /* BODY:
 
-//At least one of the following must be defined: reminderType, timingStyle, executionBasis, isEnabled, or isSnoozed
+//At least one of the following must be defined: reminderAction, reminderType, executionBasis, isEnabled, or isSnoozed
 
 {
-"reminderType": "optionalString", // If reminderType is "Custom", then customTypeName must be provided
+"reminderAction": "optionalString", // If reminderAction is "Custom", then customTypeName must be provided
 "customTypeName": "optionalString",
-"timingStyle": "optionalString", //If timingStyle provided, then all components for timingStyle type must be provided
+"reminderType": "optionalString", //If reminderType provided, then all components for reminderType type must be provided
 "executionBasis": "optionalDate",
 "isEnabled":"optionalBool",
 
-    //components only required if timingStyle provided
+    //components only required if reminderType provided
 
     //FOR countdown
     "countdownExecutionInterval":"requiredInt",

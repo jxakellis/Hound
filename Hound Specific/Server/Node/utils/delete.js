@@ -114,8 +114,8 @@ const deleteReminder = async (req, reminderId) => {
 };
 
 /**
- * If a reminder is updated, its timingStyle can be updated and switch between modes.
-* This means we make an entry into a new component table and this also means the components from the old timingStyle are left over in another table
+ * If a reminder is updated, its reminderType can be updated and switch between modes.
+* This means we make an entry into a new component table and this also means the components from the old reminderType are left over in another table
 * This remove the extraneous compoents
  * @param {*} reminderId
  * @param {*} newTimingStyle
@@ -230,7 +230,7 @@ const deleteLeftoverReminderComponents = async (req, reminderId, newTimingStyle)
     );
   }
   else {
-    throw Error('Invalid timingStyle');
+    throw Error('Invalid reminderType');
   }
 };
 

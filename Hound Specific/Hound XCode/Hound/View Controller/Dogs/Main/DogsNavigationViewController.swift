@@ -38,7 +38,7 @@ class DogsNavigationViewController: UINavigationController, DogsViewControllerDe
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if LocalConfiguration.hasLoadedIntroductionViewControllerBefore == false {
+        if LocalConfiguration.hasLoadedDogsIntroductionViewControllerBefore == false {
             passThroughDelegate.willShowIntroductionPage()
         }
     }

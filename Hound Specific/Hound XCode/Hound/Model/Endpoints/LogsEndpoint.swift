@@ -34,8 +34,8 @@ enum LogsEndpoint: EndpointObjectProtocol {
             throw LogsEndpointError.dogIdMissing
         }
 
-        // make get request
-        InternalEndpointUtils.genericGetRequest(path: pathWithParams) { dictionary, status, error in
+        // make get request, try statement only fails with invalid body and no body provided means always succeeds
+        try! InternalEndpointUtils.genericGetRequest(path: pathWithParams) { dictionary, status, error in
             completionHandler(dictionary, status, error)
         }
 

@@ -13,9 +13,10 @@ enum StringExtensionError: Error {
 }
 
 extension String {
-    /// Converts a time interval to a more readable string to display, e.g. 3600.0 Time interval to 1 hour 0 minutes or 7320.0 to 2 hours 2 minutes
-    static func convertToReadable(interperateTimeInterval: TimeInterval, capitalizeLetters: Bool = true) -> String {
-        let intTime = abs(Int(interperateTimeInterval.rounded()))
+
+    /// Converts a time interval to a more readable string to display. E.g. (1800.0, true) to 30 Minutes or (7320.0, false) to 2 hours 2 minutes. Capital letters dictates whether or not the labels are capitalized (minute vs Minute)
+    static func convertToReadable(fromTimeInterval timeInterval: TimeInterval, capitalizeLetters: Bool = true) -> String {
+        let intTime = abs(Int(timeInterval.rounded()))
 
         let numWeeks = Int((intTime / (86400))/7)
         let numDaysUnderAWeek = Int((intTime / (86400))%7)
@@ -45,6 +46,7 @@ extension String {
         if readableString.last == " "{
             readableString.removeLast()
         }
+
         if capitalizeLetters == false {
             return readableString.lowercased()
         }
@@ -54,14 +56,14 @@ extension String {
     }
 
     /// Converts dateComponents with .hour and .minute to a readable string, e.g. 8:56AM or 2:23 PM
-    static func convertToReadable(interperatedDateComponents: DateComponents) throws -> String {
+    static func convertToReadable(fromDateComponents dateComponents: DateComponents) throws -> String {
 
-        if interperatedDateComponents.hour == nil || interperatedDateComponents.minute == nil {
+        if dateComponents.hour == nil || dateComponents.minute == nil {
             throw StringExtensionError.dateComponentsInvalid
         }
 
-        let hour: Int = interperatedDateComponents.hour!
-        let minute: Int = interperatedDateComponents.minute!
+        let hour: Int = dateComponents.hour!
+        let minute: Int = dateComponents.minute!
 
         var amOrPM: String {
             if hour < 12 {
@@ -88,30 +90,30 @@ extension String {
         }
     }
 
-    static func convertToReadableNonRepeating(interperatedDateComponents: DateComponents) throws -> String {
-        if interperatedDateComponents.year == nil || interperatedDateComponents.month == nil || interperatedDateComponents.day == nil || interperatedDateComponents.hour == nil || interperatedDateComponents.minute == nil {
-            throw StringExtensionError.dateComponentsInvalid
-        }
+    /// Converts a date into a readable string. The year is only added if its different from the current. e.g. 8:58 PM March 7, 2021
+    static func convertToReadable(fromDate date: Date) -> String {
 
         var dateString = ""
-        let targetDate: Date! = Calendar.current.date(from: interperatedDateComponents)
         let dateFormatter = DateFormatter()
 
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)
-        dateString = dateFormatter.string(from: targetDate)
+        dateString = dateFormatter.string(from: date)
 
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "MMMM d", options: 0, locale: Calendar.current.locale)
-        dateString.append(" \(dateFormatter.string(from: targetDate))")
+        dateString.append(" \(dateFormatter.string(from: date))")
 
-        dateString.append(String.dayOfMonthSuffix(day: interperatedDateComponents.day!))
+        let day = Calendar.current.component(.day, from: date)
+        dateString.append(String.dayOfMonthSuffix(day: day))
 
-        if interperatedDateComponents.year != Calendar.current.component(.year, from: Date()) {
-            dateString.append(", \(interperatedDateComponents.year!)")
+        let year = Calendar.current.component(.year, from: date)
+        if year != Calendar.current.component(.year, from: Date()) {
+            dateString.append(", \(year)")
         }
 
         return dateString
     }
 
+    /// Takes the given day of month and appends an appropiate suffix of st, nd, rd, or th, e.g. 31 returns st, 20 returns th, 2 returns nd
     static func dayOfMonthSuffix(day dayOfMonth: Int) -> String {
         switch dayOfMonth {
         case 1:

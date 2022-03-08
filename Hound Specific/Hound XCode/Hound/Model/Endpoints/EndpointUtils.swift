@@ -15,10 +15,8 @@ enum InternalEndpointUtils {
 
     /// Takes an already constructed URLRequest and executes it, returning it in a compeltion handler. This is the basis to all URL requests
     static func genericRequest(request: URLRequest, completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) {
-
         // send request
         let task = session.dataTask(with: request) { data, response, err in
-
             // extract status code from URLResponse
             var httpResponseStatusCode: Int?
             if let httpResponse = response as? HTTPURLResponse {
@@ -51,13 +49,24 @@ enum InternalEndpointUtils {
 
 extension InternalEndpointUtils {
 
-    /// Perform a generic get request at the specified url, assuming path params are already provided. No body needed for request. No throws as request creating cannot fail
-    static func genericGetRequest(path: URL, completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) {
+    /// Perform a generic get request at the specified url, assuming path params are already provided. No body needed for request, except in special case of getting user information through email or idenfifer (instead of userId path param). Throws if body for request is invalid
+    static func genericGetRequest(path: URL, body: [String: Any]? = nil, completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) throws {
         // create request to send
         var req = URLRequest(url: path)
 
         // specify http method
         req.httpMethod = "GET"
+
+        if body != nil {
+            req.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: body!)
+                req.httpBody = jsonData
+            }
+            catch {
+                throw error
+            }
+        }
 
         genericRequest(request: req) { dictionary, status, error in
             completionHandler(dictionary, status, error)
@@ -145,7 +154,7 @@ extension InternalEndpointUtils {
         // notificationSound
 
         body[UserDefaultsKeys.isCompactView.rawValue] = UserConfiguration.isCompactView
-        body[UserDefaultsKeys.darkModeStyle.rawValue] = UserConfiguration.darkModeStyle
+        body[UserDefaultsKeys.darkModeStyle.rawValue] = UserConfiguration.darkModeStyle.rawValue
         body[UserDefaultsKeys.snoozeLength.rawValue] = UserConfiguration.snoozeLength
         body[UserDefaultsKeys.isPaused.rawValue] = UserConfiguration.isPaused
         body[UserDefaultsKeys.isNotificationAuthorized.rawValue] = UserConfiguration.isNotificationAuthorized
@@ -153,27 +162,96 @@ extension InternalEndpointUtils {
         body[UserDefaultsKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
         body[UserDefaultsKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
         body[UserDefaultsKeys.followUpDelay.rawValue] = UserConfiguration.followUpDelay
-        body[UserDefaultsKeys.notificationSound.rawValue] = UserConfiguration.notificationSound
+        body[UserDefaultsKeys.notificationSound.rawValue] = UserConfiguration.notificationSound.rawValue
         return body
     }
 
     /// returns an array that is suitable to be a http request body
     static func createDogBody(dog: Dog) -> [String: Any] {
-        return [:]
+        var body: [String: Any] = [:]
+        body["dogName"] = dog.dogName
+        return body
     }
 
     /// returns an array that is suitable to be a http request body
-    static func createLogBody(log: KnownLogType) -> [String: Any] {
-        return [:]
+    static func createLogBody(log: Log) -> [String: Any] {
+        var body: [String: Any] = [:]
+        body["note"] = log.note
+        body["date"] = log.date.ISO8601Format(_:)
+        body["logType"] = log.logType.rawValue
+        if log.logType == .custom {
+            body["customTypeName"] = log.customTypeName
+        }
+        return body
+
     }
 
     /// returns an array that is suitable to be a http request body
     static func createReminderBody(reminder: Reminder) -> [String: Any] {
-        return [:]
+        var body: [String: Any] = [:]
+        body["reminderAction"] = reminder.reminderAction.rawValue
+        if reminder.reminderAction == .custom {
+            body["customTypeName"] = reminder.customTypeName
+        }
+        body["executionBasis"] = reminder.executionBasis.ISO8601Format()
+        body["isEnabled"] = reminder.isEnabled
+
+        body["reminderType"] = reminder.reminderType.rawValue
+        // add the reminder components depending on the reminderType
+        switch reminder.reminderType {
+        case .countdown:
+            body["countdownExecutionInterval"] = reminder.countdownComponents.executionInterval
+            body["countdownIntervalElapsed"] = reminder.countdownComponents.intervalElapsed
+        case .weekly:
+            body["hour"] = reminder.weeklyComponents.dateComponents.hour
+            body["minute"] = reminder.weeklyComponents.dateComponents.minute
+            body["skipping"] = reminder.weeklyComponents.isSkipping
+            if reminder.weeklyComponents.isSkipping == true {
+                body["skipDate"] = reminder.weeklyComponents.isSkippingLogDate
+            }
+
+            body["sunday"] = false
+            body["monday"] = false
+            body["tuesday"] = false
+            body["wednesday"] = false
+            body["thursday"] = false
+            body["friday"] = false
+            body["saturday"] = false
+
+            for weekday in reminder.weeklyComponents.weekdays {
+                switch weekday {
+                case 1:
+                    body["sunday"] = true
+                case 2:
+                    body["monday"] = true
+                case 3:
+                    body["tuesday"] = true
+                case 4:
+                    body["wednesday"] = true
+                case 5:
+                    body["thursday"] = true
+                case 6:
+                    body["friday"] = true
+                case 7:
+                    body["saturday"] = true
+                default:
+                    continue
+                }
+            }
+
+        case .monthly:
+            body["hour"] = reminder.monthlyComponents.dateComponents.hour
+            body["minute"] = reminder.monthlyComponents.dateComponents.minute
+            body["skipping"] = reminder.monthlyComponents.isSkipping
+            if reminder.monthlyComponents.isSkipping == true {
+                body["skipDate"] = reminder.monthlyComponents.isSkippingLogDate?.ISO8601Format()
+            }
+            body["dayOfMonth"] = reminder.monthlyComponents.dayOfMonth
+        case .oneTime:
+            body["date"] = reminder.oneTimeComponents.executionDate.ISO8601Format()
+        }
+
+        return body
     }
-
-}
-
-enum EndpointUtils {
 
 }

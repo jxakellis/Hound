@@ -33,7 +33,7 @@ class TimingManager {
         for d in 0..<MainTabBarViewController.staticDogManager.dogs.count {
 
             for r in 0..<MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders.count {
-                guard MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders[r].getEnable() == true else {
+                guard MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders[r].isEnabled == true else {
                     continue
                 }
 
@@ -68,13 +68,13 @@ class TimingManager {
                 let reminder = sudoDogManager.dogs[d].dogReminders.reminders[r]
 
                 // makes sure a reminder is enabled and its presentation is not being handled
-                guard reminder.getEnable() == true && reminder.isPresentationHandled == false
+                guard reminder.isEnabled == true && reminder.isPresentationHandled == false
                 else {
                     continue
                 }
 
                 // Sets a timer that executes when the timer should go from isSkipping true -> false, e.g. 1 Day left on a timer that is skipping and when it hits 23 hours and 59 minutes it turns into a regular nonskipping timer
-                let unskipDate = reminder.timeOfDayComponents.unskipDate(timerMode: reminder.timerMode, reminderExecutionBasis: reminder.executionBasis)
+                let unskipDate = reminder.unskipDate()
 
                 // if the a date to unskip exists, then creates a timer to do so when it is time
                 if unskipDate != nil {
@@ -94,7 +94,7 @@ class TimingManager {
                                           interval: -1,
                                           target: self,
                                           selector: #selector(self.didExecuteTimer(sender:)),
-                                  userInfo: ["dogId": dogManager.dogs[d].dogId, "dogName": dogManager.dogs[d].dogTraits.dogName, "reminder": reminder],
+                                  userInfo: ["dogId": dogManager.dogs[d].dogId, "dogName": dogManager.dogs[d].dogName, "reminder": reminder],
                                           repeats: false)
                     RunLoop.main.add(timer, forMode: .common)
 
@@ -127,7 +127,13 @@ class TimingManager {
             let dog = try dogManager.findDog(forDogId: dogId)
             let reminder = try dog.dogReminders.findReminder(forReminderId: passedReminderId)
 
-            reminder.timeOfDayComponents.changeIsSkipping(newSkipStatus: false, shouldRemoveLogDuringPossibleUnskip: false)
+            if reminder.reminderType == .weekly {
+                reminder.disableIsSkipping()
+            }
+            else if reminder.reminderType == .monthly {
+                reminder.disableIsSkipping()
+
+            }
             reminder.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
 
             delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
@@ -197,24 +203,18 @@ class TimingManager {
                     continue
                 }
 
-                // one time reminder
-                if reminder.timerMode == .oneTime {
-                    // nothing
-                }
-                // If reminder is counting down
-                else if reminder.timerMode == .countDown {
+                switch reminder.currentReminderMode {
+                case .countdown:
                     // If intervalElapsed has not been added to before
-                    if reminder.countDownComponents.intervalElapsed <= 0.0001 {
-                        reminder.countDownComponents.changeIntervalElapsed(newIntervalElapsed: reminder.executionBasis.distance(to: LocalConfiguration.lastPause!))
+                    if reminder.countdownComponents.intervalElapsed <= 0.0001 {
+                        reminder.countdownComponents.changeIntervalElapsed(newIntervalElapsed: reminder.executionBasis.distance(to: LocalConfiguration.lastPause!))
                     }
                     // If intervalElapsed has been added to before
                     else {
 
-                        reminder.countDownComponents.changeIntervalElapsed(newIntervalElapsed: (reminder.countDownComponents.intervalElapsed + LocalConfiguration.lastUnpause!.distance(to: (LocalConfiguration.lastPause!))))
+                        reminder.countdownComponents.changeIntervalElapsed(newIntervalElapsed: (reminder.countdownComponents.intervalElapsed + LocalConfiguration.lastUnpause!.distance(to: (LocalConfiguration.lastPause!))))
                     }
-                }
-                // If reminder is snoozed
-                else if reminder.timerMode == .snooze {
+                case .snooze:
                     // If intervalElapsed has not been added to before
                     if reminder.snoozeComponents.intervalElapsed <= 0.0001 {
                         reminder.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: reminder.executionBasis.distance(to: LocalConfiguration.lastPause!))
@@ -223,13 +223,9 @@ class TimingManager {
                     else {
                         reminder.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: (reminder.snoozeComponents.intervalElapsed + LocalConfiguration.lastUnpause!.distance(to: (LocalConfiguration.lastPause!))))
                     }
-                }
-                // If reminder is time of day
-                else if reminder.timerMode == .weekly || reminder.timerMode == .monthly {
-                    // nothing as time of day does not utilize interval elapsed
-                }
-                else {
-                    fatalError("Not Implemented reminder.timerMode type, willPause(dogManager: DogManager)")
+                default:
+                    continue
+                    // nothing as weekly, monthly, and oneTime do not utilize interval elapsed
                 }
 
             }
@@ -289,22 +285,22 @@ class TimingManager {
             handler: { (_: UIAlertAction!)  in
                     // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                     // TimingManager.willInactivateTimer(sender: Sender(origin: self, localized: self), dogName: dogName, reminderId: reminder.reminderId)
-                    TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, knownLogType: nil)
+                    TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, logType: nil)
                     Utils.checkForReview()
                 })
 
         var alertActionsForLog: [UIAlertAction] = []
 
-        switch reminder.reminderType {
+        switch reminder.reminderAction {
         case .potty:
-            let pottyKnownTypes: [KnownLogType] = [.pee, .poo, .both, .neither, .accident]
+            let pottyKnownTypes: [LogType] = [.pee, .poo, .both, .neither, .accident]
             for pottyKnownType in pottyKnownTypes {
                 let alertActionLog = UIAlertAction(
                     title: "Log \(pottyKnownType.rawValue)",
                     style: .default,
                     handler: { (_)  in
                             // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                            TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, knownLogType: pottyKnownType)
+                            TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, logType: pottyKnownType)
                             Utils.checkForReview()
                         })
                 alertActionsForLog.append(alertActionLog)
@@ -315,7 +311,7 @@ class TimingManager {
                 style: .default,
                 handler: { (_)  in
                         // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                        TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, knownLogType: KnownLogType(rawValue: reminder.reminderType.rawValue)!)
+                        TimingManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, logType: LogType(rawValue: reminder.reminderAction.rawValue)!)
                         Utils.checkForReview()
                     })
             alertActionsForLog.append(alertActionLog)
@@ -337,6 +333,7 @@ class TimingManager {
         alertController.addAction(alertActionDismiss)
 
         let dogManager = MainTabBarViewController.staticDogManager
+
         do {
             let dog = try dogManager.findDog(forDogId: dogId)
             // AppDelegate.generalLogger.notice("willShowTimer success in finding dog")
@@ -371,7 +368,7 @@ class TimingManager {
     }
 
     /// Finishs executing timer then just resets it to countdown again
-    static func willResetTimer(sender: Sender, dogId: Int, reminderId: Int, knownLogType: KnownLogType?) {
+    static func willResetTimer(sender: Sender, dogId: Int, reminderId: Int, logType: LogType?) {
 
         let sudoDogManager = MainTabBarViewController.staticDogManager
 
@@ -379,32 +376,43 @@ class TimingManager {
 
         let reminder = try! dog.dogReminders.findReminder(forReminderId: reminderId)
 
-        if reminder.timingStyle == .oneTime {
-            if knownLogType != nil {
-                try! dog.dogTraits.addLog(newLog: KnownLog(date: Date(), logType: knownLogType!, customTypeName: reminder.customTypeName))
+        if reminder.reminderType == .oneTime {
+            if logType != nil {
+                dog.dogLogs.addLog(newLog: Log(date: Date(), logType: logType!, customTypeName: reminder.customTypeName))
             }
             try! dog.dogReminders.removeReminder(forReminderId: reminderId)
             delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
             return
         }
-        // Skips next TOD
-        else if (reminder.timerMode == .weekly || reminder.timerMode == .monthly) && reminder.timeOfDayComponents.isSkipping == false && Date().distance(to: reminder.executionDate!) > 0 {
+        // Skips next TOD for weekly
+        else if reminder.currentReminderMode == .weekly && reminder.weeklyComponents.isSkipping == false && Date().distance(to: reminder.executionDate!) > 0 {
             let executionBasisBackup = reminder.executionBasis
-            reminder.timerReset(shouldLogExecution: true, knownLogType: knownLogType, customTypeName: reminder.customTypeName)
-            reminder.timeOfDayComponents.changeIsSkipping(newSkipStatus: true, shouldRemoveLogDuringPossibleUnskip: nil)
+            reminder.timerReset(shouldLogExecution: true, logType: logType, customTypeName: reminder.customTypeName)
+            reminder.changeIsSkipping(newSkipStatus: true)
             reminder.changeExecutionBasis(newExecutionBasis: executionBasisBackup, shouldResetIntervalsElapsed: false)
         }
-        // Unskips next TOD
-        else if (reminder.timerMode == .weekly || reminder.timerMode == .monthly) && reminder.timeOfDayComponents.isSkipping == true {
-            reminder.timeOfDayComponents.changeIsSkipping(newSkipStatus: false, shouldRemoveLogDuringPossibleUnskip: true)
+        // Skips next TOD for monthly
+        else if reminder.currentReminderMode == .monthly && reminder.monthlyComponents.isSkipping == false && Date().distance(to: reminder.executionDate!) > 0 {
+            let executionBasisBackup = reminder.executionBasis
+            reminder.timerReset(shouldLogExecution: true, logType: logType, customTypeName: reminder.customTypeName)
+            reminder.changeIsSkipping(newSkipStatus: true)
+            reminder.changeExecutionBasis(newExecutionBasis: executionBasisBackup, shouldResetIntervalsElapsed: false)
+        }
+        // Unskips next TOD for weekly
+        else if reminder.currentReminderMode == .weekly && reminder.weeklyComponents.isSkipping == true {
+            reminder.changeIsSkipping(newSkipStatus: false)
+        }
+        // Unskips next TOD for monthly
+        else if reminder.currentReminderMode == .monthly && reminder.monthlyComponents.isSkipping == true {
+            reminder.changeIsSkipping(newSkipStatus: false)
         }
         // Regular reset
         else {
-            if knownLogType != nil {
-                reminder.timerReset(shouldLogExecution: true, knownLogType: knownLogType, customTypeName: reminder.customTypeName)
+            if logType != nil {
+                reminder.timerReset(shouldLogExecution: true, logType: logType, customTypeName: reminder.customTypeName)
             }
             else {
-                reminder.timerReset(shouldLogExecution: false, knownLogType: nil, customTypeName: reminder.customTypeName)
+                reminder.timerReset(shouldLogExecution: false, logType: nil, customTypeName: reminder.customTypeName)
             }
 
         }

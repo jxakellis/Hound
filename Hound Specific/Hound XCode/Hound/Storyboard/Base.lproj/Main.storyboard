@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="fvG-Uo-RvE">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -172,7 +171,7 @@
         <!--Dog Reminder Count Down-->
         <scene sceneID="igG-O6-rrf">
             <objects>
-                <viewController title="Dog Reminder Count Down" id="gRX-vW-PrI" customClass="DogsReminderCountDownViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Dog Reminder Count Down" id="gRX-vW-PrI" customClass="DogsReminderCountdownViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1dJ-c5-zaj">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="481"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -180,8 +179,8 @@
                             <datePicker contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="748" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" countDownDuration="5400" minuteInterval="5" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nvt-ES-U6h">
                                 <rect key="frame" x="0.0" y="90" width="414" height="391"/>
                                 <connections>
-                                    <action selector="willUpdateCountDown:" destination="gRX-vW-PrI" eventType="editingChanged" id="Qt9-8F-KfP"/>
-                                    <action selector="willUpdateCountDown:" destination="gRX-vW-PrI" eventType="valueChanged" id="xZo-V2-zDP"/>
+                                    <action selector="willUpdateCountdown:" destination="gRX-vW-PrI" eventType="editingChanged" id="Qt9-8F-KfP"/>
+                                    <action selector="willUpdateCountdown:" destination="gRX-vW-PrI" eventType="valueChanged" id="xZo-V2-zDP"/>
                                 </connections>
                             </datePicker>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Once saved, reminder will start immediately and will repeat after being interacted with" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OxU-He-Qgo" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
@@ -204,7 +203,7 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="countDown" destination="Nvt-ES-U6h" id="Mte-bp-dcp"/>
+                        <outlet property="countdown" destination="Nvt-ES-U6h" id="Mte-bp-dcp"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="abH-IM-GOX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -251,7 +250,7 @@
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MhX-Hm-1r1">
                                         <rect key="frame" x="0.0" y="200" width="414" height="481"/>
                                         <connections>
-                                            <segue destination="gRX-vW-PrI" kind="embed" identifier="dogsReminderCountDownViewController" id="wbe-5J-4CA"/>
+                                            <segue destination="gRX-vW-PrI" kind="embed" identifier="dogsReminderCountdownViewController" id="wbe-5J-4CA"/>
                                         </connections>
                                     </containerView>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XhW-xN-8L1">
@@ -360,7 +359,7 @@
                     </view>
                     <connections>
                         <outlet property="containerForAll" destination="8KF-Nk-KXG" id="jDl-eZ-c76"/>
-                        <outlet property="countDownContainerView" destination="MhX-Hm-1r1" id="bfp-I7-24p"/>
+                        <outlet property="countdownContainerView" destination="MhX-Hm-1r1" id="bfp-I7-24p"/>
                         <outlet property="customReminderActionName" destination="jxr-D5-mYc" id="frO-90-fOS"/>
                         <outlet property="customReminderActionNameBottomConstraint" destination="TRX-Lt-NfM" id="gzu-b3-yBF"/>
                         <outlet property="customReminderActionTextField" destination="WfV-Xu-CGv" id="fZh-jn-QFE"/>
@@ -983,10 +982,10 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
+                                    <outlet property="reminderActionDisplayName" destination="9Re-8c-KHz" id="Nzw-uM-Dmr"/>
                                     <outlet property="reminderChevron" destination="vrP-ae-kTK" id="DGm-9a-Gyn"/>
                                     <outlet property="reminderIcon" destination="WQo-kb-4po" id="ShX-SG-V8I"/>
                                     <outlet property="reminderToggleSwitch" destination="bhe-v6-mKx" id="pBZ-5o-cNj"/>
-                                    <outlet property="reminderTypeDisplayName" destination="9Re-8c-KHz" id="Nzw-uM-Dmr"/>
                                     <outlet property="timeInterval" destination="bK9-8i-YGQ" id="uSV-dg-5ai"/>
                                     <outlet property="timeLeft" destination="PDj-HF-Z40" id="858-hM-ZKH"/>
                                 </connections>
@@ -1466,8 +1465,8 @@
                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" image="line.horizontal.3.decrease" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Thk-Xg-qcG">
-                                            <rect key="frame" x="374" y="12" width="30" height="22"/>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" image="line.3.horizontal.decrease" translatesAutoresizingMaskIntoConstraints="NO" id="Thk-Xg-qcG">
+                                            <rect key="frame" x="374" y="8" width="30" height="30"/>
                                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <accessibility key="accessibilityConfiguration">
                                                 <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
@@ -1511,8 +1510,8 @@
                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" image="line.horizontal.3.decrease" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="NS2-dM-9nk">
-                                            <rect key="frame" x="364" y="12" width="40" height="32"/>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" image="line.3.horizontal.decrease" translatesAutoresizingMaskIntoConstraints="NO" id="NS2-dM-9nk">
+                                            <rect key="frame" x="364" y="8" width="40" height="40"/>
                                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <accessibility key="accessibilityConfiguration">
                                                 <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
@@ -2072,7 +2071,7 @@
                         <outlet property="logNote" destination="yRh-A8-hrG" id="Xyd-fD-upn"/>
                         <outlet property="logType" destination="GGl-n5-nGJ" id="vU1-cn-fN6"/>
                         <outlet property="pageTitle" destination="PyI-jW-rkK" id="G6u-vj-jSy"/>
-                        <outlet property="parentDogName" destination="cBP-r4-Eki" id="mAi-Uk-OkX"/>
+                        <outlet property="parentDogNameSelector" destination="cBP-r4-Eki" id="6ay-eW-EGk"/>
                         <outlet property="trashIcon" destination="rFs-Hq-1oS" id="l7f-Ph-lHk"/>
                     </connections>
                 </viewController>
@@ -2209,6 +2208,76 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="860.86956521739137" y="32.8125"/>
+        </scene>
+        <!--Server Login View Controller-->
+        <scene sceneID="pex-c7-90G">
+            <objects>
+                <viewController id="58r-r7-NND" customClass="ServerLoginViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="hff-WR-7Wu">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Dda-lY-odD">
+                                <rect key="frame" x="10" y="144" width="394" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LMt-ZX-Hls">
+                                <rect key="frame" x="100" y="396" width="214" height="31"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Sign Up"/>
+                                <connections>
+                                    <action selector="willSignUpUser:" destination="58r-r7-NND" eventType="touchUpInside" id="ALp-66-cfr"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="First Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="IHd-gr-CTK">
+                                <rect key="frame" x="10" y="228" width="394" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Last Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="OyB-Nt-N2L">
+                                <rect key="frame" x="10" y="312" width="394" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bJM-ZP-x3Q">
+                                <rect key="frame" x="100" y="477" width="214" height="31"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Sign In"/>
+                                <connections>
+                                    <action selector="willSignInUser:" destination="58r-r7-NND" eventType="touchUpInside" id="vha-dZ-ztC"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Z0a-Lb-ijF"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Dda-lY-odD" firstAttribute="leading" secondItem="Z0a-Lb-ijF" secondAttribute="leading" constant="10" id="0mT-8z-GAf"/>
+                            <constraint firstItem="Z0a-Lb-ijF" firstAttribute="trailing" secondItem="LMt-ZX-Hls" secondAttribute="trailing" constant="100" id="9Ut-ai-lRI"/>
+                            <constraint firstItem="Z0a-Lb-ijF" firstAttribute="trailing" secondItem="Dda-lY-odD" secondAttribute="trailing" constant="10" id="9vG-J5-4h6"/>
+                            <constraint firstItem="bJM-ZP-x3Q" firstAttribute="top" secondItem="LMt-ZX-Hls" secondAttribute="bottom" constant="50" id="Djp-7D-uqa"/>
+                            <constraint firstItem="LMt-ZX-Hls" firstAttribute="leading" secondItem="Z0a-Lb-ijF" secondAttribute="leading" constant="100" id="HQB-fP-RGq"/>
+                            <constraint firstItem="OyB-Nt-N2L" firstAttribute="leading" secondItem="Z0a-Lb-ijF" secondAttribute="leading" constant="10" id="Mlf-tc-xdO"/>
+                            <constraint firstItem="Dda-lY-odD" firstAttribute="top" secondItem="Z0a-Lb-ijF" secondAttribute="top" constant="100" id="QkP-vW-dI3"/>
+                            <constraint firstItem="IHd-gr-CTK" firstAttribute="top" secondItem="Dda-lY-odD" secondAttribute="bottom" constant="50" id="SDy-DI-sXS"/>
+                            <constraint firstItem="Z0a-Lb-ijF" firstAttribute="trailing" secondItem="IHd-gr-CTK" secondAttribute="trailing" constant="10" id="X2h-Ff-DbU"/>
+                            <constraint firstItem="OyB-Nt-N2L" firstAttribute="top" secondItem="IHd-gr-CTK" secondAttribute="bottom" constant="50" id="ZdX-mk-LB2"/>
+                            <constraint firstItem="bJM-ZP-x3Q" firstAttribute="leading" secondItem="Z0a-Lb-ijF" secondAttribute="leading" constant="100" id="biM-Tp-AVa"/>
+                            <constraint firstItem="Z0a-Lb-ijF" firstAttribute="trailing" secondItem="OyB-Nt-N2L" secondAttribute="trailing" constant="10" id="hek-9H-8EX"/>
+                            <constraint firstItem="IHd-gr-CTK" firstAttribute="leading" secondItem="Z0a-Lb-ijF" secondAttribute="leading" constant="10" id="pij-W8-7ol"/>
+                            <constraint firstItem="LMt-ZX-Hls" firstAttribute="top" secondItem="OyB-Nt-N2L" secondAttribute="bottom" constant="50" id="uZn-bf-OeS"/>
+                            <constraint firstItem="Z0a-Lb-ijF" firstAttribute="trailing" secondItem="bJM-ZP-x3Q" secondAttribute="trailing" constant="100" id="wTe-YV-qok"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="userEmail" destination="Dda-lY-odD" id="CUq-7n-hou"/>
+                        <outlet property="userFirstName" destination="IHd-gr-CTK" id="ErK-hu-L2P"/>
+                        <outlet property="userLastName" destination="OyB-Nt-N2L" id="hlm-2H-8Mu"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="N3u-pY-alA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2126" y="-724"/>
         </scene>
         <!--Introduction View Controller-->
         <scene sceneID="DrI-KL-fmy">
@@ -2848,6 +2917,47 @@
             </objects>
             <point key="canvasLocation" x="-7846" y="308"/>
         </scene>
+        <!--Server Sync View Controller-->
+        <scene sceneID="dHR-2G-tN2">
+            <objects>
+                <viewController id="fvG-Uo-RvE" customClass="ServerSyncViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5oC-hS-dcf">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="pawFullResolutionWhite" translatesAutoresizingMaskIntoConstraints="NO" id="3dG-2F-DxQ">
+                                <rect key="frame" x="132" y="373" width="150" height="150"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="150" id="WDd-Gv-mYH"/>
+                                    <constraint firstAttribute="width" constant="150" id="qp1-80-syR"/>
+                                </constraints>
+                            </imageView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="ffm-7i-C0x">
+                                <rect key="frame" x="189.5" y="573" width="35" height="35"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="35" id="b2e-ld-e62"/>
+                                    <constraint firstAttribute="height" constant="35" id="rs2-1a-Up1"/>
+                                </constraints>
+                                <color key="color" systemColor="systemBackgroundColor"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="TR9-Eu-OqZ"/>
+                        <color key="backgroundColor" systemColor="systemBlueColor"/>
+                        <constraints>
+                            <constraint firstItem="ffm-7i-C0x" firstAttribute="top" secondItem="3dG-2F-DxQ" secondAttribute="bottom" constant="50" id="Y1h-kD-kDf"/>
+                            <constraint firstItem="3dG-2F-DxQ" firstAttribute="centerY" secondItem="5oC-hS-dcf" secondAttribute="centerY" id="cOg-Uk-4IL"/>
+                            <constraint firstItem="ffm-7i-C0x" firstAttribute="centerX" secondItem="5oC-hS-dcf" secondAttribute="centerX" id="hMx-GJ-sg9"/>
+                            <constraint firstItem="3dG-2F-DxQ" firstAttribute="centerX" secondItem="5oC-hS-dcf" secondAttribute="centerX" id="uXo-B9-3xV"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <segue destination="49e-Tb-3d3" kind="presentation" identifier="mainTabBarViewController" modalPresentationStyle="fullScreen" id="Jqw-FR-46g"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="f1n-Oj-Vw4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2207" y="-9"/>
+        </scene>
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="GZX-3R-sVV"/>
@@ -2863,7 +2973,7 @@
         <image name="circle.fill" catalog="system" width="128" height="121"/>
         <image name="f.circle.fill" catalog="system" width="128" height="121"/>
         <image name="gearshape" catalog="system" width="128" height="121"/>
-        <image name="line.horizontal.3.decrease" catalog="system" width="128" height="73"/>
+        <image name="line.3.horizontal.decrease" width="128" height="128"/>
         <image name="list.bullet.rectangle" catalog="system" width="128" height="93"/>
         <image name="m.circle.fill" catalog="system" width="128" height="121"/>
         <image name="pawFullResolutionWhite" width="490" height="490.5"/>

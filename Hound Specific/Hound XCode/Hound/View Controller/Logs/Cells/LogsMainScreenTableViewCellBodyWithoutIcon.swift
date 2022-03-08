@@ -20,7 +20,7 @@ class LogsMainScreenTableViewCellBodyCompact: UITableViewCell {
     // MARK: - Properties
 
     private var parentDogIdSource: Int! = nil
-    private var logSource: KnownLog! = nil
+    private var logSource: Log! = nil
 
     // MARK: - Main
 
@@ -28,12 +28,12 @@ class LogsMainScreenTableViewCellBodyCompact: UITableViewCell {
         super.awakeFromNib()
     }
 
-    func setup(parentDogId: Int, log logSource: KnownLog) {
+    func setup(parentDogId: Int, log logSource: Log) {
         self.parentDogIdSource = parentDogId
         self.logSource = logSource
 
         let dog = try! MainTabBarViewController.staticDogManager.findDog(forDogId: parentDogIdSource)
-        self.dogName.text = dog.dogTraits.dogName
+        self.dogName.text = dog.dogName
         self.logType.text = self.logSource.displayTypeName
 
         let dateFormatter = DateFormatter()

@@ -40,7 +40,7 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
     func setup(dogPassed: Dog) {
         dog = dogPassed
 
-        dogIcon.image = dogPassed.dogTraits.icon
+        dogIcon.image = dogPassed.icon
 
         if dogIcon.image != nil && !(dogIcon.image!.isEqualToImage(image: DogConstant.defaultIcon)) {
             dogIcon.layer.masksToBounds = true
@@ -50,7 +50,7 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
             dogIcon.layer.masksToBounds = false
         }
 
-        self.dogName.text = dogPassed.dogTraits.dogName
+        self.dogName.text = dogPassed.dogName
 
         setupTimeLeftText()
     }
@@ -68,12 +68,10 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
             nextReminder.attributedText = NSAttributedString(string: "No Reminders Created", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: nextReminder.font.pointSize, weight: nextReminderImportantWeight)])
         }
         // if paused but has an enabled reminder...
-        else if UserConfiguration.isPaused == true && dog.hasEnabledReminder == true {
+        else if UserConfiguration.isPaused == true && dog.dogReminders.hasEnabledReminder == true {
             var allRemindersEnabled: Bool {
-                for reminder in dog.dogReminders.reminders {
-                    if reminder.getEnable() == false {
-                        return false
-                    }
+                for reminder in dog.dogReminders.reminders where reminder.isEnabled == false {
+                    return false
                 }
                 return true
             }
@@ -87,7 +85,7 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
             }
 
         }
-        else if dog.hasEnabledReminder == false {
+        else if dog.dogReminders.hasEnabledReminder == false {
             nextReminder.attributedText = NSAttributedString(string: "All Reminders Disabled", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: nextReminder.font.pointSize, weight: nextReminderImportantWeight)])
         }
         else if UserConfiguration.isPaused == true {
@@ -99,7 +97,7 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
             // has at least once enabled reminder so soonsetFireDate won't be nil by the end
             var soonestFireDate: Date! = nil
             for reminder in dog.dogReminders.reminders {
-                guard reminder.getEnable() else {
+                guard reminder.isEnabled else {
                     continue
                 }
                 if soonestFireDate == nil {
@@ -122,7 +120,7 @@ class DogsMainScreenTableViewCellDogDisplay: UITableViewCell {
                 nextReminder.attributedText = nextReminder.text!.addingFontToBeginning(text: "Next Reminder In: ", font: UIFont.systemFont(ofSize: nextReminder.font.pointSize, weight: nextReminderImportantWeight))
             }
             else {
-                let timeLeftText = String.convertToReadable(interperateTimeInterval: Date().distance(to: soonestFireDate))
+                let timeLeftText = String.convertToReadable(fromTimeInterval: Date().distance(to: soonestFireDate))
 
                 nextReminder.font = UIFont.systemFont(ofSize: nextReminder.font.pointSize, weight: nextReminderBodyWeight)
 

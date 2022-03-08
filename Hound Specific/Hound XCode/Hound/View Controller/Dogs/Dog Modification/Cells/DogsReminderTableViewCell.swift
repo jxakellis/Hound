@@ -45,36 +45,39 @@ class DogsReminderTableViewCell: UITableViewCell {
 
         reminderDisplay.text = ""
 
-        if reminder.timingStyle == .oneTime {
-            try! self.reminderDisplay.text? = " \(String.convertToReadableNonRepeating(interperatedDateComponents: reminder.oneTimeComponents.dateComponents))"
+        if reminder.reminderType == .oneTime {
+            self.reminderDisplay.text? = " \(String.convertToReadable(fromDate: reminder.oneTimeComponents.executionDate))"
         }
-        else if reminder.timingStyle == .countDown {
-            self.reminderDisplay.text?.append(" Every \(String.convertToReadable(interperateTimeInterval: reminder.countDownComponents.executionInterval))")
+        else if reminder.reminderType == .countdown {
+            self.reminderDisplay.text?.append(" Every \(String.convertToReadable(fromTimeInterval: reminder.countdownComponents.executionInterval))")
         }
-        else {
-            try! self.reminderDisplay.text?.append(" \(String.convertToReadable(interperatedDateComponents: reminder.timeOfDayComponents.timeOfDayComponent))")
+        else if reminder.reminderType == .monthly {
 
-            // day of month
-            if reminder.timeOfDayComponents.dayOfMonth != nil {
-                let dayOfMonth: Int! = reminder.timeOfDayComponents.dayOfMonth
+                let dayOfMonth: Int! = reminder.monthlyComponents.dayOfMonth
                 reminderDisplay.text?.append(" Every Month on \(dayOfMonth!)")
 
                 reminderDisplay.text?.append(String.dayOfMonthSuffix(day: dayOfMonth))
-            }
+
+        }
+
+        else if reminder.reminderType == .weekly {
+
+            try! self.reminderDisplay.text?.append(" \(String.convertToReadable(fromDateComponents: reminder.monthlyComponents.dateComponents))")
+
             // weekdays
-            else if reminder.timeOfDayComponents.weekdays == [1, 2, 3, 4, 5, 6, 7] {
+            if reminder.weeklyComponents.weekdays == [1, 2, 3, 4, 5, 6, 7] {
                 reminderDisplay.text?.append(" Everyday")
             }
-            else if reminder.timeOfDayComponents.weekdays == [1, 7] {
+            else if reminder.weeklyComponents.weekdays == [1, 7] {
                 reminderDisplay.text?.append(" on Weekends")
             }
-            else if reminder.timeOfDayComponents.weekdays == [2, 3, 4, 5, 6] {
+            else if reminder.weeklyComponents.weekdays == [2, 3, 4, 5, 6] {
                 reminderDisplay.text?.append(" on Weekdays")
             }
             else {
                 reminderDisplay.text?.append(" on")
-                if reminder.timeOfDayComponents.weekdays!.count == 1 {
-                    for weekdayInt in reminder.timeOfDayComponents.weekdays! {
+                if reminder.weeklyComponents.weekdays.count == 1 {
+                    for weekdayInt in reminder.weeklyComponents.weekdays {
                         switch weekdayInt {
                         case 1:
                             reminderDisplay.text?.append(" Sunday")
@@ -96,7 +99,7 @@ class DogsReminderTableViewCell: UITableViewCell {
                     }
                 }
                 else {
-                    for weekdayInt in reminder.timeOfDayComponents.weekdays! {
+                    for weekdayInt in reminder.weeklyComponents.weekdays {
                         switch weekdayInt {
                         case 1:
                             reminderDisplay.text?.append(" Su,")
@@ -126,7 +129,7 @@ class DogsReminderTableViewCell: UITableViewCell {
 
         reminderDisplay.attributedText = reminderDisplay.text?.addingFontToBeginning(text: reminder.displayTypeName + " -", font: UIFont.systemFont(ofSize: reminderDisplay.font.pointSize, weight: .medium))
 
-        self.reminderToggleSwitch.isOn = reminder.getEnable()
+        self.reminderToggleSwitch.isOn = reminder.isEnabled
 
     }
 

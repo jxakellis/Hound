@@ -20,7 +20,7 @@ class LogsMainScreenTableViewCellBodyRegularWithIcon: UITableViewCell {
     // MARK: - Properties
 
     private var parentDogIdSource: Int! = nil
-    private var logSource: KnownLog! = nil
+    private var logSource: Log! = nil
 
     // MARK: - Main
 
@@ -28,12 +28,12 @@ class LogsMainScreenTableViewCellBodyRegularWithIcon: UITableViewCell {
         super.awakeFromNib()
     }
 
-    func setup(parentDogId: Int, log logSource: KnownLog) {
+    func setup(parentDogId: Int, log logSource: Log) {
         self.parentDogIdSource = parentDogId
         self.logSource = logSource
 
         let dog = try! MainTabBarViewController.staticDogManager.findDog(forDogId: parentDogIdSource)
-        logIcon.image = dog.dogTraits.icon
+        logIcon.image = dog.icon
         logIcon.layer.masksToBounds = true
         logIcon.layer.cornerRadius = logIcon.frame.width/2
 

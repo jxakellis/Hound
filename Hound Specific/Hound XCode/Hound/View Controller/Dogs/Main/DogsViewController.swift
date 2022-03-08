@@ -429,7 +429,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
 
                 let willAddReminderButtonBackground = createAddButtonBackground(willAddReminderButton)
 
-                let willAddReminderButtonLabel = createAddButtonLabel(willAddReminderButton, text: "Create New Reminder For \(getDogManager().dogs[dogIndex].dogTraits.dogName)")
+                let willAddReminderButtonLabel = createAddButtonLabel(willAddReminderButton, text: "Create New Reminder For \(getDogManager().dogs[dogIndex].dogName)")
                 let willAddReminderButtonLabelBackground = createAddButtonLabelBackground(willAddReminderButtonLabel)
 
                 addButtons.append(willAddReminderButton)

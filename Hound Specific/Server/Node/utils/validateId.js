@@ -33,7 +33,7 @@ const validateUserId = async (req, res, next) => {
     catch (error) {
       // couldn't query database to find userId
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message });
+      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
     }
   }
   else {
@@ -77,7 +77,7 @@ const validateDogId = async (req, res, next) => {
     }
     catch (error) {
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message });
+      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
     }
   }
   else {
@@ -121,7 +121,7 @@ const validateLogId = async (req, res, next) => {
     }
     catch (error) {
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message });
+      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
     }
   }
   else {
@@ -165,7 +165,7 @@ const validateReminderId = async (req, res, next) => {
     }
     catch (error) {
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.message });
+      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
     }
   }
   else {

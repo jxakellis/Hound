@@ -15,6 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     static var generalLogger = Logger(subsystem: "com.example.Pupotty", category: "General")
     static var endpointLogger = Logger(subsystem: "com.example.Pupotty", category: "Endpoints")
+    static var APIResponseLogger = Logger(subsystem: "com.example.Pupotty", category: "API Response")
     static var lifeCycleLogger = Logger(subsystem: "com.example.Pupotty", category: "Life Cycle")
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {

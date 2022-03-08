@@ -30,10 +30,10 @@ const formatDate = (string) => {
  * @returns
  */
 const formatBoolean = (string) => {
-  if (string === 'true' || string === '1' || string === 1) {
+  if (string === true || string === 'true' || string === '1' || string === 1) {
     return true;
   }
-  if (string === 'false' || string === '0' || string === 0) {
+  if (string === false || string === 'false' || string === '0' || string === 0) {
     return false;
   }
 

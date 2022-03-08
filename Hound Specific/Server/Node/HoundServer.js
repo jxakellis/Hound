@@ -11,7 +11,7 @@ app.use((req, res, next) => {
   bodyParser.urlencoded({ extended: true })(req, res, (error) => {
     if (error) {
       // before creating a pool connection for request, so no need to release said connection
-      return res.status(400).json({ message: 'Invalid Body; Unable to parse', error: error.message });
+      return res.status(400).json({ message: 'Invalid Body; Unable to parse', error });
     }
 
     return next();
@@ -24,7 +24,7 @@ app.use((req, res, next) => {
   bodyParser.json()(req, res, (error) => {
     if (error) {
       // before creating a pool connection for request, so no need to release said connection
-      return res.status(400).json({ message: 'Invalid Body; Unable to parse', error: error.message });
+      return res.status(400).json({ message: 'Invalid Body; Unable to parse', error });
     }
 
     return next();

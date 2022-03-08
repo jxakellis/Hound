@@ -31,20 +31,14 @@ class SettingsViewController: UIViewController, DropDownUIViewDataSourceProtocol
 
         switch darkModeSegmentedControl.selectedSegmentIndex {
         case 0:
-            for window in UIApplication.shared.windows {
-                window.overrideUserInterfaceStyle = .light
-                UserConfiguration.darkModeStyle = .light
-            }
+            UIApplication.keyWindow?.overrideUserInterfaceStyle = .light
+            UserConfiguration.darkModeStyle = .light
         case 1:
-            for window in UIApplication.shared.windows {
-                window.overrideUserInterfaceStyle = .dark
-                UserConfiguration.darkModeStyle = .dark
-            }
+            UIApplication.keyWindow?.overrideUserInterfaceStyle = .dark
+            UserConfiguration.darkModeStyle = .dark
         default:
-            for window in UIApplication.shared.windows {
-                window.overrideUserInterfaceStyle = .unspecified
-                UserConfiguration.darkModeStyle = .unspecified
-            }
+            UIApplication.keyWindow?.overrideUserInterfaceStyle = .unspecified
+            UserConfiguration.darkModeStyle = .unspecified
         }
     }
 

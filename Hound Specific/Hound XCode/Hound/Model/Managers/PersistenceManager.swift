@@ -44,6 +44,7 @@ class PersistenceManager {
             LocalConfiguration.lastUnpause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastUnpause.rawValue) as? Date
 
             LocalConfiguration.hasLoadedIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedIntroductionViewControllerBefore
+            LocalConfiguration.hasLoadedDogsIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedDogsIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedDogsIntroductionViewControllerBefore
 
             LocalConfiguration.reviewRequestDates = UserDefaults.standard.value(forKey: UserDefaultsKeys.reviewRequestDates.rawValue) as? [Date] ?? LocalConfiguration.reviewRequestDates
 
@@ -99,14 +100,6 @@ class PersistenceManager {
                 var message: String?
 
                 switch UIApplication.appBuild {
-                case 3048:
-                    message = "--Added in-app, update release notes\n--Revised notification sound options (28->23). If your sound was removed then your sound choice was reset to the default\n--In the event of an app crash during the launch process, app data no longer resets\n--Expanded Settings page logic\n--Improved performance"
-                case 3163:
-                    message = "--If corrupted data is discovered while loading Hound, Hound now recovers itself instead of crashing\n--Improved crashes, Hound now displays error messages where previous crashes existed\n--Clarified certain error messages\n--Fixed certain spelling errors\n--Added this message!"
-                case 3193:
-                    message = "--Fixed days of week menu bug\n--Further improved crashes, converting them into error messages instead. No crashes have been detected as of version 1.3.2"
-                case 3451:
-                    message = "--Revised unarchiving of stored data, hopefully reducing corruption, data resets, and crashes.\n--Added intermittent pop-up to review Hound.\n--Integrated event logs to provide insight into crashes reports."
                 case 3810:
                     message = "--Improved redundancy when unarchiving data"
                 default:
@@ -160,11 +153,12 @@ class PersistenceManager {
             UserDefaults.standard.setValue(LocalConfiguration.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.hasLoadedIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedIntroductionViewControllerBefore.rawValue)
+            UserDefaults.standard.setValue(LocalConfiguration.hasLoadedDogsIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedDogsIntroductionViewControllerBefore.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.isShowTerminationAlert, forKey: UserDefaultsKeys.isShowTerminationAlert.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.isShowReleaseNotes, forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.reviewRequestDates, forKeyPath: UserDefaultsKeys.reviewRequestDates.rawValue)
 
-            MainTabBarViewController.firstTimeSetup = true
+            LocalConfiguration.hasLoadedIntroductionViewControllerBefore = true
         }
     }
 
@@ -233,6 +227,7 @@ class PersistenceManager {
             UserDefaults.standard.setValue(LocalConfiguration.isShowTerminationAlert, forKey: UserDefaultsKeys.isShowTerminationAlert.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.isShowReleaseNotes, forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.hasLoadedIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedIntroductionViewControllerBefore.rawValue)
+            UserDefaults.standard.setValue(LocalConfiguration.hasLoadedDogsIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedDogsIntroductionViewControllerBefore.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.reviewRequestDates, forKeyPath: UserDefaultsKeys.reviewRequestDates.rawValue)
         }
 
@@ -254,10 +249,10 @@ class PersistenceManager {
                     guard reminder.timer?.isValid == true else {
                         continue
                     }
-                    Utils.willCreateUNUserNotification(dogName: dog.dogTraits.dogName, reminder: reminder)
+                    Utils.willCreateUNUserNotification(dogName: dog.dogName, reminder: reminder)
 
                     if UserConfiguration.isFollowUpEnabled == true {
-                        Utils.willCreateFollowUpUNUserNotification(dogName: dog.dogTraits.dogName, reminder: reminder)
+                        Utils.willCreateFollowUpUNUserNotification(dogName: dog.dogName, reminder: reminder)
                     }
                 }
             }

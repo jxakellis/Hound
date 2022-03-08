@@ -9,7 +9,8 @@
 import UIKit
 
 enum DogError: Error {
-    case noRemindersPresent
+    case nilName
+    case blankName
 }
 
 class Dog: NSObject, NSCoding, NSCopying {
@@ -18,31 +19,39 @@ class Dog: NSObject, NSCoding, NSCopying {
 
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = Dog()
+        copy.dogId = self.dogId
+        copy.storedDogName = self.storedDogName
+        copy.icon = self.icon
         copy.dogReminders = self.dogReminders.copy() as? ReminderManager
         copy.dogReminders.parentDog = copy
-        copy.dogTraits = self.dogTraits.copy() as! TraitManager
+        copy.dogLogs = self.dogLogs
         return copy
     }
 
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         super.init()
-        dogTraits = aDecoder.decodeObject(forKey: "dogTraits") as? TraitManager ?? TraitManager()
-        // for build versions <= 1513
-        dogReminders = aDecoder.decodeObject(forKey: "dogReminders") as? ReminderManager ?? aDecoder.decodeObject(forKey: "dogRequirements") as? ReminderManager ?? aDecoder.decodeObject(forKey: "dogRequirments") as? ReminderManager ?? ReminderManager(parentDog: self)
-        dogReminders.parentDog = self
+        dogId = aDecoder.decodeInteger(forKey: "dogId")
+        storedDogName = aDecoder.decodeObject(forKey: "dogName") as? String ?? UUID().uuidString
+        icon = aDecoder.decodeObject(forKey: "icon") as? UIImage ?? DogConstant.defaultIcon
+        dogLogs = aDecoder.decodeObject(forKey: "dogLogs") as? LogManager ?? LogManager()
+        dogReminders = aDecoder.decodeObject(forKey: "dogReminders") as? ReminderManager ?? ReminderManager(parentDog: self)
     }
 
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(dogTraits, forKey: "dogTraits")
+        aCoder.encode(dogId, forKey: "dogId")
+        aCoder.encode(storedDogName, forKey: "dogName")
+        aCoder.encode(icon, forKey: "icon")
+        aCoder.encode(dogLogs, forKey: "dogLogs")
         aCoder.encode(dogReminders, forKey: "dogReminders")
     }
 
-    // MARK: - Properties
+    // MARK: - Main
 
     override init() {
         super.init()
         self.dogReminders = ReminderManager(parentDog: self)
+        self.dogLogs = LogManager()
     }
 
     convenience init(defaultReminders: Bool) {
@@ -52,92 +61,47 @@ class Dog: NSObject, NSCoding, NSCopying {
         }
     }
 
+    /// Assume array of dog properties
+    convenience init(fromBody body: [String: Any]) {
+        self.init()
+
+        if let dogId = body["dogId"] as? Int {
+            self.dogId = dogId
+        }
+        if let dogName = body["dogName"] as? String {
+            storedDogName = dogName
+        }
+    }
+
+    // MARK: - Properties
+
     var dogId: Int = -1
 
-    /// Traits
-    var dogTraits: TraitManager = TraitManager()
+    // MARK: - Traits
+
+    var icon: UIImage = DogConstant.defaultIcon
+
+    func resetIcon() {
+        icon = DogConstant.defaultIcon
+    }
+
+    private var storedDogName: String = DogConstant.defaultName
+    var dogName: String { return storedDogName }
+    func changeDogName(newDogName: String?) throws {
+        if newDogName == nil {
+            throw DogError.nilName
+        }
+        else if newDogName!.trimmingCharacters(in: .whitespaces) == ""{
+            throw DogError.blankName
+        }
+        else {
+            storedDogName = newDogName!
+        }
+    }
 
     /// ReminderManager that handles all specified reminders for a dog, e.g. being taken to the outside every time interval or being fed.
     var dogReminders: ReminderManager! = nil
 
-    /// Returns an array of known log types. Each known log type has an array of logs attached to it. This means you can find every log for a given log type
-    var catagorizedLogTypes: [(KnownLogType, [KnownLog])] {
-        var catagorizedLogTypes: [(KnownLogType, [KnownLog])] = []
-
-        // handles all dog logs and adds to catagorized log types
-        for dogLog in dogTraits.logs {
-            // already contains that dog log type, needs to append
-            if catagorizedLogTypes.contains(where: { (arg1) -> Bool in
-                let knownLogType = arg1.0
-                if dogLog.logType == knownLogType {
-                    return true
-                }
-                else {
-                    return false
-                }
-            }) == true {
-                // since knownLogType is already present, append on dogLog that is of that same type to the arry of logs with the given knownLogType
-                let targetIndex: Int! = catagorizedLogTypes.firstIndex(where: { (arg1) -> Bool in
-                    let knownLogType = arg1.0
-                    if knownLogType == dogLog.logType {
-                        return true
-                    }
-                    else {
-                        return false
-                    }
-                })
-
-                catagorizedLogTypes[targetIndex].1.append(dogLog)
-            }
-            // does not contain that dog Log's Type
-            else {
-                catagorizedLogTypes.append((dogLog.logType, [dogLog]))
-            }
-        }
-
-        // sorts by the order defined by the enum, so whatever case is first in the code of the enum that is the order of the catagorizedLogTypes
-        catagorizedLogTypes.sort { arg1, arg2 in
-            let (knownLogType1, _) = arg1
-            let (knownLogType2, _) = arg2
-
-            // finds corrosponding index
-            let knownLogType1Index: Int! = KnownLogType.allCases.firstIndex { arg1 in
-                if knownLogType1.rawValue == arg1.rawValue {
-                    return true
-                }
-                else {
-                    return false
-                }
-            }
-            // finds corrosponding index
-            let knownLogType2Index: Int! = KnownLogType.allCases.firstIndex { arg1 in
-                if knownLogType2.rawValue == arg1.rawValue {
-                    return true
-                }
-                else {
-                    return false
-                }
-            }
-
-            if knownLogType1Index <= knownLogType2Index {
-                return true
-            }
-            else {
-                return false
-            }
-
-        }
-
-        return catagorizedLogTypes
-    }
-
-    /// returns true if has created a reminder and has at least one enabled
-    var hasEnabledReminder: Bool {
-            for reminder in dogReminders.reminders {
-                if reminder.getEnable() == true {
-                    return true
-                }
-            }
-        return false
-    }
+    /// LogManager that handles all the logs for a dog
+    var dogLogs: LogManager! = nil
 }

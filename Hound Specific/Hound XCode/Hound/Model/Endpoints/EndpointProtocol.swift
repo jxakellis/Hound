@@ -64,7 +64,7 @@ protocol EndpointProtocol {
 }
 
 /**
- Classes that conform to this protocol have an extra create and update statement. These statements take NSObjects for the body parameter, instead of a [String:Any]. This allows for automatic extracting of body components from Dog, KnownLogType, and Reminder.
+ Classes that conform to this protocol have an extra create and update statement. These statements take NSObjects for the body parameter, instead of a [String:Any]. This allows for automatic extracting of body components from Dog, LogType, and Reminder.
  */
 protocol EndpointObjectProtocol: EndpointProtocol {
     /**

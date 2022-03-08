@@ -13,13 +13,13 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
 
     func didSetDogName(sender: Sender, dogName: String) {
         let sudoDogManager = getDogManager()
-        try! sudoDogManager.dogs[0].dogTraits.changeDogName(newDogName: dogName)
+        try! sudoDogManager.dogs[0].changeDogName(newDogName: dogName)
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
 
     func didSetDogIcon(sender: Sender, dogIcon: UIImage) {
         let sudoDogManager = getDogManager()
-        sudoDogManager.dogs[0].dogTraits.icon = dogIcon
+        sudoDogManager.dogs[0].icon = dogIcon
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
 
@@ -117,8 +117,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     var settingsNavigationViewController: SettingsNavigationViewController! = nil
     var settingsViewController: SettingsViewController! = nil
 
-    static var firstTimeSetup: Bool = false
-
     static var mainTabBarViewController: MainTabBarViewController! = nil
 
     /// The tab on the tab bar that the app should open to, if its the first time openning the app then go the the second tab (setup dogs) which is index 1 as index starts at 0
@@ -130,12 +128,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         super.viewDidLoad()
 
         AppDelegate.generalLogger.notice("Application build is \(UIApplication.appBuild)")
-
-        // Pre version 1.2.2 uses different names so needs this here to properly adapt to new class names
-        NSKeyedUnarchiver.setClass(ReminderManager.self, forClassName: "Hound.RequirementManager")
-        NSKeyedUnarchiver.setClass(TraitManager.self, forClassName: "Hound.DogTraitManager")
-        NSKeyedUnarchiver.setClass(Reminder.self, forClassName: "Hound.Requirement")
-
         var decodedDogManager: DogManager! = nil
 
         do {
@@ -167,7 +159,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
             AlertManager.shared.enqueueAlertForPresentation(dogManagerResetAlertController)
         }
 
-       // decodedDogManager.dogs[0].dogReminders.reminders[0].countDownComponents.changeExecutionInterval(newExecutionInterval: 15.0)
+       // decodedDogManager.dogs[0].dogReminders.reminders[0].countdownComponents.changeExecutionInterval(newExecutionInterval: 15.0)
 
         setDogManager(sender: Sender(origin: self, localized: self), newDogManager: decodedDogManager)
 
@@ -201,9 +193,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         super.viewWillAppear(animated)
         AlertManager.globalPresenter = self
 
-        for window in UIApplication.shared.windows {
-            window.overrideUserInterfaceStyle = UserConfiguration.darkModeStyle
-        }
+        UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.darkModeStyle
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -212,8 +202,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         AlertManager.globalPresenter = self
         AlertManager.shared.refreshAlerts(dogManager: getDogManager())
 
-        if MainTabBarViewController.firstTimeSetup == true {
-            MainTabBarViewController.firstTimeSetup = false
+        if LocalConfiguration.hasLoadedIntroductionViewControllerBefore == true {
             self.performSegue(withIdentifier: "introductionViewController", sender: self)
         }
     }

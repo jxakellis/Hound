@@ -34,7 +34,7 @@ protocol DogManagerProtocol {
     /// Returns number of reminders that are enabled and therefore have a timer. Does not factor in isPaused.
     var enabledTimersCount: Int { get }
 
-    /// Adds a dog to dogs, checks to see if the dog itself is valid, e.g. its dogId is unique. Currently does NOT override other dogs
+    /// Adds a dog to dogs, checks to see if the dog itself is valid, e.g. its dogId is unique. Currently override other dog with the same dogId
      mutating func addDog(newDog: Dog) throws
 
     /// Adds array of dogs with addDog(newDog: Dog) repition
@@ -95,10 +95,8 @@ extension DogManagerProtocol {
 
     var hasEnabledReminder: Bool {
         for dog in dogs {
-            for reminder in dog.dogReminders.reminders {
-                if reminder.getEnable() == true {
-                    return true
-                }
+            for reminder in dog.dogReminders.reminders where reminder.isEnabled == true {
+                return true
             }
         }
         return false
@@ -109,7 +107,7 @@ extension DogManagerProtocol {
         for d in 0..<MainTabBarViewController.staticDogManager.dogs.count {
 
             for r in 0..<MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders.count {
-                guard MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders[r].getEnable() == true else {
+                guard MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders[r].isEnabled == true else {
                     continue
                 }
 
@@ -141,6 +139,7 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
     }
 
     // MARK: - NSCoding
+
     required init?(coder aDecoder: NSCoder) {
         storedDogs = aDecoder.decodeObject(forKey: "dogs") as? [Dog] ?? []
     }
@@ -149,27 +148,39 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         aCoder.encode(storedDogs, forKey: "dogs")
     }
 
+    // MARK: - Main
+
     /// initalizes, sets dogs to []
     override init() {
         storedDogs = []
         super.init()
     }
 
+    convenience init(fromBody body: [String: Any]) throws {
+        self.init()
+    }
+
     func synchronizeIsSkipping() {
 
         for dogIndex in 0..<dogs.count {
             for reminderIndex in 0..<dogs[dogIndex].dogReminders.reminders.count {
+
                 let reminder: Reminder = dogs[dogIndex].dogReminders.reminders[reminderIndex]
 
-                guard reminder.getEnable() == true else {
+                guard reminder.isEnabled == true else {
                     continue
                 }
 
-                let unskipDate = reminder.timeOfDayComponents.unskipDate(timerMode: reminder.timerMode, reminderExecutionBasis: reminder.executionBasis)
+                let unskipDate = reminder.unskipDate()
 
                 if unskipDate != nil && Date().distance(to: unskipDate!) < 0 {
-                    self.dogs[dogIndex].dogReminders.reminders[reminderIndex].timeOfDayComponents.changeIsSkipping(newSkipStatus: true, shouldRemoveLogDuringPossibleUnskip: nil)
-                    self.dogs[dogIndex].dogReminders.reminders[reminderIndex].changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
+                    if reminder.reminderType == .weekly {
+                        reminder.changeIsSkipping(newSkipStatus: true)
+                    }
+                    else {
+                        reminder.changeIsSkipping(newSkipStatus: true)
+                    }
+                    reminder.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
                 }
             }
         }
@@ -181,17 +192,15 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
 
     func addDog(newDog: Dog) throws {
 
-        if newDog.dogTraits.dogName == ""{
+        guard newDog.dogName != "" else {
             throw DogManagerError.dogNameBlank
         }
-        // allow multiple dogs with the same name since going off dogId now and not dogName for identification
-       // else {
-         //   try dogs.forEach { (dog) in
-               // if dog.dogTraits.dogName.lowercased() == newDog.dogTraits.dogName.lowercased() {//
-        //            throw DogManagerError.dogIdAlreadyPresent
-        //        }
-        //    }
-        // }
+
+        // removes any existing dogs that have the same dogId as they would cause problems. .reversed() is needed to make it work, without it there will be an index of out bounds error.
+        for (dogIndex, dog) in dogs.enumerated().reversed() where dog.dogId == newDog.dogId {
+            storedDogs.remove(at: dogIndex)
+        }
+
         storedDogs.append(newDog)
         AppDelegate.endpointLogger.notice("ENDPOINT Add Dog")
     }

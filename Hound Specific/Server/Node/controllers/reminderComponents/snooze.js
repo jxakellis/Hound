@@ -47,7 +47,7 @@ const updateSnoozeComponents = async (req, reminderId) => {
       return;
     }
     catch (error) {
-      // If this succeeds: Reminder was present in the snooze table, timingStyle didn't change, and the components were successfully updated
+      // If this succeeds: Reminder was present in the snooze table, reminderType didn't change, and the components were successfully updated
       // If this fails: The components provided are invalid. It is uncaught here to intentionally be caught by invocation from reminders.
       await queryPromise(
         req,
