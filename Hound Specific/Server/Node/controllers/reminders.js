@@ -3,6 +3,7 @@ const {
   formatDate, formatBoolean, formatNumber, areAllDefined, atLeastOneDefined,
 } = require('../utils/validateFormat');
 
+const { queryReminder, queryReminders } = require('./queryFor/queryForReminders');
 const { createCountdownComponents, updateCountdownComponents } = require('./reminderComponents/countdown');
 const { createWeeklyComponents, updateWeeklyComponents } = require('./reminderComponents/weekly');
 const { createMonthlyComponents, updateMonthlyComponents } = require('./reminderComponents/monthly');
@@ -25,23 +26,8 @@ const getReminders = async (req, res) => {
     try {
       // left joins dogReminders and component tables so that a reminder has all of its components attached
       // tables where the dogReminder isn't present (i.e. its reminderType is different) will just append lots of null values to result
-      let result = await queryPromise(
-        req,
-        'SELECT *, dogReminders.reminderId as reminderId FROM dogReminders LEFT JOIN reminderCountdownComponents ON dogReminders.reminderId = reminderCountdownComponents.reminderId LEFT JOIN reminderWeeklyComponents ON dogReminders.reminderId = reminderWeeklyComponents.reminderId LEFT JOIN reminderMonthlyComponents ON dogReminders.reminderId = reminderMonthlyComponents.reminderId LEFT JOIN reminderOneTimeComponents ON dogReminders.reminderId = reminderOneTimeComponents.reminderId LEFT JOIN reminderSnoozeComponents ON dogReminders.reminderId = reminderSnoozeComponents.reminderId WHERE dogReminders.reminderId = ?',
-        [reminderId],
-      );
+      const result = await queryReminder(req, reminderId);
 
-      // there will be only one result so just take first item in array
-      result = result[0];
-
-      // because of all the null values from left join, since only one component table (for the corresponding reminderType) will have the reminder, we need to remve
-      // eslint-disable-next-line no-restricted-syntax
-      for (const [key, value] of Object.entries(result)) {
-        // checks for null json values, if json value is null then removes the key
-        if (value === null) {
-          delete result[key];
-        }
-      }
       req.commitQueries(req);
       return res.status(200).json({ result });
     }
@@ -53,29 +39,13 @@ const getReminders = async (req, res) => {
   // no reminderId
   else {
     try {
-      // get all reminders for the dogId, then left join to all reminder components table so each reminder has compoents attached
-      const result = await queryPromise(
-        req,
-        'SELECT *, dogReminders.reminderId as reminderId FROM dogReminders LEFT JOIN reminderCountdownComponents ON dogReminders.reminderId = reminderCountdownComponents.reminderId LEFT JOIN reminderWeeklyComponents ON dogReminders.reminderId = reminderWeeklyComponents.reminderId LEFT JOIN reminderMonthlyComponents ON dogReminders.reminderId = reminderMonthlyComponents.reminderId LEFT JOIN reminderOneTimeComponents ON dogReminders.reminderId = reminderOneTimeComponents.reminderId LEFT JOIN reminderSnoozeComponents ON dogReminders.reminderId = reminderSnoozeComponents.reminderId WHERE dogReminders.dogId = ?',
-        [dogId],
-      );
+      // get the reminders
+      const result = await queryReminders(req, dogId);
 
       if (result.length === 0) {
         // successful but empty array, no reminders to return
         req.commitQueries(req);
         return res.status(204).json({ result: [] });
-      }
-
-      // iterate through all the reminders returned
-      for (let i = 0; i < result.length; i += 1) {
-        // because of all the null values from left join, since only one component table (for the corresponding reminderType) will have the reminder, we need to remve
-        // eslint-disable-next-line no-restricted-syntax
-        for (const [key, value] of Object.entries(result[i])) {
-          // checks for null json values, if json value is null then removes the key
-          if (value === null) {
-            delete result[i][key];
-          }
-        }
       }
 
       // array has items, meaning there were reminders found, successful!

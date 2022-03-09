@@ -1,6 +1,6 @@
 const { queryPromise } = require('../utils/queryPromise');
 const {
-  isEmailValid, areAllDefined, atLeastOneDefined, formatBoolean, formatNumber,
+  areAllDefined, atLeastOneDefined, formatEmail, formatBoolean, formatNumber,
 } = require('../utils/validateFormat');
 
 /*
@@ -9,14 +9,8 @@ Known:
 */
 
 const getUser = async (req, res) => {
-  let { userEmail } = req.body;
-  const userId = formatNumber(req.params.userId);
-
-  // if the users provides an userEmail and a userId then there is a problem. We don't know what to look for as those could be linked to different accounts
-  if (userEmail && userId) {
-    req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Parameters or Body; userEmail and userId provided, only provide one.' });
-  }
+  const userEmail = formatEmail(req.params.userIdentifier);
+  const userId = formatNumber(req.params.userIdentifier);
 
   // userId method of finding corresponding user
   if (userId) {
@@ -48,20 +42,15 @@ const getUser = async (req, res) => {
       return res.status(400).json({ message: 'Invalid Parameters; user not found', error: error.code });
     }
   }
-  else {
+  else if (userEmail) {
     // userEmail method of finding corresponding user(s)
-    if (isEmailValid(userEmail) === false) {
-      req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Body; userEmail Invalid' });
-    }
-    // userEmail valid, can convert to lower case without producing error
-    userEmail = req.body.userEmail.toLowerCase();
+    // userEmail already validated
 
     try {
       const userInformation = await queryPromise(
         req,
         'SELECT * FROM users LEFT JOIN userConfiguration ON users.userId = userConfiguration.userId WHERE users.userEmail = ?',
-        [userEmail.toLowerCase()],
+        [userEmail],
       );
 
       if (userInformation.length === 0) {
@@ -79,23 +68,26 @@ const getUser = async (req, res) => {
       return res.status(400).json({ message: 'Invalid Body; Database query failed', error: error.code });
     }
   }
+  else {
+    req.rollbackQueries(req);
+    return res.status(400).json({ message: 'Invalid Parameters or Body; userEmail and userId undefined.' });
+  }
 };
 
 const createUser = async (req, res) => {
-  let { userEmail } = req.body;
-
-  if (userEmail === '') {
+  if (req.body.userEmail === '') {
     // userEmail cannot be blank. The else if after will catch this but this statement is to genereate a new, different error.
     req.rollbackQueries(req);
     return res.status(400).json({ message: 'Invalid Body; userEmail Invalid', error: 'ER_EMAIL_BLANK' });
   }
-  else if (isEmailValid(userEmail) === false) {
+
+  const userEmail = formatEmail(req.body.userEmail);
+
+  if (areAllDefined(userEmail) === false) {
     // userEmail NEEDs to be valid, so throw error if it is invalid
     req.rollbackQueries(req);
     return res.status(400).json({ message: 'Invalid Body; userEmail Invalid', error: 'ER_EMAIL_INVALID' });
   }
-  // userEmail valid, can convert to lower case without producing error
-  userEmail = req.body.userEmail.toLowerCase();
 
   const { userFirstName } = req.body;
   const { userLastName } = req.body;
@@ -116,9 +108,7 @@ const createUser = async (req, res) => {
   const followUpDelay = formatNumber(req.body.followUpDelay);
   const isPaused = formatBoolean(req.body.isPaused);
   const isCompactView = formatBoolean(req.body.isCompactView);
-  let { darkModeStyle } = req.body;
-  // MariaDB starts at 1 for enums, not 0 based so must correct.
-  darkModeStyle += 1;
+  const darkModeStyle = formatNumber(req.body.darkModeStyle);
   const snoozeLength = formatNumber(req.body.snoozeLength);
   const { notificationSound } = req.body;
   // component of the body is missing or invalid
@@ -159,7 +149,7 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const userId = formatNumber(req.params.userId);
-  let { userEmail } = req.body;
+  const userEmail = formatEmail(req.body.userEmail);
   const { userFirstName } = req.body;
   const { userLastName } = req.body;
 
@@ -170,7 +160,7 @@ const updateUser = async (req, res) => {
   const followUpDelay = formatNumber(req.body.followUpDelay);
   const isPaused = formatBoolean(req.body.isPaused);
   const isCompactView = formatBoolean(req.body.isCompactView);
-  const { darkModeStyle } = req.body;
+  const darkModeStyle = formatNumber(req.body.darkModeStyle);
   const snoozeLength = formatNumber(req.body.snoozeLength);
   const { notificationSound } = req.body;
 
@@ -184,15 +174,7 @@ const updateUser = async (req, res) => {
 
   try {
     if (areAllDefined(userEmail)) {
-      // userEmail only needs to be valid if its provided, therefore check here
-
-      if (isEmailValid(userEmail) === false) {
-        req.rollbackQueries(req);
-        return res.status(400).json({ message: 'Invalid Body; userEmail Invalid' });
-      }
-      // userEmail valid, can convert to lower case without producing error
-      userEmail = req.body.userEmail.toLowerCase();
-
+      // if userEmail is defined, then its valid
       await queryPromise(
         req,
         'UPDATE users SET userEmail = ? WHERE userId = ?',

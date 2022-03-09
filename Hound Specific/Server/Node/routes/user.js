@@ -8,6 +8,10 @@ const {
 
 const { validateUserId } = require('../utils/validateId');
 
+// gets user with userId then return information from users and userConfiguration table
+router.get('/:userIdentifier', getUser);
+// no body
+
 // validation that params are formatted correctly and have adequate permissions
 router.use('/:userId', validateUserId);
 
@@ -17,18 +21,6 @@ const dogsRouter = require('./dogs');
 router.use('/:userId/dogs', dogsRouter);
 
 // BASE PATH /api/v1/user/...
-
-// gets user with userEmail then return information from users and userConfiguration table
-router.get('/', getUser);
-/* BODY:
-{
-"userEmail":"requiredString"
-}
-*/
-
-// gets user with userId then return information from users and userConfiguration table
-router.get('/:userId', getUser);
-// no body
 
 // creates user and userConfiguration
 router.post('/', createUser);

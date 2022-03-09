@@ -23,6 +23,46 @@ enum UserConfiguration {
     // followUpDelay
     // notificationSound
 
+    // MARK: - Main
+
+    /// Sets the UserConfiguration values equal to all the values found in the body. The key for the each body value must match the name of the UserConfiguration property exactly in order to be used. The value must also be able to be converted into the proper data type.
+    static func setup(fromBody body: [String: Any]) {
+        if let isCompactView = body["isCompactView"] as? Bool {
+            storedIsCompactView = isCompactView
+        }
+        if let darkModeStyleInt = body["darkModeStyle"] as? Int {
+            if let darkModeStyle = UIUserInterfaceStyle(rawValue: darkModeStyleInt) {
+                storedDarkModeStyle = darkModeStyle
+            }
+        }
+        if let snoozeLength = body["snoozeLength"] as? TimeInterval {
+            storedSnoozeLength = snoozeLength
+        }
+        if let isPaused = body["isPaused"] as? Bool {
+            storedIsPaused = isPaused
+        }
+        if let isNotificationAuthorized = body["isNotificationAuthorized"] as? Bool {
+            storedIsNotificationAuthorized = isNotificationAuthorized
+        }
+        if let isNotificationEnabled = body["isNotificationEnabled"] as? Bool {
+            storedIsNotificationEnabled = isNotificationEnabled
+        }
+        if let isLoudNotification = body["isLoudNotification"] as? Bool {
+            storedIsLoudNotification = isLoudNotification
+        }
+        if let isFollowUpEnabled = body["isFollowUpEnabled"] as? Bool {
+            storedIsFollowUpEnabled = isFollowUpEnabled
+        }
+        if let followUpDelay = body["followUpDelay"] as? TimeInterval {
+            storedFollowUpDelay = followUpDelay
+        }
+        if let notificationSoundString = body["notificationSound"] as? String {
+            if let notificationSound = NotificationSound(rawValue: notificationSoundString) {
+                storedNotificationSound = notificationSound
+            }
+        }
+    }
+
     // MARK: - In-App Appearance Related
 
     static private var storedIsCompactView: Bool = true

@@ -31,7 +31,7 @@ class MonthlyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtoco
         self.storedDateComponents = aDecoder.decodeObject(forKey: "dateComponents") as? DateComponents ?? DateComponents()
         self.isSkipping = aDecoder.decodeBool(forKey: "isSkipping")
         self.isSkippingLogDate = aDecoder.decodeObject(forKey: "isSkippingLogDate") as? Date
-        self.storedDayOfMonth = aDecoder.decodeObject(forKey: "dayOfMonth") as? Int ?? 1
+        self.storedDayOfMonth = aDecoder.decodeInteger(forKey: "dayOfMonth")
     }
 
     func encode(with aCoder: NSCoder) {

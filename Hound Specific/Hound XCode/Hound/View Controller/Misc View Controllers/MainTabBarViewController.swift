@@ -128,6 +128,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         super.viewDidLoad()
 
         AppDelegate.generalLogger.notice("Application build is \(UIApplication.appBuild)")
+
+        /*
         var decodedDogManager: DogManager! = nil
 
         do {
@@ -158,10 +160,9 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
             dogManagerResetAlertController.addAction(acceptAlertAction)
             AlertManager.shared.enqueueAlertForPresentation(dogManagerResetAlertController)
         }
+         */
 
-       // decodedDogManager.dogs[0].dogReminders.reminders[0].countdownComponents.changeExecutionInterval(newExecutionInterval: 15.0)
-
-        setDogManager(sender: Sender(origin: self, localized: self), newDogManager: decodedDogManager)
+        setDogManager(sender: Sender(origin: self, localized: self), newDogManager: ServerSyncViewController.dogManager)
 
         self.selectedIndex = MainTabBarViewController.selectedEntryIndex
 
@@ -182,8 +183,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         MainTabBarViewController.mainTabBarViewController = self
 
         TimingManager.delegate = self
-        TimingManager.willInitalize(dogManager: getDogManager())
-        // fatalError()
 
         UserDefaults.standard.setValue(false, forKey: "didCrashDuringSetup")
     }
@@ -200,10 +199,11 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         // Called after the view is added to the view hierarchy
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
+        TimingManager.willInitalize(dogManager: getDogManager())
         AlertManager.shared.refreshAlerts(dogManager: getDogManager())
 
-        if LocalConfiguration.hasLoadedIntroductionViewControllerBefore == true {
-            self.performSegue(withIdentifier: "introductionViewController", sender: self)
+        if LocalConfiguration.hasLoadedIntroductionViewControllerBefore == false {
+            // self.performSegue(withIdentifier: "introductionViewController", sender: self)
         }
     }
 

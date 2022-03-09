@@ -111,10 +111,6 @@ class ErrorManager {
             ErrorManager.alertForError(message: "Your dog's name is invalid, please try a different one.")
             return true
         }
-        else if case DogManagerError.dogNameBlank = error {
-            ErrorManager.alertForError(message: "Your dog's name is blank, try typing something in.")
-            return true
-        }
         else {
             return false
         }
@@ -128,11 +124,11 @@ class ErrorManager {
              case blankName
          }
          */
-        if case DogError.nilName = error {
+        if case DogError.dogNameNil = error {
             ErrorManager.alertForError(message: "Your dog's name is invalid, please try a different one.")
             return true
         }
-        else if case DogError.blankName = error {
+        else if case DogError.dogNameBlank = error {
             ErrorManager.alertForError(message: "Your dog's name is blank, try typing something in.")
             return true
         }

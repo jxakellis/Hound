@@ -177,11 +177,12 @@ extension InternalEndpointUtils {
     static func createLogBody(log: Log) -> [String: Any] {
         var body: [String: Any] = [:]
         body["note"] = log.note
-        body["date"] = log.date.ISO8601Format(_:)
+        body["date"] = log.date.ISO8601Format()
         body["logType"] = log.logType.rawValue
-        if log.logType == .custom {
+        if log.logType == .custom && log.customTypeName != nil {
             body["customTypeName"] = log.customTypeName
         }
+        print(body)
         return body
 
     }
@@ -190,7 +191,7 @@ extension InternalEndpointUtils {
     static func createReminderBody(reminder: Reminder) -> [String: Any] {
         var body: [String: Any] = [:]
         body["reminderAction"] = reminder.reminderAction.rawValue
-        if reminder.reminderAction == .custom {
+        if reminder.reminderAction == .custom && reminder.customTypeName != nil {
             body["customTypeName"] = reminder.customTypeName
         }
         body["executionBasis"] = reminder.executionBasis.ISO8601Format()
@@ -206,8 +207,8 @@ extension InternalEndpointUtils {
             body["hour"] = reminder.weeklyComponents.dateComponents.hour
             body["minute"] = reminder.weeklyComponents.dateComponents.minute
             body["skipping"] = reminder.weeklyComponents.isSkipping
-            if reminder.weeklyComponents.isSkipping == true {
-                body["skipDate"] = reminder.weeklyComponents.isSkippingLogDate
+            if reminder.weeklyComponents.isSkipping == true && reminder.weeklyComponents.isSkippingLogDate != nil {
+                body["skipDate"] = reminder.weeklyComponents.isSkippingLogDate!.ISO8601Format()
             }
 
             body["sunday"] = false
@@ -243,8 +244,8 @@ extension InternalEndpointUtils {
             body["hour"] = reminder.monthlyComponents.dateComponents.hour
             body["minute"] = reminder.monthlyComponents.dateComponents.minute
             body["skipping"] = reminder.monthlyComponents.isSkipping
-            if reminder.monthlyComponents.isSkipping == true {
-                body["skipDate"] = reminder.monthlyComponents.isSkippingLogDate?.ISO8601Format()
+            if reminder.monthlyComponents.isSkipping == true && reminder.monthlyComponents.isSkippingLogDate != nil {
+                body["skipDate"] = reminder.monthlyComponents.isSkippingLogDate!.ISO8601Format()
             }
             body["dayOfMonth"] = reminder.monthlyComponents.dayOfMonth
         case .oneTime:
@@ -254,4 +255,59 @@ extension InternalEndpointUtils {
         return body
     }
 
+}
+
+enum EndpointUtils {
+    static var ISO8601DateFormatter: ISO8601DateFormatter = {
+        let formatter = Foundation.ISO8601DateFormatter()
+        formatter.formatOptions = [.withFractionalSeconds, .withDashSeparatorInDate, .withColonSeparatorInTime, .withFullDate, .withTime]
+        return formatter
+    }()
+
+    /// Combines the different get requests functions to query for all the components for a  fully formed dogManager
+    static func getDogManager(completionHandler: @escaping (DogManager?) -> Void) {
+        // assume userId valid as it was retrieved when the app started. Later on with familyId, if a user was removed from the family, then this refresh could fail.
+        let dogManager = DogManager()
+
+            // Retrieve any dogs the user may have
+            do {
+                try DogsEndpoint.get(forDogId: nil, completionHandler: { responseBody, _, _ in
+                    if responseBody != nil {
+                        // Array of dog JSON [{dog1:'foo'},{dog2:'bar'}]
+                        if let result = responseBody!["result"] as? [[String: Any]] {
+                            for dogBody in result {
+                                do {
+                                    // add dog to the DogManager
+                                    let dog = try Dog(fromBody: dogBody)
+                                    dogManager.addDog(newDog: dog)
+                                    return queryFinished(successful: true)
+                                }
+                                catch {
+                                    // handle if problem with adding dog
+                                }
+
+                            }
+
+                        }
+                    }
+                    
+                    // this whole body is sync. If the execution didn't make it to return queryFinished(successful: true), then it means there was an error encountered. If it did make it to that statement then this code wouldn't be executed
+                    return queryFinished(successful: false)
+                })
+            }
+            catch {
+                // couldn't query at all
+                return queryFinished(successful: false)
+            }
+        
+        // depending on whether or not the query was successful, we return different completioHandlers
+        func queryFinished(successful: Bool){
+            if successful == true {
+                completionHandler(dogManager)
+            }
+            else {
+                completionHandler(nil)
+            }
+        }
+    }
 }

@@ -274,7 +274,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
     private func willInitalize() {
         // new dog
         if targetDog == nil {
-            targetDog = Dog(defaultReminders: true)
+            targetDog = try! Dog(dogName: DogConstant.defaultDogName, defaultReminders: true)
         }
 
         if targetDog.icon.isEqualToImage(image: DogConstant.defaultIcon) {

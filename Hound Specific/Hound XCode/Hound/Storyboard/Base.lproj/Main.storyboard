@@ -1465,8 +1465,8 @@
                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" image="line.3.horizontal.decrease" translatesAutoresizingMaskIntoConstraints="NO" id="Thk-Xg-qcG">
-                                            <rect key="frame" x="374" y="8" width="30" height="30"/>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" image="line.3.horizontal.decrease" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Thk-Xg-qcG">
+                                            <rect key="frame" x="374" y="12" width="30" height="22"/>
                                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <accessibility key="accessibilityConfiguration">
                                                 <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
@@ -1510,8 +1510,8 @@
                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" image="line.3.horizontal.decrease" translatesAutoresizingMaskIntoConstraints="NO" id="NS2-dM-9nk">
-                                            <rect key="frame" x="364" y="8" width="40" height="40"/>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" image="line.3.horizontal.decrease" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="NS2-dM-9nk">
+                                            <rect key="frame" x="364" y="12" width="40" height="32"/>
                                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <accessibility key="accessibilityConfiguration">
                                                 <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
@@ -2933,24 +2933,34 @@
                                 </constraints>
                             </imageView>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="ffm-7i-C0x">
-                                <rect key="frame" x="189.5" y="573" width="35" height="35"/>
+                                <rect key="frame" x="189.5" y="558" width="35" height="35"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="35" id="b2e-ld-e62"/>
                                     <constraint firstAttribute="height" constant="35" id="rs2-1a-Up1"/>
                                 </constraints>
-                                <color key="color" systemColor="systemBackgroundColor"/>
+                                <color key="color" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </activityIndicatorView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fetching User" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0jo-Zc-MLN">
+                                <rect key="frame" x="0.0" y="628" width="414" height="24"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="TR9-Eu-OqZ"/>
                         <color key="backgroundColor" systemColor="systemBlueColor"/>
                         <constraints>
-                            <constraint firstItem="ffm-7i-C0x" firstAttribute="top" secondItem="3dG-2F-DxQ" secondAttribute="bottom" constant="50" id="Y1h-kD-kDf"/>
+                            <constraint firstItem="0jo-Zc-MLN" firstAttribute="top" secondItem="ffm-7i-C0x" secondAttribute="bottom" constant="35" id="4Nw-68-mWp"/>
+                            <constraint firstItem="TR9-Eu-OqZ" firstAttribute="trailing" secondItem="0jo-Zc-MLN" secondAttribute="trailing" id="IHP-1U-R9V"/>
+                            <constraint firstItem="ffm-7i-C0x" firstAttribute="top" secondItem="3dG-2F-DxQ" secondAttribute="bottom" constant="35" id="Y1h-kD-kDf"/>
+                            <constraint firstItem="0jo-Zc-MLN" firstAttribute="leading" secondItem="TR9-Eu-OqZ" secondAttribute="leading" id="aXe-k5-RgJ"/>
                             <constraint firstItem="3dG-2F-DxQ" firstAttribute="centerY" secondItem="5oC-hS-dcf" secondAttribute="centerY" id="cOg-Uk-4IL"/>
                             <constraint firstItem="ffm-7i-C0x" firstAttribute="centerX" secondItem="5oC-hS-dcf" secondAttribute="centerX" id="hMx-GJ-sg9"/>
                             <constraint firstItem="3dG-2F-DxQ" firstAttribute="centerX" secondItem="5oC-hS-dcf" secondAttribute="centerX" id="uXo-B9-3xV"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="statusLabel" destination="0jo-Zc-MLN" id="X55-oX-axt"/>
                         <segue destination="49e-Tb-3d3" kind="presentation" identifier="mainTabBarViewController" modalPresentationStyle="fullScreen" id="Jqw-FR-46g"/>
                     </connections>
                 </viewController>
@@ -2973,7 +2983,7 @@
         <image name="circle.fill" catalog="system" width="128" height="121"/>
         <image name="f.circle.fill" catalog="system" width="128" height="121"/>
         <image name="gearshape" catalog="system" width="128" height="121"/>
-        <image name="line.3.horizontal.decrease" width="128" height="128"/>
+        <image name="line.3.horizontal.decrease" catalog="system" width="128" height="73"/>
         <image name="list.bullet.rectangle" catalog="system" width="128" height="93"/>
         <image name="m.circle.fill" catalog="system" width="128" height="121"/>
         <image name="pawFullResolutionWhite" width="490" height="490.5"/>

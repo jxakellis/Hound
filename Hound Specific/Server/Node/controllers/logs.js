@@ -2,6 +2,7 @@ const { queryPromise } = require('../utils/queryPromise');
 const {
   formatDate, formatNumber, areAllDefined, atLeastOneDefined,
 } = require('../utils/validateFormat');
+const { queryLog, queryLogs } = require('./queryFor/queryForLogs');
 
 /*
 Known:
@@ -17,7 +18,7 @@ const getLogs = async (req, res) => {
   // if logId is defined and it is a number then continue
   if (logId) {
     try {
-      const result = await queryPromise(req, 'SELECT * FROM dogLogs WHERE logId = ?', [logId]);
+      const result = await queryLog(req, logId);
       req.commitQueries(req);
       return res.status(200).json({ result });
     }
@@ -28,11 +29,7 @@ const getLogs = async (req, res) => {
   }
   else {
     try {
-      const result = await queryPromise(
-        req,
-        'SELECT * FROM dogLogs WHERE dogId = ?',
-        [dogId],
-      );
+      const result = await queryLogs(req, dogId);
 
       if (result.length === 0) {
         // successful but empty array, not logs to return

@@ -1,4 +1,38 @@
 /**
+ * Takes a string. If the string provided passes the regex and length checks, it is a valid userEmail and the function returns true. Otherwise, function returns false.
+ * @param {*} userEmail
+ * @returns
+ */
+const formatEmail = (userEmail) => {
+  // eslint-disable-next-line no-useless-escape, max-len
+  const emailRegex = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
+
+  if (!userEmail) {
+    return undefined;
+  }
+  if (userEmail.length > 254) {
+    return undefined;
+  }
+
+  const valid = emailRegex.test(userEmail);
+  if (!valid) {
+    return undefined;
+  }
+
+  // Further checking of some things regex can't handle
+  const parts = userEmail.split('@');
+  if (parts[0].length > 64) {
+    return undefined;
+  }
+  const domainParts = parts[1].split('.');
+  if (domainParts.some((part) => part.length > 63)) {
+    return undefined;
+  }
+
+  return userEmail.toLowerCase();
+};
+
+/**
  * Converts provided date into format needed for database. If any check fails, returns undefined. Otherwise, returns correctly formatted date.
  * @param {*} date
  * @returns
@@ -117,40 +151,6 @@ const atLeastOneDefined = (arr) => {
   return true;
 };
 
-/**
- * Takes a string. If the string provided passes the regex and length checks, it is a valid userEmail and the function returns true. Otherwise, function returns false.
- * @param {*} userEmail
- * @returns
- */
-const isEmailValid = (userEmail) => {
-  // eslint-disable-next-line no-useless-escape, max-len
-  const emailRegex = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
-
-  if (!userEmail) {
-    return false;
-  }
-  if (userEmail.length > 254) {
-    return false;
-  }
-
-  const valid = emailRegex.test(userEmail);
-  if (!valid) {
-    return false;
-  }
-
-  // Further checking of some things regex can't handle
-  const parts = userEmail.split('@');
-  if (parts[0].length > 64) {
-    return false;
-  }
-  const domainParts = parts[1].split('.');
-  if (domainParts.some((part) => part.length > 63)) {
-    return false;
-  }
-
-  return true;
-};
-
 module.exports = {
-  isEmailValid, areAllDefined, atLeastOneDefined, formatDate, formatBoolean, formatNumber,
+  areAllDefined, atLeastOneDefined, formatEmail, formatDate, formatBoolean, formatNumber,
 };

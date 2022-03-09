@@ -9,8 +9,7 @@
 import UIKit
 
 enum DogConstant {
-    static let defaultEnable: Bool = true
-    static let defaultName: String = "Bella"
+    static let defaultDogName: String = "Bella"
     static let defaultIcon: UIImage = UIImage.init(named: "pawFullResolutionWhite")!
     static let chooseIcon: UIImage = UIImage.init(named: "chooseIcon")!
 }
@@ -60,7 +59,7 @@ enum ReminderConstant {
 enum DogManagerConstant {
 
     static var userDefaultDog: Dog {
-        let userDefaultDog = Dog()
+        let userDefaultDog = try! Dog(dogName: DogConstant.defaultDogName)
 
         /*
          let reminder = Reminder()
@@ -76,7 +75,7 @@ enum DogManagerConstant {
     static var defaultDogManager: DogManager {
         let dogManager = DogManager()
 
-        try! dogManager.addDog(newDog: DogManagerConstant.userDefaultDog)
+        dogManager.addDog(newDog: DogManagerConstant.userDefaultDog)
 
         return dogManager
     }
@@ -119,7 +118,7 @@ enum UserDefaultsKeys: String {
     case hasLoadedDogsIntroductionViewControllerBefore
 
     // MARK: Other
-    case didFirstTimeSetup
+    case hasDoneFirstTimeSetup
     case dogManager
     case appBuild
 }

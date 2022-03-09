@@ -220,7 +220,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         }
 
         let sudoDogManager = getDogManager()
-        try sudoDogManager.addDog(newDog: newDog)
+        sudoDogManager.addDog(newDog: newDog)
         setDogManager(sender: sender, newDogManager: sudoDogManager)
         // try delegate.didAddDog(dogAdded: addedDog)
     }

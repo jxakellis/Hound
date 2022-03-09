@@ -65,7 +65,7 @@ enum RemindersEndpoint: EndpointObjectProtocol {
         }
         catch {
             // only reason to fail immediately is if there was an invalid body
-            throw DogsEndpointError.bodyInvalid
+            throw RemindersEndpointError.bodyInvalid
         }
 
     }

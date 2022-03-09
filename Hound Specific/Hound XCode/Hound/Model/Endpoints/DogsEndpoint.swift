@@ -20,11 +20,16 @@ enum DogsEndpoint: EndpointObjectProtocol {
 
         let pathWithParams: URL
 
+        // special case where we append the query parameter of all. Its value doesn't matter but it just tells the server that we want the logs and reminders of the dog too.
         if dogId != nil {
-            pathWithParams = basePathWithoutParams.appendingPathComponent("/\(dogId!)")
+            var path = URLComponents(url: basePathWithoutParams.appendingPathComponent("/\(dogId!)"), resolvingAgainstBaseURL: false)!
+            path.queryItems = [URLQueryItem(name: "all", value: "foo")]
+            pathWithParams = path.url!
         }
         else {
-            pathWithParams = basePathWithoutParams
+            var path = URLComponents(url: basePathWithoutParams.appendingPathComponent(""), resolvingAgainstBaseURL: false)!
+            path.queryItems = [URLQueryItem(name: "all", value: "foo")]
+            pathWithParams = path.url!
         }
 
         // make get request, , try statement only fails with invalid body and no body provided means always succeeds

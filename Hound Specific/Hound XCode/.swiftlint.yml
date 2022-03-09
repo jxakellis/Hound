@@ -1,7 +1,6 @@
 disabled_rules: # rule identifiers turned on by default to exclude from running
   # general
   # single word related
-  - inclusive_language
   - identifier_name
   - type_name
   # multiple word length related

@@ -1,8 +1,14 @@
 
 import Foundation
 
-var nums = [1,3,4,6,12,5,3214,51346,2]
-for (indexx, num) in nums.enumerated().reversed() where num % 2 == 0 {
-    nums.remove(at: indexx)
+func callback(completionHandler: @escaping (String) -> Void){
+    print(1)
+    print(2)
+     completionHandler("str")
+    print(3)
+    completionHandler("asdfasf")
 }
-print(nums)
+
+callback { str in
+    print(str)
+}

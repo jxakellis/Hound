@@ -10,7 +10,6 @@ import UIKit
 
 /// Enum full of cases of possible errors from DogManager
 enum DogManagerError: Error {
-    case dogNameBlank
     case dogIdInvalid
     case dogIdNotPresent
     case dogIdAlreadyPresent
@@ -156,10 +155,6 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         super.init()
     }
 
-    convenience init(fromBody body: [String: Any]) throws {
-        self.init()
-    }
-
     func synchronizeIsSkipping() {
 
         for dogIndex in 0..<dogs.count {
@@ -188,13 +183,9 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
 
     private var storedDogs: [Dog]
     /// Array of dogs
-    var dogs: [Dog] { return storedDogs}
+    var dogs: [Dog] { return storedDogs }
 
-    func addDog(newDog: Dog) throws {
-
-        guard newDog.dogName != "" else {
-            throw DogManagerError.dogNameBlank
-        }
+    func addDog(newDog: Dog) {
 
         // removes any existing dogs that have the same dogId as they would cause problems. .reversed() is needed to make it work, without it there will be an index of out bounds error.
         for (dogIndex, dog) in dogs.enumerated().reversed() where dog.dogId == newDog.dogId {
@@ -205,9 +196,9 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         AppDelegate.endpointLogger.notice("ENDPOINT Add Dog")
     }
 
-    func addDogs(newDogs: [Dog]) throws {
+    func addDogs(newDogs: [Dog]) {
         for i in 0..<newDogs.count {
-            try addDog(newDog: newDogs[i])
+            addDog(newDog: newDogs[i])
         }
     }
 

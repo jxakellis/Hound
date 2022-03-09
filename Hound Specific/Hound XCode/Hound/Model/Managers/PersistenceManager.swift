@@ -158,7 +158,8 @@ class PersistenceManager {
             UserDefaults.standard.setValue(LocalConfiguration.isShowReleaseNotes, forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.reviewRequestDates, forKeyPath: UserDefaultsKeys.reviewRequestDates.rawValue)
 
-            LocalConfiguration.hasLoadedIntroductionViewControllerBefore = true
+            // indicate to local save that the app has sucessfully set itself up
+            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.hasDoneFirstTimeSetup.rawValue)
         }
     }
 

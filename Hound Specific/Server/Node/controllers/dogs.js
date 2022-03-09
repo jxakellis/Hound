@@ -1,5 +1,6 @@
 const { queryPromise } = require('../utils/queryPromise');
 const { formatNumber, areAllDefined, atLeastOneDefined } = require('../utils/validateFormat');
+const { queryDog, queryDogs } = require('./queryFor/queryForDogs');
 
 /*
 Known:
@@ -13,9 +14,8 @@ const getDogs = async (req, res) => {
 
   // if dogId is defined and it is a number then continue
   if (dogId) {
-    // queryPromise(req, 'SELECT dogId, dogName, icon FROM dogs WHERE dogs.dogId = ?', [dogId])
     try {
-      const result = await queryPromise(req, 'SELECT * FROM dogs WHERE dogs.dogId = ?', [dogId]);
+      const result = await queryDog(req, dogId);
       req.commitQueries(req);
       return res.status(200).json({ result });
     }
@@ -26,12 +26,8 @@ const getDogs = async (req, res) => {
   }
   else {
     try {
-      const result = await queryPromise(
-        req,
-        'SELECT * FROM dogs WHERE dogs.userId = ?',
-        [userId],
-      );
-
+      const result = await queryDogs(req, userId);
+      console.log(result);
       if (result.length === 0) {
         // successful but empty array, not dogs to return
         req.commitQueries(req);

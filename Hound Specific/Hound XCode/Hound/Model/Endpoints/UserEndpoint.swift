@@ -44,7 +44,7 @@ enum UserEndpoint: EndpointProtocol {
         if forUserEmail != nil {
             do {
                 // manually construct body to do get request. Can throw if body invalid (shouldn't be though?)
-                try InternalEndpointUtils.genericGetRequest(path: basePathWithoutParams, body: ["userEmail": forUserEmail!]) { dictionary, status, error in
+                try InternalEndpointUtils.genericGetRequest(path: basePathWithoutParams.appendingPathComponent("/\(forUserEmail!)")) { dictionary, status, error in
                     completionHandler(dictionary, status, error)
                 }
             }

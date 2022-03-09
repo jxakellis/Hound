@@ -197,19 +197,58 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 updatedLog.customTypeName = trimmedCustomLogTypeName
             }
 
-            delegate.didUpdateLog(sender: Sender(origin: self, localized: self), parentDogId: updatingLogInformation.0, updatedLog: updatedLog)
-            self.navigationController?.popViewController(animated: true)
+            try! LogsEndpoint.update(forDogId: updatingLogInformation.0, forLogId: updatedLog.logId, objectForBody: updatedLog) { responseBody, responseCode, _ in
+
+                DispatchQueue.main.async {
+
+                    print("addlogsVC update log endpoint")
+                    print(responseBody)
+                    print(responseCode)
+                    // successful query has nothing, just check for response code
+                    if responseCode != nil && 200...299 ~= responseCode! {
+                        self.delegate.didUpdateLog(sender: Sender(origin: self, localized: self), parentDogId: self.updatingLogInformation.0, updatedLog: updatedLog)
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                    // error
+                    else {
+                        // TO DO, add indicator the request failed
+                    }
+                }
+
+            }
+
         }
         // adding log
         else {
             do {
-                if logType.text == nil || logType.text?.trimmingCharacters(in: .whitespacesAndNewlines) == ""{
+                if logType.text == nil || logType.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
                     throw LogTypeError.blankLogType
                 }
                 else {
                     let newLog = Log(date: logDate.date, note: logNote.text ?? "", logType: LogType(rawValue: logType.text!)!, customTypeName: trimmedCustomLogTypeName)
-                    delegate.didAddLog(sender: Sender(origin: self, localized: self), parentDogId: parentDogNameSelector.tag, newLog: newLog)
-                    self.navigationController?.popViewController(animated: true)
+
+                    try! LogsEndpoint.create(forDogId: parentDogNameSelector.tag, objectForBody: newLog) { responseBody, responseCode, _ in
+
+                        DispatchQueue.main.async {
+
+                            print("addlogsVC create log endpoint")
+                            print(responseBody)
+                            print(responseCode)
+
+                            // successful query has a logId, check for it instead of just success code
+                            if responseBody != nil, let logId = responseBody!["result"] as? Int {
+                                newLog.logId = logId
+                                self.delegate.didAddLog(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogNameSelector.tag, newLog: newLog)
+                                self.navigationController?.popViewController(animated: true)
+                            }
+                            // error
+                            else {
+                                // TO DO, add indicator the request failed
+                            }
+                        }
+
+                    }
+
                 }
             }
             catch {
@@ -369,6 +408,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
     private func setUpGestures() {
         // adding a log
         if updatingLogInformation == nil {
+            // can edit the parent dog
             self.parentDogNameSelector.isUserInteractionEnabled = true
             let parentDogNameSelectorTapGesture = UITapGestureRecognizer(target: self, action: #selector(parentDogNameSelectorTapped))
             parentDogNameSelectorTapGesture.delegate = self
@@ -381,8 +421,9 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
             logTypeTapGesture.cancelsTouchesInView = false
             self.logType.addGestureRecognizer(logTypeTapGesture)
         }
-        // updating a rlog
+        // updating a log
         else {
+            // cannot edit the parent dog
             self.parentDogNameSelector.isUserInteractionEnabled = false
             self.parentDogNameSelector.isEnabled = false
 

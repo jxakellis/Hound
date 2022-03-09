@@ -23,11 +23,11 @@ router.use('/:dogId/reminders', reminderRouter);
 
 // BASE PATH /api/v1/user/:userId/dogs/
 
-// gets all dogs
+// gets all dogs, query parameter of ?all attaches the logs and the reminders to the dog
 router.get('/', getDogs);
 // no body
 
-// gets specific dog
+// gets specific dog, query parameter of ?all attaches the logs and the reminders to the dogs
 router.get('/:dogId', getDogs);
 // no body
 

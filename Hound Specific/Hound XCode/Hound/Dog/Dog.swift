@@ -9,8 +9,8 @@
 import UIKit
 
 enum DogError: Error {
-    case nilName
-    case blankName
+    case dogNameNil
+    case dogNameBlank
 }
 
 class Dog: NSObject, NSCoding, NSCopying {
@@ -18,7 +18,7 @@ class Dog: NSObject, NSCoding, NSCopying {
     // MARK: - NSCopying
 
     func copy(with zone: NSZone? = nil) -> Any {
-        let copy = Dog()
+        let copy = try! Dog(dogName: self.dogName)
         copy.dogId = self.dogId
         copy.storedDogName = self.storedDogName
         copy.icon = self.icon
@@ -48,28 +48,51 @@ class Dog: NSObject, NSCoding, NSCopying {
 
     // MARK: - Main
 
-    override init() {
+    init(dogName: String) throws {
         super.init()
+        if dogName.trimmingCharacters(in: .whitespaces) == "" {
+            throw DogError.dogNameBlank
+        }
+        self.storedDogName = dogName
         self.dogReminders = ReminderManager(parentDog: self)
         self.dogLogs = LogManager()
     }
 
-    convenience init(defaultReminders: Bool) {
-        self.init()
+    convenience init(dogName: String, defaultReminders: Bool? = false) throws {
+        try self.init(dogName: dogName)
         if defaultReminders == true {
             self.dogReminders.addDefaultReminders()
         }
     }
 
     /// Assume array of dog properties
-    convenience init(fromBody body: [String: Any]) {
-        self.init()
+    convenience init(fromBody body: [String: Any]) throws {
+
+        if let dogName = body["dogName"] as? String {
+            try self.init(dogName: dogName)
+        }
+        else {
+            throw DogError.dogNameNil
+        }
 
         if let dogId = body["dogId"] as? Int {
             self.dogId = dogId
         }
-        if let dogName = body["dogName"] as? String {
-            storedDogName = dogName
+
+        // check for any reminders
+        if let reminderBodies = body["reminders"] as? [[String: Any]] {
+            for reminderBody in reminderBodies {
+                let reminder = Reminder(parentDog: self, fromBody: reminderBody)
+                self.dogReminders.addReminder(newReminder: reminder)
+            }
+        }
+
+        // check for any logs
+        if let logBodies = body["logs"] as? [[String: Any]] {
+            for logBody in logBodies {
+                let log = Log(fromBody: logBody)
+                self.dogLogs.addLog(newLog: log)
+            }
         }
     }
 
@@ -85,14 +108,14 @@ class Dog: NSObject, NSCoding, NSCopying {
         icon = DogConstant.defaultIcon
     }
 
-    private var storedDogName: String = DogConstant.defaultName
+    private var storedDogName: String = DogConstant.defaultDogName
     var dogName: String { return storedDogName }
     func changeDogName(newDogName: String?) throws {
         if newDogName == nil {
-            throw DogError.nilName
+            throw DogError.dogNameNil
         }
         else if newDogName!.trimmingCharacters(in: .whitespaces) == ""{
-            throw DogError.blankName
+            throw DogError.dogNameBlank
         }
         else {
             storedDogName = newDogName!

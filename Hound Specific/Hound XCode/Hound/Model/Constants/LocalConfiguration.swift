@@ -87,7 +87,7 @@ enum LocalConfiguration {
         }
     }
 
-    static private var storedHasLoadedIntroductionViewControllerBefore: Bool = true
+    static private var storedHasLoadedIntroductionViewControllerBefore: Bool = false
     /// Keeps track of if the user has viewed AND completed the dogs introduction view controller (which helps the user setup their first reminders)
     static var hasLoadedIntroductionViewControllerBefore: Bool {
         get {

@@ -193,6 +193,6 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
         }
 
         // once this view has completed (user swiped it away or hit continue) then we can say its been compelete.
-        LocalConfiguration.hasLoadedIntroductionViewControllerBefore = false
+        LocalConfiguration.hasLoadedIntroductionViewControllerBefore = true
     }
 }

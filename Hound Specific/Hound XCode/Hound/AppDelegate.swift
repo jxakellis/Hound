@@ -52,37 +52,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             AppDelegate.generalLogger.fault("Recovery setup for app data, crashed during last setup")
             PersistenceManager.willSetup()
 
-           UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
+           UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.hasDoneFirstTimeSetup.rawValue)
             // UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
 
             AlertManager.willShowAlert(title: "🚨Crashed detected🚨", message: "Hound crashed during its last launch and had to reset itself to default in order to recover. I am sorry for the inconvenience😢")
 
         }
-
-        /*
-        else if shouldPerformCleanInstall == true {
-            AppDelegate.generalLogger.notice("Clean install setup for app data")
-            PersistenceManager.willSetup()
-            
-            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
-            UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.shouldPerformCleanInstall.rawValue)
-        }
-         */
         else {
             // retrieve value from local store, if value doesn't exist then false is returned
-            var hasSetup = UserDefaults.standard.bool(forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
-
+            let hasSetup = UserDefaults.standard.bool(forKey: UserDefaultsKeys.hasDoneFirstTimeSetup.rawValue)
+        
             if hasSetup {
                 AppDelegate.generalLogger.notice("Recurring setup for app data")
                 PersistenceManager.willSetup(isRecurringSetup: true)
-
-                hasSetup = true
             }
             else {
                 AppDelegate.generalLogger.notice("First time setup for app data")
                 PersistenceManager.willSetup()
-
-                UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.didFirstTimeSetup.rawValue)
+// hasDoneFirstTimeSetup to true in PersistanceManager after everything completed
             }
         }
 
