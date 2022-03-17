@@ -63,19 +63,19 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
 
     @IBOutlet private weak var dogName: UITextField!
 
-    @IBOutlet private weak var darkModeSegmentedControl: UISegmentedControl!
+    @IBOutlet private weak var interfaceSegmentedControl: UISegmentedControl!
 
     @IBAction private func segmentedControl(_ sender: Any) {
-        switch darkModeSegmentedControl.selectedSegmentIndex {
+        switch interfaceSegmentedControl.selectedSegmentIndex {
         case 0:
             UIApplication.keyWindow?.overrideUserInterfaceStyle = .light
-            UserConfiguration.darkModeStyle = .light
+            UserConfiguration.interfaceStyle = .light
         case 1:
             UIApplication.keyWindow?.overrideUserInterfaceStyle = .dark
-            UserConfiguration.darkModeStyle = .dark
+            UserConfiguration.interfaceStyle = .dark
         default:
             UIApplication.keyWindow?.overrideUserInterfaceStyle = .unspecified
-            UserConfiguration.darkModeStyle = .unspecified
+            UserConfiguration.interfaceStyle = .unspecified
         }
     }
 
@@ -159,11 +159,11 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
         dogName.delegate = self
 
         UIApplication.keyWindow?.overrideUserInterfaceStyle = .unspecified
-        UserConfiguration.darkModeStyle = .unspecified
+        UserConfiguration.interfaceStyle = .unspecified
 
-        darkModeSegmentedControl.selectedSegmentIndex = 2
-        darkModeSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.white], for: .normal)
-        darkModeSegmentedControl.backgroundColor = .systemGray4
+        interfaceSegmentedControl.selectedSegmentIndex = 2
+        interfaceSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.white], for: .normal)
+        interfaceSegmentedControl.backgroundColor = .systemGray4
 
         self.setupToHideKeyboardOnTapOnView()
 

@@ -159,10 +159,23 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete this log?", message: nil, preferredStyle: .alert)
 
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-            self.delegate.didRemoveLog(sender: Sender(origin: self, localized: self),
-                                            parentDogId: self.updatingLogInformation.0,
-                                            logId: self.updatingLogInformation.1.logId)
-            self.navigationController?.popViewController(animated: true)
+            // the user decided to delete so we must query server
+                LogsRequest.delete(forDogId: self.parentDogIdOfLogToUpdate!, forLogId: self.logToUpdate!.logId) { _, responseCode, _ in
+                    DispatchQueue.main.async {
+                        // successful query has nothing, just check for response code
+                        if responseCode != nil && 200...299 ~= responseCode! {
+                            self.delegate.didRemoveLog(sender: Sender(origin: self, localized: self),
+                                                            parentDogId: self.parentDogIdOfLogToUpdate!,
+                                                            logId: self.logToUpdate!.logId)
+                            self.navigationController?.popViewController(animated: true)
+                        }
+                        // some sort of server/internet error
+                        else {
+                            // TO DO, add indicator the request failed
+                        }
+                    }
+                }
+
         }
 
         let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -186,30 +199,24 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         }
 
         // updating log
-        if updatingLogInformation != nil {
-            let exsistingLog = updatingLogInformation!.1
-            let updatedLog = exsistingLog.copy() as! Log
-            updatedLog.date = logDate.date
-            updatedLog.note = logNote.text ?? ""
-            updatedLog.logType = LogType(rawValue: logType.text!)!
+        if parentDogIdOfLogToUpdate != nil && logToUpdate != nil {
+            logToUpdate!.date = logDate.date
+            logToUpdate!.note = logNote.text ?? ""
+            logToUpdate!.logType = LogType(rawValue: logType.text!)!
 
             if logType.text == LogType.custom.rawValue {
-                updatedLog.customTypeName = trimmedCustomLogTypeName
+                logToUpdate!.customTypeName = trimmedCustomLogTypeName
             }
 
-            try! LogsEndpoint.update(forDogId: updatingLogInformation.0, forLogId: updatedLog.logId, objectForBody: updatedLog) { responseBody, responseCode, _ in
+            LogsRequest.update(forDogId: parentDogIdOfLogToUpdate!, forLog: logToUpdate!) { _, responseCode, _ in
 
                 DispatchQueue.main.async {
-
-                    print("addlogsVC update log endpoint")
-                    print(responseBody)
-                    print(responseCode)
                     // successful query has nothing, just check for response code
                     if responseCode != nil && 200...299 ~= responseCode! {
-                        self.delegate.didUpdateLog(sender: Sender(origin: self, localized: self), parentDogId: self.updatingLogInformation.0, updatedLog: updatedLog)
+                        self.delegate.didUpdateLog(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogIdOfLogToUpdate!, updatedLog: self.logToUpdate!)
                         self.navigationController?.popViewController(animated: true)
                     }
-                    // error
+                    // some sort of server/internet error
                     else {
                         // TO DO, add indicator the request failed
                     }
@@ -227,13 +234,9 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 else {
                     let newLog = Log(date: logDate.date, note: logNote.text ?? "", logType: LogType(rawValue: logType.text!)!, customTypeName: trimmedCustomLogTypeName)
 
-                    try! LogsEndpoint.create(forDogId: parentDogNameSelector.tag, objectForBody: newLog) { responseBody, responseCode, _ in
+                    LogsRequest.create(forDogId: parentDogNameSelector.tag, forLog: newLog) { responseBody, _, _ in
 
                         DispatchQueue.main.async {
-
-                            print("addlogsVC create log endpoint")
-                            print(responseBody)
-                            print(responseCode)
 
                             // successful query has a logId, check for it instead of just success code
                             if responseBody != nil, let logId = responseBody!["result"] as? Int {
@@ -241,7 +244,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                                 self.delegate.didAddLog(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogNameSelector.tag, newLog: newLog)
                                 self.navigationController?.popViewController(animated: true)
                             }
-                            // error
+                            // some sort of server/internet error
                             else {
                                 // TO DO, add indicator the request failed
                             }
@@ -252,7 +255,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 }
             }
             catch {
-                ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: error)
+                ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: error)
             }
 
         }
@@ -293,8 +296,10 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
 
     var dogManager: DogManager! = nil
 
-    /// information for updating log, parentDogId, knownLog
-    var updatingLogInformation: (Int, Log)!
+   /// This is the information of a log if the user is updating an existing log instead of creating a new one
+    var logToUpdate: Log?
+    /// This is the parentDogId of a log if the user is updating an existing log instead of creating a new one
+    var parentDogIdOfLogToUpdate: Int?
 
     weak var delegate: LogsAddLogViewControllerDelegate! = nil
 
@@ -305,9 +310,9 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
 
     var initalValuesChanged: Bool {
         // updating
-        if updatingLogInformation != nil {
+        if parentDogIdOfLogToUpdate != nil && logToUpdate != nil {
             // not equal it inital
-            if logType.text != updatingLogInformation!.1.logType.rawValue {
+            if logType.text != logToUpdate!.logType.rawValue {
                 return true
             }
         }
@@ -406,26 +411,27 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
 
     /// Sets up gestureRecognizer for dog selector drop down
     private func setUpGestures() {
-        // adding a log
-        if updatingLogInformation == nil {
-            // can edit the parent dog
-            self.parentDogNameSelector.isUserInteractionEnabled = true
-            let parentDogNameSelectorTapGesture = UITapGestureRecognizer(target: self, action: #selector(parentDogNameSelectorTapped))
-            parentDogNameSelectorTapGesture.delegate = self
-            parentDogNameSelectorTapGesture.cancelsTouchesInView = false
-            self.parentDogNameSelector.addGestureRecognizer(parentDogNameSelectorTapGesture)
+        // updating a log
+        if parentDogIdOfLogToUpdate != nil && logToUpdate != nil {
+            // cannot edit the parent dog
+            self.parentDogNameSelector.isUserInteractionEnabled = false
+            self.parentDogNameSelector.isEnabled = false
 
             self.logType.isUserInteractionEnabled = true
             let logTypeTapGesture = UITapGestureRecognizer(target: self, action: #selector(logTypeTapped))
             logTypeTapGesture.delegate = self
             logTypeTapGesture.cancelsTouchesInView = false
             self.logType.addGestureRecognizer(logTypeTapGesture)
+
         }
-        // updating a log
+        // adding a log
         else {
-            // cannot edit the parent dog
-            self.parentDogNameSelector.isUserInteractionEnabled = false
-            self.parentDogNameSelector.isEnabled = false
+            // can edit the parent dog
+            self.parentDogNameSelector.isUserInteractionEnabled = true
+            let parentDogNameSelectorTapGesture = UITapGestureRecognizer(target: self, action: #selector(parentDogNameSelectorTapped))
+            parentDogNameSelectorTapGesture.delegate = self
+            parentDogNameSelectorTapGesture.cancelsTouchesInView = false
+            self.parentDogNameSelector.addGestureRecognizer(parentDogNameSelectorTapGesture)
 
             self.logType.isUserInteractionEnabled = true
             let logTypeTapGesture = UITapGestureRecognizer(target: self, action: #selector(logTypeTapped))
@@ -503,23 +509,23 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         }
 
         // updating log
-        if updatingLogInformation != nil {
+        if parentDogIdOfLogToUpdate != nil && logToUpdate != nil {
             pageTitle!.title = "Edit Log"
             trashIcon.isEnabled = true
-            let dog = try! dogManager.findDog(forDogId: updatingLogInformation.0)
+            let dog = try! dogManager.findDog(forDogId: parentDogIdOfLogToUpdate!)
             parentDogNameSelector.text = dog.dogName
             parentDogNameSelector.tag = dog.dogId
 
-            logType.text = updatingLogInformation.1.logType.rawValue
+            logType.text = logToUpdate!.logType.rawValue
             logType.isEnabled = true
-            customLogTypeTextField.text = updatingLogInformation.1.customTypeName
+            customLogTypeTextField.text = logToUpdate!.customTypeName
             // if == is true, that means it is custom, which means it shouldn't hide so ! reverses to input isHidden: false, reverse for if type is not custom. This is because this text input field is only used for custom types.
-            toggleCustomLogTypeName(isHidden: !(updatingLogInformation.1.logType == .custom))
+            toggleCustomLogTypeName(isHidden: !(logToUpdate!.logType == .custom))
 
             selectedLogTypeIndexPath = IndexPath(row: LogType.allCases.firstIndex(of: LogType(rawValue: logType.text!)!)!, section: 0)
 
-            logDate.date = updatingLogInformation.1.date
-            logNote.text = updatingLogInformation.1.note
+            logDate.date = logToUpdate!.date
+            logNote.text = logToUpdate!.note
 
         }
         // not updating

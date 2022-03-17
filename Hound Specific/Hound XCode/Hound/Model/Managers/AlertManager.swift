@@ -86,13 +86,7 @@ class AlertManager: NSObject {
         }
 
         func waitLoop() {
-            AppDelegate.generalLogger.notice("waitLoop due to being unable to present UIAlertController")
-            if AlertManager.globalPresenter == nil {
-                DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
-                    waitLoop()
-                }
-            }
-            else if AlertManager.globalPresenter!.isBeingDismissed {
+            if AlertManager.globalPresenter == nil || AlertManager.globalPresenter!.isBeingDismissed {
                 DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
                     waitLoop()
                 }
@@ -102,6 +96,7 @@ class AlertManager: NSObject {
             }
 
         }
+
         if AlertManager.globalPresenter == nil {
             AppDelegate.generalLogger.notice("AlertManager.globalPresenter is nil, initiating waitLoop")
             waitLoop()

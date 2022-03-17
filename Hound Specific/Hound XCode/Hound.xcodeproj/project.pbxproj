@@ -17,13 +17,13 @@
 		A226736225CDC36800904032 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A226736125CDC36800904032 /* StringExtension.swift */; };
 		A239B748265754B500C92837 /* LogsMainScreenTableViewCellHeaderRegular.swift in Sources */ = {isa = PBXBuildFile; fileRef = A239B747265754B500C92837 /* LogsMainScreenTableViewCellHeaderRegular.swift */; };
 		A239B74A2657594F00C92837 /* LogsMainScreenTableViewCellBodyRegularWithoutIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A239B7492657594F00C92837 /* LogsMainScreenTableViewCellBodyRegularWithoutIcon.swift */; };
-		A23DB63427CDBDDB00A3F470 /* UserEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23DB63327CDBDDB00A3F470 /* UserEndpoint.swift */; };
-		A23DB63627CDBE2C00A3F470 /* DogsEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23DB63527CDBE2C00A3F470 /* DogsEndpoint.swift */; };
+		A23DB63427CDBDDB00A3F470 /* UserRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23DB63327CDBDDB00A3F470 /* UserRequest.swift */; };
+		A23DB63627CDBE2C00A3F470 /* DogsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23DB63527CDBE2C00A3F470 /* DogsRequest.swift */; };
 		A2458B5E2759374500912550 /* circuit30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2458B5D2759374500912550 /* circuit30.wav */; };
 		A2458B602759376200912550 /* circuit.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2458B5F2759376200912550 /* circuit.mp3 */; };
 		A24725952614F3BF00259691 /* ToolTipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24725942614F3BF00259691 /* ToolTipView.swift */; };
 		A247B96425C87F300017FE66 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A247B96325C87F300017FE66 /* MainTabBarViewController.swift */; };
-		A247B96825C883680017FE66 /* DogsMainScreenTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A247B96725C883680017FE66 /* DogsMainScreenTableViewController.swift */; };
+		A247B96825C883680017FE66 /* DogsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A247B96725C883680017FE66 /* DogsTableViewController.swift */; };
 		A24F1326264064D70023BB84 /* BorderedUILabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24F1325264064D70023BB84 /* BorderedUILabel.swift */; };
 		A25070DF26DD9BFF0056CFC4 /* ScaledUILabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25070DE26DD9BFF0056CFC4 /* ScaledUILabel.swift */; };
 		A25070E126DD9C200056CFC4 /* ScaledUIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25070E026DD9C200056CFC4 /* ScaledUIButton.swift */; };
@@ -77,11 +77,19 @@
 		A290F38A25D4B10400429C9D /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A290F38925D4B10400429C9D /* Utils.swift */; };
 		A29390732608480800879C79 /* DogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29390722608480800879C79 /* DogManager.swift */; };
 		A293E194262F19E90008A9F7 /* LogsMainScreenTableViewCellBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = A293E193262F19E80008A9F7 /* LogsMainScreenTableViewCellBody.swift */; };
-		A29400AB2652DA2100725F1C /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29400AA2652DA2100725F1C /* SettingsViewController.swift */; };
-		A29400AD2652DA2700725F1C /* SettingsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29400AC2652DA2600725F1C /* SettingsNavigationViewController.swift */; };
-		A29C985227CE6D8E00B9C8E4 /* LogsEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29C985127CE6D8E00B9C8E4 /* LogsEndpoint.swift */; };
-		A29C985427CE724300B9C8E4 /* RemindersEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29C985327CE724300B9C8E4 /* RemindersEndpoint.swift */; };
-		A29C985627CE726300B9C8E4 /* EndpointProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29C985527CE726300B9C8E4 /* EndpointProtocol.swift */; };
+		A29400AB2652DA2100725F1C /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29400AA2652DA2100725F1C /* SettingsVC.swift */; };
+		A29400AD2652DA2700725F1C /* SettingsNavigationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29400AC2652DA2600725F1C /* SettingsNavigationVC.swift */; };
+		A299EA9E27E2A37B0042F8F4 /* ResponseErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EA9D27E2A37B0042F8F4 /* ResponseErrors.swift */; };
+		A299EAA027E2C4E60042F8F4 /* SettingsPersonalInformationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EA9F27E2C4E50042F8F4 /* SettingsPersonalInformationVC.swift */; };
+		A299EAA227E2C4F70042F8F4 /* SettingsFamilyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EAA127E2C4F70042F8F4 /* SettingsFamilyVC.swift */; };
+		A299EAA427E2C5050042F8F4 /* SettingsAppearanceVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EAA327E2C5050042F8F4 /* SettingsAppearanceVC.swift */; };
+		A299EAA627E2C5130042F8F4 /* SettingsRemindersVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EAA527E2C5130042F8F4 /* SettingsRemindersVC.swift */; };
+		A299EAA827E2C5220042F8F4 /* SettingsNotificationsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EAA727E2C5220042F8F4 /* SettingsNotificationsVC.swift */; };
+		A299EAAB27E2C5F60042F8F4 /* SettingsTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EAAA27E2C5F60042F8F4 /* SettingsTableVC.swift */; };
+		A299EAAD27E2D3350042F8F4 /* SettingsAboutVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EAAC27E2D3350042F8F4 /* SettingsAboutVC.swift */; };
+		A29C985227CE6D8E00B9C8E4 /* LogsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29C985127CE6D8E00B9C8E4 /* LogsRequest.swift */; };
+		A29C985427CE724300B9C8E4 /* RemindersRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29C985327CE724300B9C8E4 /* RemindersRequest.swift */; };
+		A29C985627CE726300B9C8E4 /* RequestProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29C985527CE726300B9C8E4 /* RequestProtocol.swift */; };
 		A2A45CCF2644914A0050E5A1 /* DogsIntroductionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A45CCE2644914A0050E5A1 /* DogsIntroductionViewController.swift */; };
 		A2AC89F627D2778900115831 /* CountdownComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AC89F527D2778900115831 /* CountdownComponents.swift */; };
 		A2AC89F827D277A400115831 /* Component.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AC89F727D277A400115831 /* Component.swift */; };
@@ -95,14 +103,14 @@
 		A2B9A92B2629213800626FAE /* GeneralUIAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9A92A2629213800626FAE /* GeneralUIAlertController.swift */; };
 		A2B9DAE9262B2DFA00A47D57 /* LogsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9DAE8262B2DFA00A47D57 /* LogsNavigationViewController.swift */; };
 		A2B9DAED262B2E0A00A47D57 /* LogsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9DAEC262B2E0A00A47D57 /* LogsViewController.swift */; };
-		A2B9DAF1262B2F2D00A47D57 /* LogsMainScreenTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9DAF0262B2F2D00A47D57 /* LogsMainScreenTableViewController.swift */; };
+		A2B9DAF1262B2F2D00A47D57 /* LogsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B9DAF0262B2F2D00A47D57 /* LogsTableViewController.swift */; };
 		A2BAA06C27D6C5520041F3C5 /* ServerLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2BAA06B27D6C5520041F3C5 /* ServerLoginViewController.swift */; };
 		A2BAA06E27D6ED720041F3C5 /* UserInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2BAA06D27D6ED720041F3C5 /* UserInformation.swift */; };
 		A2BAA07027D6ED8B0041F3C5 /* UserConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2BAA06F27D6ED8B0041F3C5 /* UserConfiguration.swift */; };
 		A2BAA07227D6EDA20041F3C5 /* LocalConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2BAA07127D6EDA20041F3C5 /* LocalConfiguration.swift */; };
 		A2BD897C2669A8D200E7BBE5 /* UIApplicationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2BD897B2669A8D200E7BBE5 /* UIApplicationExtension.swift */; };
 		A2C014D52628AEEE00DDE288 /* DogsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C014D42628AEEE00DDE288 /* DogsNavigationViewController.swift */; };
-		A2C4091E27C9D41300073420 /* EndpointUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C4091D27C9D41300073420 /* EndpointUtils.swift */; };
+		A2C4091E27C9D41300073420 /* RequestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C4091D27C9D41300073420 /* RequestUtils.swift */; };
 		A2DC23A8264D822F00EB287A /* DogsReminderMonthlyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DC23A7264D822F00EB287A /* DogsReminderMonthlyViewController.swift */; };
 		A2DE45FD273AD842002F28B9 /* SQL Statements in Resources */ = {isa = PBXBuildFile; fileRef = A2DE45FC273AD842002F28B9 /* SQL Statements */; };
 		A2E44707263701A90087B1A3 /* IntroductionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E44706263701A90087B1A3 /* IntroductionViewController.swift */; };
@@ -157,13 +165,13 @@
 		A226736125CDC36800904032 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		A239B747265754B500C92837 /* LogsMainScreenTableViewCellHeaderRegular.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsMainScreenTableViewCellHeaderRegular.swift; sourceTree = "<group>"; };
 		A239B7492657594F00C92837 /* LogsMainScreenTableViewCellBodyRegularWithoutIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsMainScreenTableViewCellBodyRegularWithoutIcon.swift; sourceTree = "<group>"; };
-		A23DB63327CDBDDB00A3F470 /* UserEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEndpoint.swift; sourceTree = "<group>"; };
-		A23DB63527CDBE2C00A3F470 /* DogsEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsEndpoint.swift; sourceTree = "<group>"; };
+		A23DB63327CDBDDB00A3F470 /* UserRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRequest.swift; sourceTree = "<group>"; };
+		A23DB63527CDBE2C00A3F470 /* DogsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsRequest.swift; sourceTree = "<group>"; };
 		A2458B5D2759374500912550 /* circuit30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = circuit30.wav; sourceTree = "<group>"; };
 		A2458B5F2759376200912550 /* circuit.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = circuit.mp3; sourceTree = "<group>"; };
 		A24725942614F3BF00259691 /* ToolTipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ToolTipView.swift; path = "../New Group/ToolTipView.swift"; sourceTree = "<group>"; };
 		A247B96325C87F300017FE66 /* MainTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewController.swift; sourceTree = "<group>"; };
-		A247B96725C883680017FE66 /* DogsMainScreenTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DogsMainScreenTableViewController.swift; path = "../New Group1/DogsMainScreenTableViewController.swift"; sourceTree = "<group>"; };
+		A247B96725C883680017FE66 /* DogsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DogsTableViewController.swift; path = "../New Group1/DogsTableViewController.swift"; sourceTree = "<group>"; };
 		A24F1325264064D70023BB84 /* BorderedUILabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedUILabel.swift; sourceTree = "<group>"; };
 		A25070DE26DD9BFF0056CFC4 /* ScaledUILabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaledUILabel.swift; sourceTree = "<group>"; };
 		A25070E026DD9C200056CFC4 /* ScaledUIButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaledUIButton.swift; sourceTree = "<group>"; };
@@ -218,11 +226,19 @@
 		A290F38925D4B10400429C9D /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		A29390722608480800879C79 /* DogManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogManager.swift; sourceTree = "<group>"; };
 		A293E193262F19E80008A9F7 /* LogsMainScreenTableViewCellBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsMainScreenTableViewCellBody.swift; sourceTree = "<group>"; };
-		A29400AA2652DA2100725F1C /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
-		A29400AC2652DA2600725F1C /* SettingsNavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsNavigationViewController.swift; sourceTree = "<group>"; };
-		A29C985127CE6D8E00B9C8E4 /* LogsEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsEndpoint.swift; sourceTree = "<group>"; };
-		A29C985327CE724300B9C8E4 /* RemindersEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersEndpoint.swift; sourceTree = "<group>"; };
-		A29C985527CE726300B9C8E4 /* EndpointProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointProtocol.swift; sourceTree = "<group>"; };
+		A29400AA2652DA2100725F1C /* SettingsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
+		A29400AC2652DA2600725F1C /* SettingsNavigationVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsNavigationVC.swift; sourceTree = "<group>"; };
+		A299EA9D27E2A37B0042F8F4 /* ResponseErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseErrors.swift; sourceTree = "<group>"; };
+		A299EA9F27E2C4E50042F8F4 /* SettingsPersonalInformationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPersonalInformationVC.swift; sourceTree = "<group>"; };
+		A299EAA127E2C4F70042F8F4 /* SettingsFamilyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFamilyVC.swift; sourceTree = "<group>"; };
+		A299EAA327E2C5050042F8F4 /* SettingsAppearanceVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAppearanceVC.swift; sourceTree = "<group>"; };
+		A299EAA527E2C5130042F8F4 /* SettingsRemindersVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRemindersVC.swift; sourceTree = "<group>"; };
+		A299EAA727E2C5220042F8F4 /* SettingsNotificationsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNotificationsVC.swift; sourceTree = "<group>"; };
+		A299EAAA27E2C5F60042F8F4 /* SettingsTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableVC.swift; sourceTree = "<group>"; };
+		A299EAAC27E2D3350042F8F4 /* SettingsAboutVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutVC.swift; sourceTree = "<group>"; };
+		A29C985127CE6D8E00B9C8E4 /* LogsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsRequest.swift; sourceTree = "<group>"; };
+		A29C985327CE724300B9C8E4 /* RemindersRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersRequest.swift; sourceTree = "<group>"; };
+		A29C985527CE726300B9C8E4 /* RequestProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestProtocol.swift; sourceTree = "<group>"; };
 		A2A45CCE2644914A0050E5A1 /* DogsIntroductionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsIntroductionViewController.swift; sourceTree = "<group>"; };
 		A2AC89F527D2778900115831 /* CountdownComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownComponents.swift; sourceTree = "<group>"; };
 		A2AC89F727D277A400115831 /* Component.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Component.swift; sourceTree = "<group>"; };
@@ -236,14 +252,14 @@
 		A2B9A92A2629213800626FAE /* GeneralUIAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralUIAlertController.swift; sourceTree = "<group>"; };
 		A2B9DAE8262B2DFA00A47D57 /* LogsNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsNavigationViewController.swift; sourceTree = "<group>"; };
 		A2B9DAEC262B2E0A00A47D57 /* LogsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsViewController.swift; sourceTree = "<group>"; };
-		A2B9DAF0262B2F2D00A47D57 /* LogsMainScreenTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsMainScreenTableViewController.swift; sourceTree = "<group>"; };
+		A2B9DAF0262B2F2D00A47D57 /* LogsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsTableViewController.swift; sourceTree = "<group>"; };
 		A2BAA06B27D6C5520041F3C5 /* ServerLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerLoginViewController.swift; sourceTree = "<group>"; };
 		A2BAA06D27D6ED720041F3C5 /* UserInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInformation.swift; sourceTree = "<group>"; };
 		A2BAA06F27D6ED8B0041F3C5 /* UserConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConfiguration.swift; sourceTree = "<group>"; };
 		A2BAA07127D6EDA20041F3C5 /* LocalConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalConfiguration.swift; sourceTree = "<group>"; };
 		A2BD897B2669A8D200E7BBE5 /* UIApplicationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationExtension.swift; sourceTree = "<group>"; };
 		A2C014D42628AEEE00DDE288 /* DogsNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsNavigationViewController.swift; sourceTree = "<group>"; };
-		A2C4091D27C9D41300073420 /* EndpointUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointUtils.swift; sourceTree = "<group>"; };
+		A2C4091D27C9D41300073420 /* RequestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestUtils.swift; sourceTree = "<group>"; };
 		A2DC23A7264D822F00EB287A /* DogsReminderMonthlyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsReminderMonthlyViewController.swift; sourceTree = "<group>"; };
 		A2DE45FC273AD842002F28B9 /* SQL Statements */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SQL Statements"; sourceTree = "<group>"; };
 		A2E44706263701A90087B1A3 /* IntroductionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroductionViewController.swift; sourceTree = "<group>"; };
@@ -333,12 +349,22 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
+		A224D02727E125900083CFCB /* Sync */ = {
+			isa = PBXGroup;
+			children = (
+				A2B678E427D13AD100424FB0 /* ServerSyncViewController.swift */,
+				A2BAA06B27D6C5520041F3C5 /* ServerLoginViewController.swift */,
+			);
+			path = Sync;
+			sourceTree = "<group>";
+		};
 		A258AEE9256614F9005242E4 /* View Controller */ = {
 			isa = PBXGroup;
 			children = (
 				A2B9DAE7262B2DD500A47D57 /* Logs */,
 				A27C138C25AD2A620031B6A0 /* Settings */,
-				A27C138A25AD2A520031B6A0 /* Dogs */,
+				A27C138A25AD2A520031B6A0 /* Reminders */,
+				A224D02727E125900083CFCB /* Sync */,
 				A2E447032636FF9A0087B1A3 /* Misc View Controllers */,
 			);
 			path = "View Controller";
@@ -491,20 +517,22 @@
 			path = "Reminder Modification Base";
 			sourceTree = "<group>";
 		};
-		A27C138A25AD2A520031B6A0 /* Dogs */ = {
+		A27C138A25AD2A520031B6A0 /* Reminders */ = {
 			isa = PBXGroup;
 			children = (
 				A20C87DB2636338700CC6AEF /* Main */,
 				A20C87DC2636339700CC6AEF /* Dog Modification */,
 			);
-			path = Dogs;
+			path = Reminders;
 			sourceTree = "<group>";
 		};
 		A27C138C25AD2A620031B6A0 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				A29400AC2652DA2600725F1C /* SettingsNavigationViewController.swift */,
-				A29400AA2652DA2100725F1C /* SettingsViewController.swift */,
+				A29400AC2652DA2600725F1C /* SettingsNavigationVC.swift */,
+				A29400AA2652DA2100725F1C /* SettingsVC.swift */,
+				A299EAAA27E2C5F60042F8F4 /* SettingsTableVC.swift */,
+				A299EAA927E2C5270042F8F4 /* Individual Pages */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -551,6 +579,19 @@
 			path = Reminder;
 			sourceTree = "<group>";
 		};
+		A299EAA927E2C5270042F8F4 /* Individual Pages */ = {
+			isa = PBXGroup;
+			children = (
+				A299EA9F27E2C4E50042F8F4 /* SettingsPersonalInformationVC.swift */,
+				A299EAA127E2C4F70042F8F4 /* SettingsFamilyVC.swift */,
+				A299EAA327E2C5050042F8F4 /* SettingsAppearanceVC.swift */,
+				A299EAA527E2C5130042F8F4 /* SettingsRemindersVC.swift */,
+				A299EAA727E2C5220042F8F4 /* SettingsNotificationsVC.swift */,
+				A299EAAC27E2D3350042F8F4 /* SettingsAboutVC.swift */,
+			);
+			path = "Individual Pages";
+			sourceTree = "<group>";
+		};
 		A2AC89F427D2776400115831 /* Reminder Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -578,7 +619,7 @@
 			children = (
 				A2B9DAE8262B2DFA00A47D57 /* LogsNavigationViewController.swift */,
 				A2B9DAEC262B2E0A00A47D57 /* LogsViewController.swift */,
-				A2B9DAF0262B2F2D00A47D57 /* LogsMainScreenTableViewController.swift */,
+				A2B9DAF0262B2F2D00A47D57 /* LogsTableViewController.swift */,
 				A26A7583263CFF4E0026DE34 /* Nested */,
 				A25FC7A7262E631E007AD1B3 /* Cells */,
 			);
@@ -588,7 +629,7 @@
 		A2C0541526498DE000B461C6 /* Nested */ = {
 			isa = PBXGroup;
 			children = (
-				A247B96725C883680017FE66 /* DogsMainScreenTableViewController.swift */,
+				A247B96725C883680017FE66 /* DogsTableViewController.swift */,
 				A20C87E22636358D00CC6AEF /* DogsInformationViewController.swift */,
 			);
 			path = Nested;
@@ -597,12 +638,13 @@
 		A2C4091F27C9D72100073420 /* Endpoints */ = {
 			isa = PBXGroup;
 			children = (
-				A29C985527CE726300B9C8E4 /* EndpointProtocol.swift */,
-				A2C4091D27C9D41300073420 /* EndpointUtils.swift */,
-				A23DB63327CDBDDB00A3F470 /* UserEndpoint.swift */,
-				A23DB63527CDBE2C00A3F470 /* DogsEndpoint.swift */,
-				A29C985127CE6D8E00B9C8E4 /* LogsEndpoint.swift */,
-				A29C985327CE724300B9C8E4 /* RemindersEndpoint.swift */,
+				A29C985527CE726300B9C8E4 /* RequestProtocol.swift */,
+				A2C4091D27C9D41300073420 /* RequestUtils.swift */,
+				A23DB63327CDBDDB00A3F470 /* UserRequest.swift */,
+				A23DB63527CDBE2C00A3F470 /* DogsRequest.swift */,
+				A29C985127CE6D8E00B9C8E4 /* LogsRequest.swift */,
+				A29C985327CE724300B9C8E4 /* RemindersRequest.swift */,
+				A299EA9D27E2A37B0042F8F4 /* ResponseErrors.swift */,
 			);
 			path = Endpoints;
 			sourceTree = "<group>";
@@ -623,8 +665,6 @@
 			isa = PBXGroup;
 			children = (
 				A247B96325C87F300017FE66 /* MainTabBarViewController.swift */,
-				A2B678E427D13AD100424FB0 /* ServerSyncViewController.swift */,
-				A2BAA06B27D6C5520041F3C5 /* ServerLoginViewController.swift */,
 				A2E44706263701A90087B1A3 /* IntroductionViewController.swift */,
 			);
 			path = "Misc View Controllers";
@@ -859,19 +899,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A299EAA027E2C4E60042F8F4 /* SettingsPersonalInformationVC.swift in Sources */,
 				A2BD897C2669A8D200E7BBE5 /* UIApplicationExtension.swift in Sources */,
 				A28AF46D25E9C7C80018B575 /* DogsIndependentReminderViewController.swift in Sources */,
 				A24725952614F3BF00259691 /* ToolTipView.swift in Sources */,
 				A27C3D8F25B8A213005F46BA /* DogsNestedReminderViewController.swift in Sources */,
 				A278ED942610FF89000575FC /* DogsReminderWeeklyViewController.swift in Sources */,
 				A2A45CCF2644914A0050E5A1 /* DogsIntroductionViewController.swift in Sources */,
-				A2B9DAF1262B2F2D00A47D57 /* LogsMainScreenTableViewController.swift in Sources */,
+				A2B9DAF1262B2F2D00A47D57 /* LogsTableViewController.swift in Sources */,
 				A25070DF26DD9BFF0056CFC4 /* ScaledUILabel.swift in Sources */,
 				A2AC89FE27D2782100115831 /* OneTimeComponents.swift in Sources */,
 				A2121DBD26649C7E00647682 /* DogsReminderOnceViewController.swift in Sources */,
+				A299EAA627E2C5130042F8F4 /* SettingsRemindersVC.swift in Sources */,
 				A29390732608480800879C79 /* DogManager.swift in Sources */,
 				A2EBFB9E264F6A1A001AAF18 /* AudioManager.swift in Sources */,
-				A29C985627CE726300B9C8E4 /* EndpointProtocol.swift in Sources */,
+				A29C985627CE726300B9C8E4 /* RequestProtocol.swift in Sources */,
 				A25502FE2649EDF500F6F08F /* LogsMainScreenTableViewCellBodyWithoutIcon.swift in Sources */,
 				A28A0B4C25B923BA0057BEC7 /* DogsReminderNavigationViewController.swift in Sources */,
 				A27C3D8B25B781B4005F46BA /* DogsAddDogViewController.swift in Sources */,
@@ -883,8 +925,9 @@
 				A2E66CA125534A880068CCA6 /* DogsViewController.swift in Sources */,
 				A2DC23A8264D822F00EB287A /* DogsReminderMonthlyViewController.swift in Sources */,
 				A2BAA06C27D6C5520041F3C5 /* ServerLoginViewController.swift in Sources */,
-				A29400AB2652DA2100725F1C /* SettingsViewController.swift in Sources */,
-				A23DB63627CDBE2C00A3F470 /* DogsEndpoint.swift in Sources */,
+				A299EAA827E2C5220042F8F4 /* SettingsNotificationsVC.swift in Sources */,
+				A29400AB2652DA2100725F1C /* SettingsVC.swift in Sources */,
+				A23DB63627CDBE2C00A3F470 /* DogsRequest.swift in Sources */,
 				A2BAA07227D6EDA20041F3C5 /* LocalConfiguration.swift in Sources */,
 				A24F1326264064D70023BB84 /* BorderedUILabel.swift in Sources */,
 				A226736225CDC36800904032 /* StringExtension.swift in Sources */,
@@ -893,10 +936,12 @@
 				A2FC4EC1274AFC82006A872F /* Constants.swift in Sources */,
 				A263B2F72638A54F00E1DCE6 /* Sender.swift in Sources */,
 				A2E66C9B25534A880068CCA6 /* AppDelegate.swift in Sources */,
+				A299EAAD27E2D3350042F8F4 /* SettingsAboutVC.swift in Sources */,
 				A2536B54260843E900E2FF6A /* Reminder.swift in Sources */,
 				A2AC89F827D277A400115831 /* Component.swift in Sources */,
 				A2F1791C263F3E5C006824A7 /* DropDownDefaultTableViewCell.swift in Sources */,
-				A23DB63427CDBDDB00A3F470 /* UserEndpoint.swift in Sources */,
+				A23DB63427CDBDDB00A3F470 /* UserRequest.swift in Sources */,
+				A299EAAB27E2C5F60042F8F4 /* SettingsTableVC.swift in Sources */,
 				A239B748265754B500C92837 /* LogsMainScreenTableViewCellHeaderRegular.swift in Sources */,
 				A247B96425C87F300017FE66 /* MainTabBarViewController.swift in Sources */,
 				A2B9DAED262B2E0A00A47D57 /* LogsViewController.swift in Sources */,
@@ -911,34 +956,37 @@
 				A25070EB26DD9DF50056CFC4 /* UIImageExtension.swift in Sources */,
 				A239B74A2657594F00C92837 /* LogsMainScreenTableViewCellBodyRegularWithoutIcon.swift in Sources */,
 				A26A7585263CFF8C0026DE34 /* LogsAddLogViewController.swift in Sources */,
-				A247B96825C883680017FE66 /* DogsMainScreenTableViewController.swift in Sources */,
+				A247B96825C883680017FE66 /* DogsTableViewController.swift in Sources */,
 				A2AC89F627D2778900115831 /* CountdownComponents.swift in Sources */,
 				A2EAF17D25C9D45E0022BBDD /* DogsMainScreenTableViewCellDogReminder.swift in Sources */,
+				A299EAA227E2C4F70042F8F4 /* SettingsFamilyVC.swift in Sources */,
 				A2B9DAE9262B2DFA00A47D57 /* LogsNavigationViewController.swift in Sources */,
 				A2AC8A0227D2D9B500115831 /* LogManager.swift in Sources */,
 				A2AC8A0027D2782C00115831 /* SnoozeComponents.swift in Sources */,
 				A2BAA07027D6ED8B0041F3C5 /* UserConfiguration.swift in Sources */,
 				A25070E326DD9D7E0056CFC4 /* UIViewControllerExtension.swift in Sources */,
 				A2AC89FA27D2780500115831 /* WeeklyComponents.swift in Sources */,
-				A29C985427CE724300B9C8E4 /* RemindersEndpoint.swift in Sources */,
+				A29C985427CE724300B9C8E4 /* RemindersRequest.swift in Sources */,
 				A290F38A25D4B10400429C9D /* Utils.swift in Sources */,
 				A2EBFB9C264F69ED001AAF18 /* ErrorManager.swift in Sources */,
 				A2AC89FC27D2781600115831 /* MonthlyComponents.swift in Sources */,
 				A25070E926DD9DDD0056CFC4 /* UIColorExtension.swift in Sources */,
+				A299EA9E27E2A37B0042F8F4 /* ResponseErrors.swift in Sources */,
 				A20C99972568671F00E2C9C8 /* ReminderManager.swift in Sources */,
 				A25070E726DD9DC50056CFC4 /* UILabelExtension.swift in Sources */,
 				A278ED882610FF05000575FC /* DogsReminderManagerViewController.swift in Sources */,
 				A2E66C9D25534A880068CCA6 /* SceneDelegate.swift in Sources */,
-				A29C985227CE6D8E00B9C8E4 /* LogsEndpoint.swift in Sources */,
-				A2C4091E27C9D41300073420 /* EndpointUtils.swift in Sources */,
+				A29C985227CE6D8E00B9C8E4 /* LogsRequest.swift in Sources */,
+				A2C4091E27C9D41300073420 /* RequestUtils.swift in Sources */,
 				A20C87E32636358D00CC6AEF /* DogsInformationViewController.swift in Sources */,
 				A278ED8C2610FF3D000575FC /* DogsReminderCountDownViewController.swift in Sources */,
 				A2B678E527D13AD100424FB0 /* ServerSyncViewController.swift in Sources */,
 				A27C139725AD2BD70031B6A0 /* DogsMainScreenTableViewCellDogDescription.swift in Sources */,
 				A28A0B5025B924140057BEC7 /* DogsReminderTableViewCell.swift in Sources */,
 				A2BAA06E27D6ED720041F3C5 /* UserInformation.swift in Sources */,
+				A299EAA427E2C5050042F8F4 /* SettingsAppearanceVC.swift in Sources */,
 				A2B18E3825E8A4C000951AC3 /* AlertManager.swift in Sources */,
-				A29400AD2652DA2700725F1C /* SettingsNavigationViewController.swift in Sources */,
+				A29400AD2652DA2700725F1C /* SettingsNavigationVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

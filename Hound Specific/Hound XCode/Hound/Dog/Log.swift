@@ -162,7 +162,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
         var formattedDate: Date = Date()
 
         if let dateString = body["date"] as? String {
-            formattedDate = EndpointUtils.ISO8601DateFormatter.date(from: dateString) ?? Date()
+            formattedDate = RequestUtils.ISO8601DateFormatter.date(from: dateString) ?? Date()
         }
 
         let note: String = body["note"] as? String ?? ""

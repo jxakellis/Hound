@@ -40,19 +40,14 @@ class ServerLoginViewController: UIViewController {
         AlertManager.globalPresenter = self
 
         // make sure the view has the correct interfaceStyle
-        UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.darkModeStyle
+        UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
     }
 
     /// This function queries the server to retrieve all the information for an existing user.
     private func getUser() {
-        do {
-            try UserEndpoint.get(forUserEmail: UserInformation.userEmail) { responseBody, responseCode, error in
+         UserRequest.get(forUserEmail: UserInformation.userEmail) { responseBody, responseCode, error in
                 self.processGetUserResponse(responseBody: responseBody, responseCode: responseCode, error: error)
             }
-        }
-        catch {
-
-        }
     }
 
     /// Processes the data from the server response to update local device
@@ -113,8 +108,7 @@ class ServerLoginViewController: UIViewController {
     /// This functions queries the server to create a user
     private func createUser() {
             // temp user creation
-           // The potential error throw would be due to an invalid body. The body that is being used is a predefined, static body, so it should never throw as it is known good.
-                try! UserEndpoint.create { responseBody, responseCode, error in
+                UserRequest.create { responseBody, responseCode, error in
                     self.processCreateUserResponse(responseBody: responseBody, responseCode: responseCode, error: error)
                 }
 

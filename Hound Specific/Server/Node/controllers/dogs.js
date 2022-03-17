@@ -16,8 +16,16 @@ const getDogs = async (req, res) => {
   if (dogId) {
     try {
       const result = await queryDog(req, dogId);
-      req.commitQueries(req);
-      return res.status(200).json({ result });
+      if (result.length === 0) {
+        // successful but empty array, not dogs to return
+        req.commitQueries(req);
+        return res.status(204).json({ result: [] });
+      }
+      else {
+        // array has items, meaning there was a dog found, successful!
+        req.commitQueries(req);
+        return res.status(200).json({ result });
+      }
     }
     catch (error) {
       req.rollbackQueries(req);
@@ -27,7 +35,6 @@ const getDogs = async (req, res) => {
   else {
     try {
       const result = await queryDogs(req, userId);
-      console.log(result);
       if (result.length === 0) {
         // successful but empty array, not dogs to return
         req.commitQueries(req);

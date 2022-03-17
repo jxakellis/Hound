@@ -36,7 +36,7 @@ router.post('/', createUser);
 "followUpDelay":"requiredInt",
 "isPaused":"requiredBool",
 "isCompactView":"requiredBool",
-"darkModeStyle":"requiredString",
+"interfaceStyle":"requiredString",
 "snoozeLength":"requiredInt",
 "notificationSound":"requiredString"
 }
@@ -48,7 +48,7 @@ router.put('/:userId', updateUser);
 
 //At least one of the following must be defined: userEmail, userFirstName, userLastName, isNotificationAuthorized, isNotificationEnabled,
         isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView,
-        darkModeStyle, snoozeLength, or notificationSound
+        interfaceStyle, snoozeLength, or notificationSound
 
 {
 "userEmail":"optionalEmail",
@@ -61,7 +61,7 @@ router.put('/:userId', updateUser);
 "followUpDelay":"optionalInt",
 "isPaused":"optionalBool",
 "isCompactView":"optionalBool",
-"darkModeStyle":"optionalString",
+"interfaceStyle":"optionalString",
 "snoozeLength":"optionalInt",
 "notificationSound":"optionalString"
 }

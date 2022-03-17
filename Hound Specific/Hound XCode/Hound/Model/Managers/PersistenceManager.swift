@@ -10,10 +10,63 @@ import UIKit
 
 class PersistenceManager {
     /// Called by App or Scene Delegate when setting up in didFinishLaunchingWithOptions, can be either the first time setup or a recurring setup (i.e. not the app isnt being opened for the first time)
-    static func willSetup(isRecurringSetup: Bool = false) {
+    static func setup(isRecurringSetup: Bool = false) {
 
         if isRecurringSetup == true {
             // not first time setup
+
+            recurringSetup()
+
+        }
+        else {
+            // first time setup
+
+            firstTimeSetup()
+        }
+    }
+
+    /// Sets the data to default values as if the user is opening the app for the first time
+    static private func firstTimeSetup() {
+        let data = DogManagerConstant.defaultDogManager
+        let encodedData = try! NSKeyedArchiver.archivedData(withRootObject: data, requiringSecureCoding: false)
+        UserDefaults.standard.setValue(encodedData, forKey: UserDefaultsKeys.dogManager.rawValue)
+
+        MainTabBarViewController.selectedEntryIndex = 0
+
+        UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
+
+        // MARK: User Configuration
+
+        UserDefaults.standard.setValue(UserConfiguration.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
+
+        UserDefaults.standard.setValue(UserConfiguration.snoozeLength, forKey: UserDefaultsKeys.snoozeLength.rawValue)
+
+        UserDefaults.standard.setValue(UserConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
+        UserDefaults.standard.setValue(UserConfiguration.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
+        UserDefaults.standard.setValue(UserConfiguration.isLoudNotification, forKey: UserDefaultsKeys.isLoudNotification.rawValue)
+
+        UserDefaults.standard.setValue(UserConfiguration.isFollowUpEnabled, forKey: UserDefaultsKeys.isFollowUpEnabled.rawValue)
+        UserDefaults.standard.setValue(UserConfiguration.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
+        UserDefaults.standard.setValue(UserConfiguration.notificationSound.rawValue, forKey: UserDefaultsKeys.notificationSound.rawValue)
+
+        UserDefaults.standard.setValue(UserConfiguration.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
+        UserDefaults.standard.setValue(UserConfiguration.interfaceStyle.rawValue, forKey: UserDefaultsKeys.interfaceStyle.rawValue)
+
+        // MARK: Local Configuration
+        UserDefaults.standard.setValue(LocalConfiguration.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedIntroductionViewControllerBefore.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedDogsIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedDogsIntroductionViewControllerBefore.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.isShowTerminationAlert, forKey: UserDefaultsKeys.isShowTerminationAlert.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.isShowReleaseNotes, forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.reviewRequestDates, forKeyPath: UserDefaultsKeys.reviewRequestDates.rawValue)
+
+        // indicate to local save that the app has sucessfully set itself up
+        UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.hasDoneFirstTimeSetup.rawValue)
+    }
+
+    /// Sets the data to its saved values as if the app is reopening again
+    static private func recurringSetup() {
 
             // MARK: User Configuration
 
@@ -35,7 +88,7 @@ class PersistenceManager {
 
             UserConfiguration.isCompactView = UserDefaults.standard.value(forKey: UserDefaultsKeys.isCompactView.rawValue) as? Bool ?? UserConfiguration.isCompactView
 
-            UserConfiguration.darkModeStyle = UIUserInterfaceStyle(rawValue: UserDefaults.standard.value(forKey: UserDefaultsKeys.darkModeStyle.rawValue) as? Int ?? UIUserInterfaceStyle.unspecified.rawValue)!
+            UserConfiguration.interfaceStyle = UIUserInterfaceStyle(rawValue: UserDefaults.standard.value(forKey: UserDefaultsKeys.interfaceStyle.rawValue) as? Int ?? UIUserInterfaceStyle.unspecified.rawValue)!
 
             // MARK: Local Configuration
 
@@ -53,114 +106,9 @@ class PersistenceManager {
             LocalConfiguration.isShowReleaseNotes = UserDefaults.standard.value(forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue) as? Bool ?? LocalConfiguration.isShowReleaseNotes
 
             // termination checker
-            if LocalConfiguration.isShowTerminationAlert == true && UIApplication.previousAppBuild == UIApplication.appBuild {
-
-                AppDelegate.generalLogger.notice("App has not updated")
-
-                do {
-                    if let decoded: Data = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as? Data {
-                        AppDelegate.generalLogger.notice("Decoded dogManager for termination checker")
-
-                        let unarchiver = try NSKeyedUnarchiver.init(forReadingFrom: decoded)
-                        unarchiver.requiresSecureCoding = false
-                        let decodedDogManager: DogManager = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! DogManager
-
-                        // sharedPlayer nil indicates the background silence is absent
-                        // From there we perform checks to make sure the background silence should have been there
-                        // If those check pass, it means the background silence's absense is due to the app terminating
-                        if AudioManager.sharedPlayer == nil && UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification && decodedDogManager.hasEnabledReminder && !UserConfiguration.isPaused {
-
-                            AppDelegate.generalLogger.notice("Showing Termionation Alert")
-                            let terminationAlertController = GeneralUIAlertController(title: "Oops, you may have terminated Hound", message: "Your notifications won't ring properly if the app isn't running.", preferredStyle: .alert)
-                            let understandAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-                            let stopAlertAction = UIAlertAction(title: "Don't Show Again", style: .default) { _ in
-                                LocalConfiguration.isShowTerminationAlert = false
-                            }
-
-                            terminationAlertController.addAction(understandAlertAction)
-                            terminationAlertController.addAction(stopAlertAction)
-                            AlertManager.shared.enqueueAlertForPresentation(terminationAlertController)
-                        }
-                        // }
-
-                    }
-                    else {
-                        AppDelegate.generalLogger.error("Failed to decode dogManager for termination checker")
-                    }
-                }
-                catch {
-                    AppDelegate.generalLogger.error("Failed to unarchive dogManager for termination checker \(error.localizedDescription)")
-                }
-
-            }
 
             // new update, mutally exclusive from termnating alert
-            if UIApplication.previousAppBuild != UIApplication.appBuild && LocalConfiguration.isShowReleaseNotes == true {
-                AppDelegate.generalLogger.notice("Showing Release Notes")
-                var message: String?
 
-                switch UIApplication.appBuild {
-                case 3810:
-                    message = "--Improved redundancy when unarchiving data"
-                default:
-                    message = nil
-                }
-
-                guard message != nil else {
-                    return
-                }
-
-                let updateAlertController = GeneralUIAlertController(title: "Release Notes For Hound \(UIApplication.appVersion ?? String(UIApplication.appBuild))", message: message, preferredStyle: .alert)
-                let understandAlertAction = UIAlertAction(title: "Ok, sounds great!", style: .default, handler: nil)
-                let stopAlertAction = UIAlertAction(title: "Don't show release notes again", style: .default) { _ in
-                    LocalConfiguration.isShowReleaseNotes = false
-                }
-
-                updateAlertController.addAction(understandAlertAction)
-                updateAlertController.addAction(stopAlertAction)
-                AlertManager.shared.enqueueAlertForPresentation(updateAlertController)
-            }
-
-        }
-        else {
-            // first time setup
-            let data = DogManagerConstant.defaultDogManager
-            let encodedData = try! NSKeyedArchiver.archivedData(withRootObject: data, requiringSecureCoding: false)
-            UserDefaults.standard.setValue(encodedData, forKey: UserDefaultsKeys.dogManager.rawValue)
-
-            MainTabBarViewController.selectedEntryIndex = 0
-
-            UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
-
-            // MARK: User Configuration
-
-            UserDefaults.standard.setValue(UserConfiguration.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
-
-            UserDefaults.standard.setValue(UserConfiguration.snoozeLength, forKey: UserDefaultsKeys.snoozeLength.rawValue)
-
-            UserDefaults.standard.setValue(UserConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
-            UserDefaults.standard.setValue(UserConfiguration.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
-            UserDefaults.standard.setValue(UserConfiguration.isLoudNotification, forKey: UserDefaultsKeys.isLoudNotification.rawValue)
-
-            UserDefaults.standard.setValue(UserConfiguration.isFollowUpEnabled, forKey: UserDefaultsKeys.isFollowUpEnabled.rawValue)
-            UserDefaults.standard.setValue(UserConfiguration.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
-            UserDefaults.standard.setValue(UserConfiguration.notificationSound.rawValue, forKey: UserDefaultsKeys.notificationSound.rawValue)
-
-            UserDefaults.standard.setValue(UserConfiguration.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
-            UserDefaults.standard.setValue(UserConfiguration.darkModeStyle.rawValue, forKey: UserDefaultsKeys.darkModeStyle.rawValue)
-
-            // MARK: Local Configuration
-            UserDefaults.standard.setValue(LocalConfiguration.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
-            UserDefaults.standard.setValue(LocalConfiguration.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
-            UserDefaults.standard.setValue(LocalConfiguration.hasLoadedIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedIntroductionViewControllerBefore.rawValue)
-            UserDefaults.standard.setValue(LocalConfiguration.hasLoadedDogsIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedDogsIntroductionViewControllerBefore.rawValue)
-            UserDefaults.standard.setValue(LocalConfiguration.isShowTerminationAlert, forKey: UserDefaultsKeys.isShowTerminationAlert.rawValue)
-            UserDefaults.standard.setValue(LocalConfiguration.isShowReleaseNotes, forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue)
-            UserDefaults.standard.setValue(LocalConfiguration.reviewRequestDates, forKeyPath: UserDefaultsKeys.reviewRequestDates.rawValue)
-
-            // indicate to local save that the app has sucessfully set itself up
-            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.hasDoneFirstTimeSetup.rawValue)
-        }
     }
 
     /// Called by App or Scene Delegate when entering the background, used to save information, can be called when terminating for a slightly modifed case.
@@ -220,7 +168,7 @@ class PersistenceManager {
             UserDefaults.standard.setValue(UserConfiguration.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
             UserDefaults.standard.setValue(UserConfiguration.notificationSound.rawValue, forKey: UserDefaultsKeys.notificationSound.rawValue)
             UserDefaults.standard.setValue(UserConfiguration.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
-            UserDefaults.standard.setValue(UserConfiguration.darkModeStyle.rawValue, forKey: UserDefaultsKeys.darkModeStyle.rawValue)
+            UserDefaults.standard.setValue(UserConfiguration.interfaceStyle.rawValue, forKey: UserDefaultsKeys.interfaceStyle.rawValue)
 
             // Local
             UserDefaults.standard.setValue(LocalConfiguration.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
@@ -305,9 +253,7 @@ class PersistenceManager {
                 // Updates switch to reflect change, if the last view open was the settings page then the app is exitted and property changed in the settings app then this app is reopened, VWL will not be called as the settings page was already opened, weird edge case.
                 DispatchQueue.main.async {
                     let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController.settingsViewController
-                    if settingsVC != nil && settingsVC!.isViewLoaded {
-                        settingsVC?.synchronizeAllNotificationSwitches(animated: false)
-                    }
+                    settingsVC?.settingsNotificationsViewController?.synchronizeAllNotificationSwitches(animated: false)
                 }
             case .notDetermined:
                 AppDelegate.generalLogger.notice(".notDetermined")

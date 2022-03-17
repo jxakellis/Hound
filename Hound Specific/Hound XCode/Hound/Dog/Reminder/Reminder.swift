@@ -138,7 +138,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
         storedReminderType = ReminderType(rawValue: body["reminderType"] as? String ?? ReminderConstant.defaultType.rawValue)!
 
         if let executionBasis = body["executionBasis"] as? String {
-            storedExecutionBasis = EndpointUtils.ISO8601DateFormatter.date(from: executionBasis) ?? Date()
+            storedExecutionBasis = RequestUtils.ISO8601DateFormatter.date(from: executionBasis) ?? Date()
         }
 
         if let isEnabled = body["isEnabled"] as? Bool {
@@ -156,7 +156,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
 
             var skipDate = Date()
             if let dateString = body["skipDate"] as? String {
-                skipDate = EndpointUtils.ISO8601DateFormatter.date(from: dateString) ?? Date()
+                skipDate = RequestUtils.ISO8601DateFormatter.date(from: dateString) ?? Date()
             }
 
             weeklyComponents = WeeklyComponents(
@@ -175,7 +175,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
         case .monthly:
             var skipDate = Date()
             if let dateString = body["skipDate"] as? String {
-                skipDate = EndpointUtils.ISO8601DateFormatter.date(from: dateString) ?? Date()
+                skipDate = RequestUtils.ISO8601DateFormatter.date(from: dateString) ?? Date()
             }
 
             monthlyComponents = MonthlyComponents(
@@ -188,7 +188,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
         case .oneTime:
             var executionDate = Date()
             if let dateString = body["skipDate"] as? String {
-                executionDate = EndpointUtils.ISO8601DateFormatter.date(from: dateString) ?? Date()
+                executionDate = RequestUtils.ISO8601DateFormatter.date(from: dateString) ?? Date()
             }
 
             oneTimeComponents = OneTimeComponents(date: executionDate)
@@ -497,7 +497,6 @@ class Reminder: NSObject, NSCoding, NSCopying {
             }
 
             storedIsEnabled = newEnableStatus
-            AppDelegate.endpointLogger.notice("ENDPOINT Update Reminder (enable)")
         }
     }
 

@@ -115,7 +115,7 @@ class TimingManager {
     @objc private static func willUpdateIsSkipping(sender: Timer) {
         guard let parsedDictionary = sender.userInfo as? [String: Any]
         else {
-            ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: TimingManagerError.parseSenderInfoFailed)
+            ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: TimingManagerError.parseSenderInfoFailed)
             return
         }
 
@@ -141,7 +141,6 @@ class TimingManager {
         }
         catch {
             AppDelegate.generalLogger.notice("willUpdateIsSkipping failure in finding dog or reminder")
-            ErrorManager.alertForError(message: "Something went wrong trying to unskip your reminder's timing. If your reminder appears stuck, try: disabling it then re-enabling it, deleting it, or restarting the app.")
         }
 
     }
@@ -257,7 +256,7 @@ class TimingManager {
         // Parses the sender info needed to figure out which reminder's timer fired
         guard let parsedDictionary = sender.userInfo as? [String: Any]
         else {
-            ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: TimingManagerError.parseSenderInfoFailed)
+            ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: TimingManagerError.parseSenderInfoFailed)
             return
         }
 
@@ -349,7 +348,6 @@ class TimingManager {
         }
         catch {
             AppDelegate.generalLogger.error("willShowTimer failure in finding dog or reminder")
-            ErrorManager.alertForError(message: "Something went wrong trying to present your reminder's alarm. If your reminder appears stuck, disable it then re-enable it to fix.")
         }
 
     }

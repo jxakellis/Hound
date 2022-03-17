@@ -25,7 +25,7 @@ class DogsNestedReminderViewController: UIViewController, DogsReminderManagerVie
             navigationController?.popViewController(animated: true)
         }
         catch {
-            ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: error)
+            ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: error)
         }
 
     }
@@ -36,7 +36,7 @@ class DogsNestedReminderViewController: UIViewController, DogsReminderManagerVie
             navigationController?.popViewController(animated: true)
         }
         catch {
-            ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: error)
+            ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: error)
         }
     }
 

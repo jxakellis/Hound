@@ -10,26 +10,30 @@ import UIKit
 
 class ErrorManager {
 
-    /// Alerts for an error, just calls AlertManager.willShowAlert currently with a specified title of "Error"
-    static func alertForError(message: String) {
+    /// Alerts for an unspecified error. Title is default with a parameter specified message
+    static func alert(forMessage message: String) {
 
         AlertManager.willShowAlert(title: "Uh oh! There seems to be an error.", message: message)
 
     }
 
-    private static func alertForErrorManager(sender: Sender, message: String) {
-        let originTest = sender.origin
-        if originTest != nil {
-            AlertManager.willShowAlert(title: "🚨Error from \(NSStringFromClass(originTest!.classForCoder))🚨", message: message)
+    /// Alerts for a unspecified error from a specified location. Title is extracted from sender with a parameter specified message
+     static private func alertForUnknown(sender: Sender, error: Error) {
+
+         AlertManager.willShowAlert(title: "Uh oh! There seems to be an error.", message: "Bizarre, there seems to be an unknown problem occuring! Please restart and/or reinstall Hound if issues persist.")
+
+        let origin = sender.origin
+        if origin != nil {
+            AppDelegate.generalLogger.error("Unknown error\nFrom class: \(NSStringFromClass(origin!.classForCoder))\n\nOf description: \(error.localizedDescription)")
         }
         else {
-            AlertManager.willShowAlert(title: "🚨Error from unknown class🚨", message: message)
+            AppDelegate.generalLogger.error("Unknown error\nFrom class: unknown\nOf description: \(error.localizedDescription)")
         }
 
     }
 
     /// Handles a given error, uses helper functions to compare against all known (custom) error types
-    static func handleError(sender: Sender, error: Error) {
+    static func alert(sender: Sender, forError error: Error) {
 
         let errorManagerInstance = ErrorManager()
 
@@ -64,7 +68,7 @@ class ErrorManager {
             return
         }
         else {
-            ErrorManager.alertForErrorManager(sender: sender, message: "Unable to desifer error of description: \(error.localizedDescription)")
+            ErrorManager.alertForUnknown(sender: sender, error: error)
         }
     }
 
@@ -77,11 +81,11 @@ class ErrorManager {
          }
          */
         if case TimingManagerError.invalidateFailed = error {
-            ErrorManager.alertForError(message: "Something went wrong. Please reload and try again! (TME.iF)")
+            ErrorManager.alert(forMessage: "Something went wrong. Please reload and try again! (TME.iF)")
             return true
         }
         else if case TimingManagerError.parseSenderInfoFailed = error {
-            ErrorManager.alertForError(message: "Something went wrong. Please reload and try again! (TME.pSIF)")
+            ErrorManager.alert(forMessage: "Something went wrong. Please reload and try again! (TME.pSIF)")
             return true
         }
         else {
@@ -92,23 +96,12 @@ class ErrorManager {
     /// Returns true if able to find a match in enum DogManagerError to the error provided
     private func handleDogManagerError(sender: Sender, error: Error) -> Bool {
         /*
-         enum DogManagerError: Error{
-             case dogNameBlank
-             case dogNameInvalid
-             case dogNameNotPresent
-             case dogIdAlreadyPresent
+         enum DogManagerError: Error {
+             case dogIdNotPresent
          }
          */
         if case DogManagerError.dogIdNotPresent = error {
-            ErrorManager.alertForError(message: "Couldn't find a match for a dog with that name. Please reload and try again!")
-            return true
-        }
-        else if case DogManagerError.dogIdAlreadyPresent = error {
-            ErrorManager.alertForError(message: "Your dog's name is already present, please try a different one.")
-            return true
-        }
-        else if case DogManagerError.dogIdInvalid = error {
-            ErrorManager.alertForError(message: "Your dog's name is invalid, please try a different one.")
+            ErrorManager.alert(forMessage: "Couldn't find a match for a dog with that name. Please reload and try again!")
             return true
         }
         else {
@@ -125,11 +118,11 @@ class ErrorManager {
          }
          */
         if case DogError.dogNameNil = error {
-            ErrorManager.alertForError(message: "Your dog's name is invalid, please try a different one.")
+            ErrorManager.alert(forMessage: "Your dog's name is invalid, please try a different one.")
             return true
         }
         else if case DogError.dogNameBlank = error {
-            ErrorManager.alertForError(message: "Your dog's name is blank, try typing something in.")
+            ErrorManager.alert(forMessage: "Your dog's name is blank, try typing something in.")
             return true
         }
         else {
@@ -146,11 +139,11 @@ class ErrorManager {
          }
          */
         if case LogManagerError.logIdPresent = error {
-            ErrorManager.alertForError(message: "Something went wrong when trying modify your log, please try again! (LME.lIP)")
+            ErrorManager.alert(forMessage: "Something went wrong when trying modify your log, please try again! (LME.lIP)")
             return true
         }
         else if case LogManagerError.logIdNotPresent = error {
-            ErrorManager.alertForError(message: "Something went wrong when trying modify your log, please try again! (LME.lINP)")
+            ErrorManager.alert(forMessage: "Something went wrong when trying modify your log, please try again! (LME.lINP)")
             return true
         }
         else {
@@ -167,11 +160,11 @@ class ErrorManager {
          }
          */
         if case LogTypeError.nilLogType = error {
-            ErrorManager.alertForError(message: "Your log has no type, try selecting one!")
+            ErrorManager.alert(forMessage: "Your log has no type, try selecting one!")
             return true
         }
         else if case LogTypeError.blankLogType = error {
-            ErrorManager.alertForError(message: "Your log has no type, try selecting one!")
+            ErrorManager.alert(forMessage: "Your log has no type, try selecting one!")
             return true
         }
         else {
@@ -190,11 +183,11 @@ class ErrorManager {
          }
          */
         if case ReminderManagerError.reminderIdAlreadyPresent = error {
-            ErrorManager.alertForError(message: "Your reminder seems to already exist. Please reload and try again! (RME.rIAP)")
+            ErrorManager.alert(forMessage: "Your reminder seems to already exist. Please reload and try again! (RME.rIAP)")
             return true
         }
         else if case ReminderManagerError.reminderIdNotPresent = error {
-            ErrorManager.alertForError(message: "Something went wrong when trying to modify your reminder. Please reload and try again! (RME.rINP)")
+            ErrorManager.alert(forMessage: "Something went wrong when trying to modify your reminder. Please reload and try again! (RME.rINP)")
             return true
         }
         else {
@@ -213,19 +206,19 @@ class ErrorManager {
          }
          */
         if case ReminderError.nameInvalid = error {
-            ErrorManager.alertForError(message: "Your dog's reminder name is invalid, please try a different one.")
+            ErrorManager.alert(forMessage: "Your dog's reminder name is invalid, please try a different one.")
             return true
         }
         else if case ReminderError.nameBlank = error {
-            ErrorManager.alertForError(message: "Your reminder's name is blank, try typing something in.")
+            ErrorManager.alert(forMessage: "Your reminder's name is blank, try typing something in.")
             return true
         }
         else if case ReminderError.descriptionInvalid = error {
-            ErrorManager.alertForError(message: "Your dog's reminder description is invalid, please try a different one.")
+            ErrorManager.alert(forMessage: "Your dog's reminder description is invalid, please try a different one.")
             return true
         }
         else if case ReminderError.intervalInvalid = error {
-            ErrorManager.alertForError(message: "Your dog's reminder countdown time is invalid, please try a different one.")
+            ErrorManager.alert(forMessage: "Your dog's reminder countdown time is invalid, please try a different one.")
             return true
         }
         else {
@@ -241,7 +234,7 @@ class ErrorManager {
          }
          */
         if case WeeklyComponentsError.weekdayArrayInvalid = error {
-            ErrorManager.alertForError(message: "Please select at least one day of the week for your reminder. You can do this by clicking on the grey S, M, T, W, T, F, or S. A blue letter means that your reminder will be enabled on that day.")
+            ErrorManager.alert(forMessage: "Please select at least one day of the week for your reminder. You can do this by clicking on the grey S, M, T, W, T, F, or S. A blue letter means that your reminder will be enabled on that day.")
             return true
         }
         else {
@@ -257,7 +250,7 @@ class ErrorManager {
          */
 
         if case MonthlyComponentsError.dayOfMonthInvalid = error {
-            ErrorManager.alertForError(message: "Please select a day of month for your reminder.")
+            ErrorManager.alert(forMessage: "Please select a day of month for your reminder.")
             return true
         }
         else {
@@ -272,7 +265,7 @@ class ErrorManager {
          }
          */
         if case StringExtensionError.dateComponentsInvalid = error {
-            ErrorManager.alertForError(message: "Something went wrong. Please reload and try again! (SEE.iDC)")
+            ErrorManager.alert(forMessage: "Something went wrong. Please reload and try again! (SEE.iDC)")
             return true
         }
         else {

@@ -147,7 +147,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
 
         }
         catch {
-            ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: error)
+            ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: error)
             return
         }
 
@@ -162,7 +162,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             }
         }
         catch {
-            ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: error)
+            ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: error)
         }
 
     }

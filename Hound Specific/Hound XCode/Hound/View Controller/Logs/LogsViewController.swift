@@ -29,7 +29,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
                 try sudoDogManager.findDog(forDogId: parentDogId).dogLogs.addLog(newLog: newLog)
             }
             catch {
-                ErrorManager.alertForError(message: "Unable to add log.")
+                ErrorManager.alert(sender: Sender(origin: sender, localized: self), forError: error)
             }
 
         }
@@ -74,11 +74,17 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         setDogManager(sender: sender, newDogManager: newDogManager)
     }
 
-    private var selectedLog: (Int, Log)?
+    /// Log selected in the main table view of the logs of care page. This log object has JUST been retrieved and constructed from data from the server.
+    private var selectedLog: Log?
+    /// Parent dog id of the log selected in the main table view of the logs of care page.
+    private var parentDogIdOfSelectedLog: Int?
+
     func didSelectLog(parentDogId: Int, log: Log) {
-        selectedLog = (parentDogId, log)
+        selectedLog = log
+        parentDogIdOfSelectedLog = parentDogId
         performSegue(withIdentifier: "logsAddLogViewController", sender: self)
         selectedLog = nil
+        parentDogIdOfSelectedLog = nil
     }
 
     /// If the last log under a dog for a given type was removed while filtering by that type, updates the drop down to reflect this. Does not update table view as it is trigger by the table view.
@@ -407,7 +413,8 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         else if segue.identifier == "logsAddLogViewController"{
             logsAddLogViewController = segue.destination as? LogsAddLogViewController
 
-            logsAddLogViewController!.updatingLogInformation = selectedLog
+            logsAddLogViewController!.parentDogIdOfLogToUpdate = parentDogIdOfSelectedLog
+            logsAddLogViewController!.logToUpdate = selectedLog
             logsAddLogViewController!.dogManager = getDogManager()
             logsAddLogViewController!.delegate = self
         }

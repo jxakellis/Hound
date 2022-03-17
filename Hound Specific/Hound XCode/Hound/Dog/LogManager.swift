@@ -48,12 +48,10 @@ class LogManager: NSObject, NSCoding, NSCopying {
             // instead of crashing, replace the log.
             storedLogs.remove(at: logIndex)
             storedLogs.append(newLog)
-            AppDelegate.endpointLogger.notice("ENDPOINT Update Log")
             return
         }
 
         storedLogs.append(newLog)
-        AppDelegate.endpointLogger.notice("ENDPOINT Add Log")
 
     }
 
@@ -94,13 +92,11 @@ class LogManager: NSObject, NSCoding, NSCopying {
         }
         else {
             storedLogs.remove(at: logIndex ?? -1)
-            AppDelegate.endpointLogger.notice("ENDPOINT Remove Log (logId)")
         }
     }
 
     func removeLog(forIndex index: Int) {
         storedLogs.remove(at: index)
-        AppDelegate.endpointLogger.notice("ENDPOINT Remove Log (index)")
     }
 
     /// Returns an array of known log types. Each known log type has an array of logs attached to it. This means you can find every log for a given log type

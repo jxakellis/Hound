@@ -125,14 +125,12 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
             reminder.timer?.invalidate()
             storedReminders.remove(at: reminderIndex)
             storedReminders.append(newReminder)
-            AppDelegate.endpointLogger.notice("ENDPOINT Update Reminder")
 
             sortReminders()
             return
         }
 
         appendReminder(newReminder: newReminder)
-        AppDelegate.endpointLogger.notice("ENDPOINT Add Reminder")
 
         sortReminders()
     }
@@ -180,14 +178,12 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
 
         storedReminders[indexOfRemovalTarget ?? -1].timer?.invalidate()
         storedReminders.remove(at: indexOfRemovalTarget ?? -1)
-        AppDelegate.endpointLogger.notice("ENDPOINT Remove Reminder (via reminderId)")
         }
     }
 
     func removeReminder(forIndex index: Int) {
         storedReminders[index].timer?.invalidate()
         storedReminders.remove(at: index)
-        AppDelegate.endpointLogger.notice("ENDPOINT Remove Reminder (via index)")
     }
 
     // MARK: Manipulate Reminders

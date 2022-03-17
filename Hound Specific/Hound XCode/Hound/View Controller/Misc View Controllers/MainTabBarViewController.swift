@@ -42,8 +42,8 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
 
     // MARK: - SettingsViewControllerDelegate
 
-    func didTogglePause(newPauseState: Bool) {
-        TimingManager.willTogglePause(dogManager: getDogManager(), newPauseStatus: newPauseState)
+    func didToggleIsPaused(newIsPaused: Bool) {
+        TimingManager.willTogglePause(dogManager: getDogManager(), newPauseStatus: newIsPaused)
     }
 
     // MARK: - TimingManagerDelegate && DogsViewControllerDelegate
@@ -70,8 +70,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         // MainTabBarViewController
         // TimingManager
         // DogsViewController
-
-        // print("reached MainTabBarViewController")
 
         parentDogManager = newDogManager
         MainTabBarViewController.staticDogManager = newDogManager
@@ -129,39 +127,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
 
         AppDelegate.generalLogger.notice("Application build is \(UIApplication.appBuild)")
 
-        /*
-        var decodedDogManager: DogManager! = nil
-
-        do {
-            // checks to see if data decoded sucessfully
-            if let decoded: Data = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as? Data {
-
-                let unarchiver = try NSKeyedUnarchiver.init(forReadingFrom: decoded)
-                unarchiver.requiresSecureCoding = false
-                decodedDogManager = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? DogManager
-                decodedDogManager.synchronizeIsSkipping()
-            }
-            else {
-                AppDelegate.generalLogger.error("Failed to decode dogManager in MainTabBarViewController")
-
-                decodedDogManager = DogManagerConstant.defaultDogManager
-                let dogManagerResetAlertController = GeneralUIAlertController(title: "Your data was corrupted", message: "The data you had stored for Hound was corrupted, making it unusable. In order to recover from the catastrophic failure, your data was reset to default. Apologies for any inconvenience this caused you :(", preferredStyle: .alert)
-                let acceptAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-                dogManagerResetAlertController.addAction(acceptAlertAction)
-                AlertManager.shared.enqueueAlertForPresentation(dogManagerResetAlertController)
-            }
-        }
-        catch {
-            AppDelegate.generalLogger.error("Failed to unarchive dogManager in MainTabBarViewController \(error.localizedDescription)")
-
-            decodedDogManager = DogManagerConstant.defaultDogManager
-            let dogManagerResetAlertController = GeneralUIAlertController(title: "Your data was corrupted", message: "The data you had stored for Hound was corrupted, making it unusable. In order to recover from the catastrophic failure, your data was reset to default. Apologies for any inconvenience this caused you :(", preferredStyle: .alert)
-            let acceptAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-            dogManagerResetAlertController.addAction(acceptAlertAction)
-            AlertManager.shared.enqueueAlertForPresentation(dogManagerResetAlertController)
-        }
-         */
-
         setDogManager(sender: Sender(origin: self, localized: self), newDogManager: ServerSyncViewController.dogManager)
 
         self.selectedIndex = MainTabBarViewController.selectedEntryIndex
@@ -192,13 +157,17 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         super.viewWillAppear(animated)
         AlertManager.globalPresenter = self
 
-        UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.darkModeStyle
+        UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
     }
 
     override func viewDidAppear(_ animated: Bool) {
         // Called after the view is added to the view hierarchy
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
+
+        Utils.checkForTermination()
+        Utils.checkForReleaseNotes()
+
         TimingManager.willInitalize(dogManager: getDogManager())
         AlertManager.shared.refreshAlerts(dogManager: getDogManager())
 

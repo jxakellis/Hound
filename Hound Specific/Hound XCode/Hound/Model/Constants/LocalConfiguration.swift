@@ -22,7 +22,6 @@ enum LocalConfiguration {
                 return
             }
             storedLastPause = newLastPause
-            AppDelegate.endpointLogger.notice("ENDPOINT Update lastPause")
         }
     }
 
@@ -37,7 +36,6 @@ enum LocalConfiguration {
                 return
             }
             storedLastUnpause = newLastUnpause
-            AppDelegate.endpointLogger.notice("ENDPOINT Update lastUnpause")
         }
     }
 
@@ -53,7 +51,6 @@ enum LocalConfiguration {
                 return
             }
             storeReviewRequestDates = newReviewRequestDates
-            AppDelegate.endpointLogger.notice("LOCAL Update reviewRequestDates")
         }
     }
 
@@ -68,7 +65,6 @@ enum LocalConfiguration {
                 return
             }
             storedIsShowTerminationAlert = newIsShowTerminationAlert
-            AppDelegate.endpointLogger.notice("LOCAL Update isShowTerminationAlert")
         }
     }
 
@@ -83,7 +79,6 @@ enum LocalConfiguration {
                 return
             }
             storedIsShowReleaseNotes = newIsShowReleaseNotes
-            AppDelegate.endpointLogger.notice("LOCAL Update isShowReleaseNotes")
         }
     }
 
@@ -98,7 +93,6 @@ enum LocalConfiguration {
                 return
             }
             storedHasLoadedIntroductionViewControllerBefore = newHasLoadedIntroductionViewControllerBefore
-            AppDelegate.endpointLogger.notice("LOCAL Update hasLoadedIntroductionViewControllerBefore")
         }
     }
 
@@ -113,7 +107,6 @@ enum LocalConfiguration {
                 return
             }
             storedHasLoadedDogsIntroductionViewControllerBefore = newHasLoadedDogsIntroductionViewControllerBefore
-            AppDelegate.endpointLogger.notice("LOCAL Update hasLoadedDogsIntroductionViewControllerBefore")
         }
     }
 

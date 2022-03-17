@@ -140,4 +140,76 @@ class Utils {
         })
 
     }
+
+    /// Displays a message about not terminating the app if that setting is enabled and the user terminated the app
+    static func checkForTermination() {
+        if LocalConfiguration.isShowTerminationAlert == true && UIApplication.previousAppBuild == UIApplication.appBuild {
+
+            AppDelegate.generalLogger.notice("App has not updated")
+
+            do {
+                if let decoded: Data = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as? Data {
+
+                    let unarchiver = try NSKeyedUnarchiver.init(forReadingFrom: decoded)
+                    unarchiver.requiresSecureCoding = false
+                    let decodedDogManager: DogManager = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! DogManager
+
+                    // sharedPlayer nil indicates the background silence is absent
+                    // From there we perform checks to make sure the background silence should have been there
+                    // If those check pass, it means the background silence's absense is due to the app terminating
+                    if AudioManager.sharedPlayer == nil && UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification && decodedDogManager.hasEnabledReminder && !UserConfiguration.isPaused {
+
+                        AppDelegate.generalLogger.notice("Showing Termionation Alert")
+                        let terminationAlertController = GeneralUIAlertController(title: "Oops, you may have terminated Hound", message: "Your notifications won't ring properly if the app isn't running.", preferredStyle: .alert)
+                        let understandAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                        let stopAlertAction = UIAlertAction(title: "Don't Show Again", style: .default) { _ in
+                            LocalConfiguration.isShowTerminationAlert = false
+                        }
+
+                        terminationAlertController.addAction(understandAlertAction)
+                        terminationAlertController.addAction(stopAlertAction)
+                        AlertManager.shared.enqueueAlertForPresentation(terminationAlertController)
+                    }
+                    // }
+
+                }
+                else {
+                    AppDelegate.generalLogger.error("Failed to decode dogManager for termination checker")
+                }
+            }
+            catch {
+                AppDelegate.generalLogger.error("Failed to unarchive dogManager for termination checker \(error.localizedDescription)")
+            }
+
+        }
+    }
+
+    /// Displays release notes about a new version to the user if they have that setting enabled and the app was updated to that new version
+    static func checkForReleaseNotes() {
+        if UIApplication.previousAppBuild != UIApplication.appBuild && LocalConfiguration.isShowReleaseNotes == true {
+            AppDelegate.generalLogger.notice("Showing Release Notes")
+            var message: String?
+
+            switch UIApplication.appBuild {
+            case 3810:
+                message = "--Improved redundancy when unarchiving data"
+            default:
+                message = nil
+            }
+
+            guard message != nil else {
+                return
+            }
+
+            let updateAlertController = GeneralUIAlertController(title: "Release Notes For Hound \(UIApplication.appVersion ?? String(UIApplication.appBuild))", message: message, preferredStyle: .alert)
+            let understandAlertAction = UIAlertAction(title: "Ok, sounds great!", style: .default, handler: nil)
+            let stopAlertAction = UIAlertAction(title: "Don't show release notes again", style: .default) { _ in
+                LocalConfiguration.isShowReleaseNotes = false
+            }
+
+            updateAlertController.addAction(understandAlertAction)
+            updateAlertController.addAction(stopAlertAction)
+            AlertManager.shared.enqueueAlertForPresentation(updateAlertController)
+        }
+    }
 }

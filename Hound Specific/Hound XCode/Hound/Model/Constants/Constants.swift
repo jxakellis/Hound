@@ -93,7 +93,7 @@ enum UserDefaultsKeys: String {
 
     // Appearance
     case isCompactView
-    case darkModeStyle
+    case interfaceStyle
 
     // Timing
     case isPaused

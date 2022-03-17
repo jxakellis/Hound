@@ -8,12 +8,26 @@
 
 import UIKit
 
+/// Attempted to update a user configuration value and it failed. These errors make it easier to standardize for ErrorManager.
+enum UserConfigurationResponseError: Error {
+    case updateIsCompactViewFailed
+    case updateInterfaceStyleFailed
+    case updateSnoozeLengthFailed
+    case updateIsPausedFailed
+    case updateIsNotificationAuthorizedFailed
+    case updateIsNotificationEnabledFailed
+    case updateIsLoudNotificationFailed
+    case updateIsFollowUpEnabledFailed
+    case updateFollowUpDelayFailed
+    case updateNotificationSoundFailed
+}
+
 /// Configuration that is local to the app only. If the app is reinstalled then this data should be pulled down from the cloud
 enum UserConfiguration {
 
-    // MARK: Ordered List
+    // MARK: - Ordered List
     // isCompactView
-    // darkModeStyle
+    // interfaceStyle
     // snoozeLength
     // isPaused
     // isNotificationAuthorized
@@ -30,9 +44,9 @@ enum UserConfiguration {
         if let isCompactView = body["isCompactView"] as? Bool {
             storedIsCompactView = isCompactView
         }
-        if let darkModeStyleInt = body["darkModeStyle"] as? Int {
-            if let darkModeStyle = UIUserInterfaceStyle(rawValue: darkModeStyleInt) {
-                storedDarkModeStyle = darkModeStyle
+        if let interfaceStyleInt = body["interfaceStyle"] as? Int {
+            if let interfaceStyle = UIUserInterfaceStyle(rawValue: interfaceStyleInt) {
+                storedInterfaceStyle = interfaceStyle
             }
         }
         if let snoozeLength = body["snoozeLength"] as? TimeInterval {
@@ -75,21 +89,19 @@ enum UserConfiguration {
                 return
             }
             storedIsCompactView = newIsCompactView
-            AppDelegate.endpointLogger.notice("ENDPOINT Update isCompactView")
         }
     }
 
-    static private var storedDarkModeStyle: UIUserInterfaceStyle = .unspecified
-    static var darkModeStyle: UIUserInterfaceStyle {
+    static private var storedInterfaceStyle: UIUserInterfaceStyle = .unspecified
+    static var interfaceStyle: UIUserInterfaceStyle {
         get {
-            return storedDarkModeStyle
+            return storedInterfaceStyle
         }
-        set (newDarkModeStyle) {
-            guard newDarkModeStyle != storedDarkModeStyle else {
+        set (newInterfaceStyle) {
+            guard newInterfaceStyle != storedInterfaceStyle else {
                 return
             }
-            storedDarkModeStyle = newDarkModeStyle
-            AppDelegate.endpointLogger.notice("ENDPOINT Update darkModeStyle")
+            storedInterfaceStyle = newInterfaceStyle
         }
     }
 
@@ -105,7 +117,6 @@ enum UserConfiguration {
                 return
             }
             storedSnoozeLength = newSnoozeLength
-            AppDelegate.endpointLogger.notice("ENDPOINT Update snoozeLength")
         }
     }
 
@@ -120,7 +131,6 @@ enum UserConfiguration {
                 return
             }
             storedIsPaused = newIsPaused
-            AppDelegate.endpointLogger.notice("ENDPOINT Update isPaused")
         }
     }
 
@@ -137,7 +147,6 @@ enum UserConfiguration {
                 return
             }
             storedIsNotificationAuthorized = newIsNotificationAuthorized
-            AppDelegate.endpointLogger.notice("ENDPOINT Update isNotificationAuthorized")
         }
     }
 
@@ -152,7 +161,6 @@ enum UserConfiguration {
                 return
             }
             storedIsNotificationEnabled = newIsNotificationEnabled
-            AppDelegate.endpointLogger.notice("ENDPOINT Update isNotificationEnabled")
         }
     }
 
@@ -167,7 +175,6 @@ enum UserConfiguration {
                 return
             }
             storedIsLoudNotification = newIsLoudNotification
-            AppDelegate.endpointLogger.notice("ENDPOINT Update isLoudNotification")
         }
     }
 
@@ -182,7 +189,6 @@ enum UserConfiguration {
                 return
             }
             storedIsFollowUpEnabled = newIsFollowUpEnabled
-            AppDelegate.endpointLogger.notice("ENDPOINT Update isFollowUpEnabled")
         }
     }
 
@@ -197,7 +203,6 @@ enum UserConfiguration {
                 return
             }
             storedFollowUpDelay = newFollowUpDelay
-            AppDelegate.endpointLogger.notice("ENDPOINT Update followUpDelay")
         }
     }
 
@@ -212,7 +217,6 @@ enum UserConfiguration {
                 return
             }
             storedNotificationSound = newNotificationSound
-            AppDelegate.endpointLogger.notice("ENDPOINT Update notificationSound")
         }
     }
 

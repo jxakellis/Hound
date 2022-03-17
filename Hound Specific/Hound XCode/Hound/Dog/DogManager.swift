@@ -10,9 +10,7 @@ import UIKit
 
 /// Enum full of cases of possible errors from DogManager
 enum DogManagerError: Error {
-    case dogIdInvalid
     case dogIdNotPresent
-    case dogIdAlreadyPresent
 }
 
 /// Protocol outlining functionality of DogManger
@@ -193,7 +191,6 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         }
 
         storedDogs.append(newDog)
-        AppDelegate.endpointLogger.notice("ENDPOINT Add Dog")
     }
 
     func addDogs(newDogs: [Dog]) {
@@ -214,7 +211,6 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         }
         else {
             storedDogs[newDogIndex!] = newDog
-            AppDelegate.endpointLogger.notice("ENDPOINT Update Dog")
         }
     }
 
@@ -235,13 +231,11 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         }
         else {
             storedDogs.remove(at: matchingDogIndex!)
-            AppDelegate.endpointLogger.notice("ENDPOINT Remove Dog (via dogId)")
         }
     }
 
     func removeDog(forIndex index: Int) {
         storedDogs.remove(at: index)
-        AppDelegate.endpointLogger.notice("ENDPOINT Remove Dog (via index)")
     }
 
 }

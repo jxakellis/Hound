@@ -1,5 +1,5 @@
 //
-//  InternalEndpointUtils.swift
+//  InternalRequestUtils.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 2/25/22.
@@ -9,7 +9,7 @@
 import Foundation
 
 /// abstractions used by other endpoint classes to make their request to the server, not used anywhere else in hound so therefore internal to endpoints and api requests.
-enum InternalEndpointUtils {
+enum InternalRequestUtils {
     static let basePathWithoutParams: URL = URL(string: "http://localhost:5000/api/v1")!
     static let session = URLSession.shared
 
@@ -33,7 +33,7 @@ enum InternalEndpointUtils {
                     dataJSON = try JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as? [String: [[String: Any]]] ?? JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as? [String: Any]
                 }
                 catch {
-                    print("Error when serializing data into JSON \(error)")
+                    AppDelegate.APIRequestLogger.error("Error when serializing data into JSON \(error.localizedDescription)")
                 }
             }
 
@@ -47,16 +47,18 @@ enum InternalEndpointUtils {
     }
 }
 
-extension InternalEndpointUtils {
+extension InternalRequestUtils {
 
-    /// Perform a generic get request at the specified url, assuming path params are already provided. No body needed for request, except in special case of getting user information through email or idenfifer (instead of userId path param). Throws if body for request is invalid
-    static func genericGetRequest(path: URL, body: [String: Any]? = nil, completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) throws {
+    /// Perform a generic get request at the specified url, assuming path params are already provided.
+    static func genericGetRequest(path: URL, completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) {
         // create request to send
         var req = URLRequest(url: path)
 
         // specify http method
         req.httpMethod = "GET"
 
+        /*
+         no body in get request
         if body != nil {
             req.addValue("application/json", forHTTPHeaderField: "Content-Type")
             do {
@@ -67,6 +69,7 @@ extension InternalEndpointUtils {
                 throw error
             }
         }
+         */
 
         genericRequest(request: req) { dictionary, status, error in
             completionHandler(dictionary, status, error)
@@ -139,11 +142,19 @@ extension InternalEndpointUtils {
         return body
     }
 
+    static func createUserInformationBody() -> [String: Any] {
+        var body: [String: Any] = [:]
+        body[UserDefaultsKeys.userEmail.rawValue] = UserInformation.userEmail
+        body[UserDefaultsKeys.userFirstName.rawValue] = UserInformation.userFirstName
+        body[UserDefaultsKeys.userLastName.rawValue] = UserInformation.userLastName
+        return body
+    }
+
     /// returns an array that only contains the user's userConfiguration and is that is suitable to be a http request body
     static func createUserConfigurationBody() -> [String: Any] {
         var body: [String: Any] = [:]
         // isCompactView
-        // darkModeStyle
+        // interfaceStyle
         // snoozeLength
         // isPaused
         // isNotificationAuthorized
@@ -154,7 +165,7 @@ extension InternalEndpointUtils {
         // notificationSound
 
         body[UserDefaultsKeys.isCompactView.rawValue] = UserConfiguration.isCompactView
-        body[UserDefaultsKeys.darkModeStyle.rawValue] = UserConfiguration.darkModeStyle.rawValue
+        body[UserDefaultsKeys.interfaceStyle.rawValue] = UserConfiguration.interfaceStyle.rawValue
         body[UserDefaultsKeys.snoozeLength.rawValue] = UserConfiguration.snoozeLength
         body[UserDefaultsKeys.isPaused.rawValue] = UserConfiguration.isPaused
         body[UserDefaultsKeys.isNotificationAuthorized.rawValue] = UserConfiguration.isNotificationAuthorized
@@ -182,7 +193,6 @@ extension InternalEndpointUtils {
         if log.logType == .custom && log.customTypeName != nil {
             body["customTypeName"] = log.customTypeName
         }
-        print(body)
         return body
 
     }
@@ -257,7 +267,7 @@ extension InternalEndpointUtils {
 
 }
 
-enum EndpointUtils {
+enum RequestUtils {
     static var ISO8601DateFormatter: ISO8601DateFormatter = {
         let formatter = Foundation.ISO8601DateFormatter()
         formatter.formatOptions = [.withFractionalSeconds, .withDashSeparatorInDate, .withColonSeparatorInTime, .withFullDate, .withTime]
@@ -270,8 +280,7 @@ enum EndpointUtils {
         let dogManager = DogManager()
 
             // Retrieve any dogs the user may have
-            do {
-                try DogsEndpoint.get(forDogId: nil, completionHandler: { responseBody, _, _ in
+            DogsRequest.get(forDogId: nil, completionHandler: { responseBody, _, _ in
                     if responseBody != nil {
                         // Array of dog JSON [{dog1:'foo'},{dog2:'bar'}]
                         if let result = responseBody!["result"] as? [[String: Any]] {
@@ -290,24 +299,34 @@ enum EndpointUtils {
 
                         }
                     }
-                    
+
                     // this whole body is sync. If the execution didn't make it to return queryFinished(successful: true), then it means there was an error encountered. If it did make it to that statement then this code wouldn't be executed
                     return queryFinished(successful: false)
                 })
-            }
-            catch {
-                // couldn't query at all
-                return queryFinished(successful: false)
-            }
-        
+
         // depending on whether or not the query was successful, we return different completioHandlers
-        func queryFinished(successful: Bool){
+        func queryFinished(successful: Bool) {
             if successful == true {
                 completionHandler(dogManager)
             }
             else {
                 completionHandler(nil)
             }
+        }
+    }
+    /// Provides warning if the id of anything is set to a placeholder value. 
+    static func checkId(dogId: Int? = nil, reminderId: Int? = nil, logId: Int? = nil) {
+        if UserInformation.userId == -1 {
+            AppDelegate.APIRequestLogger.warning("Warning: userId is -1")
+        }
+        if dogId != nil && dogId! == -1 {
+            AppDelegate.APIRequestLogger.warning("Warning: dogId is -1")
+        }
+        if reminderId != nil && reminderId! == -1 {
+            AppDelegate.APIRequestLogger.warning("Warning: reminderId is -1")
+        }
+        if logId != nil && logId! == -1 {
+            AppDelegate.APIRequestLogger.warning("Warning: logId is -1")
         }
     }
 }

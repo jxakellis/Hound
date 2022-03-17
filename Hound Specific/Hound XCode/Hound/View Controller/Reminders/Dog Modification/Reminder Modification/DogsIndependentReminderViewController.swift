@@ -37,7 +37,7 @@ class DogsIndependentReminderViewController: UIViewController, DogsReminderManag
             self.navigationController?.popViewController(animated: true)
         }
         catch {
-            ErrorManager.handleError(sender: Sender(origin: self, localized: self), error: error)
+            ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: error)
         }
     }
 

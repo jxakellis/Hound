@@ -9,15 +9,15 @@
 import UIKit
 
 protocol SettingsNavigationViewControllerDelegate: AnyObject {
-    func didTogglePause(newPauseState: Bool)
+    func didToggleIsPaused(newIsPaused: Bool)
 }
 
 class SettingsNavigationViewController: UINavigationController, SettingsViewControllerDelegate {
 
     // MARK: - SettingsViewControllerDelegate
 
-    func didTogglePause(newPauseState: Bool) {
-        passThroughDelegate.didTogglePause(newPauseState: newPauseState)
+    func didToggleIsPaused(newIsPaused: Bool) {
+        passThroughDelegate.didToggleIsPaused(newIsPaused: newIsPaused)
     }
 
     // MARK: - Properties

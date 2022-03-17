@@ -8,8 +8,23 @@
 
 import Foundation
 
+/// Attempted to update a user informationn value and it failed. These errors make it easier to standardize for ErrorManager.
+enum UserInformationResponseError: Error {
+    case updateUserEmailFailed
+    case updateUserFirstNameFailed
+    case updateUserLastNameFailed
+}
+
 /// Information specific to the user.
 enum UserInformation {
+
+    // MARK: - Ordered List
+    // userId
+    // userEmail
+    // userFirstName
+    // userLastName
+
+    // MARK: - Main
 
     /// Sets the UserInformation values equal to all the values found in the body. The key for the each body value must match the name of the UserConfiguration property exactly in order to be used. The value must also be able to be converted into the proper data type.
     static func setup(fromBody body: [String: Any]) {
@@ -39,7 +54,6 @@ enum UserInformation {
                 return
             }
             storedUserEmail = newUserEmail
-            AppDelegate.endpointLogger.notice("ENDPOINT Update userEmail")
         }
     }
 
@@ -53,7 +67,6 @@ enum UserInformation {
                 return
             }
             storedUserFirstName = newUserFirstName
-            AppDelegate.endpointLogger.notice("ENDPOINT Update userFirstName")
         }
     }
 
@@ -67,7 +80,6 @@ enum UserInformation {
                 return
             }
             storedUserLastName = newUserLastName
-            AppDelegate.endpointLogger.notice("ENDPOINT Update userLastName")
         }
     }
 }
