@@ -44,6 +44,13 @@ app.use('/', assignConnection);
 
 app.use('/api/v1/user', userRouter);
 
+// unknown path is specified
+app.use('*', (req, res) => {
+  // release connection
+  req.rollbackQueries(req);
+  return res.status(404).json({ message: 'Not Found', error: 'ER_NOT_FOUND' });
+});
+
 app.listen(5000, () => {
   console.log('Listening on port 5000');
 });

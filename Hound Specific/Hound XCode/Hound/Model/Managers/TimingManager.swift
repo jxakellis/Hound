@@ -150,16 +150,11 @@ class TimingManager {
     /// Toggles pause for a given dogManager to a specifided newPauseState
     static func willTogglePause(dogManager: DogManager, newPauseStatus: Bool) {
 
-        // self.isPaused can be modified by SettingsViewController but this is only when there are no active timers and pause is automatically set to unpaused
+        // UserConfiguration isPaused value is alerady changed in the settings VC
 
-        guard newPauseStatus != UserConfiguration.isPaused else {
-            return
-        }
-
-        /// Toggles pause status of timers, called when pauseAllTimers in settings is switched to a new state
+        // Toggles pause status of timers, called when pauseAllTimers in settings is switched to a new state
         if newPauseStatus == true {
             LocalConfiguration.lastPause = Date()
-            UserConfiguration.isPaused = true
 
             willPause(dogManager: dogManager)
 
@@ -168,7 +163,6 @@ class TimingManager {
         }
         else {
             LocalConfiguration.lastUnpause = Date()
-            UserConfiguration.isPaused = false
             willUnpause(dogManager: dogManager)
         }
     }

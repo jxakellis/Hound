@@ -101,7 +101,6 @@ const createUser = async (req, res) => {
     return res.status(400).json({ message: 'Invalid Body; userFirstName Blank', error: 'ER_LAST_NAME_BLANK' });
   }
 
-  const isNotificationAuthorized = formatBoolean(req.body.isNotificationAuthorized);
   const isNotificationEnabled = formatBoolean(req.body.isNotificationEnabled);
   const isLoudNotification = formatBoolean(req.body.isLoudNotification);
   const isFollowUpEnabled = formatBoolean(req.body.isFollowUpEnabled);
@@ -113,13 +112,13 @@ const createUser = async (req, res) => {
   const { notificationSound } = req.body;
   // component of the body is missing or invalid
   if (areAllDefined(
-    [userEmail, userFirstName, userLastName, isNotificationAuthorized, isNotificationEnabled,
+    [userEmail, userFirstName, userLastName, isNotificationEnabled,
       isLoudNotification, isFollowUpEnabled, followUpDelay,
       isPaused, isCompactView, interfaceStyle, snoozeLength, notificationSound],
   ) === false) {
     // >=1 of the items is undefined
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; userEmail, userFirstName, userLastName, isNotificationAuthorized, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, or notificationSound missing' });
+    return res.status(400).json({ message: 'Invalid Body; userEmail, userFirstName, userLastName, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, or notificationSound missing' });
   }
 
   let userId;
@@ -134,8 +133,8 @@ const createUser = async (req, res) => {
 
     await queryPromise(
       req,
-      'INSERT INTO userConfiguration(userId, isNotificationAuthorized, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, notificationSound) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
-      [userId, isNotificationAuthorized, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, notificationSound],
+      'INSERT INTO userConfiguration(userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, notificationSound) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+      [userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, notificationSound],
     );
 
     req.commitQueries(req);
@@ -153,7 +152,6 @@ const updateUser = async (req, res) => {
   const { userFirstName } = req.body;
   const { userLastName } = req.body;
 
-  const isNotificationAuthorized = formatBoolean(req.body.isNotificationAuthorized);
   const isNotificationEnabled = formatBoolean(req.body.isNotificationEnabled);
   const isLoudNotification = formatBoolean(req.body.isLoudNotification);
   const isFollowUpEnabled = formatBoolean(req.body.isFollowUpEnabled);
@@ -165,11 +163,11 @@ const updateUser = async (req, res) => {
   const { notificationSound } = req.body;
 
   // checks to see that all needed components are provided
-  if (atLeastOneDefined([userEmail, userFirstName, userLastName, isNotificationAuthorized, isNotificationEnabled,
+  if (atLeastOneDefined([userEmail, userFirstName, userLastName, isNotificationEnabled,
     isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView,
     interfaceStyle, snoozeLength, notificationSound]) === false) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; No userEmail, userFirstName, userLastName, isNotificationAuthorized, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, or notificationSound provided' });
+    return res.status(400).json({ message: 'Invalid Body; No userEmail, userFirstName, userLastName, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, or notificationSound provided' });
   }
 
   try {
@@ -193,13 +191,6 @@ const updateUser = async (req, res) => {
         req,
         'UPDATE users SET userLastName = ? WHERE userId = ?',
         [userLastName, userId],
-      );
-    }
-    if (areAllDefined(isNotificationAuthorized)) {
-      await queryPromise(
-        req,
-        'UPDATE userConfiguration SET isNotificationAuthorized = ? WHERE userId = ?',
-        [isNotificationAuthorized, userId],
       );
     }
     if (areAllDefined(isNotificationEnabled)) {

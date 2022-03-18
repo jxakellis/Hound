@@ -55,9 +55,6 @@ enum UserConfiguration {
         if let isPaused = body["isPaused"] as? Bool {
             storedIsPaused = isPaused
         }
-        if let isNotificationAuthorized = body["isNotificationAuthorized"] as? Bool {
-            storedIsNotificationAuthorized = isNotificationAuthorized
-        }
         if let isNotificationEnabled = body["isNotificationEnabled"] as? Bool {
             storedIsNotificationEnabled = isNotificationEnabled
         }
@@ -135,20 +132,6 @@ enum UserConfiguration {
     }
 
     // MARK: - iOS Notification Related
-
-    static private var storedIsNotificationAuthorized: Bool = false
-    /// This should be stored on the server as it is important to only send notifications to devices that can use them. This will always be overriden by the user upon reinstall if its state is different in that new install.
-    static var isNotificationAuthorized: Bool {
-        get {
-            return storedIsNotificationAuthorized
-        }
-        set (newIsNotificationAuthorized) {
-            guard newIsNotificationAuthorized != storedIsNotificationAuthorized else {
-                return
-            }
-            storedIsNotificationAuthorized = newIsNotificationAuthorized
-        }
-    }
 
     static private var storedIsNotificationEnabled: Bool = false
     /// This should be stored on the server as it is important to only send notifications to devices that can use them. This will always be overriden by the user upon reinstall if its state is different in that new install.

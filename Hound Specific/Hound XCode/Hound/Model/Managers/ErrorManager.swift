@@ -24,7 +24,7 @@ class ErrorManager {
 
         let origin = sender.origin
         if origin != nil {
-            AppDelegate.generalLogger.error("Unknown error\nFrom class: \(NSStringFromClass(origin!.classForCoder))\n\nOf description: \(error.localizedDescription)")
+            AppDelegate.generalLogger.error("Unknown Error\nFrom class: \(NSStringFromClass(origin!.classForCoder))\nOf description: \(error.localizedDescription)")
         }
         else {
             AppDelegate.generalLogger.error("Unknown error\nFrom class: unknown\nOf description: \(error.localizedDescription)")

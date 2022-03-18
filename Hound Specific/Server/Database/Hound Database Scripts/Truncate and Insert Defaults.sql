@@ -1,16 +1,18 @@
 CALL Hound.truncateAll;
 
 INSERT INTO users (userFirstName, userLastName, userEmail) VALUES 
-('Bob', 'Smith', 'bobsmith@gmail.com'),
+('Joe', 'Smith', 'joesmith@gmail.com'),
 ('George', 'Williams', 'georgewilliams@gmail.com'),
 ('Tim', 'Brown', 'timbrown@gmail.com');
 
-INSERT INTO userConfiguration (userId) VALUES 
-(1),
-(2),
-(3);
+INSERT INTO userConfiguration (
+userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView,
+interfaceStyle, snoozeLength, notificationSound) VALUES 
+(1, false, false, false, 1738, false, true, 0, 900, 'Radar'),
+(2, false, false, false, 1738, false, true, 0, 900, 'Radar'),
+(3, false, false, false, 1738, false, true, 0, 900, 'Radar');
 
-INSERT INTO dogs(userId, name) VALUES
+INSERT INTO dogs(userId, dogName) VALUES
 (1, 'Bella'),
 (1, 'Georgie'),
 (2, 'Penny'),
@@ -27,7 +29,7 @@ INSERT INTO dogLogs (dogId, date, note, logType) VALUES
 (5, '2021-11-16 14:25:00', '', 4),
 (6, '2021-11-16 17:00:00', '', 9);
 
-INSERT INTO dogReminders (dogId, reminderType, timingStyle, executionBasis, enabled) VALUES
+INSERT INTO dogReminders (dogId, reminderAction, reminderType, executionBasis, isEnabled) VALUES
 (1, 'Feed', 'countdown', '2021-11-16 12:00:00', true),
 (1, 'Fresh Water', 'countdown', '2021-11-16 14:00:00', true),
 (2, 'Feed', 'countdown', '2021-11-16 16:00:00', true),
@@ -37,22 +39,22 @@ INSERT INTO dogReminders (dogId, reminderType, timingStyle, executionBasis, enab
 (5, 'Feed', 'monthly', '2021-11-16 12:00:00', true),
 (6, 'Feed', 'countdown', '2021-11-16 12:00:00', true);
 
-INSERT INTO reminderCountdownComponents (reminderId, executionInterval, intervalElapsed) VALUES 
+INSERT INTO reminderCountdownComponents (reminderId, countdownExecutionInterval, countdownIntervalElapsed) VALUES 
 (1, 18000, 0),
 (2, 7200, 0),
 (3, 18000, 0),
 (4, 3600, 0),
 (8, 18000, 0);
 
-INSERT INTO reminderSnoozeComponents (reminderId, executionInterval) VALUES
-(1, 3600),
-(2, 3600),
-(3, 3600),
-(4, 3600),
-(5, 3600),
-(6, 3600),
-(7, 3600),
-(8, 3600);
+INSERT INTO reminderSnoozeComponents (reminderId, isSnoozed, snoozeExecutionInterval, snoozeIntervalElapsed) VALUES
+(1, false, 180, 0),
+(2, false, 180, 0),
+(3, false, 180, 0),
+(4, false, 180, 0),
+(5, false, 180, 0),
+(6, false, 180, 0),
+(7, false, 180, 0),
+(8, false, 180, 0);
 
 
 INSERT INTO reminderWeeklyComponents (reminderId, hour, minute, sunday, monday, tuesday, wednesday, thursday, friday, saturday) VALUES

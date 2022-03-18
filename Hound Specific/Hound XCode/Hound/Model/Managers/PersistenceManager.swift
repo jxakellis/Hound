@@ -27,21 +27,26 @@ class PersistenceManager {
 
     /// Sets the data to default values as if the user is opening the app for the first time
     static private func firstTimeSetup() {
+
+        UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
+
+        MainTabBarViewController.selectedEntryIndex = 0
+
+        // Data below is retrieved from the server, so no need to store/persist locally
+        /*
+        
         let data = DogManagerConstant.defaultDogManager
         let encodedData = try! NSKeyedArchiver.archivedData(withRootObject: data, requiringSecureCoding: false)
         UserDefaults.standard.setValue(encodedData, forKey: UserDefaultsKeys.dogManager.rawValue)
 
-        MainTabBarViewController.selectedEntryIndex = 0
-
-        UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
-
         // MARK: User Configuration
 
+        
         UserDefaults.standard.setValue(UserConfiguration.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
 
         UserDefaults.standard.setValue(UserConfiguration.snoozeLength, forKey: UserDefaultsKeys.snoozeLength.rawValue)
 
-        UserDefaults.standard.setValue(UserConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
+        
         UserDefaults.standard.setValue(UserConfiguration.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
         UserDefaults.standard.setValue(UserConfiguration.isLoudNotification, forKey: UserDefaultsKeys.isLoudNotification.rawValue)
 
@@ -52,7 +57,10 @@ class PersistenceManager {
         UserDefaults.standard.setValue(UserConfiguration.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
         UserDefaults.standard.setValue(UserConfiguration.interfaceStyle.rawValue, forKey: UserDefaultsKeys.interfaceStyle.rawValue)
 
+         */
+
         // MARK: Local Configuration
+        UserDefaults.standard.setValue(LocalConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedIntroductionViewControllerBefore.rawValue)
@@ -68,13 +76,15 @@ class PersistenceManager {
     /// Sets the data to its saved values as if the app is reopening again
     static private func recurringSetup() {
 
+        // Data below is retrieved from the server, so no need to store/persist locally
+        /*
             // MARK: User Configuration
 
             UserConfiguration.isPaused = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as? Bool ?? UserConfiguration.isPaused
 
             UserConfiguration.snoozeLength = UserDefaults.standard.value(forKey: UserDefaultsKeys.snoozeLength.rawValue) as? TimeInterval ?? UserConfiguration.snoozeLength
 
-            UserConfiguration.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as? Bool ?? UserConfiguration.isNotificationAuthorized
+            
 
             UserConfiguration.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as? Bool ?? UserConfiguration.isNotificationEnabled
 
@@ -90,7 +100,10 @@ class PersistenceManager {
 
             UserConfiguration.interfaceStyle = UIUserInterfaceStyle(rawValue: UserDefaults.standard.value(forKey: UserDefaultsKeys.interfaceStyle.rawValue) as? Int ?? UIUserInterfaceStyle.unspecified.rawValue)!
 
+        */
             // MARK: Local Configuration
+
+        LocalConfiguration.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as? Bool ?? LocalConfiguration.isNotificationAuthorized
 
             LocalConfiguration.lastPause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastPause.rawValue) as? Date
 
@@ -104,10 +117,6 @@ class PersistenceManager {
             LocalConfiguration.isShowTerminationAlert = UserDefaults.standard.value(forKey: UserDefaultsKeys.isShowTerminationAlert.rawValue) as? Bool ?? LocalConfiguration.isShowTerminationAlert
 
             LocalConfiguration.isShowReleaseNotes = UserDefaults.standard.value(forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue) as? Bool ?? LocalConfiguration.isShowReleaseNotes
-
-            // termination checker
-
-            // new update, mutally exclusive from termnating alert
 
     }
 
@@ -145,6 +154,9 @@ class PersistenceManager {
         // saves to user defaults
         func handleUserDefaults() {
             AppDelegate.generalLogger.notice("handleUserDefaults")
+
+            // Data below is retrieved from the server, so no need to store/persist locally
+            /*
             // dogManager
             // DogManagerEfficencyImprovement OK, Changes are being made that might not apply to the rest of the system, might be invalid, or might affect finding something
             var dataDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
@@ -152,6 +164,8 @@ class PersistenceManager {
 
             let encodedDataDogManager = try! NSKeyedArchiver.archivedData(withRootObject: dataDogManager, requiringSecureCoding: false)
             UserDefaults.standard.setValue(encodedDataDogManager, forKey: UserDefaultsKeys.dogManager.rawValue)
+             
+             // MARK: User Configuration
 
             // Pause State
             UserDefaults.standard.setValue(UserConfiguration.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
@@ -161,7 +175,7 @@ class PersistenceManager {
             UserDefaults.standard.setValue(UserConfiguration.snoozeLength, forKey: UserDefaultsKeys.snoozeLength.rawValue)
 
             // Notifications
-            UserDefaults.standard.setValue(UserConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
+            
             UserDefaults.standard.setValue(UserConfiguration.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
             UserDefaults.standard.setValue(UserConfiguration.isLoudNotification, forKey: UserDefaultsKeys.isLoudNotification.rawValue)
             UserDefaults.standard.setValue(UserConfiguration.isFollowUpEnabled, forKey: UserDefaultsKeys.isFollowUpEnabled.rawValue)
@@ -170,7 +184,9 @@ class PersistenceManager {
             UserDefaults.standard.setValue(UserConfiguration.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
             UserDefaults.standard.setValue(UserConfiguration.interfaceStyle.rawValue, forKey: UserDefaultsKeys.interfaceStyle.rawValue)
 
-            // Local
+             */
+            // MARK: Local Configuration
+            UserDefaults.standard.setValue(LocalConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.isShowTerminationAlert, forKey: UserDefaultsKeys.isShowTerminationAlert.rawValue)
@@ -183,7 +199,7 @@ class PersistenceManager {
         // ios notifications
         func handleNotifications() {
             AppDelegate.generalLogger.notice("handleNotifications")
-            guard UserConfiguration.isNotificationAuthorized && UserConfiguration.isNotificationEnabled && !UserConfiguration.isPaused else {
+            guard LocalConfiguration.isNotificationAuthorized && UserConfiguration.isNotificationEnabled && !UserConfiguration.isPaused else {
                 return
             }
             AppDelegate.generalLogger.notice("handleNotifications passed guard statement")
@@ -227,7 +243,7 @@ class PersistenceManager {
 
         synchronizeNotificationAuthorization()
 
-        if UserConfiguration.isNotificationAuthorized && UserConfiguration.isNotificationEnabled == true {
+        if LocalConfiguration.isNotificationAuthorized && UserConfiguration.isNotificationEnabled == true {
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
             UNUserNotificationCenter.current().removeAllDeliveredNotifications()
         }
@@ -235,25 +251,29 @@ class PersistenceManager {
 
     /// Checks to see if a change in notification permissions has occured, if it has then update to reflect
     static private func synchronizeNotificationAuthorization() {
+        let beforeUpdateIsNotificationEnabled = UserConfiguration.isNotificationEnabled
+        let beforeUpdateIsLoudNotification = UserConfiguration.isLoudNotification
+        let beforeUpdateIsFollowUpEnabled = UserConfiguration.isFollowUpEnabled
+
         UNUserNotificationCenter.current().getNotificationSettings { (permission) in
             switch permission.authorizationStatus {
             case .authorized:
 
                 // going from off to on, meaning the user has gone into the settings app and turned notifications from disabled to enabled
-                UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
-                UserConfiguration.isNotificationAuthorized = true
+                LocalConfiguration.isNotificationAuthorized = true
 
             case .denied:
-                UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
-                UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
-                UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isFollowUpEnabled.rawValue)
-                UserConfiguration.isNotificationAuthorized = false
+                DispatchQueue.main.async {
+                LocalConfiguration.isNotificationAuthorized = false
                 UserConfiguration.isNotificationEnabled = false
+                UserConfiguration.isLoudNotification = false
                 UserConfiguration.isFollowUpEnabled = false
                 // Updates switch to reflect change, if the last view open was the settings page then the app is exitted and property changed in the settings app then this app is reopened, VWL will not be called as the settings page was already opened, weird edge case.
-                DispatchQueue.main.async {
+
                     let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController.settingsViewController
                     settingsVC?.settingsNotificationsViewController?.synchronizeAllNotificationSwitches(animated: false)
+
+                    updateServerUserConfiguration()
                 }
             case .notDetermined:
                 AppDelegate.generalLogger.notice(".notDetermined")
@@ -266,5 +286,39 @@ class PersistenceManager {
             }
         }
 
+        /// Contact the server about the updated values and, if there is no response or a bad response, revert the values to their previous values. isNotificationAuthorized purposefully excluded as server doesn't need to know that and its value cant exactly just be flipped (as tied to apple notif auth status)
+        func updateServerUserConfiguration() {
+            var body: [String: Any] = [:]
+            // check for if values were changed, if there were then tell the server
+            if UserConfiguration.isNotificationEnabled != beforeUpdateIsNotificationEnabled {
+                body[UserDefaultsKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
+            }
+            if UserConfiguration.isLoudNotification != beforeUpdateIsLoudNotification {
+                body[UserDefaultsKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
+            }
+            if UserConfiguration.isFollowUpEnabled != beforeUpdateIsFollowUpEnabled {
+                body[UserDefaultsKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
+            }
+            UserRequest.update(body: body) { _, responseCode, _ in
+                DispatchQueue.main.async {
+                    // success
+                    if responseCode != nil && 200...299 ~= responseCode! {
+                        // do nothing as we preemptively updated the values
+                    }
+                    // error, revert to previous
+                    else {
+                        UserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
+                        UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
+                        UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
+
+                        ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: UserConfigurationResponseError.updateIsNotificationAuthorizedFailed)
+
+                        let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController.settingsViewController
+                        settingsVC?.settingsNotificationsViewController?.synchronizeAllNotificationSwitches(animated: false)
+                    }
+                }
+            }
+        }
     }
-}
+
+    }

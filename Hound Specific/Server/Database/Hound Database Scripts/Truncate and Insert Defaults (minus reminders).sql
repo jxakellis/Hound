@@ -5,10 +5,12 @@ INSERT INTO users (userFirstName, userLastName, userEmail) VALUES
 ('George', 'Williams', 'georgewilliams@gmail.com'),
 ('Tim', 'Brown', 'timbrown@gmail.com');
 
-INSERT INTO userConfiguration (userId) VALUES 
-(1),
-(2),
-(3);
+INSERT INTO userConfiguration (
+userId, isNotificationAuthorized, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView,
+darkModeStyle, snoozeLength, notificationSound) VALUES 
+(1, true, true, true, true, 1738, false, true, 'unspecified', 900, 'Radar'),
+(2, true, true, true, true, 1738, false, true, 'unspecified', 900, 'Radar'),
+(3, true, true, true, true, 1738, false, true, 'unspecified', 900, 'Radar');
 
 INSERT INTO dogs(userId, name) VALUES
 (1, 'Bella'),

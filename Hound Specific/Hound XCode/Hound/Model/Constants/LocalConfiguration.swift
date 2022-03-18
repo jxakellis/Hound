@@ -11,6 +11,24 @@ import Foundation
 /// Configuration that is local to the app only. If the app is reinstalled then this data should be fresh
 enum LocalConfiguration {
 
+    // MARK: iOS Notification Related
+
+    static private var storedIsNotificationAuthorized: Bool = false
+    /// This should be stored on the server as it is important to only send notifications to devices that can use them. This will always be overriden by the user upon reinstall if its state is different in that new install.
+    static var isNotificationAuthorized: Bool {
+        get {
+            return storedIsNotificationAuthorized
+        }
+        set (newIsNotificationAuthorized) {
+            guard newIsNotificationAuthorized != storedIsNotificationAuthorized else {
+                return
+            }
+            storedIsNotificationAuthorized = newIsNotificationAuthorized
+        }
+    }
+
+    // MARK: Alarm Timing Related
+
     static private var storedLastPause: Date?
     /// Saves date of last pause (if there was one). This is not needed on the server as it can automatically perform calculations if the reminders are paused/unapused. App needs this to perform calculations as it can be exited and lose track of time.
     static var lastPause: Date? {
@@ -38,6 +56,8 @@ enum LocalConfiguration {
             storedLastUnpause = newLastUnpause
         }
     }
+
+    // MARK: Alert Related
 
     /// Used to track when the user was last asked to review the app
     static private var storeReviewRequestDates: [Date] = [Date()]

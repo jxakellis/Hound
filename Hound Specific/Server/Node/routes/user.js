@@ -29,7 +29,6 @@ router.post('/', createUser);
 "userEmail":"requiredEmail",
 "userFirstName":"requiredString",
 "userLastName":"requiredString",
-"isNotificationAuthorized":"requiredBool",
 "isNotificationEnabled":"requiredBool",
 "isLoudNotification":"requiredBool",
 "isFollowUpEnabled":"requiredBool",
@@ -46,7 +45,7 @@ router.post('/', createUser);
 router.put('/:userId', updateUser);
 /* BODY:
 
-//At least one of the following must be defined: userEmail, userFirstName, userLastName, isNotificationAuthorized, isNotificationEnabled,
+//At least one of the following must be defined: userEmail, userFirstName, userLastName, isNotificationEnabled,
         isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView,
         interfaceStyle, snoozeLength, or notificationSound
 
@@ -54,7 +53,6 @@ router.put('/:userId', updateUser);
 "userEmail":"optionalEmail",
 "userFirstName":"optionalString",
 "userLastName":"optionalString",
-"isNotificationAuthorized":"optionalBool",
 "isNotificationEnabled":"optionalBool",
 "isLoudNotification":"optionalBool",
 "isFollowUpEnabled":"optionalBool",

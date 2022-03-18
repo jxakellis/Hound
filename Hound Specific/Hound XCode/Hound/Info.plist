@@ -29,9 +29,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow for the ability to take a picture of your dog for their icon</string>
+	<string>Allows you take a picture of your dog for their icon</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow for the ability to import a picture of your dog for their icon</string>
+	<string>Allows you to import an image of your dog for their icon</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -54,7 +54,9 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
+		<string>fetch</string>
 		<string>processing</string>
+		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
