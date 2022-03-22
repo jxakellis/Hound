@@ -76,20 +76,11 @@ class DogsIntroductionViewController: UIViewController {
             if UserConfiguration.isFollowUpEnabled != beforeUpdateIsFollowUpEnabled {
                 body[UserDefaultsKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
             }
-            UserRequest.update(body: body) { _, responseCode, _ in
-                DispatchQueue.main.async {
-                    // success
-                    if responseCode != nil && 200...299 ~= responseCode! {
-                        // do nothing as we preemptively updated the values
-                    }
-                    // error, revert to previous
-                    else {
-                        UserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
-                        UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
-                        UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
-
-                        ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: UserConfigurationResponseError.updateIsNotificationAuthorizedFailed)
-                    }
+            UserRequest.update(body: body) { requestWasSuccessful in
+                if requestWasSuccessful == false {
+                    UserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
+                    UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
+                    UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
                 }
             }
         }

@@ -1,18 +1,18 @@
 //
-//  LogsMainScreenTableViewCellBodyRegularWithoutIcon.swift
+//  LogsMainScreenTableViewCellBody.swift
 //  Hound
 //
-//  Created by Jonathan Xakellis on 5/20/21.
+//  Created by Jonathan Xakellis on 4/20/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
 //
 
 import UIKit
 
-class LogsMainScreenTableViewCellBodyRegularWithoutIcon: UITableViewCell {
+class LogsLargeBodyWithIconTableViewCell: UITableViewCell {
 
     // MARK: - IB
 
-    @IBOutlet private weak var dogName: ScaledUILabel!
+    @IBOutlet private weak var logIcon: UIImageView!
     @IBOutlet private weak var logType: ScaledUILabel!
     @IBOutlet private weak var logDate: ScaledUILabel!
     @IBOutlet private weak var logNote: ScaledUILabel!
@@ -33,7 +33,10 @@ class LogsMainScreenTableViewCellBodyRegularWithoutIcon: UITableViewCell {
         self.logSource = logSource
 
         let dog = try! MainTabBarViewController.staticDogManager.findDog(forDogId: parentDogIdSource)
-        dogName.text = dog.dogName
+        logIcon.image = dog.icon
+        logIcon.layer.masksToBounds = true
+        logIcon.layer.cornerRadius = logIcon.frame.width/2
+
         self.logType.text = self.logSource.displayTypeName
 
         let dateFormatter = DateFormatter()

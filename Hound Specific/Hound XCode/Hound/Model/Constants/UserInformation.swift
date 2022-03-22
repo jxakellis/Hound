@@ -9,23 +9,25 @@
 import Foundation
 
 /// Attempted to update a user informationn value and it failed. These errors make it easier to standardize for ErrorManager.
+/*
 enum UserInformationResponseError: Error {
     case updateUserEmailFailed
     case updateUserFirstNameFailed
     case updateUserLastNameFailed
 }
+ */
 
 /// Information specific to the user.
 enum UserInformation {
-
+    
     // MARK: - Ordered List
     // userId
     // userEmail
     // userFirstName
     // userLastName
-
+    
     // MARK: - Main
-
+    
     /// Sets the UserInformation values equal to all the values found in the body. The key for the each body value must match the name of the UserConfiguration property exactly in order to be used. The value must also be able to be converted into the proper data type.
     static func setup(fromBody body: [String: Any]) {
         if let userId = body["userId"] as? Int {
@@ -41,9 +43,9 @@ enum UserInformation {
             storedUserLastName = userLastName
         }
     }
-
+    
     static var userId: Int = 1
-
+    
     static private var storedUserEmail: String = "joesmith@gmail.com"
     static var userEmail: String {
         get {
@@ -56,7 +58,7 @@ enum UserInformation {
             storedUserEmail = newUserEmail
         }
     }
-
+    
     static private var storedUserFirstName: String = "Joe"
     static var userFirstName: String {
         get {
@@ -69,7 +71,7 @@ enum UserInformation {
             storedUserFirstName = newUserFirstName
         }
     }
-
+    
     static private var storedUserLastName: String = "Smith"
     static var userLastName: String {
         get {

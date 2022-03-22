@@ -9,75 +9,72 @@
 import UIKit
 
 class ErrorManager {
-
+    
     /// Alerts for an unspecified error. Title is default with a parameter specified message
     static func alert(forMessage message: String) {
-
+        
         AlertManager.willShowAlert(title: "Uh oh! There seems to be an error.", message: message)
-
+        
     }
-
+    
     /// Alerts for a unspecified error from a specified location. Title is extracted from sender with a parameter specified message
-     static private func alertForUnknown(sender: Sender, error: Error) {
-
-         AlertManager.willShowAlert(title: "Uh oh! There seems to be an error.", message: "Bizarre, there seems to be an unknown problem occuring! Please restart and/or reinstall Hound if issues persist.")
-
-        let origin = sender.origin
-        if origin != nil {
-            AppDelegate.generalLogger.error("Unknown Error\nFrom class: \(NSStringFromClass(origin!.classForCoder))\nOf description: \(error.localizedDescription)")
-        }
-        else {
-            AppDelegate.generalLogger.error("Unknown error\nFrom class: unknown\nOf description: \(error.localizedDescription)")
-        }
-
+    static private func alertForUnknown(error: Error) {
+        
+        AlertManager.willShowAlert(title: "Uh oh! There seems to be an error.", message: "Bizarre, there seems to be an unknown problem occuring! Please restart and/or reinstall Hound if issues persist.")
+        
+        AppDelegate.generalLogger.error("Unknown error: \(error.localizedDescription)")
+        
     }
-
+    
     /// Handles a given error, uses helper functions to compare against all known (custom) error types
-    static func alert(sender: Sender, forError error: Error) {
-
+    static func alert(forError error: Error) {
+        
         let errorManagerInstance = ErrorManager()
-
-        if errorManagerInstance.handleTimingManagerError(sender: sender, error: error) == true {
+        
+        if errorManagerInstance.handleTimingManagerError(error: error) == true {
             return
         }
-        else if errorManagerInstance.handleDogManagerError(sender: sender, error: error) == true {
+        else if errorManagerInstance.handleDogManagerError(error: error) == true {
             return
         }
-        else if errorManagerInstance.handleDogError(sender: sender, error: error) == true {
+        else if errorManagerInstance.handleDogError(error: error) == true {
             return
         }
-        else  if errorManagerInstance.handleLogManagerError(sender: sender, error: error) == true {
+        else  if errorManagerInstance.handleLogManagerError(error: error) == true {
             return
         }
-        else if errorManagerInstance.handleLogTypeError(sender: sender, error: error) == true {
+        else if errorManagerInstance.handleLogTypeError(error: error) == true {
             return
         }
-        else if errorManagerInstance.handleReminderManagerError(sender: sender, error: error) == true {
+        else if errorManagerInstance.handleReminderManagerError(error: error) == true {
             return
         }
-        else if errorManagerInstance.handleReminderError(sender: sender, error: error) == true {
+        else if errorManagerInstance.handleReminderError(error: error) == true {
             return
         }
-        else if errorManagerInstance.handleWeeklyComponentsError(sender: sender, error: error) == true {
+        else if errorManagerInstance.handleWeeklyComponentsError(error: error) == true {
             return
         }
-        else if errorManagerInstance.handleMonthlyComponentsError(sender: sender, error: error) == true {
+        else if errorManagerInstance.handleMonthlyComponentsError(error: error) == true {
             return
         }
-        else if errorManagerInstance.handleStringExtensionError(sender: sender, error: error) == true {
+        else if errorManagerInstance.handleStringExtensionError(error: error) == true {
+            return
+        }
+        else if errorManagerInstance.handleGeneralResponseError(error: error ) == true {
             return
         }
         else {
-            ErrorManager.alertForUnknown(sender: sender, error: error)
+            ErrorManager.alertForUnknown(error: error)
         }
     }
-
+    
     /// Returns true if able to find a match in enum TimingManagerError to the error provided
-    private func handleTimingManagerError(sender: Sender, error: Error) -> Bool {
+    private func handleTimingManagerError(error: Error) -> Bool {
         /*
          enum TimingManagerError: Error{
-             case parseSenderInfoFailed
-             case invalidateFailed
+         case parseSenderInfoFailed
+         case invalidateFailed
          }
          */
         if case TimingManagerError.invalidateFailed = error {
@@ -92,12 +89,12 @@ class ErrorManager {
             return false
         }
     }
-
+    
     /// Returns true if able to find a match in enum DogManagerError to the error provided
-    private func handleDogManagerError(sender: Sender, error: Error) -> Bool {
+    private func handleDogManagerError(error: Error) -> Bool {
         /*
          enum DogManagerError: Error {
-             case dogIdNotPresent
+         case dogIdNotPresent
          }
          */
         if case DogManagerError.dogIdNotPresent = error {
@@ -108,13 +105,13 @@ class ErrorManager {
             return false
         }
     }
-
+    
     /// Returns true if able to find a match in enum DogError to the error provided
-    private func handleDogError(sender: Sender, error: Error) -> Bool {
+    private func handleDogError(error: Error) -> Bool {
         /*
          enum DogError: Error {
-             case nilName
-             case blankName
+         case nilName
+         case blankName
          }
          */
         if case DogError.dogNameNil = error {
@@ -129,13 +126,13 @@ class ErrorManager {
             return false
         }
     }
-
+    
     /// Returns true if able to find a match in enum TraitManagerError to the error provided
-    private func handleLogManagerError(sender: Sender, error: Error) -> Bool {
+    private func handleLogManagerError(error: Error) -> Bool {
         /*
          enum LogManagerError: Error {
-             case logIdPresent
-             case logIdNotPresent
+         case logIdPresent
+         case logIdNotPresent
          }
          */
         if case LogManagerError.logIdPresent = error {
@@ -150,13 +147,13 @@ class ErrorManager {
             return false
         }
     }
-
+    
     /// Returns true if able to find a match in enum LogTypeError to the error provided
-    private func handleLogTypeError(sender: Sender, error: Error) -> Bool {
+    private func handleLogTypeError(error: Error) -> Bool {
         /*
          enum LogTypeError: Error {
-             case nilLogType
-             case blankLogType
+         case nilLogType
+         case blankLogType
          }
          */
         if case LogTypeError.nilLogType = error {
@@ -171,15 +168,15 @@ class ErrorManager {
             return false
         }
     }
-
+    
     /// Returns true if able to find a match in enum ReminderManagerError to the error provided
-    private func handleReminderManagerError(sender: Sender, error: Error) -> Bool {
+    private func handleReminderManagerError(error: Error) -> Bool {
         /*
          enum ReminderManagerError: Error {
-            case reminderAlreadyPresent
-             case reminderNotPresent
-             case reminderInvalid
-             case reminderNameNotPresent
+         case reminderAlreadyPresent
+         case reminderNotPresent
+         case reminderInvalid
+         case reminderNameNotPresent
          }
          */
         if case ReminderManagerError.reminderIdAlreadyPresent = error {
@@ -194,15 +191,15 @@ class ErrorManager {
             return false
         }
     }
-
+    
     /// Returns true if able to find a match in enum ReminderError to the error provided
-    private func handleReminderError(sender: Sender, error: Error) -> Bool {
+    private func handleReminderError(error: Error) -> Bool {
         /*
          enum ReminderError: Error {
-             case nameBlank
-             case nameInvalid
-             case descriptionInvalid
-             case intervalInvalid
+         case nameBlank
+         case nameInvalid
+         case descriptionInvalid
+         case intervalInvalid
          }
          */
         if case ReminderError.nameInvalid = error {
@@ -225,9 +222,9 @@ class ErrorManager {
             return false
         }
     }
-
+    
     /// Returns true if able to find a match in enum TimeOfDayComponentsError to the error provided
-    private func handleWeeklyComponentsError(sender: Sender, error: Error) -> Bool {
+    private func handleWeeklyComponentsError(error: Error) -> Bool {
         /*
          enum TimeOfDayComponentsError: Error {
          case weekdayArrayInvalid
@@ -241,14 +238,14 @@ class ErrorManager {
             return false
         }
     }
-
-    private func handleMonthlyComponentsError(sender: Sender, error: Error) -> Bool {
+    
+    private func handleMonthlyComponentsError(error: Error) -> Bool {
         /*
          enum MonthlyComponentsError: Error {
-             case dayOfMonthInvalid
+         case dayOfMonthInvalid
          }
          */
-
+        
         if case MonthlyComponentsError.dayOfMonthInvalid = error {
             ErrorManager.alert(forMessage: "Please select a day of month for your reminder.")
             return true
@@ -257,11 +254,11 @@ class ErrorManager {
             return false
         }
     }
-
-    private func handleStringExtensionError(sender: Sender, error: Error) -> Bool {
+    
+    private func handleStringExtensionError(error: Error) -> Bool {
         /*
          enum StringExtensionError: Error {
-             case invalidDateComponents
+         case invalidDateComponents
          }
          */
         if case StringExtensionError.dateComponentsInvalid = error {
@@ -272,5 +269,61 @@ class ErrorManager {
             return false
         }
     }
+    
+    private func handleGeneralResponseError(error: Error) -> Bool {
+        /*
+         enum GeneralResponseError: Error {
+         case failureResponse
+         case noResponse
+         }
+         */
+        if case GeneralResponseError.failureResponse = error {
+            ErrorManager.alert(forMessage: ErrorManagerMessages.failureResponseGeneral)
+            return true
+        }
+        else if case GeneralResponseError.noResponse = error {
+            ErrorManager.alert(forMessage: ErrorManagerMessages.noResponseGeneral)
+            return true
+        }
+        else if case GeneralResponseError.failureGetResponse = error {
+            ErrorManager.alert(forMessage: ErrorManagerMessages.failureGetResponseGeneral)
+            return true
+        }
+        else if case GeneralResponseError.noGetResponse = error {
+            ErrorManager.alert(forMessage: ErrorManagerMessages.noGetResponseGeneral)
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    
+}
 
+enum ErrorManagerMessages {
+    static let failureResponseGeneral = "Hound's server rejected your request. Please restart and re-login to Hound if the issue persists."
+    static let noResponseGeneral = "We were unable to reach Hound's server. Please verify that you are connected to the internet and retry. If the issue persists, Hound's server may be experiencing an outage."
+    static let failureGetResponseGeneral = "We were unable to retrieve your data from Hound's server. Please restart and re-login to Hound if the issue persists."
+    static let noGetResponseGeneral = "We were unable to reach Hound's server and retrieve your data. Please verify that you are connected to the internet and retry. If the issue persists, Hound's server may be experiencing an outage."
+    
+    /// Returns a default string about a failureResponse from the server: "Hound's server encountered an error with your request and couldn't save your \(type)'s data. Please restart and re-login to Hound if the issue persists."
+    static func failureResponseTemplate(ofType type: String) -> String {
+        return "Hound's server encountered an error with your request and couldn't save your \(type)'s data. Please restart and re-login to Hound if the issue persists."
+    }
+    
+    /// Returns a default string about a noResponse from the server: "We were unable to reach Hound's server and save your \(type)'s data. Please verify that you are connected to the internet and retry. If the issue persists, Hound's server may be experiencing an outage."
+    static func noResponseTemplate(ofType type: String) -> String {
+        return "We were unable to reach Hound's server and save your \(type)'s data. Please verify that you are connected to the internet and retry. If the issue persists, Hound's server may be experiencing an outage."
+    }
+    
+    /// Returns a default string about a failureGetResponse from the server: "We were unable to retrieve your \(type)'s data from Hound's server. Please restart and re-login to Hound if the issue persists."
+    static func failureGetResponseTemplate(ofType type: String) -> String {
+        return "We were unable to retrieve your \(type)'s data from Hound's server. Please restart and re-login to Hound if the issue persists."
+    }
+    
+    /// Returns a default string about a noGetResponse from the server: "We were unable to reach Hound's server and retrieve your \(type)'s data. Please verify that you are connected to the internet and retry. If the issue persists, Hound's server may be experiencing an outage."
+    static func noGetResponseTemplate(ofType type: String) -> String {
+        return "We were unable to reach Hound's server and retrieve your \(type)'s data. Please verify that you are connected to the internet and retry. If the issue persists, Hound's server may be experiencing an outage."
+    }
+    
 }

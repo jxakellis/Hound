@@ -160,21 +160,16 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
 
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             // the user decided to delete so we must query server
-                LogsRequest.delete(forDogId: self.parentDogIdOfLogToUpdate!, forLogId: self.logToUpdate!.logId) { _, responseCode, _ in
-                    DispatchQueue.main.async {
-                        // successful query has nothing, just check for response code
-                        if responseCode != nil && 200...299 ~= responseCode! {
-                            self.delegate.didRemoveLog(sender: Sender(origin: self, localized: self),
-                                                            parentDogId: self.parentDogIdOfLogToUpdate!,
-                                                            logId: self.logToUpdate!.logId)
-                            self.navigationController?.popViewController(animated: true)
-                        }
-                        // some sort of server/internet error
-                        else {
-                            // TO DO, add indicator the request failed
-                        }
+            LogsRequest.delete(forDogId: self.parentDogIdOfLogToUpdate!, forLogId: self.logToUpdate!.logId) { requestWasSuccessful in
+                DispatchQueue.main.async {
+                    if requestWasSuccessful == true {
+                        self.delegate.didRemoveLog(sender: Sender(origin: self, localized: self),
+                                                        parentDogId: self.parentDogIdOfLogToUpdate!,
+                                                        logId: self.logToUpdate!.logId)
+                        self.navigationController?.popViewController(animated: true)
                     }
                 }
+            }
 
         }
 
@@ -208,18 +203,11 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 logToUpdate!.customTypeName = trimmedCustomLogTypeName
             }
 
-            LogsRequest.update(forDogId: parentDogIdOfLogToUpdate!, forLog: logToUpdate!) { _, responseCode, _ in
+            LogsRequest.update(forDogId: parentDogIdOfLogToUpdate!, forLog: logToUpdate!) { requestWasSuccessful in
 
-                DispatchQueue.main.async {
-                    // successful query has nothing, just check for response code
-                    if responseCode != nil && 200...299 ~= responseCode! {
-                        self.delegate.didUpdateLog(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogIdOfLogToUpdate!, updatedLog: self.logToUpdate!)
-                        self.navigationController?.popViewController(animated: true)
-                    }
-                    // some sort of server/internet error
-                    else {
-                        // TO DO, add indicator the request failed
-                    }
+                if requestWasSuccessful == true {
+                    self.delegate.didUpdateLog(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogIdOfLogToUpdate!, updatedLog: self.logToUpdate!)
+                    self.navigationController?.popViewController(animated: true)
                 }
 
             }
@@ -234,28 +222,19 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 else {
                     let newLog = Log(date: logDate.date, note: logNote.text ?? "", logType: LogType(rawValue: logType.text!)!, customTypeName: trimmedCustomLogTypeName)
 
-                    LogsRequest.create(forDogId: parentDogNameSelector.tag, forLog: newLog) { responseBody, _, _ in
+                    LogsRequest.create(forDogId: parentDogNameSelector.tag, forLog: newLog) { logId in
 
-                        DispatchQueue.main.async {
-
-                            // successful query has a logId, check for it instead of just success code
-                            if responseBody != nil, let logId = responseBody!["result"] as? Int {
-                                newLog.logId = logId
-                                self.delegate.didAddLog(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogNameSelector.tag, newLog: newLog)
-                                self.navigationController?.popViewController(animated: true)
-                            }
-                            // some sort of server/internet error
-                            else {
-                                // TO DO, add indicator the request failed
-                            }
+                        if logId != nil {
+                            newLog.logId = logId!
+                            self.delegate.didAddLog(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogNameSelector.tag, newLog: newLog)
+                            self.navigationController?.popViewController(animated: true)
                         }
 
                     }
-
                 }
             }
             catch {
-                ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: error)
+                ErrorManager.alert(forError: error)
             }
 
         }

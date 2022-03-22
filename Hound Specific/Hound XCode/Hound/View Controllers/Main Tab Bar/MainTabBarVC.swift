@@ -7,7 +7,7 @@
 //
 import UIKit
 
-class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, SettingsNavigationViewControllerDelegate, LogsNavigationViewControllerDelegate, IntroductionViewControllerDelegate, DogsIntroductionViewControllerDelegate {
+class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, SettingsNavigationViewControllerDelegate, LogsNavigationViewControllerDelegate, IntroductionViewControllerDelegate, DogsIntroductionViewControllerDelegate, AlarmManagerDelegate {
 
     // MARK: - IntroductionViewControllerDelegate
 
@@ -46,7 +46,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         TimingManager.willTogglePause(dogManager: getDogManager(), newPauseStatus: newIsPaused)
     }
 
-    // MARK: - TimingManagerDelegate && DogsViewControllerDelegate
+    // MARK: - TimingManagerDelegate && DogsViewControllerDelegate && AlarmManagerDelegate
 
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
         setDogManager(sender: sender, newDogManager: newDogManager)
@@ -78,24 +78,16 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         if getDogManager().hasEnabledReminder == false && UserConfiguration.isPaused == true {
             UserConfiguration.isPaused = false
 
-            UserRequest.update(body: [UserDefaultsKeys.isPaused.rawValue: UserConfiguration.isPaused]) { _, responseCode, _ in
-                DispatchQueue.main.async {
-                    // success
-                    if responseCode != nil && 200...299 ~= responseCode! {
-                        // do nothing as we preemptively updated the values
-                    }
-                    // error, revert to previous
-                    else {
-                        ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: UserConfigurationResponseError.updateIsPausedFailed)
-
-                        // revert all values
-                        UserConfiguration.isPaused = false
-                    }
+            let body = [UserDefaultsKeys.isPaused.rawValue: UserConfiguration.isPaused]
+            UserRequest.update(body: body) { requestWasSuccessful in
+                if requestWasSuccessful == false {
+                    // revert all values
+                    UserConfiguration.isPaused = true
                 }
             }
         }
 
-        if sender.localized is TimingManager.Type || sender.localized is TimingManager {
+        if sender.localized is TimingManager.Type || sender.localized is TimingManager || sender.localized is AlarmManager.Type || sender.localized is AlarmManager {
             logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
@@ -164,6 +156,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         MainTabBarViewController.mainTabBarViewController = self
 
         TimingManager.delegate = self
+        AlarmManager.delegate = self
 
         UserDefaults.standard.setValue(false, forKey: "didCrashDuringSetup")
     }

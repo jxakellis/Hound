@@ -1,5 +1,5 @@
 //
-//  LogsMainScreenTableViewController.swift
+//  LogsTableViewController.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 4/17/21.
@@ -8,13 +8,13 @@
 
 import UIKit
 
-protocol LogsMainScreenTableViewControllerDelegate: AnyObject {
+protocol LogsTableViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
     func didSelectLog(parentDogId: Int, log: Log)
     func didRemoveLastFilterLog()
 }
 
-class LogsMainScreenTableViewController: UITableViewController, DogManagerControlFlowProtocol {
+class LogsTableViewController: UITableViewController, DogManagerControlFlowProtocol {
 
     // MARK: - DogManagerControlFlowProtocol
 
@@ -27,7 +27,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     func setDogManager(sender: Sender, newDogManager: DogManager) {
         dogManager = newDogManager
 
-        if !(sender.localized is LogsMainScreenTableViewController) {
+        if !(sender.localized is LogsTableViewController) {
             // updateDogManagerDependents and reloads table visual
             self.reloadTable()
         }
@@ -79,7 +79,8 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
                     else {
                         return false
                     }
-                }) == true {// apennds all known logs to consolidated list, some have reminder and some dont as varies depending on source (i.e. was nested under doglogs or reminder logs)
+                }) == true {
+                    // apennds all known logs to consolidated list, some have reminder and some dont as varies depending on source (i.e. was nested under doglogs or reminder logs)
                     for knownLog in dog.dogLogs.catagorizedLogTypes[filterIndexPath!.row-1].1 {
                         consolidatedLogs.append((dog.dogId, knownLog))
                     }
@@ -210,7 +211,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
     /// used for determining if overview mode was changed and if the table view needs reloaded
     private var storedIsCompactView: Bool = UserConfiguration.isCompactView
 
-    weak var delegate: LogsMainScreenTableViewControllerDelegate! = nil
+    weak var delegate: LogsTableViewControllerDelegate! = nil
 
     // MARK: - Main
 
@@ -218,6 +219,9 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
         super.viewDidLoad()
         self.tableView.allowsSelection = true
         self.tableView.separatorInset = UIEdgeInsets.zero
+        // allow for refreshing of the information from the server
+        self.tableView.refreshControl = UIRefreshControl()
+        tableView.refreshControl?.addTarget(self, action: #selector(refreshTableData), for: .valueChanged)
 
     }
 
@@ -228,6 +232,18 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             self.reloadTable()
         }
 
+    }
+    /// Makes a query to the server to retrieve new information then refreshed the tableView
+    @objc private func refreshTableData() {
+        RequestUtils.getDogManager { dogManager in
+            // end refresh first otherwise there will be a weird visual issue
+            self.tableView.refreshControl?.endRefreshing()
+            if dogManager != nil {
+                self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager!)
+                // manually reload table as the self sernder doesn't do that
+                self.reloadTable()
+            }
+        }
     }
 
     /// Updates dogManagerDependents then reloads table
@@ -285,7 +301,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             if UserConfiguration.isCompactView == true {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderCompact", for: indexPath)
 
-                let customCell = cell as! LogsMainScreenTableViewCellHeaderCompact
+                let customCell = cell as! LogsCompactHeaderTableViewCell
                 customCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
 
                 return cell
@@ -293,7 +309,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderRegular", for: indexPath)
 
-                let customCell = cell as! LogsMainScreenTableViewCellHeaderRegular
+                let customCell = cell as! LogsLargeHeaderTableViewCell
                 customCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
 
                 return cell
@@ -311,7 +327,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             if UserConfiguration.isCompactView == true {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderCompact", for: indexPath)
 
-                let customCell = cell as! LogsMainScreenTableViewCellHeaderCompact
+                let customCell = cell as! LogsCompactHeaderTableViewCell
                 customCell.setup(log: targetUniqueLogsNestedArray[0].1, showFilterIndicator: shouldShowFilterIndicator)
 
                 return cell
@@ -319,7 +335,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderRegular", for: indexPath)
 
-                let customCell = cell as! LogsMainScreenTableViewCellHeaderRegular
+                let customCell = cell as! LogsLargeHeaderTableViewCell
                 customCell.setup(log: targetUniqueLogsNestedArray[0].1, showFilterIndicator: shouldShowFilterIndicator)
 
                 return cell
@@ -339,7 +355,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             if UserConfiguration.isCompactView == true {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyCompact", for: indexPath)
 
-                let customCell = cell as! LogsMainScreenTableViewCellBodyCompact
+                let customCell = cell as! LogsCompactBodyTableViewCell
 
                 customCell.setup(parentDogId: logToDisplay.0, log: logToDisplay.1)
 
@@ -349,7 +365,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             else if !(icon.isEqualToImage(image: DogConstant.defaultIcon)) {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyRegularWithIcon", for: indexPath)
 
-                let customCell = cell as! LogsMainScreenTableViewCellBodyRegularWithIcon
+                let customCell = cell as! LogsLargeBodyWithIconTableViewCell
 
                 customCell.setup(parentDogId: logToDisplay.0, log: logToDisplay.1)
 
@@ -359,7 +375,7 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyRegularWithoutIcon", for: indexPath)
 
-                let customCell = cell as! LogsMainScreenTableViewCellBodyRegularWithoutIcon
+                let customCell = cell as! LogsLargeBodyWithoutIconTableViewCell
 
                 customCell.setup(parentDogId: logToDisplay.0, log: logToDisplay.1)
 
@@ -392,70 +408,64 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             let dogIdOfLog = targetUniqueLogsNestedArray[indexPath.row-1].0
             let logIdOfLog = targetUniqueLogsNestedArray[indexPath.row-1].1.logId
 
-            LogsRequest.delete(forDogId: dogIdOfLog, forLogId: logIdOfLog) { _, responseCode, _ in
-                DispatchQueue.main.async {
-                    // successful query has nothing, just check for response code
-                    if responseCode != nil && 200...299 ~= responseCode! {
-                        // batch update so doesn't freak out
-                        tableView.performBatchUpdates {
-                            // Remove the row from the data source
-
-                            let dog = try! newDogManager.findDog(forDogId: dogIdOfLog)
-                            // find log in dog and remove
-                            for dogLogIndex in 0..<dog.dogLogs.logs.count where dog.dogLogs.logs[dogLogIndex].logId == logIdOfLog {
-                                dog.dogLogs.removeLog(forIndex: dogLogIndex)
-                                break
-                            }
-
-                            self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager)
-
-                            tableView.deleteRows(at: [indexPath], with: .fade)
-
-                            var shouldShowFilterIndicator: Bool {
-                                if indexPath.section == 0 && self.filterIndexPath != nil {
-                                    return true
-                                }
-                                else {
-                                    return false
-                                }
-                            }
-
-                            // removed final log and must update header (no logs are left at all)
-                            if self.uniqueLogs.count == 0 {
-
-                                if UserConfiguration.isCompactView == true {
-                                    let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsMainScreenTableViewCellHeaderCompact
-                                    headerCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
-                                }
-                                else {
-                                    let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsMainScreenTableViewCellHeaderRegular
-                                    headerCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
-                                }
-
-                            }
-                            // removed final log of a given section and must remove all headers and body in that now gone-from-the-data section
-                            else if originalNumberOfSections != self.uniqueLogs.count {
-                                tableView.deleteSections(IndexSet(integer: indexPath.section), with: .automatic)
-
-                                // removed section that has filter indicator
-                                if indexPath.section == 0 && self.uniqueLogs.count >= 1 {
-                                    // for whatever header will be at the top (section 1 currently but will soon be section 0) the filter indicator will be shown if calculated shouldShowFilterIndicator returnd true (! converts to proper isHidden:)
-                                    if UserConfiguration.isCompactView == true {
-                                        let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LogsMainScreenTableViewCellHeaderCompact
-                                        headerCell.willShowFilterIndicator(isHidden: !shouldShowFilterIndicator)
-                                    }
-                                    else {
-                                        let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LogsMainScreenTableViewCellHeaderRegular
-                                        headerCell.willShowFilterIndicator(isHidden: !shouldShowFilterIndicator)
-                                    }
-                                }
-
-                            }
-                        } completion: { (_) in
+            LogsRequest.delete(forDogId: dogIdOfLog, forLogId: logIdOfLog) { requestWasSuccessful in
+                if requestWasSuccessful == true {
+                    // batch update so doesn't freak out
+                    tableView.performBatchUpdates {
+                        // Remove the row from the data source
+                        
+                        let dog = try! newDogManager.findDog(forDogId: dogIdOfLog)
+                        // find log in dog and remove
+                        for dogLogIndex in 0..<dog.dogLogs.logs.count where dog.dogLogs.logs[dogLogIndex].logId == logIdOfLog {
+                            dog.dogLogs.removeLog(forIndex: dogLogIndex)
+                            break
                         }
-                    }
-                    else {
-                        // TO DO, add indicator the request failed
+                        
+                        self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager)
+                        
+                        tableView.deleteRows(at: [indexPath], with: .fade)
+                        
+                        var shouldShowFilterIndicator: Bool {
+                            if indexPath.section == 0 && self.filterIndexPath != nil {
+                                return true
+                            }
+                            else {
+                                return false
+                            }
+                        }
+                        
+                        // removed final log and must update header (no logs are left at all)
+                        if self.uniqueLogs.count == 0 {
+                            
+                            if UserConfiguration.isCompactView == true {
+                                let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsCompactHeaderTableViewCell
+                                headerCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
+                            }
+                            else {
+                                let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsLargeHeaderTableViewCell
+                                headerCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
+                            }
+                            
+                        }
+                        // removed final log of a given section and must remove all headers and body in that now gone-from-the-data section
+                        else if originalNumberOfSections != self.uniqueLogs.count {
+                            tableView.deleteSections(IndexSet(integer: indexPath.section), with: .automatic)
+                            
+                            // removed section that has filter indicator
+                            if indexPath.section == 0 && self.uniqueLogs.count >= 1 {
+                                // for whatever header will be at the top (section 1 currently but will soon be section 0) the filter indicator will be shown if calculated shouldShowFilterIndicator returnd true (! converts to proper isHidden:)
+                                if UserConfiguration.isCompactView == true {
+                                    let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LogsCompactHeaderTableViewCell
+                                    headerCell.willShowFilterIndicator(isHidden: !shouldShowFilterIndicator)
+                                }
+                                else {
+                                    let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LogsLargeHeaderTableViewCell
+                                    headerCell.willShowFilterIndicator(isHidden: !shouldShowFilterIndicator)
+                                }
+                            }
+                            
+                        }
+                    } completion: { (_) in
                     }
                 }
             }
@@ -472,25 +482,11 @@ class LogsMainScreenTableViewController: UITableViewController, DogManagerContro
             let dogId = targetUniqueLogsNestedArray[indexPath.row-1].0
             let logId = targetUniqueLogsNestedArray[indexPath.row-1].1.logId
 
-            LogsRequest.get(forDogId: dogId, forLogId: logId) { logArray in
-                DispatchQueue.main.async {
-                    // successful query has nothing, just check for response code
-                    if logArray != nil && logArray!.count >= 1 {
-                        // successfully got log
-                        if logArray!.count >= 1 {
-                            self.tableView.deselectRow(at: indexPath, animated: true)
-                            self.delegate.didSelectLog(parentDogId: dogId, log: logArray![0])
-                        }
-                        // TO DO, log must have been deleted as empty array
-                        else {
-
-                        }
-                    }
-                    // error
-                    else {
-                        // TO DO, add indicator the request failed
-                    }
+            LogsRequest.get(forDogId: dogId, forLogId: logId) { log in
+                if log != nil {
+                    self.delegate.didSelectLog(parentDogId: dogId, log: log!)
                 }
+                self.tableView.deselectRow(at: indexPath, animated: true)
             }
 
         }

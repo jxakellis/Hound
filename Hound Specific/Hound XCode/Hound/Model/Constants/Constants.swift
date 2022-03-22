@@ -57,10 +57,10 @@ enum ReminderConstant {
 }
 
 enum DogManagerConstant {
-
+    
     static var userDefaultDog: Dog {
         let userDefaultDog = try! Dog(dogName: DogConstant.defaultDogName)
-
+        
         /*
          let reminder = Reminder()
          reminder.reminderAction = .trainingSession
@@ -68,37 +68,37 @@ enum DogManagerConstant {
          reminder.countdownComponents.changeExecutionInterval(newExecutionInterval: 30.0)
          try! userDefaultDog.dogReminders.addReminder(newReminder: reminder)
          */
-
+        
         return userDefaultDog
     }
-
+    
     static var defaultDogManager: DogManager {
         let dogManager = DogManager()
-
+        
         dogManager.addDog(newDog: DogManagerConstant.userDefaultDog)
-
+        
         return dogManager
     }
 }
 
 enum UserDefaultsKeys: String {
-
+    
     // MARK: User Information
-
+    
     case userEmail
     case userFirstName
     case userLastName
-
+    
     // MARK: User Configuration
-
+    
     // Appearance
     case isCompactView
     case interfaceStyle
-
+    
     // Timing
     case isPaused
     case snoozeLength
-
+    
     // Notifications
     case isNotificationAuthorized
     case isNotificationEnabled
@@ -106,9 +106,9 @@ enum UserDefaultsKeys: String {
     case isFollowUpEnabled
     case followUpDelay
     case notificationSound
-
+    
     // MARK: Local Configuration
-
+    
     case lastPause
     case lastUnpause
     case reviewRequestDates
@@ -116,7 +116,7 @@ enum UserDefaultsKeys: String {
     case isShowReleaseNotes
     case hasLoadedIntroductionViewControllerBefore
     case hasLoadedDogsIntroductionViewControllerBefore
-
+    
     // MARK: Other
     case hasDoneFirstTimeSetup
     case dogManager
@@ -124,13 +124,13 @@ enum UserDefaultsKeys: String {
 }
 
 enum AnimationConstant: Double {
-
+    
     case largeButtonShow = 0.30
     case largeButtonHide = 0.1500000001
-
+    
     case toolTipShow = 0.1000000002
     case toolTipHide = 0.1000000003
-
+    
     case switchButton = 0.1200000001
 }
 
@@ -141,11 +141,11 @@ enum NotificationSound: String, CaseIterable {
             self = sound
             return
         }
-
+        
         AppDelegate.generalLogger.fault("Depreciated NotificationSound \(rawValue), resetting value to default")
         self = .radar
         return
-
+        
         // case playtime = "Playtime"
         // case radiate = "Radiate"
         // case slowRise = "Slow Rise"

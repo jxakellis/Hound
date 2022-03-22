@@ -12,7 +12,7 @@ protocol DogsViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsAddDogViewControllerDelegate, DogsMainScreenTableViewControllerDelegate, DogsIndependentReminderViewControllerDelegate {
+class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsAddDogViewControllerDelegate, DogsTableViewControllerDelegate, DogsIndependentReminderViewControllerDelegate {
 
     // MARK: - Dual Delegate Implementation
 
@@ -52,23 +52,23 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         Utils.checkForReview()
     }
 
-    // MARK: - DogsMainScreenTableViewControllerDelegate
+    // MARK: - DogsTableViewControllerDelegate
 
-    /// If a dog was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the dogs information
-    func willEditDog(dogId: Int) {
+    /// If a dog was clicked on in DogsTableViewController, this function is called with a delegate and allows for the updating of the dogs information
+    func willOpenEditDog(dogId: Int) {
 
-        willOpenDog(dogToBeOpened: try! getDogManager().findDog(forDogId: dogId), isAddingReminder: false)
+        willOpenDog(dogToBeOpened: try! getDogManager().findDog(forDogId: dogId))
 
     }
-    /// If a reminder was clicked on in DogsMainScreenTableViewController, this function is called with a delegate and allows for the updating of the reminders information
-    func willEditReminder(parentDogId: Int, reminderId: Int?) {
+    /// If a reminder was clicked on in DogsTableViewController, this function is called with a delegate and allows for the updating of the reminders information
+    func willOpenEditReminder(parentDogId: Int, reminderId: Int?) {
 
         willOpenReminder(parentDogId: parentDogId, reminderId: reminderId)
 
     }
 
     /// visual indication of log
-    func didLogReminder() {
+    func logReminderAnimation() {
         let view: ScaledUIButton! = didLogEventConfirmation
         view.setImage(UIImage.init(systemName: "checkmark.circle.fill"), for: .normal)
         view.tintColor = UIColor.systemGreen
@@ -135,7 +135,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     }
 
     /// visual indication of unlog
-    func didUnlogReminder() {
+    func unlogReminderAnimation() {
         let view: ScaledUIButton! = didLogEventConfirmation
         view.setImage(UIImage.init(systemName: "arrow.uturn.backward.circle.fill"), for: .normal)
         // view.tintColor = UIColor.lightGray
@@ -204,7 +204,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
 
     // MARK: - DogManagerControlFlowProtocol
 
-    /// If the dog manager was updated in DogsMainScreenTableViewController, this function is called to reflect that change here with this dogManager
+    /// If the dog manager was updated in DogsTableViewController, this function is called to reflect that change here with this dogManager
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
         setDogManager(sender: sender, newDogManager: newDogManager)
     }
@@ -212,7 +212,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     // MARK: - DogsAddDogViewControllerDelegate
 
     /// If a dog was added by the subview, this function is called with a delegate and is incorporated into the dog manager here
-    func didAddDog(sender: Sender, newDog: Dog) throws {
+    func didAddDog(sender: Sender, newDog: Dog) {
 
         // This makes it so when a dog is added all of its reminders start counting down at the same time (b/c same last execution) instead counting down from when the reminder was added to the dog.
         for reminderIndex in 0..<newDog.dogReminders.reminders.count {
@@ -226,9 +226,9 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     }
 
     /// If a dog was updated, its former name (as its name could have been changed) and new dog instance is passed here, matching old dog is found and replaced with new
-    func didUpdateDog(sender: Sender, dogId: Int, updatedDog: Dog) throws {
+    func didUpdateDog(sender: Sender, updatedDog: Dog) {
         let sudoDogManager = getDogManager()
-        try sudoDogManager.changeDog(forDogId: dogId, newDog: updatedDog)
+        try! sudoDogManager.changeDog(forDogId: updatedDog.dogId, newDog: updatedDog)
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
 
@@ -250,11 +250,11 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         dogManager = newDogManager
 
         // possible senders
-        // DogsMainScreenTableViewController
+        // DogsTableViewController
         // DogsAddDogViewController
         // MainTabBarViewController
 
-        if !(sender.localized is DogsMainScreenTableViewController) {
+        if !(sender.localized is DogsTableViewController) {
             dogsMainScreenTableViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
 
@@ -286,7 +286,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
 
     weak var delegate: DogsViewControllerDelegate! = nil
 
-    var dogsMainScreenTableViewController = DogsMainScreenTableViewController()
+    var dogsMainScreenTableViewController = DogsTableViewController()
 
     var dogsAddDogViewController = DogsAddDogViewController()
 
@@ -329,7 +329,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     // MARK: - Navigation To Dog Addition and Modification
 
     /// Opens the dogsAddDogViewController, if a dog is passed (which is required) then instead of opening a fresh add dog page, opens up the corrosponding one for the dog
-    private func willOpenDog(dogToBeOpened: Dog? = nil, isAddingReminder: Bool = false) {
+    private func willOpenDog(dogToBeOpened: Dog? = nil) {
 
         self.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
 
@@ -337,7 +337,6 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         if dogToBeOpened != nil {
             // Conversion of "DogsAddDogViewController" to update mode
 
-            dogsAddDogViewController.isAddingReminder = isAddingReminder
             dogsAddDogViewController.isUpdating = true
             dogsAddDogViewController.targetDog = dogToBeOpened!.copy() as? Dog
         }
@@ -352,18 +351,13 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         // updating
         if reminderId != nil {
             dogsIndependentReminderViewController.targetReminder = try! getDogManager().findDog(forDogId: parentDogId).dogReminders.findReminder(forReminderId: reminderId!)
-            dogsIndependentReminderViewController.isUpdating = true
-        }
-        // new
-        else {
-            dogsIndependentReminderViewController.isUpdating = false
         }
 
     }
 
     @objc private func willCreateNew(sender: UIButton) {
         if sender.tag == 0 {
-            self.willOpenDog(dogToBeOpened: nil, isAddingReminder: false)
+            self.willOpenDog(dogToBeOpened: nil)
         }
         else {
             self.willOpenReminder(parentDogId: getDogManager().dogs[sender.tag-1].dogId, reminderId: nil)
@@ -614,7 +608,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             dogsAddDogViewController.delegate = self
         }
         if segue.identifier == "dogsMainScreenTableViewController" {
-            dogsMainScreenTableViewController = segue.destination as! DogsMainScreenTableViewController
+            dogsMainScreenTableViewController = segue.destination as! DogsTableViewController
             dogsMainScreenTableViewController.delegate = self
         }
         if segue.identifier == "dogsIndependentReminderViewController" {

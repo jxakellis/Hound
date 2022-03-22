@@ -11,61 +11,61 @@
 import UIKit
 
 class AlertManager: NSObject {
-
+    
     override init() {
         super.init()
     }
-
+    
     private var alertQueue = Queue<GeneralUIAlertController>()
     private var locked = false
     private var halted = false
     private var currentAlertPresented: GeneralUIAlertController?
-
+    
     static var shared = AlertManager()
-
+    
     /// Default sender used to present, this is necessary if an alert to be shown is called from a non UIViewController class as that is not in the view heirarchy and physically cannot present a view, so this is used instead.
     static var globalPresenter: UIViewController?
-
+    
     // MARK: -
-
+    
     /// Function used to present alertController
     static func willShowAlert(title: String, message: String?) {
         var trimmedMessage: String? = message
-
+        
         if message?.trimmingCharacters(in: .whitespaces) == ""{
             trimmedMessage = nil
         }
-
+        
         let alertController = GeneralUIAlertController(
             title: title,
             message: trimmedMessage,
             preferredStyle: .alert)
-
+        
         let alertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-
+        
         alertController.addAction(alertAction)
-
+        
         shared.enqueueAlertForPresentation(alertController)
-
+        
     }
-
+    
     // MARK: - Alert Queue Management
-
+    
     func enqueueAlertForPresentation(_ alertController: GeneralUIAlertController) {
         guard alertController.preferredStyle == .alert else {
             fatalError("use enqueueActionSheetForPresentation instead")
         }
-
+        
         alertQueue.enqueue(alertController)
-
+        
         showNextAlert()
     }
-
+    
     func enqueueActionSheetForPresentation(_ alertController: GeneralUIAlertController, sourceView: UIView, permittedArrowDirections: UIPopoverArrowDirection) {
         guard alertController.preferredStyle == .actionSheet else {
             fatalError("use enqueueAlertForPresentation instead")
         }
-
+        
         switch UIDevice.current.userInterfaceIdiom {
         case .pad:
             alertController.popoverPresentationController?.sourceView = sourceView
@@ -74,17 +74,17 @@ class AlertManager: NSObject {
         default:
             break
         }
-
+        
         alertQueue.enqueue(alertController)
-
+        
         showNextAlert()
     }
-
+    
     private func showNextAlert() {
         guard halted == false else {
             return
         }
-
+        
         func waitLoop() {
             if AlertManager.globalPresenter == nil || AlertManager.globalPresenter!.isBeingDismissed {
                 DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
@@ -94,13 +94,13 @@ class AlertManager: NSObject {
             else {
                 showNextAlert()
             }
-
+            
         }
-
+        
         if AlertManager.globalPresenter == nil {
             AppDelegate.generalLogger.notice("AlertManager.globalPresenter is nil, initiating waitLoop")
             waitLoop()
-
+            
         }
         else if AlertManager.globalPresenter!.isBeingDismissed {
             AppDelegate.generalLogger.notice("AlertManager.globalPresenter is being dismissed, initiating waitLoop")
@@ -113,9 +113,9 @@ class AlertManager: NSObject {
                 AlertManager.globalPresenter!.present(currentAlertPresented!, animated: true)
             }
         }
-
+        
     }
-
+    
     /// Invoke when the alert has finished being presented and a new alert is able to take its place
     func alertDidComplete() {
         locked = false
@@ -123,13 +123,13 @@ class AlertManager: NSObject {
         alertQueue.elements.removeFirst()
         showNextAlert()
     }
-
+    
     func refreshAlerts(dogManager: DogManager) {
         halted = true
         if currentAlertPresented == nil {
             for d in dogManager.dogs {
                 for r in d.dogReminders.reminders where r.isPresentationHandled == true {
-                    TimingManager.willShowTimer(dogName: d.dogName, dogId: d.dogId, reminder: r)
+                    AlarmManager.willShowAlarm(dogName: d.dogName, dogId: d.dogId, reminder: r)
                 }
             }
         }
@@ -139,29 +139,29 @@ class AlertManager: NSObject {
 }
 
 class Queue<Element>: NSObject {
-
+    
     override init() {
         super.init()
     }
-
+    
     var elements = [Element]()
-
+    
     // MARK: - Operations
-
+    
     func enqueue(_ element: Element) {
         elements.append(element)
     }
-
+    
     func queuePresent() -> Bool {
         return !(elements.isEmpty)
     }
-
+    
     func dequeue() -> Element? {
         guard !elements.isEmpty else {
             return nil
         }
-
+        
         return elements.removeFirst()
-
+        
     }
 }

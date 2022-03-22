@@ -37,7 +37,7 @@ class DogsIndependentReminderViewController: UIViewController, DogsReminderManag
             self.navigationController?.popViewController(animated: true)
         }
         catch {
-            ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: error)
+            ErrorManager.alert(forError: error)
         }
     }
 
@@ -56,7 +56,7 @@ class DogsIndependentReminderViewController: UIViewController, DogsReminderManag
     /// Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured reminder to DogsViewController
     @IBAction private func willSave(_ sender: Any) {
 
-        dogsReminderManagerViewController.willSaveReminder()
+        dogsReminderManagerViewController.willSaveReminder(parentDogId: self.parentDogId)
 
     }
 
@@ -69,9 +69,15 @@ class DogsIndependentReminderViewController: UIViewController, DogsReminderManag
         let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.reminderAction.text ?? targetReminder!.displayTypeName)?", message: nil, preferredStyle: .alert)
 
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-            self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, reminderId: self.targetReminder!.reminderId)
-            // self.performSegue(withIdentifier: "unwindToDogsViewController", sender: self)
-            self.navigationController?.popViewController(animated: true)
+
+            RemindersRequest.delete(forDogId: self.parentDogId, forReminderId: self.targetReminder!.reminderId) { requestWasSuccessful in
+                if requestWasSuccessful == true {
+                        // persist data locally
+                        self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, reminderId: self.targetReminder!.reminderId)
+                        self.navigationController?.popViewController(animated: true)
+                    }
+            }
+
         }
 
         let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -115,7 +121,13 @@ class DogsIndependentReminderViewController: UIViewController, DogsReminderManag
     var dogsReminderManagerViewController: DogsReminderManagerViewController = DogsReminderManagerViewController()
 
     var targetReminder: Reminder?
-    var isUpdating: Bool = false
+    var isUpdating: Bool {
+        if targetReminder == nil {
+            return false
+        }
+        else {
+            return true
+    }}
 
     var parentDogId: Int! = nil
 

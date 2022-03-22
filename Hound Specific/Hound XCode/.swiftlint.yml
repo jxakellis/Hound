@@ -19,3 +19,9 @@ disabled_rules: # rule identifiers turned on by default to exclude from running
 
 statement_position:
   statement_mode: uncuddled_else
+
+trailing_whitespace:
+    severity: warning
+    ignores_empty_lines: true
+    ignores_comments: true
+  #warning, ignores_empty_lines: false, ignores_comments: true

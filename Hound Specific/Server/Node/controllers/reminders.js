@@ -69,7 +69,7 @@ const createReminder = async (req, res) => {
   const isEnabled = formatBoolean(req.body.isEnabled);
 
   // check to see that necessary generic reminder componetns are present
-  if (areAllDefined([reminderAction, customTypeName, reminderType, executionBasis, isEnabled]) === false) {
+  if (areAllDefined([reminderAction, reminderType, executionBasis, isEnabled]) === false) {
     // >= 1 of the objects are undefined
     req.rollbackQueries(req);
     return res.status(400).json({ message: 'Invalid Body; reminderAction, reminderType, executionBasis, or isEnabled missing ' });
@@ -183,16 +183,12 @@ const updateReminder = async (req, res) => {
     // save me for second to last since I have a high chance of failing
     if (reminderType) {
       if (reminderType === 'countdown') {
-        console.log('1');
         // add new
         await updateCountdownComponents(req, reminderId);
-        console.log('2');
         // switch reminder to new mode
         await queryPromise(req, 'UPDATE dogReminders SET reminderType = ? WHERE reminderId = ?', [reminderType, reminderId]);
-        console.log('3');
         // delete old components since reminder is successfully switched to new mode
         await delLeftOverReminderComponents(req, reminderId, reminderType);
-        console.log('4');
       }
       else if (reminderType === 'weekly') {
         // add new

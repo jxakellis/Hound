@@ -1,16 +1,14 @@
 //
-//  LogsMainScreenTableViewCellHeaderRegular.swift
+//  LogsMainScreenTableViewCellHeader.swift
 //  Hound
 //
-//  Created by Jonathan Xakellis on 5/20/21.
+//  Created by Jonathan Xakellis on 4/19/21.
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
 //
 
 import UIKit
 
-class LogsMainScreenTableViewCellHeaderRegular: UITableViewCell {
-
-    // MARK: - IB
+class LogsCompactHeaderTableViewCell: UITableViewCell {
 
     @IBOutlet weak var header: ScaledUILabel!
 
@@ -36,9 +34,9 @@ class LogsMainScreenTableViewCellHeaderRegular: UITableViewCell {
     func willShowFilterIndicator(isHidden: Bool) {
         if isHidden == false {
             for constraint in filterIndicator.constraints where constraint.firstAttribute == .height {
-                constraint.constant = 40
+                constraint.constant = 30
             }
-            // filterIndicator.image = filterIndicator.image?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 40.0))
+            // filterIndicator.image = filterIndicator.image?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 30.0))
             filterIndicator.isHidden = false
         }
         else {
@@ -54,6 +52,20 @@ class LogsMainScreenTableViewCellHeaderRegular: UITableViewCell {
 
         willShowFilterIndicator(isHidden: !showFilterIndicator)
 
+        if showFilterIndicator {
+            for constraint in filterIndicator.constraints where constraint.firstAttribute == .height {
+                constraint.constant = 30
+            }
+            // filterIndicator.image = filterIndicator.image?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 30.0))
+            filterIndicator.isHidden = false
+        }
+        else {
+            for constraint in filterIndicator.constraints where constraint.firstAttribute == .height {
+                constraint.constant = 0
+            }
+            // filterIndicator.image = filterIndicator.image?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 0.0))
+            filterIndicator.isHidden = true
+        }
         self.contentView.setNeedsLayout()
         self.contentView.layoutIfNeeded()
 

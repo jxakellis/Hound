@@ -43,13 +43,13 @@ class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDel
 
         // DARK MODE
         switch UserConfiguration.interfaceStyle.rawValue {
-        // system/unspecified
+            // system/unspecified
         case 0:
             interfaceStyleSegmentedControl.selectedSegmentIndex = 2
-        // light
+            // light
         case 1:
             interfaceStyleSegmentedControl.selectedSegmentIndex = 0
-        // dark
+            // dark
         case 2:
             interfaceStyleSegmentedControl.selectedSegmentIndex = 1
         default:
@@ -83,32 +83,24 @@ class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDel
             UserConfiguration.interfaceStyle = .unspecified
         }
 
-        UserRequest.update(body: [UserDefaultsKeys.interfaceStyle.rawValue: convertedInterfaceStyleRawValue!]) { _, responseCode, _ in
-            DispatchQueue.main.async {
-                // success
-                if responseCode != nil && 200...299 ~= responseCode! {
-                    // do nothing as we preemptively updated the values
-                }
+        let body = [UserDefaultsKeys.interfaceStyle.rawValue: convertedInterfaceStyleRawValue!]
+        UserRequest.update(body: body) { requestWasSuccessful in
+            if requestWasSuccessful == false {
                 // error, revert to previous
-                else {
-                    ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: UserConfigurationResponseError.updateInterfaceStyleFailed)
-
-                    // revert all values
-                    UIApplication.keyWindow?.overrideUserInterfaceStyle = beforeUpdateInterfaceStyle
-                    UserConfiguration.interfaceStyle = beforeUpdateInterfaceStyle
-                    switch UserConfiguration.interfaceStyle.rawValue {
+                UIApplication.keyWindow?.overrideUserInterfaceStyle = beforeUpdateInterfaceStyle
+                UserConfiguration.interfaceStyle = beforeUpdateInterfaceStyle
+                switch UserConfiguration.interfaceStyle.rawValue {
                     // system/unspecified
-                    case 0:
-                        self.interfaceStyleSegmentedControl.selectedSegmentIndex = 2
+                case 0:
+                    self.interfaceStyleSegmentedControl.selectedSegmentIndex = 2
                     // light
-                    case 1:
-                        self.interfaceStyleSegmentedControl.selectedSegmentIndex = 0
+                case 1:
+                    self.interfaceStyleSegmentedControl.selectedSegmentIndex = 0
                     // dark
-                    case 2:
-                        self.interfaceStyleSegmentedControl.selectedSegmentIndex = 1
-                    default:
-                        self.interfaceStyleSegmentedControl.selectedSegmentIndex = 2
-                    }
+                case 2:
+                    self.interfaceStyleSegmentedControl.selectedSegmentIndex = 1
+                default:
+                    self.interfaceStyleSegmentedControl.selectedSegmentIndex = 2
                 }
             }
         }
@@ -129,37 +121,29 @@ class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDel
             UserConfiguration.isCompactView = false
         }
 
-        UserRequest.update(body: [UserDefaultsKeys.isCompactView.rawValue: UserConfiguration.isCompactView]) { _, responseCode, _ in
-            DispatchQueue.main.async {
-                // success
-                if responseCode != nil && 200...299 ~= responseCode! {
-                    // do nothing as we preemptively updated the values
-                }
+        let body = [UserDefaultsKeys.isCompactView.rawValue: UserConfiguration.isCompactView]
+        UserRequest.update(body: body) { requestWasSuccessful in
+            if requestWasSuccessful == false {
                 // error, revert to previous
+               UserConfiguration.isCompactView = beforeUpdateIsCompactView
+                if beforeUpdateIsCompactView == true {
+                    self.logsViewModeSegmentedControl.selectedSegmentIndex = 0
+                }
                 else {
-                    ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: UserConfigurationResponseError.updateIsCompactViewFailed)
-
-                    // revert all values
-                    UserConfiguration.isCompactView = beforeUpdateIsCompactView
-                    if beforeUpdateIsCompactView == true {
-                        self.logsViewModeSegmentedControl.selectedSegmentIndex = 0
-                    }
-                    else {
-                        self.logsViewModeSegmentedControl.selectedSegmentIndex = 1
-                    }
+                    self.logsViewModeSegmentedControl.selectedSegmentIndex = 1
                 }
             }
         }
     }
 
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destination.
+     // Pass the selected object to the new view controller.
+     }
+     */
 
 }

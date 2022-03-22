@@ -11,7 +11,6 @@ Known:
 const getUser = async (req, res) => {
   const userEmail = formatEmail(req.params.userIdentifier);
   const userId = formatNumber(req.params.userIdentifier);
-
   // userId method of finding corresponding user
   if (userId) {
     // only one user should exist for any userId otherwise the table is broken
@@ -22,15 +21,11 @@ const getUser = async (req, res) => {
         [userId],
       );
 
-      if (userInformation.length === 0) {
-        // successful but empty array, no user to return
-        req.commitQueries(req);
-        return res.status(204).json({ result: [] });
-      }
-      else if (userInformation.length !== 1) {
-        // more than one user found, shouldn't be possible
+      if (userInformation.length !== 1) {
+        // successful but empty array, no user to return.
+        // Theoretically could be multiple users found but that means the table is broken. Just do catch all
         req.rollbackQueries(req);
-        return res.status(400).json({ message: 'Invalid Parameters; multiple users found' });
+        return res.status(404).json({ message: 'Invalid Parameters; No user found or invalid permissions', error: 'ER_NO_USER_FOUND' });
       }
 
       // array has item(s), meaning there was a user found, successful!
@@ -53,10 +48,11 @@ const getUser = async (req, res) => {
         [userEmail],
       );
 
-      if (userInformation.length === 0) {
-        // successful but empty array, no user to return
-        req.commitQueries(req);
-        return res.status(204).json({ result: userInformation });
+      if (userInformation.length !== 1) {
+        // successful but empty array, no user to return.
+        // Theoretically could be multiple users found but that means the table is broken. Just do catch all
+        req.rollbackQueries(req);
+        return res.status(404).json({ message: 'Invalid Parameters; No user found or invalid permissions', error: 'ER_NO_USER_FOUND' });
       }
 
       // array has item(s), meaning there was a user found, successful!

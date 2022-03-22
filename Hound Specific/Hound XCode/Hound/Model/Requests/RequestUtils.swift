@@ -10,78 +10,98 @@ import Foundation
 
 /// abstractions used by other endpoint classes to make their request to the server, not used anywhere else in hound so therefore internal to endpoints and api requests.
 enum InternalRequestUtils {
-    static let basePathWithoutParams: URL = URL(string: "http://10.0.0.107:5000/api/v1")!
-    static let session = URLSession.shared
-
+    static let basePathWithoutParams: URL = URL(string: "http://localhost:5000/api/v1")!
+    // home URL(string: "http://10.0.0.107:5000/api/v1")!
+    //  school URL(string: "http://10.1.10.235:5000/api/v1")!
+    // hotspot URL(string: "http://172.20.10.2:5000/api/v1")!
+    // no wifi / local simulator URL(string: "http://localhost:5000/api/v1")!
+    /*
+     let sessionConfig = URLSessionConfiguration.default
+     sessionConfig.timeoutIntervalForRequest = 30.0
+     sessionConfig.timeoutIntervalForResource = 60.0
+     let session = URLSession(configuration: sessionConfig)
+     */
+    private static var sessionConfig: URLSessionConfiguration {
+        let sessionConfig = URLSessionConfiguration.default
+        sessionConfig.timeoutIntervalForRequest = 15.0
+        sessionConfig.timeoutIntervalForResource = 30.0
+        return sessionConfig
+    }
+    static let session = URLSession(configuration: sessionConfig)
+    
     /// Takes an already constructed URLRequest and executes it, returning it in a compeltion handler. This is the basis to all URL requests
-    static func genericRequest(request: URLRequest, completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) {
+    static func genericRequest(request: URLRequest, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         // send request
-        let task = session.dataTask(with: request) { data, response, err in
+        let task = session.dataTask(with: request) { data, response, error in
             // extract status code from URLResponse
-            var httpResponseStatusCode: Int?
+            var responseCode: Int?
             if let httpResponse = response as? HTTPURLResponse {
-                httpResponseStatusCode = httpResponse.statusCode
+                responseCode = httpResponse.statusCode
             }
-
+            
             // parse response from json
-            var dataJSON: [String: Any]?
-
+            var responseBody: [String: Any]?
             // if no data or if no status code, then request failed
-            if data != nil && httpResponseStatusCode != nil {
+            if data != nil && responseCode != nil {
                 do {
                     // try to serialize data as "result" form with array of info first, if that fails, revert to regular "message" and "error" format
-                    dataJSON = try JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as? [String: [[String: Any]]] ?? JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as? [String: Any]
+                    responseBody = try JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as? [String: [[String: Any]]] ?? JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as? [String: Any]
                 }
                 catch {
                     AppDelegate.APIRequestLogger.error("Error when serializing data into JSON \(error.localizedDescription)")
                 }
             }
-
+            
             // pass out information
-            completionHandler(dataJSON, httpResponseStatusCode, err)
-
+            if error != nil {
+                // assume an error is no response as that implies request/response failure, meaning the end result of no response is the same
+                completionHandler(responseBody, .noResponse)
+            }
+            else if responseCode != nil {
+                // we got a response from the server
+                if 200...299 ~= responseCode! {
+                    // our request was valid and successful
+                    completionHandler(responseBody, .successResponse)
+                }
+                else {
+                    // our request was invalid or some other problem
+                    completionHandler(responseBody, .failureResponse)
+                }
+            }
+            else {
+                // something happened and we got no response
+                completionHandler(responseBody, .noResponse)
+            }
+            
         }
-
+        
         // free up task when request is pushed
         task.resume()
     }
 }
 
 extension InternalRequestUtils {
-
+    
     /// Perform a generic get request at the specified url, assuming path params are already provided.
-    static func genericGetRequest(path: URL, completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) {
+    static func genericGetRequest(path: URL, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         // create request to send
         var req = URLRequest(url: path)
-
+        
         // specify http method
         req.httpMethod = "GET"
-
-        /*
-         no body in get request
-        if body != nil {
-            req.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            do {
-                let jsonData = try JSONSerialization.data(withJSONObject: body!)
-                req.httpBody = jsonData
-            }
-            catch {
-                throw error
-            }
+        
+        genericRequest(request: req) { responseBody, responseStatus in
+            completionHandler(responseBody, responseStatus)
         }
-         */
-
-        genericRequest(request: req) { dictionary, status, error in
-            completionHandler(dictionary, status, error)
-        }
-
+        
+        AppDelegate.APIRequestLogger.notice("Get Request")
     }
-
+    
     /// Perform a generic get request at the specified url with provided body. Throws as creating request can fail if body is invalid.
-    static func genericPostRequest(path: URL, body: [String: Any], completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) throws {
+    static func genericPostRequest(path: URL, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) throws {
         // create request to send
         var req = URLRequest(url: path)
-
+        
         // specify http method
         req.httpMethod = "POST"
         req.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -92,17 +112,19 @@ extension InternalRequestUtils {
         catch {
             throw error
         }
-
-        genericRequest(request: req) { dictionary, status, error in
-            completionHandler(dictionary, status, error)
+        
+        genericRequest(request: req) { responseBody, responseStatus in
+            completionHandler(responseBody, responseStatus)
         }
+        
+        AppDelegate.APIRequestLogger.notice("Post Request")
     }
-
+    
     /// Perform a generic get request at the specified url with provided body, assuming path params are already provided. Throws as creating request can fail if body is invalid
-    static func genericPutRequest(path: URL, body: [String: Any], completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) throws {
+    static func genericPutRequest(path: URL, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) throws {
         // create request to send
         var req = URLRequest(url: path)
-
+        
         // specify http method
         req.httpMethod = "PUT"
         req.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -113,26 +135,30 @@ extension InternalRequestUtils {
         catch {
             throw error
         }
-
-        genericRequest(request: req) { dictionary, status, error in
-            completionHandler(dictionary, status, error)
+        
+        genericRequest(request: req) { responseBody, responseStatus in
+            completionHandler(responseBody, responseStatus)
         }
+        
+        AppDelegate.APIRequestLogger.notice("Put Request")
     }
-
+    
     /// Perform a generic get request at the specified url, assuming path params are already provided. No body needed for request. No throws as request creating cannot fail
-    static func genericDeleteRequest(path: URL, completionHandler: @escaping ([String: Any]?, Int?, Error?) -> Void) {
+    static func genericDeleteRequest(path: URL, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         // create request to send
         var req = URLRequest(url: path)
-
+        
         // specify http method
         req.httpMethod = "DELETE"
-
-        genericRequest(request: req) { dictionary, status, error in
-            completionHandler(dictionary, status, error)
+        
+        genericRequest(request: req) { responseBody, responseStatus in
+            completionHandler(responseBody, responseStatus)
         }
-
+        
+        AppDelegate.APIRequestLogger.notice("Delete Request")
+        
     }
-
+    
     /// returns an array that contains the user's personal information and userConfiguration and is suitable to be a http request body
     static func createFullUserBody() -> [String: Any] {
         var body: [String: Any] = createUserConfigurationBody()
@@ -141,7 +167,7 @@ extension InternalRequestUtils {
         body[UserDefaultsKeys.userLastName.rawValue] = UserInformation.userLastName
         return body
     }
-
+    
     static func createUserInformationBody() -> [String: Any] {
         var body: [String: Any] = [:]
         body[UserDefaultsKeys.userEmail.rawValue] = UserInformation.userEmail
@@ -149,7 +175,7 @@ extension InternalRequestUtils {
         body[UserDefaultsKeys.userLastName.rawValue] = UserInformation.userLastName
         return body
     }
-
+    
     /// returns an array that only contains the user's userConfiguration and is that is suitable to be a http request body
     static func createUserConfigurationBody() -> [String: Any] {
         var body: [String: Any] = [:]
@@ -163,7 +189,7 @@ extension InternalRequestUtils {
         // isFollowUpEnabled
         // followUpDelay
         // notificationSound
-
+        
         body[UserDefaultsKeys.isCompactView.rawValue] = UserConfiguration.isCompactView
         body[UserDefaultsKeys.interfaceStyle.rawValue] = UserConfiguration.interfaceStyle.rawValue
         body[UserDefaultsKeys.snoozeLength.rawValue] = UserConfiguration.snoozeLength
@@ -175,14 +201,14 @@ extension InternalRequestUtils {
         body[UserDefaultsKeys.notificationSound.rawValue] = UserConfiguration.notificationSound.rawValue
         return body
     }
-
+    
     /// returns an array that is suitable to be a http request body
     static func createDogBody(dog: Dog) -> [String: Any] {
         var body: [String: Any] = [:]
         body["dogName"] = dog.dogName
         return body
     }
-
+    
     /// returns an array that is suitable to be a http request body
     static func createLogBody(log: Log) -> [String: Any] {
         var body: [String: Any] = [:]
@@ -193,9 +219,9 @@ extension InternalRequestUtils {
             body["customTypeName"] = log.customTypeName
         }
         return body
-
+        
     }
-
+    
     /// returns an array that is suitable to be a http request body
     static func createReminderBody(reminder: Reminder) -> [String: Any] {
         var body: [String: Any] = [:]
@@ -205,7 +231,7 @@ extension InternalRequestUtils {
         }
         body["executionBasis"] = reminder.executionBasis.ISO8601Format()
         body["isEnabled"] = reminder.isEnabled
-
+        
         body["reminderType"] = reminder.reminderType.rawValue
         // add the reminder components depending on the reminderType
         switch reminder.reminderType {
@@ -219,7 +245,7 @@ extension InternalRequestUtils {
             if reminder.weeklyComponents.isSkipping == true && reminder.weeklyComponents.isSkippingLogDate != nil {
                 body["skipDate"] = reminder.weeklyComponents.isSkippingLogDate!.ISO8601Format()
             }
-
+            
             body["sunday"] = false
             body["monday"] = false
             body["tuesday"] = false
@@ -227,7 +253,7 @@ extension InternalRequestUtils {
             body["thursday"] = false
             body["friday"] = false
             body["saturday"] = false
-
+            
             for weekday in reminder.weeklyComponents.weekdays {
                 switch weekday {
                 case 1:
@@ -248,7 +274,7 @@ extension InternalRequestUtils {
                     continue
                 }
             }
-
+            
         case .monthly:
             body["hour"] = reminder.monthlyComponents.dateComponents.hour
             body["minute"] = reminder.monthlyComponents.dateComponents.minute
@@ -260,10 +286,10 @@ extension InternalRequestUtils {
         case .oneTime:
             body["date"] = reminder.oneTimeComponents.executionDate.ISO8601Format()
         }
-
+        
         return body
     }
-
+    
 }
 
 enum RequestUtils {
@@ -272,49 +298,30 @@ enum RequestUtils {
         formatter.formatOptions = [.withFractionalSeconds, .withDashSeparatorInDate, .withColonSeparatorInTime, .withFullDate, .withTime]
         return formatter
     }()
-
-    /// Combines the different get requests functions to query for all the components for a  fully formed dogManager
+    
+    /**
+     completionHandler returns a dogManager. If the query returned a 200 status and is successful, then the dogManager is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
+     */
     static func getDogManager(completionHandler: @escaping (DogManager?) -> Void) {
         // assume userId valid as it was retrieved when the app started. Later on with familyId, if a user was removed from the family, then this refresh could fail.
-        let dogManager = DogManager()
-
-            // Retrieve any dogs the user may have
-            DogsRequest.get(forDogId: nil, completionHandler: { responseBody, _, _ in
-                    if responseBody != nil {
-                        // Array of dog JSON [{dog1:'foo'},{dog2:'bar'}]
-                        if let result = responseBody!["result"] as? [[String: Any]] {
-                            for dogBody in result {
-                                do {
-                                    // add dog to the DogManager
-                                    let dog = try Dog(fromBody: dogBody)
-                                    dogManager.addDog(newDog: dog)
-                                    return queryFinished(successful: true)
-                                }
-                                catch {
-                                    // handle if problem with adding dog
-                                }
-
-                            }
-
-                        }
-                    }
-
-                    // this whole body is sync. If the execution didn't make it to return queryFinished(successful: true), then it means there was an error encountered. If it did make it to that statement then this code wouldn't be executed
-                    return queryFinished(successful: false)
-                })
-
-        // depending on whether or not the query was successful, we return different completioHandlers
-        func queryFinished(successful: Bool) {
-            if successful == true {
-                completionHandler(dogManager)
+        
+        // Retrieve any dogs the user may have
+        DogsRequest.getAll { dogArray in
+            if dogArray != nil {
+                let dogManager = DogManager(forDogs: dogArray!)
+                DispatchQueue.main.async {
+                    completionHandler(dogManager)
+                }
             }
             else {
-                completionHandler(nil)
+                DispatchQueue.main.async {
+                    completionHandler(nil)
+                }
             }
         }
     }
     /// Provides warning if the id of anything is set to a placeholder value. 
-    static func checkId(dogId: Int? = nil, reminderId: Int? = nil, logId: Int? = nil) {
+    static func warnForPlaceholderId(dogId: Int? = nil, reminderId: Int? = nil, logId: Int? = nil) {
         if UserInformation.userId == -1 {
             AppDelegate.APIRequestLogger.warning("Warning: userId is -1")
         }

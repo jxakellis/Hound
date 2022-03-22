@@ -9,10 +9,10 @@
 import UIKit
 
 class Sender {
-
+    
     let origin: AnyObject?
     var localized: AnyObject?
-
+    
     init(origin: AnyObject, localized: AnyObject) {
         if origin is Sender {
             let castedSender = origin as! Sender
@@ -28,5 +28,5 @@ class Sender {
             self.localized = localized
         }
     }
-
+    
 }

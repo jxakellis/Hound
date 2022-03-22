@@ -15,7 +15,7 @@ extension UILabel {
             NSAttributedString.Key.foregroundColor: foregroundColor,
             NSAttributedString.Key.strokeWidth: outlineWidth,
             NSAttributedString.Key.font: font ?? UIFont.systemFontSize
-            ] as [NSAttributedString.Key: Any]
+        ] as [NSAttributedString.Key: Any]
         self.attributedText = NSMutableAttributedString(string: self.text ?? "", attributes: strokeTextAttributes)
     }
 }

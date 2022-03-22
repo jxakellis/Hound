@@ -9,35 +9,35 @@
 import UIKit
 
 class SettingsNotificationsViewController: UIViewController, UIGestureRecognizerDelegate, DropDownUIViewDataSourceProtocol {
-
+    
     // MARK: - UIGestureRecognizerDelegate
-
+    
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
-
+    
     // MARK: - Properties
-
+    
     /// holds all the views inside except for the notification sound label. Alls for hiding of the dropDown when anywhere else is clocked
     @IBOutlet weak var containerViewForAll: UIView!
-
+    
     /// Holds containerViewForAll, notificationSound label, and notificationSound drop down
     @IBOutlet weak var scrollView: UIScrollView!
     // MARK: - Main
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // values
         followUpDelayInterval.countDownDuration = UserConfiguration.followUpDelay
-
+        
         // fixes issue with first time datepicker updates not triggering function
         DispatchQueue.main.asyncAfter(deadline: .now()) {
             self.followUpDelayInterval.countDownDuration = UserConfiguration.followUpDelay
         }
-
+        
         notificationSound.text = UserConfiguration.notificationSound.rawValue
-
+        
         // gestures
         self.notificationSound.isUserInteractionEnabled = true
         notificationSound.isEnabled = true
@@ -49,43 +49,43 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         tap.cancelsTouchesInView = false
         containerViewForAll.addGestureRecognizer(tap)
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         AlertManager.globalPresenter = self
-
+        
         synchronizeAllNotificationSwitches(animated: false)
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         setUpDropDown()
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         // cant use self.hideDropDown
         AudioManager.stopAudio()
         dropDown.hideDropDown(removeFromSuperview: true)
     }
-
+    
     // MARK: - Individual Settings
-
+    
     // MARK: Use Notifications
-
+    
     @IBOutlet private weak var notificationToggleSwitch: UISwitch!
-
+    
     @IBAction private func didToggleNotificationEnabled(_ sender: Any) {
         self.hideDropDown()
         let beforeUpdateIsNotificationEnabled = UserConfiguration.isNotificationEnabled
         let beforeUpdateIsLoudNotification = UserConfiguration.isLoudNotification
         let beforeUpdateIsFollowUpEnabled = UserConfiguration.isFollowUpEnabled
-
+        
         UNUserNotificationCenter.current().getNotificationSettings { (permission) in
             switch permission.authorizationStatus {
             case .authorized:
                 DispatchQueue.main.async {
-
+                    
                     // notications enabled, going from on to off
                     if UserConfiguration.isNotificationEnabled == true {
                         UserConfiguration.isNotificationEnabled = false
@@ -95,35 +95,35 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
                         UserConfiguration.isNotificationEnabled = true
                     }
                     self.synchronizeNotificationsComponents(animated: true)
-
+                    
                     updateServerUserConfiguration()
                 }
             case .denied:
                 DispatchQueue.main.async {
                     AlertManager.willShowAlert(title: "Notifcations Disabled", message: "To enable notifications go to the Settings App -> Notifications -> Hound and enable \"Allow Notifications\"")
-
+                    
                     let switchDisableTimer = Timer(fire: Date().addingTimeInterval(0.22), interval: -1, repeats: false) { _ in
                         self.synchronizeAllNotificationSwitches(animated: true)
                     }
-
+                    
                     RunLoop.main.add(switchDisableTimer, forMode: .common)
-
+                    
                     // nothing to update (as permissions denied) so we don't tell the server anything
-
+                    
                 }
             case .notDetermined:
                 UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, _) in
                     DispatchQueue.main.async {
-                    LocalConfiguration.isNotificationAuthorized = isGranted
-                    UserConfiguration.isNotificationEnabled = isGranted
-                    UserConfiguration.isLoudNotification = isGranted
-                    UserConfiguration.isFollowUpEnabled = isGranted
-
+                        LocalConfiguration.isNotificationAuthorized = isGranted
+                        UserConfiguration.isNotificationEnabled = isGranted
+                        UserConfiguration.isLoudNotification = isGranted
+                        UserConfiguration.isFollowUpEnabled = isGranted
+                        
                         self.synchronizeAllNotificationSwitches(animated: true)
-
+                        
                         updateServerUserConfiguration()
                     }
-
+                    
                 }
             case .provisional:
                 AppDelegate.generalLogger.fault(".provisional")
@@ -133,7 +133,7 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
                 AppDelegate.generalLogger.fault("unknown auth status")
             }
         }
-
+        
         /// Contact the server about the updated values and, if there is no response or a bad response, revert the values to their previous values. isNotificationAuthorized purposefully excluded as server doesn't need to know that and its value cant exactly just be flipped (as tied to apple notif auth status)
         func updateServerUserConfiguration() {
             var body: [String: Any] = [:]
@@ -147,25 +147,17 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
             if UserConfiguration.isFollowUpEnabled != beforeUpdateIsFollowUpEnabled {
                 body[UserDefaultsKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
             }
-            UserRequest.update(body: body) { _, responseCode, _ in
-                DispatchQueue.main.async {
-                    // success
-                    if responseCode != nil && 200...299 ~= responseCode! {
-                        // do nothing as we preemptively updated the values
-                    }
-                    // error, revert to previous
-                    else {
-                        UserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
-                        UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
-                        UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
-
-                        ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: UserConfigurationResponseError.updateIsNotificationEnabledFailed)
-                        self.synchronizeAllNotificationSwitches(animated: true)
-                    }
+            UserRequest.update(body: body) { requestWasSuccessful in
+                if requestWasSuccessful == false {
+                    // error, revert to previousUserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
+                    UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
+                    UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
+                    
+                    self.synchronizeAllNotificationSwitches(animated: true)
                 }
             }
         }
-
+        
     }
     /// If disconnect between stored and displayed
     func synchronizeAllNotificationSwitches(animated: Bool) {
@@ -175,11 +167,11 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         }
         self.synchronizeNotificationsComponents(animated: animated)
     }
-
+    
     // MARK: Notification Sound
-
+    
     @IBOutlet weak var notificationSound: BorderedUILabel!
-
+    
     @objc private func willShowNotificationSound(_ sender: Any) {
         if dropDown.isDown == false {
             self.dropDown.showDropDown(height: dropDownRowHeight * 6.5, selectedIndexPath: IndexPath(row: NotificationSound.allCases.firstIndex(of: UserConfiguration.notificationSound)!, section: 1))
@@ -187,88 +179,79 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         else {
             self.hideDropDown()
         }
-
+        
     }
-
+    
     // MARK: Notification Sound Drop Down
-
+    
     private let dropDown = DropDownUIView()
-
+    
     private let dropDownRowHeight: CGFloat = 30
-
+    
     func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, DropDownUIViewIdentifier: String) {
-            let customCell = cell as! DropDownDefaultTableViewCell
-            customCell.adjustLeadingTrailing(newConstant: 12.0)
-
+        let customCell = cell as! DropDownDefaultTableViewCell
+        customCell.adjustLeadingTrailing(newConstant: 12.0)
+        
         customCell.label.text = NotificationSound.allCases[indexPath.row].rawValue
-
+        
         if NotificationSound.allCases[indexPath.row] == UserConfiguration.notificationSound {
             customCell.didToggleSelect(newSelectionStatus: true)
         }
         else {
             customCell.didToggleSelect(newSelectionStatus: false)
         }
-
+        
         if NotificationSound.allCases[indexPath.row] == NotificationSound.radar {
             customCell.label.text = "Radar (Default)"
         }
-
-            // adjust customCell based on indexPath
+        
+        // adjust customCell based on indexPath
     }
-
+    
     func numberOfRows(forSection: Int, DropDownUIViewIdentifier: String) -> Int {
         return NotificationSound.allCases.count
     }
-
+    
     func numberOfSections(DropDownUIViewIdentifier: String) -> Int {
-
+        
         return 1
-
+        
     }
-
+    
     func selectItemInDropDown(indexPath: IndexPath, DropDownUIViewIdentifier: String) {
-
+        
         // do actions based on a cell selected at a indexPath given a DropDownUIViewIdentifier
         // want to hide the drop down after something is selected
-
+        
         let beforeUpdateNotificationSound = UserConfiguration.notificationSound
         let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as! DropDownDefaultTableViewCell
         let selectedNotificationSound = NotificationSound.allCases[indexPath.row]
-
+        
         // the new cell selected is different that the current sound saved
         if selectedNotificationSound != UserConfiguration.notificationSound {
-
+            
             DispatchQueue.main.async {
-            let unselectedCellIndexPath: IndexPath! = IndexPath(row: NotificationSound.allCases.firstIndex(of: UserConfiguration.notificationSound)!, section: 0)
+                let unselectedCellIndexPath: IndexPath! = IndexPath(row: NotificationSound.allCases.firstIndex(of: UserConfiguration.notificationSound)!, section: 0)
                 let unselectedCell = self.dropDown.dropDownTableView!.cellForRow(at: unselectedCellIndexPath) as? DropDownDefaultTableViewCell
-            unselectedCell?.didToggleSelect(newSelectionStatus: false)
-
-            selectedCell.didToggleSelect(newSelectionStatus: true)
-            UserConfiguration.notificationSound = selectedNotificationSound
+                unselectedCell?.didToggleSelect(newSelectionStatus: false)
+                
+                selectedCell.didToggleSelect(newSelectionStatus: true)
+                UserConfiguration.notificationSound = selectedNotificationSound
                 self.notificationSound.text = selectedNotificationSound.rawValue
-
+                
                 AudioManager.playAudio(forAudioPath: "\(UserConfiguration.notificationSound.rawValue.lowercased())", isLoud: false)
-
-                UserRequest.update(body: [UserDefaultsKeys.notificationSound.rawValue: UserConfiguration.notificationSound.rawValue]) { _, responseCode, _ in
-                    DispatchQueue.main.async {
-                        // success
-                        if responseCode != nil && 200...299 ~= responseCode! {
-                            // do nothing as we preemptively updated the values
-                        }
+                
+                let body = [UserDefaultsKeys.notificationSound.rawValue: UserConfiguration.notificationSound.rawValue]
+                UserRequest.update(body: body) { requestWasSuccessful in
+                    if requestWasSuccessful == false {
                         // error, revert to previous
-                        else {
-                            ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: UserConfigurationResponseError.updateNotificationSoundFailed)
-
-                            // revert values
-                            UserConfiguration.notificationSound = beforeUpdateNotificationSound
-                                self.notificationSound.text = beforeUpdateNotificationSound.rawValue
-
-                        }
+                        UserConfiguration.notificationSound = beforeUpdateNotificationSound
+                        self.notificationSound.text = beforeUpdateNotificationSound.rawValue
                     }
                 }
-
+                
             }
-
+            
             // AudioManager.stopAudio()
             // self.dropDown.hideDropDown()
         }
@@ -277,13 +260,13 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
             DispatchQueue.global().async {
                 AudioManager.playAudio(forAudioPath: "\(UserConfiguration.notificationSound.rawValue.lowercased())", isLoud: false)
             }
-
+            
         }
-
+        
     }
-
+    
     // MARK: Notification Sound Drop Down Functions
-
+    
     private func setUpDropDown() {
         dropDown.DropDownUIViewIdentifier = "DROP_DOWN_NEW"
         dropDown.cellReusableIdentifier = "dropDownCell"
@@ -293,95 +276,79 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         dropDown.setRowHeight(height: self.dropDownRowHeight)
         scrollView.addSubview(dropDown)
     }
-
+    
     @objc private func hideDropDown() {
         AudioManager.stopAudio()
         dropDown.hideDropDown()
     }
-
+    
     // MARK: - Loud Notifications
-
+    
     @IBOutlet private weak var loudNotificationsToggleSwitch: UISwitch!
-
+    
     @IBAction private func didToggleLoudNotifications(_ sender: Any) {
         self.hideDropDown()
-
+        
         let beforeUpdateIsLoudNotification = UserConfiguration.isLoudNotification
         UserConfiguration.isLoudNotification = loudNotificationsToggleSwitch.isOn
-
-        UserRequest.update(body: [UserDefaultsKeys.isLoudNotification.rawValue: UserConfiguration.isLoudNotification]) { _, responseCode, _ in
-            DispatchQueue.main.async {
-                // success
-                if responseCode != nil && 200...299 ~= responseCode! {
-                    // do nothing as we preemptively updated the values
-                }
+        let body = [UserDefaultsKeys.isLoudNotification.rawValue: UserConfiguration.isLoudNotification]
+        UserRequest.update(body: body) { requestWasSuccessful in
+            if requestWasSuccessful == false {
                 // error, revert to previous
-                else {
-                    ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: UserConfigurationResponseError.updateIsLoudNotificationFailed)
-
-                    // revert values
-                    UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
-                    self.loudNotificationsToggleSwitch.setOn(UserConfiguration.isLoudNotification, animated: true)
-
-                }
+                ErrorManager.alert(forError: GeneralResponseError.noResponse)
+                
+                UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
+                self.loudNotificationsToggleSwitch.setOn(UserConfiguration.isLoudNotification, animated: true)
             }
         }
     }
-
+    
     // MARK: - Follow Up Notification
-
+    
     @IBOutlet private weak var followUpToggleSwitch: UISwitch!
-
+    
     @IBAction private func didToggleFollowUp(_ sender: Any) {
         self.hideDropDown()
-
+        
         let beforeUpdateIsFollowUpEnabled =  UserConfiguration.isFollowUpEnabled
         UserConfiguration.isFollowUpEnabled = followUpToggleSwitch.isOn
-
+        
         if followUpToggleSwitch.isOn == true {
             followUpDelayInterval.isEnabled = true
         }
         else {
             followUpDelayInterval.isEnabled = false
         }
-
-        UserRequest.update(body: [UserDefaultsKeys.isFollowUpEnabled.rawValue: UserConfiguration.isFollowUpEnabled]) { _, responseCode, _ in
-            DispatchQueue.main.async {
-                // success
-                if responseCode != nil && 200...299 ~= responseCode! {
-                    // do nothing as we preemptively updated the values
-                }
+        
+        let body = [UserDefaultsKeys.isFollowUpEnabled.rawValue: UserConfiguration.isFollowUpEnabled]
+        UserRequest.update(body: body) { requestWasSuccessful in
+            if requestWasSuccessful == false {
                 // error, revert to previous
+                UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
+                self.followUpToggleSwitch.setOn(UserConfiguration.isFollowUpEnabled, animated: true)
+                if UserConfiguration.isFollowUpEnabled {
+                    self.followUpDelayInterval.isEnabled = true
+                }
                 else {
-                    ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: UserConfigurationResponseError.updateIsFollowUpEnabledFailed)
-
-                    // revert values
-                    UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
-                    self.followUpToggleSwitch.setOn(UserConfiguration.isFollowUpEnabled, animated: true)
-                    if UserConfiguration.isFollowUpEnabled {
-                        self.followUpDelayInterval.isEnabled = true
-                    }
-                    else {
-                        self.followUpDelayInterval.isEnabled = false
-                    }
+                    self.followUpDelayInterval.isEnabled = false
                 }
             }
         }
     }
-
+    
     private func synchronizeNotificationsComponents(animated: Bool) {
         // notifications are enabled
         if UserConfiguration.isNotificationEnabled == true {
-
+            
             notificationSound.isUserInteractionEnabled = true
             notificationSound.isEnabled = true
-
+            
             loudNotificationsToggleSwitch.isEnabled = true
             loudNotificationsToggleSwitch.setOn(UserConfiguration.isLoudNotification, animated: animated)
-
+            
             followUpToggleSwitch.isEnabled = true
             followUpToggleSwitch.setOn(UserConfiguration.isFollowUpEnabled, animated: animated)
-
+            
             if followUpToggleSwitch.isOn == true {
                 followUpDelayInterval.isEnabled = true
             }
@@ -391,60 +358,52 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         }
         // notifications are disabled
         else {
-
+            
             notificationSound.isUserInteractionEnabled = false
             notificationSound.isEnabled = false
-
+            
             self.hideDropDown()
-
-                loudNotificationsToggleSwitch.isEnabled = false
-                loudNotificationsToggleSwitch.setOn(false, animated: animated)
-                UserConfiguration.isLoudNotification = false
-
-                followUpToggleSwitch.isEnabled = false
-                followUpToggleSwitch.setOn(false, animated: animated)
-                UserConfiguration.isFollowUpEnabled = false
-
+            
+            loudNotificationsToggleSwitch.isEnabled = false
+            loudNotificationsToggleSwitch.setOn(false, animated: animated)
+            UserConfiguration.isLoudNotification = false
+            
+            followUpToggleSwitch.isEnabled = false
+            followUpToggleSwitch.setOn(false, animated: animated)
+            UserConfiguration.isFollowUpEnabled = false
+            
             followUpDelayInterval.isEnabled = false
         }
     }
-
+    
     // MARK: - Follow Up Delay
-
+    
     @IBOutlet weak var followUpDelayInterval: UIDatePicker!
-
+    
     @IBAction private func didUpdateFollowUpDelay(_ sender: Any) {
         self.hideDropDown()
-
+        
         let beforeUpdateFollowUpDelay = UserConfiguration.followUpDelay
         UserConfiguration.followUpDelay = followUpDelayInterval.countDownDuration
-
-        UserRequest.update(body: [UserDefaultsKeys.followUpDelay.rawValue: UserConfiguration.followUpDelay]) { _, responseCode, _ in
-            DispatchQueue.main.async {
-                // success
-                if responseCode != nil && 200...299 ~= responseCode! {
-                    // do nothing as we preemptively updated the values
-                }
+        
+        let body = [UserDefaultsKeys.followUpDelay.rawValue: UserConfiguration.followUpDelay]
+        UserRequest.update(body: body) { requestWasSuccessful in
+            if requestWasSuccessful == false {
                 // error, revert to previous
-                else {
-                    ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: UserConfigurationResponseError.updateFollowUpDelayFailed)
-
-                    // revert values
-                    UserConfiguration.followUpDelay = beforeUpdateFollowUpDelay
-                    self.followUpDelayInterval.countDownDuration = UserConfiguration.followUpDelay
-                }
+                UserConfiguration.followUpDelay = beforeUpdateFollowUpDelay
+                self.followUpDelayInterval.countDownDuration = UserConfiguration.followUpDelay
             }
         }
     }
-
+    
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destination.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
 }

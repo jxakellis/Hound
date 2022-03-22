@@ -42,11 +42,12 @@ class ServerSyncViewController: UIViewController {
         super.viewDidLoad()
 
         syncUpdateStatusLabel()
-        getUser()
         let retryAlertAction = UIAlertAction(title: "Retry Connection", style: .default) { _ in
             self.retrySynchronization()
         }
-        retryAlertController.addAction(retryAlertAction)
+        noResponseAlertController.addAction(retryAlertAction)
+        failureResponseAlertController.addAction(retryAlertAction)
+        getUser()
         // Do any additional setup after loading the view.
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -61,7 +62,8 @@ class ServerSyncViewController: UIViewController {
 
     // MARK: - Properties
     /// Called to prompt the user to retry a server connection
-    private var retryAlertController = GeneralUIAlertController(title: "Server Sync Failed", message: "Uh oh! We were unable to reach Hound's server. Please verify that you are connected to the internet and retry.", preferredStyle: .alert)
+    private var noResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: ErrorManagerMessages.noResponseGeneral, preferredStyle: .alert)
+    private var failureResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: ErrorManagerMessages.failureResponseGeneral, preferredStyle: .alert)
 
     /// DogManager that all of the retrieved information will be added too.
     static var dogManager = DogManager()
@@ -74,68 +76,36 @@ class ServerSyncViewController: UIViewController {
     // MARK: - Functions
     /// Retrieve the user
     private func getUser() {
-       UserRequest.get(forUserEmail: UserInformation.userEmail, completionHandler: { responseBody, _, _ in
-           if responseBody != nil {
-               // know that the server was reached as we got a body back
-               self.serverContacted = true
-               self.asyncUpdateStatusLabel()
-               // JSON { result : userId }
-               if let result = responseBody!["result"] as? [[String: Any]] {
-
-                   // known that was 200 or 204 with valid body
-                   // verify that at least one user was returned
-                   if result.isEmpty == false {
-                       // set all local configuration equal to whats in the server
-                       UserInformation.setup(fromBody: result[0])
-                       UserConfiguration.setup(fromBody: result[0])
-
-                       // verify that a userId was successfully retrieved from the server
-                       if result[0]["userId"] is Int {
-                           self.getDogs()
-                       }
-
-                       self.getUserFinished = true
-                       self.checkSynchronizationStatus()
-                   }
-                   else {
-                       // TO DO handle if the query returned no users
-                       DispatchQueue.main.async {
-                           AlertManager.shared.enqueueAlertForPresentation(self.retryAlertController)
-                       }
-                   }
-
-               }
-               else {
-                   // TO DO handle if the query wasn't successful, meaning a 400 code, "message", and (maybe) "error"
-                   DispatchQueue.main.async {
-                       AlertManager.shared.enqueueAlertForPresentation(self.retryAlertController)
-                   }
-               }
-
-           }
-           else {
-               // TO DO handle if the query failed hard, no response body and some error.
-               DispatchQueue.main.async {
-                   AlertManager.shared.enqueueAlertForPresentation(self.retryAlertController)
-               }
-           }
-            })
+        UserRequest.get(forUserEmail: UserInformation.userEmail) { responseBody in
+            if responseBody != nil {
+                self.serverContacted = true
+                self.asyncUpdateStatusLabel()
+                let result = responseBody!["result"] as! [[String: Any]]
+                // verify that at least one user was returned. Shouldn't be possible to have no users but always good to check
+                if result.isEmpty == false {
+                    // set all local configuration equal to whats in the server
+                    UserInformation.setup(fromBody: result[0])
+                    UserConfiguration.setup(fromBody: result[0])
+                    
+                    // verify that a userId was successfully retrieved from the server
+                    if result[0]["userId"] is Int {
+                        self.getDogs()
+                    }
+                    
+                    self.getUserFinished = true
+                    self.checkSynchronizationStatus()
+                }
+            }
+        }
     }
 
     /// Retrieve any dogs the user may have
     private func getDogs() {
         RequestUtils.getDogManager { dogManager in
-            // success
             if dogManager != nil {
                 ServerSyncViewController.dogManager = dogManager!
                 self.getDogsFinished = true
                 self.checkSynchronizationStatus()
-            }
-            else {
-                // TO DO failed to get dogManager
-                DispatchQueue.main.async {
-                    AlertManager.shared.enqueueAlertForPresentation(self.retryAlertController)
-                }
             }
         }
     }
@@ -217,7 +187,10 @@ class ServerSyncViewController: UIViewController {
         // Pass the selected object to the new view controller.
         if segue.identifier == "mainTabBarViewController"{
             // let mainTabBarViewController: MainTabBarViewController = segue.destination as! MainTabBarViewController
-            MainTabBarViewController.staticDogManager = ServerSyncViewController.dogManager
+            // MainTabBarViewController.staticDogManager = ServerSyncViewController.dogManager
+
+            // can't use set dogmanager as will crash since VCS are still nil
+            // just have maintabbarvc pull the dogmanager from here when it instantiates
         }
     }
 

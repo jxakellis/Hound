@@ -12,7 +12,7 @@ protocol LogsViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogManagerControlFlowProtocol, LogsMainScreenTableViewControllerDelegate, DropDownUIViewDataSourceProtocol, LogsAddLogViewControllerDelegate {
+class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogManagerControlFlowProtocol, LogsTableViewControllerDelegate, DropDownUIViewDataSourceProtocol, LogsAddLogViewControllerDelegate {
 
     // MARK: - UIGestureRecognizerDelegate
 
@@ -29,7 +29,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
                 try sudoDogManager.findDog(forDogId: parentDogId).dogLogs.addLog(newLog: newLog)
             }
             catch {
-                ErrorManager.alert(sender: Sender(origin: sender, localized: self), forError: error)
+                ErrorManager.alert(forError: error)
             }
 
         }
@@ -68,7 +68,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         Utils.checkForReview()
     }
 
-    // MARK: - LogsMainScreenTableViewControllerDelegate
+    // MARK: - LogsTableViewControllerDelegate
 
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
         setDogManager(sender: sender, newDogManager: newDogManager)
@@ -230,7 +230,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             logsAddLogViewController?.navigationController?.popViewController(animated: false)
         }
         // only removes logs so ok
-        if sender.localized is LogsMainScreenTableViewController {
+        if sender.localized is LogsTableViewController {
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
         }
 
@@ -304,7 +304,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
     private var filterIndexPath: IndexPath?
     private var filterType: LogType?
 
-    var logsMainScreenTableViewController: LogsMainScreenTableViewController! = nil
+    var logsMainScreenTableViewController: LogsTableViewController! = nil
 
     var logsAddLogViewController: LogsAddLogViewController?
 
@@ -406,7 +406,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "logsMainScreenTableViewController"{
-            logsMainScreenTableViewController = segue.destination as? LogsMainScreenTableViewController
+            logsMainScreenTableViewController = segue.destination as? LogsTableViewController
             logsMainScreenTableViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
             logsMainScreenTableViewController.delegate = self
         }

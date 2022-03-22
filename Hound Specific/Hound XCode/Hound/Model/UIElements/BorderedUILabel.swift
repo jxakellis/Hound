@@ -9,7 +9,7 @@
 import UIKit
 
 class BorderedUILabel: ScaledUILabel {
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.layer.borderWidth = 0.2
@@ -17,7 +17,7 @@ class BorderedUILabel: ScaledUILabel {
         self.layer.borderColor = UIColor.systemGray2.cgColor
         self.layer.cornerRadius = 5.0
     }
-
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         self.layer.borderWidth = 0.2
@@ -25,7 +25,7 @@ class BorderedUILabel: ScaledUILabel {
         self.layer.borderColor = UIColor.systemGray2.cgColor
         self.layer.cornerRadius = 5.0
     }
-
+    
     override var text: String? {
         get {
             var withRemovedPadding = super.text

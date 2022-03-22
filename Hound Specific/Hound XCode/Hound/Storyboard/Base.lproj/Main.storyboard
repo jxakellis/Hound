@@ -519,114 +519,6 @@
             </objects>
             <point key="canvasLocation" x="-5484.057971014493" y="445.98214285714283"/>
         </scene>
-        <!--Information-->
-        <scene sceneID="ps9-Bo-bkJ">
-            <objects>
-                <viewController id="HpE-Bb-ELa" customClass="DogsInformationViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="h4B-PF-r5S">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" keyboardDismissMode="onDrag" translatesAutoresizingMaskIntoConstraints="NO" id="eed-Wk-OP9">
-                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eTM-i3-A1M" userLabel="Scroll View Container For All">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="520"/>
-                                        <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7NZ-NR-hqR" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="50" width="394" height="100"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="100" id="yNx-l3-VwM"/>
-                                                </constraints>
-                                                <string key="text">The Reminders page allows you to create, edit, log, or delete your reminders so they can better suit you. In addition, you can create, edit, and delete dogs from here.</string>
-                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" Purpose of Reminders  " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G8w-FH-Dxf" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="414" height="40"/>
-                                                <color key="backgroundColor" systemColor="systemBlueColor"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="40" id="ek3-G0-xIK"/>
-                                                </constraints>
-                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
-                                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="How To Use" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qwD-tz-hB4" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="160" width="414" height="40"/>
-                                                <color key="backgroundColor" systemColor="systemBlueColor"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="40" id="5IF-QZ-D3k"/>
-                                                </constraints>
-                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
-                                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="text set in class" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ToZ-Bg-pXu" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="210" width="394" height="300"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="300" id="ZIE-3p-PFX"/>
-                                                </constraints>
-                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                        </subviews>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                        <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="7NZ-NR-hqR" secondAttribute="trailing" constant="10" id="4EU-Uf-M0e"/>
-                                            <constraint firstItem="ToZ-Bg-pXu" firstAttribute="top" secondItem="qwD-tz-hB4" secondAttribute="bottom" constant="10" id="BuI-NN-an2"/>
-                                            <constraint firstItem="7NZ-NR-hqR" firstAttribute="leading" secondItem="eTM-i3-A1M" secondAttribute="leading" constant="10" id="Hfp-Xl-cse"/>
-                                            <constraint firstItem="G8w-FH-Dxf" firstAttribute="leading" secondItem="eTM-i3-A1M" secondAttribute="leading" id="J5K-0s-3AH"/>
-                                            <constraint firstItem="7NZ-NR-hqR" firstAttribute="top" secondItem="G8w-FH-Dxf" secondAttribute="bottom" constant="10" id="Ryf-aw-AF0"/>
-                                            <constraint firstItem="G8w-FH-Dxf" firstAttribute="top" secondItem="eTM-i3-A1M" secondAttribute="top" id="T6A-jb-xQI"/>
-                                            <constraint firstAttribute="trailing" secondItem="ToZ-Bg-pXu" secondAttribute="trailing" constant="10" id="fPf-25-Jpm"/>
-                                            <constraint firstItem="ToZ-Bg-pXu" firstAttribute="leading" secondItem="eTM-i3-A1M" secondAttribute="leading" constant="10" id="hJq-jA-DH4"/>
-                                            <constraint firstItem="qwD-tz-hB4" firstAttribute="leading" secondItem="eTM-i3-A1M" secondAttribute="leading" id="ja0-bW-MJj"/>
-                                            <constraint firstAttribute="bottom" secondItem="ToZ-Bg-pXu" secondAttribute="bottom" constant="10" id="qD3-Et-wHn"/>
-                                            <constraint firstAttribute="trailing" secondItem="qwD-tz-hB4" secondAttribute="trailing" id="rXR-ey-FWD"/>
-                                            <constraint firstItem="qwD-tz-hB4" firstAttribute="top" secondItem="7NZ-NR-hqR" secondAttribute="bottom" constant="10" id="tKg-gu-jyM"/>
-                                            <constraint firstAttribute="trailing" secondItem="G8w-FH-Dxf" secondAttribute="trailing" id="tcD-oJ-3Yr"/>
-                                        </constraints>
-                                    </view>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="eTM-i3-A1M" firstAttribute="trailing" secondItem="TJH-A8-iOF" secondAttribute="trailing" id="5uZ-8S-wr0"/>
-                                    <constraint firstItem="eTM-i3-A1M" firstAttribute="bottom" secondItem="TJH-A8-iOF" secondAttribute="bottom" id="Qmg-wI-XDL"/>
-                                    <constraint firstItem="eTM-i3-A1M" firstAttribute="leading" secondItem="TJH-A8-iOF" secondAttribute="leading" id="j2A-iP-TWz"/>
-                                    <constraint firstItem="eTM-i3-A1M" firstAttribute="width" secondItem="6bG-iA-KDQ" secondAttribute="width" id="qc3-u7-pxg"/>
-                                    <constraint firstItem="eTM-i3-A1M" firstAttribute="top" secondItem="TJH-A8-iOF" secondAttribute="top" id="tdz-VJ-3vF"/>
-                                </constraints>
-                                <viewLayoutGuide key="contentLayoutGuide" id="TJH-A8-iOF"/>
-                                <viewLayoutGuide key="frameLayoutGuide" id="6bG-iA-KDQ"/>
-                            </scrollView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="yVR-Jh-vN4"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="yVR-Jh-vN4" firstAttribute="trailing" secondItem="eed-Wk-OP9" secondAttribute="trailing" id="DFb-t3-FeB"/>
-                            <constraint firstItem="eed-Wk-OP9" firstAttribute="top" secondItem="yVR-Jh-vN4" secondAttribute="top" id="r41-XP-vbS"/>
-                            <constraint firstItem="eed-Wk-OP9" firstAttribute="leading" secondItem="yVR-Jh-vN4" secondAttribute="leading" id="rlD-yQ-XZl"/>
-                            <constraint firstItem="yVR-Jh-vN4" firstAttribute="bottom" secondItem="eed-Wk-OP9" secondAttribute="bottom" id="tRR-jR-ewV"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" title="Information" id="DLG-ZN-uTe">
-                        <barButtonItem key="leftBarButtonItem" image="chevron.left" catalog="system" id="QNe-pO-yz5">
-                            <connections>
-                                <action selector="willGoBack:" destination="HpE-Bb-ELa" id="Jel-rf-soC"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                    <connections>
-                        <outlet property="howToUseBody" destination="ToZ-Bg-pXu" id="RZj-KS-14c"/>
-                        <outlet property="purposeBody" destination="7NZ-NR-hqR" id="Acb-o7-TbY"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="fTx-Qf-Z8S" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-5483" y="-1604"/>
-        </scene>
         <!--Dogs Introduction View Controller-->
         <scene sceneID="fHU-gs-i6o">
             <objects>
@@ -826,7 +718,7 @@
         <!--Dogs Main Screen Table View-->
         <scene sceneID="bAW-wY-m9w">
             <objects>
-                <tableViewController storyboardIdentifier="Dogs Main Screen Embedded Table View" title="Dogs Main Screen Table View" id="AEi-KZ-cSf" customClass="DogsMainScreenTableViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="Dogs Main Screen Embedded Table View" title="Dogs Main Screen Table View" id="AEi-KZ-cSf" customClass="DogsTableViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" contentViewInsetsToSafeArea="NO" id="DkK-Io-vlc">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="725"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -834,7 +726,7 @@
                         <viewLayoutGuide key="contentLayoutGuide" id="kT8-53-Cu8"/>
                         <viewLayoutGuide key="frameLayoutGuide" id="dO0-k2-qcN"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="16" reuseIdentifier="dogsMainScreenTableViewCellDogDisplay" id="tHZ-ho-5tn" customClass="DogsMainScreenTableViewCellDogDisplay" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="16" reuseIdentifier="dogsDogDisplayTableViewCell" id="tHZ-ho-5tn" customClass="DogsDogDisplayTableViewCell" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="44.5" width="414" height="99.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" tableViewCell="tHZ-ho-5tn" id="G9A-nQ-CAR">
@@ -897,7 +789,7 @@
                                     <outlet property="nextReminder" destination="E6i-Fi-bHd" id="uQI-KZ-1MK"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="dogsMainScreenTableViewCellReminderDisplay" id="Lai-xI-ipQ" customClass="DogsMainScreenTableViewCellReminderDisplay" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="dogsReminderDisplayTableViewCell" id="Lai-xI-ipQ" customClass="DogsReminderDisplayTableViewCell" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="144" width="414" height="94.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" tableViewCell="Lai-xI-ipQ" id="g9N-na-X20">
@@ -995,16 +887,16 @@
             </objects>
             <point key="canvasLocation" x="-3549.275362318841" y="778.45982142857144"/>
         </scene>
-        <!--Logs Main Screen Table View Controller-->
+        <!--Logs Table View Controller-->
         <scene sceneID="Bpv-wm-fOH">
             <objects>
-                <tableViewController id="Vb4-XU-h1N" customClass="LogsMainScreenTableViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="Vb4-XU-h1N" customClass="LogsTableViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="D0N-lD-YAT">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="725"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellHeaderCompact" id="tUb-6f-NwU" customClass="LogsMainScreenTableViewCellHeaderCompact" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellHeaderCompact" id="tUb-6f-NwU" customClass="LogsCompactHeaderTableViewCell" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="44.5" width="414" height="45.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="tUb-6f-NwU" id="bMw-jC-JqT">
@@ -1049,7 +941,7 @@
                                     <outlet property="header" destination="Qpg-Gb-NBl" id="1wS-ez-ufa"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellHeaderRegular" id="goK-vX-7Uk" customClass="LogsMainScreenTableViewCellHeaderRegular" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellHeaderRegular" id="goK-vX-7Uk" customClass="LogsLargeHeaderTableViewCell" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="90" width="414" height="55.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="goK-vX-7Uk" id="hVO-Xt-Xzj">
@@ -1094,7 +986,7 @@
                                     <outlet property="header" destination="g1d-wg-iLh" id="oTM-Gq-vkM"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellBodyRegularWithIcon" id="vFK-E5-puQ" customClass="LogsMainScreenTableViewCellBodyRegularWithIcon" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellBodyRegularWithIcon" id="vFK-E5-puQ" customClass="LogsLargeBodyWithIconTableViewCell" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="145.5" width="414" height="55.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vFK-E5-puQ" id="3L0-6w-EHw">
@@ -1161,7 +1053,7 @@
                                     <outlet property="logType" destination="256-LL-2wv" id="J21-Yw-NkM"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellBodyRegularWithoutIcon" id="wk3-yL-wR3" customClass="LogsMainScreenTableViewCellBodyRegularWithoutIcon" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellBodyRegularWithoutIcon" id="wk3-yL-wR3" customClass="LogsLargeBodyWithoutIconTableViewCell" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="201" width="414" height="55.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="wk3-yL-wR3" id="QPC-qt-FVA">
@@ -1227,7 +1119,7 @@
                                     <outlet property="logType" destination="Pne-da-36Y" id="Xcw-43-jsJ"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellBodyCompact" id="d7b-Lq-gDR" customClass="LogsMainScreenTableViewCellBodyCompact" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellBodyCompact" id="d7b-Lq-gDR" customClass="LogsCompactBodyTableViewCell" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="256.5" width="414" height="40.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="d7b-Lq-gDR" id="yjP-uX-5gd">
@@ -1628,114 +1520,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sb8-0C-zGY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1535" y="-3275"/>
-        </scene>
-        <!--Information-->
-        <scene sceneID="uGs-yE-LDz">
-            <objects>
-                <viewController id="bft-FI-lsz" customClass="LogsInformationViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="i4B-GI-E4U">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yr6-Pd-Tm3">
-                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lxN-QV-jr5" userLabel="Scroll View Container For All">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="450"/>
-                                        <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="  Purpose of Logs" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HxW-lL-rcd" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="414" height="45"/>
-                                                <color key="backgroundColor" systemColor="systemBlueColor"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="45" id="RXa-iw-Tu7"/>
-                                                </constraints>
-                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
-                                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gSa-uV-Pe7" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="65" width="394" height="100"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="100" id="OJE-GI-HOT"/>
-                                                </constraints>
-                                                <string key="text">The Logs page allows you to create, edit, and delete logs of care for your dog. Log created here do not impact your reminders' alarms.</string>
-                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="  How to Use" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dgg-Al-SVf" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="185" width="414" height="45"/>
-                                                <color key="backgroundColor" systemColor="systemBlueColor"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="45" id="CGx-mR-a3B"/>
-                                                </constraints>
-                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
-                                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="text set in class" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rVo-xQ-Lmb" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="240" width="394" height="200"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="200" id="1kr-PH-Gcz"/>
-                                                </constraints>
-                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                        </subviews>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                        <constraints>
-                                            <constraint firstAttribute="bottom" secondItem="rVo-xQ-Lmb" secondAttribute="bottom" constant="10" id="1xF-Dv-IUv"/>
-                                            <constraint firstAttribute="trailing" secondItem="rVo-xQ-Lmb" secondAttribute="trailing" constant="10" id="43q-U2-qnz"/>
-                                            <constraint firstItem="HxW-lL-rcd" firstAttribute="top" secondItem="lxN-QV-jr5" secondAttribute="top" id="CZx-Dg-2Z7"/>
-                                            <constraint firstItem="gSa-uV-Pe7" firstAttribute="leading" secondItem="lxN-QV-jr5" secondAttribute="leading" constant="10" id="Gun-ZU-EKp"/>
-                                            <constraint firstAttribute="trailing" secondItem="HxW-lL-rcd" secondAttribute="trailing" id="Kbw-iq-0oc"/>
-                                            <constraint firstAttribute="trailing" secondItem="Dgg-Al-SVf" secondAttribute="trailing" id="PNg-ej-PTW"/>
-                                            <constraint firstItem="gSa-uV-Pe7" firstAttribute="top" secondItem="HxW-lL-rcd" secondAttribute="bottom" constant="20" id="PY5-vB-hMK"/>
-                                            <constraint firstItem="rVo-xQ-Lmb" firstAttribute="leading" secondItem="lxN-QV-jr5" secondAttribute="leading" constant="10" id="Pf7-4a-3v8"/>
-                                            <constraint firstItem="rVo-xQ-Lmb" firstAttribute="top" secondItem="Dgg-Al-SVf" secondAttribute="bottom" constant="10" id="Shj-MX-phj"/>
-                                            <constraint firstItem="Dgg-Al-SVf" firstAttribute="leading" secondItem="lxN-QV-jr5" secondAttribute="leading" id="YTA-00-xgf"/>
-                                            <constraint firstItem="HxW-lL-rcd" firstAttribute="leading" secondItem="lxN-QV-jr5" secondAttribute="leading" id="ZX5-ue-SdF"/>
-                                            <constraint firstAttribute="trailing" secondItem="gSa-uV-Pe7" secondAttribute="trailing" constant="10" id="eFt-05-Gc3"/>
-                                            <constraint firstItem="Dgg-Al-SVf" firstAttribute="top" secondItem="gSa-uV-Pe7" secondAttribute="bottom" constant="20" id="mRm-Ha-cZd"/>
-                                        </constraints>
-                                    </view>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="lxN-QV-jr5" firstAttribute="trailing" secondItem="md6-61-xDW" secondAttribute="trailing" id="5ut-ff-BzI"/>
-                                    <constraint firstItem="lxN-QV-jr5" firstAttribute="width" secondItem="YjH-dw-N4v" secondAttribute="width" id="S4W-4h-Mx6"/>
-                                    <constraint firstItem="lxN-QV-jr5" firstAttribute="bottom" secondItem="md6-61-xDW" secondAttribute="bottom" id="Y16-3X-hOf"/>
-                                    <constraint firstItem="lxN-QV-jr5" firstAttribute="leading" secondItem="md6-61-xDW" secondAttribute="leading" id="gay-Gg-3I1"/>
-                                    <constraint firstItem="lxN-QV-jr5" firstAttribute="top" secondItem="md6-61-xDW" secondAttribute="top" id="pt8-QA-hA5"/>
-                                </constraints>
-                                <viewLayoutGuide key="contentLayoutGuide" id="md6-61-xDW"/>
-                                <viewLayoutGuide key="frameLayoutGuide" id="YjH-dw-N4v"/>
-                            </scrollView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="kN3-Ib-e4v"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="yr6-Pd-Tm3" firstAttribute="leading" secondItem="kN3-Ib-e4v" secondAttribute="leading" id="8Py-kP-C5y"/>
-                            <constraint firstItem="kN3-Ib-e4v" firstAttribute="bottom" secondItem="yr6-Pd-Tm3" secondAttribute="bottom" id="KJ0-wD-zxR"/>
-                            <constraint firstItem="yr6-Pd-Tm3" firstAttribute="trailing" secondItem="kN3-Ib-e4v" secondAttribute="trailing" id="def-Uk-JYo"/>
-                            <constraint firstItem="yr6-Pd-Tm3" firstAttribute="top" secondItem="kN3-Ib-e4v" secondAttribute="top" id="hkN-xL-Yud"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" title="Information" id="Pcf-n2-ZNC">
-                        <barButtonItem key="leftBarButtonItem" image="chevron.left" catalog="system" id="m9G-Xi-KwK">
-                            <connections>
-                                <action selector="willGoBack:" destination="bft-FI-lsz" id="jXR-lu-UJG"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                    <connections>
-                        <outlet property="howToUseBody" destination="rVo-xQ-Lmb" id="C2h-oR-FdQ"/>
-                        <outlet property="purposeBody" destination="gSa-uV-Pe7" id="KJe-GG-SNL"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="zh4-7e-uMR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="338" y="-3274"/>
         </scene>
         <!--Main Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">

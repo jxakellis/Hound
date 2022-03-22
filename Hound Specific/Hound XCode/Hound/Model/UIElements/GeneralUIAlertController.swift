@@ -10,15 +10,15 @@ import MediaPlayer
 import UIKit
 
 class GeneralUIAlertController: UIAlertController {
-
+    
     override func viewDidDisappear(_ animated: Bool) {
         AlertManager.shared.alertDidComplete()
     }
-
+    
 }
 
 class AlarmUIAlertController: GeneralUIAlertController {
-
+    
     private var shouldVibrate = true
     private func loopVibrate() {
         if shouldVibrate == true {
@@ -29,26 +29,26 @@ class AlarmUIAlertController: GeneralUIAlertController {
             }
         }
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         guard UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification else {
             return
         }
-            AppDelegate.lifeCycleLogger.notice("AlarmUIAlertController will appear")
-                self.loopVibrate()
-                AudioManager.playLoudNotificationAudio()
+        AppDelegate.lifeCycleLogger.notice("AlarmUIAlertController will appear")
+        self.loopVibrate()
+        AudioManager.playLoudNotificationAudio()
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
+        
         // DispatchQueue.global().async{
-            AppDelegate.lifeCycleLogger.notice("AlarmUIAlertController will disappear")
-            self.shouldVibrate = false
-
-            AudioManager.stopAudio()
-
-       // }
+        AppDelegate.lifeCycleLogger.notice("AlarmUIAlertController will disappear")
+        self.shouldVibrate = false
+        
+        AudioManager.stopAudio()
+        
+        // }
     }
 }

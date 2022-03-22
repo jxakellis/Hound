@@ -22,12 +22,7 @@ CURRENT CHECKLIST, SENIOR YEAR
 
 MAIN
 
-
-
-DATABASE
-
-Current Idea: Global Endpoint Lock
-    If the app is in a state where it is updating something, it cannot send those updates to the server. Those update can only be pushed once the user is done editting and decides to SAVE (not cancel). E.g. If editting a dog and you modify a reminder, this might trigger an endpoint embedded in the reminder. This endpoint will then go nowhere because of the global lock (without it then the update would be pushed to the server). If the users decides to SAVE the dog, it will then disable the global lock and push changes to the server. If the user cancels then everything is discarded and the server never even knew this happened.
+Add feature requested by user. Add selector that allows them to click on one of the most recent custom log type names so they dont have to type it in as much.
   
 
 

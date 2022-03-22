@@ -189,7 +189,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
         }
     }
 
-    func willSaveReminder() {
+    func willSaveReminder(parentDogId: Int) {
         let updatedReminder: Reminder!
         if targetReminder != nil {
             updatedReminder = targetReminder!.copy() as? Reminder
@@ -217,79 +217,83 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             }
             updatedReminder.isEnabled = reminderToggleSwitch.isOn
 
-            if segmentedControl.selectedSegmentIndex == 0 {
-                // cannot switch an already created reminder to one time, can possible remove its past logs when one time alarm completes and self destructures
-                // if targetReminder != nil && targetReminder!.reminderType != .oneTime{
-                //    throw OneTimeComponentsError.reminderAlreadyCreated
-               // }
+            switch segmentedControl.selectedSegmentIndex {
+            case 0:
                 updatedReminder.changeReminderType(newReminderType: .oneTime)
                 updatedReminder.oneTimeComponents.executionDate = dogsReminderOnceViewController.executionDate
-            }
-            // only saves countdown if selected
-            else if segmentedControl.selectedSegmentIndex == 1 {
+            case 1:
                 updatedReminder.changeReminderType(newReminderType: .countdown)
                 updatedReminder.countdownComponents.changeExecutionInterval(newExecutionInterval: dogsReminderCountdownViewController.countdown.countDownDuration)
-            }
-            // only saves weekly if selected
-            else if segmentedControl.selectedSegmentIndex == 2 {
-
+            case 2:
                 let weekdays = dogsReminderWeeklyViewController.weekdays
-
                 if weekdays == nil {
                     throw WeeklyComponentsError.weekdayArrayInvalid
                 }
-
                 updatedReminder.changeReminderType(newReminderType: .weekly)
                 try updatedReminder.weeklyComponents.changeWeekdays(newWeekdays: weekdays!)
                 updatedReminder.weeklyComponents.changeDateComponents(newDateComponents: Calendar.current.dateComponents([.hour, .minute], from: dogsReminderWeeklyViewController.timeOfDay.date))
-            }
-            // only saves monthly if selected
-            else {
+            case 3:
                 updatedReminder.changeReminderType(newReminderType: .monthly)
                 try updatedReminder.monthlyComponents.changeDayOfMonth(newDayOfMonth: dogsReminderMonthlyViewController.dayOfMonth!)
                 updatedReminder.monthlyComponents.changeDateComponents(newDateComponents: Calendar.current.dateComponents([.hour, .minute], from: dogsReminderMonthlyViewController.datePicker.date))
+            default: break
             }
 
+            // creating a new reminder
             if targetReminder == nil {
-                delegate.didAddReminder(newReminder: updatedReminder)
+                // query server
+                RemindersRequest.create(forDogId: parentDogId, forReminder: updatedReminder) { reminderId in
+                    // query complete
+                    if reminderId != nil {
+                        // successful and able to get reminderId, persist locally
+                        updatedReminder.reminderId = reminderId!
+                        self.delegate.didAddReminder(newReminder: updatedReminder)
+                    }
+                }
+
             }
+            // updating an existing reminder
             else {
 
-                // Checks for differences in time of day, execution interval, weekdays, or time of month.
+                // Checks for differences in time of day, execution interval, weekdays, or time of month. If one is detected then we reset the reminder's whole timing to default
                 // If you were 5 minutes in to a 1 hour countdown but then change it to 30 minutes, you would want to be 0 minutes into the new timer and not 5 minutes in like previously.
 
-                if updatedReminder.reminderType == .oneTime {
+                switch updatedReminder.reminderType {
+                case .oneTime:
+                    // execution date changed
                     if updatedReminder.oneTimeComponents.executionDate != targetReminder!.oneTimeComponents.executionDate {
-                        updatedReminder.timerReset(shouldLogExecution: false)
+                        updatedReminder.prepareForNextAlarm()
                     }
-                }
-                else if updatedReminder.reminderType == .countdown {
+
+                case .countdown:
                     // execution interval changed
                     if updatedReminder.countdownComponents.executionInterval != targetReminder!.countdownComponents.executionInterval {
-                    updatedReminder.timerReset(shouldLogExecution: false)
+                    updatedReminder.prepareForNextAlarm()
                     }
-                }
-                // weekly
-                else if updatedReminder.reminderType == .weekly {
+                case .weekly:
                     // time of day or weekdays changed
                     if updatedReminder.weeklyComponents.dateComponents != targetReminder!.weeklyComponents.dateComponents || updatedReminder.weeklyComponents.weekdays != targetReminder!.weeklyComponents.weekdays {
-                        updatedReminder.timerReset(shouldLogExecution: false)
+                        updatedReminder.prepareForNextAlarm()
                     }
-                }
-                // monthly
-                else {
+                case .monthly:
                     // time of day or day of month changed
                     if updatedReminder.monthlyComponents.dateComponents != targetReminder!.monthlyComponents.dateComponents || updatedReminder.monthlyComponents.dayOfMonth != targetReminder!.monthlyComponents.dayOfMonth {
 
-                        updatedReminder.timerReset(shouldLogExecution: false)
+                        updatedReminder.prepareForNextAlarm()
                     }
                 }
 
-                delegate.didUpdateReminder(updatedReminder: updatedReminder)
+                RemindersRequest.update(forDogId: parentDogId, forReminder: updatedReminder) { requestWasSuccessful in
+                    if requestWasSuccessful == true {
+                        // successful so we can persist the data locally
+                        self.delegate.didUpdateReminder(updatedReminder: updatedReminder)
+                    }
+                }
+
             }
         }
         catch {
-            ErrorManager.alert(sender: Sender(origin: self, localized: self), forError: error)
+            ErrorManager.alert(forError: error)
         }
     }
 

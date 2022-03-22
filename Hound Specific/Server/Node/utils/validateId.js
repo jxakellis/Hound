@@ -27,7 +27,7 @@ const validateUserId = async (req, res, next) => {
       else {
         // userId does not exist in the table
         req.rollbackQueries(req);
-        return res.status(404).json({ message: 'Invalid Parameters; No user found or invalid permissions' });
+        return res.status(404).json({ message: 'Invalid Parameters; No user found or invalid permissions', error: 'ER_NO_USER_FOUND' });
       }
     }
     catch (error) {

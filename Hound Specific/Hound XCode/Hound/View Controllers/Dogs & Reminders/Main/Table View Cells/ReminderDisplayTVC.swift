@@ -8,11 +8,11 @@
 
 import UIKit
 
-protocol DogsMainScreenTableViewCellReminderDisplayDelegate: AnyObject {
+protocol DogsReminderDisplayTableViewCellDelegate: AnyObject {
     func didToggleReminderSwitch(sender: Sender, parentDogId: Int, reminderId: Int, isEnabled: Bool)
 }
 
-class DogsMainScreenTableViewCellReminderDisplay: UITableViewCell {
+class DogsReminderDisplayTableViewCell: UITableViewCell {
 
     // MARK: - IB
 
@@ -32,11 +32,11 @@ class DogsMainScreenTableViewCellReminderDisplay: UITableViewCell {
     }
 
     // MARK: - Properties
-    private var reminder: Reminder = Reminder()
+    var reminder: Reminder!
 
-    private var parentDogId: Int!
+    var parentDogId: Int!
 
-    weak var delegate: DogsMainScreenTableViewCellReminderDisplayDelegate! = nil
+    weak var delegate: DogsReminderDisplayTableViewCellDelegate! = nil
 
     // MARK: - Main
 
