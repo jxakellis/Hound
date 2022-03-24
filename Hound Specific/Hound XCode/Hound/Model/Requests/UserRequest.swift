@@ -19,13 +19,11 @@ enum UserRequest: RequestProtocol {
     // UserRequest basePath with the userId path param appended on
     static var basePathWithUserId: URL { return UserRequest.basePathWithoutParams.appendingPathComponent("/\(UserInformation.userId)") }
     
-    // MARK: - Private Functions
-    
     /**
      Uses userId to retrieve information
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func get(completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    static func get(completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         RequestUtils.warnForPlaceholderId()
         // at this point in time, an error can only occur if there is a invalid body provided. Since there is no body, there is no risk of an error.
         InternalRequestUtils.genericGetRequest(path: basePathWithUserId) { responseBody, responseStatus in
@@ -36,12 +34,14 @@ enum UserRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func get(forUserEmail: String, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    static func get(forUserEmail: String, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         InternalRequestUtils.genericGetRequest(path: basePathWithoutParams.appendingPathComponent("/\(forUserEmail)")) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
     }
+    
+    // MARK: - Private Functions
     
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
@@ -110,6 +110,7 @@ extension UserRequest {
      Uses userId to retrieve data.
      completionHandler returns a dictionary of the response body. If the query returned a 200 status and is successful, then the dictionary of the response body is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
      */
+    /*
     static func get(completionHandler: @escaping ([String: Any]?) -> Void) {
         UserRequest.get { responseBody, responseStatus in
             DispatchQueue.main.async {
@@ -132,10 +133,12 @@ extension UserRequest {
         }
         
     }
+     */
     /**
         Uses userEmail to retrieve data.
      completionHandler returns a dictionary of the response body. If the query returned a 200 status and is successful, then the dictionary of the response body is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
      */
+    /*
     static func get(forUserEmail: String, completionHandler: @escaping ([String: Any]?) -> Void) {
         UserRequest.get(forUserEmail: forUserEmail) { responseBody, responseStatus in
             DispatchQueue.main.async {
@@ -158,6 +161,7 @@ extension UserRequest {
         }
         
     }
+     */
     
     /**
      completionHandler returns a Int. If the query returned a 200 status and is successful, then userId is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
@@ -172,14 +176,14 @@ extension UserRequest {
                         completionHandler(userId!)
                     }
                     else {
-                        ErrorManager.alert(forError: GeneralResponseError.failureResponse)
+                        ErrorManager.alert(forError: GeneralResponseError.failurePostResponse)
                     }
                 case .failureResponse:
                     completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.failureResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.failurePostResponse)
                 case .noResponse:
                     completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.noResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.noPostResponse)
                 }
             }
         }
@@ -198,11 +202,11 @@ extension UserRequest {
                     completionHandler(true)
                 case .failureResponse:
                     completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.failureResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.failurePutResponse)
                     
                 case .noResponse:
                     completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.noResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.noPutResponse)
                 }
             }
         }
@@ -221,11 +225,11 @@ extension UserRequest {
                     completionHandler(true)
                 case .failureResponse:
                     completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.failureResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.failurePutResponse)
                     
                 case .noResponse:
                     completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.noResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.noPutResponse)
                 }
             }
         }
@@ -243,11 +247,11 @@ extension UserRequest {
                     completionHandler(true)
                 case .failureResponse:
                     completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.failureResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.failureDeleteResponse)
                     
                 case .noResponse:
                     completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.noResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.noDeleteResponse)
                 }
             }
         }

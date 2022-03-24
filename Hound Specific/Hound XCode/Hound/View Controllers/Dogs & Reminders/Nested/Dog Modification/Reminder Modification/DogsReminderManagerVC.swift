@@ -447,13 +447,13 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             }
             dogsReminderOnceViewController.passedDate = calculatedPassedDate
         }
-        if segue.identifier == "dogsReminderCountdownViewController"{
+        else if segue.identifier == "dogsReminderCountdownViewController"{
             dogsReminderCountdownViewController = segue.destination as! DogsReminderCountdownViewController
             dogsReminderCountdownViewController.delegate = self
             dogsReminderCountdownViewController.passedInterval = targetReminder?.countdownComponents.executionInterval
 
         }
-        if segue.identifier == "dogsReminderWeeklyViewController"{
+        else if segue.identifier == "dogsReminderWeeklyViewController"{
             dogsReminderWeeklyViewController = segue.destination as! DogsReminderWeeklyViewController
             dogsReminderWeeklyViewController.delegate = self
 
@@ -465,7 +465,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             }
 
         }
-        if segue.identifier == "dogsReminderMonthlyViewController"{
+        else if segue.identifier == "dogsReminderMonthlyViewController"{
             dogsReminderMonthlyViewController = segue.destination as! DogsReminderMonthlyViewController
             dogsReminderMonthlyViewController.delegate = self
 

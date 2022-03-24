@@ -277,53 +277,45 @@ class ErrorManager {
          case noResponse
          }
          */
-        if case GeneralResponseError.failureResponse = error {
-            ErrorManager.alert(forMessage: ErrorManagerMessages.failureResponseGeneral)
-            return true
-        }
-        else if case GeneralResponseError.noResponse = error {
-            ErrorManager.alert(forMessage: ErrorManagerMessages.noResponseGeneral)
-            return true
-        }
-        else if case GeneralResponseError.failureGetResponse = error {
-            ErrorManager.alert(forMessage: ErrorManagerMessages.failureGetResponseGeneral)
+        // MARK: GET
+        if case GeneralResponseError.failureGetResponse = error {
+            ErrorManager.alert(forMessage: GeneralResponseErrorMessages.failureGetResponse)
             return true
         }
         else if case GeneralResponseError.noGetResponse = error {
-            ErrorManager.alert(forMessage: ErrorManagerMessages.noGetResponseGeneral)
+            ErrorManager.alert(forMessage: GeneralResponseErrorMessages.noGetResponse)
+            return true
+        }
+        // MARK: POST
+        else if case GeneralResponseError.failurePostResponse = error {
+            ErrorManager.alert(forMessage: GeneralResponseErrorMessages.failurePostResponse)
+            return true
+        }
+        else if case GeneralResponseError.noPostResponse = error {
+            ErrorManager.alert(forMessage: GeneralResponseErrorMessages.noPostResponse)
+            return true
+        }
+        // MARK: PUT
+        else if case GeneralResponseError.failurePutResponse = error {
+            ErrorManager.alert(forMessage: GeneralResponseErrorMessages.failurePutResponse)
+            return true
+        }
+        else if case GeneralResponseError.noPutResponse = error {
+            ErrorManager.alert(forMessage: GeneralResponseErrorMessages.noPutResponse)
+            return true
+        }
+        // MARK: DELETE
+        else if case GeneralResponseError.failureDeleteResponse = error {
+            ErrorManager.alert(forMessage: GeneralResponseErrorMessages.failureDeleteResponse)
+            return true
+        }
+        else if case GeneralResponseError.noDeleteResponse = error {
+            ErrorManager.alert(forMessage: GeneralResponseErrorMessages.noDeleteResponse)
             return true
         }
         else {
             return false
         }
-    }
-    
-}
-
-enum ErrorManagerMessages {
-    static let failureResponseGeneral = "Hound's server rejected your request. Please restart and re-login to Hound if the issue persists."
-    static let noResponseGeneral = "We were unable to reach Hound's server. Please verify that you are connected to the internet and retry. If the issue persists, Hound's server may be experiencing an outage."
-    static let failureGetResponseGeneral = "We were unable to retrieve your data from Hound's server. Please restart and re-login to Hound if the issue persists."
-    static let noGetResponseGeneral = "We were unable to reach Hound's server and retrieve your data. Please verify that you are connected to the internet and retry. If the issue persists, Hound's server may be experiencing an outage."
-    
-    /// Returns a default string about a failureResponse from the server: "Hound's server encountered an error with your request and couldn't save your \(type)'s data. Please restart and re-login to Hound if the issue persists."
-    static func failureResponseTemplate(ofType type: String) -> String {
-        return "Hound's server encountered an error with your request and couldn't save your \(type)'s data. Please restart and re-login to Hound if the issue persists."
-    }
-    
-    /// Returns a default string about a noResponse from the server: "We were unable to reach Hound's server and save your \(type)'s data. Please verify that you are connected to the internet and retry. If the issue persists, Hound's server may be experiencing an outage."
-    static func noResponseTemplate(ofType type: String) -> String {
-        return "We were unable to reach Hound's server and save your \(type)'s data. Please verify that you are connected to the internet and retry. If the issue persists, Hound's server may be experiencing an outage."
-    }
-    
-    /// Returns a default string about a failureGetResponse from the server: "We were unable to retrieve your \(type)'s data from Hound's server. Please restart and re-login to Hound if the issue persists."
-    static func failureGetResponseTemplate(ofType type: String) -> String {
-        return "We were unable to retrieve your \(type)'s data from Hound's server. Please restart and re-login to Hound if the issue persists."
-    }
-    
-    /// Returns a default string about a noGetResponse from the server: "We were unable to reach Hound's server and retrieve your \(type)'s data. Please verify that you are connected to the internet and retry. If the issue persists, Hound's server may be experiencing an outage."
-    static func noGetResponseTemplate(ofType type: String) -> String {
-        return "We were unable to reach Hound's server and retrieve your \(type)'s data. Please verify that you are connected to the internet and retry. If the issue persists, Hound's server may be experiencing an outage."
     }
     
 }

@@ -34,7 +34,8 @@ const getLogs = async (req, res) => {
       if (result.length === 0) {
         // successful but empty array, not logs to return
         req.commitQueries(req);
-        return res.status(204).json({ result: [] });
+        // return res.status(204).json({ result: [] });
+        return res.status(200).json({ result: [] });
       }
       else {
         // array has items, meaning there were logs found, successful!

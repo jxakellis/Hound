@@ -49,7 +49,7 @@ class Dog: NSObject, NSCoding, NSCopying {
     
     init(dogName: String) throws {
         super.init()
-        if dogName.trimmingCharacters(in: .whitespaces) == "" {
+        if dogName.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
             throw DogError.dogNameBlank
         }
         self.storedDogName = dogName
@@ -57,10 +57,13 @@ class Dog: NSObject, NSCoding, NSCopying {
         self.dogLogs = LogManager()
     }
     
-    convenience init(dogName: String, defaultReminders: Bool? = false) throws {
+    convenience init(dogName: String, dogIcon: UIImage? = nil, defaultReminders: Bool = false) throws {
         try self.init(dogName: dogName)
         if defaultReminders == true {
             self.dogReminders.addDefaultReminders()
+        }
+        if dogIcon != nil {
+            self.icon = dogIcon!
         }
     }
     
@@ -109,7 +112,7 @@ class Dog: NSObject, NSCoding, NSCopying {
         if newDogName == nil {
             throw DogError.dogNameNil
         }
-        else if newDogName!.trimmingCharacters(in: .whitespaces) == ""{
+        else if newDogName!.trimmingCharacters(in: .whitespacesAndNewlines) == ""{
             throw DogError.dogNameBlank
         }
         else {

@@ -64,7 +64,7 @@ class PersistenceManager {
         UserDefaults.standard.setValue(LocalConfiguration.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedIntroductionViewControllerBefore.rawValue)
-        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedDogsIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedDogsIntroductionViewControllerBefore.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.isShowTerminationAlert, forKey: UserDefaultsKeys.isShowTerminationAlert.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.isShowReleaseNotes, forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.reviewRequestDates, forKeyPath: UserDefaultsKeys.reviewRequestDates.rawValue)
@@ -110,7 +110,7 @@ class PersistenceManager {
         LocalConfiguration.lastUnpause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastUnpause.rawValue) as? Date
         
         LocalConfiguration.hasLoadedIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedIntroductionViewControllerBefore
-        LocalConfiguration.hasLoadedDogsIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedDogsIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedDogsIntroductionViewControllerBefore
+        LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore
         
         LocalConfiguration.reviewRequestDates = UserDefaults.standard.value(forKey: UserDefaultsKeys.reviewRequestDates.rawValue) as? [Date] ?? LocalConfiguration.reviewRequestDates
         
@@ -192,7 +192,7 @@ class PersistenceManager {
             UserDefaults.standard.setValue(LocalConfiguration.isShowTerminationAlert, forKey: UserDefaultsKeys.isShowTerminationAlert.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.isShowReleaseNotes, forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.hasLoadedIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedIntroductionViewControllerBefore.rawValue)
-            UserDefaults.standard.setValue(LocalConfiguration.hasLoadedDogsIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedDogsIntroductionViewControllerBefore.rawValue)
+            UserDefaults.standard.setValue(LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.reviewRequestDates, forKeyPath: UserDefaultsKeys.reviewRequestDates.rawValue)
         }
         
@@ -270,7 +270,7 @@ class PersistenceManager {
                     UserConfiguration.isFollowUpEnabled = false
                     // Updates switch to reflect change, if the last view open was the settings page then the app is exitted and property changed in the settings app then this app is reopened, VWL will not be called as the settings page was already opened, weird edge case.
                 DispatchQueue.main.async {
-                    let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController.settingsViewController
+                    let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController?.settingsViewController
                     settingsVC?.settingsNotificationsViewController?.synchronizeAllNotificationSwitches(animated: false)
                 }
                     updateServerUserConfiguration()
@@ -299,17 +299,20 @@ class PersistenceManager {
             if UserConfiguration.isFollowUpEnabled != beforeUpdateIsFollowUpEnabled {
                 body[UserDefaultsKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
             }
-            UserRequest.update(body: body) { requestWasSuccessful in
-                if requestWasSuccessful == false {
-                    // error, revert to previous
-                    UserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
-                    UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
-                    UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
-                    
-                    let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController.settingsViewController
-                    settingsVC?.settingsNotificationsViewController?.synchronizeAllNotificationSwitches(animated: false)
+            if body.keys.isEmpty == false {
+                UserRequest.update(body: body) { requestWasSuccessful in
+                    if requestWasSuccessful == false {
+                        // error, revert to previous
+                        UserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
+                        UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
+                        UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
+                        
+                        let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController?.settingsViewController
+                        settingsVC?.settingsNotificationsViewController?.synchronizeAllNotificationSwitches(animated: false)
+                    }
                 }
             }
+            
         }
     }
     

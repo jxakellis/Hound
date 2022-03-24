@@ -32,7 +32,7 @@ class AlertManager: NSObject {
     static func willShowAlert(title: String, message: String?) {
         var trimmedMessage: String? = message
         
-        if message?.trimmingCharacters(in: .whitespaces) == ""{
+        if message?.trimmingCharacters(in: .whitespacesAndNewlines) == ""{
             trimmedMessage = nil
         }
         
@@ -124,7 +124,7 @@ class AlertManager: NSObject {
         showNextAlert()
     }
     
-    func refreshAlerts(dogManager: DogManager) {
+    func refreshAlarms(dogManager: DogManager) {
         halted = true
         if currentAlertPresented == nil {
             for d in dogManager.dogs {

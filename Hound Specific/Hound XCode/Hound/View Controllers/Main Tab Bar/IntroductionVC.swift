@@ -8,11 +8,6 @@
 
 import UIKit
 
-protocol IntroductionViewControllerDelegate: AnyObject {
-    func didSetDogName(sender: Sender, dogName: String)
-    func didSetDogIcon(sender: Sender, dogIcon: UIImage)
-}
-
 class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
     
     // MARK: - UIGestureRecognizerDelegate
@@ -63,19 +58,47 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
     
     @IBOutlet private weak var dogName: UITextField!
     
-    @IBOutlet private weak var interfaceSegmentedControl: UISegmentedControl!
+    @IBOutlet private weak var interfaceStyleSegmentedControl: UISegmentedControl!
     
     @IBAction private func segmentedControl(_ sender: Any) {
-        switch interfaceSegmentedControl.selectedSegmentIndex {
+        var convertedInterfaceStyleRawValue: Int?
+        let beforeUpdateInterfaceStyle = UserConfiguration.interfaceStyle
+        
+        switch interfaceStyleSegmentedControl.selectedSegmentIndex {
         case 0:
+            convertedInterfaceStyleRawValue = 1
             UIApplication.keyWindow?.overrideUserInterfaceStyle = .light
             UserConfiguration.interfaceStyle = .light
         case 1:
+            convertedInterfaceStyleRawValue = 2
             UIApplication.keyWindow?.overrideUserInterfaceStyle = .dark
             UserConfiguration.interfaceStyle = .dark
         default:
+            convertedInterfaceStyleRawValue = 0
             UIApplication.keyWindow?.overrideUserInterfaceStyle = .unspecified
             UserConfiguration.interfaceStyle = .unspecified
+        }
+        
+        let body = [UserDefaultsKeys.interfaceStyle.rawValue: convertedInterfaceStyleRawValue!]
+        UserRequest.update(body: body) { requestWasSuccessful in
+            if requestWasSuccessful == false {
+                // error, revert to previous
+                UIApplication.keyWindow?.overrideUserInterfaceStyle = beforeUpdateInterfaceStyle
+                UserConfiguration.interfaceStyle = beforeUpdateInterfaceStyle
+                switch UserConfiguration.interfaceStyle.rawValue {
+                    // system/unspecified
+                case 0:
+                    self.interfaceStyleSegmentedControl.selectedSegmentIndex = 2
+                    // light
+                case 1:
+                    self.interfaceStyleSegmentedControl.selectedSegmentIndex = 0
+                    // dark
+                case 2:
+                    self.interfaceStyleSegmentedControl.selectedSegmentIndex = 1
+                default:
+                    self.interfaceStyleSegmentedControl.selectedSegmentIndex = 2
+                }
+            }
         }
     }
     
@@ -84,11 +107,93 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
     /// Clicked continues button at the bottom to dismiss
     @IBAction private func willContinue(_ sender: Any) {
         // data passage handled in view will disappear as the view can also be swiped down instead of hitting the continue button.
-        self.dismiss(animated: true, completion: nil)
+        
+        // synchronizes data when setup is done (aka disappearing)
+        var dogName: String? {
+            if self.dogName.text != nil && self.dogName.text!.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                return self.dogName.text!.trimmingCharacters(in: .whitespacesAndNewlines)
+                
+            }
+            else {
+                return nil
+            }
+        }
+        
+        var dogIcon: UIImage? {
+            if self.dogIcon.imageView!.image != DogConstant.chooseIcon {
+                return self.dogIcon.imageView!.image
+            }
+            else {
+                return nil
+            }
+            
+        }
+        
+        // can only fail if dogName == "", but already checked for that and corrected if there was a problem
+        let dog = try! Dog(dogName: dogName ?? DogConstant.defaultDogName, dogIcon: dogIcon ?? DogConstant.defaultIcon, defaultReminders: false)
+        
+        // contact server to make their dog
+        DogsRequest.create(forDog: dog) { dogId in
+            if dogId != nil {
+                // go to next page if dog good
+                dog.dogId = dogId!
+                self.dog = dog
+                LocalConfiguration.hasLoadedIntroductionViewControllerBefore = true
+                self.performSegue(withIdentifier: "mainTabBarViewController", sender: self)
+            }
+        }
     }
     
     @IBAction private func didClickIcon(_ sender: Any) {
-        let imagePickMethodAlertController = GeneralUIAlertController(title: "Choose Image", message: nil, preferredStyle: .actionSheet)
+        AlertManager.shared.enqueueActionSheetForPresentation(imagePickMethodAlertController, sourceView: dogIcon, permittedArrowDirections: [.up, .down])
+    }
+    
+    // MARK: - Properties
+    
+    let imagePickMethodAlertController = GeneralUIAlertController(title: "Choose Image", message: nil, preferredStyle: .actionSheet)
+    
+    private var dog: Dog!
+    
+    // MARK: - Main
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        continueButton.layer.cornerRadius = 8.0
+        
+        dogIcon.setImage(DogConstant.chooseIcon, for: .normal)
+        dogIcon.imageView!.layer.masksToBounds = true
+        dogIcon.imageView!.layer.cornerRadius = dogIcon.frame.width/2
+        
+        dogName.delegate = self
+        
+        UIApplication.keyWindow?.overrideUserInterfaceStyle = .unspecified
+        UserConfiguration.interfaceStyle = .unspecified
+        
+        interfaceStyleSegmentedControl.selectedSegmentIndex = 2
+        interfaceStyleSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.white], for: .normal)
+        interfaceStyleSegmentedControl.backgroundColor = .systemGray4
+        
+        self.setupToHideKeyboardOnTapOnView()
+        
+        // Setup AlertController for icon button now, increases responsiveness
+        setupDogIconImagePicker()
+        
+        // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        AlertManager.globalPresenter = self
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+    }
+    
+    /// Sets up the UIAlertController that prompts the user in the different ways that they can add an icon to their dog (e.g. take a picture of choose an existing one
+    private func setupDogIconImagePicker() {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         
@@ -124,75 +229,16 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
             self.present(imagePicker, animated: true, completion: nil)
             
         }
-        
-        AlertManager.shared.enqueueActionSheetForPresentation(imagePickMethodAlertController, sourceView: dogIcon, permittedArrowDirections: [.up, .down])
     }
     
-    // MARK: - Properties
+    // MARK: - Navigation
     
-    weak var delegate: IntroductionViewControllerDelegate! = nil
-    
-    // MARK: - Main
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        continueButton.layer.cornerRadius = 8.0
-        
-        /*
-         dogIcon.image = DogConstant.chooseIcon
-         dogIcon.layer.masksToBounds = true
-         dogIcon.layer.cornerRadius = dogIcon.frame.width/2
-         
-         dogIcon.isUserInteractionEnabled = true
-         let iconTap = UITapGestureRecognizer(target: self, action: #selector(didClickIcon))
-         iconTap.delegate = self
-         iconTap.cancelsTouchesInView = false
-         dogIcon.isUserInteractionEnabled = true
-         dogIcon.addGestureRecognizer(iconTap)
-         */
-        
-        dogIcon.setImage(DogConstant.chooseIcon, for: .normal)
-        dogIcon.imageView!.layer.masksToBounds = true
-        dogIcon.imageView!.layer.cornerRadius = dogIcon.frame.width/2
-        
-        dogName.delegate = self
-        
-        UIApplication.keyWindow?.overrideUserInterfaceStyle = .unspecified
-        UserConfiguration.interfaceStyle = .unspecified
-        
-        interfaceSegmentedControl.selectedSegmentIndex = 2
-        interfaceSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.white], for: .normal)
-        interfaceSegmentedControl.backgroundColor = .systemGray4
-        
-        self.setupToHideKeyboardOnTapOnView()
-        
-        // Do any additional setup after loading the view.
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        AlertManager.globalPresenter = self
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        // setupConstraints()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        // synchronizes data when setup is done (aka disappearing)
-        if dogName.text != nil && dogName.text?.trimmingCharacters(in: .whitespacesAndNewlines) != ""{
-            delegate.didSetDogName(sender: Sender(origin: self, localized: self), dogName: dogName.text!)
-            
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "mainTabBarViewController"{
+            let mainTabBarViewController: MainTabBarViewController = segue.destination as! MainTabBarViewController
+            let dogManager = DogManager(forDogs: [dog])
+            mainTabBarViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
         }
-        if dogIcon.imageView!.image != DogConstant.chooseIcon {
-            delegate.didSetDogIcon(sender: Sender(origin: self, localized: self), dogIcon: dogIcon.imageView!.image!)
-        }
-        
-        // once this view has completed (user swiped it away or hit continue) then we can say its been compelete.
-        LocalConfiguration.hasLoadedIntroductionViewControllerBefore = true
     }
 }

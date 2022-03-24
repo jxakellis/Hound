@@ -198,14 +198,14 @@ extension LogsRequest {
                         completionHandler(logId!)
                     }
                     else {
-                        ErrorManager.alert(forError: GeneralResponseError.failureResponse)
+                        ErrorManager.alert(forError: GeneralResponseError.failurePostResponse)
                     }
                 case .failureResponse:
                     completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.failureResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.failurePostResponse)
                 case .noResponse:
                     completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.noResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.noPostResponse)
                 }
             }
         }
@@ -223,10 +223,10 @@ extension LogsRequest {
                     completionHandler(true)
                 case .failureResponse:
                     completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.failureResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.failurePutResponse)
                 case .noResponse:
                     completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.noResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.noPutResponse)
                 }
             }
         }
@@ -243,10 +243,10 @@ extension LogsRequest {
                     completionHandler(true)
                 case .failureResponse:
                     completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.failureResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.failureDeleteResponse)
                 case .noResponse:
                     completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.noResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.noDeleteResponse)
                 }
             }
         }

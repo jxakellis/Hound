@@ -26,7 +26,7 @@ enum ReminderType: String, CaseIterable {
             }
         }
         
-        AppDelegate.generalLogger.fault("ReminderType not found during init")
+        AppDelegate.generalLogger.fault("reminderType Not Found")
         self = .oneTime
     }
     case oneTime
@@ -119,7 +119,6 @@ class Reminder: NSObject, NSCoding, NSCopying {
     
     convenience init(fromBody body: [String: Any]) {
         self.init()
-        
         if let reminderId = body["reminderId"] as? Int {
             self.reminderId = reminderId
         }
@@ -146,14 +145,14 @@ class Reminder: NSObject, NSCoding, NSCopying {
         case .weekly:
             
             var skipDate = Date()
-            if let dateString = body["skipDate"] as? String {
+            if let dateString = body["weeklySkipDate"] as? String {
                 skipDate = RequestUtils.ISO8601DateFormatter.date(from: dateString) ?? Date()
             }
             
             weeklyComponents = WeeklyComponents(
-                hour: body["hour"] as? Int,
-                minute: body["minute"] as? Int,
-                skipping: body["skipping"] as? Bool,
+                hour: body["weeklyHour"] as? Int,
+                minute: body["weeklyMinute"] as? Int,
+                isSkipping: body["weeklyIsSkipping"] as? Bool,
                 skipDate: skipDate,
                 sunday: body["sunday"] as? Bool,
                 monday: body["monday"] as? Bool,
@@ -164,14 +163,14 @@ class Reminder: NSObject, NSCoding, NSCopying {
                 saturday: body["saturday"] as? Bool)
         case .monthly:
             var skipDate = Date()
-            if let dateString = body["skipDate"] as? String {
+            if let dateString = body["monthlySkipDate"] as? String {
                 skipDate = RequestUtils.ISO8601DateFormatter.date(from: dateString) ?? Date()
             }
             
             monthlyComponents = MonthlyComponents(
-                hour: body["hour"] as? Int,
-                minute: body["minute"] as? Int,
-                skipping: body["skipping"] as? Bool,
+                hour: body["monthlyHour"] as? Int,
+                minute: body["monthlyMinute"] as? Int,
+                isSkipping: body["monthlyIsSkipping"] as? Bool,
                 skipDate: skipDate,
                 dayOfMonth: body["dayOfMonth"] as? Int)
         case .oneTime:

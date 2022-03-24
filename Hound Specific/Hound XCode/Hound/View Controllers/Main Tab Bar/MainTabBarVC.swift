@@ -7,36 +7,35 @@
 //
 import UIKit
 
-class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, SettingsNavigationViewControllerDelegate, LogsNavigationViewControllerDelegate, IntroductionViewControllerDelegate, DogsIntroductionViewControllerDelegate, AlarmManagerDelegate {
-
-    // MARK: - IntroductionViewControllerDelegate
-
-    func didSetDogName(sender: Sender, dogName: String) {
-        let sudoDogManager = getDogManager()
-        try! sudoDogManager.dogs[0].changeDogName(newDogName: dogName)
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
-    }
-
-    func didSetDogIcon(sender: Sender, dogIcon: UIImage) {
-        let sudoDogManager = getDogManager()
-        sudoDogManager.dogs[0].icon = dogIcon
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
-    }
+class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, SettingsNavigationViewControllerDelegate, LogsNavigationViewControllerDelegate, RemindersIntroductionViewControllerDelegate, AlarmManagerDelegate {
 
      // MARK: - DogsNavigationViewControllerDelegate
 
-    func willShowIntroductionPage() {
-        self.performSegue(withIdentifier: "dogsIntroductionViewController", sender: self)
+    func checkForRemindersIntroductionPage() {
+        // figure out where to go next, if the user is new and has no reminders for their dog (aka probably no family yet either) then we help them make their first reminder
+        
+        // hasn't shown configuration to create reminders
+        if LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore == false {
+            // never created a reminder before, new family
+            if self.getDogManager().hasCreatedReminder == false {
+                self.performSegue(withIdentifier: "remindersIntroductionViewController", sender: self)
+            }
+            // reminders already created
+            else {
+                // TO DO create intro page for additional family member, where they still get introduced but don't create a reminder
+            }
+            
+        }
     }
 
-    // MARK: - DogsIntroductionViewControllerDelegate
+    // MARK: - RemindersIntroductionViewControllerDelegate
 
-    func didSetDefaultReminderState(sender: Sender, newDefaultReminderStatus: Bool) {
-        if newDefaultReminderStatus == true {
-            let sudoDogManager = dogsViewController.getDogManager()
-            sudoDogManager.dogs[0].dogReminders.addDefaultReminders()
-
-            setDogManager(sender: sender, newDogManager: sudoDogManager)
+    func didComplete(sender: Sender, forReminders reminders: [Reminder]) {
+        let sudoDogManager = getDogManager()
+        if sudoDogManager.hasCreatedDog == true {
+            let dog = sudoDogManager.dogs[0]
+            dog.dogReminders.addReminder(newReminders: reminders)
+            setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
         }
     }
 
@@ -86,6 +85,11 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
                 }
             }
         }
+        
+        // If the dogManager is sent from ServerSyncViewController or IntroductionViewController, then, at that point in time, nothing here is initalized and will cause a crash
+        guard !(sender.localized is ServerSyncViewController) && !(sender.origin is ServerSyncViewController) &&  !(sender.localized is IntroductionViewController) && !(sender.origin is IntroductionViewController) else {
+            return
+        }
 
         if sender.localized is TimingManager.Type || sender.localized is TimingManager || sender.localized is AlarmManager.Type || sender.localized is AlarmManager {
             logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
@@ -97,7 +101,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         else if sender.localized is LogsViewController {
             dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
-        else if sender.localized is IntroductionViewController || sender.localized is DogsIntroductionViewController {
+        else if sender.localized is RemindersIntroductionViewController {
             logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
             dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
@@ -134,8 +138,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         super.viewDidLoad()
 
         AppDelegate.generalLogger.notice("Application build is \(UIApplication.appBuild)")
-
-        setDogManager(sender: Sender(origin: self, localized: self), newDogManager: ServerSyncViewController.dogManager)
 
         self.selectedIndex = MainTabBarViewController.selectedEntryIndex
 
@@ -174,15 +176,12 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
 
-        Utils.checkForTermination()
+        let sudoDogManager = getDogManager()
+        Utils.checkForTermination(forDogManager: sudoDogManager)
         Utils.checkForReleaseNotes()
-
-        TimingManager.willInitalize(dogManager: getDogManager())
-        AlertManager.shared.refreshAlerts(dogManager: getDogManager())
-
-        if LocalConfiguration.hasLoadedIntroductionViewControllerBefore == false {
-            // self.performSegue(withIdentifier: "introductionViewController", sender: self)
-        }
+        TimingManager.willInitalize(dogManager: sudoDogManager)
+        AlertManager.shared.refreshAlarms(dogManager: sudoDogManager)
+        
     }
 
     override open var shouldAutorotate: Bool {
@@ -197,13 +196,10 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
 
      // In a storyboard-based application, you will often want to do a little preparation before navigation
      override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "introductionViewController"{
-            let introductionViewController: IntroductionViewController = segue.destination as! IntroductionViewController
-            introductionViewController.delegate = self
-        }
-        if segue.identifier == "dogsIntroductionViewController"{
-            let dogsIntroductionViewController: DogsIntroductionViewController = segue.destination as! DogsIntroductionViewController
-            dogsIntroductionViewController.delegate = self
+        if segue.identifier == "remindersIntroductionViewController"{
+            let remindersIntroductionViewController: RemindersIntroductionViewController = segue.destination as! RemindersIntroductionViewController
+            remindersIntroductionViewController.delegate = self
+            remindersIntroductionViewController.dogManager = getDogManager()
         }
      }
 

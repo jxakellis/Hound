@@ -55,29 +55,6 @@ class LogManager: NSObject, NSCoding, NSCopying {
         
     }
     
-    /*
-     func changeLog(forLogId logId: String, newLog: Log) throws {
-     //check to find the index of targetted log
-     var newLogIndex: Int?
-     
-     for i in 0..<logs.count {
-     if logs[i].logId == logId {
-     newLogIndex = i
-     break
-     }
-     }
-     
-     if newLogIndex == nil {
-     throw TraitManagerError.logIdNotPresent
-     }
-     
-     else {
-     storedLogs[newLogIndex!] = newLog
-     AppDelegate.endpointLogger.notice("ENDPOINT Update Log")
-     }
-     }
-     */
-    
     func removeLog(forLogId logId: Int) throws {
         // check to find the index of targetted log
         var logIndex: Int?

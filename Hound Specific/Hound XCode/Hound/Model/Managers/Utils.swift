@@ -16,7 +16,7 @@ class Utils {
     static func willCreateFollowUpUNUserNotification(dogName: String, reminder: Reminder) {
         
         guard reminder.executionDate != nil else {
-            AppDelegate.generalLogger.fault("willCreateFollowUpUNUserNotification executionDate nil")
+            AppDelegate.generalLogger.fault("willCreateFollowUpUNUserNotification executionDate is nil")
             return
         }
         // let reminder = try! MainTabBarViewController.staticDogManager.findDog(forDogId: dogName).dogReminders.findReminder(forReminderId: reminderUUID)
@@ -49,7 +49,7 @@ class Utils {
     static func willCreateUNUserNotification(dogName: String, reminder: Reminder) {
         
         guard reminder.executionDate != nil else {
-            AppDelegate.generalLogger.fault("willCreateUNUserNotification executionDate nil")
+            AppDelegate.generalLogger.fault("willCreateUNUserNotification executionDate is nil")
             return
         }
         // let reminder = try! MainTabBarViewController.staticDogManager.findDog(forDogId: dogName).dogReminders.findReminder(forReminderId: reminderUUID)
@@ -80,7 +80,8 @@ class Utils {
     
     /// Checks to see if the user is eligible for a notification to review Hound and if so presents the notification
     static func checkForReview() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.25, execute: {
+        // slight delay so it pops once some things are done
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
             func requestReview() {
                 if let window = UIApplication.keyWindow?.windowScene {
                     AppDelegate.generalLogger.notice("Asking user to review Hound")
@@ -142,11 +143,29 @@ class Utils {
     }
     
     /// Displays a message about not terminating the app if that setting is enabled and the user terminated the app
-    static func checkForTermination() {
-        if LocalConfiguration.isShowTerminationAlert == true && UIApplication.previousAppBuild == UIApplication.appBuild {
+    static func checkForTermination(forDogManager dogManager: DogManager) {
+        if  UIApplication.previousAppBuild != nil && UIApplication.previousAppBuild! == UIApplication.appBuild && LocalConfiguration.isShowTerminationAlert == true {
             
             AppDelegate.generalLogger.notice("App has not updated")
             
+            // sharedPlayer nil indicates the background silence is absent
+            // From there we perform checks to make sure the background silence should have been there
+            // If those check pass, it means the background silence's absense is due to the app terminating
+            if AudioManager.sharedPlayer == nil && UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification && dogManager.hasEnabledReminder && !UserConfiguration.isPaused {
+                
+                AppDelegate.generalLogger.notice("Showing Termionation Alert")
+                let terminationAlertController = GeneralUIAlertController(title: "Oops, you may have terminated Hound", message: "Your notifications won't ring properly if the app isn't running.", preferredStyle: .alert)
+                let understandAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                let stopAlertAction = UIAlertAction(title: "Don't Show Again", style: .default) { _ in
+                    LocalConfiguration.isShowTerminationAlert = false
+                }
+                
+                terminationAlertController.addAction(understandAlertAction)
+                terminationAlertController.addAction(stopAlertAction)
+                AlertManager.shared.enqueueAlertForPresentation(terminationAlertController)
+            }
+            
+            /*
             do {
                 if let decoded: Data = UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as? Data {
                     
@@ -180,13 +199,14 @@ class Utils {
             catch {
                 AppDelegate.generalLogger.error("Failed to unarchive dogManager for termination checker \(error.localizedDescription)")
             }
+             */
             
         }
     }
     
     /// Displays release notes about a new version to the user if they have that setting enabled and the app was updated to that new version
     static func checkForReleaseNotes() {
-        if UIApplication.previousAppBuild != UIApplication.appBuild && LocalConfiguration.isShowReleaseNotes == true {
+        if UIApplication.previousAppBuild != nil && UIApplication.previousAppBuild! != UIApplication.appBuild && LocalConfiguration.isShowReleaseNotes == true {
             AppDelegate.generalLogger.notice("Showing Release Notes")
             var message: String?
             

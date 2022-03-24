@@ -17,20 +17,17 @@ protocol DogsTableViewControllerDelegate: AnyObject {
 }
 
 class DogsTableViewController: UITableViewController, DogManagerControlFlowProtocol, DogsReminderDisplayTableViewCellDelegate {
-
-    // MARK: - DogsMainScreenTableViewCellReminderDelegate
-
-    /// Reminder switch is toggled in DogsMainScreenTableViewCellReminder
-    func didToggleReminderSwitch(sender: Sender, parentDogId: Int, reminderId: Int, isEnabled: Bool) {
-
+    
+    // MARK: - DogsReminderDisplayTableViewCellDelegate
+    
+    func didUpdateReminderEnable(sender: Sender, parentDogId: Int, reminder: Reminder) {
         let sudoDogManager = getDogManager()
-        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.findReminder(forReminderId: reminderId).isEnabled = isEnabled
-
+        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.findReminder(forReminderId: reminder.reminderId).isEnabled = reminder.isEnabled
         setDogManager(sender: sender, newDogManager: sudoDogManager)
-
+        
         // This is so the cell animates the changing of the switch properly, if this code wasnt implemented then when the table view is reloaded a new batch of cells is produced and that cell has the new switch state, bypassing the animation as the instantant the old one is switched it produces and shows the new switch
         // let indexPath = try! IndexPath(row: getDogManager().findDog(forDogId: parentDogName).dogReminders.findIndex(forReminderId: reminderId)+1, section: getDogManager().findIndex(forDogId: parentDogName))
-
+        
         // let cell = tableView.cellForRow(at: indexPath) as! DogsReminderDisplayTableViewCell
         // cell.reloadCell()
         // cell.reminderToggleSwitch.isOn = !isEnabled
@@ -110,6 +107,9 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
         }
 
         tableView.separatorInset = UIEdgeInsets.zero
+        // allow for refreshing of the information from the server
+        self.tableView.refreshControl = UIRefreshControl()
+        tableView.refreshControl?.addTarget(self, action: #selector(refreshTableData), for: .valueChanged)
     }
 
     private var viewIsBeingViewed: Bool = false
@@ -126,6 +126,19 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
             RunLoop.main.add(loopTimer!, forMode: .default)
         }
 
+    }
+    
+    /// Makes a query to the server to retrieve new information then refreshed the tableView
+    @objc private func refreshTableData() {
+        RequestUtils.getDogManager { dogManager in
+            // end refresh first otherwise there will be a weird visual issue
+            self.tableView.refreshControl?.endRefreshing()
+            if dogManager != nil {
+                self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager!)
+                // manually reload table as the self sernder doesn't do that
+                self.reloadTable()
+            }
+        }
     }
 
     private func reloadTable() {
@@ -437,7 +450,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
             let cell = tableView.dequeueReusableCell(withIdentifier: "dogsDogDisplayTableViewCell", for: indexPath)
 
             let customCell = cell as! DogsDogDisplayTableViewCell
-            customCell.setup(dogPassed: getDogManager().dogs[indexPath.section])
+            customCell.setup(forDog: getDogManager().dogs[indexPath.section])
             return cell
         }
         else {
@@ -445,7 +458,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
 
             let customCell = cell as! DogsReminderDisplayTableViewCell
             customCell.setup(parentDogId: getDogManager().dogs[indexPath.section].dogId,
-                             reminderPassed: getDogManager().dogs[indexPath.section].dogReminders.reminders[indexPath.row-1])
+                             forReminder: getDogManager().dogs[indexPath.section].dogReminders.reminders[indexPath.row-1])
             customCell.delegate = self
             return cell
         }

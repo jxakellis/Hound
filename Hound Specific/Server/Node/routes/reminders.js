@@ -34,9 +34,9 @@ router.post('/', createReminder);
     "countdownExecutionInterval":"requiredInt",
     "countdownIntervalElapsed":"requiredInt"
 
-    //FOR weekly, NOTE: skipping date omitted as a reminder cant be skipping when its created
-    "hour":"requiredInt",
-    "minute":"requiredInt",
+    //FOR weekly
+    "weeklyHour":"requiredInt",
+    "weeklyMinute":"requiredInt",
     "sunday":"requiredBool",
     "monday":"requiredBool",
     "tuesday":"requiredBool",
@@ -44,11 +44,15 @@ router.post('/', createReminder);
     "thursday":"requiredBool",
     "friday":"requiredBool",
     "saturday":"requiredBool",
+    "weeklyIsSkipping":"requiredBool",
+    "weeklySkipDate":"optionalDate"
 
-    //FOR monthly, NOTE: skipping date omitted as a reminder cant be skipping when its created
-    "hour":"requiredInt",
-    "minute":"requiredInt",
+    //FOR monthly
+    "monthlyHour":"requiredInt",
+    "monthlyMinute":"requiredInt",
     "dayOfMonth":"requiredInt"
+    "weeklyIsSkipping":"requiredBool",
+    "monthlySkipDate":"optionalDate"
 
     //FOR oneTime
     "date":"requiredDate"
@@ -79,8 +83,8 @@ router.put('/:reminderId', updateReminder);
     "countdownIntervalElapsed":"requiredInt"
 
     //FOR weekly
-    "hour":"requiredInt",
-    "minute":"requiredInt",
+    "weeklyHour":"requiredInt",
+    "weeklyMinute":"requiredInt",
     "sunday":"requiredBool",
     "monday":"requiredBool",
     "tuesday":"requiredBool",
@@ -88,15 +92,15 @@ router.put('/:reminderId', updateReminder);
     "thursday":"requiredBool",
     "friday":"requiredBool",
     "saturday":"requiredBool",
-    "skipping":"optionalBool", //if skipping is provided, then skipDate is required
-    "skipDate":"optionalDate"
+    "weeklyIsSkipping":"optionalBool", //if weeklyIsSkipping is provided, then weeklySkipDate is required
+    "weeklySkipDate":"optionalDate"
 
     //FOR monthly
-    "hour":"requiredInt",
-    "minute":"requiredInt",
+    "monthlyHour":"requiredInt",
+    "monthlyMinute":"requiredInt",
     "dayOfMonth":"requiredInt"
-    "skipping":"optionalBool", //if skipping is provided, then skipDate is required
-    "skipDate":"optionalDate"
+    "monthlyIsSkipping":"optionalBool", //if monthlyIsSkipping is provided, then monthlySkipDate is required
+    "weeklySkipDate":"optionalDate"
 
     //FOR oneTime
     "date":"requiredDate"

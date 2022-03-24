@@ -10,7 +10,7 @@ import UIKit
 
 protocol DogsNavigationViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
-    func willShowIntroductionPage()
+    func checkForRemindersIntroductionPage()
 }
 
 class DogsNavigationViewController: UINavigationController, DogsViewControllerDelegate {
@@ -38,9 +38,8 @@ class DogsNavigationViewController: UINavigationController, DogsViewControllerDe
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if LocalConfiguration.hasLoadedDogsIntroductionViewControllerBefore == false {
-            passThroughDelegate.willShowIntroductionPage()
-        }
+        passThroughDelegate.checkForRemindersIntroductionPage()
+        
     }
 
 }

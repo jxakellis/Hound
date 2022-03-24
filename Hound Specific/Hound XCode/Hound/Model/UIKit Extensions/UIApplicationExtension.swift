@@ -24,7 +24,7 @@ extension UIApplication {
             .first(where: \.isKeyWindow)
     }
     
-    static var previousAppBuild: Int = 0
+    static var previousAppBuild: Int?
     /*
      buildNumber=$(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" "$INFOPLIST_FILE")
      buildNumber=$(($buildNumber + 1))

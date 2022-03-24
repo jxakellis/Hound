@@ -46,7 +46,7 @@ enum UserInformation {
     
     static var userId: Int = 1
     
-    static private var storedUserEmail: String = "joesmith@gmail.com"
+    static private var storedUserEmail: String = "blanktest@gmail.com"
     static var userEmail: String {
         get {
             return storedUserEmail
@@ -59,7 +59,7 @@ enum UserInformation {
         }
     }
     
-    static private var storedUserFirstName: String = "Joe"
+    static private var storedUserFirstName: String = "Blank"
     static var userFirstName: String {
         get {
             return storedUserFirstName
@@ -72,7 +72,7 @@ enum UserInformation {
         }
     }
     
-    static private var storedUserLastName: String = "Smith"
+    static private var storedUserLastName: String = "Test"
     static var userLastName: String {
         get {
             return storedUserLastName

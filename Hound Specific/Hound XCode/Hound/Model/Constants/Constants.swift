@@ -115,7 +115,7 @@ enum UserDefaultsKeys: String {
     case isShowTerminationAlert
     case isShowReleaseNotes
     case hasLoadedIntroductionViewControllerBefore
-    case hasLoadedDogsIntroductionViewControllerBefore
+    case hasLoadedRemindersIntroductionViewControllerBefore
     
     // MARK: Other
     case hasDoneFirstTimeSetup
@@ -142,7 +142,6 @@ enum NotificationSound: String, CaseIterable {
             return
         }
         
-        AppDelegate.generalLogger.fault("Depreciated NotificationSound \(rawValue), resetting value to default")
         self = .radar
         return
         

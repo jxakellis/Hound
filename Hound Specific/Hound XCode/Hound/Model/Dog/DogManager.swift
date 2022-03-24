@@ -84,10 +84,12 @@ extension DogManagerProtocol {
     }
     
     var hasCreatedDog: Bool {
-        for _ in dogs {
+        if dogs.count > 0 {
             return true
         }
-        return false
+        else {
+            return false
+        }
     }
     
     var hasEnabledReminder: Bool {

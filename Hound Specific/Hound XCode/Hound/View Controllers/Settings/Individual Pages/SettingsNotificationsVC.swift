@@ -147,15 +147,18 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
             if UserConfiguration.isFollowUpEnabled != beforeUpdateIsFollowUpEnabled {
                 body[UserDefaultsKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
             }
-            UserRequest.update(body: body) { requestWasSuccessful in
-                if requestWasSuccessful == false {
-                    // error, revert to previousUserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
-                    UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
-                    UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
-                    
-                    self.synchronizeAllNotificationSwitches(animated: true)
+            if body.keys.isEmpty == false {
+                UserRequest.update(body: body) { requestWasSuccessful in
+                    if requestWasSuccessful == false {
+                        // error, revert to previousUserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
+                        UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
+                        UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
+                        
+                        self.synchronizeAllNotificationSwitches(animated: true)
+                    }
                 }
             }
+            
         }
         
     }

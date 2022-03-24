@@ -512,23 +512,22 @@
                         <outlet property="dogName" destination="7nG-bv-0ex" id="FOB-Ms-LQm"/>
                         <outlet property="dogRemoveButton" destination="CqS-mI-oWU" id="oJr-ei-9PK"/>
                         <outlet property="embeddedTableView" destination="6MT-az-4bi" id="dGS-SX-RQd"/>
-                        <outlet property="navigationItem" destination="P27-vi-zWN" id="X0y-m0-gln"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Px3-dS-KSe" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-5484.057971014493" y="445.98214285714283"/>
         </scene>
-        <!--Dogs Introduction View Controller-->
+        <!--Reminders Introduction View Controller-->
         <scene sceneID="fHU-gs-i6o">
             <objects>
-                <viewController id="RBT-bM-2BD" customClass="DogsIntroductionViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="RBT-bM-2BD" customClass="RemindersIntroductionViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="qvP-Er-QHY">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RQ3-lX-aXC">
-                                <rect key="frame" x="10" y="748" width="394" height="50"/>
+                                <rect key="frame" x="10" y="802" width="394" height="50"/>
                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="UMO-t3-06c"/>
@@ -543,7 +542,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Reminders" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ij3-3R-oyw" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="10" y="10" width="394" height="60"/>
+                                <rect key="frame" x="10" y="54" width="394" height="60"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="Y8x-t1-j79"/>
                                 </constraints>
@@ -552,13 +551,13 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Use this page to configure and manage reminders to care for your dog." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7yj-fM-UOb" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="10" y="80" width="394" height="48"/>
+                                <rect key="frame" x="10" y="124" width="394" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Defaults" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vvB-IM-4cz" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="148" width="414" height="40"/>
+                                <rect key="frame" x="0.0" y="192" width="414" height="40"/>
                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="mhb-KW-W5J"/>
@@ -568,13 +567,13 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="We'll create reminders that are useful for most dogs. Do you want to use them?" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iPT-rX-rGQ" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="10" y="208" width="300" height="72"/>
+                                <rect key="frame" x="10" y="252" width="300" height="72"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="752" verticalHuggingPriority="752" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OeF-Fp-oLD">
-                                <rect key="frame" x="320" y="228.5" width="51" height="31"/>
+                                <rect key="frame" x="320" y="272.5" width="51" height="31"/>
                                 <color key="onTintColor" systemColor="systemBlueColor"/>
                             </switch>
                         </subviews>
@@ -1535,8 +1534,7 @@
                         <segue destination="3Gc-35-HHr" kind="relationship" relationship="viewControllers" id="rPh-NH-iWm"/>
                         <segue destination="c3p-F3-kMn" kind="relationship" relationship="viewControllers" id="lzU-1b-eKA"/>
                         <segue destination="t9t-B7-eVe" kind="relationship" relationship="viewControllers" id="CeX-iU-V0j"/>
-                        <segue destination="w3D-Ib-MEE" kind="show" identifier="introductionViewController" id="O7H-mK-wdD"/>
-                        <segue destination="RBT-bM-2BD" kind="show" identifier="dogsIntroductionViewController" id="cWf-yg-dvP"/>
+                        <segue destination="RBT-bM-2BD" kind="presentation" identifier="remindersIntroductionViewController" modalPresentationStyle="fullScreen" id="cWf-yg-dvP"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
@@ -1618,11 +1616,11 @@
             <objects>
                 <viewController id="w3D-Ib-MEE" customClass="IntroductionViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="diK-x9-88a">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S8N-37-uHI">
-                                <rect key="frame" x="10" y="748" width="394" height="50"/>
+                                <rect key="frame" x="10" y="802" width="394" height="50"/>
                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="vOg-Li-YAl"/>
@@ -1636,7 +1634,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Welcome" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="esp-x0-Cun" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="10" y="10" width="394" height="60"/>
+                                <rect key="frame" x="10" y="54" width="394" height="60"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="XfT-Dv-3mJ"/>
                                 </constraints>
@@ -1645,7 +1643,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="What Is Your Dog's Name?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RY9-6G-ybY" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="80" width="414" height="40"/>
+                                <rect key="frame" x="0.0" y="124" width="414" height="40"/>
                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="x69-gq-cfc"/>
@@ -1655,7 +1653,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="752" verticalHuggingPriority="752" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Bella" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="CXH-t8-W6h">
-                                <rect key="frame" x="110" y="223" width="294" height="40"/>
+                                <rect key="frame" x="110" y="267" width="294" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="aA4-lN-g0r"/>
                                 </constraints>
@@ -1663,13 +1661,13 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="755" verticalCompressionResistancePriority="755" text="We will generate a basic dog for you. Reminders will come later." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0FZ-Za-zwc" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="10" y="140" width="394" height="48"/>
+                                <rect key="frame" x="10" y="184" width="394" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Appearance" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="suw-no-X4l" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="308" width="414" height="40"/>
+                                <rect key="frame" x="0.0" y="352" width="414" height="40"/>
                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="kGU-ls-QDM"/>
@@ -1679,7 +1677,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="2" translatesAutoresizingMaskIntoConstraints="NO" id="5cO-UW-ieo">
-                                <rect key="frame" x="10" y="368" width="394" height="41"/>
+                                <rect key="frame" x="10" y="412" width="394" height="41"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="hwL-CS-cpK"/>
                                 </constraints>
@@ -1694,7 +1692,7 @@
                                 </connections>
                             </segmentedControl>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CJ5-mJ-d5P" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="10" y="198" width="90" height="90"/>
+                                <rect key="frame" x="10" y="242" width="90" height="90"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="90" id="Ay3-La-q5a"/>
                                     <constraint firstAttribute="width" secondItem="CJ5-mJ-d5P" secondAttribute="height" multiplier="1:1" id="jqt-Om-9qR"/>
@@ -1739,12 +1737,13 @@
                         <outlet property="dogIcon" destination="CJ5-mJ-d5P" id="fkH-2x-g2s"/>
                         <outlet property="dogName" destination="CXH-t8-W6h" id="N1m-On-Kcn"/>
                         <outlet property="dogNameDescription" destination="0FZ-Za-zwc" id="3Ct-bA-j83"/>
-                        <outlet property="interfaceSegmentedControl" destination="5cO-UW-ieo" id="E1B-Eg-O8w"/>
+                        <outlet property="interfaceStyleSegmentedControl" destination="5cO-UW-ieo" id="la1-ZN-DjC"/>
+                        <segue destination="49e-Tb-3d3" kind="presentation" identifier="mainTabBarViewController" modalPresentationStyle="fullScreen" id="nsH-qM-K4m"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ig9-EO-oHv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1634.7826086956522" y="771.42857142857144"/>
+            <point key="canvasLocation" x="1975" y="680"/>
         </scene>
         <!--Edit Dog Reminder -->
         <scene sceneID="Kgj-aC-JCD">
@@ -2297,11 +2296,12 @@
                     <connections>
                         <outlet property="statusLabel" destination="0jo-Zc-MLN" id="X55-oX-axt"/>
                         <segue destination="49e-Tb-3d3" kind="presentation" identifier="mainTabBarViewController" modalPresentationStyle="fullScreen" id="Jqw-FR-46g"/>
+                        <segue destination="w3D-Ib-MEE" kind="presentation" identifier="introductionViewController" modalPresentationStyle="fullScreen" id="3AW-Zf-Dxq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="f1n-Oj-Vw4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2207" y="-9"/>
+            <point key="canvasLocation" x="3048" y="19"/>
         </scene>
         <!--Personal Info-->
         <scene sceneID="c2u-Cd-UY4">
@@ -3193,6 +3193,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
+        <segue reference="nsH-qM-K4m"/>
         <segue reference="GZX-3R-sVV"/>
     </inferredMetricsTieBreakers>
     <resources>

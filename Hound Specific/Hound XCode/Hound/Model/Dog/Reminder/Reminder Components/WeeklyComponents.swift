@@ -47,12 +47,12 @@ class WeeklyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtocol
         super.init()
     }
     
-    convenience init(hour: Int?, minute: Int?, skipping: Bool?, skipDate: Date?, sunday: Bool?, monday: Bool?, tuesday: Bool?, wednesday: Bool?, thursday: Bool?, friday: Bool?, saturday: Bool?) {
+    convenience init(hour: Int?, minute: Int?, isSkipping: Bool?, skipDate: Date?, sunday: Bool?, monday: Bool?, tuesday: Bool?, wednesday: Bool?, thursday: Bool?, friday: Bool?, saturday: Bool?) {
         self.init()
         storedDateComponents.hour = hour
         storedDateComponents.minute = minute
-        if skipping != nil {
-            isSkipping = skipping!
+        if isSkipping != nil {
+            self.isSkipping = isSkipping!
         }
         isSkippingLogDate = skipDate
         
@@ -104,7 +104,7 @@ class WeeklyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtocol
         case .hour:
             storedDateComponents.hour = newValue
         case .minute:
-            storedDateComponents.month = newValue
+            storedDateComponents.minute = newValue
         default:
             return
         }
@@ -163,7 +163,7 @@ class WeeklyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtocol
             calculatedDates.append(Calendar.current.date(byAdding: .day, value: 7, to: calculatedDates[0])!)
         }
         else {
-            AppDelegate.generalLogger.warning("Calculated Dates for futureExecutionDates empty")
+            AppDelegate.generalLogger.warning("Calculated Dates For futureExecutionDates Empty")
             // calculated dates should never be zero, this means there are somehow zero weekdays selected. Handle this weird case by just appending future dates (one 1 week ahead and the other 2 weeks ahead)
             calculatedDates.append(Calendar.current.date(byAdding: .day, value: 7, to: executionBasis)!)
             calculatedDates.append(Calendar.current.date(byAdding: .day, value: 14, to: executionBasis)!)

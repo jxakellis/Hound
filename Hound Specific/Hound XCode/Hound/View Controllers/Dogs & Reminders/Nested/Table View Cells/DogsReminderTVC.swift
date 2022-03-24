@@ -9,7 +9,8 @@
 import UIKit
 
 protocol DogsReminderTableViewCellDelegate: AnyObject {
-    func didToggleEnable(sender: Sender, reminderId: Int, newEnableStatus: Bool)
+    /// The reminder switch to toggle the enable status was flipped. The reminder was updated and the server queried.
+    func didUpdateReminderEnable(sender: Sender, parentDogId: Int, reminder: Reminder)
 }
 
 class DogsReminderTableViewCell: UITableViewCell {
@@ -20,14 +21,25 @@ class DogsReminderTableViewCell: UITableViewCell {
     @IBOutlet private weak var reminderToggleSwitch: UISwitch!
 
     @IBAction func didToggleEnable(_ sender: Any) {
-        delegate.didToggleEnable(sender: Sender(origin: self, localized: self), reminderId: reminderSource.reminderId, newEnableStatus: self.reminderToggleSwitch.isOn)
+        reminder.isEnabled = reminderToggleSwitch.isOn
+        delegate.didUpdateReminderEnable(sender: Sender(origin: self, localized: self), parentDogId: parentDogId, reminder: reminder)
+        
+        RemindersRequest.update(forDogId: parentDogId, forReminder: reminder) { requestWasSuccessful in
+            if requestWasSuccessful == false {
+                self.reminderToggleSwitch.setOn(false, animated: true)
+                self.reminder.isEnabled = self.reminderToggleSwitch.isOn
+                self.delegate.didUpdateReminderEnable(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, reminder: self.reminder)
+            }
+        }
     }
 
     // MARK: - Properties
 
     weak var delegate: DogsReminderTableViewCellDelegate! = nil
+    
+    var parentDogId: Int! = nil
 
-    var reminderSource: Reminder! = nil
+    var reminder: Reminder! = nil
 
     // MARK: - Main
 
@@ -40,8 +52,9 @@ class DogsReminderTableViewCell: UITableViewCell {
         // self.imageView?.contentMode = .center
     }
 
-    func setup(reminder: Reminder) {
-        reminderSource = reminder
+    func setup(parentDogId: Int, forReminder reminderPassed: Reminder) {
+        self.parentDogId = parentDogId
+        reminder = reminderPassed
 
         reminderDisplay.text = ""
 
@@ -61,7 +74,7 @@ class DogsReminderTableViewCell: UITableViewCell {
         }
         else if reminder.reminderType == .weekly {
 
-            try! self.reminderDisplay.text?.append(" \(String.convertToReadable(fromDateComponents: reminder.monthlyComponents.dateComponents))")
+            try! self.reminderDisplay.text?.append(" \(String.convertToReadable(fromDateComponents: reminder.weeklyComponents.dateComponents))")
 
             // weekdays
             if reminder.weeklyComponents.weekdays == [1, 2, 3, 4, 5, 6, 7] {

@@ -87,41 +87,6 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
     @IBOutlet private weak var addDogButton: UIButton!
 
     @IBAction func didClickIcon(_ sender: Any) {
-        let imagePickMethodAlertController = GeneralUIAlertController(title: "Choose Image", message: nil, preferredStyle: .actionSheet)
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-
-        imagePickMethodAlertController.addAction(UIAlertAction(title: "Camera", style: .default, handler: { _ in
-            openCamera()
-        }))
-
-        imagePickMethodAlertController.addAction(UIAlertAction(title: "Gallery", style: .default, handler: { _ in
-            openGallary()
-        }))
-
-        imagePickMethodAlertController.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
-
-        func openCamera() {
-            if UIImagePickerController .isSourceTypeAvailable(UIImagePickerController.SourceType.camera) {
-                imagePicker.sourceType = UIImagePickerController.SourceType.camera
-                imagePicker.allowsEditing = true
-                imagePicker.cameraCaptureMode = .photo
-                imagePicker.cameraDevice = .rear
-                self.present(imagePicker, animated: true, completion: nil)
-            }
-            else {
-                let noCameraAlertController  = GeneralUIAlertController(title: "Warning", message: "You don't have camera", preferredStyle: .alert)
-                noCameraAlertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                AlertManager.shared.enqueueAlertForPresentation(noCameraAlertController)
-            }
-        }
-
-        func openGallary() {
-            imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
-            imagePicker.allowsEditing = true
-            self.present(imagePicker, animated: true, completion: nil)
-        }
-
         AlertManager.shared.enqueueActionSheetForPresentation(imagePickMethodAlertController, sourceView: dogIcon, permittedArrowDirections: [.up, .down])
     }
 
@@ -225,7 +190,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
 
     var isUpdating: Bool = false
 
-    // private var updatedReminders: [Reminder]? = nil
+    let imagePickMethodAlertController = GeneralUIAlertController(title: "Choose Image", message: nil, preferredStyle: .actionSheet)
 
     /// Auto save warning will show if true
     private var shouldPromptSaveWarning: Bool = false
@@ -298,6 +263,10 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             dogRemoveButton.isEnabled = false
             self.navigationItem.title = "Create Dog"
         }
+        
+        // Setup AlertController for icon button now, increases responsiveness
+        setupDogIconImagePicker()
+        
     }
 
     /// Hides the big gray back button and big blue checkmark, don't want access to them while editting a reminder.
@@ -313,6 +282,45 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             addDogButtonBackground.isHidden = true
             cancelAddDogButton.isHidden = true
             cancelAddDogButtonBackground.isHidden = true
+        }
+    }
+    
+    /// Sets up the UIAlertController that prompts the user in the different ways that they can add an icon to their dog (e.g. take a picture of choose an existing one
+    private func setupDogIconImagePicker() {
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        
+        imagePickMethodAlertController.addAction(UIAlertAction(title: "Camera", style: .default, handler: { _ in
+            openCamera()
+        }))
+        
+        imagePickMethodAlertController.addAction(UIAlertAction(title: "Gallery", style: .default, handler: { _ in
+            openGallary()
+        }))
+        
+        imagePickMethodAlertController.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+        
+        func openCamera() {
+            if UIImagePickerController .isSourceTypeAvailable(UIImagePickerController.SourceType.camera) {
+                imagePicker.sourceType = UIImagePickerController.SourceType.camera
+                imagePicker.allowsEditing = true
+                imagePicker.cameraCaptureMode = .photo
+                imagePicker.cameraDevice = .rear
+                self.present(imagePicker, animated: true, completion: nil)
+                
+            }
+            else {
+                let warningAlert  = GeneralUIAlertController(title: "Warning", message: "You don't have camera", preferredStyle: .alert)
+                warningAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                AlertManager.shared.enqueueAlertForPresentation(warningAlert)
+            }
+        }
+        
+        func openGallary() {
+            imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
+            imagePicker.allowsEditing = true
+            self.present(imagePicker, animated: true, completion: nil)
+            
         }
     }
 

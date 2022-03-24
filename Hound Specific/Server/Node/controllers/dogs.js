@@ -19,7 +19,8 @@ const getDogs = async (req, res) => {
       if (result.length === 0) {
         // successful but empty array, not dogs to return
         req.commitQueries(req);
-        return res.status(204).json({ result: [] });
+        // return res.status(204).json({ result: [] });
+        return res.status(200).json({ result: [] });
       }
       else {
         // array has items, meaning there was a dog found, successful!
@@ -38,7 +39,8 @@ const getDogs = async (req, res) => {
       if (result.length === 0) {
         // successful but empty array, not dogs to return
         req.commitQueries(req);
-        return res.status(204).json({ result: [] });
+        // return res.status(204).json({ result: [] });
+        return res.status(200).json({ result: [] });
       }
       else {
         // array has items, meaning there were dogs found, successful!

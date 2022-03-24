@@ -13,6 +13,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        AppDelegate.lifeCycleLogger.notice("Scene Will Connect To Session")
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
@@ -21,7 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
-        AppDelegate.lifeCycleLogger.notice("Scene did disconnect")
+        AppDelegate.lifeCycleLogger.notice("Scene Did Disconnect")
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.
         // Release any resources associated with this scene that can be re-created the next time the scene connects.
@@ -30,7 +31,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
-        AppDelegate.lifeCycleLogger.notice("Scene did become active")
+        AppDelegate.lifeCycleLogger.notice("Scene Did Become Active")
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
         // AppDelegate.lifeCycleLogger.notice("scene did become active")
@@ -38,13 +39,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
-        AppDelegate.lifeCycleLogger.notice("Scene will resign active")
+        AppDelegate.lifeCycleLogger.notice("Scene Will Resign Active")
         // Called when the scene will move from an active state to an inactive state.
         // This may occur due to temporary interruptions (ex. an incoming phone call).
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
-        AppDelegate.lifeCycleLogger.notice("Scene will enter foreground")
+        AppDelegate.lifeCycleLogger.notice("Scene Will Enter Foreground")
         PersistenceManager.willEnterForeground()
     }
 
@@ -53,7 +54,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
 
-        AppDelegate.lifeCycleLogger.notice("Scene did enter background")
+        AppDelegate.lifeCycleLogger.notice("Scene Did Enter Background")
         PersistenceManager.willEnterBackground()
 
     }

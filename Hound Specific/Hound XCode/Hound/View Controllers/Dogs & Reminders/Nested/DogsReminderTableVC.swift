@@ -17,20 +17,13 @@ protocol DogsReminderTableViewControllerDelegate: AnyObject {
 class DogsReminderTableViewController: UITableViewController, ReminderManagerControlFlowProtocol, DogsNestedReminderViewControllerDelegate, DogsReminderTableViewCellDelegate {
 
     // MARK: - Dogs Reminder Table View Cell
-
-    func didToggleEnable(sender: Sender, reminderId: Int, newEnableStatus: Bool) {
+    
+    func didUpdateReminderEnable(sender: Sender, parentDogId: Int, reminder: Reminder) {
         let sudoReminderManager = getReminderManager()
-        do {
-            let reminder = try sudoReminderManager.findReminder(forReminderId: reminderId)
-            reminder.isEnabled = newEnableStatus
-            setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
-
-            delegate.didUpdateReminder(updatedReminder: reminder)
-        }
-        catch {
-            fatalError("DogsReminderTableViewController func didToggleEnable(reminderName: String, newEnableStatus: Bool) error")
-        }
-
+        let updatedReminder = try! sudoReminderManager.findReminder(forReminderId: reminder.reminderId)
+        updatedReminder.isEnabled = reminder.isEnabled
+        setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
+        delegate.didUpdateReminder(updatedReminder: reminder)
     }
 
     // MARK: - Dogs Nested Reminder
@@ -155,7 +148,7 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
 
         let castCell = cell as! DogsReminderTableViewCell
         castCell.delegate = self
-        castCell.setup(reminder: getReminderManager().reminders[indexPath.row])
+        castCell.setup(parentDogId: parentDogId, forReminder: getReminderManager().reminders[indexPath.row])
 
         return cell
     }

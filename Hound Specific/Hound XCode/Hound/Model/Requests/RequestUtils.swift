@@ -48,18 +48,18 @@ enum InternalRequestUtils {
                     responseBody = try JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as? [String: [[String: Any]]] ?? JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as? [String: Any]
                 }
                 catch {
-                    AppDelegate.APIRequestLogger.error("Error when serializing data into JSON \(error.localizedDescription)")
+                    AppDelegate.APIRequestLogger.error("Error When Serializing Data Into JSON \(error.localizedDescription)")
                 }
             }
             
             // pass out information
-            if error != nil {
+            if error != nil || (data == nil && response == nil) {
                 // assume an error is no response as that implies request/response failure, meaning the end result of no response is the same
                 completionHandler(responseBody, .noResponse)
             }
             else if responseCode != nil {
                 // we got a response from the server
-                if 200...299 ~= responseCode! {
+                if 200...299 ~= responseCode! && responseBody != nil {
                     // our request was valid and successful
                     completionHandler(responseBody, .successResponse)
                 }
@@ -94,11 +94,14 @@ extension InternalRequestUtils {
             completionHandler(responseBody, responseStatus)
         }
         
-        AppDelegate.APIRequestLogger.notice("Get Request")
+        AppDelegate.APIRequestLogger.notice("Get Request for \(path)")
     }
     
     /// Perform a generic get request at the specified url with provided body. Throws as creating request can fail if body is invalid.
     static func genericPostRequest(path: URL, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) throws {
+        
+        RequestUtils.warnForEmptyBody(forPath: path, forBody: body)
+        
         // create request to send
         var req = URLRequest(url: path)
         
@@ -117,11 +120,16 @@ extension InternalRequestUtils {
             completionHandler(responseBody, responseStatus)
         }
         
-        AppDelegate.APIRequestLogger.notice("Post Request")
+        AppDelegate.APIRequestLogger.notice("Post Request for \(path)")
+        // AppDelegate.APIRequestLogger.notice("Post Request for \(path) \n For Body: \(body)")
+        
     }
     
     /// Perform a generic get request at the specified url with provided body, assuming path params are already provided. Throws as creating request can fail if body is invalid
     static func genericPutRequest(path: URL, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) throws {
+        
+        RequestUtils.warnForEmptyBody(forPath: path, forBody: body)
+        
         // create request to send
         var req = URLRequest(url: path)
         
@@ -140,7 +148,9 @@ extension InternalRequestUtils {
             completionHandler(responseBody, responseStatus)
         }
         
-        AppDelegate.APIRequestLogger.notice("Put Request")
+        AppDelegate.APIRequestLogger.notice("Put Request for \(path)")
+        // AppDelegate.APIRequestLogger.notice("Put Request for \(path) \n For Body: \(body)")
+        
     }
     
     /// Perform a generic get request at the specified url, assuming path params are already provided. No body needed for request. No throws as request creating cannot fail
@@ -155,7 +165,7 @@ extension InternalRequestUtils {
             completionHandler(responseBody, responseStatus)
         }
         
-        AppDelegate.APIRequestLogger.notice("Delete Request")
+        AppDelegate.APIRequestLogger.notice("Delete Request for \(path)")
         
     }
     
@@ -239,11 +249,11 @@ extension InternalRequestUtils {
             body["countdownExecutionInterval"] = reminder.countdownComponents.executionInterval
             body["countdownIntervalElapsed"] = reminder.countdownComponents.intervalElapsed
         case .weekly:
-            body["hour"] = reminder.weeklyComponents.dateComponents.hour
-            body["minute"] = reminder.weeklyComponents.dateComponents.minute
-            body["skipping"] = reminder.weeklyComponents.isSkipping
+            body["weeklyHour"] = reminder.weeklyComponents.dateComponents.hour
+            body["weeklyMinute"] = reminder.weeklyComponents.dateComponents.minute
+           body["weeklyIsSkipping"] = reminder.weeklyComponents.isSkipping
             if reminder.weeklyComponents.isSkipping == true && reminder.weeklyComponents.isSkippingLogDate != nil {
-                body["skipDate"] = reminder.weeklyComponents.isSkippingLogDate!.ISO8601Format()
+                body["weeklySkipDate"] = reminder.weeklyComponents.isSkippingLogDate!.ISO8601Format()
             }
             
             body["sunday"] = false
@@ -276,11 +286,11 @@ extension InternalRequestUtils {
             }
             
         case .monthly:
-            body["hour"] = reminder.monthlyComponents.dateComponents.hour
-            body["minute"] = reminder.monthlyComponents.dateComponents.minute
-            body["skipping"] = reminder.monthlyComponents.isSkipping
+            body["monthlyHour"] = reminder.monthlyComponents.dateComponents.hour
+            body["monthlyMinute"] = reminder.monthlyComponents.dateComponents.minute
+            body["monthlyIsSkipping"] = reminder.monthlyComponents.isSkipping
             if reminder.monthlyComponents.isSkipping == true && reminder.monthlyComponents.isSkippingLogDate != nil {
-                body["skipDate"] = reminder.monthlyComponents.isSkippingLogDate!.ISO8601Format()
+                body["monthlySkipDate"] = reminder.monthlyComponents.isSkippingLogDate!.ISO8601Format()
             }
             body["dayOfMonth"] = reminder.monthlyComponents.dayOfMonth
         case .oneTime:
@@ -333,6 +343,12 @@ enum RequestUtils {
         }
         if logId != nil && logId! == -1 {
             AppDelegate.APIRequestLogger.warning("Warning: logId is -1")
+        }
+    }
+    /// Provides warning if the id of anything is set to a placeholder value.
+    static func warnForEmptyBody(forPath path: URL, forBody body: [String: Any]) {
+        if body.keys.count == 0 {
+            AppDelegate.APIRequestLogger.warning("Warning: Body is empty \nFor path: \(path)")
         }
     }
 }

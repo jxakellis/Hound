@@ -42,13 +42,9 @@ class AlarmUIAlertController: GeneralUIAlertController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        // DispatchQueue.global().async{
         AppDelegate.lifeCycleLogger.notice("AlarmUIAlertController will disappear")
         self.shouldVibrate = false
         
         AudioManager.stopAudio()
-        
-        // }
     }
 }

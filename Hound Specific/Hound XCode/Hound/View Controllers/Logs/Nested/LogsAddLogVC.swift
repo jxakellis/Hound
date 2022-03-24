@@ -298,7 +298,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         // new
         else {
             // starts blank by default
-            if logType.text?.trimmingCharacters(in: .whitespaces) != "" {
+            if logType.text?.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
                 return true
             }
         }

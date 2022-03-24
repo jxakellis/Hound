@@ -344,13 +344,22 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     }
 
     private func willOpenReminder(parentDogId: Int, reminderId: Int? = nil) {
-
-        self.performSegue(withIdentifier: "dogsIndependentReminderViewController", sender: self)
-        dogsIndependentReminderViewController.parentDogId = parentDogId
-
-        // updating
+ // updating
         if reminderId != nil {
-            dogsIndependentReminderViewController.targetReminder = try! getDogManager().findDog(forDogId: parentDogId).dogReminders.findReminder(forReminderId: reminderId!)
+            RemindersRequest.get(forDogId: parentDogId, forReminderId: reminderId!) { reminder in
+                if reminder != nil {
+                    self.performSegue(withIdentifier: "dogsIndependentReminderViewController", sender: self)
+                    self.dogsIndependentReminderViewController.parentDogId = parentDogId
+                    self.dogsIndependentReminderViewController.targetReminder = reminder
+                }
+            }
+            
+        }
+        // creating new
+        else {
+            // no need to query as nothing in server since creating
+            self.performSegue(withIdentifier: "dogsIndependentReminderViewController", sender: self)
+            dogsIndependentReminderViewController.parentDogId = parentDogId
         }
 
     }
@@ -607,11 +616,11 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             dogsAddDogViewController = segue.destination as! DogsAddDogViewController
             dogsAddDogViewController.delegate = self
         }
-        if segue.identifier == "dogsMainScreenTableViewController" {
+        else if segue.identifier == "dogsMainScreenTableViewController" {
             dogsMainScreenTableViewController = segue.destination as! DogsTableViewController
             dogsMainScreenTableViewController.delegate = self
         }
-        if segue.identifier == "dogsIndependentReminderViewController" {
+        else if segue.identifier == "dogsIndependentReminderViewController" {
             dogsIndependentReminderViewController = segue.destination as! DogsIndependentReminderViewController
             dogsIndependentReminderViewController.delegate = self
         }

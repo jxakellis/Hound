@@ -24,7 +24,7 @@ enum ReminderAction: String, CaseIterable {
             }
         }
         
-        AppDelegate.generalLogger.fault("reminderType Not Found")
+        AppDelegate.generalLogger.fault("reminderAction Not Found")
         self = .custom
     }
     // common

@@ -37,7 +37,7 @@ class DogsDogDisplayTableViewCell: UITableViewCell {
     }
 
     // Function used externally to setup dog
-    func setup(dogPassed: Dog) {
+    func setup(forDog dogPassed: Dog) {
         dog = dogPassed
 
         dogIcon.image = dogPassed.icon

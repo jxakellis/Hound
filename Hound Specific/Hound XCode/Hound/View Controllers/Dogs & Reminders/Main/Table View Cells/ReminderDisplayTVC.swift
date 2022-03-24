@@ -9,7 +9,8 @@
 import UIKit
 
 protocol DogsReminderDisplayTableViewCellDelegate: AnyObject {
-    func didToggleReminderSwitch(sender: Sender, parentDogId: Int, reminderId: Int, isEnabled: Bool)
+    /// The reminder switch to toggle the enable status was flipped. The reminder was updated and the server queried.
+    func didUpdateReminderEnable(sender: Sender, parentDogId: Int, reminder: Reminder)
 }
 
 class DogsReminderDisplayTableViewCell: UITableViewCell {
@@ -28,7 +29,16 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
 
     // When the on off switch is toggled
     @IBAction private func didToggleReminderSwitch(_ sender: Any) {
-        delegate.didToggleReminderSwitch(sender: Sender(origin: self, localized: self), parentDogId: parentDogId, reminderId: reminder.reminderId, isEnabled: reminderToggleSwitch.isOn)
+        reminder.isEnabled = reminderToggleSwitch.isOn
+        delegate.didUpdateReminderEnable(sender: Sender(origin: self, localized: self), parentDogId: parentDogId, reminder: reminder)
+        
+        RemindersRequest.update(forDogId: parentDogId, forReminder: reminder) { requestWasSuccessful in
+            if requestWasSuccessful == false {
+                self.reminderToggleSwitch.setOn(false, animated: true)
+                self.reminder.isEnabled = self.reminderToggleSwitch.isOn
+                self.delegate.didUpdateReminderEnable(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, reminder: self.reminder)
+            }
+        }
     }
 
     // MARK: - Properties
@@ -53,7 +63,7 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
     }
 
     // Setup function that sets up the different IBOutlet properties
-    func setup(parentDogId: Int, reminderPassed: Reminder) {
+    func setup(parentDogId: Int, forReminder reminderPassed: Reminder) {
         self.parentDogId = parentDogId
         self.reminder = reminderPassed
         self.reminderActionDisplayName.text = reminderPassed.displayTypeName

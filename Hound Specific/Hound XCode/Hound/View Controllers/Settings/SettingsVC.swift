@@ -74,24 +74,24 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
             settingsTableViewController = segue.destination as? SettingsTableViewController
             settingsTableViewController?.delegate = self
         }
-        if segue.identifier == "settingsPersonalInformationViewController" {
+        else if segue.identifier == "settingsPersonalInformationViewController" {
             settingsPersonalInformationViewController = segue.destination as? SettingsPersonalInformationViewController
         }
-        if segue.identifier == "settingsFamilyViewController" {
+        else if segue.identifier == "settingsFamilyViewController" {
             settingsFamilyViewController = segue.destination as? SettingsFamilyViewController
         }
-        if segue.identifier == "settingsAppearanceViewController" {
+        else if segue.identifier == "settingsAppearanceViewController" {
             settingsAppearanceViewController = segue.destination as? SettingsAppearanceViewController
         }
 
-        if segue.identifier == "settingsRemindersViewController" {
+        else if segue.identifier == "settingsRemindersViewController" {
             settingsRemindersViewController = segue.destination as? SettingsRemindersViewController
             settingsRemindersViewController?.delegate = self
         }
-        if segue.identifier == "settingsNotificationsViewController" {
+        else if segue.identifier == "settingsNotificationsViewController" {
             settingsNotificationsViewController = segue.destination as? SettingsNotificationsViewController
         }
-        if segue.identifier == "settingsAboutViewController" {
+        else if segue.identifier == "settingsAboutViewController" {
             settingsAboutViewController = segue.destination as? SettingsAboutViewController
         }
         // Get the new view controller using segue.destination.

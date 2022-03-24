@@ -16,17 +16,21 @@ enum DogsRequestError: Error {
 enum DogsRequest: RequestProtocol {
     static let basePathWithoutParams: URL = UserRequest.basePathWithUserId.appendingPathComponent("/dogs")
     
+    // MARK: - Private Functions
+    
     /**
      dogId optional, providing it only returns the single dog (if found) otherwise returns all dogs
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
     private static func get(forDogId dogId: Int?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
+        RequestUtils.warnForPlaceholderId(dogId: dogId)
+        
         let pathWithParams: URL
         
         // special case where we append the query parameter of all. Its value doesn't matter but it just tells the server that we want the logs and reminders of the dog too.
         if dogId != nil {
-            RequestUtils.warnForPlaceholderId(dogId: dogId!)
+            
             var path = URLComponents(url: basePathWithoutParams.appendingPathComponent("/\(dogId!)"), resolvingAgainstBaseURL: false)!
             path.queryItems = [URLQueryItem(name: "reminders", value: "true"), URLQueryItem(name: "logs", value: "true")]
             pathWithParams = path.url!
@@ -44,12 +48,11 @@ enum DogsRequest: RequestProtocol {
         
     }
     
-    // MARK: - Private Functions
-    
     /**
      completionHandler returns response data: dogId for the created dog and the ResponseStatus
      */
     private static func create(forDog dog: Dog, completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
+        RequestUtils.warnForPlaceholderId()
         let body = InternalRequestUtils.createDogBody(dog: dog)
         
         // make put request, assume body valid as constructed with method
@@ -192,14 +195,14 @@ extension DogsRequest {
                         completionHandler(dogId!)
                     }
                     else {
-                        ErrorManager.alert(forError: GeneralResponseError.failureResponse)
+                        ErrorManager.alert(forError: GeneralResponseError.failurePostResponse)
                     }
                 case .failureResponse:
                     completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.failureResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.failurePostResponse)
                 case .noResponse:
                     completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.noResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.noPostResponse)
                 }
             }
         }
@@ -216,10 +219,10 @@ extension DogsRequest {
                     completionHandler(true)
                 case .failureResponse:
                     completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.failureResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.failurePutResponse)
                 case .noResponse:
                     completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.noResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.noPutResponse)
                 }
             }
         }
@@ -236,10 +239,10 @@ extension DogsRequest {
                     completionHandler(true)
                 case .failureResponse:
                     completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.failureResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.failureDeleteResponse)
                 case .noResponse:
                     completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.noResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.noDeleteResponse)
                 }
             }
         }
