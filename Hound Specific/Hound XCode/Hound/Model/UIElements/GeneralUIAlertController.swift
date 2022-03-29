@@ -11,6 +11,9 @@ import UIKit
 
 class GeneralUIAlertController: UIAlertController {
     
+    /// This is simply a tag attached to the alertController. This helps keep track of server realted alert controller. Ultimately, this is used to detect if there are multiple server alerts in the AlertManager queue, therefore removing duplicate messages.
+    var serverRelated: Bool = false
+    
     override func viewDidDisappear(_ animated: Bool) {
         AlertManager.shared.alertDidComplete()
     }

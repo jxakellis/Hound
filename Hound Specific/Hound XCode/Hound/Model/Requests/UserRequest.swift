@@ -27,7 +27,9 @@ enum UserRequest: RequestProtocol {
         RequestUtils.warnForPlaceholderId()
         // at this point in time, an error can only occur if there is a invalid body provided. Since there is no body, there is no risk of an error.
         InternalRequestUtils.genericGetRequest(path: basePathWithUserId) { responseBody, responseStatus in
-            completionHandler(responseBody, responseStatus)
+            DispatchQueue.main.async {
+                completionHandler(responseBody, responseStatus)
+            }
         }
         
     }
@@ -36,7 +38,9 @@ enum UserRequest: RequestProtocol {
      */
     static func get(forUserEmail: String, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         InternalRequestUtils.genericGetRequest(path: basePathWithoutParams.appendingPathComponent("/\(forUserEmail)")) { responseBody, responseStatus in
-            completionHandler(responseBody, responseStatus)
+            DispatchQueue.main.async {
+                completionHandler(responseBody, responseStatus)
+            }
         }
         
     }

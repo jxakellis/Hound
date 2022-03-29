@@ -29,13 +29,14 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
 
     // When the on off switch is toggled
     @IBAction private func didToggleReminderSwitch(_ sender: Any) {
+        let beforeUpdateIsEnabled = reminder.isEnabled
         reminder.isEnabled = reminderToggleSwitch.isOn
         delegate.didUpdateReminderEnable(sender: Sender(origin: self, localized: self), parentDogId: parentDogId, reminder: reminder)
         
         RemindersRequest.update(forDogId: parentDogId, forReminder: reminder) { requestWasSuccessful in
             if requestWasSuccessful == false {
-                self.reminderToggleSwitch.setOn(false, animated: true)
-                self.reminder.isEnabled = self.reminderToggleSwitch.isOn
+                self.reminderToggleSwitch.setOn(beforeUpdateIsEnabled, animated: true)
+                self.reminder.isEnabled = beforeUpdateIsEnabled
                 self.delegate.didUpdateReminderEnable(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, reminder: self.reminder)
             }
         }

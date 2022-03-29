@@ -9,9 +9,8 @@
 import Foundation
 
 /// Enum full of cases of possible errors
-enum LogManagerError: Error {
-    case logIdPresent
-    case logIdNotPresent
+enum LogManagerError: String, Error {
+    case logIdNotPresent = "Something went wrong when trying modify your log, please try again! (LME.lINP)"
 }
 
 class LogManager: NSObject, NSCoding, NSCopying {
@@ -68,7 +67,7 @@ class LogManager: NSObject, NSCoding, NSCopying {
             throw LogManagerError.logIdNotPresent
         }
         else {
-            storedLogs.remove(at: logIndex ?? -1)
+            storedLogs.remove(at: logIndex ?? LogConstant.defaultLogId)
         }
     }
     

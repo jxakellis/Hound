@@ -4,11 +4,14 @@ const router = express.Router({ mergeParams: true });
 
 const {
   getReminders, createReminder, updateReminder, deleteReminder,
-} = require('../controllers/reminders');
-const { validateReminderId } = require('../utils/validateId');
+} = require('../controllers/main/reminders');
+const { validateParamsReminderId, validateBodyReminderId } = require('../utils/validateId');
 
+// No need to validate body for get ( no body exists)
+// No need to validate body for create ( there are no passed reminders )
+// validation body for put and delete below at their specific routes
 // validation that params are formatted correctly and have adequate permissions
-router.use('/:reminderId', validateReminderId);
+router.use('/:reminderId', validateParamsReminderId);
 
 // BASE PATH /api/v1/user/:userId/dogs/:dogId/reminders/...
 
@@ -20,9 +23,13 @@ router.get('/', getReminders);
 router.get('/:reminderId', getReminders);
 // no body
 
-// create reminder:
+// create reminder(s)
 router.post('/', createReminder);
 /* BODY:
+Single: { reminderInfo }
+Multiple: { reminders: [reminderInfo1, reminderInfo2...] }
+
+reminderInfo:
 {
 "reminderAction": "requiredString", // If reminderAction is "Custom", then customTypeName must be provided
 "customTypeName": "optionalString",
@@ -45,14 +52,14 @@ router.post('/', createReminder);
     "friday":"requiredBool",
     "saturday":"requiredBool",
     "weeklyIsSkipping":"requiredBool",
-    "weeklySkipDate":"optionalDate"
+    "weeklyIsSkippingDate":"optionalDate"
 
     //FOR monthly
     "monthlyHour":"requiredInt",
     "monthlyMinute":"requiredInt",
     "dayOfMonth":"requiredInt"
     "weeklyIsSkipping":"requiredBool",
-    "monthlySkipDate":"optionalDate"
+    "monthlyIsSkippingDate":"optionalDate"
 
     //FOR oneTime
     "date":"requiredDate"
@@ -63,16 +70,20 @@ router.post('/', createReminder);
 }
 */
 
-// update reminder
+// update reminder(s)
+router.put('/', validateBodyReminderId, updateReminder);
 router.put('/:reminderId', updateReminder);
 /* BODY:
+Single: { reminderInfo }
+Multiple: { reminders: [reminderInfo1, reminderInfo2...] }
 
+reminderInfo:
 //At least one of the following must be defined: reminderAction, reminderType, executionBasis, isEnabled, or isSnoozed
 
 {
 "reminderAction": "optionalString", // If reminderAction is "Custom", then customTypeName must be provided
 "customTypeName": "optionalString",
-"reminderType": "optionalString", //If reminderType provided, then all components for reminderType type must be provided
+"reminderType": "optionalString", // If reminderType provided, then all components for reminderType type must be provided
 "executionBasis": "optionalDate",
 "isEnabled":"optionalBool",
 
@@ -92,15 +103,15 @@ router.put('/:reminderId', updateReminder);
     "thursday":"requiredBool",
     "friday":"requiredBool",
     "saturday":"requiredBool",
-    "weeklyIsSkipping":"optionalBool", //if weeklyIsSkipping is provided, then weeklySkipDate is required
-    "weeklySkipDate":"optionalDate"
+    "weeklyIsSkipping":"optionalBool", //if weeklyIsSkipping is provided, then weeklyIsSkippingDate is required
+    "weeklyIsSkippingDate":"optionalDate"
 
     //FOR monthly
     "monthlyHour":"requiredInt",
     "monthlyMinute":"requiredInt",
     "dayOfMonth":"requiredInt"
-    "monthlyIsSkipping":"optionalBool", //if monthlyIsSkipping is provided, then monthlySkipDate is required
-    "weeklySkipDate":"optionalDate"
+    "monthlyIsSkipping":"optionalBool", //if monthlyIsSkipping is provided, then monthlyIsSkippingDate is required
+    "weeklyIsSkippingDate":"optionalDate"
 
     //FOR oneTime
     "date":"requiredDate"
@@ -113,8 +124,12 @@ router.put('/:reminderId', updateReminder);
 }
 */
 
-// delete reminder
+// delete reminder(s)
+router.delete('/', validateBodyReminderId, deleteReminder);
 router.delete('/:reminderId', deleteReminder);
-// no body
+/* BODY:
+Single: No Body
+Multiple: { reminders: [reminderId1, reminderId2...] }
+*/
 
 module.exports = router;

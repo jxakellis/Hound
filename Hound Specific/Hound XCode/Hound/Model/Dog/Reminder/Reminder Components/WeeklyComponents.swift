@@ -8,8 +8,8 @@
 
 import Foundation
 
-enum WeeklyComponentsError: Error {
-    case weekdayArrayInvalid
+enum WeeklyComponentsError: String, Error {
+    case weekdayArrayInvalid = "Please select at least one day of the week for your reminder. You can do this by clicking on the S, M, T, W, T, F, or S. A blue letter means that your reminder's alarm will sound that day and grey means it won't."
 }
 
 class WeeklyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtocol {
@@ -20,7 +20,7 @@ class WeeklyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtocol
         let copy = WeeklyComponents()
         copy.storedDateComponents = self.storedDateComponents
         copy.isSkipping = self.isSkipping
-        copy.isSkippingLogDate = self.isSkippingLogDate
+        copy.isSkippingDate = self.isSkippingDate
         copy.storedWeekdays = self.storedWeekdays
         return copy
     }
@@ -30,14 +30,14 @@ class WeeklyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtocol
     required init?(coder aDecoder: NSCoder) {
         self.storedDateComponents = aDecoder.decodeObject(forKey: "dateComponents") as? DateComponents ?? DateComponents()
         self.isSkipping = aDecoder.decodeBool(forKey: "isSkipping")
-        self.isSkippingLogDate = aDecoder.decodeObject(forKey: "isSkippingLogDate") as? Date
+        self.isSkippingDate = aDecoder.decodeObject(forKey: "isSkippingDate") as? Date
         self.storedWeekdays = aDecoder.decodeObject(forKey: "weekdays") as? [Int] ?? [1, 2, 3, 4, 5, 6, 7]
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(storedDateComponents, forKey: "dateComponent")
         aCoder.encode(isSkipping, forKey: "isSkipping")
-        aCoder.encode(isSkippingLogDate, forKey: "isSkippingLogDate")
+        aCoder.encode(isSkippingDate, forKey: "isSkippingDate")
         aCoder.encode(storedWeekdays, forKey: "weekdays")
     }
     
@@ -54,7 +54,7 @@ class WeeklyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtocol
         if isSkipping != nil {
             self.isSkipping = isSkipping!
         }
-        isSkippingLogDate = skipDate
+        isSkippingDate = skipDate
         
         var weekdays: [Int] = []
         if sunday == true {
@@ -114,7 +114,7 @@ class WeeklyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtocol
     var isSkipping: Bool = false
     
     /// The date at which the user changed the isSkipping to true.  If is skipping is true, then a certain log date was appended. If unskipped, then we have to remove that previously added log. Slight caveat: if the skip log was modified (by the user changing its date) we don't remove it.
-    var isSkippingLogDate: Date?
+    var isSkippingDate: Date?
     
     private var storedWeekdays: [Int] = [1, 2, 3, 4, 5, 6, 7]
     /// The weekdays on which the reminder should fire. 1 - 7, where 1 is sunday and 7 is saturday.

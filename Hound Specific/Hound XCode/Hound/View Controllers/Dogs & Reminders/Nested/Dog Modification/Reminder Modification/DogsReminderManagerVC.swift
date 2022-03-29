@@ -8,10 +8,12 @@
 
 import UIKit
 
+/*
 protocol DogsReminderManagerViewControllerDelegate: AnyObject {
     func didAddReminder(newReminder: Reminder)
     func didUpdateReminder(updatedReminder: Reminder)
 }
+ */
 
 class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, DogsReminderCountdownViewControllerDelegate, DogsReminderWeeklyViewControllerDelegate, DropDownUIViewDataSourceProtocol, DogsReminderMonthlyViewControllerDelegate, DogsReminderOnceViewControllerDelegate {
 
@@ -109,7 +111,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
 
     // MARK: - Properties
 
-    weak var delegate: DogsReminderManagerViewControllerDelegate! = nil
+    // weak var delegate: DogsReminderManagerViewControllerDelegate! = nil
 
     var targetReminder: Reminder?
 
@@ -189,7 +191,8 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
         }
     }
 
-    func willSaveReminder(parentDogId: Int) {
+    /// Attempts to either create a new reminder or update an existing reminder from the settings chosen by the user. If there are invalid settings (e.g. no weekdays), an error message is sent to the user and nil is returned. If the reminder is valid, a reminder is returned that is ready to be sent to the server.
+    func applyReminderSettings() -> Reminder? {
         let updatedReminder: Reminder!
         if targetReminder != nil {
             updatedReminder = targetReminder!.copy() as? Reminder
@@ -241,6 +244,8 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
 
             // creating a new reminder
             if targetReminder == nil {
+                return updatedReminder
+                /*
                 // query server
                 RemindersRequest.create(forDogId: parentDogId, forReminder: updatedReminder) { reminderId in
                     // query complete
@@ -250,6 +255,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
                         self.delegate.didAddReminder(newReminder: updatedReminder)
                     }
                 }
+                 */
 
             }
             // updating an existing reminder
@@ -283,17 +289,21 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
                     }
                 }
 
+                return updatedReminder
+                /*
                 RemindersRequest.update(forDogId: parentDogId, forReminder: updatedReminder) { requestWasSuccessful in
                     if requestWasSuccessful == true {
                         // successful so we can persist the data locally
                         self.delegate.didUpdateReminder(updatedReminder: updatedReminder)
                     }
                 }
+                 */
 
             }
         }
         catch {
             ErrorManager.alert(forError: error)
+            return nil
         }
     }
 

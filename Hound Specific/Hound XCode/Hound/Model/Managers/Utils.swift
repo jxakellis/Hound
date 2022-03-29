@@ -162,7 +162,7 @@ class Utils {
                 
                 terminationAlertController.addAction(understandAlertAction)
                 terminationAlertController.addAction(stopAlertAction)
-                AlertManager.shared.enqueueAlertForPresentation(terminationAlertController)
+                AlertManager.enqueueAlertForPresentation(terminationAlertController)
             }
             
             /*
@@ -187,7 +187,7 @@ class Utils {
                         
                         terminationAlertController.addAction(understandAlertAction)
                         terminationAlertController.addAction(stopAlertAction)
-                        AlertManager.shared.enqueueAlertForPresentation(terminationAlertController)
+                        AlertManager.enqueueAlertForPresentation(terminationAlertController)
                     }
                     // }
                     
@@ -229,7 +229,7 @@ class Utils {
             
             updateAlertController.addAction(understandAlertAction)
             updateAlertController.addAction(stopAlertAction)
-            AlertManager.shared.enqueueAlertForPresentation(updateAlertController)
+            AlertManager.enqueueAlertForPresentation(updateAlertController)
         }
     }
 }

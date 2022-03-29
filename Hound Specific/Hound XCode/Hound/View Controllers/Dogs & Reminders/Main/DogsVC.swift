@@ -13,7 +13,7 @@ protocol DogsViewControllerDelegate: AnyObject {
 }
 
 class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsAddDogViewControllerDelegate, DogsTableViewControllerDelegate, DogsIndependentReminderViewControllerDelegate {
-
+    
     // MARK: - Dual Delegate Implementation
 
     func didCancel(sender: Sender) {
@@ -21,24 +21,14 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     }
 
     // MARK: - DogsIndependentReminderViewControllerDelegate
-
-    func didAddReminder(sender: Sender, parentDogId: Int, newReminder: Reminder) {
+    
+    func didApplyReminderSettings(sender: Sender, parentDogId: Int, forReminder reminder: Reminder) {
         let sudoDogManager = getDogManager()
-
-        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.addReminder(newReminder: newReminder)
-
+        
+        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.addReminder(newReminder: reminder)
+        
         setDogManager(sender: sender, newDogManager: sudoDogManager)
-
-        Utils.checkForReview()
-    }
-
-    func didUpdateReminder(sender: Sender, parentDogId: Int, updatedReminder: Reminder) throws {
-        let sudoDogManager = getDogManager()
-
-        try sudoDogManager.findDog(forDogId: parentDogId).dogReminders.addReminder(newReminder: updatedReminder)
-
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
-
+        
         Utils.checkForReview()
     }
 
@@ -53,18 +43,45 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     }
 
     // MARK: - DogsTableViewControllerDelegate
-
-    /// If a dog was clicked on in DogsTableViewController, this function is called with a delegate and allows for the updating of the dogs information
-    func willOpenEditDog(dogId: Int) {
-
-        willOpenDog(dogToBeOpened: try! getDogManager().findDog(forDogId: dogId))
-
+    
+    /// If a dog in DogsTableViewController or Add Dog were clicked, invokes this function. Opens up the same page but changes between creating new and editing existing mode.
+    func willOpenDogMenu(forDogId dogId: Int?) {
+        
+        if dogId == nil {
+            self.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
+        }
+        else {
+            // opening existing dog, must query server to make sure its updated
+            DogsRequest.get(forDogId: dogId!) { dog in
+                if dog != nil {
+                    self.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
+                    self.dogsAddDogViewController.dogForInitalizer = dog
+                }
+            }
+        }
     }
-    /// If a reminder was clicked on in DogsTableViewController, this function is called with a delegate and allows for the updating of the reminders information
-    func willOpenEditReminder(parentDogId: Int, reminderId: Int?) {
-
-        willOpenReminder(parentDogId: parentDogId, reminderId: reminderId)
-
+    
+    /// If a reminder in DogsTableViewController or Add Reminder were clicked, invokes this function. Opens up the same page but changes between creating new and editing existing mode.
+    func willOpenReminderMenu(parentDogId: Int, forReminderId reminderId: Int? = nil) {
+        
+        // creating new
+        if reminderId == nil {
+            // no need to query as nothing in server since creating
+            self.performSegue(withIdentifier: "dogsIndependentReminderViewController", sender: self)
+            dogsIndependentReminderViewController.parentDogId = parentDogId
+        }
+        // updating
+        else {
+            // query for existing
+            RemindersRequest.get(forDogId: parentDogId, forReminderId: reminderId!) { reminder in
+                if reminder != nil {
+                    self.performSegue(withIdentifier: "dogsIndependentReminderViewController", sender: self)
+                    self.dogsIndependentReminderViewController.parentDogId = parentDogId
+                    self.dogsIndependentReminderViewController.targetReminder = reminder
+                }
+            }
+            
+        }
     }
 
     /// visual indication of log
@@ -328,48 +345,13 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
 
     // MARK: - Navigation To Dog Addition and Modification
 
-    /// Opens the dogsAddDogViewController, if a dog is passed (which is required) then instead of opening a fresh add dog page, opens up the corrosponding one for the dog
-    private func willOpenDog(dogToBeOpened: Dog? = nil) {
-
-        self.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
-
-        /// Is opening a dog
-        if dogToBeOpened != nil {
-            // Conversion of "DogsAddDogViewController" to update mode
-
-            dogsAddDogViewController.isUpdating = true
-            dogsAddDogViewController.targetDog = dogToBeOpened!.copy() as? Dog
-        }
-
-    }
-
-    private func willOpenReminder(parentDogId: Int, reminderId: Int? = nil) {
- // updating
-        if reminderId != nil {
-            RemindersRequest.get(forDogId: parentDogId, forReminderId: reminderId!) { reminder in
-                if reminder != nil {
-                    self.performSegue(withIdentifier: "dogsIndependentReminderViewController", sender: self)
-                    self.dogsIndependentReminderViewController.parentDogId = parentDogId
-                    self.dogsIndependentReminderViewController.targetReminder = reminder
-                }
-            }
-            
-        }
-        // creating new
-        else {
-            // no need to query as nothing in server since creating
-            self.performSegue(withIdentifier: "dogsIndependentReminderViewController", sender: self)
-            dogsIndependentReminderViewController.parentDogId = parentDogId
-        }
-
-    }
-
     @objc private func willCreateNew(sender: UIButton) {
-        if sender.tag == 0 {
-            self.willOpenDog(dogToBeOpened: nil)
+        // the senders tag indicates the parentDogId, if -1 then it means we are creating a new dog and if != -1 then it means we are creating a new reminder (as it has a parent dog)
+        if sender.tag == -1 {
+            self.willOpenDogMenu(forDogId: nil)
         }
         else {
-            self.willOpenReminder(parentDogId: getDogManager().dogs[sender.tag-1].dogId, reminderId: nil)
+            self.willOpenReminderMenu(parentDogId: sender.tag, forReminderId: nil)
         }
     }
 
@@ -403,7 +385,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             let willAddDogButton = ScaledUIButton(frame: CGRect(origin: CGPoint(x: originXWithAlignedTrailing, y: willAddButton.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
             willAddDogButton.setImage(UIImage(systemName: "plus.circle")!, for: .normal)
             willAddDogButton.tintColor = .systemBlue
-            willAddDogButton.tag = 0
+            willAddDogButton.tag = -1
             willAddDogButton.addTarget(self, action: #selector(willCreateNew(sender:)), for: .touchUpInside)
 
             // Create white background layered behind original button as middle is see through
@@ -418,7 +400,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             addButtonsLabelBackground.append(willAddDogButtonLabelBackground)
 
             // Goes through all the dogs and create a corresponding button for them so you can add a reminder ro them
-            for dogIndex in 0..<getDogManager().dogs.count {
+            for dog in getDogManager().dogs {
                 guard maximumSubButtonCount > addButtons.count else {
                     break
                 }
@@ -427,12 +409,12 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                 let willAddReminderButton = ScaledUIButton(frame: CGRect(origin: CGPoint(x: addButtons.last!.frame.origin.x, y: addButtons.last!.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
                 willAddReminderButton.setImage(UIImage(systemName: "plus.circle")!, for: .normal)
                 willAddReminderButton.tintColor = .systemBlue
-                willAddReminderButton.tag = dogIndex+1
+                willAddReminderButton.tag = dog.dogId
                 willAddReminderButton.addTarget(self, action: #selector(willCreateNew(sender:)), for: .touchUpInside)
 
                 let willAddReminderButtonBackground = createAddButtonBackground(willAddReminderButton)
 
-                let willAddReminderButtonLabel = createAddButtonLabel(willAddReminderButton, text: "Create New Reminder For \(getDogManager().dogs[dogIndex].dogName)")
+                let willAddReminderButtonLabel = createAddButtonLabel(willAddReminderButton, text: "Create New Reminder For \(dog.dogName)")
                 let willAddReminderButtonLabelBackground = createAddButtonLabelBackground(willAddReminderButtonLabel)
 
                 addButtons.append(willAddReminderButton)

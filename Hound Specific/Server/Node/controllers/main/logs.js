@@ -1,8 +1,8 @@
-const { queryPromise } = require('../utils/queryPromise');
+const { queryPromise } = require('../../utils/queryPromise');
 const {
   formatDate, formatNumber, areAllDefined, atLeastOneDefined,
-} = require('../utils/validateFormat');
-const { queryLog, queryLogs } = require('./queryFor/queryForLogs');
+} = require('../../utils/validateFormat');
+const { queryLog, queryLogs } = require('../getFor/getForLogs');
 
 /*
 Known:
@@ -123,7 +123,7 @@ const updateLog = async (req, res) => {
   }
 };
 
-const delLog = require('../utils/delete').deleteLog;
+const delLog = require('../../utils/delete').deleteLog;
 
 const deleteLog = async (req, res) => {
   const logId = formatNumber(req.params.logId);

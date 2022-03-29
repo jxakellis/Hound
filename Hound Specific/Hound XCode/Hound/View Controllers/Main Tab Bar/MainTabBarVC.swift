@@ -23,6 +23,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
             // reminders already created
             else {
                 // TO DO create intro page for additional family member, where they still get introduced but don't create a reminder
+                LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = true
             }
             
         }

@@ -9,21 +9,21 @@
 import UIKit
 
 protocol DogsReminderTableViewControllerDelegate: AnyObject {
-    func didAddReminder(newReminder: Reminder)
-    func didUpdateReminder(updatedReminder: Reminder)
+    func didApplyReminderSettings(forReminder: Reminder)
     func didRemoveReminder(reminderId: Int)
 }
 
 class DogsReminderTableViewController: UITableViewController, ReminderManagerControlFlowProtocol, DogsNestedReminderViewControllerDelegate, DogsReminderTableViewCellDelegate {
-
+    
     // MARK: - Dogs Reminder Table View Cell
     
-    func didUpdateReminderEnable(sender: Sender, parentDogId: Int, reminder: Reminder) {
-        let sudoReminderManager = getReminderManager()
-        let updatedReminder = try! sudoReminderManager.findReminder(forReminderId: reminder.reminderId)
-        updatedReminder.isEnabled = reminder.isEnabled
+    func didUpdateReminderEnable(sender: Sender, reminder: Reminder) {
+         let sudoReminderManager = getReminderManager()
+        // can skip this part as the cell contained a reminder object that was just referencing the reminder contained inside this remindermanager.
+        // let updatedReminder = try! sudoReminderManager.findReminder(forReminderId: reminder.reminderId)
+        // updatedReminder.isEnabled = reminder.isEnabled
         setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
-        delegate.didUpdateReminder(updatedReminder: reminder)
+        delegate.didApplyReminderSettings(forReminder: reminder)
     }
 
     // MARK: - Dogs Nested Reminder
@@ -31,20 +31,12 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
     var dogsNestedReminderViewController = DogsNestedReminderViewController()
 
     /// When this function is called through a delegate, it adds the information to the list of reminders and updates the cells to display it
-    func didAddReminder(sender: Sender, newReminder: Reminder) {
+    func didApplyReminderSettings(sender: Sender, forReminder reminder: Reminder) {
         let sudoReminderManager = getReminderManager()
-        sudoReminderManager.addReminder(newReminder: newReminder)
+        sudoReminderManager.addReminder(newReminder: reminder)
         setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
-
-        delegate.didAddReminder(newReminder: newReminder)
-    }
-
-    func didUpdateReminder(sender: Sender, updatedReminder: Reminder) {
-        let sudoReminderManager = getReminderManager()
-        sudoReminderManager.addReminder(newReminder: updatedReminder)
-        setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
-
-        delegate.didUpdateReminder(updatedReminder: updatedReminder)
+        
+        delegate.didApplyReminderSettings(forReminder: reminder)
     }
 
     func didRemoveReminder(sender: Sender, reminderId: Int) {
@@ -95,8 +87,6 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
 
     /// Used for when a reminder is selected (aka clicked) on the table view in order to pass information to open the editing page for the reminder
     private var selectedReminder: Reminder?
-    
-    var parentDogId: Int!
 
     weak var delegate: DogsReminderTableViewControllerDelegate! = nil
 
@@ -148,7 +138,7 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
 
         let castCell = cell as! DogsReminderTableViewCell
         castCell.delegate = self
-        castCell.setup(parentDogId: parentDogId, forReminder: getReminderManager().reminders[indexPath.row])
+        castCell.setup(forReminder: getReminderManager().reminders[indexPath.row])
 
         return cell
     }
@@ -182,22 +172,16 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
 
             let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
 
-                RemindersRequest.delete(forDogId: self.parentDogId, forReminderId: reminderId) { requestWasSuccessful in
-                    DispatchQueue.main.async {
-                        if requestWasSuccessful == true {
-                            sudoReminderManager.removeReminder(forIndex: indexPath.row)
-                            self.setReminderManager(sender: Sender(origin: self, localized: self), newReminderManager: sudoReminderManager)
-
-                            self.delegate.didRemoveReminder(reminderId: reminderId)
-                            self.tableView.deleteRows(at: [indexPath], with: .automatic)
-                        }
-                    }
-                }
+                sudoReminderManager.removeReminder(forIndex: indexPath.row)
+                self.setReminderManager(sender: Sender(origin: self, localized: self), newReminderManager: sudoReminderManager)
+                
+                self.delegate.didRemoveReminder(reminderId: reminderId)
+                self.tableView.deleteRows(at: [indexPath], with: .automatic)
             }
             let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
             removeReminderConfirmation.addAction(alertActionRemove)
             removeReminderConfirmation.addAction(alertActionCancel)
-            AlertManager.shared.enqueueAlertForPresentation(removeReminderConfirmation)
+            AlertManager.enqueueAlertForPresentation(removeReminderConfirmation)
         }
     }
 
@@ -218,9 +202,7 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
             dogsNestedReminderViewController = segue.destination as! DogsNestedReminderViewController
             dogsNestedReminderViewController.delegate = self
             
-            dogsNestedReminderViewController.parentDogId = parentDogId
-
-            if selectedReminder != nil {
+             if selectedReminder != nil {
                 dogsNestedReminderViewController.targetReminder = selectedReminder!
                 selectedReminder = nil
             }

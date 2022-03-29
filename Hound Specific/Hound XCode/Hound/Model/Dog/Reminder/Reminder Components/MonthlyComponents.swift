@@ -8,8 +8,8 @@
 
 import Foundation
 
-enum MonthlyComponentsError: Error {
-    case dayOfMonthInvalid
+enum MonthlyComponentsError: String, Error {
+    case dayOfMonthInvalid = "Please select a day of month for your reminder."
 }
 
 class MonthlyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtocol {
@@ -20,7 +20,7 @@ class MonthlyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtoco
         let copy = MonthlyComponents()
         copy.storedDateComponents = self.storedDateComponents
         copy.isSkipping = self.isSkipping
-        copy.isSkippingLogDate = self.isSkippingLogDate
+        copy.isSkippingDate = self.isSkippingDate
         copy.storedDayOfMonth = self.storedDayOfMonth
         return copy
     }
@@ -30,14 +30,14 @@ class MonthlyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtoco
     required init?(coder aDecoder: NSCoder) {
         self.storedDateComponents = aDecoder.decodeObject(forKey: "dateComponents") as? DateComponents ?? DateComponents()
         self.isSkipping = aDecoder.decodeBool(forKey: "isSkipping")
-        self.isSkippingLogDate = aDecoder.decodeObject(forKey: "isSkippingLogDate") as? Date
+        self.isSkippingDate = aDecoder.decodeObject(forKey: "isSkippingDate") as? Date
         self.storedDayOfMonth = aDecoder.decodeInteger(forKey: "dayOfMonth")
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(storedDateComponents, forKey: "dateComponents")
         aCoder.encode(isSkipping, forKey: "isSkipping")
-        aCoder.encode(isSkippingLogDate, forKey: "isSkippingLogDate")
+        aCoder.encode(isSkippingDate, forKey: "isSkippingDate")
         aCoder.encode(storedDayOfMonth, forKey: "dayOfMonth")
     }
     
@@ -54,7 +54,7 @@ class MonthlyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtoco
         if isSkipping != nil {
             self.isSkipping = isSkipping!
         }
-        isSkippingLogDate = skipDate
+        isSkippingDate = skipDate
         if dayOfMonth != nil {
             storedDayOfMonth = dayOfMonth!
         }
@@ -90,7 +90,7 @@ class MonthlyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtoco
     var isSkipping: Bool = false
     
     /// The date at which the user changed the isSkipping to true.  If is skipping is true, then a certain log date was appended. If unskipped, then we have to remove that previously added log. Slight caveat: if the skip log was modified (by the user changing its date) we don't remove it.
-    var isSkippingLogDate: Date?
+    var isSkippingDate: Date?
     
     private var storedDayOfMonth: Int = 1
     /// Day of the month that a reminder will fire

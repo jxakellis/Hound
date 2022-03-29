@@ -11,11 +11,14 @@ import UIKit
 enum DogConstant {
     static let defaultDogName: String = "Bella"
     static let defaultIcon: UIImage = UIImage.init(named: "pawFullResolutionWhite")!
+    static let defaultDogId: Int = -1
     static let chooseIcon: UIImage = UIImage.init(named: "chooseIcon")!
 }
 
 enum LogConstant {
     static let defaultType = LogType.allCases[0]
+    static let defaultLogId: Int = -1
+    static let defaultNote: String = ""
 }
 
 enum ReminderConstant {
@@ -23,6 +26,7 @@ enum ReminderConstant {
     static let defaultType = ReminderType.allCases[0]
     static let defaultTimeInterval = (3600*0.5)
     static let defaultEnable: Bool = true
+    static let defaultReminderId: Int = -1
     static var defaultReminderOne: Reminder {
         let reminder = Reminder()
         reminder.reminderAction = ReminderAction.potty
@@ -60,14 +64,6 @@ enum DogManagerConstant {
     
     static var userDefaultDog: Dog {
         let userDefaultDog = try! Dog(dogName: DogConstant.defaultDogName)
-        
-        /*
-         let reminder = Reminder()
-         reminder.reminderAction = .trainingSession
-         reminder.changeReminderType(newReminderType: .countdown)
-         reminder.countdownComponents.changeExecutionInterval(newExecutionInterval: 30.0)
-         try! userDefaultDog.dogReminders.addReminder(newReminder: reminder)
-         */
         
         return userDefaultDog
     }

@@ -65,8 +65,8 @@ class ServerSyncViewController: UIViewController {
 
     // MARK: - Properties
     /// Called to prompt the user to retry a server connection
-    private var failureResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: GeneralResponseErrorMessages.failureGetResponse, preferredStyle: .alert)
-    private var noResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: GeneralResponseErrorMessages.noGetResponse, preferredStyle: .alert)
+    private var failureResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: GeneralResponseError.failureGetResponse.rawValue, preferredStyle: .alert)
+    private var noResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: GeneralResponseError.noGetResponse.rawValue, preferredStyle: .alert)
     private var noDogManagerAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: "We experienced an issue while retrieving your data Hound's server. Our first request to retrieve your app settings succeeded, but we were unable to retrieve your dogs. Please verify that you are connected to the internet and retry. If the issue persists, please reinstall Hound.", preferredStyle: .alert)
 
     /// DogManager that all of the retrieved information will be added too.
@@ -81,8 +81,7 @@ class ServerSyncViewController: UIViewController {
     /// Retrieve the user
     private func getUser() {
         UserRequest.get(forUserEmail: UserInformation.userEmail) { responseBody, responseStatus in
-            DispatchQueue.main.async {
-                switch responseStatus {
+            switch responseStatus {
                 case .successResponse:
                     if responseBody != nil {
                         self.serverContacted = true
@@ -103,15 +102,15 @@ class ServerSyncViewController: UIViewController {
                             self.checkSynchronizationStatus()
                         }
                         else {
-                            AlertManager.shared.enqueueAlertForPresentation(self.failureResponseAlertController)
+                            AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
                         }
                     }
                 case .failureResponse:
-                    AlertManager.shared.enqueueAlertForPresentation(self.failureResponseAlertController)
+                    AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
                 case .noResponse:
-                    AlertManager.shared.enqueueAlertForPresentation(self.noResponseAlertController)
+                    AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)
                 }
-            }
+            
         }
     }
 
@@ -124,7 +123,7 @@ class ServerSyncViewController: UIViewController {
                 self.checkSynchronizationStatus()
             }
             else {
-                AlertManager.shared.enqueueAlertForPresentation(self.noDogManagerAlertController)
+                AlertManager.enqueueAlertForPresentation(self.noDogManagerAlertController)
             }
         }
     }
@@ -156,6 +155,7 @@ class ServerSyncViewController: UIViewController {
                     // TO DO create intro page for additional family member, where they still get introduced but don't create a dog
                     
                     self.performSegue(withIdentifier: "mainTabBarViewController", sender: nil)
+                    LocalConfiguration.hasLoadedIntroductionViewControllerBefore = false
                 }
                 
             }

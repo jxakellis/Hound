@@ -178,7 +178,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         removeDogConfirmation.addAction(alertActionRemove)
         removeDogConfirmation.addAction(alertActionCancel)
 
-        AlertManager.shared.enqueueAlertForPresentation(removeDogConfirmation)
+        AlertManager.enqueueAlertForPresentation(removeDogConfirmation)
     }
 
     @IBAction private func willAddLog(_ sender: Any) {
@@ -196,7 +196,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         // updating log
         if parentDogIdOfLogToUpdate != nil && logToUpdate != nil {
             logToUpdate!.date = logDate.date
-            logToUpdate!.note = logNote.text ?? ""
+            logToUpdate!.note = logNote.text ?? LogConstant.defaultNote
             logToUpdate!.logType = LogType(rawValue: logType.text!)!
 
             if logType.text == LogType.custom.rawValue {
@@ -220,7 +220,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                     throw LogTypeError.blankLogType
                 }
                 else {
-                    let newLog = Log(date: logDate.date, note: logNote.text ?? "", logType: LogType(rawValue: logType.text!)!, customTypeName: trimmedCustomLogTypeName)
+                    let newLog = Log(date: logDate.date, note: logNote.text ?? LogConstant.defaultNote, logType: LogType(rawValue: logType.text!)!, customTypeName: trimmedCustomLogTypeName)
 
                     LogsRequest.create(forDogId: parentDogNameSelector.tag, forLog: newLog) { logId in
 
@@ -259,7 +259,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
              unsavedInformationConfirmation.addAction(alertActionExit)
              unsavedInformationConfirmation.addAction(alertActionCancel)
 
-             AlertManager.shared.enqueueAlertForPresentation(unsavedInformationConfirmation)
+             AlertManager.enqueueAlertForPresentation(unsavedInformationConfirmation)
          }
          else {
              self.navigationController?.popViewController(animated: true)
@@ -347,7 +347,6 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
             else if dogManager.dogs.count == 0 {
                 AppDelegate.generalLogger.fault("dogManager has to have a dog for LogsAddLogViewController")
             }
-            // self.performSegue(withIdentifier: "unwindToLogsViewController", sender: self)
             self.navigationController?.popViewController(animated: true)
             return
         }
@@ -515,7 +514,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
 
             trashIcon.isEnabled = false
 
-            logType.text = ""
+            logType.text = LogConstant.defaultNote
             logType.isEnabled = true
 
             customLogTypeTextField.text = ""

@@ -1,7 +1,7 @@
 const { queryPromise } = require('../../utils/queryPromise');
 const { formatBoolean } = require('../../utils/validateFormat');
-const { queryLogs } = require('./queryForLogs');
-const { queryReminders } = require('./queryForReminders');
+const { queryLogs } = require('./getForLogs');
+const { getRemindersQuery } = require('./getForReminders');
 
 /**
  * Returns the dog for the dogId. Errors not handled
@@ -24,7 +24,7 @@ const queryDog = async (req, dogId) => {
     const queryForLogs = formatBoolean(req.query.logs);
     // if the query parameter indicates that they want the logs and the reminders too, we add them
     if (queryForReminders === true) {
-      const remindersResult = await queryReminders(req, dogId);
+      const remindersResult = await getRemindersQuery(req, dogId);
 
       result[0].reminders = remindersResult;
     }
@@ -59,7 +59,7 @@ const queryDogs = async (req, userId) => {
     // if the query parameter indicates that they want the logs and the reminders too, we add them.
     if (queryForReminders === true) {
       for (let i = 0; i < result.length; i += 1) {
-        const reminderResult = await queryReminders(req, result[i].dogId);
+        const reminderResult = await getRemindersQuery(req, result[i].dogId);
         result[i].reminders = reminderResult;
       }
     }

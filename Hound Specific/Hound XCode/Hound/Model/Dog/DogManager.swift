@@ -9,8 +9,8 @@
 import UIKit
 
 /// Enum full of cases of possible errors from DogManager
-enum DogManagerError: Error {
-    case dogIdNotPresent
+enum DogManagerError: String, Error {
+    case dogIdNotPresent = "Couldn't find a match for a dog with that id. Please reload and try again!"
 }
 
 /// Protocol outlining functionality of DogManger
@@ -223,10 +223,6 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
     
     func removeDog(forDogId dogId: Int) throws {
         var matchingDogIndex: Int?
-        
-        // if dogId == "" {
-        //    throw DogManagerError.dogNameInvalid
-        // }
         
         for (index, dog) in dogs.enumerated() where dog.dogId == dogId {
             matchingDogIndex = index

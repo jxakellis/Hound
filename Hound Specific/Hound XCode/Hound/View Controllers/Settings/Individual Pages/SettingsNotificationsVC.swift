@@ -298,8 +298,6 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         UserRequest.update(body: body) { requestWasSuccessful in
             if requestWasSuccessful == false {
                 // error, revert to previous
-                ErrorManager.alert(forError: GeneralResponseError.noResponse)
-                
                 UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
                 self.loudNotificationsToggleSwitch.setOn(UserConfiguration.isLoudNotification, animated: true)
             }

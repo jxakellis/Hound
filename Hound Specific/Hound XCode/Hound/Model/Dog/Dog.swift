@@ -8,9 +8,9 @@
 
 import UIKit
 
-enum DogError: Error {
-    case dogNameNil
-    case dogNameBlank
+enum DogError: String, Error {
+    case dogNameNil = "Your dog's name is invalid, please try a different one."
+    case dogNameBlank = "Your dog's name is blank, try typing something in."
 }
 
 class Dog: NSObject, NSCoding, NSCopying {
@@ -47,17 +47,20 @@ class Dog: NSObject, NSCoding, NSCopying {
     
     // MARK: - Main
     
-    init(dogName: String) throws {
+    init(dogName: String?) throws {
         super.init()
-        if dogName.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+        if dogName == nil {
+            throw DogError.dogNameNil
+        }
+        else if dogName!.trimmingCharacters(in: .whitespacesAndNewlines) == ""{
             throw DogError.dogNameBlank
         }
-        self.storedDogName = dogName
+        self.storedDogName = dogName!
         self.dogReminders = ReminderManager()
         self.dogLogs = LogManager()
     }
     
-    convenience init(dogName: String, dogIcon: UIImage? = nil, defaultReminders: Bool = false) throws {
+    convenience init(dogName: String?, dogIcon: UIImage? = nil, defaultReminders: Bool = false) throws {
         try self.init(dogName: dogName)
         if defaultReminders == true {
             self.dogReminders.addDefaultReminders()
@@ -96,7 +99,7 @@ class Dog: NSObject, NSCoding, NSCopying {
     
     // MARK: - Properties
     
-    var dogId: Int = -1
+    var dogId: Int = DogConstant.defaultDogId
     
     // MARK: - Traits
     

@@ -1,39 +1,39 @@
 const { queryPromise } = require('../../utils/queryPromise');
 const { formatDate, formatBoolean, formatNumber } = require('../../utils/validateFormat');
 
-const createWeeklyComponents = async (req, reminderId) => {
-  const weeklyHour = formatNumber(req.body.weeklyHour);
-  const weeklyMinute = formatNumber(req.body.weeklyMinute);
-  const sunday = formatBoolean(req.body.sunday);
-  const monday = formatBoolean(req.body.monday);
-  const tuesday = formatBoolean(req.body.tuesday);
-  const wednesday = formatBoolean(req.body.wednesday);
-  const thursday = formatBoolean(req.body.thursday);
-  const friday = formatBoolean(req.body.friday);
-  const saturday = formatBoolean(req.body.saturday);
+const createWeeklyComponents = async (req, reminder) => {
+  const weeklyHour = formatNumber(reminder.weeklyHour);
+  const weeklyMinute = formatNumber(reminder.weeklyMinute);
+  const sunday = formatBoolean(reminder.sunday);
+  const monday = formatBoolean(reminder.monday);
+  const tuesday = formatBoolean(reminder.tuesday);
+  const wednesday = formatBoolean(reminder.wednesday);
+  const thursday = formatBoolean(reminder.thursday);
+  const friday = formatBoolean(reminder.friday);
+  const saturday = formatBoolean(reminder.saturday);
 
   // Errors intentionally uncaught so they are passed to invocation in reminders
   // Newly created weekly reminder cant be weeklyIsSkipping, so no need for skip data
   await queryPromise(
     req,
     'INSERT INTO reminderWeeklyComponents(reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday) VALUES (?,?,?,?,?,?,?,?,?,?)',
-    [reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday],
+    [reminder.reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday],
   );
 };
 
 // Attempts to first add the new components to the table. iI this fails then it is known the reminder is already present or components are invalid. If the update statement fails then it is know the components are invalid, error passed to invocer.
-const updateWeeklyComponents = async (req, reminderId) => {
-  const weeklyHour = formatNumber(req.body.weeklyHour);
-  const weeklyMinute = formatNumber(req.body.weeklyMinute);
-  const sunday = formatBoolean(req.body.sunday);
-  const monday = formatBoolean(req.body.monday);
-  const tuesday = formatBoolean(req.body.tuesday);
-  const wednesday = formatBoolean(req.body.wednesday);
-  const thursday = formatBoolean(req.body.thursday);
-  const friday = formatBoolean(req.body.friday);
-  const saturday = formatBoolean(req.body.saturday);
-  const weeklyIsSkipping = formatBoolean(req.body.weeklyIsSkipping);
-  const weeklySkipDate = formatDate(req.body.weeklySkipDate);
+const updateWeeklyComponents = async (req, reminder) => {
+  const weeklyHour = formatNumber(reminder.weeklyHour);
+  const weeklyMinute = formatNumber(reminder.weeklyMinute);
+  const sunday = formatBoolean(reminder.sunday);
+  const monday = formatBoolean(reminder.monday);
+  const tuesday = formatBoolean(reminder.tuesday);
+  const wednesday = formatBoolean(reminder.wednesday);
+  const thursday = formatBoolean(reminder.thursday);
+  const friday = formatBoolean(reminder.friday);
+  const saturday = formatBoolean(reminder.saturday);
+  const weeklyIsSkipping = formatBoolean(reminder.weeklyIsSkipping);
+  const weeklyIsSkippingDate = formatDate(reminder.weeklyIsSkippingDate);
 
   try {
     // If this succeeds: Reminder was not present in the weekly table and the reminderType was changed. The old components will be deleted from the other table by reminders
@@ -41,7 +41,7 @@ const updateWeeklyComponents = async (req, reminderId) => {
     await queryPromise(
       req,
       'INSERT INTO reminderWeeklyComponents(reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday) VALUES (?,?,?,?,?,?,?,?,?,?)',
-      [reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday],
+      [reminder.reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday],
     );
     return;
   }
@@ -51,15 +51,15 @@ const updateWeeklyComponents = async (req, reminderId) => {
     if (weeklyIsSkipping === true) {
       await queryPromise(
         req,
-        'UPDATE reminderWeeklyComponents SET weeklyHour = ?, weeklyMinute = ?, sunday = ?, monday = ?, tuesday = ?, wednesday = ?, thursday = ?, friday = ?, saturday = ?, weeklyIsSkipping = ?, weeklySkipDate = ? WHERE reminderId = ?',
-        [weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday, weeklyIsSkipping, weeklySkipDate, reminderId],
+        'UPDATE reminderWeeklyComponents SET weeklyHour = ?, weeklyMinute = ?, sunday = ?, monday = ?, tuesday = ?, wednesday = ?, thursday = ?, friday = ?, saturday = ?, weeklyIsSkipping = ?, weeklyIsSkippingDate = ? WHERE reminderId = ?',
+        [weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday, weeklyIsSkipping, weeklyIsSkippingDate, reminder.createWeeklyComponentsreminderId],
       );
     }
     else {
       await queryPromise(
         req,
         'UPDATE reminderWeeklyComponents SET weeklyHour = ?, weeklyMinute = ?, sunday = ?, monday = ?, tuesday = ?, wednesday = ?, thursday = ?, friday = ?, saturday = ?, weeklyIsSkipping = ? WHERE reminderId = ?',
-        [weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday, weeklyIsSkipping, reminderId],
+        [weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday, weeklyIsSkipping, reminder.reminderId],
       );
     }
   }

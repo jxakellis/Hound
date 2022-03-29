@@ -16,8 +16,8 @@ class SettingsTableViewController: UITableViewController {
 
     // MARK: - Properties
 
-    // 6 pages and 2 space cells to allow for proper edge insets
-    private let numberOfPages = (6 + 1 + 1)
+    // 2 separators, 5 regulars pages, 1 separator, and 1 regular page to allow for proper edge insets
+    private let numberOfCells = (2 + 5 + 1 + 1)
 
     weak var delegate: SettingsTableViewControllerDelegate! = nil
 
@@ -41,7 +41,7 @@ class SettingsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return numberOfPages
+        return numberOfCells
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -49,28 +49,35 @@ class SettingsTableViewController: UITableViewController {
 
         let iconEdgeInset = UIEdgeInsets.init(top: 0, left: (5.0+35.5+2.5), bottom: 0, right: 0)
         switch indexPath.row {
+            // we want two separators cells at the top. since the first cell has a separators on both the top and bottom, we hide it. The second cell (and all following cells) only have separators on the bottom, therefore the second cell makes it look like a full size separator is on the top of the third cell. Meanwhile, the third cell has a partial separator to stylize it.
         case 0:
-            cell = tableView.dequeueReusableCell(withIdentifier: "spaceWithoutSeparator", for: indexPath)
+            cell = tableView.dequeueReusableCell(withIdentifier: "spaceCellWithoutSeparator", for: indexPath)
+            cell!.contentView.addConstraint(NSLayoutConstraint(item: cell!.contentView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 11.25))
             cell!.separatorInset = UIEdgeInsets.zero
         case 1:
+            cell = tableView.dequeueReusableCell(withIdentifier: "spaceCellWithSeparator", for: indexPath)
+            cell!.contentView.addConstraint(NSLayoutConstraint(item: cell!.contentView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 11.25))
+            cell!.separatorInset = UIEdgeInsets.zero
+        case 2:
             cell = tableView.dequeueReusableCell(withIdentifier: "personalInformation", for: indexPath)
             cell!.separatorInset = iconEdgeInset
-        case 2:
+        case 3:
             cell = tableView.dequeueReusableCell(withIdentifier: "family", for: indexPath)
             cell!.separatorInset = iconEdgeInset
-        case 3:
+        case 4:
             cell = tableView.dequeueReusableCell(withIdentifier: "appearance", for: indexPath)
             cell!.separatorInset = iconEdgeInset
-        case 4:
+        case 5:
             cell = tableView.dequeueReusableCell(withIdentifier: "reminders", for: indexPath)
             cell!.separatorInset = iconEdgeInset
-        case 5:
+        case 6:
             cell = tableView.dequeueReusableCell(withIdentifier: "notifications", for: indexPath)
             cell!.separatorInset = UIEdgeInsets.zero
-        case 6:
-            cell = tableView.dequeueReusableCell(withIdentifier: "spaceWithSeparator", for: indexPath)
-            cell!.separatorInset = UIEdgeInsets.zero
         case 7:
+            cell = tableView.dequeueReusableCell(withIdentifier: "spaceCellWithSeparator", for: indexPath)
+            cell!.contentView.addConstraint(NSLayoutConstraint(item: cell!.contentView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 22.5))
+            cell!.separatorInset = UIEdgeInsets.zero
+        case 8:
             cell = tableView.dequeueReusableCell(withIdentifier: "about", for: indexPath)
             cell!.separatorInset = UIEdgeInsets.zero
         default:

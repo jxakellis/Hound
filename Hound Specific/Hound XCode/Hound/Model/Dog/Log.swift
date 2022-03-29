@@ -45,9 +45,8 @@ enum ReminderAction: String, CaseIterable {
     case custom = "Custom"
 }
 
-enum LogTypeError: Error {
-    case nilLogType
-    case blankLogType
+enum LogTypeError: String, Error {
+    case blankLogType = "Your log has no type, try selecting one!"
 }
 
 enum LogType: String, CaseIterable {
@@ -130,7 +129,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     required init?(coder aDecoder: NSCoder) {
         self.date = aDecoder.decodeObject(forKey: "date") as? Date ?? Date()
-        self.note = aDecoder.decodeObject(forKey: "note") as? String ?? ""
+        self.note = aDecoder.decodeObject(forKey: "note") as? String ?? LogConstant.defaultNote
         self.logType = LogType(rawValue: aDecoder.decodeObject(forKey: "logType") as? String ?? LogConstant.defaultType.rawValue) ?? LogConstant.defaultType
         self.customTypeName = aDecoder.decodeObject(forKey: "customTypeName") as? String
         self.logId = aDecoder.decodeInteger(forKey: "logId")
@@ -148,7 +147,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     // MARK: - Main
     
-    init(date: Date, note: String = "", logType: LogType, customTypeName: String? = nil, logId: Int = -1) {
+    init(date: Date, note: String = LogConstant.defaultNote, logType: LogType, customTypeName: String? = nil, logId: Int = LogConstant.defaultLogId) {
         self.date = date
         self.note = note
         self.logType = logType
@@ -165,10 +164,10 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
             formattedDate = RequestUtils.ISO8601DateFormatter.date(from: dateString) ?? Date()
         }
         
-        let note: String = body["note"] as? String ?? ""
+        let note: String = body["note"] as? String ?? LogConstant.defaultNote
         let logType: LogType = LogType(rawValue: body["logType"] as? String ?? LogConstant.defaultType.rawValue)!
         let customTypeName: String? = body["customTypeName"] as? String
-        let logId: Int = body["logId"] as? Int ?? -1
+        let logId: Int = body["logId"] as? Int ?? LogConstant.defaultLogId
         
         self.init(date: formattedDate, note: note, logType: logType, customTypeName: customTypeName, logId: logId)
     }
@@ -192,5 +191,5 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
         }
     }
     
-    var logId: Int = -1
+    var logId: Int = LogConstant.defaultLogId
 }

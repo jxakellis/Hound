@@ -88,6 +88,15 @@ const formatNumber = (string) => {
   return undefined;
 };
 
+const formatArray = (string) => {
+  if (Array.isArray(string) === true) {
+    return string;
+  }
+  else {
+    return undefined;
+  }
+};
+
 /**
  * Takes single object or array of objects. If ALL objects provided are defined, returns true. Otherwise, returns false. Behaves the same as atLeastOneDefined for single object.
  * @param {*} arr
@@ -152,5 +161,5 @@ const atLeastOneDefined = (arr) => {
 };
 
 module.exports = {
-  areAllDefined, atLeastOneDefined, formatEmail, formatDate, formatBoolean, formatNumber,
+  areAllDefined, atLeastOneDefined, formatEmail, formatDate, formatBoolean, formatNumber, formatArray,
 };

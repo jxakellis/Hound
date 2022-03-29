@@ -5,22 +5,22 @@ const { formatNumber } = require('../../utils/validateFormat');
 - reminderId defined
 */
 
-const createCountdownComponents = async (req, reminderId) => {
-  const countdownExecutionInterval = formatNumber(req.body.countdownExecutionInterval);
-  const countdownIntervalElapsed = formatNumber(req.body.countdownIntervalElapsed);
+const createCountdownComponents = async (req, reminder) => {
+  const countdownExecutionInterval = formatNumber(reminder.countdownExecutionInterval);
+  const countdownIntervalElapsed = formatNumber(reminder.countdownIntervalElapsed);
 
   // Errors intentionally uncaught so they are passed to invocation in reminders
   await queryPromise(
     req,
     'INSERT INTO reminderCountdownComponents(reminderId, countdownExecutionInterval, countdownIntervalElapsed) VALUES (?,?,?)',
-    [reminderId, countdownExecutionInterval, countdownIntervalElapsed],
+    [reminder.reminderId, countdownExecutionInterval, countdownIntervalElapsed],
   );
 };
 
 // Attempts to first add the new components to the table. iI this fails then it is known the reminder is already present or components are invalid. If the update statement fails then it is know the components are invalid, error passed to invocer.
-const updateCountdownComponents = async (req, reminderId) => {
-  const countdownExecutionInterval = formatNumber(req.body.countdownExecutionInterval);
-  const countdownIntervalElapsed = formatNumber(req.body.countdownIntervalElapsed);
+const updateCountdownComponents = async (req, reminder) => {
+  const countdownExecutionInterval = formatNumber(reminder.countdownExecutionInterval);
+  const countdownIntervalElapsed = formatNumber(reminder.countdownIntervalElapsed);
 
   try {
     // If this succeeds: Reminder was not present in the countdown table and the reminderType was changed. The old components will be deleted from the other table by reminders
@@ -28,7 +28,7 @@ const updateCountdownComponents = async (req, reminderId) => {
     await queryPromise(
       req,
       'INSERT INTO reminderCountdownComponents(reminderId, countdownExecutionInterval, countdownIntervalElapsed) VALUES (?,?,?)',
-      [reminderId, countdownExecutionInterval, countdownIntervalElapsed],
+      [reminder.reminderId, countdownExecutionInterval, countdownIntervalElapsed],
     );
     return;
   }
@@ -38,7 +38,7 @@ const updateCountdownComponents = async (req, reminderId) => {
     await queryPromise(
       req,
       'UPDATE reminderCountdownComponents SET countdownExecutionInterval = ?, countdownIntervalElapsed = ? WHERE reminderId = ?',
-      [countdownExecutionInterval, countdownIntervalElapsed, reminderId],
+      [countdownExecutionInterval, countdownIntervalElapsed, reminder.reminderId],
     );
   }
 };

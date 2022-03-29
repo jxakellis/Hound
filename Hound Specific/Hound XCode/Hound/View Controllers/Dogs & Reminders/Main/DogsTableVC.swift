@@ -9,8 +9,8 @@
 import UIKit
 
 protocol DogsTableViewControllerDelegate: AnyObject {
-    func willOpenEditDog(dogId: Int)
-    func willOpenEditReminder(parentDogId: Int, reminderId: Int?)
+    func willOpenDogMenu(forDogId: Int?)
+    func willOpenReminderMenu(parentDogId: Int, forReminderId: Int?)
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
     func logReminderAnimation()
     func unlogReminderAnimation()
@@ -193,73 +193,14 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
         let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
 
         let alertActionAdd = UIAlertAction(title: "Add Reminder", style: .default) { _ in
-            self.delegate.willOpenEditReminder(parentDogId: dogId, reminderId: nil)
+            self.delegate.willOpenReminderMenu(parentDogId: dogId, forReminderId: nil)
         }
-
-        /*
-        var hasEnabledReminder: Bool {
-            for reminder in dog.dogReminders.reminders where reminder.isEnabled == true {
-                return true
-            }
-
-            return false
-        }
-
-        var enableStatusString: String {
-            if hasEnabledReminder == true {
-                return "Disable Reminders"
-            }
-            else {
-                return "Enable Reminders"
-            }
-        }
-
-        let alertActionDisable = UIAlertAction(
-            title: enableStatusString,
-            style: .default,
-            handler: { (_: UIAlertAction!)  in
-
-                // disabling all reminders
-                if hasEnabledReminder == true {
-                    for reminder in dog.dogReminders.reminders {
-
-                        reminder.isEnabled = false
-
-                        let reminderCell = self.tableView.cellForRow(
-                            at: IndexPath(
-                                row: try! dog.dogReminders.findIndex(forReminderId: reminder.reminderId)+1,
-                                section: section))
-                        as! DogsReminderDisplayTableViewCell
-
-                        reminderCell.reminderToggleSwitch.setOn(false, animated: true)
-                    }
-
-                }
-                // enabling all
-                else {
-                    for reminder in dog.dogReminders.reminders {
-                        reminder.isEnabled = true
-
-                        let reminderCell = self.tableView.cellForRow(at:
-                                                                        IndexPath(
-                                                                            row: try! dog.dogReminders.findIndex(forReminderId: reminder.reminderId)+1,
-                                                                            section: try! self.dogManager.findIndex(forDogId: dogId)))
-                        as! DogsReminderDisplayTableViewCell
-
-                        reminderCell.reminderToggleSwitch.setOn(true, animated: true)
-                    }
-                }
-
-                self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
-                // self.reloadTable()
-            })
-         */
 
         let alertActionEdit = UIAlertAction(
             title: "Edit Dog",
             style: .default,
             handler: { (_: UIAlertAction!)  in
-                self.delegate.willOpenEditDog(dogId: dogId)
+                self.delegate.willOpenDogMenu(forDogId: dogId)
             })
 
         let alertActionRemove = UIAlertAction(title: "Delete Dog", style: .destructive) { (alert) in
@@ -269,13 +210,12 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
 
             let removeDogConfirmationRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                 DogsRequest.delete(forDogId: dogId) { requestWasSuccessful in
-                    DispatchQueue.main.async {
-                        if requestWasSuccessful == true {
+                    if requestWasSuccessful == true {
                             try! sudoDogManager.removeDog(forDogId: dogId)
                             self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
                             self.tableView.deleteSections([section], with: .automatic)
                         }
-                    }
+                    
                 }
             }
 
@@ -284,7 +224,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
             removeDogConfirmation.addAction(removeDogConfirmationRemove)
             removeDogConfirmation.addAction(removeDogConfirmationCancel)
 
-            AlertManager.shared.enqueueAlertForPresentation(removeDogConfirmation)
+            AlertManager.enqueueAlertForPresentation(removeDogConfirmation)
         }
 
         alertController.addAction(alertActionAdd)
@@ -299,7 +239,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
 
         alertController.addAction(alertActionCancel)
 
-        AlertManager.shared.enqueueActionSheetForPresentation(alertController, sourceView: cell, permittedArrowDirections: [.up, .down])
+        AlertManager.enqueueActionSheetForPresentation(alertController, sourceView: cell, permittedArrowDirections: [.up, .down])
     }
 
     /// Called when a reminder is clicked by the user, display an action sheet of possible modifcations to the alarm/reminder.
@@ -313,7 +253,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
         let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
 
         let alertActionEdit = UIAlertAction(title: "Edit Reminder", style: .default) { _ in
-            self.delegate.willOpenEditReminder(parentDogId: cell.parentDogId, reminderId: reminder.reminderId)
+            self.delegate.willOpenReminderMenu(parentDogId: cell.parentDogId, forReminderId: reminder.reminderId)
         }
 
         // REMOVE BUTTON
@@ -324,14 +264,12 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
 
             let removeReminderConfirmationRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                 RemindersRequest.delete(forDogId: dog.dogId, forReminderId: reminder.reminderId) { requestWasSuccessful in
-                    DispatchQueue.main.async {
                         if requestWasSuccessful == true {
                             try! dog.dogReminders.removeReminder(forReminderId: reminder.reminderId)
                             self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
 
                             self.tableView.deleteRows(at: [indexPath], with: .automatic)
                         }
-                    }
                 }
                 
             }
@@ -341,7 +279,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
             removeReminderConfirmation.addAction(removeReminderConfirmationRemove)
             removeReminderConfirmation.addAction(removeReminderConfirmationCancel)
 
-            AlertManager.shared.enqueueAlertForPresentation(removeReminderConfirmation)
+            AlertManager.enqueueAlertForPresentation(removeReminderConfirmation)
 
         }
 
@@ -422,7 +360,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
 
         selectedReminderAlertController.addAction(alertActionCancel)
 
-        AlertManager.shared.enqueueActionSheetForPresentation(selectedReminderAlertController, sourceView: cell, permittedArrowDirections: [.up, .down])
+        AlertManager.enqueueActionSheetForPresentation(selectedReminderAlertController, sourceView: cell, permittedArrowDirections: [.up, .down])
 
     }
 
@@ -497,13 +435,11 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
                     // query server
                     
                     RemindersRequest.delete(forDogId: dogId, forReminderId: reminder.reminderId) { requestWasSuccessful in
-                        DispatchQueue.main.async {
-                            if requestWasSuccessful == true {
+                        if requestWasSuccessful == true {
                                 try! dog.dogReminders.removeReminder(forReminderId: reminder.reminderId)
                                 self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
                                 self.tableView.deleteRows(at: [indexPath], with: .automatic)
                             }
-                        }
                     }
 
                 }
@@ -521,13 +457,12 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
 
                 let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                     DogsRequest.delete(forDogId: dogId) { requestWasSuccessful in
-                        DispatchQueue.main.async {
-                            if requestWasSuccessful == true {
+                         if requestWasSuccessful == true {
                                 try! sudoDogManager.removeDog(forDogId: dogId)
                                 self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
                                 self.tableView.deleteSections([indexPath.section], with: .automatic)
                             }
-                        }
+                        
                     }
 
                 }
@@ -535,7 +470,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
                 removeConfirmation.addAction(alertActionRemove)
                 removeConfirmation.addAction(alertActionCancel)
             }
-            AlertManager.shared.enqueueAlertForPresentation(removeConfirmation)
+            AlertManager.enqueueAlertForPresentation(removeConfirmation)
 
         }
     }

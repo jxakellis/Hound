@@ -8,14 +8,6 @@
 
 import UIKit
 
-/// Enum full of cases of possible errors from Reminder
-enum ReminderError: Error {
-    case nameBlank
-    case nameInvalid
-    case descriptionInvalid
-    case intervalInvalid
-}
-
 enum ReminderType: String, CaseIterable {
     
     init?(rawValue: String) {
@@ -185,7 +177,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
     
     // MARK: - Properties
     
-    var reminderId: Int = -1
+    var reminderId: Int = ReminderConstant.defaultReminderId
     
     /// This is a user selected label for the reminder. It dictates the name that is displayed in the UI for this reminder.
     var reminderAction: ReminderAction = ReminderConstant.defaultAction
@@ -200,6 +192,105 @@ class Reminder: NSObject, NSCoding, NSCopying {
         }
         else {
             return reminderAction.rawValue
+        }
+    }
+    
+    // MARK: - Comparison
+    
+    /// Returns true if all the server synced properties for the reminder are the same. This includes all the base properties here (yes the reminderId too) and the reminder components for the corresponding reminderAction
+    func isSame(asReminder reminder: Reminder) -> Bool {
+        if reminderId != reminder.reminderId {
+            return false
+        }
+        else if reminderAction != reminder.reminderAction {
+            return false
+        }
+        else if customTypeName != reminder.customTypeName {
+            return false
+        }
+        else if executionBasis != reminder.executionBasis {
+            return false
+        }
+        else if isEnabled != reminder.isEnabled {
+            return false
+        }
+        // snooze
+        else if snoozeComponents.isSnoozed != reminder.snoozeComponents.isSnoozed {
+            return false
+        }
+        else if snoozeComponents.executionInterval != reminder.snoozeComponents.executionInterval {
+            return false
+        }
+        else if snoozeComponents.intervalElapsed != reminder.snoozeComponents.intervalElapsed {
+            return false
+        }
+        // reminder types (countdown, weekly, monthly, one time)
+        else if reminderType != reminder.reminderType {
+            return false
+        }
+        else {
+            // known at this point that the reminderTypes are the same
+            switch reminderType {
+            case .countdown:
+                if countdownComponents.executionInterval != reminder.countdownComponents.executionInterval {
+                    return false
+                }
+                else if countdownComponents.intervalElapsed != reminder.countdownComponents.intervalElapsed {
+                    return false
+                }
+                else {
+                    // everything the same!
+                    return true
+                }
+            case .weekly:
+                if weeklyComponents.dateComponents.hour != reminder.weeklyComponents.dateComponents.hour {
+                    return false
+                }
+                else if weeklyComponents.dateComponents.minute != reminder.weeklyComponents.dateComponents.minute {
+                    return false
+                }
+                else if weeklyComponents.weekdays != reminder.weeklyComponents.weekdays {
+                    return false
+                }
+                else if weeklyComponents.isSkipping != reminder.weeklyComponents.isSkipping {
+                    return false
+                }
+                else if weeklyComponents.isSkippingDate != reminder.weeklyComponents.isSkippingDate {
+                    return false
+                }
+                else {
+                    // all the same!
+                    return true
+                }
+            case .monthly:
+                if monthlyComponents.dateComponents.hour != reminder.monthlyComponents.dateComponents.hour {
+                    return false
+                }
+                else if monthlyComponents.dateComponents.minute != reminder.monthlyComponents.dateComponents.minute {
+                    return false
+                }
+                else if monthlyComponents.dayOfMonth != reminder.monthlyComponents.dayOfMonth {
+                    return false
+                }
+                else if monthlyComponents.isSkipping != reminder.monthlyComponents.isSkipping {
+                    return false
+                }
+                else if monthlyComponents.isSkippingDate != reminder.monthlyComponents.isSkippingDate {
+                    return false
+                }
+                else {
+                    // all the same!
+                    return true
+                }
+            case .oneTime:
+                if oneTimeComponents.executionDate != reminder.oneTimeComponents.executionDate {
+                    return false
+                }
+                else {
+                    // all the same!
+                    return true
+                }
+            }
         }
     }
     
@@ -354,11 +445,11 @@ class Reminder: NSObject, NSCoding, NSCopying {
             countdownComponents.changeIntervalElapsed(newIntervalElapsed: 0)
         }
         else if reminderType == .weekly {
-            weeklyComponents.isSkippingLogDate = nil
+            weeklyComponents.isSkippingDate = nil
             weeklyComponents.isSkipping = false
         }
         else if reminderType == .monthly {
-            monthlyComponents.isSkippingLogDate = nil
+            monthlyComponents.isSkippingDate = nil
             monthlyComponents.isSkipping = false
         }
         
@@ -387,23 +478,23 @@ class Reminder: NSObject, NSCoding, NSCopying {
             /*
              if newSkipStatus == true {
              // track this date so if the isSkipping is undone by the user, then we can remove the log
-             weeklyComponents.isSkippingLogDate = Date()
+             weeklyComponents.isSkippingDate = Date()
              }
              else {
              // the user decided to remove isSkipping from the reminder, that means we must removed the log that was added.
-             if weeklyComponents.isSkippingLogDate != nil {
+             if weeklyComponents.isSkippingDate != nil {
              // if the log added by skipping the reminder is unmodified, finds and removes it in the unskip process
              let dogLogs = parentDog!.dogLogs.logs
              for logDateIndex in 0..<dogLogs.count {
-             if dogLogs[logDateIndex].date.distance(to: weeklyComponents.isSkippingLogDate!) < 0.01
-             && dogLogs[logDateIndex].date.distance(to: weeklyComponents.isSkippingLogDate!) > -0.01 {
+             if dogLogs[logDateIndex].date.distance(to: weeklyComponents.isSkippingDate!) < 0.01
+             && dogLogs[logDateIndex].date.distance(to: weeklyComponents.isSkippingDate!) > -0.01 {
              parentDog!.dogLogs.removeLog(forIndex: logDateIndex)
              break
              }
              }
              }
              
-             weeklyComponents.isSkippingLogDate = nil
+             weeklyComponents.isSkippingDate = nil
              }
              */
             
@@ -417,24 +508,24 @@ class Reminder: NSObject, NSCoding, NSCopying {
             /*
              if newSkipStatus == true {
              // track this date so if the isSkipping is undone by the user, then we can remove the log
-             monthlyComponents.isSkippingLogDate = Date()
+             monthlyComponents.isSkippingDate = Date()
              }
              else {
              
              // the user decided to remove isSkipping from the reminder, that means we must removed the log that was added.
-             if monthlyComponents.isSkippingLogDate != nil {
+             if monthlyComponents.isSkippingDate != nil {
              // if the log added by skipping the reminder is unmodified, finds and removes it in the unskip process
              let dogLogs = parentDog!.dogLogs.logs
              for logDateIndex in 0..<dogLogs.count {
-             if dogLogs[logDateIndex].date.distance(to: monthlyComponents.isSkippingLogDate!) < 0.01
-             && dogLogs[logDateIndex].date.distance(to: monthlyComponents.isSkippingLogDate!) > -0.01 {
+             if dogLogs[logDateIndex].date.distance(to: monthlyComponents.isSkippingDate!) < 0.01
+             && dogLogs[logDateIndex].date.distance(to: monthlyComponents.isSkippingDate!) > -0.01 {
              parentDog!.dogLogs.removeLog(forIndex: logDateIndex)
              break
              }
              }
              }
              
-             monthlyComponents.isSkippingLogDate = nil
+             monthlyComponents.isSkippingDate = nil
              }
              */
             

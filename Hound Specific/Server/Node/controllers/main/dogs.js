@@ -1,6 +1,6 @@
-const { queryPromise } = require('../utils/queryPromise');
-const { formatNumber, areAllDefined, atLeastOneDefined } = require('../utils/validateFormat');
-const { queryDog, queryDogs } = require('./queryFor/queryForDogs');
+const { queryPromise } = require('../../utils/queryPromise');
+const { formatNumber, areAllDefined, atLeastOneDefined } = require('../../utils/validateFormat');
+const { queryDog, queryDogs } = require('../getFor/getForDogs');
 
 /*
 Known:
@@ -112,7 +112,7 @@ const updateDog = async (req, res) => {
   }
 };
 
-const delDog = require('../utils/delete').deleteDog;
+const delDog = require('../../utils/delete').deleteDog;
 
 const deleteDog = async (req, res) => {
   const dogId = formatNumber(req.params.dogId);

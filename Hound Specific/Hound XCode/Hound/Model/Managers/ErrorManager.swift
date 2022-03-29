@@ -11,16 +11,18 @@ import UIKit
 class ErrorManager {
     
     /// Alerts for an unspecified error. Title is default with a parameter specified message
-    static func alert(forMessage message: String) {
+    static func alert(forMessage message: String, serverRelated: Bool = false) {
         
-        AlertManager.willShowAlert(title: "Uh oh! There seems to be an error.", message: message)
+        AlertManager.willShowAlert(title: "Uh oh! There seems to be an issue.", message: message, serverRelated: serverRelated)
+        
+        AppDelegate.generalLogger.error("Known error: \(message)")
         
     }
     
     /// Alerts for a unspecified error from a specified location. Title is extracted from sender with a parameter specified message
     static private func alertForUnknown(error: Error) {
         
-        AlertManager.willShowAlert(title: "Uh oh! There seems to be an error.", message: "Bizarre, there seems to be an unknown problem occuring! Please restart and/or reinstall Hound if issues persist.")
+        AlertManager.willShowAlert(title: "Bizzare, there seems to be an unknown issue occuring!", message: "Please restart and/or reinstall Hound if issues persist. Issue description: \(error.localizedDescription)")
         
         AppDelegate.generalLogger.error("Unknown error: \(error.localizedDescription)")
         
@@ -29,60 +31,93 @@ class ErrorManager {
     /// Handles a given error, uses helper functions to compare against all known (custom) error types
     static func alert(forError error: Error) {
         
-        let errorManagerInstance = ErrorManager()
+        // Server Related
+        if let castError = error as? GeneralResponseError {
+            ErrorManager.alert(forMessage: castError.rawValue, serverRelated: true)
+        }
+        // Dog Object Related
+        else if let castError = error as? DogManagerError {
+            ErrorManager.alert(forMessage: castError.rawValue)
+        }
+        else if let castError = error as? DogError {
+            ErrorManager.alert(forMessage: castError.rawValue)
+        }
+        // Log Object Related
+        else if let castError = error as? LogManagerError {
+            ErrorManager.alert(forMessage: castError.rawValue)
+        }
+        else if let castError = error as? LogTypeError {
+            ErrorManager.alert(forMessage: castError.rawValue)
+        }
+        // Reminder Object Related
+        else if let castError = error as? ReminderManagerError {
+            ErrorManager.alert(forMessage: castError.rawValue)
+        }
+        else if let castError = error as? WeeklyComponentsError {
+            ErrorManager.alert(forMessage: castError.rawValue)
+        }
+        else if let castError = error as? MonthlyComponentsError {
+            ErrorManager.alert(forMessage: castError.rawValue)
+        }
+        // Other
+        else if let castError = error as? TimingManagerError {
+            ErrorManager.alert(forMessage: castError.rawValue)
+        }
+        else if let castError = error as? StringExtensionError {
+            ErrorManager.alert(forMessage: castError.rawValue)
+        }
+        else {
+            alertForUnknown(error: error)
+        }
         
-        if errorManagerInstance.handleTimingManagerError(error: error) == true {
+        /*
+         Old way of doing it
+        if handleTimingManagerError(error: error) == true {
             return
         }
-        else if errorManagerInstance.handleDogManagerError(error: error) == true {
+        else if handleDogManagerError(error: error) == true {
             return
         }
-        else if errorManagerInstance.handleDogError(error: error) == true {
+        else if handleDogError(error: error) == true {
             return
         }
-        else  if errorManagerInstance.handleLogManagerError(error: error) == true {
+        else  if handleLogManagerError(error: error) == true {
             return
         }
-        else if errorManagerInstance.handleLogTypeError(error: error) == true {
+        else if handleLogTypeError(error: error) == true {
             return
         }
-        else if errorManagerInstance.handleReminderManagerError(error: error) == true {
+        else if handleReminderManagerError(error: error) == true {
             return
         }
-        else if errorManagerInstance.handleReminderError(error: error) == true {
+        else if handleWeeklyComponentsError(error: error) == true {
             return
         }
-        else if errorManagerInstance.handleWeeklyComponentsError(error: error) == true {
+        else if handleMonthlyComponentsError(error: error) == true {
             return
         }
-        else if errorManagerInstance.handleMonthlyComponentsError(error: error) == true {
+        else if handleStringExtensionError(error: error) == true {
             return
         }
-        else if errorManagerInstance.handleStringExtensionError(error: error) == true {
-            return
-        }
-        else if errorManagerInstance.handleGeneralResponseError(error: error ) == true {
+        else if handleGeneralResponseError(error: error ) == true {
             return
         }
         else {
             ErrorManager.alertForUnknown(error: error)
         }
+         */
     }
     
+    /*
     /// Returns true if able to find a match in enum TimingManagerError to the error provided
-    private func handleTimingManagerError(error: Error) -> Bool {
+    static private func handleTimingManagerError(error: Error) -> Bool {
         /*
-         enum TimingManagerError: Error{
-         case parseSenderInfoFailed
-         case invalidateFailed
+         enum TimingManagerError: String, Error {
+         case parseSenderInfoFailed = "Something went wrong. Please reload and try again! (TME.pSIF)"
          }
          */
-        if case TimingManagerError.invalidateFailed = error {
-            ErrorManager.alert(forMessage: "Something went wrong. Please reload and try again! (TME.iF)")
-            return true
-        }
-        else if case TimingManagerError.parseSenderInfoFailed = error {
-            ErrorManager.alert(forMessage: "Something went wrong. Please reload and try again! (TME.pSIF)")
+        if case TimingManagerError.parseSenderInfoFailed = error {
+            ErrorManager.alert(forMessage: TimingManagerError.parseSenderInfoFailed.rawValue)
             return true
         }
         else {
@@ -91,14 +126,14 @@ class ErrorManager {
     }
     
     /// Returns true if able to find a match in enum DogManagerError to the error provided
-    private func handleDogManagerError(error: Error) -> Bool {
+    static private func handleDogManagerError(error: Error) -> Bool {
         /*
-         enum DogManagerError: Error {
-         case dogIdNotPresent
+         enum DogManagerError: String, Error {
+         case dogIdNotPresent = "Couldn't find a match for a dog with that id. Please reload and try again!"
          }
          */
         if case DogManagerError.dogIdNotPresent = error {
-            ErrorManager.alert(forMessage: "Couldn't find a match for a dog with that name. Please reload and try again!")
+            ErrorManager.alert(forMessage: DogManagerError.dogIdNotPresent.rawValue)
             return true
         }
         else {
@@ -107,19 +142,19 @@ class ErrorManager {
     }
     
     /// Returns true if able to find a match in enum DogError to the error provided
-    private func handleDogError(error: Error) -> Bool {
+    static private func handleDogError(error: Error) -> Bool {
         /*
-         enum DogError: Error {
-         case nilName
-         case blankName
+         enum DogError: String, Error {
+         case dogNameNil = "Your dog's name is invalid, please try a different one."
+         case dogNameBlank = "Your dog's name is blank, try typing something in."
          }
          */
         if case DogError.dogNameNil = error {
-            ErrorManager.alert(forMessage: "Your dog's name is invalid, please try a different one.")
+            ErrorManager.alert(forMessage: DogError.dogNameNil.rawValue)
             return true
         }
         else if case DogError.dogNameBlank = error {
-            ErrorManager.alert(forMessage: "Your dog's name is blank, try typing something in.")
+            ErrorManager.alert(forMessage: DogError.dogNameBlank.rawValue)
             return true
         }
         else {
@@ -128,19 +163,14 @@ class ErrorManager {
     }
     
     /// Returns true if able to find a match in enum TraitManagerError to the error provided
-    private func handleLogManagerError(error: Error) -> Bool {
+    static private func handleLogManagerError(error: Error) -> Bool {
         /*
-         enum LogManagerError: Error {
-         case logIdPresent
-         case logIdNotPresent
+         enum LogManagerError: String, Error {
+         case logIdNotPresent = "Something went wrong when trying modify your log, please try again! (LME.lINP)"
          }
          */
-        if case LogManagerError.logIdPresent = error {
-            ErrorManager.alert(forMessage: "Something went wrong when trying modify your log, please try again! (LME.lIP)")
-            return true
-        }
-        else if case LogManagerError.logIdNotPresent = error {
-            ErrorManager.alert(forMessage: "Something went wrong when trying modify your log, please try again! (LME.lINP)")
+        if case LogManagerError.logIdNotPresent = error {
+            ErrorManager.alert(forMessage: LogManagerError.logIdNotPresent.rawValue)
             return true
         }
         else {
@@ -149,19 +179,14 @@ class ErrorManager {
     }
     
     /// Returns true if able to find a match in enum LogTypeError to the error provided
-    private func handleLogTypeError(error: Error) -> Bool {
+    static private func handleLogTypeError(error: Error) -> Bool {
         /*
-         enum LogTypeError: Error {
-         case nilLogType
-         case blankLogType
+         enum LogTypeError: String, Error {
+         case blankLogType = "Your log has no type, try selecting one!"
          }
          */
-        if case LogTypeError.nilLogType = error {
-            ErrorManager.alert(forMessage: "Your log has no type, try selecting one!")
-            return true
-        }
-        else if case LogTypeError.blankLogType = error {
-            ErrorManager.alert(forMessage: "Your log has no type, try selecting one!")
+        if case LogTypeError.blankLogType = error {
+            ErrorManager.alert(forMessage: LogTypeError.blankLogType.rawValue)
             return true
         }
         else {
@@ -170,52 +195,14 @@ class ErrorManager {
     }
     
     /// Returns true if able to find a match in enum ReminderManagerError to the error provided
-    private func handleReminderManagerError(error: Error) -> Bool {
+    static private func handleReminderManagerError(error: Error) -> Bool {
         /*
-         enum ReminderManagerError: Error {
-         case reminderAlreadyPresent
-         case reminderNotPresent
-         case reminderInvalid
-         case reminderNameNotPresent
+         enum ReminderManagerError: String, Error {
+         case reminderIdNotPresent = "Something went wrong when trying to modify your reminder. Please reload and try again! (RME.rINP)"
          }
          */
-        if case ReminderManagerError.reminderIdAlreadyPresent = error {
-            ErrorManager.alert(forMessage: "Your reminder seems to already exist. Please reload and try again! (RME.rIAP)")
-            return true
-        }
-        else if case ReminderManagerError.reminderIdNotPresent = error {
-            ErrorManager.alert(forMessage: "Something went wrong when trying to modify your reminder. Please reload and try again! (RME.rINP)")
-            return true
-        }
-        else {
-            return false
-        }
-    }
-    
-    /// Returns true if able to find a match in enum ReminderError to the error provided
-    private func handleReminderError(error: Error) -> Bool {
-        /*
-         enum ReminderError: Error {
-         case nameBlank
-         case nameInvalid
-         case descriptionInvalid
-         case intervalInvalid
-         }
-         */
-        if case ReminderError.nameInvalid = error {
-            ErrorManager.alert(forMessage: "Your dog's reminder name is invalid, please try a different one.")
-            return true
-        }
-        else if case ReminderError.nameBlank = error {
-            ErrorManager.alert(forMessage: "Your reminder's name is blank, try typing something in.")
-            return true
-        }
-        else if case ReminderError.descriptionInvalid = error {
-            ErrorManager.alert(forMessage: "Your dog's reminder description is invalid, please try a different one.")
-            return true
-        }
-        else if case ReminderError.intervalInvalid = error {
-            ErrorManager.alert(forMessage: "Your dog's reminder countdown time is invalid, please try a different one.")
+        if case ReminderManagerError.reminderIdNotPresent = error {
+            ErrorManager.alert(forMessage: ReminderManagerError.reminderIdNotPresent.rawValue)
             return true
         }
         else {
@@ -224,14 +211,14 @@ class ErrorManager {
     }
     
     /// Returns true if able to find a match in enum TimeOfDayComponentsError to the error provided
-    private func handleWeeklyComponentsError(error: Error) -> Bool {
+    static private func handleWeeklyComponentsError(error: Error) -> Bool {
         /*
-         enum TimeOfDayComponentsError: Error {
-         case weekdayArrayInvalid
+         enum WeeklyComponentsError: String, Error {
+         case weekdayArrayInvalid = "Please select at least one day of the week for your reminder. You can do this by clicking on the grey S, M, T, W, T, F, or S. A blue letter means that your reminder will be enabled on that day."
          }
          */
         if case WeeklyComponentsError.weekdayArrayInvalid = error {
-            ErrorManager.alert(forMessage: "Please select at least one day of the week for your reminder. You can do this by clicking on the grey S, M, T, W, T, F, or S. A blue letter means that your reminder will be enabled on that day.")
+            ErrorManager.alert(forMessage: WeeklyComponentsError.weekdayArrayInvalid.rawValue)
             return true
         }
         else {
@@ -239,15 +226,15 @@ class ErrorManager {
         }
     }
     
-    private func handleMonthlyComponentsError(error: Error) -> Bool {
+    static private func handleMonthlyComponentsError(error: Error) -> Bool {
         /*
-         enum MonthlyComponentsError: Error {
-         case dayOfMonthInvalid
+         enum MonthlyComponentsError: String, Error {
+         case dayOfMonthInvalid = "Please select a day of month for your reminder."
          }
          */
         
         if case MonthlyComponentsError.dayOfMonthInvalid = error {
-            ErrorManager.alert(forMessage: "Please select a day of month for your reminder.")
+            ErrorManager.alert(forMessage: MonthlyComponentsError.dayOfMonthInvalid.rawValue)
             return true
         }
         else {
@@ -255,14 +242,14 @@ class ErrorManager {
         }
     }
     
-    private func handleStringExtensionError(error: Error) -> Bool {
+    static private func handleStringExtensionError(error: Error) -> Bool {
         /*
-         enum StringExtensionError: Error {
-         case invalidDateComponents
+         enum StringExtensionError: String, Error {
+         case dateComponentsInvalid = "Something went wrong. Please reload and try again! (SEE.dCI)"
          }
          */
         if case StringExtensionError.dateComponentsInvalid = error {
-            ErrorManager.alert(forMessage: "Something went wrong. Please reload and try again! (SEE.iDC)")
+            ErrorManager.alert(forMessage: StringExtensionError.dateComponentsInvalid.rawValue)
             return true
         }
         else {
@@ -270,52 +257,73 @@ class ErrorManager {
         }
     }
     
-    private func handleGeneralResponseError(error: Error) -> Bool {
+    static private func handleGeneralResponseError(error: Error) -> Bool {
         /*
-         enum GeneralResponseError: Error {
-         case failureResponse
-         case noResponse
+         enum GeneralResponseError: String, Error {
+         
+         /// GET: != 200...299, e.g. 400, 404, 500
+         case failureGetResponse = "We experienced an issue while retrieving your data Hound's server. Please restart and re-login to Hound if the issue persists."
+         
+         /// GET: Request couldn't be constructed, request wasn't sent, request didn't go through, server was down, response was lost, or some other error
+         case noGetResponse = "We were unable to reach Hound's server and retrieve your data. Please verify that you are connected to the internet and retry. If the issue persists, Hound's server may be experiencing an outage."
+         
+         /// CREATE/POST:  != 200...299, e.g. 400, 404, 500
+         case failurePostResponse = "Hound's server experienced an issue in saving your new data. Please restart and re-login to Hound if the issue persists."
+         /// CREATE/POST: Request couldn't be constructed, request wasn't sent, request didn't go through, server was down, response was lost, or some other error
+         case noPostResponse = "We were unable to reach Hound's server and save your new data. Please verify that you are connected to the internet and retry. If the issue persists, Hound's server may be experiencing an outage."
+         
+         /// UPDATE/PUT:  != 200...299, e.g. 400, 404, 500
+         case failurePutResponse = "Hound's server experienced an issue in updating your data. Please restart and re-login to Hound if the issue persists."
+         /// UPDATE/PUT: Request couldn't be constructed, request wasn't sent, request didn't go through, server was down, response was lost, or some other error
+         case noPutResponse = "We were unable to reach Hound's server and update your data. Please verify that you are connected to the internet and retry. If the issue persists, Hound's server may be experiencing an outage."
+         
+         /// DELETE:  != 200...299, e.g. 400, 404, 500
+         case failureDeleteResponse = "Hound's server experienced an issue in deleting your data. Please restart and re-login to Hound if the issue persists."
+         /// DELETE: Request couldn't be constructed, request wasn't sent, request didn't go through, server was down, response was lost, or some other error
+         case noDeleteResponse = "We were unable to reach Hound's server to delete your data. Please verify that you are connected to the internet and retry. If the issue persists, Hound's server may be experiencing an outage."
+         
          }
          */
         // MARK: GET
         if case GeneralResponseError.failureGetResponse = error {
-            ErrorManager.alert(forMessage: GeneralResponseErrorMessages.failureGetResponse)
+            ErrorManager.alert(forMessage: GeneralResponseError.failureGetResponse.rawValue)
             return true
         }
         else if case GeneralResponseError.noGetResponse = error {
-            ErrorManager.alert(forMessage: GeneralResponseErrorMessages.noGetResponse)
+            ErrorManager.alert(forMessage: GeneralResponseError.noGetResponse.rawValue)
             return true
         }
         // MARK: POST
         else if case GeneralResponseError.failurePostResponse = error {
-            ErrorManager.alert(forMessage: GeneralResponseErrorMessages.failurePostResponse)
+            ErrorManager.alert(forMessage: GeneralResponseError.failurePostResponse.rawValue)
             return true
         }
         else if case GeneralResponseError.noPostResponse = error {
-            ErrorManager.alert(forMessage: GeneralResponseErrorMessages.noPostResponse)
+            ErrorManager.alert(forMessage: GeneralResponseError.noPostResponse.rawValue)
             return true
         }
         // MARK: PUT
         else if case GeneralResponseError.failurePutResponse = error {
-            ErrorManager.alert(forMessage: GeneralResponseErrorMessages.failurePutResponse)
+            ErrorManager.alert(forMessage: GeneralResponseError.failurePutResponse.rawValue)
             return true
         }
         else if case GeneralResponseError.noPutResponse = error {
-            ErrorManager.alert(forMessage: GeneralResponseErrorMessages.noPutResponse)
+            ErrorManager.alert(forMessage: GeneralResponseError.noPutResponse.rawValue)
             return true
         }
         // MARK: DELETE
         else if case GeneralResponseError.failureDeleteResponse = error {
-            ErrorManager.alert(forMessage: GeneralResponseErrorMessages.failureDeleteResponse)
+            ErrorManager.alert(forMessage: GeneralResponseError.failureDeleteResponse.rawValue)
             return true
         }
         else if case GeneralResponseError.noDeleteResponse = error {
-            ErrorManager.alert(forMessage: GeneralResponseErrorMessages.noDeleteResponse)
+            ErrorManager.alert(forMessage: GeneralResponseError.noDeleteResponse.rawValue)
             return true
         }
         else {
             return false
         }
     }
+     */
     
 }

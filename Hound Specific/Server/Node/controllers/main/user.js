@@ -1,7 +1,7 @@
-const { queryPromise } = require('../utils/queryPromise');
+const { queryPromise } = require('../../utils/queryPromise');
 const {
   areAllDefined, atLeastOneDefined, formatEmail, formatBoolean, formatNumber,
-} = require('../utils/validateFormat');
+} = require('../../utils/validateFormat');
 
 /*
 Known:
@@ -261,7 +261,7 @@ const updateUser = async (req, res) => {
   }
 };
 
-const delUser = require('../utils/delete').deleteUser;
+const delUser = require('../../utils/delete').deleteUser;
 
 const deleteUser = async (req, res) => {
   const userId = formatNumber(req.params.userId);

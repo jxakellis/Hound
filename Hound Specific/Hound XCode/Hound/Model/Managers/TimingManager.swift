@@ -8,9 +8,8 @@
 
 import UIKit
 
-enum TimingManagerError: Error {
-    case parseSenderInfoFailed
-    case invalidateFailed
+enum TimingManagerError: String, Error {
+    case parseSenderInfoFailed = "Something went wrong. Please reload and try again! (TME.pSIF)"
 }
 
 protocol TimingManagerDelegate {
@@ -109,11 +108,11 @@ class TimingManager {
             
             if reminder.reminderType == .weekly {
                 reminder.weeklyComponents.isSkipping = false
-                reminder.weeklyComponents.isSkippingLogDate = nil
+                reminder.weeklyComponents.isSkippingDate = nil
             }
             else if reminder.reminderType == .monthly {
                 reminder.monthlyComponents.isSkipping = false
-                reminder.monthlyComponents.isSkippingLogDate = nil
+                reminder.monthlyComponents.isSkippingDate = nil
                 
             }
             reminder.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)

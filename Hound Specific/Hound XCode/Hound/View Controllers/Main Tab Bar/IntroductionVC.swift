@@ -145,7 +145,7 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
     }
     
     @IBAction private func didClickIcon(_ sender: Any) {
-        AlertManager.shared.enqueueActionSheetForPresentation(imagePickMethodAlertController, sourceView: dogIcon, permittedArrowDirections: [.up, .down])
+        AlertManager.enqueueActionSheetForPresentation(imagePickMethodAlertController, sourceView: dogIcon, permittedArrowDirections: [.up, .down])
     }
     
     // MARK: - Properties
@@ -219,7 +219,7 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
             else {
                 let warningAlert  = GeneralUIAlertController(title: "Warning", message: "You don't have camera", preferredStyle: .alert)
                 warningAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                AlertManager.shared.enqueueAlertForPresentation(warningAlert)
+                AlertManager.enqueueAlertForPresentation(warningAlert)
             }
         }
         

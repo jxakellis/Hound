@@ -9,9 +9,8 @@
 import UIKit
 
 /// Enum full of cases of possible errors from ReminderManager
-enum ReminderManagerError: Error {
-    case reminderIdAlreadyPresent
-    case reminderIdNotPresent
+enum ReminderManagerError: String, Error {
+    case reminderIdNotPresent = "Something went wrong when trying to modify your reminder. Please reload and try again! (RME.rINP)"
 }
 
 protocol ReminderManagerProtocol {
@@ -80,9 +79,7 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
     
     init(initReminders: [Reminder] = []) {
         super.init()
-        for reminder in initReminders {
-            appendReminder(newReminder: reminder)
-        }
+        addReminder(newReminders: initReminders)
     }
     
     // MARK: Properties
@@ -93,26 +90,28 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
     
     // MARK: Add Reminders
     
-    /// This handles the proper appending of a reminder. This function assumes an already checked reminder and its purpose is to bypass the add reminder endpoint
-    private func appendReminder(newReminder: Reminder) {
-        let newReminderCopy = newReminder.copy() as! Reminder
-        storedReminders.append(newReminderCopy)
-    }
-    
     func addReminder(newReminder: Reminder) {
         
-        // removes any existing reminders that have the same reminderId as they would cause problems. .reversed() is needed to make it work, without it there will be an index of out bounds error.
-        for (reminderIndex, reminder) in reminders.enumerated().reversed() where reminder.reminderId == newReminder.reminderId {
+        var lowestReminderId = Int.max
+        for reminder in reminders where reminder.reminderId < lowestReminderId {
+            // find the lowest placeholder id
+            lowestReminderId = reminder.reminderId
+        }
+        
+        // removes any existing reminders that have the same reminderId as they would cause problems. Placeholder Ids aren't real so they can be shifted .reversed() is needed to make it work, without it there will be an index of out bounds error.
+        for (reminderIndex, reminder) in reminders.enumerated().reversed() where reminder.reminderId == newReminder.reminderId && reminder.reminderId >= 0 {
+            
             // instead of crashing, replace the reminder.
             reminder.timer?.invalidate()
             storedReminders.remove(at: reminderIndex)
-            storedReminders.append(newReminder)
-            
-            sortReminders()
-            return
         }
         
-        appendReminder(newReminder: newReminder)
+        // If there are multiple reminders with placeholder ids, set the new reminder's placeholder id to the lowest possible, therefore no overlap.
+        if newReminder.reminderId < 0 && lowestReminderId < 0 {
+            newReminder.reminderId = lowestReminderId - 1
+        }
+        
+        storedReminders.append(newReminder)
         
         sortReminders()
     }
@@ -158,7 +157,7 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
                 return nil
             }
             
-            storedReminders[indexOfRemovalTarget ?? -1].timer?.invalidate()
+            storedReminders[indexOfRemovalTarget ?? ReminderConstant.defaultReminderId].timer?.invalidate()
             storedReminders.remove(at: indexOfRemovalTarget ?? -1)
         }
     }
@@ -282,6 +281,48 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
                 
             }
         }
+    }
+    
+    // MARK: Compare
+    
+    /// Compares newReminders against the reminders stored in this reminders manager. The first array is reminders that haven't changed, therefore they are in sync with the server. The second array is reminders that have been created and must be communicated to the server. The third array is reminders that have been updated so the server must be notified of their changes. The fourth array is reminders that have been deleted so the server must be notified of their deletion (this function also invalidates the timers of the reminders in the deleted array).
+    func groupReminders(newReminders: [Reminder]) -> ([Reminder], [Reminder], [Reminder], [Reminder]) {
+        var sameReminders: [Reminder] = []
+        var createdReminders: [Reminder] = []
+        var updatedReminders: [Reminder] = []
+        var deletedReminders: [Reminder] = []
+        
+        // first we loop through our inital reminders array. We can find same, updated, and deleted reminders this way.
+        // Since we don't deal with created reminders in this loop, all reminderIds will be real Ids from the server
+        for reminder in self.reminders {
+            var containsReminder = false
+            for newReminder in newReminders where newReminder.reminderId == reminder.reminderId && newReminder.reminderId >= 0 {
+                containsReminder = true
+                if reminder.isSame(asReminder: newReminder) {
+                    // nothing was changed about the reminder
+                    sameReminders.append(newReminder)
+                }
+                else {
+                    // some property of the reminder was updated
+                    updatedReminders.append(newReminder)
+                }
+                break
+            }
+            if containsReminder == false {
+                // new reminder array doesn't contain the old reminder, therefore it was deleted
+                deletedReminders.append(reminder)
+                // make sure to invalidate the old reminder, no need to do any same/updated reminder as (even if they are a .copy()) their timers are just references to the original timers. This means there are no duplicated timers and TimingManager will handle them
+                reminder.timer?.invalidate()
+                reminder.timer = nil
+            }
+        }
+        
+        // look for reminders that have the default reminder id, meaning they were just created and couldn't be in the old array
+        for newReminder in newReminders where newReminder.reminderId < 0 {
+            createdReminders.append(newReminder)
+        }
+        
+        return (sameReminders, createdReminders, updatedReminders, deletedReminders)
     }
     
 }

@@ -9,8 +9,8 @@
 import UIKit
 
 protocol DogsReminderTableViewCellDelegate: AnyObject {
-    /// The reminder switch to toggle the enable status was flipped. The reminder was updated and the server queried.
-    func didUpdateReminderEnable(sender: Sender, parentDogId: Int, reminder: Reminder)
+    /// The reminder switch to toggle the enable status was flipped. The reminder was updated and the server was NOT queried.
+    func didUpdateReminderEnable(sender: Sender, reminder: Reminder)
 }
 
 class DogsReminderTableViewCell: UITableViewCell {
@@ -22,22 +22,12 @@ class DogsReminderTableViewCell: UITableViewCell {
 
     @IBAction func didToggleEnable(_ sender: Any) {
         reminder.isEnabled = reminderToggleSwitch.isOn
-        delegate.didUpdateReminderEnable(sender: Sender(origin: self, localized: self), parentDogId: parentDogId, reminder: reminder)
-        
-        RemindersRequest.update(forDogId: parentDogId, forReminder: reminder) { requestWasSuccessful in
-            if requestWasSuccessful == false {
-                self.reminderToggleSwitch.setOn(false, animated: true)
-                self.reminder.isEnabled = self.reminderToggleSwitch.isOn
-                self.delegate.didUpdateReminderEnable(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, reminder: self.reminder)
-            }
-        }
+        delegate.didUpdateReminderEnable(sender: Sender(origin: self, localized: self), reminder: reminder)
     }
 
     // MARK: - Properties
 
     weak var delegate: DogsReminderTableViewCellDelegate! = nil
-    
-    var parentDogId: Int! = nil
 
     var reminder: Reminder! = nil
 
@@ -52,8 +42,7 @@ class DogsReminderTableViewCell: UITableViewCell {
         // self.imageView?.contentMode = .center
     }
 
-    func setup(parentDogId: Int, forReminder reminderPassed: Reminder) {
-        self.parentDogId = parentDogId
+    func setup(forReminder reminderPassed: Reminder) {
         reminder = reminderPassed
 
         reminderDisplay.text = ""

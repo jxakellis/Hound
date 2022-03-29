@@ -1,25 +1,25 @@
 const { queryPromise } = require('../../utils/queryPromise');
 const { formatBoolean, formatNumber } = require('../../utils/validateFormat');
 
-const createSnoozeComponents = async (req, reminderId) => {
-  const isSnoozed = formatBoolean(req.body.isSnoozed);
+const createSnoozeComponents = async (req, reminder) => {
+  const isSnoozed = formatBoolean(reminder.isSnoozed);
 
   // Only insert components if the reminder is snoozing, otherwise there is no need for them
   // Errors intentionally uncaught so they are passed to invocation in reminders
   if (isSnoozed === true) {
-    const snoozeExecutionInterval = formatNumber(req.body.snoozeExecutionInterval);
-    const snoozeIntervalElapsed = formatNumber(req.body.snoozeIntervalElapsed);
+    const snoozeExecutionInterval = formatNumber(reminder.snoozeExecutionInterval);
+    const snoozeIntervalElapsed = formatNumber(reminder.snoozeIntervalElapsed);
     await queryPromise(
       req,
       'INSERT INTO reminderSnoozeComponents(reminderId, isSnoozed, snoozeExecutionInterval, snoozeIntervalElapsed) VALUES (?,?,?,?)',
-      [reminderId, isSnoozed, snoozeExecutionInterval, snoozeIntervalElapsed],
+      [reminder.reminderId, isSnoozed, snoozeExecutionInterval, snoozeIntervalElapsed],
     );
   }
   else {
     await queryPromise(
       req,
       'DELETE FROM reminderSnoozeComponents WHERE reminderId = ?',
-      [reminderId],
+      [reminder.reminderId],
     );
   }
 };
@@ -29,20 +29,20 @@ const createSnoozeComponents = async (req, reminderId) => {
  * @param {*} req
  * @returns
  */
-const updateSnoozeComponents = async (req, reminderId) => {
-  const isSnoozed = formatBoolean(req.body.isSnoozed);
+const updateSnoozeComponents = async (req, reminder) => {
+  const isSnoozed = formatBoolean(reminder.isSnoozed);
 
   // if reminder is going into snooze mode then we update/insert the needed components
   if (isSnoozed === true) {
-    const snoozeExecutionInterval = formatNumber(req.body.snoozeExecutionInterval);
-    const snoozeIntervalElapsed = formatNumber(req.body.snoozeIntervalElapsed);
+    const snoozeExecutionInterval = formatNumber(reminder.snoozeExecutionInterval);
+    const snoozeIntervalElapsed = formatNumber(reminder.snoozeIntervalElapsed);
     try {
       // If this succeeds: Reminder was not present in the snooze table and the reminder was snoozed.
       // If this fails: The components provided are invalid or reminder already present in table (reminderId UNIQUE in DB)
       await queryPromise(
         req,
         'INSERT INTO reminderSnoozeComponents(reminderId, isSnoozed, snoozeExecutionInterval, snoozeIntervalElapsed) VALUES (?,?,?,?)',
-        [reminderId, isSnoozed, snoozeExecutionInterval, snoozeIntervalElapsed],
+        [reminder.reminderId, isSnoozed, snoozeExecutionInterval, snoozeIntervalElapsed],
       );
       return;
     }
@@ -52,7 +52,7 @@ const updateSnoozeComponents = async (req, reminderId) => {
       await queryPromise(
         req,
         'UPDATE reminderSnoozeComponents SET isSnoozed = ?, snoozeExecutionInterval = ?, snoozeIntervalElapsed = ? WHERE reminderId = ?',
-        [isSnoozed, snoozeExecutionInterval, snoozeIntervalElapsed, reminderId],
+        [isSnoozed, snoozeExecutionInterval, snoozeIntervalElapsed, reminder.reminderId],
       );
     }
   }
@@ -61,7 +61,7 @@ const updateSnoozeComponents = async (req, reminderId) => {
     await queryPromise(
       req,
       'DELETE FROM reminderSnoozeComponents WHERE reminderId = ?',
-      [reminderId],
+      [reminder.reminderId],
     );
   }
 };

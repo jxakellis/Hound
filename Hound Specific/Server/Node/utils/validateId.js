@@ -1,5 +1,5 @@
 const { queryPromise } = require('./queryPromise');
-const { formatNumber } = require('./validateFormat');
+const { formatNumber, formatArray } = require('./validateFormat');
 
 /**
  * Checks to see that userId is defined, is a number, and exists in the database. TO DO: add authentication to use userId
@@ -138,7 +138,7 @@ const validateLogId = async (req, res, next) => {
  * @param {*} next
  * @returns
  */
-const validateReminderId = async (req, res, next) => {
+const validateParamsReminderId = async (req, res, next) => {
   // dogId should be validated already
 
   const dogId = formatNumber(req.params.dogId);
@@ -175,6 +175,56 @@ const validateReminderId = async (req, res, next) => {
   }
 };
 
+const validateBodyReminderId = async (req, res, next) => {
+  // dogId should be validated already
+
+  const dogId = formatNumber(req.params.dogId);
+  const reminders = formatArray(req.body.reminders);
+
+  if (reminders) {
+    for (let i = 0; i < reminders.length; i += 1) {
+      const reminderId = formatNumber(reminders[i].reminderId);
+
+      // if reminderId is defined and it is a number then continue
+      if (reminderId) {
+        // query database to find out if user has permission for that reminderId
+        try {
+          // finds what reminderId (s) the user has linked to their dogId
+          const dogReminderIds = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ?', [dogId]);
+
+          // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
+
+          if (dogReminderIds.some((item) => item.reminderId === reminderId)) {
+            // the reminderId exists and it is linked to the dogId, valid!
+            // Check next reminder
+          }
+          else {
+            // the reminderId does not exist and/or the dog does not have access to that reminderId
+            req.rollbackQueries(req);
+            return res.status(404).json({ message: 'Couldn\'t Find Resource; No reminders found or invalid permissions' });
+          }
+        }
+        catch (error) {
+          req.rollbackQueries(req);
+          return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
+        }
+      }
+      else {
+        // reminderId was not provided or is invalid
+        req.rollbackQueries(req);
+        return res.status(400).json({ message: 'Invalid Parameters; reminderId Invalid' });
+      }
+    }
+    // successfully checked all reminderIds
+    return next();
+  }
+  else {
+    // reminders array was not provided or is invalid
+    req.rollbackQueries(req);
+    return res.status(400).json({ message: 'Invalid Parameters; reminders Invalid' });
+  }
+};
+
 module.exports = {
-  validateUserId, validateDogId, validateLogId, validateReminderId,
+  validateUserId, validateDogId, validateLogId, validateParamsReminderId, validateBodyReminderId,
 };

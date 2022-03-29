@@ -22,9 +22,9 @@ class RemindersIntroductionViewController: UIViewController {
     @IBOutlet private weak var remindersToggleSwitch: UISwitch!
     @IBOutlet private weak var continueButton: UIButton!
     @IBAction private func willContinue(_ sender: Any) {
-            
-        requestNotifications()
         
+        requestNotifications()
+            
         queryDefaultReminders(shouldUseDefaultReminders: remindersToggleSwitch.isOn) { reminders in
             if reminders != nil {
                 self.delegate.didComplete(sender: Sender(origin: self, localized: self), forReminders: reminders!)
@@ -36,7 +36,6 @@ class RemindersIntroductionViewController: UIViewController {
             LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = true
             self.dismiss(animated: true, completion: nil)
         }
-        
     }
     
     private func requestNotifications() {
@@ -86,12 +85,13 @@ class RemindersIntroductionViewController: UIViewController {
                 let dog = dogManager.dogs[0]
                 // use custom request
                 RemindersRequest.create(forDogId: dog.dogId, forReminders: [ReminderConstant.defaultReminderOne, ReminderConstant.defaultReminderTwo, ReminderConstant.defaultReminderThree, ReminderConstant.defaultReminderFour]) { reminders in
-                    // successful in creating all reminders
+                    // dont care about success, just pass through
                     completionHandler(reminders)
                 }
             }
             else {
                 ErrorManager.alert(forMessage: "Something must've happened to your pre-created dog! You seem to being missing it and we're unable to add your default reminders. Please use the blue plus button on the Reminder page to create a dog.")
+                completionHandler([])
             }
         }
         else {
@@ -115,7 +115,6 @@ class RemindersIntroductionViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
     }
 
 }

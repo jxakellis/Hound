@@ -16,20 +16,55 @@ class AlertManager: NSObject {
         super.init()
     }
     
-    private var alertQueue = Queue<GeneralUIAlertController>()
-    private var locked = false
-    private var halted = false
-    private var currentAlertPresented: GeneralUIAlertController?
+        // MARK: - Public Properties
     
     static var shared = AlertManager()
     
     /// Default sender used to present, this is necessary if an alert to be shown is called from a non UIViewController class as that is not in the view heirarchy and physically cannot present a view, so this is used instead.
     static var globalPresenter: UIViewController?
     
-    // MARK: -
+    // MARK: - Private Properties
     
-    /// Function used to present alertController
-    static func willShowAlert(title: String, message: String?) {
+    private var locked = false
+    private var halted = false
+    private var currentAlertPresented: GeneralUIAlertController?
+    
+    // MARK: - Queue
+    
+    private var alertQueue: [GeneralUIAlertController] = []
+    
+    /// Checks to see if the queue has any server related alerts inside of it.
+    private var containsServerRelatedAlert: Bool {
+        // check queue for server related
+        for alert in alertQueue where alert.serverRelated == true {
+            return true
+        }
+        // check current presentation
+        if currentAlertPresented?.serverRelated == true {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    
+    private var queuePresent: Bool {
+        return !(alertQueue.isEmpty)
+    }
+    
+    private func enqueue(_ alertController: GeneralUIAlertController) {
+         // if this is a server related alert and there is already a server related alert, we don't want to add a second one. no need to barrage the user with server failure messages.
+            if alertController.serverRelated == true && containsServerRelatedAlert == true {
+                return
+            }
+        
+        alertQueue.append(alertController)
+    }
+    
+    // MARK: - Alert Presentation
+    
+    /// Function used to present alertController. If the alert is related to a server query message, specifiy as so. This stops the user from being spammed with multiple server messages if there are multiple failure messages at once.
+    static func willShowAlert(title: String, message: String?, serverRelated: Bool = false) {
         var trimmedMessage: String? = message
         
         if message?.trimmingCharacters(in: .whitespacesAndNewlines) == ""{
@@ -40,28 +75,29 @@ class AlertManager: NSObject {
             title: title,
             message: trimmedMessage,
             preferredStyle: .alert)
+        alertController.serverRelated = serverRelated
         
         let alertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         
         alertController.addAction(alertAction)
         
-        shared.enqueueAlertForPresentation(alertController)
+        enqueueAlertForPresentation(alertController)
         
     }
     
     // MARK: - Alert Queue Management
     
-    func enqueueAlertForPresentation(_ alertController: GeneralUIAlertController) {
+    static func enqueueAlertForPresentation(_ alertController: GeneralUIAlertController) {
         guard alertController.preferredStyle == .alert else {
             fatalError("use enqueueActionSheetForPresentation instead")
         }
         
-        alertQueue.enqueue(alertController)
+        shared.enqueue(alertController)
         
-        showNextAlert()
+        shared.showNextAlert()
     }
     
-    func enqueueActionSheetForPresentation(_ alertController: GeneralUIAlertController, sourceView: UIView, permittedArrowDirections: UIPopoverArrowDirection) {
+    static func enqueueActionSheetForPresentation(_ alertController: GeneralUIAlertController, sourceView: UIView, permittedArrowDirections: UIPopoverArrowDirection) {
         guard alertController.preferredStyle == .actionSheet else {
             fatalError("use enqueueAlertForPresentation instead")
         }
@@ -75,9 +111,9 @@ class AlertManager: NSObject {
             break
         }
         
-        alertQueue.enqueue(alertController)
+        shared.enqueue(alertController)
         
-        showNextAlert()
+        shared.showNextAlert()
     }
     
     private func showNextAlert() {
@@ -107,9 +143,9 @@ class AlertManager: NSObject {
             waitLoop()
         }
         else {
-            if alertQueue.queuePresent() && locked == false {
+            if queuePresent == true && locked == false {
                 locked = true
-                currentAlertPresented = alertQueue.elements.first
+                currentAlertPresented = alertQueue.first
                 AlertManager.globalPresenter!.present(currentAlertPresented!, animated: true)
             }
         }
@@ -120,7 +156,7 @@ class AlertManager: NSObject {
     func alertDidComplete() {
         locked = false
         currentAlertPresented = nil
-        alertQueue.elements.removeFirst()
+        alertQueue.removeFirst()
         showNextAlert()
     }
     
@@ -135,33 +171,5 @@ class AlertManager: NSObject {
         }
         halted = false
         showNextAlert()
-    }
-}
-
-class Queue<Element>: NSObject {
-    
-    override init() {
-        super.init()
-    }
-    
-    var elements = [Element]()
-    
-    // MARK: - Operations
-    
-    func enqueue(_ element: Element) {
-        elements.append(element)
-    }
-    
-    func queuePresent() -> Bool {
-        return !(elements.isEmpty)
-    }
-    
-    func dequeue() -> Element? {
-        guard !elements.isEmpty else {
-            return nil
-        }
-        
-        return elements.removeFirst()
-        
     }
 }

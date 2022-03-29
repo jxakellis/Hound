@@ -252,8 +252,8 @@ extension InternalRequestUtils {
             body["weeklyHour"] = reminder.weeklyComponents.dateComponents.hour
             body["weeklyMinute"] = reminder.weeklyComponents.dateComponents.minute
            body["weeklyIsSkipping"] = reminder.weeklyComponents.isSkipping
-            if reminder.weeklyComponents.isSkipping == true && reminder.weeklyComponents.isSkippingLogDate != nil {
-                body["weeklySkipDate"] = reminder.weeklyComponents.isSkippingLogDate!.ISO8601Format()
+            if reminder.weeklyComponents.isSkipping == true && reminder.weeklyComponents.isSkippingDate != nil {
+                body["weeklySkipDate"] = reminder.weeklyComponents.isSkippingDate!.ISO8601Format()
             }
             
             body["sunday"] = false
@@ -289,8 +289,8 @@ extension InternalRequestUtils {
             body["monthlyHour"] = reminder.monthlyComponents.dateComponents.hour
             body["monthlyMinute"] = reminder.monthlyComponents.dateComponents.minute
             body["monthlyIsSkipping"] = reminder.monthlyComponents.isSkipping
-            if reminder.monthlyComponents.isSkipping == true && reminder.monthlyComponents.isSkippingLogDate != nil {
-                body["monthlySkipDate"] = reminder.monthlyComponents.isSkippingLogDate!.ISO8601Format()
+            if reminder.monthlyComponents.isSkipping == true && reminder.monthlyComponents.isSkippingDate != nil {
+                body["monthlySkipDate"] = reminder.monthlyComponents.isSkippingDate!.ISO8601Format()
             }
             body["dayOfMonth"] = reminder.monthlyComponents.dayOfMonth
         case .oneTime:
@@ -332,17 +332,17 @@ enum RequestUtils {
     }
     /// Provides warning if the id of anything is set to a placeholder value. 
     static func warnForPlaceholderId(dogId: Int? = nil, reminderId: Int? = nil, logId: Int? = nil) {
-        if UserInformation.userId == -1 {
-            AppDelegate.APIRequestLogger.warning("Warning: userId is -1")
+        if UserInformation.userId < 0 {
+            AppDelegate.APIRequestLogger.warning("Warning: userId is placeholder \(UserInformation.userId)")
         }
-        if dogId != nil && dogId! == -1 {
-            AppDelegate.APIRequestLogger.warning("Warning: dogId is -1")
+        if dogId != nil && dogId! < 0 {
+            AppDelegate.APIRequestLogger.warning("Warning: dogId is placeholder \(dogId!)")
         }
-        if reminderId != nil && reminderId! == -1 {
-            AppDelegate.APIRequestLogger.warning("Warning: reminderId is -1")
+        if reminderId != nil && reminderId! < 0 {
+            AppDelegate.APIRequestLogger.warning("Warning: reminderId is placeholder \(reminderId!)")
         }
-        if logId != nil && logId! == -1 {
-            AppDelegate.APIRequestLogger.warning("Warning: logId is -1")
+        if logId != nil && logId! < 0 {
+            AppDelegate.APIRequestLogger.warning("Warning: logId is placeholder \(logId!)")
         }
     }
     /// Provides warning if the id of anything is set to a placeholder value.

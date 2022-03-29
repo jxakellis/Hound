@@ -8,8 +8,8 @@
 
 import UIKit
 
-enum StringExtensionError: Error {
-    case dateComponentsInvalid
+enum StringExtensionError: String, Error {
+    case dateComponentsInvalid = "Something went wrong. Please reload and try again! (SEE.dCI)"
 }
 
 extension String {

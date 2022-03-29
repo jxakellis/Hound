@@ -1,4 +1,5 @@
 // const database = require('../databaseConnection')
+const { formatArray } = require('./validateFormat');
 
 /**
  * Queries the predefined database connection with the given sqlString
@@ -8,6 +9,7 @@
  */
 const queryPromise = (request, sqlString, sqlVariables = undefined) => new Promise((resolve, reject) => {
   const poolConnection = request.connection;
+  const sqlVariablesArray = formatArray(sqlVariables);
   // need a database to query
 
   if (!poolConnection) {
@@ -16,7 +18,7 @@ const queryPromise = (request, sqlString, sqlVariables = undefined) => new Promi
   else if (!sqlString) {
     reject(Error('Undefined sqlString for queryPromise'));
   }
-  else if (!sqlVariables) {
+  else if (!sqlVariablesArray) {
     // no variables for sql statement provided; this is acceptable
 
     poolConnection.query(
@@ -33,14 +35,10 @@ const queryPromise = (request, sqlString, sqlVariables = undefined) => new Promi
       },
     );
   }
-  else if (Array.isArray(sqlVariables) === false) {
-    // variables for sql statement provided but isn't array, needs to be in array fotmat
-    reject(Error('sqlVariables must be array for queryPromise'));
-  }
   else {
     poolConnection.query(
       sqlString,
-      sqlVariables,
+      sqlVariablesArray,
       (error, result) => {
         if (error) {
           // error when trying to do query to database

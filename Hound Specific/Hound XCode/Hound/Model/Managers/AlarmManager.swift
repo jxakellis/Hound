@@ -90,7 +90,7 @@ class AlarmManager {
                 delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
             }
             
-            AlertManager.shared.enqueueAlertForPresentation(alertController)
+            AlertManager.enqueueAlertForPresentation(alertController)
         }
         catch {
             AppDelegate.generalLogger.error("willShowAlarm failure in finding dog or reminder")
