@@ -22,12 +22,12 @@ class DogsIndependentReminderViewController: UIViewController {
     // Buttons to manage the information fate, whether to update or to cancel
 
     @IBOutlet weak var pageNavigationBar: UINavigationItem!
-    @IBOutlet private weak var saveReminderButton: UIButton!
-    @IBOutlet private weak var saveReminderButtonBackground: UIButton!
+    @IBOutlet private weak var saveReminderButton: ScaledUIButton!
+    @IBOutlet private weak var saveReminderButtonBackground: ScaledUIButton!
 
-    @IBOutlet private weak var cancelUpdateReminderButton: UIButton!
+    @IBOutlet private weak var cancelUpdateReminderButton: ScaledUIButton!
 
-    @IBOutlet private weak var cancelUpdateReminderButtonBackground: UIButton!
+    @IBOutlet private weak var cancelUpdateReminderButtonBackground: ScaledUIButton!
 
     /// Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured reminder to DogsViewController
     @IBAction private func willSave(_ sender: Any) {
@@ -40,7 +40,11 @@ class DogsIndependentReminderViewController: UIViewController {
             // reminder settings were valid
             if isUpdating == true {
                 // updating
+                saveReminderButton.beginQuerying()
+                saveReminderButtonBackground.beginQuerying()
                 RemindersRequest.update(forDogId: parentDogId, forReminder: updatedReminder!) { requestWasSuccessful in
+                    self.saveReminderButton.endQuerying()
+                    self.saveReminderButtonBackground.endQuerying()
                     if requestWasSuccessful == true {
                         // successful so we can persist the data locally
                         self.delegate.didApplyReminderSettings(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, forReminder: updatedReminder!)
@@ -49,11 +53,15 @@ class DogsIndependentReminderViewController: UIViewController {
                 }
             }
             else {
-                RemindersRequest.create(forDogId: parentDogId, forReminder: updatedReminder!) { reminderId in
+                saveReminderButton.beginQuerying()
+                saveReminderButtonBackground.beginQuerying(isBackgroundButton: true)
+                RemindersRequest.create(forDogId: parentDogId, forReminder: updatedReminder!) { reminder in
+                    self.saveReminderButton.endQuerying()
+                    self.saveReminderButtonBackground.endQuerying(isBackgroundButton: true)
                     // query complete
-                    if reminderId != nil {
+                    if reminder != nil {
                         // successful and able to get reminderId, persist locally
-                        updatedReminder!.reminderId = reminderId!
+                        updatedReminder!.reminderId = reminder!.reminderId
                         self.delegate.didApplyReminderSettings(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, forReminder: updatedReminder!)
                         self.navigationController?.popViewController(animated: true)
                     }

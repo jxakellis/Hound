@@ -98,7 +98,7 @@ extension InternalRequestUtils {
     }
     
     /// Perform a generic get request at the specified url with provided body. Throws as creating request can fail if body is invalid.
-    static func genericPostRequest(path: URL, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) throws {
+    static func genericPostRequest(path: URL, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
         RequestUtils.warnForEmptyBody(forPath: path, forBody: body)
         
@@ -111,22 +111,22 @@ extension InternalRequestUtils {
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: body)
             req.httpBody = jsonData
+            
+            genericRequest(request: req) { responseBody, responseStatus in
+                completionHandler(responseBody, responseStatus)
+            }
+            
+            AppDelegate.APIRequestLogger.notice("Post Request for \(path)")
+            // AppDelegate.APIRequestLogger.notice("Post Request for \(path) \n For Body: \(body)")
         }
         catch {
-            throw error
+            completionHandler(nil, .noResponse)
         }
-        
-        genericRequest(request: req) { responseBody, responseStatus in
-            completionHandler(responseBody, responseStatus)
-        }
-        
-        AppDelegate.APIRequestLogger.notice("Post Request for \(path)")
-        // AppDelegate.APIRequestLogger.notice("Post Request for \(path) \n For Body: \(body)")
         
     }
     
     /// Perform a generic get request at the specified url with provided body, assuming path params are already provided. Throws as creating request can fail if body is invalid
-    static func genericPutRequest(path: URL, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) throws {
+    static func genericPutRequest(path: URL, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
         RequestUtils.warnForEmptyBody(forPath: path, forBody: body)
         
@@ -139,30 +139,46 @@ extension InternalRequestUtils {
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: body)
             req.httpBody = jsonData
+            
+            genericRequest(request: req) { responseBody, responseStatus in
+                completionHandler(responseBody, responseStatus)
+            }
+            
+            AppDelegate.APIRequestLogger.notice("Put Request for \(path)")
+            // AppDelegate.APIRequestLogger.notice("Put Request for \(path) \n For Body: \(body)")
         }
         catch {
-            throw error
+            completionHandler(nil, .noResponse)
         }
-        
-        genericRequest(request: req) { responseBody, responseStatus in
-            completionHandler(responseBody, responseStatus)
-        }
-        
-        AppDelegate.APIRequestLogger.notice("Put Request for \(path)")
-        // AppDelegate.APIRequestLogger.notice("Put Request for \(path) \n For Body: \(body)")
         
     }
     
     /// Perform a generic get request at the specified url, assuming path params are already provided. No body needed for request. No throws as request creating cannot fail
-    static func genericDeleteRequest(path: URL, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    static func genericDeleteRequest(path: URL, body: [String: Any]? = nil, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         // create request to send
         var req = URLRequest(url: path)
         
         // specify http method
         req.httpMethod = "DELETE"
         
-        genericRequest(request: req) { responseBody, responseStatus in
-            completionHandler(responseBody, responseStatus)
+        if body == nil {
+            genericRequest(request: req) { responseBody, responseStatus in
+                completionHandler(responseBody, responseStatus)
+            }
+        }
+        else {
+            req.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: body!)
+                req.httpBody = jsonData
+                
+                genericRequest(request: req) { responseBody, responseStatus in
+                    completionHandler(responseBody, responseStatus)
+                }
+            }
+            catch {
+                completionHandler(nil, .noResponse)
+            }
         }
         
         AppDelegate.APIRequestLogger.notice("Delete Request for \(path)")
@@ -235,6 +251,7 @@ extension InternalRequestUtils {
     /// returns an array that is suitable to be a http request body
     static func createReminderBody(reminder: Reminder) -> [String: Any] {
         var body: [String: Any] = [:]
+        body["reminderId"] = reminder.reminderId
         body["reminderAction"] = reminder.reminderAction.rawValue
         if reminder.reminderAction == .custom && reminder.customTypeName != nil {
             body["customTypeName"] = reminder.customTypeName
@@ -300,6 +317,33 @@ extension InternalRequestUtils {
         return body
     }
     
+    /// Returns an array of reminder bodies under the key "reminders". E.g. { reminders : [{reminder1}, {reminder2}] }
+    static func createRemindersBody(reminders: [Reminder]) -> [String: [[String: Any]]] {
+        var remindersArray: [[String: Any]] = []
+        for reminder in reminders {
+            remindersArray.append(createReminderBody(reminder: reminder))
+        }
+        let body: [String: [[String: Any]]] = ["reminders": remindersArray]
+        return body
+    }
+    
+    /// returns an array that is suitable to be a http request body
+    static func createReminderIdBody(reminderId: Int) -> [String: Any] {
+        var body: [String: Any] = [:]
+        body["reminderId"] = reminderId
+       return body
+    }
+    
+    /// Returns an array of reminder bodies under the key "reminders". E.g. { reminders : [{reminder1}, {reminder2}] }
+    static func createReminderIdsBody(reminderIds: [Int]) -> [String: [[String: Any]]] {
+        var reminderIdsArray: [[String: Any]] = []
+        for reminderId in reminderIds {
+            reminderIdsArray.append(createReminderIdBody(reminderId: reminderId))
+        }
+        let body: [String: [[String: Any]]] = ["reminders": reminderIdsArray]
+        return body
+    }
+    
 }
 
 enum RequestUtils {
@@ -331,12 +375,22 @@ enum RequestUtils {
         }
     }
     /// Provides warning if the id of anything is set to a placeholder value. 
-    static func warnForPlaceholderId(dogId: Int? = nil, reminderId: Int? = nil, logId: Int? = nil) {
+    static func warnForPlaceholderId(dogId: Int? = nil, reminders: [Reminder]? = nil, reminderId: Int? = nil, reminderIds: [Int]? = nil, logId: Int? = nil) {
         if UserInformation.userId < 0 {
             AppDelegate.APIRequestLogger.warning("Warning: userId is placeholder \(UserInformation.userId)")
         }
         if dogId != nil && dogId! < 0 {
             AppDelegate.APIRequestLogger.warning("Warning: dogId is placeholder \(dogId!)")
+        }
+        if reminders != nil {
+            for singleReminder in reminders! where singleReminder.reminderId < 0 {
+                AppDelegate.APIRequestLogger.warning("Warning: reminderId is placeholder \(singleReminder.reminderId)")
+            }
+        }
+        if reminderIds != nil {
+            for singleReminderId in reminderIds! where singleReminderId < 0 {
+                AppDelegate.APIRequestLogger.warning("Warning: reminderId is placeholder \(singleReminderId)")
+            }
         }
         if reminderId != nil && reminderId! < 0 {
             AppDelegate.APIRequestLogger.warning("Warning: reminderId is placeholder \(reminderId!)")

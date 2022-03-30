@@ -1,3 +1,4 @@
+const DatabaseError = require('../../utils/errors/databaseError');
 const {
   formatNumber, formatArray,
 } = require('../../utils/validateFormat');
@@ -7,17 +8,19 @@ const { deleteReminder } = require('../../utils/delete');
  *  Queries the database to delete a single reminder. If the query is successful, then sends response of result.
  *  If an error is encountered, sends a response of the message and error
  */
-const deleteReminderQuery = async (req, res) => {
-  const reminderId = formatNumber(req.params.reminderId);
+const deleteReminderQuery = async (req) => {
+  const reminderId = formatNumber(req.body.reminderId);
 
   try {
     await deleteReminder(req, reminderId);
-    req.commitQueries(req);
-    return res.status(200).json({ result: '' });
+    // req.commitQueries(req);
+    // return res.status(200).json({ result: '' });
+    return '';
   }
   catch (error) {
-    req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Syntax; Database query failed', error: error.code });
+    // req.rollbackQueries(req);
+    // return res.status(400).json(new DatabaseError(error.code).toJSON);
+    throw new DatabaseError(error.code);
   }
 };
 
@@ -25,7 +28,7 @@ const deleteReminderQuery = async (req, res) => {
  *  Queries the database to delete multiple reminders. If the query is successful, then sends response of result.
  *  If an error is encountered, sends a response of the message and error
  */
-const deleteRemindersQuery = async (req, res) => {
+const deleteRemindersQuery = async (req) => {
   // assume .reminders is an array
   const reminders = formatArray(req.body.reminders);
 
@@ -39,12 +42,14 @@ const deleteRemindersQuery = async (req, res) => {
       await deleteReminder(req, reminderId);
     }
     catch (error) {
-      req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Syntax; Database query failed', error: error.code });
+      // req.rollbackQueries(req);
+      // return res.status(400).json(new DatabaseError(error.code).toJSON);
+      throw new DatabaseError(error.code);
     }
   }
-  req.commitQueries(req);
-  return res.status(200).json({ result: '' });
+  // req.commitQueries(req);
+  // return res.status(200).json({ result: '' });
+  return '';
 };
 
 module.exports = { deleteReminderQuery, deleteRemindersQuery };

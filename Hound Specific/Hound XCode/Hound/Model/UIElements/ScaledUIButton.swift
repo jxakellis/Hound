@@ -43,4 +43,59 @@ class ScaledUIButton: UIButton {
         self.scaleSymbolPontSize()
     }
     
+    private var initalColor: UIColor?
+    private var initalIsUserInteractionEnabled: Bool?
+    private var isQuerying: Bool = false
+    func beginQuerying(isBackgroundButton: Bool = false) {
+        isQuerying = true
+        if isBackgroundButton == false {
+            initalIsUserInteractionEnabled = isUserInteractionEnabled
+            isUserInteractionEnabled = false
+            initalColor = tintColor
+            tintColor = UIColor.systemGray4
+        }
+        spin()
+        
+        func spin() {
+            guard isQuerying == true else {
+                return
+            }
+            // begin spin
+            UIView.animate(withDuration: 0.5, delay: 0, options: .curveLinear) {
+                
+                self.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+                
+            } completion: { _ in
+                guard self.isQuerying == true else {
+                    return
+                }
+                // end spin
+                UIView.animate(withDuration: 0.5, delay: 0, options: .curveLinear) {
+                    
+                    self.transform = CGAffineTransform(rotationAngle: CGFloat.pi * 2.0)
+                } completion: { _ in
+                    guard self.isQuerying == true else {
+                        return
+                    }
+                    spin()
+                }
+            }
+        }
+    }
+    
+    func endQuerying(isBackgroundButton: Bool = false) {
+        self.isQuerying = false
+        self.transform = .identity
+        if isBackgroundButton == false {
+            if initalColor != nil {
+                self.tintColor = initalColor!
+                initalColor = nil
+            }
+            if initalIsUserInteractionEnabled != nil {
+                self.isUserInteractionEnabled = initalIsUserInteractionEnabled!
+                initalIsUserInteractionEnabled = nil
+            }
+        }
+    }
+    
 }

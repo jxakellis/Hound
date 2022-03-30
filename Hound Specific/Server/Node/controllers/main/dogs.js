@@ -1,6 +1,8 @@
+const DatabaseError = require('../../utils/errors/databaseError');
+const ValidationError = require('../../utils/errors/validationError');
 const { queryPromise } = require('../../utils/queryPromise');
 const { formatNumber, areAllDefined, atLeastOneDefined } = require('../../utils/validateFormat');
-const { queryDog, queryDogs } = require('../getFor/getForDogs');
+const { getDogQuery, getDogsQuery } = require('../getFor/getForDogs');
 
 /*
 Known:
@@ -15,11 +17,10 @@ const getDogs = async (req, res) => {
   // if dogId is defined and it is a number then continue
   if (dogId) {
     try {
-      const result = await queryDog(req, dogId);
+      const result = await getDogQuery(req, dogId);
       if (result.length === 0) {
         // successful but empty array, not dogs to return
         req.commitQueries(req);
-        // return res.status(204).json({ result: [] });
         return res.status(200).json({ result: [] });
       }
       else {
@@ -30,16 +31,15 @@ const getDogs = async (req, res) => {
     }
     catch (error) {
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
+      return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
   else {
     try {
-      const result = await queryDogs(req, userId);
+      const result = await getDogsQuery(req, userId);
       if (result.length === 0) {
         // successful but empty array, not dogs to return
         req.commitQueries(req);
-        // return res.status(204).json({ result: [] });
         return res.status(200).json({ result: [] });
       }
       else {
@@ -51,7 +51,7 @@ const getDogs = async (req, res) => {
     catch (error) {
       // error when trying to do query to database
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
+      return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
 };
@@ -63,7 +63,7 @@ const createDog = async (req, res) => {
 
   if (areAllDefined([dogName]) === false) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; dogName missing' });
+    return res.status(400).json(new ValidationError('dogName missing', 'ER_VALUES_MISSING').toJSON);
   }
 
   // allow a user to have multiple dogs by the same dogName
@@ -78,7 +78,7 @@ const createDog = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body or Parameters; Database query failed', error: error.code });
+    return res.status(400).json(new DatabaseError(error.code).toJSON);
   }
 };
 
@@ -92,7 +92,7 @@ const updateDog = async (req, res) => {
   // if dogName and icon are both undefined, then there is nothing to update
   if (atLeastOneDefined([dogName, icon]) === false) {
     req.commitQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; No dogName or icon provided' });
+    return res.status(400).json(new ValidationError('No dogName or icon provided', 'ER_NO_VALUES_PROVIDED').toJSON);
   }
 
   try {
@@ -108,7 +108,7 @@ const updateDog = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body or Parameters; Database query failed', error: error.code });
+    return res.status(400).json(new DatabaseError(error.code).toJSON);
   }
 };
 
@@ -124,7 +124,7 @@ const deleteDog = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
+    return res.status(400).json(new DatabaseError(error.code).toJSON);
   }
 };
 

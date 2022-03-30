@@ -53,7 +53,7 @@ enum UserRequest: RequestProtocol {
     private static func create(completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
         
         // make post request, assume body valid as constructed with method
-        try! InternalRequestUtils.genericPostRequest(path: basePathWithoutParams, body: InternalRequestUtils.createFullUserBody()) { responseBody, responseStatus in
+        InternalRequestUtils.genericPostRequest(path: basePathWithoutParams, body: InternalRequestUtils.createFullUserBody()) { responseBody, responseStatus in
             
             if responseBody != nil, let userId = responseBody!["result"] as? Int {
                 completionHandler(userId, responseStatus)
@@ -73,7 +73,7 @@ enum UserRequest: RequestProtocol {
         RequestUtils.warnForPlaceholderId()
         
         // make put request, assume body valid as constructed with method
-        try! InternalRequestUtils.genericPutRequest(path: basePathWithUserId, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPutRequest(path: basePathWithUserId, body: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -88,7 +88,7 @@ enum UserRequest: RequestProtocol {
         let body = InternalRequestUtils.createFullUserBody()
         
         // make put request, assume body valid as constructed with method
-        try! InternalRequestUtils.genericPutRequest(path: basePathWithUserId, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPutRequest(path: basePathWithUserId, body: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         

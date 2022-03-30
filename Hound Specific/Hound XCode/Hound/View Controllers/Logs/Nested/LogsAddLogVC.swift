@@ -203,8 +203,11 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 logToUpdate!.customTypeName = trimmedCustomLogTypeName
             }
 
+            addLogButton.beginQuerying()
+            addLogButtonBackground.beginQuerying(isBackgroundButton: true)
             LogsRequest.update(forDogId: parentDogIdOfLogToUpdate!, forLog: logToUpdate!) { requestWasSuccessful in
-
+                self.addLogButton.endQuerying()
+                self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
                 if requestWasSuccessful == true {
                     self.delegate.didUpdateLog(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogIdOfLogToUpdate!, updatedLog: self.logToUpdate!)
                     self.navigationController?.popViewController(animated: true)
@@ -222,8 +225,11 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 else {
                     let newLog = Log(date: logDate.date, note: logNote.text ?? LogConstant.defaultNote, logType: LogType(rawValue: logType.text!)!, customTypeName: trimmedCustomLogTypeName)
 
+                    addLogButton.beginQuerying()
+                    addLogButtonBackground.beginQuerying(isBackgroundButton: true)
                     LogsRequest.create(forDogId: parentDogNameSelector.tag, forLog: newLog) { logId in
-
+                        self.addLogButton.endQuerying()
+                        self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
                         if logId != nil {
                             newLog.logId = logId!
                             self.delegate.didAddLog(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogNameSelector.tag, newLog: newLog)

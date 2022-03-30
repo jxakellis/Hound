@@ -187,7 +187,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                             deletedReminderIds.append(deletedReminder.reminderId)
                         }
                         
-                        RemindersRequest.delete(forDogId: dog.dogId, reminderIds: deletedReminderIds) { requestWasSuccessful2 in
+                        RemindersRequest.delete(forDogId: dog.dogId, forReminderIds: deletedReminderIds) { requestWasSuccessful2 in
                             if requestWasSuccessful2 == true {
                                 queriedDeletedReminders = true
                             }

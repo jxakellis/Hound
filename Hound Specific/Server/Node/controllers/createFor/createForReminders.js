@@ -1,3 +1,5 @@
+const DatabaseError = require('../../utils/errors/databaseError');
+const ValidationError = require('../../utils/errors/validationError');
 const { queryPromise } = require('../../utils/queryPromise');
 const {
   formatDate, formatBoolean, formatNumber, formatArray, areAllDefined,
@@ -9,10 +11,10 @@ const { createMonthlyComponents } = require('../reminderComponents/monthly');
 const { createOneTimeComponents } = require('../reminderComponents/oneTime');
 
 /**
- *  Queries the database to create a single reminder. If the query is successful, then sends response of result.
- *  If an error is encountered, sends a response of the message and error
+ *  Queries the database to create a single reminder. If the query is successful, then returns the reminder with created reminderId.
+ *  If a problem is encountered, creates and throws custom error
  */
-const createReminderQuery = async (req, res) => {
+const createReminderQuery = async (req) => {
   const dogId = formatNumber(req.params.dogId);
   const { reminderAction, customTypeName, reminderType } = req.body;
   const executionBasis = formatDate(req.body.executionBasis);
@@ -21,13 +23,15 @@ const createReminderQuery = async (req, res) => {
   // check to see that necessary generic reminder componetns are present
   if (areAllDefined([reminderAction, reminderType, executionBasis, isEnabled]) === false) {
     // >= 1 of the objects are undefined
-    req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; reminderAction, reminderType, executionBasis, or isEnabled missing' });
+    // req.rollbackQueries(req);
+    // return res.status(400).json(new ValidationError('reminderAction, reminderType, executionBasis, or isEnabled missing', 'ER_VALUES_MISSING').toJSON);
+    throw new ValidationError('reminderAction, reminderType, executionBasis, or isEnabled missing', 'ER_VALUES_MISSING');
   }
   // if the reminder is custom, then it needs its custom name
   if (reminderAction === 'Custom' && !customTypeName) {
-    req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; No customTypeName provided for "Custom" reminderAction' });
+    // req.rollbackQueries(req);
+    // return res.status(400).json(new ValidationError('No customTypeName provided for "Custom" reminderAction', 'ER_VALUES_MISSING').toJSON);
+    throw new ValidationError('No customTypeName provided for "Custom" reminderAction', 'ER_VALUES_MISSING');
   }
 
   // define out here so reminderId can be accessed in catch block to delete entries
@@ -83,24 +87,27 @@ const createReminderQuery = async (req, res) => {
     }
     else {
       // nothing matched reminderType
-      req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Body; reminderType Invalid' });
+      // req.rollbackQueries(req);
+      // return res.status(400).json(new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID').toJSON);
+      throw new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID');
     }
     // was able to successfully create components for a certain timing style
-    req.commitQueries(req);
-    return res.status(200).json({ result: req.body });
+    // req.commitQueries(req);
+    // return res.status(200).json({ result: [req.body] });
+    return [req.body];
   }
   catch (error) {
-    req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; Database query failed', error: error.code });
+    // req.rollbackQueries(req);
+    // return res.status(400).json(new DatabaseError(error.code).toJSON);
+    throw new DatabaseError(error.code);
   }
 };
 
 /**
-   * Queries the database to create multiple reminders. If the query is successful, then sends response of result.
-  *  If an error is encountered, sends a response of the message and error
+   * Queries the database to create a single reminder. If the query is successful, then returns the reminder with created reminderId.
+ *  If a problem is encountered, creates and throws custom error
    */
-const createRemindersQuery = async (req, res) => {
+const createRemindersQuery = async (req) => {
   // assume .reminders is an array
   const dogId = formatNumber(req.params.dogId);
   const reminders = formatArray(req.body.reminders);
@@ -117,25 +124,27 @@ const createRemindersQuery = async (req, res) => {
 
     // check to see that necessary generic reminder componetns are present
     if (areAllDefined([reminderAction, reminderType, executionBasis, isEnabled]) === false) {
-    // >= 1 of the objects are undefined
-      req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Body; reminderAction, reminderType, executionBasis, or isEnabled missing' });
+      // >= 1 of the objects are undefined
+      // req.rollbackQueries(req);
+      // return res.status(400).json(new ValidationError('reminderAction, reminderType, executionBasis, or isEnabled missing', 'ER_VALUES_MISSING').toJSON);
+      throw new ValidationError('reminderAction, reminderType, executionBasis, or isEnabled missing', 'ER_VALUES_MISSING');
     }
     // if the reminder is custom, then it needs its custom name
     if (reminderAction === 'Custom' && !customTypeName) {
-      req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Body; No customTypeName provided for "Custom" reminderAction' });
+      // req.rollbackQueries(req);
+      // return res.status(400).json(new ValidationError('No customTypeName provided for "Custom" reminderAction', 'ER_VALUES_MISSING').toJSON);
+      throw new ValidationError('No customTypeName provided for "Custom" reminderAction', 'ER_VALUES_MISSING');
     }
 
     // define out here so reminderId can be accessed in catch block to delete entries
     let reminderId;
 
     try {
-    // need to check reminderType before querying because a partially correct timing style can have the query data added to the database but kick back a warning, we only want exact matches
+      // need to check reminderType before querying because a partially correct timing style can have the query data added to the database but kick back a warning, we only want exact matches
 
       // no need to check for snooze components as a newly created reminder cant be snoozed, it can only be updated to be snoozing
       if (reminderType === 'countdown') {
-      // first insert to main reminder table to get reminderId, then insert to other tables
+        // first insert to main reminder table to get reminderId, then insert to other tables
         const result = await queryPromise(
           req,
           'INSERT INTO dogReminders(dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
@@ -146,7 +155,7 @@ const createRemindersQuery = async (req, res) => {
         await createCountdownComponents(req, reminders[i]);
       }
       else if (reminderType === 'weekly') {
-      // first insert to main reminder table to get reminderId, then insert to other tables
+        // first insert to main reminder table to get reminderId, then insert to other tables
         const result = await queryPromise(
           req,
           'INSERT INTO dogReminders(dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
@@ -157,7 +166,7 @@ const createRemindersQuery = async (req, res) => {
         await createWeeklyComponents(req, reminders[i]);
       }
       else if (reminderType === 'monthly') {
-      // first insert to main reminder table to get reminderId, then insert to other tables
+        // first insert to main reminder table to get reminderId, then insert to other tables
         const result = await queryPromise(
           req,
           'INSERT INTO dogReminders(dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
@@ -168,7 +177,7 @@ const createRemindersQuery = async (req, res) => {
         await createMonthlyComponents(req, reminders[i]);
       }
       else if (reminderType === 'oneTime') {
-      // first insert to main reminder table to get reminderId, then insert to other tables
+        // first insert to main reminder table to get reminderId, then insert to other tables
         const result = await queryPromise(
           req,
           'INSERT INTO dogReminders(dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
@@ -179,21 +188,24 @@ const createRemindersQuery = async (req, res) => {
         await createOneTimeComponents(req, reminders[i]);
       }
       else {
-      // nothing matched reminderType
-        req.rollbackQueries(req);
-        return res.status(400).json({ message: 'Invalid Body; reminderType Invalid' });
+        // nothing matched reminderType
+        // req.rollbackQueries(req);
+        // return res.status(400).json(new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID').toJSON);
+        throw new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID');
       }
       // was able to successfully create components for a certain timing style
       createdReminders.push(reminders[i]);
     }
     catch (error) {
-      req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Body; Database query failed', error: error.code });
+      // req.rollbackQueries(req);
+      // return res.status(400).json(new DatabaseError(error.code).toJSON);
+      throw new DatabaseError(error.code);
     }
   }
   // nothing created a problem so we return the created reminders
-  req.commitQueries(req);
-  return res.status(200).json({ result: createdReminders });
+  // req.commitQueries(req);
+  // return res.status(200).json({ result: createdReminders });
+  return createdReminders;
 };
 
 module.exports = { createReminderQuery, createRemindersQuery };

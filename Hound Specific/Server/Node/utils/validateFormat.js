@@ -1,7 +1,5 @@
 /**
  * Takes a string. If the string provided passes the regex and length checks, it is a valid userEmail and the function returns true. Otherwise, function returns false.
- * @param {*} userEmail
- * @returns
  */
 const formatEmail = (userEmail) => {
   // eslint-disable-next-line no-useless-escape, max-len
@@ -34,8 +32,6 @@ const formatEmail = (userEmail) => {
 
 /**
  * Converts provided date into format needed for database. If any check fails, returns undefined. Otherwise, returns correctly formatted date.
- * @param {*} date
- * @returns
  */
 const formatDate = (string) => {
   if (string) {
@@ -60,8 +56,6 @@ const formatDate = (string) => {
 /**
  * Converts the provided string into a boolean. "true", "1", or 1 retuns true; "false", "0", or 0 returns false; all other values return undefined
  * This is needed as Boolean("string") always converts to true unless the string provided is ""
- * @param {*} string
- * @returns
  */
 const formatBoolean = (string) => {
   if (string === true || string === 'true' || string === '1' || string === 1) {
@@ -76,9 +70,7 @@ const formatBoolean = (string) => {
 
 /**
  * Converts the provided string into a number. Any finite number will successfully convert into a number. This is needed as Number("random") converts into NaN with type of number. This result circumvents the typeof blah === 'undefined' logic as its type is number even though its value is null/NaN/undefined.
- * @param {*} number
- * @returns
- */
+*/
 const formatNumber = (string) => {
   // must convert string to number
   if (Number.isFinite(Number(string)) === true) {
@@ -99,8 +91,6 @@ const formatArray = (string) => {
 
 /**
  * Takes single object or array of objects. If ALL objects provided are defined, returns true. Otherwise, returns false. Behaves the same as atLeastOneDefined for single object.
- * @param {*} arr
- * @returns
  */
 const areAllDefined = (arr) => {
   // array
@@ -127,8 +117,6 @@ const areAllDefined = (arr) => {
 
 /**
  * Take single object or array of objects. If at least one object provided is defined, returns true. Otherwise, returns false. Behaves the same as areAllDefined for single object.
- * @param {*} arr
- * @returns
  */
 const atLeastOneDefined = (arr) => {
   // array

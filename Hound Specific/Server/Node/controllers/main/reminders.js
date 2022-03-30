@@ -1,3 +1,5 @@
+const DatabaseError = require('../../utils/errors/databaseError');
+const convertErrorToJSON = require('../../utils/errors/errorFormat');
 const {
   formatNumber, formatArray,
 } = require('../../utils/validateFormat');
@@ -16,50 +18,121 @@ Known:
 */
 
 const getReminders = async (req, res) => {
+  const dogId = formatNumber(req.params.dogId);
   const reminderId = formatNumber(req.params.reminderId);
 
   // reminderId was provided
   if (reminderId) {
-    return getReminderQuery(req, res);
+    try {
+      const result = await getReminderQuery(req, reminderId);
+
+      if (result.length === 0) {
+        // successful but empty array, no reminders to return
+        req.commitQueries(req);
+        return res.status(200).json({ result: [] });
+      }
+      else {
+        // array has items, meaning there were reminders found, successful!
+        req.commitQueries(req);
+        return res.status(200).json({ result });
+      }
+    }
+    catch (error) {
+      // error when trying to do query to database
+      req.rollbackQueries(req);
+      return res.status(400).json(new DatabaseError(error.code).toJSON);
+    }
   }
   // no reminderId
   else {
-    return getRemindersQuery(req, res);
+    try {
+      const result = await getRemindersQuery(req, dogId);
+
+      if (result.length === 0) {
+        // successful but empty array, no reminders to return
+        req.commitQueries(req);
+        return res.status(200).json({ result: [] });
+      }
+      else {
+        // array has items, meaning there were reminders found, successful!
+        req.commitQueries(req);
+        return res.status(200).json({ result });
+      }
+    }
+    catch (error) {
+      // error when trying to do query to database
+      req.rollbackQueries(req);
+      return res.status(400).json(new DatabaseError(error.code).toJSON);
+    }
   }
 };
 
 const createReminder = async (req, res) => {
   const reminders = formatArray(req.body.reminders);
-  // reminders are provided
-  if (reminders) {
-    return createRemindersQuery(req, res);
+
+  try {
+    // reminders are provided
+    if (reminders) {
+      const result = await createRemindersQuery(req);
+      req.commitQueries(req);
+      return res.status(200).json({ result });
+    }
+    // single reminder
+    else {
+      const result = await createReminderQuery(req);
+      req.commitQueries(req);
+      return res.status(200).json({ result });
+    }
   }
-  // single reminder
-  else {
-    return createReminderQuery(req, res);
+  catch (error) {
+    req.rollbackQueries(req);
+    return res.status(400).json(convertErrorToJSON(error));
   }
 };
 
 const updateReminder = async (req, res) => {
   const reminders = formatArray(req.body.reminders);
-  // reminders are provided
-  if (reminders) {
-    return updateRemindersQuery(req, res);
+
+  try {
+    // reminders are provided
+    if (reminders) {
+      const result = await updateRemindersQuery(req);
+      req.commitQueries(req);
+      return res.status(200).json({ result });
+    }
+    // single reminder
+    else {
+      const result = await updateReminderQuery(req);
+      req.commitQueries(req);
+      return res.status(200).json({ result });
+    }
   }
-  // single reminder
-  else {
-    return updateReminderQuery(req, res);
+  catch (error) {
+    req.rollbackQueries(req);
+    return res.status(400).json(convertErrorToJSON(error));
   }
 };
 
 const deleteReminder = async (req, res) => {
   const reminders = formatArray(req.body.reminders);
-  // reminders is provided
-  if (reminders) {
-    return deleteRemindersQuery(req, res);
+
+  try {
+    // reminders are provided
+    if (reminders) {
+      const result = await deleteRemindersQuery(req);
+      req.commitQueries(req);
+      return res.status(200).json({ result });
+    }
+    // single reminder
+    else {
+      const result = await deleteReminderQuery(req);
+      req.commitQueries(req);
+      return res.status(200).json({ result });
+    }
   }
-  else {
-    return deleteReminderQuery(req, res);
+  catch (error) {
+    req.rollbackQueries(req);
+    return res.status(400).json(convertErrorToJSON(error));
   }
 };
 

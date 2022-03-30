@@ -1,12 +1,10 @@
 const { queryPromise } = require('./queryPromise');
 const { formatNumber, formatArray } = require('./validateFormat');
+const DatabaseError = require('./errors/databaseError');
+const ValidationError = require('./errors/validationError');
 
 /**
  * Checks to see that userId is defined, is a number, and exists in the database. TO DO: add authentication to use userId
- * @param {*} req
- * @param {*} res
- * @param {*} next
- * @returns
  */
 const validateUserId = async (req, res, next) => {
   // later on use a token here to validate that they have permission to use the userId
@@ -27,28 +25,24 @@ const validateUserId = async (req, res, next) => {
       else {
         // userId does not exist in the table
         req.rollbackQueries(req);
-        return res.status(404).json({ message: 'Invalid Parameters; No user found or invalid permissions', error: 'ER_NO_USER_FOUND' });
+        return res.status(404).json(new ValidationError('No user found or invalid permissions', 'ER_NOT_FOUND').toJSON);
       }
     }
     catch (error) {
       // couldn't query database to find userId
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
+      return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
   else {
     // userId was not provided or is invalid format
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Parameters; userId Invalid' });
+    return res.status(400).json(new ValidationError('userId Invalid', 'ER_ID_INVALID').toJSON);
   }
 };
 
 /**
  * Checks to see that dogId is defined, a number, and exists in the database under userId provided. If it does then the user owns the dog and invokes next().
- * @param {*} req
- * @param {*} res
- * @param {*} next
- * @returns
  */
 const validateDogId = async (req, res, next) => {
   // userId should be validated already
@@ -72,27 +66,23 @@ const validateDogId = async (req, res, next) => {
       else {
         // the dogId does not exist and/or the user does not have access to that dogId
         req.rollbackQueries(req);
-        return res.status(404).json({ message: 'Couldn\'t Find Resource; No dogs found or invalid permissions' });
+        return res.status(404).json(new ValidationError('No dogs found or invalid permissions', 'ER_ID_INVALID').toJSON);
       }
     }
     catch (error) {
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
+      return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
   else {
     // dogId was not provided or is invalid
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Parameters; dogId Invalid' });
+    return res.status(400).json(new ValidationError('dogId Invalid', 'ER_VALUES_INVALID').toJSON);
   }
 };
 
 /**
  * Checks to see that logId is defined, a number. and exists in the database under dogId provided. If it does then the dog owns that log and invokes next().
- * @param {*} req
- * @param {*} res
- * @param {*} next
- * @returns
  */
 const validateLogId = async (req, res, next) => {
   // dogId should be validated already
@@ -116,27 +106,23 @@ const validateLogId = async (req, res, next) => {
       else {
         // the logId does not exist and/or the dog does not have access to that logId
         req.rollbackQueries(req);
-        return res.status(404).json({ message: 'Couldn\'t Find Resource; No logs found or invalid permissions' });
+        return res.status(404).json(new ValidationError('No logs found or invalid permissions', 'ER_NOT_FOUND').toJSON);
       }
     }
     catch (error) {
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
+      return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
   else {
     // logId was not provided or is invalid
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Parameters; logId Invalid' });
+    return res.status(400).json(new ValidationError('logId Invalid', 'ER_VALUES_INVALID').toJSON);
   }
 };
 
 /**
  * Checks to see that reminderId is defined, a number, and exists in the database under the dogId provided. If it does then the dog owns that reminder and invokes next().
- * @param {*} req
- * @param {*} res
- * @param {*} next
- * @returns
  */
 const validateParamsReminderId = async (req, res, next) => {
   // dogId should be validated already
@@ -160,18 +146,18 @@ const validateParamsReminderId = async (req, res, next) => {
       else {
         // the reminderId does not exist and/or the dog does not have access to that reminderId
         req.rollbackQueries(req);
-        return res.status(404).json({ message: 'Couldn\'t Find Resource; No reminders found or invalid permissions' });
+        return res.status(404).json(new ValidationError('No reminders found or invalid permissions', 'ER_NOT_FOUND').toJSON);
       }
     }
     catch (error) {
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
+      return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
   else {
     // reminderId was not provided or is invalid
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Parameters; reminderId Invalid' });
+    return res.status(400).json(new ValidationError('reminderId Invalid', 'ER_VALUES_INVALID').toJSON);
   }
 };
 
@@ -179,8 +165,12 @@ const validateBodyReminderId = async (req, res, next) => {
   // dogId should be validated already
 
   const dogId = formatNumber(req.params.dogId);
+  // multiple reminders
   const reminders = formatArray(req.body.reminders);
+  // single reminder
+  const singleReminderId = formatNumber(req.body.reminderId);
 
+  // if reminders array is defined and array then continue
   if (reminders) {
     for (let i = 0; i < reminders.length; i += 1) {
       const reminderId = formatNumber(reminders[i].reminderId);
@@ -201,27 +191,51 @@ const validateBodyReminderId = async (req, res, next) => {
           else {
             // the reminderId does not exist and/or the dog does not have access to that reminderId
             req.rollbackQueries(req);
-            return res.status(404).json({ message: 'Couldn\'t Find Resource; No reminders found or invalid permissions' });
+            return res.status(404).json(new ValidationError('No reminders found or invalid permissions', 'ER_NOT_FOUND').toJSON);
           }
         }
         catch (error) {
           req.rollbackQueries(req);
-          return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
+          return res.status(400).json(new DatabaseError(error.code).toJSON);
         }
       }
       else {
         // reminderId was not provided or is invalid
         req.rollbackQueries(req);
-        return res.status(400).json({ message: 'Invalid Parameters; reminderId Invalid' });
+        return res.status(400).json(new ValidationError('reminderId Invalid', 'ER_VALUES_INVALID').toJSON);
       }
     }
     // successfully checked all reminderIds
     return next();
   }
+  // if reminderId is defined and it is a number then continue
+  else if (singleReminderId) {
+    // query database to find out if user has permission for that reminderId
+    try {
+      // finds what reminderId (s) the user has linked to their dogId
+      const dogReminderIds = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ?', [dogId]);
+
+      // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
+
+      if (dogReminderIds.some((item) => item.reminderId === singleReminderId)) {
+        // the reminderId exists and it is linked to the dogId, valid!
+        return next();
+      }
+      else {
+        // the reminderId does not exist and/or the dog does not have access to that reminderId
+        req.rollbackQueries(req);
+        return res.status(404).json(new ValidationError('No reminders found or invalid permissions', 'ER_NOT_FOUND').toJSON);
+      }
+    }
+    catch (error) {
+      req.rollbackQueries(req);
+      return res.status(400).json(new DatabaseError(error.code).toJSON);
+    }
+  }
   else {
     // reminders array was not provided or is invalid
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Parameters; reminders Invalid' });
+    return res.status(400).json(new ValidationError('reminders or reminderId Invalid', 'ER_VALUES_INVALID').toJSON);
   }
 };
 

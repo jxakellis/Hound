@@ -56,7 +56,7 @@ enum LogsRequest: RequestProtocol {
         let pathWithParams: URL = basePathWithoutParams.appendingPathComponent("/\(dogId)/logs/")
         
         // make post request, assume body valid as constructed with method
-        try! InternalRequestUtils.genericPostRequest(path: pathWithParams, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPostRequest(path: pathWithParams, body: body) { responseBody, responseStatus in
             
             if responseBody != nil, let logId = responseBody!["result"] as? Int {
                 completionHandler(logId, responseStatus)
@@ -79,7 +79,7 @@ enum LogsRequest: RequestProtocol {
         let pathWithParams: URL = basePathWithoutParams.appendingPathComponent("/\(dogId)/logs/\(log.logId)")
         
         // make put request, assume body valid as constructed with method
-        try! InternalRequestUtils.genericPutRequest(path: pathWithParams, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPutRequest(path: pathWithParams, body: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
     }

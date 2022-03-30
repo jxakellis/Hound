@@ -9,7 +9,6 @@ Known:
 
 /**
  * Deletes a user from the users table and all other associated data from all other tables.
- * @param {*} userId
  */
 const deleteUser = async (req, userId) => {
   const dogIds = await queryPromise(req, 'SELECT dogId FROM dogs WHERE userId = ?', [userId]);
@@ -26,7 +25,6 @@ const deleteUser = async (req, userId) => {
 
 /**
  * Deletes userConfiguration from the userConfiguration table
- * @param {*} userId
  */
 const deleteUserConfiguration = async (req, userId) => {
   // deletes user config
@@ -35,7 +33,6 @@ const deleteUserConfiguration = async (req, userId) => {
 
 /**
  * Deletes dog from dogs table, logs from dogLogs table, and invokes deleteReminder for all reminderIds to handle removing reminders
- * @param {*} dogId
  */
 const deleteDog = async (req, dogId) => {
   const reminderIds = await queryPromise(
@@ -57,7 +54,6 @@ const deleteDog = async (req, dogId) => {
 
 /**
  * Deletes a log from dogLogs table
- * @param {*} logId
  */
 const deleteLog = async (req, logId) => {
   await queryPromise(
@@ -70,7 +66,6 @@ const deleteLog = async (req, logId) => {
 
 /**
  * Deletes a reminder from dogReminder table and any component that may exist for it in any component table
- * @param {*} reminderId
  */
 const deleteReminder = async (req, reminderId) => {
   // deletes all components
@@ -117,8 +112,6 @@ const deleteReminder = async (req, reminderId) => {
  * If a reminder is updated, its reminderType can be updated and switch between modes.
 * This means we make an entry into a new component table and this also means the components from the old reminderType are left over in another table
 * This remove the extraneous compoents
- * @param {*} reminderId
- * @param {*} newTimingStyle
  */
 const deleteLeftoverReminderComponents = async (req, reminderId, newTimingStyle) => {
   // Don't do a try catch statement as we want as many delete statements to execute as possible. Use .catch() to ignore errors
@@ -230,7 +223,7 @@ const deleteLeftoverReminderComponents = async (req, reminderId, newTimingStyle)
     );
   }
   else {
-    throw Error('Invalid reminderType');
+    throw new Error('Invalid reminderType');
   }
 };
 

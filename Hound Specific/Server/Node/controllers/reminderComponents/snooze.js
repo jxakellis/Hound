@@ -25,9 +25,6 @@ const createSnoozeComponents = async (req, reminder) => {
 };
 /**
  * Attempts to first add the new components to the table. iI this fails then it is known the reminder is already present or components are invalid. If the update statement fails then it is know the components are invalid, error passed to invocer.
- * @param {*} reminderId
- * @param {*} req
- * @returns
  */
 const updateSnoozeComponents = async (req, reminder) => {
   const isSnoozed = formatBoolean(reminder.isSnoozed);

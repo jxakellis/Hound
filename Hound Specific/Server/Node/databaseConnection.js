@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 const mysql = require('mysql');
 const databasePassword = require('./databasePassword');
+const DatabaseError = require('./utils/errors/databaseError');
 
 const pool = mysql.createPool({
   // Determines the pool's action when no connections are available and the limit has been reached.
@@ -50,13 +51,13 @@ const assignConnection = async (req, res, next) => {
   pool.getConnection((error, connection) => {
     if (error) {
       // no need to release connection as there was a failing in actually creating connection
-      res.status(500).json({ message: "Couldn't create a pool connection" });
+      res.status(500).json(new DatabaseError("Couldn't create a pool connection", 'ER_NO_POOL_CONNECTION').toJSON);
     }
     else {
       connection.beginTransaction((error2) => {
         if (error2) {
           connection.release();
-          res.status(500).json({ message: "Couldn't begin a transaction with pool connection" });
+          res.status(500).json(new DatabaseError("Couldn't begin a transaction with pool connection", 'ER_NO_POOL_TRANSACTION').toJSON);
         }
         else {
           req.connection = connection;

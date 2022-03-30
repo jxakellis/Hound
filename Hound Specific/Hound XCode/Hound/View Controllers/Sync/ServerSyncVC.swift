@@ -82,7 +82,7 @@ class ServerSyncViewController: UIViewController {
     private func getUser() {
         UserRequest.get(forUserEmail: UserInformation.userEmail) { responseBody, responseStatus in
             switch responseStatus {
-                case .successResponse:
+            case .successResponse:
                     if responseBody != nil {
                         self.serverContacted = true
                         self.updateStatusLabel()
@@ -105,9 +105,9 @@ class ServerSyncViewController: UIViewController {
                             AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
                         }
                     }
-                case .failureResponse:
+            case .failureResponse:
                     AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
-                case .noResponse:
+            case .noResponse:
                     AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)
                 }
             

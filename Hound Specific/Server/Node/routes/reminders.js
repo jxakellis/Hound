@@ -7,9 +7,11 @@ const {
 } = require('../controllers/main/reminders');
 const { validateParamsReminderId, validateBodyReminderId } = require('../utils/validateId');
 
-// No need to validate body for get ( no body exists)
+// No need to validate body for get ( no body exists )
 // No need to validate body for create ( there are no passed reminders )
-// validation body for put and delete below at their specific routes
+// Validate body for put at specific route
+// Validate body for delete at specific route
+
 // validation that params are formatted correctly and have adequate permissions
 router.use('/:reminderId', validateParamsReminderId);
 
@@ -30,6 +32,26 @@ Single: { reminderInfo }
 Multiple: { reminders: [reminderInfo1, reminderInfo2...] }
 
 reminderInfo:
+*/
+
+// update reminder(s)
+router.put('/', validateBodyReminderId, updateReminder);
+// router.put('/:reminderId', updateReminder);
+/* BODY:
+Single: { reminderInfo }
+Multiple: { reminders: [reminderInfo1, reminderInfo2...] }
+*/
+
+// delete reminder(s)
+router.delete('/', validateBodyReminderId, deleteReminder);
+// router.delete('/:reminderId', deleteReminder);
+/* BODY:
+Single: { reminderId }
+Multiple: { reminders: [reminderId1, reminderId2...] }
+*/
+
+/*
+Reminder Info:
 {
 "reminderAction": "requiredString", // If reminderAction is "Custom", then customTypeName must be provided
 "customTypeName": "optionalString",
@@ -65,71 +87,10 @@ reminderInfo:
     "date":"requiredDate"
 
     //FOR snooze
-    no snooze components in creation, only when actually snoozed
-}
-}
-*/
-
-// update reminder(s)
-router.put('/', validateBodyReminderId, updateReminder);
-router.put('/:reminderId', updateReminder);
-/* BODY:
-Single: { reminderInfo }
-Multiple: { reminders: [reminderInfo1, reminderInfo2...] }
-
-reminderInfo:
-//At least one of the following must be defined: reminderAction, reminderType, executionBasis, isEnabled, or isSnoozed
-
-{
-"reminderAction": "optionalString", // If reminderAction is "Custom", then customTypeName must be provided
-"customTypeName": "optionalString",
-"reminderType": "optionalString", // If reminderType provided, then all components for reminderType type must be provided
-"executionBasis": "optionalDate",
-"isEnabled":"optionalBool",
-
-    //components only required if reminderType provided
-
-    //FOR countdown
-    "countdownExecutionInterval":"requiredInt",
-    "countdownIntervalElapsed":"requiredInt"
-
-    //FOR weekly
-    "weeklyHour":"requiredInt",
-    "weeklyMinute":"requiredInt",
-    "sunday":"requiredBool",
-    "monday":"requiredBool",
-    "tuesday":"requiredBool",
-    "wednesday":"requiredBool",
-    "thursday":"requiredBool",
-    "friday":"requiredBool",
-    "saturday":"requiredBool",
-    "weeklyIsSkipping":"optionalBool", //if weeklyIsSkipping is provided, then weeklyIsSkippingDate is required
-    "weeklyIsSkippingDate":"optionalDate"
-
-    //FOR monthly
-    "monthlyHour":"requiredInt",
-    "monthlyMinute":"requiredInt",
-    "dayOfMonth":"requiredInt"
-    "monthlyIsSkipping":"optionalBool", //if monthlyIsSkipping is provided, then monthlyIsSkippingDate is required
-    "weeklyIsSkippingDate":"optionalDate"
-
-    //FOR oneTime
-    "date":"requiredDate"
-
-    //FOR snooze
     "isSnoozed":"requiredBool",
     "snoozeExecutionInterval":"optionalInt", //if isSnoozed is true, then snoozeExecutionInterval and snoozeIntervalElapsed are required
     "snoozeIntervalElapsed":"optionalInt"
 }
-}
-*/
-
-// delete reminder(s)
-router.delete('/', validateBodyReminderId, deleteReminder);
-router.delete('/:reminderId', deleteReminder);
-/* BODY:
-Single: No Body
-Multiple: { reminders: [reminderId1, reminderId2...] }
 */
 
 module.exports = router;

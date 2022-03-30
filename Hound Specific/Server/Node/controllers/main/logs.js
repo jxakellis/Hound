@@ -1,8 +1,11 @@
+const DatabaseError = require('../../utils/errors/databaseError');
+const ValidationError = require('../../utils/errors/validationError');
+
 const { queryPromise } = require('../../utils/queryPromise');
 const {
   formatDate, formatNumber, areAllDefined, atLeastOneDefined,
 } = require('../../utils/validateFormat');
-const { queryLog, queryLogs } = require('../getFor/getForLogs');
+const { getLogQuery, getLogsQuery } = require('../getFor/getForLogs');
 
 /*
 Known:
@@ -18,18 +21,18 @@ const getLogs = async (req, res) => {
   // if logId is defined and it is a number then continue
   if (logId) {
     try {
-      const result = await queryLog(req, logId);
+      const result = await getLogQuery(req, logId);
       req.commitQueries(req);
       return res.status(200).json({ result });
     }
     catch (error) {
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
+      return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
   else {
     try {
-      const result = await queryLogs(req, dogId);
+      const result = await getLogsQuery(req, dogId);
 
       if (result.length === 0) {
         // successful but empty array, not logs to return
@@ -46,7 +49,7 @@ const getLogs = async (req, res) => {
     catch (error) {
       // error when trying to do query to database
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; Database query failed', error: error.code });
+      return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
 };
@@ -60,12 +63,12 @@ const createLog = async (req, res) => {
 
   if (areAllDefined([logDate, logType]) === false) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; date or logType missing' });
+    return res.status(400).json(new ValidationError('date or logType missing', 'ER_VALUES_MISSING').toJSON);
   }
   else if (logType === 'Custom' && !customTypeName) {
     // see if logType is being updated to custom and tell the user to provide customTypeName if so.
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; No customTypeName Provided for "Custom" logType' });
+    return res.status(400).json(new ValidationError('No customTypeName provided for "Custom" logType', 'ER_VALUES_MISSING').toJSON);
   }
 
   try {
@@ -79,7 +82,7 @@ const createLog = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Parameters; Database query failed; Check date or logType format', error: error.code });
+    return res.status(400).json(new DatabaseError(error.code).toJSON);
   }
 };
 
@@ -93,12 +96,12 @@ const updateLog = async (req, res) => {
   // if all undefined, then there is nothing to update
   if (atLeastOneDefined([logDate, note, logType]) === false) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; No date, note, or logType provided' });
+    return res.status(400).json(new ValidationError('No date, note, or logType provided', 'ER_NO_VALUES_PROVIDED').toJSON);
   }
   else if (logType === 'Custom' && !customTypeName) {
     // proper stuff is defined, then check to see customTypeName provided
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; No customTypeName provided for "Custom" logType' });
+    return res.status(400).json(new ValidationError('No customTypeName provided for "Custom" logType', 'ER_VALUES_MISSING').toJSON);
   }
 
   try {
@@ -119,7 +122,7 @@ const updateLog = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body or Parameters; Database query failed; Check date or logType format', error: error.code });
+    return res.status(400).json(new DatabaseError(error.code).toJSON);
   }
 };
 
@@ -135,7 +138,7 @@ const deleteLog = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Syntax; Database query failed', error: error.code });
+    return res.status(400).json(new DatabaseError(error.code).toJSON);
   }
 };
 

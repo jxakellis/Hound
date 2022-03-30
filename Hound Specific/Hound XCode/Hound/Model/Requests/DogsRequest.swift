@@ -56,7 +56,7 @@ enum DogsRequest: RequestProtocol {
         let body = InternalRequestUtils.createDogBody(dog: dog)
         
         // make put request, assume body valid as constructed with method
-        try! InternalRequestUtils.genericPostRequest(path: basePathWithoutParams, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPostRequest(path: basePathWithoutParams, body: body) { responseBody, responseStatus in
             
             if responseBody != nil, let dogId = responseBody!["result"] as? Int {
                 completionHandler(dogId, responseStatus)
@@ -78,7 +78,7 @@ enum DogsRequest: RequestProtocol {
         let body = InternalRequestUtils.createDogBody(dog: dog)
         
         // make put request, assume body valid as constructed with method
-        try! InternalRequestUtils.genericPutRequest(path: pathWithParams, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPutRequest(path: pathWithParams, body: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         

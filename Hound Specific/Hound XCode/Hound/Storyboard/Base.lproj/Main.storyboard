@@ -410,6 +410,7 @@
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="yxH-nB-lPg"/>
                                 </constraints>
                                 <color key="tintColor" systemColor="systemBlueColor"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                 <state key="normal" image="checkmark.circle.fill" catalog="system">
                                     <color key="titleColor" systemColor="systemBackgroundColor"/>
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>

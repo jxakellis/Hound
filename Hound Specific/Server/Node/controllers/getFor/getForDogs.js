@@ -1,15 +1,12 @@
 const { queryPromise } = require('../../utils/queryPromise');
 const { formatBoolean } = require('../../utils/validateFormat');
-const { queryLogs } = require('./getForLogs');
+const { getLogsQuery } = require('./getForLogs');
 const { getRemindersQuery } = require('./getForReminders');
 
 /**
  * Returns the dog for the dogId. Errors not handled
- * @param {*} req
- * @param {*} dogId
- * @returns
  */
-const queryDog = async (req, dogId) => {
+const getDogQuery = async (req, dogId) => {
   const result = await queryPromise(
     req,
     'SELECT * FROM dogs WHERE dogs.dogId = ?',
@@ -29,7 +26,7 @@ const queryDog = async (req, dogId) => {
       result[0].reminders = remindersResult;
     }
     if (queryForLogs === true) {
-      const logsResult = await queryLogs(req, dogId);
+      const logsResult = await getLogsQuery(req, dogId);
 
       result[0].logs = logsResult;
     }
@@ -39,11 +36,8 @@ const queryDog = async (req, dogId) => {
 
 /**
  * Returns an array of all the dogs for the userId. Errors not handled
- * @param {*} req
- * @param {*} dogId
- * @returns
  */
-const queryDogs = async (req, userId) => {
+const getDogsQuery = async (req, userId) => {
   const result = await queryPromise(
     req,
     'SELECT * FROM dogs WHERE dogs.userId = ?',
@@ -65,7 +59,7 @@ const queryDogs = async (req, userId) => {
     }
     if (queryForLogs === true) {
       for (let i = 0; i < result.length; i += 1) {
-        const logResult = await queryLogs(req, result[i].dogId);
+        const logResult = await getLogsQuery(req, result[i].dogId);
         result[i].logs = logResult;
       }
     }
@@ -73,4 +67,4 @@ const queryDogs = async (req, userId) => {
   }
 };
 
-module.exports = { queryDog, queryDogs };
+module.exports = { getDogQuery, getDogsQuery };

@@ -167,7 +167,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
                 dayOfMonth: body["dayOfMonth"] as? Int)
         case .oneTime:
             var executionDate = Date()
-            if let dateString = body["skipDate"] as? String {
+            if let dateString = body["date"] as? String {
                 executionDate = RequestUtils.ISO8601DateFormatter.date(from: dateString) ?? Date()
             }
             

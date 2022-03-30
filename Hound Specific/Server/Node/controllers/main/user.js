@@ -1,3 +1,5 @@
+const DatabaseError = require('../../utils/errors/databaseError');
+const ValidationError = require('../../utils/errors/validationError');
 const { queryPromise } = require('../../utils/queryPromise');
 const {
   areAllDefined, atLeastOneDefined, formatEmail, formatBoolean, formatNumber,
@@ -25,7 +27,7 @@ const getUser = async (req, res) => {
         // successful but empty array, no user to return.
         // Theoretically could be multiple users found but that means the table is broken. Just do catch all
         req.rollbackQueries(req);
-        return res.status(404).json({ message: 'Invalid Parameters; No user found or invalid permissions', error: 'ER_NO_USER_FOUND' });
+        return res.status(404).json(new ValidationError('No user found or invalid permissions', 'ER_NOT_FOUND').toJSON);
       }
 
       // array has item(s), meaning there was a user found, successful!
@@ -34,7 +36,7 @@ const getUser = async (req, res) => {
     }
     catch (error) {
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Parameters; user not found', error: error.code });
+      return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
   else if (userEmail) {
@@ -52,7 +54,7 @@ const getUser = async (req, res) => {
         // successful but empty array, no user to return.
         // Theoretically could be multiple users found but that means the table is broken. Just do catch all
         req.rollbackQueries(req);
-        return res.status(404).json({ message: 'Invalid Parameters; No user found or invalid permissions', error: 'ER_NO_USER_FOUND' });
+        return res.status(404).json(new ValidationError('No user found or invalid permissions', 'ER_NOT_FOUND').toJSON);
       }
 
       // array has item(s), meaning there was a user found, successful!
@@ -61,12 +63,12 @@ const getUser = async (req, res) => {
     }
     catch (error) {
       req.rollbackQueries(req);
-      return res.status(400).json({ message: 'Invalid Body; Database query failed', error: error.code });
+      return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
   else {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Parameters or Body; userEmail and userId undefined.' });
+    return res.status(400).json(new ValidationError('userEmail and userId missing', 'ER_VALUES_MISSING').toJSON);
   }
 };
 
@@ -74,7 +76,7 @@ const createUser = async (req, res) => {
   if (req.body.userEmail === '') {
     // userEmail cannot be blank. The else if after will catch this but this statement is to genereate a new, different error.
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; userEmail Invalid', error: 'ER_EMAIL_BLANK' });
+    return res.status(400).json(new ValidationError('userEmail Blank', 'ER_VALUES_BLANK').toJSON);
   }
 
   const userEmail = formatEmail(req.body.userEmail);
@@ -82,7 +84,7 @@ const createUser = async (req, res) => {
   if (areAllDefined(userEmail) === false) {
     // userEmail NEEDs to be valid, so throw error if it is invalid
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; userEmail Invalid', error: 'ER_EMAIL_INVALID' });
+    return res.status(400).json(new ValidationError('userEmail Invalid', 'ER_VALUES_INVALID').toJSON);
   }
 
   const { userFirstName } = req.body;
@@ -90,11 +92,11 @@ const createUser = async (req, res) => {
   // userFirstName or userLastName can't be blank. Database catches this but this statement generates a new, different error
   if (userFirstName === '') {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; userFirstName Blank', error: 'ER_FIRST_NAME_BLANK' });
+    return res.status(400).json(new ValidationError('userFirstName Blank', 'ER_VALUES_BLANK').toJSON);
   }
   else if (userLastName === '') {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; userFirstName Blank', error: 'ER_LAST_NAME_BLANK' });
+    return res.status(400).json(new ValidationError('userLastName Blank', 'ER_VALUES_BLANK').toJSON);
   }
 
   const isNotificationEnabled = formatBoolean(req.body.isNotificationEnabled);
@@ -114,7 +116,7 @@ const createUser = async (req, res) => {
   ) === false) {
     // >=1 of the items is undefined
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; userEmail, userFirstName, userLastName, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, or notificationSound missing' });
+    return res.status(400).json(new ValidationError('userEmail, userFirstName, userLastName, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, or notificationSound missing', 'ER_VALUES_MISSING').toJSON);
   }
 
   let userId;
@@ -138,7 +140,7 @@ const createUser = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; Database query failed', error: error.code });
+    return res.status(400).json(new DatabaseError(error.code).toJSON);
   }
 };
 
@@ -163,7 +165,7 @@ const updateUser = async (req, res) => {
     isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView,
     interfaceStyle, snoozeLength, notificationSound]) === false) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; No userEmail, userFirstName, userLastName, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, or notificationSound provided' });
+    return res.status(400).json(new ValidationError('No userEmail, userFirstName, userLastName, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, or notificationSound provided', 'ER_NO_VALUES_PROVIDED').toJSON);
   }
 
   try {
@@ -257,7 +259,7 @@ const updateUser = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Body; Database query failed', error: error.code });
+    return res.status(400).json(new DatabaseError(error.code).toJSON);
   }
 };
 
@@ -273,7 +275,7 @@ const deleteUser = async (req, res) => {
   }
   catch (error) {
     req.rollbackQueries(req);
-    return res.status(400).json({ message: 'Invalid Syntax; Database query failed', error: error.code });
+    return res.status(400).json(new DatabaseError(error.code).toJSON);
   }
 };
 
