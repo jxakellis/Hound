@@ -16,7 +16,7 @@ enum DogConstant {
 }
 
 enum LogConstant {
-    static let defaultType = LogType.allCases[0]
+    static let defaultAction = LogAction.allCases[0]
     static let defaultLogId: Int = -1
     static let defaultNote: String = ""
 }

@@ -75,26 +75,26 @@ class LogManager: NSObject, NSCoding, NSCopying {
         storedLogs.remove(at: index)
     }
     
-    /// Returns an array of known log types. Each known log type has an array of logs attached to it. This means you can find every log for a given log type
-    var catagorizedLogTypes: [(LogType, [Log])] {
-        var catagorizedLogTypes: [(LogType, [Log])] = []
+    /// Returns an array of known log actions. Each known log action has an array of logs attached to it. This means you can find every log for a given log action
+    var catagorizedLogActions: [(LogAction, [Log])] {
+        var catagorizedLogActions: [(LogAction, [Log])] = []
         
-        // handles all dog logs and adds to catagorized log types
+        // handles all dog logs and adds to catagorized log actions
         for dogLog in logs {
-            // already contains that dog log type, needs to append
-            if catagorizedLogTypes.contains(where: { (arg1) -> Bool in
-                let logType = arg1.0
-                if dogLog.logType == logType {
+            // already contains that dog log action, needs to append
+            if catagorizedLogActions.contains(where: { (arg1) -> Bool in
+                let logAction = arg1.0
+                if dogLog.logAction == logAction {
                     return true
                 }
                 else {
                     return false
                 }
             }) == true {
-                // since logType is already present, append on dogLog that is of that same type to the arry of logs with the given logType
-                let targetIndex: Int! = catagorizedLogTypes.firstIndex(where: { (arg1) -> Bool in
-                    let logType = arg1.0
-                    if logType == dogLog.logType {
+                // since logAction is already present, append on dogLog that is of that same action to the arry of logs with the given logAction
+                let targetIndex: Int! = catagorizedLogActions.firstIndex(where: { (arg1) -> Bool in
+                    let logAction = arg1.0
+                    if logAction == dogLog.logAction {
                         return true
                     }
                     else {
@@ -102,22 +102,22 @@ class LogManager: NSObject, NSCoding, NSCopying {
                     }
                 })
                 
-                catagorizedLogTypes[targetIndex].1.append(dogLog)
+                catagorizedLogActions[targetIndex].1.append(dogLog)
             }
-            // does not contain that dog Log's Type
+            // does not contain that dog Log's Action
             else {
-                catagorizedLogTypes.append((dogLog.logType, [dogLog]))
+                catagorizedLogActions.append((dogLog.logAction, [dogLog]))
             }
         }
         
-        // sorts by the order defined by the enum, so whatever case is first in the code of the enum that is the order of the catagorizedLogTypes
-        catagorizedLogTypes.sort { arg1, arg2 in
-            let (logType1, _) = arg1
-            let (logType2, _) = arg2
+        // sorts by the order defined by the enum, so whatever case is first in the code of the enum that is the order of the catagorizedLogActions
+        catagorizedLogActions.sort { arg1, arg2 in
+            let (logAction1, _) = arg1
+            let (logAction2, _) = arg2
             
             // finds corrosponding index
-            let logType1Index: Int! = LogType.allCases.firstIndex { arg1 in
-                if logType1.rawValue == arg1.rawValue {
+            let logAction1Index: Int! = LogAction.allCases.firstIndex { arg1 in
+                if logAction1.rawValue == arg1.rawValue {
                     return true
                 }
                 else {
@@ -125,8 +125,8 @@ class LogManager: NSObject, NSCoding, NSCopying {
                 }
             }
             // finds corrosponding index
-            let logType2Index: Int! = LogType.allCases.firstIndex { arg1 in
-                if logType2.rawValue == arg1.rawValue {
+            let logAction2Index: Int! = LogAction.allCases.firstIndex { arg1 in
+                if logAction2.rawValue == arg1.rawValue {
                     return true
                 }
                 else {
@@ -134,7 +134,7 @@ class LogManager: NSObject, NSCoding, NSCopying {
                 }
             }
             
-            if logType1Index <= logType2Index {
+            if logAction1Index <= logAction2Index {
                 return true
             }
             else {
@@ -143,7 +143,7 @@ class LogManager: NSObject, NSCoding, NSCopying {
             
         }
         
-        return catagorizedLogTypes
+        return catagorizedLogActions
     }
     
 }

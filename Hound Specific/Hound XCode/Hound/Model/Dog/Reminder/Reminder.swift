@@ -44,7 +44,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
         
         copy.reminderId = self.reminderId
         copy.reminderAction = self.reminderAction
-        copy.customTypeName = self.customTypeName
+        copy.customActionName = self.customActionName
         
         copy.countdownComponents = self.countdownComponents.copy() as! CountdownComponents
         copy.weeklyComponents = self.weeklyComponents.copy() as! WeeklyComponents
@@ -70,7 +70,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
         self.reminderId = aDecoder.decodeInteger(forKey: "reminderId")
         self.reminderAction = ReminderAction(rawValue: aDecoder.decodeObject(forKey: "reminderAction") as? String ?? ReminderConstant.defaultAction.rawValue)!
         
-        self.customTypeName = aDecoder.decodeObject(forKey: "customTypeName") as? String
+        self.customActionName = aDecoder.decodeObject(forKey: "customActionName") as? String
         
         self.countdownComponents = aDecoder.decodeObject(forKey: "countdownComponents") as? CountdownComponents ?? CountdownComponents()
         self.weeklyComponents = aDecoder.decodeObject(forKey: "weeklyComponents") as?  WeeklyComponents ?? WeeklyComponents()
@@ -89,7 +89,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
         
         aCoder.encode(reminderId, forKey: "reminderId")
         aCoder.encode(reminderAction.rawValue, forKey: "reminderAction")
-        aCoder.encode(customTypeName, forKey: "customTypeName")
+        aCoder.encode(customActionName, forKey: "customActionName")
         
         aCoder.encode(countdownComponents, forKey: "countdownComponents")
         aCoder.encode(weeklyComponents, forKey: "weeklyComponents")
@@ -116,7 +116,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
         }
         
         reminderAction = ReminderAction(rawValue: body["reminderAction"] as? String ?? ReminderConstant.defaultType.rawValue)!
-        customTypeName = body["customTypeName"] as? String
+        customActionName = body["customActionName"] as? String
         storedReminderType = ReminderType(rawValue: body["reminderType"] as? String ?? ReminderConstant.defaultType.rawValue)!
         
         if let executionBasis = body["executionBasis"] as? String {
@@ -183,12 +183,12 @@ class Reminder: NSObject, NSCoding, NSCopying {
     var reminderAction: ReminderAction = ReminderConstant.defaultAction
     
     /// If the reminder's type is custom, this is the name for it.
-    var customTypeName: String?
+    var customActionName: String?
     
-    /// Use me if displaying the reminder's name. This handles customTypeName along with regular reminder types.
-    var displayTypeName: String {
-        if reminderAction == .custom && customTypeName != nil {
-            return customTypeName!
+    /// Use me if displaying the reminder's name. This handles customActionName along with regular reminder types.
+    var displayActionName: String {
+        if reminderAction == .custom && customActionName != nil {
+            return customActionName!
         }
         else {
             return reminderAction.rawValue
@@ -205,7 +205,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
         else if reminderAction != reminder.reminderAction {
             return false
         }
-        else if customTypeName != reminder.customTypeName {
+        else if customActionName != reminder.customActionName {
             return false
         }
         else if executionBasis != reminder.executionBasis {

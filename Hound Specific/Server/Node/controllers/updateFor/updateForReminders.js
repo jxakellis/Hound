@@ -19,7 +19,7 @@ const delLeftOverReminderComponents = require('../../utils/delete').deleteLeftov
  */
 const updateReminderQuery = async (req) => {
   const reminderId = formatNumber(req.body.reminderId);
-  const { reminderAction, customTypeName, reminderType } = req.body;
+  const { reminderAction, customActionName, reminderType } = req.body;
   const executionBasis = formatDate(req.body.executionBasis);
   const isEnabled = formatBoolean(req.body.isEnabled);
   const isSnoozed = formatBoolean(req.body.isSnoozed);
@@ -34,16 +34,16 @@ const updateReminderQuery = async (req) => {
     // return res.status(400).json(new ValidationError('No reminderAction, reminderType, executionBasis, isEnabled, or isSnoozed provided', 'ER_NO_VALUES_PROVIDED').toJSON);
     throw new ValidationError('No reminderAction, reminderType, executionBasis, isEnabled, or isSnoozed provided', 'ER_NO_VALUES_PROVIDED');
   }
-  if (reminderAction === 'Custom' && !customTypeName) {
-    // req.rollbackQueries(req);
-    // return res.status(400).json(new ValidationError('No customTypeName provided for "Custom" logType', 'ER_VALUES_MISSING').toJSON);
-    throw new ValidationError('No customTypeName provided for "Custom" logType', 'ER_VALUES_MISSING');
-  }
+  // if (reminderAction === 'Custom' && !customActionName) {
+  // req.rollbackQueries(req);
+  // return res.status(400).json(new ValidationError('No customActionName provided for "Custom" logAction', 'ER_VALUES_MISSING').toJSON);
+  //   throw new ValidationError('No customActionName provided for "Custom" logAction', 'ER_VALUES_MISSING');
+  // }
 
   try {
     if (reminderAction) {
       if (reminderAction === 'Custom') {
-        await queryPromise(req, 'UPDATE dogReminders SET reminderAction = ?, customTypeName = ?  WHERE reminderId = ?', [reminderAction, customTypeName, reminderId]);
+        await queryPromise(req, 'UPDATE dogReminders SET reminderAction = ?, customActionName = ?  WHERE reminderId = ?', [reminderAction, customActionName, reminderId]);
       }
       else {
         await queryPromise(req, 'UPDATE dogReminders SET reminderAction = ? WHERE reminderId = ?', [reminderAction, reminderId]);
@@ -126,7 +126,7 @@ const updateRemindersQuery = async (req) => {
   // if there are no problems with any of the reminders, we commit our queries and send the success response
   for (let i = 0; i < reminders.length; i += 1) {
     const reminderId = formatNumber(reminders[i].reminderId);
-    const { reminderAction, customTypeName, reminderType } = reminders[i];
+    const { reminderAction, customActionName, reminderType } = reminders[i];
     const executionBasis = formatDate(reminders[i].executionBasis);
     const isEnabled = formatBoolean(reminders[i].isEnabled);
     const isSnoozed = formatBoolean(reminders[i].isSnoozed);
@@ -141,16 +141,16 @@ const updateRemindersQuery = async (req) => {
       // return res.status(400).json(new ValidationError('No reminderAction, reminderType, executionBasis, isEnabled, or isSnoozed provided', 'ER_NO_VALUES_PROVIDED').toJSON);
       throw new ValidationError('No reminderAction, reminderType, executionBasis, isEnabled, or isSnoozed provided', 'ER_NO_VALUES_PROVIDED');
     }
-    if (reminderAction === 'Custom' && !customTypeName) {
-      // req.rollbackQueries(req);
-      // return res.status(400).json(new ValidationError('No customTypeName provided for "Custom" logType', 'ER_VALUES_MISSING').toJSON);
-      throw new ValidationError('No customTypeName provided for "Custom" logType', 'ER_VALUES_MISSING');
-    }
+    // if (reminderAction === 'Custom' && !customActionName) {
+    // req.rollbackQueries(req);
+    // return res.status(400).json(new ValidationError('No customActionName provided for "Custom" logAction', 'ER_VALUES_MISSING').toJSON);
+    //  throw new ValidationError('No customActionName provided for "Custom" logAction', 'ER_VALUES_MISSING');
+    // }
 
     try {
       if (reminderAction) {
         if (reminderAction === 'Custom') {
-          await queryPromise(req, 'UPDATE dogReminders SET reminderAction = ?, customTypeName = ?  WHERE reminderId = ?', [reminderAction, customTypeName, reminderId]);
+          await queryPromise(req, 'UPDATE dogReminders SET reminderAction = ?, customActionName = ?  WHERE reminderId = ?', [reminderAction, customActionName, reminderId]);
         }
         else {
           await queryPromise(req, 'UPDATE dogReminders SET reminderAction = ? WHERE reminderId = ?', [reminderAction, reminderId]);

@@ -71,7 +71,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
                 let dog = dogManager.dogs[filterIndexPath!.section]
 
                 // checks to see if filter type still present
-                if dog.dogLogs.catagorizedLogTypes.contains(where: { (arg1) in
+                if dog.dogLogs.catagorizedLogActions.contains(where: { (arg1) in
                     let knownType = arg1.0
                     if knownType == filterType {
                         return true
@@ -81,7 +81,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
                     }
                 }) == true {
                     // apennds all known logs to consolidated list, some have reminder and some dont as varies depending on source (i.e. was nested under doglogs or reminder logs)
-                    for knownLog in dog.dogLogs.catagorizedLogTypes[filterIndexPath!.row-1].1 {
+                    for knownLog in dog.dogLogs.catagorizedLogActions[filterIndexPath!.row-1].1 {
                         consolidatedLogs.append((dog.dogId, knownLog))
                     }
                 }
@@ -206,7 +206,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
 
     /// IndexPath of current filtering scheme
     private var filterIndexPath: IndexPath?
-    private var filterType: LogType?
+    private var filterType: LogAction?
 
     /// used for determining if overview mode was changed and if the table view needs reloaded
     private var storedIsCompactView: Bool = UserConfiguration.isCompactView
@@ -255,7 +255,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
     }
 
     /// Will apply a filtering scheme dependent on indexPath, nil means going to no filtering.
-    func willApplyFiltering(associatedToIndexPath indexPath: IndexPath?, filterType: LogType?) {
+    func willApplyFiltering(associatedToIndexPath indexPath: IndexPath?, filterType: LogAction?) {
 
         filterIndexPath = indexPath
         self.filterType = filterType
@@ -481,12 +481,14 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
             let targetUniqueLogsNestedArray = uniqueLogs[indexPath.section].2
             let dogId = targetUniqueLogsNestedArray[indexPath.row-1].0
             let logId = targetUniqueLogsNestedArray[indexPath.row-1].1.logId
-
+            RequestUtils.beginQueryIndictator()
             LogsRequest.get(forDogId: dogId, forLogId: logId) { log in
-                if log != nil {
-                    self.delegate.didSelectLog(parentDogId: dogId, log: log!)
+                RequestUtils.endQueryIndictator {
+                    if log != nil {
+                        self.delegate.didSelectLog(parentDogId: dogId, log: log!)
+                    }
+                    self.tableView.deselectRow(at: indexPath, animated: true)
                 }
-                self.tableView.deselectRow(at: indexPath, animated: true)
             }
 
         }

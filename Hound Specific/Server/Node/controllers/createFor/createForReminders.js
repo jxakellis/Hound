@@ -16,7 +16,7 @@ const { createOneTimeComponents } = require('../reminderComponents/oneTime');
  */
 const createReminderQuery = async (req) => {
   const dogId = formatNumber(req.params.dogId);
-  const { reminderAction, customTypeName, reminderType } = req.body;
+  const { reminderAction, customActionName, reminderType } = req.body;
   const executionBasis = formatDate(req.body.executionBasis);
   const isEnabled = formatBoolean(req.body.isEnabled);
 
@@ -28,11 +28,11 @@ const createReminderQuery = async (req) => {
     throw new ValidationError('reminderAction, reminderType, executionBasis, or isEnabled missing', 'ER_VALUES_MISSING');
   }
   // if the reminder is custom, then it needs its custom name
-  if (reminderAction === 'Custom' && !customTypeName) {
-    // req.rollbackQueries(req);
-    // return res.status(400).json(new ValidationError('No customTypeName provided for "Custom" reminderAction', 'ER_VALUES_MISSING').toJSON);
-    throw new ValidationError('No customTypeName provided for "Custom" reminderAction', 'ER_VALUES_MISSING');
-  }
+  // if (reminderAction === 'Custom' && !customActionName) {
+  // req.rollbackQueries(req);
+  // return res.status(400).json(new ValidationError('No customActionName provided for "Custom" reminderAction', 'ER_VALUES_MISSING').toJSON);
+  //  throw new ValidationError('No customActionName provided for "Custom" reminderAction', 'ER_VALUES_MISSING');
+  // }
 
   // define out here so reminderId can be accessed in catch block to delete entries
   let reminderId;
@@ -45,8 +45,8 @@ const createReminderQuery = async (req) => {
       // first insert to main reminder table to get reminderId, then insert to other tables
       const result = await queryPromise(
         req,
-        'INSERT INTO dogReminders(dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
-        [dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled],
+        'INSERT INTO dogReminders(dogId, reminderAction, customActionName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
+        [dogId, reminderAction, customActionName, reminderType, executionBasis, isEnabled],
       );
       reminderId = formatNumber(result.insertId);
       req.body.reminderId = reminderId;
@@ -56,8 +56,8 @@ const createReminderQuery = async (req) => {
       // first insert to main reminder table to get reminderId, then insert to other tables
       const result = await queryPromise(
         req,
-        'INSERT INTO dogReminders(dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
-        [dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled],
+        'INSERT INTO dogReminders(dogId, reminderAction, customActionName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
+        [dogId, reminderAction, customActionName, reminderType, executionBasis, isEnabled],
       );
       reminderId = formatNumber(result.insertId);
       req.body.reminderId = reminderId;
@@ -67,8 +67,8 @@ const createReminderQuery = async (req) => {
       // first insert to main reminder table to get reminderId, then insert to other tables
       const result = await queryPromise(
         req,
-        'INSERT INTO dogReminders(dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
-        [dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled],
+        'INSERT INTO dogReminders(dogId, reminderAction, customActionName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
+        [dogId, reminderAction, customActionName, reminderType, executionBasis, isEnabled],
       );
       reminderId = formatNumber(result.insertId);
       req.body.reminderId = reminderId;
@@ -78,8 +78,8 @@ const createReminderQuery = async (req) => {
       // first insert to main reminder table to get reminderId, then insert to other tables
       const result = await queryPromise(
         req,
-        'INSERT INTO dogReminders(dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
-        [dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled],
+        'INSERT INTO dogReminders(dogId, reminderAction, customActionName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
+        [dogId, reminderAction, customActionName, reminderType, executionBasis, isEnabled],
       );
       reminderId = formatNumber(result.insertId);
       req.body.reminderId = reminderId;
@@ -118,7 +118,7 @@ const createRemindersQuery = async (req) => {
   // if there is no problem, we append the created reminder (with its freshly assigned id) to the array
   // if there are no problems with any of the reminders, we commit our queries and send the success response
   for (let i = 0; i < reminders.length; i += 1) {
-    const { reminderAction, customTypeName, reminderType } = reminders[i];
+    const { reminderAction, customActionName, reminderType } = reminders[i];
     const executionBasis = formatDate(reminders[i].executionBasis);
     const isEnabled = formatBoolean(reminders[i].isEnabled);
 
@@ -130,11 +130,11 @@ const createRemindersQuery = async (req) => {
       throw new ValidationError('reminderAction, reminderType, executionBasis, or isEnabled missing', 'ER_VALUES_MISSING');
     }
     // if the reminder is custom, then it needs its custom name
-    if (reminderAction === 'Custom' && !customTypeName) {
-      // req.rollbackQueries(req);
-      // return res.status(400).json(new ValidationError('No customTypeName provided for "Custom" reminderAction', 'ER_VALUES_MISSING').toJSON);
-      throw new ValidationError('No customTypeName provided for "Custom" reminderAction', 'ER_VALUES_MISSING');
-    }
+    // if (reminderAction === 'Custom' && !customActionName) {
+    // req.rollbackQueries(req);
+    // return res.status(400).json(new ValidationError('No customActionName provided for "Custom" reminderAction', 'ER_VALUES_MISSING').toJSON);
+    // throw new ValidationError('No customActionName provided for "Custom" reminderAction', 'ER_VALUES_MISSING');
+    // }
 
     // define out here so reminderId can be accessed in catch block to delete entries
     let reminderId;
@@ -147,8 +147,8 @@ const createRemindersQuery = async (req) => {
         // first insert to main reminder table to get reminderId, then insert to other tables
         const result = await queryPromise(
           req,
-          'INSERT INTO dogReminders(dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
-          [dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled],
+          'INSERT INTO dogReminders(dogId, reminderAction, customActionName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
+          [dogId, reminderAction, customActionName, reminderType, executionBasis, isEnabled],
         );
         reminderId = formatNumber(result.insertId);
         reminders[i].reminderId = reminderId;
@@ -158,8 +158,8 @@ const createRemindersQuery = async (req) => {
         // first insert to main reminder table to get reminderId, then insert to other tables
         const result = await queryPromise(
           req,
-          'INSERT INTO dogReminders(dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
-          [dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled],
+          'INSERT INTO dogReminders(dogId, reminderAction, customActionName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
+          [dogId, reminderAction, customActionName, reminderType, executionBasis, isEnabled],
         );
         reminderId = formatNumber(result.insertId);
         reminders[i].reminderId = reminderId;
@@ -169,8 +169,8 @@ const createRemindersQuery = async (req) => {
         // first insert to main reminder table to get reminderId, then insert to other tables
         const result = await queryPromise(
           req,
-          'INSERT INTO dogReminders(dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
-          [dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled],
+          'INSERT INTO dogReminders(dogId, reminderAction, customActionName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
+          [dogId, reminderAction, customActionName, reminderType, executionBasis, isEnabled],
         );
         reminderId = formatNumber(result.insertId);
         reminders[i].reminderId = reminderId;
@@ -180,8 +180,8 @@ const createRemindersQuery = async (req) => {
         // first insert to main reminder table to get reminderId, then insert to other tables
         const result = await queryPromise(
           req,
-          'INSERT INTO dogReminders(dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
-          [dogId, reminderAction, customTypeName, reminderType, executionBasis, isEnabled],
+          'INSERT INTO dogReminders(dogId, reminderAction, customActionName, reminderType, executionBasis, isEnabled) VALUES (?, ?, ?, ?, ?, ?)',
+          [dogId, reminderAction, customActionName, reminderType, executionBasis, isEnabled],
         );
         reminderId = formatNumber(result.insertId);
         reminders[i].reminderId = reminderId;

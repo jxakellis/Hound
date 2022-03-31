@@ -52,7 +52,7 @@ class ScaledUIButton: UIButton {
             initalIsUserInteractionEnabled = isUserInteractionEnabled
             isUserInteractionEnabled = false
             initalColor = tintColor
-            tintColor = UIColor.systemGray4
+            tintColor = UIColor.systemGray2
         }
         spin()
         
@@ -61,7 +61,7 @@ class ScaledUIButton: UIButton {
                 return
             }
             // begin spin
-            UIView.animate(withDuration: 0.5, delay: 0, options: .curveLinear) {
+            UIView.animate(withDuration: 0.43, delay: 0, options: .curveLinear) {
                 
                 self.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
                 
@@ -70,7 +70,7 @@ class ScaledUIButton: UIButton {
                     return
                 }
                 // end spin
-                UIView.animate(withDuration: 0.5, delay: 0, options: .curveLinear) {
+                UIView.animate(withDuration: 0.43, delay: 0, options: .curveLinear) {
                     
                     self.transform = CGAffineTransform(rotationAngle: CGFloat.pi * 2.0)
                 } completion: { _ in

@@ -25,10 +25,6 @@ class DogsIndependentReminderViewController: UIViewController {
     @IBOutlet private weak var saveReminderButton: ScaledUIButton!
     @IBOutlet private weak var saveReminderButtonBackground: ScaledUIButton!
 
-    @IBOutlet private weak var cancelUpdateReminderButton: ScaledUIButton!
-
-    @IBOutlet private weak var cancelUpdateReminderButtonBackground: ScaledUIButton!
-
     /// Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured reminder to DogsViewController
     @IBAction private func willSave(_ sender: Any) {
         
@@ -80,10 +76,9 @@ class DogsIndependentReminderViewController: UIViewController {
         guard targetReminder != nil else {
             return
         }
-        let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.reminderAction.text ?? targetReminder!.displayTypeName)?", message: nil, preferredStyle: .alert)
+        let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.reminderAction.text ?? targetReminder!.displayActionName)?", message: nil, preferredStyle: .alert)
 
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-
             RemindersRequest.delete(forDogId: self.parentDogId, forReminderId: self.targetReminder!.reminderId) { requestWasSuccessful in
                 if requestWasSuccessful == true {
                         // persist data locally
@@ -101,7 +96,9 @@ class DogsIndependentReminderViewController: UIViewController {
 
         AlertManager.enqueueAlertForPresentation(removeReminderConfirmation)
     }
-
+    
+    @IBOutlet private weak var cancelUpdateReminderButton: ScaledUIButton!
+    @IBOutlet private weak var cancelUpdateReminderButtonBackground: ScaledUIButton!
     /// The cancel / exit button was pressed, dismisses view to complete intended action
     @IBAction private func willCancel(_ sender: Any) {
 

@@ -72,19 +72,18 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
 
     // MARK: - IB
 
-    @IBOutlet weak var dogIcon: ScaledUIButton!
-
-    @IBOutlet private weak var dogName: UITextField!
+    @IBOutlet private weak var dogName: BorderedUITextField!
 
     @IBOutlet private weak var embeddedTableView: UIView!
 
-    @IBOutlet private weak var addDogButtonBackground: UIButton!
-    @IBOutlet private weak var addDogButton: UIButton!
+    @IBOutlet weak var dogIcon: ScaledUIButton!
 
     @IBAction func didClickIcon(_ sender: Any) {
         AlertManager.enqueueActionSheetForPresentation(imagePickMethodAlertController, sourceView: dogIcon, permittedArrowDirections: [.up, .down])
     }
-
+    
+    @IBOutlet private weak var addDogButtonBackground: ScaledUIButton!
+    @IBOutlet private weak var addDogButton: ScaledUIButton!
     // When the add button is clicked, runs a series of checks. Makes sure the name and description of the dog is valid, and if so then passes information up chain of view controllers to DogsViewController.
     @IBAction private func willAddDog(_ sender: Any) {
         // could be new dog or updated one
@@ -104,6 +103,8 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
         // not updating, therefore the dog is being created new and the reminders are too
         if isUpdating == false {
             // TO DO review this section. Possible better way to do it as failure messages can be duplicated
+            addDogButton.beginQuerying()
+            addDogButtonBackground.beginQuerying(isBackgroundButton: true)
             DogsRequest.create(forDog: dog) { dogId in
                 if dogId != nil {
                     // dog was successfully created
@@ -111,6 +112,8 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                     
                     // if dog succeeded then high change of reminders succeeding too
                     RemindersRequest.create(forDogId: dog.dogId, forReminders: self.modifiableDogReminders.reminders) { reminders in
+                        self.addDogButton.endQuerying()
+                        self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
                         if reminders != nil {
                             // dog and reminders successfully created, so we can proceed
                             dog.dogReminders.addReminder(newReminders: reminders!)
@@ -123,6 +126,10 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                             }
                         }
                     }
+                }
+                else {
+                    self.addDogButton.endQuerying()
+                    self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
                 }
             }
         }
@@ -139,7 +146,8 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             dog.dogReminders.addReminder(newReminders: sameReminders)
             // add created reminders when they are created and assigned their id
             dog.dogReminders.addReminder(newReminders: updatedReminders)
-            
+            addDogButton.beginQuerying()
+            addDogButtonBackground.beginQuerying(isBackgroundButton: true)
             // first query to update the dog itself (independent of any reminders)
             DogsRequest.update(forDog: dog) { requestWasSuccessful1 in
                 if requestWasSuccessful1 == true {
@@ -205,9 +213,13 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                     // we want to send a message about updating the dog if everything compelted
                     func checkForCompletion() {
                         guard queryFailure == false else {
+                            self.addDogButton.endQuerying()
+                            self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
                             return
                         }
                         if queriedCreatedReminders == true && queriedUpdatedReminders == true && queriedDeletedReminders == true {
+                            self.addDogButton.endQuerying()
+                            self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
                             self.delegate.didUpdateDog(sender: Sender(origin: self, localized: self), updatedDog: dog)
                             self.navigationController?.popViewController(animated: true)
                         }
@@ -230,9 +242,8 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
         let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogName.text ?? dogForInitalizer!.dogName)?", message: nil, preferredStyle: .alert)
 
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-            
-            DogsRequest.delete(forDogId: self.dogForInitalizer!.dogId) { requestWasSuccessful in
-                 if requestWasSuccessful == true {
+           DogsRequest.delete(forDogId: self.dogForInitalizer!.dogId) { requestWasSuccessful in
+                if requestWasSuccessful == true {
                         self.delegate.didRemoveDog(sender: Sender(origin: self, localized: self), dogId: self.dogForInitalizer!.dogId)
                         self.navigationController?.popViewController(animated: true)
                     }
@@ -249,8 +260,8 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
         AlertManager.enqueueAlertForPresentation(removeDogConfirmation)
     }
 
-    @IBOutlet private weak var cancelAddDogButton: UIButton!
-    @IBOutlet private weak var cancelAddDogButtonBackground: UIButton!
+    @IBOutlet private weak var cancelAddDogButton: ScaledUIButton!
+    @IBOutlet private weak var cancelAddDogButtonBackground: ScaledUIButton!
 
     @IBAction private func cancelAddDogButton(_ sender: Any) {
         // removed cancelling, everything autosaves now
@@ -357,7 +368,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             dogRemoveButton.isEnabled = false
             self.navigationItem.title = "Create Dog"
             
-            dogName.text = DogConstant.defaultDogName
+            dogName.text = ""
             dogIcon.setImage(DogConstant.chooseIcon, for: .normal)
             modifiableDogReminders = ReminderManager()
             // no need to pass reminders to dogsReminderNavigationViewController as reminders are empty

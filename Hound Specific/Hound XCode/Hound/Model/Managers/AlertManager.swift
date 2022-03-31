@@ -14,9 +14,28 @@ class AlertManager: NSObject {
     
     override init() {
         super.init()
+        
+        let activityIndicator = UIActivityIndicatorView(style: .medium)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.isUserInteractionEnabled = false
+        activityIndicator.startAnimating()
+        
+        loadingAlertController.view.addSubview(activityIndicator)
+        loadingAlertController.view.heightAnchor.constraint(equalToConstant: 95).isActive = true
+        
+        activityIndicator.centerXAnchor.constraint(equalTo: loadingAlertController.view.centerXAnchor, constant: 0).isActive = true
+        activityIndicator.bottomAnchor.constraint(equalTo: loadingAlertController.view.bottomAnchor, constant: -20).isActive = true
+        
+        // let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
+        // loadingIndicator.hidesWhenStopped = true
+        // loadingIndicator.style = UIActivityIndicatorView.Style.medium
+        // loadingIndicator.startAnimating()
+        loadingAlertController.view.addSubview(activityIndicator)
     }
     
         // MARK: - Public Properties
+    
+    let loadingAlertController = GeneralUIAlertController(title: nil, message: "Contacting Hound's Server...", preferredStyle: .alert)
     
     static var shared = AlertManager()
     

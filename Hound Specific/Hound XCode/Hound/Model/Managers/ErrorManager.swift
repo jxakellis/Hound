@@ -46,11 +46,14 @@ class ErrorManager {
         else if let castError = error as? LogManagerError {
             ErrorManager.alert(forMessage: castError.rawValue)
         }
-        else if let castError = error as? LogTypeError {
+        else if let castError = error as? LogActionError {
             ErrorManager.alert(forMessage: castError.rawValue)
         }
         // Reminder Object Related
         else if let castError = error as? ReminderManagerError {
+            ErrorManager.alert(forMessage: castError.rawValue)
+        }
+        else if let castError = error as? ReminderActionError {
             ErrorManager.alert(forMessage: castError.rawValue)
         }
         else if let castError = error as? WeeklyComponentsError {
@@ -84,7 +87,7 @@ class ErrorManager {
         else  if handleLogManagerError(error: error) == true {
             return
         }
-        else if handleLogTypeError(error: error) == true {
+        else if handleLogActionError(error: error) == true {
             return
         }
         else if handleReminderManagerError(error: error) == true {
@@ -178,15 +181,15 @@ class ErrorManager {
         }
     }
     
-    /// Returns true if able to find a match in enum LogTypeError to the error provided
-    static private func handleLogTypeError(error: Error) -> Bool {
+    /// Returns true if able to find a match in enum LogActionError to the error provided
+    static private func handleLogActionError(error: Error) -> Bool {
         /*
-         enum LogTypeError: String, Error {
-         case blankLogType = "Your log has no type, try selecting one!"
+         enum LogActionError: String, Error {
+         case blankLogAction = "Your log has no type, try selecting one!"
          }
          */
-        if case LogTypeError.blankLogType = error {
-            ErrorManager.alert(forMessage: LogTypeError.blankLogType.rawValue)
+        if case LogActionError.blankLogAction = error {
+            ErrorManager.alert(forMessage: LogActionError.blankLogAction.rawValue)
             return true
         }
         else {

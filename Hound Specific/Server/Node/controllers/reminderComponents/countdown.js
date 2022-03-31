@@ -8,7 +8,6 @@ const { formatNumber } = require('../../utils/validateFormat');
 const createCountdownComponents = async (req, reminder) => {
   const countdownExecutionInterval = formatNumber(reminder.countdownExecutionInterval);
   const countdownIntervalElapsed = formatNumber(reminder.countdownIntervalElapsed);
-
   // Errors intentionally uncaught so they are passed to invocation in reminders
   await queryPromise(
     req,

@@ -120,7 +120,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
                 }
                 // dog log filter
                 else {
-                    customCell.label.attributedText = NSAttributedString(string: dog.dogLogs.catagorizedLogTypes[indexPath.row-1].0.rawValue, attributes: [.font: filterByLogFont])
+                    customCell.label.attributedText = NSAttributedString(string: dog.dogLogs.catagorizedLogActions[indexPath.row-1].0.rawValue, attributes: [.font: filterByLogFont])
                 }
             }
 
@@ -144,7 +144,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             return 1
         }
         else {
-            return sudoDogManager.dogs[forSection].dogLogs.catagorizedLogTypes.count + 1
+            return sudoDogManager.dogs[forSection].dogLogs.catagorizedLogActions.count + 1
         }
 
     }
@@ -189,7 +189,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
 
             if indexPath.row != 0 {
                 let dog = getDogManager().dogs[indexPath.section]
-                filterType = dog.dogLogs.catagorizedLogTypes[indexPath.row-1].0
+                filterType = dog.dogLogs.catagorizedLogActions[indexPath.row-1].0
             }
         }
         // switching from one filter to another
@@ -201,7 +201,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             filterIndexPath = indexPath
             if indexPath.row != 0 {
                 let dog = getDogManager().dogs[indexPath.section]
-                filterType = dog.dogLogs.catagorizedLogTypes[indexPath.row-1].0
+                filterType = dog.dogLogs.catagorizedLogActions[indexPath.row-1].0
             }
         }
         logsMainScreenTableViewController?.willApplyFiltering(associatedToIndexPath: filterIndexPath, filterType: filterType)
@@ -271,7 +271,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             var totalCount: Int {
                 var count = 0
                 for dog in getDogManager().dogs {
-                    count += dog.dogLogs.catagorizedLogTypes.count + 1
+                    count += dog.dogLogs.catagorizedLogActions.count + 1
                 }
 
                 if count == 0 {
@@ -302,7 +302,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
 
     // IndexPath of a filter selected in the dropDown menu, nil if not filtering
     private var filterIndexPath: IndexPath?
-    private var filterType: LogType?
+    private var filterType: LogAction?
 
     var logsMainScreenTableViewController: LogsTableViewController! = nil
 
@@ -363,13 +363,13 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
                         largest = dogNameWidth
                     }
 
-                    let catagorizedLogTypes = dog.dogLogs.catagorizedLogTypes
-                    for logIndex in 0..<catagorizedLogTypes.count {
-                        let logType = catagorizedLogTypes[logIndex].0
-                        let logTypeWidth = logType.rawValue.boundingFrom(font: filterByLogFont, height: 30.0).width
+                    let catagorizedLogActions = dog.dogLogs.catagorizedLogActions
+                    for logIndex in 0..<catagorizedLogActions.count {
+                        let logAction = catagorizedLogActions[logIndex].0
+                        let logActionWidth = logAction.rawValue.boundingFrom(font: filterByLogFont, height: 30.0).width
 
-                        if logTypeWidth > largest {
-                            largest = logTypeWidth
+                        if logActionWidth > largest {
+                            largest = logActionWidth
                         }
 
                     }
@@ -413,7 +413,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         else if segue.identifier == "logsAddLogViewController"{
             logsAddLogViewController = segue.destination as? LogsAddLogViewController
 
-            logsAddLogViewController!.parentDogIdOfLogToUpdate = parentDogIdOfSelectedLog
+            logsAddLogViewController!.parentDogIdToUpdate = parentDogIdOfSelectedLog
             logsAddLogViewController!.logToUpdate = selectedLog
             logsAddLogViewController!.dogManager = getDogManager()
             logsAddLogViewController!.delegate = self

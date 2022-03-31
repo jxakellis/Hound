@@ -26,7 +26,7 @@ class Utils {
         
         content.title = "Follow up notification for \(dogName)!"
         
-        content.body = "It's been \(String.convertToReadable(fromTimeInterval: UserConfiguration.followUpDelay, capitalizeLetters: false)), give your dog a helping hand with \(reminder.displayTypeName)!"
+        content.body = "It's been \(String.convertToReadable(fromTimeInterval: UserConfiguration.followUpDelay, capitalizeLetters: false)), give your dog a helping hand with \(reminder.displayActionName)!"
         
         if UserConfiguration.isLoudNotification == false {
             content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(UserConfiguration.notificationSound.rawValue.lowercased())30.wav"))
@@ -58,7 +58,7 @@ class Utils {
         
         content.title = "Reminder for \(dogName)!"
         
-        content.body = reminder.displayTypeName
+        content.body = reminder.displayActionName
         
         if UserConfiguration.isLoudNotification == false {
             content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(UserConfiguration.notificationSound.rawValue.lowercased())30.wav"))

@@ -67,7 +67,7 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
     func setup(parentDogId: Int, forReminder reminderPassed: Reminder) {
         self.parentDogId = parentDogId
         self.reminder = reminderPassed
-        self.reminderActionDisplayName.text = reminderPassed.displayTypeName
+        self.reminderActionDisplayName.text = reminderPassed.displayActionName
 
         if reminder.reminderType == .oneTime {
             self.reminderIcon.image = UIImage.init(systemName: "calendar")

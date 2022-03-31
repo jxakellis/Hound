@@ -13,7 +13,7 @@ class LogsLargeBodyWithIconTableViewCell: UITableViewCell {
     // MARK: - IB
 
     @IBOutlet private weak var logIcon: UIImageView!
-    @IBOutlet private weak var logType: ScaledUILabel!
+    @IBOutlet private weak var logAction: ScaledUILabel!
     @IBOutlet private weak var logDate: ScaledUILabel!
     @IBOutlet private weak var logNote: ScaledUILabel!
 
@@ -37,7 +37,7 @@ class LogsLargeBodyWithIconTableViewCell: UITableViewCell {
         logIcon.layer.masksToBounds = true
         logIcon.layer.cornerRadius = logIcon.frame.width/2
 
-        self.logType.text = self.logSource.displayTypeName
+        self.logAction.text = self.logSource.displayActionName
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)
@@ -46,7 +46,7 @@ class LogsLargeBodyWithIconTableViewCell: UITableViewCell {
         logNote.text = logSource.note
 
         // deactivate old
-        for label in [self.logType, logDate, logNote] {
+        for label in [self.logAction, logDate, logNote] {
             var constraintsToDeactivate: [NSLayoutConstraint] = []
 
             for constraintIndex in 0..<label!.constraints.count where label!.constraints[constraintIndex].firstAttribute == .width {
@@ -59,7 +59,7 @@ class LogsLargeBodyWithIconTableViewCell: UITableViewCell {
         var labelWidthConstraints: [NSLayoutConstraint] = []
 
         // create new
-        for label in [self.logType, logDate] {
+        for label in [self.logAction, logDate] {
             let labelTextWidth = label!.text!.boundingFrom(font: label!.font, height: label!.frame.height).width
             let labelWidthConstraint = NSLayoutConstraint.init(item: label!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: labelTextWidth)
             labelWidthConstraints.append(labelWidthConstraint)

@@ -128,7 +128,7 @@ class DogsReminderTableViewCell: UITableViewCell {
             }
         }
 
-        reminderDisplay.attributedText = reminderDisplay.text?.addingFontToBeginning(text: reminder.displayTypeName + " -", font: UIFont.systemFont(ofSize: reminderDisplay.font.pointSize, weight: .medium))
+        reminderDisplay.attributedText = reminderDisplay.text?.addingFontToBeginning(text: reminder.displayActionName + " -", font: UIFont.systemFont(ofSize: reminderDisplay.font.pointSize, weight: .medium))
 
         self.reminderToggleSwitch.isOn = reminder.isEnabled
 

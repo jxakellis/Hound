@@ -8,6 +8,10 @@
 
 import UIKit
 
+enum ReminderActionError: String, Error {
+    case blankReminderAction = "Your reminder has no action, try selecting one!"
+}
+
 enum ReminderAction: String, CaseIterable {
     
     init?(rawValue: String) {
@@ -17,9 +21,9 @@ enum ReminderAction: String, CaseIterable {
             return
         }
         // regular
-        for type in ReminderAction.allCases {
-            if type.rawValue.lowercased() == rawValue.lowercased() {
-                self = type
+        for action in ReminderAction.allCases {
+            if action.rawValue.lowercased() == rawValue.lowercased() {
+                self = action
                 return
             }
         }
@@ -37,7 +41,7 @@ enum ReminderAction: String, CaseIterable {
     case bathe = "Bathe"
     case medicine = "Medicine"
     
-    // more common than previous but probably used less by user as weird type
+    // more common than previous but probably used less by user as weird action
     case sleep = "Sleep"
     case trainingSession = "Training Session"
     case doctor = "Doctor Visit"
@@ -45,11 +49,11 @@ enum ReminderAction: String, CaseIterable {
     case custom = "Custom"
 }
 
-enum LogTypeError: String, Error {
-    case blankLogType = "Your log has no type, try selecting one!"
+enum LogActionError: String, Error {
+    case blankLogAction = "Your log has no action, try selecting one!"
 }
 
-enum LogType: String, CaseIterable {
+enum LogAction: String, CaseIterable {
     
     init?(rawValue: String) {
         // backwards compatible
@@ -58,14 +62,14 @@ enum LogType: String, CaseIterable {
             return
         }
         // regular
-        for type in LogType.allCases {
-            if type.rawValue.lowercased() == rawValue.lowercased() {
-                self = type
+        for action in LogAction.allCases {
+            if action.rawValue.lowercased() == rawValue.lowercased() {
+                self = action
                 return
             }
         }
         
-        AppDelegate.generalLogger.fault("logType Not Found")
+        AppDelegate.generalLogger.fault("logAction Not Found")
         self = .custom
     }
     
@@ -104,13 +108,13 @@ protocol LogProtocol {
     /// Note attached to the log
     var note: String { get set }
     
-    var logType: LogType { get set }
+    var logAction: LogAction { get set }
     
-    /// If the reminder's type is custom, this is the name for it
-    var customTypeName: String? { get set }
+    /// If the reminder's action is custom, this is the name for it
+    var customActionName: String? { get set }
     
-    /// If not .custom type then just .type name, if custom and has customTypeName then its that string
-    var displayTypeName: String { get }
+    /// If not .custom action then just .action name, if custom and has customActionName then its that string
+    var displayActionName: String { get }
     
     var logId: Int { get set }
     
@@ -121,7 +125,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     // MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
-        let copy = Log(date: self.date, note: self.note, logType: self.logType, customTypeName: self.customTypeName, logId: self.logId)
+        let copy = Log(date: self.date, note: self.note, logAction: self.logAction, customActionName: self.customActionName, logId: self.logId)
         return copy
     }
     
@@ -130,16 +134,16 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     required init?(coder aDecoder: NSCoder) {
         self.date = aDecoder.decodeObject(forKey: "date") as? Date ?? Date()
         self.note = aDecoder.decodeObject(forKey: "note") as? String ?? LogConstant.defaultNote
-        self.logType = LogType(rawValue: aDecoder.decodeObject(forKey: "logType") as? String ?? LogConstant.defaultType.rawValue) ?? LogConstant.defaultType
-        self.customTypeName = aDecoder.decodeObject(forKey: "customTypeName") as? String
+        self.logAction = LogAction(rawValue: aDecoder.decodeObject(forKey: "logAction") as? String ?? LogConstant.defaultAction.rawValue) ?? LogConstant.defaultAction
+        self.customActionName = aDecoder.decodeObject(forKey: "customActionName") as? String
         self.logId = aDecoder.decodeInteger(forKey: "logId")
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(date, forKey: "date")
         aCoder.encode(note, forKey: "note")
-        aCoder.encode(logType.rawValue, forKey: "logType")
-        aCoder.encode(customTypeName, forKey: "customTypeName")
+        aCoder.encode(logAction.rawValue, forKey: "logAction")
+        aCoder.encode(customActionName, forKey: "customActionName")
         aCoder.encode(logId, forKey: "logId")
     }
     
@@ -147,11 +151,11 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     // MARK: - Main
     
-    init(date: Date, note: String = LogConstant.defaultNote, logType: LogType, customTypeName: String? = nil, logId: Int = LogConstant.defaultLogId) {
+    init(date: Date, note: String = LogConstant.defaultNote, logAction: LogAction, customActionName: String? = nil, logId: Int = LogConstant.defaultLogId) {
         self.date = date
         self.note = note
-        self.logType = logType
-        self.customTypeName = customTypeName
+        self.logAction = logAction
+        self.customActionName = customActionName
         self.logId = logId
         super.init()
     }
@@ -165,11 +169,11 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
         }
         
         let note: String = body["note"] as? String ?? LogConstant.defaultNote
-        let logType: LogType = LogType(rawValue: body["logType"] as? String ?? LogConstant.defaultType.rawValue)!
-        let customTypeName: String? = body["customTypeName"] as? String
+        let logAction: LogAction = LogAction(rawValue: body["logAction"] as? String ?? LogConstant.defaultAction.rawValue)!
+        let customActionName: String? = body["customActionName"] as? String
         let logId: Int = body["logId"] as? Int ?? LogConstant.defaultLogId
         
-        self.init(date: formattedDate, note: note, logType: logType, customTypeName: customTypeName, logId: logId)
+        self.init(date: formattedDate, note: note, logAction: logAction, customActionName: customActionName, logId: logId)
     }
     
     // MARK: Properties
@@ -178,16 +182,16 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     var note: String
     
-    var logType: LogType
+    var logAction: LogAction
     
-    var customTypeName: String?
+    var customActionName: String?
     
-    var displayTypeName: String {
-        if logType == .custom && customTypeName != nil {
-            return customTypeName!
+    var displayActionName: String {
+        if logAction == .custom && customActionName != nil {
+            return customActionName!
         }
         else {
-            return logType.rawValue
+            return logAction.rawValue
         }
     }
     

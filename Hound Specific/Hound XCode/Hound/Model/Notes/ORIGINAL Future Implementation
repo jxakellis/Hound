@@ -211,7 +211,7 @@ change edit to edit reminder
 change remove to remove reminder
 change did it to "Log Potty" "Log Breakfast"
 
-look into when (for example) logging a potty, being able to log Potty: Pee, Potty: Poo, etc. like an arbitrary log. Possibly chaning data type from reminderAction to ArbitraryLogType.
+look into when (for example) logging a potty, being able to log Potty: Pee, Potty: Poo, etc. like an arbitrary log. Possibly chaning data type from reminderAction to ArbitraryLogAction.
 
 Change Potty: Poop to Potty: poo
 

@@ -53,8 +53,8 @@ Multiple: { reminders: [reminderId1, reminderId2...] }
 /*
 Reminder Info:
 {
-"reminderAction": "requiredString", // If reminderAction is "Custom", then customTypeName must be provided
-"customTypeName": "optionalString",
+"reminderAction": "requiredString", // If reminderAction is "Custom", then customActionName must be provided
+"customActionName": "optionalString",
 "reminderType": "requiredString", //Only components for reminderType type specified must be provided
 "executionBasis": "requiredDate",
 "isEnabled":"requiredBool",

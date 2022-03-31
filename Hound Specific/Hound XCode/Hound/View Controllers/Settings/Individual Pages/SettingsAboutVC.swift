@@ -11,8 +11,10 @@ import UIKit
 class SettingsAboutViewController: UIViewController {
 
     // MARK: - Properties
+    
+    @IBOutlet private weak var version: ScaledUILabel!
 
-    @IBOutlet private weak var buildNumber: ScaledUILabel!
+    @IBOutlet private weak var build: ScaledUILabel!
 
     @IBOutlet private weak var copyright: ScaledUILabel!
 
@@ -20,8 +22,8 @@ class SettingsAboutViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        self.buildNumber.text = "Version \(UIApplication.appVersion ?? "nil") - Build \(UIApplication.appBuild)"
+        self.version.text = "Version \(UIApplication.appVersion ?? "nil")"
+        self.build.text = "Build \(UIApplication.appBuild)"
         self.copyright.text = "© \(Calendar.current.component(.year, from: Date())) Jonathan Xakellis"
     }
 

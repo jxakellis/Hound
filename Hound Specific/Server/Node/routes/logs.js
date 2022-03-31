@@ -26,8 +26,8 @@ router.post('/', createLog);
 {
 "date":"requiredDate",
 "note" : "optionalString",
-"logType": "requiredString", // If logType is "Custom", then customTypeName must be provided
-"customTypeName":"optionalString"
+"logAction": "requiredString", // If logAction is "Custom", then customActionName must be provided
+"customActionName":"optionalString"
 }
 */
 
@@ -35,13 +35,13 @@ router.post('/', createLog);
 router.put('/:logId', updateLog);
 /* BODY:
 
-//At least one of the following must be defined: date, note, or logType
+//At least one of the following must be defined: date, note, or logAction
 
 {
 "date":"optionalDate",
 "note" : "optionalString",
-"logType": "optionalString", // If logType is "Custom", then customTypeName must be provided
-"customTypeName":"optionalString"
+"logAction": "optionalString", // If logAction is "Custom", then customActionName must be provided
+"customActionName":"optionalString"
 }
 */
 

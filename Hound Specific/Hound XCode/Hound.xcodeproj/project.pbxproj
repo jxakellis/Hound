@@ -19,7 +19,6 @@
 		A23DB63627CDBE2C00A3F470 /* DogsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23DB63527CDBE2C00A3F470 /* DogsRequest.swift */; };
 		A2458B5E2759374500912550 /* circuit30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2458B5D2759374500912550 /* circuit30.wav */; };
 		A2458B602759376200912550 /* circuit.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2458B5F2759376200912550 /* circuit.mp3 */; };
-		A24725952614F3BF00259691 /* ToolTipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24725942614F3BF00259691 /* ToolTipView.swift */; };
 		A247B96825C883680017FE66 /* DogsTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A247B96725C883680017FE66 /* DogsTableVC.swift */; };
 		A249619027E3A642006CFDCC /* MainTabBarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A249618E27E3A642006CFDCC /* MainTabBarVC.swift */; };
 		A249619127E3A642006CFDCC /* IntroductionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A249618F27E3A642006CFDCC /* IntroductionVC.swift */; };
@@ -29,7 +28,6 @@
 		A25070E126DD9C200056CFC4 /* ScaledUIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25070E026DD9C200056CFC4 /* ScaledUIButton.swift */; };
 		A25070E326DD9D7E0056CFC4 /* UIViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25070E226DD9D7E0056CFC4 /* UIViewControllerExtension.swift */; };
 		A25070E526DD9DA50056CFC4 /* UITableViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25070E426DD9DA50056CFC4 /* UITableViewExtension.swift */; };
-		A25070E726DD9DC50056CFC4 /* UILabelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25070E626DD9DC50056CFC4 /* UILabelExtension.swift */; };
 		A25070E926DD9DDD0056CFC4 /* UIColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25070E826DD9DDD0056CFC4 /* UIColorExtension.swift */; };
 		A25070EB26DD9DF50056CFC4 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25070EA26DD9DF50056CFC4 /* UIImageExtension.swift */; };
 		A2536B54260843E900E2FF6A /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2536B53260843E900E2FF6A /* Reminder.swift */; };
@@ -62,6 +60,11 @@
 		A26CFCF427545EF9001C92D8 /* bulletin30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD827545EF9001C92D8 /* bulletin30.wav */; };
 		A26CFCF627545EF9001C92D8 /* beacon30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCDA27545EF9001C92D8 /* beacon30.wav */; };
 		A26CFCF727545EF9001C92D8 /* silk30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCDB27545EF9001C92D8 /* silk30.wav */; };
+		A26FA13827F4CB2B00546306 /* UITextViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26FA13727F4CB2B00546306 /* UITextViewExtension.swift */; };
+		A26FA13A27F5119800546306 /* BorderedUITextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26FA13927F5119800546306 /* BorderedUITextView.swift */; };
+		A26FA13C27F513B100546306 /* BorderedUITextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26FA13B27F513B100546306 /* BorderedUITextField.swift */; };
+		A26FA13E27F514C700546306 /* ScaledUITextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26FA13D27F514C700546306 /* ScaledUITextField.swift */; };
+		A26FA14027F5168300546306 /* UILabelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26FA13F27F5168300546306 /* UILabelExtension.swift */; };
 		A278ED882610FF05000575FC /* DogsReminderManagerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278ED872610FF05000575FC /* DogsReminderManagerVC.swift */; };
 		A278ED8C2610FF3D000575FC /* DogsReminderCountDownVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278ED8B2610FF3D000575FC /* DogsReminderCountDownVC.swift */; };
 		A278ED942610FF89000575FC /* DogsReminderWeeklyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A278ED932610FF89000575FC /* DogsReminderWeeklyVC.swift */; };
@@ -161,7 +164,6 @@
 		A23DB63527CDBE2C00A3F470 /* DogsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsRequest.swift; sourceTree = "<group>"; };
 		A2458B5D2759374500912550 /* circuit30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = circuit30.wav; sourceTree = "<group>"; };
 		A2458B5F2759376200912550 /* circuit.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = circuit.mp3; sourceTree = "<group>"; };
-		A24725942614F3BF00259691 /* ToolTipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ToolTipView.swift; path = "../New Group/ToolTipView.swift"; sourceTree = "<group>"; };
 		A247B96725C883680017FE66 /* DogsTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsTableVC.swift; sourceTree = "<group>"; };
 		A249618E27E3A642006CFDCC /* MainTabBarVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBarVC.swift; sourceTree = "<group>"; };
 		A249618F27E3A642006CFDCC /* IntroductionVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntroductionVC.swift; sourceTree = "<group>"; };
@@ -171,7 +173,6 @@
 		A25070E026DD9C200056CFC4 /* ScaledUIButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaledUIButton.swift; sourceTree = "<group>"; };
 		A25070E226DD9D7E0056CFC4 /* UIViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewControllerExtension.swift; sourceTree = "<group>"; };
 		A25070E426DD9DA50056CFC4 /* UITableViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITableViewExtension.swift; sourceTree = "<group>"; };
-		A25070E626DD9DC50056CFC4 /* UILabelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UILabelExtension.swift; sourceTree = "<group>"; };
 		A25070E826DD9DDD0056CFC4 /* UIColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorExtension.swift; sourceTree = "<group>"; };
 		A25070EA26DD9DF50056CFC4 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
 		A2536B53260843E900E2FF6A /* Reminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminder.swift; sourceTree = "<group>"; };
@@ -206,6 +207,11 @@
 		A26CFCD827545EF9001C92D8 /* bulletin30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bulletin30.wav; sourceTree = "<group>"; };
 		A26CFCDA27545EF9001C92D8 /* beacon30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = beacon30.wav; sourceTree = "<group>"; };
 		A26CFCDB27545EF9001C92D8 /* silk30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = silk30.wav; sourceTree = "<group>"; };
+		A26FA13727F4CB2B00546306 /* UITextViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UITextViewExtension.swift; path = "../New Group/UITextViewExtension.swift"; sourceTree = "<group>"; };
+		A26FA13927F5119800546306 /* BorderedUITextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedUITextView.swift; sourceTree = "<group>"; };
+		A26FA13B27F513B100546306 /* BorderedUITextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedUITextField.swift; sourceTree = "<group>"; };
+		A26FA13D27F514C700546306 /* ScaledUITextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaledUITextField.swift; sourceTree = "<group>"; };
+		A26FA13F27F5168300546306 /* UILabelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UILabelExtension.swift; sourceTree = "<group>"; };
 		A278ED872610FF05000575FC /* DogsReminderManagerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsReminderManagerVC.swift; sourceTree = "<group>"; };
 		A278ED8B2610FF3D000575FC /* DogsReminderCountDownVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsReminderCountDownVC.swift; sourceTree = "<group>"; };
 		A278ED932610FF89000575FC /* DogsReminderWeeklyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsReminderWeeklyVC.swift; sourceTree = "<group>"; };
@@ -244,7 +250,7 @@
 		A2B565F527E825690091CA25 /* AlarmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmManager.swift; sourceTree = "<group>"; };
 		A2B565F727E923510091CA25 /* ResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseError.swift; sourceTree = "<group>"; };
 		A2B678E427D13AD100424FB0 /* ServerSyncVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSyncVC.swift; sourceTree = "<group>"; };
-		A2B9A92A2629213800626FAE /* GeneralUIAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralUIAlertController.swift; sourceTree = "<group>"; };
+		A2B9A92A2629213800626FAE /* GeneralUIAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GeneralUIAlertController.swift; path = "../New Group1/GeneralUIAlertController.swift"; sourceTree = "<group>"; };
 		A2B9DAE8262B2DFA00A47D57 /* LogsNavigationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsNavigationVC.swift; sourceTree = "<group>"; };
 		A2B9DAEC262B2E0A00A47D57 /* LogsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsVC.swift; sourceTree = "<group>"; };
 		A2B9DAF0262B2F2D00A47D57 /* LogsTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsTableVC.swift; sourceTree = "<group>"; };
@@ -381,7 +387,7 @@
 				A258AEED25661530005242E4 /* Managers */,
 				A286934A2576A2B900C0C06E /* Notes */,
 				A263B2F52638A4C000E1DCE6 /* UIElements */,
-				A26AF36C25807878005D5DAB /* UIKit Extensions */,
+				A26AF36C25807878005D5DAB /* Extensions */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -416,11 +422,8 @@
 		A263B2F52638A4C000E1DCE6 /* UIElements */ = {
 			isa = PBXGroup;
 			children = (
-				A2B9A92A2629213800626FAE /* GeneralUIAlertController.swift */,
-				A24F1325264064D70023BB84 /* BorderedUILabel.swift */,
-				A25070DE26DD9BFF0056CFC4 /* ScaledUILabel.swift */,
-				A25070E026DD9C200056CFC4 /* ScaledUIButton.swift */,
-				A24725942614F3BF00259691 /* ToolTipView.swift */,
+				A26FA14527F5171900546306 /* General */,
+				A26FA14427F516FF00546306 /* Text */,
 				A263B30C2638AACA00E1DCE6 /* Drop Down */,
 			);
 			path = UIElements;
@@ -444,19 +447,13 @@
 			path = Nested;
 			sourceTree = "<group>";
 		};
-		A26AF36C25807878005D5DAB /* UIKit Extensions */ = {
+		A26AF36C25807878005D5DAB /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				A26AF36D25807887005D5DAB /* DateExtension.swift */,
-				A226736125CDC36800904032 /* StringExtension.swift */,
-				A25070EA26DD9DF50056CFC4 /* UIImageExtension.swift */,
-				A25070E826DD9DDD0056CFC4 /* UIColorExtension.swift */,
-				A25070E626DD9DC50056CFC4 /* UILabelExtension.swift */,
-				A25070E226DD9D7E0056CFC4 /* UIViewControllerExtension.swift */,
-				A25070E426DD9DA50056CFC4 /* UITableViewExtension.swift */,
-				A2BD897B2669A8D200E7BBE5 /* UIApplicationExtension.swift */,
+				A26FA14327F516B600546306 /* non-UI */,
+				A26FA14227F516A300546306 /* UI */,
 			);
-			path = "UIKit Extensions";
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		A26CFCC327545EF9001C92D8 /* wav30 */ = {
@@ -487,6 +484,50 @@
 				A26CFCCF27545EF9001C92D8 /* waves30.wav */,
 			);
 			path = wav30;
+			sourceTree = "<group>";
+		};
+		A26FA14227F516A300546306 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				A25070EA26DD9DF50056CFC4 /* UIImageExtension.swift */,
+				A25070E826DD9DDD0056CFC4 /* UIColorExtension.swift */,
+				A25070E226DD9D7E0056CFC4 /* UIViewControllerExtension.swift */,
+				A25070E426DD9DA50056CFC4 /* UITableViewExtension.swift */,
+				A2BD897B2669A8D200E7BBE5 /* UIApplicationExtension.swift */,
+				A26FA13727F4CB2B00546306 /* UITextViewExtension.swift */,
+				A26FA13F27F5168300546306 /* UILabelExtension.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		A26FA14327F516B600546306 /* non-UI */ = {
+			isa = PBXGroup;
+			children = (
+				A26AF36D25807887005D5DAB /* DateExtension.swift */,
+				A226736125CDC36800904032 /* StringExtension.swift */,
+			);
+			path = "non-UI";
+			sourceTree = "<group>";
+		};
+		A26FA14427F516FF00546306 /* Text */ = {
+			isa = PBXGroup;
+			children = (
+				A26FA13927F5119800546306 /* BorderedUITextView.swift */,
+				A26FA13B27F513B100546306 /* BorderedUITextField.swift */,
+				A26FA13D27F514C700546306 /* ScaledUITextField.swift */,
+				A24F1325264064D70023BB84 /* BorderedUILabel.swift */,
+				A25070DE26DD9BFF0056CFC4 /* ScaledUILabel.swift */,
+			);
+			path = Text;
+			sourceTree = "<group>";
+		};
+		A26FA14527F5171900546306 /* General */ = {
+			isa = PBXGroup;
+			children = (
+				A2B9A92A2629213800626FAE /* GeneralUIAlertController.swift */,
+				A25070E026DD9C200056CFC4 /* ScaledUIButton.swift */,
+			);
+			path = General;
 			sourceTree = "<group>";
 		};
 		A278ED912610FF45000575FC /* Dog Modification */ = {
@@ -887,8 +928,9 @@
 				A299EAA027E2C4E60042F8F4 /* SettingsPersonalInformationVC.swift in Sources */,
 				A2BD897C2669A8D200E7BBE5 /* UIApplicationExtension.swift in Sources */,
 				A28AF46D25E9C7C80018B575 /* DogsIndependentReminderVC.swift in Sources */,
-				A24725952614F3BF00259691 /* ToolTipView.swift in Sources */,
+				A26FA13E27F514C700546306 /* ScaledUITextField.swift in Sources */,
 				A27C3D8F25B8A213005F46BA /* DogsNestedReminderVC.swift in Sources */,
+				A26FA13827F4CB2B00546306 /* UITextViewExtension.swift in Sources */,
 				A278ED942610FF89000575FC /* DogsReminderWeeklyVC.swift in Sources */,
 				A2A45CCF2644914A0050E5A1 /* RemindersIntroductionVC.swift in Sources */,
 				A2B9DAF1262B2F2D00A47D57 /* LogsTableVC.swift in Sources */,
@@ -918,6 +960,7 @@
 				A249619127E3A642006CFDCC /* IntroductionVC.swift in Sources */,
 				A2BAA07227D6EDA20041F3C5 /* LocalConfiguration.swift in Sources */,
 				A24F1326264064D70023BB84 /* BorderedUILabel.swift in Sources */,
+				A26FA13C27F513B100546306 /* BorderedUITextField.swift in Sources */,
 				A226736225CDC36800904032 /* StringExtension.swift in Sources */,
 				A2040BA3262A13B000D9667E /* PersistenceManager.swift in Sources */,
 				A2FC4EC1274AFC82006A872F /* Constants.swift in Sources */,
@@ -953,13 +996,14 @@
 				A25070E326DD9D7E0056CFC4 /* UIViewControllerExtension.swift in Sources */,
 				A2AC89FA27D2780500115831 /* WeeklyComponents.swift in Sources */,
 				A29C985427CE724300B9C8E4 /* RemindersRequest.swift in Sources */,
+				A26FA14027F5168300546306 /* UILabelExtension.swift in Sources */,
 				A290F38A25D4B10400429C9D /* Utils.swift in Sources */,
 				A2EBFB9C264F69ED001AAF18 /* ErrorManager.swift in Sources */,
+				A26FA13A27F5119800546306 /* BorderedUITextView.swift in Sources */,
 				A2B565F827E923510091CA25 /* ResponseError.swift in Sources */,
 				A2AC89FC27D2781600115831 /* MonthlyComponents.swift in Sources */,
 				A25070E926DD9DDD0056CFC4 /* UIColorExtension.swift in Sources */,
 				A20C99972568671F00E2C9C8 /* ReminderManager.swift in Sources */,
-				A25070E726DD9DC50056CFC4 /* UILabelExtension.swift in Sources */,
 				A278ED882610FF05000575FC /* DogsReminderManagerVC.swift in Sources */,
 				A2E66C9D25534A880068CCA6 /* SceneDelegate.swift in Sources */,
 				A29C985227CE6D8E00B9C8E4 /* LogsRequest.swift in Sources */,

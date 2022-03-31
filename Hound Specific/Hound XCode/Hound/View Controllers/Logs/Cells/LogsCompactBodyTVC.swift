@@ -13,7 +13,7 @@ class LogsCompactBodyTableViewCell: UITableViewCell {
     // MARK: - IB
 
     @IBOutlet private weak var dogName: ScaledUILabel!
-    @IBOutlet private weak var logType: ScaledUILabel!
+    @IBOutlet private weak var logAction: ScaledUILabel!
     @IBOutlet private weak var logDate: ScaledUILabel!
     @IBOutlet private weak var logNote: ScaledUILabel!
 
@@ -34,7 +34,7 @@ class LogsCompactBodyTableViewCell: UITableViewCell {
 
         let dog = try! MainTabBarViewController.staticDogManager.findDog(forDogId: parentDogIdSource)
         self.dogName.text = dog.dogName
-        self.logType.text = self.logSource.displayTypeName
+        self.logAction.text = self.logSource.displayActionName
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)
@@ -43,7 +43,7 @@ class LogsCompactBodyTableViewCell: UITableViewCell {
         logNote.text = logSource.note
 
         // deactivate old
-        for label in [dogName, self.logType, logDate, logNote] {
+        for label in [dogName, self.logAction, logDate, logNote] {
             var constraintsToDeactivate: [NSLayoutConstraint] = []
 
             for constraintIndex in 0..<label!.constraints.count where label!.constraints[constraintIndex].firstAttribute == .width {
@@ -56,7 +56,7 @@ class LogsCompactBodyTableViewCell: UITableViewCell {
         var labelWidthConstraints: [NSLayoutConstraint] = []
 
         // create new
-        for label in [dogName, self.logType, logDate] {
+        for label in [dogName, self.logAction, logDate] {
             let labelTextWidth = label!.text!.boundingFrom(font: label!.font, height: label!.frame.height).width
             let labelWidthConstraint = NSLayoutConstraint.init(item: label!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: labelTextWidth)
             labelWidthConstraints.append(labelWidthConstraint)

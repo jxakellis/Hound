@@ -2,8 +2,8 @@
 //  UILabelExtension.swift
 //  Hound
 //
-//  Created by Jonathan Xakellis on 8/30/21.
-//  Copyright © 2021 Jonathan Xakellis. All rights reserved.
+//  Created by Jonathan Xakellis on 3/30/22.
+//  Copyright © 2022 Jonathan Xakellis. All rights reserved.
 //
 
 import UIKit

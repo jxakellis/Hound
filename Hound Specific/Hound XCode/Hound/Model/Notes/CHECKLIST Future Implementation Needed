@@ -8,7 +8,7 @@ OLD CHECKLIST, JUNIOR YEAR
 In progress:
 
 Needed:
-LogsViewController .catagorizedLogTypes efficency by reducing calls to it
+LogsViewController .catagorizedLogActions efficency by reducing calls to it
 
 Wants:
 Thinks logs alignment could be better so can easily scan through

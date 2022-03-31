@@ -51,11 +51,14 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             self.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
         }
         else {
+            RequestUtils.beginQueryIndictator()
             // opening existing dog, must query server to make sure its updated
-            DogsRequest.get(forDogId: dogId!) { dog in
-                if dog != nil {
-                    self.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
-                    self.dogsAddDogViewController.dogForInitalizer = dog
+            DogsRequest.get(forDogId: dogId!, reminders: true, logs: true) { dog in
+                RequestUtils.endQueryIndictator {
+                    if dog != nil {
+                        self.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
+                        self.dogsAddDogViewController.dogForInitalizer = dog
+                    }
                 }
             }
         }
@@ -72,12 +75,15 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         }
         // updating
         else {
+            RequestUtils.beginQueryIndictator()
             // query for existing
             RemindersRequest.get(forDogId: parentDogId, forReminderId: reminderId!) { reminder in
-                if reminder != nil {
-                    self.performSegue(withIdentifier: "dogsIndependentReminderViewController", sender: self)
-                    self.dogsIndependentReminderViewController.parentDogId = parentDogId
-                    self.dogsIndependentReminderViewController.targetReminder = reminder
+                RequestUtils.endQueryIndictator {
+                    if reminder != nil {
+                        self.performSegue(withIdentifier: "dogsIndependentReminderViewController", sender: self)
+                        self.dogsIndependentReminderViewController.parentDogId = parentDogId
+                        self.dogsIndependentReminderViewController.targetReminder = reminder
+                    }
                 }
             }
             
@@ -155,7 +161,6 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     func unlogReminderAnimation() {
         let view: ScaledUIButton! = didLogEventConfirmation
         view.setImage(UIImage.init(systemName: "arrow.uturn.backward.circle.fill"), for: .normal)
-        // view.tintColor = UIColor.lightGray
         view.tintColor = UIColor.systemGray2
         let viewBackground: ScaledUIButton! = didLogEventConfirmationBackground
         viewBackground.setImage(UIImage.init(systemName: "circle.fill"), for: .normal)

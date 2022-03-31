@@ -22,24 +22,29 @@ enum DogsRequest: RequestProtocol {
      dogId optional, providing it only returns the single dog (if found) otherwise returns all dogs
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func get(forDogId dogId: Int?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    private static func get(forDogId dogId: Int?, reminders: Bool, logs: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
         RequestUtils.warnForPlaceholderId(dogId: dogId)
         
         let pathWithParams: URL
-        
+        var path: URLComponents!
         // special case where we append the query parameter of all. Its value doesn't matter but it just tells the server that we want the logs and reminders of the dog too.
         if dogId != nil {
+            path = URLComponents(url: basePathWithoutParams.appendingPathComponent("/\(dogId!)"), resolvingAgainstBaseURL: false)!
             
-            var path = URLComponents(url: basePathWithoutParams.appendingPathComponent("/\(dogId!)"), resolvingAgainstBaseURL: false)!
-            path.queryItems = [URLQueryItem(name: "reminders", value: "true"), URLQueryItem(name: "logs", value: "true")]
-            pathWithParams = path.url!
         }
         else {
-            var path = URLComponents(url: basePathWithoutParams.appendingPathComponent(""), resolvingAgainstBaseURL: false)!
-            path.queryItems = [URLQueryItem(name: "reminders", value: "true"), URLQueryItem(name: "logs", value: "true")]
-            pathWithParams = path.url!
+            path = URLComponents(url: basePathWithoutParams.appendingPathComponent(""), resolvingAgainstBaseURL: false)!
         }
+        
+        path.queryItems = []
+        if reminders == true {
+            path.queryItems!.append(URLQueryItem(name: "reminders", value: "true"))
+        }
+        if logs == true {
+            path.queryItems!.append(URLQueryItem(name: "logs", value: "true"))
+        }
+        pathWithParams = path.url!
         
         // make get request
         InternalRequestUtils.genericGetRequest(path: pathWithParams) { responseBody, responseStatus in
@@ -108,9 +113,9 @@ extension DogsRequest {
     /**
      completionHandler returns a dog. If the query returned a 200 status and is successful, then the dog is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
      */
-    static func get(forDogId dogId: Int, completionHandler: @escaping (Dog?) -> Void) {
+    static func get(forDogId dogId: Int, reminders: Bool, logs: Bool, completionHandler: @escaping (Dog?) -> Void) {
         
-        DogsRequest.get(forDogId: dogId) { responseBody, responseStatus in
+        DogsRequest.get(forDogId: dogId, reminders: reminders, logs: logs) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 // Array of log JSON [{dog1:'foo'},{dog2:'bar'}]
@@ -145,8 +150,8 @@ extension DogsRequest {
     /**
      completionHandler returns an array of dogs. If the query returned a 200 status and is successful, then the array of dogs is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
      */
-    static func getAll(completionHandler: @escaping ([Dog]?) -> Void) {
-        DogsRequest.get(forDogId: nil) { responseBody, responseStatus in
+    static func getAll(reminders: Bool, logs: Bool, completionHandler: @escaping ([Dog]?) -> Void) {
+        DogsRequest.get(forDogId: nil, reminders: reminders, logs: logs) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 var dogArray: [Dog] = []

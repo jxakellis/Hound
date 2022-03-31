@@ -240,9 +240,9 @@ extension InternalRequestUtils {
         var body: [String: Any] = [:]
         body["note"] = log.note
         body["date"] = log.date.ISO8601Format()
-        body["logType"] = log.logType.rawValue
-        if log.logType == .custom && log.customTypeName != nil {
-            body["customTypeName"] = log.customTypeName
+        body["logAction"] = log.logAction.rawValue
+        if log.logAction == .custom && log.customActionName != nil {
+            body["customActionName"] = log.customActionName
         }
         return body
         
@@ -253,8 +253,8 @@ extension InternalRequestUtils {
         var body: [String: Any] = [:]
         body["reminderId"] = reminder.reminderId
         body["reminderAction"] = reminder.reminderAction.rawValue
-        if reminder.reminderAction == .custom && reminder.customTypeName != nil {
-            body["customTypeName"] = reminder.customTypeName
+        if reminder.reminderAction == .custom && reminder.customActionName != nil {
+            body["customActionName"] = reminder.customActionName
         }
         body["executionBasis"] = reminder.executionBasis.ISO8601Format()
         body["isEnabled"] = reminder.isEnabled
@@ -360,7 +360,7 @@ enum RequestUtils {
         // assume userId valid as it was retrieved when the app started. Later on with familyId, if a user was removed from the family, then this refresh could fail.
         
         // Retrieve any dogs the user may have
-        DogsRequest.getAll { dogArray in
+        DogsRequest.getAll(reminders: true, logs: true) { dogArray in
             if dogArray != nil {
                 let dogManager = DogManager(forDogs: dogArray!)
                 DispatchQueue.main.async {
@@ -403,6 +403,16 @@ enum RequestUtils {
     static func warnForEmptyBody(forPath path: URL, forBody body: [String: Any]) {
         if body.keys.count == 0 {
             AppDelegate.APIRequestLogger.warning("Warning: Body is empty \nFor path: \(path)")
+        }
+    }
+    
+    static func beginQueryIndictator() {
+        AlertManager.enqueueAlertForPresentation(AlertManager.shared.loadingAlertController)
+    }
+    
+    static func endQueryIndictator(completionHandler: @escaping () -> Void) {
+        AlertManager.shared.loadingAlertController.dismiss(animated: false) {
+            completionHandler()
         }
     }
 }

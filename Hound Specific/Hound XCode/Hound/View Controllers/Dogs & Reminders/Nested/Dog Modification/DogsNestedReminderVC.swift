@@ -45,7 +45,7 @@ class DogsNestedReminderViewController: UIViewController {
         
         // Since this is the nested reminders view controller, meaning its nested in the larger Add Dog VC, we only perform the server queries when the user decides to create / update the greater dog.
         
-        let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.reminderAction.text ?? targetReminder!.displayTypeName)?", message: nil, preferredStyle: .alert)
+        let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.reminderAction.text ?? targetReminder!.displayActionName)?", message: nil, preferredStyle: .alert)
 
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), reminderId: self.targetReminder!.reminderId)

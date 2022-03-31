@@ -168,7 +168,7 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
         let reminderId = sudoReminderManager.reminders[indexPath.row].reminderId
         
         if editingStyle == .delete && sudoReminderManager.reminders.count > 0 {
-            let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(sudoReminderManager.reminders[indexPath.row].displayTypeName)?", message: nil, preferredStyle: .alert)
+            let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(sudoReminderManager.reminders[indexPath.row].displayActionName)?", message: nil, preferredStyle: .alert)
 
             let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
 

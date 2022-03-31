@@ -17,7 +17,7 @@ class AlarmManager {
     /// Creates alertController to queue for presentation along with information passed along with it to reinitalize the timer once an option is selected (e.g. disable or snooze)
     static func willShowAlarm(dogName: String, dogId: Int, reminder: Reminder) {
         
-        let title = "\(reminder.displayTypeName) - \(dogName)"
+        let title = "\(reminder.displayActionName) - \(dogName)"
         
         let alertController = AlarmUIAlertController(
             title: title,
@@ -29,7 +29,7 @@ class AlarmManager {
             style: .cancel,
             handler: { (_: UIAlertAction!)  in
                 // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                AlarmManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, logType: nil)
+                AlarmManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, logAction: nil)
                 Utils.checkForReview()
             })
         
@@ -37,25 +37,25 @@ class AlarmManager {
         
         switch reminder.reminderAction {
         case .potty:
-            let pottyKnownTypes: [LogType] = [.pee, .poo, .both, .neither, .accident]
+            let pottyKnownTypes: [LogAction] = [.pee, .poo, .both, .neither, .accident]
             for pottyKnownType in pottyKnownTypes {
                 let alertActionLog = UIAlertAction(
                     title: "Log \(pottyKnownType.rawValue)",
                     style: .default,
                     handler: { (_)  in
                         // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                        AlarmManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, logType: pottyKnownType)
+                        AlarmManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, logAction: pottyKnownType)
                         Utils.checkForReview()
                     })
                 alertActionsForLog.append(alertActionLog)
             }
         default:
             let alertActionLog = UIAlertAction(
-                title: "Log \(reminder.displayTypeName)",
+                title: "Log \(reminder.displayActionName)",
                 style: .default,
                 handler: { (_)  in
                     // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                    AlarmManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, logType: LogType(rawValue: reminder.reminderAction.rawValue)!)
+                    AlarmManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, logAction: LogAction(rawValue: reminder.reminderAction.rawValue)!)
                     Utils.checkForReview()
                 })
             alertActionsForLog.append(alertActionLog)
@@ -119,7 +119,7 @@ class AlarmManager {
     }
     
     /// Finishs executing timer then just resets it to countdown again
-    static func willResetTimer(sender: Sender, dogId: Int, reminderId: Int, logType: LogType?) {
+    static func willResetTimer(sender: Sender, dogId: Int, reminderId: Int, logAction: LogAction?) {
         
         let sudoDogManager = MainTabBarViewController.staticDogManager
         
@@ -129,11 +129,11 @@ class AlarmManager {
         
         // special case. Once a oneTime reminder executes, it must be delete. Therefore there are special server queries.
         if reminder.reminderType == .oneTime {
-            if logType != nil {
+            if logAction != nil {
                 
                 // make request to add log, then (if successful) make request to delete reminder
                 
-                let log = Log(date: Date(), logType: logType!, customTypeName: reminder.customTypeName)
+                let log = Log(date: Date(), logAction: logAction!, customActionName: reminder.customActionName)
                 
                 // delete the reminder on the server
                 RemindersRequest.delete(forDogId: dogId, forReminderId: reminderId) { requestWasSuccessful in
@@ -165,9 +165,9 @@ class AlarmManager {
         else {
             // create a log to add to the dog.
             var log: Log?
-            if logType != nil {
-                // This log is only created if the user clicked an option that said "Log 'foo'". This is indicated by a non-nil logType
-                log = Log(date: Date(), logType: logType!, customTypeName: reminder.customTypeName)
+            if logAction != nil {
+                // This log is only created if the user clicked an option that said "Log 'foo'". This is indicated by a non-nil logAction
+                log = Log(date: Date(), logAction: logAction!, customActionName: reminder.customActionName)
             }
             // the reminder just executed an alarm/alert, so we want to reset its stuff
             reminder.prepareForNextAlarm()
@@ -196,7 +196,7 @@ class AlarmManager {
             // Regular reset
             else {
                 // the user logged
-                // if logType != nil {
+                // if logAction != nil {
                 //    dog.dogLogs.addLog(newLog: log!)
                 // }
             }
@@ -204,7 +204,7 @@ class AlarmManager {
             // make request to the server, if successful then we persist the data. If there is an error, then we discard to data to keep client and server in sync (as server wasn't able to update)
             RemindersRequest.update(forDogId: dogId, forReminder: reminder) { _ in
                 // we dont need to persist a log
-                if logType == nil {
+                if logAction == nil {
                     delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
                 }
                 // we need to persist a log as well
