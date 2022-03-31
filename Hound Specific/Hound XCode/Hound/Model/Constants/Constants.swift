@@ -77,48 +77,6 @@ enum DogManagerConstant {
     }
 }
 
-enum UserDefaultsKeys: String {
-    
-    // MARK: User Information
-    
-    case userEmail
-    case userFirstName
-    case userLastName
-    
-    // MARK: User Configuration
-    
-    // Appearance
-    case isCompactView
-    case interfaceStyle
-    
-    // Timing
-    case isPaused
-    case snoozeLength
-    
-    // Notifications
-    case isNotificationAuthorized
-    case isNotificationEnabled
-    case isLoudNotification
-    case isFollowUpEnabled
-    case followUpDelay
-    case notificationSound
-    
-    // MARK: Local Configuration
-    
-    case lastPause
-    case lastUnpause
-    case reviewRequestDates
-    case isShowTerminationAlert
-    case isShowReleaseNotes
-    case hasLoadedIntroductionViewControllerBefore
-    case hasLoadedRemindersIntroductionViewControllerBefore
-    
-    // MARK: Other
-    case hasDoneFirstTimeSetup
-    case dogManager
-    case appBuild
-}
-
 enum AnimationConstant: Double {
     
     case largeButtonShow = 0.30

@@ -69,6 +69,9 @@ class ErrorManager {
         else if let castError = error as? StringExtensionError {
             ErrorManager.alert(forMessage: castError.rawValue)
         }
+        else if let castError = error as? SignInWithAppleError {
+            ErrorManager.alert(forMessage: castError.rawValue)
+        }
         else {
             alertForUnknown(error: error)
         }

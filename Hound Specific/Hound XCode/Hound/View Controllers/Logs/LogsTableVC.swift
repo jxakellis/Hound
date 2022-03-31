@@ -481,9 +481,9 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
             let targetUniqueLogsNestedArray = uniqueLogs[indexPath.section].2
             let dogId = targetUniqueLogsNestedArray[indexPath.row-1].0
             let logId = targetUniqueLogsNestedArray[indexPath.row-1].1.logId
-            RequestUtils.beginQueryIndictator()
+            RequestUtils.beginAlertControllerQueryIndictator()
             LogsRequest.get(forDogId: dogId, forLogId: logId) { log in
-                RequestUtils.endQueryIndictator {
+                RequestUtils.endAlertControllerQueryIndictator {
                     if log != nil {
                         self.delegate.didSelectLog(parentDogId: dogId, log: log!)
                     }

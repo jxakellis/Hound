@@ -50,7 +50,7 @@ class ServerSyncViewController: UIViewController {
         failureResponseAlertController.addAction(retryAlertAction)
         noResponseAlertController.addAction(retryAlertAction)
         noDogManagerAlertController.addAction(retryAlertAction)
-        getUser()
+        
         // Do any additional setup after loading the view.
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -61,6 +61,15 @@ class ServerSyncViewController: UIViewController {
 
         // make sure the view has the correct interfaceStyle
         UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
+        
+        // placeholder userId
+        if UserInformation.userId == nil {
+            Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverLoginViewController", viewController: self)
+        }
+        // has userId
+        else {
+            getUser()
+        }
     }
 
     // MARK: - Properties
@@ -80,7 +89,7 @@ class ServerSyncViewController: UIViewController {
     // MARK: - Functions
     /// Retrieve the user
     private func getUser() {
-        UserRequest.get(forUserEmail: UserInformation.userEmail) { responseBody, responseStatus in
+        UserRequest.get { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                     if responseBody != nil {

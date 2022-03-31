@@ -51,10 +51,10 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             self.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
         }
         else {
-            RequestUtils.beginQueryIndictator()
+            RequestUtils.beginAlertControllerQueryIndictator()
             // opening existing dog, must query server to make sure its updated
             DogsRequest.get(forDogId: dogId!, reminders: true, logs: true) { dog in
-                RequestUtils.endQueryIndictator {
+                RequestUtils.endAlertControllerQueryIndictator {
                     if dog != nil {
                         self.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
                         self.dogsAddDogViewController.dogForInitalizer = dog
@@ -75,10 +75,10 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         }
         // updating
         else {
-            RequestUtils.beginQueryIndictator()
+            RequestUtils.beginAlertControllerQueryIndictator()
             // query for existing
             RemindersRequest.get(forDogId: parentDogId, forReminderId: reminderId!) { reminder in
-                RequestUtils.endQueryIndictator {
+                RequestUtils.endAlertControllerQueryIndictator {
                     if reminder != nil {
                         self.performSegue(withIdentifier: "dogsIndependentReminderViewController", sender: self)
                         self.dogsIndependentReminderViewController.parentDogId = parentDogId

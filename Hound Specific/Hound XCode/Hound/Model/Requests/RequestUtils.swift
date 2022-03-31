@@ -10,7 +10,7 @@ import Foundation
 
 /// abstractions used by other endpoint classes to make their request to the server, not used anywhere else in hound so therefore internal to endpoints and api requests.
 enum InternalRequestUtils {
-    static let basePathWithoutParams: URL = URL(string: "http://localhost:5000/api/v1")!
+    static let basePathWithoutParams: URL = URL(string: "http://192.168.4.253:5000/api/v1")!
     // home URL(string: "http://10.0.0.107:5000/api/v1")!
     //  school URL(string: "http://10.1.10.235:5000/api/v1")!
     // hotspot URL(string: "http://172.20.10.2:5000/api/v1")!
@@ -188,6 +188,7 @@ extension InternalRequestUtils {
     /// returns an array that contains the user's personal information and userConfiguration and is suitable to be a http request body
     static func createFullUserBody() -> [String: Any] {
         var body: [String: Any] = createUserConfigurationBody()
+        body[UserDefaultsKeys.userIdentifier.rawValue] = UserInformation.userIdentifier
         body[UserDefaultsKeys.userEmail.rawValue] = UserInformation.userEmail
         body[UserDefaultsKeys.userFirstName.rawValue] = UserInformation.userFirstName
         body[UserDefaultsKeys.userLastName.rawValue] = UserInformation.userLastName
@@ -196,6 +197,7 @@ extension InternalRequestUtils {
     
     static func createUserInformationBody() -> [String: Any] {
         var body: [String: Any] = [:]
+        body[UserDefaultsKeys.userIdentifier.rawValue] = UserInformation.userIdentifier
         body[UserDefaultsKeys.userEmail.rawValue] = UserInformation.userEmail
         body[UserDefaultsKeys.userFirstName.rawValue] = UserInformation.userFirstName
         body[UserDefaultsKeys.userLastName.rawValue] = UserInformation.userLastName
@@ -376,8 +378,11 @@ enum RequestUtils {
     }
     /// Provides warning if the id of anything is set to a placeholder value. 
     static func warnForPlaceholderId(dogId: Int? = nil, reminders: [Reminder]? = nil, reminderId: Int? = nil, reminderIds: [Int]? = nil, logId: Int? = nil) {
-        if UserInformation.userId < 0 {
-            AppDelegate.APIRequestLogger.warning("Warning: userId is placeholder \(UserInformation.userId)")
+        if UserInformation.userId == nil {
+            AppDelegate.APIRequestLogger.warning("Warning: userId is nil")
+        }
+        if UserInformation.userId! < 0 {
+            AppDelegate.APIRequestLogger.warning("Warning: userId is placeholder \(UserInformation.userId!)")
         }
         if dogId != nil && dogId! < 0 {
             AppDelegate.APIRequestLogger.warning("Warning: dogId is placeholder \(dogId!)")
@@ -406,11 +411,13 @@ enum RequestUtils {
         }
     }
     
-    static func beginQueryIndictator() {
+    /// Presents a custom made loadingAlertController on the global presentor that blocks everything until endAlertControllerQueryIndictator is called
+    static func beginAlertControllerQueryIndictator() {
         AlertManager.enqueueAlertForPresentation(AlertManager.shared.loadingAlertController)
     }
     
-    static func endQueryIndictator(completionHandler: @escaping () -> Void) {
+    /// Dismisses the custom made loadingAlertController. Allow the app to resume normal execution once the completion handler is called (as that indicates the loadingAlertController was dismissed and new things can be presented/segued to).
+    static func endAlertControllerQueryIndictator(completionHandler: @escaping () -> Void) {
         AlertManager.shared.loadingAlertController.dismiss(animated: false) {
             completionHandler()
         }

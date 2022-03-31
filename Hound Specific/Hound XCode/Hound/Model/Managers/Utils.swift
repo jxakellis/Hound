@@ -13,6 +13,23 @@ import StoreKit
 
 class Utils {
     
+    static func performSegueOnceInWindowHierarchy(segueIdentifier: String, viewController: UIViewController) {
+        
+        waitLoop()
+        
+        func waitLoop () {
+            if viewController.isViewLoaded && viewController.view.window != nil {
+                    viewController.performSegue(withIdentifier: segueIdentifier, sender: viewController)
+            }
+            else {
+                AppDelegate.generalLogger.warning("waitloop for performSegueOnceInWindowHierarchy")
+                DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
+                    waitLoop()
+                }
+            }
+        }
+    }
+    
     static func willCreateFollowUpUNUserNotification(dogName: String, reminder: Reminder) {
         
         guard reminder.executionDate != nil else {

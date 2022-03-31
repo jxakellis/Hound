@@ -42,6 +42,7 @@ class PersistenceManager {
          // MARK: User Configuration
          
          
+         
          UserDefaults.standard.setValue(UserConfiguration.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
          
          UserDefaults.standard.setValue(UserConfiguration.snoozeLength, forKey: UserDefaultsKeys.snoozeLength.rawValue)
@@ -76,9 +77,13 @@ class PersistenceManager {
     /// Sets the data to its saved values as if the app is reopening again
     static private func recurringSetup() {
         
+        // MARK: User Information
+        
         // Data below is retrieved from the server, so no need to store/persist locally
         /*
          // MARK: User Configuration
+         
+         
          
          UserConfiguration.isPaused = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as? Bool ?? UserConfiguration.isPaused
          

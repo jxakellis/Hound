@@ -11,8 +11,10 @@ Known:
 */
 
 const getUser = async (req, res) => {
-  const userEmail = formatEmail(req.params.userIdentifier);
-  const userId = formatNumber(req.params.userIdentifier);
+  // apple user identifier
+  const userIdentifier = req.params.userId;
+  // hound user id id
+  const userId = formatNumber(req.params.userId);
   // userId method of finding corresponding user
   if (userId) {
     // only one user should exist for any userId otherwise the table is broken
@@ -39,15 +41,15 @@ const getUser = async (req, res) => {
       return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
-  else if (userEmail) {
-    // userEmail method of finding corresponding user(s)
-    // userEmail already validated
+  else if (areAllDefined(userIdentifier)) {
+    // userIdentifier method of finding corresponding user(s)
+    // userIdentifier already validated
 
     try {
       const userInformation = await queryPromise(
         req,
-        'SELECT * FROM users LEFT JOIN userConfiguration ON users.userId = userConfiguration.userId WHERE users.userEmail = ?',
-        [userEmail],
+        'SELECT * FROM users LEFT JOIN userConfiguration ON users.userId = userConfiguration.userId WHERE users.userIdentifier = ?',
+        [userIdentifier],
       );
 
       if (userInformation.length !== 1) {
@@ -68,7 +70,7 @@ const getUser = async (req, res) => {
   }
   else {
     req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('userEmail and userId missing', 'ER_VALUES_MISSING').toJSON);
+    return res.status(400).json(new ValidationError('userIdentifier and userId missing', 'ER_VALUES_MISSING').toJSON);
   }
 };
 
@@ -87,17 +89,9 @@ const createUser = async (req, res) => {
     return res.status(400).json(new ValidationError('userEmail Invalid', 'ER_VALUES_INVALID').toJSON);
   }
 
+  const { userIdentifier } = req.body;
   const { userFirstName } = req.body;
   const { userLastName } = req.body;
-  // userFirstName or userLastName can't be blank. Database catches this but this statement generates a new, different error
-  if (userFirstName === '') {
-    req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('userFirstName Blank', 'ER_VALUES_BLANK').toJSON);
-  }
-  else if (userLastName === '') {
-    req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('userLastName Blank', 'ER_VALUES_BLANK').toJSON);
-  }
 
   const isNotificationEnabled = formatBoolean(req.body.isNotificationEnabled);
   const isLoudNotification = formatBoolean(req.body.isLoudNotification);
@@ -110,13 +104,13 @@ const createUser = async (req, res) => {
   const { notificationSound } = req.body;
   // component of the body is missing or invalid
   if (areAllDefined(
-    [userEmail, userFirstName, userLastName, isNotificationEnabled,
+    [userIdentifier, userEmail, userFirstName, userLastName, isNotificationEnabled,
       isLoudNotification, isFollowUpEnabled, followUpDelay,
       isPaused, isCompactView, interfaceStyle, snoozeLength, notificationSound],
   ) === false) {
     // >=1 of the items is undefined
     req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('userEmail, userFirstName, userLastName, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, or notificationSound missing', 'ER_VALUES_MISSING').toJSON);
+    return res.status(400).json(new ValidationError('userIdentifier, userEmail, userFirstName, userLastName, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, or notificationSound missing', 'ER_VALUES_MISSING').toJSON);
   }
 
   let userId;
@@ -124,14 +118,14 @@ const createUser = async (req, res) => {
   try {
     const result = await queryPromise(
       req,
-      'INSERT INTO users(userFirstName, userLastName, userEmail) VALUES (?,?,?)',
-      [userFirstName, userLastName, userEmail],
+      'INSERT INTO users(userIdentifier, userEmail, userFirstName, userLastName) VALUES (?,?,?,?)',
+      [userIdentifier, userEmail, userFirstName, userLastName],
     );
     userId = result.insertId;
 
     await queryPromise(
       req,
-      'INSERT INTO userConfiguration(userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, notificationSound) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+      'INSERT INTO userConfiguration(userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, notificationSound) VALUES (?,?,?,?,?,?,?,?,?,?)',
       [userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, notificationSound],
     );
 

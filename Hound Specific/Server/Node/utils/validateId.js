@@ -35,6 +35,12 @@ const validateUserId = async (req, res, next) => {
     }
   }
   else {
+    // the only time the userIdentifier would be provided instead of the userId is if the user was retrieving their user information.
+    // e.g. they reinstalled the app so are getting their userId to use for future requests.
+    // Other wise for any POST, PUT, DELETE User Method or GET, POST, PUT, DELETE log/reminder method (etc...), it has to be the userId
+    // and not the userIdentifier.
+    // This check only occurs for when it should be userId and not userIdentifier (aka any non-GET /user request)
+
     // userId was not provided or is invalid format
     req.rollbackQueries(req);
     return res.status(400).json(new ValidationError('userId Invalid', 'ER_ID_INVALID').toJSON);

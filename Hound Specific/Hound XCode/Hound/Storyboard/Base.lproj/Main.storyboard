@@ -1479,67 +1479,39 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Dda-lY-odD">
-                                <rect key="frame" x="10" y="144" width="394" height="34"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LMt-ZX-Hls">
-                                <rect key="frame" x="100" y="396" width="214" height="31"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Sign Up"/>
-                                <connections>
-                                    <action selector="willSignUpUser:" destination="58r-r7-NND" eventType="touchUpInside" id="ALp-66-cfr"/>
-                                </connections>
-                            </button>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="First Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="IHd-gr-CTK">
-                                <rect key="frame" x="10" y="228" width="394" height="34"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Last Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="OyB-Nt-N2L">
-                                <rect key="frame" x="10" y="312" width="394" height="34"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bJM-ZP-x3Q">
-                                <rect key="frame" x="100" y="477" width="214" height="31"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Sign In"/>
-                                <connections>
-                                    <action selector="willSignInUser:" destination="58r-r7-NND" eventType="touchUpInside" id="vha-dZ-ztC"/>
-                                </connections>
-                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welcome" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HIL-pD-UhJ" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="10" y="54" width="394" height="60"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="50"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create your Hound account below. Creating or joining a family will come soon..." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fda-3z-euN" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="10" y="124" width="394" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Z0a-Lb-ijF"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" systemColor="systemBlueColor"/>
                         <constraints>
-                            <constraint firstItem="Dda-lY-odD" firstAttribute="leading" secondItem="Z0a-Lb-ijF" secondAttribute="leading" constant="10" id="0mT-8z-GAf"/>
-                            <constraint firstItem="Z0a-Lb-ijF" firstAttribute="trailing" secondItem="LMt-ZX-Hls" secondAttribute="trailing" constant="100" id="9Ut-ai-lRI"/>
-                            <constraint firstItem="Z0a-Lb-ijF" firstAttribute="trailing" secondItem="Dda-lY-odD" secondAttribute="trailing" constant="10" id="9vG-J5-4h6"/>
-                            <constraint firstItem="bJM-ZP-x3Q" firstAttribute="top" secondItem="LMt-ZX-Hls" secondAttribute="bottom" constant="50" id="Djp-7D-uqa"/>
-                            <constraint firstItem="LMt-ZX-Hls" firstAttribute="leading" secondItem="Z0a-Lb-ijF" secondAttribute="leading" constant="100" id="HQB-fP-RGq"/>
-                            <constraint firstItem="OyB-Nt-N2L" firstAttribute="leading" secondItem="Z0a-Lb-ijF" secondAttribute="leading" constant="10" id="Mlf-tc-xdO"/>
-                            <constraint firstItem="Dda-lY-odD" firstAttribute="top" secondItem="Z0a-Lb-ijF" secondAttribute="top" constant="100" id="QkP-vW-dI3"/>
-                            <constraint firstItem="IHd-gr-CTK" firstAttribute="top" secondItem="Dda-lY-odD" secondAttribute="bottom" constant="50" id="SDy-DI-sXS"/>
-                            <constraint firstItem="Z0a-Lb-ijF" firstAttribute="trailing" secondItem="IHd-gr-CTK" secondAttribute="trailing" constant="10" id="X2h-Ff-DbU"/>
-                            <constraint firstItem="OyB-Nt-N2L" firstAttribute="top" secondItem="IHd-gr-CTK" secondAttribute="bottom" constant="50" id="ZdX-mk-LB2"/>
-                            <constraint firstItem="bJM-ZP-x3Q" firstAttribute="leading" secondItem="Z0a-Lb-ijF" secondAttribute="leading" constant="100" id="biM-Tp-AVa"/>
-                            <constraint firstItem="Z0a-Lb-ijF" firstAttribute="trailing" secondItem="OyB-Nt-N2L" secondAttribute="trailing" constant="10" id="hek-9H-8EX"/>
-                            <constraint firstItem="IHd-gr-CTK" firstAttribute="leading" secondItem="Z0a-Lb-ijF" secondAttribute="leading" constant="10" id="pij-W8-7ol"/>
-                            <constraint firstItem="LMt-ZX-Hls" firstAttribute="top" secondItem="OyB-Nt-N2L" secondAttribute="bottom" constant="50" id="uZn-bf-OeS"/>
-                            <constraint firstItem="Z0a-Lb-ijF" firstAttribute="trailing" secondItem="bJM-ZP-x3Q" secondAttribute="trailing" constant="100" id="wTe-YV-qok"/>
+                            <constraint firstItem="Z0a-Lb-ijF" firstAttribute="trailing" secondItem="Fda-3z-euN" secondAttribute="trailing" constant="10" id="1LA-3q-RsN"/>
+                            <constraint firstItem="Fda-3z-euN" firstAttribute="top" secondItem="HIL-pD-UhJ" secondAttribute="bottom" constant="10" id="4Ux-z0-c3h"/>
+                            <constraint firstItem="HIL-pD-UhJ" firstAttribute="top" secondItem="Z0a-Lb-ijF" secondAttribute="top" constant="10" id="FGd-kY-uXc"/>
+                            <constraint firstItem="Fda-3z-euN" firstAttribute="leading" secondItem="Z0a-Lb-ijF" secondAttribute="leading" constant="10" id="doa-fH-90y"/>
+                            <constraint firstItem="HIL-pD-UhJ" firstAttribute="leading" secondItem="Z0a-Lb-ijF" secondAttribute="leading" constant="10" id="jsp-Y2-4RV"/>
+                            <constraint firstItem="Z0a-Lb-ijF" firstAttribute="trailing" secondItem="HIL-pD-UhJ" secondAttribute="trailing" constant="10" id="qia-KP-22A"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="k1M-ne-H6p"/>
                     <connections>
-                        <outlet property="userEmail" destination="Dda-lY-odD" id="CUq-7n-hou"/>
-                        <outlet property="userFirstName" destination="IHd-gr-CTK" id="ErK-hu-L2P"/>
-                        <outlet property="userLastName" destination="OyB-Nt-N2L" id="hlm-2H-8Mu"/>
+                        <outlet property="welcome" destination="HIL-pD-UhJ" id="fwp-dW-2Q0"/>
+                        <outlet property="welcomeMessage" destination="Fda-3z-euN" id="VwH-ab-nzx"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="N3u-pY-alA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2126" y="-724"/>
+            <point key="canvasLocation" x="3048" y="-696"/>
         </scene>
         <!--Introduction View Controller-->
         <scene sceneID="DrI-KL-fmy">
@@ -2227,6 +2199,7 @@
                         <outlet property="statusLabel" destination="0jo-Zc-MLN" id="X55-oX-axt"/>
                         <segue destination="49e-Tb-3d3" kind="presentation" identifier="mainTabBarViewController" modalPresentationStyle="fullScreen" id="Jqw-FR-46g"/>
                         <segue destination="w3D-Ib-MEE" kind="presentation" identifier="introductionViewController" modalPresentationStyle="fullScreen" id="3AW-Zf-Dxq"/>
+                        <segue destination="58r-r7-NND" kind="presentation" identifier="serverLoginViewController" modalPresentationStyle="fullScreen" id="bqE-nO-Ztf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="f1n-Oj-Vw4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

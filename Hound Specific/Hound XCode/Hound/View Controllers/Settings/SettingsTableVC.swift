@@ -93,7 +93,7 @@ class SettingsTableViewController: UITableViewController {
         // cannot select the space cells so no need to worry about them
         self.tableView.deselectRow(at: indexPath, animated: true)
         let cell = tableView.cellForRow(at: indexPath)
-        // cell identifer converted into segue version in settings vc
+        // cell identifier converted into segue version in settings vc
         delegate.willPerformSegue(withIdentifier: cell!.reuseIdentifier!)
     }
 }

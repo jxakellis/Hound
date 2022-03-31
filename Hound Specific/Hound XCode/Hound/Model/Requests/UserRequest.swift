@@ -17,7 +17,7 @@ enum UserRequest: RequestProtocol {
     
     static let basePathWithoutParams: URL = InternalRequestUtils.basePathWithoutParams.appendingPathComponent("/user")
     // UserRequest basePath with the userId path param appended on
-    static var basePathWithUserId: URL { return UserRequest.basePathWithoutParams.appendingPathComponent("/\(UserInformation.userId)") }
+    static var basePathWithUserId: URL { return UserRequest.basePathWithoutParams.appendingPathComponent("/\(UserInformation.userId ?? -1)") }
     
     /**
      Uses userId to retrieve information
@@ -34,10 +34,11 @@ enum UserRequest: RequestProtocol {
         
     }
     /**
+     Uses userEmail to retrieve information
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    static func get(forUserEmail: String, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        InternalRequestUtils.genericGetRequest(path: basePathWithoutParams.appendingPathComponent("/\(forUserEmail)")) { responseBody, responseStatus in
+    static func get(forUserIdentifier: String, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+        InternalRequestUtils.genericGetRequest(path: basePathWithoutParams.appendingPathComponent("/\(forUserIdentifier)")) { responseBody, responseStatus in
             DispatchQueue.main.async {
                 completionHandler(responseBody, responseStatus)
             }
@@ -45,25 +46,26 @@ enum UserRequest: RequestProtocol {
         
     }
     
-    // MARK: - Private Functions
-    
     /**
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
+     completionHandler returns a Int. If the query returned a 200 status and is successful, then userId is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
      */
-    private static func create(completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
+    static func create(completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
         
         // make post request, assume body valid as constructed with method
         InternalRequestUtils.genericPostRequest(path: basePathWithoutParams, body: InternalRequestUtils.createFullUserBody()) { responseBody, responseStatus in
-            
+            DispatchQueue.main.async {
             if responseBody != nil, let userId = responseBody!["result"] as? Int {
                 completionHandler(userId, responseStatus)
             }
             else {
                 completionHandler(nil, responseStatus)
             }
+            }
         }
         
     }
+    
+    // MARK: - Private Functions
     
     /**
      Targeted update. Specifically updates user information or configuration. Body is constructed from known good values so can assume no failures as all pre determiend.
@@ -170,7 +172,8 @@ extension UserRequest {
     /**
      completionHandler returns a Int. If the query returned a 200 status and is successful, then userId is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
      */
-    private static func create(completionHandler: @escaping (Int?) -> Void) {
+    /*
+    static func create(completionHandler: @escaping (Int?) -> Void) {
         
         UserRequest.create { userId, responseStatus in
             DispatchQueue.main.async {
@@ -180,6 +183,7 @@ extension UserRequest {
                         completionHandler(userId!)
                     }
                     else {
+                        completionHandler(nil)
                         ErrorManager.alert(forError: GeneralResponseError.failurePostResponse)
                     }
                 case .failureResponse:
@@ -193,6 +197,7 @@ extension UserRequest {
         }
         
     }
+     */
     
     /**
      Targeted update. Specifically updates user information or configuration.

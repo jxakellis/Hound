@@ -9,10 +9,12 @@ const {
 const { validateUserId } = require('../utils/validateId');
 
 // gets user with userId then return information from users and userConfiguration table
-router.get('/:userIdentifier', getUser);
+router.get('/:userId', getUser);
 // no body
 
-// validation that params are formatted correctly and have adequate permissions
+// validation that params are formatted correctly and have adequate permissions.
+// This check HAS to be after the .get for /user.
+// Otherwise if the user passes a userIdentifier to get their userId, it will fail as format incorrect
 router.use('/:userId', validateUserId);
 
 // dogs: /api/v1/user/:userId/dogs
@@ -26,6 +28,7 @@ router.use('/:userId/dogs', dogsRouter);
 router.post('/', createUser);
 /* BODY:
 {
+  "userIdentifier":"requiredString",
 "userEmail":"requiredEmail",
 "userFirstName":"requiredString",
 "userLastName":"requiredString",
