@@ -60,11 +60,8 @@ class Dog: NSObject, NSCoding, NSCopying {
         self.dogLogs = LogManager()
     }
     
-    convenience init(dogName: String?, dogIcon: UIImage? = nil, defaultReminders: Bool = false) throws {
+    convenience init(dogName: String?, dogIcon: UIImage? = nil) throws {
         try self.init(dogName: dogName)
-        if defaultReminders == true {
-            self.dogReminders.addDefaultReminders()
-        }
         if dogIcon != nil {
             self.icon = dogIcon!
         }

@@ -13,6 +13,8 @@ const pool = mysql.createPool({
   queueLimit: 0,
   // The maximum number of connections to create at once.
   connectionLimit: 10,
+  connectTimeout: 10000,
+  acquireTimeout: 10000,
   host: 'localhost',
   user: 'admin',
   password: databasePassword,

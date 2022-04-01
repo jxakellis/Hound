@@ -9,7 +9,8 @@
 import UIKit
 
 protocol DogsIndependentReminderViewControllerDelegate: AnyObject {
-    func didApplyReminderSettings(sender: Sender, parentDogId: Int, forReminder: Reminder)
+    func didAddReminder(sender: Sender, parentDogId: Int, forReminder: Reminder)
+    func didUpdateReminder(sender: Sender, parentDogId: Int, forReminder: Reminder)
     func didRemoveReminder(sender: Sender, parentDogId: Int, reminderId: Int)
     /// Reinitalizes timers that were possibly destroyed
     func didCancel(sender: Sender)
@@ -43,7 +44,7 @@ class DogsIndependentReminderViewController: UIViewController {
                     self.saveReminderButtonBackground.endQuerying()
                     if requestWasSuccessful == true {
                         // successful so we can persist the data locally
-                        self.delegate.didApplyReminderSettings(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, forReminder: updatedReminder!)
+                        self.delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, forReminder: updatedReminder!)
                         self.navigationController?.popViewController(animated: true)
                     }
                 }
@@ -58,7 +59,7 @@ class DogsIndependentReminderViewController: UIViewController {
                     if reminder != nil {
                         // successful and able to get reminderId, persist locally
                         updatedReminder!.reminderId = reminder!.reminderId
-                        self.delegate.didApplyReminderSettings(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, forReminder: updatedReminder!)
+                        self.delegate.didAddReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, forReminder: updatedReminder!)
                         self.navigationController?.popViewController(animated: true)
                     }
                 }

@@ -29,72 +29,7 @@ class Utils {
             }
         }
     }
-    
-    static func willCreateFollowUpUNUserNotification(dogName: String, reminder: Reminder) {
-        
-        guard reminder.executionDate != nil else {
-            AppDelegate.generalLogger.fault("willCreateFollowUpUNUserNotification executionDate is nil")
-            return
-        }
-        // let reminder = try! MainTabBarViewController.staticDogManager.findDog(forDogId: dogName).dogReminders.findReminder(forReminderId: reminderUUID)
-        
-        let content = UNMutableNotificationContent()
-        content.interruptionLevel = .timeSensitive
-        
-        content.title = "Follow up notification for \(dogName)!"
-        
-        content.body = "It's been \(String.convertToReadable(fromTimeInterval: UserConfiguration.followUpDelay, capitalizeLetters: false)), give your dog a helping hand with \(reminder.displayActionName)!"
-        
-        if UserConfiguration.isLoudNotification == false {
-            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(UserConfiguration.notificationSound.rawValue.lowercased())30.wav"))
-        }
-        
-        let executionDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminder.executionDate! + UserConfiguration.followUpDelay)
-        
-        let trigger = UNCalendarNotificationTrigger(dateMatching: executionDateComponents, repeats: false)
-        
-        let uuidString = UUID().uuidString
-        let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
-        
-        UNUserNotificationCenter.current().add(request) { (error) in
-            if error != nil {
-                AppDelegate.generalLogger.error("willCreateUNUserNotification error: \(error!.localizedDescription)")
-            }
-        }
-    }
-    
-    static func willCreateUNUserNotification(dogName: String, reminder: Reminder) {
-        
-        guard reminder.executionDate != nil else {
-            AppDelegate.generalLogger.fault("willCreateUNUserNotification executionDate is nil")
-            return
-        }
-        // let reminder = try! MainTabBarViewController.staticDogManager.findDog(forDogId: dogName).dogReminders.findReminder(forReminderId: reminderUUID)
-        let content = UNMutableNotificationContent()
-        content.interruptionLevel = .timeSensitive
-        
-        content.title = "Reminder for \(dogName)!"
-        
-        content.body = reminder.displayActionName
-        
-        if UserConfiguration.isLoudNotification == false {
-            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(UserConfiguration.notificationSound.rawValue.lowercased())30.wav"))
-        }
-        
-        let executionDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminder.executionDate!)
-        
-        let trigger = UNCalendarNotificationTrigger(dateMatching: executionDateComponents, repeats: false)
-        
-        let uuidString = UUID().uuidString
-        let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
-        
-        UNUserNotificationCenter.current().add(request) { (error) in
-            if error != nil {
-                AppDelegate.generalLogger.error("willCreateUNUserNotification error: \(error!.localizedDescription)")
-            }
-        }
-    }
-    
+
     /// Checks to see if the user is eligible for a notification to review Hound and if so presents the notification
     static func checkForReview() {
         // slight delay so it pops once some things are done
@@ -161,6 +96,9 @@ class Utils {
     
     /// Displays a message about not terminating the app if that setting is enabled and the user terminated the app
     static func checkForTermination(forDogManager dogManager: DogManager) {
+        
+        // TO DO bug with this. If a user with notifications enabled, a dog, and an enabled reminder reinstalls the app, then this prompt will trigger. Figure out way that a user which is reinstalling is not prompted (for their first load)
+        
         if  UIApplication.previousAppBuild != nil && UIApplication.previousAppBuild! == UIApplication.appBuild && LocalConfiguration.isShowTerminationAlert == true {
             
             AppDelegate.generalLogger.notice("App has not updated")
@@ -249,4 +187,22 @@ class Utils {
             AlertManager.enqueueAlertForPresentation(updateAlertController)
         }
     }
+    
+    /// If a user has an account with notifications enabled, then notifcaiton authorized, enabled, etc. will all be true. If they reinstall, then notification authorizaed will be false but the rest will be the previous values. Therefore, we must check and either get notifcations authorized again or set them all to false.
+    static func checkForNotificationSettingImbalance() {
+        guard LocalConfiguration.isNotificationAuthorized == false else {
+            return
+        }
+        
+        // If isNotificationAuthorized is false, check if any of the settings that should false are true
+        if UserConfiguration.isNotificationEnabled == true || UserConfiguration.isFollowUpEnabled == true || UserConfiguration.isLoudNotification == true {
+            // we request authorization again.
+            // if permission is granted, then everything is updated to true and its ok
+            // if permission is denied, then everything is updated to false
+            NotificationManager.requestNotificationAuthorization { _ in
+                // everything already handled
+            }
+        }
+    }
+    
 }

@@ -12,6 +12,7 @@ enum UserDefaultsKeys: String {
     
     // MARK: User Information
     
+    case userId
     case userIdentifier
     case userEmail
     case userFirstName

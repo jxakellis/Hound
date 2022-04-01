@@ -9,7 +9,8 @@
 import UIKit
 
 protocol DogsReminderNavigationViewControllerDelegate: AnyObject {
-    func didApplyReminderSettings(forReminder: Reminder)
+    func didAddReminder(forReminder: Reminder)
+    func didUpdateReminder(forReminder: Reminder)
     func didRemoveReminder(reminderId: Int)
 }
 
@@ -17,8 +18,12 @@ class DogsReminderNavigationViewController: UINavigationController, DogsReminder
     
     // MARK: - DogsReminderTableViewControllerDelegate
 
-    func didApplyReminderSettings(forReminder reminder: Reminder) {
-        passThroughDelegate.didApplyReminderSettings(forReminder: reminder)
+    func didAddReminder(forReminder reminder: Reminder) {
+        passThroughDelegate.didAddReminder(forReminder: reminder)
+    }
+    
+    func didUpdateReminder(forReminder reminder: Reminder) {
+        passThroughDelegate.didUpdateReminder(forReminder: reminder)
     }
 
     func didRemoveReminder(reminderId: Int) {

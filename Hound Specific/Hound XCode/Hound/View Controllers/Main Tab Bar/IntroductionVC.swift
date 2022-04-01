@@ -130,7 +130,7 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
         }
         
         // can only fail if dogName == "", but already checked for that and corrected if there was a problem
-        let dog = try! Dog(dogName: dogName ?? DogConstant.defaultDogName, dogIcon: dogIcon ?? DogConstant.defaultIcon, defaultReminders: false)
+        let dog = try! Dog(dogName: dogName ?? DogConstant.defaultDogName, dogIcon: dogIcon ?? DogConstant.defaultIcon)
         
         // contact server to make their dog
         DogsRequest.create(forDog: dog) { dogId in

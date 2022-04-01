@@ -10,7 +10,8 @@ import UIKit
 
 // Delegate to pass setup reminder back to table view
 protocol DogsNestedReminderViewControllerDelegate: AnyObject {
-    func didApplyReminderSettings(sender: Sender, forReminder: Reminder)
+    func didAddReminder(sender: Sender, forReminder: Reminder)
+    func didUpdateReminder(sender: Sender, forReminder: Reminder)
     func didRemoveReminder(sender: Sender, reminderId: Int)
 }
 
@@ -28,11 +29,19 @@ class DogsNestedReminderViewController: UIViewController {
         // Since this is the nested reminders view controller, meaning its nested in the larger Add Dog VC, we only perform the server queries when the user decides to create / update the greater dog.
         
         let updatedReminder = dogsReminderManagerViewController.applyReminderSettings()
-        if updatedReminder != nil {
-            delegate.didApplyReminderSettings(sender: Sender(origin: self, localized: self), forReminder: updatedReminder!)
-            navigationController?.popViewController(animated: true)
+        // updatedReminder will be nil if a setting was invalid. If this is the case, dogsReminderManagerViewController will send a message to the user about it.
+        guard updatedReminder != nil else {
+            return
         }
         
+        if isUpdating == true {
+            delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), forReminder: updatedReminder!)
+        }
+        else {
+            delegate.didAddReminder(sender: Sender(origin: self, localized: self), forReminder: updatedReminder!)
+        }
+        
+        navigationController?.popViewController(animated: true)
     }
 
     @IBAction private func backButton(_ sender: Any) {

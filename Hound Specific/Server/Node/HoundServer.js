@@ -15,7 +15,6 @@ app.use((req, res, next) => {
       // before creating a pool connection for request, so no need to release said connection
       return res.status(400).json(new ParseError('Unable to parse form data', 'ER_NO_PARSE_FORM_DATA').toJSON);
     }
-
     return next();
   });
 });

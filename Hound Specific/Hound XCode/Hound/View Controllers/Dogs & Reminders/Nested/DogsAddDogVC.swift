@@ -51,13 +51,18 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
         return true
     }
 
-    // MARK: - Reminder Table VC Delegate
-
-    func didApplyReminderSettings(forReminder reminder: Reminder) {
+    // MARK: - DogsReminderNavigationViewControllerDelegate
+    
+    func didAddReminder(forReminder reminder: Reminder) {
         shouldPromptSaveWarning = true
         modifiableDogReminders.addReminder(newReminder: reminder)
     }
-
+    
+    func didUpdateReminder(forReminder reminder: Reminder) {
+        shouldPromptSaveWarning = true
+        modifiableDogReminders.updateReminder(updatedReminder: reminder)
+    }
+    
     func didRemoveReminder(reminderId: Int) {
         shouldPromptSaveWarning = true
         try! modifiableDogReminders.removeReminder(forReminderId: reminderId)
@@ -93,7 +98,6 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             if dogIcon.imageView?.image != nil && dogIcon.imageView!.image != DogConstant.chooseIcon {
                 dog.icon = dogIcon.imageView!.image!
             }
-            // dog.dogReminders.addReminder(newReminders: self.modifiableDogReminders.reminders)
         }
         catch {
             ErrorManager.alert(forError: error)
@@ -102,7 +106,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
         
         // not updating, therefore the dog is being created new and the reminders are too
         if isUpdating == false {
-            // TO DO review this section. Possible better way to do it as failure messages can be duplicated
+            
             addDogButton.beginQuerying()
             addDogButtonBackground.beginQuerying(isBackgroundButton: true)
             DogsRequest.create(forDog: dog) { dogId in
@@ -112,6 +116,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                     
                     // if dog succeeded then high change of reminders succeeding too
                     RemindersRequest.create(forDogId: dog.dogId, forReminders: self.modifiableDogReminders.reminders) { reminders in
+                        // TO DO review this section. Possible better way to do it as no/failure respmse messages can be duplicated (RemindersRequest.create error then try DogsRequest.delete error)
                         self.addDogButton.endQuerying()
                         self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
                         if reminders != nil {
@@ -134,7 +139,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             }
         }
         else {
-            // TO DO review this section. Lots of spaghetti code. There will be duplicate error messages and uncheck calls if a network/random error occurs between calls.
+            // TO DO review this section. Lots of spaghetti code. There will be duplicate error messages from create, update, and delete if network or other error.
             let reminderDifference = dogForInitalizer!.dogReminders.groupReminders(newReminders: modifiableDogReminders.reminders)
             let sameReminders = reminderDifference.0
             let createdReminders = reminderDifference.1
@@ -145,7 +150,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             // for reminders that already have their reminderId, we can add them to our dog.
             dog.dogReminders.addReminder(newReminders: sameReminders)
             // add created reminders when they are created and assigned their id
-            dog.dogReminders.addReminder(newReminders: updatedReminders)
+            dog.dogReminders.updateReminder(updatedReminders: updatedReminders)
             addDogButton.beginQuerying()
             addDogButtonBackground.beginQuerying(isBackgroundButton: true)
             // first query to update the dog itself (independent of any reminders)

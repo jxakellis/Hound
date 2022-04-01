@@ -35,16 +35,11 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
             }
              */
             
-            /*
-             if let receivedData = KeyChain.load(key: "MyNumber") {
-             let result = receivedData.to(type: Int.self)
-             print("result: ", result)
-             */
-            
-            // TO DO persist these values to keychain. See more under func recurringSetup()
+            let keychain = KeychainSwift()
             
             let userIdentifier = appleIDCredential.user
             UserInformation.userIdentifier = userIdentifier
+            keychain.set(userIdentifier, forKey: "userIdentifier")
             
             // IMPORTANT NOTES ABOUT PERSISTANCE AND KEYCHAIN
             // fullName and email are ONLY provided on the FIRST time the user uses sign in with apple
@@ -61,17 +56,10 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
             // 5. they go to 'sign in with apple', but since Apple recognizes they have already done that with Hound, we only get the userIdentifier
             // 6. the user is stuck. they have no account on the server and can't create one since we are unable to access the email, first name, and last name. The only way to fix this would be having them go into the iCloud 'Password & Security' settings and deleting Hound, giving them a fresh start.
             
-            let keychain = KeychainSwift()
-            
             let email = appleIDCredential.email
             if email != nil {
-                print("set email")
                 keychain.set(email!, forKey: "userEmail")
                 UserInformation.userEmail = email
-            }
-            else {
-                print("retrieve email")
-                UserInformation.userEmail = keychain.get("userEmail") ?? UserInformation.userEmail
             }
             
             let fullName = appleIDCredential.fullName
@@ -81,17 +69,11 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
                 keychain.set(firstName!, forKey: "userFirstName")
                 UserInformation.userFirstName = firstName!
             }
-            else {
-                UserInformation.userFirstName = keychain.get("userFirstName") ?? UserInformation.userFirstName
-            }
             
             let lastName = fullName?.familyName
             if lastName != nil {
                 keychain.set(lastName!, forKey: "userLastName")
                 UserInformation.userLastName = lastName!
-            }
-            else {
-                UserInformation.userLastName = keychain.get("userLastName") ?? UserInformation.userLastName
             }
             
             UserRequest.create { userId, responseStatus in
@@ -209,6 +191,18 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
     // MARK: - Main
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if UserInformation.userIdentifier != nil {
+            // we found a userIdentifier in the keychain (during recurringSetup) so we change the info to match.
+            // we could technically automatically log then in but this is easier. this verifies that an account exists and creates once if needed (if old one was deleted somehow)
+            welcome.text = "Welcome Back"
+            welcomeMessage.text = "Sign in to your existing Hound account below. Creating or joining a family will come soon..."
+        }
+        else {
+            // no info in keychain, assume first time setup
+            welcome.text = "Welcome"
+            welcomeMessage.text = "Create your Hound account below. Creating or joining a family will come soon..."
+        }
         // Do any additional setup after loading the view.
     }
     
@@ -235,7 +229,15 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
     
     private func setupSignInWithApple() {
         // make actual button
-        signInWithApple = ASAuthorizationAppleIDButton(type: .continue, style: .whiteOutline)
+        if UserInformation.userIdentifier != nil {
+            // pre existing data
+            signInWithApple = ASAuthorizationAppleIDButton(type: .signIn, style: .whiteOutline)
+        }
+        else {
+            // no preexisting data, new
+            signInWithApple = ASAuthorizationAppleIDButton(type: .signUp, style: .whiteOutline)
+        }
+        
         signInWithApple.translatesAutoresizingMaskIntoConstraints = false
         signInWithApple.addTarget(self, action: #selector(signInWithAppleTapped), for: .touchUpInside)
         self.view.addSubview(signInWithApple)
@@ -252,11 +254,21 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
     
     private func setupSignInWithAppleDisclaimer() {
         let signInWithAppleDisclaimer = ScaledUILabel()
+        
+        if UserInformation.userIdentifier != nil {
+            // pre existing data
+            signInWithAppleDisclaimer.text = "Currently, Hound only offers accounts through the 'Sign In With Apple' feature. This requires you have an Apple ID with two-factor authentication enabled."
+        }
+        else {
+            // no preexisting data, new
+            signInWithAppleDisclaimer.text = "Currently, Hound only offers accounts through the 'Sign Up With Apple' feature. This requires you have an Apple ID with two-factor authentication enabled."
+        }
+        
         signInWithAppleDisclaimer.translatesAutoresizingMaskIntoConstraints = false
         signInWithAppleDisclaimer.numberOfLines = 0
         signInWithAppleDisclaimer.font = .systemFont(ofSize: 12.5, weight: .light)
         signInWithAppleDisclaimer.textColor = .white
-        signInWithAppleDisclaimer.text = "Currently, Hound only offers accounts through the 'Sign Up With Apple' feature. This requires you have an Apple ID with two-factor authentication enabled."
+        
         self.view.addSubview(signInWithAppleDisclaimer)
         
         let constraints = [

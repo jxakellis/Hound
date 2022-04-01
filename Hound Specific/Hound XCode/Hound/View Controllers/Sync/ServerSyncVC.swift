@@ -63,7 +63,7 @@ class ServerSyncViewController: UIViewController {
         UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
         
         // placeholder userId
-        if UserInformation.userId == nil {
+        if UserInformation.userId == nil || UserInformation.userId! < 0 {
             Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverLoginViewController", viewController: self)
         }
         // has userId

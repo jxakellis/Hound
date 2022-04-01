@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import KeychainSwift
 
 class PersistenceManager {
     /// Called by App or Scene Delegate when setting up in didFinishLaunchingWithOptions, can be either the first time setup or a recurring setup (i.e. not the app isnt being opened for the first time)
@@ -31,6 +32,17 @@ class PersistenceManager {
         UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         
         MainTabBarViewController.selectedEntryIndex = 0
+        
+        // MARK: User Information
+        
+        UserDefaults.standard.setValue(UserInformation.userId, forKey: UserDefaultsKeys.userId.rawValue)
+        
+        let keychain = KeychainSwift()
+        
+        UserInformation.userIdentifier = keychain.get("userIdentifier")
+        UserInformation.userEmail = keychain.get("userEmail") ?? UserInformation.userEmail
+        UserInformation.userFirstName = keychain.get("userFirstName") ?? UserInformation.userFirstName
+        UserInformation.userLastName = keychain.get("userLastName") ?? UserInformation.userLastName
         
         // Data below is retrieved from the server, so no need to store/persist locally
         /*
@@ -79,11 +91,19 @@ class PersistenceManager {
         
         // MARK: User Information
         
-        // Data below is retrieved from the server, so no need to store/persist locally
+        UserInformation.userId = UserDefaults.standard.value(forKey: UserDefaultsKeys.userId.rawValue) as? Int
+        
+        let keychain = KeychainSwift()
+        
+        UserInformation.userIdentifier = keychain.get("userIdentifier")
+        UserInformation.userEmail = keychain.get("userEmail") ?? UserInformation.userEmail
+        UserInformation.userFirstName = keychain.get("userFirstName") ?? UserInformation.userFirstName
+        UserInformation.userLastName = keychain.get("userLastName") ?? UserInformation.userLastName
+        
         /*
          // MARK: User Configuration
          
-         
+         // Data below is retrieved from the server, so no need to store/persist locally
          
          UserConfiguration.isPaused = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as? Bool ?? UserConfiguration.isPaused
          
@@ -160,17 +180,17 @@ class PersistenceManager {
         func handleUserDefaults() {
             AppDelegate.generalLogger.notice("handleUserDefaults")
             
-            // Data below is retrieved from the server, so no need to store/persist locally
+            // MARK: User Information
+            
+            UserDefaults.standard.setValue(UserInformation.userId, forKey: UserDefaultsKeys.userId.rawValue)
+            
+            // other user info from ASAuthorization is saved immediately to the keychain
+            
             /*
-             // dogManager
-             // DogManagerEfficencyImprovement OK, Changes are being made that might not apply to the rest of the system, might be invalid, or might affect finding something
-             var dataDogManager = MainTabBarViewController.staticDogManager.copy() as! DogManager
-             dataDogManager.clearAllPresentationHandled()
-             
-             let encodedDataDogManager = try! NSKeyedArchiver.archivedData(withRootObject: dataDogManager, requiringSecureCoding: false)
-             UserDefaults.standard.setValue(encodedDataDogManager, forKey: UserDefaultsKeys.dogManager.rawValue)
              
              // MARK: User Configuration
+             
+             // Data below is retrieved from the server, so no need to store/persist locally
              
              // Pause State
              UserDefaults.standard.setValue(UserConfiguration.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
@@ -190,6 +210,7 @@ class PersistenceManager {
              UserDefaults.standard.setValue(UserConfiguration.interfaceStyle.rawValue, forKey: UserDefaultsKeys.interfaceStyle.rawValue)
              
              */
+            
             // MARK: Local Configuration
             UserDefaults.standard.setValue(LocalConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
@@ -211,18 +232,17 @@ class PersistenceManager {
             
             // remove duplicate notifications if app is backgrounded then terminated
             
-            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-            UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+            NotificationManager.removeAllNotifications()
             
             for dog in MainTabBarViewController.staticDogManager.dogs {
                 for reminder in dog.dogReminders.reminders {
                     guard reminder.timer?.isValid == true else {
                         continue
                     }
-                    Utils.willCreateUNUserNotification(dogName: dog.dogName, reminder: reminder)
+                    NotificationManager.willCreateUNUserNotification(dogName: dog.dogName, reminder: reminder)
                     
                     if UserConfiguration.isFollowUpEnabled == true {
-                        Utils.willCreateFollowUpUNUserNotification(dogName: dog.dogName, reminder: reminder)
+                        NotificationManager.willCreateFollowUpUNUserNotification(dogName: dog.dogName, reminder: reminder)
                     }
                 }
             }
@@ -249,8 +269,7 @@ class PersistenceManager {
         synchronizeNotificationAuthorization()
         
         if LocalConfiguration.isNotificationAuthorized && UserConfiguration.isNotificationEnabled == true {
-            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-            UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+            NotificationManager.removeAllNotifications()
         }
     }
     

@@ -3,7 +3,6 @@ const ValidationError = require('../../utils/errors/validationError');
 const { queryPromise } = require('../../utils/queryPromise');
 const { formatNumber, areAllDefined, atLeastOneDefined } = require('../../utils/validateFormat');
 const { getDogQuery, getDogsQuery } = require('../getFor/getForDogs');
-
 /*
 Known:
 - userId formatted correctly and request has sufficient permissions to use
@@ -57,9 +56,10 @@ const getDogs = async (req, res) => {
 };
 
 const createDog = async (req, res) => {
+  console.log(req.body);
   const userId = formatNumber(req.params.userId);
   const { dogName } = req.body;
-  // const icon = req.body.icon
+  // const icon = req.body.icon;
 
   if (areAllDefined([dogName]) === false) {
     req.rollbackQueries(req);

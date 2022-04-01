@@ -12,6 +12,7 @@
 		A20C99972568671F00E2C9C8 /* ReminderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C99962568671F00E2C9C8 /* ReminderManager.swift */; };
 		A20C999925686B7600E2C9C8 /* TimingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C999825686B7600E2C9C8 /* TimingManager.swift */; };
 		A2121DBD26649C7E00647682 /* DogsReminderOnceVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2121DBC26649C7E00647682 /* DogsReminderOnceVC.swift */; };
+		A218EA3227F6A5D90051159C /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A218EA3127F6A5D90051159C /* NotificationManager.swift */; };
 		A226736225CDC36800904032 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A226736125CDC36800904032 /* StringExtension.swift */; };
 		A239B748265754B500C92837 /* LogsLargeHeaderTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A239B747265754B500C92837 /* LogsLargeHeaderTVC.swift */; };
 		A239B74A2657594F00C92837 /* LogsLargeBodyWithoutIconTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A239B7492657594F00C92837 /* LogsLargeBodyWithoutIconTVC.swift */; };
@@ -160,6 +161,7 @@
 		A20C99962568671F00E2C9C8 /* ReminderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderManager.swift; sourceTree = "<group>"; };
 		A20C999825686B7600E2C9C8 /* TimingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimingManager.swift; sourceTree = "<group>"; };
 		A2121DBC26649C7E00647682 /* DogsReminderOnceVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsReminderOnceVC.swift; sourceTree = "<group>"; };
+		A218EA3127F6A5D90051159C /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		A226736125CDC36800904032 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		A239B747265754B500C92837 /* LogsLargeHeaderTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsLargeHeaderTVC.swift; sourceTree = "<group>"; };
 		A239B7492657594F00C92837 /* LogsLargeBodyWithoutIconTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsLargeBodyWithoutIconTVC.swift; sourceTree = "<group>"; };
@@ -425,6 +427,7 @@
 				A2B18E3525E8A4C000951AC3 /* AlertManager.swift */,
 				A263B2F62638A54F00E1DCE6 /* Sender.swift */,
 				A290F38925D4B10400429C9D /* Utils.swift */,
+				A218EA3127F6A5D90051159C /* NotificationManager.swift */,
 				A2EBFB9D264F6A1A001AAF18 /* AudioManager.swift */,
 				A2EBFB9B264F69ED001AAF18 /* ErrorManager.swift */,
 				A2040BA2262A13B000D9667E /* PersistenceManager.swift */,
@@ -1046,6 +1049,7 @@
 				A2040BA3262A13B000D9667E /* PersistenceManager.swift in Sources */,
 				A2FC4EC1274AFC82006A872F /* Constants.swift in Sources */,
 				A263B2F72638A54F00E1DCE6 /* Sender.swift in Sources */,
+				A218EA3227F6A5D90051159C /* NotificationManager.swift in Sources */,
 				A2E66C9B25534A880068CCA6 /* AppDelegate.swift in Sources */,
 				A299EAAD27E2D3350042F8F4 /* SettingsAboutVC.swift in Sources */,
 				A2536B54260843E900E2FF6A /* Reminder.swift in Sources */,

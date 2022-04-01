@@ -58,8 +58,7 @@ open class KeychainSwift {
 
   */
   @discardableResult
-  open func set(_ value: String, forKey key: String,
-                  withAccess access: KeychainSwiftAccessOptions? = nil) -> Bool {
+  open func set(_ value: String, forKey key: String, withAccess access: KeychainSwiftAccessOptions? = nil) -> Bool {
     
     if let value = value.data(using: String.Encoding.utf8) {
       return set(value, forKey: key, withAccess: access)
@@ -80,8 +79,7 @@ open class KeychainSwift {
   
   */
   @discardableResult
-  open func set(_ value: Data, forKey key: String,
-    withAccess access: KeychainSwiftAccessOptions? = nil) -> Bool {
+  open func set(_ value: Data, forKey key: String, withAccess access: KeychainSwiftAccessOptions? = nil) -> Bool {
     
     // The lock prevents the code to be run simultaneously
     // from multiple threads which may result in crashing
@@ -122,8 +120,7 @@ open class KeychainSwift {
 
   */
   @discardableResult
-  open func set(_ value: Bool, forKey key: String,
-    withAccess access: KeychainSwiftAccessOptions? = nil) -> Bool {
+  open func set(_ value: Bool, forKey key: String, withAccess access: KeychainSwiftAccessOptions? = nil) -> Bool {
   
     let bytes: [UInt8] = value ? [1] : [0]
     let data = Data(bytes)

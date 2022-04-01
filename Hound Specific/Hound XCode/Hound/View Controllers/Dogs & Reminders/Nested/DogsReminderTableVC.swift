@@ -9,7 +9,8 @@
 import UIKit
 
 protocol DogsReminderTableViewControllerDelegate: AnyObject {
-    func didApplyReminderSettings(forReminder: Reminder)
+    func didAddReminder(forReminder: Reminder)
+    func didUpdateReminder(forReminder: Reminder)
     func didRemoveReminder(reminderId: Int)
 }
 
@@ -23,20 +24,29 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
         // let updatedReminder = try! sudoReminderManager.findReminder(forReminderId: reminder.reminderId)
         // updatedReminder.isEnabled = reminder.isEnabled
         setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
-        delegate.didApplyReminderSettings(forReminder: reminder)
+        delegate.didUpdateReminder(forReminder: reminder)
     }
 
     // MARK: - Dogs Nested Reminder
 
     var dogsNestedReminderViewController = DogsNestedReminderViewController()
-
+    
     /// When this function is called through a delegate, it adds the information to the list of reminders and updates the cells to display it
-    func didApplyReminderSettings(sender: Sender, forReminder reminder: Reminder) {
+    func didAddReminder(sender: Sender, forReminder reminder: Reminder) {
         let sudoReminderManager = getReminderManager()
         sudoReminderManager.addReminder(newReminder: reminder)
         setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
         
-        delegate.didApplyReminderSettings(forReminder: reminder)
+        delegate.didAddReminder(forReminder: reminder)
+    }
+    
+    /// When this function is called through a delegate, it adds the information to the list of reminders and updates the cells to display it
+    func didUpdateReminder(sender: Sender, forReminder reminder: Reminder) {
+        let sudoReminderManager = getReminderManager()
+        sudoReminderManager.updateReminder(updatedReminder: reminder)
+        setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
+        
+        delegate.didUpdateReminder(forReminder: reminder)
     }
 
     func didRemoveReminder(sender: Sender, reminderId: Int) {

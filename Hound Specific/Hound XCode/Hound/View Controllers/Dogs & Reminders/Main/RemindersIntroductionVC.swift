@@ -23,58 +23,23 @@ class RemindersIntroductionViewController: UIViewController {
     @IBOutlet private weak var continueButton: UIButton!
     @IBAction private func willContinue(_ sender: Any) {
         
-        requestNotifications()
-            
-        queryDefaultReminders(shouldUseDefaultReminders: remindersToggleSwitch.isOn) { reminders in
-            if reminders != nil {
-                self.delegate.didComplete(sender: Sender(origin: self, localized: self), forReminders: reminders!)
-                
-            }
-            else {
-                self.delegate.didComplete(sender: Sender(origin: self, localized: self), forReminders: [])
-            }
-            LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = true
-            self.dismiss(animated: true, completion: nil)
-        }
-    }
-    
-    private func requestNotifications() {
-        let beforeUpdateIsNotificationEnabled = UserConfiguration.isNotificationEnabled
-        let beforeUpdateIsLoudNotification = UserConfiguration.isLoudNotification
-        let beforeUpdateIsFollowUpEnabled = UserConfiguration.isFollowUpEnabled
+        continueButton.isEnabled = false
         
-        if LocalConfiguration.isNotificationAuthorized == false {
-            
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, _) in
-                LocalConfiguration.isNotificationAuthorized = isGranted
-                UserConfiguration.isNotificationEnabled = isGranted
-                UserConfiguration.isLoudNotification = isGranted
-                UserConfiguration.isFollowUpEnabled = isGranted
-                
-                // Contact the server about the updated values and, if there is no response or a bad response, revert the values to their previous values. isNotificationAuthorized purposefully excluded as server doesn't need to know that and its value cant exactly just be flipped (as tied to apple notif auth status)
-                var body: [String: Any] = [:]
-                // check for if values were changed, if there were then tell the server
-                if UserConfiguration.isNotificationEnabled != beforeUpdateIsNotificationEnabled {
-                    body[UserDefaultsKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
+        NotificationManager.requestNotificationAuthorization { _ in
+            // wait the user to select an grant or deny notification permission (and for the server to respond if granted) before continusing
+            self.queryDefaultReminders(shouldUseDefaultReminders: self.remindersToggleSwitch.isOn) { reminders in
+                if reminders != nil {
+                    self.delegate.didComplete(sender: Sender(origin: self, localized: self), forReminders: reminders!)
+                    
                 }
-                if UserConfiguration.isLoudNotification != beforeUpdateIsLoudNotification {
-                    body[UserDefaultsKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
+                else {
+                    self.delegate.didComplete(sender: Sender(origin: self, localized: self), forReminders: [])
                 }
-                if UserConfiguration.isFollowUpEnabled != beforeUpdateIsFollowUpEnabled {
-                    body[UserDefaultsKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
-                }
-                if body.keys.isEmpty == false {
-                    UserRequest.update(body: body) { requestWasSuccessful in
-                        if requestWasSuccessful == false {
-                            UserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
-                            UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
-                            UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
-                        }
-                    }
-                }
+                LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = true
+                self.dismiss(animated: true, completion: nil)
             }
-            
         }
+            
     }
     
     private func queryDefaultReminders(shouldUseDefaultReminders: Bool, completionHandler: @escaping (([Reminder]?) -> Void)) {

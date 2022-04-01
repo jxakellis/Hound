@@ -22,10 +22,20 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
 
     // MARK: - DogsIndependentReminderViewControllerDelegate
     
-    func didApplyReminderSettings(sender: Sender, parentDogId: Int, forReminder reminder: Reminder) {
+    func didAddReminder(sender: Sender, parentDogId: Int, forReminder reminder: Reminder) {
         let sudoDogManager = getDogManager()
         
         try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.addReminder(newReminder: reminder)
+        
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
+        
+        Utils.checkForReview()
+    }
+    
+    func didUpdateReminder(sender: Sender, parentDogId: Int, forReminder reminder: Reminder) {
+        let sudoDogManager = getDogManager()
+        
+        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.updateReminder(updatedReminder: reminder)
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
         

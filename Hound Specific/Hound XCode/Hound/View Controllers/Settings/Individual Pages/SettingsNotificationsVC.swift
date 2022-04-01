@@ -112,18 +112,8 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
                     
                 }
             case .notDetermined:
-                UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, _) in
-                    DispatchQueue.main.async {
-                        LocalConfiguration.isNotificationAuthorized = isGranted
-                        UserConfiguration.isNotificationEnabled = isGranted
-                        UserConfiguration.isLoudNotification = isGranted
-                        UserConfiguration.isFollowUpEnabled = isGranted
-                        
-                        self.synchronizeAllNotificationSwitches(animated: true)
-                        
-                        updateServerUserConfiguration()
-                    }
-                    
+                NotificationManager.requestNotificationAuthorization { _ in
+                    self.synchronizeAllNotificationSwitches(animated: true)
                 }
             case .provisional:
                 AppDelegate.generalLogger.fault(".provisional")

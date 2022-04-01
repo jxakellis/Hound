@@ -180,6 +180,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         let sudoDogManager = getDogManager()
         Utils.checkForTermination(forDogManager: sudoDogManager)
         Utils.checkForReleaseNotes()
+        Utils.checkForNotificationSettingImbalance()
         TimingManager.willInitalize(dogManager: sudoDogManager)
         AlertManager.shared.refreshAlarms(dogManager: sudoDogManager)
         

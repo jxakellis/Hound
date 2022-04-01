@@ -18,13 +18,19 @@ protocol ReminderManagerProtocol {
     // array of reminders, a dog should contain one of these to specify all of its reminders
     var reminders: [Reminder] { get }
     
-    /// Checks to see if a reminder is already present. If its reminderId is, then is removes the old one and replaces it with the new
+    /// Checks to see if a reminder is already present. If its reminderId is, then is removes the old one and replaces it with the new. If the reminder has a placeholder reminderId and a reminder with the same reminderId already exists, then the placeholder id is shifted and the reminder is added
     mutating func addReminder(newReminder: Reminder) throws
     
     /// Invokes addReminder(newReminder: Reminder) for newReminder.count times
     mutating func addReminder(newReminders: [Reminder]) throws
     
-    /// removes trys to find a reminder whos name (capitals don't matter) matches reminder name given, if found removes reminder, if not found throws error
+    /// Checks to see if a reminder is already present. If its reminderId is, then is removes the old one and replaces it with the new. If the reminder has a placeholder reminderId and a reminder with the same reminderId already exists, then the existing reminder is overridden
+    mutating func updateReminder(updatedReminder: Reminder) throws
+    
+    /// Invokes updateReminder(updatedReminder: Reminder) for updatedReminder.count times
+    mutating func updateReminder(updatedReminders: [Reminder]) throws
+    
+    /// Tries to find a reminder with the matching reminderId, if found then it removes the reminder, if not found then throws error
     mutating func removeReminder(forReminderId reminderId: Int) throws
     mutating func removeReminder(forIndex index: Int)
     
@@ -123,12 +129,28 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
         sortReminders()
     }
     
-    /// adds default set of reminders
-    func addDefaultReminders() {
-        // addReminder(newReminder: ReminderConstant.defaultReminderOne)
-        // addReminder(newReminder: ReminderConstant.defaultReminderTwo)
-        // addReminder(newReminder: ReminderConstant.defaultReminderThree)
-        // addReminder(newReminder: ReminderConstant.defaultReminderFour)
+    // MARK: Update Reminders
+    
+    func updateReminder(updatedReminder: Reminder) {
+        
+       // Removes any existing reminders that have the same reminderId as they would cause problems.
+        for (reminderIndex, reminder) in reminders.enumerated().reversed() where reminder.reminderId == updatedReminder.reminderId {
+            
+            // remove the old reminder
+            reminder.timer?.invalidate()
+            storedReminders.remove(at: reminderIndex)
+        }
+        
+        storedReminders.append(updatedReminder)
+        
+        sortReminders()
+    }
+    
+    func updateReminder(updatedReminders: [Reminder]) {
+        for reminder in updatedReminders {
+            updateReminder(updatedReminder: reminder)
+        }
+        sortReminders()
     }
     
     // MARK: Remove Reminders

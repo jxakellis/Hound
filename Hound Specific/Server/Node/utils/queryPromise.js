@@ -18,6 +18,24 @@ const queryPromise = (request, sqlString, sqlVariables = undefined) => new Promi
   else if (!sqlVariablesArray) {
     // no variables for sql statement provided; this is acceptable
 
+    /*
+    poolConnection.query(
+      {
+        sql: sqlString,
+        timeout: 10000,
+      },
+      (error, result) => {
+        if (error) {
+          // error when trying to do query to database
+          reject(error);
+        }
+        else {
+          // database queried successfully
+          resolve(result);
+        }
+      },
+    );
+    */
     poolConnection.query(
       sqlString,
       (error, result) => {
@@ -33,6 +51,25 @@ const queryPromise = (request, sqlString, sqlVariables = undefined) => new Promi
     );
   }
   else {
+    /*
+    poolConnection.query(
+      {
+        sql: sqlString,
+        values: sqlVariablesArray,
+        timeout: 10000,
+      },
+      (error, result) => {
+        if (error) {
+          // error when trying to do query to database
+          reject(error);
+        }
+        else {
+          // database queried successfully
+          resolve(result);
+        }
+      },
+    );
+    */
     poolConnection.query(
       sqlString,
       sqlVariablesArray,
