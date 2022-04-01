@@ -3,14 +3,16 @@ CALL Hound.truncateAll;
 INSERT INTO users (userFirstName, userLastName, userEmail) VALUES 
 ('Joe', 'Smith', 'joesmith@gmail.com'),
 ('George', 'Williams', 'georgewilliams@gmail.com'),
-('Tim', 'Brown', 'timbrown@gmail.com');
+('Tim', 'Brown', 'timbrown@gmail.com'),
+('Blank', 'Test', 'blanktest@gmail.com');
 
 INSERT INTO userConfiguration (
 userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView,
 interfaceStyle, snoozeLength, notificationSound) VALUES 
 (1, false, false, false, 1738, false, true, 0, 900, 'Radar'),
 (2, false, false, false, 1738, false, true, 0, 900, 'Radar'),
-(3, false, false, false, 1738, false, true, 0, 900, 'Radar');
+(3, false, false, false, 1738, false, true, 0, 900, 'Radar'),
+(4, false, false, false, 1800, false, true, 0, 900, 'Radar');
 
 INSERT INTO dogs(userId, dogName) VALUES
 (1, 'Bella'),
@@ -57,11 +59,11 @@ INSERT INTO reminderSnoozeComponents (reminderId, isSnoozed, snoozeExecutionInte
 (8, false, 180, 0);
 
 
-INSERT INTO reminderWeeklyComponents (reminderId, hour, minute, sunday, monday, tuesday, wednesday, thursday, friday, saturday) VALUES
-(5, 10, 10, true, false, false, false, false, false, false);
+INSERT INTO reminderWeeklyComponents (reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday, weeklyIsSkipping) VALUES
+(5, 10, 10, true, false, false, false, false, false, false, false);
 
-INSERT INTO reminderMonthlyComponents (reminderId, hour, minute, dayOfMonth) VALUES
-(7, 15, 15, 20);
+INSERT INTO reminderMonthlyComponents (reminderId, monthlyHour, monthlyMinute, dayOfMonth, monthlyIsSkipping) VALUES
+(7, 15, 15, 20, false);
 
 INSERT INTO reminderOneTimeComponents (reminderId, date) VALUES 
 (6, '2021-11-16 17:00:00');
