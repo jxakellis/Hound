@@ -36,6 +36,7 @@ class PersistenceManager {
         // MARK: User Information
         
         UserDefaults.standard.setValue(UserInformation.userId, forKey: UserDefaultsKeys.userId.rawValue)
+        UserDefaults.standard.setValue(UserInformation.familyId, forKey: UserDefaultsKeys.familyId.rawValue)
         
         let keychain = KeychainSwift()
         
@@ -92,6 +93,7 @@ class PersistenceManager {
         // MARK: User Information
         
         UserInformation.userId = UserDefaults.standard.value(forKey: UserDefaultsKeys.userId.rawValue) as? Int
+        UserInformation.familyId = UserDefaults.standard.value(forKey: UserDefaultsKeys.familyId.rawValue) as? Int
         
         let keychain = KeychainSwift()
         
@@ -183,6 +185,7 @@ class PersistenceManager {
             // MARK: User Information
             
             UserDefaults.standard.setValue(UserInformation.userId, forKey: UserDefaultsKeys.userId.rawValue)
+            UserDefaults.standard.setValue(UserInformation.familyId, forKey: UserDefaultsKeys.familyId.rawValue)
             
             // other user info from ASAuthorization is saved immediately to the keychain
             

@@ -5,8 +5,8 @@ const {
 const { deleteReminder } = require('../../utils/delete');
 
 /**
- *  Queries the database to delete a single reminder. If the query is successful, then sends response of result.
- *  If an error is encountered, sends a response of the message and error
+ *  Queries the database to delete a single reminder. If the query is successful, then returns
+ *  If an error is encountered, creates and throws custom error
  */
 const deleteReminderQuery = async (req) => {
   const reminderId = formatNumber(req.body.reminderId);
@@ -15,7 +15,7 @@ const deleteReminderQuery = async (req) => {
     await deleteReminder(req, reminderId);
     // req.commitQueries(req);
     // return res.status(200).json({ result: '' });
-    return '';
+    return;
   }
   catch (error) {
     // req.rollbackQueries(req);
@@ -25,8 +25,8 @@ const deleteReminderQuery = async (req) => {
 };
 
 /**
- *  Queries the database to delete multiple reminders. If the query is successful, then sends response of result.
- *  If an error is encountered, sends a response of the message and error
+ *  Queries the database to delete multiple reminders. If the query is successful, then returns
+ *  If an error is encountered, creates and throws custom error
  */
 const deleteRemindersQuery = async (req) => {
   // assume .reminders is an array

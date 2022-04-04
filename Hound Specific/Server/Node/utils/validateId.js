@@ -48,6 +48,49 @@ const validateUserId = async (req, res, next) => {
 };
 
 /**
+ * Checks to see that familyId is defined, is a number, and exists in the database
+ */
+const validateFamilyId = async (req, res, next) => {
+  // userId should be validated already
+
+  const userId = formatNumber(req.params.userId);
+  const familyId = formatNumber(req.params.familyId);
+
+  if (familyId) {
+    // if familyId is defined and it is a number then continue
+    try {
+      // queries the database to find if the familyMember tables contains a user with the provided ID
+      const result = await queryPromise(
+        req,
+        'SELECT * FROM familyMembers WHERE familyId = ?',
+        [familyId],
+      );
+
+      // checks array of JSON from query to find if userId is contained
+      if (result.some((item) => item.userId === userId)) {
+        // userId exists in the table, therefore is part of the family
+        return next();
+      }
+      else {
+        // userId does not exist in the table
+        req.rollbackQueries(req);
+        return res.status(404).json(new ValidationError('No family found or invalid permissions', 'ER_NOT_FOUND').toJSON);
+      }
+    }
+    catch (error) {
+      // couldn't query database to find familyId
+      req.rollbackQueries(req);
+      return res.status(400).json(new DatabaseError(error.code).toJSON);
+    }
+  }
+  else {
+    // familyId was not provided or is invalid format
+    req.rollbackQueries(req);
+    return res.status(400).json(new ValidationError('familyId Invalid', 'ER_ID_INVALID').toJSON);
+  }
+};
+
+/**
  * Checks to see that dogId is defined, a number, and exists in the database under userId provided. If it does then the user owns the dog and invokes next().
  */
 const validateDogId = async (req, res, next) => {
@@ -246,5 +289,5 @@ const validateBodyReminderId = async (req, res, next) => {
 };
 
 module.exports = {
-  validateUserId, validateDogId, validateLogId, validateParamsReminderId, validateBodyReminderId,
+  validateUserId, validateFamilyId, validateDogId, validateLogId, validateParamsReminderId, validateBodyReminderId,
 };

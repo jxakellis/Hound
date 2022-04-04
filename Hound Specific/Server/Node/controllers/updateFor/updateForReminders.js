@@ -14,7 +14,7 @@ const { updateSnoozeComponents } = require('../reminderComponents/snooze');
 const delLeftOverReminderComponents = require('../../utils/delete').deleteLeftoverReminderComponents;
 
 /**
- *  Queries the database to create a single reminder. If the query is successful, then returns the reminder with created reminderId.
+ *  Queries the database to create a update reminder. If the query is successful, then returns
  *  If a problem is encountered, creates and throws custom error
  */
 const updateReminderQuery = async (req) => {
@@ -25,20 +25,11 @@ const updateReminderQuery = async (req) => {
   const isSnoozed = formatBoolean(req.body.isSnoozed);
 
   if (areAllDefined(reminderId) === false) {
-    // req.rollbackQueries(req);
-    // return res.status(400).json(new ValidationError('reminderId missing', 'ER_ID_MISSING').toJSON);
     throw new ValidationError('reminderId missing', 'ER_ID_MISSING');
   }
   if (atLeastOneDefined([reminderAction, reminderType, executionBasis, isEnabled, isSnoozed]) === false) {
-    // req.rollbackQueries(req);
-    // return res.status(400).json(new ValidationError('No reminderAction, reminderType, executionBasis, isEnabled, or isSnoozed provided', 'ER_NO_VALUES_PROVIDED').toJSON);
     throw new ValidationError('No reminderAction, reminderType, executionBasis, isEnabled, or isSnoozed provided', 'ER_NO_VALUES_PROVIDED');
   }
-  // if (reminderAction === 'Custom' && !customActionName) {
-  // req.rollbackQueries(req);
-  // return res.status(400).json(new ValidationError('No customActionName provided for "Custom" logAction', 'ER_VALUES_MISSING').toJSON);
-  //   throw new ValidationError('No customActionName provided for "Custom" logAction', 'ER_VALUES_MISSING');
-  // }
 
   try {
     if (reminderAction) {
@@ -91,8 +82,6 @@ const updateReminderQuery = async (req) => {
         await delLeftOverReminderComponents(req, reminderId, reminderType);
       }
       else {
-        // req.rollbackQueries(req);
-        // return res.status(400).json(new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID').toJSON);
         throw new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID');
       }
     }
@@ -101,20 +90,15 @@ const updateReminderQuery = async (req) => {
       await updateSnoozeComponents(req, req.body);
       // no need to invoke anything else as the snoozeComponents are self contained and the function handles deleting snoozeComponents if isSnoozed is changing to false
     }
-
-    // req.commitQueries(req);
-    // return res.status(200).json({ result: '' });
-    return '';
+    return;
   }
   catch (error) {
-    // req.rollbackQueries(req);
-    // return res.status(400).json(new DatabaseError(error.code).toJSON);
     throw new DatabaseError(error.code);
   }
 };
 
 /**
- *  Queries the database to create a single reminder. If the query is successful, then returns the reminder with created reminderId.
+ *  Queries the database to update multiple reminders. If the query is successful, then returns
  *  If a problem is encountered, creates and throws custom error
  */
 const updateRemindersQuery = async (req) => {
@@ -132,20 +116,11 @@ const updateRemindersQuery = async (req) => {
     const isSnoozed = formatBoolean(reminders[i].isSnoozed);
 
     if (areAllDefined(reminderId) === false) {
-      // req.rollbackQueries(req);
-      // return res.status(400).json(new ValidationError('reminderId missing', 'ER_ID_MISSING').toJSON);
       throw new ValidationError('reminderId missing', 'ER_ID_MISSING');
     }
     if (atLeastOneDefined([reminderAction, reminderType, executionBasis, isEnabled, isSnoozed]) === false) {
-      // req.rollbackQueries(req);
-      // return res.status(400).json(new ValidationError('No reminderAction, reminderType, executionBasis, isEnabled, or isSnoozed provided', 'ER_NO_VALUES_PROVIDED').toJSON);
       throw new ValidationError('No reminderAction, reminderType, executionBasis, isEnabled, or isSnoozed provided', 'ER_NO_VALUES_PROVIDED');
     }
-    // if (reminderAction === 'Custom' && !customActionName) {
-    // req.rollbackQueries(req);
-    // return res.status(400).json(new ValidationError('No customActionName provided for "Custom" logAction', 'ER_VALUES_MISSING').toJSON);
-    //  throw new ValidationError('No customActionName provided for "Custom" logAction', 'ER_VALUES_MISSING');
-    // }
 
     try {
       if (reminderAction) {
@@ -198,8 +173,6 @@ const updateRemindersQuery = async (req) => {
           await delLeftOverReminderComponents(req, reminderId, reminderType);
         }
         else {
-          // req.rollbackQueries(req);
-          // return res.status(400).json(new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID').toJSON);
           throw new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID');
         }
       }
@@ -210,14 +183,12 @@ const updateRemindersQuery = async (req) => {
       }
     }
     catch (error) {
-      // req.rollbackQueries(req);
-      // return res.status(400).json(new DatabaseError(error.code).toJSON);
       throw new DatabaseError(error.code);
     }
   }
-  // req.commitQueries(req);
-  // return res.status(200).json({ result: '' });
-  return '';
+  // return must be outside for loop, otherwise function won't return
+  // eslint-disable-next-line no-useless-return
+  return;
 };
 
 module.exports = { updateReminderQuery, updateRemindersQuery };

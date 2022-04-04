@@ -42,6 +42,7 @@ class SettingsPersonalInformationViewController: UIViewController, UIGestureReco
         accountInformation.text!.append("Last Name: \(UserInformation.userLastName)\n")
         accountInformation.text!.append("Email: \(UserInformation.userEmail ?? "unknown")\n")
        accountInformation.text!.append("User Identifier: \(UserInformation.userIdentifier ?? "unknown")")
+        accountInformation.text!.append("Family Identifier: \(UserInformation.familyId ?? "unknown")")
     
     }
 

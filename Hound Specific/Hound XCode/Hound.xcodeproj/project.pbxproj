@@ -101,6 +101,8 @@
 		A2AC8A0027D2782C00115831 /* SnoozeComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AC89FF27D2782C00115831 /* SnoozeComponents.swift */; };
 		A2AC8A0227D2D9B500115831 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AC8A0127D2D9B500115831 /* LogManager.swift */; };
 		A2AF317227E3D85D00261EE3 /* ResponseStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AF317127E3D85D00261EE3 /* ResponseStatus.swift */; };
+		A2B00F9C27FA376000C6126E /* ServerFamilyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B00F9B27FA376000C6126E /* ServerFamilyVC.swift */; };
+		A2B00F9E27FA3C2E00C6126E /* FamilyRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B00F9D27FA3C2D00C6126E /* FamilyRequest.swift */; };
 		A2B18E3825E8A4C000951AC3 /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B18E3525E8A4C000951AC3 /* AlertManager.swift */; };
 		A2B565F627E825690091CA25 /* AlarmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B565F527E825690091CA25 /* AlarmManager.swift */; };
 		A2B565F827E923510091CA25 /* ResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B565F727E923510091CA25 /* ResponseError.swift */; };
@@ -253,6 +255,8 @@
 		A2AC89FF27D2782C00115831 /* SnoozeComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnoozeComponents.swift; sourceTree = "<group>"; };
 		A2AC8A0127D2D9B500115831 /* LogManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
 		A2AF317127E3D85D00261EE3 /* ResponseStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ResponseStatus.swift; path = Hound/Model/Requests/ResponseStatus.swift; sourceTree = SOURCE_ROOT; };
+		A2B00F9B27FA376000C6126E /* ServerFamilyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerFamilyVC.swift; sourceTree = "<group>"; };
+		A2B00F9D27FA3C2D00C6126E /* FamilyRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyRequest.swift; sourceTree = "<group>"; };
 		A2B18E3525E8A4C000951AC3 /* AlertManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
 		A2B565F527E825690091CA25 /* AlarmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmManager.swift; sourceTree = "<group>"; };
 		A2B565F727E923510091CA25 /* ResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseError.swift; sourceTree = "<group>"; };
@@ -372,6 +376,7 @@
 			children = (
 				A2B678E427D13AD100424FB0 /* ServerSyncVC.swift */,
 				A2BAA06B27D6C5520041F3C5 /* ServerLoginVC.swift */,
+				A2B00F9B27FA376000C6126E /* ServerFamilyVC.swift */,
 			);
 			path = Sync;
 			sourceTree = "<group>";
@@ -696,6 +701,7 @@
 				A29C985527CE726300B9C8E4 /* RequestProtocol.swift */,
 				A2C4091D27C9D41300073420 /* RequestUtils.swift */,
 				A23DB63327CDBDDB00A3F470 /* UserRequest.swift */,
+				A2B00F9D27FA3C2D00C6126E /* FamilyRequest.swift */,
 				A23DB63527CDBE2C00A3F470 /* DogsRequest.swift */,
 				A29C985127CE6D8E00B9C8E4 /* LogsRequest.swift */,
 				A29C985327CE724300B9C8E4 /* RemindersRequest.swift */,
@@ -1041,6 +1047,7 @@
 				A29400AB2652DA2100725F1C /* SettingsVC.swift in Sources */,
 				A23DB63627CDBE2C00A3F470 /* DogsRequest.swift in Sources */,
 				A247236D27F63456005DF848 /* ASAuthorizationError.swift in Sources */,
+				A2B00F9C27FA376000C6126E /* ServerFamilyVC.swift in Sources */,
 				A249619127E3A642006CFDCC /* IntroductionVC.swift in Sources */,
 				A2BAA07227D6EDA20041F3C5 /* LocalConfiguration.swift in Sources */,
 				A24F1326264064D70023BB84 /* BorderedUILabel.swift in Sources */,
@@ -1095,6 +1102,7 @@
 				A2C4091E27C9D41300073420 /* RequestUtils.swift in Sources */,
 				A278ED8C2610FF3D000575FC /* DogsReminderCountDownVC.swift in Sources */,
 				A2B678E527D13AD100424FB0 /* ServerSyncVC.swift in Sources */,
+				A2B00F9E27FA3C2E00C6126E /* FamilyRequest.swift in Sources */,
 				A27C139725AD2BD70031B6A0 /* DogDisplayTVC.swift in Sources */,
 				A2BAA06E27D6ED720041F3C5 /* UserInformation.swift in Sources */,
 				A299EAA427E2C5050042F8F4 /* SettingsAppearanceVC.swift in Sources */,

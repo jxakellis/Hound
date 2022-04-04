@@ -1510,7 +1510,90 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="N3u-pY-alA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3048" y="-696"/>
+            <point key="canvasLocation" x="2987" y="-733"/>
+        </scene>
+        <!--Server Family View Controller-->
+        <scene sceneID="CZx-y3-sxl">
+            <objects>
+                <viewController id="5hN-fO-nij" customClass="ServerFamilyViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Gpu-co-yAK">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Family" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tO9-hG-xGI" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="10" y="54" width="394" height="60"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="50"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="To use Hound, you must create or join a family. Families allow multiple users to seemlessly collaborate on their dogs care." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ev5-6g-AtH" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="10" y="124" width="394" height="72"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NjJ-MK-kxv">
+                                <rect key="frame" x="10" y="241" width="394" height="63"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="NjJ-MK-kxv" secondAttribute="height" multiplier="1:0.16" id="W1V-7k-Cph"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Create a Family">
+                                    <fontDescription key="titleFontDescription" type="system" weight="medium" pointSize="30"/>
+                                    <color key="baseForegroundColor" systemColor="labelColor"/>
+                                    <color key="baseBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </buttonConfiguration>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MO6-iL-KZi">
+                                <rect key="frame" x="10" y="406.5" width="394" height="63"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="MO6-iL-KZi" secondAttribute="height" multiplier="1:0.16" id="Dk8-GQ-IUr"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Join a Family">
+                                    <fontDescription key="titleFontDescription" type="system" weight="medium" pointSize="30"/>
+                                    <color key="baseForegroundColor" systemColor="labelColor"/>
+                                    <color key="baseBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </buttonConfiguration>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pnq-Zb-3Yo" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="10" y="316.5" width="394" height="45"/>
+                                <string key="text">By creating a family, you will be designated as its 'head'. The head of the family manages who can join, who can leave, and any in-app purchases.</string>
+                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="sw0-kb-RNI"/>
+                        <color key="backgroundColor" systemColor="systemBlueColor"/>
+                        <constraints>
+                            <constraint firstItem="sw0-kb-RNI" firstAttribute="trailing" secondItem="ev5-6g-AtH" secondAttribute="trailing" constant="10" id="6Ad-fc-qSZ"/>
+                            <constraint firstItem="tO9-hG-xGI" firstAttribute="top" secondItem="sw0-kb-RNI" secondAttribute="top" constant="10" id="ENF-6W-8Oq"/>
+                            <constraint firstItem="Pnq-Zb-3Yo" firstAttribute="top" secondItem="NjJ-MK-kxv" secondAttribute="bottom" constant="12.5" id="Ghh-sm-dhe"/>
+                            <constraint firstItem="MO6-iL-KZi" firstAttribute="leading" secondItem="sw0-kb-RNI" secondAttribute="leading" constant="10" id="Rri-Th-d6t"/>
+                            <constraint firstItem="MO6-iL-KZi" firstAttribute="top" secondItem="Pnq-Zb-3Yo" secondAttribute="bottom" constant="45" id="Sx1-tu-QIt"/>
+                            <constraint firstItem="ev5-6g-AtH" firstAttribute="leading" secondItem="sw0-kb-RNI" secondAttribute="leading" constant="10" id="WP6-qy-4l1"/>
+                            <constraint firstItem="ev5-6g-AtH" firstAttribute="top" secondItem="tO9-hG-xGI" secondAttribute="bottom" constant="10" id="Wgj-9C-Uoa"/>
+                            <constraint firstItem="tO9-hG-xGI" firstAttribute="leading" secondItem="sw0-kb-RNI" secondAttribute="leading" constant="10" id="lAA-pE-Egt"/>
+                            <constraint firstItem="sw0-kb-RNI" firstAttribute="trailing" secondItem="Pnq-Zb-3Yo" secondAttribute="trailing" constant="10" id="o1c-1j-nac"/>
+                            <constraint firstItem="sw0-kb-RNI" firstAttribute="trailing" secondItem="NjJ-MK-kxv" secondAttribute="trailing" constant="10" id="pOt-BM-x7D"/>
+                            <constraint firstItem="Pnq-Zb-3Yo" firstAttribute="leading" secondItem="sw0-kb-RNI" secondAttribute="leading" constant="10" id="peT-rB-K1m"/>
+                            <constraint firstItem="NjJ-MK-kxv" firstAttribute="top" secondItem="ev5-6g-AtH" secondAttribute="bottom" constant="45" id="pgx-Iy-ruW"/>
+                            <constraint firstItem="NjJ-MK-kxv" firstAttribute="leading" secondItem="sw0-kb-RNI" secondAttribute="leading" constant="10" id="s56-O9-1Mr"/>
+                            <constraint firstItem="sw0-kb-RNI" firstAttribute="trailing" secondItem="MO6-iL-KZi" secondAttribute="trailing" constant="10" id="tf2-vc-431"/>
+                            <constraint firstItem="sw0-kb-RNI" firstAttribute="trailing" secondItem="tO9-hG-xGI" secondAttribute="trailing" constant="10" id="upJ-gD-vbP"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="vzn-kL-yaZ"/>
+                    <connections>
+                        <outlet property="createFamilyButton" destination="NjJ-MK-kxv" id="Ugo-NQ-uXv"/>
+                        <outlet property="createFamilyDisclaimer" destination="Pnq-Zb-3Yo" id="sui-8J-BrP"/>
+                        <outlet property="joinFamilyButton" destination="MO6-iL-KZi" id="LCH-v2-NyB"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="s6b-fA-GAr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4103" y="19"/>
         </scene>
         <!--Introduction View Controller-->
         <scene sceneID="DrI-KL-fmy">
@@ -1644,7 +1727,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ig9-EO-oHv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1975" y="680"/>
+            <point key="canvasLocation" x="2987" y="778"/>
         </scene>
         <!--Edit Dog Reminder -->
         <scene sceneID="Kgj-aC-JCD">
@@ -2199,11 +2282,12 @@
                         <segue destination="49e-Tb-3d3" kind="presentation" identifier="mainTabBarViewController" modalPresentationStyle="fullScreen" id="Jqw-FR-46g"/>
                         <segue destination="w3D-Ib-MEE" kind="presentation" identifier="introductionViewController" modalPresentationStyle="fullScreen" id="3AW-Zf-Dxq"/>
                         <segue destination="58r-r7-NND" kind="presentation" identifier="serverLoginViewController" modalPresentationStyle="fullScreen" id="bqE-nO-Ztf"/>
+                        <segue destination="5hN-fO-nij" kind="presentation" identifier="serverFamilyViewController" modalPresentationStyle="fullScreen" id="glJ-wS-tog"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="f1n-Oj-Vw4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3048" y="19"/>
+            <point key="canvasLocation" x="2988" y="19"/>
         </scene>
         <!--Personal Info-->
         <scene sceneID="c2u-Cd-UY4">

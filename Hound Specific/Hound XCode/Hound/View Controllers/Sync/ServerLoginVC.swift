@@ -180,11 +180,11 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
     
     // MARK: - IB
     
-    // MARK: - Properties
-    
     @IBOutlet private weak var welcome: ScaledUILabel!
     
     @IBOutlet private weak var welcomeMessage: ScaledUILabel!
+
+    // MARK: - Properties
     
     private var signInWithApple: ASAuthorizationAppleIDButton!
     
@@ -219,10 +219,6 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
 
         // make sure the view has the correct interfaceStyle
         UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
     }
     
     // MARK: Setup Buttons and Labels

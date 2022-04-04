@@ -1,5 +1,3 @@
-const DatabaseError = require('../../utils/errors/databaseError');
-const convertErrorToJSON = require('../../utils/errors/errorFormat');
 const {
   formatNumber, formatArray,
 } = require('../../utils/validateFormat');
@@ -8,10 +6,11 @@ const { getReminderQuery, getRemindersQuery } = require('../getFor/getForReminde
 const { createReminderQuery, createRemindersQuery } = require('../createFor/createForReminders');
 const { updateReminderQuery, updateRemindersQuery } = require('../updateFor/updateForReminders');
 const { deleteReminderQuery, deleteRemindersQuery } = require('../deleteFor/deleteForReminders');
+const convertErrorToJSON = require('../../utils/errors/errorFormat');
 
 /*
 Known:
-- userId formatted correctly and request has sufficient permissions to use
+- familyId formatted correctly and request has sufficient permissions to use
 - dogId formatted correctly and request has sufficient permissions to use
 - (if appliciable to controller) reminderId formatted correctly and request has sufficient permissions to use
 - (if appliciable to controller) reminders is an array with reminderId that are formatted correctly and request has sufficient permissions to use
@@ -40,7 +39,7 @@ const getReminders = async (req, res) => {
     catch (error) {
       // error when trying to do query to database
       req.rollbackQueries(req);
-      return res.status(400).json(new DatabaseError(error.code).toJSON);
+      return res.status(400).json(convertErrorToJSON(error));
     }
   }
   // no reminderId
@@ -62,7 +61,7 @@ const getReminders = async (req, res) => {
     catch (error) {
       // error when trying to do query to database
       req.rollbackQueries(req);
-      return res.status(400).json(new DatabaseError(error.code).toJSON);
+      return res.status(400).json(convertErrorToJSON(error));
     }
   }
 };
@@ -96,15 +95,15 @@ const updateReminder = async (req, res) => {
   try {
     // reminders are provided
     if (reminders) {
-      const result = await updateRemindersQuery(req);
+      await updateRemindersQuery(req);
       req.commitQueries(req);
-      return res.status(200).json({ result });
+      return res.status(200).json({ result: '' });
     }
     // single reminder
     else {
-      const result = await updateReminderQuery(req);
+      await updateReminderQuery(req);
       req.commitQueries(req);
-      return res.status(200).json({ result });
+      return res.status(200).json({ result: '' });
     }
   }
   catch (error) {
@@ -119,15 +118,15 @@ const deleteReminder = async (req, res) => {
   try {
     // reminders are provided
     if (reminders) {
-      const result = await deleteRemindersQuery(req);
+      await deleteRemindersQuery(req);
       req.commitQueries(req);
-      return res.status(200).json({ result });
+      return res.status(200).json({ result: '' });
     }
     // single reminder
     else {
-      const result = await deleteReminderQuery(req);
+      await deleteReminderQuery(req);
       req.commitQueries(req);
-      return res.status(200).json({ result });
+      return res.status(200).json({ result: '' });
     }
   }
   catch (error) {

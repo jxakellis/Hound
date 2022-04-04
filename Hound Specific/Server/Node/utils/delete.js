@@ -1,4 +1,5 @@
 const { queryPromise } = require('./queryPromise');
+const GeneralError = require('./errors/generalError');
 
 /*
 Known:
@@ -10,25 +11,40 @@ Known:
 /**
  * Deletes a user from the users table and all other associated data from all other tables.
  */
-const deleteUser = async (req, userId) => {
-  const dogIds = await queryPromise(req, 'SELECT dogId FROM dogs WHERE userId = ?', [userId]);
 
-  // deletes all dogs
-  for (let i = 0; i < dogIds.length; i += 1) {
-    await deleteDog(req, dogIds[i].dogId);
-  }
+// eslint-disable-next-line no-unused-vars
+const deleteUser = async (req, userId) => {
   // delete userConfiguration
-  await deleteUserConfiguration(req, userId);
+  // await deleteUserConfiguration(req, userId);
   // deletes user
-  await queryPromise(req, 'DELETE FROM users WHERE userId = ?', [userId]);
+  // await queryPromise(req, 'DELETE FROM users WHERE userId = ?', [userId]);
+  throw GeneralError('Delete user temporarily disabled', 'ER_PATH_DISABLED');
 };
 
 /**
  * Deletes userConfiguration from the userConfiguration table
  */
+
+// eslint-disable-next-line no-unused-vars
 const deleteUserConfiguration = async (req, userId) => {
   // deletes user config
-  await queryPromise(req, 'DELETE FROM userConfiguration WHERE userId = ?', [userId]);
+  // await queryPromise(req, 'DELETE FROM userConfiguration WHERE userId = ?', [userId]);
+  throw GeneralError('Delete user temporarily disabled', 'ER_PATH_DISABLED');
+};
+
+const deleteFamily = async (req, familyId) => {
+  const dogIds = await queryPromise(req, 'SELECT dogId FROM dogs WHERE familyId = ?', [familyId]);
+
+  // delete all the dogs
+  for (let i = 0; i < dogIds.length; i += 1) {
+    await deleteDog(req, dogIds[i]);
+  }
+
+  // deletes all family members
+  await queryPromise(req, 'DELETE FROM familyMembers WHERE familyId = ?', [familyId]);
+
+  // deletes all family heads
+  await queryPromise(req, 'DELETE FROM familyHeads WHERE familyId = ?', [familyId]);
 };
 
 /**
@@ -228,5 +244,5 @@ const deleteLeftoverReminderComponents = async (req, reminderId, newTimingStyle)
 };
 
 module.exports = {
-  deleteUser, deleteUserConfiguration, deleteDog, deleteLog, deleteReminder, deleteLeftoverReminderComponents,
+  deleteUser, deleteFamily, deleteDog, deleteLog, deleteReminder, deleteLeftoverReminderComponents,
 };

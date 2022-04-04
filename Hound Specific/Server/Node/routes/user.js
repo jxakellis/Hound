@@ -17,10 +17,10 @@ router.get('/:userId', getUser);
 // Otherwise if the user passes a userIdentifier to get their userId, it will fail as format incorrect
 router.use('/:userId', validateUserId);
 
-// dogs: /api/v1/user/:userId/dogs
-const dogsRouter = require('./dogs');
+// family: /api/v1/user/:userId/family
+const familyRouter = require('./family');
 
-router.use('/:userId/dogs', dogsRouter);
+router.use('/:userId/family', familyRouter);
 
 // BASE PATH /api/v1/user/...
 

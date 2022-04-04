@@ -14,6 +14,7 @@ enum UserDefaultsKeys: String {
     
     case userId
     case userIdentifier
+    case familyId
     case userEmail
     case userFirstName
     case userLastName

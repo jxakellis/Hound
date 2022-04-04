@@ -23,16 +23,8 @@ const createReminderQuery = async (req) => {
   // check to see that necessary generic reminder componetns are present
   if (areAllDefined([reminderAction, reminderType, executionBasis, isEnabled]) === false) {
     // >= 1 of the objects are undefined
-    // req.rollbackQueries(req);
-    // return res.status(400).json(new ValidationError('reminderAction, reminderType, executionBasis, or isEnabled missing', 'ER_VALUES_MISSING').toJSON);
     throw new ValidationError('reminderAction, reminderType, executionBasis, or isEnabled missing', 'ER_VALUES_MISSING');
   }
-  // if the reminder is custom, then it needs its custom name
-  // if (reminderAction === 'Custom' && !customActionName) {
-  // req.rollbackQueries(req);
-  // return res.status(400).json(new ValidationError('No customActionName provided for "Custom" reminderAction', 'ER_VALUES_MISSING').toJSON);
-  //  throw new ValidationError('No customActionName provided for "Custom" reminderAction', 'ER_VALUES_MISSING');
-  // }
 
   // define out here so reminderId can be accessed in catch block to delete entries
   let reminderId;
@@ -88,7 +80,7 @@ const createReminderQuery = async (req) => {
     else {
       // nothing matched reminderType
       // req.rollbackQueries(req);
-      // return res.status(400).json(new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID').toJSON);
+      // return res.status(400).json(new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID'));
       throw new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID');
     }
     // was able to successfully create components for a certain timing style
@@ -98,13 +90,13 @@ const createReminderQuery = async (req) => {
   }
   catch (error) {
     // req.rollbackQueries(req);
-    // return res.status(400).json(new DatabaseError(error.code).toJSON);
+    // return res.status(400).json(new DatabaseError(error.code));
     throw new DatabaseError(error.code);
   }
 };
 
 /**
-   * Queries the database to create a single reminder. If the query is successful, then returns the reminder with created reminderId.
+   * Queries the database to create a multiple reminders. If the query is successful, then returns the reminders with their created reminderIds.
  *  If a problem is encountered, creates and throws custom error
    */
 const createRemindersQuery = async (req) => {
@@ -126,13 +118,13 @@ const createRemindersQuery = async (req) => {
     if (areAllDefined([reminderAction, reminderType, executionBasis, isEnabled]) === false) {
       // >= 1 of the objects are undefined
       // req.rollbackQueries(req);
-      // return res.status(400).json(new ValidationError('reminderAction, reminderType, executionBasis, or isEnabled missing', 'ER_VALUES_MISSING').toJSON);
+      // return res.status(400).json(new ValidationError('reminderAction, reminderType, executionBasis, or isEnabled missing', 'ER_VALUES_MISSING'));
       throw new ValidationError('reminderAction, reminderType, executionBasis, or isEnabled missing', 'ER_VALUES_MISSING');
     }
     // if the reminder is custom, then it needs its custom name
     // if (reminderAction === 'Custom' && !customActionName) {
     // req.rollbackQueries(req);
-    // return res.status(400).json(new ValidationError('No customActionName provided for "Custom" reminderAction', 'ER_VALUES_MISSING').toJSON);
+    // return res.status(400).json(new ValidationError('No customActionName provided for "Custom" reminderAction', 'ER_VALUES_MISSING'));
     // throw new ValidationError('No customActionName provided for "Custom" reminderAction', 'ER_VALUES_MISSING');
     // }
 
@@ -190,7 +182,7 @@ const createRemindersQuery = async (req) => {
       else {
         // nothing matched reminderType
         // req.rollbackQueries(req);
-        // return res.status(400).json(new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID').toJSON);
+        // return res.status(400).json(new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID'));
         throw new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID');
       }
       // was able to successfully create components for a certain timing style
@@ -198,7 +190,7 @@ const createRemindersQuery = async (req) => {
     }
     catch (error) {
       // req.rollbackQueries(req);
-      // return res.status(400).json(new DatabaseError(error.code).toJSON);
+      // return res.status(400).json(new DatabaseError(error.code));
       throw new DatabaseError(error.code);
     }
   }

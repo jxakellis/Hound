@@ -384,6 +384,12 @@ enum RequestUtils {
         if UserInformation.userId! < 0 {
             AppDelegate.APIRequestLogger.warning("Warning: userId is placeholder \(UserInformation.userId!)")
         }
+        if UserInformation.familyId == nil {
+            AppDelegate.APIRequestLogger.warning("Warning: familyId is nil")
+        }
+        if UserInformation.familyId! < 0 {
+            AppDelegate.APIRequestLogger.warning("Warning: familyId is placeholder \(UserInformation.familyId!)")
+        }
         if dogId != nil && dogId! < 0 {
             AppDelegate.APIRequestLogger.warning("Warning: dogId is placeholder \(dogId!)")
         }

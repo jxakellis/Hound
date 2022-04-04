@@ -33,6 +33,9 @@ enum UserInformation {
         if let userId = body["userId"] as? Int {
             self.userId = userId
         }
+        if let familyId = body["familyId"] as? Int {
+            self.familyId = familyId
+        }
         if let userEmail = body["userEmail"] as? String {
             storedUserEmail = userEmail
         }
@@ -47,6 +50,8 @@ enum UserInformation {
     static var userId: Int?
     
     static var userIdentifier: String?
+    
+    static var familyId: Int?
     
     static private var storedUserEmail: String?
     static var userEmail: String? {

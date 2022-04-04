@@ -64,7 +64,18 @@ class ServerSyncViewController: UIViewController {
         
         // placeholder userId
         if UserInformation.userId == nil || UserInformation.userId! < 0 {
+            // we have the user sign into their apple id, then attempt to first create an account then get an account (if the creates fails) then throw an error message (if the get fails too).
+            // if all succeeds, then the user information and user configuration is loaded
             Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverLoginViewController", viewController: self)
+        }
+        // placeholder familyId
+        else if UserInformation.familyId == nil || UserInformation.familyId! < 0 {
+            // if the user has create a hound account or signed into an existing one, we try to load the familyId returned to them. if that is nil, then we open this menu to have them create or join once since they aren't currently one.
+            
+            // TO DO update flow.
+            // PROBLEM: if we have a familyId stored for a user, we will try to log them in using that. if they are kicked from the family (or leave it), then we still have a stored familyId that we are trying to use. this will cause all the requests to fail for the user.
+            // SOLUTION: We must check that the user has a valid familyId under getUser(). If they have a valid one, then save it and continue with the requests. If their familyId is absent/missing, then we have them create or join a family.
+            Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverFamilyViewController", viewController: self)
         }
         // has userId
         else {
