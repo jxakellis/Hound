@@ -76,79 +76,7 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
                 UserInformation.userLastName = lastName!
             }
             
-            UserRequest.create { userId, responseStatus in
-                switch responseStatus {
-                case .successResponse:
-                    // successful, continue
-                    if userId != nil {
-                        UserInformation.userId = userId!
-                        self.dismiss(animated: true, completion: nil)
-                    }
-                    else {
-                        // possibly already created account
-                        UserRequest.get(forUserIdentifier: UserInformation.userIdentifier!) { responseBody, responseStatus in
-                            switch responseStatus {
-                            case .successResponse:
-                                if responseBody != nil {
-                                    // verify that at least one user was returned. Shouldn't be possible to have no users but always good to check
-                                    if let result = responseBody!["result"] as? [[String: Any]], result.isEmpty == false {
-                                        // set all local configuration equal to whats in the server
-                                        UserInformation.setup(fromBody: result[0])
-                                        UserConfiguration.setup(fromBody: result[0])
-                                        
-                                        // verify that a userId was successfully retrieved from the server
-                                        if result[0]["userId"] is Int {
-                                            self.dismiss(animated: true, completion: nil)
-                                        }
-                                        else {
-                                            ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
-                                        }
-                                    }
-                                    else {
-                                        ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
-                                    }
-                                }
-                            case .failureResponse:
-                                ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
-                            case .noResponse:
-                                ErrorManager.alert(forError: GeneralResponseError.noGetResponse)
-                            }
-                        }
-                    }
-                case .failureResponse:
-                    // possible already created account
-                    UserRequest.get(forUserIdentifier: UserInformation.userIdentifier!) { responseBody, responseStatus in
-                        switch responseStatus {
-                        case .successResponse:
-                            if responseBody != nil {
-                                // verify that at least one user was returned. Shouldn't be possible to have no users but always good to check
-                                if let result = responseBody!["result"] as? [[String: Any]], result.isEmpty == false {
-                                    // set all local configuration equal to whats in the server
-                                    UserInformation.setup(fromBody: result[0])
-                                    UserConfiguration.setup(fromBody: result[0])
-                                    
-                                    // verify that a userId was successfully retrieved from the server
-                                    if result[0]["userId"] is Int {
-                                        self.dismiss(animated: true, completion: nil)
-                                    }
-                                    else {
-                                        ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
-                                    }
-                                }
-                                else {
-                                    ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
-                                }
-                            }
-                        case .failureResponse:
-                            ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
-                        case .noResponse:
-                            ErrorManager.alert(forError: GeneralResponseError.noGetResponse)
-                        }
-                    }
-                case .noResponse:
-                    ErrorManager.alert(forError: GeneralResponseError.noPostResponse)
-                }
-            }
+            self.signUpUser()
         }
     }
     
@@ -196,7 +124,7 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
             // we found a userIdentifier in the keychain (during recurringSetup) so we change the info to match.
             // we could technically automatically log then in but this is easier. this verifies that an account exists and creates once if needed (if old one was deleted somehow)
             welcome.text = "Welcome Back"
-            welcomeMessage.text = "Sign in to your existing Hound account below. Creating or joining a family will come soon..."
+            welcomeMessage.text = "Sign in to your existing Hound account below. If you don't have one, creating or joining a family will come soon..."
         }
         else {
             // no info in keychain, assume first time setup
@@ -272,9 +200,6 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
             signInWithAppleDisclaimer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10.0 + (signInWithApple.frame.height/2)),
             signInWithAppleDisclaimer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10 - (signInWithApple.frame.height/2))]
         NSLayoutConstraint.activate(constraints)
-        
-        // self.view.setNeedsLayout()
-        // self.view.layoutIfNeeded()
     }
     
     // MARK: - Sign In With Apple
@@ -288,6 +213,77 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = self
         authorizationController.performRequests()
+    }
+    
+    private func signUpUser() {
+        // start query indictator, if there is already one present then its fine as alertmanager will throw away the duplicate. we remove the query indicator when we finish interpreting our response (EXCEPT when we go to sign in a user, as that will also use query indictator so we want it to stay up)
+        RequestUtils.beginAlertControllerQueryIndictator()
+        UserRequest.create { userId, responseStatus in
+            switch responseStatus {
+            case .successResponse:
+                // successful, continue
+                if userId != nil {
+                    RequestUtils.endAlertControllerQueryIndictator {
+                        UserInformation.userId = userId!
+                        self.dismiss(animated: true, completion: nil)
+                    }
+                }
+                else {
+                    // create new account failed, possibly already created account
+                    self.signInUser()
+                }
+            case .failureResponse:
+                // create new account failed, possibly already created account
+                self.signInUser()
+            case .noResponse:
+                RequestUtils.endAlertControllerQueryIndictator {
+                    ErrorManager.alert(forError: GeneralResponseError.noPostResponse)
+                }
+            }
+        }
+    }
+    
+    private func signInUser() {
+        // start query indictator, if there is already one present then its fine as alertmanager will throw away the duplicate. we remove the query indicator when we finish interpreting our response
+        UserRequest.get(forUserIdentifier: UserInformation.userIdentifier!) { responseBody, responseStatus in
+            switch responseStatus {
+            case .successResponse:
+                if responseBody != nil {
+                    // verify that at least one user was returned. Shouldn't be possible to have no users but always good to check
+                    if let result = responseBody!["result"] as? [String: Any], result.isEmpty == false {
+                        // set all local configuration equal to whats in the server
+                        UserInformation.setup(fromBody: result)
+                        UserConfiguration.setup(fromBody: result)
+                        
+                        // verify that a userId was successfully retrieved from the server
+                        if result["userId"] is Int {
+                            RequestUtils.endAlertControllerQueryIndictator {
+                                self.dismiss(animated: true, completion: nil)
+                            }
+                            
+                        }
+                        else {
+                            RequestUtils.endAlertControllerQueryIndictator {
+                                ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
+                            }
+                        }
+                    }
+                    else {
+                        RequestUtils.endAlertControllerQueryIndictator {
+                            ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
+                        }
+                    }
+                }
+            case .failureResponse:
+                RequestUtils.endAlertControllerQueryIndictator {
+                    ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
+                }
+            case .noResponse:
+                RequestUtils.endAlertControllerQueryIndictator {
+                    ErrorManager.alert(forError: GeneralResponseError.noGetResponse)
+                }
+            }
+        }
     }
     /*
     // MARK: - Navigation

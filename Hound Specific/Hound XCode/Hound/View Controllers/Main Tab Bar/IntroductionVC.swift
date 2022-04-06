@@ -139,7 +139,7 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
                 dog.dogId = dogId!
                 self.dog = dog
                 LocalConfiguration.hasLoadedIntroductionViewControllerBefore = true
-                self.performSegue(withIdentifier: "mainTabBarViewController", sender: self)
+                Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController", viewController: self)
             }
         }
     }

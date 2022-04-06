@@ -18,7 +18,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         if LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore == false {
             // never created a reminder before, new family
             if self.getDogManager().hasCreatedReminder == false {
-                self.performSegue(withIdentifier: "remindersIntroductionViewController", sender: self)
+                Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "remindersIntroductionViewController", viewController: self)
             }
             // reminders already created
             else {

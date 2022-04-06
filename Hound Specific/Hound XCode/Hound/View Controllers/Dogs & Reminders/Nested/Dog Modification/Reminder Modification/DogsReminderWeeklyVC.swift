@@ -40,17 +40,17 @@ class DogsReminderWeeklyViewController: UIViewController, UIGestureRecognizerDel
         let senderButton = sender as! ScaledUIButton
         var targetColor: UIColor!
 
-        if senderButton.tag == 1 {
+        if senderButton.tag == ViewTagConstant.weekdayEnabled.rawValue {
             targetColor = UIColor.systemGray4
-            senderButton.tag = 0
+            senderButton.tag = ViewTagConstant.weekdayDisabled.rawValue
         }
         else {
             targetColor = UIColor.systemBlue
-            senderButton.tag = 1
+            senderButton.tag = ViewTagConstant.weekdayEnabled.rawValue
         }
 
         senderButton.isUserInteractionEnabled = false
-        UIView.animate(withDuration: AnimationConstant.switchButton.rawValue) {
+        UIView.animate(withDuration: AnimationConstant.weekdayButton.rawValue) {
             senderButton.tintColor = targetColor
         } completion: { (_) in
             senderButton.isUserInteractionEnabled = true
@@ -119,7 +119,7 @@ class DogsReminderWeeklyViewController: UIViewController, UIGestureRecognizerDel
 
         for dayOfWeekButton in dayOfWeekButtons {
             dayOfWeekButton!.tintColor = UIColor.systemGray4
-            dayOfWeekButton!.tag = 0
+            dayOfWeekButton!.tag = ViewTagConstant.weekdayDisabled.rawValue
         }
 
         if passedWeekDays != nil {
@@ -127,25 +127,25 @@ class DogsReminderWeeklyViewController: UIViewController, UIGestureRecognizerDel
                 switch dayOfWeek {
                 case 1:
                     sunday.tintColor = .systemBlue
-                    sunday.tag = 1
+                    sunday.tag = ViewTagConstant.weekdayEnabled.rawValue
                 case 2:
                     monday.tintColor = .systemBlue
-                    monday.tag = 1
+                    monday.tag = ViewTagConstant.weekdayEnabled.rawValue
                 case 3:
                     tuesday.tintColor = .systemBlue
-                    tuesday.tag = 1
+                    tuesday.tag = ViewTagConstant.weekdayEnabled.rawValue
                 case 4:
                     wednesday.tintColor = .systemBlue
-                    wednesday.tag = 1
+                    wednesday.tag = ViewTagConstant.weekdayEnabled.rawValue
                 case 5:
                     thursday.tintColor = .systemBlue
-                    thursday.tag = 1
+                    thursday.tag = ViewTagConstant.weekdayEnabled.rawValue
                 case 6:
                     friday.tintColor = .systemBlue
-                    friday.tag = 1
+                    friday.tag = ViewTagConstant.weekdayEnabled.rawValue
                 case 7:
                     saturday.tintColor = .systemBlue
-                    saturday.tag = 1
+                    saturday.tag = ViewTagConstant.weekdayEnabled.rawValue
                 default:
                     AppDelegate.generalLogger.fault("unknown day of week: \(dayOfWeek) while synchronizeWeekdays for DogsReminderWeeklyViewController")
                 }
@@ -159,7 +159,7 @@ class DogsReminderWeeklyViewController: UIViewController, UIGestureRecognizerDel
             var days: [Int] = []
             let dayOfWeekButtons = [self.sunday, self.monday, self.tuesday, self.wednesday, self.thursday, self.friday, self.saturday]
 
-            for dayOfWeekIndex in 0..<dayOfWeekButtons.count where dayOfWeekButtons[dayOfWeekIndex]?.tag == 1 {
+            for dayOfWeekIndex in 0..<dayOfWeekButtons.count where dayOfWeekButtons[dayOfWeekIndex]?.tag == ViewTagConstant.weekdayEnabled.rawValue {
                 days.append(dayOfWeekIndex+1)
             }
 

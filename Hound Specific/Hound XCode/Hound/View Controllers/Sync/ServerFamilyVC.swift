@@ -12,11 +12,66 @@ class ServerFamilyViewController: UIViewController {
     
     // MARK: IB
 
-    @IBOutlet weak var createFamilyButton: UIButton!
-    @IBOutlet weak var createFamilyDisclaimer: UILabel!
+    @IBOutlet private weak var createFamilyButton: UIButton!
     
-    @IBOutlet weak var joinFamilyButton: ScaledUILabel!
+    @IBAction private func willCreateFamily(_ sender: Any) {
+        RequestUtils.beginAlertControllerQueryIndictator()
+        FamilyRequest.create { familyId in
+            RequestUtils.endAlertControllerQueryIndictator {
+                if familyId != nil {
+                    // server sync vc retrieves familyId so no need to save it here
+                    self.dismiss(animated: true, completion: nil)
+                }
+            }
+        }
+    }
+    @IBOutlet private weak var createFamilyDisclaimer: UILabel!
     
+    @IBOutlet private weak var joinFamilyButton: ScaledUILabel!
+    
+    @IBAction private func willJoinFamily(_ sender: Any) {
+        // TO DO interpret response to tell user details about the family (e.g. not found, locked, or need to upgrade limit)
+        let familyCodeAlertController = GeneralUIAlertController(title: "Join a Family", message: nil, preferredStyle: .alert)
+        familyCodeAlertController.addTextField { textField in
+            textField.placeholder = "Enter Family Code..."
+        }
+        let alertActionJoin = UIAlertAction(title: "Join", style: .default) { [weak familyCodeAlertController] _ in
+            guard let textFields = familyCodeAlertController?.textFields else {
+                return
+            }
+            let familyCode = textFields[0].text ?? ""
+            // code is empty
+            if familyCode.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+                ErrorManager.alert(forError: FamilyRequestError.noFamilyCode)
+            }
+            // code isn't long enough
+            else if familyCode.count != 8 {
+                ErrorManager.alert(forError: FamilyRequestError.familyCodeFormatInvalid)
+            }
+            // client side the code is okay
+            else {
+                RequestUtils.beginAlertControllerQueryIndictator()
+                FamilyRequest.update(familyCode: familyCode) { requestWasSuccessful in
+                    RequestUtils.endAlertControllerQueryIndictator {
+                        // the code successfully allowed the user to join
+                        if requestWasSuccessful == true {
+                            self.dismiss(animated: true, completion: nil)
+                        }
+                        else {
+                            // TO DO add indictator that the user couldn't join the family
+                        }
+                    }
+                }
+            }
+            
+        }
+        let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        familyCodeAlertController.addAction(alertActionJoin)
+        familyCodeAlertController.addAction(alertActionCancel)
+        AlertManager.enqueueAlertForPresentation(familyCodeAlertController)
+       
+    }
     // MARK: Properties
     
     // MARK: - Main
@@ -47,7 +102,10 @@ class ServerFamilyViewController: UIViewController {
     
     private func setupCreateFamily() {
         // set to made to have fully rounded corners
-        createFamilyButton.layer.cornerRadius = 99999.9
+        createFamilyButton.layer.cornerRadius = createFamilyButton.frame.height/2
+        createFamilyButton.layer.masksToBounds = true
+        createFamilyButton.layer.borderWidth = 1
+        createFamilyButton.layer.borderColor = UIColor.black.cgColor
     }
     
     private func setupCreateFamilyDisclaimer() {
@@ -62,16 +120,24 @@ class ServerFamilyViewController: UIViewController {
         }
         NSLayoutConstraint.deactivate(constraintsToDeactivate)
         
+        createFamilyDisclaimer.translatesAutoresizingMaskIntoConstraints = false
+        createFamilyDisclaimer.numberOfLines = 0
+        createFamilyDisclaimer.font = .systemFont(ofSize: 12.5, weight: .light)
+        createFamilyDisclaimer.textColor = .white
+        
         // add proper constraints that adapt to the rounded corners
         let constraints = [
-            createFamilyDisclaimer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10.0 + (createFamilyButton.frame.height/2)),
-            createFamilyDisclaimer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10 - (createFamilyButton.frame.height/2))]
+            createFamilyDisclaimer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10 + (createFamilyButton.frame.height/4)),
+            createFamilyDisclaimer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10 - (createFamilyButton.frame.height/4))]
         NSLayoutConstraint.activate(constraints)
     }
     
     private func setupJoinFamily() {
         // set to made to have fully rounded corners
-        joinFamilyButton.layer.cornerRadius = 99999.9
+        joinFamilyButton.layer.cornerRadius = joinFamilyButton.frame.height/2
+        joinFamilyButton.layer.masksToBounds = true
+        joinFamilyButton.layer.borderWidth = 1
+        joinFamilyButton.layer.borderColor = UIColor.black.cgColor
     }
     
     /*

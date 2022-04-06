@@ -30,6 +30,9 @@ router.post('/', createFamily);
 /* BODY:
 */
 
+// lets a user join a new family
+router.put('/', updateFamily);
+
 // updates family
 router.put('/:familyId', updateFamily);
 /* BODY:

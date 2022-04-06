@@ -52,27 +52,26 @@ const validateUserId = async (req, res, next) => {
  */
 const validateFamilyId = async (req, res, next) => {
   // userId should be validated already
-
   const userId = formatNumber(req.params.userId);
   const familyId = formatNumber(req.params.familyId);
 
   if (familyId) {
     // if familyId is defined and it is a number then continue
     try {
-      // queries the database to find if the familyMember tables contains a user with the provided ID
+      // queries the database to find familyIds associated with the userId
       const result = await queryPromise(
         req,
-        'SELECT * FROM familyMembers WHERE familyId = ?',
-        [familyId],
+        'SELECT * FROM familyMembers WHERE userId = ?',
+        [userId],
       );
 
-      // checks array of JSON from query to find if userId is contained
-      if (result.some((item) => item.userId === userId)) {
-        // userId exists in the table, therefore is part of the family
+      // checks array of JSON from query to find if familyId is contained
+      if (result.some((item) => item.familyId === familyId)) {
+        // familyId exists in the table, therefore userId is  part of the family
         return next();
       }
       else {
-        // userId does not exist in the table
+        // familyId does not exist in the table
         req.rollbackQueries(req);
         return res.status(404).json(new ValidationError('No family found or invalid permissions', 'ER_NOT_FOUND').toJSON);
       }
@@ -91,25 +90,25 @@ const validateFamilyId = async (req, res, next) => {
 };
 
 /**
- * Checks to see that dogId is defined, a number, and exists in the database under userId provided. If it does then the user owns the dog and invokes next().
+ * Checks to see that dogId is defined, a number, and exists in the database under familyId provided. If it does then the user owns the dog and invokes next().
  */
 const validateDogId = async (req, res, next) => {
-  // userId should be validated already
+  // familyId should be validated already
 
-  const userId = formatNumber(req.params.userId);
+  const familyId = formatNumber(req.params.familyId);
   const dogId = formatNumber(req.params.dogId);
 
   // if dogId is defined and it is a number then continue
   if (dogId) {
     // query database to find out if user has permission for that dogId
     try {
-      // finds what dogId (s) the user has linked to their userId
-      const userDogIds = await queryPromise(req, 'SELECT dogs.dogId FROM dogs WHERE dogs.userId = ?', [userId]);
+      // finds what dogId (s) the user has linked to their familyId
+      const userDogIds = await queryPromise(req, 'SELECT dogs.dogId FROM dogs WHERE dogs.familyId = ?', [familyId]);
 
-      // search query result to find if the dogIds linked to the userId match the dogId provided, match means the user owns that dogId
+      // search query result to find if the dogIds linked to the familyId match the dogId provided, match means the user owns that dogId
 
       if (userDogIds.some((item) => item.dogId === dogId)) {
-        // the dogId exists and it is linked to the userId, valid!
+        // the dogId exists and it is linked to the familyId, valid!
         return next();
       }
       else {

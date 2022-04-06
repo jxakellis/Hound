@@ -15,6 +15,8 @@ protocol SettingsViewControllerDelegate: AnyObject {
 class SettingsViewController: UIViewController, SettingsTableViewControllerDelegate, SettingsRemindersViewControllerDelegate {
 
     // MARK: - SettingsTableViewControllerDelegate
+    
+    private var passedFamilyMembers: [FamilyMember] = []
 
     func willPerformSegue(withIdentifier identifier: String) {
         let convertedSegueIdentifier: String!
@@ -34,7 +36,21 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
         default:
             convertedSegueIdentifier = "settingsAboutViewController"
         }
-        self.performSegue(withIdentifier: convertedSegueIdentifier, sender: self)
+        
+        if convertedSegueIdentifier == "settingsFamilyViewController" {
+            RequestUtils.beginAlertControllerQueryIndictator()
+            FamilyRequest.get { familyMembers in
+                RequestUtils.endAlertControllerQueryIndictator {
+                    if familyMembers != nil {
+                        self.passedFamilyMembers = familyMembers!
+                        Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "convertedSegueIdentifier", viewController: self)
+                    }
+                }
+            }
+        }
+        else {
+            Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "convertedSegueIdentifier", viewController: self)
+        }
     }
 
     // MARK: - SettingsRemindersViewControllerDelegate
@@ -79,6 +95,8 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
         }
         else if segue.identifier == "settingsFamilyViewController" {
             settingsFamilyViewController = segue.destination as? SettingsFamilyViewController
+            settingsFamilyViewController?.familyMembers = passedFamilyMembers
+            passedFamilyMembers = []
         }
         else if segue.identifier == "settingsAppearanceViewController" {
             settingsAppearanceViewController = segue.destination as? SettingsAppearanceViewController

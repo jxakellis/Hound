@@ -82,7 +82,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
     func didSelectLog(parentDogId: Int, log: Log) {
         selectedLog = log
         parentDogIdOfSelectedLog = parentDogId
-        performSegue(withIdentifier: "logsAddLogViewController", sender: self)
+        Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "logsAddLogViewController", viewController: self)
         selectedLog = nil
         parentDogIdOfSelectedLog = nil
     }

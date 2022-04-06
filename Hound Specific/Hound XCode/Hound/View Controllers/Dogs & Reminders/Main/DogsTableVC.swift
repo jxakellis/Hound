@@ -312,9 +312,9 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
                 style: .default,
                 handler: { (_: UIAlertAction!)  in
                     // logAction not needed as unskipping alarm does not require that component
-                    AlarmManager.willResetTimer(
+                    AlarmManager.willUnskipReminder(
                         sender: Sender(origin: self, localized: self),
-                        dogId: dog.dogId, reminderId: reminder.reminderId, logAction: nil)
+                        dogId: dog.dogId, reminderId: reminder.reminderId)
                     self.delegate.unlogReminderAnimation()
 
                 })
@@ -330,7 +330,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
                         style: .default,
                         handler: { (_)  in
                             // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                            AlarmManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dog.dogId, reminderId: reminder.reminderId, logAction: pottyKnownType)
+                            AlarmManager.willSkipReminder(sender: Sender(origin: self, localized: self), dogId: dog.dogId, reminderId: reminder.reminderId, logAction: pottyKnownType)
                             self.delegate.logReminderAnimation()
                         })
                     alertActionsForLog.append(alertActionLog)
@@ -341,7 +341,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
                     style: .default,
                     handler: { (_)  in
                         // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                        AlarmManager.willResetTimer(sender: Sender(origin: self, localized: self), dogId: dog.dogId, reminderId: reminder.reminderId, logAction: LogAction(rawValue: reminder.reminderAction.rawValue)!)
+                        AlarmManager.willSkipReminder(sender: Sender(origin: self, localized: self), dogId: dog.dogId, reminderId: reminder.reminderId, logAction: LogAction(rawValue: reminder.reminderAction.rawValue)!)
                         self.delegate.logReminderAnimation()
                     })
                 alertActionsForLog.append(alertActionLog)

@@ -58,7 +58,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     func willOpenDogMenu(forDogId dogId: Int?) {
         
         if dogId == nil {
-            self.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
+            Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsAddDogViewController", viewController: self)
         }
         else {
             RequestUtils.beginAlertControllerQueryIndictator()
@@ -66,7 +66,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             DogsRequest.get(forDogId: dogId!, reminders: true, logs: true) { dog in
                 RequestUtils.endAlertControllerQueryIndictator {
                     if dog != nil {
-                        self.performSegue(withIdentifier: "dogsAddDogViewController", sender: self)
+                        Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsAddDogViewController", viewController: self)
                         self.dogsAddDogViewController.dogForInitalizer = dog
                     }
                 }
@@ -80,7 +80,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         // creating new
         if reminderId == nil {
             // no need to query as nothing in server since creating
-            self.performSegue(withIdentifier: "dogsIndependentReminderViewController", sender: self)
+            Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsIndependentReminderViewController", viewController: self)
             dogsIndependentReminderViewController.parentDogId = parentDogId
         }
         // updating
@@ -90,7 +90,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             RemindersRequest.get(forDogId: parentDogId, forReminderId: reminderId!) { reminder in
                 RequestUtils.endAlertControllerQueryIndictator {
                     if reminder != nil {
-                        self.performSegue(withIdentifier: "dogsIndependentReminderViewController", sender: self)
+                        Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsIndependentReminderViewController", viewController: self)
                         self.dogsIndependentReminderViewController.parentDogId = parentDogId
                         self.dogsIndependentReminderViewController.targetReminder = reminder
                     }

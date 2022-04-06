@@ -43,9 +43,7 @@ class ServerSyncViewController: UIViewController {
 
         updateStatusLabel()
         let retryAlertAction = UIAlertAction(title: "Retry Connection", style: .default) { _ in
-            DispatchQueue.main.async {
-                self.retrySynchronization()
-            }
+            self.retrySynchronization()
         }
         failureResponseAlertController.addAction(retryAlertAction)
         noResponseAlertController.addAction(retryAlertAction)
@@ -61,23 +59,13 @@ class ServerSyncViewController: UIViewController {
 
         // make sure the view has the correct interfaceStyle
         UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
-        
         // placeholder userId
         if UserInformation.userId == nil || UserInformation.userId! < 0 {
             // we have the user sign into their apple id, then attempt to first create an account then get an account (if the creates fails) then throw an error message (if the get fails too).
             // if all succeeds, then the user information and user configuration is loaded
             Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverLoginViewController", viewController: self)
         }
-        // placeholder familyId
-        else if UserInformation.familyId == nil || UserInformation.familyId! < 0 {
-            // if the user has create a hound account or signed into an existing one, we try to load the familyId returned to them. if that is nil, then we open this menu to have them create or join once since they aren't currently one.
-            
-            // TO DO update flow.
-            // PROBLEM: if we have a familyId stored for a user, we will try to log them in using that. if they are kicked from the family (or leave it), then we still have a stored familyId that we are trying to use. this will cause all the requests to fail for the user.
-            // SOLUTION: We must check that the user has a valid familyId under getUser(). If they have a valid one, then save it and continue with the requests. If their familyId is absent/missing, then we have them create or join a family.
-            Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverFamilyViewController", viewController: self)
-        }
-        // has userId
+        // has userId, possibly has familyId, will check inside getUser
         else {
             getUser()
         }
@@ -95,41 +83,73 @@ class ServerSyncViewController: UIViewController {
     // Only one call is made to the the user and one call to get all the dogs.
     private var serverContacted = false
     private var getUserFinished = false
+    private var getFamilyFinished = false
     private var getDogsFinished = false
-
+    
     // MARK: - Functions
+    
+    /// We failed to retrieve a familyId for the user so that means they have no family. Segue to page to make them create/join one.
+    private func getFamily() {
+        Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverFamilyViewController", viewController: self)
+    }
+
+    // MARK: - Primary Sync
+    
     /// Retrieve the user
     private func getUser() {
+        // make sure that the labels are up to date. we want to reset all to false when we begin query.
+        serverContacted = false
+        getUserFinished = false
+        getFamilyFinished = false
+        getDogsFinished = false
+        updateStatusLabel()
+        
         UserRequest.get { responseBody, responseStatus in
-            switch responseStatus {
-            case .successResponse:
+            DispatchQueue.main.async {
+                switch responseStatus {
+                case .successResponse:
                     if responseBody != nil {
                         self.serverContacted = true
                         self.updateStatusLabel()
                         
                         // verify that at least one user was returned. Shouldn't be possible to have no users but always good to check
-                        if let result = responseBody!["result"] as? [[String: Any]], result.isEmpty == false {
+                        if let result = responseBody!["result"] as? [String: Any], result.isEmpty == false {
                             // set all local configuration equal to whats in the server
-                            UserInformation.setup(fromBody: result[0])
-                            UserConfiguration.setup(fromBody: result[0])
+                            UserInformation.setup(fromBody: result)
+                            UserConfiguration.setup(fromBody: result)
                             
                             // verify that a userId was successfully retrieved from the server
-                            if result[0]["userId"] is Int {
-                                self.getDogs()
+                            if result["userId"] is Int {
+                                self.getUserFinished = true
+                                // if the user has create a hound account or signed into an existing one, we try to load the familyId returned to them. if that is nil, then we open this menu to have them create or join once since they aren't currently one.
+                                
+                                // user has family
+                                if result["familyId"] is Int {
+                                    self.getFamilyFinished = true
+                                    self.getDogs()
+                                }
+                                // no family for user
+                                else {
+                                    self.getFamily()
+                                }
+                                
                             }
                             
-                            self.getUserFinished = true
                             self.checkSynchronizationStatus()
                         }
                         else {
                             AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
                         }
                     }
-            case .failureResponse:
+                    else {
+                        AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
+                    }
+                case .failureResponse:
                     AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
-            case .noResponse:
+                case .noResponse:
                     AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)
                 }
+            }
             
         }
     }
@@ -153,38 +173,32 @@ class ServerSyncViewController: UIViewController {
 
         updateStatusLabel()
 
-        guard serverContacted && getUserFinished && getDogsFinished else {
+        guard serverContacted && getUserFinished && getFamilyFinished && getDogsFinished else {
             return
         }
-
-        // Encode the new dogManager into userDefaults so the dogManager accessed by MainTabBarViewController is the accurate one
-        // let encodedDataDogManager = try! NSKeyedArchiver.archivedData(withRootObject: ServerSyncViewController.dogManager, requiringSecureCoding: false)
-        // UserDefaults.standard.setValue(encodedDataDogManager, forKey: UserDefaultsKeys.dogManager.rawValue)
-
-        DispatchQueue.main.async {
+        
             // figure out where to go next, if the user is new and has no dogs (aka probably no family yet either) then we help them make their first dog
             
             // hasn't shown configuration to create dog
             if LocalConfiguration.hasLoadedIntroductionViewControllerBefore == false {
                 // never created a dog before, new family
                 if self.dogManager.hasCreatedDog == false {
-                    self.performSegue(withIdentifier: "introductionViewController", sender: self)
+                    Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "introductionViewController", viewController: self)
                 }
                 // dogs already created
                 else {
                     // TO DO create intro page for additional family member, where they still get introduced but don't create a dog
                     
-                    self.performSegue(withIdentifier: "mainTabBarViewController", sender: nil)
+                    Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController", viewController: self)
                     LocalConfiguration.hasLoadedIntroductionViewControllerBefore = false
                 }
                 
             }
             // has shown configuration before
             else {
-                self.performSegue(withIdentifier: "mainTabBarViewController", sender: nil)
+                Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController", viewController: self)
             }
             
-        }
     }
     
     /// Update status label from a synchronous code. This will produce a 'purple' error if used from a callback or other sync function
@@ -213,6 +227,15 @@ class ServerSyncViewController: UIViewController {
         else {
             self.statusLabel.text!.append(inProgressUserConfiguration)
         }
+        
+        let finishedFamily = "      Fetching Family ✅\n"
+        let inProgressFamily = "      Fetching Family ❌\n"
+        if self.getFamilyFinished == true {
+            self.statusLabel.text!.append(finishedFamily)
+        }
+        else {
+            self.statusLabel.text!.append(inProgressFamily)
+        }
 
         let finishedDogs = "      Fetching Dogs ✅"
         let inProgressDogs = "      Fetching Dogs ❌"
@@ -227,6 +250,7 @@ class ServerSyncViewController: UIViewController {
     private func retrySynchronization() {
         serverContacted = false
         getUserFinished = false
+        getFamilyFinished = false
         getDogsFinished = false
         updateStatusLabel()
         getUser()

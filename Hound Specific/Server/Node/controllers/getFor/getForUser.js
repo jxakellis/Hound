@@ -9,9 +9,13 @@ const getUserForUserIdQuery = async (req, userId) => {
   let userInformation;
   // only one user should exist for any userId otherwise the table is broken
   try {
+    // have to specifically reference the columns, otherwise familyMembers.userId will override users.userId.
+    // Therefore setting userId to null (if there is no family member) even though the userId isn't null.
+    const userInformationSelect = 'users.userId, users.userIdentifier, users.userFirstName, users.userLastName, users.userEmail';
+    const userConfigurationSelect = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.isPaused, userConfiguration.isCompactView, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';
     userInformation = await queryPromise(
       req,
-      'SELECT * FROM users LEFT JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userId = ?',
+      `SELECT ${userInformationSelect}, familyMembers.familyId, ${userConfigurationSelect} FROM users LEFT JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userId = ?`,
       [userId],
     );
   }
@@ -24,6 +28,7 @@ const getUserForUserIdQuery = async (req, userId) => {
     // Theoretically could be multiple users found but that means the table is broken. Just do catch all
     throw new ValidationError('No user found or invalid permissions', 'ER_NOT_FOUND');
   }
+  userInformation = userInformation[0];
 
   // array has item(s), meaning there was a user found, successful!
   return userInformation;
@@ -37,9 +42,13 @@ const getUserForUserIdentifierQuery = async (req, userIdentifier) => {
   // userIdentifier already validated
   let userInformation;
   try {
+    // have to specifically reference the columns, otherwise familyMembers.userId will override users.userId.
+    // Therefore setting userId to null (if there is no family member) even though the userId isn't null.
+    const userInformationSelect = 'users.userId, users.userIdentifier, users.userFirstName, users.userLastName, users.userEmail';
+    const userConfigurationSelect = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.isPaused, userConfiguration.isCompactView, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';
     userInformation = await queryPromise(
       req,
-      'SELECT * FROM users LEFT JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userIdentifier = ?',
+      `SELECT ${userInformationSelect}, familyMembers.familyId, ${userConfigurationSelect} FROM users LEFT JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userIdentifier = ?`,
       [userIdentifier],
     );
   }
@@ -51,6 +60,7 @@ const getUserForUserIdentifierQuery = async (req, userIdentifier) => {
     // Theoretically could be multiple users found but that means the table is broken. Just do catch all
     throw new ValidationError('No user found or invalid permissions', 'ER_NOT_FOUND');
   }
+  userInformation = userInformation[0];
 
   // array has item(s), meaning there was a user found, successful!
   return userInformation;

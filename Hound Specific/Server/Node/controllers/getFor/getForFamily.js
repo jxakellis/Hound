@@ -2,15 +2,38 @@ const DatabaseError = require('../../utils/errors/databaseError');
 const { queryPromise } = require('../../utils/queryPromise');
 
 /**
- * Returns the family members for the familyId. Errors not handled
+ * Returns the familyCode, familyIsLocked, and  familyMembers for the familyId. Errors not handled
  */
-const getFamilyForFamilyIdQuery = async (req, familyId) => {
+const getFamilyInformationForFamilyIdQuery = async (req, familyId) => {
+  // family id is validated, therefore we know familyMembers is >= 1 for familyId
   try {
-    const result = await queryPromise(
+    // get family members
+    const familyMembers = await queryPromise(
       req,
       'SELECT users.userId, users.userFirstName, users.userLastName FROM familyMembers LEFT JOIN users ON familyMembers.userId = users.userId WHERE familyMembers.familyId = ?',
       [familyId],
     );
+    // find which family member is the head
+    const familyHead = await queryPromise(
+      req,
+      'SELECT userId, familyIsLocked, familyCode FROM familyHeads WHERE familyId = ?',
+      [familyId],
+    );
+
+    // iterate through familyMembers
+    for (let i = 0; i < familyMembers.length; i += 1) {
+      // find which family member is also a family head
+      if (familyMembers[i].userId === familyHead[0].userId) {
+        // set isFamilyHead property to true
+        familyMembers[i].isFamilyHead = true;
+        break;
+      }
+    }
+    const result = {
+      familyCode: familyHead[0].familyCode,
+      familyIsLocked: familyHead[0].familyIsLocked,
+      familyMembers,
+    };
     return result;
   }
   catch (error) {
@@ -21,7 +44,7 @@ const getFamilyForFamilyIdQuery = async (req, familyId) => {
 /**
  * Returns the family members for the userId. Errors not handled
  */
-const getFamilyForUserIdQuery = async (req, userId) => {
+const getFamilyMembersForUserIdQuery = async (req, userId) => {
   try {
     const result = await queryPromise(
       req,
@@ -35,4 +58,4 @@ const getFamilyForUserIdQuery = async (req, userId) => {
   }
 };
 
-module.exports = { getFamilyForFamilyIdQuery, getFamilyForUserIdQuery };
+module.exports = { getFamilyInformationForFamilyIdQuery, getFamilyMembersForUserIdQuery };

@@ -169,7 +169,7 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         selectedReminder = getReminderManager().reminders[indexPath.row]
-        self.performSegue(withIdentifier: "dogsNestedReminderViewController", sender: self)
+        Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsNestedReminderViewController", viewController: self)
 
     }
 
