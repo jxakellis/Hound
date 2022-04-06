@@ -66,8 +66,7 @@ class DogsReminderMonthlyViewController: UIViewController, UIGestureRecognizerDe
             self.datePicker.date = self.datePicker.date
         }
 
-        // datePicker.minimumDate = datePicker.date
-       // datePicker.maximumDate = Calendar.current.date(byAdding: .month, value: 1, to: datePicker.date)
+        // put no date datePicker.minimumDate because when the user goes to select the time of day, it causes weird selection issues. we already handle the case if they selected a time in the past (just use that day of month for the next month) so no need to block anything
 
     }
 

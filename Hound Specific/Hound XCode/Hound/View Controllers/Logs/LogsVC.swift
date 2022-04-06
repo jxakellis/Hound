@@ -12,7 +12,7 @@ protocol LogsViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogManagerControlFlowProtocol, LogsTableViewControllerDelegate, DropDownUIViewDataSourceProtocol, LogsAddLogViewControllerDelegate {
+class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogManagerControlFlowProtocol, LogsTableViewControllerDelegate, DropDownUIViewDataSource, LogsAddLogViewControllerDelegate {
 
     // MARK: - UIGestureRecognizerDelegate
 
@@ -93,20 +93,17 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         filterType = nil
     }
 
-    // MARK: - DropDownUIViewDataSourceProtocol
-
-    private var dropDownRowHeight: CGFloat = 30
+    // MARK: - DropDownUIViewDataSource
 
     private let filterByDogFont: UIFont = UIFont.systemFont(ofSize: 20, weight: .semibold)
     private let filterByLogFont: UIFont = UIFont.systemFont(ofSize: 15, weight: .regular)
 
-    func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, DropDownUIViewIdentifier: String) {
-        if DropDownUIViewIdentifier == "DROP_DOWN_NEW"{
+    func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, dropDownUIViewIdentifier: String) {
 
             let sudoDogManager = getDogManager()
 
             let customCell = cell as! DropDownDefaultTableViewCell
-            customCell.adjustLeadingTrailing(newConstant: 12.0)
+            customCell.adjustLeadingTrailing(newConstant: DropDownUIView.insetForLogFilter)
 
             // clear filter
             if indexPath.section == sudoDogManager.dogs.count {
@@ -131,10 +128,9 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
                 customCell.didToggleSelect(newSelectionStatus: false)
             }
 
-        }
     }
 
-    func numberOfRows(forSection: Int, DropDownUIViewIdentifier: String) -> Int {
+    func numberOfRows(forSection: Int, dropDownUIViewIdentifier: String) -> Int {
         let sudoDogManager = getDogManager()
         guard sudoDogManager.dogs.isEmpty == false else {
             return 1
@@ -149,7 +145,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
 
     }
 
-    func numberOfSections(DropDownUIViewIdentifier: String) -> Int {
+    func numberOfSections(dropDownUIViewIdentifier: String) -> Int {
         let sudoDogManager = getDogManager()
         var count = 0
         for _ in sudoDogManager.dogs {
@@ -163,7 +159,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         }
     }
 
-    func selectItemInDropDown(indexPath: IndexPath, DropDownUIViewIdentifier: String) {
+    func selectItemInDropDown(indexPath: IndexPath, dropDownUIViewIdentifier: String) {
         let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as! DropDownDefaultTableViewCell
 
         // clear filter
@@ -282,17 +278,17 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
 
             // finds the total number of rows that can be displayed and makes sure that the needed does not exceed that
             let maximumHeight = self.view.safeAreaLayoutGuide.layoutFrame.size.height
-            let neededHeight = self.dropDownRowHeight * CGFloat(totalCount)
+            let neededHeight = DropDownUIView.rowHeightForLogFilter * CGFloat(totalCount)
 
             if neededHeight < maximumHeight {
                 return totalCount
             }
             else {
-                return Int((maximumHeight / dropDownRowHeight).rounded(.down))
+                return Int((maximumHeight / DropDownUIView.rowHeightForLogFilter).rounded(.down))
             }
 
         }
-        self.dropDown.showDropDown(height: dropDownRowHeight * CGFloat(numRowsDisplayed), selectedIndexPath: self.filterIndexPath)
+        self.dropDown.showDropDown(numberOfRowsToShow: CGFloat(numRowsDisplayed), selectedIndexPath: self.filterIndexPath)
 
     }
 
@@ -353,11 +349,11 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             var largestLabelWidth: CGFloat {
 
                 let sudoDogManager = getDogManager()
-                var largest: CGFloat = "Clear Filter".boundingFrom(font: filterByDogFont, height: 30.0).width
+                var largest: CGFloat = "Clear Filter".boundingFrom(font: filterByDogFont, height: DropDownUIView.rowHeightForLogFilter).width
 
                 for dogIndex in 0..<sudoDogManager.dogs.count {
                     let dog = sudoDogManager.dogs[dogIndex]
-                    let dogNameWidth = dog.dogName.boundingFrom(font: filterByDogFont, height: 30.0).width
+                    let dogNameWidth = dog.dogName.boundingFrom(font: filterByDogFont, height: DropDownUIView.rowHeightForLogFilter).width
 
                     if dogNameWidth > largest {
                         largest = dogNameWidth
@@ -366,7 +362,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
                     let catagorizedLogActions = dog.dogLogs.catagorizedLogActions
                     for logIndex in 0..<catagorizedLogActions.count {
                         let logAction = catagorizedLogActions[logIndex].0
-                        let logActionWidth = logAction.rawValue.boundingFrom(font: filterByLogFont, height: 30.0).width
+                        let logActionWidth = logAction.rawValue.boundingFrom(font: filterByLogFont, height: DropDownUIView.rowHeightForLogFilter).width
 
                         if logActionWidth > largest {
                             largest = logActionWidth
@@ -388,12 +384,13 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             }
         }
 
-        dropDown.DropDownUIViewIdentifier = "DROP_DOWN_NEW"
+        /// only one dropdown used on the dropdown instance so no identifier needed
+        dropDown.dropDownUIViewIdentifier = ""
         dropDown.cellReusableIdentifier = "dropDownCell"
-        dropDown.DropDownUIViewDataSourceProtocol = self
-        dropDown.setUpDropDown(viewPositionReference: (CGRect(origin: self.view.safeAreaLayoutGuide.layoutFrame.origin, size: CGSize(width: neededWidthForLabel + 24.0, height: 0.0))), offset: 0.0)
+        dropDown.dataSource = self
+        dropDown.setUpDropDown(viewPositionReference: (CGRect(origin: self.view.safeAreaLayoutGuide.layoutFrame.origin, size: CGSize(width: neededWidthForLabel + (DropDownUIView.insetForLogFilter * 2), height: 0.0))), offset: 0.0)
         dropDown.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
-        dropDown.setRowHeight(height: self.dropDownRowHeight)
+        dropDown.setRowHeight(height: DropDownUIView.rowHeightForLogFilter)
         self.view.addSubview(dropDown)
     }
 

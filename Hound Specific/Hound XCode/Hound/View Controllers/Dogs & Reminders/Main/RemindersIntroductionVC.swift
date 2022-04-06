@@ -25,7 +25,7 @@ class RemindersIntroductionViewController: UIViewController {
         
         continueButton.isEnabled = false
         
-        NotificationManager.requestNotificationAuthorization { _ in
+        NotificationManager.requestNotificationAuthorization {
             // wait the user to select an grant or deny notification permission (and for the server to respond if granted) before continusing
             self.queryDefaultReminders(shouldUseDefaultReminders: self.remindersToggleSwitch.isOn) { reminders in
                 if reminders != nil {
@@ -49,7 +49,7 @@ class RemindersIntroductionViewController: UIViewController {
             if dogManager.hasCreatedDog == true {
                 let dog = dogManager.dogs[0]
                 // use custom request
-                RemindersRequest.create(forDogId: dog.dogId, forReminders: [ReminderConstant.defaultReminderOne, ReminderConstant.defaultReminderTwo, ReminderConstant.defaultReminderThree, ReminderConstant.defaultReminderFour]) { reminders in
+                RemindersRequest.create(forDogId: dog.dogId, forReminders: ReminderConstant.defaultReminders) { reminders in
                     // dont care about success, just pass through
                     completionHandler(reminders)
                 }

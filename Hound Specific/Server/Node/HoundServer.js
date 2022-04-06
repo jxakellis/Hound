@@ -52,6 +52,8 @@ app.use('*', (req, res) => {
   return res.status(404).json(new GeneralError('Path not found', 'ER_NOT_FOUND').toJSON);
 });
 
-app.listen(5000, () => {
-  console.log('Listening on port 5000');
+const port = 5000;
+
+app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
 });

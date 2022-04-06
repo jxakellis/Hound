@@ -71,7 +71,7 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
 
         if reminder.reminderType == .oneTime {
             self.reminderIcon.image = UIImage.init(systemName: "calendar")
-            self.timeInterval.text = String.convertToReadable(fromDate: reminder.oneTimeComponents.executionDate)
+            self.timeInterval.text = String.convertToReadable(fromDate: reminder.oneTimeComponents.oneTimeDate)
         }
         else if reminder.reminderType == .countdown {
             self.reminderIcon.image = UIImage.init(systemName: "timer")

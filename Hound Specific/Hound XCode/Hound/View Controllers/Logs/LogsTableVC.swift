@@ -99,7 +99,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
                 // returns true if var1's log1 is earlier in time than var2's log2
 
                 // If date1's distance to date2 is positive, i.e. date2 is later in time, returns false as date2 should be ordered first (most recent (to current Date()) dates first)
-                if log1.date.distance(to: log2.date) > 0 {
+                if log1.logDate.distance(to: log2.logDate) > 0 {
                     return false
                 }
                 // If date1 is later in time than date2, returns true as it should come before date2
@@ -121,7 +121,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
             // goes through all dates present where a log happened
             for consolidatedLogsIndex in 0..<consolidatedLogs.count {
 
-                let yearMonthDayComponents = Calendar.current.dateComponents([.year, .month, .day ], from: consolidatedLogs[consolidatedLogsIndex].1.date)
+                let yearMonthDayComponents = Calendar.current.dateComponents([.year, .month, .day ], from: consolidatedLogs[consolidatedLogsIndex].1.logDate)
 
                 // Checks to make sure the day and year are valid
 

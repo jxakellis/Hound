@@ -15,7 +15,7 @@ protocol LogsAddLogViewControllerDelegate: AnyObject {
     func didUpdateLog(sender: Sender, parentDogId: Int, updatedLog: Log)
 }
 
-class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, DropDownUIViewDataSourceProtocol {
+class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, DropDownUIViewDataSource {
     
     // MARK: - UITextFieldDelegate
     
@@ -39,12 +39,12 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         return true
     }
     
-    // MARK: - DropDownUIViewDataSourceProtocol
+    // MARK: - DropDownUIViewDataSource
     
-    func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, DropDownUIViewIdentifier: String) {
-        if DropDownUIViewIdentifier == "dropDownParentDogNameSelector"{
+    func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, dropDownUIViewIdentifier: String) {
+        if dropDownUIViewIdentifier == "dropDownParentDogNameSelector"{
             let customCell = cell as! DropDownDefaultTableViewCell
-            customCell.adjustLeadingTrailing(newConstant: 8.0)
+            customCell.adjustLeadingTrailing(newConstant: DropDownUIView.insetForBorderedUILabel)
             
             if selectedParentDogIndexPath == indexPath {
                 customCell.didToggleSelect(newSelectionStatus: true)
@@ -55,7 +55,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
             
             customCell.label.text = dogManager.dogs[indexPath.row].dogName
         }
-        else if DropDownUIViewIdentifier == "dropDownLogAction"{
+        else if dropDownUIViewIdentifier == "dropDownLogAction"{
             let customCell = cell as! DropDownDefaultTableViewCell
             customCell.adjustLeadingTrailing(newConstant: 8.0)
             
@@ -73,11 +73,11 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         }
     }
     
-    func numberOfRows(forSection: Int, DropDownUIViewIdentifier: String) -> Int {
-        if DropDownUIViewIdentifier == "dropDownParentDogNameSelector"{
+    func numberOfRows(forSection: Int, dropDownUIViewIdentifier: String) -> Int {
+        if dropDownUIViewIdentifier == "dropDownParentDogNameSelector"{
             return dogManager.dogs.count
         }
-        else if DropDownUIViewIdentifier == "dropDownLogAction"{
+        else if dropDownUIViewIdentifier == "dropDownLogAction"{
             return LogAction.allCases.count
         }
         else {
@@ -85,20 +85,12 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         }
     }
     
-    func numberOfSections(DropDownUIViewIdentifier: String) -> Int {
-        if DropDownUIViewIdentifier == "dropDownParentDogNameSelector"{
-            return 1
-        }
-        else if DropDownUIViewIdentifier == "dropDownLogAction"{
-            return 1
-        }
-        else {
-            fatalError()
-        }
+    func numberOfSections(dropDownUIViewIdentifier: String) -> Int {
+        return 1
     }
     
-    func selectItemInDropDown(indexPath: IndexPath, DropDownUIViewIdentifier: String) {
-        if DropDownUIViewIdentifier == "dropDownParentDogNameSelector"{
+    func selectItemInDropDown(indexPath: IndexPath, dropDownUIViewIdentifier: String) {
+        if dropDownUIViewIdentifier == "dropDownParentDogNameSelector"{
             let selectedCell = dropDownParentDogNameSelector.dropDownTableView!.cellForRow(at: indexPath) as! DropDownDefaultTableViewCell
             selectedCell.didToggleSelect(newSelectionStatus: true)
             
@@ -108,7 +100,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
             parentDogNameSelector.tag = dogManager.dogs[indexPath.row].dogId
             self.dropDownParentDogNameSelector.hideDropDown()
         }
-        else if DropDownUIViewIdentifier == "dropDownLogAction"{
+        else if dropDownUIViewIdentifier == "dropDownLogAction"{
             let selectedCell = dropDownLogAction.dropDownTableView!.cellForRow(at: indexPath) as! DropDownDefaultTableViewCell
             selectedCell.didToggleSelect(newSelectionStatus: true)
             
@@ -157,8 +149,8 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         
         // updating log
         if parentDogIdToUpdate != nil && logToUpdate != nil {
-            logToUpdate!.date = logDate.date
-            logToUpdate!.note = logNote.text ?? LogConstant.defaultNote
+            logToUpdate!.logDate = logDate.date
+            logToUpdate!.logNote = logNote.text ?? LogConstant.defaultLogNote
             logToUpdate!.logAction = LogAction(rawValue: logAction.text!)!
             
             if logAction.text == LogAction.custom.rawValue {
@@ -185,7 +177,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                     throw LogActionError.blankLogAction
                 }
                 else {
-                    let newLog = Log(date: logDate.date, note: logNote.text ?? LogConstant.defaultNote, logAction: LogAction(rawValue: logAction.text!)!, customActionName: trimmedCustomLogActionName)
+                    let newLog = Log(logDate: logDate.date, logNote: logNote.text ?? LogConstant.defaultLogNote, logAction: LogAction(rawValue: logAction.text!)!, customActionName: trimmedCustomLogActionName)
                     
                     addLogButton.beginQuerying()
                     addLogButtonBackground.beginQuerying(isBackgroundButton: true)
@@ -330,9 +322,6 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
     /// index path of selected log type in drop down
     private var selectedLogActionIndexPath: IndexPath?
     
-    /// height of the cells in the drop down table view
-    private var dropDownRowHeight: CGFloat = 40
-    
     // MARK: - Main
     
     override func viewDidLoad() {
@@ -416,8 +405,8 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
             
             selectedLogActionIndexPath = IndexPath(row: LogAction.allCases.firstIndex(of: LogAction(rawValue: logAction.text!)!)!, section: 0)
             
-            logDate.date = logToUpdate!.date
-            logNote.text = logToUpdate!.note
+            logDate.date = logToUpdate!.logDate
+            logNote.text = logToUpdate!.logNote
             
         }
         // not updating
@@ -428,7 +417,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
             
             trashIcon.isEnabled = false
             
-            logAction.text = LogConstant.defaultNote
+            logAction.text = LogConstant.defaultLogNote
             logAction.isEnabled = true
             
             customLogAction.text = ""
@@ -490,7 +479,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 return CGFloat(dogManager.dogs.count)
             }
         }
-        self.dropDownParentDogNameSelector.showDropDown(height: self.dropDownRowHeight * CGFloat(numDogToShow))
+        self.dropDownParentDogNameSelector.showDropDown(numberOfRowsToShow: CGFloat(numDogToShow))
     }
     
     /// Dismisses the keyboard and other dropdowns to show logAction
@@ -498,7 +487,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         self.dismissKeyboard()
         self.dropDownParentDogNameSelector.hideDropDown()
         
-        self.dropDownLogAction.showDropDown(height: self.dropDownRowHeight * 6.5)
+        self.dropDownLogAction.showDropDown(numberOfRowsToShow: 6.5)
     }
     
     @objc private func logNoteTapped() {
@@ -527,20 +516,20 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
     // MARK: - Drop Down Functions
     
     private func setUpDropDowns() {
-        dropDownParentDogNameSelector.DropDownUIViewIdentifier = "dropDownParentDogNameSelector"
+        dropDownParentDogNameSelector.dropDownUIViewIdentifier = "dropDownParentDogNameSelector"
         dropDownParentDogNameSelector.cellReusableIdentifier = "dropDownCell"
-        dropDownParentDogNameSelector.DropDownUIViewDataSourceProtocol = self
+        dropDownParentDogNameSelector.dataSource = self
         dropDownParentDogNameSelector.setUpDropDown(viewPositionReference: parentDogNameSelector.frame, offset: 2.0)
         dropDownParentDogNameSelector.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
-        dropDownParentDogNameSelector.setRowHeight(height: self.dropDownRowHeight)
+        dropDownParentDogNameSelector.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
         self.view.addSubview(dropDownParentDogNameSelector)
         
-        dropDownLogAction.DropDownUIViewIdentifier = "dropDownLogAction"
+        dropDownLogAction.dropDownUIViewIdentifier = "dropDownLogAction"
         dropDownLogAction.cellReusableIdentifier = "dropDownCell"
-        dropDownLogAction.DropDownUIViewDataSourceProtocol = self
+        dropDownLogAction.dataSource = self
         dropDownLogAction.setUpDropDown(viewPositionReference: logAction.frame, offset: 2.0)
         dropDownLogAction.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
-        dropDownLogAction.setRowHeight(height: self.dropDownRowHeight)
+        dropDownLogAction.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
         self.view.addSubview(dropDownLogAction)
     }
     

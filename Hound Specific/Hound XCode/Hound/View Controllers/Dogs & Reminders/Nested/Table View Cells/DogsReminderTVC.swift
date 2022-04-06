@@ -48,7 +48,7 @@ class DogsReminderTableViewCell: UITableViewCell {
         reminderDisplay.text = ""
 
         if reminder.reminderType == .oneTime {
-            self.reminderDisplay.text? = " \(String.convertToReadable(fromDate: reminder.oneTimeComponents.executionDate))"
+            self.reminderDisplay.text? = " \(String.convertToReadable(fromDate: reminder.oneTimeComponents.oneTimeDate))"
         }
         else if reminder.reminderType == .countdown {
             self.reminderDisplay.text?.append(" Every \(String.convertToReadable(fromTimeInterval: reminder.countdownComponents.executionInterval))")

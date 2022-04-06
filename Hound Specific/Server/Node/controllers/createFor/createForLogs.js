@@ -11,13 +11,13 @@ const {
  */
 const createLogQuery = async (req) => {
   const dogId = formatNumber(req.params.dogId);
-  const logDate = formatDate(req.body.date);
-  const { note } = req.body;
+  const logDate = formatDate(req.body.logDate);
+  const { logNote } = req.body;
   const { logAction } = req.body;
   const { customActionName } = req.body;
 
   if (areAllDefined([logDate, logAction]) === false) {
-    throw new ValidationError('date or logAction missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('logDate or logAction missing', 'ER_VALUES_MISSING');
   }
   // else if (logAction === 'Custom' && !customActionName) {
   // see if logAction is being updated to custom and tell the user to provide customActionName if so.
@@ -27,8 +27,8 @@ const createLogQuery = async (req) => {
   try {
     const result = await queryPromise(
       req,
-      'INSERT INTO dogLogs(dogId, date, note, logAction, customActionName) VALUES (?, ?, ?, ?, ?)',
-      [dogId, logDate, note, logAction, customActionName],
+      'INSERT INTO dogLogs(dogId, logDate, logNote, logAction, customActionName) VALUES (?, ?, ?, ?, ?)',
+      [dogId, logDate, logNote, logAction, customActionName],
     );
     return formatNumber(result.insertId);
   }

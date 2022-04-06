@@ -22,13 +22,13 @@ const pool = mysql.createPool({
 });
 
 pool.on('acquire', (connection) => {
-  const date = new Date();
-  console.log(`Connection ${connection.threadId} acquired at H:M:S:ms ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`);
+  const currentDate = new Date();
+  console.log(`Connection ${connection.threadId} acquired at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
 });
 
 pool.on('release', (connection) => {
-  const date = new Date();
-  console.log(`Connection ${connection.threadId} released at H:M:S:ms ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`);
+  const currentDate = new Date();
+  console.log(`Connection ${connection.threadId} released at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
 });
 
 const commitQueries = (req) => {

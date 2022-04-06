@@ -84,7 +84,7 @@ Reminder Info:
     "monthlyIsSkippingDate":"optionalDate"
 
     //FOR oneTime
-    "date":"requiredDate"
+    "logDate":"requiredDate"
 
     //FOR snooze
     "isSnoozed":"requiredBool",

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsNotificationsViewController: UIViewController, UIGestureRecognizerDelegate, DropDownUIViewDataSourceProtocol {
+class SettingsNotificationsViewController: UIViewController, UIGestureRecognizerDelegate, DropDownUIViewDataSource {
     
     // MARK: - UIGestureRecognizerDelegate
     
@@ -112,7 +112,7 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
                     
                 }
             case .notDetermined:
-                NotificationManager.requestNotificationAuthorization { _ in
+                NotificationManager.requestNotificationAuthorization {
                     self.synchronizeAllNotificationSwitches(animated: true)
                 }
             case .provisional:
@@ -167,7 +167,7 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
     
     @objc private func willShowNotificationSound(_ sender: Any) {
         if dropDown.isDown == false {
-            self.dropDown.showDropDown(height: dropDownRowHeight * 6.5, selectedIndexPath: IndexPath(row: NotificationSound.allCases.firstIndex(of: UserConfiguration.notificationSound)!, section: 1))
+            self.dropDown.showDropDown(numberOfRowsToShow: 6.5, selectedIndexPath: IndexPath(row: NotificationSound.allCases.firstIndex(of: UserConfiguration.notificationSound)!, section: 1))
         }
         else {
             self.hideDropDown()
@@ -179,11 +179,9 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
     
     private let dropDown = DropDownUIView()
     
-    private let dropDownRowHeight: CGFloat = 30
-    
-    func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, DropDownUIViewIdentifier: String) {
+    func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, dropDownUIViewIdentifier: String) {
         let customCell = cell as! DropDownDefaultTableViewCell
-        customCell.adjustLeadingTrailing(newConstant: 12.0)
+        customCell.adjustLeadingTrailing(newConstant: DropDownUIView.insetForBorderedUILabel)
         
         customCell.label.text = NotificationSound.allCases[indexPath.row].rawValue
         
@@ -201,19 +199,17 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         // adjust customCell based on indexPath
     }
     
-    func numberOfRows(forSection: Int, DropDownUIViewIdentifier: String) -> Int {
+    func numberOfRows(forSection: Int, dropDownUIViewIdentifier: String) -> Int {
         return NotificationSound.allCases.count
     }
     
-    func numberOfSections(DropDownUIViewIdentifier: String) -> Int {
-        
+    func numberOfSections(dropDownUIViewIdentifier: String) -> Int {
         return 1
-        
     }
     
-    func selectItemInDropDown(indexPath: IndexPath, DropDownUIViewIdentifier: String) {
+    func selectItemInDropDown(indexPath: IndexPath, dropDownUIViewIdentifier: String) {
         
-        // do actions based on a cell selected at a indexPath given a DropDownUIViewIdentifier
+        // do actions based on a cell selected at a indexPath given a dropDownUIViewIdentifier
         // want to hide the drop down after something is selected
         
         let beforeUpdateNotificationSound = UserConfiguration.notificationSound
@@ -223,7 +219,6 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         // the new cell selected is different that the current sound saved
         if selectedNotificationSound != UserConfiguration.notificationSound {
             
-            DispatchQueue.main.async {
                 let unselectedCellIndexPath: IndexPath! = IndexPath(row: NotificationSound.allCases.firstIndex(of: UserConfiguration.notificationSound)!, section: 0)
                 let unselectedCell = self.dropDown.dropDownTableView!.cellForRow(at: unselectedCellIndexPath) as? DropDownDefaultTableViewCell
                 unselectedCell?.didToggleSelect(newSelectionStatus: false)
@@ -242,18 +237,11 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
                         self.notificationSound.text = beforeUpdateNotificationSound.rawValue
                     }
                 }
-                
-            }
-            
-            // AudioManager.stopAudio()
-            // self.dropDown.hideDropDown()
         }
-        // cell selected is the same as the current sound saved, do nothing
+        // cell selected is the same as the current sound saved
         else {
-            DispatchQueue.global().async {
-                AudioManager.playAudio(forAudioPath: "\(UserConfiguration.notificationSound.rawValue.lowercased())", isLoud: false)
-            }
-            
+            AudioManager.stopAudio()
+            self.dropDown.hideDropDown()
         }
         
     }
@@ -261,12 +249,13 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
     // MARK: Notification Sound Drop Down Functions
     
     private func setUpDropDown() {
-        dropDown.DropDownUIViewIdentifier = "DROP_DOWN_NEW"
+        /// only one dropdown used on the dropdown instance so no identifier needed
+        dropDown.dropDownUIViewIdentifier = ""
         dropDown.cellReusableIdentifier = "dropDownCell"
-        dropDown.DropDownUIViewDataSourceProtocol = self
+        dropDown.dataSource = self
         dropDown.setUpDropDown(viewPositionReference: notificationSound.frame, offset: 0.0)
         dropDown.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
-        dropDown.setRowHeight(height: self.dropDownRowHeight)
+        dropDown.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
         scrollView.addSubview(dropDown)
     }
     

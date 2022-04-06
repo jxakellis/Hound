@@ -247,14 +247,13 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     func didAddDog(sender: Sender, newDog: Dog) {
 
         // This makes it so when a dog is added all of its reminders start counting down at the same time (b/c same last execution) instead counting down from when the reminder was added to the dog.
-        for reminderIndex in 0..<newDog.dogReminders.reminders.count {
-            newDog.dogReminders.reminders[reminderIndex].changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
+        for reminder in newDog.dogReminders.reminders {
+            reminder.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
         }
 
         let sudoDogManager = getDogManager()
         sudoDogManager.addDog(newDog: newDog)
         setDogManager(sender: sender, newDogManager: sudoDogManager)
-        // try delegate.didAddDog(dogAdded: addedDog)
     }
 
     /// If a dog was updated, its former name (as its name could have been changed) and new dog instance is passed here, matching old dog is found and replaced with new

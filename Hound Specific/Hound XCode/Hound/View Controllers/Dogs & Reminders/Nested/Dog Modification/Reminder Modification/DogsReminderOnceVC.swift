@@ -1,5 +1,5 @@
 //
-//  DogsReminderOnceViewController.swift
+//  DogsReminderOneTimeViewController.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 5/30/21.
@@ -8,11 +8,11 @@
 
 import UIKit
 
-protocol DogsReminderOnceViewControllerDelegate: AnyObject {
+protocol DogsReminderOneTimeViewControllerDelegate: AnyObject {
     func willDismissKeyboard()
 }
 
-class DogsReminderOnceViewController: UIViewController, UIGestureRecognizerDelegate {
+class DogsReminderOneTimeViewController: UIViewController, UIGestureRecognizerDelegate {
 
     // MARK: - UIGestureRecognizerDelegate
 
@@ -29,7 +29,7 @@ class DogsReminderOnceViewController: UIViewController, UIGestureRecognizerDeleg
 
     // MARK: - Properties
 
-    weak var delegate: DogsReminderOnceViewControllerDelegate! = nil
+    weak var delegate: DogsReminderOneTimeViewControllerDelegate! = nil
 
     var passedDate: Date?
 
@@ -61,12 +61,13 @@ class DogsReminderOnceViewController: UIViewController, UIGestureRecognizerDeleg
             self.datePicker.date = self.datePicker.date
         }
 
-        datePicker.minimumDate = datePicker.date
+        // they can't choose a one time alarm that isn't in the future, otherwise there is no point
+        datePicker.minimumDate = Date()
 
     }
 
     /// Returns the datecomponets  selected
-    var executionDate: Date {
+    var oneTimeDate: Date {
         return datePicker.date
     }
 

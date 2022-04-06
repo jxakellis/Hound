@@ -93,7 +93,6 @@ const updateReminderQuery = async (req) => {
     return;
   }
   catch (error) {
-    console.log(error);
     throw new DatabaseError(error.code);
   }
 };

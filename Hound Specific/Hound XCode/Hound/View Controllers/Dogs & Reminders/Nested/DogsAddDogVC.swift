@@ -375,7 +375,8 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             
             dogName.text = ""
             dogIcon.setImage(DogConstant.chooseIcon, for: .normal)
-            modifiableDogReminders = ReminderManager()
+            modifiableDogReminders = ReminderManager(initReminders: ReminderConstant.defaultReminders)
+            dogsReminderNavigationViewController.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: modifiableDogReminders.copy() as! ReminderManager)
             // no need to pass reminders to dogsReminderNavigationViewController as reminders are empty
         }
         // updating dog

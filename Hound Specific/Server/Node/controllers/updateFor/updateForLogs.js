@@ -12,22 +12,22 @@ const {
  */
 const updateLogQuery = async (req) => {
   const logId = formatNumber(req.params.logId);
-  const logDate = formatDate(req.body.date);
-  const { note } = req.body;
+  const logDate = formatDate(req.body.logDate);
+  const { logNote } = req.body;
   const { logAction } = req.body;
   const { customActionName } = req.body;
 
   // if all undefined, then there is nothing to update
-  if (atLeastOneDefined([logDate, note, logAction]) === false) {
-    throw new ValidationError('No date, note, or logAction provided', 'ER_NO_VALUES_PROVIDED');
+  if (atLeastOneDefined([logDate, logNote, logAction]) === false) {
+    throw new ValidationError('No logDate, logNote, or logAction provided', 'ER_NO_VALUES_PROVIDED');
   }
 
   try {
     if (logDate) {
-      await queryPromise(req, 'UPDATE dogLogs SET date = ? WHERE logId = ?', [logDate, logId]);
+      await queryPromise(req, 'UPDATE dogLogs SET logDate = ? WHERE logId = ?', [logDate, logId]);
     }
-    if (note) {
-      await queryPromise(req, 'UPDATE dogLogs SET note = ? WHERE logId = ?', [note, logId]);
+    if (logNote) {
+      await queryPromise(req, 'UPDATE dogLogs SET logNote = ? WHERE logId = ?', [logNote, logId]);
     }
     if (logAction) {
       await queryPromise(req, 'UPDATE dogLogs SET logAction = ? WHERE logId = ?', [logAction, logId]);

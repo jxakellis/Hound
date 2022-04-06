@@ -15,7 +15,7 @@ protocol DogsReminderManagerViewControllerDelegate: AnyObject {
 }
  */
 
-class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, DogsReminderCountdownViewControllerDelegate, DogsReminderWeeklyViewControllerDelegate, DropDownUIViewDataSourceProtocol, DogsReminderMonthlyViewControllerDelegate, DogsReminderOnceViewControllerDelegate {
+class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, DogsReminderCountdownViewControllerDelegate, DogsReminderWeeklyViewControllerDelegate, DropDownUIViewDataSource, DogsReminderMonthlyViewControllerDelegate, DogsReminderOneTimeViewControllerDelegate {
 
     // MARK: Auto Save Trigger
 
@@ -38,13 +38,11 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
         return false
     }
 
-    // MARK: - DropDownUIViewDataSourceProtocol
+    // MARK: - DropDownUIViewDataSource
 
-    func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, DropDownUIViewIdentifier: String) {
-        if DropDownUIViewIdentifier == "DROP_DOWN_NEW"{
-
-            let customCell = cell as! DropDownDefaultTableViewCell
-            customCell.adjustLeadingTrailing(newConstant: 8.0)
+    func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, dropDownUIViewIdentifier: String) {
+        let customCell = cell as! DropDownDefaultTableViewCell
+            customCell.adjustLeadingTrailing(newConstant: DropDownUIView.insetForBorderedUILabel)
 
             if selectedIndexPath == indexPath {
                 customCell.didToggleSelect(newSelectionStatus: true)
@@ -54,18 +52,17 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             }
 
             customCell.label.text = ReminderAction.allCases[indexPath.row].rawValue
-        }
     }
 
-    func numberOfRows(forSection: Int, DropDownUIViewIdentifier: String) -> Int {
+    func numberOfRows(forSection: Int, dropDownUIViewIdentifier: String) -> Int {
         return ReminderAction.allCases.count
     }
 
-    func numberOfSections(DropDownUIViewIdentifier: String) -> Int {
+    func numberOfSections(dropDownUIViewIdentifier: String) -> Int {
         return 1
     }
 
-    func selectItemInDropDown(indexPath: IndexPath, DropDownUIViewIdentifier: String) {
+    func selectItemInDropDown(indexPath: IndexPath, dropDownUIViewIdentifier: String) {
 
         let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as! DropDownDefaultTableViewCell
 
@@ -134,7 +131,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
         else {
             switch segmentedControl.selectedSegmentIndex {
             case 0:
-                return dogsReminderOnceViewController.initalValuesChanged
+                return dogsReminderOneTimeViewController.initalValuesChanged
             case 1:
                 return dogsReminderCountdownViewController.initalValuesChanged
             case 2:
@@ -146,7 +143,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             }
         }
     }
-    private var dogsReminderOnceViewController = DogsReminderOnceViewController()
+    private var dogsReminderOneTimeViewController = DogsReminderOneTimeViewController()
 
     private var dogsReminderCountdownViewController = DogsReminderCountdownViewController()
 
@@ -155,8 +152,6 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
     private var dogsReminderMonthlyViewController = DogsReminderMonthlyViewController()
 
     private let dropDown = DropDownUIView()
-
-    private var dropDownRowHeight: CGFloat = 40
 
     private var selectedIndexPath: IndexPath?
 
@@ -224,8 +219,9 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
 
             switch segmentedControl.selectedSegmentIndex {
             case 0:
+                
                 updatedReminder.changeReminderType(newReminderType: .oneTime)
-                updatedReminder.oneTimeComponents.executionDate = dogsReminderOnceViewController.executionDate
+                updatedReminder.oneTimeComponents.oneTimeDate = dogsReminderOneTimeViewController.oneTimeDate
             case 1:
                 updatedReminder.changeReminderType(newReminderType: .countdown)
                 updatedReminder.countdownComponents.changeExecutionInterval(newExecutionInterval: dogsReminderCountdownViewController.countdown.countDownDuration)
@@ -251,14 +247,14 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             }
             // updating an existing reminder
             else {
-
                 // Checks for differences in time of day, execution interval, weekdays, or time of month. If one is detected then we reset the reminder's whole timing to default
                 // If you were 5 minutes in to a 1 hour countdown but then change it to 30 minutes, you would want to be 0 minutes into the new timer and not 5 minutes in like previously.
 
                 switch updatedReminder.reminderType {
                 case .oneTime:
                     // execution date changed
-                    if updatedReminder.oneTimeComponents.executionDate != targetReminder!.oneTimeComponents.executionDate {
+                    if updatedReminder.oneTimeComponents.oneTimeDate != targetReminder!.oneTimeComponents.oneTimeDate {
+                        
                         updatedReminder.prepareForNextAlarm()
                     }
 
@@ -387,12 +383,13 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
     // MARK: - Drop Down Functions
 
     private func setUpDropDown() {
-        dropDown.DropDownUIViewIdentifier = "DROP_DOWN_NEW"
+        /// only one dropdown used on the dropdown instance so no identifier needed
+        dropDown.dropDownUIViewIdentifier = ""
         dropDown.cellReusableIdentifier = "dropDownCell"
-        dropDown.DropDownUIViewDataSourceProtocol = self
+        dropDown.dataSource = self
         dropDown.setUpDropDown(viewPositionReference: reminderAction.frame, offset: 2.0)
         dropDown.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
-        dropDown.setRowHeight(height: self.dropDownRowHeight)
+        dropDown.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
         self.view.addSubview(dropDown)
     }
 
@@ -410,7 +407,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
 
     @objc private func reminderActionTapped() {
         self.dismissKeyboard()
-        self.dropDown.showDropDown(height: self.dropDownRowHeight * 6.5, selectedIndexPath: selectedIndexPath)
+        self.dropDown.showDropDown(numberOfRowsToShow: 6.5, selectedIndexPath: selectedIndexPath)
     }
 
     @objc private func dismissAll() {
@@ -420,18 +417,18 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
     // MARK: - Navigation
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "dogsReminderOnceViewController"{
-            dogsReminderOnceViewController = segue.destination as! DogsReminderOnceViewController
-            dogsReminderOnceViewController.delegate = self
+        if segue.identifier == "dogsReminderOneTimeViewController"{
+            dogsReminderOneTimeViewController = segue.destination as! DogsReminderOneTimeViewController
+            dogsReminderOneTimeViewController.delegate = self
             var calculatedPassedDate: Date? {
-                if targetReminder == nil || Date().distance(to: targetReminder!.oneTimeComponents.executionDate) < 0 {
+                if targetReminder == nil || Date().distance(to: targetReminder!.oneTimeComponents.oneTimeDate) < 0 {
                     return nil
                 }
                 else {
-                    return targetReminder!.oneTimeComponents.executionDate
+                    return targetReminder!.oneTimeComponents.oneTimeDate
                 }
             }
-            dogsReminderOnceViewController.passedDate = calculatedPassedDate
+            dogsReminderOneTimeViewController.passedDate = calculatedPassedDate
         }
         else if segue.identifier == "dogsReminderCountdownViewController"{
             dogsReminderCountdownViewController = segue.destination as! DogsReminderCountdownViewController

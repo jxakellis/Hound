@@ -43,13 +43,13 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
                 RequestUtils.endAlertControllerQueryIndictator {
                     if familyMembers != nil {
                         self.passedFamilyMembers = familyMembers!
-                        Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "convertedSegueIdentifier", viewController: self)
+                        Utils.performSegueOnceInWindowHierarchy(segueIdentifier: convertedSegueIdentifier, viewController: self)
                     }
                 }
             }
         }
         else {
-            Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "convertedSegueIdentifier", viewController: self)
+            Utils.performSegueOnceInWindowHierarchy(segueIdentifier: convertedSegueIdentifier, viewController: self)
         }
     }
 
