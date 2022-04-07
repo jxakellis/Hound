@@ -24,6 +24,8 @@ class SettingsPersonalInformationViewController: UIViewController, UIGestureReco
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // TO DO revise this page to make it more details and clean
 
         setupAccountInformation()
         // Do any additional setup after loading the view.

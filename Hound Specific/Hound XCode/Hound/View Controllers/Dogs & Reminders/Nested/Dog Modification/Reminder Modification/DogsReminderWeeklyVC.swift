@@ -94,7 +94,7 @@ class DogsReminderWeeklyViewController: UIViewController, UIGestureRecognizerDel
             self.timeOfDay.date = self.passedTimeOfDay!
         }
         else {
-            self.timeOfDay.date = Date.roundDate(targetDate: Date(), roundingInterval: 60.0*5, roundingMethod: .up)
+            self.timeOfDay.date = Date.roundDate(targetDate: Date(), roundingInterval: TimeInterval(60 * timeOfDay.minuteInterval), roundingMethod: .up)
             passedTimeOfDay = timeOfDay.date
         }
 

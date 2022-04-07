@@ -94,9 +94,11 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
         // could be new dog or updated one
         var dog: Dog!
         do {
-            dog = try Dog(dogName: dogName.text)
-            if dogIcon.imageView?.image != nil && dogIcon.imageView!.image != DogConstant.chooseIcon {
-                dog.icon = dogIcon.imageView!.image!
+            // try to initalize from a passed dog, if non exists, then we make a new one
+            dog = try dogForInitalizer ?? Dog(dogName: dogName.text)
+            try dog.changeDogName(newDogName: dogName.text)
+            if dogIcon.imageView?.image != nil && dogIcon.imageView!.image != DogConstant.chooseIconForDog {
+                dog.dogIcon = dogIcon.imageView!.image!
             }
         }
         catch {
@@ -140,17 +142,20 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
         }
         else {
             // TO DO review this section. Lots of spaghetti code. There will be duplicate error messages from create, update, and delete if network or other error.
-            let reminderDifference = dogForInitalizer!.dogReminders.groupReminders(newReminders: modifiableDogReminders.reminders)
-            let sameReminders = reminderDifference.0
+            let reminderDifference = dog.dogReminders.groupReminders(newReminders: modifiableDogReminders.reminders)
+            // same reminders, not used currently
+            _ = reminderDifference.0
             let createdReminders = reminderDifference.1
             let updatedReminders = reminderDifference.2
             let deletedReminders = reminderDifference.3
             
-            dog.dogId = dogForInitalizer!.dogId
-            // for reminders that already have their reminderId, we can add them to our dog.
-            dog.dogReminders.addReminder(newReminders: sameReminders)
+            // do nothing with reminders that are the same
             // add created reminders when they are created and assigned their id
+            // add updated reminders as they already have their reminderId
             dog.dogReminders.updateReminder(updatedReminders: updatedReminders)
+            for deletedReminder in deletedReminders {
+                try! dog.dogReminders.removeReminder(forReminderId: deletedReminder.reminderId)
+            }
             addDogButton.beginQuerying()
             addDogButtonBackground.beginQuerying(isBackgroundButton: true)
             // first query to update the dog itself (independent of any reminders)
@@ -319,7 +324,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
         if dogName.text != initalDogName {
             return true
         }
-        else if dogIcon.imageView!.image != DogConstant.chooseIcon && dogIcon.imageView!.image != initalDogIcon {
+        else if dogIcon.imageView!.image != DogConstant.chooseIconForDog && dogIcon.imageView!.image != initalDogIcon {
             return true
         }
         else if shouldPromptSaveWarning == true {
@@ -374,7 +379,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             self.navigationItem.title = "Create Dog"
             
             dogName.text = ""
-            dogIcon.setImage(DogConstant.chooseIcon, for: .normal)
+            dogIcon.setImage(DogConstant.chooseIconForDog, for: .normal)
             modifiableDogReminders = ReminderManager(initReminders: ReminderConstant.defaultReminders)
             dogsReminderNavigationViewController.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: modifiableDogReminders.copy() as! ReminderManager)
             // no need to pass reminders to dogsReminderNavigationViewController as reminders are empty
@@ -385,11 +390,11 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             self.navigationItem.title = "Edit Dog"
             
             dogName.text = dogForInitalizer!.dogName
-            if dogForInitalizer!.icon.isEqualToImage(image: DogConstant.defaultIcon) {
-                dogIcon.setImage(DogConstant.chooseIcon, for: .normal)
+            if dogForInitalizer!.dogIcon.isEqualToImage(image: DogConstant.defaultDogIcon) {
+                dogIcon.setImage(DogConstant.chooseIconForDog, for: .normal)
             }
             else {
-                dogIcon.setImage(dogForInitalizer!.icon, for: .normal)
+                dogIcon.setImage(dogForInitalizer!.dogIcon, for: .normal)
             }
             // has to copy reminders so changed that arent saved don't use reference data property to make actual modification
         modifiableDogReminders = dogForInitalizer!.dogReminders.copy() as? ReminderManager
@@ -399,7 +404,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
         initalDogName = dogName.text
         initalDogIcon = dogIcon.imageView!.image
         
-        // Setup AlertController for icon button now, increases responsiveness
+        // Setup AlertController for dogIcon button now, increases responsiveness
         setupDogIconImagePicker()
         
     }
@@ -420,7 +425,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
         }
     }
     
-    /// Sets up the UIAlertController that prompts the user in the different ways that they can add an icon to their dog (e.g. take a picture of choose an existing one
+    /// Sets up the UIAlertController that prompts the user in the different ways that they can add an dogIcon to their dog (e.g. take a picture of choose an existing one
     private func setupDogIconImagePicker() {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self

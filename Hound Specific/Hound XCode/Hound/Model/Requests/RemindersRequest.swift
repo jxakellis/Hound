@@ -11,7 +11,7 @@ import Foundation
 enum RemindersRequest: RequestProtocol {
     
     /// Need dog id for any request so we can't append '/reminders' until we have dogId
-    static let basePathWithoutParams: URL = DogsRequest.basePathWithoutParams
+    static let baseURLWithoutParams: URL = DogsRequest.baseURLWithoutParams
     
     // MARK: - Private Functions
     
@@ -21,19 +21,19 @@ enum RemindersRequest: RequestProtocol {
      */
     private static func get(forDogId dogId: Int, forReminderId reminderId: Int?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
-        RequestUtils.warnForPlaceholderId(dogId: dogId, reminderId: reminderId)
-        let pathWithParams: URL
+        InternalRequestUtils.warnForPlaceholderId(dogId: dogId, reminderId: reminderId)
+        let URLWithParams: URL
         
         if reminderId != nil {
-            pathWithParams = basePathWithoutParams.appendingPathComponent("/\(dogId)/reminders/\(reminderId!)")
+            URLWithParams = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/\(reminderId!)")
         }
         // don't necessarily need a reminderId, no reminderId specifys that you want all reminders for a dog
         else {
-            pathWithParams = basePathWithoutParams.appendingPathComponent("/\(dogId)/reminders")
+            URLWithParams = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders")
         }
         
         // make get request
-        InternalRequestUtils.genericGetRequest(path: pathWithParams) { responseBody, responseStatus in
+        InternalRequestUtils.genericGetRequest(forURL: URLWithParams) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -44,12 +44,12 @@ enum RemindersRequest: RequestProtocol {
      */
     private static func create(forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Reminder?, ResponseStatus) -> Void) {
         
-        RequestUtils.warnForPlaceholderId(dogId: dogId)
-        let pathWithParams: URL = basePathWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
+        InternalRequestUtils.warnForPlaceholderId(dogId: dogId)
+        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
         
         let body = InternalRequestUtils.createReminderBody(reminder: reminder)
         // make post request, assume body valid as constructed with method
-        InternalRequestUtils.genericPostRequest(path: pathWithParams, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPostRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
             if responseBody != nil, let remindersJSONArray = responseBody!["result"] as? [[String: Any]] {
                 // only one reminder
                 let reminder = Reminder(fromBody: remindersJSONArray[0])
@@ -67,12 +67,12 @@ enum RemindersRequest: RequestProtocol {
      */
     private static func create(forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping ([Reminder]?, ResponseStatus) -> Void) {
         
-        RequestUtils.warnForPlaceholderId(dogId: dogId)
-        let pathWithParams: URL = basePathWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
+        InternalRequestUtils.warnForPlaceholderId(dogId: dogId)
+        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
         
         let body = InternalRequestUtils.createRemindersBody(reminders: reminders)
         // make post request, assume body valid as constructed with method
-        InternalRequestUtils.genericPostRequest(path: pathWithParams, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPostRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
             if responseBody != nil, let remindersJSONArray = responseBody!["result"] as? [[String: Any]] {
                 var reminderArray: [Reminder] = []
                 for reminderJSON in remindersJSONArray {
@@ -92,12 +92,12 @@ enum RemindersRequest: RequestProtocol {
      */
     private static func update(forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
-        RequestUtils.warnForPlaceholderId(dogId: dogId, reminderId: reminder.reminderId)
-        let pathWithParams: URL = basePathWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
+        InternalRequestUtils.warnForPlaceholderId(dogId: dogId, reminderId: reminder.reminderId)
+        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
         
         let body = InternalRequestUtils.createReminderBody(reminder: reminder)
         // make put request, assume body valid as constructed with method
-        InternalRequestUtils.genericPutRequest(path: pathWithParams, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPutRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
     }
@@ -107,12 +107,12 @@ enum RemindersRequest: RequestProtocol {
      */
     private static func update(forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
-        RequestUtils.warnForPlaceholderId(dogId: dogId, reminders: reminders)
-        let pathWithParams: URL = basePathWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
+        InternalRequestUtils.warnForPlaceholderId(dogId: dogId, reminders: reminders)
+        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
         
         let body = InternalRequestUtils.createRemindersBody(reminders: reminders)
         // make put request, assume body valid as constructed with method
-        InternalRequestUtils.genericPutRequest(path: pathWithParams, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPutRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
     }
@@ -122,12 +122,12 @@ enum RemindersRequest: RequestProtocol {
      */
     private static func delete(forDogId dogId: Int, forReminderId reminderId: Int, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
-        RequestUtils.warnForPlaceholderId(dogId: dogId, reminderId: reminderId)
-        let pathWithParams: URL = basePathWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
+        InternalRequestUtils.warnForPlaceholderId(dogId: dogId, reminderId: reminderId)
+        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
         let body = InternalRequestUtils.createReminderIdBody(reminderId: reminderId)
         
         // make delete request
-        InternalRequestUtils.genericDeleteRequest(path: pathWithParams, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericDeleteRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -138,12 +138,12 @@ enum RemindersRequest: RequestProtocol {
      */
     private static func delete(forDogId dogId: Int, forReminderIds reminderIds: [Int], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
-        RequestUtils.warnForPlaceholderId(dogId: dogId, reminderIds: reminderIds)
-        let pathWithParams: URL = basePathWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
+        InternalRequestUtils.warnForPlaceholderId(dogId: dogId, reminderIds: reminderIds)
+        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
         let body = InternalRequestUtils.createReminderIdsBody(reminderIds: reminderIds)
         
         // make delete request
-        InternalRequestUtils.genericDeleteRequest(path: pathWithParams, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericDeleteRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         

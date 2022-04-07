@@ -16,7 +16,7 @@ class Dog: NSObject, NSCoding, NSCopying {
         let copy = try! Dog(dogName: self.dogName)
         copy.dogId = self.dogId
         copy.storedDogName = self.storedDogName
-        copy.icon = self.icon
+        copy.dogIcon = self.dogIcon
         copy.dogReminders = self.dogReminders.copy() as? ReminderManager
         copy.dogLogs = self.dogLogs
         return copy
@@ -27,7 +27,7 @@ class Dog: NSObject, NSCoding, NSCopying {
         super.init()
         dogId = aDecoder.decodeInteger(forKey: "dogId")
         storedDogName = aDecoder.decodeObject(forKey: "dogName") as? String ?? UUID().uuidString
-        icon = aDecoder.decodeObject(forKey: "icon") as? UIImage ?? DogConstant.defaultIcon
+        dogIcon = aDecoder.decodeObject(forKey: "dogIcon") as? UIImage ?? DogConstant.defaultDogIcon
         dogLogs = aDecoder.decodeObject(forKey: "dogLogs") as? LogManager ?? LogManager()
         dogReminders = aDecoder.decodeObject(forKey: "dogReminders") as? ReminderManager ?? ReminderManager()
     }
@@ -35,7 +35,7 @@ class Dog: NSObject, NSCoding, NSCopying {
     func encode(with aCoder: NSCoder) {
         aCoder.encode(dogId, forKey: "dogId")
         aCoder.encode(storedDogName, forKey: "dogName")
-        aCoder.encode(icon, forKey: "icon")
+        aCoder.encode(dogIcon, forKey: "dogIcon")
         aCoder.encode(dogLogs, forKey: "dogLogs")
         aCoder.encode(dogReminders, forKey: "dogReminders")
     }
@@ -58,7 +58,7 @@ class Dog: NSObject, NSCoding, NSCopying {
     convenience init(dogName: String?, dogIcon: UIImage? = nil) throws {
         try self.init(dogName: dogName)
         if dogIcon != nil {
-            self.icon = dogIcon!
+            self.dogIcon = dogIcon!
         }
     }
     
@@ -95,10 +95,10 @@ class Dog: NSObject, NSCoding, NSCopying {
     
     // MARK: - Traits
     
-    var icon: UIImage = DogConstant.defaultIcon
+    var dogIcon: UIImage = DogConstant.defaultDogIcon
     
     func resetIcon() {
-        icon = DogConstant.defaultIcon
+        dogIcon = DogConstant.defaultDogIcon
     }
     
     private var storedDogName: String = DogConstant.defaultDogName

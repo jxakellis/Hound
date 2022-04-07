@@ -9,8 +9,8 @@
 import Foundation
 
 protocol RequestProtocol {
-    /// base path for given endpoint where all the requests will be sent
-    static var basePathWithoutParams: URL { get }
+    /// base URL for given endpoint where all the requests will be sent
+    static var baseURLWithoutParams: URL { get }
     
     // MARK: - HTTP Methods
     
@@ -35,30 +35,30 @@ protocol RequestProtocol {
      */
     
     /**
-     If a path parameter is required for request, then it MUST be provided.  Note: The final path parameter can be omitted if you want to recieve all entries for dogs, logs, or reminders.
+     If a URL parameter is required for request, then it MUST be provided.  Note: The final URL parameter can be omitted if you want to recieve all entries for dogs, logs, or reminders.
      completionHandler returns response data: dictionary of the body and the ResponseStatus
-     Throws if necessary path parameter is missing
+     Throws if necessary URL parameter is missing
      */
     // static func get(forDogId dogId: Int?, forReminderId reminderId: Int?, forLogId logId: Int?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) throws
     
     /**
-     If a path parameter is required for request, then it MUST be provided.
+     If a URL parameter is required for request, then it MUST be provided.
      completionHandler returns response data: dictionary of the body and the ResponseStatus
-     Throws if necessary path parameter is missing or if the body component provided is invalid
+     Throws if necessary URL parameter is missing or if the body component provided is invalid
      */
     // static func create(forDogId dogId: Int?, body: [String: Any]?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) throws
     
     /**
-     If a path parameter is required for request, then it MUST be provided.
+     If a URL parameter is required for request, then it MUST be provided.
      completionHandler returns response data: dictionary of the body and the ResponseStatus
-     Throws if necessary path parameter is missing or if the body component provided is invalid
+     Throws if necessary URL parameter is missing or if the body component provided is invalid
      */
     // static func update(forDogId dogId: Int?, forReminderId reminderId: Int?, forLogId logId: Int?, body: [String: Any]?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) throws
     
     /**
-     If a path parameter is required for request, then it MUST be provided.
+     If a URL parameter is required for request, then it MUST be provided.
      completionHandler returns response data: dictionary of the body and the ResponseStatus
-     Throws if necessary path parameter is missing
+     Throws if necessary URL parameter is missing
      */
     // static func delete(forDogId dogId: Int?, forReminderId reminderId: Int?, forLogId logId: Int?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) throws
 }

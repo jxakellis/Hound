@@ -26,6 +26,8 @@ class ServerFamilyViewController: UIViewController {
         }
     }
     @IBOutlet private weak var createFamilyDisclaimer: UILabel!
+    @IBOutlet private weak var createFamilyDisclaimerLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var createFamilyDisclaimerTrailingConstraint: NSLayoutConstraint!
     
     @IBOutlet private weak var joinFamilyButton: ScaledUILabel!
     
@@ -109,27 +111,10 @@ class ServerFamilyViewController: UIViewController {
     }
     
     private func setupCreateFamilyDisclaimer() {
-        // remove storyboard constraints in favor of programic ones
-        var constraintsToDeactivate: [NSLayoutConstraint] = []
-        for constraint in createFamilyDisclaimer.constraints where constraint.firstAttribute == .leading ||
-            constraint.secondAttribute == .leading ||
-            constraint.firstAttribute == .trailing ||
-            constraint.secondAttribute == .trailing {
-            constraintsToDeactivate.append(constraint)
-                
-        }
-        NSLayoutConstraint.deactivate(constraintsToDeactivate)
-        
         createFamilyDisclaimer.translatesAutoresizingMaskIntoConstraints = false
-        createFamilyDisclaimer.numberOfLines = 0
-        createFamilyDisclaimer.font = .systemFont(ofSize: 12.5, weight: .light)
-        createFamilyDisclaimer.textColor = .white
         
-        // add proper constraints that adapt to the rounded corners
-        let constraints = [
-            createFamilyDisclaimer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10 + (createFamilyButton.frame.height/4)),
-            createFamilyDisclaimer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10 - (createFamilyButton.frame.height/4))]
-        NSLayoutConstraint.activate(constraints)
+        createFamilyDisclaimerLeadingConstraint.constant += (createFamilyButton.frame.height/4)
+        createFamilyDisclaimerTrailingConstraint.constant -= (createFamilyButton.frame.height/4)
     }
     
     private func setupJoinFamily() {

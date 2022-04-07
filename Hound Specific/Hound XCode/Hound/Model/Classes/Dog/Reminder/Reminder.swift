@@ -484,18 +484,6 @@ class Reminder: NSObject, NSCoding, NSCopying {
         
     }
     
-    /// The reminder's next alarm was manually skipped by the user.
-    func skipNextAlarm() {
-        let executionBasisBackup = executionBasis
-        changeIsSkipping(newSkipStatus: true)
-        changeExecutionBasis(newExecutionBasis: executionBasisBackup, shouldResetIntervalsElapsed: false)
-    }
-    
-    /// The reminder's next alarm was manually skipped by the user.
-    func unskipNextAlarm() {
-        changeIsSkipping(newSkipStatus: false)
-    }
-    
     /// Finds the date which the reminder should be transformed from isSkipping to not isSkipping. This is the date at which the skipped reminder would have occured.
     func unskipDate() -> Date? {
         if currentReminderMode == .monthly && monthlyComponents.isSkipping == true {
@@ -509,38 +497,52 @@ class Reminder: NSObject, NSCoding, NSCopying {
         }
     }
     
-    /// Typically call this function when a user driven action directly intends to change the skip status of the weekly or monthy components. This function handles both isSkipping and the logs related to isSkipping. If the newSkipStatus is false, then it will remove the log added by setting isSkipping to true, provided the log's date hasn't been modified
+    /// Call this function when a user driven action directly intends to change the skip status of the weekly or monthy components. This function only timing related data, no logs are added or removed. Additioanlly, if oneTime is getting skipped, it must be deleted externally.
     func changeIsSkipping(newSkipStatus: Bool) {
-        if reminderType == .weekly {
-            guard newSkipStatus != weeklyComponents.isSkipping else {
-                return
-            }
-            
-            weeklyComponents.isSkipping = newSkipStatus
+        switch reminderType {
+        case .oneTime: break
+            // can only skip, can't unskip
+            // do nothing inside the reminder, this is handled externally
+        case .countdown:
+            // can only skip, can't unskip
             if newSkipStatus == true {
+                // skipped, reset to now so the reminder will start counting down all over again
+                self.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
+            }
+        case .weekly:
+            // weekly can skip and unskip
+            guard newSkipStatus != weeklyComponents.isSkipping else {
+                break
+            }
+            // store new state
+            weeklyComponents.isSkipping = newSkipStatus
+            
+            if newSkipStatus == true {
+                // skipping
                 weeklyComponents.isSkippingDate = Date()
             }
             else {
+                // since we are unskipping, we want to revert to the previous executionBasis, which happens to be isSkippingDate
+                self.changeExecutionBasis(newExecutionBasis: weeklyComponents.isSkippingDate!, shouldResetIntervalsElapsed: true)
                 weeklyComponents.isSkippingDate = nil
             }
-        }
-        else if reminderType == .monthly {
+        case .monthly:
             guard newSkipStatus != monthlyComponents.isSkipping else {
                 return
             }
-            
+            // store new state
             monthlyComponents.isSkipping = newSkipStatus
+            
             if newSkipStatus == true {
+                // skipping
                 monthlyComponents.isSkippingDate = Date()
             }
             else {
+                // since we are unskipping, we want to revert to the previous executionBasis, which happens to be isSkippingDate
+                self.changeExecutionBasis(newExecutionBasis: monthlyComponents.isSkippingDate!, shouldResetIntervalsElapsed: true)
                 monthlyComponents.isSkippingDate = nil
             }
         }
-        else {
-            // do nothing
-        }
-        
     }
     
     // MARK: - Enable

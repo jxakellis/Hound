@@ -31,46 +31,6 @@ enum RequestUtils {
             }
         }
     }
-    /// Provides warning if the id of anything is set to a placeholder value. 
-    static func warnForPlaceholderId(dogId: Int? = nil, reminders: [Reminder]? = nil, reminderId: Int? = nil, reminderIds: [Int]? = nil, logId: Int? = nil) {
-        if UserInformation.userId == nil {
-            AppDelegate.APIRequestLogger.warning("Warning: userId is nil")
-        }
-        else if UserInformation.userId! < 0 {
-            AppDelegate.APIRequestLogger.warning("Warning: userId is placeholder \(UserInformation.userId!)")
-        }
-        if UserInformation.familyId == nil {
-            AppDelegate.APIRequestLogger.warning("Warning: familyId is nil")
-        }
-        else if UserInformation.familyId! < 0 {
-            AppDelegate.APIRequestLogger.warning("Warning: familyId is placeholder \(UserInformation.familyId!)")
-        }
-        if dogId != nil && dogId! < 0 {
-            AppDelegate.APIRequestLogger.warning("Warning: dogId is placeholder \(dogId!)")
-        }
-        if reminders != nil {
-            for singleReminder in reminders! where singleReminder.reminderId < 0 {
-                AppDelegate.APIRequestLogger.warning("Warning: reminderId is placeholder \(singleReminder.reminderId)")
-            }
-        }
-        if reminderIds != nil {
-            for singleReminderId in reminderIds! where singleReminderId < 0 {
-                AppDelegate.APIRequestLogger.warning("Warning: reminderId is placeholder \(singleReminderId)")
-            }
-        }
-        if reminderId != nil && reminderId! < 0 {
-            AppDelegate.APIRequestLogger.warning("Warning: reminderId is placeholder \(reminderId!)")
-        }
-        if logId != nil && logId! < 0 {
-            AppDelegate.APIRequestLogger.warning("Warning: logId is placeholder \(logId!)")
-        }
-    }
-    /// Provides warning if the id of anything is set to a placeholder value.
-    static func warnForEmptyBody(forPath path: URL, forBody body: [String: Any]) {
-        if body.keys.count == 0 {
-            AppDelegate.APIRequestLogger.warning("Warning: Body is empty \nFor path: \(path)")
-        }
-    }
     
     /// Presents a custom made loadingAlertController on the global presentor that blocks everything until endAlertControllerQueryIndictator is called
     static func beginAlertControllerQueryIndictator() {

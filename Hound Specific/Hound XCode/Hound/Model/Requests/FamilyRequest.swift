@@ -11,9 +11,9 @@ import Foundation
 /// Static word needed to conform to protocol. Enum preferred to a class as you can't instance an enum that is all static
 enum FamilyRequest: RequestProtocol {
     
-    static let basePathWithoutParams: URL = UserRequest.basePathWithUserId.appendingPathComponent("/family")
-    // UserRequest basePath with the userId path param appended on
-    static var basePathWithFamilyId: URL { return FamilyRequest.basePathWithoutParams.appendingPathComponent("/\(UserInformation.familyId ?? -1)") }
+    static let baseURLWithoutParams: URL = UserRequest.baseURLWithUserId.appendingPathComponent("/family")
+    // UserRequest baseURL with the userId path param appended on
+    static var baseURLWithFamilyId: URL { return FamilyRequest.baseURLWithoutParams.appendingPathComponent("/\(UserInformation.familyId ?? -1)") }
     
     // MARK: Private Functions
     
@@ -22,9 +22,9 @@ enum FamilyRequest: RequestProtocol {
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
     private static func get(completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        RequestUtils.warnForPlaceholderId()
+        InternalRequestUtils.warnForPlaceholderId()
         // at this point in time, an error can only occur if there is a invalid body provided. Since there is no body, there is no risk of an error.
-        InternalRequestUtils.genericGetRequest(path: basePathWithFamilyId) { responseBody, responseStatus in
+        InternalRequestUtils.genericGetRequest(forURL: baseURLWithFamilyId) { responseBody, responseStatus in
             DispatchQueue.main.async {
                 completionHandler(responseBody, responseStatus)
             }
@@ -38,7 +38,7 @@ enum FamilyRequest: RequestProtocol {
     private static func create(completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
         
         // make post request, assume body valid as constructed with method
-        InternalRequestUtils.genericPostRequest(path: basePathWithoutParams, body: [ : ]) { responseBody, responseStatus in
+        InternalRequestUtils.genericPostRequest(forURL: baseURLWithoutParams, forBody: [ : ]) { responseBody, responseStatus in
             DispatchQueue.main.async {
                 if responseBody != nil, let familyId = responseBody!["result"] as? Int {
                     completionHandler(familyId, responseStatus)
@@ -55,10 +55,10 @@ enum FamilyRequest: RequestProtocol {
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
     private static func update(body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        RequestUtils.warnForPlaceholderId()
+        InternalRequestUtils.warnForPlaceholderId()
         
         // make put request, assume body valid as constructed with method
-        InternalRequestUtils.genericPutRequest(path: basePathWithoutParams, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPutRequest(forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -68,8 +68,8 @@ enum FamilyRequest: RequestProtocol {
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
     private static func delete(completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        RequestUtils.warnForPlaceholderId()
-        InternalRequestUtils.genericDeleteRequest(path: basePathWithFamilyId) { responseBody, responseStatus in
+        InternalRequestUtils.warnForPlaceholderId()
+        InternalRequestUtils.genericDeleteRequest(forURL: baseURLWithFamilyId) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         

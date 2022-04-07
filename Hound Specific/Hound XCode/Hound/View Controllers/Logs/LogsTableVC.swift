@@ -350,7 +350,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
             // indexPath.row -1 corrects for the first row in the section being the header
             let logToDisplay = targetUniqueLogsNestedArray[indexPath.row-1]
             let dog = try! getDogManager().findDog(forDogId: logToDisplay.0)
-            let icon = dog.icon
+            let dogIcon = dog.dogIcon
 
             if UserConfiguration.isCompactView == true {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyCompact", for: indexPath)
@@ -361,21 +361,21 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
 
                 return cell
             }
-            // has icon
-            else if !(icon.isEqualToImage(image: DogConstant.defaultIcon)) {
+            // has dogIcon
+            else if !(dogIcon.isEqualToImage(image: DogConstant.defaultDogIcon)) {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyRegularWithIcon", for: indexPath)
 
-                let customCell = cell as! LogsLargeBodyWithIconTableViewCell
+                let customCell = cell as! LogsLargeBodyWithDogIconTableViewCell
 
                 customCell.setup(parentDogId: logToDisplay.0, log: logToDisplay.1)
 
                 return cell
             }
-            // no icon
+            // no dogIcon
             else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyRegularWithoutIcon", for: indexPath)
 
-                let customCell = cell as! LogsLargeBodyWithoutIconTableViewCell
+                let customCell = cell as! LogsLargeBodyWithoutDogIconTableViewCell
 
                 customCell.setup(parentDogId: logToDisplay.0, log: logToDisplay.1)
 

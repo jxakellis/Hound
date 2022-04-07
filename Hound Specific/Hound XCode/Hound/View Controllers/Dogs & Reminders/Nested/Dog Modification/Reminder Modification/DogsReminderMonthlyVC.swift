@@ -57,7 +57,7 @@ class DogsReminderMonthlyViewController: UIViewController, UIGestureRecognizerDe
             self.datePicker.date = self.passedTimeOfDay!
         }
         else {
-            self.datePicker.date = Date.roundDate(targetDate: Date(), roundingInterval: 60.0*5, roundingMethod: .up)
+            self.datePicker.date = Date.roundDate(targetDate: Date(), roundingInterval: TimeInterval(60 * datePicker.minuteInterval), roundingMethod: .up)
             passedTimeOfDay = datePicker.date
         }
 

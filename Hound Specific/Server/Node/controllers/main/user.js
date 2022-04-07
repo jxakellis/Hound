@@ -15,9 +15,9 @@ Known:
 */
 
 const getUser = async (req, res) => {
-  // apple user identifier
-  const userIdentifier = req.params.userId;
-  // hound user id id
+  // apple userIdentifier
+  const userIdentifier = req.query.userIdentifier;
+  // hound userId
   const userId = formatNumber(req.params.userId);
   if (userId) {
     try {

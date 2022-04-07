@@ -9,7 +9,7 @@
 import Foundation
 
 enum DogsRequest: RequestProtocol {
-    static let basePathWithoutParams: URL = FamilyRequest.basePathWithFamilyId.appendingPathComponent("/dogs")
+    static let baseURLWithoutParams: URL = FamilyRequest.baseURLWithFamilyId.appendingPathComponent("/dogs")
     
     // MARK: - Private Functions
     
@@ -19,30 +19,30 @@ enum DogsRequest: RequestProtocol {
      */
     private static func get(forDogId dogId: Int?, reminders: Bool, logs: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
-        RequestUtils.warnForPlaceholderId(dogId: dogId)
+        InternalRequestUtils.warnForPlaceholderId(dogId: dogId)
         
-        let pathWithParams: URL
-        var path: URLComponents!
+        let URLWithParams: URL
+        var urlComponents: URLComponents!
         // special case where we append the query parameter of all. Its value doesn't matter but it just tells the server that we want the logs and reminders of the dog too.
         if dogId != nil {
-            path = URLComponents(url: basePathWithoutParams.appendingPathComponent("/\(dogId!)"), resolvingAgainstBaseURL: false)!
+            urlComponents = URLComponents(url: baseURLWithoutParams.appendingPathComponent("/\(dogId!)"), resolvingAgainstBaseURL: false)!
             
         }
         else {
-            path = URLComponents(url: basePathWithoutParams.appendingPathComponent(""), resolvingAgainstBaseURL: false)!
+            urlComponents = URLComponents(url: baseURLWithoutParams.appendingPathComponent(""), resolvingAgainstBaseURL: false)!
         }
         
-        path.queryItems = []
+        urlComponents.queryItems = []
         if reminders == true {
-            path.queryItems!.append(URLQueryItem(name: "reminders", value: "true"))
+            urlComponents.queryItems!.append(URLQueryItem(name: "reminders", value: "true"))
         }
         if logs == true {
-            path.queryItems!.append(URLQueryItem(name: "logs", value: "true"))
+            urlComponents.queryItems!.append(URLQueryItem(name: "logs", value: "true"))
         }
-        pathWithParams = path.url!
+        URLWithParams = urlComponents.url!
         
         // make get request
-        InternalRequestUtils.genericGetRequest(path: pathWithParams) { responseBody, responseStatus in
+        InternalRequestUtils.genericGetRequest(forURL: URLWithParams) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -52,11 +52,11 @@ enum DogsRequest: RequestProtocol {
      completionHandler returns response data: dogId for the created dog and the ResponseStatus
      */
     private static func create(forDog dog: Dog, completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
-        RequestUtils.warnForPlaceholderId()
+        InternalRequestUtils.warnForPlaceholderId()
         let body = InternalRequestUtils.createDogBody(dog: dog)
         
         // make put request, assume body valid as constructed with method
-        InternalRequestUtils.genericPostRequest(path: basePathWithoutParams, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPostRequest(forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
             
             if responseBody != nil, let dogId = responseBody!["result"] as? Int {
                 completionHandler(dogId, responseStatus)
@@ -72,13 +72,13 @@ enum DogsRequest: RequestProtocol {
      */
     private static func update(forDog dog: Dog, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
-        RequestUtils.warnForPlaceholderId(dogId: dog.dogId)
-        let pathWithParams: URL = basePathWithoutParams.appendingPathComponent("/\(dog.dogId)")
+        InternalRequestUtils.warnForPlaceholderId(dogId: dog.dogId)
+        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dog.dogId)")
         
         let body = InternalRequestUtils.createDogBody(dog: dog)
         
         // make put request, assume body valid as constructed with method
-        InternalRequestUtils.genericPutRequest(path: pathWithParams, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPutRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -89,11 +89,11 @@ enum DogsRequest: RequestProtocol {
      */
     private static func delete(forDogId dogId: Int, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
-        RequestUtils.warnForPlaceholderId(dogId: dogId)
-        let pathWithParams: URL = basePathWithoutParams.appendingPathComponent("/\(dogId)")
+        InternalRequestUtils.warnForPlaceholderId(dogId: dogId)
+        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)")
         
         // make delete request
-        InternalRequestUtils.genericDeleteRequest(path: pathWithParams) { responseBody, responseStatus in
+        InternalRequestUtils.genericDeleteRequest(forURL: URLWithParams) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -116,6 +116,11 @@ extension DogsRequest {
                 // Array of log JSON [{dog1:'foo'},{dog2:'bar'}]
                 if let result = responseBody!["result"] as? [[String: Any]] {
                     let dog = Dog(fromBody: result[0])
+                    // if we have an image stored locally for a dog, then we apply the icon. if the dog has no icon (because someone else in the family made it and the user hasn't selected their own icon OR because the user made it and never added an icon) then the dog just gets the defaultDogIcon
+                    print("GET Dog Image: \(LocalConfiguration.dogIcons[dog.dogId])")
+                    print(LocalConfiguration.dogIcons.description)
+                    dog.dogIcon = LocalConfiguration.dogIcons[dog.dogId] ?? DogConstant.defaultDogIcon
+                    print(LocalConfiguration.dogIcons.description)
                     // able to add all
                     DispatchQueue.main.async {
                         completionHandler(dog)
@@ -154,7 +159,26 @@ extension DogsRequest {
                 if let result = responseBody!["result"] as? [[String: Any]] {
                     for dogBody in result {
                         let dog = Dog(fromBody: dogBody)
+                        // if we have an image stored locally for a dog, then we apply the icon. if the dog has no icon (because someone else in the family made it and the user hasn't selected their own icon OR because the user made it and never added an icon) then the dog just gets the defaultDogIcon
+                        print("Get Dog Icon: \(LocalConfiguration.dogIcons[dog.dogId])")
+                        print(LocalConfiguration.dogIcons.description)
+                        dog.dogIcon = LocalConfiguration.dogIcons[dog.dogId] ?? DogConstant.defaultDogIcon
+                        print(LocalConfiguration.dogIcons.description)
                         dogArray.append(dog)
+                    }
+                    
+                    // iterate through the dogIds of the stored dogIcons
+                    for dogIdKey in LocalConfiguration.dogIcons.keys {
+                        // if the dogArray does not contain the dogIdKey from the dictionary, that means we are storing a dogId & UIImage key-value pair for a dog that no longer exists
+                        if dogArray.contains(where: { dog in
+                                return dog.dogId == dogIdKey
+                        }) == false {
+                            print("\(dogIdKey) is not contained")
+                            LocalConfiguration.dogIcons[dogIdKey] = nil
+                        }
+                        else {
+                            print("\(dogIdKey) is still contained")
+                        }
                     }
                     // able to add all
                     DispatchQueue.main.async {
@@ -192,6 +216,11 @@ extension DogsRequest {
                 switch responseStatus {
                 case .successResponse:
                     if dogId != nil {
+                        // save dogIcon to local since everything else saved to server
+                        print("Create Dog Icon")
+                        print(LocalConfiguration.dogIcons.description)
+                        LocalConfiguration.dogIcons[dogId!] = dog.dogIcon
+                        print(LocalConfiguration.dogIcons.description)
                         completionHandler(dogId!)
                     }
                     else {
@@ -216,6 +245,11 @@ extension DogsRequest {
             DispatchQueue.main.async {
                 switch responseStatus {
                 case .successResponse:
+                    // update dogIcon locally since everything else saved to server
+                    print("Update Dog Icon")
+                    print(LocalConfiguration.dogIcons.description)
+                    LocalConfiguration.dogIcons[dog.dogId] = dog.dogIcon
+                    print(LocalConfiguration.dogIcons.description)
                     completionHandler(true)
                 case .failureResponse:
                     completionHandler(false)
@@ -236,6 +270,11 @@ extension DogsRequest {
             DispatchQueue.main.async {
                 switch responseStatus {
                 case .successResponse:
+                    // delete dogIcon locally since everything else saved to server
+                    print("DELETE Dog Icon")
+                    print(LocalConfiguration.dogIcons.description)
+                    LocalConfiguration.dogIcons[dogId] = nil
+                    print(LocalConfiguration.dogIcons.description)
                     completionHandler(true)
                 case .failureResponse:
                     completionHandler(false)

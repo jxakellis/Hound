@@ -52,7 +52,7 @@ class DogsReminderOneTimeViewController: UIViewController, UIGestureRecognizerDe
             self.datePicker.date = self.passedDate!
         }
         else {
-            self.datePicker.date = Date.roundDate(targetDate: Date(), roundingInterval: 60.0*5, roundingMethod: .up)
+            self.datePicker.date = Date.roundDate(targetDate: Date(), roundingInterval: TimeInterval(60 * datePicker.minuteInterval), roundingMethod: .up)
             passedDate = datePicker.date
         }
 
@@ -62,7 +62,7 @@ class DogsReminderOneTimeViewController: UIViewController, UIGestureRecognizerDe
         }
 
         // they can't choose a one time alarm that isn't in the future, otherwise there is no point
-        datePicker.minimumDate = Date()
+        datePicker.minimumDate = Date.roundDate(targetDate: Date(), roundingInterval: TimeInterval(60 * datePicker.minuteInterval), roundingMethod: .up)
 
     }
 

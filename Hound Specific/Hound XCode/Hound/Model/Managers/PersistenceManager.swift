@@ -13,6 +13,8 @@ enum PersistenceManager {
     /// Called by App or Scene Delegate when setting up in didFinishLaunchingWithOptions, can be either the first time setup or a recurring setup (i.e. not the app isnt being opened for the first time)
     static func setup(isRecurringSetup: Bool = false) {
         
+        UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
+        
         if isRecurringSetup == true {
             // not first time setup
             
@@ -29,8 +31,6 @@ enum PersistenceManager {
     /// Sets the data to default values as if the user is opening the app for the first time
     static private func firstTimeSetup() {
         
-        UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
-        
         MainTabBarViewController.selectedEntryIndex = 0
         
         // MARK: User Information
@@ -38,42 +38,24 @@ enum PersistenceManager {
         UserDefaults.standard.setValue(UserInformation.userId, forKey: UserDefaultsKeys.userId.rawValue)
         UserDefaults.standard.setValue(UserInformation.familyId, forKey: UserDefaultsKeys.familyId.rawValue)
         
+        // These values are retrieved from Sign In With Apple so therefore need to be persisted specially. All other values can be retrieved using these values.
         let keychain = KeychainSwift()
         
         UserInformation.userIdentifier = keychain.get("userIdentifier")
         UserInformation.userEmail = keychain.get("userEmail") ?? UserInformation.userEmail
         UserInformation.userFirstName = keychain.get("userFirstName") ?? UserInformation.userFirstName
         UserInformation.userLastName = keychain.get("userLastName") ?? UserInformation.userLastName
-        
-        // Data below is retrieved from the server, so no need to store/persist locally
-        /*
-         
-         let data = DogManagerConstant.defaultDogManager
-         let encodedData = try! NSKeyedArchiver.archivedData(withRootObject: data, requiringSecureCoding: false)
-         UserDefaults.standard.setValue(encodedData, forKey: UserDefaultsKeys.dogManager.rawValue)
          
          // MARK: User Configuration
          
-         
-         
-         UserDefaults.standard.setValue(UserConfiguration.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
-         
-         UserDefaults.standard.setValue(UserConfiguration.snoozeLength, forKey: UserDefaultsKeys.snoozeLength.rawValue)
-         
-         
-         UserDefaults.standard.setValue(UserConfiguration.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
-         UserDefaults.standard.setValue(UserConfiguration.isLoudNotification, forKey: UserDefaultsKeys.isLoudNotification.rawValue)
-         
-         UserDefaults.standard.setValue(UserConfiguration.isFollowUpEnabled, forKey: UserDefaultsKeys.isFollowUpEnabled.rawValue)
-         UserDefaults.standard.setValue(UserConfiguration.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
-         UserDefaults.standard.setValue(UserConfiguration.notificationSound.rawValue, forKey: UserDefaultsKeys.notificationSound.rawValue)
-         
-         UserDefaults.standard.setValue(UserConfiguration.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
-         UserDefaults.standard.setValue(UserConfiguration.interfaceStyle.rawValue, forKey: UserDefaultsKeys.interfaceStyle.rawValue)
-         
-         */
+        // Data is retrieved from the server, so no need to store/persist locally
         
         // MARK: Local Configuration
+        
+        let dataDogIcons = LocalConfiguration.dogIcons
+        let encodedData = try! NSKeyedArchiver.archivedData(withRootObject: dataDogIcons, requiringSecureCoding: false)
+        UserDefaults.standard.set(encodedData, forKey: UserDefaultsKeys.dogIcons.rawValue)
+        
         UserDefaults.standard.setValue(LocalConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
@@ -95,6 +77,7 @@ enum PersistenceManager {
         UserInformation.userId = UserDefaults.standard.value(forKey: UserDefaultsKeys.userId.rawValue) as? Int
         UserInformation.familyId = UserDefaults.standard.value(forKey: UserDefaultsKeys.familyId.rawValue) as? Int
         
+        // These values are retrieved from Sign In With Apple so therefore need to be persisted specially. All other values can be retrieved using these values.
         let keychain = KeychainSwift()
         
         UserInformation.userIdentifier = keychain.get("userIdentifier")
@@ -102,33 +85,25 @@ enum PersistenceManager {
         UserInformation.userFirstName = keychain.get("userFirstName") ?? UserInformation.userFirstName
         UserInformation.userLastName = keychain.get("userLastName") ?? UserInformation.userLastName
         
-        /*
          // MARK: User Configuration
          
-         // Data below is retrieved from the server, so no need to store/persist locally
+         // Data is retrieved from the server, so no need to store/persist locally
          
-         UserConfiguration.isPaused = UserDefaults.standard.value(forKey: UserDefaultsKeys.isPaused.rawValue) as? Bool ?? UserConfiguration.isPaused
-         
-         UserConfiguration.snoozeLength = UserDefaults.standard.value(forKey: UserDefaultsKeys.snoozeLength.rawValue) as? TimeInterval ?? UserConfiguration.snoozeLength
-         
-         
-         
-         UserConfiguration.isNotificationEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationEnabled.rawValue) as? Bool ?? UserConfiguration.isNotificationEnabled
-         
-         UserConfiguration.isLoudNotification = UserDefaults.standard.value(forKey: UserDefaultsKeys.isLoudNotification.rawValue) as? Bool ?? UserConfiguration.isLoudNotification
-         
-         UserConfiguration.isFollowUpEnabled = UserDefaults.standard.value(forKey: UserDefaultsKeys.isFollowUpEnabled.rawValue) as? Bool ?? UserConfiguration.isFollowUpEnabled
-         
-         UserConfiguration.followUpDelay = UserDefaults.standard.value(forKey: UserDefaultsKeys.followUpDelay.rawValue) as? TimeInterval ?? UserConfiguration.followUpDelay
-         
-         UserConfiguration.notificationSound = NotificationSound(rawValue: UserDefaults.standard.value(forKey: UserDefaultsKeys.notificationSound.rawValue) as? String ?? NotificationSound.radar.rawValue)!
-         
-         UserConfiguration.isCompactView = UserDefaults.standard.value(forKey: UserDefaultsKeys.isCompactView.rawValue) as? Bool ?? UserConfiguration.isCompactView
-         
-         UserConfiguration.interfaceStyle = UIUserInterfaceStyle(rawValue: UserDefaults.standard.value(forKey: UserDefaultsKeys.interfaceStyle.rawValue) as? Int ?? UIUserInterfaceStyle.unspecified.rawValue)!
-         
-         */
         // MARK: Local Configuration
+        
+        //checks to see if data decoded sucessfully
+        
+        if let dataDogIcons: Data = UserDefaults.standard.data(forKey: UserDefaultsKeys.dogIcons.rawValue) {
+            do {
+                let unarchiver = try NSKeyedUnarchiver.init(forReadingFrom: dataDogIcons)
+                unarchiver.requiresSecureCoding = false
+                LocalConfiguration.dogIcons = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? [LocalDogIcon] ?? []
+            }
+            catch {
+                // TO DO add error message to alert user
+                AppDelegate.generalLogger.error("Unable to unarchive localDogIcons")
+            }
+        }
         
         LocalConfiguration.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as? Bool ?? LocalConfiguration.isNotificationAuthorized
         
@@ -188,33 +163,17 @@ enum PersistenceManager {
             UserDefaults.standard.setValue(UserInformation.familyId, forKey: UserDefaultsKeys.familyId.rawValue)
             
             // other user info from ASAuthorization is saved immediately to the keychain
-            
-            /*
              
              // MARK: User Configuration
              
              // Data below is retrieved from the server, so no need to store/persist locally
-             
-             // Pause State
-             UserDefaults.standard.setValue(UserConfiguration.isPaused, forKey: UserDefaultsKeys.isPaused.rawValue)
-             
-             // Snooze interval
-             
-             UserDefaults.standard.setValue(UserConfiguration.snoozeLength, forKey: UserDefaultsKeys.snoozeLength.rawValue)
-             
-             // Notifications
-             
-             UserDefaults.standard.setValue(UserConfiguration.isNotificationEnabled, forKey: UserDefaultsKeys.isNotificationEnabled.rawValue)
-             UserDefaults.standard.setValue(UserConfiguration.isLoudNotification, forKey: UserDefaultsKeys.isLoudNotification.rawValue)
-             UserDefaults.standard.setValue(UserConfiguration.isFollowUpEnabled, forKey: UserDefaultsKeys.isFollowUpEnabled.rawValue)
-             UserDefaults.standard.setValue(UserConfiguration.followUpDelay, forKey: UserDefaultsKeys.followUpDelay.rawValue)
-             UserDefaults.standard.setValue(UserConfiguration.notificationSound.rawValue, forKey: UserDefaultsKeys.notificationSound.rawValue)
-             UserDefaults.standard.setValue(UserConfiguration.isCompactView, forKey: UserDefaultsKeys.isCompactView.rawValue)
-             UserDefaults.standard.setValue(UserConfiguration.interfaceStyle.rawValue, forKey: UserDefaultsKeys.interfaceStyle.rawValue)
-             
-             */
             
             // MARK: Local Configuration
+            
+            let dataDogIcons = LocalConfiguration.dogIcons
+            let encodedData = try! NSKeyedArchiver.archivedData(withRootObject: dataDogIcons, requiringSecureCoding: false)
+            UserDefaults.standard.set(encodedData, forKey: UserDefaultsKeys.dogIcons.rawValue)
+            
             UserDefaults.standard.setValue(LocalConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
@@ -231,7 +190,7 @@ enum PersistenceManager {
             guard LocalConfiguration.isNotificationAuthorized && UserConfiguration.isNotificationEnabled && !UserConfiguration.isPaused else {
                 return
             }
-            AppDelegate.generalLogger.notice("handleNotifications passed guard statement")
+            AppDelegate.generalLogger.notice("handleNotifications enabled by user settings, will create notifications")
             
             // remove duplicate notifications if app is backgrounded then terminated
             

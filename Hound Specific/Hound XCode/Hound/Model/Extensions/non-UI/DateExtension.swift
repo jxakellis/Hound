@@ -10,6 +10,10 @@ import Foundation
 
 extension Date {
     
+    func ISO8601FormatWithFractionalSeconds() -> String {
+        return self.ISO8601Format(Date.ISO8601FormatStyle.init(dateSeparator: .dash, dateTimeSeparator: .standard, timeSeparator: .colon, includingFractionalSeconds: true))
+    }
+    
     /// Returns a Date object that is the product of adding interval: TimeInterval to pastDate until it is greater than or equal to current date.
     static func executionDate(lastExecution pastDate: Date, currentDate: Date = Date(), interval: TimeInterval) -> Date {
         

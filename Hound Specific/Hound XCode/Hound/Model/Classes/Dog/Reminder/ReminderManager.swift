@@ -121,7 +121,6 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
         for reminder in newReminders {
             addReminder(newReminder: reminder)
         }
-        sortReminders()
     }
     
     // MARK: Update Reminders
@@ -145,7 +144,6 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
         for reminder in updatedReminders {
             updateReminder(updatedReminder: reminder)
         }
-        sortReminders()
     }
     
     // MARK: Remove Reminders

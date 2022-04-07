@@ -27,15 +27,17 @@ enum DogManagerConstant {
 
 enum DogConstant {
     static let defaultDogName: String = "Bella"
-    static let defaultIcon: UIImage = UIImage.init(named: "pawFullResolutionWhite")!
+    static let defaultDogIcon: UIImage = UIImage.init(named: "pawFullResolutionWhite")!
     static let defaultDogId: Int = -1
-    static let chooseIcon: UIImage = UIImage.init(named: "chooseIcon")!
+    static let chooseIconForDog: UIImage = UIImage.init(named: "chooseIconForDog")!
 }
 
 enum LogConstant {
     static let defaultAction = LogAction.allCases[0]
     static let defaultLogId: Int = -1
     static let defaultLogNote: String = ""
+    /// when looking to unskip a reminder, we look for a log that has its time unmodified. if its logDate within a certain percision of the skipdate, then we assume that log is from that reminder skipping.
+    static let logRemovalPrecision: Double = 0.025
 }
 
 enum ReminderConstant {

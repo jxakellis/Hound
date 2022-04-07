@@ -64,6 +64,8 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // TO DO add controls to leave family and, if head of family, to kick people and change subscription
 
         statusDescription.text = "Family Code: \(FamilyConfiguration.familyCode)\nLocked: \(FamilyConfiguration.isLocked)"
         

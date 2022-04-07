@@ -11,30 +11,25 @@ import Foundation
 /// Static word needed to conform to protocol. Enum preferred to a class as you can't instance an enum that is all static
 enum UserRequest: RequestProtocol {
     
-    static let basePathWithoutParams: URL = InternalRequestUtils.basePathWithoutParams.appendingPathComponent("/user")
-    // UserRequest basePath with the userId path param appended on
-    static var basePathWithUserId: URL { return UserRequest.basePathWithoutParams.appendingPathComponent("/\(UserInformation.userId ?? -1)") }
+    static let baseURLWithoutParams: URL = InternalRequestUtils.baseURLWithoutParams.appendingPathComponent("/user")
+    // UserRequest baseURL with the userId URL param appended on
+    static var baseURLWithUserId: URL { return UserRequest.baseURLWithoutParams.appendingPathComponent("/\(UserInformation.userId ?? -1)") }
     
     /**
-     Uses userId to retrieve information
+     Uses userIdentifier and (if present) userId to retrieve information
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
     static func get(completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        RequestUtils.warnForPlaceholderId()
-        // at this point in time, an error can only occur if there is a invalid body provided. Since there is no body, there is no risk of an error.
-        InternalRequestUtils.genericGetRequest(path: basePathWithUserId) { responseBody, responseStatus in
-            DispatchQueue.main.async {
-                completionHandler(responseBody, responseStatus)
-            }
+        InternalRequestUtils.warnForPlaceholderId()
+        let URL: URL!
+        if UserInformation.userId != nil {
+            URL = baseURLWithUserId
         }
-        
-    }
-    /**
-     Uses forUserIdentifier to retrieve information
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
-     */
-    static func get(forUserIdentifier: String, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        InternalRequestUtils.genericGetRequest(path: basePathWithoutParams.appendingPathComponent("/\(forUserIdentifier)")) { responseBody, responseStatus in
+        else {
+            URL =  baseURLWithoutParams
+        }
+        // at this point in time, an error can only occur if there is a invalid body provided. Since there is no body, there is no risk of an error.
+        InternalRequestUtils.genericGetRequest(forURL: URL) { responseBody, responseStatus in
             DispatchQueue.main.async {
                 completionHandler(responseBody, responseStatus)
             }
@@ -48,7 +43,7 @@ enum UserRequest: RequestProtocol {
     static func create(completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
         
         // make post request, assume body valid as constructed with method
-        InternalRequestUtils.genericPostRequest(path: basePathWithoutParams, body: InternalRequestUtils.createFullUserBody()) { responseBody, responseStatus in
+        InternalRequestUtils.genericPostRequest(forURL: baseURLWithoutParams, forBody: InternalRequestUtils.createFullUserBody()) { responseBody, responseStatus in
             DispatchQueue.main.async {
             if responseBody != nil, let userId = responseBody!["result"] as? Int {
                 completionHandler(userId, responseStatus)
@@ -68,10 +63,10 @@ enum UserRequest: RequestProtocol {
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
     private static func update(body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        RequestUtils.warnForPlaceholderId()
+        InternalRequestUtils.warnForPlaceholderId()
         
         // make put request, assume body valid as constructed with method
-        InternalRequestUtils.genericPutRequest(path: basePathWithUserId, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPutRequest(forURL: baseURLWithUserId, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -82,11 +77,11 @@ enum UserRequest: RequestProtocol {
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
     private static func updateAll(completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        RequestUtils.warnForPlaceholderId()
+        InternalRequestUtils.warnForPlaceholderId()
         let body = InternalRequestUtils.createFullUserBody()
         
         // make put request, assume body valid as constructed with method
-        InternalRequestUtils.genericPutRequest(path: basePathWithUserId, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPutRequest(forURL: baseURLWithUserId, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -96,8 +91,8 @@ enum UserRequest: RequestProtocol {
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
     private static func delete(completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        RequestUtils.warnForPlaceholderId()
-        InternalRequestUtils.genericDeleteRequest(path: basePathWithUserId) { responseBody, responseStatus in
+        InternalRequestUtils.warnForPlaceholderId()
+        InternalRequestUtils.genericDeleteRequest(forURL: baseURLWithUserId) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         

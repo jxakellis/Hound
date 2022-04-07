@@ -11,7 +11,7 @@ import Foundation
 enum LogsRequest: RequestProtocol {
     
     /// Need dogId for any request so we can't append '/logs' until we have dogId
-    static let basePathWithoutParams: URL = DogsRequest.basePathWithoutParams
+    static let baseURLWithoutParams: URL = DogsRequest.baseURLWithoutParams
     
     // MARK: - Private Functions
     
@@ -21,20 +21,20 @@ enum LogsRequest: RequestProtocol {
      */
     private static func get(forDogId dogId: Int, forLogId logId: Int?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
-        RequestUtils.warnForPlaceholderId(dogId: dogId, logId: logId)
-        let pathWithParams: URL
+        InternalRequestUtils.warnForPlaceholderId(dogId: dogId, logId: logId)
+        let URLWithParams: URL
         
         // looking for single log
         if logId != nil {
-            pathWithParams = basePathWithoutParams.appendingPathComponent("/\(dogId)/logs/\(logId!)")
+            URLWithParams = baseURLWithoutParams.appendingPathComponent("/\(dogId)/logs/\(logId!)")
         }
         // don't necessarily need a logId, no logId specifys that you want all logs for a dog
         else {
-            pathWithParams = basePathWithoutParams.appendingPathComponent("/\(dogId)/logs")
+            URLWithParams = baseURLWithoutParams.appendingPathComponent("/\(dogId)/logs")
         }
         
         // make get request
-        InternalRequestUtils.genericGetRequest(path: pathWithParams) { responseBody, responseStatus in
+        InternalRequestUtils.genericGetRequest(forURL: URLWithParams) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -45,13 +45,13 @@ enum LogsRequest: RequestProtocol {
      */
     private static func create(forDogId dogId: Int, forLog log: Log, completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
         
-        RequestUtils.warnForPlaceholderId(dogId: dogId)
+        InternalRequestUtils.warnForPlaceholderId(dogId: dogId)
         let body = InternalRequestUtils.createLogBody(log: log)
         
-        let pathWithParams: URL = basePathWithoutParams.appendingPathComponent("/\(dogId)/logs/")
+        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/logs/")
         
         // make post request, assume body valid as constructed with method
-        InternalRequestUtils.genericPostRequest(path: pathWithParams, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPostRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
             
             if responseBody != nil, let logId = responseBody!["result"] as? Int {
                 completionHandler(logId, responseStatus)
@@ -68,13 +68,13 @@ enum LogsRequest: RequestProtocol {
      */
     private static func update(forDogId dogId: Int, forLog log: Log, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
-        RequestUtils.warnForPlaceholderId(dogId: dogId, logId: log.logId)
+        InternalRequestUtils.warnForPlaceholderId(dogId: dogId, logId: log.logId)
         let body = InternalRequestUtils.createLogBody(log: log)
         
-        let pathWithParams: URL = basePathWithoutParams.appendingPathComponent("/\(dogId)/logs/\(log.logId)")
+        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/logs/\(log.logId)")
         
         // make put request, assume body valid as constructed with method
-        InternalRequestUtils.genericPutRequest(path: pathWithParams, body: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPutRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
     }
@@ -84,11 +84,11 @@ enum LogsRequest: RequestProtocol {
      */
     private static func delete(forDogId dogId: Int, forLogId logId: Int, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
-        RequestUtils.warnForPlaceholderId(dogId: dogId, logId: logId)
-        let pathWithParams: URL = basePathWithoutParams.appendingPathComponent("/\(dogId)/logs/\(logId)")
+        InternalRequestUtils.warnForPlaceholderId(dogId: dogId, logId: logId)
+        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/logs/\(logId)")
         
         // make delete request
-        InternalRequestUtils.genericDeleteRequest(path: pathWithParams) { responseBody, responseStatus in
+        InternalRequestUtils.genericDeleteRequest(forURL: URLWithParams) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         

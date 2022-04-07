@@ -1,24 +1,30 @@
 const { queryPromise } = require('./queryPromise');
-const { formatNumber, formatArray } = require('./validateFormat');
+const { formatNumber, formatArray, areAllDefined } = require('./validateFormat');
 const DatabaseError = require('./errors/databaseError');
 const ValidationError = require('./errors/validationError');
 
 /**
- * Checks to see that userId is defined, is a number, and exists in the database. TO DO: add authentication to use userId
+ * Checks to see that userId and userIdentifier are defined, are valid, and exist in the database.
  */
 const validateUserId = async (req, res, next) => {
   // later on use a token here to validate that they have permission to use the userId
 
   const userId = formatNumber(req.params.userId);
+  const userIdentifier = req.query.userIdentifier;
 
-  if (userId) {
+  if (userId && areAllDefined(userIdentifier)) {
     // if userId is defined and it is a number then continue
     try {
       // queries the database to find if the users table contains a user with the provided ID
-      const result = await queryPromise(req, 'SELECT userId FROM users WHERE userId = ?', [userId]);
+      const result = await queryPromise(
+        req,
+        'SELECT userId, userIdentifier FROM users WHERE userId = ? AND userIdentifier = ?',
+        [userId, userIdentifier],
+      );
 
-      // checks array of JSON from query to find if userId is contained
-      if (result.some((item) => item.userId === userId)) {
+      // checks array of JSON from query to find if userId and userIdentifier are contained
+      // this step is technically redundant
+      if (result.some((item) => item.userId === userId && item.userIdentifier === userIdentifier)) {
         // userId exists in the table
         return next();
       }
@@ -35,15 +41,9 @@ const validateUserId = async (req, res, next) => {
     }
   }
   else {
-    // the only time the userIdentifier would be provided instead of the userId is if the user was retrieving their user information.
-    // e.g. they reinstalled the app so are getting their userId to use for future requests.
-    // Other wise for any POST, PUT, DELETE User Method or GET, POST, PUT, DELETE log/reminder method (etc...), it has to be the userId
-    // and not the userIdentifier.
-    // This check only occurs for when it should be userId and not userIdentifier (aka any non-GET /user request)
-
-    // userId was not provided or is invalid format
+    // userId was not provided or is invalid format OR userIdentifier was not provided or is invalid format
     req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('userId Invalid', 'ER_ID_INVALID').toJSON);
+    return res.status(400).json(new ValidationError('userId or userIdentifier Invalid', 'ER_ID_INVALID').toJSON);
   }
 };
 

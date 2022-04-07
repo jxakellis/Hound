@@ -40,9 +40,9 @@ class DogsDogDisplayTableViewCell: UITableViewCell {
     func setup(forDog dogPassed: Dog) {
         dog = dogPassed
 
-        dogIcon.image = dogPassed.icon
+        dogIcon.image = dogPassed.dogIcon
 
-        if dogIcon.image != nil && !(dogIcon.image!.isEqualToImage(image: DogConstant.defaultIcon)) {
+        if dogIcon.image != nil && !(dogIcon.image!.isEqualToImage(image: DogConstant.defaultDogIcon)) {
             dogIcon.layer.masksToBounds = true
             dogIcon.layer.cornerRadius = dogIcon.frame.width/2
         }

@@ -138,13 +138,16 @@ class ServerSyncViewController: UIViewController {
                             self.checkSynchronizationStatus()
                         }
                         else {
+                            // TO DO if the user is failed to log in, parse the error messages and alert them to the reason as to why, alternatively, just send them to the login page again. E.g. the user had an account and so we had the userId stored locally, but the account got deleted so it now is a failure response when we try to login. 
                             AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
                         }
                     }
                     else {
+                        // TO DO if the user is failed to log in, parse the error messages and alert them to the reason as to why, alternatively, just send them to the login page again. E.g. the user had an account and so we had the userId stored locally, but the account got deleted so it now is a failure response when we try to login.
                         AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
                     }
                 case .failureResponse:
+                    // TO DO if the user is failed to log in, parse the error messages and alert them to the reason as to why, alternatively, just send them to the login page again. E.g. the user had an account and so we had the userId stored locally, but the account got deleted so it now is a failure response when we try to login.
                     AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
                 case .noResponse:
                     AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)

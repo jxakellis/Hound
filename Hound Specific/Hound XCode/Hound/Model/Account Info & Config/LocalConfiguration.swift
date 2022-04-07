@@ -6,10 +6,15 @@
 //  Copyright © 2022 Jonathan Xakellis. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 /// Configuration that is local to the app only. If the app is reinstalled then this data should be fresh
 enum LocalConfiguration {
+    
+    // MARK: Dog Related
+    
+    /// This stores the icons for the dogs locally. If a dog is succesfully POST, PUT, or DELETE then we update this dictionary, otherwise it remains untouched.
+    static var dogIcons: [LocalDogIcon] = []
     
     // MARK: iOS Notification Related
     

@@ -1,5 +1,5 @@
 //
-//  LogsMainScreenTableViewCellBody.swift
+//  LogsLargeBodyWithDogIconTableViewCell.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 4/20/21.
@@ -8,11 +8,11 @@
 
 import UIKit
 
-class LogsLargeBodyWithIconTableViewCell: UITableViewCell {
+class LogsLargeBodyWithDogIconTableViewCell: UITableViewCell {
 
     // MARK: - IB
 
-    @IBOutlet private weak var logIcon: UIImageView!
+    @IBOutlet private weak var dogIcon: UIImageView!
     @IBOutlet private weak var logAction: ScaledUILabel!
     @IBOutlet private weak var logDate: ScaledUILabel!
     @IBOutlet private weak var logNote: ScaledUILabel!
@@ -33,9 +33,9 @@ class LogsLargeBodyWithIconTableViewCell: UITableViewCell {
         self.logSource = logSource
 
         let dog = try! MainTabBarViewController.staticDogManager.findDog(forDogId: parentDogIdSource)
-        logIcon.image = dog.icon
-        logIcon.layer.masksToBounds = true
-        logIcon.layer.cornerRadius = logIcon.frame.width/2
+        dogIcon.image = dog.dogIcon
+        dogIcon.layer.masksToBounds = true
+        dogIcon.layer.cornerRadius = dogIcon.frame.width/2
 
         self.logAction.text = self.logSource.displayActionName
 
@@ -44,36 +44,6 @@ class LogsLargeBodyWithIconTableViewCell: UITableViewCell {
         logDate.text = dateFormatter.string(from: logSource.logDate)
 
         logNote.text = logSource.logNote
-
-        // deactivate old
-        for label in [self.logAction, logDate, logNote] {
-            var constraintsToDeactivate: [NSLayoutConstraint] = []
-
-            for constraintIndex in 0..<label!.constraints.count where label!.constraints[constraintIndex].firstAttribute == .width {
-                constraintsToDeactivate.append(label!.constraints[constraintIndex])
-            }
-
-            NSLayoutConstraint.deactivate(constraintsToDeactivate)
-        }
-
-        var labelWidthConstraints: [NSLayoutConstraint] = []
-
-        // create new
-        for label in [self.logAction, logDate] {
-            let labelTextWidth = label!.text!.boundingFrom(font: label!.font, height: label!.frame.height).width
-            let labelWidthConstraint = NSLayoutConstraint.init(item: label!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: labelTextWidth)
-            labelWidthConstraints.append(labelWidthConstraint)
-        }
-
-        if logNote.text?.trimmingCharacters(in: .whitespacesAndNewlines) != ""{
-            let logNoteWidthConstraint = NSLayoutConstraint.init(item: logNote!, attribute: .width, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 35.0)
-            labelWidthConstraints.append(logNoteWidthConstraint)
-        }
-
-        NSLayoutConstraint.activate(labelWidthConstraints)
-
-        self.contentView.setNeedsLayout()
-        self.contentView.layoutIfNeeded()
 
     }
 

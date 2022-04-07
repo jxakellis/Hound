@@ -245,7 +245,7 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
     
     private func signInUser() {
         // start query indictator, if there is already one present then its fine as alertmanager will throw away the duplicate. we remove the query indicator when we finish interpreting our response
-        UserRequest.get(forUserIdentifier: UserInformation.userIdentifier!) { responseBody, responseStatus in
+        UserRequest.get { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 if responseBody != nil {

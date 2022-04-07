@@ -120,7 +120,7 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
         }
         
         var dogIcon: UIImage? {
-            if self.dogIcon.imageView!.image != DogConstant.chooseIcon {
+            if self.dogIcon.imageView!.image != DogConstant.chooseIconForDog {
                 return self.dogIcon.imageView!.image
             }
             else {
@@ -130,7 +130,7 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
         }
         
         // can only fail if dogName == "", but already checked for that and corrected if there was a problem
-        let dog = try! Dog(dogName: dogName ?? DogConstant.defaultDogName, dogIcon: dogIcon ?? DogConstant.defaultIcon)
+        let dog = try! Dog(dogName: dogName ?? DogConstant.defaultDogName, dogIcon: dogIcon ?? DogConstant.defaultDogIcon)
         
         // contact server to make their dog
         DogsRequest.create(forDog: dog) { dogId in
@@ -161,7 +161,7 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
         
         continueButton.layer.cornerRadius = 8.0
         
-        dogIcon.setImage(DogConstant.chooseIcon, for: .normal)
+        dogIcon.setImage(DogConstant.chooseIconForDog, for: .normal)
         dogIcon.imageView!.layer.masksToBounds = true
         dogIcon.imageView!.layer.cornerRadius = dogIcon.frame.width/2
         
@@ -176,7 +176,7 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
         
         self.setupToHideKeyboardOnTapOnView()
         
-        // Setup AlertController for icon button now, increases responsiveness
+        // Setup AlertController for dogIcon button now, increases responsiveness
         setupDogIconImagePicker()
         
         // Do any additional setup after loading the view.
@@ -192,7 +192,7 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
         
     }
     
-    /// Sets up the UIAlertController that prompts the user in the different ways that they can add an icon to their dog (e.g. take a picture of choose an existing one
+    /// Sets up the UIAlertController that prompts the user in the different ways that they can add an dogIcon to their dog (e.g. take a picture of choose an existing one
     private func setupDogIconImagePicker() {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self

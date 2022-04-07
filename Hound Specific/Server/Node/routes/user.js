@@ -8,14 +8,13 @@ const {
 
 const { validateUserId } = require('../utils/validateId');
 
-// gets user with userId then return information from users and userConfiguration table
+router.use('/:userId', validateUserId);
+
+// gets user with userIdentifier then return information from users and userConfiguration table
+router.get('/', getUser);
+// gets user with userId && userIdentifier then return information from users and userConfiguration table
 router.get('/:userId', getUser);
 // no body
-
-// validation that params are formatted correctly and have adequate permissions.
-// This check HAS to be after the .get for /user.
-// Otherwise if the user passes a userIdentifier to get their userId, it will fail as format incorrect
-router.use('/:userId', validateUserId);
 
 // family: /api/v1/user/:userId/family
 const familyRouter = require('./family');

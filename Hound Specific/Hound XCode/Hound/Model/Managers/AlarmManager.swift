@@ -212,9 +212,9 @@ class AlarmManager {
         
         let log = Log(logDate: Date(), logAction: logAction, customActionName: reminder.customActionName)
         
-        // special case. Once a oneTime reminder executes, it must be delete. Therefore there are special server queries.
+        // special case. Once a oneTime reminder executes/ is skipped, it must be delete. Therefore there are special server queries.
         if reminder.reminderType == .oneTime {
-            // make request to add log, then (if successful) make request to delete reminder
+            // make request to delete reminder, then (if successful) make request to add the log
             
             // delete the reminder on the server
             RemindersRequest.delete(forDogId: dogId, forReminderId: reminderId) { requestWasSuccessful in
@@ -235,17 +235,19 @@ class AlarmManager {
         // Nest all the other cases inside this else statement as otherwise .oneTime alarms would make request with the above code then again down here.
         else {
             
-            reminder.skipNextAlarm()
+            reminder.changeIsSkipping(newSkipStatus: true)
             
             // make request to the server, if successful then we persist the data. If there is an error, then we discard to data to keep client and server in sync (as server wasn't able to update)
-            RemindersRequest.update(forDogId: dogId, forReminder: reminder) { _ in
-                // we need to persist a log as well
-                LogsRequest.create(forDogId: dog.dogId, forLog: log) { logId in
-                    // persist log successful, therefore we can save the info locally
-                    if logId != nil {
-                        log.logId = logId!
-                        dog.dogLogs.addLog(newLog: log)
-                        delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
+            RemindersRequest.update(forDogId: dogId, forReminder: reminder) { requestWasSuccessful in
+                if requestWasSuccessful == true {
+                    // we need to persist a log as well
+                    LogsRequest.create(forDogId: dog.dogId, forLog: log) { logId in
+                        // persist log successful, therefore we can save the info locally
+                        if logId != nil {
+                            log.logId = logId!
+                            dog.dogLogs.addLog(newLog: log)
+                            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
+                        }
                     }
                 }
             }
@@ -261,16 +263,50 @@ class AlarmManager {
         
         let reminder = try! dog.dogReminders.findReminder(forReminderId: reminderId)
         
-        guard reminder.reminderType == .weekly || reminder.reminderType == .monthly else {
+        guard (reminder.reminderType == .weekly && reminder.weeklyComponents.isSkipping == true)  || (reminder.reminderType == .monthly && reminder.monthlyComponents.isSkipping == true) else {
             return
         }
         
-        reminder.unskipNextAlarm()
+        var isSkippingLogDate: Date {
+            if reminder.reminderType == .weekly {
+                return reminder.weeklyComponents.isSkippingDate!
+            }
+            else {
+                return reminder.monthlyComponents.isSkippingDate!
+            }
+        }
+        
+        // this is the time that the reminder's next alarm was skipped. at this same moment, a log was added. If this log is still there, with it's date unmodified by the user, then we remove it.
+        let dateOfLogToRemove = isSkippingLogDate
+        
+        reminder.changeIsSkipping(newSkipStatus: false)
         
         // make request to the server, if successful then we persist the data. If there is an error, then we discard to data to keep client and server in sync (as server wasn't able to update)
-        RemindersRequest.update(forDogId: dogId, forReminder: reminder) { _ in
-            // we dont need to persist a log, so just update dogManager
-            self.delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
+        RemindersRequest.update(forDogId: dogId, forReminder: reminder) { requestWasSuccessful1 in
+            if requestWasSuccessful1 == true {
+                // find log that is incredibly close the time where the reminder was skipped, once found, then we delete it.
+                var logToRemove: Log?
+                for log in dog.dogLogs.logs where dateOfLogToRemove.distance(to: log.logDate) < LogConstant.logRemovalPrecision && dateOfLogToRemove.distance(to: log.logDate) > -LogConstant.logRemovalPrecision {
+                    logToRemove = log
+                    break
+                }
+                
+                // no log to remove from unlog event, must have already been deleted
+                if logToRemove == nil {
+                    self.delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
+                }
+                // log to remove from unlog event
+                else {
+                    // attempt to delete the log server side
+                    LogsRequest.delete(forDogId: dogId, forLogId: logToRemove!.logId) { requestWasSuccessful2 in
+                        if requestWasSuccessful2 == true {
+                            try! dog.dogLogs.removeLog(forLogId: logToRemove!.logId)
+                        }
+                        // first request was successful server side so we still call delegate
+                        self.delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
+                    }
+                }
+            }
             
         }
     }

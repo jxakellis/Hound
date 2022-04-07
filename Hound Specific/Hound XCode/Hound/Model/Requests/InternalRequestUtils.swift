@@ -10,7 +10,7 @@ import Foundation
 
 /// abstractions used by other endpoint classes to make their request to the server, not used anywhere else in hound so therefore internal to endpoints and api requests.
 enum InternalRequestUtils {
-    static let basePathWithoutParams: URL = URL(string: "http://10.0.0.110:5000/api/v1")!
+    static let baseURLWithoutParams: URL = URL(string: "http://172.20.10.2:5000/api/v1")!
     // home URL(string: "http://10.0.0.107:5000/api/v1")!
     //  school URL(string: "http://10.1.11.124:5000/api/v1")!
     // hotspot URL(string: "http://172.20.10.2:5000/api/v1")!
@@ -21,20 +21,33 @@ enum InternalRequestUtils {
      sessionConfig.timeoutIntervalForResource = 60.0
      let session = URLSession(configuration: sessionConfig)
      */
-    fileprivate static var sessionConfig: URLSessionConfiguration {
+    private static var sessionConfig: URLSessionConfiguration {
         let sessionConfig = URLSessionConfiguration.default
         sessionConfig.timeoutIntervalForRequest = 7.5
         sessionConfig.timeoutIntervalForResource = 15.0
         return sessionConfig
     }
-    fileprivate static let session = URLSession(configuration: sessionConfig)
+    private static let session = URLSession(configuration: sessionConfig)
     
     /// Takes an already constructed URLRequest and executes it, returning it in a compeltion handler. This is the basis to all URL requests
-    fileprivate static func genericRequest(request: URLRequest, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    private static func genericRequest(forRequest request: URLRequest, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
-        AppDelegate.APIRequestLogger.notice("\(request.httpMethod ?? "unknown") Request for \(request.url?.description ?? "unknown")")
+        var modifiedRequest = request
+        
+        // append userIdentifier if we have it, need it to perform requests
+        if UserInformation.userIdentifier != nil {
+            // deconstruct request slightly
+            var deconstructedURLComponents = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)
+            // if we try to append to nil, then it fails. so if the array is nil, we just make it an empty array
+            deconstructedURLComponents!.queryItems = deconstructedURLComponents!.queryItems ?? []
+            deconstructedURLComponents!.queryItems!.append(URLQueryItem(name: ServerDefaultsKeys.userIdentifier.rawValue, value: UserInformation.userIdentifier!))
+            modifiedRequest.url = deconstructedURLComponents?.url ?? request.url
+        }
+        
+        AppDelegate.APIRequestLogger.notice("\(modifiedRequest.httpMethod ?? "unknown") Request for \(modifiedRequest.url?.description ?? "unknown")")
+        
         // send request
-        let task = session.dataTask(with: request) { data, response, error in
+        let task = session.dataTask(with: modifiedRequest) { data, response, error in
             // extract status code from URLResponse
             var responseCode: Int?
             if let httpResponse = response as? HTTPURLResponse {
@@ -91,35 +104,38 @@ enum InternalRequestUtils {
 
 extension InternalRequestUtils {
     
-    /// Perform a generic get request at the specified url, assuming path params are already provided.
-    static func genericGetRequest(path: URL, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    // MARK: - Generic GET, POST, PUT, and DELETE requests
+    
+    /// Perform a generic get request at the specified url, assuming URL params are already provided.
+    static func genericGetRequest(forURL URL: URL, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+        
         // create request to send
-        var req = URLRequest(url: path)
+        var request = URLRequest(url: URL)
         
         // specify http method
-        req.httpMethod = "GET"
+        request.httpMethod = "GET"
         
-        genericRequest(request: req) { responseBody, responseStatus in
+        genericRequest(forRequest: request) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
     }
     
     /// Perform a generic get request at the specified url with provided body. Throws as creating request can fail if body is invalid.
-    static func genericPostRequest(path: URL, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    static func genericPostRequest(forURL URL: URL, forBody body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
-        RequestUtils.warnForEmptyBody(forPath: path, forBody: body)
+        InternalRequestUtils.warnForEmptyBody(forURL: URL, forBody: body)
         
         // create request to send
-        var req = URLRequest(url: path)
+        var request = URLRequest(url: URL)
         
         // specify http method
-        req.httpMethod = "POST"
-        req.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: body)
-            req.httpBody = jsonData
+            request.httpBody = jsonData
             
-            genericRequest(request: req) { responseBody, responseStatus in
+            genericRequest(forRequest: request) { responseBody, responseStatus in
                 completionHandler(responseBody, responseStatus)
             }
         }
@@ -129,22 +145,22 @@ extension InternalRequestUtils {
         
     }
     
-    /// Perform a generic get request at the specified url with provided body, assuming path params are already provided. Throws as creating request can fail if body is invalid
-    static func genericPutRequest(path: URL, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    /// Perform a generic get request at the specified url with provided body, assuming URL params are already provided. Throws as creating request can fail if body is invalid
+    static func genericPutRequest(forURL URL: URL, forBody body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
-        RequestUtils.warnForEmptyBody(forPath: path, forBody: body)
+        InternalRequestUtils.warnForEmptyBody(forURL: URL, forBody: body)
         
         // create request to send
-        var req = URLRequest(url: path)
+        var request = URLRequest(url: URL)
         
         // specify http method
-        req.httpMethod = "PUT"
-        req.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "PUT"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: body)
-            req.httpBody = jsonData
+            request.httpBody = jsonData
             
-            genericRequest(request: req) { responseBody, responseStatus in
+            genericRequest(forRequest: request) { responseBody, responseStatus in
                 completionHandler(responseBody, responseStatus)
             }
         }
@@ -154,26 +170,32 @@ extension InternalRequestUtils {
         
     }
     
-    /// Perform a generic get request at the specified url, assuming path params are already provided. No body needed for request. No throws as request creating cannot fail
-    static func genericDeleteRequest(path: URL, body: [String: Any]? = nil, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    /// Perform a generic get request at the specified url, assuming URL params are already provided. No body needed for request. No throws as request creating cannot fail
+    static func genericDeleteRequest(forURL URL: URL, forBody body: [String: Any]? = nil, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+        
+        // if a body is present, we want to make sure it isn't empty
+        if body != nil {
+            InternalRequestUtils.warnForEmptyBody(forURL: URL, forBody: body!)
+        }
+        
         // create request to send
-        var req = URLRequest(url: path)
+        var request = URLRequest(url: URL)
         
         // specify http method
-        req.httpMethod = "DELETE"
+        request.httpMethod = "DELETE"
         
         if body == nil {
-            genericRequest(request: req) { responseBody, responseStatus in
+            genericRequest(forRequest: request) { responseBody, responseStatus in
                 completionHandler(responseBody, responseStatus)
             }
         }
         else {
-            req.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             do {
                 let jsonData = try JSONSerialization.data(withJSONObject: body!)
-                req.httpBody = jsonData
+                request.httpBody = jsonData
                 
-                genericRequest(request: req) { responseBody, responseStatus in
+                genericRequest(forRequest: request) { responseBody, responseStatus in
                     completionHandler(responseBody, responseStatus)
                 }
             }
@@ -183,22 +205,24 @@ extension InternalRequestUtils {
         }
     }
     
+    // MARK: - Create Body for Request from Object
+    
     /// returns an array that contains the user's personal information and userConfiguration and is suitable to be a http request body
     static func createFullUserBody() -> [String: Any] {
         var body: [String: Any] = createUserConfigurationBody()
-        body[UserDefaultsKeys.userIdentifier.rawValue] = UserInformation.userIdentifier
-        body[UserDefaultsKeys.userEmail.rawValue] = UserInformation.userEmail
-        body[UserDefaultsKeys.userFirstName.rawValue] = UserInformation.userFirstName
-        body[UserDefaultsKeys.userLastName.rawValue] = UserInformation.userLastName
+        body[ServerDefaultsKeys.userIdentifier.rawValue] = UserInformation.userIdentifier
+        body[ServerDefaultsKeys.userEmail.rawValue] = UserInformation.userEmail
+        body[ServerDefaultsKeys.userFirstName.rawValue] = UserInformation.userFirstName
+        body[ServerDefaultsKeys.userLastName.rawValue] = UserInformation.userLastName
         return body
     }
     
     static func createUserInformationBody() -> [String: Any] {
         var body: [String: Any] = [:]
-        body[UserDefaultsKeys.userIdentifier.rawValue] = UserInformation.userIdentifier
-        body[UserDefaultsKeys.userEmail.rawValue] = UserInformation.userEmail
-        body[UserDefaultsKeys.userFirstName.rawValue] = UserInformation.userFirstName
-        body[UserDefaultsKeys.userLastName.rawValue] = UserInformation.userLastName
+        body[ServerDefaultsKeys.userIdentifier.rawValue] = UserInformation.userIdentifier
+        body[ServerDefaultsKeys.userEmail.rawValue] = UserInformation.userEmail
+        body[ServerDefaultsKeys.userFirstName.rawValue] = UserInformation.userFirstName
+        body[ServerDefaultsKeys.userLastName.rawValue] = UserInformation.userLastName
         return body
     }
     
@@ -216,33 +240,33 @@ extension InternalRequestUtils {
         // followUpDelay
         // notificationSound
         
-        body[UserDefaultsKeys.isCompactView.rawValue] = UserConfiguration.isCompactView
-        body[UserDefaultsKeys.interfaceStyle.rawValue] = UserConfiguration.interfaceStyle.rawValue
-        body[UserDefaultsKeys.snoozeLength.rawValue] = UserConfiguration.snoozeLength
-        body[UserDefaultsKeys.isPaused.rawValue] = UserConfiguration.isPaused
-        body[UserDefaultsKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
-        body[UserDefaultsKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
-        body[UserDefaultsKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
-        body[UserDefaultsKeys.followUpDelay.rawValue] = UserConfiguration.followUpDelay
-        body[UserDefaultsKeys.notificationSound.rawValue] = UserConfiguration.notificationSound.rawValue
+        body[ServerDefaultsKeys.isCompactView.rawValue] = UserConfiguration.isCompactView
+        body[ServerDefaultsKeys.interfaceStyle.rawValue] = UserConfiguration.interfaceStyle.rawValue
+        body[ServerDefaultsKeys.snoozeLength.rawValue] = UserConfiguration.snoozeLength
+        body[ServerDefaultsKeys.isPaused.rawValue] = UserConfiguration.isPaused
+        body[ServerDefaultsKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
+        body[ServerDefaultsKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
+        body[ServerDefaultsKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
+        body[ServerDefaultsKeys.followUpDelay.rawValue] = UserConfiguration.followUpDelay
+        body[ServerDefaultsKeys.notificationSound.rawValue] = UserConfiguration.notificationSound.rawValue
         return body
     }
     
     /// returns an array that is suitable to be a http request body
     static func createDogBody(dog: Dog) -> [String: Any] {
         var body: [String: Any] = [:]
-        body["dogName"] = dog.dogName
+        body[ServerDefaultsKeys.dogName.rawValue] = dog.dogName
         return body
     }
     
     /// returns an array that is suitable to be a http request body
     static func createLogBody(log: Log) -> [String: Any] {
         var body: [String: Any] = [:]
-        body["logNote"] = log.logNote
-        body["logDate"] = log.logDate.ISO8601Format()
-        body["logAction"] = log.logAction.rawValue
+        body[ServerDefaultsKeys.logNote.rawValue] = log.logNote
+             body[ServerDefaultsKeys.logDate.rawValue] = log.logDate.ISO8601FormatWithFractionalSeconds()
+             body[ServerDefaultsKeys.logAction.rawValue] = log.logAction.rawValue
         if log.logAction == .custom && log.customActionName != nil {
-            body["customActionName"] = log.customActionName
+            body[ServerDefaultsKeys.customActionName.rawValue] = log.customActionName
         }
         return body
         
@@ -251,67 +275,67 @@ extension InternalRequestUtils {
     /// returns an array that is suitable to be a http request body
     static func createReminderBody(reminder: Reminder) -> [String: Any] {
         var body: [String: Any] = [:]
-        body["reminderId"] = reminder.reminderId
-        body["reminderAction"] = reminder.reminderAction.rawValue
+        body[ServerDefaultsKeys.reminderId.rawValue] = reminder.reminderId
+             body[ServerDefaultsKeys.reminderAction.rawValue] = reminder.reminderAction.rawValue
         if reminder.reminderAction == .custom && reminder.customActionName != nil {
-            body["customActionName"] = reminder.customActionName
+            body[ServerDefaultsKeys.customActionName.rawValue] = reminder.customActionName
         }
-        body["executionBasis"] = reminder.executionBasis.ISO8601Format()
-        body["isEnabled"] = reminder.isEnabled
+        body[ServerDefaultsKeys.executionBasis.rawValue] = reminder.executionBasis.ISO8601FormatWithFractionalSeconds()
+        body[ServerDefaultsKeys.isEnabled.rawValue] = reminder.isEnabled
         
-        body["reminderType"] = reminder.reminderType.rawValue
+        body[ServerDefaultsKeys.reminderType.rawValue] = reminder.reminderType.rawValue
         // add the reminder components depending on the reminderType
         switch reminder.reminderType {
         case .countdown:
-            body["countdownExecutionInterval"] = reminder.countdownComponents.executionInterval
-            body["countdownIntervalElapsed"] = reminder.countdownComponents.intervalElapsed
+            body[ServerDefaultsKeys.countdownExecutionInterval.rawValue] = reminder.countdownComponents.executionInterval
+            body[ServerDefaultsKeys.countdownIntervalElapsed.rawValue] = reminder.countdownComponents.intervalElapsed
         case .weekly:
-            body["weeklyHour"] = reminder.weeklyComponents.dateComponents.hour
-            body["weeklyMinute"] = reminder.weeklyComponents.dateComponents.minute
-            body["weeklyIsSkipping"] = reminder.weeklyComponents.isSkipping
+            body[ServerDefaultsKeys.weeklyHour.rawValue] = reminder.weeklyComponents.dateComponents.hour
+            body[ServerDefaultsKeys.weeklyMinute.rawValue] = reminder.weeklyComponents.dateComponents.minute
+            body[ServerDefaultsKeys.weeklyIsSkipping.rawValue] = reminder.weeklyComponents.isSkipping
             if reminder.weeklyComponents.isSkipping == true && reminder.weeklyComponents.isSkippingDate != nil {
-                body["weeklySkipDate"] = reminder.weeklyComponents.isSkippingDate!.ISO8601Format()
+                body[ServerDefaultsKeys.weeklyIsSkippingDate.rawValue] = reminder.weeklyComponents.isSkippingDate!.ISO8601FormatWithFractionalSeconds()
             }
             
-            body["sunday"] = false
-            body["monday"] = false
-            body["tuesday"] = false
-            body["wednesday"] = false
-            body["thursday"] = false
-            body["friday"] = false
-            body["saturday"] = false
+            body[ServerDefaultsKeys.sunday.rawValue] = false
+            body[ServerDefaultsKeys.monday.rawValue] = false
+            body[ServerDefaultsKeys.tuesday.rawValue] = false
+            body[ServerDefaultsKeys.wednesday.rawValue] = false
+            body[ServerDefaultsKeys.thursday.rawValue] = false
+            body[ServerDefaultsKeys.friday.rawValue] = false
+            body[ServerDefaultsKeys.saturday.rawValue] = false
             
             for weekday in reminder.weeklyComponents.weekdays {
                 switch weekday {
                 case 1:
-                    body["sunday"] = true
+                    body[ServerDefaultsKeys.sunday.rawValue] = true
                 case 2:
-                    body["monday"] = true
+                    body[ServerDefaultsKeys.monday.rawValue] = true
                 case 3:
-                    body["tuesday"] = true
+                    body[ServerDefaultsKeys.tuesday.rawValue] = true
                 case 4:
-                    body["wednesday"] = true
+                    body[ServerDefaultsKeys.wednesday.rawValue] = true
                 case 5:
-                    body["thursday"] = true
+                    body[ServerDefaultsKeys.thursday.rawValue] = true
                 case 6:
-                    body["friday"] = true
+                    body[ServerDefaultsKeys.friday.rawValue] = true
                 case 7:
-                    body["saturday"] = true
+                    body[ServerDefaultsKeys.saturday.rawValue] = true
                 default:
                     continue
                 }
             }
             
         case .monthly:
-            body["monthlyHour"] = reminder.monthlyComponents.dateComponents.hour
-            body["monthlyMinute"] = reminder.monthlyComponents.dateComponents.minute
-            body["monthlyIsSkipping"] = reminder.monthlyComponents.isSkipping
+            body[ServerDefaultsKeys.monthlyHour.rawValue] = reminder.monthlyComponents.dateComponents.hour
+            body[ServerDefaultsKeys.monthlyMinute.rawValue] = reminder.monthlyComponents.dateComponents.minute
+            body[ServerDefaultsKeys.monthlyIsSkipping.rawValue] = reminder.monthlyComponents.isSkipping
             if reminder.monthlyComponents.isSkipping == true && reminder.monthlyComponents.isSkippingDate != nil {
-                body["monthlySkipDate"] = reminder.monthlyComponents.isSkippingDate!.ISO8601Format()
+                body[ServerDefaultsKeys.monthlyIsSkippingDate.rawValue] = reminder.monthlyComponents.isSkippingDate!.ISO8601FormatWithFractionalSeconds()
             }
-            body["dayOfMonth"] = reminder.monthlyComponents.dayOfMonth
+            body[ServerDefaultsKeys.dayOfMonth.rawValue] = reminder.monthlyComponents.dayOfMonth
         case .oneTime:
-            body["oneTimeDate"] = reminder.oneTimeComponents.oneTimeDate.ISO8601Format()
+            body[ServerDefaultsKeys.oneTimeDate.rawValue] = reminder.oneTimeComponents.oneTimeDate.ISO8601FormatWithFractionalSeconds()
         }
         
         return body
@@ -323,25 +347,71 @@ extension InternalRequestUtils {
         for reminder in reminders {
             remindersArray.append(createReminderBody(reminder: reminder))
         }
-        let body: [String: [[String: Any]]] = ["reminders": remindersArray]
+        let body: [String: [[String: Any]]] = [ServerDefaultsKeys.reminders.rawValue: remindersArray]
         return body
     }
     
     /// returns an array that is suitable to be a http request body
     static func createReminderIdBody(reminderId: Int) -> [String: Any] {
         var body: [String: Any] = [:]
-        body["reminderId"] = reminderId
+        body[ServerDefaultsKeys.reminderId.rawValue] = reminderId
         return body
     }
     
-    /// Returns an array of reminder bodies under the key "reminders". E.g. { reminders : [{reminder1}, {reminder2}] }
+    /// Returns an array of reminder bodies under the key ."reminders" E.g. { reminders : [{reminder1}, {reminder2}] }
     static func createReminderIdsBody(reminderIds: [Int]) -> [String: [[String: Any]]] {
         var reminderIdsArray: [[String: Any]] = []
         for reminderId in reminderIds {
             reminderIdsArray.append(createReminderIdBody(reminderId: reminderId))
         }
-        let body: [String: [[String: Any]]] = ["reminders": reminderIdsArray]
+        let body: [String: [[String: Any]]] = [ServerDefaultsKeys.reminders.rawValue: reminderIdsArray]
         return body
+    }
+    
+    // MARK: - Warn if a property has an undesired value
+    
+    /// Provides warning if the id of anything is set to a placeholder value.
+    static func warnForPlaceholderId(dogId: Int? = nil, reminders: [Reminder]? = nil, reminderId: Int? = nil, reminderIds: [Int]? = nil, logId: Int? = nil) {
+        if UserInformation.userId == nil {
+            AppDelegate.APIRequestLogger.warning("Warning: userId is nil")
+        }
+        else if UserInformation.userId! < 0 {
+            AppDelegate.APIRequestLogger.warning("Warning: userId is placeholder \(UserInformation.userId!)")
+        }
+        if UserInformation.userIdentifier == nil {
+            AppDelegate.APIRequestLogger.warning("Warning: userIdentifier is nil")
+        }
+        if UserInformation.familyId == nil {
+            AppDelegate.APIRequestLogger.warning("Warning: familyId is nil")
+        }
+        else if UserInformation.familyId! < 0 {
+            AppDelegate.APIRequestLogger.warning("Warning: familyId is placeholder \(UserInformation.familyId!)")
+        }
+        if dogId != nil && dogId! < 0 {
+            AppDelegate.APIRequestLogger.warning("Warning: dogId is placeholder \(dogId!)")
+        }
+        if reminders != nil {
+            for singleReminder in reminders! where singleReminder.reminderId < 0 {
+                AppDelegate.APIRequestLogger.warning("Warning: reminderId is placeholder \(singleReminder.reminderId)")
+            }
+        }
+        if reminderIds != nil {
+            for singleReminderId in reminderIds! where singleReminderId < 0 {
+                AppDelegate.APIRequestLogger.warning("Warning: reminderId is placeholder \(singleReminderId)")
+            }
+        }
+        if reminderId != nil && reminderId! < 0 {
+            AppDelegate.APIRequestLogger.warning("Warning: reminderId is placeholder \(reminderId!)")
+        }
+        if logId != nil && logId! < 0 {
+            AppDelegate.APIRequestLogger.warning("Warning: logId is placeholder \(logId!)")
+        }
+    }
+    /// Provides warning if the id of anything is set to a placeholder value.
+    private static func warnForEmptyBody(forURL URL: URL, forBody body: [String: Any]) {
+        if body.keys.count == 0 {
+            AppDelegate.APIRequestLogger.warning("Warning: Body is empty \nFor URL: \(URL)")
+        }
     }
     
 }

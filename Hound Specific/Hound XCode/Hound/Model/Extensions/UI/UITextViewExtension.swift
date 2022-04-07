@@ -89,7 +89,6 @@ extension UITextView {
         placeholderLabel.tag = ViewTagConstant.placeholderForUITextView.rawValue
         
         placeholderLabel.isHidden = !self.text.isEmpty
-        placeholderLabel.isHidden = false
         
         self.addSubview(placeholderLabel)
         self.resizePlaceholder()

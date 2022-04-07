@@ -22,6 +22,7 @@ class SettingsAboutViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        // TO DO update placeholder text for the about me section
         self.version.text = "Version \(UIApplication.appVersion ?? "nil")"
         self.build.text = "Build \(UIApplication.appBuild)"
         self.copyright.text = "© \(Calendar.current.component(.year, from: Date())) Jonathan Xakellis"

@@ -39,7 +39,6 @@ const getUserForUserIdQuery = async (req, userId) => {
  */
 const getUserForUserIdentifierQuery = async (req, userIdentifier) => {
 // userIdentifier method of finding corresponding user(s)
-  // userIdentifier already validated
   let userInformation;
   try {
     // have to specifically reference the columns, otherwise familyMembers.userId will override users.userId.

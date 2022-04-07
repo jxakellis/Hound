@@ -12,33 +12,20 @@ enum UserDefaultsKeys: String {
     
     // MARK: User Information
     
+    // store userId and familyId locally so it makes it easier for the user to login
     case userId
-    case userIdentifier
     case familyId
-    case userEmail
-    case userFirstName
-    case userLastName
+    
+    // the rest are exclusively server, so no user defaults
     
     // MARK: User Configuration
     
-    // Appearance
-    case isCompactView
-    case interfaceStyle
-    
-    // Timing
-    case isPaused
-    case snoozeLength
-    
-    // Notifications
-    case isNotificationAuthorized
-    case isNotificationEnabled
-    case isLoudNotification
-    case isFollowUpEnabled
-    case followUpDelay
-    case notificationSound
+    // all stored in server, so no user defaults
     
     // MARK: Local Configuration
     
+    case dogIcons
+    case isNotificationAuthorized
     case lastPause
     case lastUnpause
     case reviewRequestDates
@@ -49,6 +36,5 @@ enum UserDefaultsKeys: String {
     
     // MARK: Other
     case hasDoneFirstTimeSetup
-    case dogManager
     case appBuild
 }

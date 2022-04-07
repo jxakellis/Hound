@@ -419,13 +419,13 @@
                                     <action selector="cancelAddDogButton:" destination="yj4-3A-FdI" eventType="touchUpInside" id="Ckk-yO-nkT"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0wN-6J-sYm" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0wN-6J-sYm" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="10" y="98" width="90" height="90"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="0wN-6J-sYm" secondAttribute="height" multiplier="1:1" id="gBy-YM-VtU"/>
                                     <constraint firstAttribute="height" constant="90" id="i3W-ju-ron"/>
                                 </constraints>
-                                <state key="normal" image="chooseIcon"/>
+                                <state key="normal" image="chooseIconForDog"/>
                                 <connections>
                                     <action selector="didClickIcon:" destination="yj4-3A-FdI" eventType="touchUpInside" id="aox-YT-sgx"/>
                                 </connections>
@@ -953,7 +953,7 @@
                                     <outlet property="header" destination="g1d-wg-iLh" id="oTM-Gq-vkM"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellBodyRegularWithIcon" id="vFK-E5-puQ" customClass="LogsLargeBodyWithIconTableViewCell" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellBodyRegularWithIcon" id="vFK-E5-puQ" customClass="LogsLargeBodyWithDogIconTableViewCell" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="145.5" width="414" height="55.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vFK-E5-puQ" id="3L0-6w-EHw">
@@ -985,7 +985,7 @@
                                             <color key="textColor" systemColor="secondaryLabelColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="yyV-wd-Cpp">
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" translatesAutoresizingMaskIntoConstraints="NO" id="yyV-wd-Cpp">
                                             <rect key="frame" x="3" y="2.5" width="50.5" height="50.5"/>
                                             <color key="backgroundColor" systemColor="systemBlueColor"/>
                                             <constraints>
@@ -1014,13 +1014,13 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
+                                    <outlet property="dogIcon" destination="yyV-wd-Cpp" id="mqH-5o-bR8"/>
                                     <outlet property="logAction" destination="256-LL-2wv" id="J21-Yw-NkM"/>
                                     <outlet property="logDate" destination="GBf-dW-x4B" id="0Ln-fN-Nue"/>
-                                    <outlet property="logIcon" destination="yyV-wd-Cpp" id="McI-ul-HQp"/>
                                     <outlet property="logNote" destination="ch9-X0-qjW" id="IVL-lC-w9e"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellBodyRegularWithoutIcon" id="wk3-yL-wR3" customClass="LogsLargeBodyWithoutIconTableViewCell" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsMainScreenTableViewCellBodyRegularWithoutIcon" id="wk3-yL-wR3" customClass="LogsLargeBodyWithoutDogIconTableViewCell" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="201" width="414" height="55.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="wk3-yL-wR3" id="QPC-qt-FVA">
@@ -1594,6 +1594,8 @@
                     <connections>
                         <outlet property="createFamilyButton" destination="NjJ-MK-kxv" id="Ugo-NQ-uXv"/>
                         <outlet property="createFamilyDisclaimer" destination="Pnq-Zb-3Yo" id="sui-8J-BrP"/>
+                        <outlet property="createFamilyDisclaimerLeadingConstraint" destination="peT-rB-K1m" id="UW5-TN-Vwt"/>
+                        <outlet property="createFamilyDisclaimerTrailingConstraint" destination="o1c-1j-nac" id="M7r-Lr-gqn"/>
                         <outlet property="joinFamilyButton" destination="MO6-iL-KZi" id="LCH-v2-NyB"/>
                     </connections>
                 </viewController>
@@ -1681,13 +1683,13 @@
                                     <action selector="segmentedControl:" destination="w3D-Ib-MEE" eventType="valueChanged" id="DGd-NH-Wff"/>
                                 </connections>
                             </segmentedControl>
-                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CJ5-mJ-d5P" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CJ5-mJ-d5P" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="10" y="242" width="90" height="90"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="90" id="Ay3-La-q5a"/>
                                     <constraint firstAttribute="width" secondItem="CJ5-mJ-d5P" secondAttribute="height" multiplier="1:1" id="jqt-Om-9qR"/>
                                 </constraints>
-                                <state key="normal" image="chooseIcon"/>
+                                <state key="normal" image="chooseIconForDog"/>
                                 <connections>
                                     <action selector="didClickIcon:" destination="w3D-Ib-MEE" eventType="touchUpInside" id="3xW-F6-fZz"/>
                                 </connections>
@@ -2772,7 +2774,7 @@
                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="About" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qnp-Xo-LyR" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="About Me" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qnp-Xo-LyR" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="10" y="123" width="394" height="24"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <nil key="highlightedColor"/>
@@ -2793,17 +2795,17 @@
                             <constraint firstItem="efn-h2-GgU" firstAttribute="trailing" secondItem="6oF-pF-Bky" secondAttribute="trailing" constant="10" id="4lf-97-KNc"/>
                             <constraint firstItem="qMI-pY-Zod" firstAttribute="leading" secondItem="efn-h2-GgU" secondAttribute="leading" constant="10" id="5dv-jG-ReR"/>
                             <constraint firstItem="efn-h2-GgU" firstAttribute="trailing" secondItem="0oo-yA-3jX" secondAttribute="trailing" constant="10" id="6SE-rr-691"/>
-                            <constraint firstItem="4CW-R2-oje" firstAttribute="leading" secondItem="xiu-VJ-woT" secondAttribute="leading" constant="10" id="6c1-Ed-EP2"/>
+                            <constraint firstItem="4CW-R2-oje" firstAttribute="leading" secondItem="efn-h2-GgU" secondAttribute="leading" constant="10" id="6c1-Ed-EP2"/>
                             <constraint firstItem="efn-h2-GgU" firstAttribute="trailing" secondItem="BMc-ay-vYc" secondAttribute="trailing" constant="10" id="6ym-2N-HYh"/>
                             <constraint firstItem="BMc-ay-vYc" firstAttribute="top" secondItem="6oF-pF-Bky" secondAttribute="bottom" constant="5" id="CXK-he-UhB"/>
-                            <constraint firstItem="kCx-SR-69e" firstAttribute="leading" secondItem="xiu-VJ-woT" secondAttribute="leading" constant="10" id="Dln-td-Q3w"/>
+                            <constraint firstItem="kCx-SR-69e" firstAttribute="leading" secondItem="efn-h2-GgU" secondAttribute="leading" constant="10" id="Dln-td-Q3w"/>
                             <constraint firstItem="rI4-gw-ynM" firstAttribute="leading" secondItem="efn-h2-GgU" secondAttribute="leading" constant="10" id="GKZ-IO-9qy"/>
                             <constraint firstItem="0oo-yA-3jX" firstAttribute="top" secondItem="qMI-pY-Zod" secondAttribute="bottom" constant="7.5" id="H4u-iN-wub"/>
-                            <constraint firstItem="6oF-pF-Bky" firstAttribute="leading" secondItem="xiu-VJ-woT" secondAttribute="leading" constant="10" id="MHg-93-qyd"/>
-                            <constraint firstAttribute="trailing" secondItem="rI4-gw-ynM" secondAttribute="trailing" constant="10" id="Mbd-7g-BqR"/>
+                            <constraint firstItem="6oF-pF-Bky" firstAttribute="leading" secondItem="efn-h2-GgU" secondAttribute="leading" constant="10" id="MHg-93-qyd"/>
+                            <constraint firstItem="efn-h2-GgU" firstAttribute="trailing" secondItem="rI4-gw-ynM" secondAttribute="trailing" constant="10" id="Mbd-7g-BqR"/>
                             <constraint firstItem="Qnp-Xo-LyR" firstAttribute="leading" secondItem="efn-h2-GgU" secondAttribute="leading" constant="10" id="N9y-0C-i3j"/>
-                            <constraint firstItem="0oo-yA-3jX" firstAttribute="leading" secondItem="xiu-VJ-woT" secondAttribute="leading" constant="10" id="Pda-7e-3er"/>
-                            <constraint firstAttribute="trailing" secondItem="kCx-SR-69e" secondAttribute="trailing" constant="10" id="S8m-oH-BNh"/>
+                            <constraint firstItem="0oo-yA-3jX" firstAttribute="leading" secondItem="efn-h2-GgU" secondAttribute="leading" constant="10" id="Pda-7e-3er"/>
+                            <constraint firstItem="efn-h2-GgU" firstAttribute="trailing" secondItem="kCx-SR-69e" secondAttribute="trailing" constant="10" id="S8m-oH-BNh"/>
                             <constraint firstItem="qMI-pY-Zod" firstAttribute="top" secondItem="4CW-R2-oje" secondAttribute="bottom" constant="45" id="kyb-E0-xwE"/>
                             <constraint firstItem="kCx-SR-69e" firstAttribute="top" secondItem="rI4-gw-ynM" secondAttribute="bottom" constant="45" id="lfp-gY-djk"/>
                             <constraint firstItem="efn-h2-GgU" firstAttribute="trailing" secondItem="qMI-pY-Zod" secondAttribute="trailing" constant="10" id="mbA-kL-vEd"/>
@@ -3067,7 +3069,7 @@
                             <constraint firstItem="PMr-uA-LRM" firstAttribute="trailing" secondItem="XXS-Yg-DoY" secondAttribute="trailing" constant="10" id="MLH-oX-C2f"/>
                             <constraint firstItem="XXS-Yg-DoY" firstAttribute="leading" secondItem="PMr-uA-LRM" secondAttribute="leading" constant="10" id="Nwy-Jf-ADe"/>
                             <constraint firstItem="K9F-N0-v7X" firstAttribute="leading" secondItem="PMr-uA-LRM" secondAttribute="leading" constant="10" id="YJR-bf-7G2"/>
-                            <constraint firstAttribute="trailing" secondItem="B0g-Ts-u0i" secondAttribute="trailing" constant="10" id="aFN-l6-nvb"/>
+                            <constraint firstItem="PMr-uA-LRM" firstAttribute="trailing" secondItem="B0g-Ts-u0i" secondAttribute="trailing" constant="10" id="aFN-l6-nvb"/>
                             <constraint firstItem="PMr-uA-LRM" firstAttribute="trailing" secondItem="RuT-Ge-Fq0" secondAttribute="trailing" constant="10" id="atI-6a-yhD"/>
                             <constraint firstItem="PMr-uA-LRM" firstAttribute="trailing" secondItem="BND-Lz-bFc" secondAttribute="trailing" constant="10" id="haP-y0-6dY"/>
                             <constraint firstItem="RuT-Ge-Fq0" firstAttribute="leading" secondItem="PMr-uA-LRM" secondAttribute="leading" constant="10" id="idW-yo-mPO"/>
@@ -3096,22 +3098,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Snooze Length" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z2K-Rw-3Ts" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="10" y="233" width="131.5" height="24"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Snooze Duration" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z2K-Rw-3Ts" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="10" y="248" width="394" height="24"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <datePicker contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Lg-8F-8mh">
-                                <rect key="frame" x="151.5" y="200" width="252.5" height="90"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="O3Z-Ee-r21"/>
-                                    <constraint firstAttribute="height" constant="90" id="U4d-YX-RBT"/>
-                                </constraints>
-                                <connections>
-                                    <action selector="didUpdateSnoozeLength:" destination="ouB-ez-Ce7" eventType="valueChanged" id="gRX-HC-B4q"/>
-                                </connections>
-                            </datePicker>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="755" verticalCompressionResistancePriority="755" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" title="isPaused" translatesAutoresizingMaskIntoConstraints="NO" id="3He-Pc-BJL">
                                 <rect key="frame" x="320" y="119.5" width="51" height="31"/>
                                 <color key="onTintColor" systemColor="systemBlueColor"/>
@@ -3125,37 +3117,49 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Freezes all reminders so they do not countdown or send notifications." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t7M-mr-FOz" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="10" y="158" width="394" height="30"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t7M-mr-FOz" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="10" y="158" width="394" height="45"/>
+                                <string key="text">Freezes all reminders so they do not countdown, sound alarms, or send notifications. This setting is synced between all family members.</string>
                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="If an alarm is snoozed, this is the length of time until it sounds again." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gOs-eT-mwT" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="10" y="295" width="394" height="30"/>
+                                <rect key="frame" x="10" y="372" width="394" height="30"/>
                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <datePicker contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Lg-8F-8mh">
+                                <rect key="frame" x="10" y="277" width="394" height="90"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="0lg-bV-9OZ"/>
+                                    <constraint firstAttribute="height" constant="90" id="U4d-YX-RBT"/>
+                                </constraints>
+                                <connections>
+                                    <action selector="didUpdateSnoozeLength:" destination="ouB-ez-Ce7" eventType="valueChanged" id="gRX-HC-B4q"/>
+                                </connections>
+                            </datePicker>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="XO2-qw-eN2"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="8Lg-8F-8mh" firstAttribute="centerY" secondItem="z2K-Rw-3Ts" secondAttribute="centerY" id="4HE-jb-OGT"/>
+                            <constraint firstItem="8Lg-8F-8mh" firstAttribute="top" secondItem="z2K-Rw-3Ts" secondAttribute="bottom" constant="5" id="1e3-td-SC9"/>
                             <constraint firstItem="XO2-qw-eN2" firstAttribute="trailing" secondItem="t7M-mr-FOz" secondAttribute="trailing" constant="10" id="Cbl-ZX-Zc8"/>
                             <constraint firstItem="3He-Pc-BJL" firstAttribute="centerY" secondItem="yLz-QX-a5s" secondAttribute="centerY" id="Fj2-yt-s8Z"/>
-                            <constraint firstItem="yLz-QX-a5s" firstAttribute="leading" secondItem="zU5-NK-uXT" secondAttribute="leading" constant="10" id="GuE-2e-GTI"/>
+                            <constraint firstItem="yLz-QX-a5s" firstAttribute="leading" secondItem="XO2-qw-eN2" secondAttribute="leading" constant="10" id="GuE-2e-GTI"/>
                             <constraint firstItem="z2K-Rw-3Ts" firstAttribute="top" secondItem="t7M-mr-FOz" secondAttribute="bottom" constant="45" id="HXE-s7-no3"/>
+                            <constraint firstItem="XO2-qw-eN2" firstAttribute="trailing" secondItem="z2K-Rw-3Ts" secondAttribute="trailing" constant="10" id="IDS-EB-fo3"/>
                             <constraint firstItem="3He-Pc-BJL" firstAttribute="leading" secondItem="yLz-QX-a5s" secondAttribute="trailing" constant="10" id="KB1-iS-CJe"/>
-                            <constraint firstItem="8Lg-8F-8mh" firstAttribute="leading" secondItem="z2K-Rw-3Ts" secondAttribute="trailing" constant="10" id="RFJ-bL-gZN"/>
                             <constraint firstItem="XO2-qw-eN2" firstAttribute="trailing" secondItem="gOs-eT-mwT" secondAttribute="trailing" constant="10" id="SBA-Pn-PQf"/>
-                            <constraint firstItem="t7M-mr-FOz" firstAttribute="leading" secondItem="zU5-NK-uXT" secondAttribute="leading" constant="10" id="U3K-WF-fvj"/>
+                            <constraint firstItem="t7M-mr-FOz" firstAttribute="leading" secondItem="XO2-qw-eN2" secondAttribute="leading" constant="10" id="U3K-WF-fvj"/>
                             <constraint firstItem="yLz-QX-a5s" firstAttribute="top" secondItem="XO2-qw-eN2" secondAttribute="top" constant="35" id="YkK-3B-nnA"/>
-                            <constraint firstItem="z2K-Rw-3Ts" firstAttribute="leading" secondItem="zU5-NK-uXT" secondAttribute="leading" constant="10" id="ZVR-AI-NoM"/>
-                            <constraint firstAttribute="trailing" secondItem="8Lg-8F-8mh" secondAttribute="trailing" constant="10" id="aZ4-gx-XPQ"/>
+                            <constraint firstItem="z2K-Rw-3Ts" firstAttribute="leading" secondItem="XO2-qw-eN2" secondAttribute="leading" constant="10" id="ZVR-AI-NoM"/>
+                            <constraint firstItem="XO2-qw-eN2" firstAttribute="trailing" secondItem="8Lg-8F-8mh" secondAttribute="trailing" constant="10" id="aZ4-gx-XPQ"/>
                             <constraint firstItem="t7M-mr-FOz" firstAttribute="top" secondItem="3He-Pc-BJL" secondAttribute="bottom" constant="7.5" id="bwc-fi-Fny"/>
+                            <constraint firstItem="8Lg-8F-8mh" firstAttribute="leading" secondItem="XO2-qw-eN2" secondAttribute="leading" constant="10" id="fWC-kb-ZxK"/>
                             <constraint firstItem="gOs-eT-mwT" firstAttribute="top" secondItem="8Lg-8F-8mh" secondAttribute="bottom" constant="5" id="luC-e4-pbe"/>
-                            <constraint firstItem="gOs-eT-mwT" firstAttribute="leading" secondItem="zU5-NK-uXT" secondAttribute="leading" constant="10" id="tNZ-Iv-rMQ"/>
+                            <constraint firstItem="gOs-eT-mwT" firstAttribute="leading" secondItem="XO2-qw-eN2" secondAttribute="leading" constant="10" id="tNZ-Iv-rMQ"/>
                             <constraint firstItem="XO2-qw-eN2" firstAttribute="trailing" secondItem="3He-Pc-BJL" secondAttribute="trailing" constant="45" id="tb4-qG-l1h"/>
                         </constraints>
                     </view>
@@ -3181,10 +3185,10 @@
                                 <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tae-Jo-1oX" userLabel="containerView">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="583.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="646"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="If Follow Up Notifications are enabled, this is how long after the first notification your follow up will be sent." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Prl-sQ-Oqn" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="543.5" width="394" height="30"/>
+                                                <rect key="frame" x="10" y="606" width="394" height="30"/>
                                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                 <nil key="highlightedColor"/>
@@ -3197,46 +3201,30 @@
                                             </label>
                                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="755" verticalCompressionResistancePriority="755" contentHorizontalAlignment="center" contentVerticalAlignment="center" title="isNotificationEnabled" translatesAutoresizingMaskIntoConstraints="NO" id="aQH-BI-U0L">
                                                 <rect key="frame" x="320" y="31.5" width="51" height="31"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="31" id="2Ty-Bv-eiY"/>
-                                                </constraints>
                                                 <color key="onTintColor" systemColor="systemBlueColor"/>
                                                 <connections>
                                                     <action selector="didToggleNotificationEnabled:" destination="Vgb-2Y-U49" eventType="valueChanged" id="Nc1-v6-69Q"/>
                                                 </connections>
                                             </switch>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Follow Up Notifications" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fyy-v2-3CP" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="390" width="300" height="24"/>
+                                                <rect key="frame" x="10" y="390.5" width="300" height="24"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="755" verticalCompressionResistancePriority="755" contentHorizontalAlignment="center" contentVerticalAlignment="center" title="willFollowUp" translatesAutoresizingMaskIntoConstraints="NO" id="hGe-Mc-hm4">
-                                                <rect key="frame" x="320" y="387" width="51" height="30"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="30" id="yGk-ch-NKv"/>
-                                                </constraints>
+                                                <rect key="frame" x="320" y="387" width="51" height="31"/>
                                                 <color key="onTintColor" systemColor="systemBlueColor"/>
                                                 <connections>
                                                     <action selector="didToggleFollowUp:" destination="Vgb-2Y-U49" eventType="valueChanged" id="6bf-P8-EWI"/>
                                                 </connections>
                                             </switch>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Follow Up Delay" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wc4-1K-kvd" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="481.5" width="140.5" height="24"/>
+                                                <rect key="frame" x="10" y="482" width="394" height="24"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <datePicker contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" countDownDuration="300" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pst-bc-bN6">
-                                                <rect key="frame" x="160.5" y="448.5" width="243.5" height="90"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="KQX-QQ-276"/>
-                                                    <constraint firstAttribute="height" constant="90" id="t6T-xr-ofg"/>
-                                                </constraints>
-                                                <connections>
-                                                    <action selector="didUpdateFollowUpDelay:" destination="Vgb-2Y-U49" eventType="valueChanged" id="BSh-rJ-44A"/>
-                                                </connections>
-                                            </datePicker>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Loud Notifications" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PfB-2h-W3J" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                                 <rect key="frame" x="10" y="265.5" width="300" height="24"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
@@ -3244,24 +3232,21 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="755" verticalCompressionResistancePriority="755" contentHorizontalAlignment="center" contentVerticalAlignment="center" title="isNotificationEnabled" translatesAutoresizingMaskIntoConstraints="NO" id="OV1-FK-q3a">
-                                                <rect key="frame" x="320" y="262.5" width="51" height="30"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="30" id="4vB-ov-Aol"/>
-                                                </constraints>
+                                                <rect key="frame" x="320" y="262" width="51" height="31"/>
                                                 <color key="onTintColor" systemColor="systemBlueColor"/>
                                                 <connections>
                                                     <action selector="didToggleLoudNotifications:" destination="Vgb-2Y-U49" eventType="valueChanged" id="f3o-BD-Aod"/>
                                                 </connections>
                                             </switch>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LJV-Rs-nce" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="300" width="394" height="45"/>
+                                                <rect key="frame" x="10" y="300.5" width="394" height="45"/>
                                                 <string key="text">Notifications will ring despite your phone being silenced, locked, or in focus mode. If Hound is terminated, Loud Notifications may not work properly.</string>
                                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="If you don't respond to the first notification, send a follow up." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FIV-Xf-mEt" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="421.5" width="394" height="15"/>
+                                                <rect key="frame" x="10" y="422" width="394" height="15"/>
                                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                 <nil key="highlightedColor"/>
@@ -3278,6 +3263,16 @@
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <datePicker contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" countDownDuration="300" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pst-bc-bN6">
+                                                <rect key="frame" x="10" y="511" width="394" height="90"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="KQX-QQ-276"/>
+                                                    <constraint firstAttribute="height" constant="90" id="t6T-xr-ofg"/>
+                                                </constraints>
+                                                <connections>
+                                                    <action selector="didUpdateFollowUpDelay:" destination="Vgb-2Y-U49" eventType="valueChanged" id="BSh-rJ-44A"/>
+                                                </connections>
+                                            </datePicker>
                                         </subviews>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
@@ -3286,9 +3281,7 @@
                                             <constraint firstItem="LJV-Rs-nce" firstAttribute="top" secondItem="OV1-FK-q3a" secondAttribute="bottom" constant="7.5" id="6fP-aD-3jH"/>
                                             <constraint firstItem="hGe-Mc-hm4" firstAttribute="centerY" secondItem="Fyy-v2-3CP" secondAttribute="centerY" id="8xL-RW-tiu"/>
                                             <constraint firstItem="HjJ-6u-KHR" firstAttribute="top" secondItem="tae-Jo-1oX" secondAttribute="top" constant="35" id="9qR-P1-n3O"/>
-                                            <constraint firstItem="Pst-bc-bN6" firstAttribute="centerY" secondItem="wc4-1K-kvd" secondAttribute="centerY" id="9sg-WM-pUL"/>
                                             <constraint firstItem="hGe-Mc-hm4" firstAttribute="leading" secondItem="Fyy-v2-3CP" secondAttribute="trailing" constant="10" id="C37-tu-qtu"/>
-                                            <constraint firstItem="Pst-bc-bN6" firstAttribute="leading" secondItem="wc4-1K-kvd" secondAttribute="trailing" constant="10" id="Gq5-cg-jAS"/>
                                             <constraint firstItem="Prl-sQ-Oqn" firstAttribute="top" secondItem="Pst-bc-bN6" secondAttribute="bottom" constant="5" id="Icf-Ky-wZS"/>
                                             <constraint firstAttribute="trailing" secondItem="U1m-pf-2vk" secondAttribute="trailing" constant="10" id="KKh-Lf-N2g"/>
                                             <constraint firstItem="LJV-Rs-nce" firstAttribute="leading" secondItem="tae-Jo-1oX" secondAttribute="leading" constant="10" id="Lnj-YY-jgP"/>
@@ -3299,10 +3292,12 @@
                                             <constraint firstItem="PfB-2h-W3J" firstAttribute="top" secondItem="U1m-pf-2vk" secondAttribute="bottom" constant="45" id="VvX-3w-qGe"/>
                                             <constraint firstAttribute="bottom" secondItem="Prl-sQ-Oqn" secondAttribute="bottom" constant="10" id="YqB-TX-111"/>
                                             <constraint firstAttribute="trailing" secondItem="FIV-Xf-mEt" secondAttribute="trailing" constant="10" id="Zje-2g-4ut"/>
+                                            <constraint firstItem="Pst-bc-bN6" firstAttribute="top" secondItem="wc4-1K-kvd" secondAttribute="bottom" constant="5" id="a6X-xc-fpK"/>
                                             <constraint firstItem="Fyy-v2-3CP" firstAttribute="top" secondItem="LJV-Rs-nce" secondAttribute="bottom" constant="45" id="a7Y-K9-KXd"/>
                                             <constraint firstItem="aQH-BI-U0L" firstAttribute="leading" secondItem="HjJ-6u-KHR" secondAttribute="trailing" constant="10" id="cjf-Yt-Z1U"/>
                                             <constraint firstItem="HjJ-6u-KHR" firstAttribute="leading" secondItem="tae-Jo-1oX" secondAttribute="leading" constant="10" id="dNb-QO-Gst"/>
                                             <constraint firstItem="PfB-2h-W3J" firstAttribute="leading" secondItem="tae-Jo-1oX" secondAttribute="leading" constant="10" id="jS4-af-B1g"/>
+                                            <constraint firstItem="Pst-bc-bN6" firstAttribute="leading" secondItem="tae-Jo-1oX" secondAttribute="leading" constant="10" id="kEQ-oi-jg3"/>
                                             <constraint firstItem="OV1-FK-q3a" firstAttribute="trailing" secondItem="aQH-BI-U0L" secondAttribute="trailing" id="lLX-R6-g8v"/>
                                             <constraint firstItem="OV1-FK-q3a" firstAttribute="centerY" secondItem="PfB-2h-W3J" secondAttribute="centerY" id="ltC-PD-f6g"/>
                                             <constraint firstItem="FIV-Xf-mEt" firstAttribute="top" secondItem="Fyy-v2-3CP" secondAttribute="bottom" constant="7.5" id="oDV-ZC-hME"/>
@@ -3312,6 +3307,7 @@
                                             <constraint firstItem="Prl-sQ-Oqn" firstAttribute="leading" secondItem="tae-Jo-1oX" secondAttribute="leading" constant="10" id="riZ-TG-Vrk"/>
                                             <constraint firstItem="hGe-Mc-hm4" firstAttribute="trailing" secondItem="aQH-BI-U0L" secondAttribute="trailing" id="sjD-7q-nHB"/>
                                             <constraint firstItem="FIV-Xf-mEt" firstAttribute="leading" secondItem="tae-Jo-1oX" secondAttribute="leading" constant="10" id="uGZ-AK-eVQ"/>
+                                            <constraint firstAttribute="trailing" secondItem="wc4-1K-kvd" secondAttribute="trailing" constant="10" id="ue0-4Y-WEN"/>
                                             <constraint firstItem="W0k-0o-HUC" firstAttribute="leading" secondItem="tae-Jo-1oX" secondAttribute="leading" constant="10" id="x3X-qF-DyL"/>
                                             <constraint firstItem="wc4-1K-kvd" firstAttribute="top" secondItem="FIV-Xf-mEt" secondAttribute="bottom" constant="45" id="xOi-CL-uJ2"/>
                                             <constraint firstItem="W0k-0o-HUC" firstAttribute="top" secondItem="HjJ-6u-KHR" secondAttribute="bottom" constant="50" id="zAw-2y-Cu9"/>
@@ -3380,7 +3376,7 @@
         <image name="chevron.backward" catalog="system" width="96" height="128"/>
         <image name="chevron.left" catalog="system" width="96" height="128"/>
         <image name="chevron.right" catalog="system" width="96" height="128"/>
-        <image name="chooseIcon" width="150" height="150"/>
+        <image name="chooseIconForDog" width="150" height="150"/>
         <image name="circle.fill" catalog="system" width="128" height="121"/>
         <image name="clock" catalog="system" width="128" height="121"/>
         <image name="f.circle.fill" catalog="system" width="128" height="121"/>

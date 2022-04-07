@@ -56,6 +56,8 @@ class SettingsRemindersViewController: UIViewController, UIGestureRecognizerDele
     /// If the pause all timers switch it triggered, calls thing function
     @IBAction private func didToggleIsPaused(_ sender: Any) {
         
+        // TO DO re-enable the pause all reminders switch. to do so, make sure this feature syncs across all family members so that reminder timing (no matter where you are in the app) is accurate. also make this page sync so pause all reminders switch is updated if a fam member changed it.
+        
         // save and changes values
         let beforeUpdateIsPaused = UserConfiguration.isPaused
         UserConfiguration.isPaused = isPausedSwitch.isOn

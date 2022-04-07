@@ -42,36 +42,6 @@ class LogsCompactBodyTableViewCell: UITableViewCell {
 
         logNote.text = logSource.logNote
 
-        // deactivate old
-        for label in [dogName, self.logAction, logDate, logNote] {
-            var constraintsToDeactivate: [NSLayoutConstraint] = []
-
-            for constraintIndex in 0..<label!.constraints.count where label!.constraints[constraintIndex].firstAttribute == .width {
-                constraintsToDeactivate.append(label!.constraints[constraintIndex])
-            }
-
-            NSLayoutConstraint.deactivate(constraintsToDeactivate)
-        }
-
-        var labelWidthConstraints: [NSLayoutConstraint] = []
-
-        // create new
-        for label in [dogName, self.logAction, logDate] {
-            let labelTextWidth = label!.text!.boundingFrom(font: label!.font, height: label!.frame.height).width
-            let labelWidthConstraint = NSLayoutConstraint.init(item: label!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: labelTextWidth)
-            labelWidthConstraints.append(labelWidthConstraint)
-        }
-
-        if logNote.text?.trimmingCharacters(in: .whitespacesAndNewlines) != ""{
-            let logNoteWidthConstraint = NSLayoutConstraint.init(item: logNote!, attribute: .width, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 20.0)
-            labelWidthConstraints.append(logNoteWidthConstraint)
-        }
-
-        NSLayoutConstraint.activate(labelWidthConstraints)
-
-        self.contentView.setNeedsLayout()
-        self.contentView.layoutIfNeeded()
-
     }
 
 }
