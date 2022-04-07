@@ -65,7 +65,7 @@ class SettingsRemindersViewController: UIViewController, UIGestureRecognizerDele
         // inform delegate so appropiate actions can be taken, e.g. stop all timers
         delegate.didToggleIsPaused(newIsPaused: isPausedSwitch.isOn)
         
-        let body = [UserDefaultsKeys.isPaused.rawValue: UserConfiguration.isPaused]
+        let body = [ServerDefaultKeys.isPaused.rawValue: UserConfiguration.isPaused]
         UserRequest.update(body: body) { requestWasSuccessful in
             if requestWasSuccessful == false {
                 // error, revert to previous
@@ -95,7 +95,7 @@ class SettingsRemindersViewController: UIViewController, UIGestureRecognizerDele
     @IBAction private func didUpdateSnoozeLength(_ sender: Any) {
         let beforeUpdateSnoozeLength = UserConfiguration.snoozeLength
         UserConfiguration.snoozeLength = snoozeLength.countDownDuration
-        let body = [UserDefaultsKeys.snoozeLength.rawValue: UserConfiguration.snoozeLength]
+        let body = [ServerDefaultKeys.snoozeLength.rawValue: UserConfiguration.snoozeLength]
         UserRequest.update(body: body) { requestWasSuccessful in
             if requestWasSuccessful == false {
                 // error, revert to previous

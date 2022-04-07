@@ -12,7 +12,7 @@ const {
 const createDogQuery = async (req) => {
   const familyId = formatNumber(req.params.familyId);
   const { dogName } = req.body;
-  // const icon = req.body.icon;
+  // const dogIcon = req.body.dogIcon;
 
   if (areAllDefined([dogName]) === false) {
     throw new ValidationError('dogName missing', 'ER_VALUES_MISSING');
@@ -21,7 +21,7 @@ const createDogQuery = async (req) => {
   try {
     const result = await queryPromise(
       req,
-      'INSERT INTO dogs(familyId, icon, dogName) VALUES (?,?,?)',
+      'INSERT INTO dogs(familyId, dogIcon, dogName) VALUES (?,?,?)',
       [familyId, undefined, dogName],
     );
     return formatNumber(result.insertId);

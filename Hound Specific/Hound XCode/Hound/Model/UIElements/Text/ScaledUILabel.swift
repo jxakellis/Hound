@@ -66,7 +66,7 @@ class ScaledUILabel: UILabel {
             return placeholderText
         }
         set {
-            if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForScaledUILabel.rawValue) as! UILabel? {
+            if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForScaledUILabel.rawValue) as? UILabel {
                 placeholderLabel.text = newValue
                 placeholderLabel.sizeToFit()
             }
@@ -78,7 +78,7 @@ class ScaledUILabel: UILabel {
     
     /// Resize the placeholder UILabel to make sure it's in the same position as the UILabel text
     private func resizePlaceholder() {
-        if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForScaledUILabel.rawValue) as! UILabel? {
+        if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForScaledUILabel.rawValue) as? UILabel {
             // let labelX = self.frame.minX
             // let labelY = self.frame.minY
             // let labelWidth = self.frame.width - (labelX * 2)

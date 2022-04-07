@@ -57,7 +57,7 @@ class TimingManager {
                                                    interval: -1,
                                                    target: self,
                                                    selector: #selector(willUpdateIsSkipping(sender:)),
-                                                   userInfo: ["dogId": dogManager.dogs[d].dogId, "reminderId": reminder.reminderId],
+                                                   userInfo: [ServerDefaultKeys.dogId.rawValue: dogManager.dogs[d].dogId, ServerDefaultKeys.reminderId.rawValue: reminder.reminderId],
                                                    repeats: false)
                     
                     isSkippingDisablers.append(isSkippingDisabler)
@@ -69,7 +69,7 @@ class TimingManager {
                                   interval: -1,
                                   target: self,
                                   selector: #selector(self.didExecuteTimer(sender:)),
-                                  userInfo: ["dogId": dogManager.dogs[d].dogId, "dogName": dogManager.dogs[d].dogName, "reminder": reminder],
+                                  userInfo: [ServerDefaultKeys.dogId.rawValue: dogManager.dogs[d].dogId, ServerDefaultKeys.dogName.rawValue: dogManager.dogs[d].dogName, "reminder": reminder],
                                   repeats: false)
                 RunLoop.main.add(timer, forMode: .common)
                 
@@ -94,8 +94,8 @@ class TimingManager {
             return
         }
         
-        let dogId: Int = parsedDictionary["dogId"]! as! Int
-        let passedReminderId: Int = parsedDictionary["reminderId"]! as! Int
+        let dogId: Int = parsedDictionary[ServerDefaultKeys.dogId.rawValue]! as! Int
+        let passedReminderId: Int = parsedDictionary[ServerDefaultKeys.reminderId.rawValue]! as! Int
         let dogManager = MainTabBarViewController.staticDogManager
         
         do {
@@ -231,8 +231,8 @@ class TimingManager {
             return
         }
         
-        let dogName: String = parsedDictionary["dogName"]! as! String
-        let dogId: Int = parsedDictionary["dogId"]! as! Int
+        let dogName: String = parsedDictionary[ServerDefaultKeys.dogName.rawValue]! as! String
+        let dogId: Int = parsedDictionary[ServerDefaultKeys.dogId.rawValue]! as! Int
         let reminder: Reminder = parsedDictionary["reminder"]! as! Reminder
         
         AlarmManager.willShowAlarm(dogName: dogName, dogId: dogId, reminder: reminder)

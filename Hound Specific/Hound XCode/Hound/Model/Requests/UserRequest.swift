@@ -45,7 +45,7 @@ enum UserRequest: RequestProtocol {
         // make post request, assume body valid as constructed with method
         InternalRequestUtils.genericPostRequest(forURL: baseURLWithoutParams, forBody: InternalRequestUtils.createFullUserBody()) { responseBody, responseStatus in
             DispatchQueue.main.async {
-            if responseBody != nil, let userId = responseBody!["result"] as? Int {
+                if responseBody != nil, let userId = responseBody![ServerDefaultKeys.result.rawValue] as? Int {
                 completionHandler(userId, responseStatus)
             }
             else {

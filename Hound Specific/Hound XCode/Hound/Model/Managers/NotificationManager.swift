@@ -103,15 +103,12 @@ enum NotificationManager {
                             UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
                             UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
                         }
-                        // completionHandler(requestWasSuccessful)
                         completionHandler()
                     }
             }
             
         }
         else {
-            // already granted, no need to ask.
-           //  completionHandler(true)
             completionHandler()
         }
     }
@@ -119,18 +116,18 @@ enum NotificationManager {
     /**
      DOES NOT update local UserConfiguration. Updates the server based on the new status of the parameters provided.  If the server returned a 200 status and is successful, then true is returned. Otherwise, if there was a problem with the query, false is returned and ErrorManager is automatically invoked.
      */
-    static func updateServerUserNotificationConfiguration(updatedIsNotificationEnabled: Bool? = nil, updatedIsLoudNotification: Bool? = nil, updatedIsFollowUpEnabled: Bool? = nil, completionHandler: @escaping (Bool) -> Void) {
+    private static func updateServerUserNotificationConfiguration(updatedIsNotificationEnabled: Bool? = nil, updatedIsLoudNotification: Bool? = nil, updatedIsFollowUpEnabled: Bool? = nil, completionHandler: @escaping (Bool) -> Void) {
         // Contact the server about the updated values and, if there is no response or a bad response, revert the values to their previous values. isNotificationAuthorized purposefully excluded as server doesn't need to know that and its value cant exactly just be flipped (as tied to apple notif auth status)
         var body: [String: Any] = [:]
         // check for if values were changed, if there were then tell the server
         if updatedIsNotificationEnabled != nil {
-            body[UserDefaultsKeys.isNotificationEnabled.rawValue] = updatedIsNotificationEnabled!
+            body[ServerDefaultKeys.isNotificationEnabled.rawValue] = updatedIsNotificationEnabled!
         }
         if updatedIsLoudNotification != nil {
-            body[UserDefaultsKeys.isLoudNotification.rawValue] = updatedIsLoudNotification!
+            body[ServerDefaultKeys.isLoudNotification.rawValue] = updatedIsLoudNotification!
         }
         if updatedIsFollowUpEnabled != nil {
-            body[UserDefaultsKeys.isFollowUpEnabled.rawValue] = updatedIsFollowUpEnabled
+            body[ServerDefaultKeys.isFollowUpEnabled.rawValue] = updatedIsFollowUpEnabled
         }
         if body.keys.isEmpty == false {
             // something to update
@@ -140,6 +137,7 @@ enum NotificationManager {
         }
         // body is empty so there was nothing to query, return completion handler
         else {
+            // DONT REMOVE THIS .main, UNUserNotificationCenter.current().requestAuthorization invokes this function inside is compeltionHandler and that is not on the main thread. Will cause issues since UserRequest part is main thread but this isn't
             DispatchQueue.main.async {
                 completionHandler(true)
             }

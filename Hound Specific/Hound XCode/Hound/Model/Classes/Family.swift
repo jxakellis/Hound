@@ -22,10 +22,10 @@ class FamilyMember: NSObject {
     
     /// Assume array of family properties
     convenience init(fromBody body: [String: Any]) {
-        let userId = body["userId"] as? Int ?? -1
-        let firstName = body["userFirstName"] as? String ?? ""
-        let lastName = body["userLastName"] as? String ?? ""
-        let isFamilyHead = body["isFamilyHead"] as? Bool ?? false
+        let userId = body[ServerDefaultKeys.userId.rawValue] as? Int ?? -1
+        let firstName = body[ServerDefaultKeys.userFirstName.rawValue] as? String ?? ""
+        let lastName = body[ServerDefaultKeys.userLastName.rawValue] as? String ?? ""
+        let isFamilyHead = body[ServerDefaultKeys.isFamilyHead.rawValue] as? Bool ?? false
         self.init(userId: userId, firstName: firstName, lastName: lastName, isFamilyHead: isFamilyHead)
     }
     

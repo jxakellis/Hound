@@ -53,7 +53,7 @@ enum LogsRequest: RequestProtocol {
         // make post request, assume body valid as constructed with method
         InternalRequestUtils.genericPostRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
             
-            if responseBody != nil, let logId = responseBody!["result"] as? Int {
+            if responseBody != nil, let logId = responseBody![ServerDefaultKeys.result.rawValue] as? Int {
                 completionHandler(logId, responseStatus)
             }
             else {
@@ -110,7 +110,7 @@ extension LogsRequest {
             switch responseStatus {
             case .successResponse:
                 // Array of log JSON [{log1:'foo'},{log2:'bar'}]
-                if let result = responseBody!["result"] as? [[String: Any]] {
+                if let result = responseBody![ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
                     let log = Log(fromBody: result[0])
                     // able to add all
                     DispatchQueue.main.async {
@@ -148,7 +148,7 @@ extension LogsRequest {
             switch responseStatus {
             case .successResponse:
                 // Array of log JSON [{log1:'foo'},{log2:'bar'}]
-                if let result = responseBody!["result"] as? [[String: Any]] {
+                if let result = responseBody![ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
                     var logArray: [Log] = []
                     for logBody in result {
                         let log = Log(fromBody: logBody)

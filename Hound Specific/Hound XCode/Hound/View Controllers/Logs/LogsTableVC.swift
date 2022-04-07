@@ -299,7 +299,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
         // no logs present
         if uniqueLogs.count == 0 {
             if UserConfiguration.isCompactView == true {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderCompact", for: indexPath)
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsCompactHeaderTableViewCell", for: indexPath)
 
                 let customCell = cell as! LogsCompactHeaderTableViewCell
                 customCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
@@ -307,7 +307,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
                 return cell
             }
             else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderRegular", for: indexPath)
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsLargeHeaderTableViewCell", for: indexPath)
 
                 let customCell = cell as! LogsLargeHeaderTableViewCell
                 customCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
@@ -325,7 +325,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
             // For the given parent array, we will take the first log in the nested array. The header will extract the date information from that log. It doesn't matter which log we take as all logs will have the same day, month, and year since they were already sorted to be in that array.
 
             if UserConfiguration.isCompactView == true {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderCompact", for: indexPath)
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsCompactHeaderTableViewCell", for: indexPath)
 
                 let customCell = cell as! LogsCompactHeaderTableViewCell
                 customCell.setup(log: targetUniqueLogsNestedArray[0].1, showFilterIndicator: shouldShowFilterIndicator)
@@ -333,7 +333,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
                 return cell
             }
             else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellHeaderRegular", for: indexPath)
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsLargeHeaderTableViewCell", for: indexPath)
 
                 let customCell = cell as! LogsLargeHeaderTableViewCell
                 customCell.setup(log: targetUniqueLogsNestedArray[0].1, showFilterIndicator: shouldShowFilterIndicator)
@@ -353,7 +353,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
             let dogIcon = dog.dogIcon
 
             if UserConfiguration.isCompactView == true {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyCompact", for: indexPath)
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsCompactBodyTableViewCell", for: indexPath)
 
                 let customCell = cell as! LogsCompactBodyTableViewCell
 
@@ -363,7 +363,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
             }
             // has dogIcon
             else if !(dogIcon.isEqualToImage(image: DogConstant.defaultDogIcon)) {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyRegularWithIcon", for: indexPath)
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsLargeBodyWithDogIconTableViewCell", for: indexPath)
 
                 let customCell = cell as! LogsLargeBodyWithDogIconTableViewCell
 
@@ -373,7 +373,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
             }
             // no dogIcon
             else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsMainScreenTableViewCellBodyRegularWithoutIcon", for: indexPath)
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsLargeBodyWithoutDogIconTableViewCell", for: indexPath)
 
                 let customCell = cell as! LogsLargeBodyWithoutDogIconTableViewCell
 

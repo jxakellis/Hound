@@ -35,7 +35,7 @@ router.post('/', createDog);
 /* BODY:
 {
  "dogName": "requiredString",
-"icon": optionalImage //icon only provided if user adds a custom icon, don't store default icon.
+"dogIcon": optionalImage //dogIcon only provided if user adds a custom dogIcon, don't store default dogIcon.
 }
 */
 
@@ -43,11 +43,11 @@ router.post('/', createDog);
 router.put('/:dogId', updateDog);
 /* BODY:
 
-//At least one of the following must be defined: dogName or icon
+//At least one of the following must be defined: dogName or dogIcon
 
 {
 "dogName": "optionalString",
-"icon": optionalImage
+"dogIcon": optionalImage
 }
 */
 

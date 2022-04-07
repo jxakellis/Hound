@@ -27,33 +27,33 @@ enum UserConfiguration {
     
     /// Sets the UserConfiguration values equal to all the values found in the body. The key for the each body value must match the name of the UserConfiguration property exactly in order to be used. The value must also be able to be converted into the proper data type.
     static func setup(fromBody body: [String: Any]) {
-        if let isCompactView = body["isCompactView"] as? Bool {
+        if let isCompactView = body[ServerDefaultKeys.isCompactView.rawValue] as? Bool {
             storedIsCompactView = isCompactView
         }
-        if let interfaceStyleInt = body["interfaceStyle"] as? Int {
+        if let interfaceStyleInt = body[ServerDefaultKeys.interfaceStyle.rawValue] as? Int {
             if let interfaceStyle = UIUserInterfaceStyle(rawValue: interfaceStyleInt) {
                 storedInterfaceStyle = interfaceStyle
             }
         }
-        if let snoozeLength = body["snoozeLength"] as? TimeInterval {
+        if let snoozeLength = body[ServerDefaultKeys.snoozeLength.rawValue] as? TimeInterval {
             storedSnoozeLength = snoozeLength
         }
-        if let isPaused = body["isPaused"] as? Bool {
+        if let isPaused = body[ServerDefaultKeys.isPaused.rawValue] as? Bool {
             storedIsPaused = isPaused
         }
-        if let isNotificationEnabled = body["isNotificationEnabled"] as? Bool {
+        if let isNotificationEnabled = body[ServerDefaultKeys.isNotificationEnabled.rawValue] as? Bool {
             storedIsNotificationEnabled = isNotificationEnabled
         }
-        if let isLoudNotification = body["isLoudNotification"] as? Bool {
+        if let isLoudNotification = body[ServerDefaultKeys.isLoudNotification.rawValue] as? Bool {
             storedIsLoudNotification = isLoudNotification
         }
-        if let isFollowUpEnabled = body["isFollowUpEnabled"] as? Bool {
+        if let isFollowUpEnabled = body[ServerDefaultKeys.isFollowUpEnabled.rawValue] as? Bool {
             storedIsFollowUpEnabled = isFollowUpEnabled
         }
-        if let followUpDelay = body["followUpDelay"] as? TimeInterval {
+        if let followUpDelay = body[ServerDefaultKeys.followUpDelay.rawValue] as? TimeInterval {
             storedFollowUpDelay = followUpDelay
         }
-        if let notificationSoundString = body["notificationSound"] as? String {
+        if let notificationSoundString = body[ServerDefaultKeys.notificationSound.rawValue] as? String {
             if let notificationSound = NotificationSound(rawValue: notificationSoundString) {
                 storedNotificationSound = notificationSound
             }

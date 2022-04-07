@@ -26,9 +26,9 @@ class ScaledUIButton: UIButton {
         }
         
         if currentImage != nil && currentImage!.isSymbolImage == true {
-            DispatchQueue.main.async {
+            // DispatchQueue.main.async {
                 super.setImage(self.currentImage?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: smallestDimension)), for: .normal)
-            }
+            // }
         }
         
     }

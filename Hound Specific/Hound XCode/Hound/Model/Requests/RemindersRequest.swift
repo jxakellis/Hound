@@ -50,7 +50,7 @@ enum RemindersRequest: RequestProtocol {
         let body = InternalRequestUtils.createReminderBody(reminder: reminder)
         // make post request, assume body valid as constructed with method
         InternalRequestUtils.genericPostRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
-            if responseBody != nil, let remindersJSONArray = responseBody!["result"] as? [[String: Any]] {
+            if responseBody != nil, let remindersJSONArray = responseBody![ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
                 // only one reminder
                 let reminder = Reminder(fromBody: remindersJSONArray[0])
                 completionHandler(reminder, responseStatus)
@@ -73,7 +73,7 @@ enum RemindersRequest: RequestProtocol {
         let body = InternalRequestUtils.createRemindersBody(reminders: reminders)
         // make post request, assume body valid as constructed with method
         InternalRequestUtils.genericPostRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
-            if responseBody != nil, let remindersJSONArray = responseBody!["result"] as? [[String: Any]] {
+            if responseBody != nil, let remindersJSONArray = responseBody![ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
                 var reminderArray: [Reminder] = []
                 for reminderJSON in remindersJSONArray {
                     reminderArray.append(Reminder(fromBody: reminderJSON))
@@ -165,7 +165,7 @@ extension RemindersRequest {
             switch responseStatus {
             case .successResponse:
                 // Array of reminder JSON [{reminder1:'foo'},{reminder2:'bar'}]
-                if let result = responseBody!["result"] as? [[String: Any]] {
+                if let result = responseBody![ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
                     let reminder = Reminder(fromBody: result[0])
                     // able to add all
                     DispatchQueue.main.async {
@@ -204,7 +204,7 @@ extension RemindersRequest {
             switch responseStatus {
             case .successResponse:
                 // Array of reminder JSON [{reminder1:'foo'},{reminder2:'bar'}]
-                if let result = responseBody!["result"] as? [[String: Any]] {
+                if let result = responseBody![ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
                     var reminderArray: [Reminder] = []
                     for reminderBody in result {
                         let reminder = Reminder(fromBody: reminderBody)

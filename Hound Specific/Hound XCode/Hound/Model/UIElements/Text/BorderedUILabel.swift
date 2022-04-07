@@ -80,7 +80,7 @@ class BorderedUILabel: ScaledUILabel {
         }
         set {
             // add two space offset to placeholder label.
-            if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForBorderedUILabel.rawValue) as! UILabel? {
+            if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForBorderedUILabel.rawValue) as? UILabel {
                 // placeholder label exists
                 if newValue == nil {
                     placeholderLabel.text = nil
@@ -99,7 +99,7 @@ class BorderedUILabel: ScaledUILabel {
     
     /// Resize the placeholder UILabel to make sure it's in the same position as the UILabel text
      private func resizePlaceholder() {
-        if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForBorderedUILabel.rawValue) as! UILabel? {
+         if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForBorderedUILabel.rawValue) as? UILabel {
             // let labelX = self.frame.minX
             // let labelY = self.frame.minY
             // let labelWidth = self.frame.width - (labelX * 2)

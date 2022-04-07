@@ -40,7 +40,7 @@ enum FamilyRequest: RequestProtocol {
         // make post request, assume body valid as constructed with method
         InternalRequestUtils.genericPostRequest(forURL: baseURLWithoutParams, forBody: [ : ]) { responseBody, responseStatus in
             DispatchQueue.main.async {
-                if responseBody != nil, let familyId = responseBody!["result"] as? Int {
+                if responseBody != nil, let familyId = responseBody![ServerDefaultKeys.result.rawValue] as? Int {
                     completionHandler(familyId, responseStatus)
                 }
                 else {
@@ -89,7 +89,7 @@ extension FamilyRequest {
             switch responseStatus {
             case .successResponse:
                 // Array of family JSON [{familyMember1:'foo'},{familyMember2:'bar'}]
-                if let result = responseBody!["result"] as? [String: Any], let familyMembersBody = result["familyMembers"] as? [[String: Any]] {
+                if let result = responseBody![ServerDefaultKeys.result.rawValue] as? [String: Any], let familyMembersBody = result[ServerDefaultKeys.familyMembers.rawValue] as? [[String: Any]] {
                     // decode familyCode and familyIsLocked
                     FamilyConfiguration.setup(fromBody: result)
                     
@@ -181,7 +181,7 @@ extension FamilyRequest {
      completionHandler returns a Bool. If the query returned a 200 status and is successful, then true is returned. Otherwise, if there was a problem, false is returned and ErrorManager is automatically invoked.
      */
     static func update(familyCode: String, completionHandler: @escaping (Bool) -> Void) {
-        let body = ["familyCode": familyCode]
+        let body = [ServerDefaultKeys.familyCode.rawValue: familyCode]
         FamilyRequest.update(body: body) { _, responseStatus in
             DispatchQueue.main.async {
                 switch responseStatus {

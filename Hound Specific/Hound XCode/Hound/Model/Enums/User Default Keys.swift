@@ -12,11 +12,7 @@ enum UserDefaultsKeys: String {
     
     // MARK: User Information
     
-    // store userId and familyId locally so it makes it easier for the user to login
-    case userId
-    case familyId
-    
-    // the rest are exclusively server, so no user defaults
+    // store userId and familyId locally but we still use ServerDefaultKeys
     
     // MARK: User Configuration
     

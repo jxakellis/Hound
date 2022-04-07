@@ -113,18 +113,18 @@ class ServerSyncViewController: UIViewController {
                         self.updateStatusLabel()
                         
                         // verify that at least one user was returned. Shouldn't be possible to have no users but always good to check
-                        if let result = responseBody!["result"] as? [String: Any], result.isEmpty == false {
+                        if let result = responseBody![ServerDefaultKeys.result.rawValue] as? [String: Any], result.isEmpty == false {
                             // set all local configuration equal to whats in the server
                             UserInformation.setup(fromBody: result)
                             UserConfiguration.setup(fromBody: result)
                             
                             // verify that a userId was successfully retrieved from the server
-                            if result["userId"] is Int {
+                            if result[ServerDefaultKeys.userId.rawValue] is Int {
                                 self.getUserFinished = true
                                 // if the user has create a hound account or signed into an existing one, we try to load the familyId returned to them. if that is nil, then we open this menu to have them create or join once since they aren't currently one.
                                 
                                 // user has family
-                                if result["familyId"] is Int {
+                                if result[ServerDefaultKeys.familyId.rawValue] is Int {
                                     self.getFamilyFinished = true
                                     self.getDogs()
                                 }
@@ -268,11 +268,6 @@ class ServerSyncViewController: UIViewController {
         if segue.identifier == "mainTabBarViewController"{
             let mainTabBarViewController: MainTabBarViewController = segue.destination as! MainTabBarViewController
             mainTabBarViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
-        }
-        else if segue.identifier == "introductionViewController" {
-            // no need to pass throgh the dog manager. This page can only be accessed when there are no dogs so 
-            // let introductionViewController: IntroductionViewController = segue.destination as! IntroductionViewController
-            
         }
     }
 

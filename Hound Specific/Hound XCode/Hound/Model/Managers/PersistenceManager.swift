@@ -35,16 +35,16 @@ enum PersistenceManager {
         
         // MARK: User Information
         
-        UserDefaults.standard.setValue(UserInformation.userId, forKey: UserDefaultsKeys.userId.rawValue)
-        UserDefaults.standard.setValue(UserInformation.familyId, forKey: UserDefaultsKeys.familyId.rawValue)
+        UserDefaults.standard.setValue(UserInformation.userId, forKey: ServerDefaultKeys.userId.rawValue)
+        UserDefaults.standard.setValue(UserInformation.familyId, forKey: ServerDefaultKeys.familyId.rawValue)
         
         // These values are retrieved from Sign In With Apple so therefore need to be persisted specially. All other values can be retrieved using these values.
         let keychain = KeychainSwift()
         
-        UserInformation.userIdentifier = keychain.get("userIdentifier")
-        UserInformation.userEmail = keychain.get("userEmail") ?? UserInformation.userEmail
-        UserInformation.userFirstName = keychain.get("userFirstName") ?? UserInformation.userFirstName
-        UserInformation.userLastName = keychain.get("userLastName") ?? UserInformation.userLastName
+        UserInformation.userIdentifier = keychain.get(ServerDefaultKeys.userIdentifier.rawValue)
+        UserInformation.userEmail = keychain.get(ServerDefaultKeys.userEmail.rawValue) ?? UserInformation.userEmail
+        UserInformation.userFirstName = keychain.get(ServerDefaultKeys.userFirstName.rawValue) ?? UserInformation.userFirstName
+        UserInformation.userLastName = keychain.get(ServerDefaultKeys.userLastName.rawValue) ?? UserInformation.userLastName
          
          // MARK: User Configuration
          
@@ -74,16 +74,16 @@ enum PersistenceManager {
         
         // MARK: User Information
         
-        UserInformation.userId = UserDefaults.standard.value(forKey: UserDefaultsKeys.userId.rawValue) as? Int
-        UserInformation.familyId = UserDefaults.standard.value(forKey: UserDefaultsKeys.familyId.rawValue) as? Int
+        UserInformation.userId = UserDefaults.standard.value(forKey: ServerDefaultKeys.userId.rawValue) as? Int
+        UserInformation.familyId = UserDefaults.standard.value(forKey: ServerDefaultKeys.familyId.rawValue) as? Int
         
         // These values are retrieved from Sign In With Apple so therefore need to be persisted specially. All other values can be retrieved using these values.
         let keychain = KeychainSwift()
         
-        UserInformation.userIdentifier = keychain.get("userIdentifier")
-        UserInformation.userEmail = keychain.get("userEmail") ?? UserInformation.userEmail
-        UserInformation.userFirstName = keychain.get("userFirstName") ?? UserInformation.userFirstName
-        UserInformation.userLastName = keychain.get("userLastName") ?? UserInformation.userLastName
+        UserInformation.userIdentifier = keychain.get(ServerDefaultKeys.userIdentifier.rawValue)
+        UserInformation.userEmail = keychain.get(ServerDefaultKeys.userEmail.rawValue) ?? UserInformation.userEmail
+        UserInformation.userFirstName = keychain.get(ServerDefaultKeys.userFirstName.rawValue) ?? UserInformation.userFirstName
+        UserInformation.userLastName = keychain.get(ServerDefaultKeys.userLastName.rawValue) ?? UserInformation.userLastName
         
          // MARK: User Configuration
          
@@ -91,7 +91,7 @@ enum PersistenceManager {
          
         // MARK: Local Configuration
         
-        //checks to see if data decoded sucessfully
+        // checks to see if data decoded sucessfully
         
         if let dataDogIcons: Data = UserDefaults.standard.data(forKey: UserDefaultsKeys.dogIcons.rawValue) {
             do {
@@ -159,8 +159,8 @@ enum PersistenceManager {
             
             // MARK: User Information
             
-            UserDefaults.standard.setValue(UserInformation.userId, forKey: UserDefaultsKeys.userId.rawValue)
-            UserDefaults.standard.setValue(UserInformation.familyId, forKey: UserDefaultsKeys.familyId.rawValue)
+            UserDefaults.standard.setValue(UserInformation.userId, forKey: ServerDefaultKeys.userId.rawValue)
+            UserDefaults.standard.setValue(UserInformation.familyId, forKey: ServerDefaultKeys.familyId.rawValue)
             
             // other user info from ASAuthorization is saved immediately to the keychain
              
@@ -255,6 +255,7 @@ enum PersistenceManager {
                     UserConfiguration.isLoudNotification = false
                     UserConfiguration.isFollowUpEnabled = false
                     // Updates switch to reflect change, if the last view open was the settings page then the app is exitted and property changed in the settings app then this app is reopened, VWL will not be called as the settings page was already opened, weird edge case.
+                // keep .main as UNUserNotificationCenter.current().getNotificationSettings is on seperate thread
                 DispatchQueue.main.async {
                     let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController?.settingsViewController
                     settingsVC?.settingsNotificationsViewController?.synchronizeAllNotificationSwitches(animated: false)
@@ -277,13 +278,13 @@ enum PersistenceManager {
             var body: [String: Any] = [:]
             // check for if values were changed, if there were then tell the server
             if UserConfiguration.isNotificationEnabled != beforeUpdateIsNotificationEnabled {
-                body[UserDefaultsKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
+                body[ServerDefaultKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
             }
             if UserConfiguration.isLoudNotification != beforeUpdateIsLoudNotification {
-                body[UserDefaultsKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
+                body[ServerDefaultKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
             }
             if UserConfiguration.isFollowUpEnabled != beforeUpdateIsFollowUpEnabled {
-                body[UserDefaultsKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
+                body[ServerDefaultKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
             }
             if body.keys.isEmpty == false {
                 UserRequest.update(body: body) { requestWasSuccessful in

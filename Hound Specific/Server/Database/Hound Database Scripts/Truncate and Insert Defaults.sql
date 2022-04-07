@@ -1,71 +1,64 @@
-CALL Hound.truncateAll;
+# CALL Hound.truncateAll;
 
-INSERT INTO users (userFirstName, userLastName, userEmail) VALUES 
-('Joe', 'Smith', 'joesmith@gmail.com'),
-('George', 'Williams', 'georgewilliams@gmail.com'),
-('Tim', 'Brown', 'timbrown@gmail.com'),
-('Blank', 'Test', 'blanktest@gmail.com');
+USE Hound;
+TRUNCATE TABLE users;
+TRUNCATE TABLE userConfiguration;
+TRUNCATE TABLE familyMembers;
+TRUNCATE TABLE familyHeads;
+TRUNCATE TABLE dogs;
+TRUNCATE TABLE dogLogs;
+TRUNCATE TABLE dogReminders;
+TRUNCATE TABLE reminderCountdownComponents;
+TRUNCATE TABLE reminderOneTimeComponents;
+TRUNCATE TABLE reminderSnoozeComponents;
+TRUNCATE TABLE reminderWeeklyComponents;
+TRUNCATE TABLE reminderMonthlyComponents;
+
+INSERT INTO users (userFirstName, userLastName, userEmail, userIdentifier) VALUES
+('Joe', 'Smith', 'joesmith@gmail.com', '38523iuhfu23buyfuy42'),
+('Testing', 'Account', 'testing@gmail.com', 'uhq3iufnu3ubyfeuy3');
 
 INSERT INTO userConfiguration (
 userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView,
-interfaceStyle, snoozeLength, notificationSound) VALUES 
+interfaceStyle, snoozeLength, notificationSound) VALUES
 (1, false, false, false, 1738, false, true, 0, 900, 'Radar'),
-(2, false, false, false, 1738, false, true, 0, 900, 'Radar'),
-(3, false, false, false, 1738, false, true, 0, 900, 'Radar'),
-(4, false, false, false, 1800, false, true, 0, 900, 'Radar');
+(2, false, false, false, 1738, false, true, 0, 900, 'Radar');
 
-INSERT INTO dogs(userId, dogName) VALUES
+INSERT INTO familyMembers(familyId, userId) VALUES
+(1,1),
+(2,2);
+
+INSERT INTO familyHeads(userId, familyCode, familyIsLocked) VALUES
+(1, 'TEMPCOD1', false),
+(2, 'TEMPCOD2', false);
+
+INSERT INTO dogs(familyId, dogName) VALUES
 (1, 'Bella'),
-(1, 'Georgie'),
-(2, 'Penny'),
-(2, 'Ginger'),
-(3, 'Scout'),
-(3, 'Goose');
+(1, 'Georgie');
 
-INSERT INTO dogLogs (dogId, date, note, logType) VALUES
+INSERT INTO dogLogs (dogId, logDate, logNote, logAction) VALUES
 (1, '2021-11-16 12:00:00', 'big pee', 'Potty: Pee'),
 (1, '2021-11-16 14:00:00', 'big poop', 6),
-(2, '2021-11-16 13:00:00', '', 7),
-(3, '2021-11-16 16:00:00', '', 2),
-(4, '2021-11-16 16:30:00', '', 3),
-(5, '2021-11-16 14:25:00', '', 4),
-(6, '2021-11-16 17:00:00', '', 9);
+(2, '2021-11-16 13:00:00', '', 7);
 
 INSERT INTO dogReminders (dogId, reminderAction, reminderType, executionBasis, isEnabled) VALUES
 (1, 'Feed', 'countdown', '2021-11-16 12:00:00', true),
 (1, 'Fresh Water', 'countdown', '2021-11-16 14:00:00', true),
-(2, 'Feed', 'countdown', '2021-11-16 16:00:00', true),
-(2, 'Potty', 'countdown', '2021-11-16 15:00:00', true),
-(3, 'Feed', 'weekly', '2021-11-16 12:00:00', true),
-(4, 'Doctor Visit', 'oneTime', '2021-11-10 6:00:00', true),
-(5, 'Feed', 'monthly', '2021-11-16 12:00:00', true),
-(6, 'Feed', 'countdown', '2021-11-16 12:00:00', true);
+(2, 'Feed', 'monthly', '2021-11-16 12:00:00', true),
+(2, 'Potty', 'weekly', '2021-11-16 15:00:00', true);
 
-INSERT INTO reminderCountdownComponents (reminderId, countdownExecutionInterval, countdownIntervalElapsed) VALUES 
+INSERT INTO reminderCountdownComponents (reminderId, countdownExecutionInterval, countdownIntervalElapsed) VALUES
 (1, 18000, 0),
-(2, 7200, 0),
-(3, 18000, 0),
-(4, 3600, 0),
-(8, 18000, 0);
+(2, 7200, 0);
 
 INSERT INTO reminderSnoozeComponents (reminderId, isSnoozed, snoozeExecutionInterval, snoozeIntervalElapsed) VALUES
 (1, false, 180, 0),
 (2, false, 180, 0),
 (3, false, 180, 0),
-(4, false, 180, 0),
-(5, false, 180, 0),
-(6, false, 180, 0),
-(7, false, 180, 0),
-(8, false, 180, 0);
-
+(4, false, 180, 0);
 
 INSERT INTO reminderWeeklyComponents (reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday, weeklyIsSkipping) VALUES
-(5, 10, 10, true, false, false, false, false, false, false, false);
+(4, 10, 10, true, false, false, false, false, false, false, false);
 
 INSERT INTO reminderMonthlyComponents (reminderId, monthlyHour, monthlyMinute, dayOfMonth, monthlyIsSkipping) VALUES
-(7, 15, 15, 20, false);
-
-INSERT INTO reminderOneTimeComponents (reminderId, date) VALUES 
-(6, '2021-11-16 17:00:00');
-
-
+(3, 15, 15, 20, false);

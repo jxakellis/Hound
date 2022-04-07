@@ -148,65 +148,65 @@ class Reminder: NSObject, NSCoding, NSCopying {
     
     convenience init(fromBody body: [String: Any]) {
         self.init()
-        if let reminderId = body["reminderId"] as? Int {
+        if let reminderId = body[ServerDefaultKeys.reminderId.rawValue] as? Int {
             self.reminderId = reminderId
         }
         
-        reminderAction = ReminderAction(rawValue: body["reminderAction"] as? String ?? ReminderConstant.defaultType.rawValue)!
-        customActionName = body["customActionName"] as? String
-        storedReminderType = ReminderType(rawValue: body["reminderType"] as? String ?? ReminderConstant.defaultType.rawValue)!
+        reminderAction = ReminderAction(rawValue: body[ServerDefaultKeys.reminderAction.rawValue] as? String ?? ReminderConstant.defaultType.rawValue)!
+        customActionName = body[ServerDefaultKeys.customActionName.rawValue] as? String
+        storedReminderType = ReminderType(rawValue: body[ServerDefaultKeys.reminderType.rawValue] as? String ?? ReminderConstant.defaultType.rawValue)!
         
-        if let executionBasisString = body["executionBasis"] as? String {
+        if let executionBasisString = body[ServerDefaultKeys.executionBasis.rawValue] as? String {
            
             storedExecutionBasis = ResponseUtils.dateFormatter(fromISO8601String: executionBasisString) ?? Date()
         }
         
-        if let isEnabled = body["isEnabled"] as? Bool {
+        if let isEnabled = body[ServerDefaultKeys.isEnabled.rawValue] as? Bool {
             storedIsEnabled = isEnabled
         }
         
-        snoozeComponents = SnoozeComponents(isSnoozed: body["isSnoozed"] as? Bool, executionInterval: body["snoozeExecutionInterval"] as? TimeInterval, intervalElapsed: body["snoozeIntervalElapsed"] as? TimeInterval)
+        snoozeComponents = SnoozeComponents(isSnoozed: body[ServerDefaultKeys.isSnoozed.rawValue] as? Bool, executionInterval: body[ServerDefaultKeys.snoozeExecutionInterval.rawValue] as? TimeInterval, intervalElapsed: body[ServerDefaultKeys.snoozeIntervalElapsed.rawValue] as? TimeInterval)
         
         switch reminderType {
         case .countdown:
             countdownComponents = CountdownComponents(
-                executionInterval: body["countdownExecutionInterval"] as? TimeInterval,
-                intervalElapsed: body["countdownIntervalElapsed"] as? TimeInterval)
+                executionInterval: body[ServerDefaultKeys.countdownExecutionInterval.rawValue] as? TimeInterval,
+                intervalElapsed: body[ServerDefaultKeys.countdownIntervalElapsed.rawValue] as? TimeInterval)
         case .weekly:
             
-            var weeklySkipDate = Date()
-            if let weeklySkipDateString = body["weeklySkipDate"] as? String {
-                weeklySkipDate = ResponseUtils.dateFormatter(fromISO8601String: weeklySkipDateString) ?? Date()
+            var weeklyIsSkippingDate = Date()
+            if let weeklyIsSkippingDateString = body[ServerDefaultKeys.weeklyIsSkippingDate.rawValue] as? String {
+                weeklyIsSkippingDate = ResponseUtils.dateFormatter(fromISO8601String: weeklyIsSkippingDateString) ?? Date()
             }
             
             weeklyComponents = WeeklyComponents(
-                hour: body["weeklyHour"] as? Int,
-                minute: body["weeklyMinute"] as? Int,
-                isSkipping: body["weeklyIsSkipping"] as? Bool,
-                skipDate: weeklySkipDate,
-                sunday: body["sunday"] as? Bool,
-                monday: body["monday"] as? Bool,
-                tuesday: body["tuesday"] as? Bool,
-                wednesday: body["wednesday"] as? Bool,
-                thursday: body["thursday"] as? Bool,
-                friday: body["friday"] as? Bool,
-                saturday: body["saturday"] as? Bool)
+                hour: body[ServerDefaultKeys.weeklyHour.rawValue] as? Int,
+                minute: body[ServerDefaultKeys.weeklyMinute.rawValue] as? Int,
+                isSkipping: body[ServerDefaultKeys.weeklyIsSkipping.rawValue] as? Bool,
+                skipDate: weeklyIsSkippingDate,
+                sunday: body[ServerDefaultKeys.sunday.rawValue] as? Bool,
+                monday: body[ServerDefaultKeys.monday.rawValue] as? Bool,
+                tuesday: body[ServerDefaultKeys.tuesday.rawValue] as? Bool,
+                wednesday: body[ServerDefaultKeys.wednesday.rawValue] as? Bool,
+                thursday: body[ServerDefaultKeys.thursday.rawValue] as? Bool,
+                friday: body[ServerDefaultKeys.friday.rawValue] as? Bool,
+                saturday: body[ServerDefaultKeys.saturday.rawValue] as? Bool)
         case .monthly:
-            var monthlySkipDate = Date()
-            if let monthlySkipDateString = body["monthlySkipDate"] as? String {
-                monthlySkipDate = ResponseUtils.dateFormatter(fromISO8601String: monthlySkipDateString) ?? Date()
+            var monthlyIsSkippingDate = Date()
+            if let monthlyIsSkippingDateString = body[ServerDefaultKeys.monthlyIsSkippingDate.rawValue] as? String {
+                monthlyIsSkippingDate = ResponseUtils.dateFormatter(fromISO8601String: monthlyIsSkippingDateString) ?? Date()
             }
             
             monthlyComponents = MonthlyComponents(
-                hour: body["monthlyHour"] as? Int,
-                minute: body["monthlyMinute"] as? Int,
-                isSkipping: body["monthlyIsSkipping"] as? Bool,
-                skipDate: monthlySkipDate,
-                dayOfMonth: body["dayOfMonth"] as? Int)
+                hour: body[ServerDefaultKeys.monthlyHour.rawValue] as? Int,
+                minute: body[ServerDefaultKeys.monthlyMinute.rawValue] as? Int,
+                isSkipping: body[ServerDefaultKeys.monthlyIsSkipping.rawValue] as? Bool,
+                skipDate: monthlyIsSkippingDate,
+                dayOfMonth: body[ServerDefaultKeys.dayOfMonth.rawValue] as? Int)
         case .oneTime:
             var executionDate = Date()
             
-            if let dateString = body["oneTimeDate"] as? String {
+            if let dateString = body[ServerDefaultKeys.oneTimeDate.rawValue] as? String {
                 executionDate = ResponseUtils.dateFormatter(fromISO8601String: dateString) ?? Date()
             }
             

@@ -20,14 +20,10 @@ enum RequestUtils {
         DogsRequest.getAll(reminders: true, logs: true) { dogArray in
             if dogArray != nil {
                 let dogManager = DogManager(forDogs: dogArray!)
-                DispatchQueue.main.async {
                     completionHandler(dogManager)
-                }
             }
             else {
-                DispatchQueue.main.async {
                     completionHandler(nil)
-                }
             }
         }
     }

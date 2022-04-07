@@ -612,7 +612,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             dogsAddDogViewController = segue.destination as! DogsAddDogViewController
             dogsAddDogViewController.delegate = self
         }
-        else if segue.identifier == "dogsMainScreenTableViewController" {
+        else if segue.identifier == "dogsTableViewController" {
             dogsMainScreenTableViewController = segue.destination as! DogsTableViewController
             dogsMainScreenTableViewController.delegate = self
         }

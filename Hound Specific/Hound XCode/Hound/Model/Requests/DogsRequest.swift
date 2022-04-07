@@ -58,7 +58,7 @@ enum DogsRequest: RequestProtocol {
         // make put request, assume body valid as constructed with method
         InternalRequestUtils.genericPostRequest(forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
             
-            if responseBody != nil, let dogId = responseBody!["result"] as? Int {
+            if responseBody != nil, let dogId = responseBody![ServerDefaultKeys.result.rawValue] as? Int {
                 completionHandler(dogId, responseStatus)
             }
             else {
@@ -114,13 +114,11 @@ extension DogsRequest {
             switch responseStatus {
             case .successResponse:
                 // Array of log JSON [{dog1:'foo'},{dog2:'bar'}]
-                if let result = responseBody!["result"] as? [[String: Any]] {
+                if let result = responseBody![ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
                     let dog = Dog(fromBody: result[0])
-                    // if we have an image stored locally for a dog, then we apply the icon. if the dog has no icon (because someone else in the family made it and the user hasn't selected their own icon OR because the user made it and never added an icon) then the dog just gets the defaultDogIcon
-                    print("GET Dog Image: \(LocalConfiguration.dogIcons[dog.dogId])")
-                    print(LocalConfiguration.dogIcons.description)
-                    dog.dogIcon = LocalConfiguration.dogIcons[dog.dogId] ?? DogConstant.defaultDogIcon
-                    print(LocalConfiguration.dogIcons.description)
+                    // If we have an image stored locally for a dog, then we apply the icon.
+                    // If the dog has no icon (because someone else in the family made it and the user hasn't selected their own icon OR because the user made it and never added an icon) then the dog just gets the defaultDogIcon
+                    dog.dogIcon = LocalConfiguration.dogIcons.first(where: { $0.dogId == dog.dogId })?.dogIcon ?? DogConstant.defaultDogIcon
                     // able to add all
                     DispatchQueue.main.async {
                         completionHandler(dog)
@@ -156,29 +154,20 @@ extension DogsRequest {
             case .successResponse:
                 var dogArray: [Dog] = []
                 // Array of dog JSON [{dog1:'foo'},{dog2:'bar'}]
-                if let result = responseBody!["result"] as? [[String: Any]] {
+                if let result = responseBody![ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
                     for dogBody in result {
                         let dog = Dog(fromBody: dogBody)
-                        // if we have an image stored locally for a dog, then we apply the icon. if the dog has no icon (because someone else in the family made it and the user hasn't selected their own icon OR because the user made it and never added an icon) then the dog just gets the defaultDogIcon
-                        print("Get Dog Icon: \(LocalConfiguration.dogIcons[dog.dogId])")
-                        print(LocalConfiguration.dogIcons.description)
-                        dog.dogIcon = LocalConfiguration.dogIcons[dog.dogId] ?? DogConstant.defaultDogIcon
-                        print(LocalConfiguration.dogIcons.description)
+                        // If we have an image stored locally for a dog, then we apply the icon.
+                        // If the dog has no icon (because someone else in the family made it and the user hasn't selected their own icon OR because the user made it and never added an icon) then the dog just gets the defaultDogIcon
+                        dog.dogIcon = LocalConfiguration.dogIcons.first(where: { $0.dogId == dog.dogId })?.dogIcon ?? DogConstant.defaultDogIcon
                         dogArray.append(dog)
                     }
                     
                     // iterate through the dogIds of the stored dogIcons
-                    for dogIdKey in LocalConfiguration.dogIcons.keys {
-                        // if the dogArray does not contain the dogIdKey from the dictionary, that means we are storing a dogId & UIImage key-value pair for a dog that no longer exists
-                        if dogArray.contains(where: { dog in
-                                return dog.dogId == dogIdKey
-                        }) == false {
-                            print("\(dogIdKey) is not contained")
-                            LocalConfiguration.dogIcons[dogIdKey] = nil
-                        }
-                        else {
-                            print("\(dogIdKey) is still contained")
-                        }
+                    // if the dogArray does not contain the dogIdKey from the dictionary, that means we are storing a dogId & UIImage key-value pair for a dog that no longer exists
+                    for localDogIcon in LocalConfiguration.dogIcons where dogArray.contains(where: { $0.dogId == localDogIcon.dogId }) == false {
+                            // remove all localDogIcons that match the dogId. this is the dogId that is stored locally but was found to not be stored on the server data retrieved (aka it was deleted
+                            LocalConfiguration.dogIcons.removeAll(where: { $0.dogId == localDogIcon.dogId })
                     }
                     // able to add all
                     DispatchQueue.main.async {
@@ -216,11 +205,9 @@ extension DogsRequest {
                 switch responseStatus {
                 case .successResponse:
                     if dogId != nil {
-                        // save dogIcon to local since everything else saved to server
-                        print("Create Dog Icon")
-                        print(LocalConfiguration.dogIcons.description)
-                        LocalConfiguration.dogIcons[dogId!] = dog.dogIcon
-                        print(LocalConfiguration.dogIcons.description)
+                        // Successfully saved to server, so save dogIcon locally
+                        // add a localDogIcon that has the same dogId and dogIcon as the newly created dog
+                        LocalConfiguration.dogIcons.append(LocalDogIcon(forDogId: dogId!, forDogIcon: dog.dogIcon))
                         completionHandler(dogId!)
                     }
                     else {
@@ -245,11 +232,16 @@ extension DogsRequest {
             DispatchQueue.main.async {
                 switch responseStatus {
                 case .successResponse:
-                    // update dogIcon locally since everything else saved to server
-                    print("Update Dog Icon")
-                    print(LocalConfiguration.dogIcons.description)
-                    LocalConfiguration.dogIcons[dog.dogId] = dog.dogIcon
-                    print(LocalConfiguration.dogIcons.description)
+                    // Successfully saved to server, so update dogIcon locally
+                    // check to see if a localDogIcon exists for the dog
+                    if let localDogIcon = LocalConfiguration.dogIcons.first(where: { $0.dogId == dog.dogId}) {
+                        // update the dogIcon of the localDogIcon that has the same dogId as the dog that was just updated
+                        localDogIcon.dogIcon = dog.dogIcon
+                    }
+                    else {
+                        // need to create a localDogIcon
+                        LocalConfiguration.dogIcons.append(LocalDogIcon(forDogId: dog.dogId, forDogIcon: dog.dogIcon))
+                    }
                     completionHandler(true)
                 case .failureResponse:
                     completionHandler(false)
@@ -270,11 +262,8 @@ extension DogsRequest {
             DispatchQueue.main.async {
                 switch responseStatus {
                 case .successResponse:
-                    // delete dogIcon locally since everything else saved to server
-                    print("DELETE Dog Icon")
-                    print(LocalConfiguration.dogIcons.description)
-                    LocalConfiguration.dogIcons[dogId] = nil
-                    print(LocalConfiguration.dogIcons.description)
+                    // Successfully saved to server, so remove the stored dogIcons that have the same dogId as the removed dog
+                    LocalConfiguration.dogIcons.removeAll(where: { $0.dogId == dogId })
                     completionHandler(true)
                 case .failureResponse:
                     completionHandler(false)

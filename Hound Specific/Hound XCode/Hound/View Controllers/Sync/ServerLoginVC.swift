@@ -39,7 +39,7 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
             
             let userIdentifier = appleIDCredential.user
             UserInformation.userIdentifier = userIdentifier
-            keychain.set(userIdentifier, forKey: "userIdentifier")
+            keychain.set(userIdentifier, forKey: ServerDefaultKeys.userIdentifier.rawValue)
             
             // IMPORTANT NOTES ABOUT PERSISTANCE AND KEYCHAIN
             // fullName and email are ONLY provided on the FIRST time the user uses sign in with apple
@@ -58,7 +58,7 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
             
             let email = appleIDCredential.email
             if email != nil {
-                keychain.set(email!, forKey: "userEmail")
+                keychain.set(email!, forKey: ServerDefaultKeys.userEmail.rawValue)
                 UserInformation.userEmail = email
             }
             
@@ -66,13 +66,13 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
             
             let firstName = fullName?.givenName
             if firstName != nil {
-                keychain.set(firstName!, forKey: "userFirstName")
+                keychain.set(firstName!, forKey: ServerDefaultKeys.userFirstName.rawValue)
                 UserInformation.userFirstName = firstName!
             }
             
             let lastName = fullName?.familyName
             if lastName != nil {
-                keychain.set(lastName!, forKey: "userLastName")
+                keychain.set(lastName!, forKey: ServerDefaultKeys.userLastName.rawValue)
                 UserInformation.userLastName = lastName!
             }
             
@@ -250,13 +250,13 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
             case .successResponse:
                 if responseBody != nil {
                     // verify that at least one user was returned. Shouldn't be possible to have no users but always good to check
-                    if let result = responseBody!["result"] as? [String: Any], result.isEmpty == false {
+                    if let result = responseBody![ServerDefaultKeys.result.rawValue] as? [String: Any], result.isEmpty == false {
                         // set all local configuration equal to whats in the server
                         UserInformation.setup(fromBody: result)
                         UserConfiguration.setup(fromBody: result)
                         
                         // verify that a userId was successfully retrieved from the server
-                        if result["userId"] is Int {
+                        if result[ServerDefaultKeys.userId.rawValue] is Int {
                             RequestUtils.endAlertControllerQueryIndictator {
                                 self.dismiss(animated: true, completion: nil)
                             }

@@ -13,7 +13,7 @@ class LocalDogIcon: NSObject, NSCoding {
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        dogId = aDecoder.decodeInteger(forKey: "dogId") 
+        dogId = aDecoder.decodeInteger(forKey: "dogId")
         dogIcon = aDecoder.decodeObject(forKey: "dogIcon") as? UIImage ?? DogConstant.defaultDogIcon
         super.init()
     }
@@ -36,7 +36,4 @@ class LocalDogIcon: NSObject, NSCoding {
     var dogId: Int
     var dogIcon: UIImage
     
-    
 }
-
-

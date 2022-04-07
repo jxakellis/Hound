@@ -103,7 +103,7 @@ class DogsNestedReminderViewController: UIViewController {
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "dogsNestedReminderManagerViewController"{
+        if segue.identifier == "dogsReminderManagerViewController"{
             dogsReminderManagerViewController = segue.destination as! DogsReminderManagerViewController
             dogsReminderManagerViewController.targetReminder = targetReminder
         }

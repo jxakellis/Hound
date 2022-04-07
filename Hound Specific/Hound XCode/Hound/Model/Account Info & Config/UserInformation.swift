@@ -21,19 +21,19 @@ enum UserInformation {
     
     /// Sets the UserInformation values equal to all the values found in the body. The key for the each body value must match the name of the UserConfiguration property exactly in order to be used. The value must also be able to be converted into the proper data type.
     static func setup(fromBody body: [String: Any]) {
-        if let userId = body["userId"] as? Int {
+        if let userId = body[ServerDefaultKeys.userId.rawValue] as? Int {
             self.userId = userId
         }
-        if let familyId = body["familyId"] as? Int {
+        if let familyId = body[ServerDefaultKeys.familyId.rawValue] as? Int {
             self.familyId = familyId
         }
-        if let userEmail = body["userEmail"] as? String {
+        if let userEmail = body[ServerDefaultKeys.userEmail.rawValue] as? String {
             storedUserEmail = userEmail
         }
-        if let userFirstName = body["userFirstName"] as? String {
+        if let userFirstName = body[ServerDefaultKeys.userFirstName.rawValue] as? String {
             storedUserFirstName = userFirstName
         }
-        if let userLastName = body["userLastName"] as? String {
+        if let userLastName = body[ServerDefaultKeys.userLastName.rawValue] as? String {
             storedUserLastName = userLastName
         }
     }

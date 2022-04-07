@@ -65,15 +65,15 @@ class Dog: NSObject, NSCoding, NSCopying {
     /// Assume array of dog properties
     convenience init(fromBody body: [String: Any]) {
         
-        let dogName = body["dogName"] as? String ?? DogConstant.defaultDogName
+        let dogName = body[ServerDefaultKeys.dogName.rawValue] as? String ?? DogConstant.defaultDogName
         try! self.init(dogName: dogName)
         
-        if let dogId = body["dogId"] as? Int {
+        if let dogId = body[ServerDefaultKeys.dogId.rawValue] as? Int {
             self.dogId = dogId
         }
         
         // check for any reminders
-        if let reminderBodies = body["reminders"] as? [[String: Any]] {
+        if let reminderBodies = body[ServerDefaultKeys.reminders.rawValue] as? [[String: Any]] {
             for reminderBody in reminderBodies {
                 let reminder = Reminder(fromBody: reminderBody)
                 self.dogReminders.addReminder(newReminder: reminder)
@@ -81,7 +81,7 @@ class Dog: NSObject, NSCoding, NSCopying {
         }
         
         // check for any logs
-        if let logBodies = body["logs"] as? [[String: Any]] {
+        if let logBodies = body[ServerDefaultKeys.logs.rawValue] as? [[String: Any]] {
             for logBody in logBodies {
                 let log = Log(fromBody: logBody)
                 self.dogLogs.addLog(newLog: log)

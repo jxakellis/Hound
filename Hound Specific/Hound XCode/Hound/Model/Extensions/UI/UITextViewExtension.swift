@@ -46,7 +46,7 @@ extension UITextView {
             return placeholderText
         }
         set {
-            if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForUITextView.rawValue) as! UILabel? {
+            if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForUITextView.rawValue) as? UILabel {
                 placeholderLabel.text = newValue
                 placeholderLabel.sizeToFit()
             }
@@ -67,7 +67,7 @@ extension UITextView {
     
     /// Resize the placeholder UILabel to make sure it's in the same position as the UITextView text
     private func resizePlaceholder() {
-        if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForUITextView.rawValue) as! UILabel? {
+        if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForUITextView.rawValue) as? UILabel {
             let labelX = self.textContainer.lineFragmentPadding
             let labelY = self.textContainerInset.top - 2
             let labelWidth = self.frame.width - (labelX * 2)

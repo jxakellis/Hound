@@ -8,11 +8,27 @@
 
 import Foundation
 
-enum ServerDefaultsKeys: String {
+enum ServerDefaultKeys: String {
+    
+    // MARK: Response Body
+    
+    case result
+    case message
+    case code
+    case name
+    
+    // MARK: Family Information & Members
+    
+    case familyIsLocked
+    case familyCode
+    case familyMembers
+    case isFamilyHead
     
     // MARK: User Information
     
+    case familyId
     case userIdentifier
+    case userId
     case userEmail
     case userFirstName
     case userLastName
@@ -32,6 +48,7 @@ enum ServerDefaultsKeys: String {
     
     // MARK: Dog
     
+    case dogId
     case dogName
     
     // MARK: Logs
@@ -40,6 +57,7 @@ enum ServerDefaultsKeys: String {
     
     // MARK: Log
     
+    case logId
     case logAction
     // TO DO differentiate between log and reminder customActionName
     case customActionName
@@ -58,6 +76,12 @@ enum ServerDefaultsKeys: String {
     case executionBasis
     case isEnabled
     case reminderType
+    
+    // MARK: Snooze Components
+    
+    case isSnoozed
+    case snoozeExecutionInterval
+    case snoozeIntervalElapsed
     
     // MARK: Countdown Components
     

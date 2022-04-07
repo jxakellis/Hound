@@ -84,6 +84,7 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         UNUserNotificationCenter.current().getNotificationSettings { (permission) in
             switch permission.authorizationStatus {
             case .authorized:
+                // needed as  UNUserNotificationCenter.current().getNotificationSettings on other thread
                 DispatchQueue.main.async {
                     
                     // notications enabled, going from on to off
@@ -99,6 +100,7 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
                     updateServerUserConfiguration()
                 }
             case .denied:
+                // needed as  UNUserNotificationCenter.current().getNotificationSettings on other thread
                 DispatchQueue.main.async {
                     AlertManager.willShowAlert(title: "Notifcations Disabled", message: "To enable notifications go to the Settings App -> Notifications -> Hound and enable \"Allow Notifications\"")
                     
@@ -129,13 +131,13 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
             var body: [String: Any] = [:]
             // check for if values were changed, if there were then tell the server
             if UserConfiguration.isNotificationEnabled != beforeUpdateIsNotificationEnabled {
-                body[UserDefaultsKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
+                body[ServerDefaultKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
             }
             if UserConfiguration.isLoudNotification != beforeUpdateIsLoudNotification {
-                body[UserDefaultsKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
+                body[ServerDefaultKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
             }
             if UserConfiguration.isFollowUpEnabled != beforeUpdateIsFollowUpEnabled {
-                body[UserDefaultsKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
+                body[ServerDefaultKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
             }
             if body.keys.isEmpty == false {
                 UserRequest.update(body: body) { requestWasSuccessful in
@@ -229,7 +231,7 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
                 
                 AudioManager.playAudio(forAudioPath: "\(UserConfiguration.notificationSound.rawValue.lowercased())", isLoud: false)
                 
-                let body = [UserDefaultsKeys.notificationSound.rawValue: UserConfiguration.notificationSound.rawValue]
+                let body = [ServerDefaultKeys.notificationSound.rawValue: UserConfiguration.notificationSound.rawValue]
                 UserRequest.update(body: body) { requestWasSuccessful in
                     if requestWasSuccessful == false {
                         // error, revert to previous
@@ -273,7 +275,7 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         
         let beforeUpdateIsLoudNotification = UserConfiguration.isLoudNotification
         UserConfiguration.isLoudNotification = loudNotificationsToggleSwitch.isOn
-        let body = [UserDefaultsKeys.isLoudNotification.rawValue: UserConfiguration.isLoudNotification]
+        let body = [ServerDefaultKeys.isLoudNotification.rawValue: UserConfiguration.isLoudNotification]
         UserRequest.update(body: body) { requestWasSuccessful in
             if requestWasSuccessful == false {
                 // error, revert to previous
@@ -300,7 +302,7 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
             followUpDelayInterval.isEnabled = false
         }
         
-        let body = [UserDefaultsKeys.isFollowUpEnabled.rawValue: UserConfiguration.isFollowUpEnabled]
+        let body = [ServerDefaultKeys.isFollowUpEnabled.rawValue: UserConfiguration.isFollowUpEnabled]
         UserRequest.update(body: body) { requestWasSuccessful in
             if requestWasSuccessful == false {
                 // error, revert to previous
@@ -366,7 +368,7 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         let beforeUpdateFollowUpDelay = UserConfiguration.followUpDelay
         UserConfiguration.followUpDelay = followUpDelayInterval.countDownDuration
         
-        let body = [UserDefaultsKeys.followUpDelay.rawValue: UserConfiguration.followUpDelay]
+        let body = [ServerDefaultKeys.followUpDelay.rawValue: UserConfiguration.followUpDelay]
         UserRequest.update(body: body) { requestWasSuccessful in
             if requestWasSuccessful == false {
                 // error, revert to previous

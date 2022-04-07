@@ -22,7 +22,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
             }
             // reminders already created
             else {
-                // TO DO create intro page for additional family member, where they still get introduced but don't create a reminder
+                // TO DO create intro page for additional family member, where they still get introduced but don't create a reminder. This page should prompt a family member to enable notifications when its complete.
                 LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = true
             }
             
@@ -78,7 +78,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         if getDogManager().hasEnabledReminder == false && UserConfiguration.isPaused == true {
             UserConfiguration.isPaused = false
 
-            let body = [UserDefaultsKeys.isPaused.rawValue: UserConfiguration.isPaused]
+            let body = [ServerDefaultKeys.isPaused.rawValue: UserConfiguration.isPaused]
             UserRequest.update(body: body) { requestWasSuccessful in
                 if requestWasSuccessful == false {
                     // revert all values
@@ -160,8 +160,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
 
         TimingManager.delegate = self
         AlarmManager.delegate = self
-
-        UserDefaults.standard.setValue(false, forKey: "didCrashDuringSetup")
     }
 
     override func viewWillAppear(_ animated: Bool) {

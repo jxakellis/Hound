@@ -79,7 +79,7 @@ class IntroductionViewController: UIViewController, UITextFieldDelegate, UIImage
             UserConfiguration.interfaceStyle = .unspecified
         }
         
-        let body = [UserDefaultsKeys.interfaceStyle.rawValue: convertedInterfaceStyleRawValue!]
+        let body = [ServerDefaultKeys.interfaceStyle.rawValue: convertedInterfaceStyleRawValue!]
         UserRequest.update(body: body) { requestWasSuccessful in
             if requestWasSuccessful == false {
                 // error, revert to previous

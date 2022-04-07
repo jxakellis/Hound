@@ -83,7 +83,7 @@ class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDel
             UserConfiguration.interfaceStyle = .unspecified
         }
 
-        let body = [UserDefaultsKeys.interfaceStyle.rawValue: convertedInterfaceStyleRawValue!]
+        let body = [ServerDefaultKeys.interfaceStyle.rawValue: convertedInterfaceStyleRawValue!]
         UserRequest.update(body: body) { requestWasSuccessful in
             if requestWasSuccessful == false {
                 // error, revert to previous
@@ -121,7 +121,7 @@ class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDel
             UserConfiguration.isCompactView = false
         }
 
-        let body = [UserDefaultsKeys.isCompactView.rawValue: UserConfiguration.isCompactView]
+        let body = [ServerDefaultKeys.isCompactView.rawValue: UserConfiguration.isCompactView]
         UserRequest.update(body: body) { requestWasSuccessful in
             if requestWasSuccessful == false {
                 // error, revert to previous

@@ -172,7 +172,7 @@ class DogsIndependentReminderViewController: UIViewController {
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "dogsUpdateReminderManagerViewController"{
+        if segue.identifier == "dogsReminderManagerViewController"{
             dogsReminderManagerViewController = segue.destination as! DogsReminderManagerViewController
             dogsReminderManagerViewController.targetReminder = self.targetReminder
             // dogsReminderManagerViewController.delegate = self

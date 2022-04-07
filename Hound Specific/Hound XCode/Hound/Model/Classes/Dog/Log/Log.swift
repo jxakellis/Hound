@@ -119,14 +119,14 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
         
         var logDate: Date = Date()
         
-        if let logDateString = body["logDate"] as? String {
+        if let logDateString = body[ServerDefaultKeys.logDate.rawValue] as? String {
             logDate = ResponseUtils.dateFormatter(fromISO8601String: logDateString) ?? Date()
         }
         
-        let logNote: String = body["logNote"] as? String ?? LogConstant.defaultLogNote
-        let logAction: LogAction = LogAction(rawValue: body["logAction"] as? String ?? LogConstant.defaultAction.rawValue)!
-        let customActionName: String? = body["customActionName"] as? String
-        let logId: Int = body["logId"] as? Int ?? LogConstant.defaultLogId
+        let logNote: String = body[ServerDefaultKeys.logNote.rawValue] as? String ?? LogConstant.defaultLogNote
+        let logAction: LogAction = LogAction(rawValue: body[ServerDefaultKeys.logAction.rawValue] as? String ?? LogConstant.defaultAction.rawValue)!
+        let customActionName: String? = body[ServerDefaultKeys.customActionName.rawValue] as? String
+        let logId: Int = body[ServerDefaultKeys.logId.rawValue] as? Int ?? LogConstant.defaultLogId
         
         self.init(logDate: logDate, logNote: logNote, logAction: logAction, customActionName: customActionName, logId: logId)
     }

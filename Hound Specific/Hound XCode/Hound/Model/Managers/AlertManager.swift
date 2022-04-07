@@ -162,7 +162,7 @@ class AlertManager: NSObject {
         
         func waitLoop() {
             if AlertManager.globalPresenter == nil || AlertManager.globalPresenter!.isBeingDismissed {
-                DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
+                DispatchQueue.main.asyncAfter(deadline: .now()+0.05) {
                     waitLoop()
                 }
             }
