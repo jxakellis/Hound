@@ -29,14 +29,14 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
 
     // When the on off switch is toggled
     @IBAction private func didToggleReminderSwitch(_ sender: Any) {
-        let beforeUpdateIsEnabled = reminder.isEnabled
-        reminder.isEnabled = reminderToggleSwitch.isOn
+        let beforeUpdateIsEnabled = reminder.reminderIsEnabled
+        reminder.reminderIsEnabled = reminderToggleSwitch.isOn
         delegate.didUpdateReminderEnable(sender: Sender(origin: self, localized: self), parentDogId: parentDogId, reminder: reminder)
         
         RemindersRequest.update(forDogId: parentDogId, forReminder: reminder) { requestWasSuccessful in
             if requestWasSuccessful == false {
                 self.reminderToggleSwitch.setOn(beforeUpdateIsEnabled, animated: true)
-                self.reminder.isEnabled = beforeUpdateIsEnabled
+                self.reminder.reminderIsEnabled = beforeUpdateIsEnabled
                 self.delegate.didUpdateReminderEnable(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, reminder: self.reminder)
             }
         }
@@ -150,13 +150,13 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
             try! self.timeInterval.text = ("\(String.convertToReadable(fromDateComponents: reminder.monthlyComponents.dateComponents))")
 
             // day of month
-                let dayOfMonth: Int = reminder.monthlyComponents.dayOfMonth
-                timeInterval.text?.append(" Every Month on \(dayOfMonth)")
+                let monthlyDay: Int = reminder.monthlyComponents.monthlyDay
+                timeInterval.text?.append(" Every Month on \(monthlyDay)")
 
-             timeInterval.text?.append(String.dayOfMonthSuffix(day: dayOfMonth))
+             timeInterval.text?.append(String.monthlyDaySuffix(day: monthlyDay))
         }
 
-        self.reminderToggleSwitch.isOn = reminderPassed.isEnabled
+        self.reminderToggleSwitch.isOn = reminderPassed.reminderIsEnabled
 
         setupTimeLeftText()
     }
@@ -170,7 +170,7 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
         let timeLeftBodyWeight: UIFont.Weight = .regular
         let timeLeftImportantWeight: UIFont.Weight = .semibold
 
-        if reminder.isEnabled == false {
+        if reminder.reminderIsEnabled == false {
             timeLeft.attributedText = NSAttributedString(string: "Reminder Disabled", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
         }
         else if UserConfiguration.isPaused == true {
@@ -179,7 +179,7 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
 
         }
         else {
-            let fireDate: Date? = reminder.executionDate!
+            let fireDate: Date? = reminder.reminderExecutionDate!
 
             if fireDate == nil {
                 timeLeft.attributedText = NSAttributedString(string: "Reminder Disabled", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
@@ -187,7 +187,7 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
             else if Date().distance(to: fireDate!) <= 0 {
                 timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
             }
-            else if reminder.snoozeComponents.isSnoozed == true {
+            else if reminder.snoozeComponents.snoozeIsEnabled == true {
                 let timeLeftText = String.convertToReadable(fromTimeInterval: Date().distance(to: fireDate!))
 
                 timeLeft.font = UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftBodyWeight)

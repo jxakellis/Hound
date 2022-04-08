@@ -33,10 +33,10 @@ class DogsReminderMonthlyViewController: UIViewController, UIGestureRecognizerDe
 
     var passedTimeOfDay: Date?
 
-    var passedDayOfMonth: Int?
+    var passedMonthlyDay: Int?
 
     var initalValuesChanged: Bool {
-        if passedDayOfMonth != dayOfMonth {
+        if passedMonthlyDay != monthlyDay {
             return true
         }
         else if passedTimeOfDay != datePicker.date {
@@ -71,10 +71,10 @@ class DogsReminderMonthlyViewController: UIViewController, UIGestureRecognizerDe
     }
 
     /// Returns the day of month selected
-    var dayOfMonth: Int? {
+    var monthlyDay: Int? {
             let targetDate = datePicker.date
-            let targetDayOfMonth = Calendar.current.component(.day, from: targetDate)
-            return targetDayOfMonth
+            let targetMonthlyDay = Calendar.current.component(.day, from: targetDate)
+            return targetMonthlyDay
     }
 
 }

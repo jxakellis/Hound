@@ -89,7 +89,7 @@ extension DogManagerProtocol {
     
     var hasEnabledReminder: Bool {
         for dog in dogs {
-            for reminder in dog.dogReminders.reminders where reminder.isEnabled == true {
+            for reminder in dog.dogReminders.reminders where reminder.reminderIsEnabled == true {
                 return true
             }
         }
@@ -101,7 +101,7 @@ extension DogManagerProtocol {
         for d in 0..<MainTabBarViewController.staticDogManager.dogs.count {
             
             for r in 0..<MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders.count {
-                guard MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders[r].isEnabled == true else {
+                guard MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders[r].reminderIsEnabled == true else {
                     continue
                 }
                 
@@ -162,7 +162,7 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
                 
                 let reminder: Reminder = dogs[dogIndex].dogReminders.reminders[reminderIndex]
                 
-                guard reminder.isEnabled == true else {
+                guard reminder.reminderIsEnabled == true else {
                     continue
                 }
                 

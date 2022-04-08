@@ -4,14 +4,14 @@ const { formatDate, formatBoolean, formatNumber } = require('../../utils/validat
 const createMonthlyComponents = async (req, reminder) => {
   const monthlyHour = formatNumber(reminder.monthlyHour);
   const monthlyMinute = formatNumber(reminder.monthlyMinute);
-  const dayOfMonth = formatNumber(reminder.dayOfMonth);
+  const monthlyDay = formatNumber(reminder.monthlyDay);
 
   // Errors intentionally uncaught so they are passed to invocation in reminders
   // Newly created monthly reminder cant be monthlyIsSkipping, so no need for skip data
   await queryPromise(
     req,
-    'INSERT INTO reminderMonthlyComponents(reminderId, monthlyHour, monthlyMinute, dayOfMonth) VALUES (?,?,?,?)',
-    [reminder.reminderId, monthlyHour, monthlyMinute, dayOfMonth],
+    'INSERT INTO reminderMonthlyComponents(reminderId, monthlyHour, monthlyMinute, monthlyDay) VALUES (?,?,?,?)',
+    [reminder.reminderId, monthlyHour, monthlyMinute, monthlyDay],
   );
 };
 
@@ -19,7 +19,7 @@ const createMonthlyComponents = async (req, reminder) => {
 const updateMonthlyComponents = async (req, reminder) => {
   const monthlyHour = formatNumber(reminder.monthlyHour);
   const monthlyMinute = formatNumber(reminder.monthlyMinute);
-  const dayOfMonth = formatNumber(reminder.dayOfMonth);
+  const monthlyDay = formatNumber(reminder.monthlyDay);
   const monthlyIsSkipping = formatBoolean(reminder.monthlyIsSkipping);
   const monthlyIsSkippingDate = formatDate(reminder.monthlyIsSkippingDate);
 
@@ -28,8 +28,8 @@ const updateMonthlyComponents = async (req, reminder) => {
     // If this fails: The components provided are invalid or reminder already present in table (reminderId UNIQUE in DB)
     await queryPromise(
       req,
-      'INSERT INTO reminderMonthlyComponents(reminderId, monthlyHour, monthlyMinute, dayOfMonth) VALUES (?,?,?,?)',
-      [reminder.reminderId, monthlyHour, monthlyMinute, dayOfMonth],
+      'INSERT INTO reminderMonthlyComponents(reminderId, monthlyHour, monthlyMinute, monthlyDay) VALUES (?,?,?,?)',
+      [reminder.reminderId, monthlyHour, monthlyMinute, monthlyDay],
     );
     return;
   }
@@ -39,15 +39,15 @@ const updateMonthlyComponents = async (req, reminder) => {
     if (monthlyIsSkipping === true) {
       await queryPromise(
         req,
-        'UPDATE reminderMonthlyComponents SET monthlyHour = ?, monthlyMinute = ?, dayOfMonth = ?, monthlyIsSkipping = ?, monthlyIsSkippingDate = ? WHERE reminderId = ?',
-        [monthlyHour, monthlyMinute, dayOfMonth, monthlyIsSkipping, monthlyIsSkippingDate, reminder.reminderId],
+        'UPDATE reminderMonthlyComponents SET monthlyHour = ?, monthlyMinute = ?, monthlyDay = ?, monthlyIsSkipping = ?, monthlyIsSkippingDate = ? WHERE reminderId = ?',
+        [monthlyHour, monthlyMinute, monthlyDay, monthlyIsSkipping, monthlyIsSkippingDate, reminder.reminderId],
       );
     }
     else {
       await queryPromise(
         req,
-        'UPDATE reminderMonthlyComponents SET monthlyHour = ?, monthlyMinute = ?, dayOfMonth = ?, monthlyIsSkipping = ?  WHERE reminderId = ?',
-        [monthlyHour, monthlyMinute, dayOfMonth, monthlyIsSkipping, reminder.reminderId],
+        'UPDATE reminderMonthlyComponents SET monthlyHour = ?, monthlyMinute = ?, monthlyDay = ?, monthlyIsSkipping = ?  WHERE reminderId = ?',
+        [monthlyHour, monthlyMinute, monthlyDay, monthlyIsSkipping, reminder.reminderId],
       );
     }
   }

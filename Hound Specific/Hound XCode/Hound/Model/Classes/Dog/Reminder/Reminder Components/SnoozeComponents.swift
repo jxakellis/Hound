@@ -14,7 +14,7 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountdownProtocol
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = SnoozeComponents()
-        copy.changeSnooze(newSnoozeStatus: self.isSnoozed)
+        copy.changeSnooze(newSnoozeStatus: self.snoozeIsEnabled)
         copy.changeIntervalElapsed(newIntervalElapsed: self.intervalElapsed)
         copy.changeExecutionInterval(newExecutionInterval: self.executionInterval)
         return copy
@@ -23,13 +23,13 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountdownProtocol
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        self.storedIsSnoozed = aDecoder.decodeBool(forKey: "isSnoozed")
+        self.storedSnoozeIsEnabled = aDecoder.decodeBool(forKey: "snoozeIsEnabled")
         self.storedExecutionInterval = aDecoder.decodeDouble(forKey: "executionInterval")
         self.storedIntervalElapsed = aDecoder.decodeDouble(forKey: "intervalElapsed")
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(storedIsSnoozed, forKey: "isSnoozed")
+        aCoder.encode(storedSnoozeIsEnabled, forKey: "snoozeIsEnabled")
         aCoder.encode(storedExecutionInterval, forKey: "executionInterval")
         aCoder.encode(storedIntervalElapsed, forKey: "intervalElapsed")
     }
@@ -40,11 +40,11 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountdownProtocol
         super.init()
     }
     
-    convenience init(isSnoozed: Bool?, executionInterval: TimeInterval?, intervalElapsed: TimeInterval?) {
+    convenience init(snoozeIsEnabled: Bool?, executionInterval: TimeInterval?, intervalElapsed: TimeInterval?) {
         self.init()
         
-        if isSnoozed != nil {
-            storedIsSnoozed = isSnoozed!
+        if snoozeIsEnabled != nil {
+            storedSnoozeIsEnabled = snoozeIsEnabled!
         }
         if executionInterval != nil {
             storedExecutionInterval = executionInterval!
@@ -56,16 +56,16 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountdownProtocol
     
     // MARK: - Properties
     
-    private var storedIsSnoozed: Bool = false
+    private var storedSnoozeIsEnabled: Bool = false
     /// Bool on whether or not the parent reminder is snoozed
-    var isSnoozed: Bool { return storedIsSnoozed }
-    /// Change isSnoozed to new status and does accompanying changes
+    var snoozeIsEnabled: Bool { return storedSnoozeIsEnabled }
+    /// Change snoozeIsEnabled to new status and does accompanying changes
     func changeSnooze(newSnoozeStatus: Bool) {
         if newSnoozeStatus == true {
             storedExecutionInterval = UserConfiguration.snoozeLength
         }
         
-        storedIsSnoozed = newSnoozeStatus
+        storedSnoozeIsEnabled = newSnoozeStatus
     }
     
     // MARK: - GeneralCountdownProtocol
@@ -77,7 +77,7 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountdownProtocol
     }
     
     private var storedIntervalElapsed: TimeInterval = TimeInterval(0)
-    // this is necessary due to the pause feature. If you snooze an alarm then pause all alarms, you want the alarm to pick up where it left off, without storing this and just storing 5 minutes (default snooze length) after the executionBasis then the alarm couldn't have progress
+    // this is necessary due to the pause feature. If you snooze an alarm then pause all alarms, you want the alarm to pick up where it left off, without storing this and just storing 5 minutes (default snooze length) after the reminderExecutionBasis then the alarm couldn't have progress
     var intervalElapsed: TimeInterval { return storedIntervalElapsed }
     func changeIntervalElapsed(newIntervalElapsed: TimeInterval) {
         storedIntervalElapsed = newIntervalElapsed

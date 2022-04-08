@@ -17,8 +17,8 @@ enum NotificationManager {
     
     static func willCreateFollowUpUNUserNotification(dogName: String, reminder: Reminder) {
         
-        guard reminder.executionDate != nil else {
-            AppDelegate.generalLogger.fault("willCreateFollowUpUNUserNotification executionDate is nil")
+        guard reminder.reminderExecutionDate != nil else {
+            AppDelegate.generalLogger.fault("willCreateFollowUpUNUserNotification reminderExecutionDate is nil")
             return
         }
         // let reminder = try! MainTabBarViewController.staticDogManager.findDog(forDogId: dogName).dogReminders.findReminder(forReminderId: reminderUUID)
@@ -34,9 +34,9 @@ enum NotificationManager {
             content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(UserConfiguration.notificationSound.rawValue.lowercased())30.wav"))
         }
         
-        let executionDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminder.executionDate! + UserConfiguration.followUpDelay)
+        let reminderExecutionDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminder.reminderExecutionDate! + UserConfiguration.followUpDelay)
         
-        let trigger = UNCalendarNotificationTrigger(dateMatching: executionDateComponents, repeats: false)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: reminderExecutionDateComponents, repeats: false)
         
         let uuidString = UUID().uuidString
         let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
@@ -50,8 +50,8 @@ enum NotificationManager {
     
     static func willCreateUNUserNotification(dogName: String, reminder: Reminder) {
         
-        guard reminder.executionDate != nil else {
-            AppDelegate.generalLogger.fault("willCreateUNUserNotification executionDate is nil")
+        guard reminder.reminderExecutionDate != nil else {
+            AppDelegate.generalLogger.fault("willCreateUNUserNotification reminderExecutionDate is nil")
             return
         }
         // let reminder = try! MainTabBarViewController.staticDogManager.findDog(forDogId: dogName).dogReminders.findReminder(forReminderId: reminderUUID)
@@ -66,9 +66,9 @@ enum NotificationManager {
             content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(UserConfiguration.notificationSound.rawValue.lowercased())30.wav"))
         }
         
-        let executionDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminder.executionDate!)
+        let reminderExecutionDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminder.reminderExecutionDate!)
         
-        let trigger = UNCalendarNotificationTrigger(dateMatching: executionDateComponents, repeats: false)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: reminderExecutionDateComponents, repeats: false)
         
         let uuidString = UUID().uuidString
         let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)

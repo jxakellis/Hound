@@ -77,7 +77,7 @@ enum ReminderConstant {
         reminder.changeReminderType(newReminderType: .monthly)
         reminder.monthlyComponents.changeDateComponents(newDateComponent: .hour, newValue: 9)
         reminder.monthlyComponents.changeDateComponents(newDateComponent: .minute, newValue: 0)
-        try! reminder.monthlyComponents.changeDayOfMonth(newDayOfMonth: 1)
+        try! reminder.monthlyComponents.changeMonthlyDay(newMonthlyDay: 1)
         return reminder
     }
 }

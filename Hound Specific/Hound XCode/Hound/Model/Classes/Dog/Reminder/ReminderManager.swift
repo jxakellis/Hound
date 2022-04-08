@@ -186,7 +186,7 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
     
     /// returns true if has created a reminder and has at least one enabled
     var hasEnabledReminder: Bool {
-        for reminder in reminders where reminder.isEnabled == true {
+        for reminder in reminders where reminder.reminderIsEnabled == true {
             return true
         }
         return false
@@ -236,8 +236,8 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
             }
             // both monthly
             else if reminder1.reminderType == .monthly && reminder2.reminderType == .monthly {
-                let reminder1Day: Int! = reminder1.monthlyComponents.dayOfMonth
-                let reminder2Day: Int! = reminder2.monthlyComponents.dayOfMonth
+                let reminder1Day: Int! = reminder1.monthlyComponents.monthlyDay
+                let reminder2Day: Int! = reminder2.monthlyComponents.monthlyDay
                 // first day of the month comes first
                 if reminder1Day == reminder2Day {
                     // earliest in day comes first if same days

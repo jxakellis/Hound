@@ -2,17 +2,17 @@ const { queryPromise } = require('../../utils/queryPromise');
 const { formatBoolean, formatNumber } = require('../../utils/validateFormat');
 
 const createSnoozeComponents = async (req, reminder) => {
-  const isSnoozed = formatBoolean(reminder.isSnoozed);
+  const snoozeIsEnabled = formatBoolean(reminder.snoozeIsEnabled);
 
   // Only insert components if the reminder is snoozing, otherwise there is no need for them
   // Errors intentionally uncaught so they are passed to invocation in reminders
-  if (isSnoozed === true) {
+  if (snoozeIsEnabled === true) {
     const snoozeExecutionInterval = formatNumber(reminder.snoozeExecutionInterval);
     const snoozeIntervalElapsed = formatNumber(reminder.snoozeIntervalElapsed);
     await queryPromise(
       req,
-      'INSERT INTO reminderSnoozeComponents(reminderId, isSnoozed, snoozeExecutionInterval, snoozeIntervalElapsed) VALUES (?,?,?,?)',
-      [reminder.reminderId, isSnoozed, snoozeExecutionInterval, snoozeIntervalElapsed],
+      'INSERT INTO reminderSnoozeComponents(reminderId, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed) VALUES (?,?,?,?)',
+      [reminder.reminderId, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed],
     );
   }
   else {
@@ -27,10 +27,10 @@ const createSnoozeComponents = async (req, reminder) => {
  * Attempts to first add the new components to the table. iI this fails then it is known the reminder is already present or components are invalid. If the update statement fails then it is know the components are invalid, error passed to invocer.
  */
 const updateSnoozeComponents = async (req, reminder) => {
-  const isSnoozed = formatBoolean(reminder.isSnoozed);
+  const snoozeIsEnabled = formatBoolean(reminder.snoozeIsEnabled);
 
   // if reminder is going into snooze mode then we update/insert the needed components
-  if (isSnoozed === true) {
+  if (snoozeIsEnabled === true) {
     const snoozeExecutionInterval = formatNumber(reminder.snoozeExecutionInterval);
     const snoozeIntervalElapsed = formatNumber(reminder.snoozeIntervalElapsed);
     try {
@@ -38,8 +38,8 @@ const updateSnoozeComponents = async (req, reminder) => {
       // If this fails: The components provided are invalid or reminder already present in table (reminderId UNIQUE in DB)
       await queryPromise(
         req,
-        'INSERT INTO reminderSnoozeComponents(reminderId, isSnoozed, snoozeExecutionInterval, snoozeIntervalElapsed) VALUES (?,?,?,?)',
-        [reminder.reminderId, isSnoozed, snoozeExecutionInterval, snoozeIntervalElapsed],
+        'INSERT INTO reminderSnoozeComponents(reminderId, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed) VALUES (?,?,?,?)',
+        [reminder.reminderId, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed],
       );
       return;
     }
@@ -48,12 +48,12 @@ const updateSnoozeComponents = async (req, reminder) => {
       // If this fails: The components provided are invalid. It is uncaught here to intentionally be caught by invocation from reminders.
       await queryPromise(
         req,
-        'UPDATE reminderSnoozeComponents SET isSnoozed = ?, snoozeExecutionInterval = ?, snoozeIntervalElapsed = ? WHERE reminderId = ?',
-        [isSnoozed, snoozeExecutionInterval, snoozeIntervalElapsed, reminder.reminderId],
+        'UPDATE reminderSnoozeComponents SET snoozeIsEnabled = ?, snoozeExecutionInterval = ?, snoozeIntervalElapsed = ? WHERE reminderId = ?',
+        [snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed, reminder.reminderId],
       );
     }
   }
-  // if the reminder is leaving snooze mode (isSnoozed === false) then we delete the components
+  // if the reminder is leaving snooze mode (snoozeIsEnabled === false) then we delete the components
   else {
     await queryPromise(
       req,

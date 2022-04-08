@@ -146,7 +146,7 @@ const deleteLeftoverReminderComponents = async (req, reminderId, newTimingStyle)
       [reminderId],
     );
     // updated reminder can't be snoozed so delete.
-    // possible optimization here, since the reminder could be snoozed in the future we could just update isSnoozed to false instead of deleting the data
+    // possible optimization here, since the reminder could be snoozed in the future we could just update snoozeIsEnabled to false instead of deleting the data
     await queryPromise(
       req,
       'DELETE FROM reminderSnoozeComponents WHERE reminderId = ?',

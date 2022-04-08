@@ -43,7 +43,7 @@ class TimingManager {
                 let reminder = sudoDogManager.dogs[d].dogReminders.reminders[r]
                 
                 // makes sure a reminder is enabled and its presentation is not being handled
-                guard reminder.isEnabled == true && reminder.isPresentationHandled == false
+                guard reminder.reminderIsEnabled == true && reminder.isPresentationHandled == false
                 else {
                     continue
                 }
@@ -65,7 +65,7 @@ class TimingManager {
                     RunLoop.main.add(isSkippingDisabler, forMode: .common)
                 }
                 
-                let timer = Timer(fireAt: reminder.executionDate!,
+                let timer = Timer(fireAt: reminder.reminderExecutionDate!,
                                   interval: -1,
                                   target: self,
                                   selector: #selector(self.didExecuteTimer(sender:)),
@@ -177,7 +177,7 @@ class TimingManager {
                 case .countdown:
                     // If intervalElapsed has not been added to before
                     if reminder.countdownComponents.intervalElapsed <= 0.0001 {
-                        reminder.countdownComponents.changeIntervalElapsed(newIntervalElapsed: reminder.executionBasis.distance(to: LocalConfiguration.lastPause!))
+                        reminder.countdownComponents.changeIntervalElapsed(newIntervalElapsed: reminder.reminderExecutionBasis.distance(to: LocalConfiguration.lastPause!))
                     }
                     // If intervalElapsed has been added to before
                     else {
@@ -187,7 +187,7 @@ class TimingManager {
                 case .snooze:
                     // If intervalElapsed has not been added to before
                     if reminder.snoozeComponents.intervalElapsed <= 0.0001 {
-                        reminder.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: reminder.executionBasis.distance(to: LocalConfiguration.lastPause!))
+                        reminder.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: reminder.reminderExecutionBasis.distance(to: LocalConfiguration.lastPause!))
                     }
                     // If intervalElapsed has been added to before
                     else {
@@ -204,7 +204,7 @@ class TimingManager {
         delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
     }
     
-    /// Updates dogManager to reflect needed changes to the executionBasis, without this change the interval remaining would be based off an incorrect start date and fire at the wrong time. Can't use just Date() as it would be inaccurate if reinitalized but executionBasis + intervalRemaining will yield the same executionDate everytime.
+    /// Updates dogManager to reflect needed changes to the reminderExecutionBasis, without this change the interval remaining would be based off an incorrect start date and fire at the wrong time. Can't use just Date() as it would be inaccurate if reinitalized but reminderExecutionBasis + intervalRemaining will yield the same reminderExecutionDate everytime.
     private static func willUnpause(dogManager: DogManager) {
         
         // Goes through all enabled dogs and all their enabled reminders

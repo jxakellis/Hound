@@ -159,7 +159,7 @@ class AlarmManager {
         
         let reminder = try! dog.dogReminders.findReminder(forReminderId: reminderId)
         
-        let log = Log(logDate: Date(), logAction: logAction, customActionName: reminder.customActionName)
+        let log = Log(logDate: Date(), logAction: logAction, logCustomActionName: reminder.reminderCustomActionName)
         
         // special case. Once a oneTime reminder executes, it must be delete. Therefore there are special server queries.
         if reminder.reminderType == .oneTime {
@@ -210,7 +210,7 @@ class AlarmManager {
         
         let reminder = try! dog.dogReminders.findReminder(forReminderId: reminderId)
         
-        let log = Log(logDate: Date(), logAction: logAction, customActionName: reminder.customActionName)
+        let log = Log(logDate: Date(), logAction: logAction, logCustomActionName: reminder.reminderCustomActionName)
         
         // special case. Once a oneTime reminder executes/ is skipped, it must be delete. Therefore there are special server queries.
         if reminder.reminderType == .oneTime {

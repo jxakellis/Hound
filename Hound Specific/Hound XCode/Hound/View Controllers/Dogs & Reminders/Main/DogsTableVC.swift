@@ -22,16 +22,8 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
     
     func didUpdateReminderEnable(sender: Sender, parentDogId: Int, reminder: Reminder) {
         let sudoDogManager = getDogManager()
-        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.findReminder(forReminderId: reminder.reminderId).isEnabled = reminder.isEnabled
+        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.findReminder(forReminderId: reminder.reminderId).reminderIsEnabled = reminder.reminderIsEnabled
         setDogManager(sender: sender, newDogManager: sudoDogManager)
-        
-        // This is so the cell animates the changing of the switch properly, if this code wasnt implemented then when the table view is reloaded a new batch of cells is produced and that cell has the new switch state, bypassing the animation as the instantant the old one is switched it produces and shows the new switch
-        // let indexPath = try! IndexPath(row: getDogManager().findDog(forDogId: parentDogName).dogReminders.findIndex(forReminderId: reminderId)+1, section: getDogManager().findIndex(forDogId: parentDogName))
-        
-        // let cell = tableView.cellForRow(at: indexPath) as! DogsReminderDisplayTableViewCell
-        // cell.reloadCell()
-        // cell.reminderToggleSwitch.isOn = !isEnabled
-        // cell.reminderToggleSwitch.setOn(isEnabled, animated: true)
     }
 
     // MARK: - DogManagerControlFlowProtocol
@@ -348,7 +340,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
             }
         }
 
-        if reminder.isEnabled == true {
+        if reminder.reminderIsEnabled == true {
             for alertActionLog in alertActionsForLog {
                 selectedReminderAlertController.addAction(alertActionLog)
             }

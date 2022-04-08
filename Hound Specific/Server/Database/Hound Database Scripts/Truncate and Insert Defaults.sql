@@ -41,7 +41,7 @@ INSERT INTO dogLogs (dogId, logDate, logNote, logAction) VALUES
 (1, '2021-11-16 14:00:00', 'big poop', 6),
 (2, '2021-11-16 13:00:00', '', 7);
 
-INSERT INTO dogReminders (dogId, reminderAction, reminderType, executionBasis, isEnabled) VALUES
+INSERT INTO dogReminders (dogId, reminderAction, reminderType, reminderExecutionBasis, reminderIsEnabled) VALUES
 (1, 'Feed', 'countdown', '2021-11-16 12:00:00', true),
 (1, 'Fresh Water', 'countdown', '2021-11-16 14:00:00', true),
 (2, 'Feed', 'monthly', '2021-11-16 12:00:00', true),
@@ -51,7 +51,7 @@ INSERT INTO reminderCountdownComponents (reminderId, countdownExecutionInterval,
 (1, 18000, 0),
 (2, 7200, 0);
 
-INSERT INTO reminderSnoozeComponents (reminderId, isSnoozed, snoozeExecutionInterval, snoozeIntervalElapsed) VALUES
+INSERT INTO reminderSnoozeComponents (reminderId, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed) VALUES
 (1, false, 180, 0),
 (2, false, 180, 0),
 (3, false, 180, 0),
@@ -60,5 +60,5 @@ INSERT INTO reminderSnoozeComponents (reminderId, isSnoozed, snoozeExecutionInte
 INSERT INTO reminderWeeklyComponents (reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday, weeklyIsSkipping) VALUES
 (4, 10, 10, true, false, false, false, false, false, false, false);
 
-INSERT INTO reminderMonthlyComponents (reminderId, monthlyHour, monthlyMinute, dayOfMonth, monthlyIsSkipping) VALUES
+INSERT INTO reminderMonthlyComponents (reminderId, monthlyHour, monthlyMinute, monthlyDay, monthlyIsSkipping) VALUES
 (3, 15, 15, 20, false);

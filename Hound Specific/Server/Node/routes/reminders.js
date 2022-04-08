@@ -53,11 +53,11 @@ Multiple: { reminders: [reminderId1, reminderId2...] }
 /*
 Reminder Info:
 {
-"reminderAction": "requiredString", // If reminderAction is "Custom", then customActionName must be provided
-"customActionName": "optionalString",
+"reminderAction": "requiredString", // If reminderAction is "Custom", then reminderCustomActionName must be provided
+"reminderCustomActionName": "optionalString",
 "reminderType": "requiredString", //Only components for reminderType type specified must be provided
-"executionBasis": "requiredDate",
-"isEnabled":"requiredBool",
+"reminderExecutionBasis": "requiredDate",
+"reminderIsEnabled":"requiredBool",
 
     //FOR countdown
     "countdownExecutionInterval":"requiredInt",
@@ -79,7 +79,7 @@ Reminder Info:
     //FOR monthly
     "monthlyHour":"requiredInt",
     "monthlyMinute":"requiredInt",
-    "dayOfMonth":"requiredInt"
+    "monthlyDay":"requiredInt"
     "weeklyIsSkipping":"requiredBool",
     "monthlyIsSkippingDate":"optionalDate"
 
@@ -87,8 +87,8 @@ Reminder Info:
     "logDate":"requiredDate"
 
     //FOR snooze
-    "isSnoozed":"requiredBool",
-    "snoozeExecutionInterval":"optionalInt", //if isSnoozed is true, then snoozeExecutionInterval and snoozeIntervalElapsed are required
+    "snoozeIsEnabled":"requiredBool",
+    "snoozeExecutionInterval":"optionalInt", //if snoozeIsEnabled is true, then snoozeExecutionInterval and snoozeIntervalElapsed are required
     "snoozeIntervalElapsed":"optionalInt"
 }
 */

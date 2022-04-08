@@ -154,7 +154,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
             logToUpdate!.logAction = LogAction(rawValue: logAction.text!)!
             
             if logAction.text == LogAction.custom.rawValue {
-                logToUpdate!.customActionName = trimmedCustomLogActionName
+                logToUpdate!.logCustomActionName = trimmedCustomLogActionName
             }
             
             addLogButton.beginQuerying()
@@ -177,7 +177,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                     throw LogActionError.blankLogAction
                 }
                 else {
-                    let newLog = Log(logDate: logDate.date, logNote: logNote.text ?? LogConstant.defaultLogNote, logAction: LogAction(rawValue: logAction.text!)!, customActionName: trimmedCustomLogActionName)
+                    let newLog = Log(logDate: logDate.date, logNote: logNote.text ?? LogConstant.defaultLogNote, logAction: LogAction(rawValue: logAction.text!)!, logCustomActionName: trimmedCustomLogActionName)
                     
                     addLogButton.beginQuerying()
                     addLogButtonBackground.beginQuerying(isBackgroundButton: true)
@@ -399,7 +399,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
             
             logAction.text = logToUpdate!.logAction.rawValue
             logAction.isEnabled = true
-            customLogAction.text = logToUpdate!.customActionName
+            customLogAction.text = logToUpdate!.logCustomActionName
             // if == is true, that means it is custom, which means it shouldn't hide so ! reverses to input isHidden: false, reverse for if type is not custom. This is because this text input field is only used for custom types.
             toggleCustomLogActionName(isHidden: !(logToUpdate!.logAction == .custom))
             

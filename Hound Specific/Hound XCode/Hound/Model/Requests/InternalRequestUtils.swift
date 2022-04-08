@@ -265,8 +265,8 @@ extension InternalRequestUtils {
         body[ServerDefaultKeys.logNote.rawValue] = log.logNote
              body[ServerDefaultKeys.logDate.rawValue] = log.logDate.ISO8601FormatWithFractionalSeconds()
              body[ServerDefaultKeys.logAction.rawValue] = log.logAction.rawValue
-        if log.logAction == .custom && log.customActionName != nil {
-            body[ServerDefaultKeys.customActionName.rawValue] = log.customActionName
+        if log.logAction == .custom && log.logCustomActionName != nil {
+            body[ServerDefaultKeys.logCustomActionName.rawValue] = log.logCustomActionName
         }
         return body
         
@@ -277,11 +277,14 @@ extension InternalRequestUtils {
         var body: [String: Any] = [:]
         body[ServerDefaultKeys.reminderId.rawValue] = reminder.reminderId
              body[ServerDefaultKeys.reminderAction.rawValue] = reminder.reminderAction.rawValue
-        if reminder.reminderAction == .custom && reminder.customActionName != nil {
-            body[ServerDefaultKeys.customActionName.rawValue] = reminder.customActionName
+        if reminder.reminderAction == .custom && reminder.reminderCustomActionName != nil {
+            body[ServerDefaultKeys.reminderCustomActionName.rawValue] = reminder.reminderCustomActionName
         }
-        body[ServerDefaultKeys.executionBasis.rawValue] = reminder.executionBasis.ISO8601FormatWithFractionalSeconds()
-        body[ServerDefaultKeys.isEnabled.rawValue] = reminder.isEnabled
+        body[ServerDefaultKeys.reminderExecutionBasis.rawValue] = reminder.reminderExecutionBasis.ISO8601FormatWithFractionalSeconds()
+        body[ServerDefaultKeys.reminderIsEnabled.rawValue] = reminder.reminderIsEnabled
+        if reminder.reminderExecutionDate != nil {
+            body[ServerDefaultKeys.reminderExecutionDate.rawValue] = reminder.reminderExecutionDate!
+        }
         
         body[ServerDefaultKeys.reminderType.rawValue] = reminder.reminderType.rawValue
         // add the reminder components depending on the reminderType
@@ -333,7 +336,7 @@ extension InternalRequestUtils {
             if reminder.monthlyComponents.isSkipping == true && reminder.monthlyComponents.isSkippingDate != nil {
                 body[ServerDefaultKeys.monthlyIsSkippingDate.rawValue] = reminder.monthlyComponents.isSkippingDate!.ISO8601FormatWithFractionalSeconds()
             }
-            body[ServerDefaultKeys.dayOfMonth.rawValue] = reminder.monthlyComponents.dayOfMonth
+            body[ServerDefaultKeys.monthlyDay.rawValue] = reminder.monthlyComponents.monthlyDay
         case .oneTime:
             body[ServerDefaultKeys.oneTimeDate.rawValue] = reminder.oneTimeComponents.oneTimeDate.ISO8601FormatWithFractionalSeconds()
         }

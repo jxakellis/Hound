@@ -69,7 +69,10 @@ const formatBoolean = (string) => {
 };
 
 /**
- * Converts the provided string into a number. Any finite number will successfully convert into a number. This is needed as Number("random") converts into NaN with type of number. This result circumvents the typeof blah === 'undefined' logic as its type is number even though its value is null/NaN/undefined.
+ * Converts the provided string into a number.
+ * Any finite number will successfully convert into a number.
+ * This is needed as Number("foo") converts into NaN with type of number.
+ * This result circumvents the typeof bar === 'undefined' logic as its type is number even though its value is null/NaN/undefined.
 */
 const formatNumber = (string) => {
   // must convert string to number

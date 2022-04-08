@@ -70,7 +70,7 @@ class DogsDogDisplayTableViewCell: UITableViewCell {
         // if paused but has an enabled reminder...
         else if UserConfiguration.isPaused == true && dog.dogReminders.hasEnabledReminder == true {
             var allRemindersEnabled: Bool {
-                for reminder in dog.dogReminders.reminders where reminder.isEnabled == false {
+                for reminder in dog.dogReminders.reminders where reminder.reminderIsEnabled == false {
                     return false
                 }
                 return true
@@ -97,15 +97,15 @@ class DogsDogDisplayTableViewCell: UITableViewCell {
             // has at least once enabled reminder so soonsetFireDate won't be nil by the end
             var soonestFireDate: Date! = nil
             for reminder in dog.dogReminders.reminders {
-                guard reminder.isEnabled else {
+                guard reminder.reminderIsEnabled else {
                     continue
                 }
                 if soonestFireDate == nil {
-                    soonestFireDate = reminder.executionDate!
+                    soonestFireDate = reminder.reminderExecutionDate!
                 }
                 else {
-                    if Date().distance(to: reminder.executionDate!) < Date().distance(to: soonestFireDate) {
-                        soonestFireDate = reminder.executionDate!
+                    if Date().distance(to: reminder.reminderExecutionDate!) < Date().distance(to: soonestFireDate) {
+                        soonestFireDate = reminder.reminderExecutionDate!
                     }
                 }
             }

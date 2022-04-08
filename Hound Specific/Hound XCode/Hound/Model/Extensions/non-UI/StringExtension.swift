@@ -99,7 +99,7 @@ extension String {
         dateString.append(" \(dateFormatter.string(from: date))")
         
         let day = Calendar.current.component(.day, from: date)
-        dateString.append(String.dayOfMonthSuffix(day: day))
+        dateString.append(String.monthlyDaySuffix(day: day))
         
         let year = Calendar.current.component(.year, from: date)
         if year != Calendar.current.component(.year, from: Date()) {
@@ -110,8 +110,8 @@ extension String {
     }
     
     /// Takes the given day of month and appends an appropiate suffix of st, nd, rd, or th, e.g. 31 returns st, 20 returns th, 2 returns nd
-    static func dayOfMonthSuffix(day dayOfMonth: Int) -> String {
-        switch dayOfMonth {
+    static func monthlyDaySuffix(day monthlyDay: Int) -> String {
+        switch monthlyDay {
         case 1:
             return "st"
         case 2:

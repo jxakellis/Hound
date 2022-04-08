@@ -128,22 +128,22 @@ class WeeklyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtocol
     // MARK: - Functions
     
     /// Produces an array of at least two with all of the future dates that the reminder will fire given the weekday(s), hour, and minute
-    private func futureExecutionDates(reminderExecutionBasis executionBasis: Date) -> [Date] {
+    private func futureExecutionDates(reminderExecutionBasis: Date) -> [Date] {
         
-        // the dates calculated to be executionDates
+        // the dates calculated to be reminderExecutionDates
         var calculatedDates: [Date] = []
         
         // iterate throguh all weekdays
         for weekday in weekdays {
             // set calculated date to the last time the reminder went off
-            var calculatedDate = executionBasis
+            var calculatedDate = reminderExecutionBasis
             // iterate the calculated day forward until it is the correct weekday
             calculatedDate = Calendar.current.date(bySetting: .weekday, value: weekday, of: calculatedDate)!
             // iterate the time of day forward until the first result is found
             calculatedDate = Calendar.current.date(bySettingHour: dateComponents.hour!, minute: dateComponents.minute!, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)!
             
             // Correction for setting components to the same day. e.g. if its 11:00Am friday and you apply 8:30AM Friday to the current date, then it is in the past, this gets around this by making it 8:30AM Next Friday
-            if executionBasis.distance(to: calculatedDate) < 0 {
+            if reminderExecutionBasis.distance(to: calculatedDate) < 0 {
                 calculatedDate = Calendar.current.date(byAdding: .day, value: 7, to: calculatedDate)!
             }
             
@@ -161,21 +161,21 @@ class WeeklyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtocol
         else {
             AppDelegate.generalLogger.warning("Calculated Dates For futureExecutionDates Empty")
             // calculated dates should never be zero, this means there are somehow zero weekdays selected. Handle this weird case by just appending future dates (one 1 week ahead and the other 2 weeks ahead)
-            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 7, to: executionBasis)!)
-            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 14, to: executionBasis)!)
+            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 7, to: reminderExecutionBasis)!)
+            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 14, to: reminderExecutionBasis)!)
         }
         
         return calculatedDates
     }
     
-    /// If a reminder is skipping, then we must find the next soonest executionDate. We have to find the execution date that takes place after the skipped execution date (but before any other execution date).
-    private func skippingExecutionDate(reminderExecutionBasis executionBasis: Date) -> Date {
+    /// If a reminder is skipping, then we must find the next soonest reminderExecutionDate. We have to find the execution date that takes place after the skipped execution date (but before any other execution date).
+    private func skippingExecutionDate(reminderExecutionBasis: Date) -> Date {
         
-        let traditionalNextTOD = notSkippingExecutionDate(reminderExecutionBasis: executionBasis)
+        let traditionalNextTOD = notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
         
         // If there are multiple dates to be sorted through to find the date that is closer in time to traditionalNextTimeOfDay but still in the future
         if weekdays.count > 1 {
-            let calculatedDates = futureExecutionDates(reminderExecutionBasis: executionBasis)
+            let calculatedDates = futureExecutionDates(reminderExecutionBasis: reminderExecutionBasis)
             var nextSoonestCalculatedDate: Date = calculatedDates.last!
             
             for calculatedDate in calculatedDates {
@@ -194,10 +194,10 @@ class WeeklyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtocol
         
     }
     
-    /// This find the next execution date that takes place after the executionBasis. It purposelly not factoring in isSkipping.
-    func notSkippingExecutionDate(reminderExecutionBasis executionBasis: Date) -> Date {
+    /// This find the next execution date that takes place after the reminderExecutionBasis. It purposelly not factoring in isSkipping.
+    func notSkippingExecutionDate(reminderExecutionBasis: Date) -> Date {
         
-        let calculatedDates = futureExecutionDates(reminderExecutionBasis: executionBasis)
+        let calculatedDates = futureExecutionDates(reminderExecutionBasis: reminderExecutionBasis)
         
         // want to start with the date furthest away in time
         var soonestCalculatedDate: Date = calculatedDates.last!
@@ -205,7 +205,7 @@ class WeeklyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtocol
         // iterate through all of the future execution dates to find the one that after the execution basis but is also closet to the execution basis
         for calculatedDate in calculatedDates {
             // if calculated date is in the future (as trad should be) and if its closer to the present that the soonestCalculatedDate, then sets soonest to calculated
-            if executionBasis.distance(to: calculatedDate) > 0 && executionBasis.distance(to: calculatedDate) < executionBasis.distance(to: soonestCalculatedDate) {
+            if reminderExecutionBasis.distance(to: calculatedDate) > 0 && reminderExecutionBasis.distance(to: calculatedDate) < reminderExecutionBasis.distance(to: soonestCalculatedDate) {
                 soonestCalculatedDate = calculatedDate
             }
         }
@@ -214,13 +214,13 @@ class WeeklyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtocol
     }
     
     /// Returns the date that the reminder should have last sounded an alarm at. This helps in finding alarms that might have been missed
-    func previousExecutionDate(reminderExecutionBasis executionBasis: Date) -> Date {
+    func previousExecutionDate(reminderExecutionBasis: Date) -> Date {
         
-        let traditionalNextTOD = notSkippingExecutionDate(reminderExecutionBasis: executionBasis)
+        let traditionalNextTOD = notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
         
         // multiple days of week so need to do math to figure out correct
         if weekdays.count > 1 {
-            var preceedingExecutionDates = futureExecutionDates(reminderExecutionBasis: executionBasis)
+            var preceedingExecutionDates = futureExecutionDates(reminderExecutionBasis: reminderExecutionBasis)
             
             // Subtracts a week from all futureExecutionDates
             for futureExecutionDateIndex in 0..<preceedingExecutionDates.count {
@@ -250,12 +250,12 @@ class WeeklyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtocol
     }
     
     /// Factors in isSkipping to figure out the next time of day
-    func nextExecutionDate(reminderExecutionBasis executionBasis: Date) -> Date {
+    func nextExecutionDate(reminderExecutionBasis: Date) -> Date {
         if isSkipping == true {
-            return skippingExecutionDate(reminderExecutionBasis: executionBasis)
+            return skippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
         }
         else {
-            return notSkippingExecutionDate(reminderExecutionBasis: executionBasis)
+            return notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
         }
     }
 }

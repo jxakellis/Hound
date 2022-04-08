@@ -66,9 +66,9 @@ protocol LogProtocol {
     var logAction: LogAction { get set }
     
     /// If the reminder's action is custom, this is the name for it
-    var customActionName: String? { get set }
+    var logCustomActionName: String? { get set }
     
-    /// If not .custom action then just .action name, if custom and has customActionName then its that string
+    /// If not .custom action then just .action name, if custom and has logCustomActionName then its that string
     var displayActionName: String { get }
     
     var logId: Int { get set }
@@ -80,7 +80,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     // MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
-        let copy = Log(logDate: self.logDate, logNote: self.logNote, logAction: self.logAction, customActionName: self.customActionName, logId: self.logId)
+        let copy = Log(logDate: self.logDate, logNote: self.logNote, logAction: self.logAction, logCustomActionName: self.logCustomActionName, logId: self.logId)
         return copy
     }
     
@@ -90,7 +90,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
         self.logDate = aDecoder.decodeObject(forKey: "logDate") as? Date ?? Date()
         self.logNote = aDecoder.decodeObject(forKey: "logNote") as? String ?? LogConstant.defaultLogNote
         self.logAction = LogAction(rawValue: aDecoder.decodeObject(forKey: "logAction") as? String ?? LogConstant.defaultAction.rawValue) ?? LogConstant.defaultAction
-        self.customActionName = aDecoder.decodeObject(forKey: "customActionName") as? String
+        self.logCustomActionName = aDecoder.decodeObject(forKey: "logCustomActionName") as? String
         self.logId = aDecoder.decodeInteger(forKey: "logId")
     }
     
@@ -98,7 +98,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
         aCoder.encode(logDate, forKey: "logDate")
         aCoder.encode(logNote, forKey: "logNote")
         aCoder.encode(logAction.rawValue, forKey: "logAction")
-        aCoder.encode(customActionName, forKey: "customActionName")
+        aCoder.encode(logCustomActionName, forKey: "logCustomActionName")
         aCoder.encode(logId, forKey: "logId")
     }
     
@@ -106,11 +106,11 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     // MARK: - Main
     
-    init(logDate: Date, logNote: String = LogConstant.defaultLogNote, logAction: LogAction, customActionName: String? = nil, logId: Int = LogConstant.defaultLogId) {
+    init(logDate: Date, logNote: String = LogConstant.defaultLogNote, logAction: LogAction, logCustomActionName: String? = nil, logId: Int = LogConstant.defaultLogId) {
         self.logDate = logDate
         self.logNote = logNote
         self.logAction = logAction
-        self.customActionName = customActionName
+        self.logCustomActionName = logCustomActionName
         self.logId = logId
         super.init()
     }
@@ -125,10 +125,10 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
         
         let logNote: String = body[ServerDefaultKeys.logNote.rawValue] as? String ?? LogConstant.defaultLogNote
         let logAction: LogAction = LogAction(rawValue: body[ServerDefaultKeys.logAction.rawValue] as? String ?? LogConstant.defaultAction.rawValue)!
-        let customActionName: String? = body[ServerDefaultKeys.customActionName.rawValue] as? String
+        let logCustomActionName: String? = body[ServerDefaultKeys.logCustomActionName.rawValue] as? String
         let logId: Int = body[ServerDefaultKeys.logId.rawValue] as? Int ?? LogConstant.defaultLogId
         
-        self.init(logDate: logDate, logNote: logNote, logAction: logAction, customActionName: customActionName, logId: logId)
+        self.init(logDate: logDate, logNote: logNote, logAction: logAction, logCustomActionName: logCustomActionName, logId: logId)
     }
     
     // MARK: Properties
@@ -139,11 +139,11 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     var logAction: LogAction
     
-    var customActionName: String?
+    var logCustomActionName: String?
     
     var displayActionName: String {
-        if logAction == .custom && customActionName != nil {
-            return customActionName!
+        if logAction == .custom && logCustomActionName != nil {
+            return logCustomActionName!
         }
         else {
             return logAction.rawValue

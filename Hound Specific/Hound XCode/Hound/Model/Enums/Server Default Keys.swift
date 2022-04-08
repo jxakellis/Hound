@@ -59,8 +59,7 @@ enum ServerDefaultKeys: String {
     
     case logId
     case logAction
-    // TO DO differentiate between log and reminder customActionName
-    case customActionName
+    case logCustomActionName
     case logDate
     case logNote
     
@@ -72,14 +71,15 @@ enum ServerDefaultKeys: String {
     
     case reminderId
     case reminderAction
-    // case customActionName
-    case executionBasis
-    case isEnabled
+    case reminderCustomActionName
     case reminderType
+    case reminderExecutionBasis
+    case reminderExecutionDate
+    case reminderIsEnabled
     
     // MARK: Snooze Components
     
-    case isSnoozed
+    case snoozeIsEnabled
     case snoozeExecutionInterval
     case snoozeIntervalElapsed
     
@@ -108,7 +108,7 @@ enum ServerDefaultKeys: String {
     case monthlyMinute
     case monthlyIsSkipping
     case monthlyIsSkippingDate
-    case dayOfMonth
+    case monthlyDay
     
     // MARK: One Time Components
     

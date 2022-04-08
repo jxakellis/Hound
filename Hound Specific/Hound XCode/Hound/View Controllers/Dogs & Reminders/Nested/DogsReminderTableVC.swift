@@ -20,9 +20,6 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
     
     func didUpdateReminderEnable(sender: Sender, reminder: Reminder) {
          let sudoReminderManager = getReminderManager()
-        // can skip this part as the cell contained a reminder object that was just referencing the reminder contained inside this remindermanager.
-        // let updatedReminder = try! sudoReminderManager.findReminder(forReminderId: reminder.reminderId)
-        // updatedReminder.isEnabled = reminder.isEnabled
         setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
         delegate.didUpdateReminder(forReminder: reminder)
     }

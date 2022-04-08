@@ -21,7 +21,7 @@ class DogsReminderTableViewCell: UITableViewCell {
     @IBOutlet private weak var reminderToggleSwitch: UISwitch!
 
     @IBAction func didToggleEnable(_ sender: Any) {
-        reminder.isEnabled = reminderToggleSwitch.isOn
+        reminder.reminderIsEnabled = reminderToggleSwitch.isOn
         delegate.didUpdateReminderEnable(sender: Sender(origin: self, localized: self), reminder: reminder)
     }
 
@@ -55,10 +55,10 @@ class DogsReminderTableViewCell: UITableViewCell {
         }
         else if reminder.reminderType == .monthly {
 
-                let dayOfMonth: Int! = reminder.monthlyComponents.dayOfMonth
-                reminderDisplay.text?.append(" Every Month on \(dayOfMonth!)")
+                let monthlyDay: Int! = reminder.monthlyComponents.monthlyDay
+                reminderDisplay.text?.append(" Every Month on \(monthlyDay!)")
 
-                reminderDisplay.text?.append(String.dayOfMonthSuffix(day: dayOfMonth))
+                reminderDisplay.text?.append(String.monthlyDaySuffix(day: monthlyDay))
 
         }
         else if reminder.reminderType == .weekly {
@@ -130,7 +130,7 @@ class DogsReminderTableViewCell: UITableViewCell {
 
         reminderDisplay.attributedText = reminderDisplay.text?.addingFontToBeginning(text: reminder.displayActionName + " -", font: UIFont.systemFont(ofSize: reminderDisplay.font.pointSize, weight: .medium))
 
-        self.reminderToggleSwitch.isOn = reminder.isEnabled
+        self.reminderToggleSwitch.isOn = reminder.reminderIsEnabled
 
     }
 

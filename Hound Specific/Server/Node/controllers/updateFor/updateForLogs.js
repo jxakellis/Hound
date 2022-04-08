@@ -15,7 +15,7 @@ const updateLogQuery = async (req) => {
   const logDate = formatDate(req.body.logDate);
   const { logNote } = req.body;
   const { logAction } = req.body;
-  const { customActionName } = req.body;
+  const { logCustomActionName } = req.body;
 
   // if all undefined, then there is nothing to update
   if (atLeastOneDefined([logDate, logNote, logAction]) === false) {
@@ -32,8 +32,8 @@ const updateLogQuery = async (req) => {
     if (logAction) {
       await queryPromise(req, 'UPDATE dogLogs SET logAction = ? WHERE logId = ?', [logAction, logId]);
     }
-    if (customActionName) {
-      await queryPromise(req, 'UPDATE dogLogs SET customActionName = ? WHERE logId = ?', [customActionName, logId]);
+    if (logCustomActionName) {
+      await queryPromise(req, 'UPDATE dogLogs SET logCustomActionName = ? WHERE logId = ?', [logCustomActionName, logId]);
     }
     return;
   }

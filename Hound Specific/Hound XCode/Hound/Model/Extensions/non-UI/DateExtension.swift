@@ -15,7 +15,7 @@ extension Date {
     }
     
     /// Returns a Date object that is the product of adding interval: TimeInterval to pastDate until it is greater than or equal to current date.
-    static func executionDate(lastExecution pastDate: Date, currentDate: Date = Date(), interval: TimeInterval) -> Date {
+    static func reminderExecutionDate(lastExecution pastDate: Date, currentDate: Date = Date(), interval: TimeInterval) -> Date {
         
         let timeElapsedSincePast = currentDate.timeIntervalSince(pastDate)
         

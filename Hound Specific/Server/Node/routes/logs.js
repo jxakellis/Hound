@@ -26,8 +26,8 @@ router.post('/', createLog);
 {
 "logDate":"requiredDate",
 "logNote" : "optionalString",
-"logAction": "requiredString", // If logAction is "Custom", then customActionName must be provided
-"customActionName":"optionalString"
+"logAction": "requiredString", // If logAction is "Custom", then logCustomActionName must be provided
+"logCustomActionName":"optionalString"
 }
 */
 
@@ -40,8 +40,8 @@ router.put('/:logId', updateLog);
 {
 "logDate":"optionalDate",
 "logNote" : "optionalString",
-"logAction": "optionalString", // If logAction is "Custom", then customActionName must be provided
-"customActionName":"optionalString"
+"logAction": "optionalString", // If logAction is "Custom", then logCustomActionName must be provided
+"logCustomActionName":"optionalString"
 }
 */
 
