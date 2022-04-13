@@ -1,6 +1,6 @@
 const {
   formatNumber, formatArray,
-} = require('../../utils/validateFormat');
+} = require('../../utils/database/validateFormat');
 
 const { getReminderQuery, getRemindersQuery } = require('../getFor/getForReminders');
 const { createReminderQuery, createRemindersQuery } = require('../createFor/createForReminders');
@@ -118,13 +118,13 @@ const deleteReminder = async (req, res) => {
   try {
     // reminders are provided
     if (reminders) {
-      await deleteRemindersQuery(req);
+      await deleteRemindersQuery(req, reminders);
       req.commitQueries(req);
       return res.status(200).json({ result: '' });
     }
     // single reminder
     else {
-      await deleteReminderQuery(req);
+      await deleteReminderQuery(req, formatNumber(req.body.reminderId));
       req.commitQueries(req);
       return res.status(200).json({ result: '' });
     }

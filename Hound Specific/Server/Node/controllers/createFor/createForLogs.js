@@ -1,9 +1,9 @@
 const DatabaseError = require('../../utils/errors/databaseError');
 const ValidationError = require('../../utils/errors/validationError');
-const { queryPromise } = require('../../utils/queryPromise');
+const { queryPromise } = require('../../utils/database/queryPromise');
 const {
   formatDate, formatNumber, areAllDefined,
-} = require('../../utils/validateFormat');
+} = require('../../utils/database/validateFormat');
 
 /**
  *  Queries the database to create a log. If the query is successful, then returns the logId.

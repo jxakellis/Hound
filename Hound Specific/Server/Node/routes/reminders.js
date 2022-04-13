@@ -5,7 +5,7 @@ const router = express.Router({ mergeParams: true });
 const {
   getReminders, createReminder, updateReminder, deleteReminder,
 } = require('../controllers/main/reminders');
-const { validateParamsReminderId, validateBodyReminderId } = require('../utils/validateId');
+const { validateParamsReminderId, validateBodyReminderId } = require('../utils/database/validateId');
 
 // No need to validate body for get ( no body exists )
 // No need to validate body for create ( there are no passed reminders )

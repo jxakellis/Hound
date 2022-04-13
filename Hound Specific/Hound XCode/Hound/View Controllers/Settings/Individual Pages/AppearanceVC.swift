@@ -63,47 +63,11 @@ class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDel
 
     @IBOutlet private weak var interfaceStyleSegmentedControl: UISegmentedControl!
 
-    @IBAction private func didUpdateInterfaceStyleSegmentedControl(_ sender: Any) {
+    @IBAction private func didUpdateInterfaceStyle(_ sender: Any) {
+        
+        // TO DO can take this piece of code and make it a function (this is copy pasted 3 times between 3 VCs)
 
-        var convertedInterfaceStyleRawValue: Int?
-        let beforeUpdateInterfaceStyle = UserConfiguration.interfaceStyle
-
-        switch interfaceStyleSegmentedControl.selectedSegmentIndex {
-        case 0:
-            convertedInterfaceStyleRawValue = 1
-            UIApplication.keyWindow?.overrideUserInterfaceStyle = .light
-            UserConfiguration.interfaceStyle = .light
-        case 1:
-            convertedInterfaceStyleRawValue = 2
-            UIApplication.keyWindow?.overrideUserInterfaceStyle = .dark
-            UserConfiguration.interfaceStyle = .dark
-        default:
-            convertedInterfaceStyleRawValue = 0
-            UIApplication.keyWindow?.overrideUserInterfaceStyle = .unspecified
-            UserConfiguration.interfaceStyle = .unspecified
-        }
-
-        let body = [ServerDefaultKeys.interfaceStyle.rawValue: convertedInterfaceStyleRawValue!]
-        UserRequest.update(body: body) { requestWasSuccessful in
-            if requestWasSuccessful == false {
-                // error, revert to previous
-                UIApplication.keyWindow?.overrideUserInterfaceStyle = beforeUpdateInterfaceStyle
-                UserConfiguration.interfaceStyle = beforeUpdateInterfaceStyle
-                switch UserConfiguration.interfaceStyle.rawValue {
-                    // system/unspecified
-                case 0:
-                    self.interfaceStyleSegmentedControl.selectedSegmentIndex = 2
-                    // light
-                case 1:
-                    self.interfaceStyleSegmentedControl.selectedSegmentIndex = 0
-                    // dark
-                case 2:
-                    self.interfaceStyleSegmentedControl.selectedSegmentIndex = 1
-                default:
-                    self.interfaceStyleSegmentedControl.selectedSegmentIndex = 2
-                }
-            }
-        }
+        ViewControllerUtils.updateInterfaceStyle(forSegmentedControl: sender as! UISegmentedControl)
     }
 
     // MARK: Logs Overview Mode

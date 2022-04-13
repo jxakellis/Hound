@@ -42,6 +42,8 @@ enum UserInformation {
     
     static var userIdentifier: String?
     
+    static var userNotificationToken: String?
+    
     static var familyId: Int?
     
     static private var storedUserEmail: String?

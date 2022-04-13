@@ -1,4 +1,3 @@
-// const database = require('../databaseConnection')
 const { formatArray } = require('./validateFormat');
 
 /**

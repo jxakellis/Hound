@@ -1,5 +1,5 @@
-const { queryPromise } = require('../../utils/queryPromise');
-const { formatBoolean, formatNumber } = require('../../utils/validateFormat');
+const { queryPromise } = require('../../utils/database/queryPromise');
+const { formatBoolean, formatNumber } = require('../../utils/database/validateFormat');
 
 const createSnoozeComponents = async (req, reminder) => {
   const snoozeIsEnabled = formatBoolean(reminder.snoozeIsEnabled);

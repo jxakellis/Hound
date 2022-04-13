@@ -1,7 +1,7 @@
 const ValidationError = require('../../utils/errors/validationError');
 const {
   areAllDefined, formatNumber,
-} = require('../../utils/validateFormat');
+} = require('../../utils/database/validateFormat');
 
 const { getUserForUserIdQuery, getUserForUserIdentifierQuery } = require('../getFor/getForUser');
 const { createUserQuery } = require('../createFor/createForUser');
@@ -70,8 +70,10 @@ const updateUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
+  const userId = formatNumber(req.params.userId);
+  const familyId = formatNumber(req.params.familyId);
   try {
-    await deleteUserQuery(req);
+    await deleteUserQuery(req, userId, familyId);
     req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }

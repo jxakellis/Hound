@@ -1,7 +1,7 @@
 const { queryPromise } = require('./queryPromise');
 const { formatNumber, formatArray, areAllDefined } = require('./validateFormat');
-const DatabaseError = require('./errors/databaseError');
-const ValidationError = require('./errors/validationError');
+const DatabaseError = require('../errors/databaseError');
+const ValidationError = require('../errors/validationError');
 
 /**
  * Checks to see that userId and userIdentifier are defined, are valid, and exist in the database.
@@ -61,7 +61,7 @@ const validateFamilyId = async (req, res, next) => {
       // queries the database to find familyIds associated with the userId
       const result = await queryPromise(
         req,
-        'SELECT * FROM familyMembers WHERE userId = ?',
+        'SELECT familyId, userId fami FROM familyMembers WHERE userId = ?',
         [userId],
       );
 

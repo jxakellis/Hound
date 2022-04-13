@@ -35,7 +35,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         }
         setDogManager(sender: sender, newDogManager: sudoDogManager)
 
-        Utils.checkForReview()
+        CheckManager.checkForReview()
     }
 
     func didUpdateLog(sender: Sender, parentDogId: Int, updatedLog: Log) {
@@ -50,7 +50,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
 
          setDogManager(sender: sender, newDogManager: sudoDogManager)
 
-        Utils.checkForReview()
+        CheckManager.checkForReview()
 
     }
 
@@ -65,7 +65,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
 
         setDogManager(sender: sender, newDogManager: sudoDogManager)
 
-        Utils.checkForReview()
+        CheckManager.checkForReview()
     }
 
     // MARK: - LogsTableViewControllerDelegate
@@ -82,7 +82,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
     func didSelectLog(parentDogId: Int, log: Log) {
         selectedLog = log
         parentDogIdOfSelectedLog = parentDogId
-        Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "logsAddLogViewController", viewController: self)
+        ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "logsAddLogViewController", viewController: self)
         selectedLog = nil
         parentDogIdOfSelectedLog = nil
     }

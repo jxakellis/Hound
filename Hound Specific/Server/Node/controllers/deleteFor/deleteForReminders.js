@@ -1,25 +1,26 @@
 const DatabaseError = require('../../utils/errors/databaseError');
 const {
-  formatNumber, formatArray,
-} = require('../../utils/validateFormat');
-const { deleteReminder } = require('../../utils/delete');
+  formatNumber,
+} = require('../../utils/database/validateFormat');
+const { queryPromise } = require('../../utils/database/queryPromise');
 
 /**
  *  Queries the database to delete a single reminder. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-const deleteReminderQuery = async (req) => {
-  const reminderId = formatNumber(req.body.reminderId);
-
+const deleteReminderQuery = async (req, reminderId) => {
   try {
-    await deleteReminder(req, reminderId);
-    // req.commitQueries(req);
-    // return res.status(200).json({ result: '' });
+    // deletes all components
+    await queryPromise(req, 'DELETE FROM reminderSnoozeComponents WHERE reminderId = ?', [reminderId]);
+    await queryPromise(req, 'DELETE FROM reminderCountdownComponents WHERE reminderId = ?', [reminderId]);
+    await queryPromise(req, 'DELETE FROM reminderWeeklyComponents WHERE reminderId = ?', [reminderId]);
+    await queryPromise(req, 'DELETE FROM reminderMonthlyComponents WHERE reminderId = ?', [reminderId]);
+    await queryPromise(req, 'DELETE FROM reminderOneTimeComponents WHERE reminderId = ?', [reminderId]);
+    // deletes reminder
+    await queryPromise(req, 'DELETE FROM dogReminders WHERE reminderId = ?', [reminderId]);
     return;
   }
   catch (error) {
-    // req.rollbackQueries(req);
-    // return res.status(400).json(new DatabaseError(error.code).toJSON);
     throw new DatabaseError(error.code);
   }
 };
@@ -28,28 +29,15 @@ const deleteReminderQuery = async (req) => {
  *  Queries the database to delete multiple reminders. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-const deleteRemindersQuery = async (req) => {
-  // assume .reminders is an array
-  const reminders = formatArray(req.body.reminders);
-
+const deleteRemindersQuery = async (req, reminders) => {
   // iterate through all reminders provided to update them all
   // if there is a problem, then we return that problem (function that invokes this will roll back requests)
-  // if there are no problems with any of the reminders, we return ''.
+  // if there are no problems with any of the reminders, we return.
   for (let i = 0; i < reminders.length; i += 1) {
     const reminderId = formatNumber(reminders[i].reminderId);
 
-    try {
-      await deleteReminder(req, reminderId);
-    }
-    catch (error) {
-      // req.rollbackQueries(req);
-      // return res.status(400).json(new DatabaseError(error.code).toJSON);
-      throw new DatabaseError(error.code);
-    }
+    await deleteReminderQuery(req, reminderId);
   }
-  // req.commitQueries(req);
-  // return res.status(200).json({ result: '' });
-  return '';
 };
 
 module.exports = { deleteReminderQuery, deleteRemindersQuery };

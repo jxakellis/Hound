@@ -267,7 +267,7 @@ extension RemindersRequest {
      */
     static func create(forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping ([Reminder]?) -> Void) {
         RemindersRequest.create(forDogId: dogId, forReminders: reminders) { reminders, responseStatus in
-            DispatchQueue.main.async {
+           DispatchQueue.main.async {
                 switch responseStatus {
                 case .successResponse:
                     if reminders != nil {

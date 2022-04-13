@@ -5,7 +5,7 @@ const router = express.Router({ mergeParams: true });
 const {
   getDogs, createDog, updateDog, deleteDog,
 } = require('../controllers/main/dogs');
-const { validateDogId } = require('../utils/validateId');
+const { validateDogId } = require('../utils/database/validateId');
 
 // validation that params are formatted correctly and have adequate permissions
 router.use('/:dogId', validateDogId);

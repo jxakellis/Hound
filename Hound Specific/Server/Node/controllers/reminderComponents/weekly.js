@@ -1,5 +1,5 @@
-const { queryPromise } = require('../../utils/queryPromise');
-const { formatDate, formatBoolean, formatNumber } = require('../../utils/validateFormat');
+const { queryPromise } = require('../../utils/database/queryPromise');
+const { formatDate, formatBoolean, formatNumber } = require('../../utils/database/validateFormat');
 
 const createWeeklyComponents = async (req, reminder) => {
   const weeklyHour = formatNumber(reminder.weeklyHour);

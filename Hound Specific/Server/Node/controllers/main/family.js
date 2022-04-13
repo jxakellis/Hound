@@ -1,5 +1,5 @@
 const ValidationError = require('../../utils/errors/validationError');
-const { formatNumber } = require('../../utils/validateFormat');
+const { formatNumber } = require('../../utils/database/validateFormat');
 
 const { getFamilyInformationForFamilyIdQuery } = require('../getFor/getForFamily');
 const { createFamilyQuery } = require('../createFor/createForFamily');
@@ -31,25 +31,6 @@ const getFamily = async (req, res) => {
     req.rollbackQueries(req);
     return res.status(400).json(new ValidationError('familyId missing', 'ER_VALUES_MISSING').toJSON);
   }
-  /*
-  else {
-    try {
-      const result = await getFamilyMembersForUserIdQuery(req, userId);
-      if (result.length === 0) {
-        // successful but empty array, not family members to return
-        req.commitQueries(req);
-        return res.status(200).json({ result: [] });
-      }
-      else {
-        // array has items, meaning there was family members found, successful!
-        req.commitQueries(req);
-        return res.status(200).json({ result });
-      }
-    }
-    catch (error) {
-    }
-  }
-  */
 };
 
 const createFamily = async (req, res) => {
@@ -80,8 +61,11 @@ const updateFamily = async (req, res) => {
 };
 
 const deleteFamily = async (req, res) => {
+  const userId = formatNumber(req.params.userId);
+  const familyId = formatNumber(req.params.familyId);
+
   try {
-    await deleteFamilyQuery(req);
+    await deleteFamilyQuery(req, userId, familyId);
     req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }

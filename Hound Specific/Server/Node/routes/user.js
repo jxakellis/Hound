@@ -6,7 +6,7 @@ const {
   getUser, createUser, updateUser, deleteUser,
 } = require('../controllers/main/user');
 
-const { validateUserId } = require('../utils/validateId');
+const { validateUserId } = require('../utils/database/validateId');
 
 router.use('/:userId', validateUserId);
 

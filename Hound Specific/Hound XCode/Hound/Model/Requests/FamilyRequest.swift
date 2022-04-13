@@ -36,7 +36,7 @@ enum FamilyRequest: RequestProtocol {
      completionHandler returns response data: familyId for the created family and the ResponseStatus
      */
     private static func create(completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
-        
+        InternalRequestUtils.warnForPlaceholderId()
         // make post request, assume body valid as constructed with method
         InternalRequestUtils.genericPostRequest(forURL: baseURLWithoutParams, forBody: [ : ]) { responseBody, responseStatus in
             DispatchQueue.main.async {

@@ -27,7 +27,7 @@ enum UserDefaultsKeys: String {
     case reviewRequestDates
     case isShowTerminationAlert
     case isShowReleaseNotes
-    case hasLoadedIntroductionViewControllerBefore
+    case hasLoadedFamilyIntroductionViewControllerBefore
     case hasLoadedRemindersIntroductionViewControllerBefore
     
     // MARK: Other

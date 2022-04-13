@@ -16,28 +16,17 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         
         // hasn't shown configuration to create reminders
         if LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore == false {
-            // never created a reminder before, new family
-            if self.getDogManager().hasCreatedReminder == false {
-                Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "remindersIntroductionViewController", viewController: self)
-            }
-            // reminders already created
-            else {
-                // TO DO create intro page for additional family member, where they still get introduced but don't create a reminder. This page should prompt a family member to enable notifications when its complete.
-                LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = true
-            }
-            
+            // Created family with no reminders
+            // Joined family with no reminders
+            // Joined family with reminders
+            ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "remindersIntroductionViewController", viewController: self)
         }
     }
 
     // MARK: - RemindersIntroductionViewControllerDelegate
 
-    func didComplete(sender: Sender, forReminders reminders: [Reminder]) {
-        let sudoDogManager = getDogManager()
-        if sudoDogManager.hasCreatedDog == true {
-            let dog = sudoDogManager.dogs[0]
-            dog.dogReminders.addReminder(newReminders: reminders)
-            setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: sudoDogManager)
-        }
+    func didComplete(sender: Sender, forDogManager dogManager: DogManager) {
+        setDogManager(sender: sender, newDogManager: dogManager)
     }
 
     // MARK: - SettingsViewControllerDelegate
@@ -88,7 +77,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         }
         
         // If the dogManager is sent from ServerSyncViewController or IntroductionViewController, then, at that point in time, nothing here is initalized and will cause a crash
-        guard !(sender.localized is ServerSyncViewController) && !(sender.origin is ServerSyncViewController) &&  !(sender.localized is IntroductionViewController) && !(sender.origin is IntroductionViewController) else {
+        guard !(sender.localized is ServerSyncViewController) && !(sender.origin is ServerSyncViewController) &&  !(sender.localized is FamilyIntroductionViewController) && !(sender.origin is FamilyIntroductionViewController) else {
             return
         }
 
@@ -176,9 +165,9 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         AlertManager.globalPresenter = self
 
         let sudoDogManager = getDogManager()
-        Utils.checkForTermination(forDogManager: sudoDogManager)
-        Utils.checkForReleaseNotes()
-        Utils.checkForNotificationSettingImbalance()
+        CheckManager.checkForTermination(forDogManager: sudoDogManager)
+        CheckManager.checkForReleaseNotes()
+        CheckManager.checkForNotificationSettingImbalance()
         TimingManager.willInitalize(dogManager: sudoDogManager)
         AlertManager.shared.refreshAlarms(dogManager: sudoDogManager)
         

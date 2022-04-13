@@ -10,8 +10,8 @@ import Foundation
 
 /// abstractions used by other endpoint classes to make their request to the server, not used anywhere else in hound so therefore internal to endpoints and api requests.
 enum InternalRequestUtils {
-    static let baseURLWithoutParams: URL = URL(string: "http://172.20.10.2:5000/api/v1")!
-    // home URL(string: "http://10.0.0.107:5000/api/v1")!
+    static let baseURLWithoutParams: URL = URL(string: "http://10.0.0.110:5000/api/v1")!
+    // home URL(string: "http://10.0.0.110:5000/api/v1")!
     //  school URL(string: "http://10.1.11.124:5000/api/v1")!
     // hotspot URL(string: "http://172.20.10.2:5000/api/v1")!
     // no wifi / local simulator URL(string: "http://localhost:5000/api/v1")!
@@ -282,8 +282,9 @@ extension InternalRequestUtils {
         }
         body[ServerDefaultKeys.reminderExecutionBasis.rawValue] = reminder.reminderExecutionBasis.ISO8601FormatWithFractionalSeconds()
         body[ServerDefaultKeys.reminderIsEnabled.rawValue] = reminder.reminderIsEnabled
+        
         if reminder.reminderExecutionDate != nil {
-            body[ServerDefaultKeys.reminderExecutionDate.rawValue] = reminder.reminderExecutionDate!
+            body[ServerDefaultKeys.reminderExecutionDate.rawValue] = reminder.reminderExecutionDate!.ISO8601FormatWithFractionalSeconds()
         }
         
         body[ServerDefaultKeys.reminderType.rawValue] = reminder.reminderType.rawValue

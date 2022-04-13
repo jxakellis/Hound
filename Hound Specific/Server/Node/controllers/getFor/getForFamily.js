@@ -1,5 +1,5 @@
 const DatabaseError = require('../../utils/errors/databaseError');
-const { queryPromise } = require('../../utils/queryPromise');
+const { queryPromise } = require('../../utils/database/queryPromise');
 
 /**
  * Returns the familyCode, familyIsLocked, and  familyMembers for the familyId. Errors not handled
@@ -48,7 +48,7 @@ const getFamilyMembersForUserIdQuery = async (req, userId) => {
   try {
     const result = await queryPromise(
       req,
-      'SELECT * FROM familyMembers WHERE familyMembers.userId = ?',
+      'SELECT familyId, userId FROM familyMembers WHERE userId = ?',
       [userId],
     );
     return result;

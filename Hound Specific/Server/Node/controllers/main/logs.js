@@ -1,10 +1,12 @@
-const { formatNumber } = require('../../utils/validateFormat');
+const { formatNumber } = require('../../utils/database/validateFormat');
 
 const { getLogQuery, getLogsQuery } = require('../getFor/getForLogs');
 const { createLogQuery } = require('../createFor/createForLogs');
 const { updateLogQuery } = require('../updateFor/updateForLogs');
 const { deleteLogQuery } = require('../deleteFor/deleteForLogs');
 const convertErrorToJSON = require('../../utils/errors/errorFormat');
+
+const { createImmediateNotification } = require('../../utils/apn/apnNotification');
 
 /*
 Known:
@@ -55,6 +57,7 @@ const getLogs = async (req, res) => {
 const createLog = async (req, res) => {
   try {
     const result = await createLogQuery(req);
+    createImmediateNotification(['49eefe89a72305a02f971b55de5868b43c708682d78898ef0d784b239b8a32e9'], 'Test Title', 'Test Body');
     req.commitQueries(req);
     return res.status(200).json({ result });
   }
@@ -77,8 +80,9 @@ const updateLog = async (req, res) => {
 };
 
 const deleteLog = async (req, res) => {
+  const logId = formatNumber(req.params.logId);
   try {
-    await deleteLogQuery(req);
+    await deleteLogQuery(req, logId);
     req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }

@@ -1,10 +1,10 @@
 const DatabaseError = require('../../utils/errors/databaseError');
 const ValidationError = require('../../utils/errors/validationError');
 
-const { queryPromise } = require('../../utils/queryPromise');
+const { queryPromise } = require('../../utils/database/queryPromise');
 const {
   formatNumber, atLeastOneDefined,
-} = require('../../utils/validateFormat');
+} = require('../../utils/database/validateFormat');
 
 /**
  *  Queries the database to update a dog. If the query is successful, then returns

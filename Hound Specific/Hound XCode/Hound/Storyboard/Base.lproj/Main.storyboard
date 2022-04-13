@@ -506,7 +506,6 @@
                                 </state>
                                 <connections>
                                     <action selector="willContinue:" destination="RBT-bM-2BD" eventType="touchUpInside" id="7Om-EO-xUj"/>
-                                    <action selector="willContinue:" destination="w3D-Ib-MEE" eventType="touchUpInside" id="mz9-yV-uai"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Reminders" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ij3-3R-oyw" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
@@ -524,7 +523,7 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Defaults" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vvB-IM-4cz" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Default Reminders" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vvB-IM-4cz" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="192" width="414" height="40"/>
                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                 <constraints>
@@ -548,6 +547,7 @@
                         <viewLayoutGuide key="safeArea" id="0xH-m1-i3f"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="RQ3-lX-aXC" firstAttribute="top" relation="greaterThanOrEqual" secondItem="iPT-rX-rGQ" secondAttribute="bottom" constant="10" id="EMZ-wk-hcY"/>
                             <constraint firstItem="7yj-fM-UOb" firstAttribute="leading" secondItem="0xH-m1-i3f" secondAttribute="leading" constant="10" id="RX9-dd-i1C"/>
                             <constraint firstItem="iPT-rX-rGQ" firstAttribute="leading" secondItem="0xH-m1-i3f" secondAttribute="leading" constant="10" id="SNb-bR-PgY"/>
                             <constraint firstItem="OeF-Fp-oLD" firstAttribute="leading" secondItem="iPT-rX-rGQ" secondAttribute="trailing" constant="10" id="T4A-9v-z2q"/>
@@ -563,7 +563,6 @@
                             <constraint firstItem="0xH-m1-i3f" firstAttribute="bottom" secondItem="RQ3-lX-aXC" secondAttribute="bottom" constant="10" id="kIW-P8-OF1"/>
                             <constraint firstItem="iPT-rX-rGQ" firstAttribute="top" secondItem="vvB-IM-4cz" secondAttribute="bottom" constant="20" id="lbV-0b-a8Z"/>
                             <constraint firstItem="RQ3-lX-aXC" firstAttribute="leading" secondItem="0xH-m1-i3f" secondAttribute="leading" constant="10" id="vQl-Ru-gb8"/>
-                            <constraint firstItem="OeF-Fp-oLD" firstAttribute="top" relation="greaterThanOrEqual" secondItem="vvB-IM-4cz" secondAttribute="bottom" constant="20" id="vnN-ft-5Ul"/>
                             <constraint firstItem="vvB-IM-4cz" firstAttribute="top" secondItem="7yj-fM-UOb" secondAttribute="bottom" constant="20" id="xLF-Il-lFi"/>
                             <constraint firstItem="0xH-m1-i3f" firstAttribute="trailing" secondItem="RQ3-lX-aXC" secondAttribute="trailing" constant="10" id="yyG-TV-6g6"/>
                         </constraints>
@@ -571,8 +570,10 @@
                     <navigationItem key="navigationItem" id="2Op-xb-FnZ"/>
                     <connections>
                         <outlet property="continueButton" destination="RQ3-lX-aXC" id="4uL-rI-Fag"/>
-                        <outlet property="introductionBody" destination="7yj-fM-UOb" id="D81-kd-K2y"/>
                         <outlet property="remindersBody" destination="iPT-rX-rGQ" id="JZR-l1-fRa"/>
+                        <outlet property="remindersHeader" destination="vvB-IM-4cz" id="RiQ-TE-ml5"/>
+                        <outlet property="remindersTitle" destination="Ij3-3R-oyw" id="twp-CQ-zJc"/>
+                        <outlet property="remindersTitleDescription" destination="7yj-fM-UOb" id="irw-5i-Gas"/>
                         <outlet property="remindersToggleSwitch" destination="OeF-Fp-oLD" id="XkU-lp-xkg"/>
                     </connections>
                 </viewController>
@@ -1603,10 +1604,10 @@
             </objects>
             <point key="canvasLocation" x="4103" y="19"/>
         </scene>
-        <!--Introduction View Controller-->
+        <!--Family Introduction View Controller-->
         <scene sceneID="DrI-KL-fmy">
             <objects>
-                <viewController id="w3D-Ib-MEE" customClass="IntroductionViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="w3D-Ib-MEE" customClass="FamilyIntroductionViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="diK-x9-88a">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1622,10 +1623,10 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                                 <connections>
-                                    <action selector="willContinue:" destination="w3D-Ib-MEE" eventType="touchUpInside" id="pDR-DT-E0O"/>
+                                    <action selector="willContinue:" destination="w3D-Ib-MEE" eventType="touchUpInside" id="vUU-Xp-yya"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Dogs" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="esp-x0-Cun" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="755" verticalCompressionResistancePriority="755" text="Dogs" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="esp-x0-Cun" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="10" y="54" width="394" height="60"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="XfT-Dv-3mJ"/>
@@ -1634,7 +1635,7 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="What Is Your Dog's Name?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RY9-6G-ybY" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="254" verticalHuggingPriority="254" horizontalCompressionResistancePriority="754" verticalCompressionResistancePriority="754" text="What Is Your Dog's Name?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RY9-6G-ybY" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="124" width="414" height="40"/>
                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                 <constraints>
@@ -1658,7 +1659,7 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Appearance" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="suw-no-X4l" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="254" verticalHuggingPriority="254" horizontalCompressionResistancePriority="754" verticalCompressionResistancePriority="754" text="Theme" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="suw-no-X4l" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="352" width="414" height="40"/>
                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                 <constraints>
@@ -1668,19 +1669,19 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="2" translatesAutoresizingMaskIntoConstraints="NO" id="5cO-UW-ieo">
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" apportionsSegmentWidthsByContent="YES" segmentControlStyle="plain" selectedSegmentIndex="2" translatesAutoresizingMaskIntoConstraints="NO" id="5cO-UW-ieo">
                                 <rect key="frame" x="10" y="412" width="394" height="41"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="hwL-CS-cpK"/>
                                 </constraints>
                                 <segments>
-                                    <segment title="Light"/>
-                                    <segment title="Dark"/>
+                                    <segment title=" Light "/>
+                                    <segment title=" Dark "/>
                                     <segment title="Same As System"/>
                                 </segments>
                                 <color key="selectedSegmentTintColor" systemColor="systemBlueColor"/>
                                 <connections>
-                                    <action selector="segmentedControl:" destination="w3D-Ib-MEE" eventType="valueChanged" id="DGd-NH-Wff"/>
+                                    <action selector="didUpdateInterfaceStyle:" destination="w3D-Ib-MEE" eventType="valueChanged" id="l5c-Pn-9yN"/>
                                 </connections>
                             </segmentedControl>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CJ5-mJ-d5P" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
@@ -1691,7 +1692,7 @@
                                 </constraints>
                                 <state key="normal" image="chooseIconForDog"/>
                                 <connections>
-                                    <action selector="didClickIcon:" destination="w3D-Ib-MEE" eventType="touchUpInside" id="3xW-F6-fZz"/>
+                                    <action selector="didClickIcon:" destination="w3D-Ib-MEE" eventType="touchUpInside" id="Y8U-LT-yh9"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -1711,6 +1712,7 @@
                             <constraint firstItem="zOy-im-afc" firstAttribute="trailing" secondItem="CXH-t8-W6h" secondAttribute="trailing" constant="10" id="Tz7-zX-8hc"/>
                             <constraint firstItem="5cO-UW-ieo" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" constant="10" id="VQR-VN-pnX"/>
                             <constraint firstItem="CJ5-mJ-d5P" firstAttribute="top" secondItem="0FZ-Za-zwc" secondAttribute="bottom" constant="10" id="XZ7-Ol-OVZ"/>
+                            <constraint firstItem="S8N-37-uHI" firstAttribute="top" relation="greaterThanOrEqual" secondItem="5cO-UW-ieo" secondAttribute="bottom" constant="20" id="Zp1-e5-Uwb"/>
                             <constraint firstItem="esp-x0-Cun" firstAttribute="top" secondItem="zOy-im-afc" secondAttribute="top" constant="10" id="aWC-ia-rJP"/>
                             <constraint firstItem="CXH-t8-W6h" firstAttribute="centerY" secondItem="CJ5-mJ-d5P" secondAttribute="centerY" id="f7D-Zq-hJv"/>
                             <constraint firstItem="suw-no-X4l" firstAttribute="leading" secondItem="zOy-im-afc" secondAttribute="leading" id="fzi-2I-gqK"/>
@@ -1725,11 +1727,13 @@
                     </view>
                     <navigationItem key="navigationItem" id="KR0-od-NOs"/>
                     <connections>
-                        <outlet property="continueButton" destination="S8N-37-uHI" id="OzP-bk-8T0"/>
-                        <outlet property="dogIcon" destination="CJ5-mJ-d5P" id="fkH-2x-g2s"/>
-                        <outlet property="dogName" destination="CXH-t8-W6h" id="N1m-On-Kcn"/>
-                        <outlet property="dogNameDescription" destination="0FZ-Za-zwc" id="3Ct-bA-j83"/>
-                        <outlet property="interfaceStyleSegmentedControl" destination="5cO-UW-ieo" id="la1-ZN-DjC"/>
+                        <outlet property="continueButton" destination="S8N-37-uHI" id="kwF-bH-led"/>
+                        <outlet property="dogIcon" destination="CJ5-mJ-d5P" id="msf-Hs-pwb"/>
+                        <outlet property="dogName" destination="CXH-t8-W6h" id="QlP-0d-6fl"/>
+                        <outlet property="dogNameDescription" destination="0FZ-Za-zwc" id="5iN-dx-z5g"/>
+                        <outlet property="dogNameHeader" destination="RY9-6G-ybY" id="jA8-Gn-jt8"/>
+                        <outlet property="dogsTitle" destination="esp-x0-Cun" id="ieG-LU-Fkf"/>
+                        <outlet property="interfaceStyleSegmentedControl" destination="5cO-UW-ieo" id="E0j-oM-LFF"/>
                         <segue destination="49e-Tb-3d3" kind="presentation" identifier="mainTabBarViewController" modalPresentationStyle="fullScreen" id="nsH-qM-K4m"/>
                     </connections>
                 </viewController>
@@ -2288,7 +2292,7 @@
                     <connections>
                         <outlet property="statusLabel" destination="0jo-Zc-MLN" id="X55-oX-axt"/>
                         <segue destination="49e-Tb-3d3" kind="presentation" identifier="mainTabBarViewController" modalPresentationStyle="fullScreen" id="Jqw-FR-46g"/>
-                        <segue destination="w3D-Ib-MEE" kind="presentation" identifier="introductionViewController" modalPresentationStyle="fullScreen" id="3AW-Zf-Dxq"/>
+                        <segue destination="w3D-Ib-MEE" kind="presentation" identifier="familyIntroductionViewController" modalPresentationStyle="fullScreen" id="3AW-Zf-Dxq"/>
                         <segue destination="58r-r7-NND" kind="presentation" identifier="serverLoginViewController" modalPresentationStyle="fullScreen" id="bqE-nO-Ztf"/>
                         <segue destination="5hN-fO-nij" kind="presentation" identifier="serverFamilyViewController" modalPresentationStyle="fullScreen" id="glJ-wS-tog"/>
                     </connections>
@@ -3036,7 +3040,7 @@
                                 </segments>
                                 <color key="selectedSegmentTintColor" systemColor="systemBlueColor"/>
                                 <connections>
-                                    <action selector="didUpdateInterfaceStyleSegmentedControl:" destination="Xot-sN-Sis" eventType="valueChanged" id="G7R-h5-V1g"/>
+                                    <action selector="didUpdateInterfaceStyle:" destination="Xot-sN-Sis" eventType="valueChanged" id="cRr-R4-UvX"/>
                                 </connections>
                             </segmentedControl>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Theme" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XXS-Yg-DoY" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">

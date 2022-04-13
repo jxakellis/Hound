@@ -1,10 +1,10 @@
 const DatabaseError = require('../../utils/errors/databaseError');
 const ValidationError = require('../../utils/errors/validationError');
 
-const { queryPromise } = require('../../utils/queryPromise');
+const { queryPromise } = require('../../utils/database/queryPromise');
 const {
   formatNumber, formatEmail, formatBoolean, atLeastOneDefined, areAllDefined,
-} = require('../../utils/validateFormat');
+} = require('../../utils/database/validateFormat');
 
 /**
  *  Queries the database to update a user. If the query is successful, then returns
@@ -13,8 +13,7 @@ const {
 const updateUserQuery = async (req) => {
   const userId = formatNumber(req.params.userId);
   const userEmail = formatEmail(req.body.userEmail);
-  const { userFirstName } = req.body;
-  const { userLastName } = req.body;
+  const { userFirstName, userLastName, userNotificationToken } = req.body;
 
   const isNotificationEnabled = formatBoolean(req.body.isNotificationEnabled);
   const isLoudNotification = formatBoolean(req.body.isLoudNotification);
@@ -27,10 +26,10 @@ const updateUserQuery = async (req) => {
   const { notificationSound } = req.body;
 
   // checks to see that all needed components are provided
-  if (atLeastOneDefined([userEmail, userFirstName, userLastName, isNotificationEnabled,
+  if (atLeastOneDefined([userEmail, userFirstName, userLastName, userNotificationToken, isNotificationEnabled,
     isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView,
     interfaceStyle, snoozeLength, notificationSound]) === false) {
-    throw new ValidationError('No userEmail, userFirstName, userLastName, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, or notificationSound provided', 'ER_NO_VALUES_PROVIDED');
+    throw new ValidationError('No userEmail, userFirstName, userLastName, userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, or notificationSound provided', 'ER_NO_VALUES_PROVIDED');
   }
 
   try {
@@ -54,6 +53,13 @@ const updateUserQuery = async (req) => {
         req,
         'UPDATE users SET userLastName = ? WHERE userId = ?',
         [userLastName, userId],
+      );
+    }
+    if (areAllDefined(userNotificationToken)) {
+      await queryPromise(
+        req,
+        'UPDATE users SET userNotificationToken = ? WHERE userId = ?',
+        [userNotificationToken, userId],
       );
     }
     if (areAllDefined(isNotificationEnabled)) {

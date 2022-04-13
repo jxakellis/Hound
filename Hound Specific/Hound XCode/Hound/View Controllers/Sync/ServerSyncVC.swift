@@ -63,7 +63,7 @@ class ServerSyncViewController: UIViewController {
         if UserInformation.userId == nil || UserInformation.userId! < 0 {
             // we have the user sign into their apple id, then attempt to first create an account then get an account (if the creates fails) then throw an error message (if the get fails too).
             // if all succeeds, then the user information and user configuration is loaded
-            Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverLoginViewController", viewController: self)
+            ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverLoginViewController", viewController: self)
         }
         // has userId, possibly has familyId, will check inside getUser
         else {
@@ -90,7 +90,7 @@ class ServerSyncViewController: UIViewController {
     
     /// We failed to retrieve a familyId for the user so that means they have no family. Segue to page to make them create/join one.
     private func getFamily() {
-        Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverFamilyViewController", viewController: self)
+        ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverFamilyViewController", viewController: self)
     }
 
     // MARK: - Primary Sync
@@ -182,24 +182,17 @@ class ServerSyncViewController: UIViewController {
         
             // figure out where to go next, if the user is new and has no dogs (aka probably no family yet either) then we help them make their first dog
             
-            // hasn't shown configuration to create dog
-            if LocalConfiguration.hasLoadedIntroductionViewControllerBefore == false {
-                // never created a dog before, new family
-                if self.dogManager.hasCreatedDog == false {
-                    Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "introductionViewController", viewController: self)
-                }
-                // dogs already created
-                else {
-                    // TO DO create intro page for additional family member, where they still get introduced but don't create a dog
-                    
-                    Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController", viewController: self)
-                    LocalConfiguration.hasLoadedIntroductionViewControllerBefore = false
-                }
+            // hasn't shown configuration to create/update dog
+            if LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore == false {
+                // Created family, no dogs present
+                // OR joined family, no dogs present
+                // OR joined family, dogs already present
+                ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "familyIntroductionViewController", viewController: self)
                 
             }
             // has shown configuration before
             else {
-                Utils.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController", viewController: self)
+                ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController", viewController: self)
             }
             
     }
@@ -268,6 +261,10 @@ class ServerSyncViewController: UIViewController {
         if segue.identifier == "mainTabBarViewController"{
             let mainTabBarViewController: MainTabBarViewController = segue.destination as! MainTabBarViewController
             mainTabBarViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
+        }
+        else if segue.identifier == "familyIntroductionViewController"{
+            let familyIntroductionViewController: FamilyIntroductionViewController = segue.destination as! FamilyIntroductionViewController
+            familyIntroductionViewController.dogManager = dogManager
         }
     }
 

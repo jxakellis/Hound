@@ -28,6 +28,7 @@ enum ServerDefaultKeys: String {
     
     case familyId
     case userIdentifier
+    case userNotificationToken
     case userId
     case userEmail
     case userFirstName

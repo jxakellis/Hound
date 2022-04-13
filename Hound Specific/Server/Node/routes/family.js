@@ -6,7 +6,7 @@ const {
   getFamily, createFamily, updateFamily, deleteFamily,
 } = require('../controllers/main/family');
 
-const { validateFamilyId } = require('../utils/validateId');
+const { validateFamilyId } = require('../utils/database/validateId');
 
 router.use('/:familyId', validateFamilyId);
 

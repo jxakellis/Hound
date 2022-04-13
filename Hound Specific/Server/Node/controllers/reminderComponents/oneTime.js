@@ -1,5 +1,5 @@
-const { queryPromise } = require('../../utils/queryPromise');
-const { formatDate } = require('../../utils/validateFormat');
+const { queryPromise } = require('../../utils/database/queryPromise');
+const { formatDate } = require('../../utils/database/validateFormat');
 
 const createOneTimeComponents = async (req, reminder) => {
   const oneTimeDate = formatDate(reminder.oneTimeDate);

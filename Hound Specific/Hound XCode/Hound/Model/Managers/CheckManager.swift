@@ -1,5 +1,5 @@
 //
-//  Utils.swift
+//  CheckManager.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 2/10/21.
@@ -7,28 +7,9 @@
 //
 
 import CallKit
-import Foundation
-import UIKit
 import StoreKit
 
-enum Utils {
-    
-    static func performSegueOnceInWindowHierarchy(segueIdentifier: String, viewController: UIViewController) {
-        
-        waitLoop()
-        
-        func waitLoop () {
-            if viewController.isViewLoaded && viewController.view.window != nil {
-                    viewController.performSegue(withIdentifier: segueIdentifier, sender: viewController)
-            }
-            else {
-                AppDelegate.generalLogger.warning("waitloop for performSegueOnceInWindowHierarchy")
-                DispatchQueue.main.asyncAfter(deadline: .now()+0.05) {
-                    waitLoop()
-                }
-            }
-        }
-    }
+enum CheckManager {
 
     /// Checks to see if the user is eligible for a notification to review Hound and if so presents the notification
     static func checkForReview() {

@@ -1,10 +1,10 @@
 const DatabaseError = require('../../utils/errors/databaseError');
 const ValidationError = require('../../utils/errors/validationError');
 
-const { queryPromise } = require('../../utils/queryPromise');
+const { queryPromise } = require('../../utils/database/queryPromise');
 const {
   formatDate, formatNumber, atLeastOneDefined,
-} = require('../../utils/validateFormat');
+} = require('../../utils/database/validateFormat');
 
 /**
  *  Queries the database to update a log. If the query is successful, then returns

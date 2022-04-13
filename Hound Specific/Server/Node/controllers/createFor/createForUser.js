@@ -1,9 +1,9 @@
 const DatabaseError = require('../../utils/errors/databaseError');
 const ValidationError = require('../../utils/errors/validationError');
-const { queryPromise } = require('../../utils/queryPromise');
+const { queryPromise } = require('../../utils/database/queryPromise');
 const {
   formatNumber, formatEmail, formatBoolean, areAllDefined,
-} = require('../../utils/validateFormat');
+} = require('../../utils/database/validateFormat');
 
 /**
  *  Queries the database to create a user. If the query is successful, then returns the userId.
@@ -22,9 +22,9 @@ const createUserQuery = async (req) => {
     throw new ValidationError('userEmail Invalid', 'ER_VALUES_INVALID');
   }
 
-  const { userIdentifier } = req.body;
-  const { userFirstName } = req.body;
-  const { userLastName } = req.body;
+  const {
+    userIdentifier, userFirstName, userLastName, userNotificationToken,
+  } = req.body;
 
   const isNotificationEnabled = formatBoolean(req.body.isNotificationEnabled);
   const isLoudNotification = formatBoolean(req.body.isLoudNotification);
@@ -50,8 +50,8 @@ const createUserQuery = async (req) => {
   try {
     const result = await queryPromise(
       req,
-      'INSERT INTO users(userIdentifier, userEmail, userFirstName, userLastName) VALUES (?,?,?,?)',
-      [userIdentifier, userEmail, userFirstName, userLastName],
+      'INSERT INTO users(userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName) VALUES (?,?,?,?,?)',
+      [userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName],
     );
     userId = formatNumber(result.insertId);
 

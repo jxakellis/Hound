@@ -36,6 +36,10 @@ class ServerFamilyViewController: UIViewController {
         let familyCodeAlertController = GeneralUIAlertController(title: "Join a Family", message: nil, preferredStyle: .alert)
         familyCodeAlertController.addTextField { textField in
             textField.placeholder = "Enter Family Code..."
+            // TO DO verify that the user is typing in all capitals
+            textField.autocapitalizationType = .allCharacters
+            textField.returnKeyType = .done
+            textField.enablesReturnKeyAutomatically = true
         }
         let alertActionJoin = UIAlertAction(title: "Join", style: .default) { [weak familyCodeAlertController] _ in
             guard let textFields = familyCodeAlertController?.textFields else {

@@ -30,7 +30,7 @@ class AlarmManager {
             handler: { (_: UIAlertAction!)  in
                 // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                 AlarmManager.willDismissAlarm(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId)
-                Utils.checkForReview()
+                CheckManager.checkForReview()
             })
         
         var alertActionsForLog: [UIAlertAction] = []
@@ -45,7 +45,7 @@ class AlarmManager {
                     handler: { (_)  in
                         // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                         AlarmManager.willLogAlarm(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, logAction: pottyKnownType)
-                        Utils.checkForReview()
+                        CheckManager.checkForReview()
                     })
                 alertActionsForLog.append(alertActionLog)
             }
@@ -56,7 +56,7 @@ class AlarmManager {
                 handler: { (_)  in
                     // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                     AlarmManager.willLogAlarm(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId, logAction: LogAction(rawValue: reminder.reminderAction.rawValue)!)
-                    Utils.checkForReview()
+                    CheckManager.checkForReview()
                 })
             alertActionsForLog.append(alertActionLog)
         }
@@ -67,7 +67,7 @@ class AlarmManager {
             handler: { (_: UIAlertAction!)  in
                 // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                 AlarmManager.willSnoozeAlarm(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId)
-                Utils.checkForReview()
+                CheckManager.checkForReview()
             })
         
         for alertActionLog in alertActionsForLog {

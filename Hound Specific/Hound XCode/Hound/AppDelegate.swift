@@ -11,7 +11,7 @@ import UserNotifications
 import os.log
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     static var generalLogger = Logger(subsystem: "com.example.Pupotty", category: "General")
     static var lifeCycleLogger = Logger(subsystem: "com.example.Pupotty", category: "Life Cycle")
@@ -22,11 +22,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
 
         AppDelegate.lifeCycleLogger.notice("Application Did Finish Launching with Options")
-        AppDelegate.generalLogger.notice("\n-----Device Info-----\n Model: \(UIDevice.current.model) \n Name: \(UIDevice.current.name) \n System Name: \(UIDevice.current.systemName) \n System Version: \(UIDevice.current.systemVersion)")
-
-        UIApplication.previousAppBuild = UserDefaults.standard.object(forKey: UserDefaultsKeys.appBuild.rawValue) as? Int
-
-        UserDefaults.standard.setValue(UIApplication.appBuild, forKey: UserDefaultsKeys.appBuild.rawValue)
 
         // retrieve value from local store, if value doesn't exist then false is returned
         let hasSetup = UserDefaults.standard.bool(forKey: UserDefaultsKeys.hasDoneFirstTimeSetup.rawValue)
@@ -39,8 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             AppDelegate.generalLogger.notice("First time setup for app data")
             PersistenceManager.setup()
         }
-
-        // AppDelegate.generalLogger.notice("application end \(UserDefaults.standard.object(forKey: UserDefaultsKeys.dogManager.rawValue) as? Data)")
+        
         return true
     }
 
@@ -52,17 +46,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
 
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-
-        // Called when the user discards a scene session.
-        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
-        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
-    }
-
     func applicationWillTerminate(_ application: UIApplication) {
         AppDelegate.lifeCycleLogger.notice("Application Will Terminate")
         PersistenceManager.willEnterBackground(isTerminating: true)
 
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
+        let token = tokenParts.joined()
+        AppDelegate.generalLogger.warning("Successfully registered for remote notifications for token: \(token)")
+        
+        if token != UserInformation.userNotificationToken {
+            UserInformation.userNotificationToken = token
+            UserRequest.update(body: [ServerDefaultKeys.userNotificationToken.rawValue: UserInformation.userNotificationToken!]) { _ in
+                // do nothing
+            }
+        }
+        
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        AppDelegate.generalLogger.warning("Failed to register for remote notifications with error: \(error.localizedDescription)")
     }
 
 }

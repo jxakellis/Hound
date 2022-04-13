@@ -1,17 +1,16 @@
 const DatabaseError = require('../../utils/errors/databaseError');
 const ValidationError = require('../../utils/errors/validationError');
 
-const { queryPromise } = require('../../utils/queryPromise');
+const { queryPromise } = require('../../utils/database/queryPromise');
 const {
   formatDate, formatBoolean, formatNumber, formatArray, atLeastOneDefined, areAllDefined,
-} = require('../../utils/validateFormat');
+} = require('../../utils/database/validateFormat');
 
 const { updateCountdownComponents } = require('../reminderComponents/countdown');
 const { updateWeeklyComponents } = require('../reminderComponents/weekly');
 const { updateMonthlyComponents } = require('../reminderComponents/monthly');
 const { updateOneTimeComponents } = require('../reminderComponents/oneTime');
 const { updateSnoozeComponents } = require('../reminderComponents/snooze');
-const delLeftOverReminderComponents = require('../../utils/delete').deleteLeftoverReminderComponents;
 
 /**
  *  Queries the database to create a update reminder. If the query is successful, then returns
@@ -74,8 +73,6 @@ const updateReminderQuery = async (req) => {
 
       // switch reminder to new mode
       await queryPromise(req, 'UPDATE dogReminders SET reminderType = ? WHERE reminderId = ?', [reminderType, reminderId]);
-      // delete old components since reminder is successfully switched to new mode
-      await delLeftOverReminderComponents(req, reminderId, reminderType);
     }
     // do last since reminderType will delete snooze components
     if (areAllDefined(snoozeIsEnabled)) {
@@ -157,8 +154,6 @@ const updateRemindersQuery = async (req) => {
 
         // switch reminder to new mode
         await queryPromise(req, 'UPDATE dogReminders SET reminderType = ? WHERE reminderId = ?', [reminderType, reminderId]);
-        // delete old components since reminder is successfully switched to new mode
-        await delLeftOverReminderComponents(req, reminderId, reminderType);
       }
       // do last since reminderType will delete snooze components
       if (areAllDefined(snoozeIsEnabled)) {

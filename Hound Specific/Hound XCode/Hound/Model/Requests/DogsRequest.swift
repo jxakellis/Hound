@@ -118,7 +118,7 @@ extension DogsRequest {
                     let dog = Dog(fromBody: result[0])
                     // If we have an image stored locally for a dog, then we apply the icon.
                     // If the dog has no icon (because someone else in the family made it and the user hasn't selected their own icon OR because the user made it and never added an icon) then the dog just gets the defaultDogIcon
-                    dog.dogIcon = LocalConfiguration.dogIcons.first(where: { $0.dogId == dog.dogId })?.dogIcon ?? DogConstant.defaultDogIcon
+                    dog.dogIcon = LocalDogIcon.getIcon(forDogId: dog.dogId) ?? DogConstant.defaultDogIcon
                     // able to add all
                     DispatchQueue.main.async {
                         completionHandler(dog)
@@ -159,16 +159,11 @@ extension DogsRequest {
                         let dog = Dog(fromBody: dogBody)
                         // If we have an image stored locally for a dog, then we apply the icon.
                         // If the dog has no icon (because someone else in the family made it and the user hasn't selected their own icon OR because the user made it and never added an icon) then the dog just gets the defaultDogIcon
-                        dog.dogIcon = LocalConfiguration.dogIcons.first(where: { $0.dogId == dog.dogId })?.dogIcon ?? DogConstant.defaultDogIcon
+                        dog.dogIcon = LocalDogIcon.getIcon(forDogId: dog.dogId) ?? DogConstant.defaultDogIcon
                         dogArray.append(dog)
                     }
                     
-                    // iterate through the dogIds of the stored dogIcons
-                    // if the dogArray does not contain the dogIdKey from the dictionary, that means we are storing a dogId & UIImage key-value pair for a dog that no longer exists
-                    for localDogIcon in LocalConfiguration.dogIcons where dogArray.contains(where: { $0.dogId == localDogIcon.dogId }) == false {
-                            // remove all localDogIcons that match the dogId. this is the dogId that is stored locally but was found to not be stored on the server data retrieved (aka it was deleted
-                            LocalConfiguration.dogIcons.removeAll(where: { $0.dogId == localDogIcon.dogId })
-                    }
+                    LocalDogIcon.checkForExtraIcons(forDogs: dogArray)
                     // able to add all
                     DispatchQueue.main.async {
                         completionHandler(dogArray)
@@ -207,7 +202,7 @@ extension DogsRequest {
                     if dogId != nil {
                         // Successfully saved to server, so save dogIcon locally
                         // add a localDogIcon that has the same dogId and dogIcon as the newly created dog
-                        LocalConfiguration.dogIcons.append(LocalDogIcon(forDogId: dogId!, forDogIcon: dog.dogIcon))
+                        LocalDogIcon.addIcon(forDogId: dogId!, forDogIcon: dog.dogIcon)
                         completionHandler(dogId!)
                     }
                     else {
@@ -234,14 +229,7 @@ extension DogsRequest {
                 case .successResponse:
                     // Successfully saved to server, so update dogIcon locally
                     // check to see if a localDogIcon exists for the dog
-                    if let localDogIcon = LocalConfiguration.dogIcons.first(where: { $0.dogId == dog.dogId}) {
-                        // update the dogIcon of the localDogIcon that has the same dogId as the dog that was just updated
-                        localDogIcon.dogIcon = dog.dogIcon
-                    }
-                    else {
-                        // need to create a localDogIcon
-                        LocalConfiguration.dogIcons.append(LocalDogIcon(forDogId: dog.dogId, forDogIcon: dog.dogIcon))
-                    }
+                    LocalDogIcon.addIcon(forDogId: dog.dogId, forDogIcon: dog.dogIcon)
                     completionHandler(true)
                 case .failureResponse:
                     completionHandler(false)
@@ -263,7 +251,7 @@ extension DogsRequest {
                 switch responseStatus {
                 case .successResponse:
                     // Successfully saved to server, so remove the stored dogIcons that have the same dogId as the removed dog
-                    LocalConfiguration.dogIcons.removeAll(where: { $0.dogId == dogId })
+                    LocalDogIcon.removeIcon(forDogId: dogId)
                     completionHandler(true)
                 case .failureResponse:
                     completionHandler(false)

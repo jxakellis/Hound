@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 const mysql = require('mysql');
-const databasePassword = require('./databasePassword');
+const databasePassword = require('./databaseSensitive');
 const DatabaseError = require('./utils/errors/databaseError');
 
 const pool = mysql.createPool({

@@ -26,6 +26,8 @@ class SettingsPersonalInformationViewController: UIViewController, UIGestureReco
         super.viewDidLoad()
         
         // TO DO revise this page to make it more details and clean
+        
+        // TO DO add ability for the user to delete their account (if they are in a single person family or are in a multi person family but are only a member)
 
         setupAccountInformation()
         // Do any additional setup after loading the view.

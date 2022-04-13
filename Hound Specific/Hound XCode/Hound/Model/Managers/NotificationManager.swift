@@ -96,6 +96,12 @@ enum NotificationManager {
                 UserConfiguration.isLoudNotification = isGranted
                 UserConfiguration.isFollowUpEnabled = isGranted
                 
+                if LocalConfiguration.isNotificationAuthorized == true {
+                    DispatchQueue.main.async {
+                        UIApplication.shared.registerForRemoteNotifications()
+                    }
+                }
+                
                 NotificationManager.updateServerUserNotificationConfiguration(
                     updatedIsNotificationEnabled: UserConfiguration.isNotificationEnabled, updatedIsLoudNotification: UserConfiguration.isLoudNotification, updatedIsFollowUpEnabled: UserConfiguration.isFollowUpEnabled) { requestWasSuccessful in
                         if requestWasSuccessful == false {

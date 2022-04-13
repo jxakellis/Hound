@@ -13,6 +13,12 @@ enum PersistenceManager {
     /// Called by App or Scene Delegate when setting up in didFinishLaunchingWithOptions, can be either the first time setup or a recurring setup (i.e. not the app isnt being opened for the first time)
     static func setup(isRecurringSetup: Bool = false) {
         
+        AppDelegate.generalLogger.notice("\n-----Device Info-----\n Model: \(UIDevice.current.model) \n Name: \(UIDevice.current.name) \n System Name: \(UIDevice.current.systemName) \n System Version: \(UIDevice.current.systemVersion)")
+        
+        UIApplication.previousAppBuild = UserDefaults.standard.object(forKey: UserDefaultsKeys.appBuild.rawValue) as? Int
+        
+        UserDefaults.standard.setValue(UIApplication.appBuild, forKey: UserDefaultsKeys.appBuild.rawValue)
+
         UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         
         if isRecurringSetup == true {
@@ -59,7 +65,7 @@ enum PersistenceManager {
         UserDefaults.standard.setValue(LocalConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
-        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedIntroductionViewControllerBefore.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedFamilyIntroductionViewControllerBefore.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.isShowTerminationAlert, forKey: UserDefaultsKeys.isShowTerminationAlert.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.isShowReleaseNotes, forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue)
@@ -111,7 +117,7 @@ enum PersistenceManager {
         
         LocalConfiguration.lastUnpause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastUnpause.rawValue) as? Date
         
-        LocalConfiguration.hasLoadedIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedIntroductionViewControllerBefore
+        LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedFamilyIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore
         LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore
         
         LocalConfiguration.reviewRequestDates = UserDefaults.standard.value(forKey: UserDefaultsKeys.reviewRequestDates.rawValue) as? [Date] ?? LocalConfiguration.reviewRequestDates
@@ -179,7 +185,7 @@ enum PersistenceManager {
             UserDefaults.standard.setValue(LocalConfiguration.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.isShowTerminationAlert, forKey: UserDefaultsKeys.isShowTerminationAlert.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.isShowReleaseNotes, forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue)
-            UserDefaults.standard.setValue(LocalConfiguration.hasLoadedIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedIntroductionViewControllerBefore.rawValue)
+            UserDefaults.standard.setValue(LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedFamilyIntroductionViewControllerBefore.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue)
             UserDefaults.standard.setValue(LocalConfiguration.reviewRequestDates, forKeyPath: UserDefaultsKeys.reviewRequestDates.rawValue)
         }

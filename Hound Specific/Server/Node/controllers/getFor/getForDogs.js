@@ -1,6 +1,6 @@
 const DatabaseError = require('../../utils/errors/databaseError');
-const { queryPromise } = require('../../utils/queryPromise');
-const { formatBoolean } = require('../../utils/validateFormat');
+const { queryPromise } = require('../../utils/database/queryPromise');
+const { formatBoolean } = require('../../utils/database/validateFormat');
 const { getLogsQuery } = require('./getForLogs');
 const { getRemindersQuery } = require('./getForReminders');
 
@@ -11,7 +11,7 @@ const getDogQuery = async (req, dogId) => {
   try {
     const result = await queryPromise(
       req,
-      'SELECT * FROM dogs WHERE dogs.dogId = ?',
+      'SELECT * FROM dogs WHERE dogId = ?',
       [dogId],
     );
     // no need to do anything else as there are no dogs
@@ -47,7 +47,7 @@ const getDogsQuery = async (req, familyId) => {
   try {
     const result = await queryPromise(
       req,
-      'SELECT * FROM dogs WHERE dogs.familyId = ?',
+      'SELECT * FROM dogs WHERE familyId = ?',
       [familyId],
     );
     // no need to do anything else as there are no dogs

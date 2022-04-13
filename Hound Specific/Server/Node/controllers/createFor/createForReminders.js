@@ -1,9 +1,9 @@
 const DatabaseError = require('../../utils/errors/databaseError');
 const ValidationError = require('../../utils/errors/validationError');
-const { queryPromise } = require('../../utils/queryPromise');
+const { queryPromise } = require('../../utils/database/queryPromise');
 const {
   formatDate, formatBoolean, formatNumber, formatArray, areAllDefined,
-} = require('../../utils/validateFormat');
+} = require('../../utils/database/validateFormat');
 
 const { createCountdownComponents } = require('../reminderComponents/countdown');
 const { createWeeklyComponents } = require('../reminderComponents/weekly');

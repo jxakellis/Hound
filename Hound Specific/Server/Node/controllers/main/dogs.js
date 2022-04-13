@@ -1,4 +1,4 @@
-const { formatNumber } = require('../../utils/validateFormat');
+const { formatNumber } = require('../../utils/database/validateFormat');
 
 const { getDogQuery, getDogsQuery } = require('../getFor/getForDogs');
 const { createDogQuery } = require('../createFor/createForDogs');
@@ -80,8 +80,9 @@ const updateDog = async (req, res) => {
 };
 
 const deleteDog = async (req, res) => {
+  const dogId = formatNumber(req.params.dogId);
   try {
-    await deleteDogQuery(req);
+    await deleteDogQuery(req, dogId);
     req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }
