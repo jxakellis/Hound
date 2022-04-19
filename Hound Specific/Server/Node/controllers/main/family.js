@@ -1,5 +1,4 @@
 const ValidationError = require('../../utils/errors/validationError');
-const { formatNumber } = require('../../utils/database/validateFormat');
 
 const { getFamilyInformationForFamilyIdQuery } = require('../getFor/getForFamily');
 const { createFamilyQuery } = require('../createFor/createForFamily');
@@ -12,8 +11,7 @@ Known:
 - (if appliciable to controller) familyId formatted correctly and request has sufficient permissions to use
 */
 const getFamily = async (req, res) => {
-  // const userId = formatNumber(req.params.userId);
-  const familyId = formatNumber(req.params.familyId);
+  const familyId = req.params.familyId;
 
   if (familyId) {
     try {
@@ -61,8 +59,8 @@ const updateFamily = async (req, res) => {
 };
 
 const deleteFamily = async (req, res) => {
-  const userId = formatNumber(req.params.userId);
-  const familyId = formatNumber(req.params.familyId);
+  const userId = req.params.userId;
+  const familyId = req.params.familyId;
 
   try {
     await deleteFamilyQuery(req, userId, familyId);

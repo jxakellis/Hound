@@ -14,6 +14,7 @@ enum NotificationManager {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
     }
+     /*
     
     static func willCreateFollowUpUNUserNotification(dogName: String, reminder: Reminder) {
         
@@ -21,7 +22,6 @@ enum NotificationManager {
             AppDelegate.generalLogger.fault("willCreateFollowUpUNUserNotification reminderExecutionDate is nil")
             return
         }
-        // let reminder = try! MainTabBarViewController.staticDogManager.findDog(forDogId: dogName).dogReminders.findReminder(forReminderId: reminderUUID)
         
         let content = UNMutableNotificationContent()
         content.interruptionLevel = .timeSensitive
@@ -79,6 +79,7 @@ enum NotificationManager {
             }
         }
     }
+     */
     
     /**
      DOES update local UserConfiguration. Requests permission to send notifications to the user then invokes updateServerUserNotificationConfiguration. If the server returned a 200 status and is successful, then return. Otherwise, if the user didn't grant permission or there was a problem with the  query, then return and (if needed) ErrorManager is automatically invoked

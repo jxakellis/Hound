@@ -1,16 +1,14 @@
 const DatabaseError = require('../../utils/errors/databaseError');
 const ValidationError = require('../../utils/errors/validationError');
 const { queryPromise } = require('../../utils/database/queryPromise');
-const {
-  formatNumber, areAllDefined,
-} = require('../../utils/database/validateFormat');
+const { areAllDefined } = require('../../utils/database/validateFormat');
 
 /**
  *  Queries the database to create a dog. If the query is successful, then returns the dogId.
  *  If a problem is encountered, creates and throws custom error
  */
 const createDogQuery = async (req) => {
-  const familyId = formatNumber(req.params.familyId);
+  const familyId = req.params.familyId;
   const { dogName } = req.body;
   // const dogIcon = req.body.dogIcon;
 
@@ -24,7 +22,7 @@ const createDogQuery = async (req) => {
       'INSERT INTO dogs(familyId, dogIcon, dogName) VALUES (?,?,?)',
       [familyId, undefined, dogName],
     );
-    return formatNumber(result.insertId);
+    return result.insertId;
   }
   catch (error) {
     throw new DatabaseError(error.code);

@@ -2,7 +2,7 @@ const DatabaseError = require('../../utils/errors/databaseError');
 const ValidationError = require('../../utils/errors/validationError');
 const { queryPromise } = require('../../utils/database/queryPromise');
 const {
-  formatDate, formatBoolean, formatNumber, formatArray, areAllDefined,
+  formatDate, formatBoolean, formatArray, areAllDefined,
 } = require('../../utils/database/validateFormat');
 
 const { createCountdownComponents } = require('../reminderComponents/countdown');
@@ -15,7 +15,7 @@ const { createOneTimeComponents } = require('../reminderComponents/oneTime');
  *  If a problem is encountered, creates and throws custom error
  */
 const createReminderQuery = async (req) => {
-  const dogId = formatNumber(req.params.dogId);
+  const dogId = req.params.dogId;
   const { reminderAction, reminderCustomActionName, reminderType } = req.body;
   const reminderExecutionBasis = formatDate(req.body.reminderExecutionBasis);
   const reminderExecutionDate = formatDate(req.body.reminderExecutionDate);
@@ -37,7 +37,8 @@ const createReminderQuery = async (req) => {
       'INSERT INTO dogReminders(dogId, reminderAction, reminderCustomActionName, reminderType, reminderExecutionBasis, reminderExecutionDate, reminderIsEnabled) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [dogId, reminderAction, reminderCustomActionName, reminderType, reminderExecutionBasis, reminderExecutionDate, reminderIsEnabled],
     );
-    reminderId = formatNumber(result.insertId);
+    reminderId = result.insertId;
+    // add reminderId into body, needed for create components and when return
     req.body.reminderId = reminderId;
 
     // no need to check for snooze components as a newly created reminder cant be snoozed, it can only be updated to be snoozing
@@ -71,7 +72,7 @@ const createReminderQuery = async (req) => {
    */
 const createRemindersQuery = async (req) => {
   // assume .reminders is an array
-  const dogId = formatNumber(req.params.dogId);
+  const dogId = req.params.dogId;
   const reminders = formatArray(req.body.reminders);
   const createdReminders = [];
 
@@ -102,7 +103,8 @@ const createRemindersQuery = async (req) => {
         'INSERT INTO dogReminders(dogId, reminderAction, reminderCustomActionName, reminderType, reminderExecutionBasis, reminderExecutionDate, reminderIsEnabled) VALUES (?, ?, ?, ?, ?, ?, ?)',
         [dogId, reminderAction, reminderCustomActionName, reminderType, reminderExecutionBasis, reminderExecutionDate, reminderIsEnabled],
       );
-      reminderId = formatNumber(result.insertId);
+      reminderId = result.insertId;
+      // add reminderId into body, needed for create components and when return
       reminders[i].reminderId = reminderId;
       // no need to check for snooze components as a newly created reminder cant be snoozed, it can only be updated to be snoozing
       if (reminderType === 'countdown') {

@@ -2,7 +2,7 @@ const DatabaseError = require('../../utils/errors/databaseError');
 const ValidationError = require('../../utils/errors/validationError');
 const { queryPromise } = require('../../utils/database/queryPromise');
 const {
-  formatDate, formatNumber, areAllDefined,
+  formatDate, areAllDefined,
 } = require('../../utils/database/validateFormat');
 
 /**
@@ -10,7 +10,7 @@ const {
  *  If a problem is encountered, creates and throws custom error
  */
 const createLogQuery = async (req) => {
-  const dogId = formatNumber(req.params.dogId);
+  const dogId = req.params.dogId;
   const logDate = formatDate(req.body.logDate);
   const { logNote } = req.body;
   const { logAction } = req.body;
@@ -30,7 +30,7 @@ const createLogQuery = async (req) => {
       'INSERT INTO dogLogs(dogId, logDate, logNote, logAction, logCustomActionName) VALUES (?, ?, ?, ?, ?)',
       [dogId, logDate, logNote, logAction, logCustomActionName],
     );
-    return formatNumber(result.insertId);
+    return result.insertId;
   }
   catch (error) {
     throw new DatabaseError(error.code);

@@ -1,9 +1,20 @@
 /* eslint-disable max-len */
 const mysql = require('mysql');
 const databasePassword = require('./databaseSensitive');
-const DatabaseError = require('./utils/errors/databaseError');
+const DatabaseError = require('../utils/errors/databaseError');
 
-const pool = mysql.createPool({
+/// the connection used by the server itself when querying the database for notifcations
+const connectionForNotifications = mysql.createConnection({
+  connectionLimit: 10,
+  connectTimeout: 10000,
+  host: 'localhost',
+  user: 'admin',
+  password: databasePassword,
+  database: 'Hound',
+});
+
+/// the pool used by users when quering the database for their requests
+const poolForRequests = mysql.createPool({
   // Determines the pool's action when no connections are available and the limit has been reached.
   // If true, the pool will queue the connection request and call it when one becomes available.
   // If false, the pool will immediately call back with an error.
@@ -21,14 +32,14 @@ const pool = mysql.createPool({
   database: 'Hound',
 });
 
-pool.on('acquire', (connection) => {
+poolForRequests.on('acquire', (connection) => {
   const currentDate = new Date();
-  console.log(`Connection ${connection.threadId} acquired at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
+  console.log(`Pool connection ${connection.threadId} acquired at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
 });
 
-pool.on('release', (connection) => {
+poolForRequests.on('release', (connection) => {
   const currentDate = new Date();
-  console.log(`Connection ${connection.threadId} released at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
+  console.log(`Pool connection ${connection.threadId} released at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
 });
 
 const commitQueries = (req) => {
@@ -50,7 +61,7 @@ const rollbackQueries = (req) => {
 };
 
 const assignConnection = async (req, res, next) => {
-  pool.getConnection((error, connection) => {
+  poolForRequests.getConnection((error, connection) => {
     if (error) {
       // no need to release connection as there was a failing in actually creating connection
       res.status(500).json(new DatabaseError("Couldn't create a pool connection", 'ER_NO_POOL_CONNECTION').toJSON);
@@ -72,4 +83,4 @@ const assignConnection = async (req, res, next) => {
   });
 };
 
-module.exports = { assignConnection };
+module.exports = { connectionForNotifications, poolForRequests, assignConnection };

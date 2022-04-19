@@ -41,9 +41,6 @@ protocol DogManagerProtocol {
     /// Finds dog with the provided dogId then replaces it with the newDog
     mutating func changeDog(forDogId dogId: Int, newDog: Dog) throws
     
-    /// Synchronizes the skip status of weekly and monthly reminders. If one of these reminders was skipping, it looks to see if the skip date has passed and it should revert to normal. E.g. Its Monday night and I skip my daily morning alarm, when the app loads up Tuesday afternoon this method will remove the skip status from the alarm (as Tuesday morning was skipped and passed) and allow it to execute on the next morning (Wednesday morning).
-    mutating func synchronizeIsSkipping()
-    
     /// Returns reference of a dog with the given dogId
     func findDog(forDogId dogId: Int) throws -> Dog
     
@@ -153,32 +150,6 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         self.init()
         // verifys dogs and fixes if broken
         self.addDogs(newDogs: dogs)
-    }
-    
-    func synchronizeIsSkipping() {
-        
-        for dogIndex in 0..<dogs.count {
-            for reminderIndex in 0..<dogs[dogIndex].dogReminders.reminders.count {
-                
-                let reminder: Reminder = dogs[dogIndex].dogReminders.reminders[reminderIndex]
-                
-                guard reminder.reminderIsEnabled == true else {
-                    continue
-                }
-                
-                let unskipDate = reminder.unskipDate()
-                
-                if unskipDate != nil && Date().distance(to: unskipDate!) < 0 {
-                    if reminder.reminderType == .weekly {
-                        reminder.changeIsSkipping(newSkipStatus: true)
-                    }
-                    else {
-                        reminder.changeIsSkipping(newSkipStatus: true)
-                    }
-                    reminder.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
-                }
-            }
-        }
     }
     
     private var storedDogs: [Dog] = []

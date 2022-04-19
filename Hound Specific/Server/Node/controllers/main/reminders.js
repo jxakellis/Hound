@@ -1,12 +1,13 @@
-const {
-  formatNumber, formatArray,
-} = require('../../utils/database/validateFormat');
+const { formatArray } = require('../../utils/database/validateFormat');
 
 const { getReminderQuery, getRemindersQuery } = require('../getFor/getForReminders');
 const { createReminderQuery, createRemindersQuery } = require('../createFor/createForReminders');
 const { updateReminderQuery, updateRemindersQuery } = require('../updateFor/updateForReminders');
 const { deleteReminderQuery, deleteRemindersQuery } = require('../deleteFor/deleteForReminders');
 const convertErrorToJSON = require('../../utils/errors/errorFormat');
+
+const { createAlarmNotificationForFamily } = require('../../utils/notification/alarm/createAlarmNotification');
+const { deleteAlarmNotificationForReminder } = require('../../utils/notification/alarm/deleteAlarmNotification');
 
 /*
 Known:
@@ -17,8 +18,8 @@ Known:
 */
 
 const getReminders = async (req, res) => {
-  const dogId = formatNumber(req.params.dogId);
-  const reminderId = formatNumber(req.params.reminderId);
+  const dogId = req.params.dogId;
+  const reminderId = req.params.reminderId;
 
   // reminderId was provided
   if (reminderId) {
@@ -73,12 +74,34 @@ const createReminder = async (req, res) => {
     // reminders are provided
     if (reminders) {
       const result = await createRemindersQuery(req);
+      // create was successful, so we can create all the alarm notifications
+      for (let i = 0; i < result.length; i += 1) {
+        const reminder = result[i];
+        createAlarmNotificationForFamily(
+          req.params.familyId,
+          reminder.reminderId,
+          'placeholder',
+          reminder.reminderExecutionDate,
+          reminder.reminderAction,
+          reminder.reminderType,
+        );
+      }
       req.commitQueries(req);
       return res.status(200).json({ result });
     }
     // single reminder
     else {
       const result = await createReminderQuery(req);
+      const reminder = result[0];
+      // create was successful, so we can create the alarm notification
+      createAlarmNotificationForFamily(
+        req.params.familyId,
+        reminder.reminderId,
+        'placeholder',
+        reminder.reminderExecutionDate,
+        reminder.reminderAction,
+        reminder.reminderType,
+      );
       req.commitQueries(req);
       return res.status(200).json({ result });
     }
@@ -95,13 +118,35 @@ const updateReminder = async (req, res) => {
   try {
     // reminders are provided
     if (reminders) {
-      await updateRemindersQuery(req);
+      const result = await updateRemindersQuery(req);
+      // update was successful, so we can create all new alarm notifications
+      for (let i = 0; i < result.length; i += 1) {
+        const reminder = result[i];
+        createAlarmNotificationForFamily(
+          req.params.familyId,
+          reminder.reminderId,
+          'placeholder',
+          reminder.reminderExecutionDate,
+          reminder.reminderAction,
+          reminder.reminderType,
+        );
+      }
       req.commitQueries(req);
       return res.status(200).json({ result: '' });
     }
     // single reminder
     else {
-      await updateReminderQuery(req);
+      const result = await updateReminderQuery(req);
+      // update was successful, so we can create new alarm notification
+      const reminder = result[0];
+      createAlarmNotificationForFamily(
+        req.params.familyId,
+        reminder.reminderId,
+        'placeholder',
+        reminder.reminderExecutionDate,
+        reminder.reminderAction,
+        reminder.reminderType,
+      );
       req.commitQueries(req);
       return res.status(200).json({ result: '' });
     }
@@ -119,12 +164,24 @@ const deleteReminder = async (req, res) => {
     // reminders are provided
     if (reminders) {
       await deleteRemindersQuery(req, reminders);
+      // delete was successful, so we can remove all the alarm notifications
+      for (let i = 0; i < reminders.length; i += 1) {
+        deleteAlarmNotificationForReminder(
+          req.params.familyId,
+          reminders[i].reminderId,
+        );
+      }
       req.commitQueries(req);
       return res.status(200).json({ result: '' });
     }
     // single reminder
     else {
-      await deleteReminderQuery(req, formatNumber(req.body.reminderId));
+      await deleteReminderQuery(req, req.body.reminderId);
+      // delete was successful, so we can remove the alarm notification
+      deleteAlarmNotificationForReminder(
+        req.params.familyId,
+        req.body.reminderId,
+      );
       req.commitQueries(req);
       return res.status(200).json({ result: '' });
     }

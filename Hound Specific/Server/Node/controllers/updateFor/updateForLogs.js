@@ -3,7 +3,7 @@ const ValidationError = require('../../utils/errors/validationError');
 
 const { queryPromise } = require('../../utils/database/queryPromise');
 const {
-  formatDate, formatNumber, atLeastOneDefined,
+  formatDate, atLeastOneDefined,
 } = require('../../utils/database/validateFormat');
 
 /**
@@ -11,7 +11,7 @@ const {
  *  If a problem is encountered, creates and throws custom error
  */
 const updateLogQuery = async (req) => {
-  const logId = formatNumber(req.params.logId);
+  const logId = req.params.logId;
   const logDate = formatDate(req.body.logDate);
   const { logNote } = req.body;
   const { logAction } = req.body;

@@ -7,8 +7,10 @@ const {
 } = require('../controllers/main/logs');
 const { validateLogId } = require('../utils/database/validateId');
 
+router.param('logId', validateLogId);
+
 // validation that params are formatted correctly and have adequate permissions
-router.use('/:logId', validateLogId);
+// router.use('/:logId', validateLogId);
 
 // BASE PATH /api/v1/user/:userId/dogs/:dogId/logs/...
 

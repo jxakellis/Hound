@@ -45,15 +45,13 @@ const createUserQuery = async (req) => {
     throw new ValidationError('userIdentifier, userEmail, userFirstName, userLastName, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, or notificationSound missing', 'ER_VALUES_MISSING');
   }
 
-  let userId;
-
   try {
     const result = await queryPromise(
       req,
       'INSERT INTO users(userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName) VALUES (?,?,?,?,?)',
       [userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName],
     );
-    userId = formatNumber(result.insertId);
+    const userId = result.insertId;
 
     await queryPromise(
       req,

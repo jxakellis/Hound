@@ -1,7 +1,6 @@
 const DatabaseError = require('../../utils/errors/databaseError');
 const ValidationError = require('../../utils/errors/validationError');
 const { queryPromise } = require('../../utils/database/queryPromise');
-const { formatNumber } = require('../../utils/database/validateFormat');
 const { generateVerifiedFamilyCode } = require('../../utils/database/generateFamilyCode');
 
 const { getFamilyMembersForUserIdQuery } = require('../getFor/getForFamily');
@@ -11,7 +10,7 @@ const { getFamilyMembersForUserIdQuery } = require('../getFor/getForFamily');
  *  If a problem is encountered, creates and throws custom error
  */
 const createFamilyQuery = async (req) => {
-  const userId = formatNumber(req.params.userId);
+  const userId = req.params.userId;
 
   try {
     // check if the user is already in a family
@@ -25,7 +24,7 @@ const createFamilyQuery = async (req) => {
       'INSERT INTO familyHeads(userId, familyCode, familyIsLocked) VALUES (?, ?, ?)',
       [userId, familyCode, false],
     );
-    const familyId = formatNumber(result.insertId);
+    const familyId = result.insertId;
     await queryPromise(
       req,
       'INSERT INTO familyMembers(familyId, userId) VALUES (?, ?)',

@@ -3,7 +3,7 @@ const ValidationError = require('../../utils/errors/validationError');
 
 const { queryPromise } = require('../../utils/database/queryPromise');
 const {
-  formatDate, formatBoolean, formatNumber, formatArray, atLeastOneDefined, areAllDefined,
+  formatDate, formatBoolean, formatArray, atLeastOneDefined, areAllDefined,
 } = require('../../utils/database/validateFormat');
 
 const { updateCountdownComponents } = require('../reminderComponents/countdown');
@@ -17,7 +17,7 @@ const { updateSnoozeComponents } = require('../reminderComponents/snooze');
  *  If a problem is encountered, creates and throws custom error
  */
 const updateReminderQuery = async (req) => {
-  const reminderId = formatNumber(req.body.reminderId);
+  const reminderId = req.body.reminderId;
   const { reminderAction, reminderCustomActionName, reminderType } = req.body;
   const reminderExecutionBasis = formatDate(req.body.reminderExecutionBasis);
   const reminderExecutionDate = formatDate(req.body.reminderExecutionDate);
@@ -79,7 +79,7 @@ const updateReminderQuery = async (req) => {
       await updateSnoozeComponents(req, req.body);
       // no need to invoke anything else as the snoozeComponents are self contained and the function handles deleting snoozeComponents if snoozeIsEnabled is changing to false
     }
-    return;
+    return [req.body];
   }
   catch (error) {
     throw new DatabaseError(error.code);
@@ -98,7 +98,7 @@ const updateRemindersQuery = async (req) => {
   // if there is a problem, we rollback all our queries and send the failure response
   // if there are no problems with any of the reminders, we commit our queries and send the success response
   for (let i = 0; i < reminders.length; i += 1) {
-    const reminderId = formatNumber(reminders[i].reminderId);
+    const reminderId = reminders[i].reminderId;
     const { reminderAction, reminderCustomActionName, reminderType } = reminders[i];
     const reminderExecutionBasis = formatDate(reminders[i].reminderExecutionBasis);
     const reminderExecutionDate = formatDate(reminders[i].reminderExecutionDate);
@@ -167,7 +167,7 @@ const updateRemindersQuery = async (req) => {
   }
   // return must be outside for loop, otherwise function won't return
   // eslint-disable-next-line no-useless-return
-  return;
+  return req.body.reminders;
 };
 
 module.exports = { updateReminderQuery, updateRemindersQuery };

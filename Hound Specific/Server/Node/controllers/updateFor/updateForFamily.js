@@ -3,7 +3,7 @@ const ValidationError = require('../../utils/errors/validationError');
 
 const { queryPromise } = require('../../utils/database/queryPromise');
 const {
-  formatNumber, formatBoolean, areAllDefined,
+  formatBoolean, areAllDefined,
 } = require('../../utils/database/validateFormat');
 
 /**
@@ -47,8 +47,8 @@ const updateFamilyQuery = async (req) => {
   }
 
   // the familyCode is valid and linked to an UNLOCKED family
-  const familyId = formatNumber(result.familyId);
-  const userId = formatNumber(req.params.userId);
+  const familyId = result.familyId;
+  const userId = req.params.userId;
   try {
     // insert the user into the family as a family member.
     await queryPromise(

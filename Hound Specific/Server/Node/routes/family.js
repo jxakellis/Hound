@@ -8,7 +8,9 @@ const {
 
 const { validateFamilyId } = require('../utils/database/validateId');
 
-router.use('/:familyId', validateFamilyId);
+router.param('familyId', validateFamilyId);
+
+// router.use('/:familyId', validateFamilyId);
 
 // gets family with userId then return information from familyHead and familyMembers table
 router.get('/', getFamily);

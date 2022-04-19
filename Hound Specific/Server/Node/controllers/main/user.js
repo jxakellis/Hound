@@ -1,6 +1,6 @@
 const ValidationError = require('../../utils/errors/validationError');
 const {
-  areAllDefined, formatNumber,
+  formatBoolean, formatNumber, atLeastOneDefined, areAllDefined,
 } = require('../../utils/database/validateFormat');
 
 const { getUserForUserIdQuery, getUserForUserIdentifierQuery } = require('../getFor/getForUser');
@@ -18,7 +18,7 @@ const getUser = async (req, res) => {
   // apple userIdentifier
   const userIdentifier = req.query.userIdentifier;
   // hound userId
-  const userId = formatNumber(req.params.userId);
+  const userId = req.params.userId;
   if (userId) {
     try {
       const result = await getUserForUserIdQuery(req, userId);
@@ -58,10 +58,18 @@ const createUser = async (req, res) => {
   }
 };
 
+const { refreshFollowUpAlarmNotificationsForUser } = require('../../utils/notification/alarm/refreshAlarmNotification');
+
 const updateUser = async (req, res) => {
   try {
     await updateUserQuery(req);
     req.commitQueries(req);
+    const isFollowUpEnabled = formatBoolean(req.body.isFollowUpEnabled);
+    const followUpDelay = formatNumber(req.body.followUpDelay);
+    // check to see if either of these parameters are defined. If they are, then it means the user has updated them
+    if (atLeastOneDefined([isFollowUpEnabled, followUpDelay])) {
+      refreshFollowUpAlarmNotificationsForUser(req.params.userId, isFollowUpEnabled, followUpDelay);
+    }
     return res.status(200).json({ result: '' });
   }
   catch (error) {
@@ -70,8 +78,8 @@ const updateUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-  const userId = formatNumber(req.params.userId);
-  const familyId = formatNumber(req.params.familyId);
+  const userId = req.params.userId;
+  const familyId = req.params.familyId;
   try {
     await deleteUserQuery(req, userId, familyId);
     req.commitQueries(req);

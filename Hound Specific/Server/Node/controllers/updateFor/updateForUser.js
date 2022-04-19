@@ -11,7 +11,7 @@ const {
  *  If a problem is encountered, creates and throws custom error
  */
 const updateUserQuery = async (req) => {
-  const userId = formatNumber(req.params.userId);
+  const userId = req.params.userId;
   const userEmail = formatEmail(req.body.userEmail);
   const { userFirstName, userLastName, userNotificationToken } = req.body;
 

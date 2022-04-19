@@ -1,7 +1,4 @@
 const DatabaseError = require('../../utils/errors/databaseError');
-const {
-  formatNumber,
-} = require('../../utils/database/validateFormat');
 const { queryPromise } = require('../../utils/database/queryPromise');
 
 /**
@@ -34,7 +31,7 @@ const deleteRemindersQuery = async (req, reminders) => {
   // if there is a problem, then we return that problem (function that invokes this will roll back requests)
   // if there are no problems with any of the reminders, we return.
   for (let i = 0; i < reminders.length; i += 1) {
-    const reminderId = formatNumber(reminders[i].reminderId);
+    const reminderId = reminders[i].reminderId;
 
     await deleteReminderQuery(req, reminderId);
   }

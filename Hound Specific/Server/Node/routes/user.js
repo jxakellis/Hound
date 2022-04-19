@@ -8,7 +8,9 @@ const {
 
 const { validateUserId } = require('../utils/database/validateId');
 
-router.use('/:userId', validateUserId);
+router.param('userId', validateUserId);
+
+// router.use('/:userId', validateUserId);
 
 // gets user with userIdentifier then return information from users and userConfiguration table
 router.get('/', getUser);

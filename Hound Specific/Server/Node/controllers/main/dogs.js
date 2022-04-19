@@ -1,5 +1,3 @@
-const { formatNumber } = require('../../utils/database/validateFormat');
-
 const { getDogQuery, getDogsQuery } = require('../getFor/getForDogs');
 const { createDogQuery } = require('../createFor/createForDogs');
 const { updateDogQuery } = require('../updateFor/updateForDogs');
@@ -12,8 +10,8 @@ Known:
 */
 
 const getDogs = async (req, res) => {
-  const familyId = formatNumber(req.params.familyId);
-  const dogId = formatNumber(req.params.dogId);
+  const familyId = req.params.familyId;
+  const dogId = req.params.dogId;
 
   // if dogId is defined and it is a number then continue
   if (dogId) {
@@ -72,6 +70,7 @@ const updateDog = async (req, res) => {
   try {
     await updateDogQuery(req);
     req.commitQueries(req);
+    // TO DO update alarmNotifications as dogName could be changed
     return res.status(200).json({ result: '' });
   }
   catch (error) {
@@ -80,10 +79,11 @@ const updateDog = async (req, res) => {
 };
 
 const deleteDog = async (req, res) => {
-  const dogId = formatNumber(req.params.dogId);
+  const dogId = req.params.dogId;
   try {
     await deleteDogQuery(req, dogId);
     req.commitQueries(req);
+    // TO DO refresh alarmNotifications as reminders will all be deleted
     return res.status(200).json({ result: '' });
   }
   catch (error) {

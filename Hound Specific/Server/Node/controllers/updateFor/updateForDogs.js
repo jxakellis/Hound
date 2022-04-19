@@ -2,9 +2,7 @@ const DatabaseError = require('../../utils/errors/databaseError');
 const ValidationError = require('../../utils/errors/validationError');
 
 const { queryPromise } = require('../../utils/database/queryPromise');
-const {
-  formatNumber, atLeastOneDefined,
-} = require('../../utils/database/validateFormat');
+const { atLeastOneDefined } = require('../../utils/database/validateFormat');
 
 /**
  *  Queries the database to update a dog. If the query is successful, then returns
@@ -13,7 +11,7 @@ const {
 const updateDogQuery = async (req) => {
   // could be updating dogName or dogIcon
 
-  const dogId = formatNumber(req.params.dogId);
+  const dogId = req.params.dogId;
   const { dogName } = req.body;
   const { dogIcon } = req.body;
 

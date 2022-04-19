@@ -26,6 +26,8 @@ const validateUserId = async (req, res, next) => {
       // this step is technically redundant
       if (result.some((item) => item.userId === userId && item.userIdentifier === userIdentifier)) {
         // userId exists in the table
+        // reassign req.params so that the id there is guarrenteed to be an int and not a string
+        req.params.userId = userId;
         return next();
       }
       else {
@@ -52,7 +54,7 @@ const validateUserId = async (req, res, next) => {
  */
 const validateFamilyId = async (req, res, next) => {
   // userId should be validated already
-  const userId = formatNumber(req.params.userId);
+  const userId = req.params.userId;
   const familyId = formatNumber(req.params.familyId);
 
   if (familyId) {
@@ -68,6 +70,8 @@ const validateFamilyId = async (req, res, next) => {
       // checks array of JSON from query to find if familyId is contained
       if (result.some((item) => item.familyId === familyId)) {
         // familyId exists in the table, therefore userId is  part of the family
+        // reassign req.params so that the id there is guarrenteed to be an int and not a string
+        req.params.familyId = familyId;
         return next();
       }
       else {
@@ -95,7 +99,7 @@ const validateFamilyId = async (req, res, next) => {
 const validateDogId = async (req, res, next) => {
   // familyId should be validated already
 
-  const familyId = formatNumber(req.params.familyId);
+  const familyId = req.params.familyId;
   const dogId = formatNumber(req.params.dogId);
 
   // if dogId is defined and it is a number then continue
@@ -109,6 +113,8 @@ const validateDogId = async (req, res, next) => {
 
       if (userDogIds.some((item) => item.dogId === dogId)) {
         // the dogId exists and it is linked to the familyId, valid!
+        // reassign req.params so that the id there is guarrenteed to be an int and not a string
+        req.params.dogId = dogId;
         return next();
       }
       else {
@@ -135,7 +141,7 @@ const validateDogId = async (req, res, next) => {
 const validateLogId = async (req, res, next) => {
   // dogId should be validated already
 
-  const dogId = formatNumber(req.params.dogId);
+  const dogId = req.params.dogId;
   const logId = formatNumber(req.params.logId);
 
   // if logId is defined and it is a number then continue
@@ -149,6 +155,8 @@ const validateLogId = async (req, res, next) => {
 
       if (dogLogIds.some((item) => item.logId === logId)) {
         // the logId exists and it is linked to the dogId, valid!
+        // reassign req.params so that the id there is guarrenteed to be an int and not a string
+        req.params.logId = logId;
         return next();
       }
       else {
@@ -175,7 +183,7 @@ const validateLogId = async (req, res, next) => {
 const validateParamsReminderId = async (req, res, next) => {
   // dogId should be validated already
 
-  const dogId = formatNumber(req.params.dogId);
+  const dogId = req.params.dogId;
   const reminderId = formatNumber(req.params.reminderId);
 
   // if reminderId is defined and it is a number then continue
@@ -189,6 +197,8 @@ const validateParamsReminderId = async (req, res, next) => {
 
       if (dogReminderIds.some((item) => item.reminderId === reminderId)) {
         // the reminderId exists and it is linked to the dogId, valid!
+        // reassign req.params so that the id there is guarrenteed to be an int and not a string
+        req.params.reminderId = reminderId;
         return next();
       }
       else {
@@ -212,7 +222,7 @@ const validateParamsReminderId = async (req, res, next) => {
 const validateBodyReminderId = async (req, res, next) => {
   // dogId should be validated already
 
-  const dogId = formatNumber(req.params.dogId);
+  const dogId = req.params.dogId;
   // multiple reminders
   const reminders = formatArray(req.body.reminders);
   // single reminder
@@ -234,6 +244,8 @@ const validateBodyReminderId = async (req, res, next) => {
 
           if (dogReminderIds.some((item) => item.reminderId === reminderId)) {
             // the reminderId exists and it is linked to the dogId, valid!
+            // reassign reminder body so that the id there is guarrenteed to be an int and not a string
+            reminders[i].reminderId = reminderId;
             // Check next reminder
           }
           else {
@@ -267,6 +279,8 @@ const validateBodyReminderId = async (req, res, next) => {
 
       if (dogReminderIds.some((item) => item.reminderId === singleReminderId)) {
         // the reminderId exists and it is linked to the dogId, valid!
+        // reassign req.body so that the id there is guarrenteed to be an int and not a string
+        req.body.reminderId = singleReminderId;
         return next();
       }
       else {
