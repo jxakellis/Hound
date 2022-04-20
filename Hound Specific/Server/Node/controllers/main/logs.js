@@ -19,11 +19,11 @@ const getLogs = async (req, res) => {
   if (logId) {
     try {
       const result = await getLogQuery(req, logId);
-      req.commitQueries(req);
+      await req.commitQueries(req);
       return res.status(200).json({ result });
     }
     catch (error) {
-      req.rollbackQueries(req);
+      await req.rollbackQueries(req);
       return res.status(400).json(convertErrorToJSON(error));
     }
   }
@@ -33,18 +33,18 @@ const getLogs = async (req, res) => {
 
       if (result.length === 0) {
         // successful but empty array, not logs to return
-        req.commitQueries(req);
+        await req.commitQueries(req);
         return res.status(200).json({ result: [] });
       }
       else {
         // array has items, meaning there were logs found, successful!
-        req.commitQueries(req);
+        await req.commitQueries(req);
         return res.status(200).json({ result });
       }
     }
     catch (error) {
       // error when trying to do query to database
-      req.rollbackQueries(req);
+      await req.rollbackQueries(req);
       return res.status(400).json(convertErrorToJSON(error));
     }
   }
@@ -53,11 +53,11 @@ const getLogs = async (req, res) => {
 const createLog = async (req, res) => {
   try {
     const result = await createLogQuery(req);
-    req.commitQueries(req);
+    await req.commitQueries(req);
     return res.status(200).json({ result });
   }
   catch (error) {
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
 };
@@ -65,11 +65,11 @@ const createLog = async (req, res) => {
 const updateLog = async (req, res) => {
   try {
     await updateLogQuery(req);
-    req.commitQueries(req);
+    await req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }
   catch (error) {
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
 };
@@ -78,11 +78,11 @@ const deleteLog = async (req, res) => {
   const logId = req.params.logId;
   try {
     await deleteLogQuery(req, logId);
-    req.commitQueries(req);
+    await req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }
   catch (error) {
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
 };

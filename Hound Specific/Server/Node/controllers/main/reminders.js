@@ -28,18 +28,18 @@ const getReminders = async (req, res) => {
 
       if (result.length === 0) {
         // successful but empty array, no reminders to return
-        req.commitQueries(req);
+        await req.commitQueries(req);
         return res.status(200).json({ result: [] });
       }
       else {
         // array has items, meaning there were reminders found, successful!
-        req.commitQueries(req);
+        await req.commitQueries(req);
         return res.status(200).json({ result });
       }
     }
     catch (error) {
       // error when trying to do query to database
-      req.rollbackQueries(req);
+      await req.rollbackQueries(req);
       return res.status(400).json(convertErrorToJSON(error));
     }
   }
@@ -50,18 +50,18 @@ const getReminders = async (req, res) => {
 
       if (result.length === 0) {
         // successful but empty array, no reminders to return
-        req.commitQueries(req);
+        await req.commitQueries(req);
         return res.status(200).json({ result: [] });
       }
       else {
         // array has items, meaning there were reminders found, successful!
-        req.commitQueries(req);
+        await req.commitQueries(req);
         return res.status(200).json({ result });
       }
     }
     catch (error) {
       // error when trying to do query to database
-      req.rollbackQueries(req);
+      await req.rollbackQueries(req);
       return res.status(400).json(convertErrorToJSON(error));
     }
   }
@@ -74,40 +74,40 @@ const createReminder = async (req, res) => {
     // reminders are provided
     if (reminders) {
       const result = await createRemindersQuery(req);
+      await req.commitQueries(req);
       // create was successful, so we can create all the alarm notifications
       for (let i = 0; i < result.length; i += 1) {
         const reminder = result[i];
         createAlarmNotificationForFamily(
           req.params.familyId,
           reminder.reminderId,
-          'placeholder',
+          'TO DO add dog name',
           reminder.reminderExecutionDate,
           reminder.reminderAction,
           reminder.reminderType,
         );
       }
-      req.commitQueries(req);
       return res.status(200).json({ result });
     }
     // single reminder
     else {
       const result = await createReminderQuery(req);
+      await req.commitQueries(req);
       const reminder = result[0];
       // create was successful, so we can create the alarm notification
       createAlarmNotificationForFamily(
         req.params.familyId,
         reminder.reminderId,
-        'placeholder',
+        'TO DO add dog name',
         reminder.reminderExecutionDate,
         reminder.reminderAction,
         reminder.reminderType,
       );
-      req.commitQueries(req);
       return res.status(200).json({ result });
     }
   }
   catch (error) {
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
 };
@@ -119,19 +119,19 @@ const updateReminder = async (req, res) => {
     // reminders are provided
     if (reminders) {
       const result = await updateRemindersQuery(req);
+      await req.commitQueries(req);
       // update was successful, so we can create all new alarm notifications
       for (let i = 0; i < result.length; i += 1) {
         const reminder = result[i];
         createAlarmNotificationForFamily(
           req.params.familyId,
           reminder.reminderId,
-          'placeholder',
+          'TO DO add dog name',
           reminder.reminderExecutionDate,
           reminder.reminderAction,
           reminder.reminderType,
         );
       }
-      req.commitQueries(req);
       return res.status(200).json({ result: '' });
     }
     // single reminder
@@ -142,17 +142,17 @@ const updateReminder = async (req, res) => {
       createAlarmNotificationForFamily(
         req.params.familyId,
         reminder.reminderId,
-        'placeholder',
+        'TO DO add dog name',
         reminder.reminderExecutionDate,
         reminder.reminderAction,
         reminder.reminderType,
       );
-      req.commitQueries(req);
+      await req.commitQueries(req);
       return res.status(200).json({ result: '' });
     }
   }
   catch (error) {
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
 };
@@ -171,7 +171,7 @@ const deleteReminder = async (req, res) => {
           reminders[i].reminderId,
         );
       }
-      req.commitQueries(req);
+      await req.commitQueries(req);
       return res.status(200).json({ result: '' });
     }
     // single reminder
@@ -182,12 +182,12 @@ const deleteReminder = async (req, res) => {
         req.params.familyId,
         req.body.reminderId,
       );
-      req.commitQueries(req);
+      await req.commitQueries(req);
       return res.status(200).json({ result: '' });
     }
   }
   catch (error) {
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
 };

@@ -32,19 +32,19 @@ const validateUserId = async (req, res, next) => {
       }
       else {
         // userId does not exist in the table
-        req.rollbackQueries(req);
+        await req.rollbackQueries(req);
         return res.status(404).json(new ValidationError('No user found or invalid permissions', 'ER_NOT_FOUND').toJSON);
       }
     }
     catch (error) {
       // couldn't query database to find userId
-      req.rollbackQueries(req);
+      await req.rollbackQueries(req);
       return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
   else {
     // userId was not provided or is invalid format OR userIdentifier was not provided or is invalid format
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(400).json(new ValidationError('userId or userIdentifier Invalid', 'ER_ID_INVALID').toJSON);
   }
 };
@@ -76,19 +76,19 @@ const validateFamilyId = async (req, res, next) => {
       }
       else {
         // familyId does not exist in the table
-        req.rollbackQueries(req);
+        await req.rollbackQueries(req);
         return res.status(404).json(new ValidationError('No family found or invalid permissions', 'ER_NOT_FOUND').toJSON);
       }
     }
     catch (error) {
       // couldn't query database to find familyId
-      req.rollbackQueries(req);
+      await req.rollbackQueries(req);
       return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
   else {
     // familyId was not provided or is invalid format
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(400).json(new ValidationError('familyId Invalid', 'ER_ID_INVALID').toJSON);
   }
 };
@@ -119,18 +119,18 @@ const validateDogId = async (req, res, next) => {
       }
       else {
         // the dogId does not exist and/or the user does not have access to that dogId
-        req.rollbackQueries(req);
+        await req.rollbackQueries(req);
         return res.status(404).json(new ValidationError('No dogs found or invalid permissions', 'ER_ID_INVALID').toJSON);
       }
     }
     catch (error) {
-      req.rollbackQueries(req);
+      await req.rollbackQueries(req);
       return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
   else {
     // dogId was not provided or is invalid
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(400).json(new ValidationError('dogId Invalid', 'ER_VALUES_INVALID').toJSON);
   }
 };
@@ -161,18 +161,18 @@ const validateLogId = async (req, res, next) => {
       }
       else {
         // the logId does not exist and/or the dog does not have access to that logId
-        req.rollbackQueries(req);
+        await req.rollbackQueries(req);
         return res.status(404).json(new ValidationError('No logs found or invalid permissions', 'ER_NOT_FOUND').toJSON);
       }
     }
     catch (error) {
-      req.rollbackQueries(req);
+      await req.rollbackQueries(req);
       return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
   else {
     // logId was not provided or is invalid
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(400).json(new ValidationError('logId Invalid', 'ER_VALUES_INVALID').toJSON);
   }
 };
@@ -203,18 +203,18 @@ const validateParamsReminderId = async (req, res, next) => {
       }
       else {
         // the reminderId does not exist and/or the dog does not have access to that reminderId
-        req.rollbackQueries(req);
+        await req.rollbackQueries(req);
         return res.status(404).json(new ValidationError('No reminders found or invalid permissions', 'ER_NOT_FOUND').toJSON);
       }
     }
     catch (error) {
-      req.rollbackQueries(req);
+      await req.rollbackQueries(req);
       return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
   else {
     // reminderId was not provided or is invalid
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(400).json(new ValidationError('reminderId Invalid', 'ER_VALUES_INVALID').toJSON);
   }
 };
@@ -250,18 +250,18 @@ const validateBodyReminderId = async (req, res, next) => {
           }
           else {
             // the reminderId does not exist and/or the dog does not have access to that reminderId
-            req.rollbackQueries(req);
+            await req.rollbackQueries(req);
             return res.status(404).json(new ValidationError('No reminders found or invalid permissions', 'ER_NOT_FOUND').toJSON);
           }
         }
         catch (error) {
-          req.rollbackQueries(req);
+          await req.rollbackQueries(req);
           return res.status(400).json(new DatabaseError(error.code).toJSON);
         }
       }
       else {
         // reminderId was not provided or is invalid
-        req.rollbackQueries(req);
+        await req.rollbackQueries(req);
         return res.status(400).json(new ValidationError('reminderId Invalid', 'ER_VALUES_INVALID').toJSON);
       }
     }
@@ -285,18 +285,18 @@ const validateBodyReminderId = async (req, res, next) => {
       }
       else {
         // the reminderId does not exist and/or the dog does not have access to that reminderId
-        req.rollbackQueries(req);
+        await req.rollbackQueries(req);
         return res.status(404).json(new ValidationError('No reminders found or invalid permissions', 'ER_NOT_FOUND').toJSON);
       }
     }
     catch (error) {
-      req.rollbackQueries(req);
+      await req.rollbackQueries(req);
       return res.status(400).json(new DatabaseError(error.code).toJSON);
     }
   }
   else {
     // reminders array was not provided or is invalid
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(400).json(new ValidationError('reminders or reminderId Invalid', 'ER_VALUES_INVALID').toJSON);
   }
 };

@@ -28,10 +28,6 @@ const sendAPNNotification = (recipientTokens, alertTitle, alertBody) => {
   // App Bundle Id
   notification.topic = 'com.example.Pupotty';
 
-  // A UUID to identify the notification with APNS. If an id is not supplied, APNS will generate one automatically.
-  // If an error occurs the response will contain the id. This property populates the apns-id header.
-  // notification.id = 'placeholder';
-
   // A UNIX timestamp when the notification should expire. If the notification cannot be delivered to the device, APNS will retry until it expires
   // An expiry of 0 indicates that the notification expires immediately, therefore no retries will be attempted.
   notification.expiry = Math.floor(Date.now() / 1000) + 300;
@@ -49,7 +45,7 @@ const sendAPNNotification = (recipientTokens, alertTitle, alertBody) => {
       // TO DO create categories for the notifications
       // The notification’s type
       // This string must correspond to the identifier of one of the UNNotificationCategory objects you register at launch time.
-      category: 'placeholder',
+      category: 'TO DO add category',
       // The background notification flag
       // To perform a silent background update, specify the value 1 and don’t include the alert, badge, or sound keys in your payload.
       'content-available': 0,

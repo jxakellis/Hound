@@ -49,9 +49,9 @@ app.use('/', assignConnection);
 app.use('/api/v1/user', userRouter);
 
 // unknown path is specified
-app.use('*', (req, res) => {
+app.use('*', async (req, res) => {
   // release connection
-  req.rollbackQueries(req);
+  await req.rollbackQueries(req);
   return res.status(404).json(new GeneralError('Path not found', 'ER_NOT_FOUND').toJSON);
 });
 
@@ -62,7 +62,8 @@ const { restoreAlarmNotificationsForAllFamilies } = require('../utils/notificati
 const server = app.listen(port, () => {
   console.log(`Listening on port ${port}`);
   // server is freshly restarted so its time to restore notifications that were lost;
-  restoreAlarmNotificationsForAllFamilies();
+  // TO DO re enable me for production
+  // restoreAlarmNotificationsForAllFamilies();
 });
 
 // HoundServer.js is being termianted so we must close connections
@@ -76,11 +77,13 @@ process.on('SIGTERM', () => {
 });
 
 process.on('SIGINT', () => {
+  // manual kill with ^C
   console.log('SIGINT');
   shutdown();
 });
 
 process.on('SIGUSR2', () => {
+  // nodemon restart
   console.log('SIGUSR2');
   shutdown();
 });
@@ -97,18 +100,23 @@ process.on('SIGUSR2', () => {
  */
 const shutdown = () => {
   console.log('HoundServer.js Program Is Shutting Down');
+
   poolForRequests.end(() => {
     console.log('Pool For Requests Ended');
   });
+
   connectionForNotifications.end(() => {
     console.log('Connection For Notifications Ended');
   });
+
   server.close(() => {
     console.log('Hound Server Closed');
   });
+
   primarySchedule.gracefulShutdown()
     .then(() => console.log('Node Primary Schedule Gracefully Shutdown'))
     .catch((error) => console.log(`Node Primary Schedule Couldn't Shutdown: ${JSON.stringify(error)}`));
+
   secondarySchedule.gracefulShutdown()
     .then(() => console.log('Node Secondary Schedule Gracefully Shutdown'))
     .catch((error) => console.log(`Node Secondary Schedule Couldn't Shutdown: ${JSON.stringify(error)}`));

@@ -19,17 +19,17 @@ const getDogs = async (req, res) => {
       const result = await getDogQuery(req, dogId);
       if (result.length === 0) {
         // successful but empty array, not dogs to return
-        req.commitQueries(req);
+        await req.commitQueries(req);
         return res.status(200).json({ result: [] });
       }
       else {
         // array has items, meaning there was a dog found, successful!
-        req.commitQueries(req);
+        await req.commitQueries(req);
         return res.status(200).json({ result });
       }
     }
     catch (error) {
-      req.rollbackQueries(req);
+      await req.rollbackQueries(req);
       return res.status(400).json(convertErrorToJSON(error));
     }
   }
@@ -38,18 +38,18 @@ const getDogs = async (req, res) => {
       const result = await getDogsQuery(req, familyId);
       if (result.length === 0) {
         // successful but empty array, not dogs to return
-        req.commitQueries(req);
+        await req.commitQueries(req);
         return res.status(200).json({ result: [] });
       }
       else {
         // array has items, meaning there were dogs found, successful!
-        req.commitQueries(req);
+        await req.commitQueries(req);
         return res.status(200).json({ result });
       }
     }
     catch (error) {
       // error when trying to do query to database
-      req.rollbackQueries(req);
+      await req.rollbackQueries(req);
       return res.status(400).json(convertErrorToJSON(error));
     }
   }
@@ -58,7 +58,7 @@ const getDogs = async (req, res) => {
 const createDog = async (req, res) => {
   try {
     const result = await createDogQuery(req);
-    req.commitQueries(req);
+    await req.commitQueries(req);
     return res.status(200).json({ result });
   }
   catch (error) {
@@ -69,7 +69,7 @@ const createDog = async (req, res) => {
 const updateDog = async (req, res) => {
   try {
     await updateDogQuery(req);
-    req.commitQueries(req);
+    await req.commitQueries(req);
     // TO DO update alarmNotifications as dogName could be changed
     return res.status(200).json({ result: '' });
   }
@@ -82,12 +82,12 @@ const deleteDog = async (req, res) => {
   const dogId = req.params.dogId;
   try {
     await deleteDogQuery(req, dogId);
-    req.commitQueries(req);
+    await req.commitQueries(req);
     // TO DO refresh alarmNotifications as reminders will all be deleted
     return res.status(200).json({ result: '' });
   }
   catch (error) {
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
 };

@@ -17,16 +17,16 @@ const getFamily = async (req, res) => {
     try {
       const result = await getFamilyInformationForFamilyIdQuery(req, familyId);
       // array can't be empty as familyId verified
-      req.commitQueries(req);
+      await req.commitQueries(req);
       return res.status(200).json({ result });
     }
     catch (error) {
-      req.rollbackQueries(req);
+      await req.rollbackQueries(req);
       return res.status(400).json(convertErrorToJSON(error));
     }
   }
   else {
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(400).json(new ValidationError('familyId missing', 'ER_VALUES_MISSING').toJSON);
   }
 };
@@ -36,12 +36,14 @@ const createFamily = async (req, res) => {
     // attempt to create family
     const result = await createFamilyQuery(req);
     // create family succeeded
-    req.commitQueries(req);
+
+    // no need to update any alarm notifications as a newly created family will have no reminders
+    await req.commitQueries(req);
     return res.status(200).json({ result });
   }
   catch (error) {
     // create family failed
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(200).json(convertErrorToJSON(error));
   }
 };
@@ -49,11 +51,13 @@ const createFamily = async (req, res) => {
 const updateFamily = async (req, res) => {
   try {
     await updateFamilyQuery(req);
-    req.commitQueries(req);
+    await req.commitQueries(req);
+    // user successfully joined a family
+    
     return res.status(200).json({ result: '' });
   }
   catch (error) {
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
 };
@@ -64,11 +68,11 @@ const deleteFamily = async (req, res) => {
 
   try {
     await deleteFamilyQuery(req, userId, familyId);
-    req.commitQueries(req);
+    await req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }
   catch (error) {
-    req.rollbackQueries(req);
+    await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
 };

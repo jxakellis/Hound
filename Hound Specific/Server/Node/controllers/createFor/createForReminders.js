@@ -89,8 +89,6 @@ const createRemindersQuery = async (req) => {
     // check to see that necessary generic reminder componetns are present
     if (areAllDefined([reminderAction, reminderType, reminderExecutionBasis, reminderIsEnabled]) === false) {
       // >= 1 of the objects are undefined
-      // req.rollbackQueries(req);
-      // return res.status(400).json(new ValidationError('reminderAction, reminderType, reminderExecutionBasis, or reminderIsEnabled missing', 'ER_VALUES_MISSING'));
       throw new ValidationError('reminderAction, reminderType, reminderExecutionBasis, or reminderIsEnabled missing', 'ER_VALUES_MISSING');
     }
     // define out here so reminderId can be accessed in catch block to delete entries

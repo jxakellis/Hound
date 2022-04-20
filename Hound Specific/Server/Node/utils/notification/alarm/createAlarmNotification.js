@@ -104,6 +104,7 @@ const createFollowUpAlarmNotificationForFamily = async (familyId, reminderId, do
 };
 
 /**
+ * Doesn't check for isFollowUpEnabled status, so ensure the user is enabled
  * For a given reminder for a given user, handles the follow up alarm notifications
  * If the reminderExecutionDate is in the past, sends APN notification asap. Otherwise, schedule job to send at reminderExecutionDate + followUpDelay.
  * If a job with that name from reminderId already exists, then we cancel and replace that job
