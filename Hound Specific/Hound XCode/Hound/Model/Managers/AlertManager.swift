@@ -15,6 +15,8 @@ class AlertManager: NSObject {
     override init() {
         super.init()
         
+        // create loadingAlertController
+        
         let activityIndicator = UIActivityIndicatorView(style: .medium)
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.isUserInteractionEnabled = false
@@ -26,10 +28,6 @@ class AlertManager: NSObject {
         activityIndicator.centerXAnchor.constraint(equalTo: loadingAlertController.view.centerXAnchor, constant: 0).isActive = true
         activityIndicator.bottomAnchor.constraint(equalTo: loadingAlertController.view.bottomAnchor, constant: -20).isActive = true
         
-        // let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
-        // loadingIndicator.hidesWhenStopped = true
-        // loadingIndicator.style = UIActivityIndicatorView.Style.medium
-        // loadingIndicator.startAnimating()
         loadingAlertController.view.addSubview(activityIndicator)
         loadingAlertController.view.tag = ViewTagConstant.loadingViewController.rawValue
     }
@@ -55,11 +53,11 @@ class AlertManager: NSObject {
     /// Checks to see if the queue has any server related alerts inside of it.
     private var containsServerRelatedAlert: Bool {
         // check queue for server related
-        for alert in alertQueue where alert.tag == ViewTagConstant.serverRelatedViewController.rawValue {
+        for alert in alertQueue where alert.view.tag == ViewTagConstant.serverRelatedViewController.rawValue {
             return true
         }
         // check current presentation
-        if currentAlertPresented?.tag == ViewTagConstant.serverRelatedViewController.rawValue {
+        if currentAlertPresented?.view.tag == ViewTagConstant.serverRelatedViewController.rawValue {
             return true
         }
         else {
@@ -70,11 +68,11 @@ class AlertManager: NSObject {
     /// Checks to see if the queue has any loading view controllers
     private var containsLoadingViewController: Bool {
         // check queue for loading view controller
-        for alert in alertQueue where alert.tag == ViewTagConstant.loadingViewController.rawValue {
+        for alert in alertQueue where alert.view.tag == ViewTagConstant.loadingViewController.rawValue {
             return true
         }
         // check current presentation
-        if currentAlertPresented?.tag == ViewTagConstant.loadingViewController.rawValue {
+        if currentAlertPresented?.view.tag == ViewTagConstant.loadingViewController.rawValue {
             return true
         }
         else {
@@ -88,11 +86,11 @@ class AlertManager: NSObject {
     
     private func enqueue(_ alertController: GeneralUIAlertController) {
          // if this is a server related alert and there is already a server related alert, we don't want to add a second one. no need to barrage the user with server failure messages.
-            if alertController.tag == ViewTagConstant.serverRelatedViewController.rawValue && containsServerRelatedAlert == true {
+        if alertController.view.tag == ViewTagConstant.serverRelatedViewController.rawValue && containsServerRelatedAlert == true {
                 return
-            }
+        }
         // if this is a loading view controller and loading view controller, we don't want to add a second one.
-        else if alertController.tag == ViewTagConstant.loadingViewController.rawValue && containsLoadingViewController == true {
+        else if alertController.view.tag == ViewTagConstant.loadingViewController.rawValue && containsLoadingViewController == true {
             return
         }
         
@@ -113,7 +111,7 @@ class AlertManager: NSObject {
             title: title,
             message: trimmedMessage,
             preferredStyle: .alert)
-        alertController.tag = ViewTagConstant.serverRelatedViewController.rawValue
+        alertController.view.tag = ViewTagConstant.serverRelatedViewController.rawValue
         
         let alertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         

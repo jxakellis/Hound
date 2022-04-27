@@ -7,7 +7,7 @@
 //
 import UIKit
 
-class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, SettingsNavigationViewControllerDelegate, LogsNavigationViewControllerDelegate, RemindersIntroductionViewControllerDelegate, AlarmManagerDelegate {
+class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, LogsNavigationViewControllerDelegate, RemindersIntroductionViewControllerDelegate, AlarmManagerDelegate {
     
      // MARK: - DogsNavigationViewControllerDelegate
 
@@ -27,12 +27,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
 
     func didComplete(sender: Sender, forDogManager dogManager: DogManager) {
         setDogManager(sender: sender, newDogManager: dogManager)
-    }
-
-    // MARK: - SettingsViewControllerDelegate
-
-    func didToggleIsPaused(newIsPaused: Bool) {
-        TimingManager.willTogglePause(dogManager: getDogManager(), newPauseStatus: newIsPaused)
     }
 
     // MARK: - TimingManagerDelegate && DogsViewControllerDelegate
@@ -72,7 +66,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     }
     
     func shouldRefreshDogManager(sender: Sender) {
-        RequestUtils.getDogManager { dogManager in
+        RequestUtils.getDogManager(invokeErrorManager: true) { dogManager, _ in
             if dogManager != nil {
                 self.setDogManager(sender: sender, newDogManager: dogManager!)
             }
@@ -100,19 +94,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
 
         parentDogManager = newDogManager
         MainTabBarViewController.staticDogManager = newDogManager
-
-        // Updates isPaused to reflect any changes in data, if there are no enabled reminders then turns isPaused off as there is nothing to pause. For hasEnabledReminder to be true, the dog manager must have >=1 dog, have >=1 reminder, and >= 1 reminder turned on.
-        if getDogManager().hasEnabledReminder == false && UserConfiguration.isPaused == true {
-            UserConfiguration.isPaused = false
-
-            let body = [ServerDefaultKeys.isPaused.rawValue: UserConfiguration.isPaused]
-            UserRequest.update(body: body) { requestWasSuccessful in
-                if requestWasSuccessful == false {
-                    // revert all values
-                    UserConfiguration.isPaused = true
-                }
-            }
-        }
         
         // If the dogManager is sent from ServerSyncViewController or IntroductionViewController, then, at that point in time, nothing here is initalized and will cause a crash
         guard !(sender.localized is ServerSyncViewController) && !(sender.origin is ServerSyncViewController) &&  !(sender.localized is FamilyIntroductionViewController) && !(sender.origin is FamilyIntroductionViewController) else {
@@ -180,7 +161,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         dogsViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
 
         settingsNavigationViewController = self.viewControllers![2] as? SettingsNavigationViewController
-        settingsNavigationViewController.passThroughDelegate = self
         settingsViewController = settingsNavigationViewController.viewControllers[0] as? SettingsViewController
 
         MainTabBarViewController.mainTabBarViewController = self

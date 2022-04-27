@@ -16,7 +16,7 @@ class ServerFamilyViewController: UIViewController {
     
     @IBAction private func willCreateFamily(_ sender: Any) {
         RequestUtils.beginAlertControllerQueryIndictator()
-        FamilyRequest.create { familyId in
+        FamilyRequest.create(invokeErrorManager: true) { familyId, _ in
             RequestUtils.endAlertControllerQueryIndictator {
                 if familyId != nil {
                     // server sync vc retrieves familyId so no need to save it here
@@ -56,7 +56,7 @@ class ServerFamilyViewController: UIViewController {
             // client side the code is okay
             else {
                 RequestUtils.beginAlertControllerQueryIndictator()
-                FamilyRequest.update(familyCode: familyCode) { requestWasSuccessful in
+                FamilyRequest.update(invokeErrorManager: true, body: [ServerDefaultKeys.familyCode.rawValue: familyCode]) { requestWasSuccessful, _ in
                     RequestUtils.endAlertControllerQueryIndictator {
                         // the code successfully allowed the user to join
                         if requestWasSuccessful == true {

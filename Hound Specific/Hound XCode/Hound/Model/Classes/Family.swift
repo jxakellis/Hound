@@ -12,11 +12,10 @@ class FamilyMember: NSObject {
     
     // MARK: - Main
     
-    init(userId: Int, firstName: String, lastName: String, isFamilyHead: Bool) {
+    init(userId: Int, firstName: String, lastName: String) {
         self.storedUserId = userId
         self.storedFirstName = firstName
         self.storedLastName = lastName
-        self.storedIsFamilyHead = isFamilyHead
         super.init()
     }
     
@@ -25,8 +24,7 @@ class FamilyMember: NSObject {
         let userId = body[ServerDefaultKeys.userId.rawValue] as? Int ?? -1
         let firstName = body[ServerDefaultKeys.userFirstName.rawValue] as? String ?? ""
         let lastName = body[ServerDefaultKeys.userLastName.rawValue] as? String ?? ""
-        let isFamilyHead = body[ServerDefaultKeys.isFamilyHead.rawValue] as? Bool ?? false
-        self.init(userId: userId, firstName: firstName, lastName: lastName, isFamilyHead: isFamilyHead)
+        self.init(userId: userId, firstName: firstName, lastName: lastName)
     }
     
     // MARK: - Properties
@@ -49,10 +47,7 @@ class FamilyMember: NSObject {
         return storedUserId
     }
     
-    private var storedIsFamilyHead: Bool
     /// Indicates where or not this user is the head of the family
-    var isFamilyHead: Bool {
-        return storedIsFamilyHead
-    }
+    var isFamilyHead: Bool = false
     
 }

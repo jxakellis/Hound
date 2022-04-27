@@ -1,14 +1,19 @@
+const ValidationError = require('../../utils/errors/validationError');
 const { queryPromise } = require('../../utils/database/queryPromise');
-const { formatBoolean, formatNumber } = require('../../utils/database/validateFormat');
+const { formatBoolean, formatNumber, areAllDefined } = require('../../utils/database/validateFormat');
 
 const createSnoozeComponents = async (req, reminder) => {
   const snoozeIsEnabled = formatBoolean(reminder.snoozeIsEnabled);
+  const snoozeExecutionInterval = formatNumber(reminder.snoozeExecutionInterval);
+  const snoozeIntervalElapsed = formatNumber(reminder.snoozeIntervalElapsed);
+
+  if (areAllDefined([snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed]) === false) {
+    throw new ValidationError('snoozeIsEnabled, snoozeExecutionInterval, or snoozeIntervalElapsed missing', 'ER_VALUES_MISSING');
+  }
 
   // Only insert components if the reminder is snoozing, otherwise there is no need for them
   // Errors intentionally uncaught so they are passed to invocation in reminders
   if (snoozeIsEnabled === true) {
-    const snoozeExecutionInterval = formatNumber(reminder.snoozeExecutionInterval);
-    const snoozeIntervalElapsed = formatNumber(reminder.snoozeIntervalElapsed);
     await queryPromise(
       req,
       'INSERT INTO reminderSnoozeComponents(reminderId, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed) VALUES (?,?,?,?)',
@@ -28,11 +33,14 @@ const createSnoozeComponents = async (req, reminder) => {
  */
 const updateSnoozeComponents = async (req, reminder) => {
   const snoozeIsEnabled = formatBoolean(reminder.snoozeIsEnabled);
+  const snoozeExecutionInterval = formatNumber(reminder.snoozeExecutionInterval);
+  const snoozeIntervalElapsed = formatNumber(reminder.snoozeIntervalElapsed);
 
-  // if reminder is going into snooze mode then we update/insert the needed components
+  if (areAllDefined([snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed]) === false) {
+    throw new ValidationError('snoozeIsEnabled, snoozeExecutionInterval, or snoozeIntervalElapsed missing', 'ER_VALUES_MISSING');
+  }
+
   if (snoozeIsEnabled === true) {
-    const snoozeExecutionInterval = formatNumber(reminder.snoozeExecutionInterval);
-    const snoozeIntervalElapsed = formatNumber(reminder.snoozeIntervalElapsed);
     try {
       // If this succeeds: Reminder was not present in the snooze table and the reminder was snoozed.
       // If this fails: The components provided are invalid or reminder already present in table (reminderId UNIQUE in DB)

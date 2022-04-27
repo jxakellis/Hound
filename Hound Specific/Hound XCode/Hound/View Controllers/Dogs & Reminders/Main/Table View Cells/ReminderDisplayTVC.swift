@@ -33,8 +33,9 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
         reminder.reminderIsEnabled = reminderToggleSwitch.isOn
         delegate.didUpdateReminderEnable(sender: Sender(origin: self, localized: self), parentDogId: parentDogId, reminder: reminder)
         
-        RemindersRequest.update(forDogId: parentDogId, forReminder: reminder) { requestWasSuccessful in
+        RemindersRequest.update(invokeErrorManager: true, forDogId: parentDogId, forReminder: reminder) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
+                // revert to previous values
                 self.reminderToggleSwitch.setOn(beforeUpdateIsEnabled, animated: true)
                 self.reminder.reminderIsEnabled = beforeUpdateIsEnabled
                 self.delegate.didUpdateReminderEnable(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, reminder: self.reminder)
@@ -170,24 +171,24 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
         let timeLeftBodyWeight: UIFont.Weight = .regular
         let timeLeftImportantWeight: UIFont.Weight = .semibold
 
-        if reminder.reminderIsEnabled == false {
-            timeLeft.attributedText = NSAttributedString(string: "Reminder Disabled", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
-        }
-        else if UserConfiguration.isPaused == true {
-
+        if FamilyConfiguration.isPaused == true {
             timeLeft.attributedText = NSAttributedString(string: "Paused", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
-
+            
+        }
+        else if reminder.reminderIsEnabled == false {
+            timeLeft.attributedText = NSAttributedString(string: "Disabled", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
         }
         else {
-            let fireDate: Date? = reminder.reminderExecutionDate!
+            let fireDate: Date? = reminder.reminderExecutionDate
 
             if fireDate == nil {
-                timeLeft.attributedText = NSAttributedString(string: "Reminder Disabled", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
+                timeLeft.attributedText = NSAttributedString(string: "Disabled", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
             }
             else if Date().distance(to: fireDate!) <= 0 {
                 timeLeft.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight)])
             }
             else if reminder.snoozeComponents.snoozeIsEnabled == true {
+                // special message for snoozing time
                 let timeLeftText = String.convertToReadable(fromTimeInterval: Date().distance(to: fireDate!))
 
                 timeLeft.font = UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftBodyWeight)
@@ -197,6 +198,7 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
                 timeLeft.attributedText = timeLeft.text!.addingFontToBeginning(text: "Done Snoozing In: ", font: UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftImportantWeight))
             }
             else {
+                // regular message for regular time
                 let timeLeftText = String.convertToReadable(fromTimeInterval: Date().distance(to: fireDate!))
 
                 timeLeft.font = UIFont.systemFont(ofSize: timeLeft.font.pointSize, weight: timeLeftBodyWeight)

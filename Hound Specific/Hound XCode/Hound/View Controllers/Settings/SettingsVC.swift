@@ -8,11 +8,7 @@
 
 import UIKit
 
-protocol SettingsViewControllerDelegate: AnyObject {
-    func didToggleIsPaused(newIsPaused: Bool)
-}
-
-class SettingsViewController: UIViewController, SettingsTableViewControllerDelegate, SettingsRemindersViewControllerDelegate {
+class SettingsViewController: UIViewController, SettingsTableViewControllerDelegate {
 
     // MARK: - SettingsTableViewControllerDelegate
     
@@ -39,10 +35,20 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
         
         if convertedSegueIdentifier == "settingsFamilyViewController" {
             RequestUtils.beginAlertControllerQueryIndictator()
-            FamilyRequest.get { familyMembers in
+            FamilyRequest.get(invokeErrorManager: true) { familyMembers, _ in
                 RequestUtils.endAlertControllerQueryIndictator {
                     if familyMembers != nil {
                         self.passedFamilyMembers = familyMembers!
+                        ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: convertedSegueIdentifier, viewController: self)
+                    }
+                }
+            }
+        }
+        else if convertedSegueIdentifier == "settingsRemindersViewController" {
+            RequestUtils.beginAlertControllerQueryIndictator()
+            FamilyRequest.get(invokeErrorManager: true) { familyMembers, _ in
+                RequestUtils.endAlertControllerQueryIndictator {
+                    if familyMembers != nil {
                         ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: convertedSegueIdentifier, viewController: self)
                     }
                 }
@@ -53,15 +59,7 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
         }
     }
 
-    // MARK: - SettingsRemindersViewControllerDelegate
-
-    func didToggleIsPaused(newIsPaused: Bool) {
-        delegate.didToggleIsPaused(newIsPaused: newIsPaused)
-    }
-
     // MARK: - Properties
-
-    weak var delegate: SettingsViewControllerDelegate! = nil
 
     var settingsTableViewController: SettingsTableViewController?
     var settingsPersonalInformationViewController: SettingsPersonalInformationViewController?
@@ -104,7 +102,6 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
 
         else if segue.identifier == "settingsRemindersViewController" {
             settingsRemindersViewController = segue.destination as? SettingsRemindersViewController
-            settingsRemindersViewController?.delegate = self
         }
         else if segue.identifier == "settingsNotificationsViewController" {
             settingsNotificationsViewController = segue.destination as? SettingsNotificationsViewController

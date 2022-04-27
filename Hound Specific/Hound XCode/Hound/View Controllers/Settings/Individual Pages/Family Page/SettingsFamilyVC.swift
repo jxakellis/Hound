@@ -54,22 +54,22 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
     @IBOutlet private weak var familyCode: ScaledUILabel!
     
     // Family Lock
-    @IBOutlet private weak var familyIsLockedLabel: ScaledUILabel!
-    @IBOutlet private weak var familyIsLockedSwitch: UISwitch!
-    @IBAction private func didToggleFamilyIsLocked(_ sender: Any) {
+    @IBOutlet private weak var isLockedLabel: ScaledUILabel!
+    @IBOutlet private weak var isLockedSwitch: UISwitch!
+    @IBAction private func didToggleIsLocked(_ sender: Any) {
         
         // assume request will go through and update values
-        let initalFamilyIsLocked = FamilyConfiguration.familyIsLocked
-        FamilyConfiguration.familyIsLocked = familyIsLockedSwitch.isOn
-        updateFamilyIsLockedLabel()
+        let initalIsLocked = FamilyConfiguration.isLocked
+        FamilyConfiguration.isLocked = isLockedSwitch.isOn
+        updateIsLockedLabel()
         
-        let body = [ServerDefaultKeys.familyIsLocked.rawValue: familyIsLockedSwitch.isOn]
-        FamilyRequest.update(body: body) { requestWasSuccessful in
+        let body = [ServerDefaultKeys.isLocked.rawValue: isLockedSwitch.isOn]
+        FamilyRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // request failed so we revert
-                FamilyConfiguration.familyIsLocked = initalFamilyIsLocked
-                self.updateFamilyIsLockedLabel()
-                self.familyIsLockedSwitch.setOn(initalFamilyIsLocked, animated: true)
+                FamilyConfiguration.isLocked = initalIsLocked
+                self.updateIsLockedLabel()
+                self.isLockedSwitch.setOn(initalIsLocked, animated: true)
             }
         }
     }
@@ -110,8 +110,8 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         
         // MARK: Family Lock
         
-        familyIsLockedSwitch.isOn = FamilyConfiguration.familyIsLocked
-        updateFamilyIsLockedLabel()
+        isLockedSwitch.isOn = FamilyConfiguration.isLocked
+        updateIsLockedLabel()
         
         // MARK: Family Members
         
@@ -158,7 +158,7 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
             
             leaveFamilyAlertController.title = "Are you sure you want to leave your family?"
             let leaveAlertAction = UIAlertAction(title: "Leave Family", style: .destructive) { _ in
-                FamilyRequest.delete { requestWasSuccessful in
+                FamilyRequest.delete(invokeErrorManager: true) { requestWasSuccessful, _ in
                     if requestWasSuccessful == true {
                         // family was successfully left, restart app to default state
                         exit(0)
@@ -182,7 +182,7 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
             
             leaveFamilyAlertController.title = "Are you sure you want to delete your family?"
             let deleteAlertAction = UIAlertAction(title: "Delete Family", style: .destructive) { _ in
-                FamilyRequest.delete { requestWasSuccessful in
+                FamilyRequest.delete(invokeErrorManager: true) { requestWasSuccessful, _ in
                     if requestWasSuccessful == true {
                         // family was successfully deleted, restart app to default state
                         exit(0)
@@ -205,15 +205,15 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
     
     // MARK: - Functions
     
-    private func updateFamilyIsLockedLabel() {
-        familyIsLockedLabel.text = "Lock: "
-        if FamilyConfiguration.familyIsLocked == true {
+    private func updateIsLockedLabel() {
+        isLockedLabel.text = "Lock: "
+        if FamilyConfiguration.isLocked == true {
             // locked emoji
-            familyIsLockedLabel.text!.append("🔐")
+            isLockedLabel.text!.append("🔐")
         }
         else {
             // unlocked emoji
-            familyIsLockedLabel.text!.append("🔓")
+            isLockedLabel.text!.append("🔓")
         }
     }
     

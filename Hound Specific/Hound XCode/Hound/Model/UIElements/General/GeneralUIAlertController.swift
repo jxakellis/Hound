@@ -11,9 +11,6 @@ import UIKit
 
 class GeneralUIAlertController: UIAlertController {
     
-    /// This is simply a tag attached to the alertController. This helps keep track of different types alert controller and remove duplicates
-    var tag: Int = 0
-    
     override func viewDidDisappear(_ animated: Bool) {
         AlertManager.shared.alertDidComplete()
     }

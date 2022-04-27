@@ -256,7 +256,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
     @IBAction private func willRefresh(_ sender: Any) {
         // TO DO add activity indictator
         self.refreshButton.isEnabled = false
-        RequestUtils.getDogManager { dogManager in
+        RequestUtils.getDogManager(invokeErrorManager: true) { dogManager, _ in
             // end refresh first otherwise there will be a weird visual issue
             self.refreshButton.isEnabled = true
             if dogManager != nil {

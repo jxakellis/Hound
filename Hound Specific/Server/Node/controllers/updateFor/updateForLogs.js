@@ -3,7 +3,7 @@ const ValidationError = require('../../utils/errors/validationError');
 
 const { queryPromise } = require('../../utils/database/queryPromise');
 const {
-  formatDate, atLeastOneDefined,
+  formatDate, areAllDefined,
 } = require('../../utils/database/validateFormat');
 
 /**
@@ -18,24 +18,16 @@ const updateLogQuery = async (req) => {
   const { logCustomActionName } = req.body;
 
   // if all undefined, then there is nothing to update
-  if (atLeastOneDefined([logDate, logNote, logAction]) === false) {
-    throw new ValidationError('No logDate, logNote, or logAction provided', 'ER_NO_VALUES_PROVIDED');
+  if (areAllDefined([logDate, logNote, logAction]) === false) {
+    throw new ValidationError('logDate, logNote, or logAction missing', 'ER_VALUE_MISSING');
   }
 
   try {
-    if (logDate) {
-      await queryPromise(req, 'UPDATE dogLogs SET logDate = ? WHERE logId = ?', [logDate, logId]);
-    }
-    if (logNote) {
-      await queryPromise(req, 'UPDATE dogLogs SET logNote = ? WHERE logId = ?', [logNote, logId]);
-    }
-    if (logAction) {
-      await queryPromise(req, 'UPDATE dogLogs SET logAction = ? WHERE logId = ?', [logAction, logId]);
-    }
-    if (logCustomActionName) {
-      await queryPromise(req, 'UPDATE dogLogs SET logCustomActionName = ? WHERE logId = ?', [logCustomActionName, logId]);
-    }
-    return;
+    return queryPromise(
+      req,
+      'UPDATE dogLogs SET logDate = ?, logAction = ?, logCustomActionName = ?, logNote = ?, WHERE logId = ?',
+      [logDate, logAction, logCustomActionName, logNote, logId],
+    );
   }
   catch (error) {
     throw new DatabaseError(error.code);

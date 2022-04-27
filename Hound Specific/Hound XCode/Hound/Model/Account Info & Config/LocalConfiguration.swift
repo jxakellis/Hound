@@ -32,36 +32,6 @@ enum LocalConfiguration {
         }
     }
     
-    // MARK: Alarm Timing Related
-    
-    static private var storedLastPause: Date?
-    /// Saves date of last pause (if there was one). This is not needed on the server as it can automatically perform calculations if the reminders are paused/unapused. App needs this to perform calculations as it can be exited and lose track of time.
-    static var lastPause: Date? {
-        get {
-            return storedLastPause
-        }
-        set (newLastPause) {
-            guard newLastPause != storedLastPause else {
-                return
-            }
-            storedLastPause = newLastPause
-        }
-    }
-    
-    static private var storedLastUnpause: Date?
-    /// Saves date of last unpause (if there was one). This is not needed on the server as it can automatically perform calculations if the reminders are paused/unapused. App needs this to perform calculations as it can be exited and lose track of time.
-    static var lastUnpause: Date? {
-        get {
-            return storedLastUnpause
-        }
-        set (newLastUnpause) {
-            guard newLastUnpause != storedLastUnpause else {
-                return
-            }
-            storedLastUnpause = newLastUnpause
-        }
-    }
-    
     // MARK: Alert Related
     
     /// Used to track when the user was last asked to review the app

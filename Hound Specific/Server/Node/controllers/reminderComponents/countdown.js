@@ -8,7 +8,9 @@ const { formatNumber } = require('../../utils/database/validateFormat');
 const createCountdownComponents = async (req, reminder) => {
   const countdownExecutionInterval = formatNumber(reminder.countdownExecutionInterval);
   const countdownIntervalElapsed = formatNumber(reminder.countdownIntervalElapsed);
-  // Errors intentionally uncaught so they are passed to invocation in reminders
+
+  // TO DO add check that all components are defined (or throw validation error)
+
   await queryPromise(
     req,
     'INSERT INTO reminderCountdownComponents(reminderId, countdownExecutionInterval, countdownIntervalElapsed) VALUES (?,?,?)',
@@ -20,6 +22,8 @@ const createCountdownComponents = async (req, reminder) => {
 const updateCountdownComponents = async (req, reminder) => {
   const countdownExecutionInterval = formatNumber(reminder.countdownExecutionInterval);
   const countdownIntervalElapsed = formatNumber(reminder.countdownIntervalElapsed);
+
+  // TO DO add check that all components are defined (or throw validation error)
 
   try {
     // If this succeeds: Reminder was not present in the countdown table and the reminderType was changed. The old components will be deleted from the other table by reminders

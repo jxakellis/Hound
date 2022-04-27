@@ -41,7 +41,6 @@ const sendAPN = (recipientTokens, category, alertTitle, alertBody) => {
     /// Raw Payload takes after apple's definition of the APS body
     notification.rawPayload = {
       aps: {
-      // TO DO create categories for the notifications
       // The notification’s type
       // This string must correspond to the identifier of one of the UNNotificationCategory objects you register at launch time.
         category,

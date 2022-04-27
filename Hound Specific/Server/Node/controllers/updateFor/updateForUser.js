@@ -19,7 +19,6 @@ const updateUserQuery = async (req) => {
   const isLoudNotification = formatBoolean(req.body.isLoudNotification);
   const isFollowUpEnabled = formatBoolean(req.body.isFollowUpEnabled);
   const followUpDelay = formatNumber(req.body.followUpDelay);
-  const isPaused = formatBoolean(req.body.isPaused);
   const isCompactView = formatBoolean(req.body.isCompactView);
   const interfaceStyle = formatNumber(req.body.interfaceStyle);
   const snoozeLength = formatNumber(req.body.snoozeLength);
@@ -27,9 +26,9 @@ const updateUserQuery = async (req) => {
 
   // checks to see that all needed components are provided
   if (atLeastOneDefined([userEmail, userFirstName, userLastName, userNotificationToken, isNotificationEnabled,
-    isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView,
+    isLoudNotification, isFollowUpEnabled, followUpDelay, isCompactView,
     interfaceStyle, snoozeLength, notificationSound]) === false) {
-    throw new ValidationError('No userEmail, userFirstName, userLastName, userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView, interfaceStyle, snoozeLength, or notificationSound provided', 'ER_NO_VALUES_PROVIDED');
+    throw new ValidationError('No userEmail, userFirstName, userLastName, userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isCompactView, interfaceStyle, snoozeLength, or notificationSound provided', 'ER_NO_VALUES_PROVIDED');
   }
 
   try {
@@ -88,13 +87,6 @@ const updateUserQuery = async (req) => {
         req,
         'UPDATE userConfiguration SET followUpDelay = ? WHERE userId = ?',
         [followUpDelay, userId],
-      );
-    }
-    if (areAllDefined(isPaused)) {
-      await queryPromise(
-        req,
-        'UPDATE userConfiguration SET isPaused = ? WHERE userId = ?',
-        [isPaused, userId],
       );
     }
     if (areAllDefined(isCompactView)) {

@@ -2993,11 +2993,11 @@
                                                     <outlet property="delegate" destination="bp1-Kg-aZ6" id="PxN-I4-x3I"/>
                                                 </connections>
                                             </tableView>
-                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" title="familyIsLocked" translatesAutoresizingMaskIntoConstraints="NO" id="JX6-IX-ywD">
+                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" title="isLocked" translatesAutoresizingMaskIntoConstraints="NO" id="JX6-IX-ywD">
                                                 <rect key="frame" x="320" y="138" width="51" height="31"/>
                                                 <color key="onTintColor" systemColor="systemBlueColor"/>
                                                 <connections>
-                                                    <action selector="didToggleFamilyIsLocked:" destination="bp1-Kg-aZ6" eventType="valueChanged" id="CE3-fO-3lR"/>
+                                                    <action selector="didToggleIsLocked:" destination="bp1-Kg-aZ6" eventType="valueChanged" id="CE3-fO-3lR"/>
                                                 </connections>
                                             </switch>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Code: " textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b5w-es-k3g" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
@@ -3093,8 +3093,8 @@
                     <connections>
                         <outlet property="containerView" destination="4CU-dx-Y2m" id="9A1-vp-aZn"/>
                         <outlet property="familyCode" destination="b5w-es-k3g" id="eBT-m2-tGm"/>
-                        <outlet property="familyIsLockedLabel" destination="ele-He-dpP" id="axf-ap-bhz"/>
-                        <outlet property="familyIsLockedSwitch" destination="JX6-IX-ywD" id="MeT-Nt-zPt"/>
+                        <outlet property="isLockedLabel" destination="ele-He-dpP" id="axf-ap-bhz"/>
+                        <outlet property="isLockedSwitch" destination="JX6-IX-ywD" id="MeT-Nt-zPt"/>
                         <outlet property="leaveFamilyButton" destination="J2T-a0-Efm" id="LkJ-jL-UBk"/>
                         <outlet property="tableView" destination="HFj-2e-poA" id="zxm-Nj-USb"/>
                         <outlet property="tableViewHeightConstraint" destination="xpW-R5-JQu" id="0OY-RH-dAj"/>
@@ -3204,7 +3204,7 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="755" verticalCompressionResistancePriority="755" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" title="isPaused" translatesAutoresizingMaskIntoConstraints="NO" id="3He-Pc-BJL">
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="755" verticalCompressionResistancePriority="755" contentHorizontalAlignment="center" contentVerticalAlignment="center" title="isPaused" translatesAutoresizingMaskIntoConstraints="NO" id="3He-Pc-BJL">
                                 <rect key="frame" x="320" y="119.5" width="51" height="31"/>
                                 <color key="onTintColor" systemColor="systemBlueColor"/>
                                 <connections>

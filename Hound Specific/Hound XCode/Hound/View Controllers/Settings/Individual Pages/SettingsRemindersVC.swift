@@ -8,10 +8,6 @@
 
 import UIKit
 
-protocol SettingsRemindersViewControllerDelegate: AnyObject {
-    func didToggleIsPaused(newIsPaused: Bool)
-}
-
 class SettingsRemindersViewController: UIViewController, UIGestureRecognizerDelegate {
     
     // MARK: - UIGestureRecognizerDelegate
@@ -20,14 +16,14 @@ class SettingsRemindersViewController: UIViewController, UIGestureRecognizerDele
         return true
     }
     
-    // MARK: - Properties
-    
-    weak var delegate: SettingsRemindersViewControllerDelegate! = nil
-    
     // MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // TO DO split this page.
+        // pause all reminders will go on the family page
+        // snooze length will go on notifications
         
         snoozeLengthDatePicker.countDownDuration = UserConfiguration.snoozeLength
         
@@ -36,15 +32,12 @@ class SettingsRemindersViewController: UIViewController, UIGestureRecognizerDele
             self.snoozeLengthDatePicker.countDownDuration = UserConfiguration.snoozeLength
         }
         
-        isPausedSwitch.isOn = UserConfiguration.isPaused
-
+        isPausedSwitch.isOn = FamilyConfiguration.isPaused
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         AlertManager.globalPresenter = self
-        
-        synchronizeIsPaused()
     }
     
     // MARK: - Individual Settings
@@ -55,37 +48,7 @@ class SettingsRemindersViewController: UIViewController, UIGestureRecognizerDele
     
     /// If the pause all timers switch it triggered, calls thing function
     @IBAction private func didToggleIsPaused(_ sender: Any) {
-        
-        // TO DO re-enable the pause all reminders switch. to do so, make sure this feature syncs across all family members so that reminder timing (no matter where you are in the app) is accurate. also make this page sync so pause all reminders switch is updated if a fam member changed it.
-        
-        // save and changes values
-        let beforeUpdateIsPaused = UserConfiguration.isPaused
-        UserConfiguration.isPaused = isPausedSwitch.isOn
-        
-        // inform delegate so appropiate actions can be taken, e.g. stop all timers
-        delegate.didToggleIsPaused(newIsPaused: isPausedSwitch.isOn)
-        
-        let body = [ServerDefaultKeys.isPaused.rawValue: UserConfiguration.isPaused]
-        UserRequest.update(body: body) { requestWasSuccessful in
-            if requestWasSuccessful == false {
-                // error, revert to previous
-                UserConfiguration.isPaused = beforeUpdateIsPaused
-                self.delegate.didToggleIsPaused(newIsPaused: UserConfiguration.isPaused)
-                self.isPausedSwitch.setOn(UserConfiguration.isPaused, animated: true)
-            }
-        }
-    }
-    
-    /// Synchronizes the isPaused switch enable and isOn variables to reflect that amount of timers active, if non are active then locks user from changing switch
-    private func synchronizeIsPaused() {
-        isPausedSwitch.isOn = UserConfiguration.isPaused
-        // no timers enabled so no use for isPaused, therefore we disable it until enabled reminder
-        if MainTabBarViewController.staticDogManager.enabledTimersCount == 0 {
-            isPausedSwitch.isEnabled = false
-        }
-        else {
-            isPausedSwitch.isEnabled = true
-        }
+        TimingManager.willToggleIsPaused(forDogManager: MainTabBarViewController.staticDogManager, newIsPaused: isPausedSwitch.isOn)
     }
     
     // MARK: Snooze Length
@@ -96,7 +59,7 @@ class SettingsRemindersViewController: UIViewController, UIGestureRecognizerDele
         let beforeUpdateSnoozeLength = UserConfiguration.snoozeLength
         UserConfiguration.snoozeLength = snoozeLengthDatePicker.countDownDuration
         let body = [ServerDefaultKeys.snoozeLength.rawValue: UserConfiguration.snoozeLength]
-        UserRequest.update(body: body) { requestWasSuccessful in
+        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // error, revert to previous
                 UserConfiguration.snoozeLength = beforeUpdateSnoozeLength

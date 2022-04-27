@@ -83,7 +83,7 @@ class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDel
         }
 
         let body = [ServerDefaultKeys.isCompactView.rawValue: UserConfiguration.isCompactView]
-        UserRequest.update(body: body) { requestWasSuccessful in
+        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // error, revert to previous
                UserConfiguration.isCompactView = beforeUpdateIsCompactView

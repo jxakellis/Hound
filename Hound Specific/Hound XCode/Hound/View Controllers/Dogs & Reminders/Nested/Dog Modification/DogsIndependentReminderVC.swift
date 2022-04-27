@@ -39,7 +39,7 @@ class DogsIndependentReminderViewController: UIViewController {
                 // updating
                 saveReminderButton.beginQuerying()
                 saveReminderButtonBackground.beginQuerying()
-                RemindersRequest.update(forDogId: parentDogId, forReminder: updatedReminder!) { requestWasSuccessful in
+                RemindersRequest.update(invokeErrorManager: true, forDogId: parentDogId, forReminder: updatedReminder!) { requestWasSuccessful, _ in
                     self.saveReminderButton.endQuerying()
                     self.saveReminderButtonBackground.endQuerying()
                     if requestWasSuccessful == true {
@@ -52,7 +52,7 @@ class DogsIndependentReminderViewController: UIViewController {
             else {
                 saveReminderButton.beginQuerying()
                 saveReminderButtonBackground.beginQuerying(isBackgroundButton: true)
-                RemindersRequest.create(forDogId: parentDogId, forReminder: updatedReminder!) { reminder in
+                RemindersRequest.create(invokeErrorManager: true, forDogId: parentDogId, forReminder: updatedReminder!) { reminder, _ in
                     self.saveReminderButton.endQuerying()
                     self.saveReminderButtonBackground.endQuerying(isBackgroundButton: true)
                     // query complete
@@ -80,7 +80,7 @@ class DogsIndependentReminderViewController: UIViewController {
         let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.reminderAction.text ?? targetReminder!.displayActionName)?", message: nil, preferredStyle: .alert)
 
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-            RemindersRequest.delete(forDogId: self.parentDogId, forReminderId: self.targetReminder!.reminderId) { requestWasSuccessful in
+            RemindersRequest.delete(invokeErrorManager: true, forDogId: self.parentDogId, forReminderId: self.targetReminder!.reminderId) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
                         // persist data locally
                         self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, reminderId: self.targetReminder!.reminderId)

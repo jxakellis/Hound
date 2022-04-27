@@ -67,10 +67,6 @@ enum PersistenceManager {
             
             LocalConfiguration.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as? Bool ?? LocalConfiguration.isNotificationAuthorized
             
-            LocalConfiguration.lastPause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastPause.rawValue) as? Date
-            
-            LocalConfiguration.lastUnpause = UserDefaults.standard.value(forKey: UserDefaultsKeys.lastUnpause.rawValue) as? Date
-            
             LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedFamilyIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore
             LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore
             
@@ -87,7 +83,7 @@ enum PersistenceManager {
         // MARK: Loud Notifications and Silent Audio
         
         // Check to see if the user is eligible for loud notifications
-        if UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification && MainTabBarViewController.staticDogManager.hasEnabledReminder && !UserConfiguration.isPaused {
+        if UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification && MainTabBarViewController.staticDogManager.hasEnabledReminder && FamilyConfiguration.isPaused == false {
             // the user can have loud notifications
             if isTerminating == true {
                 // send the user an alert since their loud notifications won't work
@@ -122,8 +118,6 @@ enum PersistenceManager {
         UserDefaults.standard.set(encodedData, forKey: UserDefaultsKeys.dogIcons.rawValue)
         
         UserDefaults.standard.setValue(LocalConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
-        UserDefaults.standard.setValue(LocalConfiguration.lastPause, forKey: UserDefaultsKeys.lastPause.rawValue)
-        UserDefaults.standard.setValue(LocalConfiguration.lastUnpause, forKey: UserDefaultsKeys.lastUnpause.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.isShowReleaseNotes, forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedFamilyIntroductionViewControllerBefore.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue)

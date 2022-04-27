@@ -7,58 +7,6 @@ const { primarySchedule, secondarySchedule } = require('./schedules');
 const { areAllDefined } = require('../../database/validateFormat');
 
 /**
- * Cancels and deletes any primary and secondary job scheduled the reminderIds attached to the dogId
- */
-/*
-const deleteAlarmNotificationsForDog = async (familyId, dogId) => {
-  alarmLogger.debug(`deleteAlarmNotificationsForDog ${familyId}, ${dogId}`);
-
-  try {
-    if (areAllDefined([familyId, dogId]) === true) {
-      // finds all the reminders for the dog
-      const reminderIds = await queryPromise(
-        connectionForNotifications,
-        'SELECT reminderId FROM dogs WHERE dogId = ?',
-        [dogId],
-      );
-      // finds all the users in the family
-      const users = await queryPromise(
-        connectionForNotifications,
-        'SELECT userId FROM familyMembers WHERE familyId = ?',
-        [familyId],
-      );
-
-      // iterate through all the reminderIds to delete the primary and secondary
-      for (let i = 0; i < reminderIds.length; i += 1) {
-        const reminderId = reminderIds[i].reminderId;
-
-        // attempt to locate job that has the familyId and reminderId
-        const primaryJob = primarySchedule.scheduledJobs[`Family${familyId}Reminder${reminderId}`];
-        if (areAllDefined(primaryJob) === true) {
-          alarmLogger.debug(`Cancelling Primary Job: ${primaryJob.name}`);
-          primaryJob.cancel();
-        }
-
-        // iterate through all users for the family
-        for (let j = 0; j < users.length; j += 1) {
-          const user = users[j];
-          // if the users have any jobs on the secondary schedule for the reminder, remove them
-          const secondaryJob = secondarySchedule.scheduledJobs[`User${user.userId}Reminder${reminderId}`];
-          if (areAllDefined(secondaryJob) === true) {
-            alarmLogger.debug(`Cancelling Secondary Job: ${secondaryJob.name}`);
-            secondaryJob.cancel();
-          }
-        }
-      }
-    }
-  }
-  catch (error) {
-    alarmLogger.error(`deleteAlarmNotificationsForDog error: ${JSON.stringify(error)}`);
-  }
-};
-*/
-
-/**
  * Cancels and deletes any primary and secondary job scheduled with the provided reminderId
  */
 const deleteAlarmNotificationsForReminder = async (familyId, reminderId) => {

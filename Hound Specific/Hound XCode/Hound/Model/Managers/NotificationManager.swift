@@ -66,7 +66,7 @@ enum NotificationManager {
         }
         if body.keys.isEmpty == false {
             // something to update
-            UserRequest.update(body: body) { requestWasSuccessful in
+            UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
                 completionHandler(requestWasSuccessful)
             }
         }
@@ -131,7 +131,7 @@ enum NotificationManager {
                 body[ServerDefaultKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
             }
             if body.keys.isEmpty == false {
-                UserRequest.update(body: body) { requestWasSuccessful in
+                UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
                     if requestWasSuccessful == false {
                         // error, revert to previous
                         UserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled

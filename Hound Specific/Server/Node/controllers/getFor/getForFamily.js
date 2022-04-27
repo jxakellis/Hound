@@ -2,7 +2,7 @@ const DatabaseError = require('../../utils/errors/databaseError');
 const { queryPromise } = require('../../utils/database/queryPromise');
 
 /**
- * Returns the familyCode, familyIsLocked, and  familyMembers for the familyId. Errors not handled
+ * Returns the familyCode, isLocked, and  familyMembers for the familyId. Errors not handled
  */
 const getFamilyInformationForFamilyIdQuery = async (req, familyId) => {
   // family id is validated, therefore we know familyMembers is >= 1 for familyId
@@ -14,24 +14,15 @@ const getFamilyInformationForFamilyIdQuery = async (req, familyId) => {
       [familyId],
     );
     // find which family member is the head
-    const familyHead = await queryPromise(
+    let family = await queryPromise(
       req,
-      'SELECT userId, familyIsLocked, familyCode FROM familyHeads WHERE familyId = ?',
+      'SELECT userId, isLocked, familyCode, isPaused, lastPause, lastUnpause FROM families WHERE familyId = ?',
       [familyId],
     );
 
-    // iterate through familyMembers
-    for (let i = 0; i < familyMembers.length; i += 1) {
-      // find which family member is also a family head
-      if (familyMembers[i].userId === familyHead[0].userId) {
-        // set isFamilyHead property to true
-        familyMembers[i].isFamilyHead = true;
-        break;
-      }
-    }
+    family = family[0];
     const result = {
-      familyCode: familyHead[0].familyCode,
-      familyIsLocked: familyHead[0].familyIsLocked,
+      ...family,
       familyMembers,
     };
     return result;

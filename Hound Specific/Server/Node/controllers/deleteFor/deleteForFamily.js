@@ -4,13 +4,13 @@ const { queryPromise } = require('../../utils/database/queryPromise');
 const { deleteDogsQuery } = require('./deleteForDogs');
 
 /**
- *  Queries the database to either remove the user from their current family (familyMember) or delete the family and everything nested under it (familyHead).
+ *  Queries the database to either remove the user from their current family (familyMember) or delete the family and everything nested under it (families).
  *  If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
 const deleteFamilyQuery = async (req, userId, familyId) => {
   let familyMembers;
-  let familyHeads;
+  let family;
   try {
     // find the amount of family members in the family
     familyMembers = await queryPromise(
@@ -19,9 +19,9 @@ const deleteFamilyQuery = async (req, userId, familyId) => {
       [familyId],
     );
     // find out if the user is the family head
-    familyHeads = await queryPromise(
+    family = await queryPromise(
       req,
-      'SELECT userId FROM familyHeads WHERE familyId = ? AND userId = ?',
+      'SELECT userId FROM families WHERE familyId = ? AND userId = ?',
       [familyId, userId],
     );
   }
@@ -30,13 +30,13 @@ const deleteFamilyQuery = async (req, userId, familyId) => {
   }
 
   // User is the head of the family, so has obligation to it.
-  if (familyHeads.length === 1) {
+  if (family.length === 1) {
   // The user is the only person in the family.
     if (familyMembers.length === 1) {
       // can destroy the family
       try {
         // delete all the family heads (should be one)
-        await queryPromise(req, 'DELETE FROM familyHeads WHERE familyId = ?', [familyId]);
+        await queryPromise(req, 'DELETE FROM families WHERE familyId = ?', [familyId]);
         // deletes all users from the family
         await queryPromise(req, 'DELETE FROM familyMembers WHERE familyId = ?', [familyId]);
       }

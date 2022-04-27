@@ -16,7 +16,7 @@ TRUNCATE TABLE reminderMonthlyComponents;
 
 INSERT INTO users (userFirstName, userLastName, userEmail, userIdentifier) VALUES
 ('Joe', 'Smith', 'joesmith@gmail.com', '38523iuhfu23buyfuy42'),
-('Testing', 'Account', 'testing@gmail.com', 'uhq3iufnu3ubyfeuy3');
+('Bob', 'Smith', 'bobsmith@gmail.com', 's8523iuhfu23buyfuy42');
 
 INSERT INTO userConfiguration (
 userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isPaused, isCompactView,
@@ -26,11 +26,10 @@ interfaceStyle, snoozeLength, notificationSound) VALUES
 
 INSERT INTO familyMembers(familyId, userId) VALUES
 (1,1),
-(2,2);
+(1,2);
 
 INSERT INTO familyHeads(userId, familyCode, familyIsLocked) VALUES
-(1, 'TEMPCOD1', false),
-(2, 'TEMPCOD2', false);
+(1, 'TEMPCOD1', false);
 
 INSERT INTO dogs(familyId, dogName) VALUES
 (1, 'Bella'),
@@ -41,11 +40,11 @@ INSERT INTO dogLogs (dogId, logDate, logNote, logAction) VALUES
 (1, '2021-11-16 14:00:00', 'big poop', 6),
 (2, '2021-11-16 13:00:00', '', 7);
 
-INSERT INTO dogReminders (dogId, reminderAction, reminderType, reminderExecutionBasis, reminderIsEnabled) VALUES
-(1, 'Feed', 'countdown', '2021-11-16 12:00:00', true),
-(1, 'Fresh Water', 'countdown', '2021-11-16 14:00:00', true),
-(2, 'Feed', 'monthly', '2021-11-16 12:00:00', true),
-(2, 'Potty', 'weekly', '2021-11-16 15:00:00', true);
+INSERT INTO dogReminders (dogId, reminderAction, reminderType, reminderExecutionBasis, reminderExecutionDate, reminderIsEnabled) VALUES
+(1, 'Feed', 'countdown', '2021-11-16 12:00:00', '2022-3-15 12:00:00', true),
+(1, 'Fresh Water', 'countdown', '2021-11-16 14:00:00', '2022-3-15 12:00:00', true),
+(2, 'Feed', 'monthly', '2021-11-16 12:00:00', '2022-3-15 12:00:00', true),
+(2, 'Potty', 'weekly', '2021-11-16 15:00:00', '2022-3-15 12:00:00', true);
 
 INSERT INTO reminderCountdownComponents (reminderId, countdownExecutionInterval, countdownIntervalElapsed) VALUES
 (1, 18000, 0),

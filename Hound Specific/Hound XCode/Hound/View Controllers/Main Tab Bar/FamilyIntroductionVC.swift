@@ -88,7 +88,7 @@ class FamilyIntroductionViewController: UIViewController, UITextFieldDelegate, U
             let dog = try! Dog(dogName: dogName ?? DogConstant.defaultDogName, dogIcon: dogIcon ?? DogConstant.defaultDogIcon)
             
             // contact server to make their dog
-            DogsRequest.create(forDog: dog) { dogId in
+            DogsRequest.create(invokeErrorManager: true, forDog: dog) { dogId, _ in
                 if dogId != nil {
                     // go to next page if dog good
                     dog.dogId = dogId!

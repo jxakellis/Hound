@@ -19,10 +19,14 @@ enum ServerDefaultKeys: String {
     
     // MARK: Family Information & Members
     
-    case familyIsLocked
-    case familyCode
     case familyMembers
     case isFamilyHead
+    
+    case isLocked
+    case familyCode
+    case isPaused
+    case lastPause
+    case lastUnpause
     
     // MARK: User Information
     
@@ -39,7 +43,6 @@ enum ServerDefaultKeys: String {
     case isCompactView
     case interfaceStyle
     case snoozeLength
-    case isPaused
     case isNotificationAuthorized
     case isNotificationEnabled
     case isLoudNotification

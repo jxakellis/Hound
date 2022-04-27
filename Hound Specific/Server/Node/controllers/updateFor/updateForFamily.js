@@ -3,7 +3,7 @@ const ValidationError = require('../../utils/errors/validationError');
 
 const { queryPromise } = require('../../utils/database/queryPromise');
 const {
-  formatBoolean, areAllDefined,
+  formatBoolean, formatDate, areAllDefined,
 } = require('../../utils/database/validateFormat');
 
 /**
@@ -20,14 +20,38 @@ const updateFamilyQuery = async (req) => {
   }
   // familyId exists, so we update values the traditional way
   else {
-    const familyIsLocked = formatBoolean(req.body.familyIsLocked);
+    const isLocked = formatBoolean(req.body.isLocked);
+    const isPaused = formatBoolean(req.body.isPaused);
+    const lastPause = formatDate(req.body.lastPause);
+    const lastUnpause = formatDate(req.body.lastUnpause);
 
     try {
-      if (areAllDefined(familyIsLocked)) {
+      if (areAllDefined(isLocked)) {
         await queryPromise(
           req,
-          'UPDATE familyHeads SET familyIsLocked = ? WHERE familyId = ?',
-          [familyIsLocked, familyId],
+          'UPDATE families SET isLocked = ? WHERE familyId = ?',
+          [isLocked, familyId],
+        );
+      }
+      if (areAllDefined(isPaused)) {
+        await queryPromise(
+          req,
+          'UPDATE families SET isPaused = ? WHERE familyId = ?',
+          [isPaused, familyId],
+        );
+      }
+      if (areAllDefined(lastPause)) {
+        await queryPromise(
+          req,
+          'UPDATE families SET lastPause = ? WHERE familyId = ?',
+          [lastPause, familyId],
+        );
+      }
+      if (areAllDefined(lastUnpause)) {
+        await queryPromise(
+          req,
+          'UPDATE families SET lastUnpause = ? WHERE familyId = ?',
+          [lastUnpause, familyId],
         );
       }
     }
@@ -53,7 +77,7 @@ const addFamilyMemberQuery = async (req) => {
     // retrieve information about the family linked to the familyCode
     result = await queryPromise(
       req,
-      'SELECT familyId, familyIsLocked FROM familyHeads WHERE familyCode = ?',
+      'SELECT familyId, isLocked FROM families WHERE familyCode = ?',
       [familyCode],
     );
   }
@@ -67,10 +91,10 @@ const addFamilyMemberQuery = async (req) => {
     throw new ValidationError('familyCode invalid, not found', 'ER_NOT_FOUND');
   }
   result = result[0];
-  const isLocked = formatBoolean(result.familyIsLocked);
+  const isLocked = formatBoolean(result.isLocked);
   // familyCode exists and is linked to a family, now check if family is locked against new members
   if (isLocked === true) {
-    throw new ValidationError('familyCode locked', 'ER_FAMILY_LOCKED');
+    throw new ValidationError('Family is locked', 'ER_FAMILY_LOCKED');
   }
 
   // the familyCode is valid and linked to an UNLOCKED family

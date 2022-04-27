@@ -12,7 +12,7 @@ const getUserForUserIdQuery = async (req, userId) => {
     // have to specifically reference the columns, otherwise familyMembers.userId will override users.userId.
     // Therefore setting userId to null (if there is no family member) even though the userId isn't null.
     const userInformationSelect = 'users.userId, users.userIdentifier, users.userFirstName, users.userLastName, users.userEmail';
-    const userConfigurationSelect = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.isPaused, userConfiguration.isCompactView, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';
+    const userConfigurationSelect = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.isCompactView, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';
     userInformation = await queryPromise(
       req,
       `SELECT ${userInformationSelect}, familyMembers.familyId, ${userConfigurationSelect} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userId = ?`,
@@ -44,7 +44,7 @@ const getUserForUserIdentifierQuery = async (req, userIdentifier) => {
     // have to specifically reference the columns, otherwise familyMembers.userId will override users.userId.
     // Therefore setting userId to null (if there is no family member) even though the userId isn't null.
     const userInformationSelect = 'users.userId, users.userIdentifier, users.userFirstName, users.userLastName, users.userEmail';
-    const userConfigurationSelect = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.isPaused, userConfiguration.isCompactView, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';
+    const userConfigurationSelect = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.isCompactView, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';
     userInformation = await queryPromise(
       req,
       `SELECT ${userInformationSelect}, familyMembers.familyId, ${userConfigurationSelect} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userIdentifier = ?`,

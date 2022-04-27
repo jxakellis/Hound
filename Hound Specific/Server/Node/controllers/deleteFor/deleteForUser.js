@@ -10,7 +10,7 @@ const { deleteSecondaryAlarmNotificationsForUser } = require('../../utils/notifi
  */
 const deleteUserQuery = async (req, userId, familyId) => {
   let familyMembers;
-  let familyHeads;
+  let family;
   try {
     // find the amount of family members in the family
     familyMembers = await queryPromise(
@@ -19,9 +19,9 @@ const deleteUserQuery = async (req, userId, familyId) => {
       [familyId],
     );
     // find out if the user is the family head
-    familyHeads = await queryPromise(
+    family = await queryPromise(
       req,
-      'SELECT userId FROM familyHeads WHERE familyId = ? AND userId = ?',
+      'SELECT userId FROM families WHERE familyId = ? AND userId = ?',
       [familyId, userId],
     );
   }
@@ -30,21 +30,21 @@ const deleteUserQuery = async (req, userId, familyId) => {
   }
 
   // Either:
-  // 1. user not familyHead, so they can leave family and we can delete the user
-  // 2. user is familyHead but only familyMember, so we can delete the family and delete the user
-  if (familyHeads.length === 0 || (familyHeads.length === 1 && familyMembers.length === 1)) {
+  // 1. user not head of family, so they can leave family and we can delete the user
+  // 2. user is head of family but only familyMember, so we can delete the family and delete the user
+  if (family.length === 0 || (family.length === 1 && familyMembers.length === 1)) {
     try {
-      if (familyHeads.length === 1 && familyMembers.length === 1) {
-        // User is the ONLY family member and the familyHead. We will delete the family
+      if (family.length === 1 && familyMembers.length === 1) {
+        // User is the ONLY family member and the head of the family. We will delete the family
 
         // delete the family head which is the user
-        await queryPromise(req, 'DELETE FROM familyHeads WHERE userId = ?', [userId]);
+        await queryPromise(req, 'DELETE FROM families WHERE familyId = ?', [familyId]);
         // delete all the dogs in the family since deleting the family
         await deleteDogsQuery(req, userId, familyId);
       }
       // No matter what, we delete the user and their information
       // deletes user from family
-      await queryPromise(req, 'DELETE FROM familyMembers WHERE userId = ?', [userId]);
+      await queryPromise(req, 'DELETE FROM familyMembers WHERE familyId = ?', [familyId]);
       // delete userConfiguration
       await queryPromise(req, 'DELETE FROM userConfiguration WHERE userId = ?', [userId]);
       // deletes user

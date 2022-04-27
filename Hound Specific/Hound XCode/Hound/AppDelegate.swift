@@ -59,7 +59,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         if token != UserInformation.userNotificationToken {
             UserInformation.userNotificationToken = token
-            UserRequest.update(body: [ServerDefaultKeys.userNotificationToken.rawValue: UserInformation.userNotificationToken!]) { _ in
+            // don't sent the user an alert if this request fails as there is no point
+            UserRequest.update(invokeErrorManager: false, body: [ServerDefaultKeys.userNotificationToken.rawValue: UserInformation.userNotificationToken!]) { _, _ in
                 // do nothing
             }
         }

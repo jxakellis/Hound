@@ -6,7 +6,8 @@ const createMonthlyComponents = async (req, reminder) => {
   const monthlyMinute = formatNumber(reminder.monthlyMinute);
   const monthlyDay = formatNumber(reminder.monthlyDay);
 
-  // Errors intentionally uncaught so they are passed to invocation in reminders
+  // TO DO add check that all components are defined (or throw validation error)
+
   // Newly created monthly reminder cant be monthlyIsSkipping, so no need for skip data
   await queryPromise(
     req,
@@ -23,6 +24,8 @@ const updateMonthlyComponents = async (req, reminder) => {
   const monthlyIsSkipping = formatBoolean(reminder.monthlyIsSkipping);
   const monthlyIsSkippingDate = formatDate(reminder.monthlyIsSkippingDate);
 
+  // TO DO add check that all components are defined (or throw validation error)
+
   try {
     // If this succeeds: Reminder was not present in the monthly table and the reminderType was changed. The old components will be deleted from the other table by reminders
     // If this fails: The components provided are invalid or reminder already present in table (reminderId UNIQUE in DB)
@@ -36,20 +39,11 @@ const updateMonthlyComponents = async (req, reminder) => {
   catch (error) {
     // If this succeeds: Reminder was present in the monthly table, reminderType didn't change, and the components were successfully updated
     // If this fails: The components provided are invalid. It is uncaught here to intentionally be caught by invocation from reminders.
-    if (monthlyIsSkipping === true) {
-      await queryPromise(
-        req,
-        'UPDATE reminderMonthlyComponents SET monthlyHour = ?, monthlyMinute = ?, monthlyDay = ?, monthlyIsSkipping = ?, monthlyIsSkippingDate = ? WHERE reminderId = ?',
-        [monthlyHour, monthlyMinute, monthlyDay, monthlyIsSkipping, monthlyIsSkippingDate, reminder.reminderId],
-      );
-    }
-    else {
-      await queryPromise(
-        req,
-        'UPDATE reminderMonthlyComponents SET monthlyHour = ?, monthlyMinute = ?, monthlyDay = ?, monthlyIsSkipping = ?  WHERE reminderId = ?',
-        [monthlyHour, monthlyMinute, monthlyDay, monthlyIsSkipping, reminder.reminderId],
-      );
-    }
+    await queryPromise(
+      req,
+      'UPDATE reminderMonthlyComponents SET monthlyHour = ?, monthlyMinute = ?, monthlyDay = ?, monthlyIsSkipping = ?, monthlyIsSkippingDate = ? WHERE reminderId = ?',
+      [monthlyHour, monthlyMinute, monthlyDay, monthlyIsSkipping, monthlyIsSkippingDate, reminder.reminderId],
+    );
   }
 };
 

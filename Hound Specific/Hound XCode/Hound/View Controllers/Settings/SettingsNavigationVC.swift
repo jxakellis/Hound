@@ -8,21 +8,9 @@
 
 import UIKit
 
-protocol SettingsNavigationViewControllerDelegate: AnyObject {
-    func didToggleIsPaused(newIsPaused: Bool)
-}
-
-class SettingsNavigationViewController: UINavigationController, SettingsViewControllerDelegate {
-
-    // MARK: - SettingsViewControllerDelegate
-
-    func didToggleIsPaused(newIsPaused: Bool) {
-        passThroughDelegate.didToggleIsPaused(newIsPaused: newIsPaused)
-    }
+class SettingsNavigationViewController: UINavigationController {
 
     // MARK: - Properties
-
-    weak var passThroughDelegate: SettingsNavigationViewControllerDelegate! = nil
 
     var settingsViewController: SettingsViewController! = nil
 
@@ -32,7 +20,6 @@ class SettingsNavigationViewController: UINavigationController, SettingsViewCont
         super.viewDidLoad()
 
         settingsViewController = self.viewControllers[0] as? SettingsViewController
-        settingsViewController.delegate = self
     }
 
     /*

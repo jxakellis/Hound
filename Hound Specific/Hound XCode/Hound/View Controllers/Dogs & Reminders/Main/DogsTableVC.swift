@@ -122,7 +122,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
     
     /// Makes a query to the server to retrieve new information then refreshed the tableView
     @objc private func refreshTableData() {
-        RequestUtils.getDogManager { dogManager in
+        RequestUtils.getDogManager(invokeErrorManager: true) { dogManager, _ in
             // end refresh first otherwise there will be a weird visual issue
             self.tableView.refreshControl?.endRefreshing()
             if dogManager != nil {
@@ -201,7 +201,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
             let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogName)?", message: nil, preferredStyle: .alert)
 
             let removeDogConfirmationRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-                DogsRequest.delete(forDogId: dogId) { requestWasSuccessful in
+                DogsRequest.delete(invokeErrorManager: true, forDogId: dogId) { requestWasSuccessful, _ in
                     if requestWasSuccessful == true {
                             try! sudoDogManager.removeDog(forDogId: dogId)
                             self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
@@ -255,7 +255,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
             let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(reminder.displayActionName)?", message: nil, preferredStyle: .alert)
 
             let removeReminderConfirmationRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-                RemindersRequest.delete(forDogId: dog.dogId, forReminderId: reminder.reminderId) { requestWasSuccessful in
+                RemindersRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forReminderId: reminder.reminderId) { requestWasSuccessful, _ in
                         if requestWasSuccessful == true {
                             try! dog.dogReminders.removeReminder(forReminderId: reminder.reminderId)
                             self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
@@ -423,9 +423,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
                 removeConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(reminder.displayActionName)?", message: nil, preferredStyle: .alert)
 
                 let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-                    // query server
-                    
-                    RemindersRequest.delete(forDogId: dogId, forReminderId: reminder.reminderId) { requestWasSuccessful in
+                    RemindersRequest.delete(invokeErrorManager: true, forDogId: dogId, forReminderId: reminder.reminderId) { requestWasSuccessful, _ in
                         if requestWasSuccessful == true {
                                 try! dog.dogReminders.removeReminder(forReminderId: reminder.reminderId)
                                 self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
@@ -447,7 +445,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
                 removeConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogCell.dog.dogName)?", message: nil, preferredStyle: .alert)
 
                 let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-                    DogsRequest.delete(forDogId: dogId) { requestWasSuccessful in
+                    DogsRequest.delete(invokeErrorManager: true, forDogId: dogId) { requestWasSuccessful, _ in
                          if requestWasSuccessful == true {
                                 try! sudoDogManager.removeDog(forDogId: dogId)
                                 self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)

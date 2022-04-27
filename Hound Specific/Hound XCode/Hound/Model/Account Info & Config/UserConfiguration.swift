@@ -38,9 +38,6 @@ enum UserConfiguration {
         if let snoozeLength = body[ServerDefaultKeys.snoozeLength.rawValue] as? TimeInterval {
             storedSnoozeLength = snoozeLength
         }
-        if let isPaused = body[ServerDefaultKeys.isPaused.rawValue] as? Bool {
-            storedIsPaused = isPaused
-        }
         if let isNotificationEnabled = body[ServerDefaultKeys.isNotificationEnabled.rawValue] as? Bool {
             storedIsNotificationEnabled = isNotificationEnabled
         }
@@ -100,20 +97,6 @@ enum UserConfiguration {
                 return
             }
             storedSnoozeLength = newSnoozeLength
-        }
-    }
-    
-    static private var storedIsPaused: Bool = false
-    /// Saves state isPaused, self.isPaused can be modified by SettingsViewController but this is only when there are no active timers and pause is automatically set to unpaused
-    static var isPaused: Bool {
-        get {
-            return storedIsPaused
-        }
-        set (newIsPaused) {
-            guard newIsPaused != storedIsPaused else {
-                return
-            }
-            storedIsPaused = newIsPaused
         }
     }
     

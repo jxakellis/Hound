@@ -16,7 +16,6 @@ const getFamily = async (req, res) => {
   if (familyId) {
     try {
       const result = await getFamilyInformationForFamilyIdQuery(req, familyId);
-      // array can't be empty as familyId verified
       await req.commitQueries(req);
       return res.status(200).json({ result });
     }

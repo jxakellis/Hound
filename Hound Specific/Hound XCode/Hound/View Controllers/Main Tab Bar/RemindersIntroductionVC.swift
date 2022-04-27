@@ -38,16 +38,17 @@ class RemindersIntroductionViewController: UIViewController {
             if self.dogManager.hasCreatedReminder == false && self.remindersToggleSwitch.isOn == true {
                 // the user has a dog to add the default reminders too
                 if self.dogManager.hasCreatedDog == true {
-                    RemindersRequest.create(forDogId: self.dogManager.dogs[0].dogId, forReminders: ReminderConstant.defaultReminders) { reminders in
-                        // if we were able to add the reminders, then append to the dogManager
-                        // if there was an error, then it will tell the user
+                    RemindersRequest.create(invokeErrorManager: true, forDogId: self.dogManager.dogs[0].dogId, forReminders: ReminderConstant.defaultReminders) { reminders, _ in
+                       
+                        // dont let the user close this menu without adding a dog.
                         if reminders != nil {
+                            // if we were able to add the reminders, then append to the dogManager
                             self.dogManager.dogs[0].dogReminders.addReminder(newReminders: reminders!)
+                            self.delegate.didComplete(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                            LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = true
+                            self.dismiss(animated: true, completion: nil)
                         }
                         self.continueButton.isEnabled = true
-                        self.delegate.didComplete(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
-                        LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = true
-                        self.dismiss(animated: true, completion: nil)
                     }
                 }
                 // the user has no dog to add the default reminders too

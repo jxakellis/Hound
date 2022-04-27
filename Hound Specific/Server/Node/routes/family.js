@@ -12,11 +12,11 @@ router.param('familyId', validateFamilyId);
 
 // router.use('/:familyId', validateFamilyId);
 
-// gets family with userId then return information from familyHead and familyMembers table
+// gets family with userId then return information from families and familyMembers table
 router.get('/', getFamily);
 // no body
 
-// gets family with familyId then return information from familyHead and familyMembers table
+// gets family with familyId then return information from families and familyMembers table
 router.get('/:familyId', getFamily);
 // no body
 

@@ -16,10 +16,9 @@ enum RemindersRequest: RequestProtocol {
     // MARK: - Private Functions
     
     /**
-     reminderId optional, providing it only returns the single reminder (if found) otherwise returns all reminders
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func get(forDogId dogId: Int, forReminderId reminderId: Int?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    private static func internalGet(invokeErrorManager: Bool, forDogId dogId: Int, forReminderId reminderId: Int?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
         InternalRequestUtils.warnForPlaceholderId(dogId: dogId, reminderId: reminderId)
         let URLWithParams: URL
@@ -32,32 +31,8 @@ enum RemindersRequest: RequestProtocol {
             URLWithParams = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders")
         }
         
-        // make get request
-        InternalRequestUtils.genericGetRequest(forURL: URLWithParams) { responseBody, responseStatus in
+        InternalRequestUtils.genericGetRequest(invokeErrorManager: invokeErrorManager, forURL: URLWithParams) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
-        }
-        
-    }
-    
-    /**
-     completionHandler returns response data: reminderId for the created reminder and the ResponseStatus
-     */
-    private static func create(forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Reminder?, ResponseStatus) -> Void) {
-        
-        InternalRequestUtils.warnForPlaceholderId(dogId: dogId)
-        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
-        
-        let body = InternalRequestUtils.createReminderBody(reminder: reminder)
-        // make post request, assume body valid as constructed with method
-        InternalRequestUtils.genericPostRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
-            if responseBody != nil, let remindersJSONArray = responseBody![ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
-                // only one reminder
-                let reminder = Reminder(fromBody: remindersJSONArray[0])
-                completionHandler(reminder, responseStatus)
-            }
-            else {
-                completionHandler(nil, responseStatus)
-            }
         }
         
     }
@@ -65,54 +40,30 @@ enum RemindersRequest: RequestProtocol {
     /**
      completionHandler returns response data: created reminder with reminderId and the ResponseStatus
      */
-    private static func create(forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping ([Reminder]?, ResponseStatus) -> Void) {
+    private static func internalCreate(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
         InternalRequestUtils.warnForPlaceholderId(dogId: dogId)
         let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
         
         let body = InternalRequestUtils.createRemindersBody(reminders: reminders)
-        // make post request, assume body valid as constructed with method
-        InternalRequestUtils.genericPostRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
-            if responseBody != nil, let remindersJSONArray = responseBody![ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
-                var reminderArray: [Reminder] = []
-                for reminderJSON in remindersJSONArray {
-                    reminderArray.append(Reminder(fromBody: reminderJSON))
-                }
-                completionHandler(reminderArray, responseStatus)
-            }
-            else {
-                completionHandler(nil, responseStatus)
-            }
-        }
         
-    }
-    
-    /**
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
-     */
-    private static func update(forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        
-        InternalRequestUtils.warnForPlaceholderId(dogId: dogId, reminderId: reminder.reminderId)
-        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
-        
-        let body = InternalRequestUtils.createReminderBody(reminder: reminder)
-        // make put request, assume body valid as constructed with method
-        InternalRequestUtils.genericPutRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
+        
     }
     
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func update(forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    private static func internalUpdate(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
         InternalRequestUtils.warnForPlaceholderId(dogId: dogId, reminders: reminders)
         let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
         
         let body = InternalRequestUtils.createRemindersBody(reminders: reminders)
-        // make put request, assume body valid as constructed with method
-        InternalRequestUtils.genericPutRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
+        
+        InternalRequestUtils.genericPutRequest(invokeErrorManager: invokeErrorManager, forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
     }
@@ -120,30 +71,13 @@ enum RemindersRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func delete(forDogId dogId: Int, forReminderId reminderId: Int, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        
-        InternalRequestUtils.warnForPlaceholderId(dogId: dogId, reminderId: reminderId)
-        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
-        let body = InternalRequestUtils.createReminderIdBody(reminderId: reminderId)
-        
-        // make delete request
-        InternalRequestUtils.genericDeleteRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
-            completionHandler(responseBody, responseStatus)
-        }
-        
-    }
-    
-    /**
-     completionHandler returns response data: dictionary of the body and the ResponseStatus
-     */
-    private static func delete(forDogId dogId: Int, forReminderIds reminderIds: [Int], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    private static func internalDelete(invokeErrorManager: Bool, forDogId dogId: Int, forReminderIds reminderIds: [Int], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
         InternalRequestUtils.warnForPlaceholderId(dogId: dogId, reminderIds: reminderIds)
         let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
         let body = InternalRequestUtils.createReminderIdsBody(reminderIds: reminderIds)
         
-        // make delete request
-        InternalRequestUtils.genericDeleteRequest(forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
+        InternalRequestUtils.genericDeleteRequest(invokeErrorManager: invokeErrorManager, forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -156,214 +90,172 @@ extension RemindersRequest {
     // MARK: - Public Functions
     
     /**
-     completionHandler returns a reminder. If the query returned a 200 status and is successful, then the reminder is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
+     completionHandler returns a possible reminder and the ResponseStatus.
+     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func get(forDogId dogId: Int, forReminderId reminderId: Int, completionHandler: @escaping (Reminder?) -> Void) {
+    static func get(invokeErrorManager: Bool, forDogId dogId: Int, forReminderId reminderId: Int, completionHandler: @escaping (Reminder?, ResponseStatus) -> Void) {
         
-        // make get request
-        RemindersRequest.get(forDogId: dogId, forReminderId: reminderId) { responseBody, responseStatus in
+        RemindersRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminderId: reminderId) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                // Array of reminder JSON [{reminder1:'foo'},{reminder2:'bar'}]
-                if let result = responseBody![ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
-                    let reminder = Reminder(fromBody: result[0])
-                    // able to add all
-                    DispatchQueue.main.async {
-                        completionHandler(reminder)
-                    }
+                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
+                    completionHandler(Reminder(fromBody: result[0]), responseStatus)
                 }
                 else {
-                    DispatchQueue.main.async {
-                        completionHandler(nil)
-                        ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
-                    }
+                    completionHandler(nil, responseStatus)
                 }
             case .failureResponse:
-                DispatchQueue.main.async {
-                    completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
-                }
-                
+                completionHandler(nil, responseStatus)
             case .noResponse:
-                DispatchQueue.main.async {
-                    completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.noGetResponse)
-                }
+                completionHandler(nil, responseStatus)
             }
         }
     }
     
     /**
-     ccompletionHandler returns an array of reminders. If the query returned a 200 status and is successful, then the array of reminders is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
+     completionHandler returns a possible array of reminders and the ResponseStatus.
+     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func getAll(forDogId dogId: Int, completionHandler: @escaping ([Reminder]?) -> Void) {
+    static func get(invokeErrorManager: Bool, forDogId dogId: Int, completionHandler: @escaping ([Reminder]?, ResponseStatus) -> Void) {
         
-        // make get request
-        RemindersRequest.get(forDogId: dogId, forReminderId: nil) { responseBody, responseStatus in
-            
+        RemindersRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminderId: nil) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                // Array of reminder JSON [{reminder1:'foo'},{reminder2:'bar'}]
-                if let result = responseBody![ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
+                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
                     var reminderArray: [Reminder] = []
                     for reminderBody in result {
                         let reminder = Reminder(fromBody: reminderBody)
                         reminderArray.append(reminder)
                     }
-                    // able to add all
-                    DispatchQueue.main.async {
-                        completionHandler(reminderArray)
-                    }
+                    completionHandler(reminderArray, responseStatus)
                 }
                 else {
-                    DispatchQueue.main.async {
-                        completionHandler(nil)
-                        ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
-                    }
+                    completionHandler(nil, responseStatus)
                 }
             case .failureResponse:
-                DispatchQueue.main.async {
-                    completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
-                }
-                
+                completionHandler(nil, responseStatus)
             case .noResponse:
-                DispatchQueue.main.async {
-                    completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.noGetResponse)
-                }
+                completionHandler(nil, responseStatus)
             }
         }
     }
     
     /**
-     completionHandler returns a Int. If the query returned a 200 status and is successful, then reminderId is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
+     completionHandler returns a possible reminder and the ResponseStatus.
+     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func create(forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Reminder?) -> Void) {
+    static func create(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Reminder?, ResponseStatus) -> Void) {
         
-        RemindersRequest.create(forDogId: dogId, forReminder: reminder) { reminder, responseStatus in
-            DispatchQueue.main.async {
-                switch responseStatus {
-                case .successResponse:
-                    if reminder != nil {
-                        completionHandler(reminder!)
-                    }
-                    else {
-                        ErrorManager.alert(forError: GeneralResponseError.failurePostResponse)
-                    }
-                case .failureResponse:
-                    completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.failurePostResponse)
-                case .noResponse:
-                    completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.noPostResponse)
+        RemindersRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: [reminder]) { responseBody, responseStatus in
+            switch responseStatus {
+            case .successResponse:
+                if let remindersBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
+                    completionHandler(Reminder(fromBody: remindersBody[0]), responseStatus)
                 }
+                else {
+                    completionHandler(nil, responseStatus)
+                }
+            case .failureResponse:
+                completionHandler(nil, responseStatus)
+            case .noResponse:
+                completionHandler(nil, responseStatus)
             }
         }
     }
     
     /**
-     completionHandler returns an array of reminders. If the queries all returned a 200 status and are successful, then the reminder array with reminderIds is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked (only once).
+     completionHandler returns a possible array of reminders and the ResponseStatus.
+     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func create(forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping ([Reminder]?) -> Void) {
-        RemindersRequest.create(forDogId: dogId, forReminders: reminders) { reminders, responseStatus in
-           DispatchQueue.main.async {
-                switch responseStatus {
-                case .successResponse:
-                    if reminders != nil {
-                        completionHandler(reminders!)
-                    }
-                    else {
-                        ErrorManager.alert(forError: GeneralResponseError.failurePostResponse)
-                    }
-                case .failureResponse:
-                    completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.failurePostResponse)
-                case .noResponse:
-                    completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.noPostResponse)
-                }
-            }
-        }
-    }
-    
-    /**
-     completionHandler returns a Bool. If the query returned a 200 status and is successful, then true is returned. Otherwise, if there was a problem, false is returned and ErrorManager is automatically invoked.
-     */
-    static func update(forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Bool) -> Void) {
+    static func create(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping ([Reminder]?, ResponseStatus) -> Void) {
         
-        RemindersRequest.update(forDogId: dogId, forReminder: reminder) { _, responseStatus in
-            DispatchQueue.main.async {
-                switch responseStatus {
-                case .successResponse:
-                    completionHandler(true)
-                case .failureResponse:
-                    completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.failurePutResponse)
-                case .noResponse:
-                    completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.noPutResponse)
+        RemindersRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: reminders) { responseBody, responseStatus in
+            switch responseStatus {
+            case .successResponse:
+                if let remindersBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
+                    var reminderArray: [Reminder] = []
+                    for reminderBody in remindersBody {
+                        reminderArray.append(Reminder(fromBody: reminderBody))
+                    }
+                    completionHandler(reminderArray, responseStatus)
                 }
+                else {
+                    completionHandler(nil, responseStatus)
+                }
+            case .failureResponse:
+                completionHandler(nil, responseStatus)
+            case .noResponse:
+                completionHandler(nil, responseStatus)
             }
         }
     }
     
     /**
-     completionHandler returns a boolean. If the queries all returned a 200 status and are successful, then true is returned. Otherwise, if there was a problem, false is returned and ErrorManager is automatically invoked (only once).
+     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
+     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func update(forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping (Bool) -> Void) {
-        RemindersRequest.update(forDogId: dogId, forReminders: reminders) { _, responseStatus in
-            DispatchQueue.main.async {
-                switch responseStatus {
-                case .successResponse:
-                    completionHandler(true)
-                case .failureResponse:
-                    completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.failurePutResponse)
-                case .noResponse:
-                    completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.noPutResponse)
-                }
+    static func update(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
+        
+        RemindersRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: [reminder]) { _, responseStatus in
+            switch responseStatus {
+            case .successResponse:
+                completionHandler(true, responseStatus)
+            case .failureResponse:
+                completionHandler(false, responseStatus)
+            case .noResponse:
+                completionHandler(false, responseStatus)
             }
         }
     }
     
     /**
-     completionHandler returns a Bool. If the query returned a 200 status and is successful, then true is returned. Otherwise, if there was a problem, false is returned and ErrorManager is automatically invoked.
+     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
+     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func delete(forDogId dogId: Int, forReminderId reminderId: Int, completionHandler: @escaping (Bool) -> Void) {
-        RemindersRequest.delete(forDogId: dogId, forReminderId: reminderId) { _, responseStatus in
-            DispatchQueue.main.async {
-                switch responseStatus {
-                case .successResponse:
-                    completionHandler(true)
-                case .failureResponse:
-                    completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.failureDeleteResponse)
-                case .noResponse:
-                    completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.noDeleteResponse)
-                }
+    static func update(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
+        
+        RemindersRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: reminders) { _, responseStatus in
+            switch responseStatus {
+            case .successResponse:
+                completionHandler(true, responseStatus)
+            case .failureResponse:
+                completionHandler(false, responseStatus)
+            case .noResponse:
+                completionHandler(false, responseStatus)
             }
         }
     }
     
     /**
-     completionHandler returns a boolean. If the queries all returned a 200 status and are successful, then true is returned. Otherwise, if there was a problem, false is returned and ErrorManager is automatically invoked (only once).
+     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
+     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func delete(forDogId dogId: Int, forReminderIds reminderIds: [Int], completionHandler: @escaping (Bool) -> Void) {
-        RemindersRequest.delete(forDogId: dogId, forReminderIds: reminderIds) { _, responseStatus in
-            DispatchQueue.main.async {
-                switch responseStatus {
-                case .successResponse:
-                    completionHandler(true)
-                case .failureResponse:
-                    completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.failureDeleteResponse)
-                case .noResponse:
-                    completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.noDeleteResponse)
-                }
+    static func delete(invokeErrorManager: Bool, forDogId dogId: Int, forReminderId reminderId: Int, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
+        RemindersRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminderIds: [reminderId]) { _, responseStatus in
+            switch responseStatus {
+            case .successResponse:
+                completionHandler(true, responseStatus)
+            case .failureResponse:
+                completionHandler(false, responseStatus)
+            case .noResponse:
+                completionHandler(false, responseStatus)
+            }
+        }
+    }
+    
+    /**
+     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful.
+     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
+     */
+    static func delete(invokeErrorManager: Bool, forDogId dogId: Int, forReminderIds reminderIds: [Int], completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
+        RemindersRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminderIds: reminderIds) { _, responseStatus in
+            switch responseStatus {
+            case .successResponse:
+                completionHandler(true, responseStatus)
+            case .failureResponse:
+                completionHandler(false, responseStatus)
+            case .noResponse:
+                completionHandler(false, responseStatus)
             }
         }
     }

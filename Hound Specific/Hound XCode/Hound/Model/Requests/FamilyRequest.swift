@@ -15,38 +15,15 @@ enum FamilyRequest: RequestProtocol {
     // UserRequest baseURL with the userId path param appended on
     static var baseURLWithFamilyId: URL { return FamilyRequest.baseURLWithoutParams.appendingPathComponent("/\(UserInformation.familyId ?? -1)") }
     
-    // MARK: Private Functions
+    // MARK: - Private Functions
     
     /**
-     Uses familyId to retrieve information
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func get(completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    private static func internalGet(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         InternalRequestUtils.warnForPlaceholderId()
-        // at this point in time, an error can only occur if there is a invalid body provided. Since there is no body, there is no risk of an error.
-        InternalRequestUtils.genericGetRequest(forURL: baseURLWithFamilyId) { responseBody, responseStatus in
-            DispatchQueue.main.async {
-                completionHandler(responseBody, responseStatus)
-            }
-        }
-        
-    }
-    
-    /**
-     completionHandler returns response data: familyId for the created family and the ResponseStatus
-     */
-    private static func create(completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
-        InternalRequestUtils.warnForPlaceholderId()
-        // make post request, assume body valid as constructed with method
-        InternalRequestUtils.genericPostRequest(forURL: baseURLWithoutParams, forBody: [ : ]) { responseBody, responseStatus in
-            DispatchQueue.main.async {
-                if responseBody != nil, let familyId = responseBody![ServerDefaultKeys.result.rawValue] as? Int {
-                    completionHandler(familyId, responseStatus)
-                }
-                else {
-                    completionHandler(nil, responseStatus)
-                }
-            }
+        InternalRequestUtils.genericGetRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithFamilyId) { responseBody, responseStatus in
+            completionHandler(responseBody, responseStatus)
         }
         
     }
@@ -54,19 +31,28 @@ enum FamilyRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func update(body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    private static func internalCreate(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         InternalRequestUtils.warnForPlaceholderId()
+        InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: [ : ]) { responseBody, responseStatus in
+            completionHandler(responseBody, responseStatus)
+        }
         
+    }
+    
+    /**
+     completionHandler returns response data: dictionary of the body and the ResponseStatus
+     */
+    private static func internalUpdate(invokeErrorManager: Bool, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+        InternalRequestUtils.warnForPlaceholderId()
         // the user is trying to join a family with the family code, so omit familyId (as we don't have one)
         if body[ServerDefaultKeys.familyCode.rawValue] != nil {
-            // make put request, assume body valid as constructed with method
-            InternalRequestUtils.genericPutRequest(forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
+            InternalRequestUtils.genericPutRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
                 completionHandler(responseBody, responseStatus)
             }
         }
         // user isn't trying to join a family, so add familyId
         else {
-            InternalRequestUtils.genericPutRequest(forURL: baseURLWithFamilyId, forBody: body) { responseBody, responseStatus in
+            InternalRequestUtils.genericPutRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithFamilyId, forBody: body) { responseBody, responseStatus in
                 completionHandler(responseBody, responseStatus)
             }
         }
@@ -75,9 +61,9 @@ enum FamilyRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func delete(completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    private static func internalDelete(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         InternalRequestUtils.warnForPlaceholderId()
-        InternalRequestUtils.genericDeleteRequest(forURL: baseURLWithFamilyId) { responseBody, responseStatus in
+        InternalRequestUtils.genericDeleteRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithFamilyId) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -86,19 +72,20 @@ enum FamilyRequest: RequestProtocol {
 
 extension FamilyRequest {
     
-    // MARK: Public Functions
+    // MARK: - Public Functions
     
     /**
-     completionHandler returns an array of family members. If the query returned a 200 status and is successful, then the dog is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
+     Retrieves the family configuration, automatically setting it up if the information is successfully retrieved.
+     completionHandler returns a possible array of familyMembers and the ResponseStatus.
+     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func get(completionHandler: @escaping ([FamilyMember]?) -> Void) {
+    static func get(invokeErrorManager: Bool, completionHandler: @escaping ([FamilyMember]?, ResponseStatus) -> Void) {
         
-        FamilyRequest.get { responseBody, responseStatus in
+        FamilyRequest.internalGet(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                // Array of family JSON [{familyMember1:'foo'},{familyMember2:'bar'}]
-                if let result = responseBody![ServerDefaultKeys.result.rawValue] as? [String: Any], let familyMembersBody = result[ServerDefaultKeys.familyMembers.rawValue] as? [[String: Any]] {
-                    // decode familyCode and familyIsLocked
+                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], let familyMembersBody = result[ServerDefaultKeys.familyMembers.rawValue] as? [[String: Any]] {
+                    // set up family configuration
                     FamilyConfiguration.setup(fromBody: result)
                     
                     // decode family members
@@ -110,7 +97,14 @@ extension FamilyRequest {
                         familyMembers.append(familyMember)
                     }
                     
-                    // sort so family head is first then users in ascending userid order 
+                    // assign familyHead
+                    if let familyHeadUserId = result[ServerDefaultKeys.userId.rawValue] as? Int {
+                        for familyMember in familyMembers where familyMember.userId == familyHeadUserId {
+                            familyMember.isFamilyHead = true
+                        }
+                    }
+                    
+                    // sort so family head is first then users in ascending userid order
                     familyMembers.sort { familyMember1, familyMember2 in
                         // the family head should always be first
                         if familyMember1.isFamilyHead == true {
@@ -129,126 +123,81 @@ extension FamilyRequest {
                         }
                     }
                     
-                    // able to add all
-                    DispatchQueue.main.async {
-                        completionHandler(familyMembers)
-                    }
+                    completionHandler(familyMembers, responseStatus)
                 }
                 else {
-                    DispatchQueue.main.async {
-                        completionHandler(nil)
-                        ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
-                    }
+                    completionHandler(nil, responseStatus)
                 }
             case .failureResponse:
-                DispatchQueue.main.async {
-                    completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
-                }
-                
+                completionHandler(nil, responseStatus)
             case .noResponse:
-                DispatchQueue.main.async {
-                    completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.noGetResponse)
-                }
+                completionHandler(nil, responseStatus)
             }
-        
+            
         }
     }
     
     /**
      Sends a request for the user to create their own family.
-     completionHandler returns a Int. If the query returned a 200 status and is successful, then dogId is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
+     completionHandler returns a possible familyId and the ResponseStatus.
+     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func create(completionHandler: @escaping (Int?) -> Void) {
-        
-        FamilyRequest.create { familyId, responseStatus in
-            DispatchQueue.main.async {
-                switch responseStatus {
-                case .successResponse:
-                    if familyId != nil {
-                        completionHandler(familyId!)
-                    }
-                    else {
-                        completionHandler(nil)
-                        ErrorManager.alert(forError: GeneralResponseError.failurePostResponse)
-                    }
-                case .failureResponse:
-                    completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.failurePostResponse)
-                case .noResponse:
-                    completionHandler(nil)
-                    ErrorManager.alert(forError: GeneralResponseError.noPostResponse)
+    static func create(invokeErrorManager: Bool, completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
+        FamilyRequest.internalCreate(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
+            switch responseStatus {
+            case .successResponse:
+                // check for familyId
+                if let familyId = responseBody?[ServerDefaultKeys.result.rawValue] as? Int {
+                    completionHandler(familyId, responseStatus)
                 }
+                else {
+                    completionHandler(nil, responseStatus)
+                }
+            case .failureResponse:
+                completionHandler(nil, responseStatus)
+            case .noResponse:
+                completionHandler(nil, responseStatus)
             }
         }
     }
     
     /**
-     Send a request for the user to attempt to join a family with the familyCode.
-     completionHandler returns a Bool. If the query returned a 200 status and is successful, then true is returned. Otherwise, if there was a problem, false is returned and ErrorManager is automatically invoked.
+     Update specific piece(s) of the family
+     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
+     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func update(familyCode: String, completionHandler: @escaping (Bool) -> Void) {
-        let body = [ServerDefaultKeys.familyCode.rawValue: familyCode]
-        FamilyRequest.update(body: body) { _, responseStatus in
-            DispatchQueue.main.async {
-                switch responseStatus {
-                case .successResponse:
-                    completionHandler(true)
-                case .failureResponse:
-                    completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.failurePutResponse)
-                case .noResponse:
-                    completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.noPutResponse)
-                }
-            }
-        }
-    }
-    
-    /**
-     completionHandler returns a Bool. If the query returned a 200 status and is successful, then true is returned. Otherwise, if there was a problem, false is returned and ErrorManager is automatically invoked.
-     */
-    static func update(body: [String: Any], completionHandler: @escaping (Bool) -> Void) {
-        FamilyRequest.update(body: body) { _, responseStatus in
-            DispatchQueue.main.async {
-                switch responseStatus {
-                case .successResponse:
-                    completionHandler(true)
-                case .failureResponse:
-                    completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.failurePutResponse)
-                case .noResponse:
-                    completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.noPutResponse)
-                }
+    static func update(invokeErrorManager: Bool, body: [String: Any], completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
+        FamilyRequest.internalUpdate(invokeErrorManager: invokeErrorManager, body: body) { _, responseStatus in
+            switch responseStatus {
+            case .successResponse:
+                completionHandler(true, responseStatus)
+            case .failureResponse:
+                completionHandler(false, responseStatus)
+            case .noResponse:
+                completionHandler(false, responseStatus)
             }
         }
         
     }
     
     /**
-     completionHandler returns a Bool. If the query returned a 200 status and is successful, then true is returned. Otherwise, if there was a problem, false is returned and ErrorManager is automatically invoked.
+     If the user is a familyMember, lets the user leave the family. If the user is a familyHead and are the only member, deletes the family. If they are a familyHead and there are other familyMembers, the request fails.
+     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
+     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func delete(completionHandler: @escaping (Bool) -> Void) {
-        FamilyRequest.delete { _, responseStatus in
-            DispatchQueue.main.async {
-                switch responseStatus {
-                case .successResponse:
-                    // reset the local configurations so they are ready for the next family member
-                    LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = false
-                    LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
-                    LocalConfiguration.dogIcons = []
-                    LocalConfiguration.lastPause = nil
-                    LocalConfiguration.lastUnpause = nil
-                    completionHandler(true)
-                case .failureResponse:
-                    completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.failureDeleteResponse)
-                case .noResponse:
-                    completionHandler(false)
-                    ErrorManager.alert(forError: GeneralResponseError.noDeleteResponse)
-                }
+    static func delete(invokeErrorManager: Bool, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
+        FamilyRequest.internalDelete(invokeErrorManager: invokeErrorManager) { _, responseStatus in
+            switch responseStatus {
+            case .successResponse:
+                // reset the local configurations so they are ready for the next family member
+                LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = false
+                LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
+                LocalConfiguration.dogIcons = []
+                completionHandler(true, responseStatus)
+            case .failureResponse:
+                completionHandler(false, responseStatus)
+            case .noResponse:
+                completionHandler(false, responseStatus)
             }
         }
     }

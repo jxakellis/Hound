@@ -427,7 +427,8 @@ class Reminder: NSObject, NSCoding, NSCopying {
     }
     
     var reminderExecutionDate: Date? {
-        guard self.reminderIsEnabled == true else {
+        // the reminder will not go off if disabled or the family is paused
+        guard self.reminderIsEnabled == true && FamilyConfiguration.isPaused == false else {
             return nil
         }
         

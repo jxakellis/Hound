@@ -30,6 +30,6 @@ enum FamilyResponseError: String, Error {
     case familyNotFound = "Your family code did not match to any existing family. Please enter in a valid eight character code to join a family."
     
     /// Family code was valid and linked to a family but the family was locked
-    case familyIsLocked = "Your family is locked, preventing any new members from joining! Please have the head of the family unlock it and retry."
+    case isLocked = "Your family is locked, preventing any new members from joining! Please have the head of the family unlock it and retry."
     
 }

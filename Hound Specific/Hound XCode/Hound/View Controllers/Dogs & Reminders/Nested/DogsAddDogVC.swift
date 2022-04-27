@@ -95,14 +95,13 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             
             addDogButton.beginQuerying()
             addDogButtonBackground.beginQuerying(isBackgroundButton: true)
-            DogsRequest.create(forDog: dog) { dogId in
+            DogsRequest.create(invokeErrorManager: true, forDog: dog) { dogId, _ in
                 if dogId != nil {
                     // dog was successfully created
                     dog.dogId = dogId!
                     
                     // if dog succeeded then high change of reminders succeeding too
-                    RemindersRequest.create(forDogId: dog.dogId, forReminders: self.modifiableDogReminders.reminders) { reminders in
-                        // TO DO review this section. Possible better way to do it as no/failure respmse messages can be duplicated (RemindersRequest.create error then try DogsRequest.delete error)
+                    RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: self.modifiableDogReminders.reminders) { reminders, _ in
                         self.addDogButton.endQuerying()
                         self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
                         if reminders != nil {
@@ -113,7 +112,8 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                         }
                         else {
                             // reminders were unable to be created so we delete the dog to remove everything.
-                            DogsRequest.delete(forDogId: dog.dogId) { _ in
+                            DogsRequest.delete(invokeErrorManager: false, forDogId: dog.dogId) { _, _ in
+                                // do nothing, we can't do more even if it fails.
                             }
                         }
                     }
@@ -143,7 +143,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             addDogButton.beginQuerying()
             addDogButtonBackground.beginQuerying(isBackgroundButton: true)
             // first query to update the dog itself (independent of any reminders)
-            DogsRequest.update(forDog: dog) { requestWasSuccessful1 in
+            DogsRequest.update(invokeErrorManager: true, forDog: dog) { requestWasSuccessful1, _ in
                 if requestWasSuccessful1 == true {
                     // the dog was successfully updated, so we attempt to take actions for the reminders
                     var queryFailure = false
@@ -152,7 +152,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                     var queriedDeletedReminders = false
                     if createdReminders.count > 0 {
                         // we have reminders created that need to be created on the server
-                        RemindersRequest.create(forDogId: dog.dogId, forReminders: createdReminders) { reminders in
+                        RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: createdReminders) { reminders, _ in
                             if reminders != nil {
                                 dog.dogReminders.addReminder(newReminders: reminders!)
                                 queriedCreatedReminders = true
@@ -168,7 +168,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                         checkForCompletion()
                     }
                     if updatedReminders.count > 0 {
-                        RemindersRequest.update(forDogId: dog.dogId, forReminders: updatedReminders) { requestWasSuccessful2 in
+                        RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: updatedReminders) { requestWasSuccessful2, _ in
                             if requestWasSuccessful2 == true {
                                 queriedUpdatedReminders = true
                             }
@@ -189,7 +189,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                             deletedReminderIds.append(deletedReminder.reminderId)
                         }
                         
-                        RemindersRequest.delete(forDogId: dog.dogId, forReminderIds: deletedReminderIds) { requestWasSuccessful2 in
+                        RemindersRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forReminderIds: deletedReminderIds) { requestWasSuccessful2, _ in
                             if requestWasSuccessful2 == true {
                                 queriedDeletedReminders = true
                             }
@@ -236,7 +236,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
         let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogName.text ?? dogForInitalizer!.dogName)?", message: nil, preferredStyle: .alert)
 
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-           DogsRequest.delete(forDogId: self.dogForInitalizer!.dogId) { requestWasSuccessful in
+            DogsRequest.delete(invokeErrorManager: true, forDogId: self.dogForInitalizer!.dogId) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
                         self.delegate.didRemoveDog(sender: Sender(origin: self, localized: self), dogId: self.dogForInitalizer!.dogId)
                         self.navigationController?.popViewController(animated: true)

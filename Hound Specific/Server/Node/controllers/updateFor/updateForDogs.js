@@ -2,7 +2,7 @@ const DatabaseError = require('../../utils/errors/databaseError');
 const ValidationError = require('../../utils/errors/validationError');
 
 const { queryPromise } = require('../../utils/database/queryPromise');
-const { atLeastOneDefined } = require('../../utils/database/validateFormat');
+const { areAllDefined } = require('../../utils/database/validateFormat');
 
 /**
  *  Queries the database to update a dog. If the query is successful, then returns
@@ -13,21 +13,16 @@ const updateDogQuery = async (req) => {
 
   const dogId = req.params.dogId;
   const { dogName } = req.body;
-  const { dogIcon } = req.body;
 
-  // if dogName and dogIcon are both undefined, then there is nothing to update
-  if (atLeastOneDefined([dogName, dogIcon]) === false) {
-    throw new ValidationError('No dogName or dogIcon provided', 'ER_NO_VALUES_PROVIDED');
+  // if dogName undefined, then there is nothing to update
+  if (areAllDefined([dogName]) === false) {
+    throw new ValidationError('dogName missing', 'ER_VALUES_MISSING');
   }
   try {
-    if (dogName) {
-      // updates the dogName for the dogId provided, overship of this dog for the user have been verifiied
-      await queryPromise(req, 'UPDATE dogs SET dogName = ? WHERE dogId = ?', [dogName, dogId]);
-    }
-    if (dogIcon) {
-      // TO DO implement storage of dogIcon on server
-    }
-    return;
+    // updates the dogName for the dogId provided
+    return queryPromise(req, 'UPDATE dogs SET dogName = ? WHERE dogId = ?', [dogName, dogId]);
+
+    // TO DO implement storage of dogIcon on server
   }
   catch (error) {
     throw new DatabaseError(error.code);

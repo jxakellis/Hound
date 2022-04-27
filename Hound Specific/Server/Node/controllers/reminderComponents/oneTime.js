@@ -4,6 +4,8 @@ const { formatDate } = require('../../utils/database/validateFormat');
 const createOneTimeComponents = async (req, reminder) => {
   const oneTimeDate = formatDate(reminder.oneTimeDate);
 
+  // TO DO add check that all components are defined (or throw validation error)
+
   // Errors intentionally uncaught so they are passed to invocation in reminders
   await queryPromise(
     req,
@@ -15,6 +17,8 @@ const createOneTimeComponents = async (req, reminder) => {
 // Attempts to first add the new components to the table. iI this fails then it is known the reminder is already present or components are invalid. If the update statement fails then it is know the components are invalid, error passed to invocer.
 const updateOneTimeComponents = async (req, reminder) => {
   const oneTimeDate = formatDate(reminder.oneTimeDate);
+
+  // TO DO add check that all components are defined (or throw validation error)
 
   try {
     // If this succeeds: Reminder was not present in the weekly table and the reminderType was changed. The old components will be deleted from the other table by reminders

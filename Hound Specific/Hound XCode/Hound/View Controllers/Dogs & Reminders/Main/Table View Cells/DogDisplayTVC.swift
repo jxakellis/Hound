@@ -67,32 +67,16 @@ class DogsDogDisplayTableViewCell: UITableViewCell {
         if dog.dogReminders.reminders.count == 0 {
             nextReminder.attributedText = NSAttributedString(string: "No Reminders Created", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: nextReminder.font.pointSize, weight: nextReminderImportantWeight)])
         }
-        // if paused but has an enabled reminder...
-        else if UserConfiguration.isPaused == true && dog.dogReminders.hasEnabledReminder == true {
-            var allRemindersEnabled: Bool {
-                for reminder in dog.dogReminders.reminders where reminder.reminderIsEnabled == false {
-                    return false
-                }
-                return true
-            }
-            // no disabled reminders, all are enabled
-            if allRemindersEnabled == true {
-                nextReminder.attributedText = NSAttributedString(string: "All Reminders Paused", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: nextReminder.font.pointSize, weight: nextReminderImportantWeight)])
-            }
-            // mix of disabled and enabled reminders
-            else {
-                nextReminder.attributedText = NSAttributedString(string: "No Active Reminders", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: nextReminder.font.pointSize, weight: nextReminderImportantWeight)])
-            }
-
+        else if FamilyConfiguration.isPaused == true {
+            // pause takes priority
+            nextReminder.attributedText = NSAttributedString(string: "All Reminders Paused", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: nextReminder.font.pointSize, weight: nextReminderImportantWeight)])
+            
         }
         else if dog.dogReminders.hasEnabledReminder == false {
+            // disable comes secondary to paused
             nextReminder.attributedText = NSAttributedString(string: "All Reminders Disabled", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: nextReminder.font.pointSize, weight: nextReminderImportantWeight)])
         }
-        else if UserConfiguration.isPaused == true {
-
-            nextReminder.attributedText = NSAttributedString(string: "All Reminders Paused", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: nextReminder.font.pointSize, weight: nextReminderImportantWeight)])
-
-        }
+        
         else {
             // has at least once enabled reminder so soonsetFireDate won't be nil by the end
             var soonestFireDate: Date! = nil

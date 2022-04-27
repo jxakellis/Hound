@@ -28,11 +28,9 @@ class ServerSyncViewController: UIViewController {
         }
         failureResponseAlertController.addAction(retryAlertAction)
         noResponseAlertController.addAction(retryAlertAction)
-        noDogManagerAlertController.addAction(retryAlertAction)
         
         failureResponseAlertController.addAction(loginPageAlertAction)
         noResponseAlertController.addAction(loginPageAlertAction)
-        noDogManagerAlertController.addAction(loginPageAlertAction)
     }
     override func viewWillAppear(_ animated: Bool) {
         // Called before the view is added to the windows’ view hierarchy
@@ -58,7 +56,6 @@ class ServerSyncViewController: UIViewController {
     /// Called to prompt the user to retry a server connection
     private var failureResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: GeneralResponseError.failureGetResponse.rawValue, preferredStyle: .alert)
     private var noResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: GeneralResponseError.noGetResponse.rawValue, preferredStyle: .alert)
-    private var noDogManagerAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: "We experienced an issue while retrieving your data Hound's server. Our first request to retrieve your app settings succeeded, but we were unable to retrieve your dogs. Please verify that you are connected to the internet and retry. If the issue persists, please reinstall Hound.", preferredStyle: .alert)
 
     /// DogManager that all of the retrieved information will be added too.
     private var dogManager = DogManager()
@@ -68,13 +65,6 @@ class ServerSyncViewController: UIViewController {
     private var getUserFinished = false
     private var getFamilyFinished = false
     private var getDogsFinished = false
-    
-    // MARK: - Functions
-    
-    /// We failed to retrieve a familyId for the user so that means they have no family. Segue to page to make them create/join one.
-    private func getFamily() {
-        ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverFamilyViewController", viewController: self)
-    }
 
     // MARK: - Primary Sync
     
@@ -87,67 +77,77 @@ class ServerSyncViewController: UIViewController {
         getDogsFinished = false
         updateStatusLabel()
         
-        UserRequest.get { responseBody, responseStatus in
-            DispatchQueue.main.async {
-                switch responseStatus {
-                case .successResponse:
-                    if responseBody != nil {
-                        self.serverContacted = true
-                        self.updateStatusLabel()
-                        
-                        // verify that at least one user was returned. Shouldn't be possible to have no users but always good to check
-                        if let result = responseBody![ServerDefaultKeys.result.rawValue] as? [String: Any], result.isEmpty == false {
-                            // set all local configuration equal to whats in the server
-                            UserInformation.setup(fromBody: result)
-                            UserConfiguration.setup(fromBody: result)
-                            
-                            // verify that a userId was successfully retrieved from the server
-                            if result[ServerDefaultKeys.userId.rawValue] is Int {
-                                self.getUserFinished = true
-                                // if the user has create a hound account or signed into an existing one, we try to load the familyId returned to them. if that is nil, then we open this menu to have them create or join once since they aren't currently one.
-                                
-                                // user has family
-                                if result[ServerDefaultKeys.familyId.rawValue] is Int {
-                                    self.getFamilyFinished = true
-                                    self.getDogs()
-                                }
-                                // no family for user
-                                else {
-                                    self.getFamily()
-                                }
-                                
-                            }
-                            
-                            self.checkSynchronizationStatus()
-                        }
-                        else {
-                           AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
-                        }
-                    }
-                    else {
-                       AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
-                    }
-                case .failureResponse:
-                    AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
-                case .noResponse:
-                    AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)
+        // we want to use our own custom error message
+        UserRequest.get(invokeErrorManager: false) { familyId, responseStatus in
+            switch responseStatus {
+            case .successResponse:
+                // we got the user information back and have setup the user config based off of that info
+                self.serverContacted = true
+                self.getUserFinished = true
+                self.updateStatusLabel()
+                
+                // user has family
+                if familyId != nil {
+                    self.getFamily()
                 }
+                // no family for user
+                else {
+                    // We failed to retrieve a familyId for the user so that means they have no family. Segue to page to make them create/join one.
+                    ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverFamilyViewController", viewController: self)
+                }
+            case .failureResponse:
+                AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
+            case .noResponse:
+                AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)
             }
-            
+        }
+    }
+    
+    /// get the family configuration from the server
+    private func getFamily() {
+        // we want to use our own custom error message
+        FamilyRequest.get(invokeErrorManager: false) { familyMembers, responseStatus in
+            switch responseStatus {
+            case .successResponse:
+                // TO DO persist the family members to family configuration
+                if familyMembers != nil {
+                    // we got the family configuration from the server and loaded it, now we can proceed to the next step
+                    self.getFamilyFinished = true
+                    self.updateStatusLabel()
+                    self.getDogs()
+                }
+                else {
+                    AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
+                }
+            case .failureResponse:
+                AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
+            case .noResponse:
+                AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)
+            }
         }
     }
 
     /// Retrieve any dogs the user may have
     private func getDogs() {
-        RequestUtils.getDogManager { dogManager in
-            if dogManager != nil {
-                self.dogManager = dogManager!
-                self.getDogsFinished = true
-                self.checkSynchronizationStatus()
+        // we want to use our own custom error message
+        RequestUtils.getDogManager(invokeErrorManager: false) { dogManager, responseStatus in
+            switch responseStatus {
+            case .successResponse:
+                if dogManager != nil {
+                    self.dogManager = dogManager!
+                    self.getDogsFinished = true
+                    self.updateStatusLabel()
+                    self.checkSynchronizationStatus()
+                }
+                else {
+                    AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
+                }
+            case .failureResponse:
+                AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
+            case .noResponse:
+                AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)
             }
-            else {
-                AlertManager.enqueueAlertForPresentation(self.noDogManagerAlertController)
-            }
+            
         }
     }
 

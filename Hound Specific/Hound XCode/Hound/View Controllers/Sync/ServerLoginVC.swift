@@ -218,7 +218,8 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
     private func signUpUser() {
         // start query indictator, if there is already one present then its fine as alertmanager will throw away the duplicate. we remove the query indicator when we finish interpreting our response (EXCEPT when we go to sign in a user, as that will also use query indictator so we want it to stay up)
         RequestUtils.beginAlertControllerQueryIndictator()
-        UserRequest.create { userId, responseStatus in
+        // we have do a failure response doesn't necessarily mean a failure message, so we msut do the messages ourself
+        UserRequest.create(invokeErrorManager: false) { userId, responseStatus in
             switch responseStatus {
             case .successResponse:
                 // successful, continue
@@ -245,54 +246,13 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
     
     private func signInUser() {
         // start query indictator, if there is already one present then its fine as alertmanager will throw away the duplicate. we remove the query indicator when we finish interpreting our response
-        UserRequest.get { responseBody, responseStatus in
-            switch responseStatus {
-            case .successResponse:
-                if responseBody != nil {
-                    // verify that at least one user was returned. Shouldn't be possible to have no users but always good to check
-                    if let result = responseBody![ServerDefaultKeys.result.rawValue] as? [String: Any], result.isEmpty == false {
-                        // set all local configuration equal to whats in the server
-                        UserInformation.setup(fromBody: result)
-                        UserConfiguration.setup(fromBody: result)
-                        
-                        // verify that a userId was successfully retrieved from the server
-                        if result[ServerDefaultKeys.userId.rawValue] is Int {
-                            RequestUtils.endAlertControllerQueryIndictator {
-                                self.dismiss(animated: true, completion: nil)
-                            }
-                            
-                        }
-                        else {
-                            RequestUtils.endAlertControllerQueryIndictator {
-                                ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
-                            }
-                        }
-                    }
-                    else {
-                        RequestUtils.endAlertControllerQueryIndictator {
-                            ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
-                        }
-                    }
-                }
-            case .failureResponse:
-                RequestUtils.endAlertControllerQueryIndictator {
-                    ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
-                }
-            case .noResponse:
-                RequestUtils.endAlertControllerQueryIndictator {
-                    ErrorManager.alert(forError: GeneralResponseError.noGetResponse)
-                }
+        RequestUtils.beginAlertControllerQueryIndictator()
+        UserRequest.get(invokeErrorManager: true) { familyId, responseStatus in
+            // the user config is already automatically setup with this function
+            RequestUtils.endAlertControllerQueryIndictator {
+                // user was successfully retrieved from the server
+                self.dismiss(animated: true, completion: nil)
             }
         }
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

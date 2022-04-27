@@ -106,8 +106,8 @@ extension InternalRequestUtils {
     
     // MARK: - Generic GET, POST, PUT, and DELETE requests
     
-    /// Perform a generic get request at the specified url, assuming URL params are already provided.
-    static func genericGetRequest(forURL URL: URL, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    /// Perform a generic get request at the specified url, assuming URL params are already provided. completionHandler is on the .main thread.
+    static func genericGetRequest(invokeErrorManager: Bool, forURL URL: URL, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
         // create request to send
         var request = URLRequest(url: URL)
@@ -116,12 +116,23 @@ extension InternalRequestUtils {
         request.httpMethod = "GET"
         
         genericRequest(forRequest: request) { responseBody, responseStatus in
-            completionHandler(responseBody, responseStatus)
+            DispatchQueue.main.async {
+                completionHandler(responseBody, responseStatus)
+                // the user wants to invoke the error manager, so we check to see if it needs invoked
+                if invokeErrorManager == true {
+                    if responseStatus == .failureResponse {
+                        ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
+                    }
+                    else if responseStatus == .failureResponse {
+                        ErrorManager.alert(forError: GeneralResponseError.noGetResponse)
+                    }
+                }
+            }
         }
     }
     
-    /// Perform a generic get request at the specified url with provided body. Throws as creating request can fail if body is invalid.
-    static func genericPostRequest(forURL URL: URL, forBody body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    /// Perform a generic get request at the specified url with provided body. completionHandler is on the .main thread.
+    static func genericPostRequest(invokeErrorManager: Bool, forURL URL: URL, forBody body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
         InternalRequestUtils.warnForEmptyBody(forURL: URL, forBody: body)
         
@@ -136,17 +147,35 @@ extension InternalRequestUtils {
             request.httpBody = jsonData
             
             genericRequest(forRequest: request) { responseBody, responseStatus in
-                completionHandler(responseBody, responseStatus)
+                DispatchQueue.main.async {
+                    completionHandler(responseBody, responseStatus)
+                    // the user wants to invoke the error manager, so we check to see if it needs invoked
+                    if invokeErrorManager == true {
+                        if responseStatus == .failureResponse {
+                            ErrorManager.alert(forError: GeneralResponseError.failurePostResponse)
+                        }
+                        else if responseStatus == .failureResponse {
+                            ErrorManager.alert(forError: GeneralResponseError.noPostResponse)
+                        }
+                    }
+                }
             }
         }
         catch {
-            completionHandler(nil, .noResponse)
+            DispatchQueue.main.async {
+                completionHandler(nil, .noResponse)
+                // the user wants to invoke the error manager, so we check to see if it needs invoked
+                if invokeErrorManager == true {
+                    ErrorManager.alert(forError: GeneralResponseError.noPostResponse)
+                }
+                
+            }
         }
         
     }
     
-    /// Perform a generic get request at the specified url with provided body, assuming URL params are already provided. Throws as creating request can fail if body is invalid
-    static func genericPutRequest(forURL URL: URL, forBody body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    /// Perform a generic get request at the specified url with provided body, assuming URL params are already provided. completionHandler is on the .main thread.
+    static func genericPutRequest(invokeErrorManager: Bool, forURL URL: URL, forBody body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
         InternalRequestUtils.warnForEmptyBody(forURL: URL, forBody: body)
         
@@ -161,17 +190,35 @@ extension InternalRequestUtils {
             request.httpBody = jsonData
             
             genericRequest(forRequest: request) { responseBody, responseStatus in
-                completionHandler(responseBody, responseStatus)
+                DispatchQueue.main.async {
+                    completionHandler(responseBody, responseStatus)
+                    // the user wants to invoke the error manager, so we check to see if it needs invoked
+                    if invokeErrorManager == true {
+                        if responseStatus == .failureResponse {
+                            ErrorManager.alert(forError: GeneralResponseError.failurePutResponse)
+                        }
+                        else if responseStatus == .failureResponse {
+                            ErrorManager.alert(forError: GeneralResponseError.noPutResponse)
+                        }
+                    }
+                }
             }
         }
         catch {
-            completionHandler(nil, .noResponse)
+            DispatchQueue.main.async {
+                completionHandler(nil, .noResponse)
+                // the user wants to invoke the error manager, so we check to see if it needs invoked
+                if invokeErrorManager == true {
+                    ErrorManager.alert(forError: GeneralResponseError.noPutResponse)
+                }
+                
+            }
         }
         
     }
     
-    /// Perform a generic get request at the specified url, assuming URL params are already provided. No body needed for request. No throws as request creating cannot fail
-    static func genericDeleteRequest(forURL URL: URL, forBody body: [String: Any]? = nil, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    /// Perform a generic get request at the specified url, assuming URL params are already provided. completionHandler is on the .main thread.
+    static func genericDeleteRequest(invokeErrorManager: Bool, forURL URL: URL, forBody body: [String: Any]? = nil, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
         // if a body is present, we want to make sure it isn't empty
         if body != nil {
@@ -186,7 +233,18 @@ extension InternalRequestUtils {
         
         if body == nil {
             genericRequest(forRequest: request) { responseBody, responseStatus in
-                completionHandler(responseBody, responseStatus)
+                DispatchQueue.main.async {
+                    completionHandler(responseBody, responseStatus)
+                    // the user wants to invoke the error manager, so we check to see if it needs invoked
+                    if invokeErrorManager == true {
+                        if responseStatus == .failureResponse {
+                            ErrorManager.alert(forError: GeneralResponseError.failureDeleteResponse)
+                        }
+                        else if responseStatus == .failureResponse {
+                            ErrorManager.alert(forError: GeneralResponseError.noDeleteResponse)
+                        }
+                    }
+                }
             }
         }
         else {
@@ -196,11 +254,28 @@ extension InternalRequestUtils {
                 request.httpBody = jsonData
                 
                 genericRequest(forRequest: request) { responseBody, responseStatus in
-                    completionHandler(responseBody, responseStatus)
+                    DispatchQueue.main.async {
+                        completionHandler(responseBody, responseStatus)
+                        // the user wants to invoke the error manager, so we check to see if it needs invoked
+                        if invokeErrorManager == true {
+                            if responseStatus == .failureResponse {
+                                ErrorManager.alert(forError: GeneralResponseError.failureDeleteResponse)
+                            }
+                            else if responseStatus == .failureResponse {
+                                ErrorManager.alert(forError: GeneralResponseError.noDeleteResponse)
+                            }
+                        }
+                    }
                 }
             }
             catch {
-                completionHandler(nil, .noResponse)
+                DispatchQueue.main.async {
+                    completionHandler(nil, .noResponse)
+                    // the user wants to invoke the error manager, so we check to see if it needs invoked
+                    if invokeErrorManager == true {
+                        ErrorManager.alert(forError: GeneralResponseError.noDeleteResponse)
+                    }
+                }
             }
         }
     }
@@ -232,7 +307,6 @@ extension InternalRequestUtils {
         // isCompactView
         // interfaceStyle
         // snoozeLength
-        // isPaused
         // isNotificationAuthorized
         // isNotificationEnabled
         // isLoudNotification
@@ -243,7 +317,6 @@ extension InternalRequestUtils {
         body[ServerDefaultKeys.isCompactView.rawValue] = UserConfiguration.isCompactView
         body[ServerDefaultKeys.interfaceStyle.rawValue] = UserConfiguration.interfaceStyle.rawValue
         body[ServerDefaultKeys.snoozeLength.rawValue] = UserConfiguration.snoozeLength
-        body[ServerDefaultKeys.isPaused.rawValue] = UserConfiguration.isPaused
         body[ServerDefaultKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
         body[ServerDefaultKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
         body[ServerDefaultKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
@@ -263,11 +336,9 @@ extension InternalRequestUtils {
     static func createLogBody(log: Log) -> [String: Any] {
         var body: [String: Any] = [:]
         body[ServerDefaultKeys.logNote.rawValue] = log.logNote
-             body[ServerDefaultKeys.logDate.rawValue] = log.logDate.ISO8601FormatWithFractionalSeconds()
-             body[ServerDefaultKeys.logAction.rawValue] = log.logAction.rawValue
-        if log.logAction == .custom && log.logCustomActionName != nil {
-            body[ServerDefaultKeys.logCustomActionName.rawValue] = log.logCustomActionName
-        }
+        body[ServerDefaultKeys.logDate.rawValue] = log.logDate.ISO8601FormatWithFractionalSeconds()
+        body[ServerDefaultKeys.logAction.rawValue] = log.logAction.rawValue
+        body[ServerDefaultKeys.logCustomActionName.rawValue] = log.logCustomActionName
         return body
         
     }
@@ -276,18 +347,18 @@ extension InternalRequestUtils {
     static func createReminderBody(reminder: Reminder) -> [String: Any] {
         var body: [String: Any] = [:]
         body[ServerDefaultKeys.reminderId.rawValue] = reminder.reminderId
-             body[ServerDefaultKeys.reminderAction.rawValue] = reminder.reminderAction.rawValue
-        if reminder.reminderAction == .custom && reminder.reminderCustomActionName != nil {
-            body[ServerDefaultKeys.reminderCustomActionName.rawValue] = reminder.reminderCustomActionName
-        }
+        body[ServerDefaultKeys.reminderType.rawValue] = reminder.reminderType.rawValue
+        body[ServerDefaultKeys.reminderAction.rawValue] = reminder.reminderAction.rawValue
+        body[ServerDefaultKeys.reminderCustomActionName.rawValue] = reminder.reminderCustomActionName
         body[ServerDefaultKeys.reminderExecutionBasis.rawValue] = reminder.reminderExecutionBasis.ISO8601FormatWithFractionalSeconds()
+        body[ServerDefaultKeys.reminderExecutionDate.rawValue] = reminder.reminderExecutionDate?.ISO8601FormatWithFractionalSeconds()
         body[ServerDefaultKeys.reminderIsEnabled.rawValue] = reminder.reminderIsEnabled
         
-        if reminder.reminderExecutionDate != nil {
-            body[ServerDefaultKeys.reminderExecutionDate.rawValue] = reminder.reminderExecutionDate!.ISO8601FormatWithFractionalSeconds()
-        }
+        // snooze
+        body[ServerDefaultKeys.snoozeIsEnabled.rawValue] = reminder.snoozeComponents.snoozeIsEnabled
+        body[ServerDefaultKeys.snoozeExecutionInterval.rawValue] = reminder.snoozeComponents.executionInterval
+        body[ServerDefaultKeys.snoozeIntervalElapsed.rawValue] = reminder.snoozeComponents.intervalElapsed
         
-        body[ServerDefaultKeys.reminderType.rawValue] = reminder.reminderType.rawValue
         // add the reminder components depending on the reminderType
         switch reminder.reminderType {
         case .countdown:
@@ -297,9 +368,7 @@ extension InternalRequestUtils {
             body[ServerDefaultKeys.weeklyHour.rawValue] = reminder.weeklyComponents.dateComponents.hour
             body[ServerDefaultKeys.weeklyMinute.rawValue] = reminder.weeklyComponents.dateComponents.minute
             body[ServerDefaultKeys.weeklyIsSkipping.rawValue] = reminder.weeklyComponents.isSkipping
-            if reminder.weeklyComponents.isSkipping == true && reminder.weeklyComponents.isSkippingDate != nil {
-                body[ServerDefaultKeys.weeklyIsSkippingDate.rawValue] = reminder.weeklyComponents.isSkippingDate!.ISO8601FormatWithFractionalSeconds()
-            }
+            body[ServerDefaultKeys.weeklyIsSkippingDate.rawValue] = reminder.weeklyComponents.isSkippingDate?.ISO8601FormatWithFractionalSeconds()
             
             body[ServerDefaultKeys.sunday.rawValue] = false
             body[ServerDefaultKeys.monday.rawValue] = false
@@ -334,14 +403,11 @@ extension InternalRequestUtils {
             body[ServerDefaultKeys.monthlyHour.rawValue] = reminder.monthlyComponents.dateComponents.hour
             body[ServerDefaultKeys.monthlyMinute.rawValue] = reminder.monthlyComponents.dateComponents.minute
             body[ServerDefaultKeys.monthlyIsSkipping.rawValue] = reminder.monthlyComponents.isSkipping
-            if reminder.monthlyComponents.isSkipping == true && reminder.monthlyComponents.isSkippingDate != nil {
-                body[ServerDefaultKeys.monthlyIsSkippingDate.rawValue] = reminder.monthlyComponents.isSkippingDate!.ISO8601FormatWithFractionalSeconds()
-            }
+            body[ServerDefaultKeys.monthlyIsSkippingDate.rawValue] = reminder.monthlyComponents.isSkippingDate?.ISO8601FormatWithFractionalSeconds()
             body[ServerDefaultKeys.monthlyDay.rawValue] = reminder.monthlyComponents.monthlyDay
         case .oneTime:
             body[ServerDefaultKeys.oneTimeDate.rawValue] = reminder.oneTimeComponents.oneTimeDate.ISO8601FormatWithFractionalSeconds()
         }
-        
         return body
     }
     

@@ -140,7 +140,7 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
                 body[ServerDefaultKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
             }
             if body.keys.isEmpty == false {
-                UserRequest.update(body: body) { requestWasSuccessful in
+                UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
                     if requestWasSuccessful == false {
                         // error, revert to previousUserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
                         UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
@@ -232,7 +232,7 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
                 AudioManager.playAudio(forAudioPath: "\(UserConfiguration.notificationSound.rawValue.lowercased())")
                 
                 let body = [ServerDefaultKeys.notificationSound.rawValue: UserConfiguration.notificationSound.rawValue]
-                UserRequest.update(body: body) { requestWasSuccessful in
+            UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
                     if requestWasSuccessful == false {
                         // error, revert to previous
                         UserConfiguration.notificationSound = beforeUpdateNotificationSound
@@ -276,7 +276,7 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         let beforeUpdateIsLoudNotification = UserConfiguration.isLoudNotification
         UserConfiguration.isLoudNotification = isLoudNotificationSwitch.isOn
         let body = [ServerDefaultKeys.isLoudNotification.rawValue: UserConfiguration.isLoudNotification]
-        UserRequest.update(body: body) { requestWasSuccessful in
+        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // error, revert to previous
                 UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
@@ -303,7 +303,7 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         }
         
         let body = [ServerDefaultKeys.isFollowUpEnabled.rawValue: UserConfiguration.isFollowUpEnabled]
-        UserRequest.update(body: body) { requestWasSuccessful in
+        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // error, revert to previous
                 UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
@@ -369,7 +369,7 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         UserConfiguration.followUpDelay = followUpDelayDatePicker.countDownDuration
         
         let body = [ServerDefaultKeys.followUpDelay.rawValue: UserConfiguration.followUpDelay]
-        UserRequest.update(body: body) { requestWasSuccessful in
+        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // error, revert to previous
                 UserConfiguration.followUpDelay = beforeUpdateFollowUpDelay

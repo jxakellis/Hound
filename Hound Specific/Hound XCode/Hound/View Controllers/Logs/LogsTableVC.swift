@@ -235,7 +235,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
     }
     /// Makes a query to the server to retrieve new information then refreshed the tableView
     @objc private func refreshTableData() {
-        RequestUtils.getDogManager { dogManager in
+        RequestUtils.getDogManager(invokeErrorManager: true) { dogManager, _ in
             // end refresh first otherwise there will be a weird visual issue
             self.tableView.refreshControl?.endRefreshing()
             if dogManager != nil {
@@ -408,7 +408,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
             let dogIdOfLog = targetUniqueLogsNestedArray[indexPath.row-1].0
             let logIdOfLog = targetUniqueLogsNestedArray[indexPath.row-1].1.logId
 
-            LogsRequest.delete(forDogId: dogIdOfLog, forLogId: logIdOfLog) { requestWasSuccessful in
+            LogsRequest.delete(invokeErrorManager: true, forDogId: dogIdOfLog, forLogId: logIdOfLog) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
                     // batch update so doesn't freak out
                     tableView.performBatchUpdates {
@@ -482,7 +482,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
             let dogId = targetUniqueLogsNestedArray[indexPath.row-1].0
             let logId = targetUniqueLogsNestedArray[indexPath.row-1].1.logId
             RequestUtils.beginAlertControllerQueryIndictator()
-            LogsRequest.get(forDogId: dogId, forLogId: logId) { log in
+            LogsRequest.get(invokeErrorManager: true, forDogId: dogId, forLogId: logId) { log, _ in
                 RequestUtils.endAlertControllerQueryIndictator {
                     if log != nil {
                         self.delegate.didSelectLog(parentDogId: dogId, log: log!)

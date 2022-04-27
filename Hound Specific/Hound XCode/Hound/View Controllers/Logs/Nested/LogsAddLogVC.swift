@@ -159,7 +159,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
             
             addLogButton.beginQuerying()
             addLogButtonBackground.beginQuerying(isBackgroundButton: true)
-            LogsRequest.update(forDogId: parentDogIdToUpdate!, forLog: logToUpdate!) { requestWasSuccessful in
+            LogsRequest.update(invokeErrorManager: true, forDogId: parentDogIdToUpdate!, forLog: logToUpdate!) { requestWasSuccessful, _ in
                 self.addLogButton.endQuerying()
                 self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
                 if requestWasSuccessful == true {
@@ -181,7 +181,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                     
                     addLogButton.beginQuerying()
                     addLogButtonBackground.beginQuerying(isBackgroundButton: true)
-                    LogsRequest.create(forDogId: parentDogNameSelector.tag, forLog: newLog) { logId in
+                    LogsRequest.create(invokeErrorManager: true, forDogId: parentDogNameSelector.tag, forLog: newLog) { logId, _ in
                         self.addLogButton.endQuerying()
                         self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
                         if logId != nil {
@@ -208,7 +208,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             
             // the user decided to delete so we must query server
-                LogsRequest.delete(forDogId: self.parentDogIdToUpdate!, forLogId: self.logToUpdate!.logId) { requestWasSuccessful in
+            LogsRequest.delete(invokeErrorManager: true, forDogId: self.parentDogIdToUpdate!, forLogId: self.logToUpdate!.logId) { requestWasSuccessful, _ in
                     if requestWasSuccessful == true {
                         self.delegate.didRemoveLog(sender: Sender(origin: self, localized: self),
                                                    parentDogId: self.parentDogIdToUpdate!,

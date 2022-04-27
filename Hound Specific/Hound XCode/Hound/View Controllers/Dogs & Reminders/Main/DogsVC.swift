@@ -63,7 +63,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         else {
             RequestUtils.beginAlertControllerQueryIndictator()
             // opening existing dog, must query server to make sure its updated
-            DogsRequest.get(forDogId: dogId!, reminders: true, logs: true) { dog in
+            DogsRequest.get(invokeErrorManager: true, forDogId: dogId!, reminders: true, logs: true) { dog, _ in
                 RequestUtils.endAlertControllerQueryIndictator {
                     if dog != nil {
                         ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsAddDogViewController", viewController: self)
@@ -87,7 +87,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         else {
             RequestUtils.beginAlertControllerQueryIndictator()
             // query for existing
-            RemindersRequest.get(forDogId: parentDogId, forReminderId: reminderId!) { reminder in
+            RemindersRequest.get(invokeErrorManager: true, forDogId: parentDogId, forReminderId: reminderId!) { reminder, _ in
                 RequestUtils.endAlertControllerQueryIndictator {
                     if reminder != nil {
                         ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsIndependentReminderViewController", viewController: self)
@@ -307,7 +307,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     @IBAction private func willRefresh(_ sender: Any) {
         // TO DO add activity indictator
         self.refreshButton.isEnabled = false
-        RequestUtils.getDogManager { dogManager in
+        RequestUtils.getDogManager(invokeErrorManager: true) { dogManager, _ in
             // end refresh first otherwise there will be a weird visual issue
             self.refreshButton.isEnabled = true
             if dogManager != nil {

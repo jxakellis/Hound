@@ -21,8 +21,8 @@ const createFamilyQuery = async (req) => {
     const familyCode = await generateVerifiedFamilyCode(req);
     const result = await queryPromise(
       req,
-      'INSERT INTO familyHeads(userId, familyCode, familyIsLocked) VALUES (?, ?, ?)',
-      [userId, familyCode, false],
+      'INSERT INTO families(userId, familyCode) VALUES (?, ?)',
+      [userId, familyCode],
     );
     const familyId = result.insertId;
     await queryPromise(

@@ -47,7 +47,7 @@ enum ViewControllerUtils {
         UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
         
         let body = [ServerDefaultKeys.interfaceStyle.rawValue: convertedInterfaceStyleRawValue!]
-        UserRequest.update(body: body) { requestWasSuccessful in
+        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // error, revert to previous
                 UIApplication.keyWindow?.overrideUserInterfaceStyle = beforeUpdateInterfaceStyle
