@@ -69,12 +69,15 @@ class TimingManager {
                                   interval: -1,
                                   target: self,
                                   selector: #selector(self.didExecuteTimer(sender:)),
-                                  userInfo: [ServerDefaultKeys.dogId.rawValue: dogManager.dogs[d].dogId, ServerDefaultKeys.dogName.rawValue: dogManager.dogs[d].dogName, "reminder": reminder],
+                                  userInfo: [
+                                    ServerDefaultKeys.dogId.rawValue: dogManager.dogs[d].dogId,
+                                    ServerDefaultKeys.dogName.rawValue: dogManager.dogs[d].dogName,
+                                    ServerDefaultKeys.reminderId.rawValue: reminder.reminderId],
                                   repeats: false)
-                RunLoop.main.add(timer, forMode: .common)
+                 RunLoop.main.add(timer, forMode: .common)
                 
-                reminder.timer?.invalidate()
-                reminder.timer = timer
+                 reminder.timer?.invalidate()
+                 reminder.timer = timer
             }
         }
     }
@@ -233,9 +236,9 @@ class TimingManager {
         
         let dogName: String = parsedDictionary[ServerDefaultKeys.dogName.rawValue]! as! String
         let dogId: Int = parsedDictionary[ServerDefaultKeys.dogId.rawValue]! as! Int
-        let reminder: Reminder = parsedDictionary["reminder"]! as! Reminder
+        let reminderId: Int = parsedDictionary[ServerDefaultKeys.reminderId.rawValue]! as! Int
         
-        AlarmManager.willShowAlarm(dogName: dogName, dogId: dogId, reminder: reminder)
+        AlarmManager.willShowAlarm(forDogName: dogName, forDogId: dogId, forReminderId: reminderId)
     }
     
 }

@@ -4,6 +4,7 @@ const { formatArray, areAllDefined } = require('./validateFormat');
  * Queries the predefined database connection with the given sqlString
  */
 const queryPromise = (request, sqlString, sqlVariables = undefined) => new Promise((resolve, reject) => {
+  // make sure there is a object provided to extract connection from
   if (areAllDefined(request) === false) {
     reject(new Error('Undefined connection for query promise'));
   }

@@ -57,11 +57,19 @@ enum FamilyRequest: RequestProtocol {
     private static func update(body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         InternalRequestUtils.warnForPlaceholderId()
         
-        // make put request, assume body valid as constructed with method
-        InternalRequestUtils.genericPutRequest(forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
-            completionHandler(responseBody, responseStatus)
+        // the user is trying to join a family with the family code, so omit familyId (as we don't have one)
+        if body[ServerDefaultKeys.familyCode.rawValue] != nil {
+            // make put request, assume body valid as constructed with method
+            InternalRequestUtils.genericPutRequest(forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
+                completionHandler(responseBody, responseStatus)
+            }
         }
-        
+        // user isn't trying to join a family, so add familyId
+        else {
+            InternalRequestUtils.genericPutRequest(forURL: baseURLWithFamilyId, forBody: body) { responseBody, responseStatus in
+                completionHandler(responseBody, responseStatus)
+            }
+        }
     }
     
     /**
@@ -177,7 +185,7 @@ extension FamilyRequest {
     }
     
     /**
-    Send a request for the user to attempt to join a family with the familyCode.
+     Send a request for the user to attempt to join a family with the familyCode.
      completionHandler returns a Bool. If the query returned a 200 status and is successful, then true is returned. Otherwise, if there was a problem, false is returned and ErrorManager is automatically invoked.
      */
     static func update(familyCode: String, completionHandler: @escaping (Bool) -> Void) {
@@ -201,11 +209,38 @@ extension FamilyRequest {
     /**
      completionHandler returns a Bool. If the query returned a 200 status and is successful, then true is returned. Otherwise, if there was a problem, false is returned and ErrorManager is automatically invoked.
      */
+    static func update(body: [String: Any], completionHandler: @escaping (Bool) -> Void) {
+        FamilyRequest.update(body: body) { _, responseStatus in
+            DispatchQueue.main.async {
+                switch responseStatus {
+                case .successResponse:
+                    completionHandler(true)
+                case .failureResponse:
+                    completionHandler(false)
+                    ErrorManager.alert(forError: GeneralResponseError.failurePutResponse)
+                case .noResponse:
+                    completionHandler(false)
+                    ErrorManager.alert(forError: GeneralResponseError.noPutResponse)
+                }
+            }
+        }
+        
+    }
+    
+    /**
+     completionHandler returns a Bool. If the query returned a 200 status and is successful, then true is returned. Otherwise, if there was a problem, false is returned and ErrorManager is automatically invoked.
+     */
     static func delete(completionHandler: @escaping (Bool) -> Void) {
         FamilyRequest.delete { _, responseStatus in
             DispatchQueue.main.async {
                 switch responseStatus {
                 case .successResponse:
+                    // reset the local configurations so they are ready for the next family member
+                    LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = false
+                    LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
+                    LocalConfiguration.dogIcons = []
+                    LocalConfiguration.lastPause = nil
+                    LocalConfiguration.lastUnpause = nil
                     completionHandler(true)
                 case .failureResponse:
                     completionHandler(false)

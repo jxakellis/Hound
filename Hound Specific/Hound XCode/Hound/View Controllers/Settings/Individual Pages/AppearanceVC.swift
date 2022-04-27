@@ -64,9 +64,6 @@ class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDel
     @IBOutlet private weak var interfaceStyleSegmentedControl: UISegmentedControl!
 
     @IBAction private func didUpdateInterfaceStyle(_ sender: Any) {
-        
-        // TO DO can take this piece of code and make it a function (this is copy pasted 3 times between 3 VCs)
-
         ViewControllerUtils.updateInterfaceStyle(forSegmentedControl: sender as! UISegmentedControl)
     }
 
@@ -74,7 +71,7 @@ class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDel
 
     @IBOutlet private weak var logsViewModeSegmentedControl: UISegmentedControl!
 
-    @IBAction private func didUpdateLogsViewModeSegmentedControl(_ sender: Any) {
+    @IBAction private func didUpdateLogsViewMode(_ sender: Any) {
 
         let beforeUpdateIsCompactView = UserConfiguration.isCompactView
 

@@ -15,86 +15,9 @@ enum AudioManager {
     
     static var sharedPlayer: AVAudioPlayer!
     
-    /// Sets up the audio player to be of the right type. isLoud true means it will overtake others and be as loud as possible. isLoud false means it will be in the background and try to be incognito
-    static private func loadAVAudioSession(isLoud: Bool) throws {
-        if isLoud == true {
-            
-            // duck others isn't optimal. It makes it so our audio mixes with others but is louder than them. Want to stop their audio completely.
-            // try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [.duckOthers, .defaultToSpeaker, .allowBluetooth, .allowAirPlay, .allowBluetoothA2DP])
-            do {
-                AppDelegate.generalLogger.notice("Attempting to load loud AVAudioSession")
-                try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [.defaultToSpeaker, .allowBluetooth, .allowAirPlay, .allowBluetoothA2DP])
-                AppDelegate.generalLogger.notice("Success in loading loud AVAudioSession")
-            }
-            catch {
-                AppDelegate.generalLogger.notice("Attempting to load backup loud AVAudioSession")
-                try AVAudioSession.sharedInstance().setCategory(.playback, options: [])
-                AppDelegate.generalLogger.notice("Success in loading backup loud AVAudioSession")
-            }
-            // try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [ .defaultToSpeaker, .allowBluetooth, .allowAirPlay, .allowBluetoothA2DP])
-        }
-        else {
-            AppDelegate.generalLogger.notice("Attempting to load quiet AVAudioSession")
-            try! AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
-            AppDelegate.generalLogger.notice("Success in loading quiet AVAudioSession")
-        }
-        
-        try AVAudioSession.sharedInstance().setActive(true)
-    }
-    
-    static func playLoudNotificationAudio() {
-        DispatchQueue.global().async {
-            AppDelegate.generalLogger.notice("playLoudNotificationAudio")
-            let path = Bundle.main.path(forResource: "\(UserConfiguration.notificationSound.rawValue.lowercased())", ofType: "mp3")!
-            let url = URL(fileURLWithPath: path)
-            
-            do {
-                stopAudio()
-                
-                AudioManager.sharedPlayer = try AVAudioPlayer(contentsOf: url)
-                AudioManager.sharedPlayer.numberOfLoops = -1
-                AudioManager.sharedPlayer.volume = 1.0
-                
-                MPVolumeView.setVolume(1.0)
-                
-                try loadAVAudioSession(isLoud: true)
-                
-                AudioManager.sharedPlayer.play()
-                
-            }
-            catch {
-                AppDelegate.generalLogger.error("playLoudNotificationAudio error: \(error.localizedDescription)")
-            }
-        }
-        
-    }
-    
-    static func playSilenceAudio() {
-        DispatchQueue.global().async {
-            AppDelegate.generalLogger.notice("playSilenceAudio")
-            let path = Bundle.main.path(forResource: "silence", ofType: "mp3")!
-            let url = URL(fileURLWithPath: path)
-            
-            do {
-                stopAudio()
-                
-                AudioManager.sharedPlayer = try AVAudioPlayer(contentsOf: url)
-                AudioManager.sharedPlayer.numberOfLoops = -1
-                AudioManager.sharedPlayer.volume = 0
-                
-                try loadAVAudioSession(isLoud: false)
-                
-                AudioManager.sharedPlayer.play()
-                
-            }
-            catch {
-                AppDelegate.generalLogger.notice("playSilenceAudio error: \(error.localizedDescription)")
-            }
-            
-        }
-    }
-    
-    static func playAudio(forAudioPath audioPath: String, isLoud: Bool) {
+    // MARK: - General Audio
+
+    static func playAudio(forAudioPath audioPath: String) {
         DispatchQueue.global().async {
             AppDelegate.generalLogger.notice("playAudio: \(audioPath)")
             let path = Bundle.main.path(forResource: audioPath, ofType: "mp3")!
@@ -107,11 +30,9 @@ enum AudioManager {
                 AudioManager.sharedPlayer.numberOfLoops = -1
                 AudioManager.sharedPlayer.volume = 1.0
                 
-                if isLoud == true {
-                    MPVolumeView.setVolume(1.0)
-                }
-                
-                try loadAVAudioSession(isLoud: isLoud)
+                // generic .playback audio that mixes with others. most compatible and non intrustive
+                try AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
+                try AVAudioSession.sharedInstance().setActive(true)
                 
                 AudioManager.sharedPlayer.play()
             }
@@ -129,6 +50,103 @@ enum AudioManager {
             }
         }
         
+    }
+    
+    // MARK: - Silent Audio
+    
+    static func playSilenceAudio() {
+        DispatchQueue.global().async {
+            AppDelegate.generalLogger.notice("playSilenceAudio")
+            let path = Bundle.main.path(forResource: "silence", ofType: "mp3")!
+            let url = URL(fileURLWithPath: path)
+            
+            do {
+                stopAudio()
+                
+                AudioManager.sharedPlayer = try AVAudioPlayer(contentsOf: url)
+                AudioManager.sharedPlayer.numberOfLoops = -1
+                AudioManager.sharedPlayer.volume = 0
+                
+                // generic .playback audio that mixes with others. most compatible and non intrustive
+                try AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
+                try AVAudioSession.sharedInstance().setActive(true)
+                
+                AudioManager.sharedPlayer.play()
+                
+            }
+            catch {
+                AppDelegate.generalLogger.notice("playSilenceAudio error: \(error.localizedDescription)")
+            }
+            
+        }
+    }
+    
+    // MARK: - Loud Audio
+    
+    ///
+    private static var shouldVibrate = false
+    
+    /// Checks to see if the user has notifications enabled, loud notifications enabled, and the app is in the background and, if all conditions are met, then begins loud notification and vibration.
+    static func playLoudNotification() {
+        
+        AppDelegate.generalLogger.notice("playLoudNotification")
+        
+        // make sure the user wants loud notifications
+        guard UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification && UIApplication.shared.applicationState == .background else {
+            return
+        }
+        
+        shouldVibrate = true
+        loopVibrate()
+        // make the device repeadedly vibrate
+        func loopVibrate() {
+            if shouldVibrate == true {
+                AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)) {
+                    DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
+                       loopVibrate()
+                    }
+                }
+            }
+        }
+        
+        // make the device play the loud notification sound
+        DispatchQueue.global().async {
+            let path = Bundle.main.path(forResource: "\(UserConfiguration.notificationSound.rawValue.lowercased())", ofType: "mp3")!
+            let url = URL(fileURLWithPath: path)
+            
+            do {
+                stopAudio()
+                
+                AudioManager.sharedPlayer = try AVAudioPlayer(contentsOf: url)
+                AudioManager.sharedPlayer.numberOfLoops = -1
+                AudioManager.sharedPlayer.volume = 1.0
+                
+                MPVolumeView.setVolume(1.0)
+                
+                // duck others isn't optimal. It makes it so our audio mixes with others but is louder than them. Want to stop their audio completely.
+                do {
+                    try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [.defaultToSpeaker, .allowBluetooth, .allowAirPlay, .allowBluetoothA2DP])
+                }
+                catch {
+                    AppDelegate.generalLogger.notice("playLoudNotification, attempting to load backup loud AVAudioSession; error: \(error.localizedDescription)")
+                    try AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                }
+                try AVAudioSession.sharedInstance().setActive(true)
+                
+                AudioManager.sharedPlayer.play()
+                
+            }
+            catch {
+                AppDelegate.generalLogger.error("playLoudNotification error: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    /// No matter the user eligibility for isLoudNotiifcation, stops loud notification and vibration.
+    static func stopLoudNotification() {
+        AppDelegate.generalLogger.notice("stopLoudNotification")
+        shouldVibrate = false
+        AudioManager.stopAudio()
     }
     
 }

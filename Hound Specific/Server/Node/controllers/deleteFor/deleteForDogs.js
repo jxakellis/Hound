@@ -7,7 +7,7 @@ const { deleteReminderQuery } = require('./deleteForReminders');
  *  Queries the database to delete a dog and everything nested under it. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-const deleteDogQuery = async (req, dogId) => {
+const deleteDogQuery = async (req, userId, familyId, dogId) => {
   let reminderIds;
 
   // find reminderIds of reminders that need deleted
@@ -25,7 +25,7 @@ const deleteDogQuery = async (req, dogId) => {
 
   // deletes all reminders since we found reminderIds
   for (let i = 0; i < reminderIds.length; i += 1) {
-    await deleteReminderQuery(req, reminderIds[i].reminderId);
+    await deleteReminderQuery(req, userId, familyId, reminderIds[i].reminderId);
   }
 
   // deletes all logs
@@ -45,7 +45,7 @@ const deleteDogQuery = async (req, dogId) => {
  * Queries the database to delete all dog and everything nested under them. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-const deleteDogsQuery = async (req, familyId) => {
+const deleteDogsQuery = async (req, userId, familyId) => {
   let dogIds;
 
   // attempt to find all dogIds
@@ -58,7 +58,7 @@ const deleteDogsQuery = async (req, familyId) => {
 
   // delete all the dogs
   for (let i = 0; i < dogIds.length; i += 1) {
-    await deleteDogQuery(req, dogIds[i]);
+    await deleteDogQuery(req, userId, familyId, dogIds[i].dogId);
   }
 };
 

@@ -44,7 +44,7 @@ const createFamily = async (req, res) => {
   catch (error) {
     // create family failed
     await req.rollbackQueries(req);
-    return res.status(200).json(convertErrorToJSON(error));
+    return res.status(400).json(convertErrorToJSON(error));
   }
 };
 
@@ -52,8 +52,6 @@ const updateFamily = async (req, res) => {
   try {
     await updateFamilyQuery(req);
     await req.commitQueries(req);
-    // user successfully joined a family
-    
     return res.status(200).json({ result: '' });
   }
   catch (error) {

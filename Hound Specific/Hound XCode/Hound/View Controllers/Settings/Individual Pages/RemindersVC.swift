@@ -29,15 +29,15 @@ class SettingsRemindersViewController: UIViewController, UIGestureRecognizerDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        snoozeLength.countDownDuration = UserConfiguration.snoozeLength
+        snoozeLengthDatePicker.countDownDuration = UserConfiguration.snoozeLength
         
         // fixes issue with first time datepicker updates not triggering function
         DispatchQueue.main.asyncAfter(deadline: .now()) {
-            self.snoozeLength.countDownDuration = UserConfiguration.snoozeLength
+            self.snoozeLengthDatePicker.countDownDuration = UserConfiguration.snoozeLength
         }
         
         isPausedSwitch.isOn = UserConfiguration.isPaused
-        // Do any additional setup after loading the view.
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -90,17 +90,17 @@ class SettingsRemindersViewController: UIViewController, UIGestureRecognizerDele
     
     // MARK: Snooze Length
     
-    @IBOutlet private weak var snoozeLength: UIDatePicker!
+    @IBOutlet private weak var snoozeLengthDatePicker: UIDatePicker!
     
     @IBAction private func didUpdateSnoozeLength(_ sender: Any) {
         let beforeUpdateSnoozeLength = UserConfiguration.snoozeLength
-        UserConfiguration.snoozeLength = snoozeLength.countDownDuration
+        UserConfiguration.snoozeLength = snoozeLengthDatePicker.countDownDuration
         let body = [ServerDefaultKeys.snoozeLength.rawValue: UserConfiguration.snoozeLength]
         UserRequest.update(body: body) { requestWasSuccessful in
             if requestWasSuccessful == false {
                 // error, revert to previous
                 UserConfiguration.snoozeLength = beforeUpdateSnoozeLength
-                self.snoozeLength.countDownDuration = UserConfiguration.snoozeLength
+                self.snoozeLengthDatePicker.countDownDuration = UserConfiguration.snoozeLength
             }
         }
     }

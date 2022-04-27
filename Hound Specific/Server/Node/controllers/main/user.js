@@ -56,7 +56,7 @@ const createUser = async (req, res) => {
     const isFollowUpEnabled = formatBoolean(req.body.isFollowUpEnabled);
     const followUpDelay = formatNumber(req.body.followUpDelay);
     if (areAllDefined([isFollowUpEnabled, followUpDelay])) {
-      refreshFollowUpAlarmNotificationsForUser(req.params.userId, isFollowUpEnabled, followUpDelay);
+      refreshSecondaryAlarmNotificationsForUser(req.params.userId, isFollowUpEnabled, followUpDelay);
     }
 
     return res.status(200).json({ result });
@@ -66,7 +66,7 @@ const createUser = async (req, res) => {
   }
 };
 
-const { refreshFollowUpAlarmNotificationsForUser } = require('../../utils/notification/alarm/refreshAlarmNotification');
+const { refreshSecondaryAlarmNotificationsForUser } = require('../../utils/notification/alarm/refreshAlarmNotification');
 
 const updateUser = async (req, res) => {
   try {
@@ -77,7 +77,7 @@ const updateUser = async (req, res) => {
     const followUpDelay = formatNumber(req.body.followUpDelay);
     // check to see if either of these parameters are defined. If they are, then it means the user has updated them
     if (atLeastOneDefined([isFollowUpEnabled, followUpDelay])) {
-      refreshFollowUpAlarmNotificationsForUser(req.params.userId, isFollowUpEnabled, followUpDelay);
+      refreshSecondaryAlarmNotificationsForUser(req.params.userId, isFollowUpEnabled, followUpDelay);
     }
 
     return res.status(200).json({ result: '' });

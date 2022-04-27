@@ -18,37 +18,39 @@ class SettingsPersonalInformationViewController: UIViewController, UIGestureReco
     
     // MARK: - IB
     
-    @IBOutlet private weak var accountInformation: ScaledUILabel!
+    @IBOutlet private weak var userName: ScaledUILabel!
+    
+    @IBOutlet private weak var userEmail: ScaledUILabel!
     
     // MARK: - Main
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TO DO revise this page to make it more details and clean
+        // there is a first name and a last name for the user
+        if UserInformation.userFirstName != "" && UserInformation.userLastName != "" {
+            userName.text = "\(UserInformation.userFirstName) \(UserInformation.userLastName)"
+        }
+        // the user only has a first name
+        else if UserInformation.userFirstName != "" {
+            userName.text = "\(UserInformation.userFirstName)"
+        }
+        // the user only has a last name
+        else if UserInformation.userLastName != "" {
+            userName.text = "\(UserInformation.userLastName)"
+        }
+        // if the name is still blank, then add a placeholder
+        else {
+            userName.text = "No Name"
+        }
         
-        // TO DO add ability for the user to delete their account (if they are in a single person family or are in a multi person family but are only a member)
-
-        setupAccountInformation()
-        // Do any additional setup after loading the view.
+        userEmail.text = UserInformation.userEmail ?? "No Email"
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         AlertManager.globalPresenter = self
     }
-    
-    // MARK: - Functions
-    
-    private func setupAccountInformation() {
-        accountInformation.text = ""
-        accountInformation.text!.append("First Name: \(UserInformation.userFirstName)\n")
-        accountInformation.text!.append("Last Name: \(UserInformation.userLastName)\n")
-        accountInformation.text!.append("Email: \(UserInformation.userEmail ?? "unknown")\n")
-       accountInformation.text!.append("User Identifier: \(UserInformation.userIdentifier ?? "unknown")")
-    
-    }
-
     /*
     // MARK: - Navigation
 

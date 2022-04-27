@@ -131,7 +131,7 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
             welcome.text = "Welcome"
             welcomeMessage.text = "Create your Hound account below. Creating or joining a family will come soon..."
         }
-        // Do any additional setup after loading the view.
+
     }
     
     override func viewWillLayoutSubviews() {

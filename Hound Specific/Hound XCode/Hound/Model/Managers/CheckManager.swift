@@ -75,35 +75,6 @@ enum CheckManager {
         
     }
     
-    /// Displays a message about not terminating the app if that setting is enabled and the user terminated the app
-    static func checkForTermination(forDogManager dogManager: DogManager) {
-        
-        // TO DO bug with this. If a user with notifications enabled, a dog, and an enabled reminder reinstalls the app, then this prompt will trigger. Figure out way that a user which is reinstalling is not prompted (for their first load)
-        
-        if  UIApplication.previousAppBuild != nil && UIApplication.previousAppBuild! == UIApplication.appBuild && LocalConfiguration.isShowTerminationAlert == true {
-            
-            AppDelegate.generalLogger.notice("App has not updated")
-            
-            // sharedPlayer nil indicates the background silence is absent
-            // From there we perform checks to make sure the background silence should have been there
-            // If those check pass, it means the background silence's absense is due to the app terminating
-            if AudioManager.sharedPlayer == nil && UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification && dogManager.hasEnabledReminder && !UserConfiguration.isPaused {
-                
-                AppDelegate.generalLogger.notice("Showing Termionation Alert")
-                let terminationAlertController = GeneralUIAlertController(title: "Oops, you may have terminated Hound", message: "Your notifications won't ring properly if the app isn't running.", preferredStyle: .alert)
-                let understandAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-                let stopAlertAction = UIAlertAction(title: "Don't Show Again", style: .default) { _ in
-                    LocalConfiguration.isShowTerminationAlert = false
-                }
-                
-                terminationAlertController.addAction(understandAlertAction)
-                terminationAlertController.addAction(stopAlertAction)
-                AlertManager.enqueueAlertForPresentation(terminationAlertController)
-            }
-            
-        }
-    }
-    
     /// Displays release notes about a new version to the user if they have that setting enabled and the app was updated to that new version
     static func checkForReleaseNotes() {
         if UIApplication.previousAppBuild != nil && UIApplication.previousAppBuild! != UIApplication.appBuild && LocalConfiguration.isShowReleaseNotes == true {

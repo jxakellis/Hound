@@ -3,6 +3,7 @@ const { createLogQuery } = require('../createFor/createForLogs');
 const { updateLogQuery } = require('../updateFor/updateForLogs');
 const { deleteLogQuery } = require('../deleteFor/deleteForLogs');
 const convertErrorToJSON = require('../../utils/errors/errorFormat');
+const { createLogNotification } = require('../../utils/notification/alert/createLogNotification');
 
 /*
 Known:
@@ -54,6 +55,13 @@ const createLog = async (req, res) => {
   try {
     const result = await createLogQuery(req);
     await req.commitQueries(req);
+    createLogNotification(
+      req.params.userId,
+      req.params.familyId,
+      req.params.dogId,
+      req.body.logAction,
+      req.body.logCustomActionName,
+    );
     return res.status(200).json({ result });
   }
   catch (error) {

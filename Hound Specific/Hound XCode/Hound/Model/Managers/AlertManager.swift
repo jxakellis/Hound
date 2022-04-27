@@ -46,7 +46,6 @@ class AlertManager: NSObject {
     // MARK: - Private Properties
     
     private var locked = false
-    private var halted = false
     private var currentAlertPresented: GeneralUIAlertController?
     
     // MARK: - Queue
@@ -156,10 +155,6 @@ class AlertManager: NSObject {
     }
     
     private func showNextAlert() {
-        guard halted == false else {
-            return
-        }
-        
         func waitLoop() {
             if AlertManager.globalPresenter == nil || AlertManager.globalPresenter!.isBeingDismissed {
                 DispatchQueue.main.asyncAfter(deadline: .now()+0.05) {
@@ -196,19 +191,6 @@ class AlertManager: NSObject {
         locked = false
         currentAlertPresented = nil
         alertQueue.removeFirst()
-        showNextAlert()
-    }
-    
-    func refreshAlarms(dogManager: DogManager) {
-        halted = true
-        if currentAlertPresented == nil {
-            for d in dogManager.dogs {
-                for r in d.dogReminders.reminders where r.isPresentationHandled == true {
-                    AlarmManager.willShowAlarm(dogName: d.dogName, dogId: d.dogId, reminder: r)
-                }
-            }
-        }
-        halted = false
         showNextAlert()
     }
 }

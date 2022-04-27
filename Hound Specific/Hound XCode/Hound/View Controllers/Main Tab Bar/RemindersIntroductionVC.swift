@@ -92,7 +92,7 @@ class RemindersIntroductionViewController: UIViewController {
             remindersToggleSwitch.isOn = false
         }
 
-        continueButton.layer.cornerRadius = 8.0
+        DesignConstant.standardizeLargeButton(forButton: continueButton)
     }
 
 }

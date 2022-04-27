@@ -216,28 +216,23 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
     func setDogManager(sender: Sender, newDogManager: DogManager) {
          dogManager = newDogManager
 
-        if sender.localized is MainTabBarViewController {
+        // we dont want to update LogsTableViewController if its the one providing the update
+        if (sender.localized is LogsTableViewController) == false {
+            // need to update table view
             logsMainScreenTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
-
-            // can add logs so needs to remove filter
+            
+            // logs modified have been added so we need to reset the filter
             filterIndexPath = nil
             filterType = nil
             logsMainScreenTableViewController?.willApplyFiltering(associatedToIndexPath: filterIndexPath, filterType: filterType)
+        }
+        // we dont want to update MainTabBarViewController with the delegate if its the one providing the update
+        if (sender.localized is MainTabBarViewController) == false {
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
+        }
+        if (sender.localized is MainTabBarViewController) == true {
+            // pop add log vc as the dog it could have been adding to is now deleted
             logsAddLogViewController?.navigationController?.popViewController(animated: false)
-        }
-        // only removes logs so ok
-        if sender.localized is LogsTableViewController {
-            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
-        }
-
-        if sender.localized is LogsAddLogViewController {
-            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
-
-            // can remove or add logs so needs to remove filter
-            logsMainScreenTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
-            filterIndexPath = nil
-            filterType = nil
-            logsMainScreenTableViewController?.willApplyFiltering(associatedToIndexPath: filterIndexPath, filterType: filterType)
         }
 
         updateDogManagerDependents()
@@ -256,6 +251,20 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
 
     @IBOutlet private weak var filterButton: UIBarButtonItem!
 
+    @IBOutlet private weak var refreshButton: UIBarButtonItem!
+    
+    @IBAction private func willRefresh(_ sender: Any) {
+        // TO DO add activity indictator
+        self.refreshButton.isEnabled = false
+        RequestUtils.getDogManager { dogManager in
+            // end refresh first otherwise there will be a weird visual issue
+            self.refreshButton.isEnabled = true
+            if dogManager != nil {
+                self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager!)
+            }
+        }
+        
+    }
     @IBOutlet private weak var willAddLog: ScaledUIButton!
     @IBOutlet private weak var willAddLogBackground: ScaledUIButton!
 

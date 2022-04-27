@@ -2,8 +2,8 @@ const DatabaseError = require('../../errors/databaseError');
 const { queryPromise } = require('../../database/queryPromise');
 const { connectionForNotifications } = require('../../../main/databaseConnection');
 
-const userConfigurationLeftJoin = 'LEFT JOIN userConfiguration ON users.userId = userConfiguration.userId';
-const familyMembersLeftJoin = 'LEFT JOIN familyMembers ON users.userId = familyMembers.userId';
+const userConfigurationJoin = 'JOIN userConfiguration ON users.userId = userConfiguration.userId';
+const familyMembersJoin = 'JOIN familyMembers ON users.userId = familyMembers.userId';
 
 /**
  *  Takes a userId
@@ -15,11 +15,11 @@ const getUserToken = async (userId) => {
     // retrieve userNotificationToken that fit the criteria
     const result = await queryPromise(
       connectionForNotifications,
-      `SELECT users.userNotificationToken FROM users ${userConfigurationLeftJoin} WHERE users.userId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1`,
+      `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} WHERE users.userId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1`,
       [userId],
     );
     // make array that is just the userNotification tokens (instead of current array of JSON)
-    let formattedArray;
+    const formattedArray = [];
     for (let i = 0; i < result.length; i += 1) {
       formattedArray.push(result[i].userNotificationToken);
     }
@@ -40,7 +40,7 @@ const getAllFamilyMemberTokens = async (familyId) => {
     // retrieve userNotificationToken that fit the criteria
     const result = await queryPromise(
       connectionForNotifications,
-      `SELECT users.userNotificationToken FROM users ${userConfigurationLeftJoin} ${familyMembersLeftJoin} WHERE familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1`,
+      `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1`,
       [familyId],
     );
     // make array that is just the userNotification tokens (instead of current array of JSON)
@@ -65,11 +65,11 @@ const getOtherFamilyMemberTokens = async (userId, familyId) => {
     // retrieve userNotificationToken that fit the criteria
     const result = await queryPromise(
       connectionForNotifications,
-      `SELECT users.userNotificationToken FROM users ${userConfigurationLeftJoin} ${familyMembersLeftJoin} WHERE familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 AND users.userId != ?`,
+      `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userId != ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1`,
       [familyId, userId],
     );
     // make array that is just the userNotification tokens (instead of current array of JSON)
-    let formattedArray;
+    const formattedArray = [];
     for (let i = 0; i < result.length; i += 1) {
       formattedArray.push(result[i].userNotificationToken);
     }

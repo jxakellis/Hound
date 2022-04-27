@@ -10,29 +10,6 @@ import UIKit
 
 class ServerSyncViewController: UIViewController {
 
-    /*
-     
-     Sync Flow:
-     
-     START
-     - Fetch userConfiguration (with userId)
-         - userId valid and authenticated
-            - Fetch familyId (with userId)
-                - familyId valid and authenticated
-                    - fetch dogs, logs, reminders, and shared configuration
-                - familyId invalid and/or not authenticated
-                    - create family
-                        - return to start
-                    - join family
-                        - return to start
-         - userId invalid and/or not authenticated
-            - create user
-                - return to start
-            - login user
-                - return to start
-     
-     */
-
     // MARK: - IB
 
     @IBOutlet private weak var statusLabel: UILabel!
@@ -42,14 +19,20 @@ class ServerSyncViewController: UIViewController {
         super.viewDidLoad()
 
         updateStatusLabel()
+        // TO DO improve wording. Additionally, possibly parse error codes to provide a reason as to why the server sync is failing
         let retryAlertAction = UIAlertAction(title: "Retry Connection", style: .default) { _ in
             self.retrySynchronization()
+        }
+        let loginPageAlertAction = UIAlertAction(title: "Go to Login Page", style: .default) { _ in
+            ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverLoginViewController", viewController: self)
         }
         failureResponseAlertController.addAction(retryAlertAction)
         noResponseAlertController.addAction(retryAlertAction)
         noDogManagerAlertController.addAction(retryAlertAction)
         
-        // Do any additional setup after loading the view.
+        failureResponseAlertController.addAction(loginPageAlertAction)
+        noResponseAlertController.addAction(loginPageAlertAction)
+        noDogManagerAlertController.addAction(loginPageAlertAction)
     }
     override func viewWillAppear(_ animated: Bool) {
         // Called before the view is added to the windows’ view hierarchy
@@ -59,7 +42,7 @@ class ServerSyncViewController: UIViewController {
 
         // make sure the view has the correct interfaceStyle
         UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
-        // placeholder userId
+        // placeholder userId, therefore we need to have them login to even know who they are
         if UserInformation.userId == nil || UserInformation.userId! < 0 {
             // we have the user sign into their apple id, then attempt to first create an account then get an account (if the creates fails) then throw an error message (if the get fails too).
             // if all succeeds, then the user information and user configuration is loaded
@@ -138,16 +121,13 @@ class ServerSyncViewController: UIViewController {
                             self.checkSynchronizationStatus()
                         }
                         else {
-                            // TO DO if the user is failed to log in, parse the error messages and alert them to the reason as to why, alternatively, just send them to the login page again. E.g. the user had an account and so we had the userId stored locally, but the account got deleted so it now is a failure response when we try to login. 
-                            AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
+                           AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
                         }
                     }
                     else {
-                        // TO DO if the user is failed to log in, parse the error messages and alert them to the reason as to why, alternatively, just send them to the login page again. E.g. the user had an account and so we had the userId stored locally, but the account got deleted so it now is a failure response when we try to login.
-                        AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
+                       AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
                     }
                 case .failureResponse:
-                    // TO DO if the user is failed to log in, parse the error messages and alert them to the reason as to why, alternatively, just send them to the login page again. E.g. the user had an account and so we had the userId stored locally, but the account got deleted so it now is a failure response when we try to login.
                     AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
                 case .noResponse:
                     AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)

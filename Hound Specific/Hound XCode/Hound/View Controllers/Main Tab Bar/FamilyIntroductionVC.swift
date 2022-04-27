@@ -176,9 +176,9 @@ class FamilyIntroductionViewController: UIViewController, UITextFieldDelegate, U
         interfaceStyleSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.white], for: .normal)
         interfaceStyleSegmentedControl.backgroundColor = .systemGray4
         
-        // OTher
+        // Other
         
-        continueButton.layer.cornerRadius = 8.0
+        DesignConstant.standardizeLargeButton(forButton: continueButton)
     }
     
     override func viewWillAppear(_ animated: Bool) {

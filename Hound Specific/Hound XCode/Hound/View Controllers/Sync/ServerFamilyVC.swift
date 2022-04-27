@@ -32,11 +32,10 @@ class ServerFamilyViewController: UIViewController {
     @IBOutlet private weak var joinFamilyButton: ScaledUILabel!
     
     @IBAction private func willJoinFamily(_ sender: Any) {
-        // TO DO interpret response to tell user details about the family (e.g. not found, locked, or need to upgrade limit)
-        let familyCodeAlertController = GeneralUIAlertController(title: "Join a Family", message: nil, preferredStyle: .alert)
+       
+        let familyCodeAlertController = GeneralUIAlertController(title: "Join a Family", message: "The code is case-insensitive", preferredStyle: .alert)
         familyCodeAlertController.addTextField { textField in
             textField.placeholder = "Enter Family Code..."
-            // TO DO verify that the user is typing in all capitals
             textField.autocapitalizationType = .allCharacters
             textField.returnKeyType = .done
             textField.enablesReturnKeyAutomatically = true
@@ -45,7 +44,7 @@ class ServerFamilyViewController: UIViewController {
             guard let textFields = familyCodeAlertController?.textFields else {
                 return
             }
-            let familyCode = textFields[0].text ?? ""
+            let familyCode = (textFields[0].text ?? "").uppercased()
             // code is empty
             if familyCode.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
                 ErrorManager.alert(forError: FamilyRequestError.noFamilyCode)
@@ -63,9 +62,7 @@ class ServerFamilyViewController: UIViewController {
                         if requestWasSuccessful == true {
                             self.dismiss(animated: true, completion: nil)
                         }
-                        else {
-                            // TO DO add indictator that the user couldn't join the family
-                        }
+                        // TO DO interpret response to tell user details about the family (e.g. not found, locked, or need to upgrade limit)
                     }
                 }
             }
@@ -84,8 +81,6 @@ class ServerFamilyViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
     
     override func viewWillLayoutSubviews() {

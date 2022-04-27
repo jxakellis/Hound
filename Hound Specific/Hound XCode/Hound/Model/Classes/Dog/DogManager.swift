@@ -46,8 +46,6 @@ protocol DogManagerProtocol {
     
     /// Returns the index of a dog with the given dogId
     func findIndex(forDogId dogId: Int) throws -> Int
-    
-    mutating func clearAllPresentationHandled()
 }
 
 extension DogManagerProtocol {
@@ -107,15 +105,6 @@ extension DogManagerProtocol {
         }
         return count
     }
-    
-    mutating func clearAllPresentationHandled() {
-        for dog in dogs {
-            for reminder in dog.dogReminders.reminders {
-                reminder.isPresentationHandled = false
-            }
-        }
-    }
-    
 }
 
 class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {

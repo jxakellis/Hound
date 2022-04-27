@@ -25,7 +25,6 @@ enum UserDefaultsKeys: String {
     case lastPause
     case lastUnpause
     case reviewRequestDates
-    case isShowTerminationAlert
     case isShowReleaseNotes
     case hasLoadedFamilyIntroductionViewControllerBefore
     case hasLoadedRemindersIntroductionViewControllerBefore

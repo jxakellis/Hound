@@ -14,8 +14,6 @@ enum ImageManager {
     static func processImage(forDogIcon dogIcon: ScaledUIButton, forInfo info: [UIImagePickerController.InfoKey: Any]) -> UIImage? {
         
         let scaleFactor = UIScreen.main.scale
-        print(dogIcon.frame)
-        print(scaleFactor)
         
         let image: UIImage!
         let scaledImageSize = CGSize(width: dogIcon.frame.width * scaleFactor, height: dogIcon.frame.width * scaleFactor)

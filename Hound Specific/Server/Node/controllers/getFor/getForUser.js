@@ -15,7 +15,7 @@ const getUserForUserIdQuery = async (req, userId) => {
     const userConfigurationSelect = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.isPaused, userConfiguration.isCompactView, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';
     userInformation = await queryPromise(
       req,
-      `SELECT ${userInformationSelect}, familyMembers.familyId, ${userConfigurationSelect} FROM users LEFT JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userId = ?`,
+      `SELECT ${userInformationSelect}, familyMembers.familyId, ${userConfigurationSelect} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userId = ?`,
       [userId],
     );
   }
@@ -47,7 +47,7 @@ const getUserForUserIdentifierQuery = async (req, userIdentifier) => {
     const userConfigurationSelect = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.isPaused, userConfiguration.isCompactView, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';
     userInformation = await queryPromise(
       req,
-      `SELECT ${userInformationSelect}, familyMembers.familyId, ${userConfigurationSelect} FROM users LEFT JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userIdentifier = ?`,
+      `SELECT ${userInformationSelect}, familyMembers.familyId, ${userConfigurationSelect} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userIdentifier = ?`,
       [userIdentifier],
     );
   }

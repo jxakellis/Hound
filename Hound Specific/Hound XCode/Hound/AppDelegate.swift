@@ -9,6 +9,7 @@
 import UIKit
 import UserNotifications
 import os.log
+import CryptoKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
@@ -20,19 +21,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-
         AppDelegate.lifeCycleLogger.notice("Application Did Finish Launching with Options")
 
         // retrieve value from local store, if value doesn't exist then false is returned
         let hasSetup = UserDefaults.standard.bool(forKey: UserDefaultsKeys.hasDoneFirstTimeSetup.rawValue)
 
-        if hasSetup {
+        if hasSetup == true {
             AppDelegate.generalLogger.notice("Recurring setup for app data")
-            PersistenceManager.setup(isRecurringSetup: true)
+            PersistenceManager.setup(isFirstTime: false)
         }
         else {
             AppDelegate.generalLogger.notice("First time setup for app data")
-            PersistenceManager.setup()
+            PersistenceManager.setup(isFirstTime: true)
         }
         
         return true
@@ -55,7 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
         let token = tokenParts.joined()
-        AppDelegate.generalLogger.warning("Successfully registered for remote notifications for token: \(token)")
+        AppDelegate.generalLogger.notice("Successfully registered for remote notifications for token: \(token)")
         
         if token != UserInformation.userNotificationToken {
             UserInformation.userNotificationToken = token
@@ -69,5 +69,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         AppDelegate.generalLogger.warning("Failed to register for remote notifications with error: \(error.localizedDescription)")
     }
+    
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        AppDelegate.generalLogger.notice("Received \(userInfo)")
+        
+        // look for the aps body
+        if let aps = userInfo["aps"] as? [String: Any] {
 
+            // look for the category
+            if let category = aps["category"] as? String {
+                // if the notification is a reminder, then check to see if loud notification can be played
+                if category == "reminder" {
+                    AudioManager.playLoudNotification()
+                }
+            }
+        }
+        
+        completionHandler(.newData)
+    }
+    
 }

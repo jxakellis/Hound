@@ -301,12 +301,26 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     }
 
     // MARK: - IB
+    
+    @IBOutlet private weak var refreshButton: UIBarButtonItem!
+    
+    @IBAction private func willRefresh(_ sender: Any) {
+        // TO DO add activity indictator
+        self.refreshButton.isEnabled = false
+        RequestUtils.getDogManager { dogManager in
+            // end refresh first otherwise there will be a weird visual issue
+            self.refreshButton.isEnabled = true
+            if dogManager != nil {
+                self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager!)
+            }
+        }
+        
+    }
 
     @IBOutlet private weak var didLogEventConfirmation: ScaledUIButton!
     @IBOutlet private weak var didLogEventConfirmationBackground: ScaledUIButton!
 
     @IBOutlet private weak var willAddButton: ScaledUIButton!
-
     @IBOutlet private weak var willAddButtonBackground: ScaledUIButton!
 
     @IBAction private func willAddButton(_ sender: Any) {

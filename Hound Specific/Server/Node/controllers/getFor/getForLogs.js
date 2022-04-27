@@ -8,7 +8,7 @@ const getLogQuery = async (req, logId) => {
   try {
     const result = await queryPromise(
       req,
-      'SELECT * FROM dogLogs WHERE logId = ?',
+      'SELECT * FROM dogLogs WHERE logId = ? LIMIT 100',
       [logId],
     );
     return result;
@@ -25,7 +25,7 @@ const getLogsQuery = async (req, dogId) => {
   try {
     const result = await queryPromise(
       req,
-      'SELECT * FROM dogLogs WHERE dogId = ?',
+      'SELECT * FROM dogLogs WHERE dogId = ? LIMIT 100',
       [dogId],
     );
     return result;

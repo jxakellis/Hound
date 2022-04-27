@@ -3,6 +3,7 @@ const { createDogQuery } = require('../createFor/createForDogs');
 const { updateDogQuery } = require('../updateFor/updateForDogs');
 const { deleteDogQuery } = require('../deleteFor/deleteForDogs');
 const convertErrorToJSON = require('../../utils/errors/errorFormat');
+
 /*
 Known:
 - familyId formatted correctly and request has sufficient permissions to use
@@ -70,7 +71,6 @@ const updateDog = async (req, res) => {
   try {
     await updateDogQuery(req);
     await req.commitQueries(req);
-    // TO DO update alarmNotifications as dogName could be changed
     return res.status(200).json({ result: '' });
   }
   catch (error) {
@@ -81,9 +81,8 @@ const updateDog = async (req, res) => {
 const deleteDog = async (req, res) => {
   const dogId = req.params.dogId;
   try {
-    await deleteDogQuery(req, dogId);
+    await deleteDogQuery(req, req.params.userId, req.params.familyId, dogId);
     await req.commitQueries(req);
-    // TO DO refresh alarmNotifications as reminders will all be deleted
     return res.status(200).json({ result: '' });
   }
   catch (error) {

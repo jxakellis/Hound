@@ -10,77 +10,6 @@ import UIKit
 
 enum NotificationManager {
     
-    static func removeAllNotifications() {
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
-    }
-     /*
-    
-    static func willCreateFollowUpUNUserNotification(dogName: String, reminder: Reminder) {
-        
-        guard reminder.reminderExecutionDate != nil else {
-            AppDelegate.generalLogger.fault("willCreateFollowUpUNUserNotification reminderExecutionDate is nil")
-            return
-        }
-        
-        let content = UNMutableNotificationContent()
-        content.interruptionLevel = .timeSensitive
-        
-        content.title = "Follow up notification for \(dogName)!"
-        
-        content.body = "It's been \(String.convertToReadable(fromTimeInterval: UserConfiguration.followUpDelay, capitalizeLetters: false)), give your dog a helping hand with \(reminder.displayActionName)!"
-        
-        if UserConfiguration.isLoudNotification == false {
-            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(UserConfiguration.notificationSound.rawValue.lowercased())30.wav"))
-        }
-        
-        let reminderExecutionDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminder.reminderExecutionDate! + UserConfiguration.followUpDelay)
-        
-        let trigger = UNCalendarNotificationTrigger(dateMatching: reminderExecutionDateComponents, repeats: false)
-        
-        let uuidString = UUID().uuidString
-        let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
-        
-        UNUserNotificationCenter.current().add(request) { (error) in
-            if error != nil {
-                AppDelegate.generalLogger.error("willCreateUNUserNotification error: \(error!.localizedDescription)")
-            }
-        }
-    }
-    
-    static func willCreateUNUserNotification(dogName: String, reminder: Reminder) {
-        
-        guard reminder.reminderExecutionDate != nil else {
-            AppDelegate.generalLogger.fault("willCreateUNUserNotification reminderExecutionDate is nil")
-            return
-        }
-        // let reminder = try! MainTabBarViewController.staticDogManager.findDog(forDogId: dogName).dogReminders.findReminder(forReminderId: reminderUUID)
-        let content = UNMutableNotificationContent()
-        content.interruptionLevel = .timeSensitive
-        
-        content.title = "Reminder for \(dogName)!"
-        
-        content.body = reminder.displayActionName
-        
-        if UserConfiguration.isLoudNotification == false {
-            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(UserConfiguration.notificationSound.rawValue.lowercased())30.wav"))
-        }
-        
-        let reminderExecutionDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: reminder.reminderExecutionDate!)
-        
-        let trigger = UNCalendarNotificationTrigger(dateMatching: reminderExecutionDateComponents, repeats: false)
-        
-        let uuidString = UUID().uuidString
-        let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
-        
-        UNUserNotificationCenter.current().add(request) { (error) in
-            if error != nil {
-                AppDelegate.generalLogger.error("willCreateUNUserNotification error: \(error!.localizedDescription)")
-            }
-        }
-    }
-     */
-    
     /**
      DOES update local UserConfiguration. Requests permission to send notifications to the user then invokes updateServerUserNotificationConfiguration. If the server returned a 200 status and is successful, then return. Otherwise, if the user didn't grant permission or there was a problem with the  query, then return and (if needed) ErrorManager is automatically invoked
      */
@@ -90,8 +19,7 @@ enum NotificationManager {
         let beforeUpdateIsFollowUpEnabled = UserConfiguration.isFollowUpEnabled
         
         if LocalConfiguration.isNotificationAuthorized == false {
-            
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (isGranted, _) in
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (isGranted, _) in
                 LocalConfiguration.isNotificationAuthorized = isGranted
                 UserConfiguration.isNotificationEnabled = isGranted
                 UserConfiguration.isLoudNotification = isGranted
@@ -148,6 +76,74 @@ enum NotificationManager {
             DispatchQueue.main.async {
                 completionHandler(true)
             }
+        }
+    }
+    
+    /// Checks to see if a change in notification permissions has occured, if it has then update to reflect
+    static func synchronizeNotificationAuthorization() {
+        let beforeUpdateIsNotificationEnabled = UserConfiguration.isNotificationEnabled
+        let beforeUpdateIsLoudNotification = UserConfiguration.isLoudNotification
+        let beforeUpdateIsFollowUpEnabled = UserConfiguration.isFollowUpEnabled
+        
+        UNUserNotificationCenter.current().getNotificationSettings { (permission) in
+            switch permission.authorizationStatus {
+            case .authorized:
+                
+                // going from off to on, meaning the user has gone into the settings app and turned notifications from disabled to enabled
+                LocalConfiguration.isNotificationAuthorized = true
+                
+            case .denied:
+                
+                LocalConfiguration.isNotificationAuthorized = false
+                UserConfiguration.isNotificationEnabled = false
+                UserConfiguration.isLoudNotification = false
+                UserConfiguration.isFollowUpEnabled = false
+                // Updates switch to reflect change, if the last view open was the settings page then the app is exitted and property changed in the settings app then this app is reopened, VWL will not be called as the settings page was already opened, weird edge case.
+                // keep .main as UNUserNotificationCenter.current().getNotificationSettings is on seperate thread
+                DispatchQueue.main.async {
+                    let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController?.settingsViewController
+                    settingsVC?.settingsNotificationsViewController?.synchronizeAllNotificationSwitches(animated: false)
+                }
+                updateServerUserConfiguration()
+                
+            case .notDetermined:
+                AppDelegate.generalLogger.notice(".notDetermined")
+            case .provisional:
+                AppDelegate.generalLogger.notice(".provisional")
+            case .ephemeral:
+                AppDelegate.generalLogger.notice(".ephemeral")
+            @unknown default:
+                AppDelegate.generalLogger.notice("unknown auth status")
+            }
+        }
+        
+        /// Contact the server about the updated values and, if there is no response or a bad response, revert the values to their previous values. isNotificationAuthorized purposefully excluded as server doesn't need to know that and its value cant exactly just be flipped (as tied to apple notif auth status)
+        func updateServerUserConfiguration() {
+            var body: [String: Any] = [:]
+            // check for if values were changed, if there were then tell the server
+            if UserConfiguration.isNotificationEnabled != beforeUpdateIsNotificationEnabled {
+                body[ServerDefaultKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
+            }
+            if UserConfiguration.isLoudNotification != beforeUpdateIsLoudNotification {
+                body[ServerDefaultKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
+            }
+            if UserConfiguration.isFollowUpEnabled != beforeUpdateIsFollowUpEnabled {
+                body[ServerDefaultKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
+            }
+            if body.keys.isEmpty == false {
+                UserRequest.update(body: body) { requestWasSuccessful in
+                    if requestWasSuccessful == false {
+                        // error, revert to previous
+                        UserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
+                        UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
+                        UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
+                        
+                        let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController?.settingsViewController
+                        settingsVC?.settingsNotificationsViewController?.synchronizeAllNotificationSwitches(animated: false)
+                    }
+                }
+            }
+            
         }
     }
     

@@ -4,7 +4,8 @@ const { queryPromise } = require('../../utils/database/queryPromise');
 const { deleteDogsQuery } = require('./deleteForDogs');
 
 /**
- *  Queries the database to delete a family and everything nested under it. If the query is successful, then returns
+ *  Queries the database to either remove the user from their current family (familyMember) or delete the family and everything nested under it (familyHead).
+ *  If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
 const deleteFamilyQuery = async (req, userId, familyId) => {
@@ -28,28 +29,41 @@ const deleteFamilyQuery = async (req, userId, familyId) => {
     throw new DatabaseError(error.code);
   }
 
-  // User is not the head of the family so invalid permissions.
-  if (familyHeads.length !== 1) {
-    throw new ValidationError('No family found or invalid permissions', 'ER_NOT_FOUND');
-  }
-  // Family has multiple members inside of it so need to remove them first
-  else if (familyMembers.length !== 1) {
-    throw new ValidationError('Family still contains multiple members', 'ER_VALUES_INVALID');
-  }
+  // User is the head of the family, so has obligation to it.
+  if (familyHeads.length === 1) {
+  // The user is the only person in the family.
+    if (familyMembers.length === 1) {
+      // can destroy the family
+      try {
+        // delete all the family heads (should be one)
+        await queryPromise(req, 'DELETE FROM familyHeads WHERE familyId = ?', [familyId]);
+        // deletes all users from the family
+        await queryPromise(req, 'DELETE FROM familyMembers WHERE familyId = ?', [familyId]);
+      }
+      catch (error) {
+        throw new DatabaseError(error.code);
+      }
 
-  // User is the head of their family and there are no other members in the family. Can delete the family now
-  try {
-    // delete the family head which is the user
-    await queryPromise(req, 'DELETE FROM familyHeads WHERE familyId = ?', [familyId]);
+      // delete all the dogs
+      await deleteDogsQuery(req, userId, familyId);
+    }
+    // There are multiple people in the family
+    else {
+      // Cannot destroy family until other members are gone
+      throw new ValidationError('Family still contains multiple members', 'ER_VALUES_INVALID');
+    }
+  }
+  // User is not the head of the family, so no obligation
+  else {
+  // can leave the family
+    try {
     // deletes user from family
-    await queryPromise(req, 'DELETE FROM familyMembers WHERE familyId = ?', [familyId]);
+      await queryPromise(req, 'DELETE FROM familyMembers WHERE userId = ?', [userId]);
+    }
+    catch (error) {
+      throw new DatabaseError(error.code);
+    }
   }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
-
-  // delete all the dogs
-  await deleteDogsQuery(req, familyId);
 };
 
 module.exports = { deleteFamilyQuery };

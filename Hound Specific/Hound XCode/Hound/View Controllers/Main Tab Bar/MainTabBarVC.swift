@@ -8,7 +8,7 @@
 import UIKit
 
 class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, SettingsNavigationViewControllerDelegate, LogsNavigationViewControllerDelegate, RemindersIntroductionViewControllerDelegate, AlarmManagerDelegate {
-
+    
      // MARK: - DogsNavigationViewControllerDelegate
 
     func checkForRemindersIntroductionPage() {
@@ -35,10 +35,48 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         TimingManager.willTogglePause(dogManager: getDogManager(), newPauseStatus: newIsPaused)
     }
 
-    // MARK: - TimingManagerDelegate && DogsViewControllerDelegate && AlarmManagerDelegate
+    // MARK: - TimingManagerDelegate && DogsViewControllerDelegate
 
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
         setDogManager(sender: sender, newDogManager: newDogManager)
+    }
+    
+    // MARK: - AlarmManagerDelegate
+    
+    func didAddLog(sender: Sender, dogId: Int, log: Log) {
+        let sudoDogManager = getDogManager()
+        let dog = try! sudoDogManager.findDog(forDogId: dogId)
+        dog.dogLogs.addLog(newLog: log)
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
+    }
+    
+    func didRemoveLog(sender: Sender, dogId: Int, logId: Int) {
+        let sudoDogManager = getDogManager()
+        let dog = try! sudoDogManager.findDog(forDogId: dogId)
+        try! dog.dogLogs.removeLog(forLogId: logId)
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
+    }
+    
+    func didUpdateReminder(sender: Sender, dogId: Int, reminder: Reminder) {
+        let sudoDogManager = getDogManager()
+        let dog = try! sudoDogManager.findDog(forDogId: dogId)
+        dog.dogReminders.updateReminder(updatedReminder: reminder)
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
+    }
+    
+    func didRemoveReminder(sender: Sender, dogId: Int, reminderId: Int) {
+        let sudoDogManager = getDogManager()
+        let dog = try! sudoDogManager.findDog(forDogId: dogId)
+        try! dog.dogReminders.removeReminder(forReminderId: reminderId)
+        setDogManager(sender: sender, newDogManager: sudoDogManager)
+    }
+    
+    func shouldRefreshDogManager(sender: Sender) {
+        RequestUtils.getDogManager { dogManager in
+            if dogManager != nil {
+                self.setDogManager(sender: sender, newDogManager: dogManager!)
+            }
+        }
     }
 
     // MARK: - DogManagerControlFlowProtocol + ParentDogManager
@@ -164,12 +202,9 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
 
-        let sudoDogManager = getDogManager()
-        CheckManager.checkForTermination(forDogManager: sudoDogManager)
         CheckManager.checkForReleaseNotes()
         CheckManager.checkForNotificationSettingImbalance()
-        TimingManager.willInitalize(dogManager: sudoDogManager)
-        AlertManager.shared.refreshAlarms(dogManager: sudoDogManager)
+        TimingManager.willInitalize(dogManager: getDogManager())
         
     }
 

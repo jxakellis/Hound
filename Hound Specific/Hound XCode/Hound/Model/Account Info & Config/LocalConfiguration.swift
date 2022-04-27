@@ -79,20 +79,6 @@ enum LocalConfiguration {
         }
     }
     
-    static private var storedIsShowTerminationAlert: Bool = true
-    /// Determines where or not the app should display an alert when it believes the app was terminated.
-    static var isShowTerminationAlert: Bool {
-        get {
-            return storedIsShowTerminationAlert
-        }
-        set (newIsShowTerminationAlert) {
-            guard newIsShowTerminationAlert != storedIsShowTerminationAlert else {
-                return
-            }
-            storedIsShowTerminationAlert = newIsShowTerminationAlert
-        }
-    }
-    
     static private var storedIsShowReleaseNotes: Bool = true
     /// Determines where or not the app should display an message when the app is first opened after an update
     static var isShowReleaseNotes: Bool {

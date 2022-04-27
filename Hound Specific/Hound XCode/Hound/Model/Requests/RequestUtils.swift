@@ -28,6 +28,14 @@ enum RequestUtils {
         }
     }
     
+    /**
+     Invoke function when the user is terminating the app. Sends a query to the server to send an APN to the user, warning against terminating the app
+     */
+    static func createTerminationNotification() {
+        InternalRequestUtils.genericPostRequest(forURL: UserRequest.baseURLWithUserId.appendingPathComponent("/alert/terminate"), forBody: [:]) { _, _ in
+        }
+    }
+    
     /// Presents a custom made loadingAlertController on the global presentor that blocks everything until endAlertControllerQueryIndictator is called
     static func beginAlertControllerQueryIndictator() {
         AlertManager.enqueueAlertForPresentation(AlertManager.shared.loadingAlertController)

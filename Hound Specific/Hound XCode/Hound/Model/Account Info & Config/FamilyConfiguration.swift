@@ -27,8 +27,8 @@ enum FamilyConfiguration {
     
     /// Sets the FamilyConfiguration values equal to all the values found in the body. The key for the each body value must match the name of the FamilyConfiguration property exactly in order to be used. The value must also be able to be converted into the proper data type.
     static func setup(fromBody body: [String: Any]) {
-        if let isLocked = body[ServerDefaultKeys.familyIsLocked.rawValue] as? Bool {
-            storedIsLocked = isLocked
+        if let familyIsLocked = body[ServerDefaultKeys.familyIsLocked.rawValue] as? Bool {
+            storedIsLocked = familyIsLocked
         }
         if let familyCode = body[ServerDefaultKeys.familyCode.rawValue] as? String {
             storedFamilyCode = familyCode
@@ -53,7 +53,7 @@ enum FamilyConfiguration {
     
     static private var storedIsLocked: Bool = true
     /// If a family is locked, then no new members can join. Only the family head can lock and unlock the family.
-    static var isLocked: Bool {
+    static var familyIsLocked: Bool {
         get {
             return storedIsLocked
         }

@@ -2,11 +2,11 @@
 const mysql2 = require('mysql2');
 const databasePassword = require('./databaseSensitive');
 const DatabaseError = require('../utils/errors/databaseError');
+const { poolLogger, queryLogger } = require('../utils/logging/pino');
 
 /// the connection used by the server itself when querying the database for notifcations
 const connectionForNotifications = mysql2.createConnection({
-  connectionLimit: 10,
-  connectTimeout: 10000,
+  connectTimeout: 30000,
   host: 'localhost',
   user: 'admin',
   password: databasePassword,
@@ -34,34 +34,35 @@ const poolForRequests = mysql2.createPool({
 
 poolForRequests.on('acquire', (connection) => {
   const currentDate = new Date();
-  console.log(`Pool connection ${connection.threadId} acquired at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
+  poolLogger.info(`Pool connection ${connection.threadId} acquired at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
 });
 
 poolForRequests.on('release', (connection) => {
   const currentDate = new Date();
-  console.log(`Pool connection ${connection.threadId} released at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
+  poolLogger.info(`Pool connection ${connection.threadId} released at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
 });
 
 const commitQueries = async (req) => {
   try {
     // try to commit the transaction
+    queryLogger.debug(`Attempting To Commit Query For Thread: ${req.connection.threadId}`);
     await req.connection.promise().query('COMMIT');
     // Commit Query Successful
-    console.log('Commit Query Successful');
+    queryLogger.debug('Commit Query Successful');
     await req.connection.promise().release();
   }
   catch (error1) {
     // commit failed, now lets roll it back
-    console.log(`Commit Query Error: ${error1}`);
+    queryLogger.warn(`Commit Query Error: ${error1}`);
     try {
       await req.connection.promise().query('ROLLBACK');
       // Commit Query With Rollback Successful
-      console.log('Commit Query With Rollback Successful');
+      queryLogger.warn('Commit Query With Rollback Successful');
       await req.connection.promise().release();
     }
     catch (error2) {
       // rollback failed, release without commiting or rolling back
-      console.log(`Commit Query With Rollback Error: ${error2}`);
+      queryLogger.error(`Commit Query With Rollback Error: ${error2}`);
       await req.connection.promise().release();
     }
   }
@@ -71,12 +72,12 @@ const rollbackQueries = async (req) => {
   try {
     await req.connection.promise().query('ROLLBACK');
     // Commit Query With Rollback Successful
-    console.log('Rollback Query Successful');
+    queryLogger.debug('Rollback Query Successful');
     await req.connection.promise().release();
   }
   catch (error) {
     // rollback failed, release without rolling back
-    console.log(`Rollback Query Error: ${error}`);
+    queryLogger.error(`Rollback Query Error: ${error}`);
     await req.connection.promise().release();
   }
 };
