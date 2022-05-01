@@ -33,7 +33,7 @@ const refreshSecondaryAlarmNotificationsForUser = async (userId, isFollowUpEnabl
   try {
     const result = await queryPromise(
       connectionForNotifications,
-      'SELECT isFollowUpEnabled, followUpDelay FROM userConfiguration WHERE userId = ?',
+      'SELECT isFollowUpEnabled, followUpDelay FROM userConfiguration WHERE userId = ? LIMIT 18446744073709551615',
       [userId],
     );
 
@@ -56,7 +56,7 @@ const refreshSecondaryAlarmNotificationsForUser = async (userId, isFollowUpEnabl
         // get all the reminders for the given userId
         const remindersWithInfo = await queryPromise(
           connectionForNotifications,
-          'SELECT dogReminders.reminderId, dogReminders.reminderExecutionDate FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE familyMembers.userId = ? AND dogReminders.reminderExecutionDate IS NOT NULL',
+          'SELECT dogReminders.reminderId, dogReminders.reminderExecutionDate FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE familyMembers.userId = ? AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
           [userId],
         );
 

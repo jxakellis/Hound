@@ -59,7 +59,7 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
     // the reminderId has to exist to search and we check to make sure the dogId isn't null (to make sure the dog still exists too)
     const reminderWithInfo = await queryPromise(
       connectionForNotifications,
-      'SELECT dogs.dogName, dogReminders.reminderExecutionDate, dogReminders.reminderAction, dogReminders.reminderCustomActionName FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL',
+      'SELECT dogs.dogName, dogReminders.reminderExecutionDate, dogReminders.reminderAction, dogReminders.reminderCustomActionName FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
       [reminderId],
     );
     const reminder = reminderWithInfo[0];
@@ -87,7 +87,7 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
       // if familyId is missing, we will have no results. If a userConfiguration is missing, then there will be no userId for that user in the results
       const users = await queryPromise(
         connectionForNotifications,
-        'SELECT familyMembers.userId, userConfiguration.followUpDelay FROM familyMembers JOIN userConfiguration ON familyMembers.userId = userConfiguration.userId WHERE familyMembers.familyId = ? AND userConfiguration.isFollowUpEnabled = 1',
+        'SELECT familyMembers.userId, userConfiguration.followUpDelay FROM familyMembers JOIN userConfiguration ON familyMembers.userId = userConfiguration.userId WHERE familyMembers.familyId = ? AND userConfiguration.isFollowUpEnabled = 1 LIMIT 18446744073709551615',
         [familyId],
       );
 
@@ -168,7 +168,7 @@ const sendSecondaryAPNForUser = async (userId, reminderId) => {
     // the reminderId has to exist to search and we check to make sure the dogId isn't null (to make sure the dog still exists too)
     const reminderWithInfo = await queryPromise(
       connectionForNotifications,
-      'SELECT dogs.dogName, dogReminders.reminderAction, dogReminders.reminderCustomActionName FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL',
+      'SELECT dogs.dogName, dogReminders.reminderAction, dogReminders.reminderCustomActionName FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
       [reminderId],
     );
     const reminder = reminderWithInfo[0];

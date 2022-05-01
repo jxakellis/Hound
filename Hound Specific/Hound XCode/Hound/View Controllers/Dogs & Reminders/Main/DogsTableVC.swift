@@ -45,7 +45,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
         if !(sender.localized is DogsReminderDisplayTableViewCell) && !(sender.origin is DogsTableViewController) {
-            self.updateDogManagerDependents()
+            self.reloadTable()
         }
         if sender.localized is DogsReminderDisplayTableViewCell {
             self.reloadVisibleCellsTimeLeftLabel()
@@ -73,11 +73,6 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
             tableView.allowsSelection = false
             self.tableView.rowHeight = 65.5
         }
-    }
-
-    // Updates different visual aspects to reflect data change of dogManager
-    func updateDogManagerDependents() {
-        self.reloadTable()
     }
 
     // MARK: - Properties

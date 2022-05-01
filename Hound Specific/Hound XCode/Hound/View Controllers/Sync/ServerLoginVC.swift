@@ -120,7 +120,11 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TO DO if a user signs in / signs up, make sure to clear the local config on the intro pages. we want them to get a guarenteed fresh start.
+        // we want the user to have a fresh login experience, so we reset the introduction pages
+        LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = false
+        LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
+        
+        // all other information tracks something important and shouldn't be modified, we simply do this so the user is greeted
         
         if UserInformation.userIdentifier != nil {
             // we found a userIdentifier in the keychain (during recurringSetup) so we change the info to match.
@@ -249,11 +253,13 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
     private func signInUser() {
         // start query indictator, if there is already one present then its fine as alertmanager will throw away the duplicate. we remove the query indicator when we finish interpreting our response
         RequestUtils.beginAlertControllerQueryIndictator()
-        UserRequest.get(invokeErrorManager: true) { familyId, responseStatus in
+        UserRequest.get(invokeErrorManager: true) { userId, _, _ in
             // the user config is already automatically setup with this function
             RequestUtils.endAlertControllerQueryIndictator {
-                // user was successfully retrieved from the server
-                self.dismiss(animated: true, completion: nil)
+                if userId != nil {
+                    // user was successfully retrieved from the server
+                    self.dismiss(animated: true, completion: nil)
+                }
             }
         }
     }

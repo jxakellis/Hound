@@ -76,11 +76,12 @@ extension UserRequest {
      completionHandler returns a possible familyId and the ResponseStatus.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func get(invokeErrorManager: Bool, completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
+    static func get(invokeErrorManager: Bool, completionHandler: @escaping (Int?, Int?, ResponseStatus) -> Void) {
         UserRequest.internalGet(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], result.isEmpty == false {
+                // attempt to extract body and userId
+                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], let userId = result[ServerDefaultKeys.userId.rawValue] as? Int, result.isEmpty == false {
                     
                     // set all local configuration equal to whats in the server
                     UserInformation.setup(fromBody: result)
@@ -88,15 +89,15 @@ extension UserRequest {
                     
                     let familyId: Int? = result[ServerDefaultKeys.familyId.rawValue] as? Int
                     
-                    completionHandler(familyId, .successResponse)
+                    completionHandler(userId, familyId, .successResponse)
                 }
                 else {
-                    completionHandler(nil, .failureResponse)
+                    completionHandler(nil, nil, .failureResponse)
                 }
             case .failureResponse:
-                completionHandler(nil, .failureResponse)
+                completionHandler(nil, nil, .failureResponse)
             case .noResponse:
-                completionHandler(nil, .noResponse)
+                completionHandler(nil, nil, .noResponse)
             }
         }
     }

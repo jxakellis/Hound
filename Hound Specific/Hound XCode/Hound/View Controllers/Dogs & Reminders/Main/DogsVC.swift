@@ -295,11 +295,6 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
 
     }
 
-    // Updates different visual aspects to reflect data change of dogManager
-    func updateDogManagerDependents() {
-        //
-    }
-
     // MARK: - IB
     
     @IBOutlet private weak var refreshButton: UIBarButtonItem!
@@ -308,7 +303,6 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         // TO DO add activity indictator
         self.refreshButton.isEnabled = false
         RequestUtils.getDogManager(invokeErrorManager: true) { dogManager, _ in
-            // end refresh first otherwise there will be a weird visual issue
             self.refreshButton.isEnabled = true
             if dogManager != nil {
                 self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager!)
@@ -376,7 +370,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     @objc private func willCreateNew(sender: UIButton) {
         // the senders tag indicates the parentDogId, if -1 then it means we are creating a new dog and if != -1 then it means we are creating a new reminder (as it has a parent dog)
         if sender.tag == -1 {
-            // TO DO laddy when creating a new dog
+            // TO DO laggy when creating a new dog
             self.willOpenDogMenu(forDogId: nil)
         }
         else {

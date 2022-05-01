@@ -28,172 +28,13 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
         dogManager = newDogManager
 
         if !(sender.localized is LogsTableViewController) {
-            // updateDogManagerDependents and reloads table visual
             self.reloadTable()
         }
         else {
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
-            updateDogManagerDependents()
+            self.reloadTableDataSource()
         }
 
-    }
-
-    func updateDogManagerDependents() {
-        /// Sorts all dates of every time a reminder was logged into a tuple.
-        /// This tuple containing the parentDogId and the Log. Dates are then extracted at a later date to sort this whole list chronologically from last (closet to present) to first (the first event that happened, so it is the oldest).
-        var calculatedConsolidatedLogs: [(Int, Log)] {
-            let dogManager = getDogManager()
-            var consolidatedLogs: [(Int, Log)] = []
-
-            // not filtering
-            if filterIndexPath == nil {
-                for dogIndex in 0..<dogManager.dogs.count {
-                    // adds dog logs
-                    let dog = dogManager.dogs[dogIndex]
-                    for dogLog in dog.dogLogs.logs {
-                        consolidatedLogs.append((dog.dogId, dogLog))
-                    }
-
-                }
-            }
-            // row in zero that that means filtering by every known log types
-            else if filterIndexPath!.row == 0 {
-                let dog = dogManager.dogs[filterIndexPath!.section]
-
-                // adds dog logs
-                for dogLog in dog.dogLogs.logs {
-                    consolidatedLogs.append((dog.dogId, dogLog))
-                }
-
-            }
-            // row is not zero so filtering by a specific known log type
-            else {
-                let dog = dogManager.dogs[filterIndexPath!.section]
-
-                // checks to see if filter type still present
-                if dog.dogLogs.catagorizedLogActions.contains(where: { (arg1) in
-                    let knownType = arg1.0
-                    if knownType == filterType {
-                        return true
-                    }
-                    else {
-                        return false
-                    }
-                }) == true {
-                    // apennds all known logs to consolidated list, some have reminder and some dont as varies depending on source (i.e. was nested under doglogs or reminder logs)
-                    for knownLog in dog.dogLogs.catagorizedLogActions[filterIndexPath!.row-1].1 {
-                        consolidatedLogs.append((dog.dogId, knownLog))
-                    }
-                }
-                else {
-                    delegate.didRemoveLastFilterLog()
-                }
-
-            }
-
-            // sorts from earlist in time (e.g. 1970) to most recent (e.g. 2021)
-            consolidatedLogs.sort { (var1, var2) -> Bool in
-                let log1: Log = var1.1
-                let log2: Log = var2.1
-
-                // returns true if var1's log1 is earlier in time than var2's log2
-
-                // If date1's distance to date2 is positive, i.e. date2 is later in time, returns false as date2 should be ordered first (most recent (to current Date()) dates first)
-                if log1.logDate.distance(to: log2.logDate) > 0 {
-                    return false
-                }
-                // If date1 is later in time than date2, returns true as it should come before date2
-                else {
-                    return true
-                }
-            }
-
-            return consolidatedLogs
-        }
-
-        /// Returns an array tuples which has another array of tuples [month, year, [(parentDogId,Log)].
-        var calculatedUniqueLogs: [(Int, Int, [(Int, Log)])] {
-
-            // Method finds unique days (of a given year) which a logging event occured
-            //  For every log that happened on a given unique day/year combo, its information (parentDogId, Log) is appeneded to the array attached to the unique pair.
-            var uniqueLogs: [(Int, Int, Int, [(Int, Log)])] = []
-
-            // goes through all dates present where a log happened
-            for consolidatedLogsIndex in 0..<consolidatedLogs.count {
-
-                let yearMonthDayComponents = Calendar.current.dateComponents([.year, .month, .day ], from: consolidatedLogs[consolidatedLogsIndex].1.logDate)
-
-                // Checks to make sure the day and year are valid
-
-                if yearMonthDayComponents.day == nil || yearMonthDayComponents.month == nil || yearMonthDayComponents.year == nil {
-                    fatalError("year, month, or day nil for calculatedUniqueLogs")
-                }
-                // Checks to see if the uniqueLogs contains the day & year pair already, if it doesnt then adds it and the corresponding dateLog for that day, if there is more than one they will be added in further recursion
-                else if uniqueLogs.contains(where: { (arg1) -> Bool in
-
-                    let (day, month, year, _) = arg1
-                    if yearMonthDayComponents.day == day && yearMonthDayComponents.month == month && yearMonthDayComponents.year == year {
-                        return true
-                    }
-                    else {
-                        return false
-                    }
-                }) == false {
-                    uniqueLogs.append((yearMonthDayComponents.day!, yearMonthDayComponents.month!, yearMonthDayComponents.year!, [consolidatedLogs[consolidatedLogsIndex]]))
-                }
-                // if a day and year pair is already present, then just appends to their corresponding array that stores all logs that happened on that given pair of day & year
-                else {
-                    uniqueLogs[uniqueLogs.count-1].3.append(consolidatedLogs[consolidatedLogsIndex])
-                }
-            }
-
-            uniqueLogs.sort { (arg1, arg2) -> Bool in
-                let (day1, month1, year1, _) = arg1
-                let (day2, month2, year2, _) = arg2
-
-                // if the year is bigger and the day is bigger then that comes first (e.g.  (4, 2020) comes first in the array and (2,2020) comes second, so most recent is first)
-                if year1 >= year2 {
-                    // if month is bigger then it comes first (a bigger month will always be closer to the future)
-                    if month1 > month2 {
-                        return true
-                    }
-                    else if month1 == month2 {
-                        // if day is bigger then it comes first (a bigger day will always be closer to the future than a smaller one)
-                        if day1 >= day2 {
-                            return true
-                        }
-                        else {
-                            return false
-                        }
-                    }
-                    else {
-                        return false
-                    }
-
-                }
-                else {
-                    return false
-                }
-            }
-
-            // converts from day, month, year, [logs] into day, year, [logs] so it can be returned. month not needed
-            var converted: [(Int, Int, [(Int, Log)])] = []
-            for uniqueLogDate in uniqueLogs {
-                converted.append((uniqueLogDate.0, uniqueLogDate.2, uniqueLogDate.3))
-            }
-
-            return converted
-        }
-
-        self.consolidatedLogs = calculatedConsolidatedLogs
-        self.uniqueLogs = calculatedUniqueLogs
-
-        if uniqueLogs.count == 0 {
-            tableView.separatorStyle = .none
-        }
-        else {
-            tableView.separatorStyle = .singleLine
-        }
     }
 
     // MARK: - Properties
@@ -221,7 +62,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
         self.tableView.separatorInset = UIEdgeInsets.zero
         // allow for refreshing of the information from the server
         self.tableView.refreshControl = UIRefreshControl()
-        tableView.refreshControl?.addTarget(self, action: #selector(refreshTableData), for: .valueChanged)
+        tableView.refreshControl?.addTarget(self, action: #selector(refreshTable), for: .valueChanged)
 
     }
 
@@ -234,7 +75,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
 
     }
     /// Makes a query to the server to retrieve new information then refreshed the tableView
-    @objc private func refreshTableData() {
+    @objc private func refreshTable() {
         RequestUtils.getDogManager(invokeErrorManager: true) { dogManager, _ in
             // end refresh first otherwise there will be a weird visual issue
             self.tableView.refreshControl?.endRefreshing()
@@ -249,9 +90,167 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
     /// Updates dogManagerDependents then reloads table
     private func reloadTable() {
 
-        updateDogManagerDependents()
+        reloadTableDataSource()
 
         tableView.reloadData()
+    }
+    
+    private func reloadTableDataSource() {
+        /// Sorts all dates of every time a reminder was logged into a tuple.
+        /// This tuple containing the parentDogId and the Log. Dates are then extracted at a later date to sort this whole list chronologically from last (closet to present) to first (the first event that happened, so it is the oldest).
+        var calculatedConsolidatedLogs: [(Int, Log)] {
+            let dogManager = getDogManager()
+            var consolidatedLogs: [(Int, Log)] = []
+            
+            // not filtering
+            if filterIndexPath == nil {
+                for dogIndex in 0..<dogManager.dogs.count {
+                    // adds dog logs
+                    let dog = dogManager.dogs[dogIndex]
+                    for dogLog in dog.dogLogs.logs {
+                        consolidatedLogs.append((dog.dogId, dogLog))
+                    }
+                    
+                }
+            }
+            // row in zero that that means filtering by every known log types
+            else if filterIndexPath!.row == 0 {
+                let dog = dogManager.dogs[filterIndexPath!.section]
+                
+                // adds dog logs
+                for dogLog in dog.dogLogs.logs {
+                    consolidatedLogs.append((dog.dogId, dogLog))
+                }
+                
+            }
+            // row is not zero so filtering by a specific known log type
+            else {
+                let dog = dogManager.dogs[filterIndexPath!.section]
+                
+                // checks to see if filter type still present
+                if dog.dogLogs.catagorizedLogActions.contains(where: { (arg1) in
+                    let knownType = arg1.0
+                    if knownType == filterType {
+                        return true
+                    }
+                    else {
+                        return false
+                    }
+                }) == true {
+                    // apennds all known logs to consolidated list, some have reminder and some dont as varies depending on source (i.e. was nested under doglogs or reminder logs)
+                    for knownLog in dog.dogLogs.catagorizedLogActions[filterIndexPath!.row-1].1 {
+                        consolidatedLogs.append((dog.dogId, knownLog))
+                    }
+                }
+                else {
+                    delegate.didRemoveLastFilterLog()
+                }
+                
+            }
+            
+            // sorts from earlist in time (e.g. 1970) to most recent (e.g. 2021)
+            consolidatedLogs.sort { (var1, var2) -> Bool in
+                let log1: Log = var1.1
+                let log2: Log = var2.1
+                
+                // returns true if var1's log1 is earlier in time than var2's log2
+                
+                // If date1's distance to date2 is positive, i.e. date2 is later in time, returns false as date2 should be ordered first (most recent (to current Date()) dates first)
+                if log1.logDate.distance(to: log2.logDate) > 0 {
+                    return false
+                }
+                // If date1 is later in time than date2, returns true as it should come before date2
+                else {
+                    return true
+                }
+            }
+            
+            return consolidatedLogs
+        }
+        
+        /// Returns an array tuples which has another array of tuples [month, year, [(parentDogId,Log)].
+        var calculatedUniqueLogs: [(Int, Int, [(Int, Log)])] {
+            
+            // Method finds unique days (of a given year) which a logging event occured
+            //  For every log that happened on a given unique day/year combo, its information (parentDogId, Log) is appeneded to the array attached to the unique pair.
+            var uniqueLogs: [(Int, Int, Int, [(Int, Log)])] = []
+            
+            // goes through all dates present where a log happened
+            for consolidatedLogsIndex in 0..<consolidatedLogs.count {
+                
+                let yearMonthDayComponents = Calendar.current.dateComponents([.year, .month, .day ], from: consolidatedLogs[consolidatedLogsIndex].1.logDate)
+                
+                // Checks to make sure the day and year are valid
+                
+                if yearMonthDayComponents.day == nil || yearMonthDayComponents.month == nil || yearMonthDayComponents.year == nil {
+                    fatalError("year, month, or day nil for calculatedUniqueLogs")
+                }
+                // Checks to see if the uniqueLogs contains the day & year pair already, if it doesnt then adds it and the corresponding dateLog for that day, if there is more than one they will be added in further recursion
+                else if uniqueLogs.contains(where: { (arg1) -> Bool in
+                    
+                    let (day, month, year, _) = arg1
+                    if yearMonthDayComponents.day == day && yearMonthDayComponents.month == month && yearMonthDayComponents.year == year {
+                        return true
+                    }
+                    else {
+                        return false
+                    }
+                }) == false {
+                    uniqueLogs.append((yearMonthDayComponents.day!, yearMonthDayComponents.month!, yearMonthDayComponents.year!, [consolidatedLogs[consolidatedLogsIndex]]))
+                }
+                // if a day and year pair is already present, then just appends to their corresponding array that stores all logs that happened on that given pair of day & year
+                else {
+                    uniqueLogs[uniqueLogs.count-1].3.append(consolidatedLogs[consolidatedLogsIndex])
+                }
+            }
+            
+            uniqueLogs.sort { (arg1, arg2) -> Bool in
+                let (day1, month1, year1, _) = arg1
+                let (day2, month2, year2, _) = arg2
+                
+                // if the year is bigger and the day is bigger then that comes first (e.g.  (4, 2020) comes first in the array and (2,2020) comes second, so most recent is first)
+                if year1 >= year2 {
+                    // if month is bigger then it comes first (a bigger month will always be closer to the future)
+                    if month1 > month2 {
+                        return true
+                    }
+                    else if month1 == month2 {
+                        // if day is bigger then it comes first (a bigger day will always be closer to the future than a smaller one)
+                        if day1 >= day2 {
+                            return true
+                        }
+                        else {
+                            return false
+                        }
+                    }
+                    else {
+                        return false
+                    }
+                    
+                }
+                else {
+                    return false
+                }
+            }
+            
+            // converts from day, month, year, [logs] into day, year, [logs] so it can be returned. month not needed
+            var converted: [(Int, Int, [(Int, Log)])] = []
+            for uniqueLogDate in uniqueLogs {
+                converted.append((uniqueLogDate.0, uniqueLogDate.2, uniqueLogDate.3))
+            }
+            
+            return converted
+        }
+        
+        self.consolidatedLogs = calculatedConsolidatedLogs
+        self.uniqueLogs = calculatedUniqueLogs
+        
+        if uniqueLogs.count == 0 {
+            tableView.separatorStyle = .none
+        }
+        else {
+            tableView.separatorStyle = .singleLine
+        }
     }
 
     /// Will apply a filtering scheme dependent on indexPath, nil means going to no filtering.

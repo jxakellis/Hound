@@ -15,7 +15,7 @@ const getUserToken = async (userId) => {
     // retrieve userNotificationToken that fit the criteria
     const result = await queryPromise(
       connectionForNotifications,
-      `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} WHERE users.userId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1`,
+      `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} WHERE users.userId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 1`,
       [userId],
     );
     // make array that is just the userNotification tokens (instead of current array of JSON)
@@ -40,7 +40,7 @@ const getAllFamilyMemberTokens = async (familyId) => {
     // retrieve userNotificationToken that fit the criteria
     const result = await queryPromise(
       connectionForNotifications,
-      `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1`,
+      `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
       [familyId],
     );
     // make array that is just the userNotification tokens (instead of current array of JSON)
@@ -65,7 +65,7 @@ const getOtherFamilyMemberTokens = async (userId, familyId) => {
     // retrieve userNotificationToken that fit the criteria
     const result = await queryPromise(
       connectionForNotifications,
-      `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userId != ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1`,
+      `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userId != ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
       [familyId, userId],
     );
     // make array that is just the userNotification tokens (instead of current array of JSON)

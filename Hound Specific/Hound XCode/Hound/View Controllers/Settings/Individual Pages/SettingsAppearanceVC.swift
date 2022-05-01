@@ -20,6 +20,8 @@ class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDel
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // TO DO add reminders overview mode. allow the user to switch between compact and large.
 
         // DARK MODE
         interfaceStyleSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.white], for: .normal)
@@ -96,15 +98,5 @@ class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDel
             }
         }
     }
-
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
-
+    
 }

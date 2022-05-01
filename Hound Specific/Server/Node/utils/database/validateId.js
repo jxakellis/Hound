@@ -18,14 +18,12 @@ const validateUserId = async (req, res, next) => {
       // queries the database to find if the users table contains a user with the provided ID
       const result = await queryPromise(
         req,
-        'SELECT userId, userIdentifier FROM users WHERE userId = ? AND userIdentifier = ?',
+        'SELECT userId, userIdentifier FROM users WHERE userId = ? AND userIdentifier = ? LIMIT 1',
         [userId, userIdentifier],
       );
 
-      // checks array of JSON from query to find if userId and userIdentifier are contained
-      // this step is technically redundant
-      if (result.some((item) => item.userId === userId && item.userIdentifier === userIdentifier)) {
-        // userId exists in the table
+      if (result.length === 1) {
+        // userId exists in the table for given userId and identifier, so all valid
         // reassign req.params so that the id there is guarrenteed to be an int and not a string
         req.params.userId = userId;
         return next();
@@ -63,12 +61,11 @@ const validateFamilyId = async (req, res, next) => {
       // queries the database to find familyIds associated with the userId
       const result = await queryPromise(
         req,
-        'SELECT familyId, userId fami FROM familyMembers WHERE userId = ?',
-        [userId],
+        'SELECT familyId, userId FROM familyMembers WHERE userId = ?, familyId = ? LIMIT 1',
+        [userId, familyId],
       );
 
-      // checks array of JSON from query to find if familyId is contained
-      if (result.some((item) => item.familyId === familyId)) {
+      if (result.length === 1) {
         // familyId exists in the table, therefore userId is  part of the family
         // reassign req.params so that the id there is guarrenteed to be an int and not a string
         req.params.familyId = familyId;
@@ -107,11 +104,11 @@ const validateDogId = async (req, res, next) => {
     // query database to find out if user has permission for that dogId
     try {
       // finds what dogId (s) the user has linked to their familyId
-      const userDogIds = await queryPromise(req, 'SELECT dogs.dogId FROM dogs WHERE dogs.familyId = ?', [familyId]);
+      const dog = await queryPromise(req, 'SELECT dogId FROM dogs WHERE familyId = ?, dogId = ? LIMIT 1', [familyId, dogId]);
 
       // search query result to find if the dogIds linked to the familyId match the dogId provided, match means the user owns that dogId
 
-      if (userDogIds.some((item) => item.dogId === dogId)) {
+      if (dog.length === 1) {
         // the dogId exists and it is linked to the familyId, valid!
         // reassign req.params so that the id there is guarrenteed to be an int and not a string
         req.params.dogId = dogId;
@@ -149,11 +146,11 @@ const validateLogId = async (req, res, next) => {
     // query database to find out if user has permission for that logId
     try {
       // finds what logId (s) the user has linked to their dogId
-      const dogLogIds = await queryPromise(req, 'SELECT logId FROM dogLogs WHERE dogId = ?', [dogId]);
+      const log = await queryPromise(req, 'SELECT logId FROM dogLogs WHERE dogId = ?, logId = ? LIMIT 1', [dogId, logId]);
 
       // search query result to find if the logIds linked to the dogIds match the logId provided, match means the user owns that logId
 
-      if (dogLogIds.some((item) => item.logId === logId)) {
+      if (log.length === 1) {
         // the logId exists and it is linked to the dogId, valid!
         // reassign req.params so that the id there is guarrenteed to be an int and not a string
         req.params.logId = logId;
@@ -191,11 +188,11 @@ const validateParamsReminderId = async (req, res, next) => {
     // query database to find out if user has permission for that reminderId
     try {
       // finds what reminderId (s) the user has linked to their dogId
-      const dogReminderIds = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ?', [dogId]);
+      const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ?, reminderId = ? LIMIT 1', [dogId, reminderId]);
 
       // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 
-      if (dogReminderIds.some((item) => item.reminderId === reminderId)) {
+      if (reminder.length === 1) {
         // the reminderId exists and it is linked to the dogId, valid!
         // reassign req.params so that the id there is guarrenteed to be an int and not a string
         req.params.reminderId = reminderId;
@@ -238,11 +235,11 @@ const validateBodyReminderId = async (req, res, next) => {
         // query database to find out if user has permission for that reminderId
         try {
           // finds what reminderId (s) the user has linked to their dogId
-          const dogReminderIds = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ?', [dogId]);
+          const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ?, reminderId = ? LIMIT 1', [dogId, reminderId]);
 
           // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 
-          if (dogReminderIds.some((item) => item.reminderId === reminderId)) {
+          if (reminder.length === 1) {
             // the reminderId exists and it is linked to the dogId, valid!
             // reassign reminder body so that the id there is guarrenteed to be an int and not a string
             reminders[i].reminderId = reminderId;
@@ -273,11 +270,11 @@ const validateBodyReminderId = async (req, res, next) => {
     // query database to find out if user has permission for that reminderId
     try {
       // finds what reminderId (s) the user has linked to their dogId
-      const dogReminderIds = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ?', [dogId]);
+      const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ?, reminderId = ?', [dogId, singleReminderId]);
 
       // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 
-      if (dogReminderIds.some((item) => item.reminderId === singleReminderId)) {
+      if (reminder.length === 1) {
         // the reminderId exists and it is linked to the dogId, valid!
         // reassign req.body so that the id there is guarrenteed to be an int and not a string
         req.body.reminderId = singleReminderId;

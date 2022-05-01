@@ -76,62 +76,27 @@ extension FamilyRequest {
     
     /**
      Retrieves the family configuration, automatically setting it up if the information is successfully retrieved.
-     completionHandler returns a possible array of familyMembers and the ResponseStatus.
+     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func get(invokeErrorManager: Bool, completionHandler: @escaping ([FamilyMember]?, ResponseStatus) -> Void) {
+    static func get(invokeErrorManager: Bool, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
         
         FamilyRequest.internalGet(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], let familyMembersBody = result[ServerDefaultKeys.familyMembers.rawValue] as? [[String: Any]] {
+                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any] {
                     // set up family configuration
                     FamilyConfiguration.setup(fromBody: result)
                     
-                    // decode family members
-                    var familyMembers: [FamilyMember] = []
-                    // get individual bodies
-                    for familyMemberBody in familyMembersBody {
-                        // convert individual bodies to family member
-                        let familyMember = FamilyMember(fromBody: familyMemberBody)
-                        familyMembers.append(familyMember)
-                    }
-                    
-                    // assign familyHead
-                    if let familyHeadUserId = result[ServerDefaultKeys.userId.rawValue] as? Int {
-                        for familyMember in familyMembers where familyMember.userId == familyHeadUserId {
-                            familyMember.isFamilyHead = true
-                        }
-                    }
-                    
-                    // sort so family head is first then users in ascending userid order
-                    familyMembers.sort { familyMember1, familyMember2 in
-                        // the family head should always be first
-                        if familyMember1.isFamilyHead == true {
-                            // 1st element is head so should come before therefore return true
-                            return true
-                        }
-                        else if familyMember2.isFamilyHead == true {
-                            // 2nd element is head so should come before therefore return false
-                            return false
-                        }
-                        else {
-                            // the user with the lower userId should come before the higher id
-                            // if familyMember1 has a smaller userId then comparison returns true and then true is returned again, bringing familyMember1 to be first
-                            // if familyMember2 has a smaller userId then comparison returns false and then false is returned, bringing familyMember2 to be first
-                            return (familyMember1.userId < familyMember2.userId)
-                        }
-                    }
-                    
-                    completionHandler(familyMembers, responseStatus)
+                    completionHandler(true, responseStatus)
                 }
                 else {
-                    completionHandler(nil, responseStatus)
+                    completionHandler(false, responseStatus)
                 }
             case .failureResponse:
-                completionHandler(nil, responseStatus)
+                completionHandler(false, responseStatus)
             case .noResponse:
-                completionHandler(nil, responseStatus)
+                completionHandler(false, responseStatus)
             }
             
         }
@@ -189,7 +154,7 @@ extension FamilyRequest {
         FamilyRequest.internalDelete(invokeErrorManager: invokeErrorManager) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
-                // reset the local configurations so they are ready for the next family member
+                // reset the local configurations so they are ready for the next family
                 LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = false
                 LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
                 LocalConfiguration.dogIcons = []

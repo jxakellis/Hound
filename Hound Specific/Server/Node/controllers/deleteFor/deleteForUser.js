@@ -15,13 +15,13 @@ const deleteUserQuery = async (req, userId, familyId) => {
     // find the amount of family members in the family
     familyMembers = await queryPromise(
       req,
-      'SELECT userId FROM familyMembers WHERE familyId = ?',
+      'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
       [familyId],
     );
     // find out if the user is the family head
     family = await queryPromise(
       req,
-      'SELECT userId FROM families WHERE familyId = ? AND userId = ?',
+      'SELECT userId FROM families WHERE familyId = ? AND userId = ? LIMIT 18446744073709551615',
       [familyId, userId],
     );
   }

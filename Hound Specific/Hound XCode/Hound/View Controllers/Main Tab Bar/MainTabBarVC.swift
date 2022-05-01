@@ -7,7 +7,7 @@
 //
 import UIKit
 
-class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, LogsNavigationViewControllerDelegate, RemindersIntroductionViewControllerDelegate, AlarmManagerDelegate {
+class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, LogsNavigationViewControllerDelegate, RemindersIntroductionViewControllerDelegate, AlarmManagerDelegate, SettingsNavigationViewControllerDelegate {
     
      // MARK: - DogsNavigationViewControllerDelegate
 
@@ -29,7 +29,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         setDogManager(sender: sender, newDogManager: dogManager)
     }
 
-    // MARK: - TimingManagerDelegate && DogsViewControllerDelegate
+    // MARK: - TimingManagerDelegate && DogsViewControllerDelegate && SettingsNavigationViewControllerDelegate
 
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
         setDogManager(sender: sender, newDogManager: newDogManager)
@@ -91,6 +91,11 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         // MainTabBarViewController
         // TimingManager
         // DogsViewController
+        
+        // MainTabBarViewController may not have been fully initalized by the time setDogManager is called on it, leading to TimingManager throwing an error possibly
+        if !(sender.localized is MainTabBarViewController) {
+            TimingManager.willReinitalize(forOldDogManager: getDogManager(), forNewDogManager: newDogManager)
+        }
 
         parentDogManager = newDogManager
         MainTabBarViewController.staticDogManager = newDogManager
@@ -99,30 +104,15 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         guard !(sender.localized is ServerSyncViewController) && !(sender.origin is ServerSyncViewController) &&  !(sender.localized is FamilyIntroductionViewController) && !(sender.origin is FamilyIntroductionViewController) else {
             return
         }
-
-        if sender.localized is TimingManager.Type || sender.localized is TimingManager || sender.localized is AlarmManager.Type || sender.localized is AlarmManager {
-            logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+        
+        if (sender.localized is DogsViewController) == false {
             dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
-        else if sender.localized is DogsViewController {
+        if (sender.localized is LogsViewController) == false {
             logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
-        }
-        else if sender.localized is LogsViewController {
-            dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
-        }
-        else if sender.localized is RemindersIntroductionViewController {
-            logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
-            dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+            
         }
 
-        if !(sender.localized is MainTabBarViewController) {
-            self.updateDogManagerDependents()
-        }
-
-    }
-
-    func updateDogManagerDependents() {
-        TimingManager.willReinitalize(dogManager: getDogManager())
     }
 
     // MARK: - Properties
@@ -161,6 +151,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         dogsViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
 
         settingsNavigationViewController = self.viewControllers![2] as? SettingsNavigationViewController
+        settingsNavigationViewController.passThroughDelegate = self
         settingsViewController = settingsNavigationViewController.viewControllers[0] as? SettingsViewController
 
         MainTabBarViewController.mainTabBarViewController = self
@@ -184,8 +175,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
 
         CheckManager.checkForReleaseNotes()
         CheckManager.checkForNotificationSettingImbalance()
-        TimingManager.willInitalize(dogManager: getDogManager())
-        
+        TimingManager.willInitalize(forDogManager: getDogManager())
     }
 
     override open var shouldAutorotate: Bool {

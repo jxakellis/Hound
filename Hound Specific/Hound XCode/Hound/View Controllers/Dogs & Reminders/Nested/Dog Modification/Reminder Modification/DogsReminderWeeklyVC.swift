@@ -180,19 +180,10 @@ class DogsReminderWeeklyViewController: UIViewController, UIGestureRecognizerDel
         super.viewDidAppear(animated)
 
         for constraint in interWeekdayConstraints {
+            // the distance between week day buttons should be 8 points on a 414 point screen, so this adjusts that ratio to fit any width of screen
             constraint.constant = (8.0/414.0)*self.view.safeAreaLayoutGuide.layoutFrame.width
         }
 
     }
-
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
 
 }

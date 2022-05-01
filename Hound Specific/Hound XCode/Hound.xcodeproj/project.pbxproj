@@ -86,7 +86,6 @@
 		A29400AD2652DA2700725F1C /* SettingsNavigationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29400AC2652DA2600725F1C /* SettingsNavigationVC.swift */; };
 		A299EAA027E2C4E60042F8F4 /* SettingsPersonalInformationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EA9F27E2C4E50042F8F4 /* SettingsPersonalInformationVC.swift */; };
 		A299EAA427E2C5050042F8F4 /* SettingsAppearanceVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EAA327E2C5050042F8F4 /* SettingsAppearanceVC.swift */; };
-		A299EAA627E2C5130042F8F4 /* SettingsRemindersVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EAA527E2C5130042F8F4 /* SettingsRemindersVC.swift */; };
 		A299EAA827E2C5220042F8F4 /* SettingsNotificationsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EAA727E2C5220042F8F4 /* SettingsNotificationsVC.swift */; };
 		A299EAAB27E2C5F60042F8F4 /* SettingsTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EAAA27E2C5F60042F8F4 /* SettingsTableVC.swift */; };
 		A299EAAD27E2D3350042F8F4 /* SettingsAboutVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EAAC27E2D3350042F8F4 /* SettingsAboutVC.swift */; };
@@ -266,7 +265,6 @@
 		A29400AC2652DA2600725F1C /* SettingsNavigationVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsNavigationVC.swift; sourceTree = "<group>"; };
 		A299EA9F27E2C4E50042F8F4 /* SettingsPersonalInformationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPersonalInformationVC.swift; sourceTree = "<group>"; };
 		A299EAA327E2C5050042F8F4 /* SettingsAppearanceVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAppearanceVC.swift; sourceTree = "<group>"; };
-		A299EAA527E2C5130042F8F4 /* SettingsRemindersVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRemindersVC.swift; sourceTree = "<group>"; };
 		A299EAA727E2C5220042F8F4 /* SettingsNotificationsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNotificationsVC.swift; sourceTree = "<group>"; };
 		A299EAAA27E2C5F60042F8F4 /* SettingsTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableVC.swift; sourceTree = "<group>"; };
 		A299EAAC27E2D3350042F8F4 /* SettingsAboutVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutVC.swift; sourceTree = "<group>"; };
@@ -752,7 +750,6 @@
 				A299EA9F27E2C4E50042F8F4 /* SettingsPersonalInformationVC.swift */,
 				A233519327FC908300CDF1BF /* Family Page */,
 				A299EAA327E2C5050042F8F4 /* SettingsAppearanceVC.swift */,
-				A299EAA527E2C5130042F8F4 /* SettingsRemindersVC.swift */,
 				A299EAA727E2C5220042F8F4 /* SettingsNotificationsVC.swift */,
 				A299EAAC27E2D3350042F8F4 /* SettingsAboutVC.swift */,
 			);
@@ -1145,7 +1142,6 @@
 				A25070DF26DD9BFF0056CFC4 /* ScaledUILabel.swift in Sources */,
 				A2AC89FE27D2782100115831 /* OneTimeComponents.swift in Sources */,
 				A2121DBD26649C7E00647682 /* DogsReminderOneTimeVC.swift in Sources */,
-				A299EAA627E2C5130042F8F4 /* SettingsRemindersVC.swift in Sources */,
 				A2AF01B727FC9CF500D06638 /* SettingsHeadTVC.swift in Sources */,
 				A29390732608480800879C79 /* DogManager.swift in Sources */,
 				A2EBFB9E264F6A1A001AAF18 /* AudioManager.swift in Sources */,

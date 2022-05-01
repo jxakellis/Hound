@@ -22,8 +22,6 @@ enum UserDefaultsKeys: String {
     
     case dogIcons
     case isNotificationAuthorized
-    case lastPause
-    case lastUnpause
     case reviewRequestDates
     case isShowReleaseNotes
     case hasLoadedFamilyIntroductionViewControllerBefore

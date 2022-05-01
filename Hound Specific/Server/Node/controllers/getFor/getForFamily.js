@@ -10,13 +10,13 @@ const getFamilyInformationForFamilyIdQuery = async (req, familyId) => {
     // get family members
     const familyMembers = await queryPromise(
       req,
-      'SELECT users.userId, users.userFirstName, users.userLastName FROM familyMembers LEFT JOIN users ON familyMembers.userId = users.userId WHERE familyMembers.familyId = ?',
+      'SELECT users.userId, users.userFirstName, users.userLastName FROM familyMembers LEFT JOIN users ON familyMembers.userId = users.userId WHERE familyMembers.familyId = ? LIMIT 18446744073709551615',
       [familyId],
     );
     // find which family member is the head
     let family = await queryPromise(
       req,
-      'SELECT userId, isLocked, familyCode, isPaused, lastPause, lastUnpause FROM families WHERE familyId = ?',
+      'SELECT userId, isLocked, familyCode, isPaused, lastPause, lastUnpause FROM families WHERE familyId = ? LIMIT 1',
       [familyId],
     );
 
@@ -39,7 +39,7 @@ const getFamilyMembersForUserIdQuery = async (req, userId) => {
   try {
     const result = await queryPromise(
       req,
-      'SELECT familyId, userId FROM familyMembers WHERE userId = ?',
+      'SELECT familyId, userId FROM familyMembers WHERE userId = ? LIMIT 1',
       [userId],
     );
     return result;

@@ -28,7 +28,7 @@ const getReminderQuery = async (req, reminderId) => {
     // find reminder that matches the id
     result = await queryPromise(
       req,
-      `SELECT ${dogRemindersSelect}, ${reminderSnoozeComponentsSelect}, ${reminderCountdownComponentsSelect}, ${reminderWeeklyComponentsSelect}, ${reminderMonthlyComponentsSelect}, ${reminderOneTimeComponentsSelect} FROM dogReminders ${reminderSnoozeComponentsLeftJoin} ${reminderCountdownComponentsLeftJoin} ${reminderWeeklyComponentsLeftJoin} ${reminderMonthlyComponentsLeftJoin} ${reminderOneTimeComponentsLeftJoin} WHERE dogReminders.reminderId = ?`,
+      `SELECT ${dogRemindersSelect}, ${reminderSnoozeComponentsSelect}, ${reminderCountdownComponentsSelect}, ${reminderWeeklyComponentsSelect}, ${reminderMonthlyComponentsSelect}, ${reminderOneTimeComponentsSelect} FROM dogReminders ${reminderSnoozeComponentsLeftJoin} ${reminderCountdownComponentsLeftJoin} ${reminderWeeklyComponentsLeftJoin} ${reminderMonthlyComponentsLeftJoin} ${reminderOneTimeComponentsLeftJoin} WHERE dogReminders.reminderId = ? LIMIT 1`,
       [reminderId],
     );
   }
@@ -64,7 +64,7 @@ const getRemindersQuery = async (req, dogId) => {
     // find reminder that matches the dogId
     const result = await queryPromise(
       req,
-      `SELECT ${dogRemindersSelect}, ${reminderSnoozeComponentsSelect}, ${reminderCountdownComponentsSelect}, ${reminderWeeklyComponentsSelect}, ${reminderMonthlyComponentsSelect}, ${reminderOneTimeComponentsSelect} FROM dogReminders ${reminderSnoozeComponentsLeftJoin} ${reminderCountdownComponentsLeftJoin} ${reminderWeeklyComponentsLeftJoin} ${reminderMonthlyComponentsLeftJoin} ${reminderOneTimeComponentsLeftJoin} WHERE dogReminders.dogId = ?`,
+      `SELECT ${dogRemindersSelect}, ${reminderSnoozeComponentsSelect}, ${reminderCountdownComponentsSelect}, ${reminderWeeklyComponentsSelect}, ${reminderMonthlyComponentsSelect}, ${reminderOneTimeComponentsSelect} FROM dogReminders ${reminderSnoozeComponentsLeftJoin} ${reminderCountdownComponentsLeftJoin} ${reminderWeeklyComponentsLeftJoin} ${reminderMonthlyComponentsLeftJoin} ${reminderOneTimeComponentsLeftJoin} WHERE dogReminders.dogId = ? LIMIT 1000`,
       [dogId],
     );
 

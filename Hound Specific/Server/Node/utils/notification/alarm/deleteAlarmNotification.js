@@ -15,13 +15,13 @@ const deleteAlarmNotificationsForFamily = async (familyId) => {
       // get all the reminders for the family
       const reminders = await queryPromise(
         connectionForNotifications,
-        'SELECT reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.familyId = ?',
+        'SELECT reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.familyId = ? LIMIT 18446744073709551615',
         [familyId],
       );
       // finds all the users in the family
       const users = await queryPromise(
         connectionForNotifications,
-        'SELECT userId FROM familyMembers WHERE familyId = ?',
+        'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
         [familyId],
       );
 
@@ -70,7 +70,7 @@ const deleteAlarmNotificationsForReminder = async (familyId, reminderId) => {
       // finds all the users in the family
       const users = await queryPromise(
         connectionForNotifications,
-        'SELECT userId FROM familyMembers WHERE familyId = ?',
+        'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
         [familyId],
       );
       // iterate through all users for the family
@@ -101,7 +101,7 @@ const deleteSecondaryAlarmNotificationsForUser = async (userId) => {
       // specifically use JOIN to excluse resulst where reminder, dog, family, or family member are missing
       const reminderIds = await queryPromise(
         connectionForNotifications,
-        'SELECT dogReminder.reminderId FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE familyMembers.userId = ? AND dogReminders.reminderExecutionDate IS NOT NULL',
+        'SELECT dogReminder.reminderId FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE familyMembers.userId = ? AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
         [userId],
       );
 

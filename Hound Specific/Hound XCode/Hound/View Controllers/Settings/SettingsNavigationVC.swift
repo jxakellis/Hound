@@ -8,11 +8,23 @@
 
 import UIKit
 
-class SettingsNavigationViewController: UINavigationController {
+protocol SettingsNavigationViewControllerDelegate: AnyObject {
+    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+}
 
+class SettingsNavigationViewController: UINavigationController, SettingsViewControllerDelegate {
+    
+    // MARK: - SettingsViewControllerDelegate
+    
+    func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
+        passThroughDelegate.didUpdateDogManager(sender: sender, newDogManager: newDogManager)
+    }
+    
     // MARK: - Properties
 
     var settingsViewController: SettingsViewController! = nil
+    
+    weak var passThroughDelegate: SettingsNavigationViewControllerDelegate!
 
     // MARK: - Main
 
@@ -20,16 +32,7 @@ class SettingsNavigationViewController: UINavigationController {
         super.viewDidLoad()
 
         settingsViewController = self.viewControllers[0] as? SettingsViewController
+        settingsViewController.delegate = self
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

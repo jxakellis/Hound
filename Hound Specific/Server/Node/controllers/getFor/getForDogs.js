@@ -11,7 +11,7 @@ const getDogQuery = async (req, dogId) => {
   try {
     const result = await queryPromise(
       req,
-      'SELECT * FROM dogs WHERE dogId = ?',
+      'SELECT * FROM dogs WHERE dogId = ? LIMIT 1',
       [dogId],
     );
     // no need to do anything else as there are no dogs
@@ -47,7 +47,7 @@ const getDogsQuery = async (req, familyId) => {
   try {
     const result = await queryPromise(
       req,
-      'SELECT * FROM dogs WHERE familyId = ?',
+      'SELECT * FROM dogs WHERE familyId = ? LIMIT 1000',
       [familyId],
     );
     // no need to do anything else as there are no dogs

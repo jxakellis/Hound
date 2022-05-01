@@ -14,7 +14,7 @@ const createLogNotification = async (userId, familyId, dogId, logAction, logCust
       // get the first and last name of the user who logged the event
       let user = await queryPromise(
         connectionForNotifications,
-        'SELECT userFirstName, userLastName FROM users WHERE userId = ?',
+        'SELECT userFirstName, userLastName FROM users WHERE userId = ? LIMIT 1',
         [userId],
       );
       user = user[0];
@@ -22,7 +22,7 @@ const createLogNotification = async (userId, familyId, dogId, logAction, logCust
       // get the name of the dog who got logged
       let dog = await queryPromise(
         connectionForNotifications,
-        'SELECT dogName FROM dogs WHERE dogId = ?',
+        'SELECT dogName FROM dogs WHERE dogId = ? LIMIT 1',
         [dogId],
       );
       dog = dog[0];

@@ -8,11 +8,19 @@
 
 import UIKit
 
-class SettingsViewController: UIViewController, SettingsTableViewControllerDelegate {
+protocol SettingsViewControllerDelegate: AnyObject {
+    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+}
 
-    // MARK: - SettingsTableViewControllerDelegate
+class SettingsViewController: UIViewController, SettingsTableViewControllerDelegate, SettingsFamilyViewControllerDelegate {
     
-    private var passedFamilyMembers: [FamilyMember] = []
+    // MARK: - SettingsFamilyViewControllerDelegate
+    
+    func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
+        delegate.didUpdateDogManager(sender: sender, newDogManager: newDogManager)
+    }
+    
+    // MARK: - SettingsTableViewControllerDelegate
 
     func willPerformSegue(withIdentifier identifier: String) {
         let convertedSegueIdentifier: String!
@@ -23,8 +31,6 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
             convertedSegueIdentifier = "settingsFamilyViewController"
         case "appearance":
             convertedSegueIdentifier = "settingsAppearanceViewController"
-        case "reminders":
-            convertedSegueIdentifier = "settingsRemindersViewController"
         case "notifications":
             convertedSegueIdentifier = "settingsNotificationsViewController"
         case "about":
@@ -33,30 +39,7 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
             convertedSegueIdentifier = "settingsAboutViewController"
         }
         
-        if convertedSegueIdentifier == "settingsFamilyViewController" {
-            RequestUtils.beginAlertControllerQueryIndictator()
-            FamilyRequest.get(invokeErrorManager: true) { familyMembers, _ in
-                RequestUtils.endAlertControllerQueryIndictator {
-                    if familyMembers != nil {
-                        self.passedFamilyMembers = familyMembers!
-                        ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: convertedSegueIdentifier, viewController: self)
-                    }
-                }
-            }
-        }
-        else if convertedSegueIdentifier == "settingsRemindersViewController" {
-            RequestUtils.beginAlertControllerQueryIndictator()
-            FamilyRequest.get(invokeErrorManager: true) { familyMembers, _ in
-                RequestUtils.endAlertControllerQueryIndictator {
-                    if familyMembers != nil {
-                        ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: convertedSegueIdentifier, viewController: self)
-                    }
-                }
-            }
-        }
-        else {
-            ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: convertedSegueIdentifier, viewController: self)
-        }
+        ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: convertedSegueIdentifier, viewController: self)
     }
 
     // MARK: - Properties
@@ -65,9 +48,9 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
     var settingsPersonalInformationViewController: SettingsPersonalInformationViewController?
     var settingsFamilyViewController: SettingsFamilyViewController?
     var settingsAppearanceViewController: SettingsAppearanceViewController?
-    var settingsRemindersViewController: SettingsRemindersViewController?
     var settingsNotificationsViewController: SettingsNotificationsViewController?
     var settingsAboutViewController: SettingsAboutViewController?
+    weak var delegate: SettingsViewControllerDelegate!
 
     // MARK: - Main
 
@@ -82,7 +65,6 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
 
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "settingsTableViewController" {
             settingsTableViewController = segue.destination as? SettingsTableViewController
@@ -93,15 +75,10 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
         }
         else if segue.identifier == "settingsFamilyViewController" {
             settingsFamilyViewController = segue.destination as? SettingsFamilyViewController
-            settingsFamilyViewController?.familyMembers = passedFamilyMembers
-            passedFamilyMembers = []
+            settingsFamilyViewController?.delegate = self
         }
         else if segue.identifier == "settingsAppearanceViewController" {
             settingsAppearanceViewController = segue.destination as? SettingsAppearanceViewController
-        }
-
-        else if segue.identifier == "settingsRemindersViewController" {
-            settingsRemindersViewController = segue.destination as? SettingsRemindersViewController
         }
         else if segue.identifier == "settingsNotificationsViewController" {
             settingsNotificationsViewController = segue.destination as? SettingsNotificationsViewController
@@ -109,8 +86,6 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
         else if segue.identifier == "settingsAboutViewController" {
             settingsAboutViewController = segue.destination as? SettingsAboutViewController
         }
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
     }
 
 }

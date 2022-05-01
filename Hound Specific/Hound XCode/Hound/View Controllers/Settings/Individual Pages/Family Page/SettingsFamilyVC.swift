@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol SettingsFamilyViewControllerDelegate: AnyObject {
+    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+}
+
 class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource {
 
     // MARK: - UIGestureRecognizerDelegate
@@ -16,101 +20,72 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         return true
     }
     
-    // MARK: - Table View Data Source
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 1
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return familyMembers.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let familyMember = familyMembers[indexPath.row]
-        // family members is sorted to have the family head as its first element
-        if indexPath.row == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "settingsFamilyHeadTableViewCell", for: indexPath) as! SettingsFamilyHeadTableViewCell
-            cell.setup(firstName: familyMember.firstName, lastName: familyMember.lastName, userId: familyMember.userId)
-            
-            return cell
-        }
-        else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "settingsFamilyMemberTableViewCell", for: indexPath) as! SettingsFamilyMemberTableViewCell
-            cell.setup(firstName: familyMember.firstName, lastName: familyMember.lastName, userId: familyMember.userId)
-            
-            return cell
-        }
-    }
-    
-    // MARK: - IB
+    // MARK: - Properties
     
     @IBOutlet private weak var containerView: UIView!
-
-    // Family Code
-    @IBOutlet private weak var familyCode: ScaledUILabel!
     
-    // Family Lock
-    @IBOutlet private weak var isLockedLabel: ScaledUILabel!
-    @IBOutlet private weak var isLockedSwitch: UISwitch!
-    @IBAction private func didToggleIsLocked(_ sender: Any) {
-        
-        // assume request will go through and update values
-        let initalIsLocked = FamilyConfiguration.isLocked
-        FamilyConfiguration.isLocked = isLockedSwitch.isOn
-        updateIsLockedLabel()
-        
-        let body = [ServerDefaultKeys.isLocked.rawValue: isLockedSwitch.isOn]
-        FamilyRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
-            if requestWasSuccessful == false {
-                // request failed so we revert
-                FamilyConfiguration.isLocked = initalIsLocked
-                self.updateIsLockedLabel()
-                self.isLockedSwitch.setOn(initalIsLocked, animated: true)
+    @IBOutlet private weak var refreshButton: UIBarButtonItem!
+    
+    @IBAction private func willRefresh(_ sender: Any) {
+        // TO DO add activity indictator
+        self.refreshButton.isEnabled = false
+        FamilyRequest.get(invokeErrorManager: true) { requestWasSuccessful, _ in
+            self.refreshButton.isEnabled = true
+            if requestWasSuccessful == true {
+                // update the data to reflect what was retrieved from the server
+                self.repeatableSetup()
+                self.tableView.reloadData()
+                // its possible that the familymembers table changed its constraint for height, so re layout
+                self.view.setNeedsLayout()
+                self.view.layoutIfNeeded()
             }
         }
     }
     
-    // Family Members
-    @IBOutlet private weak var tableView: UITableView!
+    var leaveFamilyAlertController: GeneralUIAlertController!
     
-    @IBOutlet private weak var tableViewHeightConstraint: NSLayoutConstraint!
-    
-    // Leave Family
-    @IBOutlet private weak var leaveFamilyButton: UIButton!
-    
-    @IBAction private func didClickLeaveFamily(_ sender: Any) {
-        
-        // User could have only clicked this button if they were eligible to leave the family
-        
-        AlertManager.enqueueAlertForPresentation(leaveFamilyAlertController)
-        
-    }
-    // MARK: - Properties
-    
-    var familyMembers: [FamilyMember] = []
-    
-    let leaveFamilyAlertController = GeneralUIAlertController(title: "placeholder", message: "Hound will restart once this process is complete", preferredStyle: .alert)
+    weak var delegate: SettingsFamilyViewControllerDelegate!
     
     // MARK: - Main
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TO DO shift pausing to server side. the local reminders could be desynced and this could cause problems. much more streamlined if the server only has one point of contact (user sending query to toggle paused then the server handles the rest).
-        
-        // TO DO add refresh button for all family configuration / members
-        
         // (if head of family)
         // TO DO add control to kick people
         // TO DO add subscription controls
         
-       // MARK: Family Code
+        oneTimeSetup()
+        
+        repeatableSetup()
+    }
 
-        familyCode.text = "Code: \(FamilyConfiguration.familyCode)"
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        AlertManager.globalPresenter = self
+    }
+    
+    // MARK: - Functions
+    
+    /// These properties only need assigned once.
+    private func oneTimeSetup() {
+        
+        tableView.allowsSelection = false
+        tableView.separatorInset = .zero
+        
+        DesignConstant.standardizeLargeButton(forButton: leaveFamilyButton)
+    }
+    
+    /// These properties can be reassigned. Does not reload anything, rather just configures.
+    private func repeatableSetup() {
+        // MARK: Pause All Reminders
+        
+        isPausedSwitch.isOn = FamilyConfiguration.isPaused
+        
+        // MARK: Family Code
+        var code = FamilyConfiguration.familyCode
+        code.insert("-", at: code.index(code.startIndex, offsetBy: 4))
+        familyCode.text = "Code: \(code)"
         
         // MARK: Family Lock
         
@@ -119,12 +94,9 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         
         // MARK: Family Members
         
-        tableView.allowsSelection = false
-        tableView.separatorInset = .zero
-        
         var tableViewHeight: CGFloat {
             var height = 0.0
-            for index in 0..<familyMembers.count {
+            for index in 0..<FamilyConfiguration.familyMembers.count {
                 // head of family
                 if index == 0 {
                     // icon size + top/bot constraints
@@ -145,7 +117,7 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         // MARK: Leave Family Button
         
         // find the user in the family that is the head
-        let familyHead = familyMembers.first { familyMember in
+        let familyHead = FamilyConfiguration.familyMembers.first { familyMember in
             if familyMember.isFamilyHead == true {
                 return true
             }
@@ -153,6 +125,8 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
                 return false
             }
         }
+        
+        leaveFamilyAlertController = GeneralUIAlertController(title: "placeholder", message: "Hound will restart once this process is complete", preferredStyle: .alert)
         
         // user is not the head of the family, so the button is enabled for them
         if familyHead?.userId != UserInformation.userId {
@@ -174,7 +148,7 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         // user is the head of the family, further checks needed
         else {
             // user must kicked other members before they can destroy their family
-            if familyMembers.count == 1 {
+            if FamilyConfiguration.familyMembers.count == 1 {
                 leaveFamilyButton.isEnabled = true
             }
             // user is only family member so can destroy their family
@@ -196,18 +170,89 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
             leaveFamilyAlertController.addAction(deleteAlertAction)
         }
         
-        DesignConstant.standardizeLargeButton(forButton: leaveFamilyButton)
-        
         let cancelAlertAction = UIAlertAction(title: "Cancel", style: .cancel)
         leaveFamilyAlertController.addAction(cancelAlertAction)
     }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        AlertManager.globalPresenter = self
+    
+    // MARK: - Individual Settings
+    
+    // MARK: Pause All Reminders
+    /// Switch for pause all timers
+    @IBOutlet private weak var isPausedSwitch: UISwitch!
+    
+    /// If the pause all timers switch it triggered, calls thing function
+    @IBAction private func didToggleIsPaused(_ sender: Any) {
+        let dogManager = MainTabBarViewController.staticDogManager
+        let isPaused = isPausedSwitch.isOn
+        
+        guard isPaused != FamilyConfiguration.isPaused else {
+            return
+        }
+        
+        let body: [String: Any] = [
+            ServerDefaultKeys.isPaused.rawValue: isPaused
+        ]
+        
+        FamilyRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
+            if requestWasSuccessful == true {
+                // update the local information to reflect the server change
+                FamilyConfiguration.isPaused = isPaused
+                if isPaused == false {
+                    // TO DO have server calculate reminderExecutionDates itself
+                    // reminders are now unpaused, we must update the server with the new executionDates (can't calculate them itself)
+                    RequestUtils.getDogManager(invokeErrorManager: true) { dogManager, _ in
+                        // Goes through all enabled dogs and all their reminders
+                        if dogManager != nil {
+                            for dog in dogManager!.dogs {
+                                // update the Hound server with
+                                let remindersToUpdate = dog.dogReminders.reminders.filter({ reminder in
+                                    // create an array of reminders with non-nil executionDates, as we are providing the Hound server with a list of reminders with the newly calculated executionDates
+                                    return (reminder.reminderExecutionDate == nil) == false
+                                })
+                                RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: remindersToUpdate) { requestWasSuccessful, _ in
+                                    if requestWasSuccessful == true {
+                                        // the call to update the server on the reminder unpause was successful, now send to delegate
+                                        self.delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager!)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else {
+                    // reminders are now paused, so remove the timers
+                    TimingManager.invalidateAll(forDogManager: dogManager)
+                }
+            }
+            else {
+                self.isPausedSwitch.setOn(!isPaused, animated: true)
+            }
+        }
     }
     
-    // MARK: - Functions
+    // MARK: Family Code
+    @IBOutlet private weak var familyCode: ScaledUILabel!
+    
+    // MARK: Family Lock
+    @IBOutlet private weak var isLockedLabel: ScaledUILabel!
+    @IBOutlet private weak var isLockedSwitch: UISwitch!
+    @IBAction private func didToggleIsLocked(_ sender: Any) {
+        
+        // assume request will go through and update values
+        let initalIsLocked = FamilyConfiguration.isLocked
+        FamilyConfiguration.isLocked = isLockedSwitch.isOn
+        updateIsLockedLabel()
+        
+        let body = [ServerDefaultKeys.isLocked.rawValue: isLockedSwitch.isOn]
+        FamilyRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
+            if requestWasSuccessful == false {
+                // request failed so we revert
+                FamilyConfiguration.isLocked = initalIsLocked
+                self.updateIsLockedLabel()
+                self.isLockedSwitch.setOn(initalIsLocked, animated: true)
+            }
+        }
+    }
     
     private func updateIsLockedLabel() {
         isLockedLabel.text = "Lock: "
@@ -219,6 +264,50 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
             // unlocked emoji
             isLockedLabel.text!.append("🔓")
         }
+    }
+    
+    // MARK: Family Members
+    @IBOutlet private weak var tableView: UITableView!
+    
+    @IBOutlet private weak var tableViewHeightConstraint: NSLayoutConstraint!
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        // #warning Incomplete implementation, return the number of sections
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // #warning Incomplete implementation, return the number of rows
+        return FamilyConfiguration.familyMembers.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let familyMember = FamilyConfiguration.familyMembers[indexPath.row]
+        // family members is sorted to have the family head as its first element
+        if indexPath.row == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "settingsFamilyHeadTableViewCell", for: indexPath) as! SettingsFamilyHeadTableViewCell
+            cell.setup(firstName: familyMember.firstName, lastName: familyMember.lastName, userId: familyMember.userId)
+            
+            return cell
+        }
+        else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "settingsFamilyMemberTableViewCell", for: indexPath) as! SettingsFamilyMemberTableViewCell
+            cell.setup(firstName: familyMember.firstName, lastName: familyMember.lastName, userId: familyMember.userId)
+            
+            return cell
+        }
+    }
+    
+    // MARK: Leave Family
+    @IBOutlet private weak var leaveFamilyButton: UIButton!
+    
+    @IBAction private func didClickLeaveFamily(_ sender: Any) {
+        
+        // User could have only clicked this button if they were eligible to leave the family
+        
+        AlertManager.enqueueAlertForPresentation(leaveFamilyAlertController)
+        
     }
     
 }

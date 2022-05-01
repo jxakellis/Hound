@@ -44,7 +44,7 @@ class ServerFamilyViewController: UIViewController {
             guard let textFields = familyCodeAlertController?.textFields else {
                 return
             }
-            let familyCode = (textFields[0].text ?? "").uppercased()
+            let familyCode = (textFields[0].text ?? "").uppercased().replacingOccurrences(of: "-", with: "")
             // code is empty
             if familyCode.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
                 ErrorManager.alert(forError: FamilyRequestError.noFamilyCode)
@@ -123,15 +123,5 @@ class ServerFamilyViewController: UIViewController {
         joinFamilyButton.layer.borderWidth = 1
         joinFamilyButton.layer.borderColor = UIColor.black.cgColor
     }
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

@@ -23,12 +23,13 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
     
     /// Holds containerViewForAll, notificationSound label, and notificationSound drop down
     @IBOutlet weak var scrollView: UIScrollView!
+    
     // MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // values
+        // Follow Up Delay
         followUpDelayDatePicker.countDownDuration = UserConfiguration.followUpDelay
         
         // fixes issue with first time datepicker updates not triggering function
@@ -36,9 +37,9 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
             self.followUpDelayDatePicker.countDownDuration = UserConfiguration.followUpDelay
         }
         
+        // Notification Sound
         notificationSoundLabel.text = UserConfiguration.notificationSound.rawValue
         
-        // gestures
         self.notificationSoundLabel.isUserInteractionEnabled = true
         notificationSoundLabel.isEnabled = true
         let notificationSoundLabelTapGesture = UITapGestureRecognizer(target: self, action: #selector(willShowNotificationSoundDropDown))
@@ -48,6 +49,15 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         tap.delegate = self
         tap.cancelsTouchesInView = false
         containerViewForAll.addGestureRecognizer(tap)
+        
+        // Snooze Length
+        
+        snoozeLengthDatePicker.countDownDuration = UserConfiguration.snoozeLength
+        
+        // fixes issue with first time datepicker updates not triggering function
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
+            self.snoozeLengthDatePicker.countDownDuration = UserConfiguration.snoozeLength
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -163,6 +173,99 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         self.synchronizeNotificationsComponents(animated: animated)
     }
     
+    // MARK: Follow Up Notification
+    
+    @IBOutlet private weak var isFollowUpEnabledSwitch: UISwitch!
+    
+    @IBAction private func didToggleIsFollowUpEnabled(_ sender: Any) {
+        self.hideDropDown()
+        
+        let beforeUpdateIsFollowUpEnabled =  UserConfiguration.isFollowUpEnabled
+        UserConfiguration.isFollowUpEnabled = isFollowUpEnabledSwitch.isOn
+        
+        if isFollowUpEnabledSwitch.isOn == true {
+            followUpDelayDatePicker.isEnabled = true
+        }
+        else {
+            followUpDelayDatePicker.isEnabled = false
+        }
+        
+        let body = [ServerDefaultKeys.isFollowUpEnabled.rawValue: UserConfiguration.isFollowUpEnabled]
+        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
+            if requestWasSuccessful == false {
+                // error, revert to previous
+                UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
+                self.isFollowUpEnabledSwitch.setOn(UserConfiguration.isFollowUpEnabled, animated: true)
+                if UserConfiguration.isFollowUpEnabled {
+                    self.followUpDelayDatePicker.isEnabled = true
+                }
+                else {
+                    self.followUpDelayDatePicker.isEnabled = false
+                }
+            }
+        }
+    }
+    
+    private func synchronizeNotificationsComponents(animated: Bool) {
+        // notifications are enabled
+        if UserConfiguration.isNotificationEnabled == true {
+            
+            notificationSoundLabel.isUserInteractionEnabled = true
+            notificationSoundLabel.isEnabled = true
+            
+            isLoudNotificationSwitch.isEnabled = true
+            isLoudNotificationSwitch.setOn(UserConfiguration.isLoudNotification, animated: animated)
+            
+            isFollowUpEnabledSwitch.isEnabled = true
+            isFollowUpEnabledSwitch.setOn(UserConfiguration.isFollowUpEnabled, animated: animated)
+            
+            if isFollowUpEnabledSwitch.isOn == true {
+                followUpDelayDatePicker.isEnabled = true
+            }
+            else {
+                followUpDelayDatePicker.isEnabled = false
+            }
+        }
+        // notifications are disabled
+        else {
+            
+            notificationSoundLabel.isUserInteractionEnabled = false
+            notificationSoundLabel.isEnabled = false
+            
+            self.hideDropDown()
+            
+            isLoudNotificationSwitch.isEnabled = false
+            isLoudNotificationSwitch.setOn(false, animated: animated)
+            UserConfiguration.isLoudNotification = false
+            
+            isFollowUpEnabledSwitch.isEnabled = false
+            isFollowUpEnabledSwitch.setOn(false, animated: animated)
+            UserConfiguration.isFollowUpEnabled = false
+            
+            followUpDelayDatePicker.isEnabled = false
+        }
+    }
+    
+    // MARK: Follow Up Delay
+    
+    @IBOutlet weak var followUpDelayDatePicker: UIDatePicker!
+    
+    @IBAction private func didUpdateFollowUpDelay(_ sender: Any) {
+        self.hideDropDown()
+        
+        let beforeUpdateFollowUpDelay = UserConfiguration.followUpDelay
+        UserConfiguration.followUpDelay = followUpDelayDatePicker.countDownDuration
+        
+        let body = [ServerDefaultKeys.followUpDelay.rawValue: UserConfiguration.followUpDelay]
+        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
+            if requestWasSuccessful == false {
+                // error, revert to previous
+                UserConfiguration.followUpDelay = beforeUpdateFollowUpDelay
+                self.followUpDelayDatePicker.countDownDuration = UserConfiguration.followUpDelay
+            }
+        }
+    }
+    
     // MARK: Notification Sound
     
     @IBOutlet weak var notificationSoundLabel: BorderedUILabel!
@@ -266,7 +369,7 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         dropDown.hideDropDown()
     }
     
-    // MARK: - Loud Notifications
+    // MARK: Loud Notifications
     
     @IBOutlet private weak var isLoudNotificationSwitch: UISwitch!
     
@@ -285,107 +388,21 @@ class SettingsNotificationsViewController: UIViewController, UIGestureRecognizer
         }
     }
     
-    // MARK: - Follow Up Notification
+    // MARK: Snooze Length
     
-    @IBOutlet private weak var isFollowUpEnabledSwitch: UISwitch!
+    @IBOutlet private weak var snoozeLengthDatePicker: UIDatePicker!
     
-    @IBAction private func didToggleIsFollowUpEnabled(_ sender: Any) {
-        self.hideDropDown()
-        
-        let beforeUpdateIsFollowUpEnabled =  UserConfiguration.isFollowUpEnabled
-        UserConfiguration.isFollowUpEnabled = isFollowUpEnabledSwitch.isOn
-        
-        if isFollowUpEnabledSwitch.isOn == true {
-            followUpDelayDatePicker.isEnabled = true
-        }
-        else {
-            followUpDelayDatePicker.isEnabled = false
-        }
-        
-        let body = [ServerDefaultKeys.isFollowUpEnabled.rawValue: UserConfiguration.isFollowUpEnabled]
+    @IBAction private func didUpdateSnoozeLength(_ sender: Any) {
+        let beforeUpdateSnoozeLength = UserConfiguration.snoozeLength
+        UserConfiguration.snoozeLength = snoozeLengthDatePicker.countDownDuration
+        let body = [ServerDefaultKeys.snoozeLength.rawValue: UserConfiguration.snoozeLength]
         UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // error, revert to previous
-                UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
-                self.isFollowUpEnabledSwitch.setOn(UserConfiguration.isFollowUpEnabled, animated: true)
-                if UserConfiguration.isFollowUpEnabled {
-                    self.followUpDelayDatePicker.isEnabled = true
-                }
-                else {
-                    self.followUpDelayDatePicker.isEnabled = false
-                }
+                UserConfiguration.snoozeLength = beforeUpdateSnoozeLength
+                self.snoozeLengthDatePicker.countDownDuration = UserConfiguration.snoozeLength
             }
         }
     }
-    
-    private func synchronizeNotificationsComponents(animated: Bool) {
-        // notifications are enabled
-        if UserConfiguration.isNotificationEnabled == true {
-            
-            notificationSoundLabel.isUserInteractionEnabled = true
-            notificationSoundLabel.isEnabled = true
-            
-            isLoudNotificationSwitch.isEnabled = true
-            isLoudNotificationSwitch.setOn(UserConfiguration.isLoudNotification, animated: animated)
-            
-            isFollowUpEnabledSwitch.isEnabled = true
-            isFollowUpEnabledSwitch.setOn(UserConfiguration.isFollowUpEnabled, animated: animated)
-            
-            if isFollowUpEnabledSwitch.isOn == true {
-                followUpDelayDatePicker.isEnabled = true
-            }
-            else {
-                followUpDelayDatePicker.isEnabled = false
-            }
-        }
-        // notifications are disabled
-        else {
-            
-            notificationSoundLabel.isUserInteractionEnabled = false
-            notificationSoundLabel.isEnabled = false
-            
-            self.hideDropDown()
-            
-            isLoudNotificationSwitch.isEnabled = false
-            isLoudNotificationSwitch.setOn(false, animated: animated)
-            UserConfiguration.isLoudNotification = false
-            
-            isFollowUpEnabledSwitch.isEnabled = false
-            isFollowUpEnabledSwitch.setOn(false, animated: animated)
-            UserConfiguration.isFollowUpEnabled = false
-            
-            followUpDelayDatePicker.isEnabled = false
-        }
-    }
-    
-    // MARK: - Follow Up Delay
-    
-    @IBOutlet weak var followUpDelayDatePicker: UIDatePicker!
-    
-    @IBAction private func didUpdateFollowUpDelay(_ sender: Any) {
-        self.hideDropDown()
-        
-        let beforeUpdateFollowUpDelay = UserConfiguration.followUpDelay
-        UserConfiguration.followUpDelay = followUpDelayDatePicker.countDownDuration
-        
-        let body = [ServerDefaultKeys.followUpDelay.rawValue: UserConfiguration.followUpDelay]
-        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
-            if requestWasSuccessful == false {
-                // error, revert to previous
-                UserConfiguration.followUpDelay = beforeUpdateFollowUpDelay
-                self.followUpDelayDatePicker.countDownDuration = UserConfiguration.followUpDelay
-            }
-        }
-    }
-    
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
     
 }

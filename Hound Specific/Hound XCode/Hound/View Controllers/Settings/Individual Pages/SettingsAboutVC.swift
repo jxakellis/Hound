@@ -22,8 +22,7 @@ class SettingsAboutViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // TO DO update placeholder text for the about me section
-        self.version.text = "Version \(UIApplication.appVersion ?? "nil")"
+         self.version.text = "Version \(UIApplication.appVersion ?? "nil")"
         self.build.text = "Build \(UIApplication.appBuild)"
         self.copyright.text = "© \(Calendar.current.component(.year, from: Date())) Jonathan Xakellis"
     }
@@ -32,15 +31,5 @@ class SettingsAboutViewController: UIViewController {
         super.viewWillAppear(animated)
         AlertManager.globalPresenter = self
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

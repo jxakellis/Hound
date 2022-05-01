@@ -234,15 +234,6 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             // pop add log vc as the dog it could have been adding to is now deleted
             logsAddLogViewController?.navigationController?.popViewController(animated: false)
         }
-
-        updateDogManagerDependents()
-    }
-
-    func updateDogManagerDependents() {
-
-        filterButton.isEnabled = !dogManager.dogs.isEmpty
-        willAddLog?.isHidden = dogManager.dogs.isEmpty
-        willAddLogBackground?.isHidden = dogManager.dogs.isEmpty
     }
 
     // MARK: - IB
@@ -257,7 +248,6 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         // TO DO add activity indictator
         self.refreshButton.isEnabled = false
         RequestUtils.getDogManager(invokeErrorManager: true) { dogManager, _ in
-            // end refresh first otherwise there will be a weird visual issue
             self.refreshButton.isEnabled = true
             if dogManager != nil {
                 self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager!)
@@ -332,7 +322,9 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         super.viewWillAppear(animated)
         AlertManager.globalPresenter = self
 
-        updateDogManagerDependents()
+        filterButton.isEnabled = !dogManager.dogs.isEmpty
+        willAddLog?.isHidden = dogManager.dogs.isEmpty
+        willAddLogBackground?.isHidden = dogManager.dogs.isEmpty
     }
 
     override func viewDidAppear(_ animated: Bool) {

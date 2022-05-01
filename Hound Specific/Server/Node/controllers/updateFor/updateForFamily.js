@@ -176,7 +176,7 @@ const addFamilyMemberQuery = async (req) => {
     // retrieve information about the family linked to the familyCode
     result = await queryPromise(
       req,
-      'SELECT familyId, isLocked FROM families WHERE familyCode = ?',
+      'SELECT familyId, isLocked FROM families WHERE familyCode = ? LIMIT 1',
       [familyCode],
     );
   }

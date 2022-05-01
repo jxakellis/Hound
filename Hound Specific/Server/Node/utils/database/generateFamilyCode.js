@@ -25,7 +25,7 @@ const generateVerifiedFamilyCode = async (req) => {
     const code = generateFamilyCode();
     const result = await queryPromise(
       req,
-      'SELECT familyCode FROM families WHERE familyCode = ?',
+      'SELECT familyCode FROM families WHERE familyCode = ? LIMIT 1',
       [code],
     );
     // if the result's length is zero, that means there wasn't a match for the family code and the code is unique

@@ -78,7 +78,7 @@ class ServerSyncViewController: UIViewController {
         updateStatusLabel()
         
         // we want to use our own custom error message
-        UserRequest.get(invokeErrorManager: false) { familyId, responseStatus in
+        UserRequest.get(invokeErrorManager: false) { _, familyId, responseStatus in
             switch responseStatus {
             case .successResponse:
                 // we got the user information back and have setup the user config based off of that info
@@ -105,20 +105,14 @@ class ServerSyncViewController: UIViewController {
     
     /// get the family configuration from the server
     private func getFamily() {
-        // we want to use our own custom error message
-        FamilyRequest.get(invokeErrorManager: false) { familyMembers, responseStatus in
+        // we want to use our own custom error message so we can have custom alert actions
+        FamilyRequest.get(invokeErrorManager: false) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
-                // TO DO persist the family members to family configuration
-                if familyMembers != nil {
-                    // we got the family configuration from the server and loaded it, now we can proceed to the next step
-                    self.getFamilyFinished = true
-                    self.updateStatusLabel()
-                    self.getDogs()
-                }
-                else {
-                    AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
-                }
+                // we got the family configuration from the server and loaded it, now we can proceed to the next step
+                self.getFamilyFinished = true
+                self.updateStatusLabel()
+                self.getDogs()
             case .failureResponse:
                 AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
             case .noResponse:

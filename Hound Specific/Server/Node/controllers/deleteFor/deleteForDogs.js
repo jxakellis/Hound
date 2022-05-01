@@ -14,7 +14,7 @@ const deleteDogQuery = async (req, userId, familyId, dogId) => {
   try {
     reminderIds = await queryPromise(
       req,
-      'SELECT reminderId FROM dogReminders WHERE dogId = ?',
+      'SELECT reminderId FROM dogReminders WHERE dogId = ? LIMIT 18446744073709551615',
 
       [dogId],
     );
@@ -50,7 +50,7 @@ const deleteDogsQuery = async (req, userId, familyId) => {
 
   // attempt to find all dogIds
   try {
-    dogIds = await queryPromise(req, 'SELECT dogId FROM dogs WHERE familyId = ?', [familyId]);
+    dogIds = await queryPromise(req, 'SELECT dogId FROM dogs WHERE familyId = ? LIMIT 18446744073709551615', [familyId]);
   }
   catch (error) {
     throw new DatabaseError(error.code);

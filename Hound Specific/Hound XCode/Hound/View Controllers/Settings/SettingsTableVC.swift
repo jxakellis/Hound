@@ -17,7 +17,7 @@ class SettingsTableViewController: UITableViewController {
     // MARK: - Properties
 
     // 2 separators, 5 regulars pages, 1 separator, and 1 regular page to allow for proper edge insets
-    private let numberOfCells = (2 + 5 + 1 + 1)
+    private let numberOfCells = (2 + 4 + 1 + 1)
 
     weak var delegate: SettingsTableViewControllerDelegate! = nil
 
@@ -68,16 +68,13 @@ class SettingsTableViewController: UITableViewController {
             cell = tableView.dequeueReusableCell(withIdentifier: "appearance", for: indexPath)
             cell!.separatorInset = iconEdgeInset
         case 5:
-            cell = tableView.dequeueReusableCell(withIdentifier: "reminders", for: indexPath)
-            cell!.separatorInset = iconEdgeInset
-        case 6:
             cell = tableView.dequeueReusableCell(withIdentifier: "notifications", for: indexPath)
             cell!.separatorInset = UIEdgeInsets.zero
-        case 7:
+        case 6:
             cell = tableView.dequeueReusableCell(withIdentifier: "spaceCellWithSeparator", for: indexPath)
             cell!.contentView.addConstraint(NSLayoutConstraint(item: cell!.contentView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 22.5))
             cell!.separatorInset = UIEdgeInsets.zero
-        case 8:
+        case 7:
             cell = tableView.dequeueReusableCell(withIdentifier: "about", for: indexPath)
             cell!.separatorInset = UIEdgeInsets.zero
         default:

@@ -25,8 +25,6 @@ enum ServerDefaultKeys: String {
     case isLocked
     case familyCode
     case isPaused
-    case lastPause
-    case lastUnpause
     
     // MARK: User Information
     
