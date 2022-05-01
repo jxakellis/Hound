@@ -74,10 +74,10 @@ class TimingManager {
                                     ServerDefaultKeys.dogName.rawValue: dogManager.dogs[d].dogName,
                                     ServerDefaultKeys.reminderId.rawValue: reminder.reminderId],
                                   repeats: false)
-                 RunLoop.main.add(timer, forMode: .common)
+                RunLoop.main.add(timer, forMode: .common)
                 
-                 reminder.timer?.invalidate()
-                 reminder.timer = timer
+                reminder.timer?.invalidate()
+                reminder.timer = timer
             }
         }
     }
@@ -130,36 +130,42 @@ class TimingManager {
     /// Toggles pause for a given dogManager to a specifided newPauseState
     static func willToggleIsPaused(forDogManager dogManager: DogManager, newIsPaused isPaused: Bool) {
         
-        // UserConfiguration isPaused value is alerady changed in the settings VC
-        // Toggles pause status of timers, called when pauseAllTimers in settings is switched to a new state
-        if isPaused == true {
-            let lastPause = Date()
-            let body: [String: Any] = [
-                ServerDefaultKeys.isPaused.rawValue: true,
-                ServerDefaultKeys.lastPause.rawValue: lastPause.ISO8601FormatWithFractionalSeconds()
-            ]
-            FamilyRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
-                if requestWasSuccessful == true {
-                    FamilyConfiguration.isPaused = true
-                    FamilyConfiguration.lastPause = lastPause
-                    self.willPause(forDogManager: dogManager)
-                    
-                    self.invalidateAll(dogManager: dogManager)
-                }
-            }
+        guard isPaused != FamilyConfiguration.isPaused else {
+            return
         }
-        else {
-            let lastUnpause = Date()
-            let body: [String: Any] = [
-                ServerDefaultKeys.isPaused.rawValue: false,
-                ServerDefaultKeys.lastUnpause.rawValue: lastUnpause.ISO8601FormatWithFractionalSeconds()
-            ]
-            FamilyRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
-                if requestWasSuccessful == true {
-                    FamilyConfiguration.isPaused = false
-                    FamilyConfiguration.lastUnpause = lastUnpause
-                    self.willUnpause(forDogManager: dogManager)
-                    
+        
+        let body: [String: Any] = [
+            ServerDefaultKeys.isPaused.rawValue: isPaused
+        ]
+        
+        FamilyRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
+            if requestWasSuccessful == true {
+                // update the local information to reflect the server change
+                FamilyConfiguration.isPaused = isPaused
+                if isPaused == false {
+                    // TO DO have server calculate reminderExecutionDates itself
+                    // reminders are now unpaused, we must update the server with the new executionDates (can't calculate them itself)
+                    RequestUtils.getDogManager(invokeErrorManager: true) { dogManager, _ in
+                        // Goes through all enabled dogs and all their reminders
+                        if dogManager != nil {
+                            for dog in dogManager!.dogs {
+                                // update the Hound server with
+                                let remindersToUpdate = dog.dogReminders.reminders.filter({ reminder in
+                                    // create an array of reminders with non-nil executionDates, as we are providing the Hound server with a list of reminders with the newly calculated executionDates
+                                    return (reminder.reminderExecutionDate == nil) == false
+                                })
+                                RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: remindersToUpdate) { requestWasSuccessful, _ in
+                                    if requestWasSuccessful == true {
+                                        // the call to update the server on the reminder unpause was successful, now send to delegate
+                                        delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager!)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else {
+                    // reminders are now paused, so remove the timers
                     self.invalidateAll(dogManager: dogManager)
                 }
             }
@@ -208,7 +214,7 @@ class TimingManager {
                     }
                 case .snooze:
                     // If intervalElapsed has not been added to before, so not first time it has been paused and lastUnpause shouldn't be nil
-                    if reminder.snoozeComponents.intervalElapsed <= 0.0001 {
+                    if reminder.snoozeComponents.intervalElapsed == 0.0 {
                         reminder.snoozeComponents.changeIntervalElapsed(newIntervalElapsed: reminder.reminderExecutionBasis.distance(to: FamilyConfiguration.lastPause!))
                     }
                     // If intervalElapsed has been added to before
@@ -236,7 +242,7 @@ class TimingManager {
     /// Updates dogManager to reflect needed changes to the reminderExecutionBasis, without this change the interval remaining would be based off an incorrect start date and fire at the wrong time. Can't use just Date() as it would be inaccurate if reinitalized but reminderExecutionBasis + intervalRemaining will yield the same reminderExecutionDate everytime.
     private static func willUnpause(forDogManager dogManager: DogManager) {
         
-        // Goes through all enabled dogs and all their enabled reminders
+        // Goes through all enabled dogs and all their reminders
         for dog in dogManager.dogs {
             for reminder in dog.dogReminders.reminders {
                 // Changes the execution basis to the current time of unpause, if the execution basis is not changed then the interval remaining will go off a earlier point in time and have an overall earlier execution date, making the timer fire too early

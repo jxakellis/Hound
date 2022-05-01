@@ -57,7 +57,7 @@ app.use('*', async (req, res) => {
 });
 
 // If we are running a production server, then it should restore restoreAlarmNotificationsForAllFamilies when we restart
-const isProduction = false;
+const isProduction = true;
 const port = 3000;
 const { restoreAlarmNotificationsForAllFamilies } = require('../utils/notification/alarm/restoreAlarmNotification');
 
@@ -73,7 +73,7 @@ const server = app.listen(port, () => {
 // HoundServer.js is being termianted so we must close connections
 
 const { connectionForNotifications, poolForRequests } = require('./databaseConnection');
-const { primarySchedule, secondarySchedule } = require('../utils/notification/alarm/schedules');
+const { schedule } = require('../utils/notification/alarm/schedules');
 
 process.on('SIGTERM', () => {
   serverLogger.info('SIGTERM');
@@ -122,11 +122,7 @@ const shutdown = () => {
     serverLogger.info(`HoundServer.js Error: ${error}`);
   }
 
-  primarySchedule.gracefulShutdown()
-    .then(() => serverLogger.info('Node Primary Schedule Gracefully Shutdown'))
+  schedule.gracefulShutdown()
+    .then(() => serverLogger.info('Node Schedule Gracefully Shutdown'))
     .catch((error) => serverLogger.info(`Node Primary Schedule Couldn't Shutdown: ${JSON.stringify(error)}`));
-
-  secondarySchedule.gracefulShutdown()
-    .then(() => serverLogger.info('Node Secondary Schedule Gracefully Shutdown'))
-    .catch((error) => serverLogger.info(`Node Secondary Schedule Couldn't Shutdown: ${JSON.stringify(error)}`));
 };

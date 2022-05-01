@@ -120,6 +120,8 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // TO DO if a user signs in / signs up, make sure to clear the local config on the intro pages. we want them to get a guarenteed fresh start.
+        
         if UserInformation.userIdentifier != nil {
             // we found a userIdentifier in the keychain (during recurringSetup) so we change the info to match.
             // we could technically automatically log then in but this is easier. this verifies that an account exists and creates once if needed (if old one was deleted somehow)

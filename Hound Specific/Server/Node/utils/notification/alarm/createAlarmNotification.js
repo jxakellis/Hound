@@ -2,7 +2,7 @@ const { alarmLogger } = require('../../logging/pino');
 const { queryPromise } = require('../../database/queryPromise');
 const { connectionForNotifications } = require('../../../main/databaseConnection');
 
-const { primarySchedule, secondarySchedule } = require('./schedules');
+const { schedule } = require('./schedules');
 
 const { formatDate, areAllDefined } = require('../../database/validateFormat');
 const { sendAPNForFamily, sendAPNForUser } = require('../apn/sendAPN');
@@ -36,7 +36,7 @@ const createAlarmNotificationForFamily = async (familyId, reminderId, reminderEx
         }
         // reminderExecutionDate is in the future
         else {
-          primarySchedule.scheduleJob(`Family${familyId}Reminder${reminderId}`, formattedReminderExecutionDate, async () => {
+          schedule.scheduleJob(`Family${familyId}Reminder${reminderId}`, formattedReminderExecutionDate, async () => {
             // do these async, no need to await
             sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(familyId, reminderId);
           });
@@ -94,7 +94,7 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
       // create secondary notifications for all users that fit the criteria for a secondary
       for (let i = 0; i < users.length; i += 1) {
       // attempt to locate job that has the userId and reminderId  (note: names are in strings, so must convert int to string), we would want to remove that
-        const secondaryJob = secondarySchedule.scheduledJobs[`User${users[i].userId}Reminder${reminderId}`];
+        const secondaryJob = schedule.scheduledJobs[`User${users[i].userId}Reminder${reminderId}`];
         if (areAllDefined(secondaryJob) === true) {
           alarmLogger.debug(`Cancelling Secondary Job: ${secondaryJob.name}`);
           secondaryJob.cancel();
@@ -128,7 +128,7 @@ const createSecondaryAlarmNotificationForUser = async (userId, reminderId, secon
     // make sure everything is defined, reminderCustomActionName can be undefined
     if (areAllDefined([userId, reminderId]) === true) {
       // attempt to locate job that has the userId and reminderId  (note: names are in strings, so must convert int to string)
-      const secondaryJob = secondarySchedule.scheduledJobs[`User${userId}Reminder${reminderId}`];
+      const secondaryJob = schedule.scheduledJobs[`User${userId}Reminder${reminderId}`];
       if (areAllDefined(secondaryJob) === true) {
         alarmLogger.debug(`Cancelling Secondary Job: ${secondaryJob.name}`);
         secondaryJob.cancel();
@@ -145,7 +145,7 @@ const createSecondaryAlarmNotificationForUser = async (userId, reminderId, secon
         }
         // formattedSecondaryExecutionDate is in the future
         else {
-          secondarySchedule.scheduleJob(`User${userId}Reminder${reminderId}`, formattedSecondaryExecutionDate, () => {
+          schedule.scheduleJob(`User${userId}Reminder${reminderId}`, formattedSecondaryExecutionDate, () => {
             // no need to await, let it go
             sendSecondaryAPNForUser(userId, reminderId);
           });
@@ -196,5 +196,5 @@ const sendSecondaryAPNForUser = async (userId, reminderId) => {
 
 // Don't export sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily or sendSecondaryAPNForUser as they are helper methods
 module.exports = {
-  primarySchedule, secondarySchedule, createAlarmNotificationForFamily, createSecondaryAlarmNotificationForUser,
+  createAlarmNotificationForFamily, createSecondaryAlarmNotificationForUser,
 };

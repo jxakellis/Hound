@@ -89,9 +89,9 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
     @IBOutlet weak var reminderAction: BorderedUILabel!
     
     /// Text input for customLogActionName
-    @IBOutlet private weak var customReminderAction: BorderedUITextField!
-    @IBOutlet private weak var customReminderActionHeightConstraint: NSLayoutConstraint!
-    @IBOutlet private weak var customReminderActionBottomConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var reminderCustomActionName: BorderedUITextField!
+    @IBOutlet private weak var reminderCustomActionNameHeightConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var reminderCustomActionNameBottomConstraint: NSLayoutConstraint!
     
     @IBOutlet private weak var reminderToggleSwitch: UISwitch!
 
@@ -111,7 +111,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
     var targetReminder: Reminder?
 
     private var initalReminderAction: ReminderAction?
-    private var initalCustomReminderAction: String?
+    private var initalReminderCustomActionName: String?
     private var initalEnableStatus: Bool?
     private var initalSegmentedIndex: Int?
 
@@ -119,7 +119,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
         if reminderAction.text != initalReminderAction?.rawValue {
             return true
         }
-        else if reminderAction.text == LogAction.custom.rawValue && initalCustomReminderAction != customReminderAction.text {
+        else if reminderAction.text == LogAction.custom.rawValue && initalReminderCustomActionName != reminderCustomActionName.text {
             return true
         }
         else if reminderToggleSwitch.isOn != initalEnableStatus {
@@ -159,6 +159,8 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // TO DO add memory for reminderCustomActionName
 
         setUpGestures()
 
@@ -200,12 +202,12 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
                 throw ReminderActionError.blankReminderAction
             }
 
-            var trimmedCustomReminderAction: String? {
-                if customReminderAction.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+            var trimmedReminderCustomActionName: String? {
+                if reminderCustomActionName.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
                     return nil
                 }
                 else {
-                    return customReminderAction.text
+                    return reminderCustomActionName.text
                 }
             }
 
@@ -213,7 +215,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             updatedReminder.reminderAction = ReminderAction(rawValue: reminderAction.text!)!
 
             if reminderAction.text == LogAction.custom.rawValue {
-                updatedReminder.reminderCustomActionName = trimmedCustomReminderAction
+                updatedReminder.reminderCustomActionName = trimmedReminderCustomActionName
             }
             updatedReminder.reminderIsEnabled = reminderToggleSwitch.isOn
 
@@ -289,16 +291,16 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
     /// Toggles visability of optional custom log type components, used for a custom name for it
     private func toggleCustomLogActionName(isHidden: Bool) {
         if isHidden == false {
-            customReminderActionHeightConstraint.constant = 40.0
-            customReminderActionBottomConstraint.constant = 10.0
-            customReminderAction.isHidden = false
+            reminderCustomActionNameHeightConstraint.constant = 40.0
+            reminderCustomActionNameBottomConstraint.constant = 10.0
+            reminderCustomActionName.isHidden = false
             self.containerForAll.setNeedsLayout()
             self.containerForAll.layoutIfNeeded()
         }
         else {
-            customReminderActionHeightConstraint.constant = 0.0
-            customReminderActionBottomConstraint.constant = 0.0
-            customReminderAction.isHidden = true
+            reminderCustomActionNameHeightConstraint.constant = 0.0
+            reminderCustomActionNameBottomConstraint.constant = 0.0
+            reminderCustomActionName.isHidden = true
             self.containerForAll.setNeedsLayout()
             self.containerForAll.layoutIfNeeded()
         }
@@ -317,10 +319,10 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
         reminderAction.placeholder = "Select an action..."
         initalReminderAction = targetReminder?.reminderAction ?? ReminderConstant.defaultAction
 
-        customReminderAction.text = targetReminder?.reminderCustomActionName ?? ""
-        customReminderAction.placeholder = " Enter a custom action name..."
-        initalCustomReminderAction = customReminderAction.text
-        customReminderAction.delegate = self
+        reminderCustomActionName.text = targetReminder?.reminderCustomActionName ?? ""
+        reminderCustomActionName.placeholder = " Enter a custom action name..."
+        initalReminderCustomActionName = reminderCustomActionName.text
+        reminderCustomActionName.delegate = self
         // if == is true, that means it is custom, which means it shouldn't hide so ! reverses to input isHidden: false, reverse for if type is not custom. This is because this text input field is only used for custom types.
         toggleCustomLogActionName(isHidden: !(targetReminder?.reminderAction == .custom))
 

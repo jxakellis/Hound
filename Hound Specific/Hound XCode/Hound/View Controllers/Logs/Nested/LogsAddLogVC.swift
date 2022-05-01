@@ -327,6 +327,8 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // TO DO add memory for logCustomActionName
+        
         self.view.addSubview(logNote)
         
         setupViews()

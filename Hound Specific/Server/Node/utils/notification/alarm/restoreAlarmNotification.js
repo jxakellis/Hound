@@ -1,5 +1,5 @@
 const { alarmLogger } = require('../../logging/pino');
-const { primarySchedule, secondarySchedule } = require('./schedules');
+const { schedule } = require('./schedules');
 const { createAlarmNotificationForFamily } = require('./createAlarmNotification');
 
 const { queryPromise } = require('../../database/queryPromise');
@@ -15,11 +15,8 @@ const restoreAlarmNotificationsForAllFamilies = async () => {
 
   try {
     // remove any pending jobs (there shouldn't be any)
-    for (const key of Object.keys(primarySchedule.scheduledJobs)) {
-      primarySchedule.scheduledJobs[key].cancel();
-    }
-    for (const key of Object.keys(secondarySchedule.scheduledJobs)) {
-      secondarySchedule.scheduledJobs[key].cancel();
+    for (const key of Object.keys(schedule.scheduledJobs)) {
+      schedule.scheduledJobs[key].cancel();
     }
 
     // for ALL reminders get: familyId, reminderId, dogName, reminderExecutionDate, reminderAction, and reminderCustomActionName

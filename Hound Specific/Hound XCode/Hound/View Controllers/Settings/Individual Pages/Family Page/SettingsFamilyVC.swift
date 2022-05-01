@@ -100,6 +100,10 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // TO DO shift pausing to server side. the local reminders could be desynced and this could cause problems. much more streamlined if the server only has one point of contact (user sending query to toggle paused then the server handles the rest).
+        
+        // TO DO add refresh button for all family configuration / members
+        
         // (if head of family)
         // TO DO add control to kick people
         // TO DO add subscription controls

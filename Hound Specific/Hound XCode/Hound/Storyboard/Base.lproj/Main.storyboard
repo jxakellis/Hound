@@ -327,12 +327,12 @@
                     <connections>
                         <outlet property="containerForAll" destination="8KF-Nk-KXG" id="jDl-eZ-c76"/>
                         <outlet property="countdownContainerView" destination="MhX-Hm-1r1" id="bfp-I7-24p"/>
-                        <outlet property="customReminderAction" destination="WfV-Xu-CGv" id="fZh-jn-QFE"/>
-                        <outlet property="customReminderActionBottomConstraint" destination="Jma-Yh-Wgz" id="sst-nH-gZ4"/>
-                        <outlet property="customReminderActionHeightConstraint" destination="zPQ-ZM-YZA" id="q7H-sy-pdQ"/>
                         <outlet property="monthlyContainerView" destination="o5c-qK-6d7" id="7d6-Tr-h8C"/>
                         <outlet property="onceContainerView" destination="3lK-XC-aXM" id="xwp-uh-MsJ"/>
                         <outlet property="reminderAction" destination="NuX-y6-aex" id="aW2-ov-lha"/>
+                        <outlet property="reminderCustomActionName" destination="WfV-Xu-CGv" id="4hn-kv-hsc"/>
+                        <outlet property="reminderCustomActionNameBottomConstraint" destination="Jma-Yh-Wgz" id="oXX-qC-yHr"/>
+                        <outlet property="reminderCustomActionNameHeightConstraint" destination="zPQ-ZM-YZA" id="JPI-7C-tff"/>
                         <outlet property="reminderToggleSwitch" destination="je1-CJ-DNf" id="nXB-iD-FVB"/>
                         <outlet property="segmentedControl" destination="HGx-qs-bNl" id="zzB-gc-U8D"/>
                         <outlet property="weeklyContainerView" destination="XhW-xN-8L1" id="gsI-Gb-tmu"/>
