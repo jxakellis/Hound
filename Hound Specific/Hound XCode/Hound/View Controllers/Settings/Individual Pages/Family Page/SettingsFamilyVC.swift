@@ -27,10 +27,11 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
     @IBOutlet private weak var refreshButton: UIBarButtonItem!
     
     @IBAction private func willRefresh(_ sender: Any) {
-        // TO DO add activity indictator
         self.refreshButton.isEnabled = false
+        ActivityIndicator.shared.beginAnimating(title: navigationItem.title ?? "", view: self.view, navigationItem: navigationItem)
         FamilyRequest.get(invokeErrorManager: true) { requestWasSuccessful, _ in
             self.refreshButton.isEnabled = true
+            ActivityIndicator.shared.stopAnimating(navigationItem: self.navigationItem)
             if requestWasSuccessful == true {
                 // update the data to reflect what was retrieved from the server
                 self.repeatableSetup()

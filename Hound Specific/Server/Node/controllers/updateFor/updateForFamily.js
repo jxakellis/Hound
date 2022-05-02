@@ -1,12 +1,12 @@
-const DatabaseError = require('../../utils/errors/databaseError');
-const ValidationError = require('../../utils/errors/validationError');
+const DatabaseError = require('../../main/tools/errors/databaseError');
+const ValidationError = require('../../main/tools/errors/validationError');
 
-const { queryPromise } = require('../../utils/database/queryPromise');
+const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
   formatBoolean, formatDate, areAllDefined,
-} = require('../../utils/database/validateFormat');
+} = require('../../main/tools/validation/validateFormat');
 
-const { deleteAlarmNotificationsForFamily } = require('../../utils/notification/alarm/deleteAlarmNotification');
+const { deleteAlarmNotificationsForFamily } = require('../../main/tools/notifications/alarm/deleteAlarmNotification');
 /**
  *  Queries the database to update a family to add a new user. If the query is successful, then returns
  *  If a problem is encountered, creates and throws custom error

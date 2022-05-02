@@ -6,6 +6,9 @@
 // for all scheduled items. Cannot create multiple seperate schedulers.
 const schedule = require('node-schedule');
 
+// notification schedule uses a lot listeners, increase this limit as we scale
+require('events').EventEmitter.defaultMaxListeners = 100;
+
 module.exports = {
   schedule,
 };

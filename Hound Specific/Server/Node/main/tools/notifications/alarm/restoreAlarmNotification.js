@@ -1,9 +1,9 @@
-const { alarmLogger } = require('../../logging/pino');
+const { alarmLogger } = require('../../logging/loggers');
 const { schedule } = require('./schedules');
 const { createAlarmNotificationForFamily } = require('./createAlarmNotification');
 
 const { queryPromise } = require('../../database/queryPromise');
-const { connectionForNotifications } = require('../../../main/databaseConnection');
+const { connectionForNotifications } = require('../../database/databaseConnection');
 
 /**
  * Assumes an empty schedule

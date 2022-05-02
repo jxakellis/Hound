@@ -1,8 +1,8 @@
-const DatabaseError = require('../../utils/errors/databaseError');
-const ValidationError = require('../../utils/errors/validationError');
-const { queryPromise } = require('../../utils/database/queryPromise');
+const DatabaseError = require('../../main/tools/errors/databaseError');
+const ValidationError = require('../../main/tools/errors/validationError');
+const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { deleteDogsQuery } = require('./deleteForDogs');
-const { deleteSecondaryAlarmNotificationsForUser } = require('../../utils/notification/alarm/deleteAlarmNotification');
+const { deleteSecondaryAlarmNotificationsForUser } = require('../../main/tools/notifications/alarm/deleteAlarmNotification');
 
 /**
  *  Queries the database to delete a user and everything nested under it. If the query is successful, then returns

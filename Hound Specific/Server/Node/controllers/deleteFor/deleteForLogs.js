@@ -1,5 +1,5 @@
-const DatabaseError = require('../../utils/errors/databaseError');
-const { queryPromise } = require('../../utils/database/queryPromise');
+const DatabaseError = require('../../main/tools/errors/databaseError');
+const { queryPromise } = require('../../main/tools/database/queryPromise');
 
 /**
  *  Queries the database to delete a log. If the query is successful, then returns

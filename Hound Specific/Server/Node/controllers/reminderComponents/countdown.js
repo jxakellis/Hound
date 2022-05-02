@@ -1,5 +1,5 @@
-const { queryPromise } = require('../../utils/database/queryPromise');
-const { formatNumber } = require('../../utils/database/validateFormat');
+const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { formatNumber } = require('../../main/tools/validation/validateFormat');
 
 /* KNOWN:
 - reminderId defined

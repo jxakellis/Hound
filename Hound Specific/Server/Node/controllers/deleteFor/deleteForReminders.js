@@ -1,7 +1,7 @@
-const DatabaseError = require('../../utils/errors/databaseError');
-const { queryPromise } = require('../../utils/database/queryPromise');
+const DatabaseError = require('../../main/tools/errors/databaseError');
+const { queryPromise } = require('../../main/tools/database/queryPromise');
 
-const { deleteAlarmNotificationsForReminder } = require('../../utils/notification/alarm/deleteAlarmNotification');
+const { deleteAlarmNotificationsForReminder } = require('../../main/tools/notifications/alarm/deleteAlarmNotification');
 
 /**
  *  Queries the database to delete a single reminder. If the query is successful, then returns

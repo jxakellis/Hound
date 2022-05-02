@@ -2,11 +2,11 @@ const express = require('express');
 
 const router = express.Router({ mergeParams: true });
 
-const ValidationError = require('../utils/errors/validationError');
+const ValidationError = require('../main/tools/errors/validationError');
 
-const convertErrorToJSON = require('../utils/errors/errorFormat');
-const { areAllDefined } = require('../utils/database/validateFormat');
-const { createTerminateNotification } = require('../utils/notification/alert/createTerminateNotification');
+const convertErrorToJSON = require('../main/tools/errors/errorFormat');
+const { areAllDefined } = require('../main/tools/validation/validateFormat');
+const { createTerminateNotification } = require('../main/tools/notifications/alert/createTerminateNotification');
 
 // BASE PATH /api/v1/user/:userId/alert...
 

@@ -1,6 +1,6 @@
-const DatabaseError = require('../../utils/errors/databaseError');
-const ValidationError = require('../../utils/errors/validationError');
-const { queryPromise } = require('../../utils/database/queryPromise');
+const DatabaseError = require('../../main/tools/errors/databaseError');
+const ValidationError = require('../../main/tools/errors/validationError');
+const { queryPromise } = require('../../main/tools/database/queryPromise');
 
 const dogRemindersSelect = 'dogReminders.reminderId, dogReminders.reminderAction, dogReminders.reminderCustomActionName, dogReminders.reminderType, dogReminders.reminderExecutionBasis, dogReminders.reminderIsEnabled, dogReminders.reminderExecutionDate';
 
@@ -64,7 +64,7 @@ const getRemindersQuery = async (req, dogId) => {
     // find reminder that matches the dogId
     const result = await queryPromise(
       req,
-      `SELECT ${dogRemindersSelect}, ${reminderSnoozeComponentsSelect}, ${reminderCountdownComponentsSelect}, ${reminderWeeklyComponentsSelect}, ${reminderMonthlyComponentsSelect}, ${reminderOneTimeComponentsSelect} FROM dogReminders ${reminderSnoozeComponentsLeftJoin} ${reminderCountdownComponentsLeftJoin} ${reminderWeeklyComponentsLeftJoin} ${reminderMonthlyComponentsLeftJoin} ${reminderOneTimeComponentsLeftJoin} WHERE dogReminders.dogId = ? LIMIT 1000`,
+      `SELECT ${dogRemindersSelect}, ${reminderSnoozeComponentsSelect}, ${reminderCountdownComponentsSelect}, ${reminderWeeklyComponentsSelect}, ${reminderMonthlyComponentsSelect}, ${reminderOneTimeComponentsSelect} FROM dogReminders ${reminderSnoozeComponentsLeftJoin} ${reminderCountdownComponentsLeftJoin} ${reminderWeeklyComponentsLeftJoin} ${reminderMonthlyComponentsLeftJoin} ${reminderOneTimeComponentsLeftJoin} WHERE dogReminders.dogId = ? ORDER BY reminderId DESC LIMIT 1000`,
       [dogId],
     );
 

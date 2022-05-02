@@ -152,6 +152,7 @@
 		A2EAF17D25C9D45E0022BBDD /* ReminderDisplayTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2EAF17C25C9D45E0022BBDD /* ReminderDisplayTVC.swift */; };
 		A2EBFB9C264F69ED001AAF18 /* ErrorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2EBFB9B264F69ED001AAF18 /* ErrorManager.swift */; };
 		A2EBFB9E264F6A1A001AAF18 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2EBFB9D264F6A1A001AAF18 /* AudioManager.swift */; };
+		A2EDD741281F8E10000AC617 /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2EDD740281F8E10000AC617 /* ActivityIndicator.swift */; };
 		A2F1791C263F3E5C006824A7 /* DropDownDefaultTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F1791B263F3E5C006824A7 /* DropDownDefaultTableViewCell.swift */; };
 		A2F1791F263F3FE3006824A7 /* DropDownDefaultTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A2F1791E263F3FE3006824A7 /* DropDownDefaultTableViewCell.xib */; };
 		A2F6F4C527FC9D3200CAA320 /* SettingsMemberTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F6F4C427FC9D3200CAA320 /* SettingsMemberTVC.swift */; };
@@ -333,6 +334,7 @@
 		A2EAF17C25C9D45E0022BBDD /* ReminderDisplayTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDisplayTVC.swift; sourceTree = "<group>"; };
 		A2EBFB9B264F69ED001AAF18 /* ErrorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorManager.swift; sourceTree = "<group>"; };
 		A2EBFB9D264F6A1A001AAF18 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
+		A2EDD740281F8E10000AC617 /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
 		A2F1791B263F3E5C006824A7 /* DropDownDefaultTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropDownDefaultTableViewCell.swift; sourceTree = "<group>"; };
 		A2F1791E263F3FE3006824A7 /* DropDownDefaultTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DropDownDefaultTableViewCell.xib; sourceTree = "<group>"; };
 		A2F6F4C427FC9D3200CAA320 /* SettingsMemberTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMemberTVC.swift; sourceTree = "<group>"; };
@@ -567,14 +569,6 @@
 			path = "Drop Down";
 			sourceTree = "<group>";
 		};
-		A26A7583263CFF4E0026DE34 /* Nested */ = {
-			isa = PBXGroup;
-			children = (
-				A26A7584263CFF8C0026DE34 /* LogsAddLogVC.swift */,
-			);
-			path = Nested;
-			sourceTree = "<group>";
-		};
 		A26AF36C25807878005D5DAB /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -654,6 +648,7 @@
 			children = (
 				A2AA5CDC27FE482800FD0134 /* GeneralUIAlertController.swift */,
 				A25070E026DD9C200056CFC4 /* ScaledUIButton.swift */,
+				A2EDD740281F8E10000AC617 /* ActivityIndicator.swift */,
 			);
 			path = General;
 			sourceTree = "<group>";
@@ -797,7 +792,7 @@
 				A2B9DAE8262B2DFA00A47D57 /* LogsNavigationVC.swift */,
 				A2B9DAEC262B2E0A00A47D57 /* LogsVC.swift */,
 				A2B9DAF0262B2F2D00A47D57 /* LogsTableVC.swift */,
-				A26A7583263CFF4E0026DE34 /* Nested */,
+				A26A7584263CFF8C0026DE34 /* LogsAddLogVC.swift */,
 			);
 			path = Logs;
 			sourceTree = "<group>";
@@ -1126,6 +1121,7 @@
 				A2BD897C2669A8D200E7BBE5 /* UIApplicationExtension.swift in Sources */,
 				A2AA5CBF27FE421B00FD0134 /* InternalRequestUtils.swift in Sources */,
 				A2F6F4C527FC9D3200CAA320 /* SettingsMemberTVC.swift in Sources */,
+				A2EDD741281F8E10000AC617 /* ActivityIndicator.swift in Sources */,
 				A28AF46D25E9C7C80018B575 /* DogsIndependentReminderVC.swift in Sources */,
 				A2AA5CCD27FE453400FD0134 /* WeeklyComponentsError.swift in Sources */,
 				A2AA5CE927FE485100FD0134 /* LogsLargeBodyWithIconTVC.swift in Sources */,

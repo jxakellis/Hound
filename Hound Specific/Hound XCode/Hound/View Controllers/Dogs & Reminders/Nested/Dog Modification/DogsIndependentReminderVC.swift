@@ -17,59 +17,66 @@ protocol DogsIndependentReminderViewControllerDelegate: AnyObject {
 }
 
 class DogsIndependentReminderViewController: UIViewController {
-
+    
     // MARK: - IB
-
-    // Buttons to manage the information fate, whether to update or to cancel
-
+    
     @IBOutlet weak var pageNavigationBar: UINavigationItem!
+    
     @IBOutlet private weak var saveReminderButton: ScaledUIButton!
     @IBOutlet private weak var saveReminderButtonBackground: ScaledUIButton!
-
     /// Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured reminder to DogsViewController
     @IBAction private func willSave(_ sender: Any) {
         
         // Since this is the independent reminders view controller, meaning its not nested in a larger Add Dog VC, we perform the server queries then exit.
         
-        let updatedReminder = dogsReminderManagerViewController.applyReminderSettings()
+        let reminder = dogsReminderManagerViewController.applyReminderSettings()
         
-        if updatedReminder != nil {
-            // reminder settings were valid
-            if isUpdating == true {
-                // updating
-                saveReminderButton.beginQuerying()
-                saveReminderButtonBackground.beginQuerying()
-                RemindersRequest.update(invokeErrorManager: true, forDogId: parentDogId, forReminder: updatedReminder!) { requestWasSuccessful, _ in
-                    self.saveReminderButton.endQuerying()
-                    self.saveReminderButtonBackground.endQuerying()
-                    if requestWasSuccessful == true {
-                        // successful so we can persist the data locally
-                        self.delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, forReminder: updatedReminder!)
-                        self.navigationController?.popViewController(animated: true)
+        guard reminder != nil else {
+            return
+        }
+        
+        saveReminderButton.beginQuerying()
+        saveReminderButtonBackground.beginQuerying(isBackgroundButton: true)
+        
+        // reminder settings were valid
+        if isUpdating == true {
+            RemindersRequest.update(invokeErrorManager: true, forDogId: parentDogId, forReminder: reminder!) { requestWasSuccessful, _ in
+                self.saveReminderButton.endQuerying()
+                self.saveReminderButtonBackground.endQuerying(isBackgroundButton: true)
+                if requestWasSuccessful == true {
+                    // the query was successful so we should now persist the reminderCustomActionName to LocalConfiguration if there was one
+                    if reminder!.reminderCustomActionName != nil && reminder!.reminderCustomActionName?.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                        LocalConfiguration.addReminderCustomAction(forName: reminder!.reminderCustomActionName!)
                     }
-                }
-            }
-            else {
-                saveReminderButton.beginQuerying()
-                saveReminderButtonBackground.beginQuerying(isBackgroundButton: true)
-                RemindersRequest.create(invokeErrorManager: true, forDogId: parentDogId, forReminder: updatedReminder!) { reminder, _ in
-                    self.saveReminderButton.endQuerying()
-                    self.saveReminderButtonBackground.endQuerying(isBackgroundButton: true)
-                    // query complete
-                    if reminder != nil {
-                        // successful and able to get reminderId, persist locally
-                        updatedReminder!.reminderId = reminder!.reminderId
-                        self.delegate.didAddReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, forReminder: updatedReminder!)
-                        self.navigationController?.popViewController(animated: true)
-                    }
+                    
+                    // successful so persist the data locally
+                    self.delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, forReminder: reminder!)
+                    self.navigationController?.popViewController(animated: true)
                 }
             }
         }
-
+        else {
+            RemindersRequest.create(invokeErrorManager: true, forDogId: parentDogId, forReminder: reminder!) { createdReminder, _ in
+                self.saveReminderButton.endQuerying()
+                self.saveReminderButtonBackground.endQuerying(isBackgroundButton: true)
+                // query complete
+                if createdReminder != nil {
+                    // the query was successful so we should now persist the reminderCustomActionName to LocalConfiguration if there was one
+                    if reminder!.reminderCustomActionName != nil && reminder!.reminderCustomActionName?.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                        LocalConfiguration.addReminderCustomAction(forName: reminder!.reminderCustomActionName!)
+                    }
+                    
+                    // successful and able to get reminderId, persist locally
+                    reminder!.reminderId = createdReminder!.reminderId
+                    self.delegate.didAddReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, forReminder: reminder!)
+                    self.navigationController?.popViewController(animated: true)
+                }
+            }
+        }
+        
     }
-
+    
     @IBOutlet weak var reminderRemoveButton: UIBarButtonItem!
-
     @IBAction func willRemoveReminder(_ sender: Any) {
         
         // Since this is the independent reminders view controller, meaning its not nested in a larger Add Dog VC, we perform the server queries then exit.
@@ -77,24 +84,24 @@ class DogsIndependentReminderViewController: UIViewController {
         guard targetReminder != nil else {
             return
         }
-        let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.reminderAction.text ?? targetReminder!.displayActionName)?", message: nil, preferredStyle: .alert)
-
+        let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.selectedReminderAction?.rawValue ?? targetReminder!.displayActionName)?", message: nil, preferredStyle: .alert)
+        
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             RemindersRequest.delete(invokeErrorManager: true, forDogId: self.parentDogId, forReminderId: self.targetReminder!.reminderId) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
-                        // persist data locally
-                        self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, reminderId: self.targetReminder!.reminderId)
-                        self.navigationController?.popViewController(animated: true)
-                    }
+                    // persist data locally
+                    self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, reminderId: self.targetReminder!.reminderId)
+                    self.navigationController?.popViewController(animated: true)
+                }
             }
-
+            
         }
-
+        
         let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-
+        
         removeReminderConfirmation.addAction(alertActionRemove)
         removeReminderConfirmation.addAction(alertActionCancel)
-
+        
         AlertManager.enqueueAlertForPresentation(removeReminderConfirmation)
     }
     
@@ -102,35 +109,35 @@ class DogsIndependentReminderViewController: UIViewController {
     @IBOutlet private weak var cancelUpdateReminderButtonBackground: ScaledUIButton!
     /// The cancel / exit button was pressed, dismisses view to complete intended action
     @IBAction private func willCancel(_ sender: Any) {
-
+        
         // "Any changes you have made won't be saved"
         if dogsReminderManagerViewController.initalValuesChanged == true {
             let unsavedInformationConfirmation = GeneralUIAlertController(title: "Are you sure you want to exit?", message: nil, preferredStyle: .alert)
-
+            
             let alertActionExit = UIAlertAction(title: "Yes, I don't want to save changes", style: .default) { _ in
                 self.delegate.didCancel(sender: Sender(origin: self, localized: self))
                 self.navigationController?.popViewController(animated: true)
             }
-
+            
             let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-
+            
             unsavedInformationConfirmation.addAction(alertActionExit)
             unsavedInformationConfirmation.addAction(alertActionCancel)
-
+            
             AlertManager.enqueueAlertForPresentation(unsavedInformationConfirmation)
         }
         else {
             self.navigationController?.popViewController(animated: true)
         }
-
+        
     }
-
+    
     // MARK: - Properties
-
+    
     weak var delegate: DogsIndependentReminderViewControllerDelegate! = nil
-
+    
     var dogsReminderManagerViewController: DogsReminderManagerViewController = DogsReminderManagerViewController()
-
+    
     var targetReminder: Reminder?
     var isUpdating: Bool {
         if targetReminder == nil {
@@ -138,15 +145,15 @@ class DogsIndependentReminderViewController: UIViewController {
         }
         else {
             return true
-    }}
-
+        }}
+    
     var parentDogId: Int! = nil
-
+    
     // MARK: - Main
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         if isUpdating == true {
             pageNavigationBar.title = "Edit Reminder"
             pageNavigationBar.rightBarButtonItem!.isEnabled = true
@@ -155,21 +162,21 @@ class DogsIndependentReminderViewController: UIViewController {
             pageNavigationBar.title = "Create Reminder"
             pageNavigationBar.rightBarButtonItem!.isEnabled = false
         }
-
+        
         self.view.bringSubviewToFront(saveReminderButtonBackground)
         self.view.bringSubviewToFront(saveReminderButton)
-
+        
         self.view.bringSubviewToFront(cancelUpdateReminderButtonBackground)
         self.view.bringSubviewToFront(cancelUpdateReminderButton)
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         AlertManager.globalPresenter = self
     }
-
+    
     // MARK: Navigation
-
+    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "dogsReminderManagerViewController"{
@@ -178,5 +185,5 @@ class DogsIndependentReminderViewController: UIViewController {
             // dogsReminderManagerViewController.delegate = self
         }
     }
-
+    
 }

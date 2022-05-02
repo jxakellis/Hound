@@ -125,7 +125,6 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             }
         }
         else {
-            // TO DO review this section. Lots of spaghetti code. There will be duplicate error messages from create, update, and delete if network or other error.
             let reminderDifference = dog.dogReminders.groupReminders(newReminders: modifiableDogReminders.reminders)
             // same reminders, not used currently
             _ = reminderDifference.0
@@ -150,6 +149,8 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                     var queriedCreatedReminders = false
                     var queriedUpdatedReminders = false
                     var queriedDeletedReminders = false
+                    
+                    // check to see if we need to create any reminders on the server
                     if createdReminders.count > 0 {
                         // we have reminders created that need to be created on the server
                         RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: createdReminders) { reminders, _ in
@@ -163,10 +164,12 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                             checkForCompletion()
                         }
                     }
+                    // no reminders to be created on the server
                     else {
                         queriedCreatedReminders = true
                         checkForCompletion()
                     }
+                    // check to see if we need to update any reminders on the server
                     if updatedReminders.count > 0 {
                         RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: updatedReminders) { requestWasSuccessful2, _ in
                             if requestWasSuccessful2 == true {
@@ -178,10 +181,12 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                             checkForCompletion()
                         }
                     }
+                    // no reminders to be updated on the server
                     else {
                         queriedUpdatedReminders = true
                         checkForCompletion()
                     }
+                    // check to see if we need to delete any reminders on the server
                     if deletedReminders.count > 0 {
                         // find all the ids of the reminders to delete
                         var deletedReminderIds: [Int] = []
@@ -199,6 +204,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                             checkForCompletion()
                         }
                     }
+                    // no reminders to be deleted on the server
                     else {
                         queriedDeletedReminders = true
                         checkForCompletion()

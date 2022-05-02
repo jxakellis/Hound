@@ -239,16 +239,17 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
     // MARK: - IB
 
     @IBOutlet private weak var containerView: UIView!
-
+    
     @IBOutlet private weak var filterButton: UIBarButtonItem!
 
     @IBOutlet private weak var refreshButton: UIBarButtonItem!
     
     @IBAction private func willRefresh(_ sender: Any) {
-        // TO DO add activity indictator
         self.refreshButton.isEnabled = false
+        ActivityIndicator.shared.beginAnimating(title: navigationItem.title ?? "", view: self.view, navigationItem: navigationItem)
         RequestUtils.getDogManager(invokeErrorManager: true) { dogManager, _ in
             self.refreshButton.isEnabled = true
+            ActivityIndicator.shared.stopAnimating(navigationItem: self.navigationItem)
             if dogManager != nil {
                 self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager!)
             }

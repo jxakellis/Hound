@@ -2,8 +2,8 @@ const { getLogQuery, getLogsQuery } = require('../getFor/getForLogs');
 const { createLogQuery } = require('../createFor/createForLogs');
 const { updateLogQuery } = require('../updateFor/updateForLogs');
 const { deleteLogQuery } = require('../deleteFor/deleteForLogs');
-const convertErrorToJSON = require('../../utils/errors/errorFormat');
-const { createLogNotification } = require('../../utils/notification/alert/createLogNotification');
+const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
+const { createLogNotification } = require('../../main/tools/notifications/alert/createLogNotification');
 
 /*
 Known:

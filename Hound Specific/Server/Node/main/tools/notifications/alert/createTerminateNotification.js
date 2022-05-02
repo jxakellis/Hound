@@ -1,4 +1,4 @@
-const { areAllDefined } = require('../../database/validateFormat');
+const { areAllDefined } = require('../../validation/validateFormat');
 const { sendAPNForUser } = require('../apn/sendAPN');
 
 const createTerminateNotification = async (userId) => {

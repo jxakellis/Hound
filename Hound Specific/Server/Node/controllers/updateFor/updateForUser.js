@@ -1,10 +1,10 @@
-const DatabaseError = require('../../utils/errors/databaseError');
-const ValidationError = require('../../utils/errors/validationError');
+const DatabaseError = require('../../main/tools/errors/databaseError');
+const ValidationError = require('../../main/tools/errors/validationError');
 
-const { queryPromise } = require('../../utils/database/queryPromise');
+const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
   formatNumber, formatEmail, formatBoolean, atLeastOneDefined, areAllDefined,
-} = require('../../utils/database/validateFormat');
+} = require('../../main/tools/validation/validateFormat');
 
 /**
  *  Queries the database to update a user. If the query is successful, then returns

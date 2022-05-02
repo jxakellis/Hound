@@ -1,5 +1,5 @@
-const DatabaseError = require('../../utils/errors/databaseError');
-const { queryPromise } = require('../../utils/database/queryPromise');
+const DatabaseError = require('../../main/tools/errors/databaseError');
+const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { deleteLogsQuery } = require('./deleteForLogs');
 const { deleteReminderQuery } = require('./deleteForReminders');
 

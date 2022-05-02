@@ -2,10 +2,10 @@
   "name": "node",
   "version": "1.0.0",
   "description": "Hound Server",
-  "main": "./main/HoundServer.js",
+  "main": "./main/server/server.js",
   "scripts": {
-    "start": "node --max-old-space-size=2048 main/HoundServer.js | pino-pretty -c -t",
-    "startWithOptions": "nodemon main/HoundServer.js"
+    "start": "node --max-old-space-size=2048 main/server/server.js | pino-pretty -c -t",
+    "startWithOptions": "nodemon main/server/server.js"
   },
   "author": "",
   "license": "ISC",

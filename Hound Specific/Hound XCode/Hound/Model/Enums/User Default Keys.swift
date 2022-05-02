@@ -19,8 +19,9 @@ enum UserDefaultsKeys: String {
     // all stored in server, so no user defaults
     
     // MARK: Local Configuration
-    
     case dogIcons
+    case logCustomActionNames
+    case reminderCustomActionNames
     case isNotificationAuthorized
     case reviewRequestDates
     case isShowReleaseNotes

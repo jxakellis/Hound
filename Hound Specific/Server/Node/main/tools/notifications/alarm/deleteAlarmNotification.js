@@ -1,10 +1,10 @@
-const { alarmLogger } = require('../../logging/pino');
+const { alarmLogger } = require('../../logging/loggers');
 const { queryPromise } = require('../../database/queryPromise');
-const { connectionForNotifications } = require('../../../main/databaseConnection');
+const { connectionForNotifications } = require('../../database/databaseConnection');
 
 const { schedule } = require('./schedules');
 
-const { areAllDefined } = require('../../database/validateFormat');
+const { areAllDefined } = require('../../validation/validateFormat');
 
 const deleteAlarmNotificationsForFamily = async (familyId) => {
   alarmLogger.debug(`deleteAlarmNotificationsForFamily ${familyId}`);

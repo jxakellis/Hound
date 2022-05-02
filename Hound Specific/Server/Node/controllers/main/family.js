@@ -1,10 +1,10 @@
-const ValidationError = require('../../utils/errors/validationError');
+const ValidationError = require('../../main/tools/errors/validationError');
 
 const { getFamilyInformationForFamilyIdQuery } = require('../getFor/getForFamily');
 const { createFamilyQuery } = require('../createFor/createForFamily');
 const { updateFamilyQuery } = require('../updateFor/updateForFamily');
 const { deleteFamilyQuery } = require('../deleteFor/deleteForFamily');
-const convertErrorToJSON = require('../../utils/errors/errorFormat');
+const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
 /*
 Known:
 - userId formatted correctly and request has sufficient permissions to use

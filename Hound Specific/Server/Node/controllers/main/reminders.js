@@ -1,12 +1,12 @@
-const { formatArray } = require('../../utils/database/validateFormat');
+const { formatArray } = require('../../main/tools/validation/validateFormat');
 
 const { getReminderQuery, getRemindersQuery } = require('../getFor/getForReminders');
 const { createReminderQuery, createRemindersQuery } = require('../createFor/createForReminders');
 const { updateReminderQuery, updateRemindersQuery } = require('../updateFor/updateForReminders');
 const { deleteReminderQuery, deleteRemindersQuery } = require('../deleteFor/deleteForReminders');
-const convertErrorToJSON = require('../../utils/errors/errorFormat');
+const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
 
-const { createAlarmNotificationForFamily } = require('../../utils/notification/alarm/createAlarmNotification');
+const { createAlarmNotificationForFamily } = require('../../main/tools/notifications/alarm/createAlarmNotification');
 
 /*
 Known:

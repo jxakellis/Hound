@@ -243,7 +243,7 @@
                                         </segments>
                                         <color key="selectedSegmentTintColor" systemColor="systemBlueColor"/>
                                         <connections>
-                                            <action selector="segmentedControl:" destination="ngF-4H-kgO" eventType="valueChanged" id="SbE-AV-4lM"/>
+                                            <action selector="didUpdateReminderType:" destination="ngF-4H-kgO" eventType="valueChanged" id="fnp-Sc-VCg"/>
                                         </connections>
                                     </segmentedControl>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MhX-Hm-1r1">
@@ -329,12 +329,12 @@
                         <outlet property="countdownContainerView" destination="MhX-Hm-1r1" id="bfp-I7-24p"/>
                         <outlet property="monthlyContainerView" destination="o5c-qK-6d7" id="7d6-Tr-h8C"/>
                         <outlet property="onceContainerView" destination="3lK-XC-aXM" id="xwp-uh-MsJ"/>
-                        <outlet property="reminderAction" destination="NuX-y6-aex" id="aW2-ov-lha"/>
-                        <outlet property="reminderCustomActionName" destination="WfV-Xu-CGv" id="4hn-kv-hsc"/>
-                        <outlet property="reminderCustomActionNameBottomConstraint" destination="Jma-Yh-Wgz" id="oXX-qC-yHr"/>
-                        <outlet property="reminderCustomActionNameHeightConstraint" destination="zPQ-ZM-YZA" id="JPI-7C-tff"/>
-                        <outlet property="reminderToggleSwitch" destination="je1-CJ-DNf" id="nXB-iD-FVB"/>
-                        <outlet property="segmentedControl" destination="HGx-qs-bNl" id="zzB-gc-U8D"/>
+                        <outlet property="reminderActionLabel" destination="NuX-y6-aex" id="4uF-xy-a7h"/>
+                        <outlet property="reminderCustomActionNameBottomConstraint" destination="Jma-Yh-Wgz" id="yeK-Kd-XEE"/>
+                        <outlet property="reminderCustomActionNameHeightConstraint" destination="zPQ-ZM-YZA" id="hIe-vu-nAQ"/>
+                        <outlet property="reminderCustomActionNameTextField" destination="WfV-Xu-CGv" id="utz-JZ-8QD"/>
+                        <outlet property="reminderIsEnabledSwitch" destination="je1-CJ-DNf" id="sa7-P3-MTY"/>
+                        <outlet property="reminderTypeSegmentedControl" destination="HGx-qs-bNl" id="b9q-na-MxX"/>
                         <outlet property="weeklyContainerView" destination="XhW-xN-8L1" id="gsI-Gb-tmu"/>
                     </connections>
                 </viewController>
@@ -1295,16 +1295,13 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2IS-0f-Kjf" userLabel="Container" customClass="BorderedUILabel" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <subviews>
-                                    <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aFT-Sz-KlF" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
+                                    <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aFT-Sz-KlF" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
                                         <rect key="frame" x="316" y="627" width="86" height="86"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <state key="normal" image="circle.fill" catalog="system">
                                             <color key="titleColor" systemColor="systemBackgroundColor"/>
                                             <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
                                         </state>
-                                        <connections>
-                                            <action selector="willAddDog:" destination="yj4-3A-FdI" eventType="touchUpInside" id="5U7-G2-mZq"/>
-                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="x5G-Ck-EDF" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
                                         <rect key="frame" x="314" y="625" width="90" height="90"/>
@@ -1319,8 +1316,7 @@
                                             <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="80"/>
                                         </state>
                                         <connections>
-                                            <action selector="willAddDog:" destination="yj4-3A-FdI" eventType="touchUpInside" id="dyX-8g-JX6"/>
-                                            <action selector="willAddLog:" destination="SZm-Ec-oLW" eventType="touchUpInside" id="gqC-wo-ahC"/>
+                                            <action selector="willAddLog:" destination="SZm-Ec-oLW" eventType="touchUpInside" id="sS5-lc-4m9"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bLz-mC-dUW" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
@@ -1339,7 +1335,7 @@
                                             <action selector="willCancel:" destination="SZm-Ec-oLW" eventType="touchUpInside" id="hNh-Y3-kJw"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mbU-X7-WfL" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
+                                    <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mbU-X7-WfL" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
                                         <rect key="frame" x="12" y="627" width="86" height="86"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <state key="normal" image="circle.fill" catalog="system">
@@ -1360,7 +1356,7 @@
                                     <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="0FN-6L-oEu">
                                         <rect key="frame" x="0.0" y="350" width="414" height="375"/>
                                         <connections>
-                                            <action selector="didUpdateDatePicker:" destination="SZm-Ec-oLW" eventType="valueChanged" id="pFf-A0-31r"/>
+                                            <action selector="didUpdateLogDate:" destination="SZm-Ec-oLW" eventType="valueChanged" id="dme-jh-ryL"/>
                                         </connections>
                                     </datePicker>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Information" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="itn-As-F90" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
@@ -1440,25 +1436,25 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" image="trash" catalog="system" id="rFs-Hq-1oS">
                             <connections>
-                                <action selector="willRemoveLog:" destination="SZm-Ec-oLW" id="QcW-zP-jas"/>
+                                <action selector="willRemoveLog:" destination="SZm-Ec-oLW" id="slG-UR-ewN"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="addLogButton" destination="x5G-Ck-EDF" id="iNG-6a-B9W"/>
-                        <outlet property="addLogButtonBackground" destination="aFT-Sz-KlF" id="ktK-Pt-g9M"/>
-                        <outlet property="cancelAddLogButton" destination="bLz-mC-dUW" id="mia-St-jI3"/>
-                        <outlet property="cancelAddLogButtonBackground" destination="mbU-X7-WfL" id="GY4-hr-qFf"/>
+                        <outlet property="addLogButton" destination="x5G-Ck-EDF" id="58I-b0-rup"/>
+                        <outlet property="addLogButtonBackground" destination="aFT-Sz-KlF" id="k2N-fL-ivN"/>
+                        <outlet property="cancelButton" destination="bLz-mC-dUW" id="WaN-jf-bSb"/>
+                        <outlet property="cancelButtonBackground" destination="mbU-X7-WfL" id="8Sh-qM-xTY"/>
                         <outlet property="containerForAll" destination="2IS-0f-Kjf" id="aS7-g5-MqK"/>
-                        <outlet property="customLogAction" destination="BPc-k5-bv7" id="ZLq-tg-hnE"/>
-                        <outlet property="customLogActionBottomConstraint" destination="46e-Gj-4A3" id="kbA-Qj-u72"/>
-                        <outlet property="customLogActionHeightConstraint" destination="WN3-5G-Yq6" id="XU0-da-X1i"/>
-                        <outlet property="logAction" destination="GGl-n5-nGJ" id="vU1-cn-fN6"/>
-                        <outlet property="logDate" destination="0FN-6L-oEu" id="VmN-3j-Tew"/>
-                        <outlet property="logNote" destination="56j-GM-g1K" id="bin-y5-ChO"/>
+                        <outlet property="logActionLabel" destination="GGl-n5-nGJ" id="GAv-XU-LqO"/>
+                        <outlet property="logCustomActionNameBottomConstraint" destination="46e-Gj-4A3" id="4fX-l8-EV6"/>
+                        <outlet property="logCustomActionNameHeightConstraint" destination="WN3-5G-Yq6" id="I9f-zF-SEk"/>
+                        <outlet property="logCustomActionNameTextField" destination="BPc-k5-bv7" id="DV7-yJ-39M"/>
+                        <outlet property="logDateDatePicker" destination="0FN-6L-oEu" id="i5i-dM-V3H"/>
+                        <outlet property="logNoteTextView" destination="56j-GM-g1K" id="7rl-uO-z6r"/>
                         <outlet property="pageTitle" destination="PyI-jW-rkK" id="G6u-vj-jSy"/>
-                        <outlet property="parentDogNameSelector" destination="cBP-r4-Eki" id="6ay-eW-EGk"/>
-                        <outlet property="trashIcon" destination="rFs-Hq-1oS" id="l7f-Ph-lHk"/>
+                        <outlet property="parentDogLabel" destination="cBP-r4-Eki" id="haU-AF-iTW"/>
+                        <outlet property="removeLogBarButton" destination="rFs-Hq-1oS" id="S77-GT-TCL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sb8-0C-zGY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -2129,7 +2125,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="barTintColor" systemColor="systemBackgroundColor"/>
                         <textAttributes key="titleTextAttributes">
-                            <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                             <color key="textColor" systemColor="systemBlueColor"/>
                         </textAttributes>
                     </navigationBar>
@@ -2153,7 +2149,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="barTintColor" systemColor="systemBackgroundColor"/>
                         <textAttributes key="titleTextAttributes">
-                            <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                             <color key="textColor" systemColor="systemBlueColor"/>
                         </textAttributes>
                     </navigationBar>
@@ -2177,7 +2173,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="barTintColor" systemColor="systemBackgroundColor"/>
                         <textAttributes key="titleTextAttributes">
-                            <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                             <color key="textColor" systemColor="systemBlueColor"/>
                         </textAttributes>
                     </navigationBar>

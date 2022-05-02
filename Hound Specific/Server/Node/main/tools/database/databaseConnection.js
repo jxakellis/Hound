@@ -1,9 +1,10 @@
 /* eslint-disable max-len */
 const mysql2 = require('mysql2');
 const databasePassword = require('./databaseSensitive');
-const DatabaseError = require('../utils/errors/databaseError');
-const { poolLogger, queryLogger } = require('../utils/logging/pino');
+const DatabaseError = require('../errors/databaseError');
+const { poolLogger, queryLogger } = require('../logging/loggers');
 
+// TO DO seperate this into multiple connections, maybe one for alarms, maybe one for alerts, maybe a general one
 /// the connection used by the server itself when querying the database for notifcations
 const connectionForNotifications = mysql2.createConnection({
   connectTimeout: 30000,
@@ -34,12 +35,12 @@ const poolForRequests = mysql2.createPool({
 
 poolForRequests.on('acquire', (connection) => {
   const currentDate = new Date();
-  poolLogger.info(`Pool connection ${connection.threadId} acquired at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
+  poolLogger.debug(`Pool connection ${connection.threadId} acquired at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
 });
 
 poolForRequests.on('release', (connection) => {
   const currentDate = new Date();
-  poolLogger.info(`Pool connection ${connection.threadId} released at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
+  poolLogger.debug(`Pool connection ${connection.threadId} released at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
 });
 
 const commitQueries = async (req) => {

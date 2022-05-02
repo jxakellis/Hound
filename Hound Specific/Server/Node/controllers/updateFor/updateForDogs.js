@@ -1,8 +1,8 @@
-const DatabaseError = require('../../utils/errors/databaseError');
-const ValidationError = require('../../utils/errors/validationError');
+const DatabaseError = require('../../main/tools/errors/databaseError');
+const ValidationError = require('../../main/tools/errors/validationError');
 
-const { queryPromise } = require('../../utils/database/queryPromise');
-const { areAllDefined } = require('../../utils/database/validateFormat');
+const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { areAllDefined } = require('../../main/tools/validation/validateFormat');
 
 /**
  *  Queries the database to update a dog. If the query is successful, then returns

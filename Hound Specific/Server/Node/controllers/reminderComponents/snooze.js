@@ -1,6 +1,6 @@
-const ValidationError = require('../../utils/errors/validationError');
-const { queryPromise } = require('../../utils/database/queryPromise');
-const { formatBoolean, formatNumber, areAllDefined } = require('../../utils/database/validateFormat');
+const ValidationError = require('../../main/tools/errors/validationError');
+const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { formatBoolean, formatNumber, areAllDefined } = require('../../main/tools/validation/validateFormat');
 
 const createSnoozeComponents = async (req, reminder) => {
   const snoozeIsEnabled = formatBoolean(reminder.snoozeIsEnabled);

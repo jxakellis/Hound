@@ -1,5 +1,5 @@
-const DatabaseError = require('../../utils/errors/databaseError');
-const { queryPromise } = require('../../utils/database/queryPromise');
+const DatabaseError = require('../../main/tools/errors/databaseError');
+const { queryPromise } = require('../../main/tools/database/queryPromise');
 
 /**
  * Returns the log for the dogId. Errors not handled
@@ -25,7 +25,7 @@ const getLogsQuery = async (req, dogId) => {
   try {
     const result = await queryPromise(
       req,
-      'SELECT * FROM dogLogs WHERE dogId = ? LIMIT 1000',
+      'SELECT * FROM dogLogs WHERE dogId = ? ORDER BY logDate DESC LIMIT 1000',
       [dogId],
     );
     return result;

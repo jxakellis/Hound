@@ -2,7 +2,7 @@ const { getDogQuery, getDogsQuery } = require('../getFor/getForDogs');
 const { createDogQuery } = require('../createFor/createForDogs');
 const { updateDogQuery } = require('../updateFor/updateForDogs');
 const { deleteDogQuery } = require('../deleteFor/deleteForDogs');
-const convertErrorToJSON = require('../../utils/errors/errorFormat');
+const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
 
 /*
 Known:

@@ -22,23 +22,27 @@ class DogsNestedReminderViewController: UIViewController {
     @IBOutlet weak var pageNavigationBar: UINavigationItem!
 
     @IBOutlet private weak var saveButton: UIBarButtonItem!
-    
     // Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured reminder back to table view.
     @IBAction private func willSave(_ sender: Any) {
         
         // Since this is the nested reminders view controller, meaning its nested in the larger Add Dog VC, we only perform the server queries when the user decides to create / update the greater dog.
         
-        let updatedReminder = dogsReminderManagerViewController.applyReminderSettings()
+        let reminder = dogsReminderManagerViewController.applyReminderSettings()
         // updatedReminder will be nil if a setting was invalid. If this is the case, dogsReminderManagerViewController will send a message to the user about it.
-        guard updatedReminder != nil else {
+        guard reminder != nil else {
             return
         }
         
+        // we were able to add the reminder successfully, so persist the possible reminderCustomActionName to the local storage. Technically, we should wait until the server query to complete to add this to memory but that will add significantly more complexity as this VC is nested.
+        if reminder!.reminderCustomActionName != nil && reminder!.reminderCustomActionName?.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+            LocalConfiguration.addReminderCustomAction(forName: reminder!.reminderCustomActionName!)
+        }
+        
         if isUpdating == true {
-            delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), forReminder: updatedReminder!)
+            delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), forReminder: reminder!)
         }
         else {
-            delegate.didAddReminder(sender: Sender(origin: self, localized: self), forReminder: updatedReminder!)
+            delegate.didAddReminder(sender: Sender(origin: self, localized: self), forReminder: reminder!)
         }
         
         navigationController?.popViewController(animated: true)
@@ -49,12 +53,11 @@ class DogsNestedReminderViewController: UIViewController {
         }
 
     @IBOutlet weak var reminderRemoveButton: UIBarButtonItem!
-    
     @IBAction func willRemoveReminder(_ sender: Any) {
         
         // Since this is the nested reminders view controller, meaning its nested in the larger Add Dog VC, we only perform the server queries when the user decides to create / update the greater dog.
         
-        let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.reminderAction.text ?? targetReminder!.displayActionName)?", message: nil, preferredStyle: .alert)
+        let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.selectedReminderAction?.rawValue ?? targetReminder!.displayActionName)?", message: nil, preferredStyle: .alert)
 
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), reminderId: self.targetReminder!.reminderId)

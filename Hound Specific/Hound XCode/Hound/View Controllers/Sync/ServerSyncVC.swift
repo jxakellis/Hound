@@ -19,8 +19,7 @@ class ServerSyncViewController: UIViewController {
         super.viewDidLoad()
 
         updateStatusLabel()
-        // TO DO improve wording. Additionally, possibly parse error codes to provide a reason as to why the server sync is failing
-        let retryAlertAction = UIAlertAction(title: "Retry Connection", style: .default) { _ in
+        let retryAlertAction = UIAlertAction(title: "Retry Login", style: .default) { _ in
             self.retrySynchronization()
         }
         let loginPageAlertAction = UIAlertAction(title: "Go to Login Page", style: .default) { _ in

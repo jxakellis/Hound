@@ -1,10 +1,10 @@
-const { alarmLogger } = require('../../logging/pino');
+const { alarmLogger } = require('../../logging/loggers');
 const { queryPromise } = require('../../database/queryPromise');
-const { connectionForNotifications } = require('../../../main/databaseConnection');
+const { connectionForNotifications } = require('../../database/databaseConnection');
 
 const {
   formatBoolean, formatNumber, formatDate, areAllDefined,
-} = require('../../database/validateFormat');
+} = require('../../validation/validateFormat');
 
 const { createSecondaryAlarmNotificationForUser } = require('./createAlarmNotification');
 const { deleteSecondaryAlarmNotificationsForUser } = require('./deleteAlarmNotification');

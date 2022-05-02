@@ -1,6 +1,6 @@
 const DatabaseError = require('../../errors/databaseError');
 const { queryPromise } = require('../../database/queryPromise');
-const { connectionForNotifications } = require('../../../main/databaseConnection');
+const { connectionForNotifications } = require('../../database/databaseConnection');
 
 const userConfigurationJoin = 'JOIN userConfiguration ON users.userId = userConfiguration.userId';
 const familyMembersJoin = 'JOIN familyMembers ON users.userId = familyMembers.userId';

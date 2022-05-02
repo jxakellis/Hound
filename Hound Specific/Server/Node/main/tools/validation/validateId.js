@@ -1,4 +1,4 @@
-const { queryPromise } = require('./queryPromise');
+const { queryPromise } = require('../database/queryPromise');
 const { formatNumber, formatArray, areAllDefined } = require('./validateFormat');
 const DatabaseError = require('../errors/databaseError');
 const ValidationError = require('../errors/validationError');
@@ -61,7 +61,7 @@ const validateFamilyId = async (req, res, next) => {
       // queries the database to find familyIds associated with the userId
       const result = await queryPromise(
         req,
-        'SELECT familyId, userId FROM familyMembers WHERE userId = ?, familyId = ? LIMIT 1',
+        'SELECT familyId, userId FROM familyMembers WHERE userId = ? AND familyId = ? LIMIT 1',
         [userId, familyId],
       );
 
@@ -104,7 +104,7 @@ const validateDogId = async (req, res, next) => {
     // query database to find out if user has permission for that dogId
     try {
       // finds what dogId (s) the user has linked to their familyId
-      const dog = await queryPromise(req, 'SELECT dogId FROM dogs WHERE familyId = ?, dogId = ? LIMIT 1', [familyId, dogId]);
+      const dog = await queryPromise(req, 'SELECT dogId FROM dogs WHERE familyId = ? AND dogId = ? LIMIT 1', [familyId, dogId]);
 
       // search query result to find if the dogIds linked to the familyId match the dogId provided, match means the user owns that dogId
 
@@ -146,7 +146,7 @@ const validateLogId = async (req, res, next) => {
     // query database to find out if user has permission for that logId
     try {
       // finds what logId (s) the user has linked to their dogId
-      const log = await queryPromise(req, 'SELECT logId FROM dogLogs WHERE dogId = ?, logId = ? LIMIT 1', [dogId, logId]);
+      const log = await queryPromise(req, 'SELECT logId FROM dogLogs WHERE dogId = ? AND logId = ? LIMIT 1', [dogId, logId]);
 
       // search query result to find if the logIds linked to the dogIds match the logId provided, match means the user owns that logId
 
@@ -188,7 +188,7 @@ const validateParamsReminderId = async (req, res, next) => {
     // query database to find out if user has permission for that reminderId
     try {
       // finds what reminderId (s) the user has linked to their dogId
-      const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ?, reminderId = ? LIMIT 1', [dogId, reminderId]);
+      const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ? AND reminderId = ? LIMIT 1', [dogId, reminderId]);
 
       // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 
@@ -235,7 +235,7 @@ const validateBodyReminderId = async (req, res, next) => {
         // query database to find out if user has permission for that reminderId
         try {
           // finds what reminderId (s) the user has linked to their dogId
-          const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ?, reminderId = ? LIMIT 1', [dogId, reminderId]);
+          const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ? AND reminderId = ? LIMIT 1', [dogId, reminderId]);
 
           // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 
@@ -270,7 +270,7 @@ const validateBodyReminderId = async (req, res, next) => {
     // query database to find out if user has permission for that reminderId
     try {
       // finds what reminderId (s) the user has linked to their dogId
-      const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ?, reminderId = ?', [dogId, singleReminderId]);
+      const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ? AND reminderId = ?', [dogId, singleReminderId]);
 
       // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 

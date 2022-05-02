@@ -1,7 +1,7 @@
 const apn = require('apn');
-const { apnLogger } = require('../../logging/pino');
+const { apnLogger } = require('../../logging/loggers');
 
-const { formatArray, areAllDefined } = require('../../database/validateFormat');
+const { formatArray, areAllDefined } = require('../../validation/validateFormat');
 
 const { apnProvider } = require('./apnProvider');
 const { getUserToken, getAllFamilyMemberTokens, getOtherFamilyMemberTokens } = require('./apnTokens');
@@ -104,7 +104,7 @@ const sendAPN = (recipientTokens, category, alertTitle, alertBody) => {
 * Invokes sendAPN with the tokens, alertTitle, and alertBody
 */
 const sendAPNForUser = async (userId, category, alertTitle, alertBody) => {
-  apnLogger.info(`sendAPNForUser ${userId}, ${category}, ${alertTitle}, ${alertBody}`);
+  apnLogger.debug(`sendAPNForUser ${userId}, ${category}, ${alertTitle}, ${alertBody}`);
 
   try {
     // get tokens of all qualifying family members that aren't the user
@@ -125,7 +125,7 @@ const sendAPNForUser = async (userId, category, alertTitle, alertBody) => {
  * Invokes sendAPN with the tokens, alertTitle, and alertBody
  */
 const sendAPNForFamily = async (familyId, category, alertTitle, alertBody) => {
-  apnLogger.info(`sendAPNForFamily ${familyId}, ${category}, ${alertTitle}, ${alertBody}`);
+  apnLogger.debug(`sendAPNForFamily ${familyId}, ${category}, ${alertTitle}, ${alertBody}`);
 
   try {
     // get notification tokens of all qualifying family members
@@ -145,7 +145,7 @@ const sendAPNForFamily = async (familyId, category, alertTitle, alertBody) => {
  * Invokes sendAPN with the tokens, alertTitle, and alertBody
  */
 const sendAPNForFamilyExcludingUser = async (userId, familyId, category, alertTitle, alertBody) => {
-  apnLogger.info(`sendAPNForFamilyExcludingUser ${userId}, ${familyId}, ${category}, ${alertTitle}, ${alertBody}`);
+  apnLogger.debug(`sendAPNForFamilyExcludingUser ${userId}, ${familyId}, ${category}, ${alertTitle}, ${alertBody}`);
   // get tokens of all qualifying family members that aren't the user
   const tokens = formatArray(await getOtherFamilyMemberTokens(userId, familyId));
   // sendAPN if there are > 0 user notification tokens

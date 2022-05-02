@@ -1,7 +1,7 @@
-const DatabaseError = require('../../utils/errors/databaseError');
-const ValidationError = require('../../utils/errors/validationError');
-const { queryPromise } = require('../../utils/database/queryPromise');
-const { generateVerifiedFamilyCode } = require('../../utils/database/generateFamilyCode');
+const DatabaseError = require('../../main/tools/errors/databaseError');
+const ValidationError = require('../../main/tools/errors/validationError');
+const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { generateVerifiedFamilyCode } = require('../../main/tools/database/generateVerifiedFamilyCode');
 
 const { getFamilyMembersForUserIdQuery } = require('../getFor/getForFamily');
 

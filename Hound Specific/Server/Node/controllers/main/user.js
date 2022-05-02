@@ -1,13 +1,13 @@
-const ValidationError = require('../../utils/errors/validationError');
+const ValidationError = require('../../main/tools/errors/validationError');
 const {
   formatBoolean, formatNumber, atLeastOneDefined, areAllDefined,
-} = require('../../utils/database/validateFormat');
+} = require('../../main/tools/validation/validateFormat');
 
 const { getUserForUserIdQuery, getUserForUserIdentifierQuery } = require('../getFor/getForUser');
 const { createUserQuery } = require('../createFor/createForUser');
 const { updateUserQuery } = require('../updateFor/updateForUser');
 const { deleteUserQuery } = require('../deleteFor/deleteForUser');
-const convertErrorToJSON = require('../../utils/errors/errorFormat');
+const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
 
 /*
 Known:
@@ -66,7 +66,7 @@ const createUser = async (req, res) => {
   }
 };
 
-const { refreshSecondaryAlarmNotificationsForUser } = require('../../utils/notification/alarm/refreshAlarmNotification');
+const { refreshSecondaryAlarmNotificationsForUser } = require('../../main/tools/notifications/alarm/refreshAlarmNotification');
 
 const updateUser = async (req, res) => {
   try {
