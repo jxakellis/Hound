@@ -91,9 +91,7 @@ class ServerFamilyViewController: UIViewController {
     }
     
     override func viewWillLayoutSubviews() {
-        setupCreateFamily()
-        setupCreateFamilyDisclaimer()
-        setupJoinFamily()
+        repeatableSetup()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -106,29 +104,34 @@ class ServerFamilyViewController: UIViewController {
         UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
     }
     
-    // MARK: Setup Buttons and Labels
+    // MARK: - Setup
     
-    private func setupCreateFamily() {
-        // set to made to have fully rounded corners
-        createFamilyButton.layer.cornerRadius = createFamilyButton.frame.height/2
-        createFamilyButton.layer.masksToBounds = true
-        createFamilyButton.layer.borderWidth = 1
-        createFamilyButton.layer.borderColor = UIColor.black.cgColor
-    }
-    
-    private func setupCreateFamilyDisclaimer() {
-        createFamilyDisclaimerLabel.translatesAutoresizingMaskIntoConstraints = false
+    private func repeatableSetup() {
+        setupCreateFamily()
+        setupCreateFamilyDisclaimer()
+        setupJoinFamily()
+        func setupCreateFamily() {
+            // set to made to have fully rounded corners
+            createFamilyButton.layer.cornerRadius = createFamilyButton.frame.height/2
+            createFamilyButton.layer.masksToBounds = true
+            createFamilyButton.layer.borderWidth = 1
+            createFamilyButton.layer.borderColor = UIColor.black.cgColor
+        }
         
-        createFamilyDisclaimerLeadingConstraint.constant += (createFamilyButton.frame.height/6)
-        createFamilyDisclaimerTrailingConstraint.constant += (createFamilyButton.frame.height/6)
-    }
-    
-    private func setupJoinFamily() {
-        // set to made to have fully rounded corners
-        joinFamilyButton.layer.cornerRadius = joinFamilyButton.frame.height/2
-        joinFamilyButton.layer.masksToBounds = true
-        joinFamilyButton.layer.borderWidth = 1
-        joinFamilyButton.layer.borderColor = UIColor.black.cgColor
+        func setupCreateFamilyDisclaimer() {
+            createFamilyDisclaimerLabel.translatesAutoresizingMaskIntoConstraints = false
+            
+            createFamilyDisclaimerLeadingConstraint.constant += (createFamilyButton.frame.height/6)
+            createFamilyDisclaimerTrailingConstraint.constant += (createFamilyButton.frame.height/6)
+        }
+        
+        func setupJoinFamily() {
+            // set to made to have fully rounded corners
+            joinFamilyButton.layer.cornerRadius = joinFamilyButton.frame.height/2
+            joinFamilyButton.layer.masksToBounds = true
+            joinFamilyButton.layer.borderWidth = 1
+            joinFamilyButton.layer.borderColor = UIColor.black.cgColor
+        }
     }
 
 }

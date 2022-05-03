@@ -60,7 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         if token != UserInformation.userNotificationToken {
             
             // don't sent the user an alert if this request fails as there is no point
-            UserRequest.update(invokeErrorManager: false, body: [ServerDefaultKeys.userNotificationToken.rawValue: UserInformation.userNotificationToken!]) { requestWasSuccessful, _ in
+            UserRequest.update(invokeErrorManager: false, body: [ServerDefaultKeys.userNotificationToken.rawValue: token]) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
                     UserInformation.userNotificationToken = token
                 }
@@ -83,6 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             if let category = aps["category"] as? String {
                 // if the notification is a reminder, then check to see if loud notification can be played
                 if category == "reminder" {
+                    // BUG if a reminder is updated to an earlier time by another user, then our user will be out of date. This means they could get a notification for a reminder, but when they open up the app it will show the reminder at the original (incorrect) time. This bug however, when the original reminder is supposed to go off, will fix itself as it checks to see if the reminder is updated before showing an alert
                     AudioManager.playLoudNotification()
                 }
             }

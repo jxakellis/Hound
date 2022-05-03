@@ -153,6 +153,10 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         }
         
         storedDogs.append(newDog)
+        
+        storedDogs.sort { dog1, dog2 in
+            return dog1.dogId <= dog2.dogId
+        }
     }
     
     func addDogs(newDogs: [Dog]) {

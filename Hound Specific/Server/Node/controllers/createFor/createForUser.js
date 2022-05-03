@@ -30,17 +30,18 @@ const createUserQuery = async (req) => {
   const isLoudNotification = formatBoolean(req.body.isLoudNotification);
   const isFollowUpEnabled = formatBoolean(req.body.isFollowUpEnabled);
   const followUpDelay = formatNumber(req.body.followUpDelay);
-  const isCompactView = formatBoolean(req.body.isCompactView);
+  const logsInterfaceScale = req.body.logsInterfaceScale;
+  const remindersInterfaceScale = req.body.remindersInterfaceScale;
   const interfaceStyle = formatNumber(req.body.interfaceStyle);
   const snoozeLength = formatNumber(req.body.snoozeLength);
   const { notificationSound } = req.body;
   // component of the body is missing or invalid
   if (areAllDefined(
     [userIdentifier, userEmail, userFirstName, userLastName, isNotificationEnabled,
-      isLoudNotification, isFollowUpEnabled, followUpDelay, isCompactView, interfaceStyle, snoozeLength, notificationSound],
+      isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, notificationSound],
   ) === false) {
     // >=1 of the items is undefined
-    throw new ValidationError('userIdentifier, userEmail, userFirstName, userLastName, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isCompactView, interfaceStyle, snoozeLength, or notificationSound missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('userIdentifier, userEmail, userFirstName, userLastName, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound missing', 'ER_VALUES_MISSING');
   }
 
   try {
@@ -53,8 +54,8 @@ const createUserQuery = async (req) => {
 
     await queryPromise(
       req,
-      'INSERT INTO userConfiguration(userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isCompactView, interfaceStyle, snoozeLength, notificationSound) VALUES (?,?,?,?,?,?,?,?,?)',
-      [userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isCompactView, interfaceStyle, snoozeLength, notificationSound],
+      'INSERT INTO userConfiguration(userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, notificationSound) VALUES (?,?,?,?,?,?,?,?,?,?)',
+      [userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, notificationSound],
     );
 
     return userId;

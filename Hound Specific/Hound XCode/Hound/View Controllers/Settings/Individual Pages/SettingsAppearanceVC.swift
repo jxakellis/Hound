@@ -23,20 +23,21 @@ class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDel
         
         // TO DO add reminders overview mode. allow the user to switch between compact and large.
 
-        // DARK MODE
-        interfaceStyleSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.white], for: .normal)
+        // Dark Mode
+        interfaceStyleSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 15), .foregroundColor: UIColor.white], for: .normal)
         interfaceStyleSegmentedControl.backgroundColor = .systemGray4
 
-        // LOGS OVERVIEW MODE
-        self.logsViewModeSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 15), .foregroundColor: UIColor.white], for: .normal)
-        self.logsViewModeSegmentedControl.backgroundColor = .systemGray4
+        // Logs Interface Scale
+        logsInterfaceScaleSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 15), .foregroundColor: UIColor.white], for: .normal)
+        logsInterfaceScaleSegmentedControl.backgroundColor = .systemGray4
 
-        if UserConfiguration.isCompactView == true {
-            logsViewModeSegmentedControl.selectedSegmentIndex = 0
-        }
-        else {
-            logsViewModeSegmentedControl.selectedSegmentIndex = 1
-        }
+        logsInterfaceScaleSegmentedControl.selectedSegmentIndex = LogsInterfaceScale.allCases.firstIndex(of: UserConfiguration.logsInterfaceScale)!
+        
+        // Reminders Interface Scale
+        remindersInterfaceScaleSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 15), .foregroundColor: UIColor.white], for: .normal)
+        remindersInterfaceScaleSegmentedControl.backgroundColor = .systemGray4
+        
+        remindersInterfaceScaleSegmentedControl.selectedSegmentIndex = RemindersInterfaceScale.allCases.firstIndex(of: UserConfiguration.remindersInterfaceScale)!
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -69,32 +70,44 @@ class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDel
         ViewControllerUtils.updateInterfaceStyle(forSegmentedControl: sender as! UISegmentedControl)
     }
 
-    // MARK: Logs Overview Mode
+    // MARK: Logs Interface Scale
 
-    @IBOutlet private weak var logsViewModeSegmentedControl: UISegmentedControl!
+    @IBOutlet private weak var logsInterfaceScaleSegmentedControl: UISegmentedControl!
 
-    @IBAction private func didUpdateLogsViewMode(_ sender: Any) {
+    @IBAction private func didUpdateLogsInterfaceScale(_ sender: Any) {
 
-        let beforeUpdateIsCompactView = UserConfiguration.isCompactView
+        let beforeUpdateLogsInterfaceScale = UserConfiguration.logsInterfaceScale
 
-        if logsViewModeSegmentedControl.selectedSegmentIndex == 0 {
-            UserConfiguration.isCompactView = true
-        }
-        else {
-            UserConfiguration.isCompactView = false
-        }
-
-        let body = [ServerDefaultKeys.isCompactView.rawValue: UserConfiguration.isCompactView]
+        // selected segement index is in the same order as all cases
+        UserConfiguration.logsInterfaceScale = LogsInterfaceScale.allCases[logsInterfaceScaleSegmentedControl.selectedSegmentIndex]
+        
+        let body = [ServerDefaultKeys.logsInterfaceScale.rawValue: UserConfiguration.logsInterfaceScale.rawValue]
         UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // error, revert to previous
-               UserConfiguration.isCompactView = beforeUpdateIsCompactView
-                if beforeUpdateIsCompactView == true {
-                    self.logsViewModeSegmentedControl.selectedSegmentIndex = 0
-                }
-                else {
-                    self.logsViewModeSegmentedControl.selectedSegmentIndex = 1
-                }
+               UserConfiguration.logsInterfaceScale = beforeUpdateLogsInterfaceScale
+                self.logsInterfaceScaleSegmentedControl.selectedSegmentIndex = LogsInterfaceScale.allCases.firstIndex(of: UserConfiguration.logsInterfaceScale)!
+            }
+        }
+    }
+    
+    // MARK: Reminders Interface Scale
+    
+    @IBOutlet private weak var remindersInterfaceScaleSegmentedControl: UISegmentedControl!
+    
+    @IBAction private func didUpdateRemindersInterfaceScale(_ sender: Any) {
+        
+        let beforeUpdateRemindersInterfaceScale = UserConfiguration.remindersInterfaceScale
+        
+        // selected segement index is in the same order as all cases
+        UserConfiguration.remindersInterfaceScale = RemindersInterfaceScale.allCases[remindersInterfaceScaleSegmentedControl.selectedSegmentIndex]
+        
+        let body = [ServerDefaultKeys.remindersInterfaceScale.rawValue: UserConfiguration.remindersInterfaceScale.rawValue]
+        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
+            if requestWasSuccessful == false {
+                // error, revert to previous
+                UserConfiguration.remindersInterfaceScale = beforeUpdateRemindersInterfaceScale
+                self.remindersInterfaceScaleSegmentedControl.selectedSegmentIndex = RemindersInterfaceScale.allCases.firstIndex(of: UserConfiguration.remindersInterfaceScale)!
             }
         }
     }

@@ -42,6 +42,8 @@
 		A263B2F72638A54F00E1DCE6 /* Sender.swift in Sources */ = {isa = PBXBuildFile; fileRef = A263B2F62638A54F00E1DCE6 /* Sender.swift */; };
 		A263D88527FF830C00938EC4 /* LocalDogIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A263D88427FF830C00938EC4 /* LocalDogIcon.swift */; };
 		A263D88727FF85E000938EC4 /* Server Default Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A263D88627FF85E000938EC4 /* Server Default Keys.swift */; };
+		A264AC1D2821B6620041E88A /* Log Interface Scale.swift in Sources */ = {isa = PBXBuildFile; fileRef = A264AC1C2821B6620041E88A /* Log Interface Scale.swift */; };
+		A264AC1F2821B6930041E88A /* Reminder Interface Scale.swift in Sources */ = {isa = PBXBuildFile; fileRef = A264AC1E2821B6930041E88A /* Reminder Interface Scale.swift */; };
 		A26A7585263CFF8C0026DE34 /* LogsAddLogVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26A7584263CFF8C0026DE34 /* LogsAddLogVC.swift */; };
 		A26A984A27F658CD002803A6 /* User Default Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26A984927F658CD002803A6 /* User Default Keys.swift */; };
 		A26AF36E25807887005D5DAB /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26AF36D25807887005D5DAB /* DateExtension.swift */; };
@@ -110,11 +112,9 @@
 		A2AA5CDB27FE481C00FD0134 /* DropDownUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CDA27FE481C00FD0134 /* DropDownUIView.swift */; };
 		A2AA5CDD27FE482800FD0134 /* GeneralUIAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CDC27FE482800FD0134 /* GeneralUIAlertController.swift */; };
 		A2AA5CDF27FE483D00FD0134 /* UITextViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CDE27FE483D00FD0134 /* UITextViewExtension.swift */; };
-		A2AA5CE627FE485100FD0134 /* LogsLargeHeaderTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CE127FE485100FD0134 /* LogsLargeHeaderTVC.swift */; };
-		A2AA5CE727FE485100FD0134 /* LogsCompactBodyTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CE227FE485100FD0134 /* LogsCompactBodyTVC.swift */; };
-		A2AA5CE827FE485100FD0134 /* LogsCompactHeaderTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CE327FE485100FD0134 /* LogsCompactHeaderTVC.swift */; };
-		A2AA5CE927FE485100FD0134 /* LogsLargeBodyWithIconTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CE427FE485100FD0134 /* LogsLargeBodyWithIconTVC.swift */; };
-		A2AA5CEA27FE485100FD0134 /* LogsLargeBodyWithoutIconTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CE527FE485100FD0134 /* LogsLargeBodyWithoutIconTVC.swift */; };
+		A2AA5CE727FE485100FD0134 /* LogsBodyWithoutIconTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CE227FE485100FD0134 /* LogsBodyWithoutIconTVC.swift */; };
+		A2AA5CE827FE485100FD0134 /* LogsHeaderTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CE327FE485100FD0134 /* LogsHeaderTVC.swift */; };
+		A2AA5CE927FE485100FD0134 /* LogsBodyWithIconTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CE427FE485100FD0134 /* LogsBodyWithIconTableViewCell.swift */; };
 		A2AA5CED27FE486500FD0134 /* SettingsFamilyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CEC27FE486500FD0134 /* SettingsFamilyVC.swift */; };
 		A2AA5CEF27FE487200FD0134 /* DogDisplayTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CEE27FE487200FD0134 /* DogDisplayTVC.swift */; };
 		A2AC89F627D2778900115831 /* CountdownComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AC89F527D2778900115831 /* CountdownComponents.swift */; };
@@ -219,6 +219,8 @@
 		A263B2F62638A54F00E1DCE6 /* Sender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sender.swift; sourceTree = "<group>"; };
 		A263D88427FF830C00938EC4 /* LocalDogIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDogIcon.swift; sourceTree = "<group>"; };
 		A263D88627FF85E000938EC4 /* Server Default Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Server Default Keys.swift"; sourceTree = "<group>"; };
+		A264AC1C2821B6620041E88A /* Log Interface Scale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Log Interface Scale.swift"; sourceTree = "<group>"; };
+		A264AC1E2821B6930041E88A /* Reminder Interface Scale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Reminder Interface Scale.swift"; sourceTree = "<group>"; };
 		A26A7584263CFF8C0026DE34 /* LogsAddLogVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsAddLogVC.swift; sourceTree = "<group>"; };
 		A26A984927F658CD002803A6 /* User Default Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User Default Keys.swift"; sourceTree = "<group>"; };
 		A26AF36D25807887005D5DAB /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
@@ -287,11 +289,9 @@
 		A2AA5CDA27FE481C00FD0134 /* DropDownUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropDownUIView.swift; sourceTree = "<group>"; };
 		A2AA5CDC27FE482800FD0134 /* GeneralUIAlertController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralUIAlertController.swift; sourceTree = "<group>"; };
 		A2AA5CDE27FE483D00FD0134 /* UITextViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UITextViewExtension.swift; sourceTree = "<group>"; };
-		A2AA5CE127FE485100FD0134 /* LogsLargeHeaderTVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogsLargeHeaderTVC.swift; sourceTree = "<group>"; };
-		A2AA5CE227FE485100FD0134 /* LogsCompactBodyTVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogsCompactBodyTVC.swift; sourceTree = "<group>"; };
-		A2AA5CE327FE485100FD0134 /* LogsCompactHeaderTVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogsCompactHeaderTVC.swift; sourceTree = "<group>"; };
-		A2AA5CE427FE485100FD0134 /* LogsLargeBodyWithIconTVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogsLargeBodyWithIconTVC.swift; sourceTree = "<group>"; };
-		A2AA5CE527FE485100FD0134 /* LogsLargeBodyWithoutIconTVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogsLargeBodyWithoutIconTVC.swift; sourceTree = "<group>"; };
+		A2AA5CE227FE485100FD0134 /* LogsBodyWithoutIconTVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogsBodyWithoutIconTVC.swift; sourceTree = "<group>"; };
+		A2AA5CE327FE485100FD0134 /* LogsHeaderTVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogsHeaderTVC.swift; sourceTree = "<group>"; };
+		A2AA5CE427FE485100FD0134 /* LogsBodyWithIconTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogsBodyWithIconTableViewCell.swift; sourceTree = "<group>"; };
 		A2AA5CEC27FE486500FD0134 /* SettingsFamilyVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsFamilyVC.swift; sourceTree = "<group>"; };
 		A2AA5CEE27FE487200FD0134 /* DogDisplayTVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DogDisplayTVC.swift; sourceTree = "<group>"; };
 		A2AC89F527D2778900115831 /* CountdownComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownComponents.swift; sourceTree = "<group>"; };
@@ -403,8 +403,8 @@
 				A27C3D8A25B781B4005F46BA /* DogsAddDogVC.swift */,
 				A28A0B4B25B923BA0057BEC7 /* DogsReminderNavigationVC.swift */,
 				A28A0B4725B922E80057BEC7 /* DogsReminderTableVC.swift */,
+				A249619227E3A75E006CFDCC /* DogsReminderTVC.swift */,
 				A278ED912610FF45000575FC /* Dog Modification */,
-				A27C139325AD2B210031B6A0 /* Table View Cells */,
 			);
 			path = Nested;
 			sourceTree = "<group>";
@@ -691,14 +691,6 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
-		A27C139325AD2B210031B6A0 /* Table View Cells */ = {
-			isa = PBXGroup;
-			children = (
-				A249619227E3A75E006CFDCC /* DogsReminderTVC.swift */,
-			);
-			path = "Table View Cells";
-			sourceTree = "<group>";
-		};
 		A286934725769D4E00C0C06E /* Enums */ = {
 			isa = PBXGroup;
 			children = (
@@ -706,6 +698,8 @@
 				A2581B7927FDE0590099AFB8 /* View Tag Constant.swift */,
 				A2581B7727FDDF500099AFB8 /* Animation Constant.swift */,
 				A2581B7527FDDF350099AFB8 /* Notification Sound.swift */,
+				A264AC1C2821B6620041E88A /* Log Interface Scale.swift */,
+				A264AC1E2821B6930041E88A /* Reminder Interface Scale.swift */,
 				A233518F27FB7BAB00CDF1BF /* Dog Constants.swift */,
 				A26A984927F658CD002803A6 /* User Default Keys.swift */,
 				A263D88627FF85E000938EC4 /* Server Default Keys.swift */,
@@ -747,11 +741,9 @@
 		A2AA5CE027FE485100FD0134 /* Table View Cells */ = {
 			isa = PBXGroup;
 			children = (
-				A2AA5CE127FE485100FD0134 /* LogsLargeHeaderTVC.swift */,
-				A2AA5CE227FE485100FD0134 /* LogsCompactBodyTVC.swift */,
-				A2AA5CE327FE485100FD0134 /* LogsCompactHeaderTVC.swift */,
-				A2AA5CE427FE485100FD0134 /* LogsLargeBodyWithIconTVC.swift */,
-				A2AA5CE527FE485100FD0134 /* LogsLargeBodyWithoutIconTVC.swift */,
+				A2AA5CE327FE485100FD0134 /* LogsHeaderTVC.swift */,
+				A2AA5CE227FE485100FD0134 /* LogsBodyWithoutIconTVC.swift */,
+				A2AA5CE427FE485100FD0134 /* LogsBodyWithIconTableViewCell.swift */,
 			);
 			path = "Table View Cells";
 			sourceTree = "<group>";
@@ -1108,7 +1100,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A2AA5CE727FE485100FD0134 /* LogsCompactBodyTVC.swift in Sources */,
+				A2AA5CE727FE485100FD0134 /* LogsBodyWithoutIconTVC.swift in Sources */,
 				A263D88727FF85E000938EC4 /* Server Default Keys.swift in Sources */,
 				A299EAA027E2C4E60042F8F4 /* SettingsPersonalInformationVC.swift in Sources */,
 				A2BD897C2669A8D200E7BBE5 /* UIApplicationExtension.swift in Sources */,
@@ -1117,8 +1109,7 @@
 				A2EDD741281F8E10000AC617 /* ActivityIndicator.swift in Sources */,
 				A28AF46D25E9C7C80018B575 /* DogsIndependentReminderVC.swift in Sources */,
 				A2AA5CCD27FE453400FD0134 /* WeeklyComponentsError.swift in Sources */,
-				A2AA5CE927FE485100FD0134 /* LogsLargeBodyWithIconTVC.swift in Sources */,
-				A2AA5CEA27FE485100FD0134 /* LogsLargeBodyWithoutIconTVC.swift in Sources */,
+				A2AA5CE927FE485100FD0134 /* LogsBodyWithIconTableViewCell.swift in Sources */,
 				A26FA13E27F514C700546306 /* ScaledUITextField.swift in Sources */,
 				A27C3D8F25B8A213005F46BA /* DogsNestedReminderVC.swift in Sources */,
 				A263D88527FF830C00938EC4 /* LocalDogIcon.swift in Sources */,
@@ -1191,7 +1182,6 @@
 				A247B96825C883680017FE66 /* DogsTableVC.swift in Sources */,
 				A2AC89F627D2778900115831 /* CountdownComponents.swift in Sources */,
 				A2EAF17D25C9D45E0022BBDD /* ReminderDisplayTVC.swift in Sources */,
-				A2AA5CE627FE485100FD0134 /* LogsLargeHeaderTVC.swift in Sources */,
 				A2581B7627FDDF350099AFB8 /* Notification Sound.swift in Sources */,
 				A2AA5CCB27FE451E00FD0134 /* ReminderManagerError.swift in Sources */,
 				A2B9DAE9262B2DFA00A47D57 /* LogsNavigationVC.swift in Sources */,
@@ -1200,10 +1190,11 @@
 				A2BAA07027D6ED8B0041F3C5 /* UserConfiguration.swift in Sources */,
 				A2AA5CDB27FE481C00FD0134 /* DropDownUIView.swift in Sources */,
 				A25070E326DD9D7E0056CFC4 /* UIViewControllerExtension.swift in Sources */,
+				A264AC1F2821B6930041E88A /* Reminder Interface Scale.swift in Sources */,
 				A2AA5CC727FE44B400FD0134 /* ReminderActionError.swift in Sources */,
 				A2AC89FA27D2780500115831 /* WeeklyComponents.swift in Sources */,
 				A29C985427CE724300B9C8E4 /* RemindersRequest.swift in Sources */,
-				A2AA5CE827FE485100FD0134 /* LogsCompactHeaderTVC.swift in Sources */,
+				A2AA5CE827FE485100FD0134 /* LogsHeaderTVC.swift in Sources */,
 				A26FA14027F5168300546306 /* UILabelExtension.swift in Sources */,
 				A290F38A25D4B10400429C9D /* CheckManager.swift in Sources */,
 				A207F7A0280610D6003248E8 /* ImageManager.swift in Sources */,
@@ -1222,6 +1213,7 @@
 				A278ED8C2610FF3D000575FC /* DogsReminderCountDownVC.swift in Sources */,
 				A2B678E527D13AD100424FB0 /* ServerSyncVC.swift in Sources */,
 				A2B00F9E27FA3C2E00C6126E /* FamilyRequest.swift in Sources */,
+				A264AC1D2821B6620041E88A /* Log Interface Scale.swift in Sources */,
 				A2AA5CBD27FE391400FD0134 /* ResponseUtils.swift in Sources */,
 				A2AA5CD927FE480000FD0134 /* Log.swift in Sources */,
 				A2581B7827FDDF500099AFB8 /* Animation Constant.swift in Sources */,

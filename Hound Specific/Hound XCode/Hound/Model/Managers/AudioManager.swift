@@ -55,6 +55,7 @@ enum AudioManager {
     // MARK: - Silent Audio
     
     static func playSilenceAudio() {
+        
         DispatchQueue.global().async {
             AppDelegate.generalLogger.notice("playSilenceAudio")
             let path = Bundle.main.path(forResource: "silence", ofType: "mp3")!
@@ -92,6 +93,7 @@ enum AudioManager {
         AppDelegate.generalLogger.notice("playLoudNotification")
         
         // make sure the user wants loud notifications
+        // don't check for if there are enabled reminders, as client could be out of sync with server which has a reminder
         guard UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification && UIApplication.shared.applicationState == .background else {
             return
         }

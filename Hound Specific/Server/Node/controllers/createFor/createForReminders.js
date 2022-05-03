@@ -58,7 +58,7 @@ const createReminderQuery = async (req) => {
       // nothing matched reminderType
       throw new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID');
     }
-    // was able to successfully create components for a certain timing style
+    // was able to successfully create components for a certain reminder type
     return [req.body];
   }
   catch (error) {
@@ -121,7 +121,7 @@ const createRemindersQuery = async (req) => {
         // nothing matched reminderType
         throw new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID');
       }
-      // was able to successfully create components for a certain timing style
+      // was able to successfully create components for a certain reminder type
       createdReminders.push(reminders[i]);
     }
     catch (error) {

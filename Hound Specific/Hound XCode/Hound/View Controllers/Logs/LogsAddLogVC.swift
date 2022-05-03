@@ -333,9 +333,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         
         view.addSubview(logNoteTextView)
         
-        setupViews()
-        setupValues()
-        setUpGestures()
+        oneTimeSetup()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -346,7 +344,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        setUpDropDowns()
+        repeatableSetup()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -355,107 +353,154 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         dropDownParentDog.hideDropDown(removeFromSuperview: true)
     }
     
+    // MARK: - Setup
+    
+    private func oneTimeSetup() {
+        setupViews()
+        setupValues()
+        setUpGestures()
+        
+        /// Requires log information to be present. Sets up the values of different variables that is found out from information passed
+        func setupValues() {
+            
+            // updating log
+            if parentDogIdToUpdate != nil && logToUpdate != nil {
+                pageTitle!.title = "Edit Log"
+                removeLogBarButton.isEnabled = true
+                
+                let dog = try! dogManager.findDog(forDogId: parentDogIdToUpdate!)
+                parentDogLabel.text = dog.dogName
+                parentDogLabel.tag = dog.dogId
+                
+                selectedLogActionIndexPath = IndexPath(row: LogAction.allCases.firstIndex(of: LogAction(rawValue: logActionLabel.text!)!)!, section: 0)
+            }
+            // not updating
+            else {
+                pageTitle!.title = "Create Log"
+                removeLogBarButton.isEnabled = false
+                
+                parentDogLabel.text = dogManager.dogs[0].dogName
+                parentDogLabel.tag = dogManager.dogs[0].dogId
+                
+                selectedLogActionIndexPath = nil
+            }
+            
+            logActionLabel.text = logToUpdate?.logAction.rawValue
+            selectedLogAction = logToUpdate?.logAction
+            
+            logCustomActionNameTextField.text = logToUpdate?.logCustomActionName
+            // Only make the logCustomActionName input visible for custom log actions
+            // If logToUpdate is nil or logToUpdate.logAction is not custom, then the expression is false. The ! equates that to true, which means it inputs (isHidden: true).
+            toggleLogCustomActionNameTextField(isHidden: !(logToUpdate?.logAction == .custom))
+            
+            logNoteTextView.text = logToUpdate?.logNote
+            logDateDatePicker.date = logToUpdate?.logDate ?? Date()
+            
+            logActionLabel.placeholder = "Select an action..."
+            
+            // spaces to align with bordered label
+            logCustomActionNameTextField.placeholder = " Enter a custom action name..."
+            logNoteTextView.placeholder = " Enter a note..."
+            
+            // configure inital values so we can track if anything gets updated
+            initalParentDogId = parentDogLabel.tag
+            initalLogAction = selectedLogAction
+            initalLogCustomActionName = logCustomActionNameTextField.text
+            initalLogDate = logDateDatePicker.date
+            initalLogNote = logNoteTextView.text
+            
+        }
+        
+        /// Requires log information to be present. Sets up gestureRecognizer for dog selector drop down
+        func setUpGestures() {
+            // updating a log
+            if parentDogIdToUpdate != nil && logToUpdate != nil {
+                // cannot edit the parent dog
+                parentDogLabel.isUserInteractionEnabled = false
+                parentDogLabel.isEnabled = false
+            }
+            // adding a log
+            else {
+                // can edit the parent dog, have to explictly enable isUserInteractionEnabled to be able to click
+                parentDogLabel.isUserInteractionEnabled = true
+                parentDogLabel.isEnabled = true
+                let parentDogLabelTapGesture = UITapGestureRecognizer(target: self, action: #selector(parentDogLabelTapped))
+                parentDogLabelTapGesture.delegate = self
+                parentDogLabelTapGesture.cancelsTouchesInView = false
+                parentDogLabel.addGestureRecognizer(parentDogLabelTapGesture)
+            }
+            
+            logActionLabel.isUserInteractionEnabled = true
+            let logActionLabelTapGesture = UITapGestureRecognizer(target: self, action: #selector(logActionLabelTapped))
+            logActionLabelTapGesture.delegate = self
+            logActionLabelTapGesture.cancelsTouchesInView = false
+            logActionLabel.addGestureRecognizer(logActionLabelTapGesture)
+            
+            let logNoteTextViewTapGesture = UITapGestureRecognizer(target: self, action: #selector(logNoteTextViewTapped))
+            logNoteTextViewTapGesture.delegate = self
+            logNoteTextViewTapGesture.cancelsTouchesInView = false
+            logNoteTextView.addGestureRecognizer(logNoteTextViewTapGesture)
+            
+            let dismissAllTapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissAll))
+            dismissAllTapGesture.delegate = self
+            dismissAllTapGesture.cancelsTouchesInView = false
+            containerForAll.addGestureRecognizer(dismissAllTapGesture)
+        }
+        
+        /// Doesn't require log information to be present.
+        func setupViews() {
+            view.sendSubviewToBack(containerForAll)
+            
+            containerForAll.bringSubviewToFront(cancelButton)
+            containerForAll.bringSubviewToFront(addLogButton)
+            
+            logCustomActionNameTextField.delegate = self
+            
+            logNoteTextView.delegate = self
+            
+            setupToHideKeyboardOnTapOnView()
+        }
+    }
+    
+    private func repeatableSetup() {
+        setUpDropDowns()
+        func setUpDropDowns() {
+            dropDownParentDog.dropDownUIViewIdentifier = "dropDownParentDog"
+            dropDownParentDog.cellReusableIdentifier = "dropDownCell"
+            dropDownParentDog.dataSource = self
+            dropDownParentDog.setUpDropDown(viewPositionReference: parentDogLabel.frame, offset: 2.0)
+            dropDownParentDog.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
+            dropDownParentDog.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
+            view.addSubview(dropDownParentDog)
+            
+            dropDownLogAction.dropDownUIViewIdentifier = "dropDownLogAction"
+            dropDownLogAction.cellReusableIdentifier = "dropDownCell"
+            dropDownLogAction.dataSource = self
+            dropDownLogAction.setUpDropDown(viewPositionReference: logActionLabel.frame, offset: 2.0)
+            dropDownLogAction.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
+            dropDownLogAction.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
+            view.addSubview(dropDownLogAction)
+        }
+    }
+    
     // MARK: - Functions
     
-    /// Requires log information to be present. Sets up the values of different variables that is found out from information passed
-    private func setupValues() {
-        
-        // updating log
-        if parentDogIdToUpdate != nil && logToUpdate != nil {
-            pageTitle!.title = "Edit Log"
-            removeLogBarButton.isEnabled = true
-            
-            let dog = try! dogManager.findDog(forDogId: parentDogIdToUpdate!)
-            parentDogLabel.text = dog.dogName
-            parentDogLabel.tag = dog.dogId
-            
-            selectedLogActionIndexPath = IndexPath(row: LogAction.allCases.firstIndex(of: LogAction(rawValue: logActionLabel.text!)!)!, section: 0)
+    /// Toggles visability of optional custom log type components, used for a custom name for it
+    private func toggleLogCustomActionNameTextField(isHidden: Bool) {
+        if isHidden == false {
+            logCustomActionNameTextField.isHidden = false
+            logCustomActionNameHeightConstraint.constant = 40.0
+            logCustomActionNameBottomConstraint.constant = 10.0
+            containerForAll.setNeedsLayout()
+            containerForAll.layoutIfNeeded()
         }
-        // not updating
         else {
-            pageTitle!.title = "Create Log"
-            removeLogBarButton.isEnabled = false
-            
-            parentDogLabel.text = dogManager.dogs[0].dogName
-            parentDogLabel.tag = dogManager.dogs[0].dogId
-            
-            selectedLogActionIndexPath = nil
+            logCustomActionNameTextField.isHidden = true
+            logCustomActionNameHeightConstraint.constant = 0.0
+            logCustomActionNameBottomConstraint.constant = 0.0
+            containerForAll.setNeedsLayout()
+            containerForAll.layoutIfNeeded()
         }
-        
-        logActionLabel.text = logToUpdate?.logAction.rawValue
-        selectedLogAction = logToUpdate?.logAction
-        
-        logCustomActionNameTextField.text = logToUpdate?.logCustomActionName
-        // Only make the logCustomActionName input visible for custom log actions
-        // If logToUpdate is nil or logToUpdate.logAction is not custom, then the expression is false. The ! equates that to true, which means it inputs (isHidden: true).
-        toggleLogCustomActionNameTextField(isHidden: !(logToUpdate?.logAction == .custom))
-        
-        logNoteTextView.text = logToUpdate?.logNote
-        logDateDatePicker.date = logToUpdate?.logDate ?? Date()
-        
-        logActionLabel.placeholder = "Select an action..."
-        
-        // spaces to align with bordered label
-        logCustomActionNameTextField.placeholder = " Enter a custom action name..."
-        logNoteTextView.placeholder = " Enter a note..."
-        
-        // configure inital values so we can track if anything gets updated
-        initalParentDogId = parentDogLabel.tag
-        initalLogAction = selectedLogAction
-        initalLogCustomActionName = logCustomActionNameTextField.text
-        initalLogDate = logDateDatePicker.date
-        initalLogNote = logNoteTextView.text
-        
-    }
-    
-    /// Requires log information to be present. Sets up gestureRecognizer for dog selector drop down
-    private func setUpGestures() {
-        // updating a log
-        if parentDogIdToUpdate != nil && logToUpdate != nil {
-            // cannot edit the parent dog
-            parentDogLabel.isUserInteractionEnabled = false
-            parentDogLabel.isEnabled = false
-       }
-        // adding a log
-        else {
-            // can edit the parent dog, have to explictly enable isUserInteractionEnabled to be able to click
-            parentDogLabel.isUserInteractionEnabled = true
-            parentDogLabel.isEnabled = true
-            let parentDogLabelTapGesture = UITapGestureRecognizer(target: self, action: #selector(parentDogLabelTapped))
-            parentDogLabelTapGesture.delegate = self
-            parentDogLabelTapGesture.cancelsTouchesInView = false
-            parentDogLabel.addGestureRecognizer(parentDogLabelTapGesture)
-        }
-        
-        logActionLabel.isUserInteractionEnabled = true
-        let logActionLabelTapGesture = UITapGestureRecognizer(target: self, action: #selector(logActionLabelTapped))
-        logActionLabelTapGesture.delegate = self
-        logActionLabelTapGesture.cancelsTouchesInView = false
-        logActionLabel.addGestureRecognizer(logActionLabelTapGesture)
-        
-        let logNoteTextViewTapGesture = UITapGestureRecognizer(target: self, action: #selector(logNoteTextViewTapped))
-        logNoteTextViewTapGesture.delegate = self
-        logNoteTextViewTapGesture.cancelsTouchesInView = false
-        logNoteTextView.addGestureRecognizer(logNoteTextViewTapGesture)
-        
-        let dismissAllTapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissAll))
-        dismissAllTapGesture.delegate = self
-        dismissAllTapGesture.cancelsTouchesInView = false
-        containerForAll.addGestureRecognizer(dismissAllTapGesture)
-    }
-    
-    /// Doesn't require log information to be present.
-    private func setupViews() {
-        view.sendSubviewToBack(containerForAll)
-        
-        containerForAll.bringSubviewToFront(cancelButton)
-        containerForAll.bringSubviewToFront(addLogButton)
-        
-        logCustomActionNameTextField.delegate = self
-        
-        logNoteTextView.delegate = self
-        
-        setupToHideKeyboardOnTapOnView()
     }
     
     // MARK: @objc
@@ -494,44 +539,6 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
     @objc private func logNoteTextViewTapped() {
         dropDownParentDog.hideDropDown()
         dropDownLogAction.hideDropDown()
-    }
-    
-    /// Toggles visability of optional custom log type components, used for a custom name for it
-    private func toggleLogCustomActionNameTextField(isHidden: Bool) {
-        if isHidden == false {
-            logCustomActionNameTextField.isHidden = false
-            logCustomActionNameHeightConstraint.constant = 40.0
-            logCustomActionNameBottomConstraint.constant = 10.0
-            containerForAll.setNeedsLayout()
-            containerForAll.layoutIfNeeded()
-        }
-        else {
-            logCustomActionNameTextField.isHidden = true
-            logCustomActionNameHeightConstraint.constant = 0.0
-            logCustomActionNameBottomConstraint.constant = 0.0
-            containerForAll.setNeedsLayout()
-            containerForAll.layoutIfNeeded()
-        }
-    }
-    
-    // MARK: - Drop Down Functions
-    
-    private func setUpDropDowns() {
-        dropDownParentDog.dropDownUIViewIdentifier = "dropDownParentDog"
-        dropDownParentDog.cellReusableIdentifier = "dropDownCell"
-        dropDownParentDog.dataSource = self
-        dropDownParentDog.setUpDropDown(viewPositionReference: parentDogLabel.frame, offset: 2.0)
-        dropDownParentDog.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
-        dropDownParentDog.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
-        view.addSubview(dropDownParentDog)
-        
-        dropDownLogAction.dropDownUIViewIdentifier = "dropDownLogAction"
-        dropDownLogAction.cellReusableIdentifier = "dropDownCell"
-        dropDownLogAction.dataSource = self
-        dropDownLogAction.setUpDropDown(viewPositionReference: logActionLabel.frame, offset: 2.0)
-        dropDownLogAction.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
-        dropDownLogAction.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
-        view.addSubview(dropDownLogAction)
     }
     
 }

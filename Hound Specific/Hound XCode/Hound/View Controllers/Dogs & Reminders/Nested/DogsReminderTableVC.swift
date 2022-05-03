@@ -18,8 +18,10 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
     
     // MARK: - Dogs Reminder Table View Cell
     
-    func didUpdateReminderEnable(sender: Sender, reminder: Reminder) {
-         let sudoReminderManager = getReminderManager()
+    func didUpdateReminderIsEnabled(sender: Sender, reminderId: Int, reminderIsEnabled: Bool) {
+        let sudoReminderManager = getReminderManager()
+        let reminder = try! sudoReminderManager.findReminder(forReminderId: reminderId)
+        reminder.reminderIsEnabled = reminderIsEnabled
         setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
         delegate.didUpdateReminder(forReminder: reminder)
     }
@@ -64,10 +66,6 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
 
     func setReminderManager(sender: Sender, newReminderManager: ReminderManager) {
         reminderManager = newReminderManager
-
-        if !(sender.localized is DogsReminderNavigationViewController) {
-           // delegate.didUpdateReminders(newReminderList: getReminderManager().reminders)
-        }
 
         if !(sender.origin is DogsReminderTableViewCell) && !(sender.origin is DogsReminderTableViewController) {
             updateReminderManagerDependents()

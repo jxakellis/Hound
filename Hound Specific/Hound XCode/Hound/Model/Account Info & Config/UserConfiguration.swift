@@ -27,149 +27,62 @@ enum UserConfiguration {
     
     /// Sets the UserConfiguration values equal to all the values found in the body. The key for the each body value must match the name of the UserConfiguration property exactly in order to be used. The value must also be able to be converted into the proper data type.
     static func setup(fromBody body: [String: Any]) {
-        if let isCompactView = body[ServerDefaultKeys.isCompactView.rawValue] as? Bool {
-            storedIsCompactView = isCompactView
+        if let logsInterfaceScaleString = body[ServerDefaultKeys.logsInterfaceScale.rawValue] as? String, let logsInterfaceScale = LogsInterfaceScale(rawValue: logsInterfaceScaleString) {
+            self.logsInterfaceScale = logsInterfaceScale
         }
-        if let interfaceStyleInt = body[ServerDefaultKeys.interfaceStyle.rawValue] as? Int {
-            if let interfaceStyle = UIUserInterfaceStyle(rawValue: interfaceStyleInt) {
-                storedInterfaceStyle = interfaceStyle
-            }
+        if let remindersInterfaceScaleString = body[ServerDefaultKeys.remindersInterfaceScale.rawValue] as? String, let remindersInterfaceScale = RemindersInterfaceScale(rawValue: remindersInterfaceScaleString) {
+            self.remindersInterfaceScale = remindersInterfaceScale
+        }
+        if let interfaceStyleInt = body[ServerDefaultKeys.interfaceStyle.rawValue] as? Int, let interfaceStyle = UIUserInterfaceStyle(rawValue: interfaceStyleInt) {
+            self.interfaceStyle = interfaceStyle
         }
         if let snoozeLength = body[ServerDefaultKeys.snoozeLength.rawValue] as? TimeInterval {
-            storedSnoozeLength = snoozeLength
+            self.snoozeLength = snoozeLength
         }
         if let isNotificationEnabled = body[ServerDefaultKeys.isNotificationEnabled.rawValue] as? Bool {
-            storedIsNotificationEnabled = isNotificationEnabled
+            self.isNotificationEnabled = isNotificationEnabled
         }
         if let isLoudNotification = body[ServerDefaultKeys.isLoudNotification.rawValue] as? Bool {
-            storedIsLoudNotification = isLoudNotification
+            self.isLoudNotification = isLoudNotification
         }
         if let isFollowUpEnabled = body[ServerDefaultKeys.isFollowUpEnabled.rawValue] as? Bool {
-            storedIsFollowUpEnabled = isFollowUpEnabled
+            self.isFollowUpEnabled = isFollowUpEnabled
         }
         if let followUpDelay = body[ServerDefaultKeys.followUpDelay.rawValue] as? TimeInterval {
-            storedFollowUpDelay = followUpDelay
+            self.followUpDelay = followUpDelay
         }
-        if let notificationSoundString = body[ServerDefaultKeys.notificationSound.rawValue] as? String {
-            if let notificationSound = NotificationSound(rawValue: notificationSoundString) {
-                storedNotificationSound = notificationSound
-            }
+        if let notificationSoundString = body[ServerDefaultKeys.notificationSound.rawValue] as? String, let notificationSound = NotificationSound(rawValue: notificationSoundString) {
+            self.notificationSound = notificationSound
         }
     }
     
     // MARK: - In-App Appearance Related
     
-    static private var storedIsCompactView: Bool = true
-    static var isCompactView: Bool {
-        get {
-            return storedIsCompactView
-        }
-        set (newIsCompactView) {
-            guard newIsCompactView != storedIsCompactView else {
-                return
-            }
-            storedIsCompactView = newIsCompactView
-        }
-    }
+    static var logsInterfaceScale: LogsInterfaceScale = .medium
     
-    static private var storedInterfaceStyle: UIUserInterfaceStyle = .unspecified
-    static var interfaceStyle: UIUserInterfaceStyle {
-        get {
-            return storedInterfaceStyle
-        }
-        set (newInterfaceStyle) {
-            guard newInterfaceStyle != storedInterfaceStyle else {
-                return
-            }
-            storedInterfaceStyle = newInterfaceStyle
-        }
-    }
+    static var remindersInterfaceScale: RemindersInterfaceScale = .medium
+    
+    static var interfaceStyle: UIUserInterfaceStyle = .unspecified
     
     // MARK: - Alarm Timing Related
     
-    static private var storedSnoozeLength: TimeInterval = TimeInterval(60*5)
-    static var snoozeLength: TimeInterval {
-        get {
-            return storedSnoozeLength
-        }
-        set (newSnoozeLength) {
-            guard newSnoozeLength != storedSnoozeLength else {
-                return
-            }
-            storedSnoozeLength = newSnoozeLength
-        }
-    }
+    static var snoozeLength: TimeInterval = TimeInterval(60*5)
     
     // MARK: - iOS Notification Related
     
-    static private var storedIsNotificationEnabled: Bool = false
     /// This should be stored on the server as it is important to only send notifications to devices that can use them. This will always be overriden by the user upon reinstall if its state is different in that new install.
-    static var isNotificationEnabled: Bool {
-        get {
-            return storedIsNotificationEnabled
-        }
-        set (newIsNotificationEnabled) {
-            guard newIsNotificationEnabled != storedIsNotificationEnabled else {
-                return
-            }
-            storedIsNotificationEnabled = newIsNotificationEnabled
-        }
-    }
+    static var isNotificationEnabled: Bool = false
     
-    static private var storedIsLoudNotification: Bool = false
     /// Determines if the app should send the user loud notifications. Loud notification bypass most iPhone settings to play at max volume (Do Not Disturb, ringer off, volume off...)
-    static var isLoudNotification: Bool {
-        get {
-            return storedIsLoudNotification
-        }
-        set (newIsLoudNotification) {
-            guard newIsLoudNotification != storedIsLoudNotification else {
-                return
-            }
-            storedIsLoudNotification = newIsLoudNotification
-        }
-    }
+    static var isLoudNotification: Bool = false
     
-    static private var storedIsFollowUpEnabled: Bool = false
     /// Sends a secondary, follow up notifcation if the first, primary notification about a reminder's alarm is not addressed.
-    static var isFollowUpEnabled: Bool {
-        get {
-            return storedIsFollowUpEnabled
-        }
-        set (newIsFollowUpEnabled) {
-            guard newIsFollowUpEnabled != storedIsFollowUpEnabled else {
-                return
-            }
-            storedIsFollowUpEnabled = newIsFollowUpEnabled
-        }
-    }
+    static var isFollowUpEnabled: Bool = false
     
-    static private var storedFollowUpDelay: TimeInterval = 5.0 * 60.0
     /// The delay between the inital, primary notifcation of a reminder and a seconary, followup notification of a reminder.
-    static var followUpDelay: TimeInterval {
-        get {
-            return storedFollowUpDelay
-        }
-        set (newFollowUpDelay) {
-            guard newFollowUpDelay != storedFollowUpDelay else {
-                return
-            }
-            storedFollowUpDelay = newFollowUpDelay
-        }
-    }
+    static var followUpDelay: TimeInterval = 5.0 * 60.0
     
-    static private var storedNotificationSound: NotificationSound = NotificationSound.radar
     /// Sound a notification will play
-    static var notificationSound: NotificationSound {
-        get {
-            return storedNotificationSound
-        }
-        set (newNotificationSound) {
-            guard newNotificationSound != storedNotificationSound else {
-                return
-            }
-            storedNotificationSound = newNotificationSound
-        }
-    }
+    static var notificationSound: NotificationSound = NotificationSound.radar
     
 }

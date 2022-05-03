@@ -162,6 +162,7 @@ class ServerSyncViewController: UIViewController {
             switch responseStatus {
             case .successResponse:
                 // we got the user information back and have setup the user config based off of that info
+                self.serverContacted = true
                 self.getUserFinished = true
                 self.updateStatusLabel()
                 

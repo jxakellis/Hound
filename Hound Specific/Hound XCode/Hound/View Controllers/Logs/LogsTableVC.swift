@@ -47,8 +47,8 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
     /// the current log action that the logs are being filtered by
     private var filterLogAction: LogAction?
 
-    /// used for determining if overview mode was changed and if the table view needs reloaded
-    private var storedIsCompactView: Bool = UserConfiguration.isCompactView
+    /// used for determining if logs interface scale was changed and if the table view needs reloaded
+    private var storedLogsInterfaceScale: LogsInterfaceScale = UserConfiguration.logsInterfaceScale
 
     weak var delegate: LogsTableViewControllerDelegate! = nil
 
@@ -66,8 +66,9 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if storedIsCompactView != UserConfiguration.isCompactView {
-            storedIsCompactView = UserConfiguration.isCompactView
+        
+        if storedLogsInterfaceScale != UserConfiguration.logsInterfaceScale {
+            storedLogsInterfaceScale = UserConfiguration.logsInterfaceScale
             self.reloadTable()
         }
 
@@ -166,23 +167,12 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
 
         // no logs present
         if chronologicalLogsGroupedByDate.count == 0 {
-            if UserConfiguration.isCompactView == true {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsCompactHeaderTableViewCell", for: indexPath)
-
-                let customCell = cell as! LogsCompactHeaderTableViewCell
-                customCell.setup(fromDate: nil, shouldShowFilterIndictator: shouldShowFilterIndicator)
-
-                return cell
-            }
-            else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsLargeHeaderTableViewCell", for: indexPath)
-
-                let customCell = cell as! LogsLargeHeaderTableViewCell
-                customCell.setup(fromDate: nil, shouldShowFilterIndictator: shouldShowFilterIndicator)
-
-                return cell
-            }
-
+            let cell = tableView.dequeueReusableCell(withIdentifier: "logsHeaderTableViewCell", for: indexPath)
+            
+            let customCell = cell as! LogsHeaderTableViewCell
+            customCell.setup(fromDate: nil, shouldShowFilterIndictator: shouldShowFilterIndicator)
+            
+            return cell
         }
         // logs are present and need a header (row being zero indicates that the cell is a header)
         else if indexPath.row == 0 {
@@ -191,22 +181,12 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
 
             // For the given parent array, we will take the first log in the nested array. The header will extract the date information from that log. It doesn't matter which log we take as all logs will have the same day, month, and year since they were already sorted to be in that array.
 
-            if UserConfiguration.isCompactView == true {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsCompactHeaderTableViewCell", for: indexPath)
-
-                let customCell = cell as! LogsCompactHeaderTableViewCell
-                customCell.setup(fromDate: nestedLogsArray[0].1.logDate, shouldShowFilterIndictator: shouldShowFilterIndicator)
-
-                return cell
-            }
-            else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsLargeHeaderTableViewCell", for: indexPath)
-
-                let customCell = cell as! LogsLargeHeaderTableViewCell
-                customCell.setup(fromDate: nestedLogsArray[0].1.logDate, shouldShowFilterIndictator: shouldShowFilterIndicator)
-
-                return cell
-            }
+            let cell = tableView.dequeueReusableCell(withIdentifier: "logsHeaderTableViewCell", for: indexPath)
+            
+            let customCell = cell as! LogsHeaderTableViewCell
+            customCell.setup(fromDate: nestedLogsArray[0].1.logDate, shouldShowFilterIndictator: shouldShowFilterIndicator)
+            
+            return cell
         }
         // log
         else {
@@ -218,28 +198,20 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
             let dog = try! getDogManager().findDog(forDogId: targetTuple.0)
             let log = targetTuple.1
             
-            if UserConfiguration.isCompactView == true {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsCompactBodyTableViewCell", for: indexPath)
-
-                let customCell = cell as! LogsCompactBodyTableViewCell
-                customCell.setup(forParentDogName: dog.dogName, forLog: log)
-
-                return cell
-            }
             // has dogIcon
-            else if dog.dogIcon.isEqualToImage(image: DogConstant.defaultDogIcon) == false {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsLargeBodyWithDogIconTableViewCell", for: indexPath)
+            if dog.dogIcon.isEqualToImage(image: DogConstant.defaultDogIcon) == false {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsBodyWithIconTableViewCell", for: indexPath)
 
-                let customCell = cell as! LogsLargeBodyWithDogIconTableViewCell
+                let customCell = cell as! LogsBodyWithIconTableViewCell
                 customCell.setup(forParentDogIcon: dog.dogIcon, forLog: log)
 
                 return cell
             }
             // no dogIcon
             else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsLargeBodyWithoutDogIconTableViewCell", for: indexPath)
+                let cell = tableView.dequeueReusableCell(withIdentifier: "logsBodyWithoutIconTableViewCell", for: indexPath)
 
-                let customCell = cell as! LogsLargeBodyWithoutDogIconTableViewCell
+                let customCell = cell as! LogsBodyWithoutIconTableViewCell
                 customCell.setup(forParentDogName: dog.dogName, forLog: log)
 
                 return cell
@@ -300,14 +272,8 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
                         // removed final log and must update header (no logs are left at all)
                         if self.chronologicalLogsGroupedByDate.count == 0 {
                             
-                            if UserConfiguration.isCompactView == true {
-                                let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsCompactHeaderTableViewCell
-                                headerCell.setup(fromDate: nil, shouldShowFilterIndictator: shouldShowFilterIndicator)
-                            }
-                            else {
-                                let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsLargeHeaderTableViewCell
-                                headerCell.setup(fromDate: nil, shouldShowFilterIndictator: shouldShowFilterIndicator)
-                            }
+                            let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsHeaderTableViewCell
+                            headerCell.setup(fromDate: nil, shouldShowFilterIndictator: shouldShowFilterIndicator)
                             
                         }
                         // removed final log of a given section and must remove all headers and body in that now gone-from-the-data section
@@ -317,14 +283,9 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
                             // removed section that has filter indicator
                             if indexPath.section == 0 && self.chronologicalLogsGroupedByDate.count >= 1 {
                                 // for whatever header will be at the top (section 1 currently but will soon be section 0) the filter indicator will be shown if calculated shouldShowFilterIndicator returnd true (! converts to proper isHidden:)
-                                if UserConfiguration.isCompactView == true {
-                                    let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LogsCompactHeaderTableViewCell
-                                    headerCell.filterImageView.isHidden = !shouldShowFilterIndicator
-                                }
-                                else {
-                                    let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LogsLargeHeaderTableViewCell
-                                    headerCell.filterImageView.isHidden = !shouldShowFilterIndicator
-                                }
+                                
+                                let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LogsHeaderTableViewCell
+                                headerCell.filterImageView.isHidden = !shouldShowFilterIndicator
                             }
                             
                         }

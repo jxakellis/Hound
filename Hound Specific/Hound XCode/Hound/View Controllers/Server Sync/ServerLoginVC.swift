@@ -120,6 +120,26 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        oneTimeSetup()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        repeatableSetup()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        // Called before the view is added to the windows’ view hierarchy
+        super.viewWillAppear(animated)
+        // Make this view the presenter if the app has to present any alert.
+        AlertManager.globalPresenter = self
+
+        // make sure the view has the correct interfaceStyle
+        UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
+    }
+    
+    // MARK: Setup
+    
+    private func oneTimeSetup() {
         // we want the user to have a fresh login experience, so we reset the introduction pages
         LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = false
         LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
@@ -137,75 +157,61 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
             welcome.text = "Welcome"
             welcomeMessage.text = "Create your Hound account below. Creating or joining a family will come soon..."
         }
-
     }
     
-    override func viewWillLayoutSubviews() {
+    private func repeatableSetup() {
         setupSignInWithApple()
         setupSignInWithAppleDisclaimer()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        // Called before the view is added to the windows’ view hierarchy
-        super.viewWillAppear(animated)
-        // Make this view the presenter if the app has to present any alert.
-        AlertManager.globalPresenter = self
-
-        // make sure the view has the correct interfaceStyle
-        UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
-    }
-    
-    // MARK: Setup Buttons and Labels
-    
-    private func setupSignInWithApple() {
-        // make actual button
-        if UserInformation.userIdentifier != nil {
-            // pre existing data
-            signInWithApple = ASAuthorizationAppleIDButton(type: .signIn, style: .whiteOutline)
-        }
-        else {
-            // no preexisting data, new
-            signInWithApple = ASAuthorizationAppleIDButton(type: .signUp, style: .whiteOutline)
-        }
-        
-        signInWithApple.translatesAutoresizingMaskIntoConstraints = false
-        signInWithApple.addTarget(self, action: #selector(signInWithAppleTapped), for: .touchUpInside)
-        self.view.addSubview(signInWithApple)
-        
-        let constraints = [signInWithApple.topAnchor.constraint(equalTo: welcomeMessage.bottomAnchor, constant: 45),
-                           signInWithApple.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-                           signInWithApple.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-                           signInWithApple.heightAnchor.constraint(equalTo: signInWithApple.widthAnchor, multiplier: 0.16)]
-        NSLayoutConstraint.activate(constraints)
-        // set to made to have fully rounded corners
-        signInWithApple.cornerRadius = 99999.9
-        
-    }
-    
-    private func setupSignInWithAppleDisclaimer() {
-        let signInWithAppleDisclaimer = ScaledUILabel()
-        
-        if UserInformation.userIdentifier != nil {
-            // pre existing data
-            signInWithAppleDisclaimer.text = "Currently, Hound only offers accounts through the 'Sign In With Apple' feature. This requires you have an Apple ID with two-factor authentication enabled."
-        }
-        else {
-            // no preexisting data, new
-            signInWithAppleDisclaimer.text = "Currently, Hound only offers accounts through the 'Sign Up With Apple' feature. This requires you have an Apple ID with two-factor authentication enabled."
+        func setupSignInWithApple() {
+            // make actual button
+            if UserInformation.userIdentifier != nil {
+                // pre existing data
+                signInWithApple = ASAuthorizationAppleIDButton(type: .signIn, style: .whiteOutline)
+            }
+            else {
+                // no preexisting data, new
+                signInWithApple = ASAuthorizationAppleIDButton(type: .signUp, style: .whiteOutline)
+            }
+            
+            signInWithApple.translatesAutoresizingMaskIntoConstraints = false
+            signInWithApple.addTarget(self, action: #selector(signInWithAppleTapped), for: .touchUpInside)
+            self.view.addSubview(signInWithApple)
+            
+            let constraints = [signInWithApple.topAnchor.constraint(equalTo: welcomeMessage.bottomAnchor, constant: 45),
+                               signInWithApple.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+                               signInWithApple.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+                               signInWithApple.heightAnchor.constraint(equalTo: signInWithApple.widthAnchor, multiplier: 0.16)]
+            NSLayoutConstraint.activate(constraints)
+            // set to made to have fully rounded corners
+            signInWithApple.cornerRadius = 99999.9
+            
         }
         
-        signInWithAppleDisclaimer.translatesAutoresizingMaskIntoConstraints = false
-        signInWithAppleDisclaimer.numberOfLines = 0
-        signInWithAppleDisclaimer.font = .systemFont(ofSize: 12.5, weight: .light)
-        signInWithAppleDisclaimer.textColor = .white
-        
-        self.view.addSubview(signInWithAppleDisclaimer)
-        
-        let constraints = [
-            signInWithAppleDisclaimer.topAnchor.constraint(equalTo: signInWithApple.bottomAnchor, constant: 12.5),
-            signInWithAppleDisclaimer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10.0 + (signInWithApple.frame.height/2)),
-            signInWithAppleDisclaimer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10 - (signInWithApple.frame.height/2))]
-        NSLayoutConstraint.activate(constraints)
+        func setupSignInWithAppleDisclaimer() {
+            let signInWithAppleDisclaimer = ScaledUILabel()
+            
+            if UserInformation.userIdentifier != nil {
+                // pre existing data
+                signInWithAppleDisclaimer.text = "Currently, Hound only offers accounts through the 'Sign In With Apple' feature. This requires you have an Apple ID with two-factor authentication enabled."
+            }
+            else {
+                // no preexisting data, new
+                signInWithAppleDisclaimer.text = "Currently, Hound only offers accounts through the 'Sign Up With Apple' feature. This requires you have an Apple ID with two-factor authentication enabled."
+            }
+            
+            signInWithAppleDisclaimer.translatesAutoresizingMaskIntoConstraints = false
+            signInWithAppleDisclaimer.numberOfLines = 0
+            signInWithAppleDisclaimer.font = .systemFont(ofSize: 12.5, weight: .light)
+            signInWithAppleDisclaimer.textColor = .white
+            
+            self.view.addSubview(signInWithAppleDisclaimer)
+            
+            let constraints = [
+                signInWithAppleDisclaimer.topAnchor.constraint(equalTo: signInWithApple.bottomAnchor, constant: 12.5),
+                signInWithAppleDisclaimer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10.0 + (signInWithApple.frame.height/2)),
+                signInWithAppleDisclaimer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10 - (signInWithApple.frame.height/2))]
+            NSLayoutConstraint.activate(constraints)
+        }
     }
     
     // MARK: - Sign In With Apple

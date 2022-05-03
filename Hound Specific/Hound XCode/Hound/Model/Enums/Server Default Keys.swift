@@ -39,7 +39,8 @@ enum ServerDefaultKeys: String {
     
     // MARK: User Configuration
     
-    case isCompactView
+    case logsInterfaceScale
+    case remindersInterfaceScale
     case interfaceStyle
     case snoozeLength
     case isNotificationAuthorized

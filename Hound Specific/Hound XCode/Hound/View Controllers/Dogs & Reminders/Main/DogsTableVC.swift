@@ -157,11 +157,11 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
         for cell in tableView.visibleCells {
             if cell is DogsDogDisplayTableViewCell {
                 let sudoCell = cell as! DogsDogDisplayTableViewCell
-                sudoCell.reloadCell()
+                sudoCell.reloadNextAlarmText()
             }
             else {
                 let sudoCell = cell as! DogsReminderDisplayTableViewCell
-                sudoCell.reloadCell()
+                sudoCell.reloadNextAlarmText()
             }
         }
     }
@@ -217,10 +217,6 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
         alertController.addAction(alertActionAdd)
 
         alertController.addAction(alertActionEdit)
-
-        // if dog.dogReminders.reminders.count != 0 {
-        //    alertController.addAction(alertActionDisable)
-        // }
 
         alertController.addAction(alertActionRemove)
 
@@ -381,7 +377,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
             let cell = tableView.dequeueReusableCell(withIdentifier: "dogsReminderDisplayTableViewCell", for: indexPath)
 
             let customCell = cell as! DogsReminderDisplayTableViewCell
-            customCell.setup(parentDogId: getDogManager().dogs[indexPath.section].dogId,
+            customCell.setup(forParentDogId: getDogManager().dogs[indexPath.section].dogId,
                              forReminder: getDogManager().dogs[indexPath.section].dogReminders.reminders[indexPath.row-1])
             customCell.delegate = self
             return cell

@@ -183,22 +183,118 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupValues()
-        
-        setupGestures()
-        
-        setupSegmentedControl()
-        
+        oneTimeSetup()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        setupDropDown()
+        repeatableSetup()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         dropDown.hideDropDown(removeFromSuperview: true)
+    }
+    
+    // MARK: - Setup
+    
+    private func oneTimeSetup() {
+        setupValues()
+        setupGestures()
+        setupSegmentedControl()
+        
+        /// Sets up the values of different variables that is found out from information passed
+        func setupValues() {
+            
+            if targetReminder != nil {
+                selectedIndexPath = IndexPath(row: ReminderAction.allCases.firstIndex(of: targetReminder!.reminderAction)!, section: 0)
+            }
+            
+            reminderActionLabel.text = targetReminder?.reminderAction.rawValue ?? ""
+            reminderActionLabel.placeholder = "Select an action..."
+            selectedReminderAction = targetReminder?.reminderAction ?? ReminderConstant.defaultAction
+            
+            initalReminderAction = targetReminder?.reminderAction ?? ReminderConstant.defaultAction
+            
+            reminderCustomActionNameTextField.text = targetReminder?.reminderCustomActionName
+            reminderCustomActionNameTextField.placeholder = " Enter a custom action name..."
+            reminderCustomActionNameTextField.delegate = self
+            
+            initalReminderCustomActionName = reminderCustomActionNameTextField.text
+            // if == is true, that means it is custom, which means it shouldn't hide so ! reverses to input isHidden: false, reverse for if type is not custom. This is because this text input field is only used for custom types.
+            toggleReminderCustomActionNameTextField(isHidden: !(targetReminder?.reminderAction == .custom))
+            
+            reminderIsEnabledSwitch.isOn = targetReminder?.reminderIsEnabled ?? ReminderConstant.defaultEnable
+            
+            initalReminderIsEnabled = targetReminder?.reminderIsEnabled ?? ReminderConstant.defaultEnable
+        }
+        
+        /// Sets up gestureRecognizer for dog selector drop down
+        func setupGestures() {
+            reminderActionLabel.isUserInteractionEnabled = true
+            let reminderActionTapGesture = UITapGestureRecognizer(target: self, action: #selector(reminderActionTapped))
+            reminderActionTapGesture.delegate = self
+            reminderActionTapGesture.cancelsTouchesInView = false
+            reminderActionLabel.addGestureRecognizer(reminderActionTapGesture)
+            
+            let dismissKeyboardAndDropDownTapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboardAndDropDown))
+            dismissKeyboardAndDropDownTapGesture.delegate = self
+            dismissKeyboardAndDropDownTapGesture.cancelsTouchesInView = false
+            containerForAll.addGestureRecognizer(dismissKeyboardAndDropDownTapGesture)
+        }
+        
+        func setupSegmentedControl() {
+            reminderTypeSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.white], for: .normal)
+            reminderTypeSegmentedControl.backgroundColor = .systemGray4
+            
+            onceContainerView.isHidden = true
+            countdownContainerView.isHidden = true
+            weeklyContainerView.isHidden = true
+            monthlyContainerView.isHidden = true
+            
+            // creating new
+            if targetReminder == nil {
+                reminderTypeSegmentedControl.selectedSegmentIndex = 1
+                countdownContainerView.isHidden = false
+            }
+            // editing current
+            else {
+                if targetReminder!.reminderType == .oneTime {
+                    reminderTypeSegmentedControl.selectedSegmentIndex = 0
+                    onceContainerView.isHidden = false
+                }
+                // Segmented control setup
+                else if targetReminder!.reminderType == .countdown {
+                    reminderTypeSegmentedControl.selectedSegmentIndex = 1
+                    countdownContainerView.isHidden = false
+                }
+                else if targetReminder!.reminderType == .weekly {
+                    reminderTypeSegmentedControl.selectedSegmentIndex = 2
+                    weeklyContainerView.isHidden = false
+                }
+                else {
+                    reminderTypeSegmentedControl.selectedSegmentIndex = 3
+                    monthlyContainerView.isHidden = false
+                }
+            }
+            
+            // assign value to inital parameter
+            initalReminderTypeSegmentedControlIndex = reminderTypeSegmentedControl.selectedSegmentIndex
+        }
+    }
+    
+    private func repeatableSetup () {
+        setupDropDown()
+        func setupDropDown() {
+            /// only one dropdown used on the dropdown instance so no identifier needed
+            dropDown.dropDownUIViewIdentifier = ""
+            dropDown.cellReusableIdentifier = "dropDownCell"
+            dropDown.dataSource = self
+            dropDown.setUpDropDown(viewPositionReference: reminderActionLabel.frame, offset: 2.0)
+            dropDown.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
+            dropDown.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
+            view.addSubview(dropDown)
+        }
     }
     
     // MARK: - Functions
@@ -309,96 +405,6 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
         }
         containerForAll.setNeedsLayout()
         containerForAll.layoutIfNeeded()
-    }
-    
-    /// Sets up the values of different variables that is found out from information passed
-    private func setupValues() {
-        
-        if targetReminder != nil {
-            selectedIndexPath = IndexPath(row: ReminderAction.allCases.firstIndex(of: targetReminder!.reminderAction)!, section: 0)
-        }
-        
-        reminderActionLabel.text = targetReminder?.reminderAction.rawValue ?? ""
-        reminderActionLabel.placeholder = "Select an action..."
-        selectedReminderAction = targetReminder?.reminderAction ?? ReminderConstant.defaultAction
-        
-        initalReminderAction = targetReminder?.reminderAction ?? ReminderConstant.defaultAction
-        
-        reminderCustomActionNameTextField.text = targetReminder?.reminderCustomActionName
-        reminderCustomActionNameTextField.placeholder = " Enter a custom action name..."
-        reminderCustomActionNameTextField.delegate = self
-        
-        initalReminderCustomActionName = reminderCustomActionNameTextField.text
-        // if == is true, that means it is custom, which means it shouldn't hide so ! reverses to input isHidden: false, reverse for if type is not custom. This is because this text input field is only used for custom types.
-        toggleReminderCustomActionNameTextField(isHidden: !(targetReminder?.reminderAction == .custom))
-        
-        reminderIsEnabledSwitch.isOn = targetReminder?.reminderIsEnabled ?? ReminderConstant.defaultEnable
-        
-        initalReminderIsEnabled = targetReminder?.reminderIsEnabled ?? ReminderConstant.defaultEnable
-    }
-    
-    /// Sets up gestureRecognizer for dog selector drop down
-    private func setupGestures() {
-        reminderActionLabel.isUserInteractionEnabled = true
-        let reminderActionTapGesture = UITapGestureRecognizer(target: self, action: #selector(reminderActionTapped))
-        reminderActionTapGesture.delegate = self
-        reminderActionTapGesture.cancelsTouchesInView = false
-        reminderActionLabel.addGestureRecognizer(reminderActionTapGesture)
-        
-        let dismissKeyboardAndDropDownTapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboardAndDropDown))
-        dismissKeyboardAndDropDownTapGesture.delegate = self
-        dismissKeyboardAndDropDownTapGesture.cancelsTouchesInView = false
-        containerForAll.addGestureRecognizer(dismissKeyboardAndDropDownTapGesture)
-    }
-    
-    private func setupSegmentedControl() {
-        reminderTypeSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.white], for: .normal)
-        reminderTypeSegmentedControl.backgroundColor = .systemGray4
-        
-        onceContainerView.isHidden = true
-        countdownContainerView.isHidden = true
-        weeklyContainerView.isHidden = true
-        monthlyContainerView.isHidden = true
-        
-        // creating new
-        if targetReminder == nil {
-            reminderTypeSegmentedControl.selectedSegmentIndex = 1
-            countdownContainerView.isHidden = false
-        }
-        // editing current
-        else {
-            if targetReminder!.reminderType == .oneTime {
-                reminderTypeSegmentedControl.selectedSegmentIndex = 0
-                onceContainerView.isHidden = false
-            }
-            // Segmented control setup
-            else if targetReminder!.reminderType == .countdown {
-                reminderTypeSegmentedControl.selectedSegmentIndex = 1
-                countdownContainerView.isHidden = false
-            }
-            else if targetReminder!.reminderType == .weekly {
-                reminderTypeSegmentedControl.selectedSegmentIndex = 2
-                weeklyContainerView.isHidden = false
-            }
-            else {
-                reminderTypeSegmentedControl.selectedSegmentIndex = 3
-                monthlyContainerView.isHidden = false
-            }
-        }
-        
-        // assign value to inital parameter
-        initalReminderTypeSegmentedControlIndex = reminderTypeSegmentedControl.selectedSegmentIndex
-    }
-    
-    private func setupDropDown() {
-        /// only one dropdown used on the dropdown instance so no identifier needed
-        dropDown.dropDownUIViewIdentifier = ""
-        dropDown.cellReusableIdentifier = "dropDownCell"
-        dropDown.dataSource = self
-        dropDown.setUpDropDown(viewPositionReference: reminderActionLabel.frame, offset: 2.0)
-        dropDown.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
-        dropDown.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
-        view.addSubview(dropDown)
     }
     
     // MARK: - @objc

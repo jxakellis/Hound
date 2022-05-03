@@ -63,7 +63,10 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
     
     // MARK: - NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
-        let copy = ReminderManager(initReminders: self.reminders)
+        let copy = ReminderManager()
+        for reminder in reminders {
+            copy.addReminder(newReminder: reminder.copy() as! Reminder)
+        }
         return copy
     }
     
@@ -190,6 +193,21 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
             return true
         }
         return false
+    }
+    
+    /// Returns the reminderExecutionDate that is closest to the present but still in the future.
+    var soonestReminderExecutionDate: Date? {
+        var closestExecutionDate: Date?
+        // no point to interate through reminders with a nil reminderExecutionDate
+        for reminder in reminders where reminder.reminderExecutionDate != nil {
+            if closestExecutionDate == nil {
+                closestExecutionDate = reminder.reminderExecutionDate!
+            }
+            else if Date().distance(to: reminder.reminderExecutionDate!) < Date().distance(to: closestExecutionDate!) {
+                closestExecutionDate = reminder.reminderExecutionDate!
+            }
+        }
+        return closestExecutionDate
     }
     
     private func sortReminders() {

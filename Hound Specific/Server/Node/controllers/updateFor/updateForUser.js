@@ -19,16 +19,17 @@ const updateUserQuery = async (req) => {
   const isLoudNotification = formatBoolean(req.body.isLoudNotification);
   const isFollowUpEnabled = formatBoolean(req.body.isFollowUpEnabled);
   const followUpDelay = formatNumber(req.body.followUpDelay);
-  const isCompactView = formatBoolean(req.body.isCompactView);
+  const logsInterfaceScale = req.body.logsInterfaceScale;
+  const remindersInterfaceScale = req.body.remindersInterfaceScale;
   const interfaceStyle = formatNumber(req.body.interfaceStyle);
   const snoozeLength = formatNumber(req.body.snoozeLength);
   const { notificationSound } = req.body;
 
   // checks to see that all needed components are provided
   if (atLeastOneDefined([userEmail, userFirstName, userLastName, userNotificationToken, isNotificationEnabled,
-    isLoudNotification, isFollowUpEnabled, followUpDelay, isCompactView,
+    isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale,
     interfaceStyle, snoozeLength, notificationSound]) === false) {
-    throw new ValidationError('No userEmail, userFirstName, userLastName, userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, isCompactView, interfaceStyle, snoozeLength, or notificationSound provided', 'ER_NO_VALUES_PROVIDED');
+    throw new ValidationError('No userEmail, userFirstName, userLastName, userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound provided', 'ER_NO_VALUES_PROVIDED');
   }
 
   try {
@@ -89,11 +90,18 @@ const updateUserQuery = async (req) => {
         [followUpDelay, userId],
       );
     }
-    if (areAllDefined(isCompactView)) {
+    if (areAllDefined(logsInterfaceScale)) {
       await queryPromise(
         req,
-        'UPDATE userConfiguration SET isCompactView = ? WHERE userId = ?',
-        [isCompactView, userId],
+        'UPDATE userConfiguration SET logsInterfaceScale = ? WHERE userId = ?',
+        [logsInterfaceScale, userId],
+      );
+    }
+    if (areAllDefined(remindersInterfaceScale)) {
+      await queryPromise(
+        req,
+        'UPDATE userConfiguration SET remindersInterfaceScale = ? WHERE userId = ?',
+        [remindersInterfaceScale, userId],
       );
     }
     if (areAllDefined(interfaceStyle)) {

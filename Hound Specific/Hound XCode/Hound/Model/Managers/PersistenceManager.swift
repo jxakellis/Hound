@@ -80,11 +80,12 @@ enum PersistenceManager {
         // MARK: Loud Notifications and Silent Audio
         
         // Check to see if the user is eligible for loud notifications
-        if UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification && MainTabBarViewController.staticDogManager.hasEnabledReminder && FamilyConfiguration.isPaused == false {
+        // don't check for if there are enabled reminders/ isPaused, as client could be out of sync with server which has a reminder/ different pause status
+        if UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification {
             // the user can have loud notifications
             if isTerminating == true {
                 // send the user an alert since their loud notifications won't work
-                // TO DO, if the app is directly terminated and doesn't enter the background, then the user wont get a notifiation (api request doesn't go through)
+                // BUG, if the app is directly terminated and doesn't enter the background, then the user wont get a notifiation (api request doesn't go through)
                 RequestUtils.createTerminationNotification()
             }
             else {

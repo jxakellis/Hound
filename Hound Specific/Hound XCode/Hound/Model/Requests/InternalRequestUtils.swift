@@ -123,7 +123,7 @@ extension InternalRequestUtils {
                     if responseStatus == .failureResponse {
                         ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
                     }
-                    else if responseStatus == .failureResponse {
+                    else if responseStatus == .noResponse {
                         ErrorManager.alert(forError: GeneralResponseError.noGetResponse)
                     }
                 }
@@ -154,7 +154,7 @@ extension InternalRequestUtils {
                         if responseStatus == .failureResponse {
                             ErrorManager.alert(forError: GeneralResponseError.failurePostResponse)
                         }
-                        else if responseStatus == .failureResponse {
+                        else if responseStatus == .noResponse {
                             ErrorManager.alert(forError: GeneralResponseError.noPostResponse)
                         }
                     }
@@ -197,7 +197,7 @@ extension InternalRequestUtils {
                         if responseStatus == .failureResponse {
                             ErrorManager.alert(forError: GeneralResponseError.failurePutResponse)
                         }
-                        else if responseStatus == .failureResponse {
+                        else if responseStatus == .noResponse {
                             ErrorManager.alert(forError: GeneralResponseError.noPutResponse)
                         }
                     }
@@ -240,7 +240,7 @@ extension InternalRequestUtils {
                         if responseStatus == .failureResponse {
                             ErrorManager.alert(forError: GeneralResponseError.failureDeleteResponse)
                         }
-                        else if responseStatus == .failureResponse {
+                        else if responseStatus == .noResponse {
                             ErrorManager.alert(forError: GeneralResponseError.noDeleteResponse)
                         }
                     }
@@ -314,7 +314,8 @@ extension InternalRequestUtils {
         // followUpDelay
         // notificationSound
         
-        body[ServerDefaultKeys.isCompactView.rawValue] = UserConfiguration.isCompactView
+        body[ServerDefaultKeys.logsInterfaceScale.rawValue] = UserConfiguration.logsInterfaceScale.rawValue
+        body[ServerDefaultKeys.remindersInterfaceScale.rawValue] = UserConfiguration.remindersInterfaceScale.rawValue
         body[ServerDefaultKeys.interfaceStyle.rawValue] = UserConfiguration.interfaceStyle.rawValue
         body[ServerDefaultKeys.snoozeLength.rawValue] = UserConfiguration.snoozeLength
         body[ServerDefaultKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
