@@ -22,9 +22,10 @@ enum ServerDefaultKeys: String {
     case familyMembers
     case isFamilyHead
     
-    case isLocked
     case familyCode
+    case isLocked
     case isPaused
+    case kickUserId
     
     // MARK: User Information
     

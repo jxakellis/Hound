@@ -39,15 +39,13 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
 
     // MARK: - Properties
 
-    /// Stores an array of tuples. Each tuple has a log and the id of the parent dog. Sorted chronologically, first to last.
-    var consolidatedLogs: [(Int, Log)] = []
+    /// Array of tuples [(uniqueDay, uniqueMonth, uniqueYear, [(parentDogId, log)])]. This array has all of the logs for all of the dogs grouped what unique day/month/year they occured on, first element is furthest in the future and last element is the oldest. Optionally filters by the dogId and logAction provides
+    private var chronologicalLogsGroupedByDate: [(Int, Int, Int, [(Int, Log)])] = []
 
-    /// Stores an array of (unique days, unique years, [(parentDogId, logs). Identifies unique day and year combos in which a logging event occured. E.g. you logged twice on january 1st 2020& once on january 4th 2020, so the array would be [(1,2020),(4,2020)] Tuple inside the nested array is (parentDogId, log)
-    private var uniqueLogs: [(Int, Int, [(Int, Log)])] = []
-
-    /// IndexPath of current filtering scheme
-    private var filterIndexPath: IndexPath?
-    private var filterType: LogAction?
+    /// the dogId of the current dog that the logs are being filted by
+    private var filterDogId: Int?
+    /// the current log action that the logs are being filtered by
+    private var filterLogAction: LogAction?
 
     /// used for determining if overview mode was changed and if the table view needs reloaded
     private var storedIsCompactView: Bool = UserConfiguration.isCompactView
@@ -96,156 +94,26 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
     }
     
     private func reloadTableDataSource() {
-        /// Sorts all dates of every time a reminder was logged into a tuple.
-        /// This tuple containing the parentDogId and the Log. Dates are then extracted at a later date to sort this whole list chronologically from last (closet to present) to first (the first event that happened, so it is the oldest).
-        var calculatedConsolidatedLogs: [(Int, Log)] {
-            let dogManager = getDogManager()
-            var consolidatedLogs: [(Int, Log)] = []
-            
-            // not filtering
-            if filterIndexPath == nil {
-                for dogIndex in 0..<dogManager.dogs.count {
-                    // adds dog logs
-                    let dog = dogManager.dogs[dogIndex]
-                    for dogLog in dog.dogLogs.logs {
-                        consolidatedLogs.append((dog.dogId, dogLog))
-                    }
-                    
-                }
-            }
-            // row in zero that that means filtering by every known log types
-            else if filterIndexPath!.row == 0 {
-                let dog = dogManager.dogs[filterIndexPath!.section]
-                
-                // adds dog logs
-                for dogLog in dog.dogLogs.logs {
-                    consolidatedLogs.append((dog.dogId, dogLog))
-                }
-                
-            }
-            // row is not zero so filtering by a specific known log type
-            else {
-                let dog = dogManager.dogs[filterIndexPath!.section]
-                
-                // checks to see if filter type still present
-                if dog.dogLogs.catagorizedLogActions.contains(where: { (arg1) in
-                    let knownType = arg1.0
-                    if knownType == filterType {
-                        return true
-                    }
-                    else {
-                        return false
-                    }
-                }) == true {
-                    // apennds all known logs to consolidated list, some have reminder and some dont as varies depending on source (i.e. was nested under doglogs or reminder logs)
-                    for knownLog in dog.dogLogs.catagorizedLogActions[filterIndexPath!.row-1].1 {
-                        consolidatedLogs.append((dog.dogId, knownLog))
-                    }
-                }
-                else {
-                    delegate.didRemoveLastFilterLog()
-                }
-                
-            }
-            
-            // sorts from earlist in time (e.g. 1970) to most recent (e.g. 2021)
-            consolidatedLogs.sort { (var1, var2) -> Bool in
-                let log1: Log = var1.1
-                let log2: Log = var2.1
-                
-                // returns true if var1's log1 is earlier in time than var2's log2
-                
-                // If date1's distance to date2 is positive, i.e. date2 is later in time, returns false as date2 should be ordered first (most recent (to current Date()) dates first)
-                if log1.logDate.distance(to: log2.logDate) > 0 {
-                    return false
-                }
-                // If date1 is later in time than date2, returns true as it should come before date2
-                else {
+        
+        self.chronologicalLogsGroupedByDate = dogManager.chronologicalLogsGroupedByDate(forDogId: filterDogId, forLogAction: filterLogAction)
+        
+        if filterDogId != nil && filterLogAction != nil, let dog = try? dogManager.findDog(forDogId: filterDogId!) {
+            // checks to see if filter log action still present within the dog, if its not then the user took an action to remove the last log of a certain log action from the dog
+            if dog.dogLogs.catagorizedLogActions.contains(where: { (arg1) in
+                let knownLogAction = arg1.0
+                if knownLogAction == filterLogAction! {
                     return true
                 }
-            }
-            
-            return consolidatedLogs
-        }
-        
-        /// Returns an array tuples which has another array of tuples [month, year, [(parentDogId,Log)].
-        var calculatedUniqueLogs: [(Int, Int, [(Int, Log)])] {
-            
-            // Method finds unique days (of a given year) which a logging event occured
-            //  For every log that happened on a given unique day/year combo, its information (parentDogId, Log) is appeneded to the array attached to the unique pair.
-            var uniqueLogs: [(Int, Int, Int, [(Int, Log)])] = []
-            
-            // goes through all dates present where a log happened
-            for consolidatedLogsIndex in 0..<consolidatedLogs.count {
-                
-                let yearMonthDayComponents = Calendar.current.dateComponents([.year, .month, .day ], from: consolidatedLogs[consolidatedLogsIndex].1.logDate)
-                
-                // Checks to make sure the day and year are valid
-                
-                if yearMonthDayComponents.day == nil || yearMonthDayComponents.month == nil || yearMonthDayComponents.year == nil {
-                    fatalError("year, month, or day nil for calculatedUniqueLogs")
-                }
-                // Checks to see if the uniqueLogs contains the day & year pair already, if it doesnt then adds it and the corresponding dateLog for that day, if there is more than one they will be added in further recursion
-                else if uniqueLogs.contains(where: { (arg1) -> Bool in
-                    
-                    let (day, month, year, _) = arg1
-                    if yearMonthDayComponents.day == day && yearMonthDayComponents.month == month && yearMonthDayComponents.year == year {
-                        return true
-                    }
-                    else {
-                        return false
-                    }
-                }) == false {
-                    uniqueLogs.append((yearMonthDayComponents.day!, yearMonthDayComponents.month!, yearMonthDayComponents.year!, [consolidatedLogs[consolidatedLogsIndex]]))
-                }
-                // if a day and year pair is already present, then just appends to their corresponding array that stores all logs that happened on that given pair of day & year
-                else {
-                    uniqueLogs[uniqueLogs.count-1].3.append(consolidatedLogs[consolidatedLogsIndex])
-                }
-            }
-            
-            uniqueLogs.sort { (arg1, arg2) -> Bool in
-                let (day1, month1, year1, _) = arg1
-                let (day2, month2, year2, _) = arg2
-                
-                // if the year is bigger and the day is bigger then that comes first (e.g.  (4, 2020) comes first in the array and (2,2020) comes second, so most recent is first)
-                if year1 >= year2 {
-                    // if month is bigger then it comes first (a bigger month will always be closer to the future)
-                    if month1 > month2 {
-                        return true
-                    }
-                    else if month1 == month2 {
-                        // if day is bigger then it comes first (a bigger day will always be closer to the future than a smaller one)
-                        if day1 >= day2 {
-                            return true
-                        }
-                        else {
-                            return false
-                        }
-                    }
-                    else {
-                        return false
-                    }
-                    
-                }
                 else {
                     return false
                 }
+            }) == false {
+                print("didRemoveLastFilterLog \(filterLogAction)")
+                delegate.didRemoveLastFilterLog()
             }
-            
-            // converts from day, month, year, [logs] into day, year, [logs] so it can be returned. month not needed
-            var converted: [(Int, Int, [(Int, Log)])] = []
-            for uniqueLogDate in uniqueLogs {
-                converted.append((uniqueLogDate.0, uniqueLogDate.2, uniqueLogDate.3))
-            }
-            
-            return converted
         }
         
-        self.consolidatedLogs = calculatedConsolidatedLogs
-        self.uniqueLogs = calculatedUniqueLogs
-        
-        if uniqueLogs.count == 0 {
+        if chronologicalLogsGroupedByDate.count == 0 {
             tableView.separatorStyle = .none
         }
         else {
@@ -254,10 +122,10 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
     }
 
     /// Will apply a filtering scheme dependent on indexPath, nil means going to no filtering.
-    func willApplyFiltering(associatedToIndexPath indexPath: IndexPath?, filterType: LogAction?) {
+    func willApplyFiltering(forFilterDogId filterDogId: Int?, forFilterLogAction filterLogAction: LogAction?) {
 
-        filterIndexPath = indexPath
-        self.filterType = filterType
+        self.filterDogId = filterDogId
+        self.filterLogAction = filterLogAction
 
         reloadTable()
     }
@@ -265,29 +133,30 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
     // MARK: - Table View Data Source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        if uniqueLogs.count == 0 {
+        if chronologicalLogsGroupedByDate.count == 0 {
             return 1
         }
         else {
-            return uniqueLogs.count
+            return chronologicalLogsGroupedByDate.count
         }
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        if uniqueLogs.count == 0 {
+        if chronologicalLogsGroupedByDate.count == 0 {
             return 1
 
         }
         else {
-            return uniqueLogs[section].2.count + 1
+            // find the number of logs for a given unique day/month/year, then add 1 for the header that says the day/month/year
+            return chronologicalLogsGroupedByDate[section].3.count + 1
         }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         var shouldShowFilterIndicator: Bool {
-            if indexPath.section == 0 && self.filterIndexPath != nil {
+            if indexPath.section == 0 && (filterDogId != nil || filterLogAction != nil) {
                 return true
             }
             else {
@@ -296,12 +165,12 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
         }
 
         // no logs present
-        if uniqueLogs.count == 0 {
+        if chronologicalLogsGroupedByDate.count == 0 {
             if UserConfiguration.isCompactView == true {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsCompactHeaderTableViewCell", for: indexPath)
 
                 let customCell = cell as! LogsCompactHeaderTableViewCell
-                customCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
+                customCell.setup(fromDate: nil, shouldShowFilterIndictator: shouldShowFilterIndicator)
 
                 return cell
             }
@@ -309,7 +178,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsLargeHeaderTableViewCell", for: indexPath)
 
                 let customCell = cell as! LogsLargeHeaderTableViewCell
-                customCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
+                customCell.setup(fromDate: nil, shouldShowFilterIndictator: shouldShowFilterIndicator)
 
                 return cell
             }
@@ -318,8 +187,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
         // logs are present and need a header (row being zero indicates that the cell is a header)
         else if indexPath.row == 0 {
 
-            // indexPath.section dictates how far into the first array, everything is already sorted so thats all we need to know. Then  we take the .2 entry as that is the nested array of the tuple of logs and parentDogIds
-            let targetUniqueLogsNestedArray: [(Int, Log)]! = uniqueLogs[indexPath.section].2
+            let nestedLogsArray: [(Int, Log)] = chronologicalLogsGroupedByDate[indexPath.section].3
 
             // For the given parent array, we will take the first log in the nested array. The header will extract the date information from that log. It doesn't matter which log we take as all logs will have the same day, month, and year since they were already sorted to be in that array.
 
@@ -327,7 +195,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsCompactHeaderTableViewCell", for: indexPath)
 
                 let customCell = cell as! LogsCompactHeaderTableViewCell
-                customCell.setup(log: targetUniqueLogsNestedArray[0].1, showFilterIndicator: shouldShowFilterIndicator)
+                customCell.setup(fromDate: nestedLogsArray[0].1.logDate, shouldShowFilterIndictator: shouldShowFilterIndicator)
 
                 return cell
             }
@@ -335,7 +203,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsLargeHeaderTableViewCell", for: indexPath)
 
                 let customCell = cell as! LogsLargeHeaderTableViewCell
-                customCell.setup(log: targetUniqueLogsNestedArray[0].1, showFilterIndicator: shouldShowFilterIndicator)
+                customCell.setup(fromDate: nestedLogsArray[0].1.logDate, shouldShowFilterIndictator: shouldShowFilterIndicator)
 
                 return cell
             }
@@ -343,30 +211,27 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
         // log
         else {
 
-            // indexPath.section dictates how far into the first array, everything is already sorted so thats all we need to know. Then  we take the .2 entry as that is the nested array of the tuple of logs and parentDogIds
-            let targetUniqueLogsNestedArray: [(Int, Log)]! = uniqueLogs[indexPath.section].2
+            let nestedLogsArray: [(Int, Log)] =  chronologicalLogsGroupedByDate[indexPath.section].3
 
             // indexPath.row -1 corrects for the first row in the section being the header
-            let logToDisplay = targetUniqueLogsNestedArray[indexPath.row-1]
-            let dog = try! getDogManager().findDog(forDogId: logToDisplay.0)
-            let dogIcon = dog.dogIcon
-
+            let targetTuple = nestedLogsArray[indexPath.row-1]
+            let dog = try! getDogManager().findDog(forDogId: targetTuple.0)
+            let log = targetTuple.1
+            
             if UserConfiguration.isCompactView == true {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsCompactBodyTableViewCell", for: indexPath)
 
                 let customCell = cell as! LogsCompactBodyTableViewCell
-
-                customCell.setup(parentDogId: logToDisplay.0, log: logToDisplay.1)
+                customCell.setup(forParentDogName: dog.dogName, forLog: log)
 
                 return cell
             }
             // has dogIcon
-            else if !(dogIcon.isEqualToImage(image: DogConstant.defaultDogIcon)) {
+            else if dog.dogIcon.isEqualToImage(image: DogConstant.defaultDogIcon) == false {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsLargeBodyWithDogIconTableViewCell", for: indexPath)
 
                 let customCell = cell as! LogsLargeBodyWithDogIconTableViewCell
-
-                customCell.setup(parentDogId: logToDisplay.0, log: logToDisplay.1)
+                customCell.setup(forParentDogIcon: dog.dogIcon, forLog: log)
 
                 return cell
             }
@@ -375,8 +240,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
                 let cell = tableView.dequeueReusableCell(withIdentifier: "logsLargeBodyWithoutDogIconTableViewCell", for: indexPath)
 
                 let customCell = cell as! LogsLargeBodyWithoutDogIconTableViewCell
-
-                customCell.setup(parentDogId: logToDisplay.0, log: logToDisplay.1)
+                customCell.setup(forParentDogName: dog.dogName, forLog: log)
 
                 return cell
             }
@@ -400,32 +264,32 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
         if editingStyle == .delete {
 
             // identify components needed to remove data
-            let newDogManager = getDogManager()
-            let originalNumberOfSections = uniqueLogs.count
+            let sudoDogManager = getDogManager()
+            let originalNumberOfSections = chronologicalLogsGroupedByDate.count
 
-            let targetUniqueLogsNestedArray = uniqueLogs[indexPath.section].2
-            let dogIdOfLog = targetUniqueLogsNestedArray[indexPath.row-1].0
-            let logIdOfLog = targetUniqueLogsNestedArray[indexPath.row-1].1.logId
+            let nestedLogsArray = chronologicalLogsGroupedByDate[indexPath.section].3
+            let parentDogId = nestedLogsArray[indexPath.row-1].0
+            let logId = nestedLogsArray[indexPath.row-1].1.logId
 
-            LogsRequest.delete(invokeErrorManager: true, forDogId: dogIdOfLog, forLogId: logIdOfLog) { requestWasSuccessful, _ in
+            LogsRequest.delete(invokeErrorManager: true, forDogId: parentDogId, forLogId: logId) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
                     // batch update so doesn't freak out
                     tableView.performBatchUpdates {
                         // Remove the row from the data source
                         
-                        let dog = try! newDogManager.findDog(forDogId: dogIdOfLog)
+                        let dog = try! sudoDogManager.findDog(forDogId: parentDogId)
                         // find log in dog and remove
-                        for dogLogIndex in 0..<dog.dogLogs.logs.count where dog.dogLogs.logs[dogLogIndex].logId == logIdOfLog {
+                        for dogLogIndex in 0..<dog.dogLogs.logs.count where dog.dogLogs.logs[dogLogIndex].logId == logId {
                             dog.dogLogs.removeLog(forIndex: dogLogIndex)
                             break
                         }
                         
-                        self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager)
+                        self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
                         
                         tableView.deleteRows(at: [indexPath], with: .fade)
                         
                         var shouldShowFilterIndicator: Bool {
-                            if indexPath.section == 0 && self.filterIndexPath != nil {
+                            if indexPath.section == 0 && (self.filterDogId != nil || self.filterLogAction != nil) {
                                 return true
                             }
                             else {
@@ -434,32 +298,32 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
                         }
                         
                         // removed final log and must update header (no logs are left at all)
-                        if self.uniqueLogs.count == 0 {
+                        if self.chronologicalLogsGroupedByDate.count == 0 {
                             
                             if UserConfiguration.isCompactView == true {
                                 let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsCompactHeaderTableViewCell
-                                headerCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
+                                headerCell.setup(fromDate: nil, shouldShowFilterIndictator: shouldShowFilterIndicator)
                             }
                             else {
                                 let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsLargeHeaderTableViewCell
-                                headerCell.setup(log: nil, showFilterIndicator: shouldShowFilterIndicator)
+                                headerCell.setup(fromDate: nil, shouldShowFilterIndictator: shouldShowFilterIndicator)
                             }
                             
                         }
                         // removed final log of a given section and must remove all headers and body in that now gone-from-the-data section
-                        else if originalNumberOfSections != self.uniqueLogs.count {
+                        else if originalNumberOfSections != self.chronologicalLogsGroupedByDate.count {
                             tableView.deleteSections(IndexSet(integer: indexPath.section), with: .automatic)
                             
                             // removed section that has filter indicator
-                            if indexPath.section == 0 && self.uniqueLogs.count >= 1 {
+                            if indexPath.section == 0 && self.chronologicalLogsGroupedByDate.count >= 1 {
                                 // for whatever header will be at the top (section 1 currently but will soon be section 0) the filter indicator will be shown if calculated shouldShowFilterIndicator returnd true (! converts to proper isHidden:)
                                 if UserConfiguration.isCompactView == true {
                                     let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LogsCompactHeaderTableViewCell
-                                    headerCell.willShowFilterIndicator(isHidden: !shouldShowFilterIndicator)
+                                    headerCell.filterImageView.isHidden = !shouldShowFilterIndicator
                                 }
                                 else {
                                     let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LogsLargeHeaderTableViewCell
-                                    headerCell.willShowFilterIndicator(isHidden: !shouldShowFilterIndicator)
+                                    headerCell.filterImageView.isHidden = !shouldShowFilterIndicator
                                 }
                             }
                             
@@ -473,23 +337,18 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section > (uniqueLogs.count - 1) || (indexPath.row - 1) > (uniqueLogs[indexPath.section].2.count - 1) || (indexPath.row - 1) < 0 {
-            ErrorManager.alert(forMessage: "You selected a row that was unable to be decifered. Please restart Hound to fix.")
-        }
-        else {
-            let targetUniqueLogsNestedArray = uniqueLogs[indexPath.section].2
-            let dogId = targetUniqueLogsNestedArray[indexPath.row-1].0
-            let logId = targetUniqueLogsNestedArray[indexPath.row-1].1.logId
-            RequestUtils.beginAlertControllerQueryIndictator()
-            LogsRequest.get(invokeErrorManager: true, forDogId: dogId, forLogId: logId) { log, _ in
-                RequestUtils.endAlertControllerQueryIndictator {
-                    if log != nil {
-                        self.delegate.didSelectLog(parentDogId: dogId, log: log!)
-                    }
-                    self.tableView.deselectRow(at: indexPath, animated: true)
+        let nestedLogsArray = chronologicalLogsGroupedByDate[indexPath.section].3
+        let dogId = nestedLogsArray[indexPath.row-1].0
+        let logId = nestedLogsArray[indexPath.row-1].1.logId
+        
+        RequestUtils.beginAlertControllerQueryIndictator()
+        LogsRequest.get(invokeErrorManager: true, forDogId: dogId, forLogId: logId) { log, _ in
+            RequestUtils.endAlertControllerQueryIndictator {
+                if log != nil {
+                    self.delegate.didSelectLog(parentDogId: dogId, log: log!)
                 }
+                self.tableView.deselectRow(at: indexPath, animated: true)
             }
-
         }
     }
 

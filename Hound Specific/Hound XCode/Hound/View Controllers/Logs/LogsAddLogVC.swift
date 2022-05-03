@@ -57,7 +57,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         }
         else if dropDownUIViewIdentifier == "dropDownLogAction"{
             let customCell = cell as! DropDownDefaultTableViewCell
-            customCell.adjustLeadingTrailing(newConstant: 8.0)
+            customCell.adjustLeadingTrailing(newConstant: DropDownUIView.insetForBorderedUILabel)
             
             if selectedLogActionIndexPath == indexPath {
                 customCell.didToggleSelect(newSelectionStatus: true)

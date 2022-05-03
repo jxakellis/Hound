@@ -178,7 +178,7 @@ class FamilyIntroductionViewController: UIViewController, UITextFieldDelegate, U
         
         // Other
         
-        DesignConstant.standardizeLargeButton(forButton: continueButton)
+        continueButton.layer.cornerRadius = 10.0
     }
     
     override func viewWillAppear(_ animated: Bool) {

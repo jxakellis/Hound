@@ -123,14 +123,7 @@ enum AudioManager {
                 
                 MPVolumeView.setVolume(1.0)
                 
-                // duck others isn't optimal. It makes it so our audio mixes with others but is louder than them. Want to stop their audio completely.
-                do {
-                    try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [.defaultToSpeaker, .allowBluetooth, .allowAirPlay, .allowBluetoothA2DP])
-                }
-                catch {
-                    AppDelegate.generalLogger.notice("playLoudNotification, attempting to load backup loud AVAudioSession; error: \(error.localizedDescription)")
-                    try AVAudioSession.sharedInstance().setCategory(.playback, options: [])
-                }
+                try AVAudioSession.sharedInstance().setCategory(.playback, options: [])
                 try AVAudioSession.sharedInstance().setActive(true)
                 
                 AudioManager.sharedPlayer.play()

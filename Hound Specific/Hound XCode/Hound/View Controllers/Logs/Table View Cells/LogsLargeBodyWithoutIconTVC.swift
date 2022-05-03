@@ -12,15 +12,10 @@ class LogsLargeBodyWithoutDogIconTableViewCell: UITableViewCell {
 
     // MARK: - IB
 
-    @IBOutlet private weak var dogName: ScaledUILabel!
-    @IBOutlet private weak var logAction: ScaledUILabel!
-    @IBOutlet private weak var logDate: ScaledUILabel!
-    @IBOutlet private weak var logNote: ScaledUILabel!
-
-    // MARK: - Properties
-
-    private var parentDogIdSource: Int! = nil
-    private var logSource: Log! = nil
+    @IBOutlet private weak var dogNameLabel: ScaledUILabel!
+    @IBOutlet private weak var logActionLabel: ScaledUILabel!
+    @IBOutlet private weak var logDateLabel: ScaledUILabel!
+    @IBOutlet private weak var logNoteLabel: ScaledUILabel!
 
     // MARK: - Main
 
@@ -28,20 +23,15 @@ class LogsLargeBodyWithoutDogIconTableViewCell: UITableViewCell {
         super.awakeFromNib()
     }
 
-    func setup(parentDogId: Int, log logSource: Log) {
-        self.parentDogIdSource = parentDogId
-        self.logSource = logSource
-
-        let dog = try! MainTabBarViewController.staticDogManager.findDog(forDogId: parentDogIdSource)
-        dogName.text = dog.dogName
-        self.logAction.text = self.logSource.displayActionName
+    func setup(forParentDogName parentDogName: String, forLog log: Log) {
+        dogNameLabel.text = parentDogName
+        logActionLabel.text = log.displayActionName
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)
-        logDate.text = dateFormatter.string(from: logSource.logDate)
-
-        logNote.text = logSource.logNote
+        logDateLabel.text = dateFormatter.string(from: log.logDate)
         
+        logNoteLabel.text = log.logNote
     }
 
 }

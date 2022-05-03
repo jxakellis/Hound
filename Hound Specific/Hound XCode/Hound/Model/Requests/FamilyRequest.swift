@@ -154,10 +154,6 @@ extension FamilyRequest {
         FamilyRequest.internalDelete(invokeErrorManager: invokeErrorManager) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
-                // reset the local configurations so they are ready for the next family
-                LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = false
-                LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
-                LocalConfiguration.dogIcons = []
                 completionHandler(true, responseStatus)
             case .failureResponse:
                 completionHandler(false, responseStatus)

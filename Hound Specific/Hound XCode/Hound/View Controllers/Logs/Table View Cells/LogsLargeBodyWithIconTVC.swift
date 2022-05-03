@@ -12,38 +12,30 @@ class LogsLargeBodyWithDogIconTableViewCell: UITableViewCell {
 
     // MARK: - IB
 
-    @IBOutlet private weak var dogIcon: UIImageView!
-    @IBOutlet private weak var logAction: ScaledUILabel!
-    @IBOutlet private weak var logDate: ScaledUILabel!
-    @IBOutlet private weak var logNote: ScaledUILabel!
+    @IBOutlet private weak var dogIconImageView: UIImageView!
+    @IBOutlet private weak var logActionLabel: ScaledUILabel!
+    @IBOutlet private weak var logDateLabel: ScaledUILabel!
+    @IBOutlet private weak var logNoteLabel: ScaledUILabel!
 
-    // MARK: - Properties
-
-    private var parentDogIdSource: Int! = nil
-    private var logSource: Log! = nil
-
-    // MARK: - Main
+   // MARK: - Main
 
     override func awakeFromNib() {
         super.awakeFromNib()
     }
 
-    func setup(parentDogId: Int, log logSource: Log) {
-        self.parentDogIdSource = parentDogId
-        self.logSource = logSource
+    func setup(forParentDogIcon parentDogIcon: UIImage, forLog log: Log) {
+        
+        dogIconImageView.image = parentDogIcon
+        dogIconImageView.layer.masksToBounds = true
+        dogIconImageView.layer.cornerRadius = dogIconImageView.frame.width/2
 
-        let dog = try! MainTabBarViewController.staticDogManager.findDog(forDogId: parentDogIdSource)
-        dogIcon.image = dog.dogIcon
-        dogIcon.layer.masksToBounds = true
-        dogIcon.layer.cornerRadius = dogIcon.frame.width/2
-
-        self.logAction.text = self.logSource.displayActionName
+        self.logActionLabel.text = log.displayActionName
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)
-        logDate.text = dateFormatter.string(from: logSource.logDate)
+        logDateLabel.text = dateFormatter.string(from: log.logDate)
 
-        logNote.text = logSource.logNote
+        logNoteLabel.text = log.logNote
 
     }
 

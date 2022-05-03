@@ -9,18 +9,49 @@
 import UIKit
 
 class ServerSyncViewController: UIViewController {
-
+    
     // MARK: - IB
-
+    
     @IBOutlet private weak var statusLabel: UILabel!
-
+    
     // MARK: - Main
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        oneTimeSetup()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        // Called before the view is added to the windows’ view hierarchy
+        super.viewWillAppear(animated)
+        // Make this view the presenter if the app has to present any alert.
+        AlertManager.globalPresenter = self
+        
+        // make sure the view has the correct interfaceStyle
+        UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
+        
+        repeatableSetup()
+    }
+    
+    // MARK: - Properties
+    /// Called to prompt the user to retry a server connection
+    private var failureResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: GeneralResponseError.failureGetResponse.rawValue, preferredStyle: .alert)
+    private var noResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: GeneralResponseError.noGetResponse.rawValue, preferredStyle: .alert)
+    
+    /// DogManager that all of the retrieved information will be added too.
+    private var dogManager = DogManager()
+    
+    private var serverContacted = false
+    private var getUserFinished = false
+    private var getFamilyFinished = false
+    private var getDogsFinished = false
+    
+    // MARK: - Functions
+    
+    private func oneTimeSetup() {
         updateStatusLabel()
         let retryAlertAction = UIAlertAction(title: "Retry Login", style: .default) { _ in
-            self.retrySynchronization()
+            self.repeatableSetup()
         }
         let loginPageAlertAction = UIAlertAction(title: "Go to Login Page", style: .default) { _ in
             ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverLoginViewController", viewController: self)
@@ -31,14 +62,14 @@ class ServerSyncViewController: UIViewController {
         failureResponseAlertController.addAction(loginPageAlertAction)
         noResponseAlertController.addAction(loginPageAlertAction)
     }
-    override func viewWillAppear(_ animated: Bool) {
-        // Called before the view is added to the windows’ view hierarchy
-        super.viewWillAppear(animated)
-        // Make this view the presenter if the app has to present any alert.
-        AlertManager.globalPresenter = self
-
-        // make sure the view has the correct interfaceStyle
-        UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
+    
+    private func repeatableSetup() {
+        serverContacted = false
+        getUserFinished = false
+        getFamilyFinished = false
+        getDogsFinished = false
+        updateStatusLabel()
+        
         // placeholder userId, therefore we need to have them login to even know who they are
         if UserInformation.userId == nil || UserInformation.userId! < 0 {
             // we have the user sign into their apple id, then attempt to first create an account then get an account (if the creates fails) then throw an error message (if the get fails too).
@@ -47,41 +78,90 @@ class ServerSyncViewController: UIViewController {
         }
         // has userId, possibly has familyId, will check inside getUser
         else {
-            getUser()
+            self.getUser()
         }
     }
-
-    // MARK: - Properties
-    /// Called to prompt the user to retry a server connection
-    private var failureResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: GeneralResponseError.failureGetResponse.rawValue, preferredStyle: .alert)
-    private var noResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: GeneralResponseError.noGetResponse.rawValue, preferredStyle: .alert)
-
-    /// DogManager that all of the retrieved information will be added too.
-    private var dogManager = DogManager()
-
-    // Only one call is made to the the user and one call to get all the dogs.
-    private var serverContacted = false
-    private var getUserFinished = false
-    private var getFamilyFinished = false
-    private var getDogsFinished = false
-
-    // MARK: - Primary Sync
+    
+    /// If all the request has successfully completed, persist the new dogManager to memory and continue into the hound app.
+    private func checkSynchronizationStatus() {
+        
+        guard serverContacted && getUserFinished && getFamilyFinished && getDogsFinished else {
+            return
+        }
+        
+        // figure out where to go next, if the user is new and has no dogs (aka probably no family yet either) then we help them make their first dog
+        
+        // hasn't shown configuration to create/update dog
+        if LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore == false {
+            // Created family, no dogs present
+            // OR joined family, no dogs present
+            // OR joined family, dogs already present
+            ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "familyIntroductionViewController", viewController: self)
+            
+        }
+        // has shown configuration before
+        else {
+            ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController", viewController: self)
+        }
+        
+    }
+    
+    /// Update status label from a synchronous code. This will produce a 'purple' error if used from a callback or other sync function
+    private func updateStatusLabel() {
+        let finishedContact = "      Contacting Server ✅\n"
+        let inProgressContact = "      Contacting Server ❌\n"
+        if self.serverContacted == true {
+            self.statusLabel.text! = finishedContact
+        }
+        else {
+            self.statusLabel.text! = inProgressContact
+        }
+        
+        let finishedUser = "      Fetching User ✅\n"
+        let inProgressUser = "      Fetching User ❌\n"
+        if self.getUserFinished == true {
+            self.statusLabel.text!.append(finishedUser)
+        }
+        else {
+            self.statusLabel.text!.append(inProgressUser)
+        }
+        
+        let finishedUserConfiguration = "      Fetching User Configuration ✅\n"
+        let inProgressUserConfiguration = "      Fetching User Configuration ❌\n"
+        if self.getUserFinished == true {
+            self.statusLabel.text!.append(finishedUserConfiguration)
+        }
+        else {
+            self.statusLabel.text!.append(inProgressUserConfiguration)
+        }
+        
+        let finishedFamily = "      Fetching Family ✅\n"
+        let inProgressFamily = "      Fetching Family ❌\n"
+        if self.getFamilyFinished == true {
+            self.statusLabel.text!.append(finishedFamily)
+        }
+        else {
+            self.statusLabel.text!.append(inProgressFamily)
+        }
+        
+        let finishedDogs = "      Fetching Dogs ✅"
+        let inProgressDogs = "      Fetching Dogs ❌"
+        if self.getDogsFinished == true {
+            self.statusLabel.text!.append(finishedDogs)
+        }
+        else {
+            self.statusLabel.text!.append(inProgressDogs)
+        }
+    }
+    
+    // MARK: - Get Functions
     
     /// Retrieve the user
     private func getUser() {
-        // make sure that the labels are up to date. we want to reset all to false when we begin query.
-        serverContacted = false
-        getUserFinished = false
-        getFamilyFinished = false
-        getDogsFinished = false
-        updateStatusLabel()
-        
-        // we want to use our own custom error message
         UserRequest.get(invokeErrorManager: false) { _, familyId, responseStatus in
             switch responseStatus {
             case .successResponse:
                 // we got the user information back and have setup the user config based off of that info
-                self.serverContacted = true
                 self.getUserFinished = true
                 self.updateStatusLabel()
                 
@@ -119,7 +199,7 @@ class ServerSyncViewController: UIViewController {
             }
         }
     }
-
+    
     /// Retrieve any dogs the user may have
     private func getDogs() {
         // we want to use our own custom error message
@@ -143,90 +223,9 @@ class ServerSyncViewController: UIViewController {
             
         }
     }
-
-    /// If all the request has successfully completed, persist the new dogManager to memory and continue into the hound app.
-    private func checkSynchronizationStatus() {
-
-        updateStatusLabel()
-
-        guard serverContacted && getUserFinished && getFamilyFinished && getDogsFinished else {
-            return
-        }
-        
-            // figure out where to go next, if the user is new and has no dogs (aka probably no family yet either) then we help them make their first dog
-            
-            // hasn't shown configuration to create/update dog
-            if LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore == false {
-                // Created family, no dogs present
-                // OR joined family, no dogs present
-                // OR joined family, dogs already present
-                ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "familyIntroductionViewController", viewController: self)
-                
-            }
-            // has shown configuration before
-            else {
-                ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController", viewController: self)
-            }
-            
-    }
     
-    /// Update status label from a synchronous code. This will produce a 'purple' error if used from a callback or other sync function
-    private func updateStatusLabel() {
-        let finishedContact = "      Contacting Server ✅\n"
-        let inProgressContact = "      Contacting Server ❌\n"
-        if self.serverContacted == true {
-            self.statusLabel.text! = finishedContact
-        }
-        else {
-            self.statusLabel.text! = inProgressContact
-        }
-        let finishedUser = "      Fetching User ✅\n"
-        let inProgressUser = "      Fetching User ❌\n"
-        if self.getUserFinished == true {
-            self.statusLabel.text!.append(finishedUser)
-        }
-        else {
-            self.statusLabel.text!.append(inProgressUser)
-        }
-        let finishedUserConfiguration = "      Fetching User Configuration ✅\n"
-        let inProgressUserConfiguration = "      Fetching User Configuration ❌\n"
-        if self.getUserFinished == true {
-            self.statusLabel.text!.append(finishedUserConfiguration)
-        }
-        else {
-            self.statusLabel.text!.append(inProgressUserConfiguration)
-        }
-        
-        let finishedFamily = "      Fetching Family ✅\n"
-        let inProgressFamily = "      Fetching Family ❌\n"
-        if self.getFamilyFinished == true {
-            self.statusLabel.text!.append(finishedFamily)
-        }
-        else {
-            self.statusLabel.text!.append(inProgressFamily)
-        }
-
-        let finishedDogs = "      Fetching Dogs ✅"
-        let inProgressDogs = "      Fetching Dogs ❌"
-        if self.getDogsFinished == true {
-            self.statusLabel.text!.append(finishedDogs)
-        }
-        else {
-            self.statusLabel.text!.append(inProgressDogs)
-        }
-    }
-    /// Server sync failed and cannot continue into the Hound app. This function attempts to retry the whole process from the very beginning.
-    private func retrySynchronization() {
-        serverContacted = false
-        getUserFinished = false
-        getFamilyFinished = false
-        getDogsFinished = false
-        updateStatusLabel()
-        getUser()
-    }
-
     // MARK: - Navigation
-
+    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
@@ -240,5 +239,5 @@ class ServerSyncViewController: UIViewController {
             familyIntroductionViewController.dogManager = dogManager
         }
     }
-
+    
 }

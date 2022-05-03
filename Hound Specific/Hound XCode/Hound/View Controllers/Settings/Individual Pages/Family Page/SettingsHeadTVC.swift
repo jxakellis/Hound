@@ -12,7 +12,7 @@ class SettingsFamilyHeadTableViewCell: UITableViewCell {
     
     // MARK: - IB
     
-    @IBOutlet private weak var fullName: ScaledUILabel!
+    @IBOutlet private weak var fullNameLabel: ScaledUILabel!
     
     // MARK: - Properties
     
@@ -33,27 +33,10 @@ class SettingsFamilyHeadTableViewCell: UITableViewCell {
     
     // MARK: - Functions
     
-    func setup(firstName: String, lastName: String, userId: Int) {
+    func setup(forDisplayFullName displayFullName: String, userId: Int) {
         self.userId = userId
         
-        let trimmedFirstName = firstName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedLastName = lastName.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        // check to see if anything is blank
-        if trimmedFirstName == "" && trimmedLastName == "" {
-            fullName.text = "No Name"
-        }
-        else if trimmedFirstName == "" {
-            // no first name but has last name
-            fullName.text = trimmedLastName
-        }
-        else if trimmedLastName == "" {
-            // no last name but has first name
-            fullName.text = trimmedFirstName
-        }
-        else {
-            fullName.text = "\(trimmedFirstName) \(trimmedLastName)"
-        }
+        fullNameLabel.text = displayFullName
     }
 
 }

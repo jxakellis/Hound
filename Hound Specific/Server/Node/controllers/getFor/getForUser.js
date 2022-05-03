@@ -2,6 +2,9 @@ const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 
+const userInformationSelect = 'users.userId, users.userNotificationToken, users.userFirstName, users.userLastName, users.userEmail';
+const userConfigurationSelect = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.isCompactView, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';
+
 /**
  * Returns the user for the userId. Errors not handled
  */
@@ -11,8 +14,6 @@ const getUserForUserIdQuery = async (req, userId) => {
   try {
     // have to specifically reference the columns, otherwise familyMembers.userId will override users.userId.
     // Therefore setting userId to null (if there is no family member) even though the userId isn't null.
-    const userInformationSelect = 'users.userId, users.userIdentifier, users.userFirstName, users.userLastName, users.userEmail';
-    const userConfigurationSelect = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.isCompactView, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';
     userInformation = await queryPromise(
       req,
       `SELECT ${userInformationSelect}, familyMembers.familyId, ${userConfigurationSelect} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userId = ? LIMIT 1`,
@@ -43,8 +44,6 @@ const getUserForUserIdentifierQuery = async (req, userIdentifier) => {
   try {
     // have to specifically reference the columns, otherwise familyMembers.userId will override users.userId.
     // Therefore setting userId to null (if there is no family member) even though the userId isn't null.
-    const userInformationSelect = 'users.userId, users.userIdentifier, users.userFirstName, users.userLastName, users.userEmail';
-    const userConfigurationSelect = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.isCompactView, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';
     userInformation = await queryPromise(
       req,
       `SELECT ${userInformationSelect}, familyMembers.familyId, ${userConfigurationSelect} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userIdentifier = ? LIMIT 1`,
@@ -54,7 +53,7 @@ const getUserForUserIdentifierQuery = async (req, userIdentifier) => {
   catch (error) {
     throw new DatabaseError(error.code);
   }
-  if (userInformation.length !== 1) {
+  if (userInformation.length === 0) {
     // successful but empty array, no user to return.
     // Theoretically could be multiple users found but that means the table is broken. Just do catch all
     throw new ValidationError('No user found or invalid permissions', 'ER_NOT_FOUND');

@@ -19,13 +19,16 @@ class ServerFamilyViewController: UIViewController {
         FamilyRequest.create(invokeErrorManager: true) { familyId, _ in
             RequestUtils.endAlertControllerQueryIndictator {
                 if familyId != nil {
-                    // server sync vc retrieves familyId so no need to save it here
+                    // Reset certain local configurations so they are ready for the next family ( if they were previously in one ). These local configurations just control some basic user experience things, so can be modified.
+                    LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = false
+                    LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
+                    LocalConfiguration.dogIcons = []
                     self.dismiss(animated: true, completion: nil)
                 }
             }
         }
     }
-    @IBOutlet private weak var createFamilyDisclaimer: UILabel!
+    @IBOutlet private weak var createFamilyDisclaimerLabel: UILabel!
     @IBOutlet private weak var createFamilyDisclaimerLeadingConstraint: NSLayoutConstraint!
     @IBOutlet private weak var createFamilyDisclaimerTrailingConstraint: NSLayoutConstraint!
     
@@ -60,6 +63,10 @@ class ServerFamilyViewController: UIViewController {
                     RequestUtils.endAlertControllerQueryIndictator {
                         // the code successfully allowed the user to join
                         if requestWasSuccessful == true {
+                            // Reset certain local configurations so they are ready for the next family ( if they were previously in one ). These local configurations just control some basic user experience things, so can be modified.
+                            LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = false
+                            LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
+                            LocalConfiguration.dogIcons = []
                             self.dismiss(animated: true, completion: nil)
                         }
                         // TO DO interpret response to tell user details about the family (e.g. not found, locked, or need to upgrade limit)
@@ -110,10 +117,10 @@ class ServerFamilyViewController: UIViewController {
     }
     
     private func setupCreateFamilyDisclaimer() {
-        createFamilyDisclaimer.translatesAutoresizingMaskIntoConstraints = false
+        createFamilyDisclaimerLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        createFamilyDisclaimerLeadingConstraint.constant += (createFamilyButton.frame.height/4)
-        createFamilyDisclaimerTrailingConstraint.constant -= (createFamilyButton.frame.height/4)
+        createFamilyDisclaimerLeadingConstraint.constant += (createFamilyButton.frame.height/6)
+        createFamilyDisclaimerTrailingConstraint.constant += (createFamilyButton.frame.height/6)
     }
     
     private func setupJoinFamily() {

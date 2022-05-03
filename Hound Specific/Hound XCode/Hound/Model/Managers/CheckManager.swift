@@ -82,8 +82,8 @@ enum CheckManager {
             var message: String?
             
             switch UIApplication.appBuild {
-            case 3810:
-                message = "--Improved redundancy when unarchiving data"
+            case 4000:
+                message = "--Cloud storage! Create your Hound account with the 'Sign In with Apple' feature and have all of your information saved to the Hound server.\n--Family sharing! Create your own Hound family and have other users join it, allowing your logs, reminders, and notifications to all sync.\n--Refined UI. Enjoy a smoother, more fleshed out UI experience with quality of life tweaks.\n--Settings Revamp. Utilize the redesigned settings page to view more options in a cleaner way."
             default:
                 message = nil
             }

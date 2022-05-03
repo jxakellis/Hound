@@ -41,6 +41,28 @@ class FamilyMember: NSObject {
         return storedLastName
     }
     
+    /// The family member's full name. Handles cases where the first name and/or last name may be ""
+    var displayFullName: String {
+        let trimmedFirstName = firstName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedLastName = lastName.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // check to see if anything is blank
+        if trimmedFirstName == "" && trimmedLastName == "" {
+            return "No Name"
+        }
+        else if trimmedFirstName == "" {
+            // no first name but has last name
+            return trimmedLastName
+        }
+        else if trimmedLastName == "" {
+            // no last name but has first name
+            return trimmedFirstName
+        }
+        else {
+            return "\(trimmedFirstName) \(trimmedLastName)"
+        }
+    }
+    
     private var storedUserId: Int
     /// The family member's userId
     var userId: Int {

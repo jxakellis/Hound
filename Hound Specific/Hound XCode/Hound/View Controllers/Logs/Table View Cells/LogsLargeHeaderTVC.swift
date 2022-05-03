@@ -12,13 +12,9 @@ class LogsLargeHeaderTableViewCell: UITableViewCell {
 
     // MARK: - IB
 
-    @IBOutlet weak var header: ScaledUILabel!
+    @IBOutlet private weak var headerLabel: ScaledUILabel!
 
-    @IBOutlet private weak var filterIndicator: UIImageView!
-
-    // MARK: - Properties
-
-    private var logSource: Log?
+    @IBOutlet weak var filterImageView: UIImageView!
 
     // MARK: - Main
 
@@ -26,69 +22,39 @@ class LogsLargeHeaderTableViewCell: UITableViewCell {
         super.awakeFromNib()
     }
 
-    /*
-     //https://nsdateformatter.com/ "EEEE, MMMM d, yyyy"
-     //DateFormatter().dateStyle = "full"
-     //DateFormatter().timeStyle = "none"
-     //https://stackoverflow.com/questions/24100855/set-a-datestyle-in-swift
-     */
+    func setup(fromDate date: Date?, shouldShowFilterIndictator: Bool) {
 
-    func willShowFilterIndicator(isHidden: Bool) {
-        if isHidden == false {
-            for constraint in filterIndicator.constraints where constraint.firstAttribute == .height {
-                constraint.constant = 40
-            }
-            // filterIndicator.image = filterIndicator.image?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 40.0))
-            filterIndicator.isHidden = false
+        filterImageView.isHidden = !shouldShowFilterIndictator
+
+        if date == nil {
+            headerLabel.text = "No Logs Recorded"
         }
         else {
-            for constraint in filterIndicator.constraints where constraint.firstAttribute == .height {
-                constraint.constant = 0
-            }
-            // filterIndicator.image = filterIndicator.image?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 0.0))
-            filterIndicator.isHidden = true
-        }
-    }
-
-    func setup(log logSource: Log?, showFilterIndicator: Bool) {
-
-        willShowFilterIndicator(isHidden: !showFilterIndicator)
-
-        self.contentView.setNeedsLayout()
-        self.contentView.layoutIfNeeded()
-
-        self.logSource = logSource
-                if logSource == nil {
-            header.text = "No Logs Recorded"
-        }
-        else {
-            let dateSource = logSource!.logDate
-
-            let currentYearComponent = Calendar.current.component(.year, from: Date())
-            let dateSourceYearComponent = Calendar.current.component(.year, from: dateSource)
+            let currentYear = Calendar.current.component(.year, from: Date())
+            let dateYear = Calendar.current.component(.year, from: date!)
 
             // today
-            if Calendar.current.isDateInToday(dateSource) {
-                header.text = "Today"
+            if Calendar.current.isDateInToday(date!) {
+                headerLabel.text = "Today"
             }
             // yesterday
-            else if Calendar.current.isDateInYesterday(dateSource) {
-                header.text = "Yesterday"
+            else if Calendar.current.isDateInYesterday(date!) {
+                headerLabel.text = "Yesterday"
             }
-            else if Calendar.current.isDateInTomorrow(dateSource) {
-                header.text = "Tomorrow"
+            else if Calendar.current.isDateInTomorrow(date!) {
+                headerLabel.text = "Tomorrow"
             }
             // this year
-            else if currentYearComponent == dateSourceYearComponent {
+            else if currentYear == dateYear {
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEE, MMMM d", options: 0, locale: Calendar.current.locale)
-                header.text = dateFormatter.string(from: dateSource)
+                headerLabel.text = dateFormatter.string(from: date!)
             }
-            // previous year or even older
+            // previous year or even older, so we want to show that year
             else {
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEE, MMMM d, yyyy", options: 0, locale: Calendar.current.locale)
-                header.text = dateFormatter.string(from: dateSource)
+                headerLabel.text = dateFormatter.string(from: date!)
             }
         }
     }

@@ -24,6 +24,9 @@ enum UserInformation {
         if let userId = body[ServerDefaultKeys.userId.rawValue] as? Int {
             self.userId = userId
         }
+        if let userNotificationToken = body[ServerDefaultKeys.userNotificationToken.rawValue] as? String {
+            self.userNotificationToken = userNotificationToken
+        }
         if let familyId = body[ServerDefaultKeys.familyId.rawValue] as? Int {
             self.familyId = familyId
         }

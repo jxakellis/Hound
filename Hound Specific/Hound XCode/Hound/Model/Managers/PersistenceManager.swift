@@ -42,7 +42,6 @@ enum PersistenceManager {
             
             UserInformation.userId = UserDefaults.standard.value(forKey: ServerDefaultKeys.userId.rawValue) as? Int
             UserInformation.familyId = UserDefaults.standard.value(forKey: ServerDefaultKeys.familyId.rawValue) as? Int
-            UserInformation.userNotificationToken = UserDefaults.standard.value(forKey: ServerDefaultKeys.userNotificationToken.rawValue) as? String
             
             // MARK: User Configuration
             
@@ -101,7 +100,6 @@ enum PersistenceManager {
         
         UserDefaults.standard.setValue(UserInformation.userId, forKey: ServerDefaultKeys.userId.rawValue)
         UserDefaults.standard.setValue(UserInformation.familyId, forKey: ServerDefaultKeys.familyId.rawValue)
-        UserDefaults.standard.setValue(UserInformation.userNotificationToken, forKey: ServerDefaultKeys.userNotificationToken.rawValue)
         
         // other user info from ASAuthorization is saved immediately to the keychain
         

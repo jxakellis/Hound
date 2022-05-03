@@ -90,7 +90,8 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
     /// If the last log under a dog for a given type was removed while filtering by that type, updates the drop down to reflect this. Does not update table view as it is trigger by the table view.
     func didRemoveLastFilterLog() {
         filterIndexPath = nil
-        filterType = nil
+        filterDogId = nil
+        filterLogAction = nil
     }
 
     // MARK: - DropDownUIViewDataSource
@@ -130,17 +131,17 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
 
     }
 
-    func numberOfRows(forSection: Int, dropDownUIViewIdentifier: String) -> Int {
+    func numberOfRows(forSection section: Int, dropDownUIViewIdentifier: String) -> Int {
         let sudoDogManager = getDogManager()
         guard sudoDogManager.dogs.isEmpty == false else {
             return 1
         }
         // on additional section used for clear filter
-        if forSection == sudoDogManager.dogs.count {
+        if section == sudoDogManager.dogs.count {
             return 1
         }
         else {
-            return sudoDogManager.dogs[forSection].dogLogs.catagorizedLogActions.count + 1
+            return sudoDogManager.dogs[section].dogLogs.catagorizedLogActions.count + 1
         }
 
     }
@@ -162,30 +163,31 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
     func selectItemInDropDown(indexPath: IndexPath, dropDownUIViewIdentifier: String) {
         let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as! DropDownDefaultTableViewCell
 
+        // reset the filter values to nothing and assign their value below if needed
+        // cannot assign filterIndexPath to nil as need it for logic below, the other two filters are just trackers not used for logic here so can set them to nil
+        filterDogId = nil
+        filterLogAction = nil
+        
         // clear filter
         if indexPath.section == getDogManager().dogs.count {
             selectedCell.didToggleSelect(newSelectionStatus: true)
-
             filterIndexPath = nil
-            filterType = nil
         }
         // already filtering, now not filtering
         else if filterIndexPath == indexPath {
             selectedCell.didToggleSelect(newSelectionStatus: false)
-
             filterIndexPath = nil
-            filterType = nil
         }
-
         // not filtering, now will filter
         else if filterIndexPath == nil {
             selectedCell.didToggleSelect(newSelectionStatus: true)
 
             filterIndexPath = indexPath
+            let dog = getDogManager().dogs[indexPath.section]
+            filterDogId = dog.dogId
 
             if indexPath.row != 0 {
-                let dog = getDogManager().dogs[indexPath.section]
-                filterType = dog.dogLogs.catagorizedLogActions[indexPath.row-1].0
+                filterLogAction = dog.dogLogs.catagorizedLogActions[indexPath.row-1].0
             }
         }
         // switching from one filter to another
@@ -195,14 +197,16 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             selectedCell.didToggleSelect(newSelectionStatus: true)
 
             filterIndexPath = indexPath
+            let dog = getDogManager().dogs[indexPath.section]
+            filterDogId = dog.dogId
+            
             if indexPath.row != 0 {
-                let dog = getDogManager().dogs[indexPath.section]
-                filterType = dog.dogLogs.catagorizedLogActions[indexPath.row-1].0
+                filterLogAction = dog.dogLogs.catagorizedLogActions[indexPath.row-1].0
             }
         }
-        logsMainScreenTableViewController?.willApplyFiltering(associatedToIndexPath: filterIndexPath, filterType: filterType)
+        logsTableViewController.willApplyFiltering(forFilterDogId: filterDogId, forFilterLogAction: filterLogAction)
 
-        self.dropDown.hideDropDown()
+        dropDown.hideDropDown()
     }
 
     // MARK: - DogManagerControlFlowProtocol
@@ -219,12 +223,13 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         // we dont want to update LogsTableViewController if its the one providing the update
         if (sender.localized is LogsTableViewController) == false {
             // need to update table view
-            logsMainScreenTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
+            logsTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
             
             // logs modified have been added so we need to reset the filter
             filterIndexPath = nil
-            filterType = nil
-            logsMainScreenTableViewController?.willApplyFiltering(associatedToIndexPath: filterIndexPath, filterType: filterType)
+            filterDogId = nil
+            filterLogAction = nil
+            logsTableViewController?.willApplyFiltering(forFilterDogId: filterDogId, forFilterLogAction: filterLogAction)
         }
         // we dont want to update MainTabBarViewController with the delegate if its the one providing the update
         if (sender.localized is MainTabBarViewController) == false {
@@ -298,9 +303,12 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
 
     // IndexPath of a filter selected in the dropDown menu, nil if not filtering
     private var filterIndexPath: IndexPath?
-    private var filterType: LogAction?
+    /// the dogId of the current dog that the logs are being filted by
+    private var filterDogId: Int?
+    /// the current log action that the logs are being filtered by
+    private var filterLogAction: LogAction?
 
-    var logsMainScreenTableViewController: LogsTableViewController! = nil
+    var logsTableViewController: LogsTableViewController! = nil
 
     var logsAddLogViewController: LogsAddLogViewController?
 
@@ -404,10 +412,10 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "logsMainScreenTableViewController"{
-            logsMainScreenTableViewController = segue.destination as? LogsTableViewController
-            logsMainScreenTableViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
-            logsMainScreenTableViewController.delegate = self
+        if segue.identifier == "logsTableViewController"{
+            logsTableViewController = segue.destination as? LogsTableViewController
+            logsTableViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
+            logsTableViewController.delegate = self
         }
         else if segue.identifier == "logsAddLogViewController"{
             logsAddLogViewController = segue.destination as? LogsAddLogViewController

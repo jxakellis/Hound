@@ -101,7 +101,7 @@ const deleteSecondaryAlarmNotificationsForUser = async (userId) => {
       // specifically use JOIN to excluse resulst where reminder, dog, family, or family member are missing
       const reminderIds = await queryPromise(
         connectionForNotifications,
-        'SELECT dogReminder.reminderId FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE familyMembers.userId = ? AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
+        'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE familyMembers.userId = ? AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
         [userId],
       );
 

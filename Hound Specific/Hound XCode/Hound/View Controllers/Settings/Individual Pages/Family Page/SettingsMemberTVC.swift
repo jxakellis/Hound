@@ -12,8 +12,11 @@ class SettingsFamilyMemberTableViewCell: UITableViewCell {
 
     // MARK: - IB
     
-    @IBOutlet private weak var fullName: ScaledUILabel!
+    @IBOutlet private weak var fullNameLabel: ScaledUILabel!
     
+    @IBOutlet private weak var rightChevronImageView: UIImageView!
+    @IBOutlet private weak var rightChevronLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var rightChevronAspectRatio: NSLayoutConstraint!
     // MARK: - Properties
     
     var userId: Int!
@@ -33,26 +36,19 @@ class SettingsFamilyMemberTableViewCell: UITableViewCell {
     
     // MARK: - Functions
     
-    func setup(firstName: String, lastName: String, userId: Int) {
+    func setup(forDisplayFullName displayFullName: String, userId: Int, isUserFamilyHead: Bool) {
         self.userId = userId
         
-        let trimmedFirstName = firstName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedLastName = lastName.trimmingCharacters(in: .whitespacesAndNewlines)
+        fullNameLabel.text = displayFullName
         
-        // check to see if anything is blank
-        if trimmedFirstName == "" && trimmedLastName == "" {
-            fullName.text = "No Name"
-        }
-        else if trimmedFirstName == "" {
-            // no first name but has last name
-            fullName.text = trimmedLastName
-        }
-        else if trimmedLastName == "" {
-            // no last name but has first name
-            fullName.text = trimmedFirstName
-        }
-        else {
-            fullName.text = "\(trimmedFirstName) \(trimmedLastName)"
+        // if the user is not the family head, that means the cell should not be selectable nor should we show the chevron that indicates selectability
+        isUserInteractionEnabled = isUserFamilyHead
+        rightChevronImageView.isHidden = !isUserFamilyHead
+        
+        if isUserFamilyHead == false {
+            rightChevronLeadingConstraint.constant = 0.0
+            NSLayoutConstraint.deactivate([rightChevronAspectRatio])
+            NSLayoutConstraint.activate([ rightChevronImageView.widthAnchor.constraint(equalToConstant: 0.0)])
         }
     }
 

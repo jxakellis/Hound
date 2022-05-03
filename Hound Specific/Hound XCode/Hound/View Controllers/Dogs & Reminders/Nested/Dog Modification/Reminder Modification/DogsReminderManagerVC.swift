@@ -324,7 +324,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
         
         initalReminderAction = targetReminder?.reminderAction ?? ReminderConstant.defaultAction
         
-        reminderCustomActionNameTextField.text = targetReminder?.reminderCustomActionName ?? ""
+        reminderCustomActionNameTextField.text = targetReminder?.reminderCustomActionName
         reminderCustomActionNameTextField.placeholder = " Enter a custom action name..."
         reminderCustomActionNameTextField.delegate = self
         

@@ -58,10 +58,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         AppDelegate.generalLogger.notice("Successfully registered for remote notifications for token: \(token)")
         
         if token != UserInformation.userNotificationToken {
-            UserInformation.userNotificationToken = token
+            
             // don't sent the user an alert if this request fails as there is no point
-            UserRequest.update(invokeErrorManager: false, body: [ServerDefaultKeys.userNotificationToken.rawValue: UserInformation.userNotificationToken!]) { _, _ in
-                // do nothing
+            UserRequest.update(invokeErrorManager: false, body: [ServerDefaultKeys.userNotificationToken.rawValue: UserInformation.userNotificationToken!]) { requestWasSuccessful, _ in
+                if requestWasSuccessful == true {
+                    UserInformation.userNotificationToken = token
+                }
             }
         }
         

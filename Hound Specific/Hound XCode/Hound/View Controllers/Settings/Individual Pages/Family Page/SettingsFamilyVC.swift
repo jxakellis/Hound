@@ -20,7 +20,7 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         return true
     }
     
-    // MARK: - Properties
+    // MARK: - IB
     
     @IBOutlet private weak var containerView: UIView!
     
@@ -43,7 +43,19 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         }
     }
     
+    // MARK: Properties
+    
+    /// Returns whether or not the user is the head of the family. This changes whether or not they can kick family members, delete the family, etc.
+    var isUserFamilyHead: Bool {
+        for familyMember in FamilyConfiguration.familyMembers where familyMember.userId == UserInformation.userId! {
+            return familyMember.isFamilyHead
+        }
+        return false
+    }
+    
     var leaveFamilyAlertController: GeneralUIAlertController!
+    
+    var kickFamilyMemberAlertController: GeneralUIAlertController!
     
     weak var delegate: SettingsFamilyViewControllerDelegate!
     
@@ -53,7 +65,6 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         super.viewDidLoad()
         
         // (if head of family)
-        // TO DO add control to kick people
         // TO DO add subscription controls
         
         oneTimeSetup()
@@ -71,10 +82,9 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
     /// These properties only need assigned once.
     private func oneTimeSetup() {
         
-        tableView.allowsSelection = false
         tableView.separatorInset = .zero
         
-        DesignConstant.standardizeLargeButton(forButton: leaveFamilyButton)
+        leaveFamilyButton.layer.cornerRadius = 10.0
     }
     
     /// These properties can be reassigned. Does not reload anything, rather just configures.
@@ -94,6 +104,8 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         updateIsLockedLabel()
         
         // MARK: Family Members
+        
+        tableView.allowsSelection = isUserFamilyHead
         
         var tableViewHeight: CGFloat {
             var height = 0.0
@@ -117,23 +129,14 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         
         // MARK: Leave Family Button
         
-        // find the user in the family that is the head
-        let familyHead = FamilyConfiguration.familyMembers.first { familyMember in
-            if familyMember.isFamilyHead == true {
-                return true
-            }
-            else {
-                return false
-            }
-        }
-        
         leaveFamilyAlertController = GeneralUIAlertController(title: "placeholder", message: "Hound will restart once this process is complete", preferredStyle: .alert)
         
         // user is not the head of the family, so the button is enabled for them
-        if familyHead?.userId != UserInformation.userId {
+        if isUserFamilyHead == false {
             leaveFamilyButton.isEnabled = true
             
             leaveFamilyButton.setTitle("Leave Family", for: .normal)
+            leaveFamilyButton.backgroundColor = .systemBlue
             
             leaveFamilyAlertController.title = "Are you sure you want to leave your family?"
             let leaveAlertAction = UIAlertAction(title: "Leave Family", style: .destructive) { _ in
@@ -151,10 +154,12 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
             // user must kicked other members before they can destroy their family
             if FamilyConfiguration.familyMembers.count == 1 {
                 leaveFamilyButton.isEnabled = true
+                leaveFamilyButton.backgroundColor = .systemBlue
             }
             // user is only family member so can destroy their family
             else {
                 leaveFamilyButton.isEnabled = false
+                leaveFamilyButton.backgroundColor = .systemGray4
             }
             
             leaveFamilyButton.setTitle("Delete Family", for: .normal)
@@ -288,15 +293,45 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         // family members is sorted to have the family head as its first element
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "settingsFamilyHeadTableViewCell", for: indexPath) as! SettingsFamilyHeadTableViewCell
-            cell.setup(firstName: familyMember.firstName, lastName: familyMember.lastName, userId: familyMember.userId)
+            cell.setup(forDisplayFullName: familyMember.displayFullName, userId: familyMember.userId)
             
             return cell
         }
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "settingsFamilyMemberTableViewCell", for: indexPath) as! SettingsFamilyMemberTableViewCell
-            cell.setup(firstName: familyMember.firstName, lastName: familyMember.lastName, userId: familyMember.userId)
+            cell.setup(forDisplayFullName: familyMember.displayFullName, userId: familyMember.userId, isUserFamilyHead: isUserFamilyHead)
             
             return cell
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.tableView.deselectRow(at: indexPath, animated: true)
+        // the first row is the family head who should be able to be selected
+        if indexPath.row != 0 {
+            // construct the alert controller which will confirm if the user wants to kick the family member
+            let familyMember = FamilyConfiguration.familyMembers[indexPath.row]
+            kickFamilyMemberAlertController = GeneralUIAlertController(title: "Do you want to kick \(familyMember.displayFullName) from your family?", message: nil, preferredStyle: .alert)
+            
+            let kickAlertAction = UIAlertAction(title: "Kick \(familyMember.displayFullName)", style: .destructive) { _ in
+                // the user wants to kick the family member so query the server
+                let body = [ServerDefaultKeys.kickUserId.rawValue: familyMember.userId]
+                RequestUtils.beginAlertControllerQueryIndictator()
+                FamilyRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
+                    RequestUtils.endAlertControllerQueryIndictator {
+                        if requestWasSuccessful == true {
+                            // invoke the @IBAction function to refresh this page
+                            self.willRefresh(0)
+                        }
+                    }
+                }
+            }
+            let cancelAlertAction = UIAlertAction(title: "Cancel", style: .cancel)
+            
+            kickFamilyMemberAlertController.addAction(kickAlertAction)
+            kickFamilyMemberAlertController.addAction(cancelAlertAction)
+            
+            AlertManager.enqueueAlertForPresentation(kickFamilyMemberAlertController)
         }
     }
     

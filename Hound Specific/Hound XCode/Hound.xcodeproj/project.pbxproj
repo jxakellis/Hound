@@ -14,7 +14,6 @@
 		A2121DBD26649C7E00647682 /* DogsReminderOneTimeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2121DBC26649C7E00647682 /* DogsReminderOneTimeVC.swift */; };
 		A212522228060F5B00FBFAC7 /* ViewControllerUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A212522128060F5B00FBFAC7 /* ViewControllerUtils.swift */; };
 		A218EA3227F6A5D90051159C /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A218EA3127F6A5D90051159C /* NotificationManager.swift */; };
-		A22043362818E5E20027B70A /* Design Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22043352818E5E20027B70A /* Design Constant.swift */; };
 		A226736225CDC36800904032 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A226736125CDC36800904032 /* StringExtension.swift */; };
 		A233519027FB7BAB00CDF1BF /* Dog Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A233518F27FB7BAB00CDF1BF /* Dog Constants.swift */; };
 		A233519527FC92F800CDF1BF /* FamilyConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A233519427FC92F800CDF1BF /* FamilyConfiguration.swift */; };
@@ -191,7 +190,6 @@
 		A2121DBC26649C7E00647682 /* DogsReminderOneTimeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsReminderOneTimeVC.swift; sourceTree = "<group>"; };
 		A212522128060F5B00FBFAC7 /* ViewControllerUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerUtils.swift; sourceTree = "<group>"; };
 		A218EA3127F6A5D90051159C /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
-		A22043352818E5E20027B70A /* Design Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Design Constant.swift"; sourceTree = "<group>"; };
 		A226736125CDC36800904032 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		A233518F27FB7BAB00CDF1BF /* Dog Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dog Constants.swift"; sourceTree = "<group>"; };
 		A233519427FC92F800CDF1BF /* FamilyConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyConfiguration.swift; sourceTree = "<group>"; };
@@ -221,7 +219,6 @@
 		A263B2F62638A54F00E1DCE6 /* Sender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sender.swift; sourceTree = "<group>"; };
 		A263D88427FF830C00938EC4 /* LocalDogIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDogIcon.swift; sourceTree = "<group>"; };
 		A263D88627FF85E000938EC4 /* Server Default Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Server Default Keys.swift"; sourceTree = "<group>"; };
-		A265848C25E8128400E8B812 /* CHECKLIST Future Implementation Needed */ = {isa = PBXFileReference; lastKnownFileType = text; path = "CHECKLIST Future Implementation Needed"; sourceTree = "<group>"; };
 		A26A7584263CFF8C0026DE34 /* LogsAddLogVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsAddLogVC.swift; sourceTree = "<group>"; };
 		A26A984927F658CD002803A6 /* User Default Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User Default Keys.swift"; sourceTree = "<group>"; };
 		A26AF36D25807887005D5DAB /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
@@ -256,7 +253,6 @@
 		A278ED932610FF89000575FC /* DogsReminderWeeklyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsReminderWeeklyVC.swift; sourceTree = "<group>"; };
 		A27C3D8A25B781B4005F46BA /* DogsAddDogVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsAddDogVC.swift; sourceTree = "<group>"; };
 		A27C3D8E25B8A213005F46BA /* DogsNestedReminderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsNestedReminderVC.swift; sourceTree = "<group>"; };
-		A286934D2576A4CA00C0C06E /* ORIGINAL Future Implementation */ = {isa = PBXFileReference; lastKnownFileType = text; path = "ORIGINAL Future Implementation"; sourceTree = "<group>"; };
 		A28A0B4725B922E80057BEC7 /* DogsReminderTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsReminderTableVC.swift; sourceTree = "<group>"; };
 		A28A0B4B25B923BA0057BEC7 /* DogsReminderNavigationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsReminderNavigationVC.swift; sourceTree = "<group>"; };
 		A28AF46C25E9C7C80018B575 /* DogsIndependentReminderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsIndependentReminderVC.swift; sourceTree = "<group>"; };
@@ -422,14 +418,14 @@
 			path = "Table View Cells";
 			sourceTree = "<group>";
 		};
-		A224D02727E125900083CFCB /* Sync */ = {
+		A224D02727E125900083CFCB /* Server Sync */ = {
 			isa = PBXGroup;
 			children = (
 				A2B678E427D13AD100424FB0 /* ServerSyncVC.swift */,
 				A2BAA06B27D6C5520041F3C5 /* ServerLoginVC.swift */,
 				A2B00F9B27FA376000C6126E /* ServerFamilyVC.swift */,
 			);
-			path = Sync;
+			path = "Server Sync";
 			sourceTree = "<group>";
 		};
 		A233519327FC908300CDF1BF /* Family Page */ = {
@@ -501,7 +497,7 @@
 				A2B9DAE7262B2DD500A47D57 /* Logs */,
 				A27C138C25AD2A620031B6A0 /* Settings */,
 				A27C138A25AD2A520031B6A0 /* Dogs & Reminders */,
-				A224D02727E125900083CFCB /* Sync */,
+				A224D02727E125900083CFCB /* Server Sync */,
 				A2E447032636FF9A0087B1A3 /* Main Tab Bar */,
 			);
 			path = "View Controllers";
@@ -711,7 +707,6 @@
 				A2581B7727FDDF500099AFB8 /* Animation Constant.swift */,
 				A2581B7527FDDF350099AFB8 /* Notification Sound.swift */,
 				A233518F27FB7BAB00CDF1BF /* Dog Constants.swift */,
-				A22043352818E5E20027B70A /* Design Constant.swift */,
 				A26A984927F658CD002803A6 /* User Default Keys.swift */,
 				A263D88627FF85E000938EC4 /* Server Default Keys.swift */,
 			);
@@ -721,8 +716,6 @@
 		A286934A2576A2B900C0C06E /* Notes */ = {
 			isa = PBXGroup;
 			children = (
-				A286934D2576A4CA00C0C06E /* ORIGINAL Future Implementation */,
-				A265848C25E8128400E8B812 /* CHECKLIST Future Implementation Needed */,
 				A2FC4EBC274AF59F006A872F /* Add Drop Down */,
 				A2FC4EBE274AF980006A872F /* Add Tool Tip */,
 			);
@@ -1217,7 +1210,6 @@
 				A2EBFB9C264F69ED001AAF18 /* ErrorManager.swift in Sources */,
 				A26FA13A27F5119800546306 /* BorderedUITextView.swift in Sources */,
 				A2B565F827E923510091CA25 /* GeneralResponseError.swift in Sources */,
-				A22043362818E5E20027B70A /* Design Constant.swift in Sources */,
 				A2AC89FC27D2781600115831 /* MonthlyComponents.swift in Sources */,
 				A25070E926DD9DDD0056CFC4 /* UIColorExtension.swift in Sources */,
 				A20C99972568671F00E2C9C8 /* ReminderManager.swift in Sources */,

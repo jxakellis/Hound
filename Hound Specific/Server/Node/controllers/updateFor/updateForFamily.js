@@ -3,10 +3,10 @@ const ValidationError = require('../../main/tools/errors/validationError');
 
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
-  formatBoolean, formatDate, areAllDefined,
+  formatBoolean, formatDate, areAllDefined, formatNumber,
 } = require('../../main/tools/validation/validateFormat');
 
-const { deleteAlarmNotificationsForFamily } = require('../../main/tools/notifications/alarm/deleteAlarmNotification');
+const { deleteAlarmNotificationsForFamily, deleteSecondaryAlarmNotificationsForUser } = require('../../main/tools/notifications/alarm/deleteAlarmNotification');
 /**
  *  Queries the database to update a family to add a new user. If the query is successful, then returns
  *  If a problem is encountered, creates and throws custom error
@@ -14,31 +14,31 @@ const { deleteAlarmNotificationsForFamily } = require('../../main/tools/notifica
 // eslint-disable-next-line consistent-return
 const updateFamilyQuery = async (req) => {
   const familyId = req.params.familyId;
+  const isLocked = formatBoolean(req.body.isLocked);
+  const isPaused = formatBoolean(req.body.isPaused);
+  const kickUserId = formatNumber(req.body.kickUserId);
 
   // familyId doesn't exist, so user must want to join a family
   if (areAllDefined(familyId) === false) {
     return addFamilyMemberQuery(req);
   }
-  // familyId exists, so we update values the traditional way
-  else {
-    const isLocked = formatBoolean(req.body.isLocked);
-    const isPaused = formatBoolean(req.body.isPaused);
-
+  else if (areAllDefined(isLocked)) {
     try {
-      if (areAllDefined(isLocked)) {
-        await queryPromise(
-          req,
-          'UPDATE families SET isLocked = ? WHERE familyId = ?',
-          [isLocked, familyId],
-        );
-      }
-      else if (areAllDefined(isPaused)) {
-        await updateIsPausedQuery(req);
-      }
+      return queryPromise(
+        req,
+        'UPDATE families SET isLocked = ? WHERE familyId = ?',
+        [isLocked, familyId],
+      );
     }
     catch (error) {
       throw new DatabaseError(error.code);
     }
+  }
+  else if (areAllDefined(isPaused)) {
+    return updateIsPausedQuery(req);
+  }
+  else if (areAllDefined(kickUserId)) {
+    return kickFamilyMemberQuery(req);
   }
 };
 
@@ -49,6 +49,11 @@ const reminderCountdownComponentsSelect = 'reminderCountdownComponents.countdown
 const reminderSnoozeComponentsLeftJoin = 'LEFT JOIN reminderSnoozeComponents ON dogReminders.reminderId = reminderSnoozeComponents.reminderId';
 const reminderCountdownComponentsLeftJoin = 'LEFT JOIN reminderCountdownComponents ON dogReminders.reminderId = reminderCountdownComponents.reminderId';
 
+/**
+ * Helper method for updateFamilyQuery, goes through all of the logic to update isPaused, lastPause, lastUnpause
+ * If pausing, saves all intervalElapsed, sets all reminderExecutionDates to nil, and deleteAlarmNotifications
+ * If unpausing, sets reminderExecutionBasis to Date(). The new reminderExecutionDates must be calculated by the user and sent to the server
+ */
 const updateIsPausedQuery = async (req) => {
   const familyId = req.params.familyId;
   const isPaused = formatBoolean(req.body.isPaused);
@@ -137,6 +142,7 @@ const updateIsPausedQuery = async (req) => {
       }
       // toggling everything to unpaused from paused
       else {
+        // TO DO have the server calculate the new reminderExecutionDates
         const lastUnpause = new Date();
         // update the family's pause configuration to reflect changes
         await queryPromise(
@@ -206,6 +212,55 @@ const addFamilyMemberQuery = async (req) => {
       [result.familyId, userId],
     );
     return;
+  }
+  catch (error) {
+    throw new DatabaseError(error.code);
+  }
+};
+
+/**
+ * Helper method for updateFamilyQuery, goes through checks to attempt to kick a user from the family
+ */
+const kickFamilyMemberQuery = async (req) => {
+  const userId = req.params.userId;
+  const familyId = req.params.familyId;
+  const kickUserId = formatNumber(req.body.kickUserId);
+
+  // have to specify who to kick from the family
+  if (areAllDefined(kickUserId) === false) {
+    throw new ValidationError('kickUserId missing', 'ER_VALUES_MISSING');
+  }
+  // a user cannot kick themselves
+  if (userId === kickUserId) {
+    throw new ValidationError('kickUserId invalid', 'ER_VALUES_INVALID');
+  }
+  let family;
+  try {
+    family = await queryPromise(
+      req,
+      'SELECT userId, familyId FROM families WHERE userId = ? AND familyId = ? LIMIT 1',
+      [userId, familyId],
+    );
+  }
+  catch (error) {
+    throw new DatabaseError(error.code);
+  }
+  // check to see if the user is the family head, as only the family head has permissions to kick
+  if (family.length === 0) {
+    throw new ValidationError('Invalid permissions to kick family member', 'ER_NOT_FOUND');
+  }
+
+  // kickUserId is valid, kickUserId is different then the requester, requester is the family head so everything is valid
+  try {
+    // kick the user by deleting them from the family
+    await queryPromise(
+      req,
+      'DELETE FROM familyMembers WHERE userId = ?',
+      [kickUserId],
+    );
+    // remove any pending secondary alarm notifications they have queued
+    // The primary alarm notifications retrieve the notification tokens of familyMembers right as they fire, so the user will not be included
+    deleteSecondaryAlarmNotificationsForUser(kickUserId);
   }
   catch (error) {
     throw new DatabaseError(error.code);

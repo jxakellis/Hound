@@ -55,7 +55,7 @@ const updateWeeklyComponents = async (req, reminder) => {
     await queryPromise(
       req,
       'UPDATE reminderWeeklyComponents SET weeklyHour = ?, weeklyMinute = ?, sunday = ?, monday = ?, tuesday = ?, wednesday = ?, thursday = ?, friday = ?, saturday = ?, weeklyIsSkipping = ?, weeklyIsSkippingDate = ? WHERE reminderId = ?',
-      [weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday, weeklyIsSkipping, weeklyIsSkippingDate, reminder.createWeeklyComponentsreminderId],
+      [weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday, weeklyIsSkipping, weeklyIsSkippingDate, reminder.reminderId],
     );
   }
 };

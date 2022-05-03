@@ -16,7 +16,7 @@ const getFamilyInformationForFamilyIdQuery = async (req, familyId) => {
     // find which family member is the head
     let family = await queryPromise(
       req,
-      'SELECT userId, isLocked, familyCode, isPaused, lastPause, lastUnpause FROM families WHERE familyId = ? LIMIT 1',
+      'SELECT userId, isLocked, familyCode, isPaused FROM families WHERE familyId = ? LIMIT 1',
       [familyId],
     );
 

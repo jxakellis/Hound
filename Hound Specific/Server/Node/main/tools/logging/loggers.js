@@ -1,6 +1,6 @@
 const parentLogger = require('pino')();
 
-parentLogger.level = 'info';
+parentLogger.level = 'debug';
 
 // Logs general server information, unrelated to an individual request
 const serverLogger = parentLogger.child({ module: 'Server' });

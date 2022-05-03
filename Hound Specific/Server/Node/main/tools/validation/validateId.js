@@ -18,7 +18,7 @@ const validateUserId = async (req, res, next) => {
       // queries the database to find if the users table contains a user with the provided ID
       const result = await queryPromise(
         req,
-        'SELECT userId, userIdentifier FROM users WHERE userId = ? AND userIdentifier = ? LIMIT 1',
+        'SELECT userId FROM users WHERE userId = ? AND userIdentifier = ? LIMIT 1',
         [userId, userIdentifier],
       );
 
