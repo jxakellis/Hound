@@ -3,7 +3,7 @@ const { schedule } = require('./schedules');
 const { createAlarmNotificationForFamily } = require('./createAlarmNotification');
 
 const { queryPromise } = require('../../database/queryPromise');
-const { connectionForNotifications } = require('../../database/databaseConnection');
+const { connectionForAlarms } = require('../../database/databaseConnection');
 
 /**
  * Assumes an empty schedule
@@ -21,7 +21,7 @@ const restoreAlarmNotificationsForAllFamilies = async () => {
 
     // for ALL reminders get: familyId, reminderId, dogName, reminderExecutionDate, reminderAction, and reminderCustomActionName
     const remindersWithInfo = await queryPromise(
-      connectionForNotifications,
+      connectionForAlarms,
       'SELECT dogs.familyId, dogReminders.reminderId, dogReminders.reminderExecutionDate FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId WHERE dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
     );
     // for every reminder that exists (with a valid reminderExecutionDate), we invoke createAlarmNotificationForAll for it
@@ -39,7 +39,8 @@ const restoreAlarmNotificationsForAllFamilies = async () => {
     }
   }
   catch (error) {
-    alarmLogger.error(`restoreAlarmNotificationsForAll error: ${JSON.stringify(error)}`);
+    alarmLogger.error('restoreAlarmNotificationsForAll error:');
+    alarmLogger.error(error);
   }
 };
 

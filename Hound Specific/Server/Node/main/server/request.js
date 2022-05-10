@@ -3,6 +3,7 @@ const express = require('express');
 const { parseFormData, parseJSON } = require('./parse');
 const { logRequest, logResponse } = require('../tools/logging/logQuery');
 const { assignConnection } = require('../tools/database/databaseConnection');
+const { validateAppBuild } = require('../tools/validation/validateId');
 const userRouter = require('../../routes/user');
 const GeneralError = require('../tools/errors/generalError');
 
@@ -20,11 +21,15 @@ const configureAppForRequests = (app) => {
 
   // Assign the request a pool connection to use
 
-  app.use('/', assignConnection);
+  app.use(assignConnection);
+
+  // Make sure the user is on an updated version
+
+  app.use('/api/:appBuild', validateAppBuild);
 
   // Route the request to the userRouter
 
-  app.use('/api/v1/user', userRouter);
+  app.use('/api/:appBuild/user', userRouter);
 
   // Throw back the request if an unknown path is used
   app.use('*', async (req, res) => {

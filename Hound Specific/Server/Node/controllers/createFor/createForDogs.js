@@ -9,11 +9,10 @@ const { areAllDefined } = require('../../main/tools/validation/validateFormat');
  */
 const createDogQuery = async (req) => {
   const familyId = req.params.familyId;
-  const { dogName } = req.body;
-  // const dogIcon = req.body.dogIcon;
+  const dogName = req.body.dogName;
 
-  if (areAllDefined([dogName]) === false) {
-    throw new ValidationError('dogName missing', 'ER_VALUES_MISSING');
+  if (areAllDefined(familyId, dogName) === false) {
+    throw new ValidationError('familyId or dogName missing', 'ER_VALUES_MISSING');
   }
 
   try {

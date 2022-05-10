@@ -11,7 +11,6 @@ const { deleteAlarmNotificationsForFamily, deleteSecondaryAlarmNotificationsForU
  *  Queries the database to update a family to add a new user. If the query is successful, then returns
  *  If a problem is encountered, creates and throws custom error
  */
-// eslint-disable-next-line consistent-return
 const updateFamilyQuery = async (req) => {
   const familyId = req.params.familyId;
   const isLocked = formatBoolean(req.body.isLocked);
@@ -20,11 +19,12 @@ const updateFamilyQuery = async (req) => {
 
   // familyId doesn't exist, so user must want to join a family
   if (areAllDefined(familyId) === false) {
-    return addFamilyMemberQuery(req);
+    await addFamilyMemberQuery(req);
   }
+  // try updating individual components
   else if (areAllDefined(isLocked)) {
     try {
-      return queryPromise(
+      await queryPromise(
         req,
         'UPDATE families SET isLocked = ? WHERE familyId = ?',
         [isLocked, familyId],
@@ -35,10 +35,10 @@ const updateFamilyQuery = async (req) => {
     }
   }
   else if (areAllDefined(isPaused)) {
-    return updateIsPausedQuery(req);
+    await updateIsPausedQuery(req);
   }
   else if (areAllDefined(kickUserId)) {
-    return kickFamilyMemberQuery(req);
+    await kickFamilyMemberQuery(req);
   }
 };
 
@@ -57,6 +57,10 @@ const reminderCountdownComponentsLeftJoin = 'LEFT JOIN reminderCountdownComponen
 const updateIsPausedQuery = async (req) => {
   const familyId = req.params.familyId;
   const isPaused = formatBoolean(req.body.isPaused);
+
+  if (areAllDefined(familyId, isPaused) === false) {
+    throw new ValidationError('familyId or isPaused missing', 'ER_VALUES_MISSING');
+  }
 
   try {
     // find out the family's current pause status
@@ -142,7 +146,6 @@ const updateIsPausedQuery = async (req) => {
       }
       // toggling everything to unpaused from paused
       else {
-        // TO DO have the server calculate the new reminderExecutionDates
         const lastUnpause = new Date();
         // update the family's pause configuration to reflect changes
         await queryPromise(
@@ -158,6 +161,11 @@ const updateIsPausedQuery = async (req) => {
           'UPDATE dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId SET dogReminders.reminderExecutionBasis = ? WHERE dogs.familyId = ?',
           [lastUnpause, familyId],
         );
+
+        // currently no need to recreate/refresh alarm notifications. This is because the executionDates will all still be nil
+        // User needs to update reminders with the executioDates calculated on their device
+
+        // TO DO have the server calculate the new reminderExecutionDates (if we do this, then have alarm notifications created for family)
       }
     }
   }
@@ -227,8 +235,8 @@ const kickFamilyMemberQuery = async (req) => {
   const kickUserId = formatNumber(req.body.kickUserId);
 
   // have to specify who to kick from the family
-  if (areAllDefined(kickUserId) === false) {
-    throw new ValidationError('kickUserId missing', 'ER_VALUES_MISSING');
+  if (areAllDefined(userId, familyId, kickUserId) === false) {
+    throw new ValidationError('userId, familyId, or kickUserId missing', 'ER_VALUES_MISSING');
   }
   // a user cannot kick themselves
   if (userId === kickUserId) {

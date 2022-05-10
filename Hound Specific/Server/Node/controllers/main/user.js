@@ -19,32 +19,35 @@ const getUser = async (req, res) => {
   const userIdentifier = req.query.userIdentifier;
   // hound userId
   const userId = req.params.userId;
-  if (userId) {
+  let result;
+  // user provided userId so we go that route
+  if (areAllDefined(userId)) {
     try {
-      const result = await getUserForUserIdQuery(req, userId);
-      await req.commitQueries(req);
-      return res.status(200).json({ result });
+      result = await getUserForUserIdQuery(req, userId);
     }
     catch (error) {
       await req.rollbackQueries(req);
       return res.status(400).json(convertErrorToJSON(error));
     }
   }
+  // user provided userIdentifier so we find them using that way
   else if (areAllDefined(userIdentifier)) {
     try {
-      const result = await getUserForUserIdentifierQuery(req, userIdentifier);
-      await req.commitQueries(req);
-      return res.status(200).json({ result });
+      result = await getUserForUserIdentifierQuery(req, userIdentifier);
     }
     catch (error) {
       await req.rollbackQueries(req);
       return res.status(400).json(convertErrorToJSON(error));
     }
   }
+  // no identifier provided
   else {
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('userId and  userIdentifier missing', 'ER_VALUES_MISSING').toJSON);
+    return res.status(400).json(new ValidationError('userId or userIdentifier missing', 'ER_VALUES_MISSING').toJSON);
   }
+
+  await req.commitQueries(req);
+  return res.status(200).json({ result });
 };
 
 const createUser = async (req, res) => {
@@ -55,10 +58,9 @@ const createUser = async (req, res) => {
     // both parameters should be defined. Therefore, we can create the follow up notifications for the user
     const isFollowUpEnabled = formatBoolean(req.body.isFollowUpEnabled);
     const followUpDelay = formatNumber(req.body.followUpDelay);
-    if (areAllDefined([isFollowUpEnabled, followUpDelay])) {
+    if (areAllDefined(isFollowUpEnabled, followUpDelay)) {
       refreshSecondaryAlarmNotificationsForUser(req.params.userId, isFollowUpEnabled, followUpDelay);
     }
-
     return res.status(200).json({ result });
   }
   catch (error) {
@@ -72,11 +74,10 @@ const updateUser = async (req, res) => {
   try {
     await updateUserQuery(req);
     await req.commitQueries(req);
-
     const isFollowUpEnabled = formatBoolean(req.body.isFollowUpEnabled);
     const followUpDelay = formatNumber(req.body.followUpDelay);
     // check to see if either of these parameters are defined. If they are, then it means the user has updated them
-    if (atLeastOneDefined([isFollowUpEnabled, followUpDelay])) {
+    if (atLeastOneDefined(isFollowUpEnabled, followUpDelay)) {
       refreshSecondaryAlarmNotificationsForUser(req.params.userId, isFollowUpEnabled, followUpDelay);
     }
 

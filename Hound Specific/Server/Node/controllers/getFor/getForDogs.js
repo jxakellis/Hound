@@ -1,13 +1,19 @@
 const DatabaseError = require('../../main/tools/errors/databaseError');
+const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
-const { formatBoolean } = require('../../main/tools/validation/validateFormat');
+const { formatBoolean, areAllDefined } = require('../../main/tools/validation/validateFormat');
 const { getLogsQuery } = require('./getForLogs');
 const { getRemindersQuery } = require('./getForReminders');
 
 /**
- * Returns the dog for the dogId. Errors not handled
+ *  If the query is successful, returns the dog for the dogId.
+ *  If a problem is encountered, creates and throws custom error
  */
 const getDogQuery = async (req, dogId) => {
+  if (areAllDefined(dogId) === false) {
+    throw new ValidationError('dogId missing', 'ER_VALUES_MISSING');
+  }
+
   try {
     const result = await queryPromise(
       req,
@@ -41,9 +47,14 @@ const getDogQuery = async (req, dogId) => {
 };
 
 /**
- * Returns an array of all the dogs for the familyId. Errors not handled
+ *  If the query is successful, returns an array of all the dogs for the familyId.
+ *  If a problem is encountered, creates and throws custom error
  */
 const getDogsQuery = async (req, familyId) => {
+  if (areAllDefined(familyId) === false) {
+    throw new ValidationError('familyId missing', 'ER_VALUES_MISSING');
+  }
+
   try {
     const result = await queryPromise(
       req,

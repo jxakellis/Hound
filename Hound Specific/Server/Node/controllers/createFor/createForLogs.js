@@ -16,13 +16,9 @@ const createLogQuery = async (req) => {
   const { logAction } = req.body;
   const { logCustomActionName } = req.body;
 
-  if (areAllDefined([logDate, logAction]) === false) {
-    throw new ValidationError('logDate or logAction missing', 'ER_VALUES_MISSING');
+  if (areAllDefined(dogId, logDate, logNote, logAction) === false) {
+    throw new ValidationError('dogId, logDate, logNote, or logAction missing', 'ER_VALUES_MISSING');
   }
-  // else if (logAction === 'Custom' && !logCustomActionName) {
-  // see if logAction is being updated to custom and tell the user to provide logCustomActionName if so.
-  //   throw new ValidationError('No logCustomActionName provided for "Custom" logAction', 'ER_VALUES_MISSING');
-  // }
 
   try {
     const result = await queryPromise(

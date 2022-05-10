@@ -3,6 +3,7 @@ const { createDogQuery } = require('../createFor/createForDogs');
 const { updateDogQuery } = require('../updateFor/updateForDogs');
 const { deleteDogQuery } = require('../deleteFor/deleteForDogs');
 const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
+const { areAllDefined } = require('../../main/tools/validation/validateFormat');
 
 /*
 Known:
@@ -14,45 +15,31 @@ const getDogs = async (req, res) => {
   const familyId = req.params.familyId;
   const dogId = req.params.dogId;
 
-  // if dogId is defined and it is a number then continue
-  if (dogId) {
-    try {
-      const result = await getDogQuery(req, dogId);
-      if (result.length === 0) {
-        // successful but empty array, not dogs to return
-        await req.commitQueries(req);
-        return res.status(200).json({ result: [] });
-      }
-      else {
-        // array has items, meaning there was a dog found, successful!
-        await req.commitQueries(req);
-        return res.status(200).json({ result });
-      }
+  let result;
+  try {
+    // if dogId is defined and it is a number then continue to find a single dog
+    if (areAllDefined(dogId)) {
+      result = await getDogQuery(req, dogId);
     }
-    catch (error) {
-      await req.rollbackQueries(req);
-      return res.status(400).json(convertErrorToJSON(error));
+    // looking for multiple dogs
+    else {
+      result = await getDogsQuery(req, familyId);
     }
   }
+  catch (error) {
+    await req.rollbackQueries(req);
+    return res.status(400).json(convertErrorToJSON(error));
+  }
+
+  if (result.length === 0) {
+    // successful but empty array, not dogs to return
+    await req.commitQueries(req);
+    return res.status(200).json({ result: [] });
+  }
   else {
-    try {
-      const result = await getDogsQuery(req, familyId);
-      if (result.length === 0) {
-        // successful but empty array, not dogs to return
-        await req.commitQueries(req);
-        return res.status(200).json({ result: [] });
-      }
-      else {
-        // array has items, meaning there were dogs found, successful!
-        await req.commitQueries(req);
-        return res.status(200).json({ result });
-      }
-    }
-    catch (error) {
-      // error when trying to do query to database
-      await req.rollbackQueries(req);
-      return res.status(400).json(convertErrorToJSON(error));
-    }
+    // array has items, meaning there was a dog found, successful!
+    await req.commitQueries(req);
+    return res.status(200).json({ result });
   }
 };
 

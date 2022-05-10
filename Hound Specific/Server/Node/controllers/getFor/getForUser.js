@@ -1,6 +1,7 @@
 const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { areAllDefined } = require('../../main/tools/validation/validateFormat');
 
 const userInformationSelect = 'users.userId, users.userNotificationToken, users.userFirstName, users.userLastName, users.userEmail';
 const userConfigurationSelect = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.logsInterfaceScale, userConfiguration.remindersInterfaceScale, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';
@@ -9,6 +10,10 @@ const userConfigurationSelect = 'userConfiguration.isNotificationEnabled, userCo
  * Returns the user for the userId. Errors not handled
  */
 const getUserForUserIdQuery = async (req, userId) => {
+  if (areAllDefined(userId) === false) {
+    throw new ValidationError('userId missing', 'ER_VALUES_MISSING');
+  }
+
   let userInformation;
   // only one user should exist for any userId otherwise the table is broken
   try {
@@ -23,12 +28,6 @@ const getUserForUserIdQuery = async (req, userId) => {
   catch (error) {
     throw new DatabaseError(error.code);
   }
-
-  if (userInformation.length !== 1) {
-    // successful but empty array, no user to return.
-    // Theoretically could be multiple users found but that means the table is broken. Just do catch all
-    throw new ValidationError('No user found or invalid permissions', 'ER_NOT_FOUND');
-  }
   userInformation = userInformation[0];
 
   // array has item(s), meaning there was a user found, successful!
@@ -39,7 +38,11 @@ const getUserForUserIdQuery = async (req, userId) => {
  * Returns the user for the userIdentifier. Errors not handled
  */
 const getUserForUserIdentifierQuery = async (req, userIdentifier) => {
-// userIdentifier method of finding corresponding user(s)
+  if (areAllDefined(userIdentifier) === false) {
+    throw new ValidationError('userIdentifier missing', 'ER_VALUES_MISSING');
+  }
+
+  // userIdentifier method of finding corresponding user(s)
   let userInformation;
   try {
     // have to specifically reference the columns, otherwise familyMembers.userId will override users.userId.
@@ -53,6 +56,8 @@ const getUserForUserIdentifierQuery = async (req, userIdentifier) => {
   catch (error) {
     throw new DatabaseError(error.code);
   }
+
+  // in this case, there was no middleware to verify the userIdentifer so we must make sure that it is valid
   if (userInformation.length === 0) {
     // successful but empty array, no user to return.
     // Theoretically could be multiple users found but that means the table is broken. Just do catch all

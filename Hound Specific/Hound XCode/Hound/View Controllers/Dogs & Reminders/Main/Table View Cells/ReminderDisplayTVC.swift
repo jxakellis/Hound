@@ -83,42 +83,42 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
         switch reminder.reminderType {
         case .countdown:
             reminderIconImageView.image = UIImage.init(systemName: "timer")
-            nextAlarmLabel.text = ("Every \(String.convertToReadable(fromTimeInterval: reminder.countdownComponents.executionInterval))")
+            reminderIntervalLabel.text = ("Every \(String.convertToReadable(fromTimeInterval: reminder.countdownComponents.executionInterval))")
         case .weekly:
             reminderIconImageView.image = UIImage.init(systemName: "alarm")
-            try! nextAlarmLabel.text = ("\(String.convertToReadable(fromDateComponents: reminder.weeklyComponents.dateComponents))")
+            try! reminderIntervalLabel.text = ("\(String.convertToReadable(fromDateComponents: reminder.weeklyComponents.dateComponents))")
             
             // weekdays
             if reminder.weeklyComponents.weekdays == [1, 2, 3, 4, 5, 6, 7] {
-                nextAlarmLabel.text?.append(" Everyday")
+                reminderIntervalLabel.text?.append(" Everyday")
             }
             else if reminder.weeklyComponents.weekdays == [1, 7] {
-                nextAlarmLabel.text?.append(" on Weekends")
+                reminderIntervalLabel.text?.append(" on Weekends")
             }
             else if reminder.weeklyComponents.weekdays == [2, 3, 4, 5, 6] {
-                nextAlarmLabel.text?.append(" on Weekdays")
+                reminderIntervalLabel.text?.append(" on Weekdays")
             }
             else {
-                nextAlarmLabel.text?.append(" on")
+                reminderIntervalLabel.text?.append(" on")
                 if reminder.weeklyComponents.weekdays.count == 1 {
                     for weekdayInt in reminder.weeklyComponents.weekdays {
                         switch weekdayInt {
                         case 1:
-                            nextAlarmLabel.text?.append(" Sunday")
+                            reminderIntervalLabel.text?.append(" Sunday")
                         case 2:
-                            nextAlarmLabel.text?.append(" Monday")
+                            reminderIntervalLabel.text?.append(" Monday")
                         case 3:
-                            nextAlarmLabel.text?.append(" Tuesday")
+                            reminderIntervalLabel.text?.append(" Tuesday")
                         case 4:
-                            nextAlarmLabel.text?.append(" Wednesday")
+                            reminderIntervalLabel.text?.append(" Wednesday")
                         case 5:
-                            nextAlarmLabel.text?.append(" Thursday")
+                            reminderIntervalLabel.text?.append(" Thursday")
                         case 6:
-                            nextAlarmLabel.text?.append(" Friday")
+                            reminderIntervalLabel.text?.append(" Friday")
                         case 7:
-                            nextAlarmLabel.text?.append(" Saturday")
+                            reminderIntervalLabel.text?.append(" Saturday")
                         default:
-                            nextAlarmLabel.text?.append("unknown")
+                            reminderIntervalLabel.text?.append("unknown")
                         }
                     }
                 }
@@ -126,41 +126,41 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
                     for weekdayInt in reminder.weeklyComponents.weekdays {
                         switch weekdayInt {
                         case 1:
-                            nextAlarmLabel.text?.append(" Su,")
+                            reminderIntervalLabel.text?.append(" Su,")
                         case 2:
-                            nextAlarmLabel.text?.append(" M,")
+                            reminderIntervalLabel.text?.append(" M,")
                         case 3:
-                            nextAlarmLabel.text?.append(" Tu,")
+                            reminderIntervalLabel.text?.append(" Tu,")
                         case 4:
-                            nextAlarmLabel.text?.append(" W,")
+                            reminderIntervalLabel.text?.append(" W,")
                         case 5:
-                            nextAlarmLabel.text?.append(" Th,")
+                            reminderIntervalLabel.text?.append(" Th,")
                         case 6:
-                            nextAlarmLabel.text?.append(" F,")
+                            reminderIntervalLabel.text?.append(" F,")
                         case 7:
-                            nextAlarmLabel.text?.append(" Sa,")
+                            reminderIntervalLabel.text?.append(" Sa,")
                         default:
-                            nextAlarmLabel.text?.append("unknown")
+                            reminderIntervalLabel.text?.append("unknown")
                         }
                     }
                 }
                 // checks if extra comma, then removes
-                if nextAlarmLabel.text?.last == ","{
-                    nextAlarmLabel.text?.removeLast()
+                if reminderIntervalLabel.text?.last == ","{
+                    reminderIntervalLabel.text?.removeLast()
                 }
             }
         case .monthly:
             reminderIconImageView.image = UIImage.init(systemName: "calendar")
-            try! self.nextAlarmLabel.text = ("\(String.convertToReadable(fromDateComponents: reminder.monthlyComponents.dateComponents))")
+            try! self.reminderIntervalLabel.text = ("\(String.convertToReadable(fromDateComponents: reminder.monthlyComponents.dateComponents))")
             
             // day of month
             let monthlyDay: Int = reminder.monthlyComponents.monthlyDay
-            nextAlarmLabel.text?.append(" Every Month on \(monthlyDay)")
+            reminderIntervalLabel.text?.append(" Every Month on \(monthlyDay)")
             
-            nextAlarmLabel.text?.append(String.monthlyDaySuffix(day: monthlyDay))
+            reminderIntervalLabel.text?.append(String.monthlyDaySuffix(day: monthlyDay))
         case .oneTime:
             reminderIconImageView.image = UIImage.init(systemName: "calendar")
-            nextAlarmLabel.text = String.convertToReadable(fromDate: reminder.oneTimeComponents.oneTimeDate)
+            reminderIntervalLabel.text = String.convertToReadable(fromDate: reminder.oneTimeComponents.oneTimeDate)
         }
         
         reloadNextAlarmText()
@@ -182,7 +182,6 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
         reminderActionTopConstraint.constant = 7.5 * sizeRatio
         reminderActionHeightConstraint.constant = 30.0 * sizeRatio
         reminderActionBottomConstraint.constant = 2.5 * sizeRatio
-        
         
         // Reminder Interval Label Configuration
         

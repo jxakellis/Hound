@@ -7,8 +7,8 @@ const createSnoozeComponents = async (req, reminder) => {
   const snoozeExecutionInterval = formatNumber(reminder.snoozeExecutionInterval);
   const snoozeIntervalElapsed = formatNumber(reminder.snoozeIntervalElapsed);
 
-  if (areAllDefined([snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed]) === false) {
-    throw new ValidationError('snoozeIsEnabled, snoozeExecutionInterval, or snoozeIntervalElapsed missing', 'ER_VALUES_MISSING');
+  if (areAllDefined(reminder.reminderId, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed) === false) {
+    throw new ValidationError('reminderId, snoozeIsEnabled, snoozeExecutionInterval, or snoozeIntervalElapsed missing', 'ER_VALUES_MISSING');
   }
 
   // Only insert components if the reminder is snoozing, otherwise there is no need for them
@@ -36,8 +36,8 @@ const updateSnoozeComponents = async (req, reminder) => {
   const snoozeExecutionInterval = formatNumber(reminder.snoozeExecutionInterval);
   const snoozeIntervalElapsed = formatNumber(reminder.snoozeIntervalElapsed);
 
-  if (areAllDefined([snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed]) === false) {
-    throw new ValidationError('snoozeIsEnabled, snoozeExecutionInterval, or snoozeIntervalElapsed missing', 'ER_VALUES_MISSING');
+  if (areAllDefined(reminder.reminderId, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed) === false) {
+    throw new ValidationError('reminderId, snoozeIsEnabled, snoozeExecutionInterval, or snoozeIntervalElapsed missing', 'ER_VALUES_MISSING');
   }
 
   if (snoozeIsEnabled === true) {

@@ -5,6 +5,7 @@ const app = express();
 
 // MARK: Create the server
 
+// TO DO enable me for production
 const isProduction = true;
 const port = 3000;
 const { restoreAlarmNotificationsForAllFamilies } = require('../tools/notifications/alarm/restoreAlarmNotification');
@@ -13,7 +14,6 @@ const { restoreAlarmNotificationsForAllFamilies } = require('../tools/notificati
 const server = app.listen(port, () => {
   serverLogger.info(`Listening on port ${port}`);
 
-  // TO DO re enable me for production
   if (isProduction === true) {
     // Server is freshly restarted. Restore notifications that were lost;
     restoreAlarmNotificationsForAllFamilies();
@@ -28,7 +28,9 @@ configureAppForRequests(app);
 
 // MARK:  Handle termination of the server
 
-const { connectionForNotifications, poolForRequests } = require('../tools/database/databaseConnection');
+const {
+  connectionForAlarms, connectionForLogs, connectionForTokens, poolForRequests,
+} = require('../tools/database/databaseConnection');
 const { schedule } = require('../tools/notifications/alarm/schedules');
 
 process.on('SIGTERM', () => {
@@ -60,8 +62,16 @@ const shutdown = () => {
       serverLogger.info('Pool For Requests Ended');
     });
 
-    connectionForNotifications.end(() => {
-      serverLogger.info('Connection For Notifications Ended');
+    connectionForAlarms.end(() => {
+      serverLogger.info('Connection For Alarms Ended');
+    });
+
+    connectionForLogs.end(() => {
+      serverLogger.info('Connection For Logs Ended');
+    });
+
+    connectionForTokens.end(() => {
+      serverLogger.info('Connection For Tokens Ended');
     });
 
     server.close(() => {

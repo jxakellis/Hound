@@ -81,7 +81,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="65.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Potty - Every 30 Minutes" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aZu-Qx-VXW" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Potty - Every 30 Minutes" lineBreakMode="tailTruncation" minimumScaleFactor="0.34999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="aZu-Qx-VXW" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                             <rect key="frame" x="10" y="10" width="305" height="45.5"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="45" id="mH0-oX-bg1"/>
@@ -736,7 +736,7 @@
                                                 <constraint firstAttribute="width" constant="20" id="ieF-kk-hdN"/>
                                             </constraints>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Next Reminder In: 5 minutes" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="E6i-Fi-bHd" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Next Reminder In: 5 minutes" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.34999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="E6i-Fi-bHd" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                             <rect key="frame" x="70" y="58" width="304" height="20"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="i9K-No-B69"/>
@@ -800,7 +800,7 @@
                                                 <action selector="didToggleReminderIsEnabled:" destination="Lai-xI-ipQ" eventType="valueChanged" id="V06-Vh-HVK"/>
                                             </connections>
                                         </switch>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Every 30 Minutes" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="bK9-8i-YGQ" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Every 30 Minutes" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.34999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="bK9-8i-YGQ" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                             <rect key="frame" x="70" y="40.5" width="245" height="15"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="15" id="fL5-n7-OUt"/>
@@ -826,7 +826,7 @@
                                                 <constraint firstAttribute="width" secondItem="vrP-ae-kTK" secondAttribute="height" multiplier="1:1.5" id="vLO-W2-hfl"/>
                                             </constraints>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Remind In: 5 Minutes" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="PDj-HF-Z40" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Remind In: 5 Minutes" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.34999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="PDj-HF-Z40" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                             <rect key="frame" x="70" y="58" width="245" height="15"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="15" id="PfR-w2-cTb"/>

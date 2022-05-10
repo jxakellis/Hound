@@ -1,6 +1,6 @@
 const { alarmLogger } = require('../../logging/loggers');
 const { queryPromise } = require('../../database/queryPromise');
-const { connectionForNotifications } = require('../../database/databaseConnection');
+const { connectionForAlarms } = require('../../database/databaseConnection');
 
 const {
   formatBoolean, formatNumber, formatDate, areAllDefined,
@@ -8,12 +8,6 @@ const {
 
 const { createSecondaryAlarmNotificationForUser } = require('./createAlarmNotification');
 const { deleteSecondaryAlarmNotificationsForUser } = require('./deleteAlarmNotification');
-
-// TO DO refresh for edge cases
-
-// Add refresh notifications (aka refresh scheduled jobs) for family,
-// this would be invoked when the family toggles isPaused.
-// No need to call upon a family delete (as sendAPN checks for user tokens before sending and if the family was deleted then no tokens linked to the familyId)
 
 /**
  * Invoke when the user toggles isFollowUpEnabled or changes followUpDelay
@@ -25,14 +19,14 @@ const refreshSecondaryAlarmNotificationsForUser = async (userId, isFollowUpEnabl
   alarmLogger.debug(`refreshSecondaryAlarmNotificationsForUser ${userId}, ${isFollowUpEnabled}, ${followUpDelay}`);
 
   // Have to be careful isFollowUpEnabled and followUpDelay are accessed as there will be uncommited transactions involved
-  // If the transaction is uncommited and querying from an outside connection (connectionForNotifications), the values from a SELECT query will be the old values
+  // If the transaction is uncommited and querying from an outside connection (connectionForAlarms), the values from a SELECT query will be the old values
   // If the transaction is uncommited and querying from the updating connection (req.connection), the values from the SELECT query will be the updated values
   // If the transaction is committed, then any connection will reflect the new values
   let formattedIsFollowUpEnabled = formatBoolean(isFollowUpEnabled);
   let formattedFollowUpDelay = formatNumber(followUpDelay);
   try {
     const result = await queryPromise(
-      connectionForNotifications,
+      connectionForAlarms,
       'SELECT isFollowUpEnabled, followUpDelay FROM userConfiguration WHERE userId = ? LIMIT 18446744073709551615',
       [userId],
     );
@@ -44,18 +38,17 @@ const refreshSecondaryAlarmNotificationsForUser = async (userId, isFollowUpEnabl
     if (areAllDefined(formattedFollowUpDelay) === false) {
       formattedFollowUpDelay = formatNumber(result[0].followUpDelay);
     }
-    if (areAllDefined([userId, isFollowUpEnabled, followUpDelay])) {
+    if (areAllDefined(userId, isFollowUpEnabled, followUpDelay)) {
       if (isFollowUpEnabled === false) {
-        // follow up is not enabled so we should remove any potential secondary jobs
+      // follow up is not enabled so we should remove any potential secondary jobs
         await deleteSecondaryAlarmNotificationsForUser(userId);
       }
       else {
-        // follow up is enabled and followUpDelay is potentially updated. Therefore destroy any existing secondary jobs and recreate
-        await deleteSecondaryAlarmNotificationsForUser(userId);
-
+        // follow up is enabled and followUpDelay is potentially updated. Therefore recreate secondary jobs
+        // no need to invoke deleteSecondaryAlarmNotificationsForUser as createSecondaryAlarmNotificationForUser will delete/override by itself
         // get all the reminders for the given userId
         const remindersWithInfo = await queryPromise(
-          connectionForNotifications,
+          connectionForAlarms,
           'SELECT dogReminders.reminderId, dogReminders.reminderExecutionDate FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE familyMembers.userId = ? AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
           [userId],
         );
@@ -75,7 +68,8 @@ const refreshSecondaryAlarmNotificationsForUser = async (userId, isFollowUpEnabl
     }
   }
   catch (error) {
-    alarmLogger.error(`refreshSecondaryAlarmNotificationsForUser error: ${JSON.stringify(error)}`);
+    alarmLogger.error('refreshSecondaryAlarmNotificationsForUser error:');
+    alarmLogger.error(error);
   }
 };
 

@@ -26,9 +26,21 @@ const updateUserQuery = async (req) => {
   const { notificationSound } = req.body;
 
   // checks to see that all needed components are provided
-  if (atLeastOneDefined([userEmail, userFirstName, userLastName, userNotificationToken, isNotificationEnabled,
-    isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale,
-    interfaceStyle, snoozeLength, notificationSound]) === false) {
+  if (atLeastOneDefined(
+    userEmail,
+    userFirstName,
+    userLastName,
+    userNotificationToken,
+    isNotificationEnabled,
+    isLoudNotification,
+    isFollowUpEnabled,
+    followUpDelay,
+    logsInterfaceScale,
+    remindersInterfaceScale,
+    interfaceStyle,
+    snoozeLength,
+    notificationSound,
+  ) === false) {
     throw new ValidationError('No userEmail, userFirstName, userLastName, userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound provided', 'ER_NO_VALUES_PROVIDED');
   }
 
@@ -76,6 +88,7 @@ const updateUserQuery = async (req) => {
         [isLoudNotification, userId],
       );
     }
+    // don't refresh secondary jobs here, it will be handled by the main controller
     if (areAllDefined(isFollowUpEnabled)) {
       await queryPromise(
         req,
@@ -83,6 +96,7 @@ const updateUserQuery = async (req) => {
         [isFollowUpEnabled, userId],
       );
     }
+    // don't refresh secondary jobs here, it will be handled by the main controller
     if (areAllDefined(followUpDelay)) {
       await queryPromise(
         req,

@@ -18,16 +18,26 @@ const { updateSnoozeComponents } = require('../reminderComponents/snooze');
  */
 const updateReminderQuery = async (req) => {
   const reminderId = req.body.reminderId;
-  const { reminderType, reminderAction, reminderCustomActionName } = req.body;
+  const { reminderAction, reminderCustomActionName, reminderType } = req.body;
   const reminderExecutionBasis = formatDate(req.body.reminderExecutionBasis);
   const reminderExecutionDate = formatDate(req.body.reminderExecutionDate);
   const reminderIsEnabled = formatBoolean(req.body.reminderIsEnabled);
 
-  if (areAllDefined([reminderId, reminderType, reminderAction, reminderExecutionBasis, reminderIsEnabled]) === false) {
-    throw new ValidationError('reminderId, reminderType, reminderAction, reminderExecutionBasis, or reminderIsEnabled missing', 'ER_VALUES_MISSING');
+  if (areAllDefined(reminderId, reminderAction, reminderType, reminderExecutionBasis, reminderIsEnabled) === false) {
+    throw new ValidationError('reminderid, reminderAction, reminderType, reminderExecutionBasis, or reminderIsEnabled missing', 'ER_VALUES_MISSING');
+  }
+  else if (reminderType !== 'countdown' && reminderType !== 'weekly' && reminderType !== 'monthly' && reminderType !== 'oneTime') {
+    throw new ValidationError('reminderType invalid', 'ER_VALUES_INVALID');
   }
 
   try {
+    // update primary bit of reminder
+    await queryPromise(
+      req,
+      'UPDATE dogReminders SET reminderType = ?, reminderAction = ?, reminderCustomActionName = ?, reminderExecutionBasis = ?, reminderExecutionDate = ?, reminderIsEnabled = ?  WHERE reminderId = ?',
+      [reminderType, reminderAction, reminderCustomActionName, reminderExecutionBasis, reminderExecutionDate, reminderIsEnabled, reminderId],
+    );
+
     // update reminder components
     if (reminderType === 'countdown') {
       await updateCountdownComponents(req, req.body);
@@ -41,19 +51,9 @@ const updateReminderQuery = async (req) => {
     else if (reminderType === 'oneTime') {
       await updateOneTimeComponents(req, req.body);
     }
-    else {
-      throw new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID');
-    }
 
     // no need to invoke anything else as the snoozeComponents are self contained and the function handles deleting snoozeComponents if snoozeIsEnabled is changing to false
     await updateSnoozeComponents(req, req.body);
-
-    // update primary bit of reminder
-    await queryPromise(
-      req,
-      'UPDATE dogReminders SET reminderType = ?, reminderAction = ?, reminderCustomActionName = ?, reminderExecutionBasis = ?, reminderExecutionDate = ?, reminderIsEnabled = ?  WHERE reminderId = ?',
-      [reminderType, reminderAction, reminderCustomActionName, reminderExecutionBasis, reminderExecutionDate, reminderIsEnabled, reminderId],
-    );
 
     return [req.body];
   }
@@ -70,6 +70,10 @@ const updateRemindersQuery = async (req) => {
   // assume .reminders is an array
   const reminders = formatArray(req.body.reminders);
 
+  if (areAllDefined(reminders) === false) {
+    throw new ValidationError('reminders missing', 'ER_VALUES_MISSING');
+  }
+
   // synchronously iterate through all reminders provided to update them all
   // if there is a problem, we rollback all our queries and send the failure response
   // if there are no problems with any of the reminders, we commit our queries and send the success response
@@ -80,11 +84,21 @@ const updateRemindersQuery = async (req) => {
     const reminderExecutionDate = formatDate(reminders[i].reminderExecutionDate);
     const reminderIsEnabled = formatBoolean(reminders[i].reminderIsEnabled);
 
-    if (areAllDefined([reminderId, reminderType, reminderAction, reminderExecutionBasis, reminderIsEnabled]) === false) {
+    if (areAllDefined(reminderId, reminderAction, reminderType, reminderExecutionBasis, reminderIsEnabled) === false) {
       throw new ValidationError('reminderid, reminderAction, reminderType, reminderExecutionBasis, or reminderIsEnabled missing', 'ER_VALUES_MISSING');
+    }
+    else if (reminderType !== 'countdown' && reminderType !== 'weekly' && reminderType !== 'monthly' && reminderType !== 'oneTime') {
+      throw new ValidationError('reminderType invalid', 'ER_VALUES_INVALID');
     }
 
     try {
+      // update primary bit of reminder
+      await queryPromise(
+        req,
+        'UPDATE dogReminders SET reminderType = ?, reminderAction = ?, reminderCustomActionName = ?, reminderExecutionBasis = ?, reminderExecutionDate = ?, reminderIsEnabled = ?  WHERE reminderId = ?',
+        [reminderType, reminderAction, reminderCustomActionName, reminderExecutionBasis, reminderExecutionDate, reminderIsEnabled, reminderId],
+      );
+
       // update reminder components
       if (reminderType === 'countdown') {
         await updateCountdownComponents(req, reminders[i]);
@@ -98,27 +112,15 @@ const updateRemindersQuery = async (req) => {
       else if (reminderType === 'oneTime') {
         await updateOneTimeComponents(req, reminders[i]);
       }
-      else {
-        throw new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID');
-      }
 
       // no need to invoke anything else as the snoozeComponents are self contained and the function handles deleting snoozeComponents if snoozeIsEnabled is changing to false
       await updateSnoozeComponents(req, reminders[i]);
-
-      // update primary bit of reminder
-      await queryPromise(
-        req,
-        'UPDATE dogReminders SET reminderType = ?, reminderAction = ?, reminderCustomActionName = ?, reminderExecutionBasis = ?, reminderExecutionDate = ?, reminderIsEnabled = ?  WHERE reminderId = ?',
-        [reminderType, reminderAction, reminderCustomActionName, reminderExecutionBasis, reminderExecutionDate, reminderIsEnabled, reminderId],
-      );
     }
     catch (error) {
       throw new DatabaseError(error.code);
     }
   }
-  // return must be outside for loop, otherwise function won't return
-  // eslint-disable-next-line no-useless-return
-  return req.body.reminders;
+  return reminders;
 };
 
 module.exports = { updateReminderQuery, updateRemindersQuery };

@@ -1,6 +1,6 @@
 const DatabaseError = require('../../errors/databaseError');
 const { queryPromise } = require('../../database/queryPromise');
-const { connectionForNotifications } = require('../../database/databaseConnection');
+const { connectionForTokens } = require('../../database/databaseConnection');
 
 const userConfigurationJoin = 'JOIN userConfiguration ON users.userId = userConfiguration.userId';
 const familyMembersJoin = 'JOIN familyMembers ON users.userId = familyMembers.userId';
@@ -14,7 +14,7 @@ const getUserToken = async (userId) => {
   try {
     // retrieve userNotificationToken that fit the criteria
     const result = await queryPromise(
-      connectionForNotifications,
+      connectionForTokens,
       `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} WHERE users.userId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 1`,
       [userId],
     );
@@ -39,7 +39,7 @@ const getAllFamilyMemberTokens = async (familyId) => {
   try {
     // retrieve userNotificationToken that fit the criteria
     const result = await queryPromise(
-      connectionForNotifications,
+      connectionForTokens,
       `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
       [familyId],
     );
@@ -64,7 +64,7 @@ const getOtherFamilyMemberTokens = async (userId, familyId) => {
   try {
     // retrieve userNotificationToken that fit the criteria
     const result = await queryPromise(
-      connectionForNotifications,
+      connectionForTokens,
       `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userId != ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
       [familyId, userId],
     );

@@ -11,6 +11,10 @@ import UIKit
 /// Configuration that is local to the app only. If the app is reinstalled then this data should be fresh
 enum LocalConfiguration {
     
+    // TO DO import certain variables from Hound 1.3.5 that are immutable to me (e.g. notificationAuthorized and reviewRequestDates) as Apple doesn't care that the app reset so the original values need to be tracked
+    // open up Hound 1.3.5 and find their original names to import
+    // TO DO remove unnecessary 'static private var storedVarible'. Make it all just static var with no getter/setters (unless its something speicial like dogIcon, logCustomActioNames, etc..)
+    
     // MARK: Dog Related
     
     /// This stores the icons for the dogs locally. If a dog is succesfully POST, PUT, or DELETE then we update this dictionary, otherwise it remains untouched.

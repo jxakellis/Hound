@@ -1,6 +1,7 @@
 const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { areAllDefined } = require('../../main/tools/validation/validateFormat');
 
 const dogRemindersSelect = 'dogReminders.reminderId, dogReminders.reminderAction, dogReminders.reminderCustomActionName, dogReminders.reminderType, dogReminders.reminderExecutionBasis, dogReminders.reminderIsEnabled, dogReminders.reminderExecutionDate';
 
@@ -20,9 +21,14 @@ const reminderOneTimeComponentsSelect = 'reminderOneTimeComponents.oneTimeDate';
 const reminderOneTimeComponentsLeftJoin = 'LEFT JOIN reminderOneTimeComponents ON dogReminders.reminderId = reminderOneTimeComponents.reminderId';
 
 /**
- * Returns the reminder for the reminderId. Errors not handled
+ *  If the query is successful, returns the reminder for the reminderId.
+ *  If a problem is encountered, creates and throws custom error
  */
 const getReminderQuery = async (req, reminderId) => {
+  if (areAllDefined(reminderId) === false) {
+    throw new ValidationError('reminderId missing', 'ER_VALUES_MISSING');
+  }
+
   let result;
   try {
     // find reminder that matches the id
@@ -34,11 +40,6 @@ const getReminderQuery = async (req, reminderId) => {
   }
   catch (error) {
     throw new DatabaseError(error.code);
-  }
-
-  // there wasn't a reminder found for the reminderId
-  if (result.length !== 1) {
-    throw new ValidationError('No reminder found or invalid permissions', 'ER_VALUES_INVALID');
   }
 
   // iterate through all the reminders returned
@@ -57,9 +58,14 @@ const getReminderQuery = async (req, reminderId) => {
 };
 
 /**
- * Returns an array of all the reminders for the dogId. Errors not handled
+ *  If the query is successful, returns an array of all the reminders for the dogId.
+ *  If a problem is encountered, creates and throws custom error
  */
 const getRemindersQuery = async (req, dogId) => {
+  if (areAllDefined(dogId) === false) {
+    throw new ValidationError('dogId missing', 'ER_VALUES_MISSING');
+  }
+
   try {
     // find reminder that matches the dogId
     const result = await queryPromise(

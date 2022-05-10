@@ -1,5 +1,6 @@
+const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
-const { formatNumber } = require('../../main/tools/validation/validateFormat');
+const { formatNumber, areAllDefined } = require('../../main/tools/validation/validateFormat');
 
 /* KNOWN:
 - reminderId defined
@@ -9,7 +10,9 @@ const createCountdownComponents = async (req, reminder) => {
   const countdownExecutionInterval = formatNumber(reminder.countdownExecutionInterval);
   const countdownIntervalElapsed = formatNumber(reminder.countdownIntervalElapsed);
 
-  // TO DO add check that all components are defined (or throw validation error)
+  if (areAllDefined(reminder.reminderId, countdownExecutionInterval, countdownIntervalElapsed) === false) {
+    throw new ValidationError('reminderId, countdownExecutionInterval, or countdownExecutionInterval missing', 'ER_VALUES_MISSING');
+  }
 
   await queryPromise(
     req,
@@ -23,7 +26,9 @@ const updateCountdownComponents = async (req, reminder) => {
   const countdownExecutionInterval = formatNumber(reminder.countdownExecutionInterval);
   const countdownIntervalElapsed = formatNumber(reminder.countdownIntervalElapsed);
 
-  // TO DO add check that all components are defined (or throw validation error)
+  if (areAllDefined(reminder.reminderId, countdownExecutionInterval, countdownIntervalElapsed) === false) {
+    throw new ValidationError('reminderId, countdownExecutionInterval, or countdownExecutionInterval missing', 'ER_VALUES_MISSING');
+  }
 
   try {
     // If this succeeds: Reminder was not present in the countdown table and the reminderType was changed. The old components will be deleted from the other table by reminders

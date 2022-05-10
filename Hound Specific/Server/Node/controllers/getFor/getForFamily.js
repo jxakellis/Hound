@@ -1,10 +1,17 @@
 const DatabaseError = require('../../main/tools/errors/databaseError');
+const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { areAllDefined } = require('../../main/tools/validation/validateFormat');
 
 /**
- * Returns the familyCode, isLocked, and  familyMembers for the familyId. Errors not handled
+ *  If the query is successful, returns the familyCode, isLocked, and  familyMembers for the familyId.
+ *  If a problem is encountered, creates and throws custom error
  */
 const getFamilyInformationForFamilyIdQuery = async (req, familyId) => {
+  // validate that a familyId was passed, assume that its in the correct format
+  if (areAllDefined(familyId) === false) {
+    throw new ValidationError('familyId missing', 'ER_VALUES_MISSING');
+  }
   // family id is validated, therefore we know familyMembers is >= 1 for familyId
   try {
     // get family members
@@ -33,9 +40,15 @@ const getFamilyInformationForFamilyIdQuery = async (req, familyId) => {
 };
 
 /**
- * Returns the family members for the userId. Errors not handled
+ *  If the query is successful, returns the family members for the userId.
+ *  If a problem is encountered, creates and throws custom error
  */
 const getFamilyMembersForUserIdQuery = async (req, userId) => {
+  // validate that a userId was passed, assume that its in the correct format
+  if (areAllDefined(userId) === false) {
+    throw new ValidationError('userId missing', 'ER_VALUES_MISSING');
+  }
+
   try {
     const result = await queryPromise(
       req,

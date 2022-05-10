@@ -15,9 +15,10 @@ const updateDogQuery = async (req) => {
   const { dogName } = req.body;
 
   // if dogName undefined, then there is nothing to update
-  if (areAllDefined([dogName]) === false) {
-    throw new ValidationError('dogName missing', 'ER_VALUES_MISSING');
+  if (areAllDefined(dogId, dogName) === false) {
+    throw new ValidationError('dogId or dogName missing', 'ER_VALUES_MISSING');
   }
+
   try {
     // updates the dogName for the dogId provided
     return queryPromise(req, 'UPDATE dogs SET dogName = ? WHERE dogId = ?', [dogName, dogId]);

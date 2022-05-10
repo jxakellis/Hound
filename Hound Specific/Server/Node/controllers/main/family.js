@@ -1,5 +1,3 @@
-const ValidationError = require('../../main/tools/errors/validationError');
-
 const { getFamilyInformationForFamilyIdQuery } = require('../getFor/getForFamily');
 const { createFamilyQuery } = require('../createFor/createForFamily');
 const { updateFamilyQuery } = require('../updateFor/updateForFamily');
@@ -12,31 +10,20 @@ Known:
 */
 const getFamily = async (req, res) => {
   const familyId = req.params.familyId;
-
-  if (familyId) {
-    try {
-      const result = await getFamilyInformationForFamilyIdQuery(req, familyId);
-      await req.commitQueries(req);
-      return res.status(200).json({ result });
-    }
-    catch (error) {
-      await req.rollbackQueries(req);
-      return res.status(400).json(convertErrorToJSON(error));
-    }
+  try {
+    const result = await getFamilyInformationForFamilyIdQuery(req, familyId);
+    await req.commitQueries(req);
+    return res.status(200).json({ result });
   }
-  else {
+  catch (error) {
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('familyId missing', 'ER_VALUES_MISSING').toJSON);
+    return res.status(400).json(convertErrorToJSON(error));
   }
 };
 
 const createFamily = async (req, res) => {
   try {
-    // attempt to create family
     const result = await createFamilyQuery(req);
-    // create family succeeded
-
-    // no need to update any alarm notifications as a newly created family will have no reminders
     await req.commitQueries(req);
     return res.status(200).json({ result });
   }

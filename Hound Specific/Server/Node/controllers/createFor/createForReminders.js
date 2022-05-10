@@ -22,9 +22,12 @@ const createReminderQuery = async (req) => {
   const reminderIsEnabled = formatBoolean(req.body.reminderIsEnabled);
 
   // check to see that necessary generic reminder componetns are present
-  if (areAllDefined([reminderAction, reminderType, reminderExecutionBasis, reminderIsEnabled]) === false) {
+  if (areAllDefined(dogId, reminderAction, reminderType, reminderExecutionBasis, reminderIsEnabled) === false) {
     // >= 1 of the objects are undefined
-    throw new ValidationError('reminderAction, reminderType, reminderExecutionBasis, or reminderIsEnabled missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('dogId, reminderAction, reminderType, reminderExecutionBasis, or reminderIsEnabled missing', 'ER_VALUES_MISSING');
+  }
+  else if (reminderType !== 'countdown' && reminderType !== 'weekly' && reminderType !== 'monthly' && reminderType !== 'oneTime') {
+    throw new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID');
   }
 
   // define out here so reminderId can be accessed in catch block to delete entries
@@ -53,10 +56,6 @@ const createReminderQuery = async (req) => {
     }
     else if (reminderType === 'oneTime') {
       await createOneTimeComponents(req, req.body);
-    }
-    else {
-      // nothing matched reminderType
-      throw new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID');
     }
     // was able to successfully create components for a certain reminder type
     return [req.body];
@@ -87,9 +86,12 @@ const createRemindersQuery = async (req) => {
     const reminderIsEnabled = formatBoolean(reminders[i].reminderIsEnabled);
 
     // check to see that necessary generic reminder componetns are present
-    if (areAllDefined([reminderAction, reminderType, reminderExecutionBasis, reminderIsEnabled]) === false) {
-      // >= 1 of the objects are undefined
-      throw new ValidationError('reminderAction, reminderType, reminderExecutionBasis, or reminderIsEnabled missing', 'ER_VALUES_MISSING');
+    if (areAllDefined(dogId, reminderAction, reminderType, reminderExecutionBasis, reminderIsEnabled) === false) {
+    // >= 1 of the objects are undefined
+      throw new ValidationError('dogId, reminderAction, reminderType, reminderExecutionBasis, or reminderIsEnabled missing', 'ER_VALUES_MISSING');
+    }
+    else if (reminderType !== 'countdown' && reminderType !== 'weekly' && reminderType !== 'monthly' && reminderType !== 'oneTime') {
+      throw new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID');
     }
     // define out here so reminderId can be accessed in catch block to delete entries
     let reminderId;
@@ -116,10 +118,6 @@ const createRemindersQuery = async (req) => {
       }
       else if (reminderType === 'oneTime') {
         await createOneTimeComponents(req, reminders[i]);
-      }
-      else {
-        // nothing matched reminderType
-        throw new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID');
       }
       // was able to successfully create components for a certain reminder type
       createdReminders.push(reminders[i]);

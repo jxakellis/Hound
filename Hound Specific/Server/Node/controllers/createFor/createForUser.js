@@ -10,18 +10,7 @@ const {
  *  If a problem is encountered, creates and throws custom error
  */
 const createUserQuery = async (req) => {
-  if (req.body.userEmail === '') {
-    // userEmail cannot be blank. The else if after will catch this but this statement is to genereate a new, different error.
-    throw new ValidationError('userEmail Blank', 'ER_VALUES_BLANK');
-  }
-
   const userEmail = formatEmail(req.body.userEmail);
-
-  if (areAllDefined(userEmail) === false) {
-    // userEmail NEEDs to be valid, so throw error if it is invalid
-    throw new ValidationError('userEmail Invalid', 'ER_VALUES_INVALID');
-  }
-
   const {
     userIdentifier, userFirstName, userLastName, userNotificationToken,
   } = req.body;
@@ -34,11 +23,14 @@ const createUserQuery = async (req) => {
   const remindersInterfaceScale = req.body.remindersInterfaceScale;
   const interfaceStyle = formatNumber(req.body.interfaceStyle);
   const snoozeLength = formatNumber(req.body.snoozeLength);
-  const { notificationSound } = req.body;
+  const notificationSound = req.body.notificationSound;
   // component of the body is missing or invalid
+  // userNotificationToken is optional as at this point the client may not have it
   if (areAllDefined(
-    [userIdentifier, userEmail, userFirstName, userLastName, isNotificationEnabled,
-      isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, notificationSound],
+    [userEmail, userIdentifier, userFirstName, userLastName,
+      isNotificationEnabled, isLoudNotification, isFollowUpEnabled,
+      followUpDelay, logsInterfaceScale, remindersInterfaceScale,
+      interfaceStyle, snoozeLength, notificationSound],
   ) === false) {
     // >=1 of the items is undefined
     throw new ValidationError('userIdentifier, userEmail, userFirstName, userLastName, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound missing', 'ER_VALUES_MISSING');

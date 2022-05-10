@@ -1,54 +1,47 @@
 const { alarmLogger } = require('../../logging/loggers');
 const { queryPromise } = require('../../database/queryPromise');
-const { connectionForNotifications } = require('../../database/databaseConnection');
-
-const { schedule } = require('./schedules');
+const { connectionForAlarms } = require('../../database/databaseConnection');
 
 const { areAllDefined } = require('../../validation/validateFormat');
+const { cancelPrimaryJobForFamilyForReminder, cancelSecondaryJobForUserForReminder } = require('./cancelJob');
 
 const deleteAlarmNotificationsForFamily = async (familyId) => {
   alarmLogger.debug(`deleteAlarmNotificationsForFamily ${familyId}`);
 
   try {
     // make sure reminderId is defined
-    if (areAllDefined(familyId) === true) {
-      // get all the reminders for the family
-      const reminders = await queryPromise(
-        connectionForNotifications,
-        'SELECT reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.familyId = ? LIMIT 18446744073709551615',
-        [familyId],
-      );
+    if (areAllDefined(familyId) === false) {
+      return;
+    }
+
+    // get all the reminders for the family
+    const reminders = await queryPromise(
+      connectionForAlarms,
+      'SELECT reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.familyId = ? LIMIT 18446744073709551615',
+      [familyId],
+    );
       // finds all the users in the family
-      const users = await queryPromise(
-        connectionForNotifications,
-        'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
-        [familyId],
-      );
+    const users = await queryPromise(
+      connectionForAlarms,
+      'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
+      [familyId],
+    );
 
-      for (let i = 0; i < reminders.length; i += 1) {
-        const reminderId = reminders[i].reminderId;
-        // attempt to locate job that has the familyId and reminderId
-        const primaryJob = schedule.scheduledJobs[`Family${familyId}Reminder${reminderId}`];
-        if (areAllDefined(primaryJob) === true) {
-          alarmLogger.debug(`Cancelling Primary Job: ${primaryJob.name}`);
-          primaryJob.cancel();
-        }
+    for (let i = 0; i < reminders.length; i += 1) {
+      const reminderId = reminders[i].reminderId;
+      cancelPrimaryJobForFamilyForReminder(familyId, reminderId);
 
-        // iterate through all users for the family
-        for (let j = 0; j < users.length; j += 1) {
-          const userId = users[j].userId;
-          // if the users have any jobs on the secondary schedule for the reminder, remove them
-          const secondaryJob = schedule.scheduledJobs[`User${userId}Reminder${reminderId}`];
-          if (areAllDefined(secondaryJob) === true) {
-            alarmLogger.debug(`Cancelling Secondary Job: ${secondaryJob.name}`);
-            secondaryJob.cancel();
-          }
-        }
+      // iterate through all users for the family
+      for (let j = 0; j < users.length; j += 1) {
+        const userId = users[j].userId;
+        // if the users have any jobs on the secondary schedule for the reminder, remove them
+        cancelSecondaryJobForUserForReminder(userId, reminderId);
       }
     }
   }
   catch (error) {
-    alarmLogger.error(`deleteAlarmNotificationsForFamily error: ${JSON.stringify(error)}`);
+    alarmLogger.error('deleteAlarmNotificationsForFamily error:');
+    alarmLogger.error(error);
   }
 };
 
@@ -60,32 +53,27 @@ const deleteAlarmNotificationsForReminder = async (familyId, reminderId) => {
 
   try {
     // make sure reminderId is defined
-    if (areAllDefined([familyId, reminderId]) === true) {
-    // attempt to locate job that has the familyId and reminderId
-      const primaryJob = schedule.scheduledJobs[`Family${familyId}Reminder${reminderId}`];
-      if (areAllDefined(primaryJob) === true) {
-        alarmLogger.debug(`Cancelling Primary Job: ${primaryJob.name}`);
-        primaryJob.cancel();
-      }
-      // finds all the users in the family
-      const users = await queryPromise(
-        connectionForNotifications,
-        'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
-        [familyId],
-      );
+    if (areAllDefined(familyId, reminderId) === false) {
+      return;
+    }
+
+    cancelPrimaryJobForFamilyForReminder(familyId, reminderId);
+
+    // finds all the users in the family
+    const users = await queryPromise(
+      connectionForAlarms,
+      'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
+      [familyId],
+    );
       // iterate through all users for the family
-      for (let i = 0; i < users.length; i += 1) {
+    for (let i = 0; i < users.length; i += 1) {
       // if the users have any jobs on the secondary schedule for the reminder, remove them
-        const secondaryJob = schedule.scheduledJobs[`User${users[i].userId}Reminder${reminderId}`];
-        if (areAllDefined(secondaryJob) === true) {
-          alarmLogger.debug(`Cancelling Secondary Job: ${secondaryJob.name}`);
-          secondaryJob.cancel();
-        }
-      }
+      cancelSecondaryJobForUserForReminder(users[i].userId, reminderId);
     }
   }
   catch (error) {
-    alarmLogger.error(`deleteAlarmNotificationsForReminder error: ${JSON.stringify(error)}`);
+    alarmLogger.error('deleteAlarmNotificationsForReminder error:');
+    alarmLogger.error(error);
   }
 };
 
@@ -96,28 +84,26 @@ const deleteSecondaryAlarmNotificationsForUser = async (userId) => {
   alarmLogger.debug(`deleteSecondaryAlarmNotificationsForUser ${userId}`);
 
   try {
-    if (areAllDefined(userId) === true) {
-      // get all the reminders for the given userId
-      // specifically use JOIN to excluse resulst where reminder, dog, family, or family member are missing
-      const reminderIds = await queryPromise(
-        connectionForNotifications,
-        'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE familyMembers.userId = ? AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
-        [userId],
-      );
+    if (areAllDefined(userId) === false) {
+      return;
+    }
+    // get all the reminders for the given userId
+    // specifically use JOIN to excluse resulst where reminder, dog, family, or family member are missing
+    const reminderIds = await queryPromise(
+      connectionForAlarms,
+      'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE familyMembers.userId = ? AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
+      [userId],
+    );
 
-      // iterate through all reminderIds
-      for (let i = 0; i < reminderIds.length; i += 1) {
-        // if the users have any jobs on the secondary schedule for the reminder, remove them
-        const secondaryJob = schedule.scheduledJobs[`User${userId}Reminder${reminderIds[i].reminderId}`];
-        if (areAllDefined(secondaryJob) === true) {
-          alarmLogger.debug(`Cancelling Secondary Job: ${secondaryJob.name}`);
-          secondaryJob.cancel();
-        }
-      }
+    // iterate through all reminderIds
+    for (let i = 0; i < reminderIds.length; i += 1) {
+      // if the users have any jobs on the secondary schedule for the reminder, remove them
+      cancelSecondaryJobForUserForReminder(userId, reminderIds[i].reminderId);
     }
   }
   catch (error) {
-    alarmLogger.error(`deleteSecondaryAlarmNotificationsForUser error: ${JSON.stringify(error)}`);
+    alarmLogger.error('deleteSecondaryAlarmNotificationsForUser error:');
+    alarmLogger.error(error);
   }
 };
 

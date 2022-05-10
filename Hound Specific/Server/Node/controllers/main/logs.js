@@ -4,6 +4,7 @@ const { updateLogQuery } = require('../updateFor/updateForLogs');
 const { deleteLogQuery } = require('../deleteFor/deleteForLogs');
 const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
 const { createLogNotification } = require('../../main/tools/notifications/alert/createLogNotification');
+const { areAllDefined } = require('../../main/tools/validation/validateFormat');
 
 /*
 Known:
@@ -16,38 +17,32 @@ const getLogs = async (req, res) => {
   const dogId = req.params.dogId;
   const logId = req.params.logId;
 
-  // if logId is defined and it is a number then continue
-  if (logId) {
-    try {
-      const result = await getLogQuery(req, logId);
-      await req.commitQueries(req);
-      return res.status(200).json({ result });
+  let result;
+
+  try {
+    // if logId is defined and it is a number then continue to find a single log
+    if (areAllDefined(logId)) {
+      result = await getLogQuery(req, logId);
     }
-    catch (error) {
-      await req.rollbackQueries(req);
-      return res.status(400).json(convertErrorToJSON(error));
+    // query for multiple logs
+    else {
+      result = await getLogsQuery(req, dogId);
     }
   }
-  else {
-    try {
-      const result = await getLogsQuery(req, dogId);
+  catch (error) {
+    await req.rollbackQueries(req);
+    return res.status(400).json(convertErrorToJSON(error));
+  }
 
-      if (result.length === 0) {
-        // successful but empty array, not logs to return
-        await req.commitQueries(req);
-        return res.status(200).json({ result: [] });
-      }
-      else {
-        // array has items, meaning there were logs found, successful!
-        await req.commitQueries(req);
-        return res.status(200).json({ result });
-      }
-    }
-    catch (error) {
-      // error when trying to do query to database
-      await req.rollbackQueries(req);
-      return res.status(400).json(convertErrorToJSON(error));
-    }
+  if (result.length === 0) {
+    // successful but empty array, not logs to return
+    await req.commitQueries(req);
+    return res.status(200).json({ result: [] });
+  }
+  else {
+    // array has items, meaning there were logs found, successful!
+    await req.commitQueries(req);
+    return res.status(200).json({ result });
   }
 };
 

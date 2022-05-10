@@ -8,7 +8,9 @@ const formatEmail = (userEmail) => {
   if (!userEmail) {
     return undefined;
   }
-  if (userEmail.length > 254) {
+  // for our purposes all emails should be in the foo@bar.com format
+  // shortest possible email is therefore x@y.zz (6 characters)
+  else if (userEmail.length < 6 || userEmail.length > 254) {
     return undefined;
   }
 
@@ -61,7 +63,7 @@ const formatBoolean = (string) => {
   if (string === true || string === 'true' || string === '1' || string === 1) {
     return true;
   }
-  if (string === false || string === 'false' || string === '0' || string === 0) {
+  else if (string === false || string === 'false' || string === '0' || string === 0) {
     return false;
   }
 
@@ -87,20 +89,18 @@ const formatArray = (string) => {
   if (Array.isArray(string) === true) {
     return string;
   }
-  else {
-    return undefined;
-  }
+  return undefined;
 };
 
 /**
  * Takes single object or array of objects. If ALL objects provided are defined, returns true. Otherwise, returns false. Behaves the same as atLeastOneDefined for single object.
  */
-const areAllDefined = (arr) => {
+const areAllDefined = (...args) => {
   // array
-  if (Array.isArray(arr) === true) {
+  if (Array.isArray(args) === true) {
     // checks to see all objects in array are defined
-    for (let i = 0; i < arr.length; i += 1) {
-      if (typeof arr[i] === 'undefined') {
+    for (let i = 0; i < args.length; i += 1) {
+      if (typeof args[i] === 'undefined') {
         // single object in array is undefined so return false
         return false;
       }
@@ -109,8 +109,7 @@ const areAllDefined = (arr) => {
     return true;
   }
   // single object,  not array
-
-  if (typeof arr === 'undefined') {
+  else if (typeof args === 'undefined') {
     // object not defined
     return false;
   }
@@ -121,14 +120,14 @@ const areAllDefined = (arr) => {
 /**
  * Take single object or array of objects. If at least one object provided is defined, returns true. Otherwise, returns false. Behaves the same as areAllDefined for single object.
  */
-const atLeastOneDefined = (arr) => {
+const atLeastOneDefined = (...args) => {
   // array
-  if (Array.isArray(arr) === true) {
+  if (Array.isArray(args) === true) {
     let isObjectDefined = false;
     // checks to see if at least one object in array is defined
 
-    for (let i = 0; i < arr.length; i += 1) {
-      if (typeof arr[i] !== 'undefined') {
+    for (let i = 0; i < args.length; i += 1) {
+      if (typeof args[i] !== 'undefined') {
         // single object in array is defined so we can break loop as we are only looking for one defined
         isObjectDefined = true;
         break;
@@ -143,7 +142,7 @@ const atLeastOneDefined = (arr) => {
   }
   // single object,  not array
 
-  if (typeof arr === 'undefined') {
+  else if (typeof args === 'undefined') {
     // object not defined
     return false;
   }

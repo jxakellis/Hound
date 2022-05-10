@@ -1,12 +1,14 @@
+const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
-const { formatDate } = require('../../main/tools/validation/validateFormat');
+const { areAllDefined, formatDate } = require('../../main/tools/validation/validateFormat');
 
 const createOneTimeComponents = async (req, reminder) => {
   const oneTimeDate = formatDate(reminder.oneTimeDate);
 
-  // TO DO add check that all components are defined (or throw validation error)
+  if (areAllDefined(reminder.reminderId, oneTimeDate) === false) {
+    throw new ValidationError('reminderId or oneTimeDate missing', 'ER_VALUES_MISSING');
+  }
 
-  // Errors intentionally uncaught so they are passed to invocation in reminders
   await queryPromise(
     req,
     'INSERT INTO reminderOneTimeComponents(reminderId, oneTimeDate) VALUES (?,?)',
@@ -18,7 +20,9 @@ const createOneTimeComponents = async (req, reminder) => {
 const updateOneTimeComponents = async (req, reminder) => {
   const oneTimeDate = formatDate(reminder.oneTimeDate);
 
-  // TO DO add check that all components are defined (or throw validation error)
+  if (areAllDefined(reminder.reminderId, oneTimeDate) === false) {
+    throw new ValidationError('reminderId or oneTimeDate missing', 'ER_VALUES_MISSING');
+  }
 
   try {
     // If this succeeds: Reminder was not present in the weekly table and the reminderType was changed. The old components will be deleted from the other table by reminders
@@ -28,7 +32,6 @@ const updateOneTimeComponents = async (req, reminder) => {
       'INSERT INTO reminderOneTimeComponents(reminderId, oneTimeDate) VALUES (?,?)',
       [reminder.reminderId, oneTimeDate],
     );
-    return;
   }
   catch (error) {
     // If this succeeds: Reminder was present in the weekly table, reminderType didn't change, and the components were successfully updated

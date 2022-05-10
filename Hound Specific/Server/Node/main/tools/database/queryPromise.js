@@ -12,7 +12,7 @@ const queryPromise = (request, sqlString, sqlVariables = undefined) => new Promi
   const poolConnection = request.connection;
   const genericConnection = request;
   let connection;
-  if (areAllDefined(poolConnection) === true) {
+  if (areAllDefined(poolConnection)) {
     connection = poolConnection;
   }
   else {

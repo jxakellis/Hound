@@ -11,8 +11,13 @@ import Foundation
 /// Information specific to the user.
 enum UserInformation {
     
+    // TO DO remove unnecessary 'static private var storedVarible'. Make it all just static var with no getter/setters (unless its something speicial like dogIcon, logCustomActioNames, etc..)
+    
     // MARK: - Ordered List
     // userId
+    // userIdentifier
+    // userNotificationToken
+    // familyId
     // userEmail
     // userFirstName
     // userLastName

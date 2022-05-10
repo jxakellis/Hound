@@ -4,9 +4,26 @@ const databasePassword = require('./databaseSensitive');
 const DatabaseError = require('../errors/databaseError');
 const { poolLogger, queryLogger } = require('../logging/loggers');
 
-// TO DO seperate this into multiple connections, maybe one for alarms, maybe one for alerts, maybe a general one
-/// the connection used by the server itself when querying the database for notifcations
-const connectionForNotifications = mysql2.createConnection({
+/// The connection used by the server when querying the database for alarm notifications
+const connectionForAlarms = mysql2.createConnection({
+  connectTimeout: 30000,
+  host: 'localhost',
+  user: 'admin',
+  password: databasePassword,
+  database: 'Hound',
+});
+
+/// The connection used by the server when querying the database for log notifications
+const connectionForLogs = mysql2.createConnection({
+  connectTimeout: 30000,
+  host: 'localhost',
+  user: 'admin',
+  password: databasePassword,
+  database: 'Hound',
+});
+
+/// The connection used by the server when querying the database for user tokens
+const connectionForTokens = mysql2.createConnection({
   connectTimeout: 30000,
   host: 'localhost',
   user: 'admin',
@@ -106,4 +123,6 @@ const assignConnection = (req, res, next) => {
   });
 };
 
-module.exports = { connectionForNotifications, poolForRequests, assignConnection };
+module.exports = {
+  connectionForAlarms, connectionForLogs, connectionForTokens, poolForRequests, assignConnection,
+};

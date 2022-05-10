@@ -3,6 +3,37 @@ const { formatNumber, formatArray, areAllDefined } = require('./validateFormat')
 const DatabaseError = require('../errors/databaseError');
 const ValidationError = require('../errors/validationError');
 
+// the most recent build of the app published to the app store
+const currentAppBuild = 4000;
+// the second most recent build of the app, this will be the version most users are on until the app store one processes
+const previousAppBuild = 3999;
+
+/**
+ * Checks to see that the appBuild of the requester is either up to date or one version behind.
+ * If a Hound update is publish, we want to support both the users who have updated to the brand new version and the ones who haven't.
+ * If we didn't support both, then users could be locked out of Hound and unable to update as the app store takes a day or two to show the update
+ *
+ * However, if a user is on an old version, we kick them back.
+ * E.g. User is on build 1000. The most recent build was 1500 but we just published 2000.
+ * We reject the build 1000 user but support build 1500 and build 2000.
+ * Build 1500 will no longer be supported once a new build (e.g. 2500) comes out.
+ */
+const validateAppBuild = async (req, res, next) => {
+  const appBuild = formatNumber(req.params.appBuild);
+  if (areAllDefined(appBuild) === false) {
+    await req.rollbackQueries(req);
+    return res.status(400).json(new ValidationError('appBuild missing', 'ER_VALUES_MISSING').toJSON);
+  }
+  // the user isn't on the previous or current app build
+  else if (appBuild !== previousAppBuild && appBuild !== currentAppBuild) {
+    await req.rollbackQueries(req);
+    return res.status(400).json(new ValidationError(`appBuild of ${appBuild} is invalid. Acceptable builds are ${previousAppBuild} and ${currentAppBuild}`, 'ER_APP_BUILD_INVALID').toJSON);
+  }
+  else {
+    return next();
+  }
+};
+
 /**
  * Checks to see that userId and userIdentifier are defined, are valid, and exist in the database.
  */
@@ -104,7 +135,8 @@ const validateDogId = async (req, res, next) => {
     // query database to find out if user has permission for that dogId
     try {
       // finds what dogId (s) the user has linked to their familyId
-      const dog = await queryPromise(req, 'SELECT dogId FROM dogs WHERE familyId = ? AND dogId = ? LIMIT 1', [familyId, dogId]);
+      // JOIN families as dog must have a family attached to it
+      const dog = await queryPromise(req, 'SELECT dogId FROM dogs JOIN families ON dogs.familyId = families.familyId WHERE familyId = ? AND dogId = ? LIMIT 1', [familyId, dogId]);
 
       // search query result to find if the dogIds linked to the familyId match the dogId provided, match means the user owns that dogId
 
@@ -146,7 +178,8 @@ const validateLogId = async (req, res, next) => {
     // query database to find out if user has permission for that logId
     try {
       // finds what logId (s) the user has linked to their dogId
-      const log = await queryPromise(req, 'SELECT logId FROM dogLogs WHERE dogId = ? AND logId = ? LIMIT 1', [dogId, logId]);
+      // JOIN dogs as log has to have dog still attached to it
+      const log = await queryPromise(req, 'SELECT logId FROM dogLogs JOIN dogs ON dogLogs.dogId = dogs.dogId WHERE dogId = ? AND logId = ? LIMIT 1', [dogId, logId]);
 
       // search query result to find if the logIds linked to the dogIds match the logId provided, match means the user owns that logId
 
@@ -188,7 +221,8 @@ const validateParamsReminderId = async (req, res, next) => {
     // query database to find out if user has permission for that reminderId
     try {
       // finds what reminderId (s) the user has linked to their dogId
-      const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ? AND reminderId = ? LIMIT 1', [dogId, reminderId]);
+      // JOIN dogs as reminder must have dog attached to it
+      const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogId = ? AND reminderId = ? LIMIT 1', [dogId, reminderId]);
 
       // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 
@@ -235,7 +269,8 @@ const validateBodyReminderId = async (req, res, next) => {
         // query database to find out if user has permission for that reminderId
         try {
           // finds what reminderId (s) the user has linked to their dogId
-          const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ? AND reminderId = ? LIMIT 1', [dogId, reminderId]);
+          // JOIN dogs as reminder must still have dog attached to it
+          const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId  WHERE dogId = ? AND reminderId = ? LIMIT 1', [dogId, reminderId]);
 
           // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 
@@ -270,7 +305,8 @@ const validateBodyReminderId = async (req, res, next) => {
     // query database to find out if user has permission for that reminderId
     try {
       // finds what reminderId (s) the user has linked to their dogId
-      const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders WHERE dogId = ? AND reminderId = ?', [dogId, singleReminderId]);
+      // JOIN dogs as reminder must have dog attached to it
+      const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogId = ? AND reminderId = ?', [dogId, singleReminderId]);
 
       // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 
@@ -299,5 +335,5 @@ const validateBodyReminderId = async (req, res, next) => {
 };
 
 module.exports = {
-  validateUserId, validateFamilyId, validateDogId, validateLogId, validateParamsReminderId, validateBodyReminderId,
+  validateAppBuild, validateUserId, validateFamilyId, validateDogId, validateLogId, validateParamsReminderId, validateBodyReminderId,
 };

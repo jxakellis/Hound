@@ -18,12 +18,12 @@ const updateLogQuery = async (req) => {
   const { logCustomActionName } = req.body;
 
   // if all undefined, then there is nothing to update
-  if (areAllDefined([logDate, logNote, logAction]) === false) {
-    throw new ValidationError('logDate, logNote, or logAction missing', 'ER_VALUE_MISSING');
+  if (areAllDefined(logId, logDate, logNote, logAction) === false) {
+    throw new ValidationError('logId, logDate, logNote, or logAction missing', 'ER_VALUE_MISSING');
   }
 
   try {
-    return queryPromise(
+    await queryPromise(
       req,
       'UPDATE dogLogs SET logDate = ?, logAction = ?, logCustomActionName = ?, logNote = ? WHERE logId = ?',
       [logDate, logAction, logCustomActionName, logNote, logId],
