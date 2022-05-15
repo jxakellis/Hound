@@ -27,22 +27,7 @@ class SettingsPersonalInformationViewController: UIViewController, UIGestureReco
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // there is a first name and a last name for the user
-        if UserInformation.userFirstName != "" && UserInformation.userLastName != "" {
-            userName.text = "\(UserInformation.userFirstName) \(UserInformation.userLastName)"
-        }
-        // the user only has a first name
-        else if UserInformation.userFirstName != "" {
-            userName.text = "\(UserInformation.userFirstName)"
-        }
-        // the user only has a last name
-        else if UserInformation.userLastName != "" {
-            userName.text = "\(UserInformation.userLastName)"
-        }
-        // if the name is still blank, then add a placeholder
-        else {
-            userName.text = "No Name"
-        }
+        userName.text = UserInformation.displayFullName
         
         userEmail.text = UserInformation.userEmail ?? "No Email"
     }

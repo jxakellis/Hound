@@ -94,6 +94,7 @@
 		A29C985427CE724300B9C8E4 /* RemindersRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29C985327CE724300B9C8E4 /* RemindersRequest.swift */; };
 		A29C985627CE726300B9C8E4 /* RequestProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29C985527CE726300B9C8E4 /* RequestProtocol.swift */; };
 		A2A45CCF2644914A0050E5A1 /* RemindersIntroductionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A45CCE2644914A0050E5A1 /* RemindersIntroductionVC.swift */; };
+		A2A91117282C18380078B857 /* AppBuildResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A91116282C18380078B857 /* AppBuildResponseError.swift */; };
 		A2AA5CBD27FE391400FD0134 /* ResponseUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CBC27FE391400FD0134 /* ResponseUtils.swift */; };
 		A2AA5CBF27FE421B00FD0134 /* InternalRequestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CBE27FE421B00FD0134 /* InternalRequestUtils.swift */; };
 		A2AA5CC127FE446700FD0134 /* DogManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CC027FE446700FD0134 /* DogManagerError.swift */; };
@@ -271,6 +272,7 @@
 		A29C985327CE724300B9C8E4 /* RemindersRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersRequest.swift; sourceTree = "<group>"; };
 		A29C985527CE726300B9C8E4 /* RequestProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestProtocol.swift; sourceTree = "<group>"; };
 		A2A45CCE2644914A0050E5A1 /* RemindersIntroductionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersIntroductionVC.swift; sourceTree = "<group>"; };
+		A2A91116282C18380078B857 /* AppBuildResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBuildResponseError.swift; sourceTree = "<group>"; };
 		A2AA5CBC27FE391400FD0134 /* ResponseUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseUtils.swift; sourceTree = "<group>"; };
 		A2AA5CBE27FE421B00FD0134 /* InternalRequestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalRequestUtils.swift; sourceTree = "<group>"; };
 		A2AA5CC027FE446700FD0134 /* DogManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogManagerError.swift; sourceTree = "<group>"; };
@@ -474,8 +476,7 @@
 			isa = PBXGroup;
 			children = (
 				A2AA5CD027FE456400FD0134 /* FamilyRequestError.swift */,
-				A2B565F727E923510091CA25 /* GeneralResponseError.swift */,
-				A2581B7327FDD35E0099AFB8 /* FamilyResponseError.swift */,
+				A2A91115282C181B0078B857 /* Response */,
 				A2AA5CC027FE446700FD0134 /* DogManagerError.swift */,
 				A2AA5CC227FE447D00FD0134 /* DogError.swift */,
 				A2AA5CC427FE449100FD0134 /* LogManagerError.swift */,
@@ -736,6 +737,16 @@
 				A299EAAC27E2D3350042F8F4 /* SettingsAboutVC.swift */,
 			);
 			path = "Individual Pages";
+			sourceTree = "<group>";
+		};
+		A2A91115282C181B0078B857 /* Response */ = {
+			isa = PBXGroup;
+			children = (
+				A2A91116282C18380078B857 /* AppBuildResponseError.swift */,
+				A2581B7327FDD35E0099AFB8 /* FamilyResponseError.swift */,
+				A2B565F727E923510091CA25 /* GeneralResponseError.swift */,
+			);
+			path = Response;
 			sourceTree = "<group>";
 		};
 		A2AA5CE027FE485100FD0134 /* Table View Cells */ = {
@@ -1140,6 +1151,7 @@
 				A2AA5CDD27FE482800FD0134 /* GeneralUIAlertController.swift in Sources */,
 				A2AA5CCF27FE454D00FD0134 /* MonthlyComponentsError.swift in Sources */,
 				A2AA5CD327FE459200FD0134 /* TimingManagerError.swift in Sources */,
+				A2A91117282C18380078B857 /* AppBuildResponseError.swift in Sources */,
 				A2DC23A8264D822F00EB287A /* DogsReminderMonthlyVC.swift in Sources */,
 				A2B565F627E825690091CA25 /* AlarmManager.swift in Sources */,
 				A2BAA06C27D6C5520041F3C5 /* ServerLoginVC.swift in Sources */,

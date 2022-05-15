@@ -100,7 +100,7 @@ class AlertManager: NSObject {
     // MARK: - Alert Presentation
     
     /// Function used to present alertController. If the alert is related to a server query message, specifiy as so. This stops the user from being spammed with multiple server messages if there are multiple failure messages at once.
-    static func willShowAlert(title: String, message: String?, serverRelated: Bool = false) {
+    static func willShowAlert(title: String, message: String?, hasOKAlertAction: Bool = true, serverRelated: Bool = false) {
         var trimmedMessage: String? = message
         
         if message?.trimmingCharacters(in: .whitespacesAndNewlines) == ""{
@@ -113,9 +113,11 @@ class AlertManager: NSObject {
             preferredStyle: .alert)
         alertController.view.tag = ViewTagConstant.serverRelatedViewController.rawValue
         
-        let alertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-        
-        alertController.addAction(alertAction)
+        if hasOKAlertAction == true {
+            let alertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+            
+            alertController.addAction(alertAction)
+        }
         
         enqueueAlertForPresentation(alertController)
         

@@ -84,6 +84,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                 // if the notification is a reminder, then check to see if loud notification can be played
                 if category == "reminder" {
                     // BUG if a reminder is updated to an earlier time by another user, then our user will be out of date. This means they could get a notification for a reminder, but when they open up the app it will show the reminder at the original (incorrect) time. This bug however, when the original reminder is supposed to go off, will fix itself as it checks to see if the reminder is updated before showing an alert
+                    // a potential rememdy to this bug, is when the notification for a reminder alarm comes through verify that we have an updated reminder that matches. if we don't have the reminder or the reminder is incorrect, then have the user query the server to retrieve the updated reminder
                     AudioManager.playLoudNotification()
                 }
             }

@@ -7,6 +7,7 @@ const {
 } = require('../../main/tools/validation/validateFormat');
 
 const { deleteAlarmNotificationsForFamily, deleteSecondaryAlarmNotificationsForUser } = require('../../main/tools/notifications/alarm/deleteAlarmNotification');
+const { getFamilyMembersForUserIdQuery } = require('../getFor/getForFamily');
 /**
  *  Queries the database to update a family to add a new user. If the query is successful, then returns
  *  If a problem is encountered, creates and throws custom error
@@ -181,14 +182,14 @@ const addFamilyMemberQuery = async (req) => {
   let familyCode = req.body.familyCode;
   // make sure familyCode was provided
   if (areAllDefined(familyCode) === false) {
-    throw new ValidationError('familyCode missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('familyCode missing', 'ER_FAMILY_CODE_INVALID');
   }
   familyCode = familyCode.toUpperCase();
 
-  let result;
+  let family;
   try {
     // retrieve information about the family linked to the familyCode
-    result = await queryPromise(
+    family = await queryPromise(
       req,
       'SELECT familyId, isLocked FROM families WHERE familyCode = ? LIMIT 1',
       [familyCode],
@@ -199,12 +200,12 @@ const addFamilyMemberQuery = async (req) => {
   }
 
   // make sure the familyCode was valid by checking if it matched a family
-  if (result.length === 0) {
+  if (family.length === 0) {
     // result length is zero so there are no families with that familyCode
-    throw new ValidationError('familyCode invalid, not found', 'ER_NOT_FOUND');
+    throw new ValidationError('familyCode invalid, not found', 'ER_FAMILY_NOT_FOUND');
   }
-  result = result[0];
-  const isLocked = formatBoolean(result.isLocked);
+  family = family[0];
+  const isLocked = formatBoolean(family.isLocked);
   // familyCode exists and is linked to a family, now check if family is locked against new members
   if (isLocked === true) {
     throw new ValidationError('Family is locked', 'ER_FAMILY_LOCKED');
@@ -212,12 +213,21 @@ const addFamilyMemberQuery = async (req) => {
 
   // the familyCode is valid and linked to an UNLOCKED family
   const userId = req.params.userId;
+
+  const isFamilyMember = await getFamilyMembersForUserIdQuery(req, userId);
+
+  if (isFamilyMember.length !== 0) {
+    // user is already in a family
+    throw new ValidationError('You are already in a family', 'ER_FAMILY_ALREADY');
+  }
+
+  // familyCode validated and user is not a family member in any family
   try {
     // insert the user into the family as a family member.
     await queryPromise(
       req,
       'INSERT INTO familyMembers(familyId, userId) VALUES (?, ?)',
-      [result.familyId, userId],
+      [family.familyId, userId],
     );
     return;
   }

@@ -7,22 +7,16 @@ const {
 } = require('../controllers/main/dogs');
 const { validateDogId } = require('../main/tools/validation/validateId');
 
+// validation that params are formatted correctly and have adequate permissions
 router.param('dogId', validateDogId);
 
-// validation that params are formatted correctly and have adequate permissions
-// router.use('/:dogId', validateDogId);
-
-// logs: /api/v1/dog/:userId/:dogId/logs
 const logsRouter = require('./logs');
 
 router.use('/:dogId/logs', logsRouter);
 
-// reminders: /api/v1/dog/:userId/:dogId/reminders
 const reminderRouter = require('./reminders');
 
 router.use('/:dogId/reminders', reminderRouter);
-
-// BASE PATH /api/v1/user/:userId/dogs/
 
 // gets all dogs, query parameter of ?all attaches the logs and the reminders to the dog
 router.get('/', getDogs);

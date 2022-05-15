@@ -93,15 +93,7 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
         case .unknown:
             // user not signed into apple id
             ErrorManager.alert(forError: SignInWithAppleError.unknown)
-        case .invalidResponse:
-            ErrorManager.alert(forError: SignInWithAppleError.other)
-        case .notHandled:
-            ErrorManager.alert(forError: SignInWithAppleError.other)
-        case .failed:
-            ErrorManager.alert(forError: SignInWithAppleError.other)
-        case .notInteractive:
-            ErrorManager.alert(forError: SignInWithAppleError.other)
-        @unknown default:
+        default:
             ErrorManager.alert(forError: SignInWithAppleError.other)
         }
     }

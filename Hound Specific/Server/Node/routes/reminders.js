@@ -12,11 +12,8 @@ const { validateParamsReminderId, validateBodyReminderId } = require('../main/to
 // Validate body for put at specific route
 // Validate body for delete at specific route
 
-router.param('reminderId', validateParamsReminderId);
 // validation that params are formatted correctly and have adequate permissions
-// router.use('/:reminderId', validateParamsReminderId);
-
-// BASE PATH /api/v1/user/:userId/dogs/:dogId/reminders/...
+router.param('reminderId', validateParamsReminderId);
 
 // gets all reminders
 router.get('/', getReminders);

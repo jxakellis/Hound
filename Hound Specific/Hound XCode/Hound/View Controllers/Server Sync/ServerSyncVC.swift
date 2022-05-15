@@ -158,7 +158,6 @@ class ServerSyncViewController: UIViewController {
     
     /// Retrieve the user
     private func getUser() {
-        // TO DO make user request send current app build
         UserRequest.get(invokeErrorManager: false) { _, familyId, responseStatus in
             switch responseStatus {
             case .successResponse:

@@ -27,7 +27,7 @@ const validateAppBuild = async (req, res, next) => {
   // the user isn't on the previous or current app build
   else if (appBuild !== previousAppBuild && appBuild !== currentAppBuild) {
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError(`appBuild of ${appBuild} is invalid. Acceptable builds are ${previousAppBuild} and ${currentAppBuild}`, 'ER_APP_BUILD_INVALID').toJSON);
+    return res.status(400).json(new ValidationError(`appBuild of ${appBuild} is invalid. Acceptable builds are ${previousAppBuild} and ${currentAppBuild}`, 'ER_APP_BUILD_OUTDATED').toJSON);
   }
   else {
     return next();
@@ -136,7 +136,11 @@ const validateDogId = async (req, res, next) => {
     try {
       // finds what dogId (s) the user has linked to their familyId
       // JOIN families as dog must have a family attached to it
-      const dog = await queryPromise(req, 'SELECT dogId FROM dogs JOIN families ON dogs.familyId = families.familyId WHERE familyId = ? AND dogId = ? LIMIT 1', [familyId, dogId]);
+      const dog = await queryPromise(
+        req,
+        'SELECT dogs.dogId FROM dogs JOIN families ON dogs.familyId = families.familyId WHERE dogs.familyId = ? AND dogs.dogId = ? LIMIT 1',
+        [familyId, dogId],
+      );
 
       // search query result to find if the dogIds linked to the familyId match the dogId provided, match means the user owns that dogId
 
@@ -179,7 +183,7 @@ const validateLogId = async (req, res, next) => {
     try {
       // finds what logId (s) the user has linked to their dogId
       // JOIN dogs as log has to have dog still attached to it
-      const log = await queryPromise(req, 'SELECT logId FROM dogLogs JOIN dogs ON dogLogs.dogId = dogs.dogId WHERE dogId = ? AND logId = ? LIMIT 1', [dogId, logId]);
+      const log = await queryPromise(req, 'SELECT dogLogs.logId FROM dogLogs JOIN dogs ON dogLogs.dogId = dogs.dogId WHERE dogLogs.dogId = ? AND dogLogs.logId = ? LIMIT 1', [dogId, logId]);
 
       // search query result to find if the logIds linked to the dogIds match the logId provided, match means the user owns that logId
 
@@ -222,7 +226,7 @@ const validateParamsReminderId = async (req, res, next) => {
     try {
       // finds what reminderId (s) the user has linked to their dogId
       // JOIN dogs as reminder must have dog attached to it
-      const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogId = ? AND reminderId = ? LIMIT 1', [dogId, reminderId]);
+      const reminder = await queryPromise(req, 'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1', [dogId, reminderId]);
 
       // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 
@@ -270,7 +274,7 @@ const validateBodyReminderId = async (req, res, next) => {
         try {
           // finds what reminderId (s) the user has linked to their dogId
           // JOIN dogs as reminder must still have dog attached to it
-          const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId  WHERE dogId = ? AND reminderId = ? LIMIT 1', [dogId, reminderId]);
+          const reminder = await queryPromise(req, 'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId  WHERE dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1', [dogId, reminderId]);
 
           // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 
@@ -306,7 +310,7 @@ const validateBodyReminderId = async (req, res, next) => {
     try {
       // finds what reminderId (s) the user has linked to their dogId
       // JOIN dogs as reminder must have dog attached to it
-      const reminder = await queryPromise(req, 'SELECT reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogId = ? AND reminderId = ?', [dogId, singleReminderId]);
+      const reminder = await queryPromise(req, 'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.dogId = ? AND dogReminders.reminderId = ?', [dogId, singleReminderId]);
 
       // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 

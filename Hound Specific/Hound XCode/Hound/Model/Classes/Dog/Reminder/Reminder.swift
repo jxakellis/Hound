@@ -20,6 +20,7 @@ enum ReminderType: String, CaseIterable {
         
         AppDelegate.generalLogger.fault("reminderType Not Found")
         self = .oneTime
+        return
     }
     case oneTime
     case countdown
@@ -38,13 +39,7 @@ enum ReminderMode {
 enum ReminderAction: String, CaseIterable {
     
     init?(rawValue: String) {
-        // backwards compatible
-        if rawValue == "Other"{
-            self = .custom
-            return
-        }
-        // regular
-        for action in ReminderAction.allCases {
+       for action in ReminderAction.allCases {
             if action.rawValue.lowercased() == rawValue.lowercased() {
                 self = action
                 return
@@ -53,6 +48,7 @@ enum ReminderAction: String, CaseIterable {
         
         AppDelegate.generalLogger.fault("reminderAction Not Found")
         self = .custom
+        return
     }
     // common
     case feed = "Feed"

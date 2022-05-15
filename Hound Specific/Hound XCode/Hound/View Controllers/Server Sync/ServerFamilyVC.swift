@@ -47,14 +47,15 @@ class ServerFamilyViewController: UIViewController {
             guard let textFields = familyCodeAlertController?.textFields else {
                 return
             }
-            let familyCode = (textFields[0].text ?? "").uppercased().replacingOccurrences(of: "-", with: "")
+            // uppercase everything then replace "-" with "" (nothing) then remove any excess whitespaces/newliens
+            let familyCode = (textFields[0].text ?? "").uppercased().replacingOccurrences(of: "-", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
             // code is empty
-            if familyCode.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
-                ErrorManager.alert(forError: FamilyRequestError.noFamilyCode)
+            if familyCode == "" {
+                ErrorManager.alert(forError: FamilyRequestError.familyCodeBlank)
             }
             // code isn't long enough
             else if familyCode.count != 8 {
-                ErrorManager.alert(forError: FamilyRequestError.familyCodeFormatInvalid)
+                ErrorManager.alert(forError: FamilyRequestError.familyCodeInvalid)
             }
             // client side the code is okay
             else {
@@ -69,7 +70,6 @@ class ServerFamilyViewController: UIViewController {
                             LocalConfiguration.dogIcons = []
                             self.dismiss(animated: true, completion: nil)
                         }
-                        // TO DO interpret response to tell user details about the family (e.g. not found, locked, or need to upgrade limit)
                     }
                 }
             }

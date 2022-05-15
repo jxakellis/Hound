@@ -18,17 +18,13 @@ router.get('/', getUser);
 router.get('/:userId', getUser);
 // no body
 
-// alert: /api/v1/user/:userId/alert
 const alertRouter = require('./alert');
 
 router.use('/:userId/alert', alertRouter);
 
-// family: /api/v1/user/:userId/family
 const familyRouter = require('./family');
 
 router.use('/:userId/family', familyRouter);
-
-// BASE PATH /api/v1/user/...
 
 // creates user and userConfiguration
 router.post('/', createUser);

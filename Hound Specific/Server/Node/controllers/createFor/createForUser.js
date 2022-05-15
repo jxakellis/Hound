@@ -27,7 +27,7 @@ const createUserQuery = async (req) => {
   // component of the body is missing or invalid
   // userNotificationToken is optional as at this point the client may not have it
   if (areAllDefined(
-    [userEmail, userIdentifier, userFirstName, userLastName,
+    [userEmail, userIdentifier,
       isNotificationEnabled, isLoudNotification, isFollowUpEnabled,
       followUpDelay, logsInterfaceScale, remindersInterfaceScale,
       interfaceStyle, snoozeLength, notificationSound],

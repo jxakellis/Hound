@@ -13,7 +13,6 @@ enum LocalConfiguration {
     
     // TO DO import certain variables from Hound 1.3.5 that are immutable to me (e.g. notificationAuthorized and reviewRequestDates) as Apple doesn't care that the app reset so the original values need to be tracked
     // open up Hound 1.3.5 and find their original names to import
-    // TO DO remove unnecessary 'static private var storedVarible'. Make it all just static var with no getter/setters (unless its something speicial like dogIcon, logCustomActioNames, etc..)
     
     // MARK: Dog Related
     
@@ -96,77 +95,20 @@ enum LocalConfiguration {
     
     // MARK: iOS Notification Related
     
-    static private var storedIsNotificationAuthorized: Bool = false
-    /// This should be stored on the server as it is important to only send notifications to devices that can use them. This will always be overriden by the user upon reinstall if its state is different in that new install.
-    static var isNotificationAuthorized: Bool {
-        get {
-            return storedIsNotificationAuthorized
-        }
-        set (newIsNotificationAuthorized) {
-            guard newIsNotificationAuthorized != storedIsNotificationAuthorized else {
-                return
-            }
-            storedIsNotificationAuthorized = newIsNotificationAuthorized
-        }
-    }
+    static var isNotificationAuthorized: Bool = false
     
     // MARK: Alert Related
     
     /// Used to track when the user was last asked to review the app
-    static private var storeReviewRequestDates: [Date] = [Date()]
-    /// Used to track when the user was last asked to review the app
-    static var reviewRequestDates: [Date] {
-        get {
-            return storeReviewRequestDates
-        }
-        set (newReviewRequestDates) {
-            guard newReviewRequestDates != storeReviewRequestDates else {
-                return
-            }
-            storeReviewRequestDates = newReviewRequestDates
-        }
-    }
+    static var reviewRequestDates: [Date] = [Date()]
     
-    static private var storedIsShowReleaseNotes: Bool = true
     /// Determines where or not the app should display an message when the app is first opened after an update
-    static var isShowReleaseNotes: Bool {
-        get {
-            return storedIsShowReleaseNotes
-        }
-        set (newIsShowReleaseNotes) {
-            guard newIsShowReleaseNotes != storedIsShowReleaseNotes else {
-                return
-            }
-            storedIsShowReleaseNotes = newIsShowReleaseNotes
-        }
-    }
+    static var isShowReleaseNotes: Bool = true
     
-    static private var storedHasLoadedFamilyIntroductionViewControllerBefore: Bool = false
-    /// Keeps track of if the user has viewed AND completed the dogs introduction view controller (which helps the user setup their first reminders)
-    static var hasLoadedFamilyIntroductionViewControllerBefore: Bool {
-        get {
-            return storedHasLoadedFamilyIntroductionViewControllerBefore
-        }
-        set (newhasLoadedFamilyIntroductionViewControllerBefore) {
-            guard newhasLoadedFamilyIntroductionViewControllerBefore != storedHasLoadedFamilyIntroductionViewControllerBefore else {
-                return
-            }
-            storedHasLoadedFamilyIntroductionViewControllerBefore = newhasLoadedFamilyIntroductionViewControllerBefore
-        }
-    }
+    /// Keeps track of if the user has viewed AND completed the family introduction view controller (which helps the user setup their first dog)
+    static var hasLoadedFamilyIntroductionViewControllerBefore: Bool = false
     
-    static private var storedHasLoadedRemindersIntroductionViewControllerBefore: Bool = false
-    /// Keeps track of if the user has viewed AND completed the dogs introduction view controller (which helps the user setup their first reminders)
-    static var hasLoadedRemindersIntroductionViewControllerBefore: Bool {
-        get {
-            return storedHasLoadedRemindersIntroductionViewControllerBefore
-        }
-        set (newHasLoadedRemindersIntroductionViewControllerBefore) {
-            guard newHasLoadedRemindersIntroductionViewControllerBefore != storedHasLoadedRemindersIntroductionViewControllerBefore else {
-                return
-            }
-            storedHasLoadedRemindersIntroductionViewControllerBefore = newHasLoadedRemindersIntroductionViewControllerBefore
-        }
-    }
+    /// Keeps track of if the user has viewed AND completed the reminders introduction view controller (which helps the user setup their first reminders)
+    static var hasLoadedRemindersIntroductionViewControllerBefore: Bool = false
     
 }

@@ -23,8 +23,8 @@ const createWeeklyComponents = async (req, reminder) => {
   // Newly created weekly reminder cant be weeklyIsSkipping, so no need for skip data
   await queryPromise(
     req,
-    'INSERT INTO reminderWeeklyComponents(reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday) VALUES (?,?,?,?,?,?,?,?,?,?)',
-    [reminder.reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday],
+    'INSERT INTO reminderWeeklyComponents(reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday, weeklyIsSkipping, weeklyIsSkippingDate) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
+    [reminder.reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday, false, undefined],
   );
 };
 
@@ -58,8 +58,8 @@ const updateWeeklyComponents = async (req, reminder) => {
     // If this fails: The components provided are invalid or reminder already present in table (reminderId UNIQUE in DB)
     await queryPromise(
       req,
-      'INSERT INTO reminderWeeklyComponents(reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday) VALUES (?,?,?,?,?,?,?,?,?,?)',
-      [reminder.reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday],
+      'INSERT INTO reminderWeeklyComponents(reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday, weeklyIsSkipping, weeklyIsSkippingDate) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
+      [reminder.reminderId, weeklyHour, weeklyMinute, sunday, monday, tuesday, wednesday, thursday, friday, saturday, false, undefined],
     );
   }
   catch (error) {

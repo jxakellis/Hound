@@ -22,6 +22,7 @@ class SettingsAboutViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        // TO DO create two info pages, one is about and the other is contact us. Have emails be @houndorganizer emails, e.g. billing@houndorganizer.com
          self.version.text = "Version \(UIApplication.appVersion ?? "nil")"
         self.build.text = "Build \(UIApplication.appBuild)"
         self.copyright.text = "© \(Calendar.current.component(.year, from: Date())) Jonathan Xakellis"

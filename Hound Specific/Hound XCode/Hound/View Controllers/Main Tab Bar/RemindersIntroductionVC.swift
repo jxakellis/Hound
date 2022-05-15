@@ -95,5 +95,10 @@ class RemindersIntroductionViewController: UIViewController {
 
         continueButton.layer.cornerRadius = 10.0
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        AlertManager.globalPresenter = self
+    }
 
 }

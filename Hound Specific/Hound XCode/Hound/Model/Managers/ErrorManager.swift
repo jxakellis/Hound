@@ -11,9 +11,9 @@ import UIKit
 enum ErrorManager {
     
     /// Alerts for an unspecified error. Title is default with a parameter specified message
-    static func alert(forMessage message: String, serverRelated: Bool = false) {
+    static func alert(forMessage message: String, hasOKAlertAction: Bool = true, serverRelated: Bool = false) {
         
-        AlertManager.willShowAlert(title: "Uh oh! There seems to be an issue.", message: message, serverRelated: serverRelated)
+        AlertManager.willShowAlert(title: "Uh oh! There seems to be an issue.", message: message, hasOKAlertAction: hasOKAlertAction, serverRelated: serverRelated)
         
         AppDelegate.generalLogger.error("Known error: \(message)")
         
@@ -31,14 +31,18 @@ enum ErrorManager {
     /// Handles a given error, uses helper functions to compare against all known (custom) error types
     static func alert(forError error: Error) {
         
-        // Server Related
-        if let castError = error as? FamilyResponseError {
+        // Request Related
+        if let castError = error as? FamilyRequestError {
+            ErrorManager.alert(forMessage: castError.rawValue)
+        }
+        // Response Related
+        else if let castError = error as? AppBuildResponseError {
+            ErrorManager.alert(forMessage: castError.rawValue, hasOKAlertAction: false, serverRelated: true)
+        }
+        else if let castError = error as? FamilyResponseError {
             ErrorManager.alert(forMessage: castError.rawValue, serverRelated: true)
         }
         else if let castError = error as? GeneralResponseError {
-            ErrorManager.alert(forMessage: castError.rawValue, serverRelated: true)
-        }
-        else if let castError = error as? FamilyResponseError {
             ErrorManager.alert(forMessage: castError.rawValue, serverRelated: true)
         }
         // Dog Object Related

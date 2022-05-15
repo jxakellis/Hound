@@ -20,12 +20,9 @@ router.get('/', getFamily);
 router.get('/:familyId', getFamily);
 // no body
 
-// dogs: /api/v1/user/:userId/dogs
 const dogsRouter = require('./dogs');
 
 router.use('/:familyId/dogs', dogsRouter);
-
-// BASE PATH /api/v1/user/:userId/family...
 
 // creates family
 router.post('/', createFamily);

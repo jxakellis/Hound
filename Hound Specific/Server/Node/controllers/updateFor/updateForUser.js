@@ -3,7 +3,7 @@ const ValidationError = require('../../main/tools/errors/validationError');
 
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
-  formatNumber, formatEmail, formatBoolean, atLeastOneDefined, areAllDefined,
+  formatNumber, formatBoolean, atLeastOneDefined, areAllDefined,
 } = require('../../main/tools/validation/validateFormat');
 
 /**
@@ -12,8 +12,12 @@ const {
  */
 const updateUserQuery = async (req) => {
   const userId = req.params.userId;
-  const userEmail = formatEmail(req.body.userEmail);
-  const { userFirstName, userLastName, userNotificationToken } = req.body;
+  // const userEmail = formatEmail(req.body.userEmail);
+  const {
+    // userFirstName,
+    // userLastName,
+    userNotificationToken,
+  } = req.body;
 
   const isNotificationEnabled = formatBoolean(req.body.isNotificationEnabled);
   const isLoudNotification = formatBoolean(req.body.isLoudNotification);
@@ -27,9 +31,9 @@ const updateUserQuery = async (req) => {
 
   // checks to see that all needed components are provided
   if (atLeastOneDefined(
-    userEmail,
-    userFirstName,
-    userLastName,
+    // userEmail,
+    // userFirstName,
+    // userLastName,
     userNotificationToken,
     isNotificationEnabled,
     isLoudNotification,
@@ -41,10 +45,11 @@ const updateUserQuery = async (req) => {
     snoozeLength,
     notificationSound,
   ) === false) {
-    throw new ValidationError('No userEmail, userFirstName, userLastName, userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound provided', 'ER_NO_VALUES_PROVIDED');
+    throw new ValidationError('No userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound provided', 'ER_NO_VALUES_PROVIDED');
   }
 
   try {
+    /*
     if (areAllDefined(userEmail)) {
       // if userEmail is defined, then its valid
       await queryPromise(
@@ -67,6 +72,7 @@ const updateUserQuery = async (req) => {
         [userLastName, userId],
       );
     }
+    */
     if (areAllDefined(userNotificationToken)) {
       await queryPromise(
         req,

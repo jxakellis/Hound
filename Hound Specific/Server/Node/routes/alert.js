@@ -8,8 +8,6 @@ const convertErrorToJSON = require('../main/tools/errors/errorFormat');
 const { areAllDefined } = require('../main/tools/validation/validateFormat');
 const { createTerminateNotification } = require('../main/tools/notifications/alert/createTerminateNotification');
 
-// BASE PATH /api/v1/user/:userId/alert...
-
 // User has done some action that warrents us sending them a special notification
 router.post('/:alertType', async (req, res) => {
   if (areAllDefined(req.params, req.params.alertType) === false) {

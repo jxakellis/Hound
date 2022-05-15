@@ -17,19 +17,12 @@ const createFamilyQuery = async (req) => {
     throw new ValidationError('userId missing', 'ER_VALUES_MISSING');
   }
 
-  let existingFamilyResult;
-
-  try {
-    // check if the user is already in a family
-    existingFamilyResult = await getFamilyMembersForUserIdQuery(req, userId);
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  // check if the user is already in a family
+  const existingFamilyResult = await getFamilyMembersForUserIdQuery(req, userId);
 
   // validate that the user is not in a family
   if (existingFamilyResult.length !== 0) {
-    throw new ValidationError('User is already in a family', 'ER_ALREADY_PRESENT');
+    throw new ValidationError('User is already in a family', 'ER_FAMILY_ALREADY');
   }
 
   try {
@@ -37,8 +30,8 @@ const createFamilyQuery = async (req) => {
     const familyCode = await generateVerifiedFamilyCode(req);
     const result = await queryPromise(
       req,
-      'INSERT INTO families(userId, familyCode) VALUES (?, ?)',
-      [userId, familyCode],
+      'INSERT INTO families(userId, familyCode, isLocked, isPaused) VALUES (?, ?, ?, ?)',
+      [userId, familyCode, false, false],
     );
     const familyId = result.insertId;
     await queryPromise(

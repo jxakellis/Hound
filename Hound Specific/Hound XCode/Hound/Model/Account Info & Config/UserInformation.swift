@@ -11,8 +11,6 @@ import Foundation
 /// Information specific to the user.
 enum UserInformation {
     
-    // TO DO remove unnecessary 'static private var storedVarible'. Make it all just static var with no getter/setters (unless its something speicial like dogIcon, logCustomActioNames, etc..)
-    
     // MARK: - Ordered List
     // userId
     // userIdentifier
@@ -36,13 +34,13 @@ enum UserInformation {
             self.familyId = familyId
         }
         if let userEmail = body[ServerDefaultKeys.userEmail.rawValue] as? String {
-            storedUserEmail = userEmail
+            self.userEmail = userEmail
         }
         if let userFirstName = body[ServerDefaultKeys.userFirstName.rawValue] as? String {
-            storedUserFirstName = userFirstName
+            self.userFirstName = userFirstName
         }
         if let userLastName = body[ServerDefaultKeys.userLastName.rawValue] as? String {
-            storedUserLastName = userLastName
+            self.userLastName = userLastName
         }
     }
     
@@ -54,42 +52,32 @@ enum UserInformation {
     
     static var familyId: Int?
     
-    static private var storedUserEmail: String?
-    static var userEmail: String? {
-        get {
-            return storedUserEmail
-        }
-        set (newUserEmail) {
-            guard newUserEmail != storedUserEmail else {
-                return
-            }
-            storedUserEmail = newUserEmail
-        }
-    }
+    static var userEmail: String?
     
-    static private var storedUserFirstName: String = ""
-    static var userFirstName: String {
-        get {
-            return storedUserFirstName
-        }
-        set (newUserFirstName) {
-            guard newUserFirstName != storedUserFirstName else {
-                return
-            }
-            storedUserFirstName = newUserFirstName
-        }
-    }
+    static var userFirstName: String?
     
-    static private var storedUserLastName: String = ""
-    static var userLastName: String {
-        get {
-            return storedUserLastName
+    static var userLastName: String?
+    
+    /// The users member's full name. Handles cases where the first name and/or last name may be ""
+    static var displayFullName: String {
+        let trimmedFirstName = userFirstName?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedLastName = userLastName?.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // check to see if anything is blank
+        if (trimmedFirstName == nil || trimmedFirstName == "") && (trimmedLastName == nil || trimmedLastName == "") {
+            return "No Name"
         }
-        set (newUserLastName) {
-            guard newUserLastName != storedUserLastName else {
-                return
-            }
-            storedUserLastName = newUserLastName
+        // we know one of OR both of the trimmedFirstName and trimmedLast name are != nil && != ""
+        else if trimmedFirstName == nil && trimmedFirstName == "" {
+            // no first name but has last name
+            return trimmedLastName!
+        }
+        else if trimmedLastName == nil && trimmedLastName == "" {
+            // no last name but has first name
+            return trimmedFirstName!
+        }
+        else {
+            return "\(trimmedFirstName!) \(trimmedLastName!)"
         }
     }
 }

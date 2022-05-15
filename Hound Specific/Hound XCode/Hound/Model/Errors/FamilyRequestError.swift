@@ -9,6 +9,6 @@
 import Foundation
 
 enum FamilyRequestError: String, Error {
-    case noFamilyCode = "Your family code is blank! Please enter one and retry."
-    case familyCodeFormatInvalid = "Your family code is incorrect! Please make sure you enter the eight character code correctly and retry."
+    case familyCodeBlank = "Your family code is blank! Please enter in a valid code and retry."
+    case familyCodeInvalid = "Your family code's format is invalid! Please enter in a valid code and retry."
 }
