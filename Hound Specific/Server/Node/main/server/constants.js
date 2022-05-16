@@ -1,5 +1,9 @@
 // If true, then when the server restarts we recreate all of the alarm notifications. If false, then assume dev environment and do nothing
-const isProduction = false;
+const isProduction = true;
+
+/// If we have too many jobs scheduled at once, it could slow performance.
+// Additionally, there could be uncaught jobs getting duplicated that won't get noticed with a high limit
+const numberOfScheduledJobsAllowed = 1000000;
 
 // The most recent build of the app published to the app store
 const currentAppBuild = 4000;
@@ -13,5 +17,5 @@ const numberOfLogsPerDog = 100000;
 const numberOfRemindersPerDog = 10;
 
 module.exports = {
-  isProduction, currentAppBuild, previousAppBuild, numberOfLogsPerDog, numberOfRemindersPerDog,
+  isProduction, numberOfScheduledJobsAllowed, currentAppBuild, previousAppBuild, numberOfLogsPerDog, numberOfRemindersPerDog,
 };

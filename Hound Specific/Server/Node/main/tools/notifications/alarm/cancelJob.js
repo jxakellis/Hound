@@ -17,6 +17,7 @@ const cancelPrimaryJobForFamilyForReminder = async (familyId, reminderId) => {
   if (areAllDefined(primaryJob)) {
     alarmLogger.debug(`Cancelling Primary Job: ${primaryJob.name}`);
     primaryJob.cancel();
+    alarmLogger.info(`Cancelled job; count is now ${Object.keys(schedule.scheduledJobs).length}`);
   }
 };
 
@@ -33,6 +34,7 @@ const cancelSecondaryJobForUserForReminder = async (userId, reminderId) => {
   if (areAllDefined(secondaryJob)) {
     alarmLogger.debug(`Cancelling Secondary Job: ${secondaryJob.name}`);
     secondaryJob.cancel();
+    alarmLogger.info(`Cancelled job; count is now ${Object.keys(schedule.scheduledJobs).length}`);
   }
 };
 

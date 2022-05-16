@@ -108,7 +108,6 @@ const updateReminderQuery = async (req, reminder) => {
     return [reminder];
   }
   catch (error) {
-    console.log(error);
     throw new DatabaseError(error.code);
   }
 };

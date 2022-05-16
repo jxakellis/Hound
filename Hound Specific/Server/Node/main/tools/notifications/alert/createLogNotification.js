@@ -4,13 +4,15 @@ const { areAllDefined } = require('../../validation/validateFormat');
 
 const { queryPromise } = require('../../database/queryPromise');
 const { sendAPNForFamilyExcludingUser } = require('../apn/sendAPN');
+const { validateAbreviatedFullName } = require('../../validation/validateName');
 
 /**
  * Sends an alert to all of the family members that one of them has logged something.
  */
 const createLogNotification = async (userId, familyId, dogId, logAction, logCustomActionName) => {
+  alertLogger.debug(`createLogNotification ${userId}, ${familyId}, ${dogId}, ${logAction}, ${logCustomActionName}`);
   // make sure all params are defined
-  if (areAllDefined(userId, familyId, dogId, logAction, logCustomActionName) === false) {
+  if (areAllDefined(userId, familyId, dogId, logAction) === false) {
     return;
   }
 
@@ -32,37 +34,14 @@ const createLogNotification = async (userId, familyId, dogId, logAction, logCust
     dog = dog[0];
 
     // check to see if we were able to retrieve the properties of the user who logged the event and the dog that the log was under
-    if (areAllDefined(user, user.userFirstName, user.userLastName, dog, dog.dogName) === false) {
+    if (areAllDefined(user, dog, dog.dogName) === false) {
       return;
-    }
-
-    // construct a name to use for the notification
-    let name = '';
-    // there is a first name and a last name for the user
-    if (user.userFirstName !== '' && user.userLastName !== '') {
-      // we know the last name has >= 1 characters, so can get char at 0
-      // Bob S
-      name = `${user.userFirstName} ${user.userLastName.charAt(0)}`;
-    }
-    // the user only has a first name
-    else if (user.userFirstName !== '') {
-      // Bob
-      name = user.userFirstName;
-    }
-    // the user only has a last name
-    else if (user.userLastName !== '') {
-      // Smith
-      name = user.userLastName;
-    }
-    // if the name is still blank, then add a placeholder
-    else {
-      // No Name
-      name = 'No Name';
     }
 
     // now we can construct the messages
     // Log for Fido
     const alertTitle = `Log for ${dog.dogName}`;
+    const name = validateAbreviatedFullName(user.userFirstName, user.userLastName);
     let alertBody;
     if (logAction === 'Custom' && areAllDefined(logCustomActionName)) {
       // Bob S lent a helping hand with 'Special Name'

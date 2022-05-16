@@ -44,6 +44,7 @@ const createAlarmNotificationForFamily = async (familyId, reminderId, reminderEx
     }
     // reminderExecutionDate is in the future
     else {
+      alarmLogger.info(`Scheduling a new job; count will be ${Object.keys(schedule.scheduledJobs).length + 1}`);
       schedule.scheduleJob(`Family${familyId}Reminder${reminderId}`, formattedReminderExecutionDate, async () => {
         // do these async, no need to await
         sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(familyId, reminderId);
@@ -66,13 +67,13 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
     // the reminderId has to exist to search and we check to make sure the dogId isn't null (to make sure the dog still exists too)
     const reminderWithInfo = await queryPromise(
       connectionForAlarms,
-      'SELECT dogs.dogName, dogReminders.reminderExecutionDate, dogReminders.reminderAction, dogReminders.reminderCustomActionName FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
+      'SELECT dogs.dogName, dogReminders.reminderId, dogReminders.reminderExecutionDate, dogReminders.reminderAction, dogReminders.reminderCustomActionName FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
       [reminderId],
     );
     const reminder = reminderWithInfo[0];
 
     // Check to make sure the required information of the reminder exists
-    if (areAllDefined(reminder, reminder.dogName, reminder.reminderAction) === false) {
+    if (areAllDefined(reminder, reminder.dogName, reminder.reminderId, reminder.reminderAction) === false) {
       return;
     }
 
@@ -150,6 +151,7 @@ const createSecondaryAlarmNotificationForUser = async (userId, reminderId, secon
     }
     // formattedSecondaryExecutionDate is in the future
     else {
+      alarmLogger.info(`Scheduling a new job; count will be ${Object.keys(schedule.scheduledJobs).length + 1}`);
       schedule.scheduleJob(`User${userId}Reminder${reminderId}`, formattedSecondaryExecutionDate, () => {
         // no need to await, let it go
         sendSecondaryAPNForUser(userId, reminderId);

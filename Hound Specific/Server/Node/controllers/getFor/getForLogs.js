@@ -16,7 +16,7 @@ const getLogQuery = async (req, logId) => {
     // only select the relevant information to save on data
     const result = await queryPromise(
       req,
-      'SELECT logId, dogId, userId, logDate, logNote, logAction, logCustomActionName, logIsDeleted FROM dogLogs WHERE logId = ? LIMIT 1',
+      'SELECT logId, dogId, userId, logDate, logNote, logAction, logCustomActionName FROM dogLogs WHERE logId = ? LIMIT 1',
       [logId],
     );
     return result;
@@ -38,7 +38,7 @@ const getLogsQuery = async (req, dogId) => {
     // only select the relevant information to save on data
     const result = await queryPromise(
       req,
-      'SELECT logId, dogId, userId, logDate, logNote, logAction, logCustomActionName, logIsDeleted FROM dogLogs WHERE dogId = ? ORDER BY logDate DESC LIMIT 1000',
+      'SELECT logId, dogId, userId, logDate, logNote, logAction, logCustomActionName FROM dogLogs WHERE dogId = ? ORDER BY logDate DESC LIMIT 1000',
       [dogId],
     );
     return result;

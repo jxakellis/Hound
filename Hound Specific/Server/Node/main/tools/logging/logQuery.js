@@ -3,7 +3,6 @@ const { requestLogger } = require('./loggers');
 // Logs the request from a user
 const logRequest = (req, res, next) => {
   requestLogger.info(`Request for ${req.method} ${req.originalUrl}`);
-
   next();
 };
 

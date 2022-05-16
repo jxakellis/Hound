@@ -2797,28 +2797,28 @@
                                 <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4CU-dx-Y2m" userLabel="containerView">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="779.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="783"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Lock 🔒" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ele-He-dpP" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Lock 🔓" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ele-He-dpP" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                                 <rect key="frame" x="10" y="281.5" width="300" height="24"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Prevents users from joining your family. If you want a new user to be able to join, disable this setting." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zj8-zg-mAB" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="313" width="394" height="30"/>
+                                                <rect key="frame" x="10" y="316.5" width="394" height="30"/>
                                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Members" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NoQ-r1-a7I" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="388" width="394" height="24"/>
+                                                <rect key="frame" x="10" y="391.5" width="394" height="24"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="HFj-2e-poA">
-                                                <rect key="frame" x="0.0" y="422" width="414" height="200"/>
+                                                <rect key="frame" x="0.0" y="425.5" width="414" height="200"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="200" id="xpW-R5-JQu"/>
@@ -2839,7 +2839,7 @@
                                                                         <constraint firstAttribute="height" constant="45" id="xKd-dz-Z6t"/>
                                                                     </constraints>
                                                                 </imageView>
-                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="placeholder" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o6R-JO-Mp1" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bob Smith" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o6R-JO-Mp1" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                                                     <rect key="frame" x="65.5" y="10" width="338.5" height="45.5"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -2876,7 +2876,7 @@
                                                                         <constraint firstAttribute="width" secondItem="1u3-1r-4Dw" secondAttribute="height" multiplier="1:1" id="pis-WN-mHh"/>
                                                                     </constraints>
                                                                 </imageView>
-                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="placeholder" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vyZ-U5-fzl" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Joe Smith" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vyZ-U5-fzl" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                                                     <rect key="frame" x="65.5" y="10" width="305" height="35.5"/>
                                                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17.5"/>
                                                                     <nil key="textColor"/>
@@ -2916,14 +2916,14 @@
                                                     <outlet property="delegate" destination="bp1-Kg-aZ6" id="PxN-I4-x3I"/>
                                                 </connections>
                                             </tableView>
-                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" title="isLocked" translatesAutoresizingMaskIntoConstraints="NO" id="JX6-IX-ywD">
+                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" title="isLocked" translatesAutoresizingMaskIntoConstraints="NO" id="JX6-IX-ywD">
                                                 <rect key="frame" x="320" y="278" width="51" height="31"/>
                                                 <color key="onTintColor" systemColor="systemBlueColor"/>
                                                 <connections>
                                                     <action selector="didToggleIsLocked:" destination="bp1-Kg-aZ6" eventType="valueChanged" id="CE3-fO-3lR"/>
                                                 </connections>
                                             </switch>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Code: " textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b5w-es-k3g" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Code: ABCD-1234" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b5w-es-k3g" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                                 <rect key="frame" x="10" y="160" width="394" height="24"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <nil key="textColor"/>
@@ -2937,7 +2937,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="J2T-a0-Efm">
-                                                <rect key="frame" x="10" y="667" width="394" height="50"/>
+                                                <rect key="frame" x="10" y="670.5" width="394" height="50"/>
                                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="50" id="pTs-oJ-mpU"/>
@@ -2952,7 +2952,7 @@
                                                 </connections>
                                             </button>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="geY-JC-XUr" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="724.5" width="394" height="45"/>
+                                                <rect key="frame" x="10" y="728" width="394" height="45"/>
                                                 <string key="text">If the head of the family leaves, it will delete the family. In order for the head to leave, all other family members must leave (or be kicked). Family members can freely leave and join any family.</string>
                                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -3004,13 +3004,13 @@
                                             <constraint firstItem="NoQ-r1-a7I" firstAttribute="top" secondItem="zj8-zg-mAB" secondAttribute="bottom" constant="45" id="dCr-ql-uhB"/>
                                             <constraint firstItem="NoQ-r1-a7I" firstAttribute="leading" secondItem="4CU-dx-Y2m" secondAttribute="leading" constant="10" id="dSc-4K-N4X"/>
                                             <constraint firstAttribute="trailing" secondItem="geY-JC-XUr" secondAttribute="trailing" constant="10" id="eYM-iG-ucJ"/>
+                                            <constraint firstItem="zj8-zg-mAB" firstAttribute="top" secondItem="JX6-IX-ywD" secondAttribute="bottom" constant="7.5" id="hdE-nM-UAc"/>
                                             <constraint firstItem="ele-He-dpP" firstAttribute="leading" secondItem="4CU-dx-Y2m" secondAttribute="leading" constant="10" id="i5s-SQ-4ri"/>
                                             <constraint firstAttribute="bottom" secondItem="geY-JC-XUr" secondAttribute="bottom" constant="10" id="jzf-JE-j5K"/>
                                             <constraint firstItem="oFm-N7-SnK" firstAttribute="leading" secondItem="Jon-z7-YHU" secondAttribute="trailing" constant="10" id="lfG-83-NKf"/>
                                             <constraint firstItem="JX6-IX-ywD" firstAttribute="centerY" secondItem="ele-He-dpP" secondAttribute="centerY" id="n6G-k8-K0u"/>
                                             <constraint firstItem="HFj-2e-poA" firstAttribute="leading" secondItem="4CU-dx-Y2m" secondAttribute="leading" id="q0u-Ro-rFa"/>
                                             <constraint firstAttribute="trailing" secondItem="oFm-N7-SnK" secondAttribute="trailing" constant="45" id="rym-K4-56I"/>
-                                            <constraint firstItem="zj8-zg-mAB" firstAttribute="top" secondItem="ele-He-dpP" secondAttribute="bottom" constant="7.5" id="tIB-Hc-q1T"/>
                                             <constraint firstItem="oFm-N7-SnK" firstAttribute="centerY" secondItem="Jon-z7-YHU" secondAttribute="centerY" id="vag-Fb-rmS"/>
                                             <constraint firstItem="J2T-a0-Efm" firstAttribute="leading" secondItem="4CU-dx-Y2m" secondAttribute="leading" constant="10" id="w2D-tN-nZI"/>
                                             <constraint firstItem="xUl-RO-dzS" firstAttribute="top" secondItem="oFm-N7-SnK" secondAttribute="bottom" constant="7.5" id="w7i-mr-CEa"/>
@@ -3199,10 +3199,10 @@
                                 <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tae-Jo-1oX" userLabel="containerView">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="802.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="843.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="If Follow Up Notifications are enabled, this is how long after the first notification your follow up will be sent." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Prl-sQ-Oqn" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="319.5" width="394" height="30"/>
+                                                <rect key="frame" x="10" y="323" width="394" height="30"/>
                                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                 <nil key="highlightedColor"/>
@@ -3234,45 +3234,45 @@
                                                 </connections>
                                             </switch>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Follow Up Delay" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wc4-1K-kvd" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="195.5" width="394" height="24"/>
+                                                <rect key="frame" x="10" y="199" width="394" height="24"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Loud Notifications" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PfB-2h-W3J" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="394.5" width="300" height="24"/>
+                                                <rect key="frame" x="10" y="554.5" width="300" height="24"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="755" verticalCompressionResistancePriority="755" contentHorizontalAlignment="center" contentVerticalAlignment="center" title="isNotificationEnabled" translatesAutoresizingMaskIntoConstraints="NO" id="OV1-FK-q3a">
-                                                <rect key="frame" x="320" y="391" width="51" height="31"/>
+                                                <rect key="frame" x="320" y="551" width="51" height="31"/>
                                                 <color key="onTintColor" systemColor="systemBlueColor"/>
                                                 <connections>
                                                     <action selector="didToggleIsLoudNotification:" destination="Vgb-2Y-U49" eventType="valueChanged" id="JYW-0U-9S2"/>
                                                 </connections>
                                             </switch>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LJV-Rs-nce" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="429.5" width="394" height="45"/>
+                                                <rect key="frame" x="10" y="589.5" width="394" height="45"/>
                                                 <string key="text">Notifications will ring and repeatedly vibrate despite your phone being silenced, locked, or in focus mode. If Hound is terminated, Loud Notifications will not work properly.</string>
                                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="If you don't respond to the first notification, send a follow up." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FIV-Xf-mEt" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="135.5" width="394" height="15"/>
+                                                <rect key="frame" x="10" y="139" width="394" height="15"/>
                                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Loud Notifications Sound" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W0k-0o-HUC" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="519.5" width="394" height="24"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Notifications Sound" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W0k-0o-HUC" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="398" width="394" height="24"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <datePicker contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" countDownDuration="300" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pst-bc-bN6">
-                                                <rect key="frame" x="10" y="224.5" width="394" height="90"/>
+                                                <rect key="frame" x="10" y="228" width="394" height="90"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="KQX-QQ-276"/>
                                                     <constraint firstAttribute="height" constant="90" id="t6T-xr-ofg"/>
@@ -3282,13 +3282,13 @@
                                                 </connections>
                                             </datePicker>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Snooze Duration" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8e6-dd-hKg" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="638.5" width="394" height="24"/>
+                                                <rect key="frame" x="10" y="679.5" width="394" height="24"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <datePicker contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4JP-rw-Kag">
-                                                <rect key="frame" x="10" y="667.5" width="394" height="90"/>
+                                                <rect key="frame" x="10" y="708.5" width="394" height="90"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="90" id="cyx-c7-vt2"/>
                                                 </constraints>
@@ -3297,7 +3297,13 @@
                                                 </connections>
                                             </datePicker>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="If you snooze an alarm, this is the length of time until it sounds again." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gOs-eT-mwT" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="762.5" width="394" height="30"/>
+                                                <rect key="frame" x="10" y="803.5" width="394" height="30"/>
+                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
+                                                <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Changes the sound your alarm plays. Tap on one of them to hear what it sounds like!" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VLq-0g-6OR" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="479.5" width="394" height="30"/>
                                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                 <nil key="highlightedColor"/>
@@ -3307,6 +3313,7 @@
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="Prl-sQ-Oqn" secondAttribute="trailing" constant="10" id="11e-h4-veY"/>
                                             <constraint firstAttribute="trailing" secondItem="W0k-0o-HUC" secondAttribute="trailing" constant="10" id="1wo-Ms-8AB"/>
+                                            <constraint firstItem="VLq-0g-6OR" firstAttribute="leading" secondItem="tae-Jo-1oX" secondAttribute="leading" constant="10" id="3BF-7U-PHV"/>
                                             <constraint firstItem="4JP-rw-Kag" firstAttribute="leading" secondItem="tae-Jo-1oX" secondAttribute="leading" constant="10" id="40l-Ml-UxF"/>
                                             <constraint firstItem="LJV-Rs-nce" firstAttribute="top" secondItem="OV1-FK-q3a" secondAttribute="bottom" constant="7.5" id="6fP-aD-3jH"/>
                                             <constraint firstItem="hGe-Mc-hm4" firstAttribute="centerY" secondItem="Fyy-v2-3CP" secondAttribute="centerY" id="8xL-RW-tiu"/>
@@ -3315,13 +3322,16 @@
                                             <constraint firstItem="Prl-sQ-Oqn" firstAttribute="top" secondItem="Pst-bc-bN6" secondAttribute="bottom" constant="5" id="Icf-Ky-wZS"/>
                                             <constraint firstAttribute="bottom" secondItem="gOs-eT-mwT" secondAttribute="bottom" constant="10" id="K2m-kr-GLy"/>
                                             <constraint firstItem="LJV-Rs-nce" firstAttribute="leading" secondItem="tae-Jo-1oX" secondAttribute="leading" constant="10" id="Lnj-YY-jgP"/>
+                                            <constraint firstAttribute="trailing" secondItem="VLq-0g-6OR" secondAttribute="trailing" constant="10" id="NEX-jY-54l"/>
+                                            <constraint firstItem="FIV-Xf-mEt" firstAttribute="top" secondItem="hGe-Mc-hm4" secondAttribute="bottom" constant="7.5" id="O4O-Hm-Fst"/>
+                                            <constraint firstItem="PfB-2h-W3J" firstAttribute="top" secondItem="VLq-0g-6OR" secondAttribute="bottom" constant="45" id="OyW-Sc-bbU"/>
                                             <constraint firstItem="4JP-rw-Kag" firstAttribute="top" secondItem="8e6-dd-hKg" secondAttribute="bottom" constant="5" id="PX3-7n-ZHv"/>
                                             <constraint firstItem="wc4-1K-kvd" firstAttribute="leading" secondItem="tae-Jo-1oX" secondAttribute="leading" constant="10" id="QJF-br-ZBp"/>
+                                            <constraint firstItem="8e6-dd-hKg" firstAttribute="top" secondItem="LJV-Rs-nce" secondAttribute="bottom" constant="45" id="QXJ-GA-Mi3"/>
                                             <constraint firstAttribute="trailing" secondItem="4JP-rw-Kag" secondAttribute="trailing" constant="10" id="RVY-1I-xav"/>
                                             <constraint firstAttribute="trailing" secondItem="Pst-bc-bN6" secondAttribute="trailing" constant="10" id="Rje-zN-DUK"/>
                                             <constraint firstAttribute="trailing" secondItem="gOs-eT-mwT" secondAttribute="trailing" constant="10" id="SOg-nn-fd8"/>
                                             <constraint firstItem="OV1-FK-q3a" firstAttribute="leading" secondItem="PfB-2h-W3J" secondAttribute="trailing" constant="10" id="UKc-oR-Qxz"/>
-                                            <constraint firstItem="PfB-2h-W3J" firstAttribute="top" secondItem="Prl-sQ-Oqn" secondAttribute="bottom" constant="45" id="VvX-3w-qGe"/>
                                             <constraint firstAttribute="trailing" secondItem="FIV-Xf-mEt" secondAttribute="trailing" constant="10" id="Zje-2g-4ut"/>
                                             <constraint firstItem="Pst-bc-bN6" firstAttribute="top" secondItem="wc4-1K-kvd" secondAttribute="bottom" constant="5" id="a6X-xc-fpK"/>
                                             <constraint firstItem="Fyy-v2-3CP" firstAttribute="top" secondItem="HjJ-6u-KHR" secondAttribute="bottom" constant="45" id="a7Y-K9-KXd"/>
@@ -3330,11 +3340,10 @@
                                             <constraint firstItem="HjJ-6u-KHR" firstAttribute="leading" secondItem="tae-Jo-1oX" secondAttribute="leading" constant="10" id="dNb-QO-Gst"/>
                                             <constraint firstItem="PfB-2h-W3J" firstAttribute="leading" secondItem="tae-Jo-1oX" secondAttribute="leading" constant="10" id="jS4-af-B1g"/>
                                             <constraint firstItem="Pst-bc-bN6" firstAttribute="leading" secondItem="tae-Jo-1oX" secondAttribute="leading" constant="10" id="kEQ-oi-jg3"/>
-                                            <constraint firstItem="W0k-0o-HUC" firstAttribute="top" secondItem="LJV-Rs-nce" secondAttribute="bottom" constant="45" id="lD7-0f-GtE"/>
+                                            <constraint firstItem="W0k-0o-HUC" firstAttribute="top" secondItem="Prl-sQ-Oqn" secondAttribute="bottom" constant="45" id="lD7-0f-GtE"/>
                                             <constraint firstItem="OV1-FK-q3a" firstAttribute="trailing" secondItem="aQH-BI-U0L" secondAttribute="trailing" id="lLX-R6-g8v"/>
                                             <constraint firstItem="OV1-FK-q3a" firstAttribute="centerY" secondItem="PfB-2h-W3J" secondAttribute="centerY" id="ltC-PD-f6g"/>
                                             <constraint firstItem="gOs-eT-mwT" firstAttribute="leading" secondItem="tae-Jo-1oX" secondAttribute="leading" constant="10" id="n3o-Nm-BZv"/>
-                                            <constraint firstItem="FIV-Xf-mEt" firstAttribute="top" secondItem="Fyy-v2-3CP" secondAttribute="bottom" constant="7.5" id="oDV-ZC-hME"/>
                                             <constraint firstAttribute="trailing" secondItem="LJV-Rs-nce" secondAttribute="trailing" constant="10" id="oDf-lK-B6I"/>
                                             <constraint firstItem="Fyy-v2-3CP" firstAttribute="leading" secondItem="tae-Jo-1oX" secondAttribute="leading" constant="10" id="poY-Ao-raL"/>
                                             <constraint firstAttribute="trailing" secondItem="aQH-BI-U0L" secondAttribute="trailing" constant="45" id="q6m-UM-hPw"/>
@@ -3350,7 +3359,7 @@
                                         </constraints>
                                     </view>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" text="By The Seaside" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CWU-QQ-0qi" customClass="BorderedUILabel" customModule="Hound" customModuleProvider="target">
-                                        <rect key="frame" x="10" y="553.5" width="394" height="40"/>
+                                        <rect key="frame" x="10" y="432" width="394" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="juA-NP-vXP"/>
                                         </constraints>
@@ -3365,10 +3374,10 @@
                                     <constraint firstItem="KRu-su-RWP" firstAttribute="trailing" secondItem="CWU-QQ-0qi" secondAttribute="trailing" constant="10" id="Nuq-fE-WcS"/>
                                     <constraint firstItem="tae-Jo-1oX" firstAttribute="leading" secondItem="FRo-GN-ik2" secondAttribute="leading" id="POY-PD-xcB"/>
                                     <constraint firstItem="CWU-QQ-0qi" firstAttribute="top" secondItem="W0k-0o-HUC" secondAttribute="bottom" constant="10" id="Qbt-9e-yP7"/>
-                                    <constraint firstItem="8e6-dd-hKg" firstAttribute="top" secondItem="CWU-QQ-0qi" secondAttribute="bottom" constant="45" id="VlM-j2-h6g"/>
                                     <constraint firstItem="CWU-QQ-0qi" firstAttribute="leading" secondItem="KRu-su-RWP" secondAttribute="leading" constant="10" id="fJv-n7-Umo"/>
                                     <constraint firstItem="tae-Jo-1oX" firstAttribute="top" secondItem="FRo-GN-ik2" secondAttribute="top" id="t8F-D7-jgY"/>
                                     <constraint firstItem="tae-Jo-1oX" firstAttribute="trailing" secondItem="FRo-GN-ik2" secondAttribute="trailing" id="tag-O7-OfX"/>
+                                    <constraint firstItem="VLq-0g-6OR" firstAttribute="top" secondItem="CWU-QQ-0qi" secondAttribute="bottom" constant="7.5" id="yJ5-c8-ZQv"/>
                                 </constraints>
                                 <viewLayoutGuide key="contentLayoutGuide" id="FRo-GN-ik2"/>
                                 <viewLayoutGuide key="frameLayoutGuide" id="KRu-su-RWP"/>

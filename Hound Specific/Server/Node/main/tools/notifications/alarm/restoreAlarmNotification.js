@@ -17,6 +17,7 @@ const restoreAlarmNotificationsForAllFamilies = async () => {
     // remove any pending jobs (there shouldn't be any)
     for (const key of Object.keys(schedule.scheduledJobs)) {
       schedule.scheduledJobs[key].cancel();
+      alarmLogger.info(`Cancelled job; count is now ${Object.keys(schedule.scheduledJobs).length}`);
     }
 
     // for ALL reminders get: familyId, reminderId, dogName, reminderExecutionDate, reminderAction, and reminderCustomActionName

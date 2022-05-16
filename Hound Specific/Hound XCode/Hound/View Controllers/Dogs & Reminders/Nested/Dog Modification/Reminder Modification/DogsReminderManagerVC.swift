@@ -183,6 +183,8 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // BUG if updating an existing reminder to a new mode, e.g. recurring to days of week, the day of month/hour/minute will populate as whatever is stored. This means if I go to update a recurring reminder to days of week, instead of being the exact time it currently is (i.e. the datePicker is at 11:37am) it will populate to the default of 7:00am.
+        
         oneTimeSetup()
     }
     
@@ -435,14 +437,19 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
         if segue.identifier == "dogsReminderCountdownViewController"{
             dogsReminderCountdownViewController = segue.destination as! DogsReminderCountdownViewController
             dogsReminderCountdownViewController.delegate = self
-            dogsReminderCountdownViewController.passedInterval = targetReminder?.countdownComponents.executionInterval
+            
+            guard targetReminder != nil && targetReminder!.reminderType == .countdown else {
+                return
+            }
+            
+            dogsReminderCountdownViewController.passedInterval = targetReminder!.countdownComponents.executionInterval
             
         }
         else if segue.identifier == "dogsReminderWeeklyViewController"{
             dogsReminderWeeklyViewController = segue.destination as! DogsReminderWeeklyViewController
             dogsReminderWeeklyViewController.delegate = self
             
-            guard targetReminder != nil else {
+            guard targetReminder != nil && targetReminder!.reminderType == .weekly else {
                 return
             }
                 dogsReminderWeeklyViewController.passedTimeOfDay = targetReminder!.weeklyComponents.notSkippingExecutionDate(reminderExecutionBasis: targetReminder!.reminderExecutionBasis)
@@ -452,8 +459,8 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
         else if segue.identifier == "dogsReminderMonthlyViewController"{
             dogsReminderMonthlyViewController = segue.destination as! DogsReminderMonthlyViewController
             dogsReminderMonthlyViewController.delegate = self
-            
-            guard targetReminder != nil else {
+           
+            guard targetReminder != nil && targetReminder!.reminderType == .monthly else {
                 return
             }
             
@@ -463,13 +470,11 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             dogsReminderOneTimeViewController = segue.destination as! DogsReminderOneTimeViewController
             dogsReminderOneTimeViewController.delegate = self
             
-            if targetReminder == nil || Date().distance(to: targetReminder!.oneTimeComponents.oneTimeDate) < 0 {
-                dogsReminderOneTimeViewController.passedDate = nil
-            }
-            else {
-                dogsReminderOneTimeViewController.passedDate = targetReminder!.oneTimeComponents.oneTimeDate
+            guard targetReminder != nil && targetReminder!.reminderType == .oneTime && Date().distance(to: targetReminder!.oneTimeComponents.oneTimeDate) > 0 else {
+                return
             }
             
+            dogsReminderOneTimeViewController.passedDate = targetReminder!.oneTimeComponents.oneTimeDate
         }
         
     }

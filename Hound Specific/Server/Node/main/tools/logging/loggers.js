@@ -24,7 +24,7 @@ const alarmLogger = parentLogger.child({ module: 'Alarm' });
 const alertLogger = parentLogger.child({ module: 'Alert' });
 
 // Logs functions related to sending an APN
-const apnLogger = parentLogger.child({ module: 'APM' });
+const apnLogger = parentLogger.child({ module: 'APN' });
 
 module.exports = {
   serverLogger, requestLogger, responseLogger, poolLogger, queryLogger, alarmLogger, alertLogger, apnLogger,
