@@ -4,6 +4,7 @@ const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
   formatNumber, formatDate, formatBoolean, formatArray, areAllDefined,
 } = require('../../main/tools/validation/validateFormat');
+const { numberOfRemindersPerDog } = require('../../main/server/constants');
 
 /**
  *  Queries the database to create a single reminder. If the query is successful, then returns the reminder with created reminderId added to it.
@@ -14,6 +15,23 @@ const createReminderQuery = async (req, reminder) => {
 
   if (areAllDefined(dogId, reminder) === false) {
     throw new ValidationError('dogId or reminder missing', 'ER_VALUES_MISSING');
+  }
+
+  let numberOfReminders;
+  try {
+    numberOfReminders = await queryPromise(
+      req,
+      'SELECT reminderId FROM dogReminders WHERE dogId = ?',
+      [dogId],
+    );
+  }
+  catch (error) {
+    throw new DatabaseError(error.code);
+  }
+
+  // make sure that the user isn't creating too many reminders
+  if (numberOfReminders.length >= numberOfRemindersPerDog) {
+    throw new ValidationError(`Dog reminder limit of ${numberOfRemindersPerDog} exceeded`, 'ER_REMINDER_LIMIT_EXCEEDED');
   }
 
   // general reminder components
@@ -91,7 +109,6 @@ const createReminderQuery = async (req, reminder) => {
     };
   }
   catch (error) {
-    console.log(error);
     throw new DatabaseError(error.code);
   }
 };

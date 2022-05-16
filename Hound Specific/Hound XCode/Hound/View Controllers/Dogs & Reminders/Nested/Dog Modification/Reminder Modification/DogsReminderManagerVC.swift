@@ -432,20 +432,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
     // MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "dogsReminderOneTimeViewController"{
-            dogsReminderOneTimeViewController = segue.destination as! DogsReminderOneTimeViewController
-            dogsReminderOneTimeViewController.delegate = self
-            var calculatedPassedDate: Date? {
-                if targetReminder == nil || Date().distance(to: targetReminder!.oneTimeComponents.oneTimeDate) < 0 {
-                    return nil
-                }
-                else {
-                    return targetReminder!.oneTimeComponents.oneTimeDate
-                }
-            }
-            dogsReminderOneTimeViewController.passedDate = calculatedPassedDate
-        }
-        else if segue.identifier == "dogsReminderCountdownViewController"{
+        if segue.identifier == "dogsReminderCountdownViewController"{
             dogsReminderCountdownViewController = segue.destination as! DogsReminderCountdownViewController
             dogsReminderCountdownViewController.delegate = self
             dogsReminderCountdownViewController.passedInterval = targetReminder?.countdownComponents.executionInterval
@@ -455,19 +442,34 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             dogsReminderWeeklyViewController = segue.destination as! DogsReminderWeeklyViewController
             dogsReminderWeeklyViewController.delegate = self
             
-            if targetReminder != nil {
+            guard targetReminder != nil else {
+                return
+            }
                 dogsReminderWeeklyViewController.passedTimeOfDay = targetReminder!.weeklyComponents.notSkippingExecutionDate(reminderExecutionBasis: targetReminder!.reminderExecutionBasis)
                 dogsReminderWeeklyViewController.passedWeekDays = targetReminder!.weeklyComponents.weekdays
-            }
             
         }
         else if segue.identifier == "dogsReminderMonthlyViewController"{
             dogsReminderMonthlyViewController = segue.destination as! DogsReminderMonthlyViewController
             dogsReminderMonthlyViewController.delegate = self
             
-            if targetReminder != nil {
-                dogsReminderMonthlyViewController.passedTimeOfDay = targetReminder!.monthlyComponents.notSkippingExecutionDate(reminderExecutionBasis: targetReminder!.reminderExecutionBasis)
+            guard targetReminder != nil else {
+                return
             }
+            
+            dogsReminderMonthlyViewController.passedTimeOfDay = targetReminder!.monthlyComponents.notSkippingExecutionDate(reminderExecutionBasis: targetReminder!.reminderExecutionBasis)
+        }
+        else if segue.identifier == "dogsReminderOneTimeViewController"{
+            dogsReminderOneTimeViewController = segue.destination as! DogsReminderOneTimeViewController
+            dogsReminderOneTimeViewController.delegate = self
+            
+            if targetReminder == nil || Date().distance(to: targetReminder!.oneTimeComponents.oneTimeDate) < 0 {
+                dogsReminderOneTimeViewController.passedDate = nil
+            }
+            else {
+                dogsReminderOneTimeViewController.passedDate = targetReminder!.oneTimeComponents.oneTimeDate
+            }
+            
         }
         
     }

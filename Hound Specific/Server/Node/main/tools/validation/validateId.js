@@ -2,11 +2,7 @@ const { queryPromise } = require('../database/queryPromise');
 const { formatNumber, formatArray, areAllDefined } = require('./validateFormat');
 const DatabaseError = require('../errors/databaseError');
 const ValidationError = require('../errors/validationError');
-
-// the most recent build of the app published to the app store
-const currentAppBuild = 4000;
-// the second most recent build of the app, this will be the version most users are on until the app store one processes
-const previousAppBuild = 3999;
+const { currentAppBuild, previousAppBuild } = require('../../server/constants');
 
 /**
  * Checks to see that the appBuild of the requester is either up to date or one version behind.

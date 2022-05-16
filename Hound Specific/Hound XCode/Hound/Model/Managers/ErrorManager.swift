@@ -39,10 +39,13 @@ enum ErrorManager {
         else if let castError = error as? AppBuildResponseError {
             ErrorManager.alert(forMessage: castError.rawValue, hasOKAlertAction: false, serverRelated: true)
         }
+        else if let castError = error as? GeneralResponseError {
+            ErrorManager.alert(forMessage: castError.rawValue, serverRelated: true)
+        }
         else if let castError = error as? FamilyResponseError {
             ErrorManager.alert(forMessage: castError.rawValue, serverRelated: true)
         }
-        else if let castError = error as? GeneralResponseError {
+        else if let castError = error as? LimitResponseError {
             ErrorManager.alert(forMessage: castError.rawValue, serverRelated: true)
         }
         // Dog Object Related

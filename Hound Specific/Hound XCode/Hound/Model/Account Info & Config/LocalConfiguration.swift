@@ -13,7 +13,7 @@ enum LocalConfiguration {
     
     // MARK: Sync Related
     
-    // TO DO make app store the last date a full dogManager was retrieved from the server and store the dogManager. Then when the user goes to sync again, we provide lastDogManagerSync which tells the server to only provide items that were updated after the last time the user synced. This makes it so the user always has the latest information without having to constantly retrieve it all.
+    // TO DO make the app store the last date a full dogManager was retrieved from the server and store the dogManager. Then when the user goes to sync again, we provide lastDogManagerSync which tells the server to only provide items that were updated after the last time the user synced. This makes it so the user always has the latest information without having to constantly retrieve it all.
     
     // For our first every dogManager sync, we want to retrieve ever dog, reminder, and log (which can be a LOT of data as accounts accumlate logs over the years). To get everything the family has ever added, we set our last sync as far back in time as it will go. This will retrieve everything
     static var lastDogManagerSync: Date = Date(timeIntervalSince1970: 0)

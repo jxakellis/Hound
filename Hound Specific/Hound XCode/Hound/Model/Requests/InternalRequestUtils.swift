@@ -88,7 +88,7 @@ enum InternalRequestUtils {
                     var responseCode: Error?
                     
                     if let responseCodeString = responseBody?[ServerDefaultKeys.code.rawValue] as? String {
-                        responseCode = AppBuildResponseError(rawValue: responseCodeString) ?? FamilyResponseError(rawValue: responseCodeString)
+                        responseCode = AppBuildResponseError(rawValue: responseCodeString) ?? FamilyResponseError(rawValue: responseCodeString) ?? LimitResponseError(rawValue: responseCodeString)
                     }
                     
                     guard (responseCode is AppBuildResponseError) == false else {

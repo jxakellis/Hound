@@ -1,11 +1,11 @@
 const express = require('express');
 const { serverLogger } = require('../tools/logging/loggers');
+const { isProduction } = require('./constants');
 
 const app = express();
 
 // MARK: Create the server
 
-const isProduction = false;
 const port = 3000;
 const { restoreAlarmNotificationsForAllFamilies } = require('../tools/notifications/alarm/restoreAlarmNotification');
 

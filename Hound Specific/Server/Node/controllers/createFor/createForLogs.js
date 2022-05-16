@@ -4,6 +4,7 @@ const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
   formatDate, areAllDefined,
 } = require('../../main/tools/validation/validateFormat');
+const { numberOfLogsPerDog } = require('../../main/server/constants');
 
 /**
  *  Queries the database to create a log. If the query is successful, then returns the logId.
@@ -20,6 +21,23 @@ const createLogQuery = async (req) => {
 
   if (areAllDefined(userId, dogId, logDate, logNote, logAction) === false) {
     throw new ValidationError('userId, dogId, logDate, logNote, or logAction missing', 'ER_VALUES_MISSING');
+  }
+
+  let numberOfLogs;
+  try {
+    numberOfLogs = await queryPromise(
+      req,
+      'SELECT logId FROM dogLogs WHERE dogId = ?',
+      [dogId],
+    );
+  }
+  catch (error) {
+    throw new DatabaseError(error.code);
+  }
+
+  // make sure that the user isn't creating too many logs
+  if (numberOfLogs.length >= numberOfLogsPerDog) {
+    throw new ValidationError(`Dog log limit of ${numberOfLogsPerDog} exceeded`, 'ER_LOGS_LIMIT_EXCEEDED');
   }
 
   try {

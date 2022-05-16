@@ -85,6 +85,7 @@
 		A29390732608480800879C79 /* DogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29390722608480800879C79 /* DogManager.swift */; };
 		A29400AB2652DA2100725F1C /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29400AA2652DA2100725F1C /* SettingsVC.swift */; };
 		A29400AD2652DA2700725F1C /* SettingsNavigationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29400AC2652DA2600725F1C /* SettingsNavigationVC.swift */; };
+		A2987E9A2831F02300884E97 /* LimitResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2987E992831F02300884E97 /* LimitResponseError.swift */; };
 		A299EAA027E2C4E60042F8F4 /* SettingsPersonalInformationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EA9F27E2C4E50042F8F4 /* SettingsPersonalInformationVC.swift */; };
 		A299EAA427E2C5050042F8F4 /* SettingsAppearanceVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EAA327E2C5050042F8F4 /* SettingsAppearanceVC.swift */; };
 		A299EAA827E2C5220042F8F4 /* SettingsNotificationsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EAA727E2C5220042F8F4 /* SettingsNotificationsVC.swift */; };
@@ -262,6 +263,7 @@
 		A29390722608480800879C79 /* DogManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogManager.swift; sourceTree = "<group>"; };
 		A29400AA2652DA2100725F1C /* SettingsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		A29400AC2652DA2600725F1C /* SettingsNavigationVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsNavigationVC.swift; sourceTree = "<group>"; };
+		A2987E992831F02300884E97 /* LimitResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LimitResponseError.swift; sourceTree = "<group>"; };
 		A299EA9F27E2C4E50042F8F4 /* SettingsPersonalInformationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPersonalInformationVC.swift; sourceTree = "<group>"; };
 		A299EAA327E2C5050042F8F4 /* SettingsAppearanceVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAppearanceVC.swift; sourceTree = "<group>"; };
 		A299EAA727E2C5220042F8F4 /* SettingsNotificationsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNotificationsVC.swift; sourceTree = "<group>"; };
@@ -740,6 +742,7 @@
 			isa = PBXGroup;
 			children = (
 				A2A91116282C18380078B857 /* AppBuildResponseError.swift */,
+				A2987E992831F02300884E97 /* LimitResponseError.swift */,
 				A2581B7327FDD35E0099AFB8 /* FamilyResponseError.swift */,
 				A2B565F727E923510091CA25 /* GeneralResponseError.swift */,
 			);
@@ -1151,6 +1154,7 @@
 				A2DC23A8264D822F00EB287A /* DogsReminderMonthlyVC.swift in Sources */,
 				A2B565F627E825690091CA25 /* AlarmManager.swift in Sources */,
 				A2BAA06C27D6C5520041F3C5 /* ServerLoginVC.swift in Sources */,
+				A2987E9A2831F02300884E97 /* LimitResponseError.swift in Sources */,
 				A212522228060F5B00FBFAC7 /* ViewControllerUtils.swift in Sources */,
 				A26A984A27F658CD002803A6 /* User Default Keys.swift in Sources */,
 				A299EAA827E2C5220042F8F4 /* SettingsNotificationsVC.swift in Sources */,
