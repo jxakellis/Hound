@@ -9,10 +9,9 @@ const { areAllDefined } = require('../../main/tools/validation/validateFormat');
  *  If a problem is encountered, creates and throws custom error
  */
 const updateDogQuery = async (req) => {
-  // could be updating dogName or dogIcon
-
-  const dogId = req.params.dogId;
-  const { dogName } = req.body;
+  const dogId = req.params.dogId; // required
+  const { dogName } = req.body; // required
+  const dogLastModified = new Date(); // manual
 
   // if dogName undefined, then there is nothing to update
   if (areAllDefined(dogId, dogName) === false) {
@@ -21,7 +20,11 @@ const updateDogQuery = async (req) => {
 
   try {
     // updates the dogName for the dogId provided
-    return queryPromise(req, 'UPDATE dogs SET dogName = ? WHERE dogId = ?', [dogName, dogId]);
+    return queryPromise(
+      req,
+      'UPDATE dogs SET dogName = ?, SET dogLastModified = ? WHERE dogId = ?',
+      [dogName, dogLastModified, dogId],
+    );
 
     // TO DO implement storage of dogIcon on server
   }

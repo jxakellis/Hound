@@ -2,129 +2,117 @@ const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
-  formatDate, formatBoolean, formatArray, areAllDefined,
+  formatNumber, formatDate, formatBoolean, formatArray, areAllDefined,
 } = require('../../main/tools/validation/validateFormat');
 
-const { createCountdownComponents } = require('../reminderComponents/countdown');
-const { createWeeklyComponents } = require('../reminderComponents/weekly');
-const { createMonthlyComponents } = require('../reminderComponents/monthly');
-const { createOneTimeComponents } = require('../reminderComponents/oneTime');
-
 /**
- *  Queries the database to create a single reminder. If the query is successful, then returns the reminder with created reminderId.
+ *  Queries the database to create a single reminder. If the query is successful, then returns the reminder with created reminderId added to it.
  *  If a problem is encountered, creates and throws custom error
  */
-const createReminderQuery = async (req) => {
+const createReminderQuery = async (req, reminder) => {
   const dogId = req.params.dogId;
-  const { reminderAction, reminderCustomActionName, reminderType } = req.body;
-  const reminderExecutionBasis = formatDate(req.body.reminderExecutionBasis);
-  const reminderExecutionDate = formatDate(req.body.reminderExecutionDate);
-  const reminderIsEnabled = formatBoolean(req.body.reminderIsEnabled);
 
-  // check to see that necessary generic reminder componetns are present
-  if (areAllDefined(dogId, reminderAction, reminderType, reminderExecutionBasis, reminderIsEnabled) === false) {
-    // >= 1 of the objects are undefined
-    throw new ValidationError('dogId, reminderAction, reminderType, reminderExecutionBasis, or reminderIsEnabled missing', 'ER_VALUES_MISSING');
+  if (areAllDefined(dogId, reminder) === false) {
+    throw new ValidationError('dogId or reminder missing', 'ER_VALUES_MISSING');
+  }
+
+  // general reminder components
+  const { reminderAction, reminderCustomActionName, reminderType } = reminder; // required
+  const reminderIsEnabled = formatBoolean(reminder.reminderIsEnabled); // required
+  const reminderExecutionBasis = formatDate(reminder.reminderExecutionBasis); // required
+  const reminderExecutionDate = formatDate(reminder.reminderExecutionDate); // optional
+  const reminderLastModified = new Date(); // manual
+
+  // countdown components
+  const countdownExecutionInterval = formatNumber(reminder.countdownExecutionInterval); // required
+
+  // weekly components
+  const weeklyHour = formatNumber(reminder.weeklyHour); // required
+  const weeklyMinute = formatNumber(reminder.weeklyMinute); // required
+  const weeklySunday = formatBoolean(reminder.weeklySunday); // required
+  const weeklyMonday = formatBoolean(reminder.weeklyMonday); // required
+  const weeklyTuesday = formatBoolean(reminder.weeklyTuesday); // required
+  const weeklyWednesday = formatBoolean(reminder.weeklyWednesday); // required
+  const weeklyThursday = formatBoolean(reminder.weeklyThursday); // required
+  const weeklyFriday = formatBoolean(reminder.weeklyFriday); // required
+  const weeklySaturday = formatBoolean(reminder.weeklySaturday); // required
+
+  // monthly components
+  const monthlyHour = formatNumber(reminder.monthlyHour); // required
+  const monthlyMinute = formatNumber(reminder.monthlyMinute); // required
+  const monthlyDay = formatNumber(reminder.monthlyDay); // required
+
+  // one time components
+  const oneTimeDate = formatDate(reminder.oneTimeDate); // required
+
+  // check to see that necessary generic reminder components are present
+  if (areAllDefined(reminderAction, reminderType, reminderIsEnabled, reminderExecutionBasis) === false) {
+    throw new ValidationError('reminderAction, reminderType, reminderIsEnabled, or reminderExecutionBasis missing', 'ER_VALUES_MISSING');
   }
   else if (reminderType !== 'countdown' && reminderType !== 'weekly' && reminderType !== 'monthly' && reminderType !== 'oneTime') {
-    throw new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID');
+    throw new ValidationError('reminderType invalid', 'ER_VALUES_INVALID');
   }
-
-  // define out here so reminderId can be accessed in catch block to delete entries
-  let reminderId;
+  // no need to check snooze components as a newly created reminder can't be snoozed yet
+  // no need to check for countdownIntervalElapsed as newly created reminder couldn't have elapsed time
+  else if (areAllDefined(countdownExecutionInterval) === false) {
+    throw new ValidationError('countdownExecutionInterval missing', 'ER_VALUES_MISSING');
+  }
+  // no need to check weeklyIsSkipping && weeklyIsSkippingDate validity as newly created reminder can't be skipped yet
+  else if (areAllDefined(weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday) === false) {
+    throw new ValidationError('weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, or weeklySaturday missing', 'ER_VALUES_MISSING');
+  }
+  // no need to check monthlyIsSkipping && monthlyIsSkippingDate validity as newly created reminder can't be skipped yet
+  else if (areAllDefined(monthlyDay, monthlyHour, monthlyMinute) === false) {
+    throw new ValidationError('monthlyDay, monthlyHour, or monthlyMinute missing', 'ER_VALUES_MISSING');
+  }
+  else if (areAllDefined(oneTimeDate) === false) {
+    throw new ValidationError('oneTimeDate missing', 'ER_VALUES_MISSING');
+  }
 
   try {
-    // first insert to main reminder table to get reminderId, then insert to other tables
     const result = await queryPromise(
       req,
-      'INSERT INTO dogReminders(dogId, reminderAction, reminderCustomActionName, reminderType, reminderExecutionBasis, reminderExecutionDate, reminderIsEnabled) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [dogId, reminderAction, reminderCustomActionName, reminderType, reminderExecutionBasis, reminderExecutionDate, reminderIsEnabled],
+      'INSERT INTO dogReminders(dogId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderExecutionDate, reminderLastModified, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed, countdownExecutionInterval, countdownIntervalElapsed, weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklyIsSkipping, weeklyIsSkippingDate, monthlyDay, monthlyHour, monthlyMinute, monthlyIsSkipping, monthlyIsSkippingDate, oneTimeDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [
+        dogId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderExecutionDate, reminderLastModified,
+        false, 0, 0,
+        countdownExecutionInterval, 0,
+        weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, false, undefined,
+        monthlyDay, monthlyHour, monthlyMinute, false, undefined,
+        oneTimeDate,
+      ],
     );
-    reminderId = result.insertId;
-    // add reminderId into body, needed for create components and when return
-    req.body.reminderId = reminderId;
 
-    // no need to check for snooze components as a newly created reminder cant be snoozed, it can only be updated to be snoozing
-    if (reminderType === 'countdown') {
-      await createCountdownComponents(req, req.body);
-    }
-    else if (reminderType === 'weekly') {
-      await createWeeklyComponents(req, req.body);
-    }
-    else if (reminderType === 'monthly') {
-      await createMonthlyComponents(req, req.body);
-    }
-    else if (reminderType === 'oneTime') {
-      await createOneTimeComponents(req, req.body);
-    }
-    // was able to successfully create components for a certain reminder type
-    return [req.body];
+    // ...reminder must come first otherwise its placeholder reminderId will override the real one
+    // was able to successfully create reminder, return the provided reminder with its added to the body
+    return {
+      ...reminder,
+      reminderId: result.insertId,
+    };
   }
   catch (error) {
+    console.log(error);
     throw new DatabaseError(error.code);
   }
 };
 
 /**
-   * Queries the database to create a multiple reminders. If the query is successful, then returns the reminders with their created reminderIds.
+   * Queries the database to create a multiple reminders. If the query is successful, then returns the reminders with their created reminderIds added to them.
  *  If a problem is encountered, creates and throws custom error
    */
-const createRemindersQuery = async (req) => {
-  // assume .reminders is an array
-  const dogId = req.params.dogId;
-  const reminders = formatArray(req.body.reminders);
+const createRemindersQuery = async (req, reminders) => {
+  const dogId = req.params.dogId; // required
+  const remindersArray = formatArray(reminders); // required
   const createdReminders = [];
 
-  // synchronously iterate through all reminders provided to create them all
-  // if there is a problem, we rollback all our queries and send the failure response
-  // if there is no problem, we append the created reminder (with its freshly assigned id) to the array
-  // if there are no problems with any of the reminders, we commit our queries and send the success response
-  for (let i = 0; i < reminders.length; i += 1) {
-    const { reminderAction, reminderCustomActionName, reminderType } = reminders[i];
-    const reminderExecutionBasis = formatDate(reminders[i].reminderExecutionBasis);
-    const reminderExecutionDate = formatDate(reminders[i].reminderExecutionDate);
-    const reminderIsEnabled = formatBoolean(reminders[i].reminderIsEnabled);
+  if (areAllDefined(dogId, remindersArray) === false) {
+    throw new ValidationError('dogId or reminders missing', 'ER_VALUES_MISSING');
+  }
 
-    // check to see that necessary generic reminder componetns are present
-    if (areAllDefined(dogId, reminderAction, reminderType, reminderExecutionBasis, reminderIsEnabled) === false) {
-    // >= 1 of the objects are undefined
-      throw new ValidationError('dogId, reminderAction, reminderType, reminderExecutionBasis, or reminderIsEnabled missing', 'ER_VALUES_MISSING');
-    }
-    else if (reminderType !== 'countdown' && reminderType !== 'weekly' && reminderType !== 'monthly' && reminderType !== 'oneTime') {
-      throw new ValidationError('reminderType Invalid', 'ER_VALUES_INVALID');
-    }
-    // define out here so reminderId can be accessed in catch block to delete entries
-    let reminderId;
-
-    try {
-      // first insert to main reminder table to get reminderId, then insert to other tables
-      const result = await queryPromise(
-        req,
-        'INSERT INTO dogReminders(dogId, reminderAction, reminderCustomActionName, reminderType, reminderExecutionBasis, reminderExecutionDate, reminderIsEnabled) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [dogId, reminderAction, reminderCustomActionName, reminderType, reminderExecutionBasis, reminderExecutionDate, reminderIsEnabled],
-      );
-      reminderId = result.insertId;
-      // add reminderId into body, needed for create components and when return
-      reminders[i].reminderId = reminderId;
-      // no need to check for snooze components as a newly created reminder cant be snoozed, it can only be updated to be snoozing
-      if (reminderType === 'countdown') {
-        await createCountdownComponents(req, reminders[i]);
-      }
-      else if (reminderType === 'weekly') {
-        await createWeeklyComponents(req, reminders[i]);
-      }
-      else if (reminderType === 'monthly') {
-        await createMonthlyComponents(req, reminders[i]);
-      }
-      else if (reminderType === 'oneTime') {
-        await createOneTimeComponents(req, reminders[i]);
-      }
-      // was able to successfully create components for a certain reminder type
-      createdReminders.push(reminders[i]);
-    }
-    catch (error) {
-      throw new DatabaseError(error.code);
-    }
+  for (let i = 0; i < remindersArray.length; i += 1) {
+    // retrieve the original provided body AND the created id
+    const createdReminder = await createReminderQuery(req, remindersArray[i]);
+    createdReminders.push(createdReminder);
   }
   // everything was successful so we return the created reminders
   return createdReminders;

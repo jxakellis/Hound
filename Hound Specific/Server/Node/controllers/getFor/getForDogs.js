@@ -28,12 +28,12 @@ const getDogQuery = async (req, dogId) => {
       const queryForReminders = formatBoolean(req.query.reminders);
       const queryForLogs = formatBoolean(req.query.logs);
       // if the query parameter indicates that they want the logs and the reminders too, we add them
-      if (queryForReminders === true) {
+      if (queryForReminders) {
         const remindersResult = await getRemindersQuery(req, dogId);
 
         result[0].reminders = remindersResult;
       }
-      if (queryForLogs === true) {
+      if (queryForLogs) {
         const logsResult = await getLogsQuery(req, dogId);
 
         result[0].logs = logsResult;
@@ -69,18 +69,20 @@ const getDogsQuery = async (req, familyId) => {
       const queryForReminders = formatBoolean(req.query.reminders);
       const queryForLogs = formatBoolean(req.query.logs);
       // if the query parameter indicates that they want the logs and the reminders too, we add them.
-      if (queryForReminders === true) {
+      if (queryForReminders) {
         for (let i = 0; i < result.length; i += 1) {
           const reminderResult = await getRemindersQuery(req, result[i].dogId);
           result[i].reminders = reminderResult;
         }
       }
-      if (queryForLogs === true) {
+      if (queryForLogs) {
         for (let i = 0; i < result.length; i += 1) {
           const logResult = await getLogsQuery(req, result[i].dogId);
           result[i].logs = logResult;
         }
       }
+      // we don't need to transmit this data
+      result[0].dogLastModified = undefined;
       return result;
     }
   }

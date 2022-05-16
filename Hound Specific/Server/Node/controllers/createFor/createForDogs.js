@@ -8,8 +8,9 @@ const { areAllDefined } = require('../../main/tools/validation/validateFormat');
  *  If a problem is encountered, creates and throws custom error
  */
 const createDogQuery = async (req) => {
-  const familyId = req.params.familyId;
-  const dogName = req.body.dogName;
+  const familyId = req.params.familyId; // required
+  const dogName = req.body.dogName; // required
+  const dogLastModified = new Date(); // manual
 
   if (areAllDefined(familyId, dogName) === false) {
     throw new ValidationError('familyId or dogName missing', 'ER_VALUES_MISSING');
@@ -18,8 +19,8 @@ const createDogQuery = async (req) => {
   try {
     const result = await queryPromise(
       req,
-      'INSERT INTO dogs(familyId, dogIcon, dogName) VALUES (?,?,?)',
-      [familyId, undefined, dogName],
+      'INSERT INTO dogs(familyId, dogIcon, dogName, dogLastModified) VALUES (?,?,?,?)',
+      [familyId, undefined, dogName, dogLastModified],
     );
     return result.insertId;
   }

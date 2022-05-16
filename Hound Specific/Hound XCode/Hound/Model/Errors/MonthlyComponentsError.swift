@@ -9,5 +9,7 @@
 import Foundation
 
 enum MonthlyComponentsError: String, Error {
-    case monthlyDayInvalid = "Please select a day of month for your reminder."
+    case dayInvalid = "Please select a day of month for your reminder."
+    case hourInvalid = "Please select a time of day for your reminder."
+    case minuteInvalid = "Please select a time of day for your reminder. "
 }

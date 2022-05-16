@@ -8,33 +8,36 @@
 
 import Foundation
 
-class MonthlyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtocol {
+class MonthlyComponents: Component, NSCoding, NSCopying {
     
     // MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = MonthlyComponents()
-        copy.storedDateComponents = self.storedDateComponents
+        copy.storedDay = self.day
+        copy.storedHour = self.hour
+        copy.storedMinute = self.minute
         copy.isSkipping = self.isSkipping
         copy.isSkippingDate = self.isSkippingDate
-        copy.storedMonthlyDay = self.storedMonthlyDay
         return copy
     }
     
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        self.storedDateComponents = aDecoder.decodeObject(forKey: "dateComponents") as? DateComponents ?? DateComponents()
-        self.isSkipping = aDecoder.decodeBool(forKey: "isSkipping")
-        self.isSkippingDate = aDecoder.decodeObject(forKey: "isSkippingDate") as? Date
-        self.storedMonthlyDay = aDecoder.decodeInteger(forKey: "monthlyDay")
+        storedDay = aDecoder.decodeInteger(forKey: "day")
+        storedHour = aDecoder.decodeInteger(forKey: "hour")
+        storedMinute = aDecoder.decodeInteger(forKey: "minute")
+        isSkipping = aDecoder.decodeBool(forKey: "isSkipping")
+        isSkippingDate = aDecoder.decodeObject(forKey: "isSkippingDate") as? Date
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(storedDateComponents, forKey: "dateComponents")
+        aCoder.encode(storedDay, forKey: "day")
+        aCoder.encode(storedHour, forKey: "hour")
+        aCoder.encode(storedMinute, forKey: "minute")
         aCoder.encode(isSkipping, forKey: "isSkipping")
         aCoder.encode(isSkippingDate, forKey: "isSkippingDate")
-        aCoder.encode(storedMonthlyDay, forKey: "monthlyDay")
     }
     
     // MARK: Main
@@ -43,43 +46,54 @@ class MonthlyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtoco
         super.init()
     }
     
-    convenience init(hour: Int?, minute: Int?, isSkipping: Bool?, skipDate: Date?, monthlyDay: Int?) {
+    convenience init(day: Int?, hour: Int?, minute: Int?, isSkipping: Bool?, isSkippingDate: Date?) {
         self.init()
-        storedDateComponents.hour = hour
-        storedDateComponents.minute = minute
-        if isSkipping != nil {
-            self.isSkipping = isSkipping!
-        }
-        isSkippingDate = skipDate
-        if monthlyDay != nil {
-            storedMonthlyDay = monthlyDay!
-        }
+        storedDay = day ?? self.day
+        storedHour = hour ?? self.hour
+        storedMinute = minute ?? self.minute
+        self.isSkipping = isSkipping ?? self.isSkipping
+        self.isSkippingDate = isSkippingDate
         
     }
     
     // MARK: - Properties
     
-    private var storedDateComponents: DateComponents = DateComponents()
-    var dateComponents: DateComponents { return storedDateComponents }
-    
-    func changeDateComponents(newDateComponents: DateComponents) {
-        if newDateComponents.hour != nil {
-            storedDateComponents.hour = newDateComponents.hour
+    private var storedDay: Int = 1
+    /// Day of the month that a reminder will fire
+    var day: Int { return storedDay }
+    /// Throws if not within the range of [1,31]
+    func changeDay(newDay: Int) throws {
+        guard newDay >= 1 && newDay <= 31 else {
+            throw MonthlyComponentsError.dayInvalid
         }
-        if newDateComponents.minute != nil {
-            storedDateComponents.minute = newDateComponents.minute
-        }
+        storedDay = newDay
+        
     }
     
-    func changeDateComponents(newDateComponent: Calendar.Component, newValue: Int) {
-        switch newDateComponent {
-        case .hour:
-            storedDateComponents.hour = newValue
-        case .minute:
-            storedDateComponents.minute = newValue
-        default:
-            return
+    private var storedHour: Int = 7
+    /// Hour of the day that the reminder will fire
+    var hour: Int { return storedHour }
+    
+    ///  Throws if not within the range of [0,24]
+    func changeHour(newHour: Int) throws {
+        guard newHour >= 0 && newHour <= 24 else {
+            throw MonthlyComponentsError.hourInvalid
         }
+        
+        storedHour = newHour
+    }
+    
+    private var storedMinute: Int = 0
+    /// Minute of the hour that the reminder will fire
+    var minute: Int { return storedMinute }
+    
+    /// Throws if not within the range of [0,60]
+    func changeMinute(newMinute: Int) throws {
+        guard newMinute >= 0 && newMinute <= 60 else {
+            throw MonthlyComponentsError.minuteInvalid
+        }
+        
+        storedMinute = newMinute
     }
     
     /// Whether or not the next alarm will be skipped
@@ -88,41 +102,57 @@ class MonthlyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtoco
     /// The date at which the user changed the isSkipping to true.  If is skipping is true, then a certain log date was appended. If unskipped, then we have to remove that previously added log. Slight caveat: if the skip log was modified (by the user changing its date) we don't remove it.
     var isSkippingDate: Date?
     
-    private var storedMonthlyDay: Int = 1
-    /// Day of the month that a reminder will fire
-    var monthlyDay: Int { return storedMonthlyDay }
-    /// Changes the day of month. Throws if not within the range of [1,31]
-    func changeMonthlyDay(newMonthlyDay: Int) throws {
+    // MARK: - Functions
+    
+    /// This find the next execution date that takes place after the reminderExecutionBasis. It purposelly not factoring in isSkipping.
+    func notSkippingExecutionDate(reminderExecutionBasis: Date) -> Date {
         
-        if newMonthlyDay < 1 || newMonthlyDay > 31 {
-            throw MonthlyComponentsError.monthlyDayInvalid
-        }
-        else if storedMonthlyDay != newMonthlyDay {
-            storedMonthlyDay = newMonthlyDay
-        }
-        
+        // there will only be two future executions dates for a day, so we take the first one is the one.
+        return futureExecutionDates(reminderExecutionBasis: reminderExecutionBasis).first!
     }
     
-    //// If we add a month to the date, then it might be incorrect and lose accuracy. For example, our monthlyDay is 31. We are in April so there is only 30 days. Therefore we get a calculated date of April 30th. After adding a month, the result date is May 30th, but it should be 31st because of our monthlyDay and that May has 31 days. This corrects that.
+    func previousExecutionDate(reminderExecutionBasis: Date) -> Date {
+        
+        // use non skipping version
+        let nextTimeOfDay = notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
+        
+        var preceedingExecutionDate: Date = Calendar.current.date(byAdding: .month, value: -1, to: nextTimeOfDay)!
+        preceedingExecutionDate = fallShortCorrection(dateToCorrect: preceedingExecutionDate)
+        return preceedingExecutionDate
+    }
+    
+    /// Factors in isSkipping to figure out the next time of day
+    func nextExecutionDate(reminderExecutionBasis: Date) -> Date {
+        if isSkipping == true {
+            return skippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
+        }
+        else {
+            return notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
+        }
+    }
+    
+    // MARK: - Private Helper Functions
+    
+    //// If we add a month to the date, then it might be incorrect and lose accuracy. For example, our day is 31. We are in April so there is only 30 days. Therefore we get a calculated date of April 30th. After adding a month, the result date is May 30th, but it should be 31st because of our day and that May has 31 days. This corrects that.
     private func fallShortCorrection(dateToCorrect: Date) -> Date {
         
-        let monthlyDayForCalculatedDate = Calendar.current.component(.day, from: dateToCorrect)
+        let dayForCalculatedDate = Calendar.current.component(.day, from: dateToCorrect)
         // when adding a month, the day set fell short of what was needed. We need to correct it
-        if monthlyDay > monthlyDayForCalculatedDate {
-            // We need to find the maximum possible monthlyDay to set the date to without having it accidentially roll into the next month.
-            var calculatedMonthlyDay: Int {
-                let neededMonthlyDay = monthlyDay
-                let maximumMonthlyDay = Calendar.current.range(of: .day, in: .month, for: dateToCorrect)!.count
-                if neededMonthlyDay <= maximumMonthlyDay {
-                    return neededMonthlyDay
+        if day > dayForCalculatedDate {
+            // We need to find the maximum possible day to set the date to without having it accidentially roll into the next month.
+            var calculatedDay: Int {
+                let neededDay = day
+                let maximumDay = Calendar.current.range(of: .day, in: .month, for: dateToCorrect)!.count
+                if neededDay <= maximumDay {
+                    return neededDay
                 }
                 else {
-                    return maximumMonthlyDay
+                    return maximumDay
                 }
             }
             
-            // We have the correct monthlyDay to set the date to, now we can change it.
-            return Calendar.current.date(bySetting: .day, value: calculatedMonthlyDay, of: dateToCorrect)!
+            // We have the correct day to set the date to, now we can change it.
+            return Calendar.current.date(bySetting: .day, value: calculatedDay, of: dateToCorrect)!
         }
         // when adding a month, the day did not fall short of what was needed
         else {
@@ -142,16 +172,16 @@ class MonthlyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtoco
         let numDaysInMonth = Calendar.current.range(of: .day, in: .month, for: calculatedDate)!.count
         
         // the day of month is greater than the number of days in the target month, so we just use the last possible day of month to get as close as possible without rolling over into the next month.
-        if monthlyDay > numDaysInMonth {
+        if day > numDaysInMonth {
             calculatedDate = Calendar.current.date(bySetting: .day, value: numDaysInMonth, of: calculatedDate)!
             // sets time of day
-            calculatedDate = Calendar.current.date(bySettingHour: dateComponents.hour!, minute: dateComponents.minute!, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)!
+            calculatedDate = Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)!
         }
         // day of month is less than days available in the current month, so no roll over correction needed and traditional method
         else {
-            calculatedDate = Calendar.current.date(bySetting: .day, value: monthlyDay, of: calculatedDate)!
+            calculatedDate = Calendar.current.date(bySetting: .day, value: day, of: calculatedDate)!
             // sets time of day
-            calculatedDate = Calendar.current.date(bySettingHour: dateComponents.hour!, minute: dateComponents.minute!, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)!
+            calculatedDate = Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)!
         }
         
         // We are looking for future dates, not past. If the calculated date is in the past, we correct to make it in the future.
@@ -184,35 +214,9 @@ class MonthlyComponents: Component, NSCoding, NSCopying, GeneralTimeOfDayProtoco
     
     /// If a reminder is skipping, then we must find the next soonest reminderExecutionDate. We have to find the execution date that takes place after the skipped execution date (but before any other execution date).
     private func skippingExecutionDate(reminderExecutionBasis: Date) -> Date {
-        // there will only be two future executions dates for a monthlyDay, so we take the second one. The first one is the one used for a not skipping
+        // there will only be two future executions dates for a day, so we take the second one. The first one is the one used for a not skipping
         return futureExecutionDates(reminderExecutionBasis: reminderExecutionBasis).last!
         
     }
     
-    /// This find the next execution date that takes place after the reminderExecutionBasis. It purposelly not factoring in isSkipping.
-    func notSkippingExecutionDate(reminderExecutionBasis: Date) -> Date {
-        
-        // there will only be two future executions dates for a monthlyDay, so we take the first one is the one.
-        return futureExecutionDates(reminderExecutionBasis: reminderExecutionBasis).first!
-    }
-    
-    func previousExecutionDate(reminderExecutionBasis: Date) -> Date {
-        
-        // use non skipping version
-        let nextTimeOfDay = notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
-        
-        var preceedingExecutionDate: Date = Calendar.current.date(byAdding: .month, value: -1, to: nextTimeOfDay)!
-        preceedingExecutionDate = fallShortCorrection(dateToCorrect: preceedingExecutionDate)
-        return preceedingExecutionDate
-    }
-    
-    /// Factors in isSkipping to figure out the next time of day
-    func nextExecutionDate(reminderExecutionBasis: Date) -> Date {
-        if isSkipping == true {
-            return skippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
-        }
-        else {
-            return notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
-        }
-    }
 }

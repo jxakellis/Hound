@@ -76,9 +76,6 @@ enum ErrorManager {
         else if let castError = error as? TimingManagerError {
             ErrorManager.alert(forMessage: castError.rawValue)
         }
-        else if let castError = error as? StringExtensionError {
-            ErrorManager.alert(forMessage: castError.rawValue)
-        }
         else if let castError = error as? SignInWithAppleError {
             ErrorManager.alert(forMessage: castError.rawValue)
         }

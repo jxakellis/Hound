@@ -11,11 +11,12 @@ const {
  *  If a problem is encountered, creates and throws custom error
  */
 const updateLogQuery = async (req) => {
-  const logId = req.params.logId;
-  const logDate = formatDate(req.body.logDate);
-  const { logNote } = req.body;
-  const { logAction } = req.body;
-  const { logCustomActionName } = req.body;
+  const logId = req.params.logId; // required
+  const logDate = formatDate(req.body.logDate); // required
+  const { logNote } = req.body; // required
+  const { logAction } = req.body; // required
+  const { logCustomActionName } = req.body; // optional
+  const logLastModified = new Date(); // manual
 
   // if all undefined, then there is nothing to update
   if (areAllDefined(logId, logDate, logNote, logAction) === false) {
@@ -25,8 +26,8 @@ const updateLogQuery = async (req) => {
   try {
     await queryPromise(
       req,
-      'UPDATE dogLogs SET logDate = ?, logAction = ?, logCustomActionName = ?, logNote = ? WHERE logId = ?',
-      [logDate, logAction, logCustomActionName, logNote, logId],
+      'UPDATE dogLogs SET logDate = ?, logAction = ?, logCustomActionName = ?, logNote = ?, logLastModified = ? WHERE logId = ?',
+      [logDate, logAction, logCustomActionName, logNote, logLastModified, logId],
     );
   }
   catch (error) {

@@ -1798,87 +1798,9 @@
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="1" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="KE9-sW-ERX">
                                 <rect key="frame" x="0.0" y="113.5" width="414" height="229.5"/>
                                 <connections>
-                                    <action selector="willUpdateTimeOfDay:" destination="Zjt-y9-htp" eventType="editingChanged" id="jsA-DP-FU5"/>
-                                    <action selector="willUpdateTimeOfDay:" destination="Zjt-y9-htp" eventType="valueChanged" id="lIe-ee-oaT"/>
+                                    <action selector="didUpdateTimeOfDay:" destination="Zjt-y9-htp" eventType="valueChanged" id="wg8-nh-bSt"/>
                                 </connections>
                             </datePicker>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JqF-PI-2lY" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="10" y="54" width="49.5" height="49.5"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="JqF-PI-2lY" secondAttribute="height" multiplier="1:1" id="Hm2-gr-qNw"/>
-                                </constraints>
-                                <color key="tintColor" systemColor="systemBlueColor"/>
-                                <state key="normal" image="s.circle.fill" catalog="system"/>
-                                <connections>
-                                    <action selector="toggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="rFG-OD-MOp"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BWf-ZH-KPJ" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="67.5" y="54" width="49.5" height="49.5"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="BWf-ZH-KPJ" secondAttribute="height" multiplier="1:1" id="W3p-ZI-opV"/>
-                                </constraints>
-                                <color key="tintColor" systemColor="systemBlueColor"/>
-                                <state key="normal" image="m.circle.fill" catalog="system"/>
-                                <connections>
-                                    <action selector="toggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="6Wf-Mx-mYl"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zN3-Wx-58L" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="125" y="54" width="49.5" height="49.5"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="zN3-Wx-58L" secondAttribute="height" multiplier="1:1" id="ca2-mX-CXo"/>
-                                </constraints>
-                                <color key="tintColor" systemColor="systemBlueColor"/>
-                                <state key="normal" image="t.circle.fill" catalog="system"/>
-                                <connections>
-                                    <action selector="toggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="UXW-Ia-tHs"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2b7-cC-Q2l" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="182.5" y="54" width="49" height="49.5"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="2b7-cC-Q2l" secondAttribute="height" multiplier="1:1" id="JxE-Nt-KwL"/>
-                                </constraints>
-                                <color key="tintColor" systemColor="systemBlueColor"/>
-                                <state key="normal" image="w.circle.fill" catalog="system"/>
-                                <connections>
-                                    <action selector="toggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="wHN-iQ-eU9"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TMQ-Jx-Z8B" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="239.5" y="54" width="49.5" height="49.5"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="TMQ-Jx-Z8B" secondAttribute="height" multiplier="1:1" id="qxT-O5-cqh"/>
-                                </constraints>
-                                <color key="tintColor" systemColor="systemBlueColor"/>
-                                <state key="normal" image="t.circle.fill" catalog="system"/>
-                                <connections>
-                                    <action selector="toggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="zAJ-6P-6D0"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Ap-4c-M9b" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="297" y="54" width="49.5" height="49.5"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="2Ap-4c-M9b" secondAttribute="height" multiplier="1:1" id="9Oc-WS-VYr"/>
-                                </constraints>
-                                <color key="tintColor" systemColor="systemBlueColor"/>
-                                <state key="normal" image="f.circle.fill" catalog="system"/>
-                                <connections>
-                                    <action selector="toggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="eFG-Qs-JQZ"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zb1-0i-9Km" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="354.5" y="54" width="49.5" height="49.5"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="Zb1-0i-9Km" secondAttribute="height" multiplier="1:1" id="Hbo-Qd-gDX"/>
-                                </constraints>
-                                <color key="tintColor" systemColor="systemBlueColor"/>
-                                <state key="normal" image="s.circle.fill" catalog="system"/>
-                                <connections>
-                                    <action selector="toggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="sAq-pw-aLp"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FyQ-Em-AAX" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="11" y="55" width="47.5" height="47.5"/>
                                 <accessibility key="accessibilityConfiguration">
@@ -1934,6 +1856,83 @@
                                 </accessibility>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" image="circle.fill" catalog="system"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JqF-PI-2lY" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="10" y="54" width="49.5" height="49.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="JqF-PI-2lY" secondAttribute="height" multiplier="1:1" id="Hm2-gr-qNw"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <state key="normal" image="s.circle.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="didToggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="Bsv-V3-Wxj"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BWf-ZH-KPJ" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="67.5" y="54" width="49.5" height="49.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="BWf-ZH-KPJ" secondAttribute="height" multiplier="1:1" id="W3p-ZI-opV"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <state key="normal" image="m.circle.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="didToggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="T4Q-Y0-011"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zN3-Wx-58L" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="125" y="54" width="49.5" height="49.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="zN3-Wx-58L" secondAttribute="height" multiplier="1:1" id="ca2-mX-CXo"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <state key="normal" image="t.circle.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="didToggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="xWp-fc-jha"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2b7-cC-Q2l" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="182.5" y="54" width="49" height="49.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="2b7-cC-Q2l" secondAttribute="height" multiplier="1:1" id="JxE-Nt-KwL"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <state key="normal" image="w.circle.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="didToggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="FoG-mz-eho"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TMQ-Jx-Z8B" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="239.5" y="54" width="49.5" height="49.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="TMQ-Jx-Z8B" secondAttribute="height" multiplier="1:1" id="qxT-O5-cqh"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <state key="normal" image="t.circle.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="didToggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="9cd-N5-D3n"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Ap-4c-M9b" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="297" y="54" width="49.5" height="49.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="2Ap-4c-M9b" secondAttribute="height" multiplier="1:1" id="9Oc-WS-VYr"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <state key="normal" image="f.circle.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="didToggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="a8o-Z3-OBG"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zb1-0i-9Km" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="354.5" y="54" width="49.5" height="49.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="Zb1-0i-9Km" secondAttribute="height" multiplier="1:1" id="Hbo-Qd-gDX"/>
+                                </constraints>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <state key="normal" image="s.circle.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="didToggleWeekdayButton:" destination="Zjt-y9-htp" eventType="touchUpInside" id="ALv-Gm-CKL"/>
+                                </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="tsl-PX-q6k"/>
@@ -2002,27 +2001,27 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="friday" destination="2Ap-4c-M9b" id="vWV-nD-4nj"/>
-                        <outlet property="monday" destination="BWf-ZH-KPJ" id="TqP-Ek-Hpx"/>
-                        <outlet property="saturday" destination="Zb1-0i-9Km" id="PGG-g2-wZt"/>
-                        <outlet property="sunday" destination="JqF-PI-2lY" id="SPU-bL-GRU"/>
-                        <outlet property="thursday" destination="TMQ-Jx-Z8B" id="JA2-i0-14R"/>
-                        <outlet property="timeOfDay" destination="KE9-sW-ERX" id="v6l-fk-P9V"/>
-                        <outlet property="tuesday" destination="zN3-Wx-58L" id="xPw-t6-CtT"/>
-                        <outlet property="wednesday" destination="2b7-cC-Q2l" id="3ui-aw-nBX"/>
-                        <outletCollection property="interWeekdayConstraints" destination="cSo-st-Dlp" collectionClass="NSMutableArray" id="2RS-sJ-qbR"/>
-                        <outletCollection property="interWeekdayConstraints" destination="7rY-u6-t1B" collectionClass="NSMutableArray" id="aH0-7c-E18"/>
-                        <outletCollection property="interWeekdayConstraints" destination="YZ6-Cx-pmC" collectionClass="NSMutableArray" id="er1-oB-RdQ"/>
-                        <outletCollection property="interWeekdayConstraints" destination="KNp-Kw-clr" collectionClass="NSMutableArray" id="91w-wn-13d"/>
-                        <outletCollection property="interWeekdayConstraints" destination="PQL-td-xSP" collectionClass="NSMutableArray" id="ezH-r6-6Pw"/>
-                        <outletCollection property="interWeekdayConstraints" destination="8Ss-s1-aHm" collectionClass="NSMutableArray" id="XPe-6M-C12"/>
-                        <outletCollection property="dayOfWeekBackgrounds" destination="FyQ-Em-AAX" collectionClass="NSMutableArray" id="yCD-De-M2d"/>
-                        <outletCollection property="dayOfWeekBackgrounds" destination="nD7-N7-2g5" collectionClass="NSMutableArray" id="2qQ-FB-ArH"/>
-                        <outletCollection property="dayOfWeekBackgrounds" destination="iLb-Vr-PE0" collectionClass="NSMutableArray" id="WZa-0V-ikQ"/>
-                        <outletCollection property="dayOfWeekBackgrounds" destination="SHU-83-hOc" collectionClass="NSMutableArray" id="4CS-Q6-16X"/>
-                        <outletCollection property="dayOfWeekBackgrounds" destination="Guh-ku-adz" collectionClass="NSMutableArray" id="qc0-up-bsi"/>
-                        <outletCollection property="dayOfWeekBackgrounds" destination="w3I-xA-RpX" collectionClass="NSMutableArray" id="utd-AG-eiu"/>
-                        <outletCollection property="dayOfWeekBackgrounds" destination="CyC-2F-qBz" collectionClass="NSMutableArray" id="v6t-xt-mHD"/>
+                        <outlet property="fridayButton" destination="2Ap-4c-M9b" id="IKz-Tc-Xmg"/>
+                        <outlet property="mondayButton" destination="BWf-ZH-KPJ" id="BO0-42-xIF"/>
+                        <outlet property="saturdayButton" destination="Zb1-0i-9Km" id="7NL-hR-fEP"/>
+                        <outlet property="sundayButton" destination="JqF-PI-2lY" id="82Z-uA-URG"/>
+                        <outlet property="thursdayButton" destination="TMQ-Jx-Z8B" id="w5d-Qx-jMw"/>
+                        <outlet property="timeOfDayDatePicker" destination="KE9-sW-ERX" id="ouz-np-uFU"/>
+                        <outlet property="tuesdayButton" destination="zN3-Wx-58L" id="o8m-8B-STF"/>
+                        <outlet property="wednesdayButton" destination="2b7-cC-Q2l" id="mZu-14-P4m"/>
+                        <outletCollection property="interDayOfWeekConstraints" destination="cSo-st-Dlp" collectionClass="NSMutableArray" id="lf9-Nx-dAT"/>
+                        <outletCollection property="interDayOfWeekConstraints" destination="7rY-u6-t1B" collectionClass="NSMutableArray" id="u5Y-eh-ZHe"/>
+                        <outletCollection property="interDayOfWeekConstraints" destination="YZ6-Cx-pmC" collectionClass="NSMutableArray" id="Ofg-ji-LgI"/>
+                        <outletCollection property="interDayOfWeekConstraints" destination="PQL-td-xSP" collectionClass="NSMutableArray" id="pxq-E1-En7"/>
+                        <outletCollection property="interDayOfWeekConstraints" destination="KNp-Kw-clr" collectionClass="NSMutableArray" id="FKk-if-XBG"/>
+                        <outletCollection property="interDayOfWeekConstraints" destination="8Ss-s1-aHm" collectionClass="NSMutableArray" id="Ac7-sU-6EB"/>
+                        <outletCollection property="dayOfWeekBackgrounds" destination="FyQ-Em-AAX" collectionClass="NSMutableArray" id="8IO-up-IjK"/>
+                        <outletCollection property="dayOfWeekBackgrounds" destination="nD7-N7-2g5" collectionClass="NSMutableArray" id="ZWX-cy-uJj"/>
+                        <outletCollection property="dayOfWeekBackgrounds" destination="iLb-Vr-PE0" collectionClass="NSMutableArray" id="Y1q-oh-7q4"/>
+                        <outletCollection property="dayOfWeekBackgrounds" destination="Guh-ku-adz" collectionClass="NSMutableArray" id="VFc-WX-EoW"/>
+                        <outletCollection property="dayOfWeekBackgrounds" destination="CyC-2F-qBz" collectionClass="NSMutableArray" id="T4f-vX-VTb"/>
+                        <outletCollection property="dayOfWeekBackgrounds" destination="SHU-83-hOc" collectionClass="NSMutableArray" id="aH2-V5-dJ8"/>
+                        <outletCollection property="dayOfWeekBackgrounds" destination="w3I-xA-RpX" collectionClass="NSMutableArray" id="TLF-LE-LZK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DEU-ai-82Z" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -2112,7 +2111,7 @@
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="9v0-8g-D5f">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="343"/>
                                 <connections>
-                                    <action selector="didUpdateDatePicker:" destination="Xze-9B-CGF" eventType="valueChanged" id="H68-mU-C9a"/>
+                                    <action selector="didUpdateTimeOfDay:" destination="Xze-9B-CGF" eventType="valueChanged" id="CMn-st-pM3"/>
                                 </connections>
                             </datePicker>
                         </subviews>
@@ -2126,7 +2125,7 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="datePicker" destination="9v0-8g-D5f" id="bZO-nb-vLS"/>
+                        <outlet property="timeOfDayDatePicker" destination="9v0-8g-D5f" id="q4G-YG-tOX"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wpy-iG-wss" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

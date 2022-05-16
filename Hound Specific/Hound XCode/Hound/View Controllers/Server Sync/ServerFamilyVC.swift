@@ -22,6 +22,7 @@ class ServerFamilyViewController: UIViewController {
                     // Reset certain local configurations so they are ready for the next family ( if they were previously in one ). These local configurations just control some basic user experience things, so can be modified.
                     LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = false
                     LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
+                    LocalConfiguration.lastDogManagerSync = Date(timeIntervalSince1970: 0)
                     LocalConfiguration.dogIcons = []
                     self.dismiss(animated: true, completion: nil)
                 }
@@ -67,6 +68,7 @@ class ServerFamilyViewController: UIViewController {
                             // Reset certain local configurations so they are ready for the next family ( if they were previously in one ). These local configurations just control some basic user experience things, so can be modified.
                             LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = false
                             LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
+                            LocalConfiguration.lastDogManagerSync = Date(timeIntervalSince1970: 0)
                             LocalConfiguration.dogIcons = []
                             self.dismiss(animated: true, completion: nil)
                         }

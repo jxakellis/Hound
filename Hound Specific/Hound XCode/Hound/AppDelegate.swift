@@ -22,18 +22,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         AppDelegate.lifeCycleLogger.notice("Application Did Finish Launching with Options")
-
-        // retrieve value from local store, if value doesn't exist then false is returned
-        let hasSetup = UserDefaults.standard.bool(forKey: UserDefaultsKeys.hasDoneFirstTimeSetup.rawValue)
-
-        if hasSetup == true {
-            AppDelegate.generalLogger.notice("Recurring setup for app data")
-            PersistenceManager.setup(isFirstTime: false)
-        }
-        else {
-            AppDelegate.generalLogger.notice("First time setup for app data")
-            PersistenceManager.setup(isFirstTime: true)
-        }
+        
+        PersistenceManager.setup()
         
         return true
     }

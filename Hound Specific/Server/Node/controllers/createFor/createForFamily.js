@@ -11,7 +11,7 @@ const { areAllDefined } = require('../../main/tools/validation/validateFormat');
  *  If a problem is encountered, creates and throws custom error
  */
 const createFamilyQuery = async (req) => {
-  const userId = req.params.userId;
+  const userId = req.params.userId; // required
 
   if (areAllDefined(userId) === false) {
     throw new ValidationError('userId missing', 'ER_VALUES_MISSING');

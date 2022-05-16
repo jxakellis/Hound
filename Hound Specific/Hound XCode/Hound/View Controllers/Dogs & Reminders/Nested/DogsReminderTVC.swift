@@ -51,7 +51,7 @@ class DogsReminderTableViewCell: UITableViewCell {
         }
         else if reminder.reminderType == .monthly {
 
-                let monthlyDay: Int! = reminder.monthlyComponents.monthlyDay
+                let monthlyDay: Int! = reminder.monthlyComponents.day
                 reminderLabel.text?.append(" Every Month on \(monthlyDay!)")
 
                 reminderLabel.text?.append(String.monthlyDaySuffix(day: monthlyDay))
@@ -59,7 +59,7 @@ class DogsReminderTableViewCell: UITableViewCell {
         }
         else if reminder.reminderType == .weekly {
 
-            try! self.reminderLabel.text?.append(" \(String.convertToReadable(fromDateComponents: reminder.weeklyComponents.dateComponents))")
+            reminderLabel.text?.append(" \(String.convertToReadable(fromHour: reminder.weeklyComponents.hour, fromMinute: reminder.weeklyComponents.minute))")
 
             // weekdays
             if reminder.weeklyComponents.weekdays == [1, 2, 3, 4, 5, 6, 7] {

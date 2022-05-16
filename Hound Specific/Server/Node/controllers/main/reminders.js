@@ -57,11 +57,15 @@ const createReminder = async (req, res) => {
   try {
     // reminders are provided
     if (areAllDefined(reminders)) {
-      result = await createRemindersQuery(req);
+      // array of reminders JSON
+      // [{reminderInfo1}, {reminderInfo2}...]
+      result = await createRemindersQuery(req, reminders);
     }
     // single reminder
     else {
-      result = await createReminderQuery(req);
+      // convert single reminder JSON into an array with a single reminder
+      // { reminderInfo1 } => [{reminderInfo1}]
+      result = [await createReminderQuery(req, req.body)];
     }
   }
   catch (error) {
@@ -90,11 +94,11 @@ const updateReminder = async (req, res) => {
   try {
     // reminders array is provided
     if (areAllDefined(reminders)) {
-      result = await updateRemindersQuery(req);
+      result = await updateRemindersQuery(req, reminders);
     }
     // just a single reminder
     else {
-      result = await updateReminderQuery(req);
+      result = await updateReminderQuery(req, req.body);
     }
   }
   catch (error) {
@@ -116,16 +120,17 @@ const updateReminder = async (req, res) => {
 };
 
 const deleteReminder = async (req, res) => {
+  const familyId = req.params.familyId;
   const reminders = formatArray(req.body.reminders);
 
   try {
     // reminders array
     if (areAllDefined(reminders)) {
-      await deleteRemindersQuery(req, req.params.userId, req.params.familyId, reminders);
+      await deleteRemindersQuery(req, familyId, reminders);
     }
     // single reminder
     else {
-      await deleteReminderQuery(req, req.params.userId, req.params.familyId, req.body.reminderId);
+      await deleteReminderQuery(req, familyId, req.body.reminderId);
     }
   }
   catch (error) {

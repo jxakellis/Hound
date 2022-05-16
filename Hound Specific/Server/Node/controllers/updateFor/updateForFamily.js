@@ -43,13 +43,6 @@ const updateFamilyQuery = async (req) => {
   }
 };
 
-// columns for SELECT statement for updateIsPausedQuery
-const reminderSnoozeComponentsSelect = 'reminderSnoozeComponents.snoozeIsEnabled, reminderSnoozeComponents.snoozeExecutionInterval, reminderSnoozeComponents.snoozeIntervalElapsed';
-const reminderCountdownComponentsSelect = 'reminderCountdownComponents.countdownExecutionInterval, reminderCountdownComponents.countdownIntervalElapsed';
-
-const reminderSnoozeComponentsLeftJoin = 'LEFT JOIN reminderSnoozeComponents ON dogReminders.reminderId = reminderSnoozeComponents.reminderId';
-const reminderCountdownComponentsLeftJoin = 'LEFT JOIN reminderCountdownComponents ON dogReminders.reminderId = reminderCountdownComponents.reminderId';
-
 /**
  * Helper method for updateFamilyQuery, goes through all of the logic to update isPaused, lastPause, lastUnpause
  * If pausing, saves all intervalElapsed, sets all reminderExecutionDates to nil, and deleteAlarmNotifications
@@ -58,6 +51,7 @@ const reminderCountdownComponentsLeftJoin = 'LEFT JOIN reminderCountdownComponen
 const updateIsPausedQuery = async (req) => {
   const familyId = req.params.familyId;
   const isPaused = formatBoolean(req.body.isPaused);
+  const reminderLastModified = new Date();
 
   if (areAllDefined(familyId, isPaused) === false) {
     throw new ValidationError('familyId or isPaused missing', 'ER_VALUES_MISSING');
@@ -74,7 +68,7 @@ const updateIsPausedQuery = async (req) => {
     // if we got a result for the family configuration and if the new pause status is different from the current one, then continue
     if (familyConfiguration.length === 1 && isPaused !== formatBoolean(familyConfiguration[0].isPaused)) {
       // toggling everything to paused from unpaused
-      if (isPaused === true) {
+      if (isPaused) {
         // update the family's pause configuration to reflect changes
         const lastPause = new Date();
         await queryPromise(
@@ -87,7 +81,7 @@ const updateIsPausedQuery = async (req) => {
         // there are the reminders that will need their intervals elapsed saved before we pause, everything else doesn't need touched.
         const reminders = await queryPromise(
           req,
-          `SELECT dogReminders.reminderId, dogReminders.reminderType, dogReminders.reminderExecutionBasis, ${reminderSnoozeComponentsSelect}, ${reminderCountdownComponentsSelect} FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId ${reminderSnoozeComponentsLeftJoin} ${reminderCountdownComponentsLeftJoin} WHERE dogs.familyId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND (reminderSnoozeComponents.snoozeIsEnabled = 1 OR dogReminders.reminderType = 'countdown') LIMIT 18446744073709551615`,
+          'SELECT reminderId, reminderType, reminderExecutionBasis, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed, countdownExecutionInterval, countdownIntervalElapsed FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.familyId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND (snoozeIsEnabled = 1 OR reminderType = \'countdown\') LIMIT 18446744073709551615',
           [familyId],
         );
 
@@ -107,14 +101,15 @@ const updateIsPausedQuery = async (req) => {
             // since the reminder has been paused before, we must find the time elapsed since the last unpause to this pause
               millisecondsElapsed = Math.abs(lastPause.getTime() - formatDate(familyConfiguration[0].lastUnpause).getTime());
             }
+            // reminderLastModified is modified below when we set all the executionDates to null
             await queryPromise(
               req,
-              'UPDATE reminderCountdownComponents SET countdownIntervalElapsed = ? WHERE reminderId = ?',
+              'UPDATE dogReminders SET countdownIntervalElapsed = ? WHERE reminderId = ?',
               [(millisecondsElapsed / 1000) + reminder.countdownIntervalElapsed, reminder.reminderId],
             );
           }
           // update snooze timing
-          else if (formatBoolean(reminder.isSnoozeEnabled) === true) {
+          else if (formatBoolean(reminder.isSnoozeEnabled)) {
             let millisecondsElapsed;
             // the reminder has not has its interval elapsed changed before, meaning it's not been paused or unpaused since its current reminderExecutionBasis
             if (reminder.snoozeIntervalElapsed === 0) {
@@ -126,9 +121,10 @@ const updateIsPausedQuery = async (req) => {
             // since the reminder has been paused before, we must find the time elapsed since the last unpause to this pause
               millisecondsElapsed = Math.abs(lastPause.getTime() - formatDate(familyConfiguration[0].lastUnpause).getTime());
             }
+            // reminderLastModified is modified below when all executionDates are set to null
             await queryPromise(
               req,
-              'UPDATE reminderSnoozeComponents SET snoozeIntervalElapsed = ? WHERE reminderId = ?',
+              'UPDATE dogReminders SET snoozeIntervalElapsed = ? WHERE reminderId = ?',
               [(millisecondsElapsed / 1000) + reminder.snoozeIntervalElapsed, reminder.reminderId],
             );
           }
@@ -138,8 +134,8 @@ const updateIsPausedQuery = async (req) => {
         // Update the reminderExecutionDates to NULL for all of the family's reminders
         await queryPromise(
           req,
-          'UPDATE dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId SET dogReminders.reminderExecutionDate = NULL WHERE dogs.familyId = ?',
-          [familyId],
+          'UPDATE dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId SET dogReminders.reminderExecutionDate = NULL, SET dogReminders.reminderLastModified = ? WHERE dogs.familyId = ?',
+          [reminderLastModified, familyId],
         );
 
         // remove any alarm notifications that may be scheduled since everything is now paused and no need for alarms.
@@ -159,8 +155,8 @@ const updateIsPausedQuery = async (req) => {
         // Update the reminderExecutionBasis to lastUnpause for all of the family's reminders
         await queryPromise(
           req,
-          'UPDATE dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId SET dogReminders.reminderExecutionBasis = ? WHERE dogs.familyId = ?',
-          [lastUnpause, familyId],
+          'UPDATE dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId SET dogReminders.reminderExecutionBasis = ?, SET dogReminders.reminderLastModified = ? WHERE dogs.familyId = ?',
+          [lastUnpause, reminderLastModified, familyId],
         );
 
         // currently no need to recreate/refresh alarm notifications. This is because the executionDates will all still be nil
@@ -207,7 +203,7 @@ const addFamilyMemberQuery = async (req) => {
   family = family[0];
   const isLocked = formatBoolean(family.isLocked);
   // familyCode exists and is linked to a family, now check if family is locked against new members
-  if (isLocked === true) {
+  if (isLocked) {
     throw new ValidationError('Family is locked', 'ER_FAMILY_LOCKED');
   }
 

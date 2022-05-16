@@ -10,12 +10,13 @@ const { createTerminateNotification } = require('../main/tools/notifications/ale
 
 // User has done some action that warrents us sending them a special notification
 router.post('/:alertType', async (req, res) => {
-  if (areAllDefined(req.params, req.params.alertType) === false) {
+  const alertType = req.params.alertType;
+  if (areAllDefined(alertType) === false) {
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(new ValidationError('No alert type provided', 'ER_VALUES_INVALID')));
   }
   // the user has terminated the app
-  if (req.params.alertType === 'terminate') {
+  if (alertType === 'terminate') {
     createTerminateNotification(req.params.userId);
   }
   await req.commitQueries(req);

@@ -6,6 +6,9 @@ const { formatArray, areAllDefined } = require('../../validation/validateFormat'
 const { apnProvider } = require('./apnProvider');
 const { getUserToken, getAllFamilyMemberTokens, getOtherFamilyMemberTokens } = require('./apnTokens');
 
+// TO DO split final sendAPN into individual requests per user.
+// this would allow us to customize the payload so that the "sound" is "notificationSound" that the user selected
+
 /**
  * Creates a notification that is immediately sent to Apple Push Services and informs users
  * Takes an array of notificationTokens that identifies all the recipients of the notification

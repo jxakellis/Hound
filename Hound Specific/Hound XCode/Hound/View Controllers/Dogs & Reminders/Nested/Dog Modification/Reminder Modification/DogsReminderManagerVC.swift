@@ -344,12 +344,15 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
                     throw WeeklyComponentsError.weekdayArrayInvalid
                 }
                 reminder.changeReminderType(newReminderType: .weekly)
+                
                 try reminder.weeklyComponents.changeWeekdays(newWeekdays: weekdays!)
-                reminder.weeklyComponents.changeDateComponents(newDateComponents: Calendar.current.dateComponents([.hour, .minute], from: dogsReminderWeeklyViewController.timeOfDay.date))
+                try reminder.weeklyComponents.changeHour(newHour: Calendar.current.component(.hour, from: dogsReminderWeeklyViewController.timeOfDayDatePicker.date))
+                try reminder.weeklyComponents.changeMinute(newMinute: Calendar.current.component(.minute, from: dogsReminderWeeklyViewController.timeOfDayDatePicker.date))
             case 3:
                 reminder.changeReminderType(newReminderType: .monthly)
-                try reminder.monthlyComponents.changeMonthlyDay(newMonthlyDay: dogsReminderMonthlyViewController.monthlyDay!)
-                reminder.monthlyComponents.changeDateComponents(newDateComponents: Calendar.current.dateComponents([.hour, .minute], from: dogsReminderMonthlyViewController.datePicker.date))
+                try reminder.monthlyComponents.changeDay(newDay: Calendar.current.component(.day, from: dogsReminderMonthlyViewController.timeOfDayDatePicker.date))
+                try reminder.monthlyComponents.changeHour(newHour: Calendar.current.component(.hour, from: dogsReminderMonthlyViewController.timeOfDayDatePicker.date))
+                try reminder.monthlyComponents.changeMinute(newMinute: Calendar.current.component(.minute, from: dogsReminderMonthlyViewController.timeOfDayDatePicker.date))
             default: break
             }
             
@@ -371,12 +374,12 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
                     }
                 case .weekly:
                     // time of day or weekdays changed
-                    if reminder.weeklyComponents.dateComponents != targetReminder!.weeklyComponents.dateComponents || reminder.weeklyComponents.weekdays != targetReminder!.weeklyComponents.weekdays {
+                    if reminder.weeklyComponents.weekdays != targetReminder!.weeklyComponents.weekdays || reminder.weeklyComponents.hour != targetReminder!.weeklyComponents.hour || reminder.weeklyComponents.minute != targetReminder!.weeklyComponents.minute {
                         reminder.prepareForNextAlarm()
                     }
                 case .monthly:
                     // time of day or day of month changed
-                    if reminder.monthlyComponents.dateComponents != targetReminder!.monthlyComponents.dateComponents || reminder.monthlyComponents.monthlyDay != targetReminder!.monthlyComponents.monthlyDay {
+                    if reminder.monthlyComponents.day != targetReminder!.monthlyComponents.day || reminder.monthlyComponents.hour != targetReminder!.monthlyComponents.hour || reminder.monthlyComponents.minute != targetReminder!.monthlyComponents.minute {
                         reminder.prepareForNextAlarm()
                     }
                 }
@@ -453,9 +456,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             dogsReminderWeeklyViewController.delegate = self
             
             if targetReminder != nil {
-                if targetReminder!.weeklyComponents.dateComponents.hour != nil {
-                    dogsReminderWeeklyViewController.passedTimeOfDay = targetReminder!.weeklyComponents.notSkippingExecutionDate(reminderExecutionBasis: targetReminder!.reminderExecutionBasis)
-                }
+                dogsReminderWeeklyViewController.passedTimeOfDay = targetReminder!.weeklyComponents.notSkippingExecutionDate(reminderExecutionBasis: targetReminder!.reminderExecutionBasis)
                 dogsReminderWeeklyViewController.passedWeekDays = targetReminder!.weeklyComponents.weekdays
             }
             
@@ -465,11 +466,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             dogsReminderMonthlyViewController.delegate = self
             
             if targetReminder != nil {
-                if targetReminder!.monthlyComponents.dateComponents.hour != nil {
-                    dogsReminderMonthlyViewController.passedTimeOfDay = targetReminder!.monthlyComponents.notSkippingExecutionDate(reminderExecutionBasis: targetReminder!.reminderExecutionBasis)
-                }
-                dogsReminderMonthlyViewController.passedMonthlyDay = targetReminder!.monthlyComponents.monthlyDay
-                
+                dogsReminderMonthlyViewController.passedTimeOfDay = targetReminder!.monthlyComponents.notSkippingExecutionDate(reminderExecutionBasis: targetReminder!.reminderExecutionBasis)
             }
         }
         

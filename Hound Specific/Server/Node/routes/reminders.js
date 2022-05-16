@@ -28,8 +28,6 @@ router.post('/', createReminder);
 /* BODY:
 Single: { reminderInfo }
 Multiple: { reminders: [reminderInfo1, reminderInfo2...] }
-
-reminderInfo:
 */
 
 // update reminder(s)
@@ -46,49 +44,6 @@ router.delete('/', validateBodyReminderId, deleteReminder);
 /* BODY:
 Single: { reminderId }
 Multiple: { reminders: [reminderId1, reminderId2...] }
-*/
-
-/*
-Reminder Info:
-{
-"reminderAction": "requiredString", // If reminderAction is "Custom", then reminderCustomActionName must be provided
-"reminderCustomActionName": "optionalString",
-"reminderType": "requiredString", //Only components for reminderType type specified must be provided
-"reminderExecutionBasis": "requiredDate",
-"reminderIsEnabled":"requiredBool",
-
-    //FOR countdown
-    "countdownExecutionInterval":"requiredInt",
-    "countdownIntervalElapsed":"requiredInt"
-
-    //FOR weekly
-    "weeklyHour":"requiredInt",
-    "weeklyMinute":"requiredInt",
-    "sunday":"requiredBool",
-    "monday":"requiredBool",
-    "tuesday":"requiredBool",
-    "wednesday":"requiredBool",
-    "thursday":"requiredBool",
-    "friday":"requiredBool",
-    "saturday":"requiredBool",
-    "weeklyIsSkipping":"requiredBool",
-    "weeklyIsSkippingDate":"optionalDate"
-
-    //FOR monthly
-    "monthlyHour":"requiredInt",
-    "monthlyMinute":"requiredInt",
-    "monthlyDay":"requiredInt"
-    "weeklyIsSkipping":"requiredBool",
-    "monthlyIsSkippingDate":"optionalDate"
-
-    //FOR oneTime
-    "logDate":"requiredDate"
-
-    //FOR snooze
-    "snoozeIsEnabled":"requiredBool",
-    "snoozeExecutionInterval":"optionalInt", //if snoozeIsEnabled is true, then snoozeExecutionInterval and snoozeIntervalElapsed are required
-    "snoozeIntervalElapsed":"optionalInt"
-}
 */
 
 module.exports = router;

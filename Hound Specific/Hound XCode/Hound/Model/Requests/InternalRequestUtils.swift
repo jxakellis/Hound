@@ -389,55 +389,55 @@ extension InternalRequestUtils {
         body[ServerDefaultKeys.snoozeExecutionInterval.rawValue] = reminder.snoozeComponents.executionInterval
         body[ServerDefaultKeys.snoozeIntervalElapsed.rawValue] = reminder.snoozeComponents.intervalElapsed
         
-        // add the reminder components depending on the reminderType
-        switch reminder.reminderType {
-        case .countdown:
-            body[ServerDefaultKeys.countdownExecutionInterval.rawValue] = reminder.countdownComponents.executionInterval
-            body[ServerDefaultKeys.countdownIntervalElapsed.rawValue] = reminder.countdownComponents.intervalElapsed
-        case .weekly:
-            body[ServerDefaultKeys.weeklyHour.rawValue] = reminder.weeklyComponents.dateComponents.hour
-            body[ServerDefaultKeys.weeklyMinute.rawValue] = reminder.weeklyComponents.dateComponents.minute
-            body[ServerDefaultKeys.weeklyIsSkipping.rawValue] = reminder.weeklyComponents.isSkipping
-            body[ServerDefaultKeys.weeklyIsSkippingDate.rawValue] = reminder.weeklyComponents.isSkippingDate?.ISO8601FormatWithFractionalSeconds()
-            
-            body[ServerDefaultKeys.sunday.rawValue] = false
-            body[ServerDefaultKeys.monday.rawValue] = false
-            body[ServerDefaultKeys.tuesday.rawValue] = false
-            body[ServerDefaultKeys.wednesday.rawValue] = false
-            body[ServerDefaultKeys.thursday.rawValue] = false
-            body[ServerDefaultKeys.friday.rawValue] = false
-            body[ServerDefaultKeys.saturday.rawValue] = false
-            
-            for weekday in reminder.weeklyComponents.weekdays {
-                switch weekday {
-                case 1:
-                    body[ServerDefaultKeys.sunday.rawValue] = true
-                case 2:
-                    body[ServerDefaultKeys.monday.rawValue] = true
-                case 3:
-                    body[ServerDefaultKeys.tuesday.rawValue] = true
-                case 4:
-                    body[ServerDefaultKeys.wednesday.rawValue] = true
-                case 5:
-                    body[ServerDefaultKeys.thursday.rawValue] = true
-                case 6:
-                    body[ServerDefaultKeys.friday.rawValue] = true
-                case 7:
-                    body[ServerDefaultKeys.saturday.rawValue] = true
-                default:
-                    continue
-                }
+        // countdown
+        body[ServerDefaultKeys.countdownExecutionInterval.rawValue] = reminder.countdownComponents.executionInterval
+        body[ServerDefaultKeys.countdownIntervalElapsed.rawValue] = reminder.countdownComponents.intervalElapsed
+        
+        // weekly
+        body[ServerDefaultKeys.weeklyHour.rawValue] = reminder.weeklyComponents.hour
+        body[ServerDefaultKeys.weeklyMinute.rawValue] = reminder.weeklyComponents.minute
+        body[ServerDefaultKeys.weeklyIsSkipping.rawValue] = reminder.weeklyComponents.isSkipping
+        body[ServerDefaultKeys.weeklyIsSkippingDate.rawValue] = reminder.weeklyComponents.isSkippingDate?.ISO8601FormatWithFractionalSeconds()
+        
+        body[ServerDefaultKeys.weeklySunday.rawValue] = false
+        body[ServerDefaultKeys.weeklyMonday.rawValue] = false
+        body[ServerDefaultKeys.weeklyTuesday.rawValue] = false
+        body[ServerDefaultKeys.weeklyWednesday.rawValue] = false
+        body[ServerDefaultKeys.weeklyThursday.rawValue] = false
+        body[ServerDefaultKeys.weeklyFriday.rawValue] = false
+        body[ServerDefaultKeys.weeklySaturday.rawValue] = false
+        
+        for weekday in reminder.weeklyComponents.weekdays {
+            switch weekday {
+            case 1:
+                body[ServerDefaultKeys.weeklySunday.rawValue] = true
+            case 2:
+                body[ServerDefaultKeys.weeklyMonday.rawValue] = true
+            case 3:
+                body[ServerDefaultKeys.weeklyTuesday.rawValue] = true
+            case 4:
+                body[ServerDefaultKeys.weeklyWednesday.rawValue] = true
+            case 5:
+                body[ServerDefaultKeys.weeklyThursday.rawValue] = true
+            case 6:
+                body[ServerDefaultKeys.weeklyFriday.rawValue] = true
+            case 7:
+                body[ServerDefaultKeys.weeklySaturday.rawValue] = true
+            default:
+                continue
             }
-            
-        case .monthly:
-            body[ServerDefaultKeys.monthlyHour.rawValue] = reminder.monthlyComponents.dateComponents.hour
-            body[ServerDefaultKeys.monthlyMinute.rawValue] = reminder.monthlyComponents.dateComponents.minute
-            body[ServerDefaultKeys.monthlyIsSkipping.rawValue] = reminder.monthlyComponents.isSkipping
-            body[ServerDefaultKeys.monthlyIsSkippingDate.rawValue] = reminder.monthlyComponents.isSkippingDate?.ISO8601FormatWithFractionalSeconds()
-            body[ServerDefaultKeys.monthlyDay.rawValue] = reminder.monthlyComponents.monthlyDay
-        case .oneTime:
-            body[ServerDefaultKeys.oneTimeDate.rawValue] = reminder.oneTimeComponents.oneTimeDate.ISO8601FormatWithFractionalSeconds()
         }
+        
+        // monthly
+        body[ServerDefaultKeys.monthlyDay.rawValue] = reminder.monthlyComponents.day
+        body[ServerDefaultKeys.monthlyHour.rawValue] = reminder.monthlyComponents.hour
+        body[ServerDefaultKeys.monthlyMinute.rawValue] = reminder.monthlyComponents.minute
+        body[ServerDefaultKeys.monthlyIsSkipping.rawValue] = reminder.monthlyComponents.isSkipping
+        body[ServerDefaultKeys.monthlyIsSkippingDate.rawValue] = reminder.monthlyComponents.isSkippingDate?.ISO8601FormatWithFractionalSeconds()
+        
+        // one time
+        body[ServerDefaultKeys.oneTimeDate.rawValue] = reminder.oneTimeComponents.oneTimeDate.ISO8601FormatWithFractionalSeconds()
+        
         return body
     }
     

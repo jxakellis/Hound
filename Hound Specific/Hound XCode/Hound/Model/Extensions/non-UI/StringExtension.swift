@@ -52,14 +52,7 @@ extension String {
     }
     
     /// Converts dateComponents with .hour and .minute to a readable string, e.g. 8:56AM or 2:23 PM
-    static func convertToReadable(fromDateComponents dateComponents: DateComponents) throws -> String {
-        
-        if dateComponents.hour == nil || dateComponents.minute == nil {
-            throw StringExtensionError.dateComponentsInvalid
-        }
-        
-        let hour: Int = dateComponents.hour!
-        let minute: Int = dateComponents.minute!
+    static func convertToReadable(fromHour hour: Int, fromMinute minute: Int) -> String {
         
         var amOrPM: String {
             if hour < 12 {

@@ -10,22 +10,23 @@ const {
  *  If a problem is encountered, creates and throws custom error
  */
 const createUserQuery = async (req) => {
-  const userEmail = formatEmail(req.body.userEmail);
+  const userEmail = formatEmail(req.body.userEmail); // required
   const {
-    userIdentifier, userFirstName, userLastName, userNotificationToken,
+    userIdentifier, // required
+    userFirstName, userLastName, userNotificationToken, // optional
   } = req.body;
 
-  const isNotificationEnabled = formatBoolean(req.body.isNotificationEnabled);
-  const isLoudNotification = formatBoolean(req.body.isLoudNotification);
-  const isFollowUpEnabled = formatBoolean(req.body.isFollowUpEnabled);
-  const followUpDelay = formatNumber(req.body.followUpDelay);
-  const logsInterfaceScale = req.body.logsInterfaceScale;
-  const remindersInterfaceScale = req.body.remindersInterfaceScale;
-  const interfaceStyle = formatNumber(req.body.interfaceStyle);
-  const snoozeLength = formatNumber(req.body.snoozeLength);
-  const notificationSound = req.body.notificationSound;
+  const isNotificationEnabled = formatBoolean(req.body.isNotificationEnabled); // required
+  const isLoudNotification = formatBoolean(req.body.isLoudNotification); // required
+  const isFollowUpEnabled = formatBoolean(req.body.isFollowUpEnabled); // required
+  const followUpDelay = formatNumber(req.body.followUpDelay); // required
+  const logsInterfaceScale = req.body.logsInterfaceScale; // required
+  const remindersInterfaceScale = req.body.remindersInterfaceScale; // required
+  const interfaceStyle = formatNumber(req.body.interfaceStyle); // required
+  const snoozeLength = formatNumber(req.body.snoozeLength); // required
+  const notificationSound = req.body.notificationSound; // required
+
   // component of the body is missing or invalid
-  // userNotificationToken is optional as at this point the client may not have it
   if (areAllDefined(
     [userEmail, userIdentifier,
       isNotificationEnabled, isLoudNotification, isFollowUpEnabled,
@@ -33,7 +34,7 @@ const createUserQuery = async (req) => {
       interfaceStyle, snoozeLength, notificationSound],
   ) === false) {
     // >=1 of the items is undefined
-    throw new ValidationError('userIdentifier, userEmail, userFirstName, userLastName, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('userEmail, userIdentifier, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound missing', 'ER_VALUES_MISSING');
   }
 
   try {

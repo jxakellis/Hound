@@ -13,9 +13,10 @@ const getLogQuery = async (req, logId) => {
     throw new ValidationError('logId missing', 'ER_VALUES_MISSING');
   }
   try {
+    // only select the relevant information to save on data
     const result = await queryPromise(
       req,
-      'SELECT * FROM dogLogs WHERE logId = ? LIMIT 1',
+      'SELECT logId, dogId, userId, logDate, logNote, logAction, logCustomActionName, logIsDeleted FROM dogLogs WHERE logId = ? LIMIT 1',
       [logId],
     );
     return result;
@@ -34,9 +35,10 @@ const getLogsQuery = async (req, dogId) => {
     throw new ValidationError('dogId missing', 'ER_VALUES_MISSING');
   }
   try {
+    // only select the relevant information to save on data
     const result = await queryPromise(
       req,
-      'SELECT * FROM dogLogs WHERE dogId = ? ORDER BY logDate DESC LIMIT 1000',
+      'SELECT logId, dogId, userId, logDate, logNote, logAction, logCustomActionName, logIsDeleted FROM dogLogs WHERE dogId = ? ORDER BY logDate DESC LIMIT 1000',
       [dogId],
     );
     return result;

@@ -86,7 +86,7 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
             reminderIntervalLabel.text = ("Every \(String.convertToReadable(fromTimeInterval: reminder.countdownComponents.executionInterval))")
         case .weekly:
             reminderIconImageView.image = UIImage.init(systemName: "alarm")
-            try! reminderIntervalLabel.text = ("\(String.convertToReadable(fromDateComponents: reminder.weeklyComponents.dateComponents))")
+            reminderIntervalLabel.text = ("\(String.convertToReadable(fromHour: reminder.weeklyComponents.hour, fromMinute: reminder.weeklyComponents.minute))")
             
             // weekdays
             if reminder.weeklyComponents.weekdays == [1, 2, 3, 4, 5, 6, 7] {
@@ -151,10 +151,10 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
             }
         case .monthly:
             reminderIconImageView.image = UIImage.init(systemName: "calendar")
-            try! self.reminderIntervalLabel.text = ("\(String.convertToReadable(fromDateComponents: reminder.monthlyComponents.dateComponents))")
+            reminderIntervalLabel.text = ("\(String.convertToReadable(fromHour: reminder.monthlyComponents.hour, fromMinute: reminder.monthlyComponents.minute))")
             
             // day of month
-            let monthlyDay: Int = reminder.monthlyComponents.monthlyDay
+            let monthlyDay: Int = reminder.monthlyComponents.day
             reminderIntervalLabel.text?.append(" Every Month on \(monthlyDay)")
             
             reminderIntervalLabel.text?.append(String.monthlyDaySuffix(day: monthlyDay))
@@ -162,8 +162,6 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
             reminderIconImageView.image = UIImage.init(systemName: "calendar")
             reminderIntervalLabel.text = String.convertToReadable(fromDate: reminder.oneTimeComponents.oneTimeDate)
         }
-        
-        reloadNextAlarmText()
         
         // Size Ratio Configuration
         
@@ -206,6 +204,9 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
         let reminderIconLeading = dogIconLeadingAndWidth - reminderIconWidth - (5 * sizeRatio)
         reminderIconLeadingConstraint.constant = reminderIconLeading
         reminderIconWidthConstraint.constant = reminderIconWidth
+        
+        // put this reload after the sizeRatio otherwise the .font sizeRatio adjustment will change the whole text label to the same font (we want some bold and some not bold)
+        reloadNextAlarmText()
     }
     
     func reloadNextAlarmText() {

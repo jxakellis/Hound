@@ -10,10 +10,12 @@ const { validateDogId } = require('../main/tools/validation/validateId');
 // validation that params are formatted correctly and have adequate permissions
 router.param('dogId', validateDogId);
 
+// route to dogs
 const logsRouter = require('./logs');
 
 router.use('/:dogId/logs', logsRouter);
 
+// route to reminders
 const reminderRouter = require('./reminders');
 
 router.use('/:dogId/reminders', reminderRouter);
@@ -29,22 +31,13 @@ router.get('/:dogId', getDogs);
 // creates dog
 router.post('/', createDog);
 /* BODY:
-{
- "dogName": "requiredString",
-"dogIcon": optionalImage //dogIcon only provided if user adds a custom dogIcon, don't store default dogIcon.
-}
+Single: { dogInfo }
 */
 
 // updates dog
 router.put('/:dogId', updateDog);
 /* BODY:
-
-//At least one of the following must be defined: dogName or dogIcon
-
-{
-"dogName": "optionalString",
-"dogIcon": optionalImage
-}
+Single: { dogInfo }
 */
 
 // deletes dog

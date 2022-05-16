@@ -10,21 +10,23 @@ const {
  *  If a problem is encountered, creates and throws custom error
  */
 const createLogQuery = async (req) => {
-  const dogId = req.params.dogId;
-  const logDate = formatDate(req.body.logDate);
-  const { logNote } = req.body;
-  const { logAction } = req.body;
-  const { logCustomActionName } = req.body;
+  const userId = req.params.userId; // required
+  const dogId = req.params.dogId; // required
+  const logDate = formatDate(req.body.logDate); // required
+  const { logNote } = req.body; // required
+  const { logAction } = req.body; // required
+  const { logCustomActionName } = req.body; // optional
+  const logLastModified = new Date(); // manual
 
-  if (areAllDefined(dogId, logDate, logNote, logAction) === false) {
-    throw new ValidationError('dogId, logDate, logNote, or logAction missing', 'ER_VALUES_MISSING');
+  if (areAllDefined(userId, dogId, logDate, logNote, logAction) === false) {
+    throw new ValidationError('userId, dogId, logDate, logNote, or logAction missing', 'ER_VALUES_MISSING');
   }
 
   try {
     const result = await queryPromise(
       req,
-      'INSERT INTO dogLogs(dogId, logDate, logNote, logAction, logCustomActionName) VALUES (?, ?, ?, ?, ?)',
-      [dogId, logDate, logNote, logAction, logCustomActionName],
+      'INSERT INTO dogLogs(userId, dogId, logDate, logNote, logAction, logCustomActionName, logLastModified) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [userId, dogId, logDate, logNote, logAction, logCustomActionName, logLastModified],
     );
     return result.insertId;
   }

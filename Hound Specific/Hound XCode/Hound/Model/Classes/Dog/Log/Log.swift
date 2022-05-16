@@ -77,6 +77,8 @@ protocol LogProtocol {
 
 class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
+    // TO DO implement userId of person who created the log. then, with this user id, display it on the logs page or wherever else needed (i.e. show that x person created the log)
+    
     // MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {

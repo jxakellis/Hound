@@ -21,9 +21,9 @@ class DogsReminderMonthlyViewController: UIViewController, UIGestureRecognizerDe
     }
 
     // MARK: - IB
-    @IBOutlet weak var datePicker: UIDatePicker!
+    @IBOutlet weak var timeOfDayDatePicker: UIDatePicker!
 
-    @IBAction private func didUpdateDatePicker(_ sender: Any) {
+    @IBAction private func didUpdateTimeOfDay(_ sender: Any) {
         delegate.willDismissKeyboard()
     }
 
@@ -33,18 +33,8 @@ class DogsReminderMonthlyViewController: UIViewController, UIGestureRecognizerDe
 
     var passedTimeOfDay: Date?
 
-    var passedMonthlyDay: Int?
-
     var initalValuesChanged: Bool {
-        if passedMonthlyDay != monthlyDay {
-            return true
-        }
-        else if passedTimeOfDay != datePicker.date {
-            return true
-        }
-        else {
-            return false
-        }
+        return (passedTimeOfDay != timeOfDayDatePicker.date) ? true : false
     }
 
     // MARK: - Main
@@ -54,27 +44,20 @@ class DogsReminderMonthlyViewController: UIViewController, UIGestureRecognizerDe
 
         // keep duplicate as without it the user can see the .asyncafter visual scroll, but this duplicate stops a value changed not being called on first value change bug
         if self.passedTimeOfDay != nil {
-            self.datePicker.date = self.passedTimeOfDay!
+            self.timeOfDayDatePicker.date = self.passedTimeOfDay!
         }
         else {
-            self.datePicker.date = Date.roundDate(targetDate: Date(), roundingInterval: TimeInterval(60 * datePicker.minuteInterval), roundingMethod: .up)
-            passedTimeOfDay = datePicker.date
+            self.timeOfDayDatePicker.date = Date.roundDate(targetDate: Date(), roundingInterval: TimeInterval(60 * timeOfDayDatePicker.minuteInterval), roundingMethod: .up)
+            passedTimeOfDay = timeOfDayDatePicker.date
         }
 
         // fix bug with datePicker value changed not triggering on first go
         DispatchQueue.main.asyncAfter(deadline: .now()) {
-            self.datePicker.date = self.datePicker.date
+            self.timeOfDayDatePicker.date = self.timeOfDayDatePicker.date
         }
 
         // put no date datePicker.minimumDate because when the user goes to select the time of day, it causes weird selection issues. we already handle the case if they selected a time in the past (just use that day of month for the next month) so no need to block anything
 
-    }
-
-    /// Returns the day of month selected
-    var monthlyDay: Int? {
-            let targetDate = datePicker.date
-            let targetMonthlyDay = Calendar.current.component(.day, from: targetDate)
-            return targetMonthlyDay
     }
 
 }

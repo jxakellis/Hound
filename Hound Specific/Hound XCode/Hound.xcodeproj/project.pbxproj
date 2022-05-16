@@ -107,7 +107,6 @@
 		A2AA5CCF27FE454D00FD0134 /* MonthlyComponentsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CCE27FE454D00FD0134 /* MonthlyComponentsError.swift */; };
 		A2AA5CD127FE456400FD0134 /* FamilyRequestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CD027FE456400FD0134 /* FamilyRequestError.swift */; };
 		A2AA5CD327FE459200FD0134 /* TimingManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CD227FE459200FD0134 /* TimingManagerError.swift */; };
-		A2AA5CD527FE45AA00FD0134 /* StringExtensionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CD427FE45AA00FD0134 /* StringExtensionError.swift */; };
 		A2AA5CD727FE47F500FD0134 /* Dog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CD627FE47F500FD0134 /* Dog.swift */; };
 		A2AA5CD927FE480000FD0134 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CD827FE480000FD0134 /* Log.swift */; };
 		A2AA5CDB27FE481C00FD0134 /* DropDownUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CDA27FE481C00FD0134 /* DropDownUIView.swift */; };
@@ -285,7 +284,6 @@
 		A2AA5CCE27FE454D00FD0134 /* MonthlyComponentsError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyComponentsError.swift; sourceTree = "<group>"; };
 		A2AA5CD027FE456400FD0134 /* FamilyRequestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyRequestError.swift; sourceTree = "<group>"; };
 		A2AA5CD227FE459200FD0134 /* TimingManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimingManagerError.swift; sourceTree = "<group>"; };
-		A2AA5CD427FE45AA00FD0134 /* StringExtensionError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensionError.swift; sourceTree = "<group>"; };
 		A2AA5CD627FE47F500FD0134 /* Dog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dog.swift; sourceTree = "<group>"; };
 		A2AA5CD827FE480000FD0134 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		A2AA5CDA27FE481C00FD0134 /* DropDownUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropDownUIView.swift; sourceTree = "<group>"; };
@@ -486,7 +484,6 @@
 				A2AA5CCC27FE453400FD0134 /* WeeklyComponentsError.swift */,
 				A2AA5CCE27FE454D00FD0134 /* MonthlyComponentsError.swift */,
 				A2AA5CD227FE459200FD0134 /* TimingManagerError.swift */,
-				A2AA5CD427FE45AA00FD0134 /* StringExtensionError.swift */,
 				A247236C27F63456005DF848 /* SignInWithAppleError.swift */,
 			);
 			path = Errors;
@@ -1129,7 +1126,6 @@
 				A2A45CCF2644914A0050E5A1 /* RemindersIntroductionVC.swift in Sources */,
 				A2B9DAF1262B2F2D00A47D57 /* LogsTableVC.swift in Sources */,
 				A2AA5CC927FE44C300FD0134 /* LogActionError.swift in Sources */,
-				A2AA5CD527FE45AA00FD0134 /* StringExtensionError.swift in Sources */,
 				A25070DF26DD9BFF0056CFC4 /* ScaledUILabel.swift in Sources */,
 				A2AC89FE27D2782100115831 /* OneTimeComponents.swift in Sources */,
 				A2121DBD26649C7E00647682 /* DogsReminderOneTimeVC.swift in Sources */,

@@ -59,25 +59,25 @@ enum ReminderConstant {
         let reminder = Reminder()
         reminder.reminderAction = .feed
         reminder.changeReminderType(newReminderType: .weekly)
-        reminder.weeklyComponents.changeDateComponents(newDateComponent: .hour, newValue: 7)
-        reminder.weeklyComponents.changeDateComponents(newDateComponent: .minute, newValue: 0)
+        try! reminder.weeklyComponents.changeHour(newHour: 7)
+        try! reminder.weeklyComponents.changeMinute(newMinute: 0)
         return reminder
     }
     private static var defaultReminderThree: Reminder {
         let reminder = Reminder()
         reminder.reminderAction = .feed
         reminder.changeReminderType(newReminderType: .weekly)
-        reminder.weeklyComponents.changeDateComponents(newDateComponent: .hour, newValue: 5+12)
-        reminder.weeklyComponents.changeDateComponents(newDateComponent: .minute, newValue: 0)
+        try! reminder.weeklyComponents.changeHour(newHour: 5+12)
+        try! reminder.weeklyComponents.changeMinute(newMinute: 0)
         return reminder
     }
     private static var defaultReminderFour: Reminder {
         let reminder = Reminder()
         reminder.reminderAction = .medicine
         reminder.changeReminderType(newReminderType: .monthly)
-        reminder.monthlyComponents.changeDateComponents(newDateComponent: .hour, newValue: 9)
-        reminder.monthlyComponents.changeDateComponents(newDateComponent: .minute, newValue: 0)
-        try! reminder.monthlyComponents.changeMonthlyDay(newMonthlyDay: 1)
+        try! reminder.monthlyComponents.changeDay(newDay: 1)
+        try! reminder.monthlyComponents.changeHour(newHour: 9)
+        try! reminder.monthlyComponents.changeMinute(newMinute: 0)
         return reminder
     }
 }

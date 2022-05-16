@@ -50,6 +50,10 @@ enum ServerDefaultKeys: String {
     case followUpDelay
     case notificationSound
     
+    // MARK: - Special Local Configuration
+    
+    case lastDogManagerSync
+    
     // MARK: Dog
     
     case dogId
@@ -96,23 +100,23 @@ enum ServerDefaultKeys: String {
     
     case weeklyHour
     case weeklyMinute
+    case weeklySunday
+    case weeklyMonday
+    case weeklyTuesday
+    case weeklyWednesday
+    case weeklyThursday
+    case weeklyFriday
+    case weeklySaturday
     case weeklyIsSkipping
     case weeklyIsSkippingDate
-    case sunday
-    case monday
-    case tuesday
-    case wednesday
-    case thursday
-    case friday
-    case saturday
     
     // MARK: Monthly Components
     
+    case monthlyDay
     case monthlyHour
     case monthlyMinute
     case monthlyIsSkipping
     case monthlyIsSkippingDate
-    case monthlyDay
     
     // MARK: One Time Components
     

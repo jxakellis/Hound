@@ -26,14 +26,3 @@ protocol GeneralCountdownProtocol {
     var intervalElapsed: TimeInterval { get }
     mutating func changeIntervalElapsed(newIntervalElapsed: TimeInterval)
 }
-
-protocol GeneralTimeOfDayProtocol {
-    
-    /// DateComponent that stores at least hour and minute for the timeOfDay reminder, potentially can store other components if needed
-    var dateComponents: DateComponents { get }
-    /// Changes the values of timeOfDayComponent to the values provided by the dateComponent.
-    mutating func changeDateComponents(newDateComponents: DateComponents)
-    /// Changes the specific component's value from dateComponent to the value provided
-    mutating func changeDateComponents(newDateComponent: Calendar.Component, newValue: Int)
-    
-}

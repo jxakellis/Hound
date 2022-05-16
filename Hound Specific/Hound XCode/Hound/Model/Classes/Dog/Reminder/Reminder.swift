@@ -161,53 +161,51 @@ class Reminder: NSObject, NSCoding, NSCopying {
             storedReminderIsEnabled = reminderIsEnabled
         }
         
+        // snooze
         snoozeComponents = SnoozeComponents(snoozeIsEnabled: body[ServerDefaultKeys.snoozeIsEnabled.rawValue] as? Bool, executionInterval: body[ServerDefaultKeys.snoozeExecutionInterval.rawValue] as? TimeInterval, intervalElapsed: body[ServerDefaultKeys.snoozeIntervalElapsed.rawValue] as? TimeInterval)
         
-        switch reminderType {
-        case .countdown:
-            countdownComponents = CountdownComponents(
-                executionInterval: body[ServerDefaultKeys.countdownExecutionInterval.rawValue] as? TimeInterval,
-                intervalElapsed: body[ServerDefaultKeys.countdownIntervalElapsed.rawValue] as? TimeInterval)
-        case .weekly:
+        // countdown
+        countdownComponents = CountdownComponents(
+            executionInterval: body[ServerDefaultKeys.countdownExecutionInterval.rawValue] as? TimeInterval,
+            intervalElapsed: body[ServerDefaultKeys.countdownIntervalElapsed.rawValue] as? TimeInterval)
             
-            var weeklyIsSkippingDate = Date()
-            if let weeklyIsSkippingDateString = body[ServerDefaultKeys.weeklyIsSkippingDate.rawValue] as? String {
-                weeklyIsSkippingDate = ResponseUtils.dateFormatter(fromISO8601String: weeklyIsSkippingDateString) ?? Date()
-            }
-            
-            weeklyComponents = WeeklyComponents(
-                hour: body[ServerDefaultKeys.weeklyHour.rawValue] as? Int,
-                minute: body[ServerDefaultKeys.weeklyMinute.rawValue] as? Int,
-                isSkipping: body[ServerDefaultKeys.weeklyIsSkipping.rawValue] as? Bool,
-                skipDate: weeklyIsSkippingDate,
-                sunday: body[ServerDefaultKeys.sunday.rawValue] as? Bool,
-                monday: body[ServerDefaultKeys.monday.rawValue] as? Bool,
-                tuesday: body[ServerDefaultKeys.tuesday.rawValue] as? Bool,
-                wednesday: body[ServerDefaultKeys.wednesday.rawValue] as? Bool,
-                thursday: body[ServerDefaultKeys.thursday.rawValue] as? Bool,
-                friday: body[ServerDefaultKeys.friday.rawValue] as? Bool,
-                saturday: body[ServerDefaultKeys.saturday.rawValue] as? Bool)
-        case .monthly:
-            var monthlyIsSkippingDate = Date()
-            if let monthlyIsSkippingDateString = body[ServerDefaultKeys.monthlyIsSkippingDate.rawValue] as? String {
-                monthlyIsSkippingDate = ResponseUtils.dateFormatter(fromISO8601String: monthlyIsSkippingDateString) ?? Date()
-            }
-            
-            monthlyComponents = MonthlyComponents(
-                hour: body[ServerDefaultKeys.monthlyHour.rawValue] as? Int,
-                minute: body[ServerDefaultKeys.monthlyMinute.rawValue] as? Int,
-                isSkipping: body[ServerDefaultKeys.monthlyIsSkipping.rawValue] as? Bool,
-                skipDate: monthlyIsSkippingDate,
-                monthlyDay: body[ServerDefaultKeys.monthlyDay.rawValue] as? Int)
-        case .oneTime:
-            var reminderExecutionDate = Date()
-            
-            if let reminderExecutionDateString = body[ServerDefaultKeys.oneTimeDate.rawValue] as? String {
-                reminderExecutionDate = ResponseUtils.dateFormatter(fromISO8601String: reminderExecutionDateString) ?? Date()
-            }
-            
-            oneTimeComponents = OneTimeComponents(date: reminderExecutionDate)
+        // weekly
+        var weeklyIsSkippingDate = Date()
+        if let weeklyIsSkippingDateString = body[ServerDefaultKeys.weeklyIsSkippingDate.rawValue] as? String {
+            weeklyIsSkippingDate = ResponseUtils.dateFormatter(fromISO8601String: weeklyIsSkippingDateString) ?? Date()
         }
+        weeklyComponents = WeeklyComponents(
+            hour: body[ServerDefaultKeys.weeklyHour.rawValue] as? Int,
+            minute: body[ServerDefaultKeys.weeklyMinute.rawValue] as? Int,
+            isSkipping: body[ServerDefaultKeys.weeklyIsSkipping.rawValue] as? Bool,
+            isSkippingDate: weeklyIsSkippingDate,
+            sunday: body[ServerDefaultKeys.weeklySunday.rawValue] as? Bool,
+            monday: body[ServerDefaultKeys.weeklyMonday.rawValue] as? Bool,
+            tuesday: body[ServerDefaultKeys.weeklyTuesday.rawValue] as? Bool,
+            wednesday: body[ServerDefaultKeys.weeklyWednesday.rawValue] as? Bool,
+            thursday: body[ServerDefaultKeys.weeklyThursday.rawValue] as? Bool,
+            friday: body[ServerDefaultKeys.weeklyFriday.rawValue] as? Bool,
+            saturday: body[ServerDefaultKeys.weeklySaturday.rawValue] as? Bool)
+            
+        // monthly
+        var monthlyIsSkippingDate = Date()
+        if let monthlyIsSkippingDateString = body[ServerDefaultKeys.monthlyIsSkippingDate.rawValue] as? String {
+            monthlyIsSkippingDate = ResponseUtils.dateFormatter(fromISO8601String: monthlyIsSkippingDateString) ?? Date()
+        }
+        monthlyComponents = MonthlyComponents(
+            day: body[ServerDefaultKeys.monthlyDay.rawValue] as? Int,
+            hour: body[ServerDefaultKeys.monthlyHour.rawValue] as? Int,
+            minute: body[ServerDefaultKeys.monthlyMinute.rawValue] as? Int,
+            isSkipping: body[ServerDefaultKeys.monthlyIsSkipping.rawValue] as? Bool,
+            isSkippingDate: monthlyIsSkippingDate
+        )
+            
+        // one time
+        var reminderExecutionDate = Date()
+        if let reminderExecutionDateString = body[ServerDefaultKeys.oneTimeDate.rawValue] as? String {
+            reminderExecutionDate = ResponseUtils.dateFormatter(fromISO8601String: reminderExecutionDateString) ?? Date()
+        }
+        oneTimeComponents = OneTimeComponents(date: reminderExecutionDate)
     }
     
     // MARK: - Properties
@@ -278,10 +276,10 @@ class Reminder: NSObject, NSCoding, NSCopying {
                     return true
                 }
             case .weekly:
-                if weeklyComponents.dateComponents.hour != reminder.weeklyComponents.dateComponents.hour {
+                if weeklyComponents.hour != reminder.weeklyComponents.hour {
                     return false
                 }
-                else if weeklyComponents.dateComponents.minute != reminder.weeklyComponents.dateComponents.minute {
+                else if weeklyComponents.minute != reminder.weeklyComponents.minute {
                     return false
                 }
                 else if weeklyComponents.weekdays != reminder.weeklyComponents.weekdays {
@@ -298,13 +296,13 @@ class Reminder: NSObject, NSCoding, NSCopying {
                     return true
                 }
             case .monthly:
-                if monthlyComponents.dateComponents.hour != reminder.monthlyComponents.dateComponents.hour {
+                if monthlyComponents.hour != reminder.monthlyComponents.hour {
                     return false
                 }
-                else if monthlyComponents.dateComponents.minute != reminder.monthlyComponents.dateComponents.minute {
+                else if monthlyComponents.minute != reminder.monthlyComponents.minute {
                     return false
                 }
-                else if monthlyComponents.monthlyDay != reminder.monthlyComponents.monthlyDay {
+                else if monthlyComponents.day != reminder.monthlyComponents.day {
                     return false
                 }
                 else if monthlyComponents.isSkipping != reminder.monthlyComponents.isSkipping {

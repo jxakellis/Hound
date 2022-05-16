@@ -10,7 +10,10 @@ const { validateFamilyId } = require('../main/tools/validation/validateId');
 
 router.param('familyId', validateFamilyId);
 
-// router.use('/:familyId', validateFamilyId);
+// route to dogs (or nested) related things
+const dogsRouter = require('./dogs');
+
+router.use('/:familyId/dogs', dogsRouter);
 
 // gets family with userId then return information from families and familyMembers table
 router.get('/', getFamily);
@@ -19,10 +22,6 @@ router.get('/', getFamily);
 // gets family with familyId then return information from families and familyMembers table
 router.get('/:familyId', getFamily);
 // no body
-
-const dogsRouter = require('./dogs');
-
-router.use('/:familyId/dogs', dogsRouter);
 
 // creates family
 router.post('/', createFamily);

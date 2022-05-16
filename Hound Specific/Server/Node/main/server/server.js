@@ -5,8 +5,7 @@ const app = express();
 
 // MARK: Create the server
 
-// TO DO enable me for production
-const isProduction = true;
+const isProduction = false;
 const port = 3000;
 const { restoreAlarmNotificationsForAllFamilies } = require('../tools/notifications/alarm/restoreAlarmNotification');
 
@@ -14,7 +13,7 @@ const { restoreAlarmNotificationsForAllFamilies } = require('../tools/notificati
 const server = app.listen(port, () => {
   serverLogger.info(`Listening on port ${port}`);
 
-  if (isProduction === true) {
+  if (isProduction) {
     // Server is freshly restarted. Restore notifications that were lost;
     restoreAlarmNotificationsForAllFamilies();
   }

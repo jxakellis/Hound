@@ -12,12 +12,7 @@ const {
  */
 const updateUserQuery = async (req) => {
   const userId = req.params.userId;
-  // const userEmail = formatEmail(req.body.userEmail);
-  const {
-    // userFirstName,
-    // userLastName,
-    userNotificationToken,
-  } = req.body;
+  const { userNotificationToken } = req.body;
 
   const isNotificationEnabled = formatBoolean(req.body.isNotificationEnabled);
   const isLoudNotification = formatBoolean(req.body.isLoudNotification);
@@ -31,9 +26,6 @@ const updateUserQuery = async (req) => {
 
   // checks to see that all needed components are provided
   if (atLeastOneDefined(
-    // userEmail,
-    // userFirstName,
-    // userLastName,
     userNotificationToken,
     isNotificationEnabled,
     isLoudNotification,
@@ -49,30 +41,6 @@ const updateUserQuery = async (req) => {
   }
 
   try {
-    /*
-    if (areAllDefined(userEmail)) {
-      // if userEmail is defined, then its valid
-      await queryPromise(
-        req,
-        'UPDATE users SET userEmail = ? WHERE userId = ?',
-        [userEmail, userId],
-      );
-    }
-    if (areAllDefined(userFirstName)) {
-      await queryPromise(
-        req,
-        'UPDATE users SET userFirstName = ? WHERE userId = ?',
-        [userFirstName, userId],
-      );
-    }
-    if (areAllDefined(userLastName)) {
-      await queryPromise(
-        req,
-        'UPDATE users SET userLastName = ? WHERE userId = ?',
-        [userLastName, userId],
-      );
-    }
-    */
     if (areAllDefined(userNotificationToken)) {
       await queryPromise(
         req,
