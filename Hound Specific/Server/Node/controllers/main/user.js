@@ -89,10 +89,8 @@ const updateUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-  const userId = req.params.userId;
-  const familyId = req.params.familyId;
   try {
-    await deleteUserQuery(req, userId, familyId);
+    await deleteUserQuery();
     await req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }

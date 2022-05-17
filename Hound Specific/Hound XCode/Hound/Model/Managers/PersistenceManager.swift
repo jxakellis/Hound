@@ -13,6 +13,8 @@ enum PersistenceManager {
     /// Called by App or Scene Delegate when setting up in didFinishLaunchingWithOptions, can be either the first time setup or a recurring setup (i.e. not the app isnt being opened for the first time)
     static func setup() {
         
+        // TO DO verify that Hound 1.3.5 things were imported properly (i.e. isNotificationAuthorized, reviewRequestDates, and possible others)
+        
         AppDelegate.generalLogger.notice("\n-----Device Info-----\n Model: \(UIDevice.current.model) \n Name: \(UIDevice.current.name) \n System Name: \(UIDevice.current.systemName) \n System Version: \(UIDevice.current.systemVersion)")
         
         UIApplication.previousAppBuild = UserDefaults.standard.object(forKey: UserDefaultsKeys.appBuild.rawValue) as? Int
@@ -74,7 +76,6 @@ enum PersistenceManager {
             // the user can have loud notifications
             if isTerminating == true {
                 // send the user an alert since their loud notifications won't work
-                // BUG, if the app is directly terminated and doesn't enter the background, then the user wont get a notifiation (api request doesn't go through)
                 RequestUtils.createTerminationNotification()
             }
             else {

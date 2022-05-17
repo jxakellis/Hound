@@ -2260,7 +2260,7 @@
                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="To close (delete) your account permanently, contact customer support." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SJG-iw-b7H" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="To permanently delete your account, contact support@houndorganizer.com" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SJG-iw-b7H" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="10" y="296" width="394" height="30"/>
                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                 <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -2905,7 +2905,7 @@
                                                         </tableViewCellContentView>
                                                         <connections>
                                                             <outlet property="fullNameLabel" destination="vyZ-U5-fzl" id="Siv-YF-aJB"/>
-                                                            <outlet property="rightChevronAspectRatio" destination="t8j-vs-P7y" id="tAb-Kl-5cV"/>
+                                                            <outlet property="rightChevronAspectRatio" destination="t8j-vs-P7y" id="XPY-o2-lds"/>
                                                             <outlet property="rightChevronImageView" destination="dB3-wh-Rfz" id="Rkx-Bf-0sB"/>
                                                             <outlet property="rightChevronLeadingConstraint" destination="1h2-O1-8u4" id="38i-Gp-taj"/>
                                                         </connections>

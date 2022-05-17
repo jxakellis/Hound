@@ -2,9 +2,9 @@
 const schedule = require('node-schedule');
 const eventEmitter = require('events').EventEmitter;
 
-const { numberOfScheduledJobsAllowed } = require('../../../server/constants');
+const { NUMBER_OF_SCHEDULED_JOBS_ALLOWED } = require('../../../server/constants');
 
-eventEmitter.defaultMaxListeners = numberOfScheduledJobsAllowed;
+eventEmitter.defaultMaxListeners = NUMBER_OF_SCHEDULED_JOBS_ALLOWED;
 
 module.exports = {
   schedule,

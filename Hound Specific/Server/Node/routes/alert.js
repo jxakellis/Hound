@@ -7,6 +7,7 @@ const ValidationError = require('../main/tools/errors/validationError');
 const convertErrorToJSON = require('../main/tools/errors/errorFormat');
 const { areAllDefined } = require('../main/tools/validation/validateFormat');
 const { createTerminateNotification } = require('../main/tools/notifications/alert/createTerminateNotification');
+const { TERMINATE_CATEGORY } = require('../main/server/constants');
 
 // User has done some action that warrents us sending them a special notification
 router.post('/:alertType', async (req, res) => {
@@ -16,7 +17,7 @@ router.post('/:alertType', async (req, res) => {
     return res.status(400).json(convertErrorToJSON(new ValidationError('No alert type provided', 'ER_VALUES_INVALID')));
   }
   // the user has terminated the app
-  if (alertType === 'terminate') {
+  if (alertType === TERMINATE_CATEGORY) {
     createTerminateNotification(req.params.userId);
   }
   await req.commitQueries(req);

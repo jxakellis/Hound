@@ -1,4 +1,5 @@
 const apn = require('apn');
+const { REMINDER_CATEGORY } = require('../../../server/constants');
 const { apnLogger } = require('../../logging/loggers');
 
 const { formatArray, areAllDefined } = require('../../validation/validateFormat');
@@ -67,8 +68,8 @@ const sendAPN = (token, category, sound, alertTitle, alertBody) => {
       },
     };
 
-    // if there is a sound for the notification, then we add it to the rawPayload
-    if (areAllDefined(sound, notification, notification.rawPayload, notification.rawPayload.aps)) {
+    // if there is a sound for the reminder alarm alert, then we add it to the rawPayload
+    if (category === REMINDER_CATEGORY && areAllDefined(sound, notification, notification.rawPayload, notification.rawPayload.aps)) {
       notification.rawPayload.aps.sound = `${sound}30.wav`;
     }
 

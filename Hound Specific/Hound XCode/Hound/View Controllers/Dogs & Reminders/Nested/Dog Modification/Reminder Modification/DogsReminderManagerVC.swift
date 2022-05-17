@@ -183,8 +183,6 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // BUG if updating an existing reminder to a new mode, e.g. recurring to days of week, the day of month/hour/minute will populate as whatever is stored. This means if I go to update a recurring reminder to days of week, instead of being the exact time it currently is (i.e. the datePicker is at 11:37am) it will populate to the default of 7:00am.
-        
         oneTimeSetup()
     }
     
@@ -434,6 +432,10 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
     // MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Guard statements are used so that information is only passed to the VC thats the reminder's current type.
+        //  This is so the current menu (e.g. weekly) has the up to date information but the other ones (e.g. countdown, monthly, oneTime) are in the default statement (e.g. datePickers set to current date and time).
+        // If we didn't do this, the defaults that were applied to the countdown/monthly/oneTime components a while ago would be passed (e.g. date pickers set to 7:00am on some day that isn't the current one). But with these guard statements, the everything is configured so it reflects the present moment (e.g. datePickers set to current time and current day)
+        
         if segue.identifier == "dogsReminderCountdownViewController"{
             dogsReminderCountdownViewController = segue.destination as! DogsReminderCountdownViewController
             dogsReminderCountdownViewController.delegate = self

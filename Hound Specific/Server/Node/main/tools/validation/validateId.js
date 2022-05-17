@@ -2,7 +2,7 @@ const { queryPromise } = require('../database/queryPromise');
 const { formatNumber, formatArray, areAllDefined } = require('./validateFormat');
 const DatabaseError = require('../errors/databaseError');
 const ValidationError = require('../errors/validationError');
-const { currentAppBuild, previousAppBuild } = require('../../server/constants');
+const { CURRENT_APP_BUILD, PREVIOUS_APP_BUILD } = require('../../server/constants');
 
 /**
  * Checks to see that the appBuild of the requester is either up to date or one version behind.
@@ -21,9 +21,9 @@ const validateAppBuild = async (req, res, next) => {
     return res.status(400).json(new ValidationError('appBuild missing', 'ER_VALUES_MISSING').toJSON);
   }
   // the user isn't on the previous or current app build
-  else if (appBuild !== previousAppBuild && appBuild !== currentAppBuild) {
+  else if (appBuild !== PREVIOUS_APP_BUILD && appBuild !== CURRENT_APP_BUILD) {
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError(`appBuild of ${appBuild} is invalid. Acceptable builds are ${previousAppBuild} and ${currentAppBuild}`, 'ER_APP_BUILD_OUTDATED').toJSON);
+    return res.status(400).json(new ValidationError(`appBuild of ${appBuild} is invalid. Acceptable builds are ${PREVIOUS_APP_BUILD} and ${CURRENT_APP_BUILD}`, 'ER_APP_BUILD_OUTDATED').toJSON);
   }
   else {
     return next();

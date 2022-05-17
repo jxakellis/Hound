@@ -2,6 +2,7 @@ const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { deleteDogsQuery } = require('./deleteForDogs');
+const { createFamilyMemberLeaveNotification } = require('../../main/tools/notifications/alert/createFamilyNotification');
 
 /**
  *  Queries the database to either remove the user from their current family (familyMember) or delete the family and everything nested under it (families).
@@ -31,27 +32,24 @@ const deleteFamilyQuery = async (req, userId, familyId) => {
 
   // User is the head of the family, so has obligation to it.
   if (family.length === 1) {
-  // The user is the only person in the family.
-    if (familyMembers.length === 1) {
-      // can destroy the family
-      try {
-        // delete all the family heads (should be one)
-        await queryPromise(req, 'DELETE FROM families WHERE familyId = ?', [familyId]);
-        // deletes all users from the family
-        await queryPromise(req, 'DELETE FROM familyMembers WHERE familyId = ?', [familyId]);
-      }
-      catch (error) {
-        throw new DatabaseError(error.code);
-      }
-
-      // delete all the dogs
-      await deleteDogsQuery(req, userId, familyId);
-    }
-    // There are multiple people in the family
-    else {
+    if (familyMembers.length !== 1) {
       // Cannot destroy family until other members are gone
       throw new ValidationError('Family still contains multiple members', 'ER_VALUES_INVALID');
     }
+
+    // can destroy the family
+    try {
+    // delete all the family heads (should be one)
+      await queryPromise(req, 'DELETE FROM families WHERE familyId = ?', [familyId]);
+      // deletes all users from the family
+      await queryPromise(req, 'DELETE FROM familyMembers WHERE familyId = ?', [familyId]);
+    }
+    catch (error) {
+      throw new DatabaseError(error.code);
+    }
+
+    // delete all the dogs
+    await deleteDogsQuery(req, userId, familyId);
   }
   // User is not the head of the family, so no obligation
   else {
@@ -64,6 +62,11 @@ const deleteFamilyQuery = async (req, userId, familyId) => {
       throw new DatabaseError(error.code);
     }
   }
+
+  // now that the user has successfully left their family (or destroyed it), we can send a notification to remaining members
+  // NOTE: in the case of the user being the family head (aka the only family members if we reached this point),
+  // this will ultimately find no userNotificationTokens for the other family members and send no APN
+  createFamilyMemberLeaveNotification(userId, familyId);
 };
 
 module.exports = { deleteFamilyQuery };

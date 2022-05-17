@@ -1,25 +1,26 @@
-const { connectionForLogs } = require('../../database/databaseConnection');
+const { connectionForGeneralAlerts } = require('../../database/databaseConnection');
 const { alertLogger } = require('../../logging/loggers');
 const { areAllDefined } = require('../../validation/validateFormat');
 
 const { queryPromise } = require('../../database/queryPromise');
 const { sendAPNForFamilyExcludingUser } = require('../apn/sendAPN');
-const { validateAbreviatedFullName } = require('../../validation/validateName');
+const { formatIntoAbreviatedFullName } = require('../../validation/validateName');
+const { LOG_CATEGORY } = require('../../../server/constants');
 
 /**
  * Sends an alert to all of the family members that one of them has logged something.
  */
 const createLogNotification = async (userId, familyId, dogId, logAction, logCustomActionName) => {
-  alertLogger.debug(`createLogNotification ${userId}, ${familyId}, ${dogId}, ${logAction}, ${logCustomActionName}`);
-  // make sure all params are defined
-  if (areAllDefined(userId, familyId, dogId, logAction) === false) {
-    return;
-  }
-
   try {
+    alertLogger.debug(`createLogNotification ${userId}, ${familyId}, ${dogId}, ${logAction}, ${logCustomActionName}`);
+    // make sure all params are defined
+    if (areAllDefined(userId, familyId, dogId, logAction) === false) {
+      return;
+    }
+
     // get the first and last name of the user who logged the event
     let user = await queryPromise(
-      connectionForLogs,
+      connectionForGeneralAlerts,
       'SELECT userFirstName, userLastName FROM users WHERE userId = ? LIMIT 1',
       [userId],
     );
@@ -27,7 +28,7 @@ const createLogNotification = async (userId, familyId, dogId, logAction, logCust
 
     // get the name of the dog who got logged
     let dog = await queryPromise(
-      connectionForLogs,
+      connectionForGeneralAlerts,
       'SELECT dogName FROM dogs WHERE dogId = ? LIMIT 1',
       [dogId],
     );
@@ -41,7 +42,7 @@ const createLogNotification = async (userId, familyId, dogId, logAction, logCust
     // now we can construct the messages
     // Log for Fido
     const alertTitle = `Log for ${dog.dogName}`;
-    const name = validateAbreviatedFullName(user.userFirstName, user.userLastName);
+    const name = formatIntoAbreviatedFullName(user.userFirstName, user.userLastName);
     let alertBody;
     if (logAction === 'Custom' && areAllDefined(logCustomActionName)) {
       // Bob S lent a helping hand with 'Special Name'
@@ -53,7 +54,7 @@ const createLogNotification = async (userId, familyId, dogId, logAction, logCust
     }
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, 'log', alertTitle, alertBody);
+    sendAPNForFamilyExcludingUser(userId, familyId, LOG_CATEGORY, alertTitle, alertBody);
   }
   catch (error) {
     alertLogger.error('createLogNotification error:');

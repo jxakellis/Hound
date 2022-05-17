@@ -8,7 +8,7 @@ const formatName = (string) => {
   return string.trim();
 };
 
-const validateFullName = (userFirstName, userLastName) => {
+const formatIntoFullName = (userFirstName, userLastName) => {
   const trimmedFirstName = formatName(userFirstName);
   const trimmedLastName = formatName(userLastName);
 
@@ -29,7 +29,7 @@ const validateFullName = (userFirstName, userLastName) => {
   }
 };
 
-const validateAbreviatedFullName = (userFirstName, userLastName) => {
+const formatIntoAbreviatedFullName = (userFirstName, userLastName) => {
   const trimmedFirstName = formatName(userFirstName);
   const trimmedLastName = formatName(userLastName);
 
@@ -50,4 +50,4 @@ const validateAbreviatedFullName = (userFirstName, userLastName) => {
   }
 };
 
-module.exports = { validateFullName, validateAbreviatedFullName };
+module.exports = { formatIntoFullName, formatIntoAbreviatedFullName };

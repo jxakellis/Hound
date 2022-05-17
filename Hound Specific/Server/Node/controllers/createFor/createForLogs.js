@@ -4,7 +4,7 @@ const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
   formatDate, areAllDefined,
 } = require('../../main/tools/validation/validateFormat');
-const { numberOfLogsPerDog } = require('../../main/server/constants');
+const { NUMBER_OF_LOGS_PER_DOG } = require('../../main/server/constants');
 
 /**
  *  Queries the database to create a log. If the query is successful, then returns the logId.
@@ -36,8 +36,8 @@ const createLogQuery = async (req) => {
   }
 
   // make sure that the user isn't creating too many logs
-  if (numberOfLogs.length >= numberOfLogsPerDog) {
-    throw new ValidationError(`Dog log limit of ${numberOfLogsPerDog} exceeded`, 'ER_LOGS_LIMIT_EXCEEDED');
+  if (numberOfLogs.length >= NUMBER_OF_LOGS_PER_DOG) {
+    throw new ValidationError(`Dog log limit of ${NUMBER_OF_LOGS_PER_DOG} exceeded`, 'ER_LOGS_LIMIT_EXCEEDED');
   }
 
   try {

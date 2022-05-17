@@ -22,7 +22,7 @@ const updateDogQuery = async (req) => {
     // updates the dogName for the dogId provided
     return queryPromise(
       req,
-      'UPDATE dogs SET dogName = ?, SET dogLastModified = ? WHERE dogId = ?',
+      'UPDATE dogs SET dogName = ?, dogLastModified = ? WHERE dogId = ?',
       [dogName, dogLastModified, dogId],
     );
 

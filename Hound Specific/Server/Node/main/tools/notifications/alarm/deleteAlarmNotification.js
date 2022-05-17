@@ -6,9 +6,9 @@ const { areAllDefined } = require('../../validation/validateFormat');
 const { cancelPrimaryJobForFamilyForReminder, cancelSecondaryJobForUserForReminder } = require('./cancelJob');
 
 const deleteAlarmNotificationsForFamily = async (familyId) => {
-  alarmLogger.debug(`deleteAlarmNotificationsForFamily ${familyId}`);
-
   try {
+    alarmLogger.debug(`deleteAlarmNotificationsForFamily ${familyId}`);
+
     // make sure reminderId is defined
     if (areAllDefined(familyId) === false) {
       return;
@@ -49,9 +49,9 @@ const deleteAlarmNotificationsForFamily = async (familyId) => {
  * Cancels and deletes any primary and secondary job scheduled with the provided reminderId
  */
 const deleteAlarmNotificationsForReminder = async (familyId, reminderId) => {
-  alarmLogger.debug(`deleteAlarmNotificationsForReminder ${familyId}, ${reminderId}`);
-
   try {
+    alarmLogger.debug(`deleteAlarmNotificationsForReminder ${familyId}, ${reminderId}`);
+
     // make sure reminderId is defined
     if (areAllDefined(familyId, reminderId) === false) {
       return;
@@ -81,9 +81,9 @@ const deleteAlarmNotificationsForReminder = async (familyId, reminderId) => {
  * Cancels and deletes any secondary jobs scheduled with the provided userId
  */
 const deleteSecondaryAlarmNotificationsForUser = async (userId) => {
-  alarmLogger.debug(`deleteSecondaryAlarmNotificationsForUser ${userId}`);
-
   try {
+    alarmLogger.debug(`deleteSecondaryAlarmNotificationsForUser ${userId}`);
+
     if (areAllDefined(userId) === false) {
       return;
     }

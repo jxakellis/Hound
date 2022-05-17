@@ -17,6 +17,7 @@ class SettingsFamilyMemberTableViewCell: UITableViewCell {
     @IBOutlet private weak var rightChevronImageView: UIImageView!
     @IBOutlet private weak var rightChevronLeadingConstraint: NSLayoutConstraint!
     @IBOutlet private weak var rightChevronAspectRatio: NSLayoutConstraint!
+    
     // MARK: - Properties
     
     var userId: Int!
@@ -25,7 +26,8 @@ class SettingsFamilyMemberTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        
+        // BUG if head of family is transferred to a family member and the page is reloaded, then this cell will break. Make this cell more dynamic so it can properly shift between family head and non family head.
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -47,7 +49,11 @@ class SettingsFamilyMemberTableViewCell: UITableViewCell {
         
         if isUserFamilyHead == false {
             rightChevronLeadingConstraint.constant = 0.0
-            NSLayoutConstraint.deactivate([rightChevronAspectRatio])
+            if rightChevronAspectRatio != nil {
+                // upon cell reload, the rightChevronAspectRatio can be nil if deactived already
+                NSLayoutConstraint.deactivate([rightChevronAspectRatio])
+            }
+           
             NSLayoutConstraint.activate([ rightChevronImageView.widthAnchor.constraint(equalToConstant: 0.0)])
         }
     }

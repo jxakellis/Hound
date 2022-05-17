@@ -9,6 +9,7 @@ const { sendAPNForFamily, sendAPNForUser } = require('../apn/sendAPN');
 
 const { deleteAlarmNotificationsForReminder } = require('./deleteAlarmNotification');
 const { cancelSecondaryJobForUserForReminder } = require('./cancelJob');
+const { REMINDER_CATEGORY } = require('../../../server/constants');
 
 /**
  * For a given reminder for a given family, handles the alarm notifications
@@ -17,11 +18,11 @@ const { cancelSecondaryJobForUserForReminder } = require('./cancelJob');
  * Additionally, handles secondaryAlarmNotification for any eligible users with createSecondaryAlarmNotificationForFamily.
  */
 const createAlarmNotificationForFamily = async (familyId, reminderId, reminderExecutionDate) => {
-  // all ids should already be formatted into numbers
-  const formattedReminderExecutionDate = formatDate(reminderExecutionDate);
-  alarmLogger.debug(`createAlarmNotificationForFamily ${familyId}, ${reminderId}, ${reminderExecutionDate}, ${formattedReminderExecutionDate}`);
-
   try {
+    // all ids should already be formatted into numbers
+    const formattedReminderExecutionDate = formatDate(reminderExecutionDate);
+    alarmLogger.debug(`createAlarmNotificationForFamily ${familyId}, ${reminderId}, ${reminderExecutionDate}, ${formattedReminderExecutionDate}`);
+
     if (areAllDefined(familyId, reminderId) === false) {
       return;
     }
@@ -88,7 +89,7 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
     }
 
     // send immediate APN notification for family
-    sendAPNForFamily(familyId, 'reminder', primaryAlertTitle, primaryAlertBody);
+    sendAPNForFamily(familyId, REMINDER_CATEGORY, primaryAlertTitle, primaryAlertBody);
 
     // createSecondaryAlarmNotificationForFamily, handles the secondary alarm notifications
     // If the reminderExecutionDate is in the past, sends APN notification asap. Otherwise, schedule job to send at reminderExecutionDate.
@@ -127,10 +128,10 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
  * Once date is reached, job executes to sendAPNForAll with userId, constructed alertTitle, and constructed alertBody
  */
 const createSecondaryAlarmNotificationForUser = async (userId, reminderId, secondaryExecutionDate) => {
-  const formattedSecondaryExecutionDate = formatDate(secondaryExecutionDate);
-  alarmLogger.debug(`createSecondaryAlarmNotificationForUser ${userId}, ${reminderId}, ${secondaryExecutionDate}, ${formattedSecondaryExecutionDate}`);
-
   try {
+    const formattedSecondaryExecutionDate = formatDate(secondaryExecutionDate);
+    alarmLogger.debug(`createSecondaryAlarmNotificationForUser ${userId}, ${reminderId}, ${secondaryExecutionDate}, ${formattedSecondaryExecutionDate}`);
+
     // make sure the required parameters are defined
     if (areAllDefined(userId, reminderId) === false) {
       return;
@@ -195,7 +196,7 @@ const sendSecondaryAPNForUser = async (userId, reminderId) => {
       secondaryAlertBody = `It's been a bit, remember to give your dog a helping hand with '${reminder.reminderAction}'`;
     }
 
-    sendAPNForUser(userId, 'reminder', secondaryAlertTitle, secondaryAlertBody);
+    sendAPNForUser(userId, REMINDER_CATEGORY, secondaryAlertTitle, secondaryAlertBody);
   }
   catch (error) {
     alarmLogger.error('sendAPNForUser error:');

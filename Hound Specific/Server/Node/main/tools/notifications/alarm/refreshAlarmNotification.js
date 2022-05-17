@@ -16,15 +16,16 @@ const { deleteSecondaryAlarmNotificationsForUser } = require('./deleteAlarmNotif
  * No need to call if the user updates their isNotificationEnabled (as sendAPN checks to see if the user is notification enabled before sending)
  */
 const refreshSecondaryAlarmNotificationsForUser = async (userId, isFollowUpEnabled, followUpDelay) => {
-  alarmLogger.debug(`refreshSecondaryAlarmNotificationsForUser ${userId}, ${isFollowUpEnabled}, ${followUpDelay}`);
-
-  // Have to be careful isFollowUpEnabled and followUpDelay are accessed as there will be uncommited transactions involved
-  // If the transaction is uncommited and querying from an outside connection (connectionForAlarms), the values from a SELECT query will be the old values
-  // If the transaction is uncommited and querying from the updating connection (req.connection), the values from the SELECT query will be the updated values
-  // If the transaction is committed, then any connection will reflect the new values
-  let formattedIsFollowUpEnabled = formatBoolean(isFollowUpEnabled);
-  let formattedFollowUpDelay = formatNumber(followUpDelay);
   try {
+    alarmLogger.debug(`refreshSecondaryAlarmNotificationsForUser ${userId}, ${isFollowUpEnabled}, ${followUpDelay}`);
+
+    // Have to be careful isFollowUpEnabled and followUpDelay are accessed as there will be uncommited transactions involved
+    // If the transaction is uncommited and querying from an outside connection (connectionForAlarms), the values from a SELECT query will be the old values
+    // If the transaction is uncommited and querying from the updating connection (req.connection), the values from the SELECT query will be the updated values
+    // If the transaction is committed, then any connection will reflect the new values
+    let formattedIsFollowUpEnabled = formatBoolean(isFollowUpEnabled);
+    let formattedFollowUpDelay = formatNumber(followUpDelay);
+
     const result = await queryPromise(
       connectionForAlarms,
       'SELECT isFollowUpEnabled, followUpDelay FROM userConfiguration WHERE userId = ? LIMIT 18446744073709551615',

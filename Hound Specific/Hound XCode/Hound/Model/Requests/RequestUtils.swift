@@ -14,6 +14,7 @@ enum RequestUtils {
      completionHandler returns a dogManager. If the query returned a 200 status and is successful, then the dogManager is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
      */
     static func getDogManager(invokeErrorManager: Bool, completionHandler: @escaping (DogManager?, ResponseStatus) -> Void) {
+        // BUG we want to sync the isPaused status when we do this as well, as if the family was paused then the refreshed local alarms could be going off but they aren't in actuality since everything is paused.
         // assume userId valid as it was retrieved when the app started. Later on with familyId, if a user was removed from the family, then this refresh could fail.
         
         // Retrieve any dogs the user may have

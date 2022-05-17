@@ -11,9 +11,9 @@ const { connectionForAlarms } = require('../../database/databaseConnection');
  * Use if the schedule gets destroyed (e.g. server crashes/restarts)
  */
 const restoreAlarmNotificationsForAllFamilies = async () => {
-  alarmLogger.debug('restoreAlarmNotificationsForAll');
-
   try {
+    alarmLogger.debug('restoreAlarmNotificationsForAll');
+
     // remove any pending jobs (there shouldn't be any)
     for (const key of Object.keys(schedule.scheduledJobs)) {
       schedule.scheduledJobs[key].cancel();

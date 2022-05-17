@@ -14,7 +14,7 @@ const connectionForAlarms = mysql2.createConnection({
 });
 
 /// The connection used by the server when querying the database for log notifications
-const connectionForLogs = mysql2.createConnection({
+const connectionForGeneralAlerts = mysql2.createConnection({
   connectTimeout: 30000,
   host: 'localhost',
   user: 'admin',
@@ -124,5 +124,5 @@ const assignConnection = (req, res, next) => {
 };
 
 module.exports = {
-  connectionForAlarms, connectionForLogs, connectionForTokens, poolForRequests, assignConnection,
+  connectionForAlarms, connectionForGeneralAlerts, connectionForTokens, poolForRequests, assignConnection,
 };
