@@ -124,7 +124,7 @@ class DogsReminderTableViewCell: UITableViewCell {
             }
         }
 
-        reminderLabel.attributedText = reminderLabel.text?.addingFontToBeginning(text: reminder.displayActionName + " -", font: UIFont.systemFont(ofSize: reminderLabel.font.pointSize, weight: .medium))
+        reminderLabel.attributedText = reminderLabel.text?.addingFontToBeginning(text: reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true) + " -", font: UIFont.systemFont(ofSize: reminderLabel.font.pointSize, weight: .medium))
 
         reminderIsEnabledSwitch.isOn = reminder.reminderIsEnabled
 

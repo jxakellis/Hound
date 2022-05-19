@@ -109,7 +109,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
                     return false
                 }
             }) == false {
-                print("didRemoveLastFilterLog \(filterLogAction)")
+                // user remove the last log for that particular filter type, so we should clear the current active filter 
                 delegate.didRemoveLastFilterLog()
             }
         }

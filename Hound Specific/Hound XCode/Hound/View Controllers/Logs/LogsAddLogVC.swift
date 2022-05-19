@@ -68,11 +68,17 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
             
             // inside of the predefined LogAction
             if indexPath.row < LogAction.allCases.count {
-                customCell.label.text = LogAction.allCases[indexPath.row].rawValue
+                customCell.label.text = LogAction.allCases[indexPath.row].displayActionName(
+                    logCustomActionName: nil,
+                    isShowingAbreviatedCustomActionName: false
+                )
             }
             // a user generated custom name
             else {
-                customCell.label.text = "Custom: \(LocalConfiguration.logCustomActionNames[indexPath.row - LogAction.allCases.count])"
+                customCell.label.text = LogAction.custom.displayActionName(
+                    logCustomActionName: LocalConfiguration.logCustomActionNames[indexPath.row - LogAction.allCases.count],
+                    isShowingAbreviatedCustomActionName: false
+                )
             }
         }
     }
@@ -112,12 +118,18 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
             
             // inside of the predefined LogAction
             if indexPath.row < LogAction.allCases.count {
-                logActionLabel.text = LogAction.allCases[indexPath.row].rawValue
+                logActionLabel.text = LogAction.allCases[indexPath.row].displayActionName(
+                    logCustomActionName: nil,
+                    isShowingAbreviatedCustomActionName: false
+                )
                 selectedLogAction = LogAction.allCases[indexPath.row]
             }
             // a user generated custom name
             else {
-                logActionLabel.text = "Custom: \(LocalConfiguration.logCustomActionNames[indexPath.row - LogAction.allCases.count])"
+                logActionLabel.text = LogAction.custom.displayActionName(
+                    logCustomActionName: LocalConfiguration.logCustomActionNames[indexPath.row - LogAction.allCases.count],
+                    isShowingAbreviatedCustomActionName: false
+                )
                 selectedLogAction = LogAction.custom
                 logCustomActionNameTextField.text = LocalConfiguration.logCustomActionNames[indexPath.row - LogAction.allCases.count]
             }
@@ -372,7 +384,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 parentDogLabel.text = dog.dogName
                 parentDogLabel.tag = dog.dogId
                 
-                selectedLogActionIndexPath = IndexPath(row: LogAction.allCases.firstIndex(of: LogAction(rawValue: logActionLabel.text!)!)!, section: 0)
+                selectedLogActionIndexPath = IndexPath(row: LogAction.allCases.firstIndex(of: logToUpdate!.logAction)!, section: 0)
             }
             // not updating
             else {
@@ -385,7 +397,8 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 selectedLogActionIndexPath = nil
             }
             
-            logActionLabel.text = logToUpdate?.logAction.rawValue
+            // this is for the label for the logAction dropdown, so we only want the names to be the defaults. I.e. if our log is "Custom" with "someCustomActionName", the logActionLabel should only show "Custom" and then the logCustomActionNameTextField should be "someCustomActionName".
+            logActionLabel.text = logToUpdate?.logAction.displayActionName(logCustomActionName: nil, isShowingAbreviatedCustomActionName: false)
             selectedLogAction = logToUpdate?.logAction
             
             logCustomActionNameTextField.text = logToUpdate?.logCustomActionName

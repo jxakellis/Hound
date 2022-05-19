@@ -1,5 +1,5 @@
 const { queryPromise } = require('../database/queryPromise');
-const { formatNumber, formatArray, areAllDefined } = require('./validateFormat');
+const { formatNumber, formatArray, areAllDefined } = require('./formatObject');
 const DatabaseError = require('../errors/databaseError');
 const ValidationError = require('../errors/validationError');
 const { CURRENT_APP_BUILD, PREVIOUS_APP_BUILD } = require('../../server/constants');

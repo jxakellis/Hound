@@ -9,7 +9,8 @@ const familyCodeLength = 8;
 // Makes a code for a family to use that consists of A-Z and 0-9
 const generateFamilyCode = () => {
   let result = '';
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  // O and 0 + L and I are all removed because they look similar
+  const characters = 'ABCDEFGHJKMNPQRSTUVWXYZ123456789';
   const charactersLength = characters.length;
   for (let i = 0; i < familyCodeLength; i += 1) {
     result += characters.charAt(getRandomInt(charactersLength));

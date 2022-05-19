@@ -126,23 +126,9 @@ class FamilyIntroductionViewController: UIViewController, UITextFieldDelegate, U
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Dog Name Header
+        dogNameHeader.text = (dogManager.hasCreatedDog == false) ? "What Is Your Dog's Name?" : "Your Dog"
         
-        if dogManager.hasCreatedDog == false {
-            dogNameHeader.text = "What Is Your Dog's Name?"
-        }
-        else {
-            dogNameHeader.text = "Your Dog"
-        }
-        
-        // Dog Name Description
-        
-        if dogManager.hasCreatedDog == false {
-            dogNameDescription.text = "We will generate a basic dog for you. Reminders will come later."
-        }
-        else {
-            dogNameDescription.text = "It looks like your family has already created a dog. Although, if you want, you can add your own custom icon to it."
-        }
+        dogNameDescription.text = (dogManager.hasCreatedDog == false) ? "We will generate a basic dog for you. Reminders will come later." : "It looks like your family has already created a dog. Although, if you want, you can add your own custom icon to it."
         
         // Dog Name
         dogName.text = ""

@@ -50,7 +50,7 @@ class LogsBodyWithoutIconTableViewCell: UITableViewCell {
         logDateLabel.font =  logDateLabel.font.withSize(15.0 * sizeRatio)
         logNoteLabel.font =  logNoteLabel.font.withSize(15.0 * sizeRatio)
         
-        self.logActionLabel.text = log.displayActionName
+        self.logActionLabel.text = log.logAction.displayActionName(logCustomActionName: log.logCustomActionName, isShowingAbreviatedCustomActionName: true)
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)

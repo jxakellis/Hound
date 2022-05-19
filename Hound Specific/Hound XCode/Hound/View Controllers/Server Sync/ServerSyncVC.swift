@@ -168,7 +168,7 @@ class ServerSyncViewController: UIViewController {
                 
                 // user has family
                 if familyId != nil {
-                    self.getFamily()
+                    self.getFamilyConfigurationAndDogs()
                 }
                 // no family for user
                 else {
@@ -183,32 +183,17 @@ class ServerSyncViewController: UIViewController {
         }
     }
     
-    /// get the family configuration from the server
-    private func getFamily() {
-        // we want to use our own custom error message so we can have custom alert actions
-        FamilyRequest.get(invokeErrorManager: false) { _, responseStatus in
-            switch responseStatus {
-            case .successResponse:
-                // we got the family configuration from the server and loaded it, now we can proceed to the next step
-                self.getFamilyFinished = true
-                self.updateStatusLabel()
-                self.getDogs()
-            case .failureResponse:
-                AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
-            case .noResponse:
-                AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)
-            }
-        }
-    }
-    
-    /// Retrieve any dogs the user may have
-    private func getDogs() {
+    /// Retrieves the family configuration then any dogs the user may have
+    private func getFamilyConfigurationAndDogs() {
         // we want to use our own custom error message
+        // Additionally, getDogManager first makes sure the familyConfiguration is up to date with inital query then if successful it sends a second query to get our dogManager
         RequestUtils.getDogManager(invokeErrorManager: false) { dogManager, responseStatus in
             switch responseStatus {
             case .successResponse:
                 if dogManager != nil {
                     self.dogManager = dogManager!
+                    // Now its known getDogManager was successful which also implied that getFamily was successful
+                    self.getFamilyFinished = true
                     self.getDogsFinished = true
                     self.updateStatusLabel()
                     self.checkSynchronizationStatus()

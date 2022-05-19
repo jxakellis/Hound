@@ -3,7 +3,7 @@ const { createDogQuery } = require('../createFor/createForDogs');
 const { updateDogQuery } = require('../updateFor/updateForDogs');
 const { deleteDogQuery } = require('../deleteFor/deleteForDogs');
 const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
-const { areAllDefined } = require('../../main/tools/validation/validateFormat');
+const { areAllDefined } = require('../../main/tools/format/formatObject');
 
 /*
 Known:

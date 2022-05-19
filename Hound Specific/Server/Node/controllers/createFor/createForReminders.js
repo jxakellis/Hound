@@ -3,7 +3,7 @@ const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
   formatNumber, formatDate, formatBoolean, formatArray, areAllDefined,
-} = require('../../main/tools/validation/validateFormat');
+} = require('../../main/tools/format/formatObject');
 const { NUMBER_OF_REMINDERS_PER_DOG } = require('../../main/server/constants');
 
 /**

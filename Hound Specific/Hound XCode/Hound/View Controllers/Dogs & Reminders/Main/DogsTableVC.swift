@@ -231,7 +231,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
         let dog: Dog = try! sudoDogManager.findDog(forDogId: cell.parentDogId)
         let reminder: Reminder = cell.reminder
        
-        let selectedReminderAlertController = GeneralUIAlertController(title: "You Selected: \(reminder.displayActionName) for \(dog.dogName)", message: nil, preferredStyle: .actionSheet)
+        let selectedReminderAlertController = GeneralUIAlertController(title: "You Selected: \(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true)) for \(dog.dogName)", message: nil, preferredStyle: .actionSheet)
 
         let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
 
@@ -243,7 +243,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
         let alertActionRemove = UIAlertAction(title: "Delete Reminder", style: .destructive) { (_) in
 
             // REMOVE CONFIRMATION
-            let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(reminder.displayActionName)?", message: nil, preferredStyle: .alert)
+            let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))?", message: nil, preferredStyle: .alert)
 
             let removeReminderConfirmationRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                 RemindersRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forReminderId: reminder.reminderId) { requestWasSuccessful, _ in
@@ -291,7 +291,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
         // ADD LOG BUTTONS (MULTIPLE IF POTTY OR OTHER SPECIAL CASE)
         if shouldUndoLog == true {
             let alertActionLog = UIAlertAction(
-                title: "Undo Log for \(reminder.displayActionName)",
+                title: "Undo Log for \(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))",
                 style: .default,
                 handler: { (_: UIAlertAction!)  in
                     // logAction not needed as unskipping alarm does not require that component
@@ -308,7 +308,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
                 let pottyKnownTypes: [LogAction] = [.pee, .poo, .both, .neither, .accident]
                 for pottyKnownType in pottyKnownTypes {
                     let alertActionLog = UIAlertAction(
-                        title: "Log \(pottyKnownType.rawValue)",
+                        title: "Log \(pottyKnownType.displayActionName(logCustomActionName: nil, isShowingAbreviatedCustomActionName: true))",
                         style: .default,
                         handler: { (_)  in
                             // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
@@ -319,7 +319,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
                 }
             default:
                 let alertActionLog = UIAlertAction(
-                    title: "Log \(reminder.displayActionName)",
+                    title: "Log \(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))",
                     style: .default,
                     handler: { (_)  in
                         // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
@@ -411,7 +411,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
                 let dog: Dog = try! sudoDogManager.findDog(forDogId: dogId)
                 let reminder: Reminder = reminderCell.reminder
 
-                removeConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(reminder.displayActionName)?", message: nil, preferredStyle: .alert)
+                removeConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))?", message: nil, preferredStyle: .alert)
 
                 let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                     RemindersRequest.delete(invokeErrorManager: true, forDogId: dogId, forReminderId: reminder.reminderId) { requestWasSuccessful, _ in

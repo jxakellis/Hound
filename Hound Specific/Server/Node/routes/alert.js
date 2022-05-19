@@ -5,7 +5,7 @@ const router = express.Router({ mergeParams: true });
 const ValidationError = require('../main/tools/errors/validationError');
 
 const convertErrorToJSON = require('../main/tools/errors/errorFormat');
-const { areAllDefined } = require('../main/tools/validation/validateFormat');
+const { areAllDefined } = require('../main/tools/format/formatObject');
 const { createTerminateNotification } = require('../main/tools/notifications/alert/createTerminateNotification');
 const { TERMINATE_CATEGORY } = require('../main/server/constants');
 

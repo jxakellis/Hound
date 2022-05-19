@@ -78,7 +78,7 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
         
         //  Text and Image Configuration
         
-        reminderActionLabel.text = reminder.displayActionName
+        reminderActionLabel.text = reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true)
         
         switch reminder.reminderType {
         case .countdown:

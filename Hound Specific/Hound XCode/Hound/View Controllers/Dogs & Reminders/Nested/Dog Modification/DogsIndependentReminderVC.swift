@@ -82,9 +82,10 @@ class DogsIndependentReminderViewController: UIViewController {
         // Since this is the independent reminders view controller, meaning its not nested in a larger Add Dog VC, we perform the server queries then exit.
         
         guard targetReminder != nil else {
+            reminderRemoveButton.isEnabled = false
             return
         }
-        let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.selectedReminderAction?.rawValue ?? targetReminder!.displayActionName)?", message: nil, preferredStyle: .alert)
+        let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.selectedReminderAction?.displayActionName(reminderCustomActionName: targetReminder!.reminderCustomActionName, isShowingAbreviatedCustomActionName: true) ?? targetReminder!.reminderAction.displayActionName(reminderCustomActionName: targetReminder!.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))?", message: nil, preferredStyle: .alert)
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             RemindersRequest.delete(invokeErrorManager: true, forDogId: self.parentDogId, forReminderId: self.targetReminder!.reminderId) { requestWasSuccessful, _ in

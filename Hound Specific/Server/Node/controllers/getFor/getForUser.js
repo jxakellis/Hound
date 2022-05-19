@@ -1,7 +1,7 @@
 const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
-const { areAllDefined } = require('../../main/tools/validation/validateFormat');
+const { areAllDefined } = require('../../main/tools/format/formatObject');
 
 const userInformationSelect = 'users.userId, users.userNotificationToken, users.userFirstName, users.userLastName, users.userEmail';
 const userConfigurationSelect = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.logsInterfaceScale, userConfiguration.remindersInterfaceScale, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';

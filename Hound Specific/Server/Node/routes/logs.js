@@ -5,7 +5,7 @@ const router = express.Router({ mergeParams: true });
 const {
   getLogs, createLog, updateLog, deleteLog,
 } = require('../controllers/main/logs');
-const { validateLogId } = require('../main/tools/validation/validateId');
+const { validateLogId } = require('../main/tools/format/validateId');
 
 // validation that params are formatted correctly and have adequate permissions
 router.param('logId', validateLogId);

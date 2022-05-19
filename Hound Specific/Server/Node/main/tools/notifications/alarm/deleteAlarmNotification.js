@@ -2,7 +2,7 @@ const { alarmLogger } = require('../../logging/loggers');
 const { queryPromise } = require('../../database/queryPromise');
 const { connectionForAlarms } = require('../../database/databaseConnection');
 
-const { areAllDefined } = require('../../validation/validateFormat');
+const { areAllDefined } = require('../../format/formatObject');
 const { cancelPrimaryJobForFamilyForReminder, cancelSecondaryJobForUserForReminder } = require('./cancelJob');
 
 const deleteAlarmNotificationsForFamily = async (familyId) => {

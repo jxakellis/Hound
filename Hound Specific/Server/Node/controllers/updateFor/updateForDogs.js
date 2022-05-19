@@ -2,7 +2,7 @@ const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 
 const { queryPromise } = require('../../main/tools/database/queryPromise');
-const { areAllDefined } = require('../../main/tools/validation/validateFormat');
+const { areAllDefined } = require('../../main/tools/format/formatObject');
 
 /**
  *  Queries the database to update a dog. If the query is successful, then returns

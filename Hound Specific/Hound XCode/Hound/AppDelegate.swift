@@ -67,18 +67,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         AppDelegate.generalLogger.notice("Received \(userInfo)")
         
         // look for the aps body
-        if let aps = userInfo["aps"] as? [String: Any] {
-
-            // look for the category
-            if let category = aps["category"] as? String {
-                // if the notification is a reminder, then check to see if loud notification can be played
-                if category == "reminder" {
-                    // BUG if a reminder is updated to an earlier time by another user, then our user will be out of date. This means they could get a notification for a reminder, but when they open up the app it will show the reminder at the original (incorrect) time. This bug however, when the original reminder is supposed to go off, will fix itself as it checks to see if the reminder is updated before showing an alert
-                    // a potential rememdy to this bug, is when the notification for a reminder alarm comes through verify that we have an updated reminder that matches. if we don't have the reminder or the reminder is incorrect, then have the user query the server to retrieve the updated reminder
-                    AudioManager.playLoudNotification()
-                }
-            }
+        guard let aps = userInfo["aps"] as? [String: Any] else {
+            completionHandler(.noData)
+            return
         }
+        
+        guard let category = aps["category"] as? String else {
+            completionHandler(.noData)
+            return
+        }
+
+        // if the notification is a reminder, then check to see if loud notification can be played
+        guard category == "reminder" else {
+            completionHandler(.noData)
+            return
+        }
+        
+        // BUG if a reminder is created by another user and this user hasn't refreshed. Then when the notification comes through nothing will display. this is because this local device doesn't know that reminder exists.
+        // solution: attach a reminderId/reminderLastModified and use that to determine if we need to refresh that reminder.
+        
+        // BUG (similar to above problem)if a reminder is updated to an earlier time by another user, then our user will be out of date. This means they could get a notification for a reminder, but when they open up the app it will show the reminder at the original (incorrect) time. This bug however, when the original reminder is supposed to go off, will fix itself as it checks to see if the reminder is updated before showing an alert
+        // solution: a potential rememdy to this bug, is when the notification for a reminder alarm comes through verify that we have an updated reminder that matches. if we don't have the reminder or the reminder is incorrect, then have the user query the server to retrieve the updated reminder
+        AudioManager.playLoudNotification()
         
         completionHandler(.newData)
     }

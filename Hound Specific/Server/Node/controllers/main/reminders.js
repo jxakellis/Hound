@@ -1,4 +1,4 @@
-const { formatArray, areAllDefined } = require('../../main/tools/validation/validateFormat');
+const { formatArray, areAllDefined } = require('../../main/tools/format/formatObject');
 
 const { getReminderQuery, getRemindersQuery } = require('../getFor/getForReminders');
 const { createReminderQuery, createRemindersQuery } = require('../createFor/createForReminders');

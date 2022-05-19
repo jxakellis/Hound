@@ -76,6 +76,7 @@ enum PersistenceManager {
             // the user can have loud notifications
             if isTerminating == true {
                 // send the user an alert since their loud notifications won't work
+                // BUG if the user directly termiantes the app, without letting it go to background first, then the API request doesn't get sent off and the user doesn't get their notification warning them
                 RequestUtils.createTerminationNotification()
             }
             else {

@@ -53,11 +53,11 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
         
         // inside of the predefined ReminderAction
         if indexPath.row < ReminderAction.allCases.count {
-            customCell.label.text = ReminderAction.allCases[indexPath.row].rawValue
+            customCell.label.text = ReminderAction.allCases[indexPath.row].displayActionName(reminderCustomActionName: nil, isShowingAbreviatedCustomActionName: false)
         }
         // a user generated custom name
         else {
-            customCell.label.text = "Custom: \(LocalConfiguration.reminderCustomActionNames[indexPath.row - ReminderAction.allCases.count])"
+            customCell.label.text = ReminderAction.custom.displayActionName(reminderCustomActionName: LocalConfiguration.reminderCustomActionNames[indexPath.row - ReminderAction.allCases.count], isShowingAbreviatedCustomActionName: false)
         }
     }
     
@@ -77,12 +77,12 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
         
         // inside of the predefined LogAction
         if indexPath.row < ReminderAction.allCases.count {
-            reminderActionLabel.text = ReminderAction.allCases[indexPath.row].rawValue
+            reminderActionLabel.text = ReminderAction.allCases[indexPath.row].displayActionName(reminderCustomActionName: nil, isShowingAbreviatedCustomActionName: false)
             selectedReminderAction = ReminderAction.allCases[indexPath.row]
         }
         // a user generated custom name
         else {
-            reminderActionLabel.text = "Custom: \(LocalConfiguration.reminderCustomActionNames[indexPath.row - ReminderAction.allCases.count])"
+            reminderActionLabel.text = ReminderAction.custom.displayActionName(reminderCustomActionName: LocalConfiguration.reminderCustomActionNames[indexPath.row - ReminderAction.allCases.count], isShowingAbreviatedCustomActionName: false)
             selectedReminderAction = ReminderAction.custom
             reminderCustomActionNameTextField.text = LocalConfiguration.reminderCustomActionNames[indexPath.row - ReminderAction.allCases.count]
         }
@@ -210,7 +210,13 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
                 selectedIndexPath = IndexPath(row: ReminderAction.allCases.firstIndex(of: targetReminder!.reminderAction)!, section: 0)
             }
             
-            reminderActionLabel.text = targetReminder?.reminderAction.rawValue ?? ""
+            if let targetReminder = targetReminder {
+                // this is for the label for the reminderAction dropdown, so we only want the names to be the defaults. I.e. if our reminder is "Custom" with "someCustomActionName", the reminderActionLabel should only show "Custom" and then the logCustomActionNameTextField should be "someCustomActionName".
+                reminderActionLabel.text = targetReminder.reminderAction.displayActionName(reminderCustomActionName: nil, isShowingAbreviatedCustomActionName: false)
+            }
+            else {
+                reminderActionLabel.text = ""
+            }
             reminderActionLabel.placeholder = "Select an action..."
             selectedReminderAction = targetReminder?.reminderAction ?? ReminderConstant.defaultAction
             
@@ -314,20 +320,13 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
                 reminder = Reminder()
             }
             
-            var trimmedReminderCustomActionName: String? {
-                if reminderCustomActionNameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
-                    return nil
-                }
-                else {
-                    return reminderCustomActionNameTextField.text
-                }
-            }
-            
             reminder.reminderId = targetReminder?.reminderId ?? reminder.reminderId
             reminder.reminderAction = selectedReminderAction!
             
             if selectedReminderAction == ReminderAction.custom {
-                reminder.reminderCustomActionName = trimmedReminderCustomActionName
+                let trimmedReminderCustomActionName = reminderCustomActionNameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines)
+                // if the trimmedReminderCustomActionName is not "", meaning it has text, then we save it. Otherwise, the trimmedReminderCustomActionName is "" or nil so we save its value as nil
+                reminder.reminderCustomActionName = (trimmedReminderCustomActionName != "") ? trimmedReminderCustomActionName : nil
             }
             reminder.reminderIsEnabled = reminderIsEnabledSwitch.isOn
             

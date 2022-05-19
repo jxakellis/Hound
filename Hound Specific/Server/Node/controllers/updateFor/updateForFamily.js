@@ -4,9 +4,11 @@ const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
   formatBoolean, formatDate, areAllDefined, formatNumber,
-} = require('../../main/tools/validation/validateFormat');
+} = require('../../main/tools/format/formatObject');
 
-const { createFamilyMemberJoinNotification, createFamilyMemberLeaveNotification, createFamilyPausedNotification } = require('../../main/tools/notifications/alert/createFamilyNotification');
+const {
+  createFamilyMemberJoinNotification, createFamilyMemberLeaveNotification, createFamilyLockedNotification, createFamilyPausedNotification,
+} = require('../../main/tools/notifications/alert/createFamilyNotification');
 const { deleteAlarmNotificationsForFamily, deleteSecondaryAlarmNotificationsForUser } = require('../../main/tools/notifications/alarm/deleteAlarmNotification');
 const { getFamilyMembersForUserIdQuery } = require('../getFor/getForFamily');
 
@@ -40,6 +42,7 @@ const updateFamilyQuery = async (req) => {
  * Helper method for updateFamilyQuery, goes through checks to attempt to add user to desired family
  */
 const addFamilyMemberQuery = async (req) => {
+  // TO DO possibly convert to accept/decline system of adding people (don't have family lock)
   let familyCode = req.body.familyCode;
   // make sure familyCode was provided
   if (areAllDefined(familyCode) === false) {
@@ -102,6 +105,7 @@ const addFamilyMemberQuery = async (req) => {
  * Helper method for updateFamilyQuery, switches the family isLocked status
  */
 const updateIsLockedQuery = async (req) => {
+  const userId = req.params.userId;
   const familyId = req.params.familyId;
   const isLocked = formatBoolean(req.body.isLocked);
   try {
@@ -114,6 +118,9 @@ const updateIsLockedQuery = async (req) => {
   catch (error) {
     throw new DatabaseError(error.code);
   }
+
+  // TO DO test notification
+  createFamilyLockedNotification(userId, familyId, isLocked);
 };
 
 /**

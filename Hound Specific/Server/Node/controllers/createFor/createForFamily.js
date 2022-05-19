@@ -4,7 +4,7 @@ const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { generateVerifiedFamilyCode } = require('../../main/tools/database/generateVerifiedFamilyCode');
 
 const { getFamilyMembersForUserIdQuery } = require('../getFor/getForFamily');
-const { areAllDefined } = require('../../main/tools/validation/validateFormat');
+const { areAllDefined } = require('../../main/tools/format/formatObject');
 
 /**
  *  Queries the database to create a family. If the query is successful, then returns the familyId.

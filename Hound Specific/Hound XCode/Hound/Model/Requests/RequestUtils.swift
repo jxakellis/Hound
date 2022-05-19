@@ -11,23 +11,30 @@ import Foundation
 enum RequestUtils {
     
     /**
-     completionHandler returns a dogManager. If the query returned a 200 status and is successful, then the dogManager is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
+     First refreshes the FamilyConfiguration of the user to make sure everything is synced up (e.g. isPaused). completionHandler returns a dogManager. If the query returned a 200 status and is successful, then the dogManager is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
      */
     static func getDogManager(invokeErrorManager: Bool, completionHandler: @escaping (DogManager?, ResponseStatus) -> Void) {
-        // BUG we want to sync the isPaused status when we do this as well, as if the family was paused then the refreshed local alarms could be going off but they aren't in actuality since everything is paused.
-        // assume userId valid as it was retrieved when the app started. Later on with familyId, if a user was removed from the family, then this refresh could fail.
         
-        // Retrieve any dogs the user may have
-        DogsRequest.getAll(invokeErrorManager: invokeErrorManager, reminders: true, logs: true) { dogArray, responseStatus in
-            if dogArray != nil {
+        // We want to sync the isPaused status before getting the newDogManager. Otherwise, reminder could be up to date but alarms could be going off locally since the local app doesn't realized that the app was paused (the opposite with an unpause could also be possible
+        FamilyRequest.get(invokeErrorManager: invokeErrorManager) { requestWasSuccessful, responseStatus in
+            guard requestWasSuccessful == true else {
+                return completionHandler(nil, responseStatus)
+            }
+            
+            // Now can get the dogManager
+            // Retrieve any dogs the user may have
+            DogsRequest.getAll(invokeErrorManager: invokeErrorManager, reminders: true, logs: true) { dogArray, responseStatus in
+                guard dogArray != nil else {
+                    return completionHandler(nil, responseStatus)
+                }
+                // successful sync, so we can update value
+                LocalConfiguration.lastDogManagerSync = Date()
                 // we have an array of dogs that we made sure has all the reminders and logs, so therefore we have complete dogmanager
                 let dogManager = DogManager(forDogs: dogArray!)
                 completionHandler(dogManager, responseStatus)
             }
-            else {
-                completionHandler(nil, responseStatus)
-            }
         }
+        
     }
     
     /**

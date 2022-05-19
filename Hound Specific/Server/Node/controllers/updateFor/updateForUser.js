@@ -4,7 +4,7 @@ const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
   formatNumber, formatBoolean, atLeastOneDefined, areAllDefined,
-} = require('../../main/tools/validation/validateFormat');
+} = require('../../main/tools/format/formatObject');
 
 /**
  *  Queries the database to update a user. If the query is successful, then returns

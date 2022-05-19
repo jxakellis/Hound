@@ -1,7 +1,7 @@
 const DatabaseError = require('../../errors/databaseError');
 const { queryPromise } = require('../../database/queryPromise');
 const { connectionForTokens } = require('../../database/databaseConnection');
-const { formatBoolean, areAllDefined } = require('../../validation/validateFormat');
+const { formatBoolean, areAllDefined } = require('../../format/formatObject');
 
 const userConfigurationJoin = 'JOIN userConfiguration ON users.userId = userConfiguration.userId';
 const familyMembersJoin = 'JOIN familyMembers ON users.userId = familyMembers.userId';
@@ -12,7 +12,6 @@ const familyMembersJoin = 'JOIN familyMembers ON users.userId = familyMembers.us
  *  If an error is encountered, creates and throws custom error
  */
 const getUserToken = async (userId) => {
-  console.log('getUserToken');
   let result;
   try {
     // retrieve userNotificationToken, notificationSound, and isLoudNotificaiton of a user with the userId, non-null userNotificationToken, and isNotificationEnabled
@@ -35,7 +34,6 @@ const getUserToken = async (userId) => {
  * If an error is encountered, creates and throws custom error
  */
 const getAllFamilyMemberTokens = async (familyId) => {
-  console.log('getAllFamilyMemberTokens');
   let result;
   try {
     // retrieve userNotificationToken that fit the criteria
@@ -58,7 +56,6 @@ const getAllFamilyMemberTokens = async (familyId) => {
  * If an error is encountered, creates and throws custom error
  */
 const getOtherFamilyMemberTokens = async (userId, familyId) => {
-  console.log('getOtherFamilyMemberTokens');
   let result;
   try {
     // retrieve userNotificationToken that fit the criteria

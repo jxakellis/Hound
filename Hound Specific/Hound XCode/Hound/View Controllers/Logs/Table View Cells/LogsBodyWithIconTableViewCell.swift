@@ -30,7 +30,7 @@ class LogsBodyWithIconTableViewCell: UITableViewCell {
     
     func setup(forParentDogIcon parentDogIcon: UIImage, forLog log: Log) {
         
-        self.logActionLabel.text = log.displayActionName
+        self.logActionLabel.text = log.logAction.displayActionName(logCustomActionName: log.logCustomActionName, isShowingAbreviatedCustomActionName: true)
         
         var sizeRatio: Double!
         switch UserConfiguration.logsInterfaceScale {

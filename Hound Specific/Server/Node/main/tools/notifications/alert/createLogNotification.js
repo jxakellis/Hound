@@ -1,10 +1,11 @@
 const { connectionForGeneralAlerts } = require('../../database/databaseConnection');
 const { alertLogger } = require('../../logging/loggers');
-const { areAllDefined } = require('../../validation/validateFormat');
+const { areAllDefined } = require('../../format/formatObject');
 
 const { queryPromise } = require('../../database/queryPromise');
 const { sendAPNForFamilyExcludingUser } = require('../apn/sendAPN');
-const { formatIntoAbreviatedFullName } = require('../../validation/validateName');
+const { formatIntoAbreviatedFullName } = require('../../format/formatName');
+const { formatLogAction } = require('../../format/formatName');
 const { LOG_CATEGORY } = require('../../../server/constants');
 
 /**
@@ -43,15 +44,7 @@ const createLogNotification = async (userId, familyId, dogId, logAction, logCust
     // Log for Fido
     const alertTitle = `Log for ${dog.dogName}`;
     const name = formatIntoAbreviatedFullName(user.userFirstName, user.userLastName);
-    let alertBody;
-    if (logAction === 'Custom' && areAllDefined(logCustomActionName)) {
-      // Bob S lent a helping hand with 'Special Name'
-      alertBody = `${name} lent a helping hand with '${logCustomActionName}'`;
-    }
-    else {
-      // Bob S lent a helping hand with 'Potty: Poo'
-      alertBody = `${name} lent a helping hand with '${logAction}'`;
-    }
+    const alertBody = `${name} lent a helping hand with '${formatLogAction(logAction, logCustomActionName)}'`;
 
     // we now have the messages and can send our APN
     sendAPNForFamilyExcludingUser(userId, familyId, LOG_CATEGORY, alertTitle, alertBody);

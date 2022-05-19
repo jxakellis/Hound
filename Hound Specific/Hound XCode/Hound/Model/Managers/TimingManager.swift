@@ -44,7 +44,7 @@ class TimingManager {
                 let reminder = sudoDogManager.dogs[d].dogReminders.reminders[r]
                 
                 // makes sure a reminder is enabled and its presentation is not being handled
-                guard reminder.reminderIsEnabled == true && reminder.isPresentationHandled == false
+                guard reminder.reminderIsEnabled == true && reminder.hasAlarmPresentationHandled == false
                 else {
                     continue
                 }

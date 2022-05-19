@@ -1,7 +1,7 @@
 const ValidationError = require('../../main/tools/errors/validationError');
 const {
   formatBoolean, formatNumber, atLeastOneDefined, areAllDefined,
-} = require('../../main/tools/validation/validateFormat');
+} = require('../../main/tools/format/formatObject');
 
 const { getUserForUserIdQuery, getUserForUserIdentifierQuery } = require('../getFor/getForUser');
 const { createUserQuery } = require('../createFor/createForUser');

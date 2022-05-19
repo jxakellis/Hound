@@ -15,16 +15,17 @@ class AlertManager: NSObject {
     override init() {
         super.init()
         
-        // create loadingAlertController
-        
         let activityIndicator = UIActivityIndicatorView(style: .medium)
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.isUserInteractionEnabled = false
         activityIndicator.startAnimating()
         
         loadingAlertController.view.addSubview(activityIndicator)
-        loadingAlertController.view.heightAnchor.constraint(equalToConstant: 95).isActive = true
         
+        let defaultLoadingAlertControllerHeight = 95.0
+        // the bold text accessibilty causes the uilabel in the alertcontroller to become two lines instead of one. We cannot get the UILabel's frame so we must manually make a guess on expanding the alertController's height. If we don't then the activity indicator and the 'Contacting Hound's Server' label will over lap
+        let heightMultiplier = UIAccessibility.isBoldTextEnabled ? 1.18 : 1.0
+        loadingAlertController.view.heightAnchor.constraint(equalToConstant: defaultLoadingAlertControllerHeight*heightMultiplier).isActive = true
         activityIndicator.centerXAnchor.constraint(equalTo: loadingAlertController.view.centerXAnchor, constant: 0).isActive = true
         activityIndicator.bottomAnchor.constraint(equalTo: loadingAlertController.view.bottomAnchor, constant: -20).isActive = true
         

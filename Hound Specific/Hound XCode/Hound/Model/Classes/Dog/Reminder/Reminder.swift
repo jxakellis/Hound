@@ -66,6 +66,44 @@ enum ReminderAction: String, CaseIterable {
     case doctor = "Doctor Visit"
     
     case custom = "Custom"
+    
+    /// Returns the name of the current reminderAction with an appropiate emoji appended. If non-nil, non-"" reminderCustomActionName is provided, then then that is returned, e.g. displayActionName(nil, valueDoesNotMatter) -> 'Feed 🍗'; displayActionName(nil, valueDoesNotMatter) -> 'Custom 📝'; displayActionName('someCustomName', true) -> 'someCustomName'; displayActionName('someCustomName', false) -> 'Custom 📝: someCustomName'
+    func displayActionName(reminderCustomActionName: String?, isShowingAbreviatedCustomActionName: Bool) -> String {
+        switch self {
+        case .feed:
+            return self.rawValue.appending(" 🍗")
+        case .water:
+            return self.rawValue.appending(" 💧")
+        case .potty:
+            return self.rawValue.appending(" 💦💩")
+        case .walk:
+            return self.rawValue.appending(" 🦮")
+        case .brush:
+            return self.rawValue.appending(" 💈")
+        case .bathe:
+            return self.rawValue.appending(" 🛁")
+        case .medicine:
+            return self.rawValue.appending(" 💊")
+        case .sleep:
+            return self.rawValue.appending(" 💤")
+        case .trainingSession:
+            return self.rawValue.appending(" 🐾")
+        case .doctor:
+            return self.rawValue.appending(" 🩺")
+        case .custom:
+            if reminderCustomActionName != nil && reminderCustomActionName!.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                if isShowingAbreviatedCustomActionName == true {
+                    return reminderCustomActionName!
+                }
+                else {
+                    return self.rawValue.appending(" 📝: \(reminderCustomActionName!)")
+                }
+            }
+            else {
+                return self.rawValue.appending(" 📝")
+            }
+        }
+    }
 }
 
 class Reminder: NSObject, NSCoding, NSCopying {
@@ -86,7 +124,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
         copy.snoozeComponents = self.snoozeComponents.copy() as! SnoozeComponents
         copy.storedReminderType = self.reminderType
         
-        copy.isPresentationHandled = self.isPresentationHandled
+        copy.hasAlarmPresentationHandled = self.hasAlarmPresentationHandled
         copy.storedReminderExecutionBasis = self.reminderExecutionBasis
         copy.timer = self.timer
         
@@ -217,16 +255,6 @@ class Reminder: NSObject, NSCoding, NSCopying {
     
     /// If the reminder's type is custom, this is the name for it.
     var reminderCustomActionName: String?
-    
-    /// Use me if displaying the reminder's name. This handles reminderCustomActionName along with regular reminder types.
-    var displayActionName: String {
-        if reminderAction == .custom && reminderCustomActionName != nil {
-            return reminderCustomActionName!
-        }
-        else {
-            return reminderAction.rawValue
-        }
-    }
     
     // MARK: - Comparison
     
@@ -390,7 +418,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
     }
     
     /// When an alert from this reminder is enqueued to be presented, this property is true. This prevents multiple alerts for the same reminder being requeued everytime timing manager refreshes.
-    var isPresentationHandled: Bool = false
+    var hasAlarmPresentationHandled: Bool = false
     
     var intervalRemaining: TimeInterval? {
         switch currentReminderMode {
@@ -460,7 +488,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
         
         self.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
         
-        self.isPresentationHandled = false
+        self.hasAlarmPresentationHandled = false
         
         snoozeComponents.changeSnooze(newSnoozeStatus: false)
         snoozeComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))

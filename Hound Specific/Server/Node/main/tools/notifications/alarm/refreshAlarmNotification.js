@@ -4,7 +4,7 @@ const { connectionForAlarms } = require('../../database/databaseConnection');
 
 const {
   formatBoolean, formatNumber, formatDate, areAllDefined,
-} = require('../../validation/validateFormat');
+} = require('../../format/formatObject');
 
 const { createSecondaryAlarmNotificationForUser } = require('./createAlarmNotification');
 const { deleteSecondaryAlarmNotificationsForUser } = require('./deleteAlarmNotification');

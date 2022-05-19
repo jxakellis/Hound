@@ -1,7 +1,7 @@
 const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
-const { formatBoolean, areAllDefined } = require('../../main/tools/validation/validateFormat');
+const { formatBoolean, areAllDefined } = require('../../main/tools/format/formatObject');
 const { getLogsQuery } = require('./getForLogs');
 const { getRemindersQuery } = require('./getForReminders');
 

@@ -4,7 +4,7 @@ const { updateLogQuery } = require('../updateFor/updateForLogs');
 const { deleteLogQuery } = require('../deleteFor/deleteForLogs');
 const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
 const { createLogNotification } = require('../../main/tools/notifications/alert/createLogNotification');
-const { areAllDefined } = require('../../main/tools/validation/validateFormat');
+const { areAllDefined } = require('../../main/tools/format/formatObject');
 
 /*
 Known:

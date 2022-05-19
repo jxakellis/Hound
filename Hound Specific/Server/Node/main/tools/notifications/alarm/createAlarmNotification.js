@@ -4,11 +4,12 @@ const { connectionForAlarms } = require('../../database/databaseConnection');
 
 const { schedule } = require('./schedules');
 
-const { formatDate, areAllDefined } = require('../../validation/validateFormat');
+const { formatDate, areAllDefined } = require('../../format/formatObject');
 const { sendAPNForFamily, sendAPNForUser } = require('../apn/sendAPN');
 
 const { deleteAlarmNotificationsForReminder } = require('./deleteAlarmNotification');
 const { cancelSecondaryJobForUserForReminder } = require('./cancelJob');
+const { formatReminderAction } = require('../../format/formatName');
 const { REMINDER_CATEGORY } = require('../../../server/constants');
 
 /**
@@ -79,17 +80,11 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
     }
 
     // make information for notification
-    const primaryAlertTitle = `Reminder for ${reminder.dogName}`;
-    let primaryAlertBody;
-    if (reminder.reminderAction === 'Custom' && areAllDefined(reminder.reminderCustomActionName) && reminder.reminderCustomActionName !== '') {
-      primaryAlertBody = `Give your dog a helping hand with '${reminder.reminderCustomActionName}'`;
-    }
-    else {
-      primaryAlertBody = `Give your dog a helping hand with '${reminder.reminderAction}'`;
-    }
+    const alertTitle = `Reminder for ${reminder.dogName}`;
+    const alertBody = `Give your dog a helping hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
 
     // send immediate APN notification for family
-    sendAPNForFamily(familyId, REMINDER_CATEGORY, primaryAlertTitle, primaryAlertBody);
+    sendAPNForFamily(familyId, REMINDER_CATEGORY, alertTitle, alertBody);
 
     // createSecondaryAlarmNotificationForFamily, handles the secondary alarm notifications
     // If the reminderExecutionDate is in the past, sends APN notification asap. Otherwise, schedule job to send at reminderExecutionDate.
@@ -186,17 +181,10 @@ const sendSecondaryAPNForUser = async (userId, reminderId) => {
     }
 
     // form secondary alert title and body for secondary notification
-    const secondaryAlertTitle = `Follow up reminder for ${reminder.dogName}`;
-    let secondaryAlertBody;
+    const alertTitle = `Follow up reminder for ${reminder.dogName}`;
+    const alertBody = `It's been a bit, remember to give your dog a helping hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
 
-    if (reminder.reminderAction === 'Custom' && areAllDefined(reminder.reminderCustomActionName) && reminder.reminderCustomActionName !== '') {
-      secondaryAlertBody = `It's been a bit, remember to give your dog a helping hand with '${reminder.reminderCustomActionName}'`;
-    }
-    else {
-      secondaryAlertBody = `It's been a bit, remember to give your dog a helping hand with '${reminder.reminderAction}'`;
-    }
-
-    sendAPNForUser(userId, REMINDER_CATEGORY, secondaryAlertTitle, secondaryAlertBody);
+    sendAPNForUser(userId, REMINDER_CATEGORY, alertTitle, alertBody);
   }
   catch (error) {
     alarmLogger.error('sendAPNForUser error:');

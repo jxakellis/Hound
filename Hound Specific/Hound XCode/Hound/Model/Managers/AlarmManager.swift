@@ -22,20 +22,43 @@ class AlarmManager {
     /// Creates AlarmUIAlertController to show the user about their alarm going off. We query the server with the information provided first to make sure it is up to date. 
     static func willShowAlarm(forDogName dogName: String, forDogId dogId: Int, forReminderId reminderId: Int) {
         
+        let localReminder: Reminder? = try? MainTabBarViewController.staticDogManager.findDog(forDogId: dogId).dogReminders.findReminder(forReminderId: reminderId)
+        
+        
+        // To start, either:
+        // 1. we shouldn't have the reminder stored locally (nil)
+        // 2. we have the reminder stored locally and it shouldn't be hasAlarmPresentationHandled
+        guard localReminder == nil || localReminder!.hasAlarmPresentationHandled == false else {
+            return
+        }
+        
+        if let localReminder = localReminder {
+            // now we can mark that the localReminder is presentation handled (if we have it), so block above catches any rogue requests
+            localReminder.hasAlarmPresentationHandled = true
+            delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminder: localReminder)
+        }
+        
         // before presenting alarm, make sure we are up to date locally
-        RemindersRequest.get(invokeErrorManager: true, forDogId: dogId, forReminderId: reminderId) { reminder, _ in
+        RemindersRequest.get(invokeErrorManager: true, forDogId: dogId, forReminderId: reminderId) { reminder, responseStatus in
             
             // if the distance from the present to the executionDate is positive, then the executionDate is in the future, else if negative then the executionDate is in the past
             guard reminder != nil && reminder!.reminderExecutionDate != nil && Date().distance(to: reminder!.reminderExecutionDate!) < 0 else {
-                // there was something wrong with the reminder and we should refresh the local dog/reminder data
-                delegate.shouldRefreshDogManager(sender: Sender(origin: self, localized: self))
+                // there was something wrong with the reminder and we should refresh the local dog/reminder data (don't refresh if the problem was caused by no connection)
+                if responseStatus != .noResponse {
+                    delegate.shouldRefreshDogManager(sender: Sender(origin: self, localized: self))
+                }
+                // clear the presentation handled from any local reminder that matches, otherwise it won't be able to present
+                if let localReminder = try? MainTabBarViewController.staticDogManager.findDog(forDogId: dogId).dogReminders.findReminder(forReminderId: reminderId) {
+                    localReminder.hasAlarmPresentationHandled = false
+                    delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminder: localReminder)
+                }
                 return
             }
             
             // the reminder exists, its executionDate exists, and its executionDate is in the past (meaning it should be valid).
         
                 // the dogId and reminderId exist if we got a reminder back
-                let title = "\(reminder!.displayActionName) - \(dogName)"
+            let title = "\(reminder!.reminderAction.displayActionName(reminderCustomActionName: reminder?.reminderCustomActionName, isShowingAbreviatedCustomActionName: true)) - \(dogName)"
                 
                 let alertController = GeneralUIAlertController(
                     title: title,
@@ -58,7 +81,7 @@ class AlarmManager {
                     let pottyKnownTypes: [LogAction] = [.pee, .poo, .both, .neither, .accident]
                     for pottyKnownType in pottyKnownTypes {
                         let alertActionLog = UIAlertAction(
-                            title: "Log \(pottyKnownType.rawValue)",
+                            title: "Log \(pottyKnownType.displayActionName(logCustomActionName: nil, isShowingAbreviatedCustomActionName: true))",
                             style: .default,
                             handler: { (_)  in
                                 // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
@@ -69,7 +92,7 @@ class AlarmManager {
                     }
                 default:
                     let alertActionLog = UIAlertAction(
-                        title: "Log \(reminder!.displayActionName)",
+                        title: "Log \(reminder!.reminderAction.displayActionName(reminderCustomActionName: reminder?.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))",
                         style: .default,
                         handler: { (_)  in
                             // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
@@ -95,10 +118,10 @@ class AlarmManager {
                 alertController.addAction(alertActionDismiss)
                 
                 // we have successfully constructed our alert
-                reminder!.isPresentationHandled = true
+                reminder!.hasAlarmPresentationHandled = true
                 delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminder: reminder!)
-                
-                AlertManager.enqueueAlertForPresentation(alertController)
+            
+            AlertManager.enqueueAlertForPresentation(alertController)
             
         }
     }

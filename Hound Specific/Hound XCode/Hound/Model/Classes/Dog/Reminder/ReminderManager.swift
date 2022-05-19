@@ -97,9 +97,10 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
     func addReminder(newReminder: Reminder) {
         
         var lowestReminderId = Int.max
-        for reminder in reminders where reminder.reminderId < lowestReminderId {
-            // find the lowest placeholder id
-            lowestReminderId = reminder.reminderId
+        reminders.forEach { reminder in
+            if reminder.reminderId < lowestReminderId {
+                lowestReminderId = reminder.reminderId
+            }
         }
         
         // removes any existing reminders that have the same reminderId as they would cause problems. Placeholder Ids aren't real so they can be shifted .reversed() is needed to make it work, without it there will be an index of out bounds error.
@@ -211,104 +212,115 @@ class ReminderManager: NSObject, NSCoding, NSCopying, ReminderManagerProtocol {
     }
     
     private func sortReminders() {
-        storedReminders.sort { (reminder1, reminder2) -> Bool in
-            if reminder1.reminderType == .oneTime && reminder2.reminderType == .oneTime {
-                if Date().distance(to: reminder1.oneTimeComponents.oneTimeDate) < Date().distance(to: reminder2.oneTimeComponents.oneTimeDate) {
-                    return true
-                }
-                else {
-                    return false
-                }
+        // Returns true if reminderId1 should come before reminderId2, taking into account placeholderIds.
+        func compareReminderIds(reminderId1: Int, reminderId2: Int) -> Bool {
+            
+            // both real id from the server, make the one that is lower (aka older) come first
+            if reminderId1 > 0 && reminderId2 > 0 {
+                return reminderId1 < reminderId2
             }
+            // both placeholder ids until there is server contact to create the reminders
+            else if reminderId1 < 0 && reminderId2 < 0 {
+                // the placeholder that is close to 0 / is a larger value (the older one) should come first
+                return reminderId1 > reminderId2
+            }
+            // one of them is a placeholder id
+            else {
+                // if reminderId1 is >0 then it is the real id and should come first, otherwise reminderId2 is the real id and should come first
+                return reminderId1 > 0
+            }
+        }
+        storedReminders.sort { (reminder1, reminder2) -> Bool in
             // both countdown
-            else if reminder1.reminderType == .countdown && reminder2.reminderType == .countdown {
-                // shorter is listed first
-                if reminder1.countdownComponents.executionInterval <= reminder2.countdownComponents.executionInterval {
-                    return true
+            if reminder1.reminderType == .countdown && reminder2.reminderType == .countdown {
+                let reminder1ExecutionInterval = reminder1.countdownComponents.executionInterval
+                let reminder2ExecutionInterval = reminder2.countdownComponents.executionInterval
+                
+                guard reminder1ExecutionInterval != reminder2ExecutionInterval else {
+                    // if equal, then smaller reminderId comes first
+                    return compareReminderIds(reminderId1: reminder1.reminderId, reminderId2: reminder2.reminderId)
                 }
-                else {
-                    return false
-                }
+                // shorter executionInterval comes first
+                return reminder1ExecutionInterval < reminder2ExecutionInterval
             }
             // both weekly
             else if reminder1.reminderType == .weekly && reminder2.reminderType == .weekly {
                 // earlier in the day is listed first
                 let reminder1Hour = reminder1.weeklyComponents.hour
                 let reminder2Hour = reminder2.weeklyComponents.hour
-                if reminder1Hour == reminder2Hour {
+                
+                guard reminder1Hour != reminder2Hour else {
+                    // hours are equal
                     let reminder1Minute = reminder1.weeklyComponents.minute
                     let reminder2Minute = reminder2.weeklyComponents.minute
-                    if reminder1Minute <= reminder2Minute {
-                        return true
+                    
+                    guard reminder1Minute != reminder2Minute else {
+                        // if equal, then smaller reminderId comes first
+                        return compareReminderIds(reminderId1: reminder1.reminderId, reminderId2: reminder2.reminderId)
                     }
-                    else {
-                        return false
-                    }
+                    
+                    // smaller minute comes first
+                    return reminder1Minute < reminder2Minute
                 }
-                else if reminder1Hour <= reminder2Hour {
-                    return true
-                }
-                else {
-                    return false
-                }
+                
+                // smaller hour comes first
+                return reminder1Hour < reminder2Hour
             }
             // both monthly
             else if reminder1.reminderType == .monthly && reminder2.reminderType == .monthly {
-                let reminder1Day: Int! = reminder1.monthlyComponents.day
-                let reminder2Day: Int! = reminder2.monthlyComponents.day
-                // first day of the month comes first
-                if reminder1Day == reminder2Day {
+                let reminder1Day = reminder1.monthlyComponents.day
+                let reminder2Day = reminder2.monthlyComponents.day
+                
+                guard reminder1Day != reminder2Day else {
                     // earliest in day comes first if same days
                     let reminder1Hour = reminder1.monthlyComponents.hour
                     let reminder2Hour = reminder2.monthlyComponents.hour
-                    if reminder1Hour == reminder2Hour {
+                    
+                    guard reminder1Hour != reminder2Hour else {
                         // earliest in hour comes first if same hour
                         let reminder1Minute = reminder1.monthlyComponents.minute
                         let reminder2Minute = reminder2.monthlyComponents.minute
-                        if reminder1Minute <= reminder2Minute {
-                            return true
+                        
+                        guard reminder1Minute != reminder2Minute else {
+                            // smaller remidnerId comes first
+                            return compareReminderIds(reminderId1: reminder1.reminderId, reminderId2: reminder2.reminderId)
                         }
-                        else {
-                            return false
-                        }
+                        // smaller minute comes first
+                        return reminder1Minute < reminder2Minute
                     }
-                    else if reminder1Hour <= reminder2Hour {
-                        return true
-                    }
-                    else {
-                        return false
-                    }
+                    
+                    // smaller hour comes first
+                    return reminder1Hour < reminder2Hour
                 }
-                else if reminder1Day < reminder2Day {
-                    return true
+                // smaller day comes first
+                return reminder1Day < reminder2Day
+            }
+            else if reminder1.reminderType == .oneTime && reminder2.reminderType == .oneTime {
+                let reminder1DistanceToPast = Date().distance(to: reminder1.oneTimeComponents.oneTimeDate)
+                let reminder2DistanceToPast = Date().distance(to: reminder2.oneTimeComponents.oneTimeDate)
+                
+                guard reminder1DistanceToPast != reminder2DistanceToPast else {
+                    // if equal, then smaller reminderId comes first
+                    return compareReminderIds(reminderId1: reminder1.reminderId, reminderId2: reminder2.reminderId)
                 }
-                else {
-                    return false
-                }
+                // not equal, the oldest one comes first
+                return reminder1DistanceToPast < reminder2DistanceToPast
             }
             // different timing styles
             else {
-                
                 // reminder1 and reminder2 are known to be different styles
                 switch reminder1.reminderType {
                 case .countdown:
-                    // can assume is comes first as countdown always first and different
+                    // reminder2 can't be .countdown and .countdown always comes first, so reminder1 comes first
                     return true
                 case .weekly:
-                    if reminder2.reminderType == .countdown {
-                        return false
-                    }
-                    else {
-                        return true
-                    }
+                    // reminder2 can't be weekly. Therefore, the only way it can come before is if its .countdown
+                    return (reminder2.reminderType == .countdown) ? false : true
                 case .monthly:
-                    if reminder2.reminderType == .oneTime {
-                        return true
-                    }
-                    else {
-                        return false
-                    }
+                    // reminder2 can't be weekly. Therefore, the only way it can come before is if its .countdown or .weekly
+                    return (reminder2.reminderType == .countdown || reminder2.reminderType == .weekly) ? false : true
                 case .oneTime:
+                    // reminder2 can't be oneTime. Therefore, it will come before as it has to be one of the other types
                     return false
                 }
                 
