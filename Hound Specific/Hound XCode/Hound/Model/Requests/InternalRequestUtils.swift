@@ -10,7 +10,7 @@ import UIKit
 
 /// abstractions used by other endpoint classes to make their request to the server, not used anywhere else in hound so therefore internal to endpoints and api requests.
 enum InternalRequestUtils {
-    static let baseURLWithoutParams: URL = URL(string: "http://10.0.0.110:3000/api/\(UIApplication.appBuild)")!
+    static let baseURLWithoutParams: URL = URL(string: "http://10.0.0.107:3000/api/\(UIApplication.appBuild)")!
     // home URL(string: "http://10.0.0.110:5000/api/v1")!
     //  school URL(string: "http://10.1.11.124:5000/api/v1")!
     // hotspot URL(string: "http://172.20.10.2:5000/api/v1")!

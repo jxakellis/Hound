@@ -3,7 +3,7 @@ const { formatArray, areAllDefined } = require('../../main/tools/format/formatOb
 const { getReminderQuery, getRemindersQuery } = require('../getFor/getForReminders');
 const { createReminderQuery, createRemindersQuery } = require('../createFor/createForReminders');
 const { updateReminderQuery, updateRemindersQuery } = require('../updateFor/updateForReminders');
-const { deleteReminderQuery, deleteRemindersQuery } = require('../deleteFor/deleteForReminders');
+const { deleteReminderForReminderId } = require('../deleteFor/deleteForReminders');
 const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
 
 const { createAlarmNotificationForFamily } = require('../../main/tools/notifications/alarm/createAlarmNotification');
@@ -121,16 +121,20 @@ const updateReminder = async (req, res) => {
 
 const deleteReminder = async (req, res) => {
   const familyId = req.params.familyId;
+  const dogId = req.params.dogId;
   const reminders = formatArray(req.body.reminders);
 
   try {
     // reminders array
     if (areAllDefined(reminders)) {
-      await deleteRemindersQuery(req, familyId, reminders);
+      for (let i = 0; i < reminders.length; i += 1) {
+        const reminderId = reminders[i].reminderId;
+        await deleteReminderForReminderId(req, familyId, dogId, reminderId);
+      }
     }
     // single reminder
     else {
-      await deleteReminderQuery(req, familyId, req.body.reminderId);
+      await deleteReminderForReminderId(req, familyId, dogId, req.body.reminderId);
     }
   }
   catch (error) {

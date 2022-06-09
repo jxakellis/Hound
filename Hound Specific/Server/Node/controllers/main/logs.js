@@ -1,7 +1,7 @@
 const { getLogQuery, getLogsQuery } = require('../getFor/getForLogs');
 const { createLogQuery } = require('../createFor/createForLogs');
 const { updateLogQuery } = require('../updateFor/updateForLogs');
-const { deleteLogQuery } = require('../deleteFor/deleteForLogs');
+const { deleteLogForLogId } = require('../deleteFor/deleteForLogs');
 const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
 const { createLogNotification } = require('../../main/tools/notifications/alert/createLogNotification');
 const { areAllDefined } = require('../../main/tools/format/formatObject');
@@ -78,9 +78,10 @@ const updateLog = async (req, res) => {
 };
 
 const deleteLog = async (req, res) => {
+  const dogId = req.params.dogId;
   const logId = req.params.logId;
   try {
-    await deleteLogQuery(req, logId);
+    await deleteLogForLogId(req, dogId, logId);
     await req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }

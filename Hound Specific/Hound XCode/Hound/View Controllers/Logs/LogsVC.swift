@@ -252,11 +252,12 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
     @IBAction private func willRefresh(_ sender: Any) {
         self.refreshButton.isEnabled = false
         ActivityIndicator.shared.beginAnimating(title: navigationItem.title ?? "", view: self.view, navigationItem: navigationItem)
-        RequestUtils.getDogManager(invokeErrorManager: true) { dogManager, _ in
+        
+        DogsRequest.get(invokeErrorManager: true, dogManager: getDogManager()) { newDogManager, _ in
             self.refreshButton.isEnabled = true
             ActivityIndicator.shared.stopAnimating(navigationItem: self.navigationItem)
-            if dogManager != nil {
-                self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager!)
+            if newDogManager != nil {
+                self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager!)
             }
         }
         

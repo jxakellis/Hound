@@ -41,7 +41,7 @@ enum ImageManager {
     static func setupDogIconImagePicker(forViewController viewController: UIViewController) -> (UIImagePickerController, GeneralUIAlertController) {
         let imagePicker = UIImagePickerController()
         
-        let imagePickMethodAlertController = GeneralUIAlertController(title: "Choose Image", message: nil, preferredStyle: .actionSheet)
+        let imagePickMethodAlertController = GeneralUIAlertController(title: "Choose Image", message: "Other family members aren't able to see your personal dog icons", preferredStyle: .actionSheet)
         
         imagePickMethodAlertController.addAction(UIAlertAction(title: "Camera", style: .default, handler: { _ in
             if UIImagePickerController .isSourceTypeAvailable(UIImagePickerController.SourceType.camera) {

@@ -17,8 +17,8 @@ class Dog: NSObject, NSCoding, NSCopying {
         copy.dogId = self.dogId
         copy.storedDogName = self.storedDogName
         copy.dogIcon = self.dogIcon
-        copy.dogReminders = self.dogReminders.copy() as? ReminderManager
-        copy.dogLogs = self.dogLogs
+        copy.dogReminders = self.dogReminders.copy() as? ReminderManager ?? ReminderManager()
+        copy.dogLogs = self.dogLogs.copy() as? LogManager ?? LogManager()
         return copy
     }
     
@@ -51,47 +51,48 @@ class Dog: NSObject, NSCoding, NSCopying {
             throw DogError.dogNameBlank
         }
         self.storedDogName = dogName!
-        self.dogReminders = ReminderManager()
-        self.dogLogs = LogManager()
     }
     
-    convenience init(dogName: String?, dogIcon: UIImage? = nil) throws {
+    convenience init(dogId: Int = DogConstant.defaultDogId, dogName: String?, dogIcon: UIImage = DogConstant.defaultDogIcon) throws {
         try self.init(dogName: dogName)
-        if dogIcon != nil {
-            self.dogIcon = dogIcon!
-        }
+        
+        self.dogId = dogId
+        self.dogIcon = dogIcon
     }
     
     /// Assume array of dog properties
     convenience init(fromBody body: [String: Any]) {
         
-        let dogName = body[ServerDefaultKeys.dogName.rawValue] as? String ?? DogConstant.defaultDogName
-        try! self.init(dogName: dogName)
+        // make sure the dog isn't deleted, otherwise it returns nil (indicating there is no dog left)
+        // guard body[ServerDefaultKeys.dogIsDeleted.rawValue] as? Bool ?? false == false else {
+        //   return nil
+        // }
         
-        if let dogId = body[ServerDefaultKeys.dogId.rawValue] as? Int {
-            self.dogId = dogId
-        }
+        let dogId = body[ServerDefaultKeys.dogId.rawValue] as? Int ?? DogConstant.defaultDogId
+        let dogName = body[ServerDefaultKeys.dogName.rawValue] as? String ?? DogConstant.defaultDogName
+        
+        try! self.init(dogId: dogId, dogName: dogName, dogIcon: LocalDogIcon.getIcon(forDogId: dogId) ?? DogConstant.defaultDogIcon)
+        
+        storedDogIsDeleted = body[ServerDefaultKeys.dogIsDeleted.rawValue] as? Bool ?? false
         
         // check for any reminders
         if let reminderBodies = body[ServerDefaultKeys.reminders.rawValue] as? [[String: Any]] {
-            for reminderBody in reminderBodies {
-                let reminder = Reminder(fromBody: reminderBody)
-                self.dogReminders.addReminder(newReminder: reminder)
-            }
+            dogReminders = ReminderManager(fromBody: reminderBodies)
         }
         
         // check for any logs
         if let logBodies = body[ServerDefaultKeys.logs.rawValue] as? [[String: Any]] {
-            for logBody in logBodies {
-                let log = Log(fromBody: logBody)
-                self.dogLogs.addLog(newLog: log)
-            }
+            dogLogs = LogManager(fromBody: logBodies)
         }
     }
     
     // MARK: - Properties
     
     var dogId: Int = DogConstant.defaultDogId
+    
+    private var storedDogIsDeleted: Bool = false
+    /// This property a marker leftover from when we went through the process of constructing a new dog from JSON and combining with an existing dog object. This markers allows us to have a new dog to overwrite the old dog, then leaves an indicator that this should be deleted. This deletion is handled by DogsRequest
+    var dogIsDeleted: Bool { return storedDogIsDeleted }
     
     // MARK: - Traits
     
@@ -116,8 +117,16 @@ class Dog: NSObject, NSCoding, NSCopying {
     }
     
     /// ReminderManager that handles all specified reminders for a dog, e.g. being taken to the outside every time interval or being fed.
-    var dogReminders: ReminderManager! = nil
+    var dogReminders: ReminderManager = ReminderManager()
     
     /// LogManager that handles all the logs for a dog
-    var dogLogs: LogManager! = nil
+    var dogLogs: LogManager = LogManager()
+    
+    // MARK: - Manipulation
+    
+    /// Combines all of the reminders and logs in union fashion to the current dog. If a reminder or log exists in either of the dogs, then they will be present after this function is done. If a reminder or log is present in both of the dogs, the oldDog's reminder/log will be overriden with the newDogs (this object's) reminder/log
+    func combine(withOldDog oldDog: Dog) {
+        dogLogs.combine(withOldLogManager: oldDog.dogLogs)
+        dogReminders.combine(withOldReminderManager: oldDog.dogReminders)
+    }
 }

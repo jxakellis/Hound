@@ -24,7 +24,6 @@ class AlarmManager {
         
         let localReminder: Reminder? = try? MainTabBarViewController.staticDogManager.findDog(forDogId: dogId).dogReminders.findReminder(forReminderId: reminderId)
         
-        
         // To start, either:
         // 1. we shouldn't have the reminder stored locally (nil)
         // 2. we have the reminder stored locally and it shouldn't be hasAlarmPresentationHandled
@@ -43,8 +42,9 @@ class AlarmManager {
             
             // if the distance from the present to the executionDate is positive, then the executionDate is in the future, else if negative then the executionDate is in the past
             guard reminder != nil && reminder!.reminderExecutionDate != nil && Date().distance(to: reminder!.reminderExecutionDate!) < 0 else {
-                // there was something wrong with the reminder and we should refresh the local dog/reminder data (don't refresh if the problem was caused by no connection)
+                // there was something wrong with the reminder and we should refresh the local dog/reminder data
                 if responseStatus != .noResponse {
+                    // we only want to refresh if our inital request was able to reach the server
                     delegate.shouldRefreshDogManager(sender: Sender(origin: self, localized: self))
                 }
                 // clear the presentation handled from any local reminder that matches, otherwise it won't be able to present
@@ -173,7 +173,7 @@ class AlarmManager {
     /// User responded to the reminder's alarm that popped up on their screen. They selected to 'Log' the reminder. Therefore we reset the timing data and add a log.
     private static func willLogAlarm(forDogId dogId: Int, forReminder reminder: Reminder, forLogAction logAction: LogAction) {
         
-        let log = Log(logDate: Date(), logAction: logAction, logCustomActionName: reminder.reminderCustomActionName)
+        let log = Log(logAction: logAction, logCustomActionName: reminder.reminderCustomActionName, logDate: Date())
         
         // special case. Once a oneTime reminder executes, it must be delete. Therefore there are special server queries.
         if reminder.reminderType == .oneTime {
@@ -219,7 +219,7 @@ class AlarmManager {
     
     /// The user went to log/skip a reminder on the reminders page. Must updating skipping data and add a log
     static func willSkipReminder(forDogId dogId: Int, forReminder reminder: Reminder, forLogAction logAction: LogAction) {
-        let log = Log(logDate: Date(), logAction: logAction, logCustomActionName: reminder.reminderCustomActionName)
+        let log = Log(logAction: logAction, logCustomActionName: reminder.reminderCustomActionName, logDate: Date())
         
         // special case. Once a oneTime reminder executes/ is skipped, it must be delete. Therefore there are special server queries.
         if reminder.reminderType == .oneTime {

@@ -151,7 +151,7 @@ class TimingManager {
                 reminder.monthlyComponents.isSkippingDate = nil
                 
             }
-            reminder.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
+            reminder.reminderExecutionBasis = Date()
             
             delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
             

@@ -16,7 +16,7 @@ class ScaledUILabel: UILabel {
         super.init(frame: frame)
         self.adjustsFontSizeToFitWidth = true
         if self.minimumScaleFactor == 0 {
-            self.minimumScaleFactor = 0.82
+            self.minimumScaleFactor = 0.72
         }
     }
     
@@ -24,7 +24,7 @@ class ScaledUILabel: UILabel {
         super.init(coder: coder)
         self.adjustsFontSizeToFitWidth = true
         if self.minimumScaleFactor == 0 {
-            self.minimumScaleFactor = 0.82
+            self.minimumScaleFactor = 0.72
         }
     }
     

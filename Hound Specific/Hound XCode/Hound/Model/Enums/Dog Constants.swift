@@ -33,32 +33,36 @@ enum DogConstant {
 }
 
 enum LogConstant {
-    static let defaultAction = LogAction.allCases[0]
     static let defaultLogId: Int = -1
+    static let defaultLogAction = LogAction.allCases[0]
+    static let defaultLogCustomActionName: String? = nil
     static let defaultLogNote: String = ""
+    static var defaultLogDate: Date { return Date() }
     /// when looking to unskip a reminder, we look for a log that has its time unmodified. if its logDate within a certain percision of the skipdate, then we assume that log is from that reminder skipping.
     static let logRemovalPrecision: Double = 0.025
 }
 
 enum ReminderConstant {
-    static let defaultAction = ReminderAction.allCases[0]
-    static let defaultType = ReminderType.allCases[0]
-    static let defaultTimeInterval = (3600*0.5)
-    static let defaultEnable: Bool = true
     static let defaultReminderId: Int = -1
+    static let defaultReminderAction = ReminderAction.feed
+    static let defaultReminderCustomActionName: String? = nil
+    static let defaultReminderType = ReminderType.countdown
+    static var defaultReminderExecutionBasis: Date { return Date() }
+    static let defaultReminderIsEnabled = true
     static var defaultReminders: [Reminder] {
         return [ defaultReminderOne, defaultReminderTwo, defaultReminderThree, defaultReminderFour ]
     }
     private static var defaultReminderOne: Reminder {
         let reminder = Reminder()
-        reminder.reminderAction = ReminderAction.potty
-        reminder.countdownComponents.changeExecutionInterval(newExecutionInterval: defaultTimeInterval)
+        reminder.reminderAction = .potty
+        reminder.reminderType = .countdown
+        reminder.countdownComponents.changeExecutionInterval(newExecutionInterval: ReminderComponentConstant.defaultCountdownExecutionInterval)
         return reminder
     }
     private static var defaultReminderTwo: Reminder {
         let reminder = Reminder()
         reminder.reminderAction = .feed
-        reminder.changeReminderType(newReminderType: .weekly)
+        reminder.reminderType = .weekly
         try! reminder.weeklyComponents.changeHour(newHour: 7)
         try! reminder.weeklyComponents.changeMinute(newMinute: 0)
         return reminder
@@ -66,7 +70,7 @@ enum ReminderConstant {
     private static var defaultReminderThree: Reminder {
         let reminder = Reminder()
         reminder.reminderAction = .feed
-        reminder.changeReminderType(newReminderType: .weekly)
+        reminder.reminderType = .weekly
         try! reminder.weeklyComponents.changeHour(newHour: 5+12)
         try! reminder.weeklyComponents.changeMinute(newMinute: 0)
         return reminder
@@ -74,10 +78,14 @@ enum ReminderConstant {
     private static var defaultReminderFour: Reminder {
         let reminder = Reminder()
         reminder.reminderAction = .medicine
-        reminder.changeReminderType(newReminderType: .monthly)
+        reminder.reminderType = .monthly
         try! reminder.monthlyComponents.changeDay(newDay: 1)
         try! reminder.monthlyComponents.changeHour(newHour: 9)
         try! reminder.monthlyComponents.changeMinute(newMinute: 0)
         return reminder
     }
+}
+
+enum ReminderComponentConstant {
+    static let defaultCountdownExecutionInterval: TimeInterval = 1800
 }

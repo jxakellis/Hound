@@ -106,7 +106,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                         self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
                         if reminders != nil {
                             // dog and reminders successfully created, so we can proceed
-                            dog.dogReminders.addReminder(newReminders: reminders!)
+                            dog.dogReminders.addReminders(newReminders: reminders!)
                             self.delegate.didAddDog(sender: Sender(origin: self, localized: self), newDog: dog)
                             self.navigationController?.popViewController(animated: true)
                         }
@@ -155,7 +155,7 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                         // we have reminders created that need to be created on the server
                         RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: createdReminders) { reminders, _ in
                             if reminders != nil {
-                                dog.dogReminders.addReminder(newReminders: reminders!)
+                                dog.dogReminders.addReminders(newReminders: reminders!)
                                 queriedCreatedReminders = true
                             }
                             else {

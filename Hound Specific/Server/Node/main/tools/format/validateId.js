@@ -134,7 +134,7 @@ const validateDogId = async (req, res, next) => {
       // JOIN families as dog must have a family attached to it
       const dog = await queryPromise(
         req,
-        'SELECT dogs.dogId FROM dogs JOIN families ON dogs.familyId = families.familyId WHERE dogs.familyId = ? AND dogs.dogId = ? LIMIT 1',
+        'SELECT dogs.dogId FROM dogs JOIN families ON dogs.familyId = families.familyId WHERE dogs.dogIsDeleted = 0 AND dogs.familyId = ? AND dogs.dogId = ? LIMIT 1',
         [familyId, dogId],
       );
 
@@ -179,7 +179,11 @@ const validateLogId = async (req, res, next) => {
     try {
       // finds what logId (s) the user has linked to their dogId
       // JOIN dogs as log has to have dog still attached to it
-      const log = await queryPromise(req, 'SELECT dogLogs.logId FROM dogLogs JOIN dogs ON dogLogs.dogId = dogs.dogId WHERE dogLogs.dogId = ? AND dogLogs.logId = ? LIMIT 1', [dogId, logId]);
+      const log = await queryPromise(
+        req,
+        'SELECT dogLogs.logId FROM dogLogs JOIN dogs ON dogLogs.dogId = dogs.dogId WHERE dogLogs.logIsDeleted = 0 AND dogLogs.dogId = ? AND dogLogs.logId = ? LIMIT 1',
+        [dogId, logId],
+      );
 
       // search query result to find if the logIds linked to the dogIds match the logId provided, match means the user owns that logId
 
@@ -222,7 +226,11 @@ const validateParamsReminderId = async (req, res, next) => {
     try {
       // finds what reminderId (s) the user has linked to their dogId
       // JOIN dogs as reminder must have dog attached to it
-      const reminder = await queryPromise(req, 'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1', [dogId, reminderId]);
+      const reminder = await queryPromise(
+        req,
+        'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
+        [dogId, reminderId],
+      );
 
       // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 
@@ -270,7 +278,11 @@ const validateBodyReminderId = async (req, res, next) => {
         try {
           // finds what reminderId (s) the user has linked to their dogId
           // JOIN dogs as reminder must still have dog attached to it
-          const reminder = await queryPromise(req, 'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId  WHERE dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1', [dogId, reminderId]);
+          const reminder = await queryPromise(
+            req,
+            'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId  WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
+            [dogId, reminderId],
+          );
 
           // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 
@@ -306,7 +318,11 @@ const validateBodyReminderId = async (req, res, next) => {
     try {
       // finds what reminderId (s) the user has linked to their dogId
       // JOIN dogs as reminder must have dog attached to it
-      const reminder = await queryPromise(req, 'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.dogId = ? AND dogReminders.reminderId = ?', [dogId, singleReminderId]);
+      const reminder = await queryPromise(
+        req,
+        'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ?',
+        [dogId, singleReminderId],
+      );
 
       // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 

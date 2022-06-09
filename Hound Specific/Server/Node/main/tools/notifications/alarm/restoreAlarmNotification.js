@@ -23,7 +23,7 @@ const restoreAlarmNotificationsForAllFamilies = async () => {
     // for ALL reminders get: familyId, reminderId, dogName, reminderExecutionDate, reminderAction, and reminderCustomActionName
     const remindersWithInfo = await queryPromise(
       connectionForAlarms,
-      'SELECT dogs.familyId, dogReminders.reminderId, dogReminders.reminderExecutionDate FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId WHERE dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
+      'SELECT dogs.familyId, dogReminders.reminderId, dogReminders.reminderExecutionDate FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
     );
     // for every reminder that exists (with a valid reminderExecutionDate), we invoke createAlarmNotificationForAll for it
     for (let i = 0; i < remindersWithInfo.length; i += 1) {

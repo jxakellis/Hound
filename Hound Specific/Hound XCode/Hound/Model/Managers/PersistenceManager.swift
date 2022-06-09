@@ -45,11 +45,31 @@ enum PersistenceManager {
         
         // MARK: Local Configuration
         
-        LocalConfiguration.lastDogManagerSync = UserDefaults.standard.value(forKey: ServerDefaultKeys.lastDogManagerSync.rawValue) as? Date ?? LocalConfiguration.lastDogManagerSync
+        LocalConfiguration.lastServerSynchronization = UserDefaults.standard.value(forKey: ServerDefaultKeys.lastServerSynchronization.rawValue) as? Date ?? LocalConfiguration.lastServerSynchronization
         
         if let dataDogIcons: Data = UserDefaults.standard.data(forKey: UserDefaultsKeys.dogIcons.rawValue), let unarchiver = try? NSKeyedUnarchiver.init(forReadingFrom: dataDogIcons) {
             unarchiver.requiresSecureCoding = false
             LocalConfiguration.dogIcons = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? [LocalDogIcon] ?? LocalConfiguration.dogIcons
+        }
+        
+        if let dataDogManager: Data = UserDefaults.standard.data(forKey: ServerDefaultKeys.dogManager.rawValue), let unarchiver = try? NSKeyedUnarchiver.init(forReadingFrom: dataDogManager) {
+            unarchiver.requiresSecureCoding = false
+            
+            if let dogManager = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? DogManager {
+                ServerSyncViewController.dogManager = dogManager
+            }
+            else {
+                // if nil, then decode failed or there was an issue. therefore, set the interval back to past so we can refetch from the server
+                AppDelegate.generalLogger.error("Failed to decode dogManager with unarchiver")
+                ServerSyncViewController.dogManager = DogManager()
+                LocalConfiguration.lastServerSynchronization = Date(timeIntervalSince1970: 0)
+            }
+        }
+        else {
+            // if nil, then decode failed or there was an issue. therefore, set the interval back to past so we can refetch from the server
+            AppDelegate.generalLogger.error("Failed to construct dataDogManager or construct unarchiver for dogManager")
+            ServerSyncViewController.dogManager = DogManager()
+            LocalConfiguration.lastServerSynchronization = Date(timeIntervalSince1970: 0)
         }
         
         LocalConfiguration.logCustomActionNames = UserDefaults.standard.value(forKey: UserDefaultsKeys.logCustomActionNames.rawValue) as? [String] ?? LocalConfiguration.logCustomActionNames
@@ -101,10 +121,13 @@ enum PersistenceManager {
         
         // Local Configuration
         
-        UserDefaults.standard.set(LocalConfiguration.lastDogManagerSync, forKey: ServerDefaultKeys.lastDogManagerSync.rawValue)
+        UserDefaults.standard.set(LocalConfiguration.lastServerSynchronization, forKey: ServerDefaultKeys.lastServerSynchronization.rawValue)
         
         if let dataDogIcons = try? NSKeyedArchiver.archivedData(withRootObject: LocalConfiguration.dogIcons, requiringSecureCoding: false) {
             UserDefaults.standard.set(dataDogIcons, forKey: UserDefaultsKeys.dogIcons.rawValue)
+        }
+        if let dataDogManager = try? NSKeyedArchiver.archivedData(withRootObject: MainTabBarViewController.staticDogManager, requiringSecureCoding: false) {
+            UserDefaults.standard.set(dataDogManager, forKey: ServerDefaultKeys.dogManager.rawValue)
         }
         
         UserDefaults.standard.set(LocalConfiguration.logCustomActionNames, forKey: UserDefaultsKeys.logCustomActionNames.rawValue)
@@ -117,6 +140,7 @@ enum PersistenceManager {
         
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedFamilyIntroductionViewControllerBefore.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue)
+        
     }
     
     static func willEnterForeground() {

@@ -17,7 +17,7 @@ const deleteAlarmNotificationsForFamily = async (familyId) => {
     // get all the reminders for the family
     const reminders = await queryPromise(
       connectionForAlarms,
-      'SELECT reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.familyId = ? LIMIT 18446744073709551615',
+      'SELECT reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogs.familyId = ? LIMIT 18446744073709551615',
       [familyId],
     );
       // finds all the users in the family
@@ -91,7 +91,7 @@ const deleteSecondaryAlarmNotificationsForUser = async (userId) => {
     // specifically use JOIN to excluse resulst where reminder, dog, family, or family member are missing
     const reminderIds = await queryPromise(
       connectionForAlarms,
-      'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE familyMembers.userId = ? AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
+      'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND familyMembers.userId = ? AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
       [userId],
     );
 

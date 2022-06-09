@@ -7,10 +7,25 @@ const { deleteAlarmNotificationsForReminder } = require('../../main/tools/notifi
  *  Queries the database to delete a single reminder. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-const deleteReminderQuery = async (req, familyId, reminderId) => {
+const deleteReminderForReminderId = async (req, familyId, dogId, reminderId) => {
   try {
+    const dogLastModified = new Date();
+    const reminderLastModified = dogLastModified;
+
     // deletes reminder
-    await queryPromise(req, 'DELETE FROM dogReminders WHERE reminderId = ?', [reminderId]);
+    await queryPromise(
+      req,
+      'UPDATE dogReminders SET reminderIsDeleted = 1, reminderLastModified = ? WHERE reminderId = ?',
+      [reminderLastModified, reminderId],
+    );
+
+    // update the dog last modified since one of its compoents was updated
+    await queryPromise(
+      req,
+      'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
+      [dogLastModified, dogId],
+    );
+
     // everything here succeeded so we shoot off a request to delete the alarm notification for the reminder
     deleteAlarmNotificationsForReminder(familyId, reminderId);
     return;
@@ -21,18 +36,48 @@ const deleteReminderQuery = async (req, familyId, reminderId) => {
 };
 
 /**
- *  Queries the database to delete multiple reminders. If the query is successful, then returns
+ *  Queries the database to delete all reminders for a dogId. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-const deleteRemindersQuery = async (req, familyId, reminders) => {
-  // iterate through all reminders provided to update them all
-  // if there is a problem, then we return that problem (function that invokes this will roll back requests)
-  // if there are no problems with any of the reminders, we return.
-  for (let i = 0; i < reminders.length; i += 1) {
-    const reminderId = reminders[i].reminderId;
+const deleteAllRemindersForDogId = async (req, familyId, dogId) => {
+  try {
+    const dogLastModified = new Date();
+    const reminderLastModified = dogLastModified;
 
-    await deleteReminderQuery(req, familyId, reminderId);
+    // find all the reminderIds
+    const reminders = await queryPromise(
+      req,
+      'SELECT reminderId FROM dogReminders WHERE reminderIsDeleted = 0 AND dogId = ? LIMIT 18446744073709551615',
+      [dogId],
+    );
+
+    // deletes reminders
+    await queryPromise(
+      req,
+      'UPDATE dogReminders SET reminderIsDeleted = 1, reminderLastModified = ? WHERE dogId = ?',
+      [reminderLastModified, dogId],
+    );
+
+    // update the dog last modified since one of its compoents was updated
+    await queryPromise(
+      req,
+      'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
+      [dogLastModified, dogId],
+    );
+
+    // iterate through all reminders provided to update them all
+    // if there is a problem, then we return that problem (function that invokes this will roll back requests)
+    // if there are no problems with any of the reminders, we return.
+    for (let i = 0; i < reminders.length; i += 1) {
+      const reminderId = reminders[i].reminderId;
+
+      // everything here succeeded so we shoot off a request to delete the alarm notification for the reminder
+      deleteAlarmNotificationsForReminder(familyId, reminderId);
+    }
+  }
+  catch (error) {
+    throw new DatabaseError(error.code);
   }
 };
 
-module.exports = { deleteReminderQuery, deleteRemindersQuery };
+module.exports = { deleteReminderForReminderId, deleteAllRemindersForDogId };

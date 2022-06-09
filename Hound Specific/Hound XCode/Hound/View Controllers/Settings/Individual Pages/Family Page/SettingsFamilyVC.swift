@@ -12,8 +12,8 @@ protocol SettingsFamilyViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource {
-
+class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource, DogManagerControlFlowProtocol {
+    
     // MARK: - UIGestureRecognizerDelegate
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -75,6 +75,22 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         AlertManager.globalPresenter = self
+    }
+    
+    // MARK: - Dog Manager
+    
+    private var dogManager: DogManager = DogManager()
+    
+    func getDogManager() -> DogManager {
+        return dogManager
+    }
+    
+    func setDogManager(sender: Sender, newDogManager: DogManager) {
+        dogManager = newDogManager
+        
+        if sender.localized is SettingsViewController {
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: newDogManager)
+        }
     }
     
     // MARK: - Functions
@@ -206,20 +222,21 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
                 if isPaused == false {
                     // TO DO have server calculate reminderExecutionDates itself
                     // reminders are now unpaused, we must update the server with the new executionDates (can't calculate them itself)
-                    RequestUtils.getDogManager(invokeErrorManager: true) { dogManager, _ in
-                        // Goes through all enabled dogs and all their reminders
-                        if dogManager != nil {
-                            for dog in dogManager!.dogs {
-                                // update the Hound server with
-                                let remindersToUpdate = dog.dogReminders.reminders.filter({ reminder in
-                                    // create an array of reminders with non-nil executionDates, as we are providing the Hound server with a list of reminders with the newly calculated executionDates
-                                    return (reminder.reminderExecutionDate == nil) == false
-                                })
-                                RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: remindersToUpdate) { requestWasSuccessful, _ in
-                                    if requestWasSuccessful == true {
-                                        // the call to update the server on the reminder unpause was successful, now send to delegate
-                                        self.delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager!)
-                                    }
+                    DogsRequest.get(invokeErrorManager: true, dogManager: self.getDogManager()) { newDogManager, _ in
+                        guard newDogManager != nil else {
+                            return
+                        }
+                        
+                        for dog in newDogManager!.dogs {
+                            // update the Hound server with
+                            let remindersToUpdate = dog.dogReminders.reminders.filter({ reminder in
+                                // create an array of reminders with non-nil executionDates, as we are providing the Hound server with a list of reminders with the newly calculated executionDates
+                                return (reminder.reminderExecutionDate == nil) == false
+                            })
+                            RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: remindersToUpdate) { requestWasSuccessful, _ in
+                                if requestWasSuccessful == true {
+                                    // the call to update the server on the reminder unpause was successful, now send to delegate
+                                    self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager!)
                                 }
                             }
                         }

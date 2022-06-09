@@ -181,6 +181,7 @@ class AlertManager: NSObject {
             if queuePresent == true && locked == false {
                 locked = true
                 currentAlertPresented = alertQueue.first
+                alertQueue.removeFirst()
                 AlertManager.globalPresenter!.present(currentAlertPresented!, animated: true)
             }
         }
@@ -191,7 +192,6 @@ class AlertManager: NSObject {
     func alertDidComplete() {
         locked = false
         currentAlertPresented = nil
-        alertQueue.removeFirst()
         showNextAlert()
     }
 }

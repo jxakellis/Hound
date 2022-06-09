@@ -139,7 +139,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
         super.init()
         
         self.reminderId = aDecoder.decodeInteger(forKey: "reminderId")
-        self.reminderAction = ReminderAction(rawValue: aDecoder.decodeObject(forKey: "reminderAction") as? String ?? ReminderConstant.defaultAction.rawValue)!
+        self.reminderAction = ReminderAction(rawValue: aDecoder.decodeObject(forKey: "reminderAction") as? String ?? ReminderConstant.defaultReminderAction.rawValue)!
         
         self.reminderCustomActionName = aDecoder.decodeObject(forKey: "reminderCustomActionName") as? String
         
@@ -180,24 +180,43 @@ class Reminder: NSObject, NSCoding, NSCopying {
         super.init()
     }
     
-    convenience init(fromBody body: [String: Any]) {
-        self.init()
-        if let reminderId = body[ServerDefaultKeys.reminderId.rawValue] as? Int {
+    convenience init(
+        reminderId: Int = ReminderConstant.defaultReminderId,
+        reminderAction: ReminderAction = ReminderConstant.defaultReminderAction,
+        reminderCustomActionName: String? = ReminderConstant.defaultReminderCustomActionName,
+        reminderType: ReminderType = ReminderConstant.defaultReminderType,
+        reminderExecutionBasis: Date = ReminderConstant.defaultReminderExecutionBasis,
+        reminderIsEnabled: Bool = ReminderConstant.defaultReminderIsEnabled) {
+            self.init()
+            
             self.reminderId = reminderId
-        }
+            self.reminderAction = reminderAction
+            self.reminderCustomActionName = reminderCustomActionName
+            self.storedReminderType = reminderType
+            self.storedReminderExecutionBasis = reminderExecutionBasis
+            self.reminderIsEnabled = reminderIsEnabled
+    }
+    
+    convenience init(fromBody body: [String: Any]) {
         
-        reminderAction = ReminderAction(rawValue: body[ServerDefaultKeys.reminderAction.rawValue] as? String ?? ReminderConstant.defaultType.rawValue)!
-        reminderCustomActionName = body[ServerDefaultKeys.reminderCustomActionName.rawValue] as? String
-        storedReminderType = ReminderType(rawValue: body[ServerDefaultKeys.reminderType.rawValue] as? String ?? ReminderConstant.defaultType.rawValue)!
+        // if reminder was deleted, then return nil and don't create object
+        // guard body[ServerDefaultKeys.reminderIsDeleted.rawValue] as? Bool ?? false == false else {
+        //     return nil
+        // }
         
+        let reminderId = body[ServerDefaultKeys.reminderId.rawValue] as? Int ?? ReminderConstant.defaultReminderId
+        let reminderAction = ReminderAction(rawValue: body[ServerDefaultKeys.reminderAction.rawValue] as? String ?? ReminderConstant.defaultReminderAction.rawValue) ?? ReminderConstant.defaultReminderAction
+        let reminderCustomActionName = body[ServerDefaultKeys.reminderCustomActionName.rawValue] as? String ?? ReminderConstant.defaultReminderCustomActionName
+        let reminderType = ReminderType(rawValue: body[ServerDefaultKeys.reminderType.rawValue] as? String ?? ReminderConstant.defaultReminderType.rawValue) ?? ReminderConstant.defaultReminderType
+        var reminderExecutionBasis = ReminderConstant.defaultReminderExecutionBasis
         if let reminderExecutionBasisString = body[ServerDefaultKeys.reminderExecutionBasis.rawValue] as? String {
-           
-            storedReminderExecutionBasis = ResponseUtils.dateFormatter(fromISO8601String: reminderExecutionBasisString) ?? Date()
+            reminderExecutionBasis = ResponseUtils.dateFormatter(fromISO8601String: reminderExecutionBasisString) ?? ReminderConstant.defaultReminderExecutionBasis
         }
+        let reminderIsEnabled = body[ServerDefaultKeys.reminderIsEnabled.rawValue] as? Bool ?? ReminderConstant.defaultReminderIsEnabled
         
-        if let reminderIsEnabled = body[ServerDefaultKeys.reminderIsEnabled.rawValue] as? Bool {
-            storedReminderIsEnabled = reminderIsEnabled
-        }
+        self.init(reminderId: reminderId, reminderAction: reminderAction, reminderCustomActionName: reminderCustomActionName, reminderType: reminderType, reminderExecutionBasis: reminderExecutionBasis, reminderIsEnabled: reminderIsEnabled)
+        
+        storedReminderIsDeleted = body[ServerDefaultKeys.reminderIsDeleted.rawValue] as? Bool ?? false
         
         // snooze
         snoozeComponents = SnoozeComponents(snoozeIsEnabled: body[ServerDefaultKeys.snoozeIsEnabled.rawValue] as? Bool, executionInterval: body[ServerDefaultKeys.snoozeExecutionInterval.rawValue] as? TimeInterval, intervalElapsed: body[ServerDefaultKeys.snoozeIntervalElapsed.rawValue] as? TimeInterval)
@@ -239,24 +258,274 @@ class Reminder: NSObject, NSCoding, NSCopying {
         )
             
         // one time
-        var reminderExecutionDate = Date()
-        if let reminderExecutionDateString = body[ServerDefaultKeys.oneTimeDate.rawValue] as? String {
-            reminderExecutionDate = ResponseUtils.dateFormatter(fromISO8601String: reminderExecutionDateString) ?? Date()
+        var oneTimeDate = Date()
+        if let oneTimeDateString = body[ServerDefaultKeys.oneTimeDate.rawValue] as? String {
+            oneTimeDate = ResponseUtils.dateFormatter(fromISO8601String: oneTimeDateString) ?? Date()
         }
-        oneTimeComponents = OneTimeComponents(date: reminderExecutionDate)
+        oneTimeComponents = OneTimeComponents(date: oneTimeDate)
     }
     
     // MARK: - Properties
     
+    // General
+    
     var reminderId: Int = ReminderConstant.defaultReminderId
     
+    private var storedReminderIsDeleted: Bool = false
+    /// This property a marker leftover from when we went through the process of constructing a new reminder from JSON and combining with an existing reminder object. This markers allows us to have a new reminder to overwrite the old reminder, then leaves an indicator that this should be deleted. This deletion is handled by DogsRequest
+    var reminderIsDeleted: Bool { return storedReminderIsDeleted }
+    
     /// This is a user selected label for the reminder. It dictates the name that is displayed in the UI for this reminder.
-    var reminderAction: ReminderAction = ReminderConstant.defaultAction
+    var reminderAction: ReminderAction = ReminderConstant.defaultReminderAction
     
     /// If the reminder's type is custom, this is the name for it.
-    var reminderCustomActionName: String?
+    var reminderCustomActionName: String? = ReminderConstant.defaultReminderCustomActionName
     
-    // MARK: - Comparison
+    // Timing
+    
+    private var storedReminderType: ReminderType = ReminderConstant.defaultReminderType
+    /// Tells the reminder what components to use to make sure its in the correct timing style. Changing this changes between countdown, weekly, monthly, and oneTime mode.
+    var reminderType: ReminderType {
+        get {
+        return storedReminderType
+        }
+        set (newReminderType) {
+            guard newReminderType != storedReminderType else {
+                return
+            }
+            
+            self.prepareForNextAlarm()
+            
+            storedReminderType = newReminderType
+        }
+    }
+    
+    private var storedReminderExecutionBasis: Date = ReminderConstant.defaultReminderExecutionBasis
+    /// This is what the reminder should base its timing off it. This is either the last time a user responded to a reminder alarm or the last time a user changed a timing related property of the reminder. For example, 5 minutes into the timer you change the countdown from 30 minutes to 15. To start the timer fresh, having it count down from the moment it was changed, reset reminderExecutionBasis to Date()
+    var reminderExecutionBasis: Date {
+        get {
+            return storedReminderExecutionBasis
+        }
+        set (newReminderExecutionBasis) {
+            // If resetting the reminderExecutionBasis to the current time (and not changing it to another reminderExecutionBasis of some other reminder) then resets interval elasped as timers would have to be fresh
+            countdownComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
+            snoozeComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
+            
+            storedReminderExecutionBasis = newReminderExecutionBasis
+        }
+        
+    }
+    
+    // Enable
+    
+    private var storedReminderIsEnabled: Bool = ReminderConstant.defaultReminderIsEnabled
+    /// Whether or not the reminder  is enabled, if disabled all reminders will not fire.
+    var reminderIsEnabled: Bool {
+        get {
+            return storedReminderIsEnabled
+        }
+        set (newEnableStatus) {
+            if storedReminderIsEnabled == false && newEnableStatus == true {
+                prepareForNextAlarm()
+            }
+            else if newEnableStatus == false {
+                timer?.invalidate()
+                timer = nil
+            }
+            
+            storedReminderIsEnabled = newEnableStatus
+        }
+    }
+    
+    // MARK: - Reminder Components
+    
+    var countdownComponents: CountdownComponents = CountdownComponents()
+    
+    var weeklyComponents: WeeklyComponents = WeeklyComponents()
+    
+    var monthlyComponents: MonthlyComponents = MonthlyComponents()
+    
+    var oneTimeComponents: OneTimeComponents = OneTimeComponents()
+    
+    var snoozeComponents: SnoozeComponents = SnoozeComponents()
+    
+    /// Factors in snoozeIsEnabled into reminderType to produce a current mode. For example, a reminder might be countdown but if its snoozed then this will return .snooze
+    var currentReminderMode: ReminderMode {
+        if snoozeComponents.snoozeIsEnabled == true {
+            return .snooze
+        }
+        else if reminderType == .countdown {
+            return .countdown
+        }
+        else if reminderType == .weekly {
+            return .weekly
+        }
+        else if reminderType == .monthly {
+            return .monthly
+        }
+        else {
+            return .oneTime
+        }
+    }
+    
+    // MARK: - Timing
+    
+    /// When an alert from this reminder is enqueued to be presented, this property is true. This prevents multiple alerts for the same reminder being requeued everytime timing manager refreshes.
+    var hasAlarmPresentationHandled: Bool = false
+    
+    var intervalRemaining: TimeInterval? {
+        switch currentReminderMode {
+        case .oneTime:
+            return Date().distance(to: oneTimeComponents.oneTimeDate)
+        case .countdown:
+            // the time is supposed to countdown for minus the time it has countdown
+            return countdownComponents.executionInterval - countdownComponents.intervalElapsed
+        case .weekly:
+            if self.reminderExecutionBasis.distance(to: self.weeklyComponents.previousExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis)) > 0 {
+                return nil
+            }
+            else {
+                return Date().distance(to: self.weeklyComponents.nextExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis))
+            }
+        case .monthly:
+            if self.reminderExecutionBasis.distance(to:
+                                                self.monthlyComponents.previousExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis)) > 0 {
+                return nil
+            }
+            else {
+                return Date().distance(to: self.monthlyComponents.nextExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis))
+            }
+        case .snooze:
+            // the time is supposed to countdown for minus the time it has countdown
+            return snoozeComponents.executionInterval - snoozeComponents.intervalElapsed
+        }
+    }
+    
+    var reminderExecutionDate: Date? {
+        // the reminder will not go off if disabled or the family is paused
+        guard self.reminderIsEnabled == true && FamilyConfiguration.isPaused == false else {
+            return nil
+        }
+        
+        switch currentReminderMode {
+        case .oneTime:
+            return oneTimeComponents.oneTimeDate
+        case .countdown:
+            return Date.reminderExecutionDate(lastExecution: reminderExecutionBasis, interval: intervalRemaining!)
+        case .weekly:
+            // If the intervalRemaining is nil than means there is no time left
+            if intervalRemaining == nil {
+                return Date()
+            }
+            else {
+                return weeklyComponents.nextExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis)
+            }
+        case .monthly:
+            // If the intervalRemaining is nil than means there is no time left
+            if intervalRemaining == nil {
+                return Date()
+            }
+            else {
+                return monthlyComponents.nextExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis)
+            }
+        case .snooze:
+            return Date.reminderExecutionDate(lastExecution: reminderExecutionBasis, interval: intervalRemaining!)
+        }
+    }
+    
+    /// This is the timer that is used to make the reminder function. It triggers the events for the reminder. If getting rid of or replacing a reminder, invalidate this timer
+    var timer: Timer?
+    
+    /// The reminder's alarm executed and the user responded to it. We want to restore the reminder to a state where it is ready for its next alarm. This should also be called if the timing components are updated.
+    func prepareForNextAlarm() {
+        
+        reminderExecutionBasis = Date()
+        
+        hasAlarmPresentationHandled = false
+        
+        snoozeComponents.changeSnooze(newSnoozeStatus: false)
+        snoozeComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
+        
+        if reminderType == .countdown {
+            countdownComponents.changeIntervalElapsed(newIntervalElapsed: 0)
+        }
+        else if reminderType == .weekly {
+            weeklyComponents.isSkippingDate = nil
+            weeklyComponents.isSkipping = false
+        }
+        else if reminderType == .monthly {
+            monthlyComponents.isSkippingDate = nil
+            monthlyComponents.isSkipping = false
+        }
+        
+    }
+    
+    /// Finds the date which the reminder should be transformed from isSkipping to not isSkipping. This is the date at which the skipped reminder would have occured.
+    func unskipDate() -> Date? {
+        if currentReminderMode == .monthly && monthlyComponents.isSkipping == true {
+            return monthlyComponents.notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
+        }
+        else if currentReminderMode == .weekly && weeklyComponents.isSkipping == true {
+            return weeklyComponents.notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
+        }
+        else {
+            return nil
+        }
+    }
+    
+    /// Call this function when a user driven action directly intends to change the skip status of the weekly or monthy components. This function only timing related data, no logs are added or removed. Additioanlly, if oneTime is getting skipped, it must be deleted externally.
+    func changeIsSkipping(newSkipStatus: Bool) {
+        switch reminderType {
+        case .oneTime: break
+            // can only skip, can't unskip
+            // do nothing inside the reminder, this is handled externally
+        case .countdown:
+            // can only skip, can't unskip
+            if newSkipStatus == true {
+                // skipped, reset to now so the reminder will start counting down all over again
+                reminderExecutionBasis = Date()
+            }
+        case .weekly:
+            // weekly can skip and unskip
+            guard newSkipStatus != weeklyComponents.isSkipping else {
+                break
+            }
+            // store new state
+            weeklyComponents.isSkipping = newSkipStatus
+            
+            if newSkipStatus == true {
+                // skipping
+                weeklyComponents.isSkippingDate = Date()
+            }
+            else {
+                // since we are unskipping, we want to revert to the previous reminderExecutionBasis, which happens to be isSkippingDate
+                reminderExecutionBasis = weeklyComponents.isSkippingDate!
+                weeklyComponents.isSkippingDate = nil
+            }
+        case .monthly:
+            guard newSkipStatus != monthlyComponents.isSkipping else {
+                return
+            }
+            // store new state
+            monthlyComponents.isSkipping = newSkipStatus
+            
+            if newSkipStatus == true {
+                // skipping
+                monthlyComponents.isSkippingDate = Date()
+            }
+            else {
+                // since we are unskipping, we want to revert to the previous reminderExecutionBasis, which happens to be isSkippingDate
+                reminderExecutionBasis = monthlyComponents.isSkippingDate!
+                monthlyComponents.isSkippingDate = nil
+            }
+        }
+    }
+    
+}
+
+extension Reminder {
+    
+    // MARK: - Compare
     
     /// Returns true if all the server synced properties for the reminder are the same. This includes all the base properties here (yes the reminderId too) and the reminder components for the corresponding reminderAction
     func isSame(asReminder reminder: Reminder) -> Bool {
@@ -354,240 +623,4 @@ class Reminder: NSObject, NSCoding, NSCopying {
             }
         }
     }
-    
-    // MARK: - Reminder Components
-    
-    var countdownComponents: CountdownComponents = CountdownComponents()
-    
-    var weeklyComponents: WeeklyComponents = WeeklyComponents()
-    
-    var monthlyComponents: MonthlyComponents = MonthlyComponents()
-    
-    var oneTimeComponents: OneTimeComponents = OneTimeComponents()
-    
-    var snoozeComponents: SnoozeComponents = SnoozeComponents()
-    
-    private var storedReminderType: ReminderType = .countdown
-    /// Tells the reminder what components to use to make sure its in the correct timing style. Changing this changes between countdown, weekly, monthly, and oneTime mode.
-    var reminderType: ReminderType { return storedReminderType }
-    func changeReminderType(newReminderType: ReminderType) {
-        guard newReminderType != storedReminderType else {
-            return
-        }
-        
-        // self.prepareForNextAlarm(shouldLogExecution: false)
-        self.prepareForNextAlarm()
-        
-        storedReminderType = newReminderType
-    }
-    
-    /// Factors in snoozeIsEnabled into reminderType to produce a current mode. For example, a reminder might be countdown but if its snoozed then this will return .snooze
-    var currentReminderMode: ReminderMode {
-        if snoozeComponents.snoozeIsEnabled == true {
-            return .snooze
-        }
-        else if reminderType == .countdown {
-            return .countdown
-        }
-        else if reminderType == .weekly {
-            return .weekly
-        }
-        else if reminderType == .monthly {
-            return .monthly
-        }
-        // else if reminderType == .oneTime {
-        else {
-            return .oneTime
-        }
-    }
-    
-    // MARK: - Timing
-    
-    private var storedReminderExecutionBasis: Date = Date()
-    /// This is what the reminder should base its timing off it. This is either the last time a user responded to a reminder alarm or the last time a user changed a timing related property of the reminder. For example, 5 minutes into the timer you change the countdown from 30 minutes to 15. To start the timer fresh, having it count down from the moment it was changed, reset reminderExecutionBasis to Date()
-    var reminderExecutionBasis: Date { return storedReminderExecutionBasis }
-    func changeExecutionBasis(newExecutionBasis: Date, shouldResetIntervalsElapsed: Bool) {
-        storedReminderExecutionBasis = newExecutionBasis
-        
-        // If resetting the reminderExecutionBasis to the current time (and not changing it to another reminderExecutionBasis of some other reminder) then resets interval elasped as timers would have to be fresh
-        if shouldResetIntervalsElapsed == true {
-            snoozeComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
-            countdownComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
-        }
-        
-    }
-    
-    /// When an alert from this reminder is enqueued to be presented, this property is true. This prevents multiple alerts for the same reminder being requeued everytime timing manager refreshes.
-    var hasAlarmPresentationHandled: Bool = false
-    
-    var intervalRemaining: TimeInterval? {
-        switch currentReminderMode {
-        case .oneTime:
-            return Date().distance(to: oneTimeComponents.oneTimeDate)
-        case .countdown:
-            // the time is supposed to countdown for minus the time it has countdown
-            return countdownComponents.executionInterval - countdownComponents.intervalElapsed
-        case .weekly:
-            if self.reminderExecutionBasis.distance(to: self.weeklyComponents.previousExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis)) > 0 {
-                return nil
-            }
-            else {
-                return Date().distance(to: self.weeklyComponents.nextExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis))
-            }
-        case .monthly:
-            if self.reminderExecutionBasis.distance(to:
-                                                self.monthlyComponents.previousExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis)) > 0 {
-                return nil
-            }
-            else {
-                return Date().distance(to: self.monthlyComponents.nextExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis))
-            }
-        case .snooze:
-            // the time is supposed to countdown for minus the time it has countdown
-            return snoozeComponents.executionInterval - snoozeComponents.intervalElapsed
-        }
-    }
-    
-    var reminderExecutionDate: Date? {
-        // the reminder will not go off if disabled or the family is paused
-        guard self.reminderIsEnabled == true && FamilyConfiguration.isPaused == false else {
-            return nil
-        }
-        
-        switch currentReminderMode {
-        case .oneTime:
-            return oneTimeComponents.oneTimeDate
-        case .countdown:
-            return Date.reminderExecutionDate(lastExecution: reminderExecutionBasis, interval: intervalRemaining!)
-        case .weekly:
-            // If the intervalRemaining is nil than means there is no time left
-            if intervalRemaining == nil {
-                return Date()
-            }
-            else {
-                return weeklyComponents.nextExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis)
-            }
-        case .monthly:
-            // If the intervalRemaining is nil than means there is no time left
-            if intervalRemaining == nil {
-                return Date()
-            }
-            else {
-                return monthlyComponents.nextExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis)
-            }
-        case .snooze:
-            return Date.reminderExecutionDate(lastExecution: reminderExecutionBasis, interval: intervalRemaining!)
-        }
-    }
-    
-    /// This is the timer that is used to make the reminder function. It triggers the events for the reminder. If getting rid of or replacing a reminder, invalidate this timer
-    var timer: Timer?
-    
-    /// The reminder's alarm executed and the user responded to it. We want to restore the reminder to a state where it is ready for its next alarm. This should also be called if the timing components are updated.
-    func prepareForNextAlarm() {
-        
-        self.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
-        
-        self.hasAlarmPresentationHandled = false
-        
-        snoozeComponents.changeSnooze(newSnoozeStatus: false)
-        snoozeComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
-        
-        if reminderType == .countdown {
-            countdownComponents.changeIntervalElapsed(newIntervalElapsed: 0)
-        }
-        else if reminderType == .weekly {
-            weeklyComponents.isSkippingDate = nil
-            weeklyComponents.isSkipping = false
-        }
-        else if reminderType == .monthly {
-            monthlyComponents.isSkippingDate = nil
-            monthlyComponents.isSkipping = false
-        }
-        
-    }
-    
-    /// Finds the date which the reminder should be transformed from isSkipping to not isSkipping. This is the date at which the skipped reminder would have occured.
-    func unskipDate() -> Date? {
-        if currentReminderMode == .monthly && monthlyComponents.isSkipping == true {
-            return monthlyComponents.notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
-        }
-        else if currentReminderMode == .weekly && weeklyComponents.isSkipping == true {
-            return weeklyComponents.notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
-        }
-        else {
-            return nil
-        }
-    }
-    
-    /// Call this function when a user driven action directly intends to change the skip status of the weekly or monthy components. This function only timing related data, no logs are added or removed. Additioanlly, if oneTime is getting skipped, it must be deleted externally.
-    func changeIsSkipping(newSkipStatus: Bool) {
-        switch reminderType {
-        case .oneTime: break
-            // can only skip, can't unskip
-            // do nothing inside the reminder, this is handled externally
-        case .countdown:
-            // can only skip, can't unskip
-            if newSkipStatus == true {
-                // skipped, reset to now so the reminder will start counting down all over again
-                self.changeExecutionBasis(newExecutionBasis: Date(), shouldResetIntervalsElapsed: true)
-            }
-        case .weekly:
-            // weekly can skip and unskip
-            guard newSkipStatus != weeklyComponents.isSkipping else {
-                break
-            }
-            // store new state
-            weeklyComponents.isSkipping = newSkipStatus
-            
-            if newSkipStatus == true {
-                // skipping
-                weeklyComponents.isSkippingDate = Date()
-            }
-            else {
-                // since we are unskipping, we want to revert to the previous reminderExecutionBasis, which happens to be isSkippingDate
-                self.changeExecutionBasis(newExecutionBasis: weeklyComponents.isSkippingDate!, shouldResetIntervalsElapsed: true)
-                weeklyComponents.isSkippingDate = nil
-            }
-        case .monthly:
-            guard newSkipStatus != monthlyComponents.isSkipping else {
-                return
-            }
-            // store new state
-            monthlyComponents.isSkipping = newSkipStatus
-            
-            if newSkipStatus == true {
-                // skipping
-                monthlyComponents.isSkippingDate = Date()
-            }
-            else {
-                // since we are unskipping, we want to revert to the previous reminderExecutionBasis, which happens to be isSkippingDate
-                self.changeExecutionBasis(newExecutionBasis: monthlyComponents.isSkippingDate!, shouldResetIntervalsElapsed: true)
-                monthlyComponents.isSkippingDate = nil
-            }
-        }
-    }
-    
-    // MARK: - Enable
-    
-    private var storedReminderIsEnabled: Bool = true
-    /// Whether or not the reminder  is enabled, if disabled all reminders will not fire.
-    var reminderIsEnabled: Bool {
-        get {
-            return storedReminderIsEnabled
-        }
-        set (newEnableStatus) {
-            if storedReminderIsEnabled == false && newEnableStatus == true {
-                // prepareForNextAlarm(shouldLogExecution: false)
-                prepareForNextAlarm()
-            }
-            else if newEnableStatus == false {
-                timer?.invalidate()
-                timer = nil
-            }
-            
-            storedReminderIsEnabled = newEnableStatus
-        }
-    }
-    
 }

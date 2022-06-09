@@ -1,7 +1,9 @@
 const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
-const { formatBoolean, areAllDefined } = require('../../main/tools/format/formatObject');
+const {
+  formatBoolean, formatDate, areAllDefined,
+} = require('../../main/tools/format/formatObject');
 const { getLogsQuery } = require('./getForLogs');
 const { getRemindersQuery } = require('./getForReminders');
 
@@ -10,16 +12,32 @@ const { getRemindersQuery } = require('./getForReminders');
  *  If a problem is encountered, creates and throws custom error
  */
 const getDogQuery = async (req, dogId) => {
+  const lastServerSynchronization = formatDate(req.query.lastServerSynchronization);
+
   if (areAllDefined(dogId) === false) {
     throw new ValidationError('dogId missing', 'ER_VALUES_MISSING');
   }
 
   try {
-    const result = await queryPromise(
-      req,
-      'SELECT dogId, dogName FROM dogs WHERE dogId = ? LIMIT 1',
-      [dogId],
-    );
+    let result;
+    // if the user provides a last sync, then we look for dogs that were modified after this last sync. Therefore, only providing dogs that were modified and the local client is outdated on
+    if (areAllDefined(lastServerSynchronization)) {
+      // BUG if a log/reminder was updated in dog but the dog wasn't modified, then the dogLastModified won't be updated.
+      // therefore, a log/remidner could be updated in a dog but the server won't send back the updated info (since this information is nested under the dog which we never process)
+      result = await queryPromise(
+        req,
+        'SELECT dogId, dogName FROM dogs WHERE dogLastModified >= ? AND dogId = ? LIMIT 1',
+        [lastServerSynchronization, dogId],
+      );
+    }
+    else {
+      result = await queryPromise(
+        req,
+        'SELECT dogId, dogName FROM dogs WHERE dogId = ? LIMIT 1',
+        [dogId],
+      );
+    }
+
     // no need to do anything else as there are no dogs
     if (result.length === 0) {
       return result;
@@ -51,16 +69,31 @@ const getDogQuery = async (req, dogId) => {
  *  If a problem is encountered, creates and throws custom error
  */
 const getDogsQuery = async (req, familyId) => {
+  const lastServerSynchronization = formatDate(req.query.lastServerSynchronization);
+
   if (areAllDefined(familyId) === false) {
     throw new ValidationError('familyId missing', 'ER_VALUES_MISSING');
   }
 
   try {
-    const result = await queryPromise(
-      req,
-      'SELECT dogId, dogName FROM dogs WHERE familyId = ? ORDER BY dogId DESC LIMIT 1000',
-      [familyId],
-    );
+    let result;
+    // if the user provides a last sync, then we look for dogs that were modified after this last sync. Therefore, only providing dogs that were modified and the local client is outdated on
+    if (areAllDefined(lastServerSynchronization)) {
+      // BUG if a log/reminder was updated in dog but the dog wasn't modified, then the dogLastModified won't be updated.
+      // therefore, a log/remidner could be updated in a dog but the server won't send back the updated info (since this information is nested under the dog which we never process)
+      result = await queryPromise(
+        req,
+        'SELECT dogId, dogName FROM dogs WHERE dogLastModified >= ? AND familyId = ? LIMIT 18446744073709551615',
+        [lastServerSynchronization, familyId],
+      );
+    }
+    else {
+      result = await queryPromise(
+        req,
+        'SELECT dogId, dogName FROM dogs WHERE familyId = ? LIMIT 18446744073709551615',
+        [familyId],
+      );
+    }
     // no need to do anything else as there are no dogs
     if (result.length === 0) {
       return result;

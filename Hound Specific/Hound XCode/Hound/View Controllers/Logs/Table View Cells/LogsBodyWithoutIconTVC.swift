@@ -17,6 +17,7 @@ class LogsBodyWithoutIconTableViewCell: UITableViewCell {
     @IBOutlet private weak var dogNameBottomConstraint: NSLayoutConstraint!
     @IBOutlet private weak var dogNameHeightConstraint: NSLayoutConstraint!
     
+    @IBOutlet private weak var userInitalsLabel: ScaledUILabel!
     @IBOutlet private weak var logActionLabel: ScaledUILabel!
     @IBOutlet private weak var logDateLabel: ScaledUILabel!
     @IBOutlet private weak var logNoteLabel: ScaledUILabel!
@@ -36,9 +37,9 @@ class LogsBodyWithoutIconTableViewCell: UITableViewCell {
         case .small:
             sizeRatio = 1.0
         case .medium:
-            sizeRatio = 1.25
+            sizeRatio = 1.2
         case .large:
-            sizeRatio = 1.5
+            sizeRatio = 1.4
         }
         
         dogNameLabel.font =  dogNameLabel.font.withSize(15.0 * sizeRatio)
@@ -46,9 +47,20 @@ class LogsBodyWithoutIconTableViewCell: UITableViewCell {
         dogNameBottomConstraint.constant = 5.0 * sizeRatio
         dogNameHeightConstraint.constant = 25.0 * sizeRatio
         
+        userInitalsLabel.font = userInitalsLabel.font.withSize(15.0 * sizeRatio)
         logActionLabel.font =  logActionLabel.font.withSize(15.0 * sizeRatio)
         logDateLabel.font =  logDateLabel.font.withSize(15.0 * sizeRatio)
         logNoteLabel.font =  logNoteLabel.font.withSize(15.0 * sizeRatio)
+        
+        let familyMemberThatLogged = FamilyConfiguration.familyMembers.first { familyMember in
+            if familyMember.userId == log.userId {
+                return true
+            }
+            else {
+                return false
+            }
+        }
+        self.userInitalsLabel.text = familyMemberThatLogged?.displayInitals ?? "UKN⚠️"
         
         self.logActionLabel.text = log.logAction.displayActionName(logCustomActionName: log.logCustomActionName, isShowingAbreviatedCustomActionName: true)
         

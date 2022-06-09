@@ -5,13 +5,24 @@ const { queryPromise } = require('../../main/tools/database/queryPromise');
  *  Queries the database to delete a log. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-const deleteLogQuery = async (req, logId) => {
+const deleteLogForLogId = async (req, dogId, logId) => {
   try {
+    const dogLastModified = new Date();
+    const logLastModified = logLastModified;
+
     await queryPromise(
       req,
-      'DELETE FROM dogLogs WHERE logId = ?',
-      [logId],
+      'UPDATE dogLogs SET logIsDeleted = 1, logLastModified = ? WHERE logId = ?',
+      [logLastModified, logId],
     );
+
+    // update the dog last modified since one of its compoents was updated
+    await queryPromise(
+      req,
+      'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
+      [dogLastModified, dogId],
+    );
+
     return;
   }
   catch (error) {
@@ -23,13 +34,24 @@ const deleteLogQuery = async (req, logId) => {
  *  Queries the database to delete all logs for a dogId. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-const deleteLogsQuery = async (req, dogId) => {
+const deleteAllLogsForDogId = async (req, dogId) => {
   try {
+    const dogLastModified = new Date();
+    const logLastModified = dogLastModified;
+
     await queryPromise(
       req,
-      'DELETE FROM dogLogs WHERE dogId = ?',
-      [dogId],
+      'UPDATE dogLogs SET logIsDeleted = 1, logLastModified = ? WHERE dogId = ?',
+      [logLastModified, dogId],
     );
+
+    // update the dog last modified since one of its compoents was updated
+    await queryPromise(
+      req,
+      'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
+      [dogLastModified, dogId],
+    );
+
     return;
   }
   catch (error) {
@@ -37,4 +59,4 @@ const deleteLogsQuery = async (req, dogId) => {
   }
 };
 
-module.exports = { deleteLogQuery, deleteLogsQuery };
+module.exports = { deleteLogForLogId, deleteAllLogsForDogId };

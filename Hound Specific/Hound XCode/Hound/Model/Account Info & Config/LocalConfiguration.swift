@@ -13,10 +13,8 @@ enum LocalConfiguration {
     
     // MARK: Sync Related
     
-    // TO DO make the app store the last date a full dogManager was retrieved from the server and store the dogManager. Then when the user goes to sync again, we provide lastDogManagerSync which tells the server to only provide items that were updated after the last time the user synced. This makes it so the user always has the latest information without having to constantly retrieve it all.
-    
     // For our first every dogManager sync, we want to retrieve ever dog, reminder, and log (which can be a LOT of data as accounts accumlate logs over the years). To get everything the family has ever added, we set our last sync as far back in time as it will go. This will retrieve everything
-    static var lastDogManagerSync: Date = Date(timeIntervalSince1970: 0)
+    static var lastServerSynchronization: Date = Date(timeIntervalSince1970: 0)
     
     // MARK: Dog Related
     
@@ -114,5 +112,31 @@ enum LocalConfiguration {
     
     /// Keeps track of if the user has viewed AND completed the reminders introduction view controller (which helps the user setup their first reminders)
     static var hasLoadedRemindersIntroductionViewControllerBefore: Bool = false
+    
+    // MARK: Functions
+    
+    /// Resets the values of certain LocalConfiguration variables for when a user is joining a new family. These are certain local configurations that just control some basic user experience things, so can be modified.
+    static func resetForNewFamily() {
+        // We write these changes to storage immediately. If not, could cause funky issues if not persisted. For example: the dogs from user's old family would combine client side with dogs of new family, but this would only be client-side. Those dogs wouldn't actually exist on the server and would be bugged.
+        
+       LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = false
+        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedFamilyIntroductionViewControllerBefore.rawValue)
+        
+        LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
+        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue)
+        
+        LocalConfiguration.lastServerSynchronization = Date(timeIntervalSince1970: 0)
+        UserDefaults.standard.set(LocalConfiguration.lastServerSynchronization, forKey: ServerDefaultKeys.lastServerSynchronization.rawValue)
+        
+        LocalConfiguration.dogIcons = []
+        if let dataDogIcons = try? NSKeyedArchiver.archivedData(withRootObject: LocalConfiguration.dogIcons, requiringSecureCoding: false) {
+            UserDefaults.standard.set(dataDogIcons, forKey: UserDefaultsKeys.dogIcons.rawValue)
+        }
+        
+        // reset local dogManager to blank to clear what was saved from the last
+        if let dataDogManager = try? NSKeyedArchiver.archivedData(withRootObject: DogManager(), requiringSecureCoding: false) {
+            UserDefaults.standard.set(dataDogManager, forKey: ServerDefaultKeys.dogManager.rawValue)
+        }
+    }
     
 }

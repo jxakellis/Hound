@@ -22,6 +22,8 @@ enum ServerDefaultKeys: String {
     case familyMembers
     case isFamilyHead
     
+    case dogManager
+    
     case familyCode
     case isLocked
     case isPaused
@@ -52,12 +54,13 @@ enum ServerDefaultKeys: String {
     
     // MARK: - Special Local Configuration
     
-    case lastDogManagerSync
+    case lastServerSynchronization
     
     // MARK: Dog
     
     case dogId
     case dogName
+    case dogIsDeleted
     
     // MARK: Logs
     
@@ -70,6 +73,7 @@ enum ServerDefaultKeys: String {
     case logCustomActionName
     case logDate
     case logNote
+    case logIsDeleted
     
     // MARK: Reminders
     
@@ -84,6 +88,7 @@ enum ServerDefaultKeys: String {
     case reminderExecutionBasis
     case reminderExecutionDate
     case reminderIsEnabled
+    case reminderIsDeleted
     
     // MARK: Snooze Components
     

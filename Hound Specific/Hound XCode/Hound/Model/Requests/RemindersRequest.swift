@@ -175,7 +175,8 @@ extension RemindersRequest {
                 if let remindersBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
                     var reminderArray: [Reminder] = []
                     for reminderBody in remindersBody {
-                        reminderArray.append(Reminder(fromBody: reminderBody))
+                        let reminder = Reminder(fromBody: reminderBody)
+                        reminderArray.append(reminder)
                     }
                     completionHandler(reminderArray, responseStatus)
                 }

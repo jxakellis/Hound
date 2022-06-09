@@ -69,7 +69,7 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
     // the reminderId has to exist to search and we check to make sure the dogId isn't null (to make sure the dog still exists too)
     const reminderWithInfo = await queryPromise(
       connectionForAlarms,
-      'SELECT dogs.dogName, dogReminders.reminderId, dogReminders.reminderExecutionDate, dogReminders.reminderAction, dogReminders.reminderCustomActionName FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
+      'SELECT dogs.dogName, dogReminders.reminderId, dogReminders.reminderExecutionDate, dogReminders.reminderAction, dogReminders.reminderCustomActionName, dogReminders.reminderLastModified FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
       [reminderId],
     );
     const reminder = reminderWithInfo[0];
@@ -84,7 +84,8 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
     const alertBody = `Give your dog a helping hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
 
     // send immediate APN notification for family
-    sendAPNForFamily(familyId, REMINDER_CATEGORY, alertTitle, alertBody);
+    const customPayload = { reminderId: reminder.reminderId, reminderLastModified: reminder.reminderLastModified };
+    sendAPNForFamily(familyId, REMINDER_CATEGORY, alertTitle, alertBody, customPayload);
 
     // createSecondaryAlarmNotificationForFamily, handles the secondary alarm notifications
     // If the reminderExecutionDate is in the past, sends APN notification asap. Otherwise, schedule job to send at reminderExecutionDate.
@@ -170,7 +171,7 @@ const sendSecondaryAPNForUser = async (userId, reminderId) => {
     // the reminderId has to exist to search and we check to make sure the dogId isn't null (to make sure the dog still exists too)
     const reminderWithInfo = await queryPromise(
       connectionForAlarms,
-      'SELECT dogs.dogName, dogReminders.reminderAction, dogReminders.reminderCustomActionName FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
+      'SELECT dogs.dogName, dogReminders.reminderId, dogReminders.reminderAction, dogReminders.reminderCustomActionName, dogReminders.reminderLastModified FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
       [reminderId],
     );
     const reminder = reminderWithInfo[0];
@@ -184,7 +185,8 @@ const sendSecondaryAPNForUser = async (userId, reminderId) => {
     const alertTitle = `Follow up reminder for ${reminder.dogName}`;
     const alertBody = `It's been a bit, remember to give your dog a helping hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
 
-    sendAPNForUser(userId, REMINDER_CATEGORY, alertTitle, alertBody);
+    const customPayload = { reminderId: reminder.reminderId, reminderLastModified: reminder.reminderLastModified };
+    sendAPNForUser(userId, REMINDER_CATEGORY, alertTitle, alertBody, customPayload);
   }
   catch (error) {
     alarmLogger.error('sendAPNForUser error:');

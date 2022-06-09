@@ -8,7 +8,13 @@
 
 import UIKit
 
-class ServerSyncViewController: UIViewController {
+class ServerSyncViewController: UIViewController, ServerFamilyViewControllerDelegate, DogManagerControlFlowProtocol {
+
+    // MARK: - ServerFamilyViewControllerDelegate
+    
+    func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
+        setDogManager(sender: sender, newDogManager: newDogManager)
+    }
     
     // MARK: - IB
     
@@ -39,7 +45,15 @@ class ServerSyncViewController: UIViewController {
     private var noResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: GeneralResponseError.noGetResponse.rawValue, preferredStyle: .alert)
     
     /// DogManager that all of the retrieved information will be added too.
-    private var dogManager = DogManager()
+    static var dogManager = DogManager()
+    
+    func getDogManager() -> DogManager {
+        return ServerSyncViewController.dogManager
+    }
+    
+    func setDogManager(sender: Sender, newDogManager: DogManager) {
+        ServerSyncViewController.dogManager = newDogManager
+    }
     
     private var serverContacted = false
     private var getUserFinished = false
@@ -187,11 +201,12 @@ class ServerSyncViewController: UIViewController {
     private func getFamilyConfigurationAndDogs() {
         // we want to use our own custom error message
         // Additionally, getDogManager first makes sure the familyConfiguration is up to date with inital query then if successful it sends a second query to get our dogManager
-        RequestUtils.getDogManager(invokeErrorManager: false) { dogManager, responseStatus in
+        DogsRequest.get(invokeErrorManager: false, dogManager: ServerSyncViewController.dogManager) { newDogManager, responseStatus in
+            
             switch responseStatus {
             case .successResponse:
-                if dogManager != nil {
-                    self.dogManager = dogManager!
+                if newDogManager != nil {
+                    ServerSyncViewController.dogManager = newDogManager!
                     // Now its known getDogManager was successful which also implied that getFamily was successful
                     self.getFamilyFinished = true
                     self.getDogsFinished = true
@@ -206,7 +221,6 @@ class ServerSyncViewController: UIViewController {
             case .noResponse:
                 AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)
             }
-            
         }
     }
     
@@ -218,11 +232,15 @@ class ServerSyncViewController: UIViewController {
         // Pass the selected object to the new view controller.
         if segue.identifier == "mainTabBarViewController"{
             let mainTabBarViewController: MainTabBarViewController = segue.destination as! MainTabBarViewController
-            mainTabBarViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
+            mainTabBarViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: ServerSyncViewController.dogManager)
         }
         else if segue.identifier == "familyIntroductionViewController"{
             let familyIntroductionViewController: FamilyIntroductionViewController = segue.destination as! FamilyIntroductionViewController
-            familyIntroductionViewController.dogManager = dogManager
+            familyIntroductionViewController.dogManager = ServerSyncViewController.dogManager
+        }
+        else if segue.identifier == "serverFamilyViewController" {
+            let serverFamilyViewController: ServerFamilyViewController = segue.destination as! ServerFamilyViewController
+            serverFamilyViewController.delegate = self
         }
     }
     

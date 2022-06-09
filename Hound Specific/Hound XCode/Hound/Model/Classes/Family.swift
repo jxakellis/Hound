@@ -37,24 +37,48 @@ class FamilyMember: NSObject {
     
     /// The family member's full name. Handles cases where the first name and/or last name may be ""
     var displayFullName: String {
-        let trimmedFirstName = firstName?.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedLastName = lastName?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedFirstName = firstName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let trimmedLastName = lastName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         
         // check to see if anything is blank
-        if (trimmedFirstName == nil || trimmedFirstName == "") && (trimmedLastName == nil || trimmedLastName == "") {
+        if trimmedFirstName == "" && trimmedLastName == "" {
             return "No Name"
         }
         // we know one of OR both of the trimmedFirstName and trimmedLast name are != nil && != ""
-        else if trimmedFirstName == nil && trimmedFirstName == "" {
+        else if trimmedFirstName == "" {
             // no first name but has last name
-            return trimmedLastName!
+            return trimmedLastName
         }
-        else if trimmedLastName == nil && trimmedLastName == "" {
+        else if trimmedLastName == "" {
             // no last name but has first name
-            return trimmedFirstName!
+            return trimmedFirstName
         }
         else {
-            return "\(trimmedFirstName!) \(trimmedLastName!)"
+            return "\(trimmedFirstName) \(trimmedLastName)"
+        }
+    }
+    
+    /// The family member's initals name. Handles cases where the first name and/or last name may be ""
+    var displayInitals: String {
+        // get the first character of each string (using " " if nothing) then convert to single character string
+        let firstNameFirstLetter: String = String(firstName?.trimmingCharacters(in: .whitespacesAndNewlines).first ?? Character(""))
+        let lastNameFirstLetter: String = String(lastName?.trimmingCharacters(in: .whitespacesAndNewlines).first ?? Character(""))
+        
+        // check to see if anything is blank
+        if firstNameFirstLetter == "" && lastNameFirstLetter == "" {
+            return "UKN⚠️"
+        }
+        // we know one of OR both of the trimmedFirstName and trimmedLast name are != nil && != ""
+        else if firstNameFirstLetter == "" {
+            // no first name but has last name
+            return lastNameFirstLetter
+        }
+        else if firstNameFirstLetter == "" {
+            // no last name but has first name
+            return lastNameFirstLetter
+        }
+        else {
+            return "\(firstNameFirstLetter).\(lastNameFirstLetter)."
         }
     }
     

@@ -17,7 +17,8 @@ const createLogQuery = async (req) => {
   const { logNote } = req.body; // required
   const { logAction } = req.body; // required
   const { logCustomActionName } = req.body; // optional
-  const logLastModified = new Date(); // manual
+  const dogLastModified = new Date();
+  const logLastModified = dogLastModified; // manual
 
   if (areAllDefined(userId, dogId, logDate, logNote, logAction) === false) {
     throw new ValidationError('userId, dogId, logDate, logNote, or logAction missing', 'ER_VALUES_MISSING');
@@ -27,7 +28,7 @@ const createLogQuery = async (req) => {
   try {
     numberOfLogs = await queryPromise(
       req,
-      'SELECT logId FROM dogLogs WHERE dogId = ?',
+      'SELECT logId FROM dogLogs WHERE logIsDeleted = 0 AND dogId = ?',
       [dogId],
     );
   }
@@ -46,6 +47,14 @@ const createLogQuery = async (req) => {
       'INSERT INTO dogLogs(userId, dogId, logDate, logNote, logAction, logCustomActionName, logLastModified) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [userId, dogId, logDate, logNote, logAction, logCustomActionName, logLastModified],
     );
+
+    // update the dog last modified since one of its compoents was updated
+    await queryPromise(
+      req,
+      'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
+      [dogLastModified, dogId],
+    );
+
     return result.insertId;
   }
   catch (error) {

@@ -17,12 +17,14 @@ const updateReminderQuery = async (req, reminder) => {
   }
 
   // general reminder components
-  const reminderId = formatNumber(reminder.reminderId);
+  const dogId = req.params.dogId;
+  const reminderId = reminder.reminderId;
   const { reminderAction, reminderCustomActionName, reminderType } = reminder;
   const reminderIsEnabled = formatBoolean(reminder.reminderIsEnabled);
   const reminderExecutionBasis = formatDate(reminder.reminderExecutionBasis);
   const reminderExecutionDate = formatDate(reminder.reminderExecutionDate);
-  const reminderLastModified = new Date();
+  const dogLastModified = new Date();
+  const reminderLastModified = dogLastModified;
 
   // snooze components
   const snoozeIsEnabled = formatBoolean(reminder.snoozeIsEnabled);
@@ -103,6 +105,13 @@ const updateReminderQuery = async (req, reminder) => {
         oneTimeDate,
         reminderId,
       ],
+    );
+
+    // update the dog last modified since one of its compoents was updated
+    await queryPromise(
+      req,
+      'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
+      [dogLastModified, dogId],
     );
 
     return [reminder];

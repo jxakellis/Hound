@@ -1,7 +1,7 @@
 const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
-const { deleteDogsQuery } = require('./deleteForDogs');
+const { deleteAllDogsForFamilyId } = require('./deleteForDogs');
 const { createFamilyMemberLeaveNotification } = require('../../main/tools/notifications/alert/createFamilyNotification');
 
 /**
@@ -49,7 +49,7 @@ const deleteFamilyQuery = async (req, userId, familyId) => {
     }
 
     // delete all the dogs
-    await deleteDogsQuery(req, userId, familyId);
+    await deleteAllDogsForFamilyId(req, familyId);
   }
   // User is not the head of the family, so no obligation
   else {

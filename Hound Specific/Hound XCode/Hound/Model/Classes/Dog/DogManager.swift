@@ -8,106 +8,7 @@
 
 import UIKit
 
-/// Protocol outlining functionality of DogManger
-protocol DogManagerProtocol {
-    
-    /// Stores all the dogs. This is get only to make sure integrite of dogs added is kept
-    var dogs: [Dog] { get }
-    
-    /// Returns true if ANY the dogs present has at least 1 CREATED reminder
-    var hasCreatedReminder: Bool { get }
-    
-    /// Returns true if dogs.count > 0
-    var hasCreatedDog: Bool { get }
-    
-    /// Returns true if ANY the dogs present has at least 1 ENABLED reminder
-    var hasEnabledReminder: Bool { get }
-    
-    /// Returns number of reminders that are enabled and therefore have a timer. Does not factor in isPaused.
-    var enabledTimersCount: Int { get }
-    
-    /// Adds a dog to dogs, checks to see if the dog itself is valid, e.g. its dogId is unique. Currently override other dog with the same dogId
-    mutating func addDog(newDog: Dog) throws
-    
-    /// Adds array of dogs with addDog(newDog: Dog) repition
-    mutating func addDogs(newDogs: [Dog]) throws
-    
-    /// Removes a dog with the given dogId
-    mutating func removeDog(forDogId dogId: Int) throws
-    
-    /// Removes a dog at the given index
-    mutating func removeDog(forIndex index: Int)
-    
-    /// Finds dog with the provided dogId then replaces it with the newDog
-    mutating func changeDog(forDogId dogId: Int, newDog: Dog) throws
-    
-    /// Returns reference of a dog with the given dogId
-    func findDog(forDogId dogId: Int) throws -> Dog
-    
-    /// Returns the index of a dog with the given dogId
-    func findIndex(forDogId dogId: Int) throws -> Int
-}
-
-extension DogManagerProtocol {
-    
-    func findDog(forDogId dogId: Int) throws -> Dog {
-        for d in 0..<dogs.count where dogs[d].dogId == dogId {
-            return dogs[d]
-        }
-        
-        throw DogManagerError.dogIdNotPresent
-    }
-    
-    func findIndex(forDogId dogId: Int) throws -> Int {
-        for d in 0..<dogs.count where dogs[d].dogId == dogId {
-            return d
-        }
-        
-        throw DogManagerError.dogIdNotPresent
-    }
-    
-    var hasCreatedReminder: Bool {
-        for dog in 0..<dogs.count where dogs[dog].dogReminders.reminders.count > 0 {
-            return true
-        }
-        return false
-    }
-    
-    var hasCreatedDog: Bool {
-        if dogs.count > 0 {
-            return true
-        }
-        else {
-            return false
-        }
-    }
-    
-    var hasEnabledReminder: Bool {
-        for dog in dogs {
-            for reminder in dog.dogReminders.reminders where reminder.reminderIsEnabled == true {
-                return true
-            }
-        }
-        return false
-    }
-    
-    var enabledTimersCount: Int {
-        var count = 0
-        for d in 0..<MainTabBarViewController.staticDogManager.dogs.count {
-            
-            for r in 0..<MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders.count {
-                guard MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders[r].reminderIsEnabled == true else {
-                    continue
-                }
-                
-                count += 1
-            }
-        }
-        return count
-    }
-}
-
-class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
+class DogManager: NSObject, NSCopying, NSCoding {
     
     // MARK: - NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
@@ -141,50 +42,75 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         self.addDogs(newDogs: dogs)
     }
     
+    /// Init from an array of dog JSON
+    convenience init?(fromBody dogBodies: [[String: Any]]) {
+       
+        var dogArray: [Dog] = []
+        
+        // Array of dog JSON [{dog1:'foo'},{dog2:'bar'}]
+        for dogBody in dogBodies {
+            let dog = Dog(fromBody: dogBody)
+                // If we have an image stored locally for a dog, then we apply the icon.
+                // If the dog has no icon (because someone else in the family made it and the user hasn't selected their own icon OR because the user made it and never added an icon) then the dog just gets the defaultDogIcon
+                dog.dogIcon = LocalDogIcon.getIcon(forDogId: dog.dogId) ?? DogConstant.defaultDogIcon
+                dogArray.append(dog)
+        }
+        
+        self.init(forDogs: dogArray)
+    }
+    
     private var storedDogs: [Dog] = []
-    /// Array of dogs
+    /// Stores all the dogs. This is get only to make sure integrite of dogs added is kept
     var dogs: [Dog] { return storedDogs }
     
-    func addDog(newDog: Dog) {
-        
-        // removes any existing dogs that have the same dogId as they would cause problems. .reversed() is needed to make it work, without it there will be an index of out bounds error.
-        for (dogIndex, dog) in dogs.enumerated().reversed() where dog.dogId == newDog.dogId {
-            storedDogs.remove(at: dogIndex)
+    /// Helper function allows us to use the same logic for addDog and addDogs and allows us to only sort at the end. Without this function, addDogs would invoke addDog repeadly and sortDogs() with each call.
+    func addDogWithoutSorting(newDog: Dog) {
+        // If we discover a newDog has the same dogId as an existing dog, we replace that existing dog with the new dog BUT we first add the existing reminders and logs to the new dog's reminders and logs.
+        for (currentDogIndex, currentDog) in dogs.enumerated().reversed() where currentDog.dogId == newDog.dogId {
+            // we should combine the currentDog's reminders/logs into the new dog
+            newDog.combine(withOldDog: currentDog)
+            newDog.dogIcon = currentDog.dogIcon
+            storedDogs.remove(at: currentDogIndex)
+            break
         }
         
         storedDogs.append(newDog)
+    }
+    
+    /// Adds a dog to dogs, checks to see if the dog itself is valid, e.g. its dogId is unique. Currently override other dog with the same dogId
+    func addDog(newDog: Dog) {
         
+        addDogWithoutSorting(newDog: newDog)
+        
+        sortDogs()
+    }
+    
+    /// Adds array of dogs with addDog(newDog: Dog) repition  (but only sorts once at the end to be more efficent)
+    func addDogs(newDogs: [Dog]) {
+        for newDog in newDogs {
+            addDogWithoutSorting(newDog: newDog)
+        }
+        
+        sortDogs()
+    }
+    
+    /// Sorts the dogs based upon their dogId
+    private func sortDogs() {
         storedDogs.sort { dog1, dog2 in
             return dog1.dogId <= dog2.dogId
         }
     }
     
-    func addDogs(newDogs: [Dog]) {
-        for i in 0..<newDogs.count {
-            addDog(newDog: newDogs[i])
-        }
-    }
-    
-    func changeDog(forDogId dogId: Int, newDog: Dog) throws {
-        var newDogIndex: Int?
-        
-        for i in 0..<dogs.count where dogs[i].dogId == dogId {
-            newDogIndex = i
-        }
-        
-        if newDogIndex == nil {
-            throw DogManagerError.dogIdNotPresent
-        }
-        else {
-            storedDogs[newDogIndex!] = newDog
-        }
-    }
-    
+    /// Removes a dog with the given dogId
     func removeDog(forDogId dogId: Int) throws {
         var matchingDogIndex: Int?
         
         for (index, dog) in dogs.enumerated() where dog.dogId == dogId {
             matchingDogIndex = index
+            // make sure we invalidate all the timers associated. this isn't technically necessary but its easier to tie up lose ends here
+            for reminder in dog.dogReminders.reminders {
+                reminder.timer?.invalidate()
+            }
             break
         }
         
@@ -196,8 +122,87 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         }
     }
     
+    /// Removes a dog at the given index
     func removeDog(forIndex index: Int) {
+        // unsafe function
+        let dog = dogs[index]
+        
+        // make sure we invalidate all the timers associated. this isn't technically necessary but its easier to tie up lose ends here
+        for reminder in dog.dogReminders.reminders {
+            reminder.timer?.invalidate()
+        }
+        
         storedDogs.remove(at: index)
+    }
+    
+}
+
+extension DogManager {
+    
+    // MARK: Locate
+    
+    /// Returns reference of a dog with the given dogId
+    func findDog(forDogId dogId: Int) throws -> Dog {
+        for d in 0..<dogs.count where dogs[d].dogId == dogId {
+            return dogs[d]
+        }
+        
+        throw DogManagerError.dogIdNotPresent
+    }
+    
+    /// Returns the index of a dog with the given dogId
+    func findIndex(forDogId dogId: Int) throws -> Int {
+        for d in 0..<dogs.count where dogs[d].dogId == dogId {
+            return d
+        }
+        
+        throw DogManagerError.dogIdNotPresent
+    }
+    
+    // MARK: Information
+    
+    /// Returns true if ANY the dogs present has at least 1 CREATED reminder
+    var hasCreatedReminder: Bool {
+        for dog in 0..<dogs.count where dogs[dog].dogReminders.reminders.count > 0 {
+            return true
+        }
+        return false
+    }
+    
+    /// Returns true if dogs.count > 0
+    var hasCreatedDog: Bool {
+        if dogs.count > 0 {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    
+    /// Returns true if ANY the dogs present has at least 1 ENABLED reminder
+    var hasEnabledReminder: Bool {
+        for dog in dogs {
+            for reminder in dog.dogReminders.reminders where reminder.reminderIsEnabled == true {
+                return true
+            }
+        }
+        return false
+    }
+    
+    /// Returns number of reminders that are enabled and therefore have a timer. Does not factor in isPaused.
+    var enabledTimersCount: Int {
+        var count = 0
+        for d in 0..<MainTabBarViewController.staticDogManager.dogs.count {
+            
+            for r in 0..<MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders.count {
+                guard MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders[r].reminderIsEnabled == true else {
+                    continue
+                }
+                
+                count += 1
+            }
+        }
+        return count
     }
     
     /// Returns an array of tuples [(parentDogId, log]). This array has all the logs for all the dogs sorted chronologically, oldest log at index 0 and newest at end of array. Optionally filters by the dogId and logAction provides
@@ -257,8 +262,8 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
                 return true
             }
         }
-            
-            return chronologicalLogs
+        
+        return chronologicalLogs
     }
     
     /// Returns an array of tuples [(uniqueDay, uniqueMonth, uniqueYear, [(parentDogId, log)])]. This array has all of the logs for all of the dogs grouped what unique day/month/year they occured on, first element is furthest in the future and last element is the oldest. Optionally filters by the dogId and logAction provides
@@ -334,6 +339,16 @@ class DogManager: NSObject, DogManagerProtocol, NSCopying, NSCoding {
         
         return chronologicalLogsGroupedByDate
         
+    }
+    
+    // MARK: Compare
+    
+    /// Combines all of the dogs, reminders, and logs in union fashion to the dogManager. If a dog, reminder, or log exists in either of the dogManagers, then they will be present after this function is done. Dogs, reminders, or logs in the newDogManager (this object) overwrite dogs, reminders, or logs in the oldDogManager. Note: if one dog is to overwrite another dog, it will first combine the reminder/logs, again the reminders/logs of the newDog will take precident over the reminders/logs of the oldDog.
+    func combine(withOldDogManager oldDogManager: DogManager) {
+        // the addDogs function overwrites the dog info (e.g. dogName) but combines the reminders / logs in the event that the oldDogManager and the newDogManager both contain a dog with the same dogId. Therefore, we must add the dogs to the oldDogManager (allowing the newDogManager to overwrite the oldDogManager dogs if there is an overlap)
+        oldDogManager.addDogs(newDogs: self.dogs)
+        // now that the oldDogManager contains its original dogs, our new dogs, and has had its old dogs overwritten (in the case old & new both had a dog with same dogId), we have an updated array.
+        self.storedDogs = oldDogManager.dogs
     }
     
 }

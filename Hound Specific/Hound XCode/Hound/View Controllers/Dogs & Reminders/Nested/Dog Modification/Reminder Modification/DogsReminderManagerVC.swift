@@ -218,9 +218,9 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
                 reminderActionLabel.text = ""
             }
             reminderActionLabel.placeholder = "Select an action..."
-            selectedReminderAction = targetReminder?.reminderAction ?? ReminderConstant.defaultAction
+            selectedReminderAction = targetReminder?.reminderAction
             
-            initalReminderAction = targetReminder?.reminderAction ?? ReminderConstant.defaultAction
+            initalReminderAction = targetReminder?.reminderAction
             
             reminderCustomActionNameTextField.text = targetReminder?.reminderCustomActionName
             reminderCustomActionNameTextField.placeholder = " Enter a custom action name..."
@@ -230,9 +230,9 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             // if == is true, that means it is custom, which means it shouldn't hide so ! reverses to input isHidden: false, reverse for if type is not custom. This is because this text input field is only used for custom types.
             toggleReminderCustomActionNameTextField(isHidden: !(targetReminder?.reminderAction == .custom))
             
-            reminderIsEnabledSwitch.isOn = targetReminder?.reminderIsEnabled ?? ReminderConstant.defaultEnable
+            reminderIsEnabledSwitch.isOn = targetReminder?.reminderIsEnabled ?? ReminderConstant.defaultReminderIsEnabled
             
-            initalReminderIsEnabled = targetReminder?.reminderIsEnabled ?? ReminderConstant.defaultEnable
+            initalReminderIsEnabled = targetReminder?.reminderIsEnabled ?? ReminderConstant.defaultReminderIsEnabled
         }
         
         /// Sets up gestureRecognizer for dog selector drop down
@@ -332,23 +332,25 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             
             switch reminderTypeSegmentedControl.selectedSegmentIndex {
             case 0:
-                reminder.changeReminderType(newReminderType: .oneTime)
+                reminder.reminderType = .oneTime
+                
                 reminder.oneTimeComponents.oneTimeDate = dogsReminderOneTimeViewController.oneTimeDate
             case 1:
-                reminder.changeReminderType(newReminderType: .countdown)
+                reminder.reminderType = .countdown
+                
                 reminder.countdownComponents.changeExecutionInterval(newExecutionInterval: dogsReminderCountdownViewController.countdown.countDownDuration)
             case 2:
                 let weekdays = dogsReminderWeeklyViewController.weekdays
                 if weekdays == nil {
                     throw WeeklyComponentsError.weekdayArrayInvalid
                 }
-                reminder.changeReminderType(newReminderType: .weekly)
+                reminder.reminderType = .weekly
                 
                 try reminder.weeklyComponents.changeWeekdays(newWeekdays: weekdays!)
                 try reminder.weeklyComponents.changeHour(newHour: Calendar.current.component(.hour, from: dogsReminderWeeklyViewController.timeOfDayDatePicker.date))
                 try reminder.weeklyComponents.changeMinute(newMinute: Calendar.current.component(.minute, from: dogsReminderWeeklyViewController.timeOfDayDatePicker.date))
             case 3:
-                reminder.changeReminderType(newReminderType: .monthly)
+                reminder.reminderType = .monthly
                 try reminder.monthlyComponents.changeDay(newDay: Calendar.current.component(.day, from: dogsReminderMonthlyViewController.timeOfDayDatePicker.date))
                 try reminder.monthlyComponents.changeHour(newHour: Calendar.current.component(.hour, from: dogsReminderMonthlyViewController.timeOfDayDatePicker.date))
                 try reminder.monthlyComponents.changeMinute(newMinute: Calendar.current.component(.minute, from: dogsReminderMonthlyViewController.timeOfDayDatePicker.date))

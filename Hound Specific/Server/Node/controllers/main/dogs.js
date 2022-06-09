@@ -1,7 +1,7 @@
 const { getDogQuery, getDogsQuery } = require('../getFor/getForDogs');
 const { createDogQuery } = require('../createFor/createForDogs');
 const { updateDogQuery } = require('../updateFor/updateForDogs');
-const { deleteDogQuery } = require('../deleteFor/deleteForDogs');
+const { deleteDogForDogId } = require('../deleteFor/deleteForDogs');
 const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
 const { areAllDefined } = require('../../main/tools/format/formatObject');
 
@@ -68,7 +68,7 @@ const updateDog = async (req, res) => {
 const deleteDog = async (req, res) => {
   const dogId = req.params.dogId;
   try {
-    await deleteDogQuery(req, req.params.userId, req.params.familyId, dogId);
+    await deleteDogForDogId(req, req.params.familyId, dogId);
     await req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }

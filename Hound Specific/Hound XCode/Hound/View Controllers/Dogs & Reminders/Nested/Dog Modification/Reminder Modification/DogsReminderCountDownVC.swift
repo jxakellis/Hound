@@ -51,7 +51,7 @@ class DogsReminderCountdownViewController: UIViewController, UIGestureRecognizer
             self.countdown.countDownDuration = self.passedInterval!
         }
         else {
-            self.countdown.countDownDuration = ReminderConstant.defaultTimeInterval
+            self.countdown.countDownDuration = ReminderComponentConstant.defaultCountdownExecutionInterval
             passedInterval = countdown.countDownDuration
         }
 
@@ -61,7 +61,7 @@ class DogsReminderCountdownViewController: UIViewController, UIGestureRecognizer
                 self.countdown.countDownDuration = self.passedInterval!
             }
             else {
-                self.countdown.countDownDuration = ReminderConstant.defaultTimeInterval
+                self.countdown.countDownDuration = ReminderComponentConstant.defaultCountdownExecutionInterval
             }
         }
 

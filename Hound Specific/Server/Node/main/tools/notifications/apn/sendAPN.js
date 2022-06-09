@@ -13,12 +13,13 @@ const { getUserToken, getAllFamilyMemberTokens, getOtherFamilyMemberTokens } = r
  * Takes a string that will be the title of the notification
  * Takes a string that will be the body of the notification
  */
-const sendAPN = (token, category, sound, alertTitle, alertBody) => {
+// (token, category, sound, alertTitle, alertBody)
+const sendAPN = (token, category, sound, alertTitle, alertBody, customPayload) => {
   apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${alertTitle}, ${alertBody}`);
 
   try {
     // sound doesn't have to be defined, its optional
-    if (areAllDefined(token, category, alertTitle, alertBody) === false) {
+    if (areAllDefined(token, category, alertTitle, alertBody, customPayload) === false) {
       return;
     }
 
@@ -73,6 +74,12 @@ const sendAPN = (token, category, sound, alertTitle, alertBody) => {
       notification.rawPayload.aps.sound = `${sound}30.wav`;
     }
 
+    // add customPayload into rawPayload
+    notification.rawPayload = {
+      ...customPayload,
+      ...notification.rawPayload,
+    };
+
     // aps Dictionary Keys
     // https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2943363
 
@@ -105,20 +112,20 @@ const sendAPN = (token, category, sound, alertTitle, alertBody) => {
 * Takes a userId and retrieves the userNotificationToken for the user
 * Invokes sendAPN with the tokens, alertTitle, and alertBody
 */
-const sendAPNForUser = async (userId, category, alertTitle, alertBody) => {
-  apnLogger.debug(`sendAPNForUser ${userId}, ${category}, ${alertTitle}, ${alertBody}`);
+const sendAPNForUser = async (userId, category, alertTitle, alertBody, customPayload) => {
+  apnLogger.debug(`sendAPNForUser ${userId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
 
   try {
     // get tokens of all qualifying family members that aren't the user
     const tokenAndSounds = formatArray(await getUserToken(userId));
 
-    if (areAllDefined(tokenAndSounds, category, alertTitle, alertBody) === false || tokenAndSounds.length === 0) {
+    if (areAllDefined(tokenAndSounds, category, alertTitle, alertBody, customPayload) === false || tokenAndSounds.length === 0) {
       return;
     }
 
     // sendAPN if there are > 0 user notification tokens
     for (let i = 0; i < tokenAndSounds.length; i += 1) {
-      sendAPN(tokenAndSounds[i].userNotificationToken, category, tokenAndSounds[i].notificationSound, alertTitle, alertBody);
+      sendAPN(tokenAndSounds[i].userNotificationToken, category, tokenAndSounds[i].notificationSound, alertTitle, alertBody, customPayload);
     }
   }
   catch (error) {
@@ -131,20 +138,20 @@ const sendAPNForUser = async (userId, category, alertTitle, alertBody) => {
  * Takes a familyId and retrieves the userNotificationToken for all familyMembers
  * Invokes sendAPN with the tokens, alertTitle, and alertBody
  */
-const sendAPNForFamily = async (familyId, category, alertTitle, alertBody) => {
-  apnLogger.debug(`sendAPNForFamily ${familyId}, ${category}, ${alertTitle}, ${alertBody}`);
+const sendAPNForFamily = async (familyId, category, alertTitle, alertBody, customPayload) => {
+  apnLogger.debug(`sendAPNForFamily ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
 
   try {
     // get notification tokens of all qualifying family members
     const tokenAndSounds = formatArray(await getAllFamilyMemberTokens(familyId));
 
-    if (areAllDefined(tokenAndSounds, category, alertTitle, alertBody) === false || tokenAndSounds.length === 0) {
+    if (areAllDefined(tokenAndSounds, category, alertTitle, alertBody, customPayload) === false || tokenAndSounds.length === 0) {
       return;
     }
 
     // sendAPN if there are > 0 user notification tokens
     for (let i = 0; i < tokenAndSounds.length; i += 1) {
-      sendAPN(tokenAndSounds[i].userNotificationToken, category, tokenAndSounds[i].notificationSound, alertTitle, alertBody);
+      sendAPN(tokenAndSounds[i].userNotificationToken, category, tokenAndSounds[i].notificationSound, alertTitle, alertBody, customPayload);
     }
   }
   catch (error) {
@@ -157,19 +164,19 @@ const sendAPNForFamily = async (familyId, category, alertTitle, alertBody) => {
  * Takes a familyId and retrieves the userNotificationToken for all familyMembers (excluding the userId provided)
  * Invokes sendAPN with the tokens, alertTitle, and alertBody
  */
-const sendAPNForFamilyExcludingUser = async (userId, familyId, category, alertTitle, alertBody) => {
-  apnLogger.debug(`sendAPNForFamilyExcludingUser ${userId}, ${familyId}, ${category}, ${alertTitle}, ${alertBody}`);
+const sendAPNForFamilyExcludingUser = async (userId, familyId, category, alertTitle, alertBody, customPayload) => {
+  apnLogger.debug(`sendAPNForFamilyExcludingUser ${userId}, ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
   try {
     // get tokens of all qualifying family members that aren't the user
     const tokenAndSounds = formatArray(await getOtherFamilyMemberTokens(userId, familyId));
 
-    if (areAllDefined(tokenAndSounds, category, alertTitle, alertBody) === false || tokenAndSounds.length === 0) {
+    if (areAllDefined(tokenAndSounds, category, alertTitle, alertBody, customPayload) === false || tokenAndSounds.length === 0) {
       return;
     }
 
     // sendAPN if there are > 0 user notification tokens
     for (let i = 0; i < tokenAndSounds.length; i += 1) {
-      sendAPN(tokenAndSounds[i].userNotificationToken, category, tokenAndSounds[i].notificationSound, alertTitle, alertBody);
+      sendAPN(tokenAndSounds[i].userNotificationToken, category, tokenAndSounds[i].notificationSound, alertTitle, alertBody, customPayload);
     }
   }
   catch (error) {

@@ -31,22 +31,53 @@ class LogManager: NSObject, NSCoding, NSCopying {
         super.init()
     }
     
+    convenience init(fromBody logBodies: [[String: Any]]) {
+        self.init()
+        
+        for logBody in logBodies {
+            let log = Log(fromBody: logBody)
+            addLog(newLog: log)
+        }
+        
+    }
+    
     // MARK: - Properties
     private var storedLogs: [Log] = []
     var logs: [Log] { return storedLogs }
     
-    func addLog(newLog: Log) {
-        
+    /// Helper function allows us to use the same logic for addLog and addLogs and allows us to only sort at the end. Without this function, addLogs would invoke addLog repeadly and sortLogs() with each call.
+    private func addLogWithoutSorting(newLog: Log) {
         // removes any existing logs that have the same logId as they would cause problems. .reversed() is needed to make it work, without it there will be an index of out bounds error.
         for (logIndex, log) in logs.enumerated().reversed() where log.logId == newLog.logId {
-            // instead of crashing, replace the log.
+            // replace the log
             storedLogs.remove(at: logIndex)
-            storedLogs.append(newLog)
-            return
+            break
         }
         
         storedLogs.append(newLog)
+    }
+    
+    func addLog(newLog: Log) {
         
+        addLogWithoutSorting(newLog: newLog)
+        
+        sortLogs()
+        
+    }
+    
+    func addLogs(newLogs: [Log]) {
+        
+        for newLog in newLogs {
+            addLogWithoutSorting(newLog: newLog)
+        }
+        
+        sortLogs()
+        
+    }
+    
+    /// No sort currently used
+    private func sortLogs() {
+        // no sort currently used
     }
     
     func removeLog(forLogId logId: Int) throws {
@@ -69,6 +100,12 @@ class LogManager: NSObject, NSCoding, NSCopying {
     func removeLog(forIndex index: Int) {
         storedLogs.remove(at: index)
     }
+    
+}
+
+extension LogManager {
+    
+    // MARK: Information
     
     /// Returns an array of known log actions. Each known log action has an array of logs attached to it. This means you can find every log for a given log action
     var catagorizedLogActions: [(LogAction, [Log])] {
@@ -141,4 +178,13 @@ class LogManager: NSObject, NSCoding, NSCopying {
         return catagorizedLogActions
     }
     
+    // MARK: Compare
+    
+    /// Combines the logs of an old log manager with the new log manager, forming a union with their log arrays. In the event that the newLogManager (this object) has a log with the same id as the oldLogManager, the log from the newLogManager will override that log
+    func combine(withOldLogManager oldLogManager: LogManager) {
+        // the addLogs function overwrites logs if it finds them, so we must add the logs to the old log (allowing the newLogManager to overwrite the oldLogManager logs if there is an overlap)
+        oldLogManager.addLogs(newLogs: self.logs)
+        // now that the oldLogManager contains its original logs, our new logs, and has had its old logs overwritten (in the case old & new both had a log with same logId), we have an updated array.
+        self.storedLogs = oldLogManager.logs
+    }
 }

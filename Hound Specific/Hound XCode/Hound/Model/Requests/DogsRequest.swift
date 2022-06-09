@@ -16,7 +16,7 @@ enum DogsRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func internalGet(invokeErrorManager: Bool, forDogId dogId: Int?, reminders: Bool, logs: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    private static func internalGet(invokeErrorManager: Bool, forDogId dogId: Int?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
         InternalRequestUtils.warnForPlaceholderId(dogId: dogId)
         
@@ -25,19 +25,18 @@ enum DogsRequest: RequestProtocol {
         // special case where we append the query parameter of all. Its value doesn't matter but it just tells the server that we want the logs and reminders of the dog too.
         if dogId != nil {
             urlComponents = URLComponents(url: baseURLWithoutParams.appendingPathComponent("/\(dogId!)"), resolvingAgainstBaseURL: false)!
-            
         }
         else {
             urlComponents = URLComponents(url: baseURLWithoutParams.appendingPathComponent(""), resolvingAgainstBaseURL: false)!
         }
         
-        urlComponents.queryItems = []
-        if reminders == true {
-            urlComponents.queryItems!.append(URLQueryItem(name: "reminders", value: "true"))
-        }
-        if logs == true {
-            urlComponents.queryItems!.append(URLQueryItem(name: "logs", value: "true"))
-        }
+        // if we are querying about a dog, we always want its reminders and logs
+        urlComponents.queryItems = [
+            URLQueryItem(name: "reminders", value: "true"),
+            URLQueryItem(name: "logs", value: "true"),
+            URLQueryItem(name: "lastServerSynchronization", value: LocalConfiguration.lastServerSynchronization.ISO8601FormatWithFractionalSeconds())
+        ]
+        
         URLWithParams = urlComponents.url!
         
         // make get request
@@ -99,22 +98,38 @@ extension DogsRequest {
     // MARK: - Public Functions
     
     /**
-     completionHandler returns a possible dog and the ResponseStatus.
-     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
+     completionHandler returns a dog. If the query returned a 200 status and is successful, then the dog is returned (the client-side dog is combined with the server-side updated dog). Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
      */
-    static func get(invokeErrorManager: Bool, forDogId dogId: Int, reminders: Bool, logs: Bool, completionHandler: @escaping (Dog?, ResponseStatus) -> Void) {
+    static func get(invokeErrorManager: Bool, dog currentDog: Dog, completionHandler: @escaping (Dog?, ResponseStatus) -> Void) {
         
-        DogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, reminders: reminders, logs: logs) { responseBody, responseStatus in
+        DogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: currentDog.dogId) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 // Array of log JSON [{dog1:'foo'},{dog2:'bar'}]
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
-                    let dog = Dog(fromBody: result[0])
+                if let newDogBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
+                    
+                    let newDog = Dog(fromBody: newDogBody[0])
+                    
+                    guard newDog.dogIsDeleted == false else {
+                        completionHandler(nil, responseStatus)
+                        return
+                    }
+                    
+                    newDog.combine(withOldDog: currentDog)
                     // If we have an image stored locally for a dog, then we apply the icon.
                     // If the dog has no icon (because someone else in the family made it and the user hasn't selected their own icon OR because the user made it and never added an icon) then the dog just gets the defaultDogIcon
-                    dog.dogIcon = LocalDogIcon.getIcon(forDogId: dog.dogId) ?? DogConstant.defaultDogIcon
+                    newDog.dogIcon = LocalDogIcon.getIcon(forDogId: newDog.dogId) ?? DogConstant.defaultDogIcon
                     
-                    completionHandler(dog, responseStatus)
+                    // delete any newReminder with the marker that they should be deleted
+                    for newReminder in newDog.dogReminders.reminders where newReminder.reminderIsDeleted == true {
+                        try? newDog.dogReminders.removeReminder(forReminderId: newReminder.reminderId)
+                    }
+                    // delere any newLog with the marker that they should be deleted
+                    for newLog in newDog.dogLogs.logs where newLog.logIsDeleted == true {
+                        try? newDog.dogLogs.removeLog(forLogId: newLog.logId)
+                    }
+                    
+                    completionHandler(newDog, responseStatus)
                 }
                 else {
                     completionHandler(nil, responseStatus)
@@ -128,36 +143,65 @@ extension DogsRequest {
     }
     
     /**
-     completionHandler returns a possible array of dogs and the ResponseStatus.
-     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
+     First refreshes the FamilyConfiguration of the user to make sure everything is synced up (e.g. isPaused). completionHandler returns a dogManager. If the query returned a 200 status and is successful, then the dogManager is returned (the client-side dogManager is combined with the server-side updated dogManager). Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
      */
-    static func getAll(invokeErrorManager: Bool, reminders: Bool, logs: Bool, completionHandler: @escaping ([Dog]?, ResponseStatus) -> Void) {
-        DogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: nil, reminders: reminders, logs: logs) { responseBody, responseStatus in
-            switch responseStatus {
-            case .successResponse:
-                var dogArray: [Dog] = []
-                // Array of dog JSON [{dog1:'foo'},{dog2:'bar'}]
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
-                    for dogBody in result {
-                        let dog = Dog(fromBody: dogBody)
-                        // If we have an image stored locally for a dog, then we apply the icon.
-                        // If the dog has no icon (because someone else in the family made it and the user hasn't selected their own icon OR because the user made it and never added an icon) then the dog just gets the defaultDogIcon
-                        dog.dogIcon = LocalDogIcon.getIcon(forDogId: dog.dogId) ?? DogConstant.defaultDogIcon
-                        dogArray.append(dog)
+    static func get(invokeErrorManager: Bool, dogManager currentDogManager: DogManager, completionHandler: @escaping (DogManager?, ResponseStatus) -> Void) {
+        
+        // We want to sync the isPaused status before getting the newDogManager. Otherwise, reminder could be up to date but alarms could be going off locally since the local app doesn't realized that the app was paused (the opposite with an unpause could also be possible
+        FamilyRequest.get(invokeErrorManager: invokeErrorManager) { requestWasSuccessful, responseStatus in
+            guard requestWasSuccessful == true else {
+                return completionHandler(nil, responseStatus)
+            }
+            
+            // we want this Date() to be slightly in the past. If we set  LocalConfiguration.lastServerSynchronization = Date() after the request is successful then any changes that might have occured DURING our query (e.g. we are querying and at the exact same moment a family member creates a log) will not be saved. Therefore, this is more redundant and makes sure nothing is missed
+            let lastServerSynchronization = Date()
+            
+            // Now can get the dogManager
+            DogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: nil) { responseBody, responseStatus in
+                switch responseStatus {
+                case .successResponse:
+                    if let newDogManagerBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]], let newDogManager = DogManager(fromBody: newDogManagerBody) {
+                        
+                        // successful sync, so we can update value
+                        LocalConfiguration.lastServerSynchronization = lastServerSynchronization
+                        
+                        newDogManager.combine(withOldDogManager: currentDogManager)
+                        
+                        // Check to see if any dogs have the marker that they should be deleted
+                        // We do it this way as if we immediatly deleted the dog/reminder/log when converting the JSON to object, then the dog/reminder/log from the oldDogManager would still be present. This way allows us to create a dog/reminder/log that overwrites the oldDogManager's dog/reminder/log, but leaves this boolean in place to tell us whether it belongs or not.
+                        for newDog in newDogManager.dogs {
+                            // find any newDogs with the marker that they should be deleted, if they need to be, then no point to iterating through their logs/reminders
+                            if newDog.dogIsDeleted == true {
+                                try? newDogManager.removeDog(forDogId: newDog.dogId)
+                            }
+                            // dog shouldn't be deleted, so verify its reminders/logs
+                            else {
+                                // delete any newReminder with the marker that they should be deleted
+                                for newReminder in newDog.dogReminders.reminders where newReminder.reminderIsDeleted == true {
+                                    try? newDog.dogReminders.removeReminder(forReminderId: newReminder.reminderId)
+                                }
+                                // delere any newLog with the marker that they should be deleted
+                                for newLog in newDog.dogLogs.logs where newLog.logIsDeleted == true {
+                                    try? newDog.dogLogs.removeLog(forLogId: newLog.logId)
+                                }
+                            }
+                        }
+                        
+                        LocalDogIcon.checkForExtraIcons(forDogs: newDogManager.dogs)
+                        
+                        completionHandler(newDogManager, responseStatus)
                     }
-                    
-                    LocalDogIcon.checkForExtraIcons(forDogs: dogArray)
-                    completionHandler(dogArray, responseStatus)
-                }
-                else {
+                    else {
+                        completionHandler(nil, responseStatus)
+                    }
+                case .failureResponse:
+                    completionHandler(nil, responseStatus)
+                case .noResponse:
                     completionHandler(nil, responseStatus)
                 }
-            case .failureResponse:
-                completionHandler(nil, responseStatus)
-            case .noResponse:
-                completionHandler(nil, responseStatus)
             }
         }
+        
     }
     
     /**

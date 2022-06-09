@@ -30,7 +30,7 @@ const createFamilyMemberJoinNotification = async (userId, familyId) => {
     const alertBody = `Welcome ${abreviatedFullName} into your Hound family`;
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, GENERAL_CATEGORY, alertTitle, alertBody);
+    sendAPNForFamilyExcludingUser(userId, familyId, GENERAL_CATEGORY, alertTitle, alertBody, {});
   }
   catch (error) {
     alertLogger.error('createFamilyMemberJoinNotification error:');
@@ -60,7 +60,7 @@ const createFamilyMemberLeaveNotification = async (userId, familyId) => {
     const alertBody = `${abreviatedFullName} has parted ways with your Hound family`;
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, GENERAL_CATEGORY, alertTitle, alertBody);
+    sendAPNForFamilyExcludingUser(userId, familyId, GENERAL_CATEGORY, alertTitle, alertBody, {});
   }
   catch (error) {
     alertLogger.error('createFamilyMemberLeaveNotification error:');
@@ -99,7 +99,7 @@ const createFamilyLockedNotification = async (userId, familyId, newIsLocked) => 
     }
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, GENERAL_CATEGORY, alertTitle, alertBody);
+    sendAPNForFamilyExcludingUser(userId, familyId, GENERAL_CATEGORY, alertTitle, alertBody, {});
   }
   catch (error) {
     alertLogger.error('createFamilyLockedNotification error:');
@@ -138,7 +138,7 @@ const createFamilyPausedNotification = async (userId, familyId, newIsPaused) => 
     }
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, GENERAL_CATEGORY, alertTitle, alertBody);
+    sendAPNForFamilyExcludingUser(userId, familyId, GENERAL_CATEGORY, alertTitle, alertBody, {});
   }
   catch (error) {
     alertLogger.error('createFamilyPausedNotification error:');

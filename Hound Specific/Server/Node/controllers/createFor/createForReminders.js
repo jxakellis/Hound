@@ -21,7 +21,7 @@ const createReminderQuery = async (req, reminder) => {
   try {
     numberOfReminders = await queryPromise(
       req,
-      'SELECT reminderId FROM dogReminders WHERE dogId = ?',
+      'SELECT reminderId FROM dogReminders WHERE reminderIsDeleted = 0 AND dogId = ?',
       [dogId],
     );
   }
@@ -39,7 +39,8 @@ const createReminderQuery = async (req, reminder) => {
   const reminderIsEnabled = formatBoolean(reminder.reminderIsEnabled); // required
   const reminderExecutionBasis = formatDate(reminder.reminderExecutionBasis); // required
   const reminderExecutionDate = formatDate(reminder.reminderExecutionDate); // optional
-  const reminderLastModified = new Date(); // manual
+  const dogLastModified = new Date();
+  const reminderLastModified = dogLastModified; // manual
 
   // countdown components
   const countdownExecutionInterval = formatNumber(reminder.countdownExecutionInterval); // required
@@ -99,6 +100,13 @@ const createReminderQuery = async (req, reminder) => {
         monthlyDay, monthlyHour, monthlyMinute, false, undefined,
         oneTimeDate,
       ],
+    );
+
+    // update the dog last modified since one of its compoents was updated
+    await queryPromise(
+      req,
+      'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
+      [dogLastModified, dogId],
     );
 
     // ...reminder must come first otherwise its placeholder reminderId will override the real one

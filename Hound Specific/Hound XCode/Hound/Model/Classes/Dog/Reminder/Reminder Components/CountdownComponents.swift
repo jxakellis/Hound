@@ -50,7 +50,7 @@ class CountdownComponents: Component, NSCoding, NSCopying, GeneralCountdownProto
     
     // MARK: - GeneralCountdownProtocol
     
-    private var storedExecutionInterval: TimeInterval = TimeInterval(ReminderConstant.defaultTimeInterval)
+    private var storedExecutionInterval: TimeInterval = ReminderComponentConstant.defaultCountdownExecutionInterval
     var executionInterval: TimeInterval { return storedExecutionInterval }
     func changeExecutionInterval(newExecutionInterval: TimeInterval) {
         storedExecutionInterval = newExecutionInterval

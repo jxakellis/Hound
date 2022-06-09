@@ -11,11 +11,12 @@ import Foundation
 enum ViewTagConstant: Int {
     // reserve 0 through 9999 for use within app. it will never reach anywhere near that level but it costs nothing to reserver some tags.
     
-    case placeholderForBorderedUILabel = 10001
-    case placeholderForScaledUILabel = 10002
-    case placeholderForUITextView = 10003
-    case weekdayEnabled = 10004
-    case weekdayDisabled = 10005
-    case loadingViewController = 10006
-    case serverRelatedViewController = 10007
+    case startOfReservedInts = 1000000000
+    case placeholderForBorderedUILabel = 1000000001
+    case placeholderForScaledUILabel = 1000000002
+    case placeholderForUITextView = 1000000003
+    case weekdayEnabled = 1000000004
+    case weekdayDisabled = 1000000005
+    case loadingViewController = 1000000006
+    case serverRelatedViewController = 1000000007
 }

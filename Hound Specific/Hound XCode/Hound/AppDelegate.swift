@@ -83,11 +83,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             return
         }
         
-        // BUG if a reminder is created by another user and this user hasn't refreshed. Then when the notification comes through nothing will display. this is because this local device doesn't know that reminder exists.
-        // solution: attach a reminderId/reminderLastModified and use that to determine if we need to refresh that reminder.
+        // check to see if we have a reminderLastModified available to us
+        if let reminderLastModifiedString = userInfo["reminderLastModified"] as? String, let reminderLastModified = ResponseUtils.dateFormatter(fromISO8601String: reminderLastModifiedString) {
+            // If the reminder was modified after the last time we synced our whole dogManager, then that means our local reminder is out of date.
+            // This makes our local reminder untrustworthy, as the server reminder could have been deleted (and we don't know), the server reminder could have been created (and we don't have it locally), or the server reminder could have had its timing changes (and our locally timing will be inaccurate).
+            // Therefore, we should refresh the dogManager to make sure we are up to date on important features of the reminder's state: create, delete, timing.
+            // Once everything is synced again, the alarm will be shown as expected. N
+            // Note: we also individually fetch a reminder before immediately constructing its alertController for its alarm. This ensure, even if the user has notifications turned off (meaning this piece of code right here won't be executed), that the reminder they are being show is up to date.
+            if LocalConfiguration.lastServerSynchronization.distance(to: reminderLastModified) > 0 {
+                // reminderLastModified is further in the future than lastServerSynchronization
+                DogsRequest.get(invokeErrorManager: false, dogManager: MainTabBarViewController.staticDogManager) { newDogManager, _ in
+                    guard newDogManager != nil else {
+                        return
+                    }
+                    MainTabBarViewController.mainTabBarViewController?.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager!)
+                }
+            }
+        }
         
-        // BUG (similar to above problem)if a reminder is updated to an earlier time by another user, then our user will be out of date. This means they could get a notification for a reminder, but when they open up the app it will show the reminder at the original (incorrect) time. This bug however, when the original reminder is supposed to go off, will fix itself as it checks to see if the reminder is updated before showing an alert
-        // solution: a potential rememdy to this bug, is when the notification for a reminder alarm comes through verify that we have an updated reminder that matches. if we don't have the reminder or the reminder is incorrect, then have the user query the server to retrieve the updated reminder
         AudioManager.playLoudNotification()
         
         completionHandler(.newData)

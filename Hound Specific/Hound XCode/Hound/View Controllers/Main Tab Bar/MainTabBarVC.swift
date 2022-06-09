@@ -66,9 +66,9 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
     }
     
     func shouldRefreshDogManager(sender: Sender) {
-        RequestUtils.getDogManager(invokeErrorManager: true) { dogManager, _ in
-            if dogManager != nil {
-                self.setDogManager(sender: sender, newDogManager: dogManager!)
+        DogsRequest.get(invokeErrorManager: true, dogManager: getDogManager()) { newDogManager, _ in
+            if newDogManager != nil {
+                self.setDogManager(sender: sender, newDogManager: newDogManager!)
             }
         }
     }
@@ -86,11 +86,6 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
 
     // Sets dog manager, when the value of dog manager is changed it not only changes the variable but calls other needed functions to reflect the change
     func setDogManager(sender: Sender, newDogManager: DogManager) {
-
-        // possible senders
-        // MainTabBarViewController
-        // TimingManager
-        // DogsViewController
         
         // MainTabBarViewController may not have been fully initalized by the time setDogManager is called on it, leading to TimingManager throwing an error possibly
         if !(sender.localized is MainTabBarViewController) {
@@ -110,7 +105,9 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         }
         if (sender.localized is LogsViewController) == false {
             logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
-            
+        }
+        if (sender.localized is SettingsViewController) == false {
+            settingsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
         }
 
     }
@@ -153,6 +150,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
         settingsNavigationViewController = self.viewControllers![2] as? SettingsNavigationViewController
         settingsNavigationViewController.passThroughDelegate = self
         settingsViewController = settingsNavigationViewController.viewControllers[0] as? SettingsViewController
+        settingsViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
 
         MainTabBarViewController.mainTabBarViewController = self
 

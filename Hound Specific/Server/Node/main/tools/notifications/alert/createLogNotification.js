@@ -30,7 +30,7 @@ const createLogNotification = async (userId, familyId, dogId, logAction, logCust
     // get the name of the dog who got logged
     let dog = await queryPromise(
       connectionForGeneralAlerts,
-      'SELECT dogName FROM dogs WHERE dogId = ? LIMIT 1',
+      'SELECT dogName FROM dogs WHERE dogIsDeleted = 0 dogId = ? LIMIT 1',
       [dogId],
     );
     dog = dog[0];
@@ -47,7 +47,7 @@ const createLogNotification = async (userId, familyId, dogId, logAction, logCust
     const alertBody = `${name} lent a helping hand with '${formatLogAction(logAction, logCustomActionName)}'`;
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, LOG_CATEGORY, alertTitle, alertBody);
+    sendAPNForFamilyExcludingUser(userId, familyId, LOG_CATEGORY, alertTitle, alertBody, {});
   }
   catch (error) {
     alertLogger.error('createLogNotification error:');

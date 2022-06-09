@@ -131,66 +131,94 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     // MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
-        let copy = Log(logDate: self.logDate, logNote: self.logNote, logAction: self.logAction, logCustomActionName: self.logCustomActionName, logId: self.logId)
+        let copy = Log(logId: self.logId, logAction: self.logAction, logCustomActionName: self.logCustomActionName, logDate: self.logDate, logNote: self.logNote)
         return copy
     }
     
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
+        self.logId = aDecoder.decodeInteger(forKey: "logId")
+        self.userId = aDecoder.decodeInteger(forKey: "userId")
+        self.logAction = LogAction(rawValue: aDecoder.decodeObject(forKey: "logAction") as? String ?? LogConstant.defaultLogAction.rawValue) ?? LogConstant.defaultLogAction
+        self.logCustomActionName = aDecoder.decodeObject(forKey: "logCustomActionName") as? String
         self.logDate = aDecoder.decodeObject(forKey: "logDate") as? Date ?? Date()
         self.logNote = aDecoder.decodeObject(forKey: "logNote") as? String ?? LogConstant.defaultLogNote
-        self.logAction = LogAction(rawValue: aDecoder.decodeObject(forKey: "logAction") as? String ?? LogConstant.defaultAction.rawValue) ?? LogConstant.defaultAction
-        self.logCustomActionName = aDecoder.decodeObject(forKey: "logCustomActionName") as? String
-        self.logId = aDecoder.decodeInteger(forKey: "logId")
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(logDate, forKey: "logDate")
-        aCoder.encode(logNote, forKey: "logNote")
+        aCoder.encode(logId, forKey: "logId")
+        aCoder.encode(userId, forKey: "userId")
         aCoder.encode(logAction.rawValue, forKey: "logAction")
         aCoder.encode(logCustomActionName, forKey: "logCustomActionName")
-        aCoder.encode(logId, forKey: "logId")
+        aCoder.encode(logDate, forKey: "logDate")
+        aCoder.encode(logNote, forKey: "logNote")
     }
-    
-    // static var supportsSecureCoding: Bool = true
     
     // MARK: - Main
     
-    init(logDate: Date, logNote: String = LogConstant.defaultLogNote, logAction: LogAction, logCustomActionName: String? = nil, logId: Int = LogConstant.defaultLogId) {
-        self.logDate = logDate
-        self.logNote = logNote
+    override init() {
+        super.init()
+    }
+    
+    convenience init(
+        logId: Int = LogConstant.defaultLogId,
+        userId: Int = UserInformation.userId ?? -1,
+        logAction: LogAction = LogConstant.defaultLogAction,
+        logCustomActionName: String? = LogConstant.defaultLogCustomActionName,
+        logDate: Date = LogConstant.defaultLogDate,
+        logNote: String = LogConstant.defaultLogNote
+    ) {
+        self.init()
+        
+        self.logId = logId
+        self.userId = userId
         self.logAction = logAction
         self.logCustomActionName = logCustomActionName
-        self.logId = logId
-        super.init()
+        self.logDate = logDate
+        self.logNote = logNote
     }
     
     convenience init(fromBody body: [String: Any]) {
         
-        var logDate: Date = Date()
+        // if log was deleted, then don't create a new one
+        // guard body[ServerDefaultKeys.logIsDeleted.rawValue] as? Bool ?? false == false else {
+        //     return nil
+        // }
         
+        let logId: Int = body[ServerDefaultKeys.logId.rawValue] as? Int ?? LogConstant.defaultLogId
+        let userId: Int = body[ServerDefaultKeys.userId.rawValue] as? Int ?? -1
+        let logAction: LogAction = LogAction(rawValue: body[ServerDefaultKeys.logAction.rawValue] as? String ?? LogConstant.defaultLogAction.rawValue)!
+        let logCustomActionName: String? = body[ServerDefaultKeys.logCustomActionName.rawValue] as? String ?? LogConstant.defaultLogCustomActionName
+        
+        var logDate: Date = LogConstant.defaultLogDate
         if let logDateString = body[ServerDefaultKeys.logDate.rawValue] as? String {
-            logDate = ResponseUtils.dateFormatter(fromISO8601String: logDateString) ?? Date()
+            logDate = ResponseUtils.dateFormatter(fromISO8601String: logDateString) ?? LogConstant.defaultLogDate
         }
         
         let logNote: String = body[ServerDefaultKeys.logNote.rawValue] as? String ?? LogConstant.defaultLogNote
-        let logAction: LogAction = LogAction(rawValue: body[ServerDefaultKeys.logAction.rawValue] as? String ?? LogConstant.defaultAction.rawValue)!
-        let logCustomActionName: String? = body[ServerDefaultKeys.logCustomActionName.rawValue] as? String
-        let logId: Int = body[ServerDefaultKeys.logId.rawValue] as? Int ?? LogConstant.defaultLogId
         
-        self.init(logDate: logDate, logNote: logNote, logAction: logAction, logCustomActionName: logCustomActionName, logId: logId)
+        self.init(logId: logId, userId: userId, logAction: logAction, logCustomActionName: logCustomActionName, logDate: logDate, logNote: logNote)
+        
+        storedLogIsDeleted = body[ServerDefaultKeys.logIsDeleted.rawValue] as? Bool ?? false
     }
     
     // MARK: Properties
     
-    var logDate: Date
-    
-    var logNote: String
-    
-    var logAction: LogAction
-    
-    var logCustomActionName: String?
-    
     var logId: Int = LogConstant.defaultLogId
+    
+    var userId: Int = UserInformation.userId ?? -1
+    
+    private var storedLogIsDeleted: Bool = false
+    /// This property a marker leftover from when we went through the process of constructing a new log from JSON and combining with an existing log object. This markers allows us to have a new log to overwrite the old log, then leaves an indicator that this should be deleted. This deletion is handled by DogsRequest
+    var logIsDeleted: Bool { return storedLogIsDeleted }
+    
+    var logAction: LogAction = LogConstant.defaultLogAction
+    
+    var logCustomActionName: String? = LogConstant.defaultLogCustomActionName
+    
+    var logDate: Date = LogConstant.defaultLogDate
+    
+    var logNote: String = LogConstant.defaultLogNote
+    
 }

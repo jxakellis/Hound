@@ -1,39 +1,28 @@
 const DatabaseError = require('../../main/tools/errors/databaseError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
-const { deleteLogsQuery } = require('./deleteForLogs');
-const { deleteReminderQuery } = require('./deleteForReminders');
+const { deleteAllLogsForDogId } = require('./deleteForLogs');
+const { deleteAllRemindersForDogId } = require('./deleteForReminders');
 
 /**
  *  Queries the database to delete a dog and everything nested under it. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-const deleteDogQuery = async (req, userId, familyId, dogId) => {
-  let reminderIds;
+const deleteDogForDogId = async (req, familyId, dogId) => {
+  const dogLastModified = new Date();
 
-  // find reminderIds of reminders that need deleted
-  try {
-    reminderIds = await queryPromise(
-      req,
-      'SELECT reminderId FROM dogReminders WHERE dogId = ? LIMIT 18446744073709551615',
-
-      [dogId],
-    );
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
-
-  // deletes all reminders since we found reminderIds
-  for (let i = 0; i < reminderIds.length; i += 1) {
-    await deleteReminderQuery(req, userId, familyId, reminderIds[i].reminderId);
-  }
+  // delete all reminders
+  await deleteAllRemindersForDogId(req, familyId, dogId);
 
   // deletes all logs
-  await deleteLogsQuery(req, dogId);
+  await deleteAllLogsForDogId(req, dogId);
 
   try {
     // deletes dog
-    await queryPromise(req, 'DELETE FROM dogs WHERE dogId = ?', [dogId]);
+    await queryPromise(
+      req,
+      'UPDATE dogs SET dogIsDeleted = 1, dogLastModified = ? WHERE dogId = ?',
+      [dogLastModified, dogId],
+    );
     return;
   }
   catch (error) {
@@ -45,12 +34,16 @@ const deleteDogQuery = async (req, userId, familyId, dogId) => {
  * Queries the database to delete all dog and everything nested under them. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-const deleteDogsQuery = async (req, userId, familyId) => {
+const deleteAllDogsForFamilyId = async (req, familyId) => {
   let dogIds;
 
   // attempt to find all dogIds
   try {
-    dogIds = await queryPromise(req, 'SELECT dogId FROM dogs WHERE familyId = ? LIMIT 18446744073709551615', [familyId]);
+    dogIds = await queryPromise(
+      req,
+      'SELECT dogId FROM dogs WHERE dogIsDeleted = 0 AND familyId = ? LIMIT 18446744073709551615',
+      [familyId],
+    );
   }
   catch (error) {
     throw new DatabaseError(error.code);
@@ -58,8 +51,8 @@ const deleteDogsQuery = async (req, userId, familyId) => {
 
   // delete all the dogs
   for (let i = 0; i < dogIds.length; i += 1) {
-    await deleteDogQuery(req, userId, familyId, dogIds[i].dogId);
+    await deleteDogForDogId(req, familyId, dogIds[i].dogId);
   }
 };
 
-module.exports = { deleteDogQuery, deleteDogsQuery };
+module.exports = { deleteDogForDogId, deleteAllDogsForFamilyId };

@@ -174,7 +174,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
             if parentDogIdToUpdate != nil && logToUpdate != nil {
                 logToUpdate!.logDate = logDateDatePicker.date
                 logToUpdate!.logNote = logNoteTextView.text ?? LogConstant.defaultLogNote
-                logToUpdate!.logAction = selectedLogAction ?? LogConstant.defaultAction
+                logToUpdate!.logAction = selectedLogAction ?? LogConstant.defaultLogAction
                 
                 if selectedLogAction == LogAction.custom {
                     logToUpdate!.logCustomActionName = logCustomActionNameTextField.text
@@ -206,7 +206,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                     return ErrorManager.alert(forError: LogActionError.blankLogAction)
                 }
                 
-                let newLog = Log(logDate: logDateDatePicker.date, logNote: logNoteTextView.text ?? LogConstant.defaultLogNote, logAction: selectedLogAction!, logCustomActionName: logCustomActionNameTextField.text)
+                let newLog = Log(logAction: selectedLogAction!, logCustomActionName: logCustomActionNameTextField.text, logDate: logDateDatePicker.date, logNote: logNoteTextView.text ?? LogConstant.defaultLogNote)
                     
                     addLogButton.beginQuerying()
                     addLogButtonBackground.beginQuerying(isBackgroundButton: true)
