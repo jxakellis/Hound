@@ -84,20 +84,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         }
         
         // check to see if we have a reminderLastModified available to us
-        if let reminderLastModifiedString = userInfo["reminderLastModified"] as? String, let reminderLastModified = ResponseUtils.dateFormatter(fromISO8601String: reminderLastModifiedString) {
+        if let reminderLastModifiedString = userInfo["reminderLastModified"] as? String, let reminderLastModified = ResponseUtils.dateFormatter(fromISO8601String: reminderLastModifiedString), LocalConfiguration.lastDogManagerSynchronization.distance(to: reminderLastModified) > 0 {
             // If the reminder was modified after the last time we synced our whole dogManager, then that means our local reminder is out of date.
-            // This makes our local reminder untrustworthy, as the server reminder could have been deleted (and we don't know), the server reminder could have been created (and we don't have it locally), or the server reminder could have had its timing changes (and our locally timing will be inaccurate).
+            // This makes our local reminder untrustworthy. The server reminder could have been deleted (and we don't know), the server reminder could have been created (and we don't have it locally), or the server reminder could have had its timing changes (and our locally timing will be inaccurate).
             // Therefore, we should refresh the dogManager to make sure we are up to date on important features of the reminder's state: create, delete, timing.
-            // Once everything is synced again, the alarm will be shown as expected. N
+            // Once everything is synced again, the alarm will be shown as expected.
+            
             // Note: we also individually fetch a reminder before immediately constructing its alertController for its alarm. This ensure, even if the user has notifications turned off (meaning this piece of code right here won't be executed), that the reminder they are being show is up to date.
-            if LocalConfiguration.lastDogManagerSynchronization.distance(to: reminderLastModified) > 0 {
-                // reminderLastModified is further in the future than lastDogManagerSynchronization
-                DogsRequest.get(invokeErrorManager: false, dogManager: MainTabBarViewController.staticDogManager) { newDogManager, _ in
-                    guard newDogManager != nil else {
-                        return
-                    }
-                    MainTabBarViewController.mainTabBarViewController?.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager!)
+            DogsRequest.get(invokeErrorManager: false, dogManager: MainTabBarViewController.staticDogManager) { newDogManager, _ in
+                guard newDogManager != nil else {
+                    return
                 }
+                MainTabBarViewController.mainTabBarViewController?.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager!)
             }
         }
         
