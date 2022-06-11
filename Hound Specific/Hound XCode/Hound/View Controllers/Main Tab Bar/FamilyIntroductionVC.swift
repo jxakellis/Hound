@@ -51,7 +51,7 @@ class FamilyIntroductionViewController: UIViewController, UITextFieldDelegate, U
     
     @IBOutlet private weak var interfaceStyleSegmentedControl: UISegmentedControl!
     @IBAction private func didUpdateInterfaceStyle(_ sender: Any) {
-        ViewControllerUtils.updateInterfaceStyle(forSegmentedControl: sender as! UISegmentedControl)
+        (sender as! UISegmentedControl).updateInterfaceStyle()
     }
     
     @IBOutlet private weak var continueButton: UIButton!
@@ -94,7 +94,6 @@ class FamilyIntroductionViewController: UIViewController, UITextFieldDelegate, U
                     dog.dogId = dogId!
                     self.dogManager.addDog(newDog: dog)
                     LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = true
-                    ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController", viewController: self)
                 }
                 self.continueButton.isEnabled = true
             }
@@ -108,7 +107,7 @@ class FamilyIntroductionViewController: UIViewController, UITextFieldDelegate, U
             }
             // close page because updated
             LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = true
-            ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController", viewController: self)
+            self.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController")
             continueButton.isEnabled = true
         }
         

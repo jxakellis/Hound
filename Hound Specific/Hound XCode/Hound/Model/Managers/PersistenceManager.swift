@@ -65,14 +65,14 @@ enum PersistenceManager {
                 // if nil, then decode failed or there was an issue. therefore, set the interval back to past so we can refetch from the server
                 AppDelegate.generalLogger.error("Failed to decode dogManager with unarchiver")
                 ServerSyncViewController.dogManager = DogManager()
-                LocalConfiguration.lastDogManagerSynchronization = Date(timeIntervalSince1970: 1234567890)
+                LocalConfiguration.lastDogManagerSynchronization = LocalConfiguration.defaultLastDogManagerSynchronization
             }
         }
         else {
             // if nil, then decode failed or there was an issue. therefore, set the interval back to past so we can refetch from the server
             AppDelegate.generalLogger.error("Failed to construct dataDogManager or construct unarchiver for dogManager")
             ServerSyncViewController.dogManager = DogManager()
-            LocalConfiguration.lastDogManagerSynchronization = Date(timeIntervalSince1970: 1234567890)
+            LocalConfiguration.lastDogManagerSynchronization = LocalConfiguration.defaultLastDogManagerSynchronization
         }
         
         LocalConfiguration.logCustomActionNames = UserDefaults.standard.value(forKey: UserDefaultsKeys.logCustomActionNames.rawValue) as? [String] ?? LocalConfiguration.logCustomActionNames

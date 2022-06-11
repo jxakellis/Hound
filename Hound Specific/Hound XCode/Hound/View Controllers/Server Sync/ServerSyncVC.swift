@@ -70,7 +70,7 @@ class ServerSyncViewController: UIViewController, ServerFamilyViewControllerDele
             self.repeatableSetup()
         }
         let loginPageAlertAction = UIAlertAction(title: "Go to Login Page", style: .default) { _ in
-            ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverLoginViewController", viewController: self)
+            self.performSegueOnceInWindowHierarchy(segueIdentifier: "serverLoginViewController")
         }
         failureResponseAlertController.addAction(retryAlertAction)
         noResponseAlertController.addAction(retryAlertAction)
@@ -90,7 +90,7 @@ class ServerSyncViewController: UIViewController, ServerFamilyViewControllerDele
         if UserInformation.userId == nil || UserInformation.userId! < 0 {
             // we have the user sign into their apple id, then attempt to first create an account then get an account (if the creates fails) then throw an error message (if the get fails too).
             // if all succeeds, then the user information and user configuration is loaded
-            ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverLoginViewController", viewController: self)
+            self.performSegueOnceInWindowHierarchy(segueIdentifier: "serverLoginViewController")
         }
         // has userId, possibly has familyId, will check inside getUser
         else {
@@ -112,12 +112,12 @@ class ServerSyncViewController: UIViewController, ServerFamilyViewControllerDele
             // Created family, no dogs present
             // OR joined family, no dogs present
             // OR joined family, dogs already present
-            ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "familyIntroductionViewController", viewController: self)
+            self.performSegueOnceInWindowHierarchy(segueIdentifier: "familyIntroductionViewController")
             
         }
         // has shown configuration before
         else {
-            ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController", viewController: self)
+            self.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController")
         }
         
     }
@@ -189,7 +189,7 @@ class ServerSyncViewController: UIViewController, ServerFamilyViewControllerDele
                 // no family for user
                 else {
                     // We failed to retrieve a familyId for the user so that means they have no family. Segue to page to make them create/join one.
-                    ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "serverFamilyViewController", viewController: self)
+                    self.performSegueOnceInWindowHierarchy(segueIdentifier: "serverFamilyViewController")
                 }
             case .failureResponse:
                 AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)

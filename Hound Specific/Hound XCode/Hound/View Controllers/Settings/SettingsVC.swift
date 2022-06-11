@@ -12,9 +12,9 @@ protocol SettingsViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class SettingsViewController: UIViewController, SettingsTableViewControllerDelegate, SettingsFamilyViewControllerDelegate, DogManagerControlFlowProtocol {
+class SettingsViewController: UIViewController, SettingsTableViewControllerDelegate, SettingsFamilyViewControllerDelegate, SettingsPersonalInformationViewControllerDelegate, DogManagerControlFlowProtocol {
     
-    // MARK: - SettingsFamilyViewControllerDelegate
+    // MARK: - SettingsFamilyViewControllerDelegate & SettingsPersonalInformationViewControllerDelegate
     
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
         setDogManager(sender: sender, newDogManager: newDogManager)
@@ -39,7 +39,7 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
             convertedSegueIdentifier = "settingsAboutViewController"
         }
         
-        ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: convertedSegueIdentifier, viewController: self)
+        self.performSegueOnceInWindowHierarchy(segueIdentifier: convertedSegueIdentifier)
     }
 
     // MARK: - Properties
@@ -78,6 +78,9 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
         if (sender.localized is SettingsFamilyViewController) == false {
             settingsFamilyViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: newDogManager)
         }
+        if (sender.localized is SettingsPersonalInformationViewControllerDelegate) == false {
+            settingsPersonalInformationViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: newDogManager)
+        }
         // pass up
         if (sender.localized is MainTabBarViewController) == false {
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: newDogManager)
@@ -93,6 +96,8 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
         }
         else if segue.identifier == "settingsPersonalInformationViewController" {
             settingsPersonalInformationViewController = segue.destination as? SettingsPersonalInformationViewController
+            settingsPersonalInformationViewController?.delegate = self
+            settingsPersonalInformationViewController?.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
         }
         else if segue.identifier == "settingsFamilyViewController" {
             settingsFamilyViewController = segue.destination as? SettingsFamilyViewController

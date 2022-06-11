@@ -65,7 +65,7 @@ class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDel
     @IBOutlet private weak var interfaceStyleSegmentedControl: UISegmentedControl!
 
     @IBAction private func didUpdateInterfaceStyle(_ sender: Any) {
-        ViewControllerUtils.updateInterfaceStyle(forSegmentedControl: sender as! UISegmentedControl)
+        (sender as! UISegmentedControl).updateInterfaceStyle()
     }
 
     // MARK: Logs Interface Scale

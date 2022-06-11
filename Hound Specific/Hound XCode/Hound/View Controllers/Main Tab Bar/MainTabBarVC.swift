@@ -19,7 +19,7 @@ class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtoco
             // Created family with no reminders
             // Joined family with no reminders
             // Joined family with reminders
-            ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "remindersIntroductionViewController", viewController: self)
+            self.performSegueOnceInWindowHierarchy(segueIdentifier: "remindersIntroductionViewController")
         }
     }
 

@@ -82,7 +82,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
     func didSelectLog(parentDogId: Int, log: Log) {
         selectedLog = log
         parentDogIdOfSelectedLog = parentDogId
-        ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "logsAddLogViewController", viewController: self)
+        self.performSegueOnceInWindowHierarchy(segueIdentifier: "logsAddLogViewController")
         selectedLog = nil
         parentDogIdOfSelectedLog = nil
     }
@@ -256,9 +256,13 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         DogsRequest.get(invokeErrorManager: true, dogManager: getDogManager()) { newDogManager, _ in
             self.refreshButton.isEnabled = true
             ActivityIndicator.shared.stopAnimating(navigationItem: self.navigationItem)
-            if newDogManager != nil {
-                self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager!)
+            
+            guard newDogManager != nil else {
+                return
             }
+            
+            self.performSpinningCheckmarkAnimation()
+            self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager!)
         }
         
     }

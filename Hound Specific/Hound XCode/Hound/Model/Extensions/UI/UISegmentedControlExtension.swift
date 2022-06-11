@@ -1,38 +1,21 @@
 //
-//  ViewControllerUtils.swift
+//  File.swift
 //  Hound
 //
-//  Created by Jonathan Xakellis on 2/10/21.
-//  Copyright © 2021 Jonathan Xakellis. All rights reserved.
+//  Created by Jonathan Xakellis on 6/11/22.
+//  Copyright © 2022 Jonathan Xakellis. All rights reserved.
 //
 
 import UIKit
 
-enum ViewControllerUtils {
-    
-    static func performSegueOnceInWindowHierarchy(segueIdentifier: String, viewController: UIViewController) {
-        
-        waitLoop()
-        
-        func waitLoop () {
-            if viewController.isViewLoaded && viewController.view.window != nil {
-                viewController.performSegue(withIdentifier: segueIdentifier, sender: viewController)
-            }
-            else {
-                AppDelegate.generalLogger.warning("waitloop for performSegueOnceInWindowHierarchy")
-                DispatchQueue.main.asyncAfter(deadline: .now()+0.05) {
-                    waitLoop()
-                }
-            }
-        }
-    }
-    
-    static func updateInterfaceStyle(forSegmentedControl segmentedControl: UISegmentedControl) {
+extension UISegmentedControl {
+    /// Assumes the segmented control is configured for interfaceStyle selection (0: light, 1: dark, 2: unspecified). Using the selectedSegmentIndex, queries the server to update the interfaceStyle UserConfiguration. If successful, then changes UI to new interface style and saves new UserConfiguration value. If unsuccessful, reverts the selectedSegmentIndex to the position before the change, doesn't change the UI interface style, and doesn't save the new UserConfiguration value
+    func updateInterfaceStyle() {
         
         var convertedInterfaceStyleRawValue: Int?
         let beforeUpdateInterfaceStyle = UserConfiguration.interfaceStyle
         
-        switch segmentedControl.selectedSegmentIndex {
+        switch self.selectedSegmentIndex {
         case 0:
             convertedInterfaceStyleRawValue = 1
             UserConfiguration.interfaceStyle = .light
@@ -55,18 +38,17 @@ enum ViewControllerUtils {
                 switch UserConfiguration.interfaceStyle.rawValue {
                     // system/unspecified
                 case 0:
-                    segmentedControl.selectedSegmentIndex = 2
+                    self.selectedSegmentIndex = 2
                     // light
                 case 1:
-                    segmentedControl.selectedSegmentIndex = 0
+                    self.selectedSegmentIndex = 0
                     // dark
                 case 2:
-                    segmentedControl.selectedSegmentIndex = 1
+                    self.selectedSegmentIndex = 1
                 default:
-                    segmentedControl.selectedSegmentIndex = 2
+                    self.selectedSegmentIndex = 2
                 }
             }
         }
     }
-    
 }

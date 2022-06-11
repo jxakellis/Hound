@@ -32,14 +32,18 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         FamilyRequest.get(invokeErrorManager: true) { requestWasSuccessful, _ in
             self.refreshButton.isEnabled = true
             ActivityIndicator.shared.stopAnimating(navigationItem: self.navigationItem)
-            if requestWasSuccessful == true {
-                // update the data to reflect what was retrieved from the server
-                self.repeatableSetup()
-                self.tableView.reloadData()
-                // its possible that the familymembers table changed its constraint for height, so re layout
-                self.view.setNeedsLayout()
-                self.view.layoutIfNeeded()
+            
+            guard requestWasSuccessful else {
+                return
             }
+            
+            // update the data to reflect what was retrieved from the server
+            self.performSpinningCheckmarkAnimation()
+            self.repeatableSetup()
+            self.tableView.reloadData()
+            // its possible that the familymembers table changed its constraint for height, so re layout
+            self.view.setNeedsLayout()
+            self.view.layoutIfNeeded()
         }
     }
     
@@ -86,7 +90,7 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
     func setDogManager(sender: Sender, newDogManager: DogManager) {
         dogManager = newDogManager
         
-        if sender.localized is SettingsViewController {
+        if (sender.localized is SettingsViewController) == false {
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: newDogManager)
         }
     }

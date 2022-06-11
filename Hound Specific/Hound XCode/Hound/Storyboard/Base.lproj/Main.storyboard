@@ -621,7 +621,7 @@
                                 </state>
                             </button>
                             <button hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="U8V-sN-8QM" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="117" y="358" width="180" height="180"/>
+                                <rect key="frame" x="162" y="403" width="90" height="90"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="90" id="9UF-of-xbU"/>
                                     <constraint firstAttribute="height" relation="lessThanOrEqual" constant="180" id="etX-L0-02H"/>
@@ -636,7 +636,7 @@
                                 </connections>
                             </button>
                             <button hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="upa-lb-hyr" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="121.5" y="362.5" width="171" height="171"/>
+                                <rect key="frame" x="164" y="405" width="86" height="86"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" image="circle.fill" catalog="system">
                                     <color key="titleColor" systemColor="systemBackgroundColor"/>
@@ -650,7 +650,7 @@
                         <viewLayoutGuide key="safeArea" id="O1u-W8-tvY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="U8V-sN-8QM" firstAttribute="width" secondItem="O1u-W8-tvY" secondAttribute="width" multiplier="180/414" priority="999" id="0N0-y4-4fC"/>
+                            <constraint firstItem="U8V-sN-8QM" firstAttribute="width" secondItem="O1u-W8-tvY" secondAttribute="width" multiplier="90/414" priority="999" id="0N0-y4-4fC"/>
                             <constraint firstItem="upa-lb-hyr" firstAttribute="centerY" secondItem="U8V-sN-8QM" secondAttribute="centerY" id="2iv-Ps-bnw"/>
                             <constraint firstItem="U8V-sN-8QM" firstAttribute="centerY" secondItem="QS5-Rx-YEW" secondAttribute="centerY" id="6lq-nB-Vm1"/>
                             <constraint firstItem="8b5-pw-vvl" firstAttribute="height" secondItem="vhe-hX-gRw" secondAttribute="height" multiplier="1.05" id="7JB-W5-hI5"/>
@@ -2269,59 +2269,115 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LT0-Mu-JEa" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="10" y="123" width="394" height="24"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="placeholder" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p9S-Oi-kIs" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="10" y="154.5" width="394" height="15"/>
-                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
-                                <color key="textColor" systemColor="secondaryLabelColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Email" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Iv-or-ivM" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="10" y="214.5" width="394" height="24"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="placeholder" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="30l-2W-Fn1" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="10" y="246" width="394" height="15"/>
-                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
-                                <color key="textColor" systemColor="secondaryLabelColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="To permanently delete your account, contact support@houndorganizer.com" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SJG-iw-b7H" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="10" y="296" width="394" height="30"/>
-                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
-                                <color key="textColor" systemColor="secondaryLabelColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4vb-aF-YnR">
+                                <rect key="frame" x="0.0" y="88" width="414" height="725"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1Z3-fe-wRw" userLabel="containerView">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="405.5"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LT0-Mu-JEa" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="35" width="394" height="24"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Bob Smith" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p9S-Oi-kIs" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="66.5" width="394" height="15"/>
+                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
+                                                <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Email" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Iv-or-ivM" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="126.5" width="394" height="24"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="To permanently delete your account, contact support@houndorganizer.com" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SJG-iw-b7H" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="218" width="394" height="30"/>
+                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
+                                                <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dFR-dD-PKh">
+                                                <rect key="frame" x="10" y="293" width="394" height="50"/>
+                                                <color key="backgroundColor" systemColor="systemBlueColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="50" id="URf-6W-Isj"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <state key="normal" title="Redownload Data">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="didClickRedownloadData:" destination="X8m-uQ-MZX" eventType="touchUpInside" id="2Mo-zo-WX4"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rou-GI-ddQ" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="350.5" width="394" height="45"/>
+                                                <string key="text">Deletes local storage of all dogs, reminders, and logs to fully redownload them from the Hound server, ensuring that the data displayed locally reflects the data stored server-side.</string>
+                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
+                                                <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="bobsmith@gmail.com" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="30l-2W-Fn1" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="158" width="394" height="15"/>
+                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
+                                                <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstItem="2Iv-or-ivM" firstAttribute="leading" secondItem="LT0-Mu-JEa" secondAttribute="leading" id="003-3T-zne"/>
+                                            <constraint firstItem="2Iv-or-ivM" firstAttribute="trailing" secondItem="LT0-Mu-JEa" secondAttribute="trailing" id="1nr-Fh-56O"/>
+                                            <constraint firstItem="dFR-dD-PKh" firstAttribute="trailing" secondItem="LT0-Mu-JEa" secondAttribute="trailing" id="4Vx-14-mMp"/>
+                                            <constraint firstAttribute="trailing" secondItem="LT0-Mu-JEa" secondAttribute="trailing" constant="10" id="7Mb-R6-x4g"/>
+                                            <constraint firstItem="p9S-Oi-kIs" firstAttribute="trailing" secondItem="LT0-Mu-JEa" secondAttribute="trailing" id="8Fu-EM-vVP"/>
+                                            <constraint firstItem="dFR-dD-PKh" firstAttribute="leading" secondItem="LT0-Mu-JEa" secondAttribute="leading" id="8wO-Wv-wM1"/>
+                                            <constraint firstItem="SJG-iw-b7H" firstAttribute="top" secondItem="30l-2W-Fn1" secondAttribute="bottom" constant="45" id="E5U-iL-gGY"/>
+                                            <constraint firstItem="LT0-Mu-JEa" firstAttribute="top" secondItem="1Z3-fe-wRw" secondAttribute="top" constant="35" id="Jin-fH-UGD"/>
+                                            <constraint firstItem="p9S-Oi-kIs" firstAttribute="leading" secondItem="LT0-Mu-JEa" secondAttribute="leading" id="M7m-lJ-GBa"/>
+                                            <constraint firstAttribute="bottom" secondItem="Rou-GI-ddQ" secondAttribute="bottom" constant="10" id="SGT-e0-IPK"/>
+                                            <constraint firstItem="p9S-Oi-kIs" firstAttribute="top" secondItem="LT0-Mu-JEa" secondAttribute="bottom" constant="7.5" id="Yhb-op-rPi"/>
+                                            <constraint firstItem="Rou-GI-ddQ" firstAttribute="leading" secondItem="LT0-Mu-JEa" secondAttribute="leading" id="brc-Mx-l0h"/>
+                                            <constraint firstItem="2Iv-or-ivM" firstAttribute="top" secondItem="p9S-Oi-kIs" secondAttribute="bottom" constant="45" id="c8i-dI-zY3"/>
+                                            <constraint firstItem="Rou-GI-ddQ" firstAttribute="top" secondItem="dFR-dD-PKh" secondAttribute="bottom" constant="7.5" id="flW-FQ-id2"/>
+                                            <constraint firstItem="SJG-iw-b7H" firstAttribute="trailing" secondItem="LT0-Mu-JEa" secondAttribute="trailing" id="lZc-tY-6Tn"/>
+                                            <constraint firstItem="Rou-GI-ddQ" firstAttribute="trailing" secondItem="LT0-Mu-JEa" secondAttribute="trailing" id="noR-br-ygi"/>
+                                            <constraint firstItem="LT0-Mu-JEa" firstAttribute="leading" secondItem="1Z3-fe-wRw" secondAttribute="leading" constant="10" id="nwR-of-D1X"/>
+                                            <constraint firstItem="30l-2W-Fn1" firstAttribute="trailing" secondItem="LT0-Mu-JEa" secondAttribute="trailing" id="oyQ-5Z-8Rv"/>
+                                            <constraint firstItem="30l-2W-Fn1" firstAttribute="leading" secondItem="LT0-Mu-JEa" secondAttribute="leading" id="rWe-uF-aBJ"/>
+                                            <constraint firstItem="30l-2W-Fn1" firstAttribute="top" secondItem="2Iv-or-ivM" secondAttribute="bottom" constant="7.5" id="s7K-kp-6H9"/>
+                                            <constraint firstItem="dFR-dD-PKh" firstAttribute="top" secondItem="SJG-iw-b7H" secondAttribute="bottom" constant="45" id="uNM-Sw-LGj"/>
+                                            <constraint firstItem="SJG-iw-b7H" firstAttribute="leading" secondItem="LT0-Mu-JEa" secondAttribute="leading" id="wl6-2Y-Lwv"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="1Z3-fe-wRw" firstAttribute="top" secondItem="c21-Tw-ipC" secondAttribute="top" id="GUs-MN-rED"/>
+                                    <constraint firstItem="1Z3-fe-wRw" firstAttribute="trailing" secondItem="c21-Tw-ipC" secondAttribute="trailing" id="Mku-eZ-7zs"/>
+                                    <constraint firstItem="1Z3-fe-wRw" firstAttribute="leading" secondItem="c21-Tw-ipC" secondAttribute="leading" id="UVy-vB-m6U"/>
+                                    <constraint firstItem="1Z3-fe-wRw" firstAttribute="width" secondItem="5wQ-41-o2E" secondAttribute="width" id="ege-OS-jvF"/>
+                                    <constraint firstItem="1Z3-fe-wRw" firstAttribute="bottom" secondItem="c21-Tw-ipC" secondAttribute="bottom" id="hMU-Ke-IP0"/>
+                                </constraints>
+                                <viewLayoutGuide key="contentLayoutGuide" id="c21-Tw-ipC"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="5wQ-41-o2E"/>
+                            </scrollView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="47C-oT-HIU"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="2Iv-or-ivM" firstAttribute="top" secondItem="p9S-Oi-kIs" secondAttribute="bottom" constant="45" id="0pW-QN-Ihf"/>
-                            <constraint firstItem="47C-oT-HIU" firstAttribute="trailing" secondItem="p9S-Oi-kIs" secondAttribute="trailing" constant="10" id="16y-8u-0E4"/>
-                            <constraint firstItem="p9S-Oi-kIs" firstAttribute="top" secondItem="LT0-Mu-JEa" secondAttribute="bottom" constant="7.5" id="ID8-xL-dhj"/>
-                            <constraint firstItem="2Iv-or-ivM" firstAttribute="leading" secondItem="47C-oT-HIU" secondAttribute="leading" constant="10" id="JBi-cs-VCj"/>
-                            <constraint firstItem="30l-2W-Fn1" firstAttribute="leading" secondItem="47C-oT-HIU" secondAttribute="leading" constant="10" id="Lmd-jB-Flv"/>
-                            <constraint firstItem="LT0-Mu-JEa" firstAttribute="top" secondItem="47C-oT-HIU" secondAttribute="top" constant="35" id="Upk-vq-H4q"/>
-                            <constraint firstItem="LT0-Mu-JEa" firstAttribute="leading" secondItem="47C-oT-HIU" secondAttribute="leading" constant="10" id="XZT-jQ-tzj"/>
-                            <constraint firstItem="47C-oT-HIU" firstAttribute="trailing" secondItem="2Iv-or-ivM" secondAttribute="trailing" constant="10" id="Yxi-uj-3m1"/>
-                            <constraint firstItem="p9S-Oi-kIs" firstAttribute="leading" secondItem="47C-oT-HIU" secondAttribute="leading" constant="10" id="ZzL-fj-8W2"/>
-                            <constraint firstItem="47C-oT-HIU" firstAttribute="trailing" secondItem="30l-2W-Fn1" secondAttribute="trailing" constant="10" id="d6F-ku-R23"/>
-                            <constraint firstItem="SJG-iw-b7H" firstAttribute="top" secondItem="30l-2W-Fn1" secondAttribute="bottom" constant="35" id="eSq-W5-RcD"/>
-                            <constraint firstItem="47C-oT-HIU" firstAttribute="trailing" secondItem="LT0-Mu-JEa" secondAttribute="trailing" constant="10" id="no7-os-UWV"/>
-                            <constraint firstItem="47C-oT-HIU" firstAttribute="trailing" secondItem="SJG-iw-b7H" secondAttribute="trailing" constant="10" id="o6h-gh-s9W"/>
-                            <constraint firstItem="SJG-iw-b7H" firstAttribute="leading" secondItem="47C-oT-HIU" secondAttribute="leading" constant="10" id="rQ7-sP-y0B"/>
-                            <constraint firstItem="30l-2W-Fn1" firstAttribute="top" secondItem="2Iv-or-ivM" secondAttribute="bottom" constant="7.5" id="wqH-mY-cmn"/>
+                            <constraint firstItem="47C-oT-HIU" firstAttribute="trailing" secondItem="4vb-aF-YnR" secondAttribute="trailing" id="0c7-LF-a5M"/>
+                            <constraint firstItem="4vb-aF-YnR" firstAttribute="top" secondItem="47C-oT-HIU" secondAttribute="top" id="0fj-PP-6IJ"/>
+                            <constraint firstItem="47C-oT-HIU" firstAttribute="bottom" secondItem="4vb-aF-YnR" secondAttribute="bottom" id="5Hn-Hm-Qbn"/>
+                            <constraint firstItem="4vb-aF-YnR" firstAttribute="leading" secondItem="47C-oT-HIU" secondAttribute="leading" id="U87-19-web"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Personal Info" id="8x0-Pt-Lnc"/>
                     <connections>
+                        <outlet property="redownloadDataButton" destination="dFR-dD-PKh" id="ozY-gk-8g7"/>
                         <outlet property="userEmail" destination="30l-2W-Fn1" id="Z0V-9p-zjs"/>
                         <outlet property="userName" destination="p9S-Oi-kIs" id="rPc-fd-8qo"/>
                     </connections>

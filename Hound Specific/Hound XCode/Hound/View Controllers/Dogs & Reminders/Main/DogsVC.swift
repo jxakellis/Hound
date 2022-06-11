@@ -58,7 +58,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
     func willOpenDogMenu(forDogId dogId: Int?) {
         
         if dogId == nil {
-            ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsAddDogViewController", viewController: self)
+            self.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsAddDogViewController")
         }
         else {
             if let currentDog = try? getDogManager().findDog(forDogId: dogId!) {
@@ -69,7 +69,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                     guard newDog != nil else {
                         return
                     }
-                    ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsAddDogViewController", viewController: self)
+                    self.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsAddDogViewController")
                     self.dogsAddDogViewController.dogToUpdate = newDog
                 }
             }
@@ -84,7 +84,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         // creating new
         if reminderId == nil {
             // no need to query as nothing in server since creating
-            ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsIndependentReminderViewController", viewController: self)
+            self.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsIndependentReminderViewController")
             dogsIndependentReminderViewController.parentDogId = parentDogId
         }
         // updating
@@ -94,7 +94,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             RemindersRequest.get(invokeErrorManager: true, forDogId: parentDogId, forReminderId: reminderId!) { reminder, _ in
                 RequestUtils.endAlertControllerQueryIndictator {
                     if reminder != nil {
-                        ViewControllerUtils.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsIndependentReminderViewController", viewController: self)
+                        self.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsIndependentReminderViewController")
                         self.dogsIndependentReminderViewController.parentDogId = parentDogId
                         self.dogsIndependentReminderViewController.targetReminder = reminder
                     }
@@ -104,138 +104,11 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         }
     }
     
-    /// visual indication of log
     func logReminderAnimation() {
-        let view: ScaledUIButton! = didLogEventConfirmation
-        view.setImage(UIImage.init(systemName: "checkmark.circle.fill"), for: .normal)
-        view.tintColor = UIColor.systemGreen
-        let viewBackground: ScaledUIButton! = didLogEventConfirmationBackground
-        viewBackground.setImage(UIImage.init(systemName: "circle.fill"), for: .normal)
-        
-        view.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
-        view.alpha = 0.0
-        view.isHidden = false
-        viewBackground.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
-        viewBackground.alpha = 0.0
-        viewBackground.isHidden = false
-        
-        let duration: TimeInterval = 0.17
-        
-        // come in from nothing
-        UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut, animations: {
-            
-            view.transform = .identity
-            view.alpha = 1.0
-            viewBackground.transform = .identity
-            viewBackground.alpha = 1.0
-            
-        }) { _ in
-            
-            // begin spin once
-            UIView.animate(withDuration: duration, delay: 0, options: .curveLinear) {
-                
-                view.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
-                viewBackground.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
-                
-            } completion: { _ in
-                // finished
-            }
-            
-            // end spin
-            UIView.animate(withDuration: duration, delay: (duration*0.85), options: .curveEaseIn) {
-                
-                view.transform = CGAffineTransform(rotationAngle: CGFloat.pi * 2.0)
-                viewBackground.transform = CGAffineTransform(rotationAngle: CGFloat.pi * 2.0)
-                
-            } completion: { _ in
-                
-                // get small and disappear
-                UIView.animate(withDuration: duration, delay: 0, options: .curveEaseIn) {
-                    
-                    view.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
-                    view.alpha = 0.0
-                    viewBackground.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
-                    viewBackground.alpha = 0.0
-                    
-                } completion: { _ in
-                    
-                    // done with everything
-                    view.isHidden = true
-                    view.transform = .identity
-                    viewBackground.isHidden = true
-                    viewBackground.transform = .identity
-                    
-                }
-            }
-            
-        }
+        self.performSpinningCheckmarkAnimation()
     }
-    
-    /// visual indication of unlog
     func unlogReminderAnimation() {
-        let view: ScaledUIButton! = didLogEventConfirmation
-        view.setImage(UIImage.init(systemName: "arrow.uturn.backward.circle.fill"), for: .normal)
-        view.tintColor = UIColor.systemGray2
-        let viewBackground: ScaledUIButton! = didLogEventConfirmationBackground
-        viewBackground.setImage(UIImage.init(systemName: "circle.fill"), for: .normal)
-        
-        view.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
-        view.alpha = 0.0
-        view.isHidden = false
-        viewBackground.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
-        viewBackground.alpha = 0.0
-        viewBackground.isHidden = false
-        
-        let duration: TimeInterval = 0.17
-        
-        // come in from nothing
-        UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut, animations: {
-            
-            view.transform = .identity
-            view.alpha = 1.0
-            viewBackground.transform = .identity
-            viewBackground.alpha = 1.0
-            
-        }) { _ in
-            
-            // begin spin once
-            UIView.animate(withDuration: duration, delay: 0, options: .curveLinear) {
-                
-                view.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
-                viewBackground.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
-                
-            } completion: { _ in
-                // finished
-            }
-            
-            // end spin
-            UIView.animate(withDuration: duration, delay: (duration*0.85), options: .curveEaseIn) {
-                
-                view.transform = CGAffineTransform(rotationAngle: CGFloat.pi * 2.0)
-                viewBackground.transform = CGAffineTransform(rotationAngle: CGFloat.pi * 2.0)
-                
-            } completion: { _ in
-                
-                // get small and disappear
-                UIView.animate(withDuration: duration, delay: 0, options: .curveEaseIn) {
-                    
-                    view.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
-                    view.alpha = 0.0
-                    viewBackground.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
-                    viewBackground.alpha = 0.0
-                    
-                } completion: { _ in
-                    
-                    // done with everything
-                    view.isHidden = true
-                    view.transform = .identity
-                    viewBackground.isHidden = true
-                    viewBackground.transform = .identity
-                    
-                }
-            }
-            
-        }
+        self.performSpinningUndoAnimation()
     }
     
     // MARK: - DogManagerControlFlowProtocol
@@ -314,6 +187,8 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
             guard newDogManager != nil else {
                 return
             }
+            
+            self.performSpinningCheckmarkAnimation()
             self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager!)
         }
         
