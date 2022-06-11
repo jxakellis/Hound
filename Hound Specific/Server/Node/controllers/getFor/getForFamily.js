@@ -3,8 +3,15 @@ const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { areAllDefined } = require('../../main/tools/format/formatObject');
 
+// Select every column except for userEmail, userIdentifier, userNotificationToken, and userIsDeleted (by not transmitting, increases network efficiency)
+// userEmail, userIdentifier, and userNotificationToken are all private so shouldn't be shown. userIsDeleted isn't currently being used
+const usersColumns = 'users.userId, users.userFirstName, users.userLastName';
+// Select every column except for familyId, lastPause, lastUnpause, and familyIsDeleted (by not transmitting, increases network efficiency)
+// familyId is already known, lastPause + lastUnpause have no use client-side and familyIsDeleted isn't currently being used
+const familiesColumns = 'userId, familyCode, isLocked, isPaused';
+
 /**
- *  If the query is successful, returns the familyCode, isLocked, and  familyMembers for the familyId.
+ *  If the query is successful, returns the userId, familyCode, isLocked, isPaused, and familyMembers for the familyId.
  *  If a problem is encountered, creates and throws custom error
  */
 const getFamilyInformationForFamilyId = async (req, familyId) => {
@@ -17,13 +24,13 @@ const getFamilyInformationForFamilyId = async (req, familyId) => {
     // get family members
     const familyMembers = await queryPromise(
       req,
-      'SELECT users.userId, users.userFirstName, users.userLastName FROM familyMembers LEFT JOIN users ON familyMembers.userId = users.userId WHERE familyMembers.familyId = ? LIMIT 18446744073709551615',
+      `SELECT ${usersColumns} FROM familyMembers LEFT JOIN users ON familyMembers.userId = users.userId WHERE familyMembers.familyId = ? LIMIT 18446744073709551615`,
       [familyId],
     );
     // find which family member is the head
     let family = await queryPromise(
       req,
-      'SELECT userId, isLocked, familyCode, isPaused FROM families WHERE familyId = ? LIMIT 1',
+      `SELECT ${familiesColumns} FROM families WHERE familyId = ? LIMIT 1`,
       [familyId],
     );
 
@@ -52,7 +59,7 @@ const getFamilyMembersForUserId = async (req, userId) => {
   try {
     const result = await queryPromise(
       req,
-      'SELECT familyId, userId FROM familyMembers WHERE userId = ? LIMIT 1',
+      `SELECT ${usersColumns} FROM familyMembers WHERE userId = ? LIMIT 1`,
       [userId],
     );
     return result;

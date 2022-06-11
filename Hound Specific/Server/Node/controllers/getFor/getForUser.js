@@ -3,8 +3,8 @@ const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { areAllDefined } = require('../../main/tools/format/formatObject');
 
-const userInformationSelect = 'users.userId, users.userNotificationToken, users.userFirstName, users.userLastName, users.userEmail';
-const userConfigurationSelect = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.logsInterfaceScale, userConfiguration.remindersInterfaceScale, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';
+const userColumns = 'users.userId, users.userNotificationToken, users.userFirstName, users.userLastName, users.userEmail';
+const userConfigurationColumns = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.logsInterfaceScale, userConfiguration.remindersInterfaceScale, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';
 
 /**
  * Returns the user for the userId. Errors not handled
@@ -21,7 +21,7 @@ const getUserForUserId = async (req, userId) => {
     // Therefore setting userId to null (if there is no family member) even though the userId isn't null.
     userInformation = await queryPromise(
       req,
-      `SELECT ${userInformationSelect}, familyMembers.familyId, ${userConfigurationSelect} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userId = ? LIMIT 1`,
+      `SELECT ${userColumns}, familyMembers.familyId, ${userConfigurationColumns} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userId = ? LIMIT 1`,
       [userId],
     );
   }
@@ -49,7 +49,7 @@ const getUserForUserIdentifier = async (req, userIdentifier) => {
     // Therefore setting userId to null (if there is no family member) even though the userId isn't null.
     userInformation = await queryPromise(
       req,
-      `SELECT ${userInformationSelect}, familyMembers.familyId, ${userConfigurationSelect} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userIdentifier = ? LIMIT 1`,
+      `SELECT ${userColumns}, familyMembers.familyId, ${userConfigurationColumns} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userIdentifier = ? LIMIT 1`,
       [userIdentifier],
     );
   }
