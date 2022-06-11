@@ -7,28 +7,17 @@ const app = express();
 // MARK: Create the server
 
 const { restoreAlarmNotificationsForAllFamilies } = require('../tools/notifications/alarm/restoreAlarmNotification');
+const { cleanUpIsDeleted } = require('../tools/database/cleanUpDatabase');
 
 // Make the server listen on a specific port
-const server = app.listen(SERVER_PORT, () => {
+const server = app.listen(SERVER_PORT, async () => {
   serverLogger.info(`Listening on port ${SERVER_PORT}`);
 
   if (IS_PRODUCTION) {
     // Server is freshly restarted. Restore notifications that were lost;
-    restoreAlarmNotificationsForAllFamilies();
+    await restoreAlarmNotificationsForAllFamilies();
   }
-  /**
-   *  // TO DO on server start, search through all families.
-   * For each family, find the familyId and the oldest lastServerSynchronization of its family members.
-   * Then find any dogs, reminders or logs for the family that have IsDeleted true and lastModified older than that lastServerSync
-   * Once we find those dogs, reminders, and logs, we can formally delete them.
-   * This is because all current users will have synced those changes (indicated by lastServerSync)
-   * and new users don't need to know IsDeleted as they won't have a need to delete the data client side.
-   *
-   * ALSO for saving lastServerSynchronization, use the queryParam from a get all dogs + reminders + logs query
-   * Technically will be slightly outdated (as after that query the client-side lastServerSync will be updated to Date())
-   * but this only have the downside of temporarily storing data longer than it needs to be stored
-   * but with safety of not assume new Date() on server which would be inaccurate by ~10-1000 milliseconds
-   */
+  await cleanUpIsDeleted();
 });
 
 // MARK: Setup the app to process requests
@@ -40,7 +29,7 @@ configureAppForRequests(app);
 // MARK:  Handle termination of the server
 
 const {
-  connectionForAlarms, connectionForGeneralAlerts, connectionForTokens, poolForRequests,
+  connectionForAlerts, connectionForTokens, poolForRequests,
 } = require('../tools/database/databaseConnection');
 const { schedule } = require('../tools/notifications/alarm/schedules');
 
@@ -73,11 +62,11 @@ const shutdown = () => {
       serverLogger.info('Pool For Requests Ended');
     });
 
-    connectionForAlarms.end(() => {
+    connectionForAlerts.end(() => {
       serverLogger.info('Connection For Alarms Ended');
     });
 
-    connectionForGeneralAlerts.end(() => {
+    connectionForAlerts.end(() => {
       serverLogger.info('Connection For Logs Ended');
     });
 

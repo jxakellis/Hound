@@ -24,7 +24,8 @@ enum UserDefaultsKeys: String {
     case reminderCustomActionNames
     case isNotificationAuthorized
     case reviewRequestDates
-    case isShowReleaseNotes
+    case shouldShowReleaseNotes
+    case appBuildsWithReleaseNotesShown
     case hasLoadedFamilyIntroductionViewControllerBefore
     case hasLoadedRemindersIntroductionViewControllerBefore
     

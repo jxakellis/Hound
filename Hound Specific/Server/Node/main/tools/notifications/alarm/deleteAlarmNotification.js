@@ -1,6 +1,6 @@
 const { alarmLogger } = require('../../logging/loggers');
 const { queryPromise } = require('../../database/queryPromise');
-const { connectionForAlarms } = require('../../database/databaseConnection');
+const { connectionForAlerts } = require('../../database/databaseConnection');
 
 const { areAllDefined } = require('../../format/formatObject');
 const { cancelPrimaryJobForFamilyForReminder, cancelSecondaryJobForUserForReminder } = require('./cancelJob');
@@ -16,13 +16,13 @@ const deleteAlarmNotificationsForFamily = async (familyId) => {
 
     // get all the reminders for the family
     const reminders = await queryPromise(
-      connectionForAlarms,
+      connectionForAlerts,
       'SELECT reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogs.familyId = ? LIMIT 18446744073709551615',
       [familyId],
     );
       // finds all the users in the family
     const users = await queryPromise(
-      connectionForAlarms,
+      connectionForAlerts,
       'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
       [familyId],
     );
@@ -61,7 +61,7 @@ const deleteAlarmNotificationsForReminder = async (familyId, reminderId) => {
 
     // finds all the users in the family
     const users = await queryPromise(
-      connectionForAlarms,
+      connectionForAlerts,
       'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
       [familyId],
     );
@@ -90,7 +90,7 @@ const deleteSecondaryAlarmNotificationsForUser = async (userId) => {
     // get all the reminders for the given userId
     // specifically use JOIN to excluse resulst where reminder, dog, family, or family member are missing
     const reminderIds = await queryPromise(
-      connectionForAlarms,
+      connectionForAlerts,
       'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND familyMembers.userId = ? AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
       [userId],
     );

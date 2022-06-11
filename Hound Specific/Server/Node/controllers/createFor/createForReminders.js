@@ -21,7 +21,7 @@ const createReminderQuery = async (req, reminder) => {
   try {
     numberOfReminders = await queryPromise(
       req,
-      'SELECT reminderId FROM dogReminders WHERE reminderIsDeleted = 0 AND dogId = ?',
+      'SELECT reminderId FROM dogReminders WHERE reminderIsDeleted = 0 AND dogId = ? LIMIT 18446744073709551615',
       [dogId],
     );
   }

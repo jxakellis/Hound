@@ -1,6 +1,6 @@
 const { formatArray, areAllDefined } = require('../../main/tools/format/formatObject');
 
-const { getReminderQuery, getRemindersQuery } = require('../getFor/getForReminders');
+const { getReminderForReminderId, getAllRemindersForDogId } = require('../getFor/getForReminders');
 const { createReminderQuery, createRemindersQuery } = require('../createFor/createForReminders');
 const { updateReminderQuery, updateRemindersQuery } = require('../updateFor/updateForReminders');
 const { deleteReminderForReminderId } = require('../deleteFor/deleteForReminders');
@@ -25,11 +25,11 @@ const getReminders = async (req, res) => {
   try {
     // reminderId was provided, look for single reminder
     if (areAllDefined(reminderId)) {
-      result = await getReminderQuery(req, reminderId);
+      result = await getReminderForReminderId(req, reminderId);
     }
     // look for multiple reminders
     else {
-      result = await getRemindersQuery(req, dogId);
+      result = await getAllRemindersForDogId(req, dogId);
     }
   }
   catch (error) {

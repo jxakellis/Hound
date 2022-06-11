@@ -3,7 +3,7 @@ const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { generateVerifiedFamilyCode } = require('../../main/tools/database/generateVerifiedFamilyCode');
 
-const { getFamilyMembersForUserIdQuery } = require('../getFor/getForFamily');
+const { getFamilyMembersForUserId } = require('../getFor/getForFamily');
 const { areAllDefined } = require('../../main/tools/format/formatObject');
 
 /**
@@ -18,7 +18,7 @@ const createFamilyQuery = async (req) => {
   }
 
   // check if the user is already in a family
-  const existingFamilyResult = await getFamilyMembersForUserIdQuery(req, userId);
+  const existingFamilyResult = await getFamilyMembersForUserId(req, userId);
 
   // validate that the user is not in a family
   if (existingFamilyResult.length !== 0) {

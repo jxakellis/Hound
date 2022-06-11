@@ -1,5 +1,5 @@
 const DatabaseError = require('../../errors/databaseError');
-const { connectionForGeneralAlerts } = require('../../database/databaseConnection');
+const { connectionForAlerts } = require('../../database/databaseConnection');
 const { alertLogger } = require('../../logging/loggers');
 const { formatBoolean, areAllDefined } = require('../../format/formatObject');
 
@@ -158,7 +158,7 @@ const abreviatedFullNameQuery = async (userId) => {
   let result;
   try {
     result = await queryPromise(
-      connectionForGeneralAlerts,
+      connectionForAlerts,
       'SELECT userFirstName, userLastName FROM users WHERE userId = ? LIMIT 1',
       [userId],
     );

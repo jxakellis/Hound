@@ -25,6 +25,8 @@ class ServerSyncViewController: UIViewController, ServerFamilyViewControllerDele
         super.viewDidLoad()
         
         oneTimeSetup()
+        
+        // TO DO change from text checkmark boxes to progressive loading bar. this loading bar uses the progress property of the URLSessionDataTask object to actually tell how far each query is done.
     }
     
     override func viewWillAppear(_ animated: Bool) {

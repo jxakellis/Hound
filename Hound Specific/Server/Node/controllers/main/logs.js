@@ -1,4 +1,4 @@
-const { getLogQuery, getLogsQuery } = require('../getFor/getForLogs');
+const { getLogForLogId, getAllLogsForDogId } = require('../getFor/getForLogs');
 const { createLogQuery } = require('../createFor/createForLogs');
 const { updateLogQuery } = require('../updateFor/updateForLogs');
 const { deleteLogForLogId } = require('../deleteFor/deleteForLogs');
@@ -22,11 +22,11 @@ const getLogs = async (req, res) => {
   try {
     // if logId is defined and it is a number then continue to find a single log
     if (areAllDefined(logId)) {
-      result = await getLogQuery(req, logId);
+      result = await getLogForLogId(req, logId);
     }
     // query for multiple logs
     else {
-      result = await getLogsQuery(req, dogId);
+      result = await getAllLogsForDogId(req, dogId);
     }
   }
   catch (error) {

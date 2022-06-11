@@ -1,6 +1,6 @@
 const { alarmLogger } = require('../../logging/loggers');
 const { queryPromise } = require('../../database/queryPromise');
-const { connectionForAlarms } = require('../../database/databaseConnection');
+const { connectionForAlerts } = require('../../database/databaseConnection');
 
 const {
   formatBoolean, formatNumber, formatDate, areAllDefined,
@@ -20,14 +20,14 @@ const refreshSecondaryAlarmNotificationsForUser = async (userId, isFollowUpEnabl
     alarmLogger.debug(`refreshSecondaryAlarmNotificationsForUser ${userId}, ${isFollowUpEnabled}, ${followUpDelay}`);
 
     // Have to be careful isFollowUpEnabled and followUpDelay are accessed as there will be uncommited transactions involved
-    // If the transaction is uncommited and querying from an outside connection (connectionForAlarms), the values from a SELECT query will be the old values
+    // If the transaction is uncommited and querying from an outside connection (connectionForAlerts), the values from a SELECT query will be the old values
     // If the transaction is uncommited and querying from the updating connection (req.connection), the values from the SELECT query will be the updated values
     // If the transaction is committed, then any connection will reflect the new values
     let formattedIsFollowUpEnabled = formatBoolean(isFollowUpEnabled);
     let formattedFollowUpDelay = formatNumber(followUpDelay);
 
     const result = await queryPromise(
-      connectionForAlarms,
+      connectionForAlerts,
       'SELECT isFollowUpEnabled, followUpDelay FROM userConfiguration WHERE userId = ? LIMIT 18446744073709551615',
       [userId],
     );
@@ -49,7 +49,7 @@ const refreshSecondaryAlarmNotificationsForUser = async (userId, isFollowUpEnabl
         // no need to invoke deleteSecondaryAlarmNotificationsForUser as createSecondaryAlarmNotificationForUser will delete/override by itself
         // get all the reminders for the given userId
         const remindersWithInfo = await queryPromise(
-          connectionForAlarms,
+          connectionForAlerts,
           'SELECT dogReminders.reminderId, dogReminders.reminderExecutionDate FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE familyMembers.userId = ? AND dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
           [userId],
         );

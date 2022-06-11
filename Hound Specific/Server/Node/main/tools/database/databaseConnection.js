@@ -5,7 +5,7 @@ const DatabaseError = require('../errors/databaseError');
 const { poolLogger, queryLogger } = require('../logging/loggers');
 
 /// The connection used by the server when querying the database for alarm notifications
-const connectionForAlarms = mysql2.createConnection({
+const connectionForAlerts = mysql2.createConnection({
   connectTimeout: 30000,
   host: 'localhost',
   user: 'admin',
@@ -14,7 +14,7 @@ const connectionForAlarms = mysql2.createConnection({
 });
 
 /// The connection used by the server when querying the database for log notifications
-const connectionForGeneralAlerts = mysql2.createConnection({
+const connectionForGeneral = mysql2.createConnection({
   connectTimeout: 30000,
   host: 'localhost',
   user: 'admin',
@@ -124,5 +124,5 @@ const assignConnection = (req, res, next) => {
 };
 
 module.exports = {
-  connectionForAlarms, connectionForGeneralAlerts, connectionForTokens, poolForRequests, assignConnection,
+  connectionForAlerts, connectionForGeneral, connectionForTokens, poolForRequests, assignConnection,
 };

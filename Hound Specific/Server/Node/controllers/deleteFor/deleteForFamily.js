@@ -43,6 +43,12 @@ const deleteFamilyQuery = async (req, userId, familyId) => {
       await queryPromise(req, 'DELETE FROM families WHERE familyId = ?', [familyId]);
       // deletes all users from the family
       await queryPromise(req, 'DELETE FROM familyMembers WHERE familyId = ?', [familyId]);
+      // delete all the corresponding dog, reminder, and log data
+      await queryPromise(
+        req,
+        'DELETE dogs, dogReminders, dogLogs FROM dogs LEFT JOIN dogLogs ON dogs.dogId = dogLogs.dogId LEFT JOIN dogReminders ON dogs.dogId = dogReminders.dogId WHERE dogs.familyId = ?',
+        [familyId],
+      );
     }
     catch (error) {
       throw new DatabaseError(error.code);

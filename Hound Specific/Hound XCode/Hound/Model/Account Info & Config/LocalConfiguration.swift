@@ -14,7 +14,7 @@ enum LocalConfiguration {
     // MARK: Sync Related
     
     // For our first every dogManager sync, we want to retrieve ever dog, reminder, and log (which can be a LOT of data as accounts accumlate logs over the years). To get everything the family has ever added, we set our last sync as far back in time as it will go. This will retrieve everything
-    static var lastServerSynchronization: Date = Date(timeIntervalSince1970: 0)
+    static var lastDogManagerSynchronization: Date = Date(timeIntervalSince1970: 1234567890)
     
     // MARK: Dog Related
     
@@ -105,7 +105,10 @@ enum LocalConfiguration {
     static var reviewRequestDates: [Date] = [Date()]
     
     /// Determines where or not the app should display an message when the app is first opened after an update
-    static var isShowReleaseNotes: Bool = true
+    static var shouldShowReleaseNotes: Bool = true
+    
+    /// Keeps track of what Hound versions the release notes have been shown for. For example, if we show the release notes for Hound 2.0.0 Build 4000, then we will store 4000 in the array. This makes sure the release notes are only shown once for a given update
+    static var appBuildsWithReleaseNotesShown: [Int] = []
     
     /// Keeps track of if the user has viewed AND completed the family introduction view controller (which helps the user setup their first dog)
     static var hasLoadedFamilyIntroductionViewControllerBefore: Bool = false
@@ -125,8 +128,8 @@ enum LocalConfiguration {
         LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue)
         
-        LocalConfiguration.lastServerSynchronization = Date(timeIntervalSince1970: 0)
-        UserDefaults.standard.set(LocalConfiguration.lastServerSynchronization, forKey: ServerDefaultKeys.lastServerSynchronization.rawValue)
+        LocalConfiguration.lastDogManagerSynchronization = Date(timeIntervalSince1970: 1234567890)
+        UserDefaults.standard.set(LocalConfiguration.lastDogManagerSynchronization, forKey: ServerDefaultKeys.lastDogManagerSynchronization.rawValue)
         
         LocalConfiguration.dogIcons = []
         if let dataDogIcons = try? NSKeyedArchiver.archivedData(withRootObject: LocalConfiguration.dogIcons, requiringSecureCoding: false) {

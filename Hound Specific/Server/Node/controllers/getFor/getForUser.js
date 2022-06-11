@@ -9,7 +9,7 @@ const userConfigurationSelect = 'userConfiguration.isNotificationEnabled, userCo
 /**
  * Returns the user for the userId. Errors not handled
  */
-const getUserForUserIdQuery = async (req, userId) => {
+const getUserForUserId = async (req, userId) => {
   if (areAllDefined(userId) === false) {
     throw new ValidationError('userId missing', 'ER_VALUES_MISSING');
   }
@@ -37,7 +37,7 @@ const getUserForUserIdQuery = async (req, userId) => {
 /**
  * Returns the user for the userIdentifier. Errors not handled
  */
-const getUserForUserIdentifierQuery = async (req, userIdentifier) => {
+const getUserForUserIdentifier = async (req, userIdentifier) => {
   if (areAllDefined(userIdentifier) === false) {
     throw new ValidationError('userIdentifier missing', 'ER_VALUES_MISSING');
   }
@@ -69,4 +69,4 @@ const getUserForUserIdentifierQuery = async (req, userIdentifier) => {
   return userInformation;
 };
 
-module.exports = { getUserForUserIdQuery, getUserForUserIdentifierQuery };
+module.exports = { getUserForUserId, getUserForUserIdentifier };

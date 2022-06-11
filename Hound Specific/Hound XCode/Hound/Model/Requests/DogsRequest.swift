@@ -34,7 +34,7 @@ enum DogsRequest: RequestProtocol {
         urlComponents.queryItems = [
             URLQueryItem(name: "reminders", value: "true"),
             URLQueryItem(name: "logs", value: "true"),
-            URLQueryItem(name: "lastServerSynchronization", value: LocalConfiguration.lastServerSynchronization.ISO8601FormatWithFractionalSeconds())
+            URLQueryItem(name: "lastDogManagerSynchronization", value: LocalConfiguration.lastDogManagerSynchronization.ISO8601FormatWithFractionalSeconds())
         ]
         
         URLWithParams = urlComponents.url!
@@ -160,8 +160,8 @@ extension DogsRequest {
                 return completionHandler(nil, responseStatus)
             }
             
-            // we want this Date() to be slightly in the past. If we set  LocalConfiguration.lastServerSynchronization = Date() after the request is successful then any changes that might have occured DURING our query (e.g. we are querying and at the exact same moment a family member creates a log) will not be saved. Therefore, this is more redundant and makes sure nothing is missed
-            let lastServerSynchronization = Date()
+            // we want this Date() to be slightly in the past. If we set  LocalConfiguration.lastDogManagerSynchronization = Date() after the request is successful then any changes that might have occured DURING our query (e.g. we are querying and at the exact same moment a family member creates a log) will not be saved. Therefore, this is more redundant and makes sure nothing is missed
+            let lastDogManagerSynchronization = Date()
             
             // Now can get the dogManager
             DogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: nil) { responseBody, responseStatus in
@@ -170,7 +170,7 @@ extension DogsRequest {
                     if let newDogManagerBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]], let newDogManager = DogManager(fromBody: newDogManagerBody) {
                         
                         // successful sync, so we can update value
-                        LocalConfiguration.lastServerSynchronization = lastServerSynchronization
+                        LocalConfiguration.lastDogManagerSynchronization = lastDogManagerSynchronization
                         
                         newDogManager.combine(withOldDogManager: currentDogManager)
                         

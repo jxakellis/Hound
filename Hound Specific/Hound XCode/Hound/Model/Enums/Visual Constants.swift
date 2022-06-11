@@ -24,3 +24,11 @@ enum ViewTagConstant: Int {
 enum FontConstant: Double {
     case logCellFontSize = 13.0
 }
+
+enum AnimationConstant: Double {
+    
+    case largeButtonShow = 0.300001
+    case largeButtonHide = 0.150001
+    
+    case weekdayButton = 0.120001
+}

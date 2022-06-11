@@ -1,4 +1,4 @@
-const { connectionForGeneralAlerts } = require('../../database/databaseConnection');
+const { connectionForAlerts } = require('../../database/databaseConnection');
 const { alertLogger } = require('../../logging/loggers');
 const { areAllDefined } = require('../../format/formatObject');
 
@@ -21,7 +21,7 @@ const createLogNotification = async (userId, familyId, dogId, logAction, logCust
 
     // get the first and last name of the user who logged the event
     let user = await queryPromise(
-      connectionForGeneralAlerts,
+      connectionForAlerts,
       'SELECT userFirstName, userLastName FROM users WHERE userId = ? LIMIT 1',
       [userId],
     );
@@ -29,8 +29,8 @@ const createLogNotification = async (userId, familyId, dogId, logAction, logCust
 
     // get the name of the dog who got logged
     let dog = await queryPromise(
-      connectionForGeneralAlerts,
-      'SELECT dogName FROM dogs WHERE dogIsDeleted = 0 dogId = ? LIMIT 1',
+      connectionForAlerts,
+      'SELECT dogName FROM dogs WHERE dogIsDeleted = 0 AND dogId = ? LIMIT 1',
       [dogId],
     );
     dog = dog[0];

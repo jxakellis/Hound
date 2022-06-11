@@ -90,8 +90,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             // Therefore, we should refresh the dogManager to make sure we are up to date on important features of the reminder's state: create, delete, timing.
             // Once everything is synced again, the alarm will be shown as expected. N
             // Note: we also individually fetch a reminder before immediately constructing its alertController for its alarm. This ensure, even if the user has notifications turned off (meaning this piece of code right here won't be executed), that the reminder they are being show is up to date.
-            if LocalConfiguration.lastServerSynchronization.distance(to: reminderLastModified) > 0 {
-                // reminderLastModified is further in the future than lastServerSynchronization
+            if LocalConfiguration.lastDogManagerSynchronization.distance(to: reminderLastModified) > 0 {
+                // reminderLastModified is further in the future than lastDogManagerSynchronization
                 DogsRequest.get(invokeErrorManager: false, dogManager: MainTabBarViewController.staticDogManager) { newDogManager, _ in
                     guard newDogManager != nil else {
                         return

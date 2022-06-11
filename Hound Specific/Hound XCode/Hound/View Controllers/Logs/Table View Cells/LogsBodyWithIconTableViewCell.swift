@@ -19,7 +19,6 @@ class LogsBodyWithIconTableViewCell: UITableViewCell {
     @IBOutlet private weak var logDateBottomConstraint: NSLayoutConstraint!
     @IBOutlet private weak var logDateHeightConstraint: NSLayoutConstraint!
     
-    
     @IBOutlet private weak var logActionLabel: ScaledUILabel!
     @IBOutlet private weak var familyMemberNameLabel: ScaledUILabel!
     @IBOutlet private weak var logNoteLabel: ScaledUILabel!

@@ -7,7 +7,7 @@ const { areAllDefined } = require('../../main/tools/format/formatObject');
  *  If the query is successful, returns the familyCode, isLocked, and  familyMembers for the familyId.
  *  If a problem is encountered, creates and throws custom error
  */
-const getFamilyInformationForFamilyIdQuery = async (req, familyId) => {
+const getFamilyInformationForFamilyId = async (req, familyId) => {
   // validate that a familyId was passed, assume that its in the correct format
   if (areAllDefined(familyId) === false) {
     throw new ValidationError('familyId missing', 'ER_VALUES_MISSING');
@@ -43,7 +43,7 @@ const getFamilyInformationForFamilyIdQuery = async (req, familyId) => {
  *  If the query is successful, returns the family members for the userId.
  *  If a problem is encountered, creates and throws custom error
  */
-const getFamilyMembersForUserIdQuery = async (req, userId) => {
+const getFamilyMembersForUserId = async (req, userId) => {
   // validate that a userId was passed, assume that its in the correct format
   if (areAllDefined(userId) === false) {
     throw new ValidationError('userId missing', 'ER_VALUES_MISSING');
@@ -62,4 +62,4 @@ const getFamilyMembersForUserIdQuery = async (req, userId) => {
   }
 };
 
-module.exports = { getFamilyInformationForFamilyIdQuery, getFamilyMembersForUserIdQuery };
+module.exports = { getFamilyInformationForFamilyId, getFamilyMembersForUserId };

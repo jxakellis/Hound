@@ -28,7 +28,7 @@ const createLogQuery = async (req) => {
   try {
     numberOfLogs = await queryPromise(
       req,
-      'SELECT logId FROM dogLogs WHERE logIsDeleted = 0 AND dogId = ?',
+      'SELECT logId FROM dogLogs WHERE logIsDeleted = 0 AND dogId = ? LIMIT 18446744073709551615',
       [dogId],
     );
   }

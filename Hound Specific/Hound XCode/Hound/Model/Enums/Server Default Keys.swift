@@ -54,7 +54,7 @@ enum ServerDefaultKeys: String {
     
     // MARK: - Special Local Configuration
     
-    case lastServerSynchronization
+    case lastDogManagerSynchronization
     
     // MARK: Dog
     

@@ -3,7 +3,7 @@ const {
   formatBoolean, formatNumber, atLeastOneDefined, areAllDefined,
 } = require('../../main/tools/format/formatObject');
 
-const { getUserForUserIdQuery, getUserForUserIdentifierQuery } = require('../getFor/getForUser');
+const { getUserForUserId, getUserForUserIdentifier } = require('../getFor/getForUser');
 const { createUserQuery } = require('../createFor/createForUser');
 const { updateUserQuery } = require('../updateFor/updateForUser');
 const { deleteUserQuery } = require('../deleteFor/deleteForUser');
@@ -23,7 +23,7 @@ const getUser = async (req, res) => {
   // user provided userId so we go that route
   if (areAllDefined(userId)) {
     try {
-      result = await getUserForUserIdQuery(req, userId);
+      result = await getUserForUserId(req, userId);
     }
     catch (error) {
       await req.rollbackQueries(req);
@@ -33,7 +33,7 @@ const getUser = async (req, res) => {
   // user provided userIdentifier so we find them using that way
   else if (areAllDefined(userIdentifier)) {
     try {
-      result = await getUserForUserIdentifierQuery(req, userIdentifier);
+      result = await getUserForUserIdentifier(req, userIdentifier);
     }
     catch (error) {
       await req.rollbackQueries(req);

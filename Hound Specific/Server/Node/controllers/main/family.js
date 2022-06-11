@@ -1,4 +1,4 @@
-const { getFamilyInformationForFamilyIdQuery } = require('../getFor/getForFamily');
+const { getFamilyInformationForFamilyId } = require('../getFor/getForFamily');
 const { createFamilyQuery } = require('../createFor/createForFamily');
 const { updateFamilyQuery } = require('../updateFor/updateForFamily');
 const { deleteFamilyQuery } = require('../deleteFor/deleteForFamily');
@@ -11,7 +11,7 @@ Known:
 const getFamily = async (req, res) => {
   const familyId = req.params.familyId;
   try {
-    const result = await getFamilyInformationForFamilyIdQuery(req, familyId);
+    const result = await getFamilyInformationForFamilyId(req, familyId);
     await req.commitQueries(req);
     return res.status(200).json({ result });
   }

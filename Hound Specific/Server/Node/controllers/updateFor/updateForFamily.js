@@ -11,7 +11,7 @@ const {
 } = require('../../main/tools/notifications/alert/createFamilyNotification');
 const { createUserKickedNotification } = require('../../main/tools/notifications/alert/createUserKickedNotification');
 const { deleteAlarmNotificationsForFamily, deleteSecondaryAlarmNotificationsForUser } = require('../../main/tools/notifications/alarm/deleteAlarmNotification');
-const { getFamilyMembersForUserIdQuery } = require('../getFor/getForFamily');
+const { getFamilyMembersForUserId } = require('../getFor/getForFamily');
 
 /**
  *  Queries the database to update a family to add a new user. If the query is successful, then returns
@@ -43,7 +43,6 @@ const updateFamilyQuery = async (req) => {
  * Helper method for updateFamilyQuery, goes through checks to attempt to add user to desired family
  */
 const addFamilyMemberQuery = async (req) => {
-  // TO DO possibly convert to accept/decline system of adding people (don't have family lock)
   let familyCode = req.body.familyCode;
   // make sure familyCode was provided
   if (areAllDefined(familyCode) === false) {
@@ -79,7 +78,7 @@ const addFamilyMemberQuery = async (req) => {
   // the familyCode is valid and linked to an UNLOCKED family
   const userId = req.params.userId;
 
-  const isFamilyMember = await getFamilyMembersForUserIdQuery(req, userId);
+  const isFamilyMember = await getFamilyMembersForUserId(req, userId);
 
   if (isFamilyMember.length !== 0) {
     // user is already in a family

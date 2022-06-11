@@ -1,4 +1,4 @@
-const { getDogQuery, getDogsQuery } = require('../getFor/getForDogs');
+const { getDogForDogId, getAllDogsForFamilyId } = require('../getFor/getForDogs');
 const { createDogQuery } = require('../createFor/createForDogs');
 const { updateDogQuery } = require('../updateFor/updateForDogs');
 const { deleteDogForDogId } = require('../deleteFor/deleteForDogs');
@@ -19,11 +19,11 @@ const getDogs = async (req, res) => {
   try {
     // if dogId is defined and it is a number then continue to find a single dog
     if (areAllDefined(dogId)) {
-      result = await getDogQuery(req, dogId);
+      result = await getDogForDogId(req, dogId);
     }
     // looking for multiple dogs
     else {
-      result = await getDogsQuery(req, familyId);
+      result = await getAllDogsForFamilyId(req, familyId);
     }
   }
   catch (error) {

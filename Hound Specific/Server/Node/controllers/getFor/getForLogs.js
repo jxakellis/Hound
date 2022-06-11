@@ -3,12 +3,16 @@ const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { formatDate, areAllDefined } = require('../../main/tools/format/formatObject');
 
+// Select every column except for dogId and logLastModified (by not transmitting, increases network efficiency)
+// dogId is already known and dogLastModified has no use client-side
+const dogLogsColumns = 'logId, userId, logDate, logNote, logAction, logCustomActionName, logIsDeleted';
+
 /**
  *  If the query is successful, returns the log for the dogId.
  *  If a problem is encountered, creates and throws custom error
 */
-const getLogQuery = async (req, logId) => {
-  const lastServerSynchronization = formatDate(req.query.lastServerSynchronization);
+const getLogForLogId = async (req, logId) => {
+  const lastDogManagerSynchronization = formatDate(req.query.lastDogManagerSynchronization);
 
   // verify that a logId was passed
   if (areAllDefined(logId) === false) {
@@ -16,17 +20,17 @@ const getLogQuery = async (req, logId) => {
   }
   try {
     let result;
-    if (areAllDefined(lastServerSynchronization)) {
+    if (areAllDefined(lastDogManagerSynchronization)) {
       result = await queryPromise(
         req,
-        'SELECT * FROM dogLogs WHERE logLastModified >= ? AND logId = ? LIMIT 1',
-        [lastServerSynchronization, logId],
+        `SELECT ${dogLogsColumns} FROM dogLogs WHERE logLastModified >= ? AND logId = ? LIMIT 1`,
+        [lastDogManagerSynchronization, logId],
       );
     }
     else {
       result = await queryPromise(
         req,
-        'SELECT * FROM dogLogs WHERE logId = ? LIMIT 1',
+        `SELECT ${dogLogsColumns} FROM dogLogs WHERE logId = ? LIMIT 1`,
         [logId],
       );
     }
@@ -42,25 +46,25 @@ const getLogQuery = async (req, logId) => {
  *  If the query is successful, returns an array of all the logs for the dogId. Errors not handled
  *  If a problem is encountered, creates and throws custom error
  */
-const getLogsQuery = async (req, dogId) => {
-  const lastServerSynchronization = formatDate(req.query.lastServerSynchronization);
+const getAllLogsForDogId = async (req, dogId) => {
+  const lastDogManagerSynchronization = formatDate(req.query.lastDogManagerSynchronization);
 
   if (areAllDefined(dogId) === false) {
     throw new ValidationError('dogId missing', 'ER_VALUES_MISSING');
   }
   try {
     let result;
-    if (areAllDefined(lastServerSynchronization)) {
+    if (areAllDefined(lastDogManagerSynchronization)) {
       result = await queryPromise(
         req,
-        'SELECT * FROM dogLogs WHERE logLastModified >= ? AND dogId = ? LIMIT 18446744073709551615',
-        [lastServerSynchronization, dogId],
+        `SELECT ${dogLogsColumns} FROM dogLogs WHERE logLastModified >= ? AND dogId = ? LIMIT 18446744073709551615`,
+        [lastDogManagerSynchronization, dogId],
       );
     }
     else {
       result = await queryPromise(
         req,
-        'SELECT * FROM dogLogs WHERE dogId = ? LIMIT 18446744073709551615',
+        `SELECT ${dogLogsColumns} FROM dogLogs WHERE dogId = ? LIMIT 18446744073709551615`,
         [dogId],
       );
     }
@@ -72,4 +76,4 @@ const getLogsQuery = async (req, dogId) => {
   }
 };
 
-module.exports = { getLogQuery, getLogsQuery };
+module.exports = { getLogForLogId, getAllLogsForDogId };

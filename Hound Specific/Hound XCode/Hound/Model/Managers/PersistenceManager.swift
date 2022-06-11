@@ -13,8 +13,6 @@ enum PersistenceManager {
     /// Called by App or Scene Delegate when setting up in didFinishLaunchingWithOptions, can be either the first time setup or a recurring setup (i.e. not the app isnt being opened for the first time)
     static func setup() {
         
-        // TO DO verify that Hound 1.3.5 things were imported properly (i.e. isNotificationAuthorized, reviewRequestDates, and possible others)
-        
         AppDelegate.generalLogger.notice("\n-----Device Info-----\n Model: \(UIDevice.current.model) \n Name: \(UIDevice.current.name) \n System Name: \(UIDevice.current.systemName) \n System Version: \(UIDevice.current.systemVersion)")
         
         UIApplication.previousAppBuild = UserDefaults.standard.object(forKey: UserDefaultsKeys.appBuild.rawValue) as? Int
@@ -45,7 +43,7 @@ enum PersistenceManager {
         
         // MARK: Local Configuration
         
-        LocalConfiguration.lastServerSynchronization = UserDefaults.standard.value(forKey: ServerDefaultKeys.lastServerSynchronization.rawValue) as? Date ?? LocalConfiguration.lastServerSynchronization
+        LocalConfiguration.lastDogManagerSynchronization = UserDefaults.standard.value(forKey: ServerDefaultKeys.lastDogManagerSynchronization.rawValue) as? Date ?? LocalConfiguration.lastDogManagerSynchronization
         
         if let dataDogIcons: Data = UserDefaults.standard.data(forKey: UserDefaultsKeys.dogIcons.rawValue), let unarchiver = try? NSKeyedUnarchiver.init(forReadingFrom: dataDogIcons) {
             unarchiver.requiresSecureCoding = false
@@ -67,14 +65,14 @@ enum PersistenceManager {
                 // if nil, then decode failed or there was an issue. therefore, set the interval back to past so we can refetch from the server
                 AppDelegate.generalLogger.error("Failed to decode dogManager with unarchiver")
                 ServerSyncViewController.dogManager = DogManager()
-                LocalConfiguration.lastServerSynchronization = Date(timeIntervalSince1970: 0)
+                LocalConfiguration.lastDogManagerSynchronization = Date(timeIntervalSince1970: 1234567890)
             }
         }
         else {
             // if nil, then decode failed or there was an issue. therefore, set the interval back to past so we can refetch from the server
             AppDelegate.generalLogger.error("Failed to construct dataDogManager or construct unarchiver for dogManager")
             ServerSyncViewController.dogManager = DogManager()
-            LocalConfiguration.lastServerSynchronization = Date(timeIntervalSince1970: 0)
+            LocalConfiguration.lastDogManagerSynchronization = Date(timeIntervalSince1970: 1234567890)
         }
         
         LocalConfiguration.logCustomActionNames = UserDefaults.standard.value(forKey: UserDefaultsKeys.logCustomActionNames.rawValue) as? [String] ?? LocalConfiguration.logCustomActionNames
@@ -83,11 +81,12 @@ enum PersistenceManager {
         LocalConfiguration.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as? Bool ?? LocalConfiguration.isNotificationAuthorized
         
         LocalConfiguration.reviewRequestDates = UserDefaults.standard.value(forKey: UserDefaultsKeys.reviewRequestDates.rawValue) as? [Date] ?? LocalConfiguration.reviewRequestDates
-        LocalConfiguration.isShowReleaseNotes = UserDefaults.standard.value(forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue) as? Bool ?? LocalConfiguration.isShowReleaseNotes
+        LocalConfiguration.shouldShowReleaseNotes = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue) as? Bool ?? LocalConfiguration.shouldShowReleaseNotes
+        LocalConfiguration.appBuildsWithReleaseNotesShown = UserDefaults.standard.value(forKey: UserDefaultsKeys.appBuildsWithReleaseNotesShown.rawValue) as? [Int] ?? LocalConfiguration.appBuildsWithReleaseNotesShown
         
         LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedFamilyIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore
         LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore
-        
+    
     }
     
     /// Called by App or Scene Delegate when entering the background, used to save information, can be called when terminating for a slightly modifed case.
@@ -126,7 +125,7 @@ enum PersistenceManager {
         
         // Local Configuration
         
-        UserDefaults.standard.set(LocalConfiguration.lastServerSynchronization, forKey: ServerDefaultKeys.lastServerSynchronization.rawValue)
+        UserDefaults.standard.set(LocalConfiguration.lastDogManagerSynchronization, forKey: ServerDefaultKeys.lastDogManagerSynchronization.rawValue)
         
         if let dataDogIcons = try? NSKeyedArchiver.archivedData(withRootObject: LocalConfiguration.dogIcons, requiringSecureCoding: false) {
             UserDefaults.standard.set(dataDogIcons, forKey: UserDefaultsKeys.dogIcons.rawValue)
@@ -141,7 +140,8 @@ enum PersistenceManager {
         UserDefaults.standard.setValue(LocalConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
         
         UserDefaults.standard.setValue(LocalConfiguration.reviewRequestDates, forKeyPath: UserDefaultsKeys.reviewRequestDates.rawValue)
-        UserDefaults.standard.setValue(LocalConfiguration.isShowReleaseNotes, forKey: UserDefaultsKeys.isShowReleaseNotes.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.shouldShowReleaseNotes, forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.appBuildsWithReleaseNotesShown, forKey: UserDefaultsKeys.appBuildsWithReleaseNotesShown.rawValue)
         
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedFamilyIntroductionViewControllerBefore.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue)

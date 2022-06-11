@@ -37,13 +37,11 @@
 		A2536B54260843E900E2FF6A /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2536B53260843E900E2FF6A /* Reminder.swift */; };
 		A2581B7427FDD35E0099AFB8 /* FamilyResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2581B7327FDD35E0099AFB8 /* FamilyResponseError.swift */; };
 		A2581B7627FDDF350099AFB8 /* Notification Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2581B7527FDDF350099AFB8 /* Notification Sound.swift */; };
-		A2581B7827FDDF500099AFB8 /* Animation Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2581B7727FDDF500099AFB8 /* Animation Constant.swift */; };
 		A2581B7A27FDE0590099AFB8 /* Visual Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2581B7927FDE0590099AFB8 /* Visual Constants.swift */; };
 		A263B2F72638A54F00E1DCE6 /* Sender.swift in Sources */ = {isa = PBXBuildFile; fileRef = A263B2F62638A54F00E1DCE6 /* Sender.swift */; };
 		A263D88527FF830C00938EC4 /* LocalDogIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A263D88427FF830C00938EC4 /* LocalDogIcon.swift */; };
 		A263D88727FF85E000938EC4 /* Server Default Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A263D88627FF85E000938EC4 /* Server Default Keys.swift */; };
-		A264AC1D2821B6620041E88A /* Log Interface Scale.swift in Sources */ = {isa = PBXBuildFile; fileRef = A264AC1C2821B6620041E88A /* Log Interface Scale.swift */; };
-		A264AC1F2821B6930041E88A /* Reminder Interface Scale.swift in Sources */ = {isa = PBXBuildFile; fileRef = A264AC1E2821B6930041E88A /* Reminder Interface Scale.swift */; };
+		A264AC1D2821B6620041E88A /* Interface Scale.swift in Sources */ = {isa = PBXBuildFile; fileRef = A264AC1C2821B6620041E88A /* Interface Scale.swift */; };
 		A26A7585263CFF8C0026DE34 /* LogsAddLogVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26A7584263CFF8C0026DE34 /* LogsAddLogVC.swift */; };
 		A26A984A27F658CD002803A6 /* User Default Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26A984927F658CD002803A6 /* User Default Keys.swift */; };
 		A26AF36E25807887005D5DAB /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26AF36D25807887005D5DAB /* DateExtension.swift */; };
@@ -214,14 +212,12 @@
 		A2536B53260843E900E2FF6A /* Reminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminder.swift; sourceTree = "<group>"; };
 		A2581B7327FDD35E0099AFB8 /* FamilyResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyResponseError.swift; sourceTree = "<group>"; };
 		A2581B7527FDDF350099AFB8 /* Notification Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification Sound.swift"; sourceTree = "<group>"; };
-		A2581B7727FDDF500099AFB8 /* Animation Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Animation Constant.swift"; sourceTree = "<group>"; };
 		A2581B7927FDE0590099AFB8 /* Visual Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Visual Constants.swift"; sourceTree = "<group>"; };
 		A25C075826DC525C00D6E4C2 /* HoundDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HoundDebug.entitlements; sourceTree = "<group>"; };
 		A263B2F62638A54F00E1DCE6 /* Sender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sender.swift; sourceTree = "<group>"; };
 		A263D88427FF830C00938EC4 /* LocalDogIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDogIcon.swift; sourceTree = "<group>"; };
 		A263D88627FF85E000938EC4 /* Server Default Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Server Default Keys.swift"; sourceTree = "<group>"; };
-		A264AC1C2821B6620041E88A /* Log Interface Scale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Log Interface Scale.swift"; sourceTree = "<group>"; };
-		A264AC1E2821B6930041E88A /* Reminder Interface Scale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Reminder Interface Scale.swift"; sourceTree = "<group>"; };
+		A264AC1C2821B6620041E88A /* Interface Scale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Interface Scale.swift"; sourceTree = "<group>"; };
 		A26A7584263CFF8C0026DE34 /* LogsAddLogVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsAddLogVC.swift; sourceTree = "<group>"; };
 		A26A984927F658CD002803A6 /* User Default Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User Default Keys.swift"; sourceTree = "<group>"; };
 		A26AF36D25807887005D5DAB /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
@@ -696,10 +692,8 @@
 			children = (
 				A212522128060F5B00FBFAC7 /* ViewControllerUtils.swift */,
 				A2581B7927FDE0590099AFB8 /* Visual Constants.swift */,
-				A2581B7727FDDF500099AFB8 /* Animation Constant.swift */,
 				A2581B7527FDDF350099AFB8 /* Notification Sound.swift */,
-				A264AC1C2821B6620041E88A /* Log Interface Scale.swift */,
-				A264AC1E2821B6930041E88A /* Reminder Interface Scale.swift */,
+				A264AC1C2821B6620041E88A /* Interface Scale.swift */,
 				A233518F27FB7BAB00CDF1BF /* Dog Constants.swift */,
 				A26A984927F658CD002803A6 /* User Default Keys.swift */,
 				A263D88627FF85E000938EC4 /* Server Default Keys.swift */,
@@ -1202,7 +1196,6 @@
 				A2BAA07027D6ED8B0041F3C5 /* UserConfiguration.swift in Sources */,
 				A2AA5CDB27FE481C00FD0134 /* DropDownUIView.swift in Sources */,
 				A25070E326DD9D7E0056CFC4 /* UIViewControllerExtension.swift in Sources */,
-				A264AC1F2821B6930041E88A /* Reminder Interface Scale.swift in Sources */,
 				A2AA5CC727FE44B400FD0134 /* ReminderActionError.swift in Sources */,
 				A2AC89FA27D2780500115831 /* WeeklyComponents.swift in Sources */,
 				A29C985427CE724300B9C8E4 /* RemindersRequest.swift in Sources */,
@@ -1225,10 +1218,9 @@
 				A278ED8C2610FF3D000575FC /* DogsReminderCountDownVC.swift in Sources */,
 				A2B678E527D13AD100424FB0 /* ServerSyncVC.swift in Sources */,
 				A2B00F9E27FA3C2E00C6126E /* FamilyRequest.swift in Sources */,
-				A264AC1D2821B6620041E88A /* Log Interface Scale.swift in Sources */,
+				A264AC1D2821B6620041E88A /* Interface Scale.swift in Sources */,
 				A2AA5CBD27FE391400FD0134 /* ResponseUtils.swift in Sources */,
 				A2AA5CD927FE480000FD0134 /* Log.swift in Sources */,
-				A2581B7827FDDF500099AFB8 /* Animation Constant.swift in Sources */,
 				A2BAA06E27D6ED720041F3C5 /* UserInformation.swift in Sources */,
 				A299EAA427E2C5050042F8F4 /* SettingsAppearanceVC.swift in Sources */,
 				A2B18E3825E8A4C000951AC3 /* AlertManager.swift in Sources */,

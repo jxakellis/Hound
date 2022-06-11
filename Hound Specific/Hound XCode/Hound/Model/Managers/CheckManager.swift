@@ -27,44 +27,34 @@ enum CheckManager {
             }
             
             switch LocalConfiguration.reviewRequestDates.count {
-                // never reviewed before (first date is just put as a placeholder, not actual ask date)
+                
             case 1:
+                // never reviewed before (first date is just put as a placeholder, not actual ask date)
                 // been a 5 days since installed app or got update to add review feature
                 if LocalConfiguration.reviewRequestDates.last!.distance(to: Date()) > (60*60*24*5) {
                     requestReview()
                 }
-                else {
-                    // AppDelegate.generalLogger.notice("Too soon to ask user for another review \nCount: \(LocalConfiguration.reviewRequestDates.count)\nCurrent date: \(Date())\nLast date \(LocalConfiguration.reviewRequestDates.last!.description)\nCurrent distance \(LocalConfiguration.reviewRequestDates.last!.distance(to: Date()))\nDistance left \((60*60*24*5)-LocalConfiguration.reviewRequestDates.last!.distance(to: Date()))")
-                }
-                // been asked once before
+                
             case 2:
+                // been asked once before
                 // been 10 days since last ask (15 days since beginning)
                 if LocalConfiguration.reviewRequestDates.last!.distance(to: Date()) > (60*60*24*10) {
                     requestReview()
                 }
-                else {
-                    // AppDelegate.generalLogger.notice("Too soon to ask user for another review - count: \(LocalConfiguration.reviewRequestDates.count) - current date: \(Date()) - last date \(LocalConfiguration.reviewRequestDates.last!.description) - current distance \(LocalConfiguration.reviewRequestDates.last!.distance(to: Date())) - distance left \((60*60*24*10)-LocalConfiguration.reviewRequestDates.last!.distance(to: Date()))")
-                }
-                // been asked twice before
             case 3:
+                // been asked twice before
                 // been 20 days since last ask (35 days total)
                 if LocalConfiguration.reviewRequestDates.last!.distance(to: Date()) > (60*60*24*20) {
                     requestReview()
                 }
-                else {
-                    // AppDelegate.generalLogger.notice("Too soon to ask user for another review - count: \(LocalConfiguration.reviewRequestDates.count) - current date: \(Date()) - last date \(LocalConfiguration.reviewRequestDates.last!.description) - current distance \(LocalConfiguration.reviewRequestDates.last!.distance(to: Date())) - distance left \((60*60*24*20)-LocalConfiguration.reviewRequestDates.last!.distance(to: Date()))")
-                }
-                // been asked three times before
             case 4:
+                // been asked three times before
                 // been 40 days since last ask (75 days total)
                 if LocalConfiguration.reviewRequestDates.last!.distance(to: Date()) > (60*60*24*40) {
                     requestReview()
                 }
-                else {
-                    // AppDelegate.generalLogger.notice("Too soon to ask user for another review - count: \(LocalConfiguration.reviewRequestDates.count) - current date: \(Date()) - last date \(LocalConfiguration.reviewRequestDates.last!.description) - current distance \(LocalConfiguration.reviewRequestDates.last!.distance(to: Date())) - distance left \((60*60*24*40)-LocalConfiguration.reviewRequestDates.last!.distance(to: Date()))")
-                }
-                // out of asks
             case 5:
+                // out of asks
                 AppDelegate.generalLogger.notice("Out of review requests")
             default:
                 AppDelegate.generalLogger.notice("Fall through when asking user to review Hound")
@@ -77,13 +67,31 @@ enum CheckManager {
     
     /// Displays release notes about a new version to the user if they have that setting enabled and the app was updated to that new version
     static func checkForReleaseNotes() {
-        if UIApplication.previousAppBuild != nil && UIApplication.previousAppBuild! != UIApplication.appBuild && LocalConfiguration.isShowReleaseNotes == true {
-            AppDelegate.generalLogger.notice("Showing Release Notes")
+        // make sure this feature is enabled
+        guard LocalConfiguration.shouldShowReleaseNotes == true else {
+            return
+        }
+        // make sure the app had been opened before, we don't want to show the user release notes on their first launch
+        guard UIApplication.previousAppBuild != nil else {
+            return
+        }
+        
+        // make sure the previousAppBuild and current appBuild are equal, indicating that the app was updated
+        guard UIApplication.previousAppBuild! != UIApplication.appBuild else {
+            return
+        }
+        
+        // make sure we haven't shown the release notes for this version before. To do this, we check to see if our array of app builds that we showed release notes for contains the app build of the current version. If the array does not contain the current app build, then we haven't shown release notes for this new version and we are ok to proceed.
+        guard LocalConfiguration.appBuildsWithReleaseNotesShown.contains(UIApplication.appBuild) == false else {
+            return
+        }
+        
+       AppDelegate.generalLogger.notice("Showing Release Notes")
             var message: String?
             
             switch UIApplication.appBuild {
             case 4000:
-                message = "--Cloud storage! Create your Hound account with the 'Sign In with Apple' feature and have all of your information saved to the Hound server.\n--Family sharing! Create your own Hound family and have other users join it, allowing your logs, reminders, and notifications to all sync.\n--Refined UI. Enjoy a smoother, more fleshed out UI experience with quality of life tweaks.\n--Settings Revamp. Utilize the redesigned settings page to view more options in a cleaner way."
+                message = "-- Cloud storage! Create your Hound account with the 'Sign In with Apple' feature and have all of your information saved to the Hound server.\n-- Family sharing! Create your own Hound family and have other users join it, allowing your logs, reminders, and notifications to all sync.\n-- Refined UI. Enjoy a smoother, more fleshed out UI experience with quality of life tweaks.\n-- Settings Revamp. Utilize the redesigned settings page to view more options in a cleaner way."
             default:
                 message = nil
             }
@@ -95,13 +103,14 @@ enum CheckManager {
             let updateAlertController = GeneralUIAlertController(title: "Release Notes For Hound \(UIApplication.appVersion ?? String(UIApplication.appBuild))", message: message, preferredStyle: .alert)
             let understandAlertAction = UIAlertAction(title: "Ok, sounds great!", style: .default, handler: nil)
             let stopAlertAction = UIAlertAction(title: "Don't show release notes again", style: .default) { _ in
-                LocalConfiguration.isShowReleaseNotes = false
+                LocalConfiguration.shouldShowReleaseNotes = false
             }
             
             updateAlertController.addAction(understandAlertAction)
             updateAlertController.addAction(stopAlertAction)
             AlertManager.enqueueAlertForPresentation(updateAlertController)
-        }
+            // we successfully showed the message, so store the build we showed it for
+            LocalConfiguration.appBuildsWithReleaseNotesShown.append(UIApplication.appBuild)
     }
     
     /// If a user has an account with notifications enabled, then notifcaiton authorized, enabled, etc. will all be true. If they reinstall, then notification authorizaed will be false but the rest will be the previous values. Therefore, we must check and either get notifcations authorized again or set them all to false.
