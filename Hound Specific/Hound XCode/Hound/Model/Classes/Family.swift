@@ -35,6 +35,15 @@ class FamilyMember: NSObject {
     /// The family member's last name
     var lastName: String?
     
+    /// The family member's userId
+    var userId: Int
+    
+    /// Indicates where or not this user is the head of the family
+    var isFamilyHead: Bool = false
+    
+}
+
+extension FamilyMember {
     /// The family member's full name. Handles cases where the first name and/or last name may be ""
     var displayFullName: String {
         let trimmedFirstName = firstName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
@@ -82,10 +91,40 @@ class FamilyMember: NSObject {
         }
     }
     
-    /// The family member's userId
-    var userId: Int
+    /// The family member's first name. Handles cases where the first name may be "", therefore trying to use the last name to substitute
+    var displayFirstName: String {
+        let trimmedFirstName = firstName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let trimmedLastName = lastName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        
+        // check to see if anything is blank
+        if trimmedFirstName == "" && trimmedLastName == "" {
+            return "No Name"
+        }
+        // we know one of OR both of the trimmedFirstName and trimmedLast name are != ""
+        else if trimmedFirstName == "" {
+            // no first name but has last name
+            return trimmedLastName
+        }
+        // we know the user has a firstName that isn't == "", so we can use that
+        else {
+            return trimmedFirstName
+        }
+    }
     
-    /// Indicates where or not this user is the head of the family
-    var isFamilyHead: Bool = false
-    
+    static func findFamilyMember(forUserId userId: Int?) -> FamilyMember? {
+        guard userId != nil else {
+            return nil
+        }
+        
+        let matchingFamilyMember: FamilyMember? = FamilyConfiguration.familyMembers.first { familyMember in
+            if familyMember.userId == userId! {
+                return true
+            }
+            else {
+                return false
+            }
+        }
+        
+        return matchingFamilyMember
+    }
 }

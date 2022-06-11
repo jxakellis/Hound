@@ -126,8 +126,6 @@ protocol LogProtocol {
 
 class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
-    // TO DO implement userId of person who created the log. then, with this user id, display it on the logs page or wherever else needed (i.e. show that x person created the log)
-    
     // MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
@@ -163,7 +161,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     convenience init(
         logId: Int = LogConstant.defaultLogId,
-        userId: Int = UserInformation.userId ?? -1,
+        userId: Int = LogConstant.defaultUserId,
         logAction: LogAction = LogConstant.defaultLogAction,
         logCustomActionName: String? = LogConstant.defaultLogCustomActionName,
         logDate: Date = LogConstant.defaultLogDate,
@@ -187,6 +185,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
         // }
         
         let logId: Int = body[ServerDefaultKeys.logId.rawValue] as? Int ?? LogConstant.defaultLogId
+        // don't user LogConstant.defaultUserId here. if we cannot decode the value, then just leave it as -1, as otherwise it would incorrectly display that this user created the log (as LogConstant.defaultUserId defaults to UserInformation.userId first)
         let userId: Int = body[ServerDefaultKeys.userId.rawValue] as? Int ?? -1
         let logAction: LogAction = LogAction(rawValue: body[ServerDefaultKeys.logAction.rawValue] as? String ?? LogConstant.defaultLogAction.rawValue)!
         let logCustomActionName: String? = body[ServerDefaultKeys.logCustomActionName.rawValue] as? String ?? LogConstant.defaultLogCustomActionName
@@ -207,7 +206,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     var logId: Int = LogConstant.defaultLogId
     
-    var userId: Int = UserInformation.userId ?? -1
+    var userId: Int = LogConstant.defaultUserId
     
     private var storedLogIsDeleted: Bool = false
     /// This property a marker leftover from when we went through the process of constructing a new log from JSON and combining with an existing log object. This markers allows us to have a new log to overwrite the old log, then leaves an indicator that this should be deleted. This deletion is handled by DogsRequest

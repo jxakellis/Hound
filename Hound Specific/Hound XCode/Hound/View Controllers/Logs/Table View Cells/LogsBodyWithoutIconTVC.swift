@@ -17,7 +17,7 @@ class LogsBodyWithoutIconTableViewCell: UITableViewCell {
     @IBOutlet private weak var dogNameBottomConstraint: NSLayoutConstraint!
     @IBOutlet private weak var dogNameHeightConstraint: NSLayoutConstraint!
     
-    @IBOutlet private weak var userInitalsLabel: ScaledUILabel!
+    @IBOutlet private weak var familyMemberNameLabel: ScaledUILabel!
     @IBOutlet private weak var logActionLabel: ScaledUILabel!
     @IBOutlet private weak var logDateLabel: ScaledUILabel!
     @IBOutlet private weak var logNoteLabel: ScaledUILabel!
@@ -32,35 +32,20 @@ class LogsBodyWithoutIconTableViewCell: UITableViewCell {
         
         self.dogNameLabel.text = dogName
         
-        var sizeRatio: Double!
-        switch UserConfiguration.logsInterfaceScale {
-        case .small:
-            sizeRatio = 1.0
-        case .medium:
-            sizeRatio = 1.2
-        case .large:
-            sizeRatio = 1.4
-        }
+        let fontSize = FontConstant.logCellFontSize.rawValue
+        let sizeRatio = UserConfiguration.logsInterfaceScale.currentScaleFactor
         
-        dogNameLabel.font =  dogNameLabel.font.withSize(15.0 * sizeRatio)
+        dogNameLabel.font =  dogNameLabel.font.withSize(fontSize * sizeRatio)
         dogNameTopConstraint.constant = 5.0 * sizeRatio
         dogNameBottomConstraint.constant = 5.0 * sizeRatio
         dogNameHeightConstraint.constant = 25.0 * sizeRatio
         
-        userInitalsLabel.font = userInitalsLabel.font.withSize(15.0 * sizeRatio)
-        logActionLabel.font =  logActionLabel.font.withSize(15.0 * sizeRatio)
-        logDateLabel.font =  logDateLabel.font.withSize(15.0 * sizeRatio)
-        logNoteLabel.font =  logNoteLabel.font.withSize(15.0 * sizeRatio)
+        familyMemberNameLabel.font = familyMemberNameLabel.font.withSize(fontSize * sizeRatio)
+        logActionLabel.font =  logActionLabel.font.withSize(fontSize * sizeRatio)
+        logDateLabel.font =  logDateLabel.font.withSize(fontSize * sizeRatio)
+        logNoteLabel.font =  logNoteLabel.font.withSize(fontSize * sizeRatio)
         
-        let familyMemberThatLogged = FamilyConfiguration.familyMembers.first { familyMember in
-            if familyMember.userId == log.userId {
-                return true
-            }
-            else {
-                return false
-            }
-        }
-        self.userInitalsLabel.text = familyMemberThatLogged?.displayInitals ?? "UKN⚠️"
+        familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: log.userId)?.displayFirstName ?? "Unknown⚠️"
         
         self.logActionLabel.text = log.logAction.displayActionName(logCustomActionName: log.logCustomActionName, isShowingAbreviatedCustomActionName: true)
         

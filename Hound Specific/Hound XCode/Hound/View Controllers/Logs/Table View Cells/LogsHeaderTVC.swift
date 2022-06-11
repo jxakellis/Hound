@@ -59,15 +59,7 @@ class LogsHeaderTableViewCell: UITableViewCell {
             }
         }
         
-        var sizeRatio: Double!
-        switch UserConfiguration.logsInterfaceScale {
-        case .small:
-            sizeRatio = 1.0
-        case .medium:
-            sizeRatio = 1.25
-        case .large:
-            sizeRatio = 1.5
-        }
+        let sizeRatio = UserConfiguration.logsInterfaceScale.currentScaleFactor
         
         headerLabel.font =  headerLabel.font.withSize(20.0 * sizeRatio)
         headerTopConstraint.constant = 5.0 * sizeRatio

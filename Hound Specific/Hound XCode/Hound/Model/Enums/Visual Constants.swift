@@ -20,3 +20,7 @@ enum ViewTagConstant: Int {
     case loadingViewController = 1000000006
     case serverRelatedViewController = 1000000007
 }
+
+enum FontConstant: Double {
+    case logCellFontSize = 13.0
+}

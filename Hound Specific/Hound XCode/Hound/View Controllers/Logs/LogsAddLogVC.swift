@@ -154,7 +154,9 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
     @IBOutlet private weak var containerForAll: UIView!
     @IBOutlet private weak var pageTitle: UINavigationItem!
     
-    @IBOutlet weak var parentDogLabel: BorderedUILabel!
+    @IBOutlet private weak var familyMemberNameLabel: BorderedUILabel!
+    
+    @IBOutlet private weak var parentDogLabel: BorderedUILabel!
     
     @IBOutlet private weak var logActionLabel: BorderedUILabel!
     
@@ -380,6 +382,8 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 pageTitle!.title = "Edit Log"
                 removeLogBarButton.isEnabled = true
                 
+                familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: logToUpdate?.userId)?.displayFullName ?? "Unknown⚠️"
+                
                 let dog = try! dogManager.findDog(forDogId: parentDogIdToUpdate!)
                 parentDogLabel.text = dog.dogName
                 parentDogLabel.tag = dog.dogId
@@ -391,11 +395,16 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
                 pageTitle!.title = "Create Log"
                 removeLogBarButton.isEnabled = false
                 
+                familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: UserInformation.userId)?.displayFullName ?? "Unknown⚠️"
+                
                 parentDogLabel.text = dogManager.dogs[0].dogName
                 parentDogLabel.tag = dogManager.dogs[0].dogId
                 
                 selectedLogActionIndexPath = nil
             }
+            
+            familyMemberNameLabel.isUserInteractionEnabled = false
+            familyMemberNameLabel.isEnabled = false
             
             // this is for the label for the logAction dropdown, so we only want the names to be the defaults. I.e. if our log is "Custom" with "someCustomActionName", the logActionLabel should only show "Custom" and then the logCustomActionNameTextField should be "someCustomActionName".
             logActionLabel.text = logToUpdate?.logAction.displayActionName(logCustomActionName: nil, isShowingAbreviatedCustomActionName: false)

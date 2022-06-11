@@ -108,6 +108,13 @@ extension DogsRequest {
                 // Array of log JSON [{dog1:'foo'},{dog2:'bar'}]
                 if let newDogBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
                     
+                    guard newDogBody.count != 0 else {
+                        // the dog wasn't updated since last opened
+                        completionHandler(currentDog, responseStatus)
+                        return
+                    }
+                    
+                    // the dog was updated since last opened
                     let newDog = Dog(fromBody: newDogBody[0])
                     
                     guard newDog.dogIsDeleted == false else {

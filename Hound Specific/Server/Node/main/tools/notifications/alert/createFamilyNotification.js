@@ -80,7 +80,7 @@ const createFamilyLockedNotification = async (userId, familyId, newIsLocked) => 
       return;
     }
 
-    const abreviatedFullName = abreviatedFullNameQuery(userId);
+    const abreviatedFullName = await abreviatedFullNameQuery(userId);
 
     if (areAllDefined(abreviatedFullName) === false) {
       return;
@@ -90,11 +90,11 @@ const createFamilyLockedNotification = async (userId, familyId, newIsLocked) => 
     let alertTitle;
     let alertBody;
     if (isLocked) {
-      alertTitle = `${abreviatedFullName} has locked your Hound family!`;
+      alertTitle = `${abreviatedFullName} locked your family!`;
       alertBody = 'New users are now prevented from joining';
     }
     else {
-      alertTitle = `${abreviatedFullName} has unlocked your Hound family`;
+      alertTitle = `${abreviatedFullName} unlocked your family!`;
       alertBody = 'New users are now allowed to join';
     }
 

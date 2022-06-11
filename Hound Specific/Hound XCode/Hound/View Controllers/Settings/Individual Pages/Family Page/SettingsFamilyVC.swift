@@ -47,10 +47,8 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
     
     /// Returns whether or not the user is the head of the family. This changes whether or not they can kick family members, delete the family, etc.
     var isUserFamilyHead: Bool {
-        for familyMember in FamilyConfiguration.familyMembers where familyMember.userId == UserInformation.userId! {
-            return familyMember.isFamilyHead
-        }
-        return false
+        let familyMember = FamilyMember.findFamilyMember(forUserId: UserInformation.userId!)
+        return familyMember?.isFamilyHead ?? false
     }
     
     var leaveFamilyAlertController: GeneralUIAlertController!

@@ -9,6 +9,7 @@ const {
 const {
   createFamilyMemberJoinNotification, createFamilyMemberLeaveNotification, createFamilyLockedNotification, createFamilyPausedNotification,
 } = require('../../main/tools/notifications/alert/createFamilyNotification');
+const { createUserKickedNotification } = require('../../main/tools/notifications/alert/createUserKickedNotification');
 const { deleteAlarmNotificationsForFamily, deleteSecondaryAlarmNotificationsForUser } = require('../../main/tools/notifications/alarm/deleteAlarmNotification');
 const { getFamilyMembersForUserIdQuery } = require('../getFor/getForFamily');
 
@@ -119,7 +120,6 @@ const updateIsLockedQuery = async (req) => {
     throw new DatabaseError(error.code);
   }
 
-  // TO DO test notification
   createFamilyLockedNotification(userId, familyId, isLocked);
 };
 
@@ -334,6 +334,7 @@ const kickFamilyMemberQuery = async (req) => {
   // The primary alarm notifications retrieve the notification tokens of familyMembers right as they fire, so the user will not be included
   deleteSecondaryAlarmNotificationsForUser(kickUserId);
   createFamilyMemberLeaveNotification(kickUserId, familyId);
+  createUserKickedNotification(kickUserId);
 };
 
 module.exports = { updateFamilyQuery };

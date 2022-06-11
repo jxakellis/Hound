@@ -34,6 +34,9 @@ enum DogConstant {
 
 enum LogConstant {
     static let defaultLogId: Int = -1
+    static var defaultUserId: Int {
+        return UserInformation.userId ?? -1
+    }
     static let defaultLogAction = LogAction.allCases[0]
     static let defaultLogCustomActionName: String? = nil
     static let defaultLogNote: String = ""

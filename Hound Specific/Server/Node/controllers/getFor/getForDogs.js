@@ -22,7 +22,6 @@ const getDogQuery = async (req, dogId) => {
     let result;
     // if the user provides a last sync, then we look for dogs that were modified after this last sync. Therefore, only providing dogs that were modified and the local client is outdated on
     if (areAllDefined(lastServerSynchronization)) {
-      // BUG if a log/reminder was updated in dog but the dog wasn't modified, then the dogLastModified won't be updated.
       // therefore, a log/remidner could be updated in a dog but the server won't send back the updated info (since this information is nested under the dog which we never process)
       result = await queryPromise(
         req,
@@ -79,7 +78,6 @@ const getDogsQuery = async (req, familyId) => {
     let result;
     // if the user provides a last sync, then we look for dogs that were modified after this last sync. Therefore, only providing dogs that were modified and the local client is outdated on
     if (areAllDefined(lastServerSynchronization)) {
-      // BUG if a log/reminder was updated in dog but the dog wasn't modified, then the dogLastModified won't be updated.
       // therefore, a log/remidner could be updated in a dog but the server won't send back the updated info (since this information is nested under the dog which we never process)
       result = await queryPromise(
         req,

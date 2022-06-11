@@ -14,13 +14,14 @@ class LogsBodyWithIconTableViewCell: UITableViewCell {
     
     @IBOutlet private weak var dogIconImageView: UIImageView!
     
-    @IBOutlet private weak var userInitalsLabel: ScaledUILabel!
-    @IBOutlet private weak var userInitalsTopConstraint: NSLayoutConstraint!
-    @IBOutlet private weak var userInitalsBottomConstraint: NSLayoutConstraint!
-    @IBOutlet private weak var userInitalsHeightConstraint: NSLayoutConstraint!
-    @IBOutlet private weak var logActionLabel: ScaledUILabel!
-    
     @IBOutlet private weak var logDateLabel: ScaledUILabel!
+    @IBOutlet private weak var logDateTopConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var logDateBottomConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var logDateHeightConstraint: NSLayoutConstraint!
+    
+    
+    @IBOutlet private weak var logActionLabel: ScaledUILabel!
+    @IBOutlet private weak var familyMemberNameLabel: ScaledUILabel!
     @IBOutlet private weak var logNoteLabel: ScaledUILabel!
     
     // MARK: - Main
@@ -31,38 +32,23 @@ class LogsBodyWithIconTableViewCell: UITableViewCell {
     
     func setup(forParentDogIcon parentDogIcon: UIImage, forLog log: Log) {
         
-        let familyMemberThatLogged = FamilyConfiguration.familyMembers.first { familyMember in
-            if familyMember.userId == log.userId {
-                return true
-            }
-            else {
-                return false
-            }
-        }
-        self.userInitalsLabel.text = familyMemberThatLogged?.displayInitals ?? "UKN⚠️"
+        let familyMemberThatLogged = FamilyMember.findFamilyMember(forUserId: log.userId)
+        familyMemberNameLabel.text = familyMemberThatLogged?.displayFirstName ?? "Unknown⚠️"
         
-        var sizeRatio: Double!
-        switch UserConfiguration.logsInterfaceScale {
-        case .small:
-            sizeRatio = 1.0
-        case .medium:
-            sizeRatio = 1.2
-        case .large:
-            sizeRatio = 1.4
-        }
+        let fontSize = FontConstant.logCellFontSize.rawValue
+        let sizeRatio = UserConfiguration.logsInterfaceScale.currentScaleFactor
         
-        userInitalsLabel.font = userInitalsLabel.font.withSize(15.0 * sizeRatio)
-        userInitalsTopConstraint.constant = 5.0 * sizeRatio
-        userInitalsBottomConstraint.constant = 5.0 * sizeRatio
-        userInitalsHeightConstraint.constant = 25.0 * sizeRatio
+        familyMemberNameLabel.font = familyMemberNameLabel.font.withSize(fontSize * sizeRatio)
+        logDateTopConstraint.constant = 5.0 * sizeRatio
+        logDateBottomConstraint.constant = 5.0 * sizeRatio
+        logDateHeightConstraint.constant = 25.0 * sizeRatio
         
-        logActionLabel.font =  logActionLabel.font.withSize(15.0 * sizeRatio)
-        
-        logDateLabel.font =  logDateLabel.font.withSize(15.0 * sizeRatio)
-        logNoteLabel.font =  logNoteLabel.font.withSize(15.0 * sizeRatio)
+        logActionLabel.font =  logActionLabel.font.withSize(fontSize * sizeRatio)
+        logDateLabel.font =  logDateLabel.font.withSize(fontSize * sizeRatio)
+        logNoteLabel.font =  logNoteLabel.font.withSize(fontSize * sizeRatio)
         
         // setup the icon afterwards otherwise the cornerRadius could be wrong since its dependent on the sizeRatio code above
-        let cellHeight = userInitalsTopConstraint.constant + userInitalsBottomConstraint.constant + userInitalsHeightConstraint.constant
+        let cellHeight = logDateTopConstraint.constant + logDateBottomConstraint.constant + logDateHeightConstraint.constant
         let dogIconImageViewHeight = cellHeight - 2.5 - 2.5
         dogIconImageView.image = parentDogIcon
         dogIconImageView.layer.masksToBounds = true

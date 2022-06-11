@@ -38,7 +38,7 @@
 		A2581B7427FDD35E0099AFB8 /* FamilyResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2581B7327FDD35E0099AFB8 /* FamilyResponseError.swift */; };
 		A2581B7627FDDF350099AFB8 /* Notification Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2581B7527FDDF350099AFB8 /* Notification Sound.swift */; };
 		A2581B7827FDDF500099AFB8 /* Animation Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2581B7727FDDF500099AFB8 /* Animation Constant.swift */; };
-		A2581B7A27FDE0590099AFB8 /* View Tag Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2581B7927FDE0590099AFB8 /* View Tag Constant.swift */; };
+		A2581B7A27FDE0590099AFB8 /* Visual Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2581B7927FDE0590099AFB8 /* Visual Constants.swift */; };
 		A263B2F72638A54F00E1DCE6 /* Sender.swift in Sources */ = {isa = PBXBuildFile; fileRef = A263B2F62638A54F00E1DCE6 /* Sender.swift */; };
 		A263D88527FF830C00938EC4 /* LocalDogIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A263D88427FF830C00938EC4 /* LocalDogIcon.swift */; };
 		A263D88727FF85E000938EC4 /* Server Default Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A263D88627FF85E000938EC4 /* Server Default Keys.swift */; };
@@ -215,7 +215,7 @@
 		A2581B7327FDD35E0099AFB8 /* FamilyResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyResponseError.swift; sourceTree = "<group>"; };
 		A2581B7527FDDF350099AFB8 /* Notification Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification Sound.swift"; sourceTree = "<group>"; };
 		A2581B7727FDDF500099AFB8 /* Animation Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Animation Constant.swift"; sourceTree = "<group>"; };
-		A2581B7927FDE0590099AFB8 /* View Tag Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View Tag Constant.swift"; sourceTree = "<group>"; };
+		A2581B7927FDE0590099AFB8 /* Visual Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Visual Constants.swift"; sourceTree = "<group>"; };
 		A25C075826DC525C00D6E4C2 /* HoundDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HoundDebug.entitlements; sourceTree = "<group>"; };
 		A263B2F62638A54F00E1DCE6 /* Sender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sender.swift; sourceTree = "<group>"; };
 		A263D88427FF830C00938EC4 /* LocalDogIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDogIcon.swift; sourceTree = "<group>"; };
@@ -695,7 +695,7 @@
 			isa = PBXGroup;
 			children = (
 				A212522128060F5B00FBFAC7 /* ViewControllerUtils.swift */,
-				A2581B7927FDE0590099AFB8 /* View Tag Constant.swift */,
+				A2581B7927FDE0590099AFB8 /* Visual Constants.swift */,
 				A2581B7727FDDF500099AFB8 /* Animation Constant.swift */,
 				A2581B7527FDDF350099AFB8 /* Notification Sound.swift */,
 				A264AC1C2821B6620041E88A /* Log Interface Scale.swift */,
@@ -1172,7 +1172,7 @@
 				A226736225CDC36800904032 /* StringExtension.swift in Sources */,
 				A2040BA3262A13B000D9667E /* PersistenceManager.swift in Sources */,
 				A233519527FC92F800CDF1BF /* FamilyConfiguration.swift in Sources */,
-				A2581B7A27FDE0590099AFB8 /* View Tag Constant.swift in Sources */,
+				A2581B7A27FDE0590099AFB8 /* Visual Constants.swift in Sources */,
 				A263B2F72638A54F00E1DCE6 /* Sender.swift in Sources */,
 				A218EA3227F6A5D90051159C /* NotificationManager.swift in Sources */,
 				A233519027FB7BAB00CDF1BF /* Dog Constants.swift in Sources */,

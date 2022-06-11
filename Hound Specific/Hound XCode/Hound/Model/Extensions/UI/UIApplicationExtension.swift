@@ -25,12 +25,6 @@ extension UIApplication {
     }
     
     static var previousAppBuild: Int?
-    /*
-     buildNumber=$(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" "$INFOPLIST_FILE")
-     buildNumber=$(($buildNumber + 1))
-     /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $buildNumber" "$INFOPLIST_FILE"
-     
-     */
     
     static var appVersion: String? {
         return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String

@@ -52,6 +52,11 @@ enum PersistenceManager {
             LocalConfiguration.dogIcons = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? [LocalDogIcon] ?? LocalConfiguration.dogIcons
         }
         
+        // if the user had a dogManager from pre Hound 2.0 (build 4000), then we must clear it. It will be incompatible and cause issues. Must start from scratch.
+        if UIApplication.previousAppBuild ?? 4000 < 4000 {
+            UserDefaults.standard.removeObject(forKey: ServerDefaultKeys.dogManager.rawValue)
+        }
+        
         if let dataDogManager: Data = UserDefaults.standard.data(forKey: ServerDefaultKeys.dogManager.rawValue), let unarchiver = try? NSKeyedUnarchiver.init(forReadingFrom: dataDogManager) {
             unarchiver.requiresSecureCoding = false
             

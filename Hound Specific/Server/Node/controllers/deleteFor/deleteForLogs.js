@@ -8,7 +8,7 @@ const { queryPromise } = require('../../main/tools/database/queryPromise');
 const deleteLogForLogId = async (req, dogId, logId) => {
   try {
     const dogLastModified = new Date();
-    const logLastModified = logLastModified;
+    const logLastModified = dogLastModified;
 
     await queryPromise(
       req,

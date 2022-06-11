@@ -165,15 +165,7 @@ class DogsReminderDisplayTableViewCell: UITableViewCell {
         
         // Size Ratio Configuration
         
-        var sizeRatio: Double!
-        switch UserConfiguration.remindersInterfaceScale {
-        case .small:
-            sizeRatio = 1.0
-        case .medium:
-            sizeRatio = 1.25
-        case .large:
-            sizeRatio = 1.5
-        }
+        let sizeRatio = UserConfiguration.remindersInterfaceScale.currentScaleFactor
         
         // Reminder Action Label Configuration
         reminderActionLabel.font = reminderActionLabel.font.withSize(25.0 * sizeRatio)

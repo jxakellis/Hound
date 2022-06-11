@@ -22,4 +22,15 @@ enum LogsInterfaceScale: String, CaseIterable {
     case small = "Small"
     case medium = "Medium"
     case large = "Large"
+    
+    var currentScaleFactor: Double {
+        switch self {
+        case .small:
+            return 1.0
+        case .medium:
+            return 1.2
+        case .large:
+            return 1.4
+        }
+    }
 }
