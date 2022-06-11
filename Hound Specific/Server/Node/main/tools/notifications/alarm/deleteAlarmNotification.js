@@ -1,13 +1,16 @@
 const { alarmLogger } = require('../../logging/loggers');
 const { queryPromise } = require('../../database/queryPromise');
-const { connectionForAlerts } = require('../../database/databaseConnection');
+const { connectionForAlarms } = require('../../database/databaseConnection');
+const { IS_PRODUCTION } = require('../../../server/constants');
 
 const { areAllDefined } = require('../../format/formatObject');
 const { cancelPrimaryJobForFamilyForReminder, cancelSecondaryJobForUserForReminder } = require('./cancelJob');
 
 const deleteAlarmNotificationsForFamily = async (familyId) => {
   try {
-    alarmLogger.debug(`deleteAlarmNotificationsForFamily ${familyId}`);
+    if (IS_PRODUCTION === false) {
+      alarmLogger.debug(`deleteAlarmNotificationsForFamily ${familyId}`);
+    }
 
     // make sure reminderId is defined
     if (areAllDefined(familyId) === false) {
@@ -16,13 +19,13 @@ const deleteAlarmNotificationsForFamily = async (familyId) => {
 
     // get all the reminders for the family
     const reminders = await queryPromise(
-      connectionForAlerts,
+      connectionForAlarms,
       'SELECT reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogs.familyId = ? LIMIT 18446744073709551615',
       [familyId],
     );
       // finds all the users in the family
     const users = await queryPromise(
-      connectionForAlerts,
+      connectionForAlarms,
       'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
       [familyId],
     );
@@ -50,7 +53,9 @@ const deleteAlarmNotificationsForFamily = async (familyId) => {
  */
 const deleteAlarmNotificationsForReminder = async (familyId, reminderId) => {
   try {
-    alarmLogger.debug(`deleteAlarmNotificationsForReminder ${familyId}, ${reminderId}`);
+    if (IS_PRODUCTION === false) {
+      alarmLogger.debug(`deleteAlarmNotificationsForReminder ${familyId}, ${reminderId}`);
+    }
 
     // make sure reminderId is defined
     if (areAllDefined(familyId, reminderId) === false) {
@@ -61,7 +66,7 @@ const deleteAlarmNotificationsForReminder = async (familyId, reminderId) => {
 
     // finds all the users in the family
     const users = await queryPromise(
-      connectionForAlerts,
+      connectionForAlarms,
       'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
       [familyId],
     );
@@ -82,7 +87,9 @@ const deleteAlarmNotificationsForReminder = async (familyId, reminderId) => {
  */
 const deleteSecondaryAlarmNotificationsForUser = async (userId) => {
   try {
-    alarmLogger.debug(`deleteSecondaryAlarmNotificationsForUser ${userId}`);
+    if (IS_PRODUCTION === false) {
+      alarmLogger.debug(`deleteSecondaryAlarmNotificationsForUser ${userId}`);
+    }
 
     if (areAllDefined(userId) === false) {
       return;
@@ -90,7 +97,7 @@ const deleteSecondaryAlarmNotificationsForUser = async (userId) => {
     // get all the reminders for the given userId
     // specifically use JOIN to excluse resulst where reminder, dog, family, or family member are missing
     const reminderIds = await queryPromise(
-      connectionForAlerts,
+      connectionForAlarms,
       'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND familyMembers.userId = ? AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
       [userId],
     );

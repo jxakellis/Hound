@@ -3,8 +3,27 @@ const mysql2 = require('mysql2');
 const databasePassword = require('./databaseSensitive');
 const DatabaseError = require('../errors/databaseError');
 const { poolLogger, queryLogger } = require('../logging/loggers');
+const { IS_PRODUCTION } = require('../../server/constants');
 
-/// The connection used by the server when querying the database for alarm notifications
+/// The connection used by the server when querying the database for log notifications
+const connectionForGeneral = mysql2.createConnection({
+  connectTimeout: 30000,
+  host: 'localhost',
+  user: 'admin',
+  password: databasePassword,
+  database: 'Hound',
+});
+
+/// The connection used by the server when querying the database to add logs about requests
+const connectionForLogging = mysql2.createConnection({
+  connectTimeout: 30000,
+  host: 'localhost',
+  user: 'admin',
+  password: databasePassword,
+  database: 'Hound',
+});
+
+/// The connection used by the server when querying the database for notifications
 const connectionForAlerts = mysql2.createConnection({
   connectTimeout: 30000,
   host: 'localhost',
@@ -13,8 +32,8 @@ const connectionForAlerts = mysql2.createConnection({
   database: 'Hound',
 });
 
-/// The connection used by the server when querying the database for log notifications
-const connectionForGeneral = mysql2.createConnection({
+/// The connection used by the server when querying the database for notifications
+const connectionForAlarms = mysql2.createConnection({
   connectTimeout: 30000,
   host: 'localhost',
   user: 'admin',
@@ -51,36 +70,42 @@ const poolForRequests = mysql2.createPool({
 });
 
 poolForRequests.on('acquire', (connection) => {
-  const currentDate = new Date();
-  poolLogger.debug(`Pool connection ${connection.threadId} acquired at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
+  if (IS_PRODUCTION === false) {
+    const currentDate = new Date();
+    poolLogger.debug(`Pool connection ${connection.threadId} acquired at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
+  }
 });
 
 poolForRequests.on('release', (connection) => {
-  const currentDate = new Date();
-  poolLogger.debug(`Pool connection ${connection.threadId} released at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
+  if (IS_PRODUCTION === false) {
+    const currentDate = new Date();
+    poolLogger.debug(`Pool connection ${connection.threadId} released at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
+  }
 });
 
 const commitQueries = async (req) => {
   try {
     // try to commit the transaction
-    queryLogger.debug(`Attempting To Commit Query For Thread: ${req.connection.threadId}`);
+    // queryLogger.debug(`Attempting To Commit Query For Thread: ${req.connection.threadId}`);
     await req.connection.promise().query('COMMIT');
     // Commit Query Successful
-    queryLogger.debug('Commit Query Successful');
+    // queryLogger.debug('Commit Query Successful');
     await req.connection.promise().release();
   }
   catch (error1) {
     // commit failed, now lets roll it back
-    queryLogger.warn(`Commit Query Error: ${error1}`);
+    queryLogger.error('Commit Query Error:');
+    queryLogger.error(error1);
     try {
       await req.connection.promise().query('ROLLBACK');
       // Commit Query With Rollback Successful
-      queryLogger.warn('Commit Query With Rollback Successful');
+      queryLogger.error('Commit Query With Rollback Successful');
       await req.connection.promise().release();
     }
     catch (error2) {
       // rollback failed, release without commiting or rolling back
-      queryLogger.error(`Commit Query With Rollback Error: ${error2}`);
+      queryLogger.error('Commit Query With Rollback Error:');
+      queryLogger.error(error2);
       await req.connection.promise().release();
     }
   }
@@ -90,12 +115,13 @@ const rollbackQueries = async (req) => {
   try {
     await req.connection.promise().query('ROLLBACK');
     // Commit Query With Rollback Successful
-    queryLogger.debug('Rollback Query Successful');
+    // queryLogger.debug('Rollback Query Successful');
     await req.connection.promise().release();
   }
   catch (error) {
     // rollback failed, release without rolling back
-    queryLogger.error(`Rollback Query Error: ${error}`);
+    queryLogger.error('Rollback Query Error:');
+    queryLogger.error(error);
     await req.connection.promise().release();
   }
 };
@@ -124,5 +150,5 @@ const assignConnection = (req, res, next) => {
 };
 
 module.exports = {
-  connectionForAlerts, connectionForGeneral, connectionForTokens, poolForRequests, assignConnection,
+  connectionForGeneral, connectionForLogging, connectionForAlerts, connectionForAlarms, connectionForTokens, poolForRequests, assignConnection,
 };

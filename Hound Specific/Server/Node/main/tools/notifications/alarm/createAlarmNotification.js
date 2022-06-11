@@ -1,6 +1,6 @@
 const { alarmLogger } = require('../../logging/loggers');
 const { queryPromise } = require('../../database/queryPromise');
-const { connectionForAlerts } = require('../../database/databaseConnection');
+const { connectionForAlarms } = require('../../database/databaseConnection');
 
 const { schedule } = require('./schedules');
 
@@ -10,7 +10,7 @@ const { sendAPNForFamily, sendAPNForUser } = require('../apn/sendAPN');
 const { deleteAlarmNotificationsForReminder } = require('./deleteAlarmNotification');
 const { cancelSecondaryJobForUserForReminder } = require('./cancelJob');
 const { formatReminderAction } = require('../../format/formatName');
-const { REMINDER_CATEGORY } = require('../../../server/constants');
+const { IS_PRODUCTION, REMINDER_CATEGORY } = require('../../../server/constants');
 
 /**
  * For a given reminder for a given family, handles the alarm notifications
@@ -22,7 +22,9 @@ const createAlarmNotificationForFamily = async (familyId, reminderId, reminderEx
   try {
     // all ids should already be formatted into numbers
     const formattedReminderExecutionDate = formatDate(reminderExecutionDate);
-    alarmLogger.debug(`createAlarmNotificationForFamily ${familyId}, ${reminderId}, ${reminderExecutionDate}, ${formattedReminderExecutionDate}`);
+    if (IS_PRODUCTION === false) {
+      alarmLogger.debug(`createAlarmNotificationForFamily ${familyId}, ${reminderId}, ${reminderExecutionDate}, ${formattedReminderExecutionDate}`);
+    }
 
     if (areAllDefined(familyId, reminderId) === false) {
       return;
@@ -46,7 +48,9 @@ const createAlarmNotificationForFamily = async (familyId, reminderId, reminderEx
     }
     // reminderExecutionDate is in the future
     else {
-      alarmLogger.info(`Scheduling a new job; count will be ${Object.keys(schedule.scheduledJobs).length + 1}`);
+      if (IS_PRODUCTION === false) {
+        alarmLogger.info(`Scheduling a new job; count will be ${Object.keys(schedule.scheduledJobs).length + 1}`);
+      }
       schedule.scheduleJob(`Family${familyId}Reminder${reminderId}`, formattedReminderExecutionDate, async () => {
         // do these async, no need to await
         sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(familyId, reminderId);
@@ -68,7 +72,7 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
     // get the dogName, reminderAction, and reminderCustomActionName for the given reminderId
     // the reminderId has to exist to search and we check to make sure the dogId isn't null (to make sure the dog still exists too)
     const reminderWithInfo = await queryPromise(
-      connectionForAlerts,
+      connectionForAlarms,
       'SELECT dogs.dogName, dogReminders.reminderId, dogReminders.reminderExecutionDate, dogReminders.reminderAction, dogReminders.reminderCustomActionName, dogReminders.reminderLastModified FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
       [reminderId],
     );
@@ -94,7 +98,7 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
     // get all the users for a given family that have secondary notifications enabled
     // if familyId is missing, we will have no results. If a userConfiguration is missing, then there will be no userId for that user in the results
     const users = await queryPromise(
-      connectionForAlerts,
+      connectionForAlarms,
       'SELECT familyMembers.userId, userConfiguration.followUpDelay FROM familyMembers JOIN userConfiguration ON familyMembers.userId = userConfiguration.userId WHERE familyMembers.familyId = ? AND userConfiguration.isFollowUpEnabled = 1 LIMIT 18446744073709551615',
       [familyId],
     );
@@ -126,7 +130,9 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
 const createSecondaryAlarmNotificationForUser = async (userId, reminderId, secondaryExecutionDate) => {
   try {
     const formattedSecondaryExecutionDate = formatDate(secondaryExecutionDate);
-    alarmLogger.debug(`createSecondaryAlarmNotificationForUser ${userId}, ${reminderId}, ${secondaryExecutionDate}, ${formattedSecondaryExecutionDate}`);
+    if (IS_PRODUCTION === false) {
+      alarmLogger.debug(`createSecondaryAlarmNotificationForUser ${userId}, ${reminderId}, ${secondaryExecutionDate}, ${formattedSecondaryExecutionDate}`);
+    }
 
     // make sure the required parameters are defined
     if (areAllDefined(userId, reminderId) === false) {
@@ -148,7 +154,9 @@ const createSecondaryAlarmNotificationForUser = async (userId, reminderId, secon
     }
     // formattedSecondaryExecutionDate is in the future
     else {
-      alarmLogger.info(`Scheduling a new job; count will be ${Object.keys(schedule.scheduledJobs).length + 1}`);
+      if (IS_PRODUCTION === false) {
+        alarmLogger.info(`Scheduling a new job; count will be ${Object.keys(schedule.scheduledJobs).length + 1}`);
+      }
       schedule.scheduleJob(`User${userId}Reminder${reminderId}`, formattedSecondaryExecutionDate, () => {
         // no need to await, let it go
         sendSecondaryAPNForUser(userId, reminderId);
@@ -170,7 +178,7 @@ const sendSecondaryAPNForUser = async (userId, reminderId) => {
     // get the dogName, reminderAction, and reminderCustomActionName for the given reminderId
     // the reminderId has to exist to search and we check to make sure the dogId isn't null (to make sure the dog still exists too)
     const reminderWithInfo = await queryPromise(
-      connectionForAlerts,
+      connectionForAlarms,
       'SELECT dogs.dogName, dogReminders.reminderId, dogReminders.reminderAction, dogReminders.reminderCustomActionName, dogReminders.reminderLastModified FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
       [reminderId],
     );

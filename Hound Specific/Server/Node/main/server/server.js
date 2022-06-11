@@ -29,7 +29,7 @@ configureAppForRequests(app);
 // MARK:  Handle termination of the server
 
 const {
-  connectionForAlerts, connectionForTokens, poolForRequests,
+  connectionForGeneral, connectionForLogging, connectionForAlerts, connectionForAlarms, connectionForTokens, poolForRequests,
 } = require('../tools/database/databaseConnection');
 const { schedule } = require('../tools/notifications/alarm/schedules');
 
@@ -58,20 +58,28 @@ const shutdown = () => {
   serverLogger.info('HoundServer.js Program Is Shutting Down');
 
   try {
-    poolForRequests.end(() => {
-      serverLogger.info('Pool For Requests Ended');
+    connectionForGeneral.end(() => {
+      serverLogger.info('Connection For General Ended');
+    });
+
+    connectionForLogging.end(() => {
+      serverLogger.info('Connection For Logging Ended');
     });
 
     connectionForAlerts.end(() => {
+      serverLogger.info('Connection For Alerts Ended');
+    });
+
+    connectionForAlarms.end(() => {
       serverLogger.info('Connection For Alarms Ended');
-    });
-
-    connectionForAlerts.end(() => {
-      serverLogger.info('Connection For Logs Ended');
     });
 
     connectionForTokens.end(() => {
       serverLogger.info('Connection For Tokens Ended');
+    });
+
+    poolForRequests.end(() => {
+      serverLogger.info('Pool For Requests Ended');
     });
 
     server.close(() => {

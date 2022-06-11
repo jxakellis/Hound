@@ -15,6 +15,7 @@ const createUserQuery = async (req) => {
     userIdentifier, // required
     userFirstName, userLastName, userNotificationToken, // optional
   } = req.body;
+  const userAccountCreationDate = new Date();
 
   const isNotificationEnabled = formatBoolean(req.body.isNotificationEnabled); // required
   const isLoudNotification = formatBoolean(req.body.isLoudNotification); // required
@@ -40,8 +41,8 @@ const createUserQuery = async (req) => {
   try {
     const result = await queryPromise(
       req,
-      'INSERT INTO users(userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName) VALUES (?,?,?,?,?)',
-      [userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName],
+      'INSERT INTO users(userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate) VALUES (?,?,?,?,?,?)',
+      [userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate],
     );
     const userId = result.insertId;
 

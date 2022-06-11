@@ -6,14 +6,17 @@ const { queryPromise } = require('../../database/queryPromise');
 const { sendAPNForFamilyExcludingUser } = require('../apn/sendAPN');
 const { formatIntoAbreviatedFullName } = require('../../format/formatName');
 const { formatLogAction } = require('../../format/formatName');
-const { LOG_CATEGORY } = require('../../../server/constants');
+const { LOG_CATEGORY, IS_PRODUCTION } = require('../../../server/constants');
 
 /**
  * Sends an alert to all of the family members that one of them has logged something.
  */
 const createLogNotification = async (userId, familyId, dogId, logAction, logCustomActionName) => {
   try {
-    alertLogger.debug(`createLogNotification ${userId}, ${familyId}, ${dogId}, ${logAction}, ${logCustomActionName}`);
+    if (IS_PRODUCTION === false) {
+      alertLogger.debug(`createLogNotification ${userId}, ${familyId}, ${dogId}, ${logAction}, ${logCustomActionName}`);
+    }
+
     // make sure all params are defined
     if (areAllDefined(userId, familyId, dogId, logAction) === false) {
       return;

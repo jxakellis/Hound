@@ -6,14 +6,17 @@ const { formatBoolean, areAllDefined } = require('../../format/formatObject');
 const { queryPromise } = require('../../database/queryPromise');
 const { sendAPNForFamilyExcludingUser } = require('../apn/sendAPN');
 const { formatIntoAbreviatedFullName } = require('../../format/formatName');
-const { GENERAL_CATEGORY } = require('../../../server/constants');
+const { GENERAL_CATEGORY, IS_PRODUCTION } = require('../../../server/constants');
 
 /**
  * Sends an alert to all of the family members that a new member has joined
  */
 const createFamilyMemberJoinNotification = async (userId, familyId) => {
   try {
-    alertLogger.debug(`createFamilyMemberJoinNotification ${userId}, ${familyId}`);
+    if (IS_PRODUCTION === false) {
+      alertLogger.debug(`createFamilyMemberJoinNotification ${userId}, ${familyId}`);
+    }
+
     // make sure all params are defined
     if (areAllDefined(userId, familyId) === false) {
       return;
@@ -43,7 +46,10 @@ const createFamilyMemberJoinNotification = async (userId, familyId) => {
  */
 const createFamilyMemberLeaveNotification = async (userId, familyId) => {
   try {
-    alertLogger.debug(`createFamilyMemberLeaveNotification ${userId}, ${familyId}`);
+    if (IS_PRODUCTION === false) {
+      alertLogger.debug(`createFamilyMemberLeaveNotification ${userId}, ${familyId}`);
+    }
+
     // make sure all params are defined
     if (areAllDefined(userId, familyId) === false) {
       return;
@@ -73,7 +79,10 @@ const createFamilyMemberLeaveNotification = async (userId, familyId) => {
  */
 const createFamilyLockedNotification = async (userId, familyId, newIsLocked) => {
   try {
-    alertLogger.debug(`createFamilyLockedNotification ${userId}, ${familyId}, ${newIsLocked}`);
+    if (IS_PRODUCTION === false) {
+      alertLogger.debug(`createFamilyLockedNotification ${userId}, ${familyId}, ${newIsLocked}`);
+    }
+
     const isLocked = formatBoolean(newIsLocked);
     // make sure all params are defined
     if (areAllDefined(userId, familyId, isLocked) === false) {
@@ -112,7 +121,10 @@ const createFamilyLockedNotification = async (userId, familyId, newIsLocked) => 
  */
 const createFamilyPausedNotification = async (userId, familyId, newIsPaused) => {
   try {
-    alertLogger.debug(`createFamilyPausedNotification ${userId}, ${familyId}, ${newIsPaused}`);
+    if (IS_PRODUCTION === false) {
+      alertLogger.debug(`createFamilyPausedNotification ${userId}, ${familyId}, ${newIsPaused}`);
+    }
+
     const isPaused = formatBoolean(newIsPaused);
     // make sure all params are defined
     if (areAllDefined(userId, familyId, isPaused) === false) {

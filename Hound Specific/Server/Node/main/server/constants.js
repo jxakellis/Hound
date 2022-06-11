@@ -1,7 +1,8 @@
 /// MARK: - Server Itself
 const SERVER_PORT = 3000;
-// If true, then when the server restarts we recreate all of the alarm notifications. If false, then assume dev environment and do nothing
-const IS_PRODUCTION = true;
+// If true, then when the server restarts we recreate all of the alarm notifications. Only output xxxLogger.error and serverLogger.* console messages
+// If false, then assume dev environment and output all xxxLogger.* console messages
+const IS_PRODUCTION = false;
 /// If we have too many jobs scheduled at once, it could slow performance.
 // Additionally, there could be uncaught jobs getting duplicated that won't get noticed with a high limit
 const NUMBER_OF_SCHEDULED_JOBS_ALLOWED = 1000000;

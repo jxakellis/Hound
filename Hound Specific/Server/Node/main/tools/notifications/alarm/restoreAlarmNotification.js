@@ -1,9 +1,9 @@
-const { alarmLogger } = require('../../logging/loggers');
+const { serverLogger } = require('../../logging/loggers');
 const { schedule } = require('./schedules');
 const { createAlarmNotificationForFamily } = require('./createAlarmNotification');
 
 const { queryPromise } = require('../../database/queryPromise');
-const { connectionForAlerts } = require('../../database/databaseConnection');
+const { connectionForAlarms } = require('../../database/databaseConnection');
 
 /**
  * Assumes an empty schedule
@@ -12,22 +12,21 @@ const { connectionForAlerts } = require('../../database/databaseConnection');
  */
 const restoreAlarmNotificationsForAllFamilies = async () => {
   try {
-    alarmLogger.debug('restoreAlarmNotificationsForAll');
+    serverLogger.debug('restoreAlarmNotificationsForAll');
 
     // remove any pending jobs (there shouldn't be any)
     for (const key of Object.keys(schedule.scheduledJobs)) {
       schedule.scheduledJobs[key].cancel();
-      alarmLogger.info(`Cancelled job; count is now ${Object.keys(schedule.scheduledJobs).length}`);
     }
 
     // for ALL reminders get: familyId, reminderId, dogName, reminderExecutionDate, reminderAction, and reminderCustomActionName
     const remindersWithInfo = await queryPromise(
-      connectionForAlerts,
+      connectionForAlarms,
       'SELECT dogs.familyId, dogReminders.reminderId, dogReminders.reminderExecutionDate FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
     );
     // for every reminder that exists (with a valid reminderExecutionDate), we invoke createAlarmNotificationForAll for it
     for (let i = 0; i < remindersWithInfo.length; i += 1) {
-      alarmLogger.debug(`Recreating notification ${JSON.stringify(remindersWithInfo[i])}`);
+      serverLogger.debug(`Recreating notification ${JSON.stringify(remindersWithInfo[i])}`);
       // get individual information for a family
       const alarmNotificationInformation = remindersWithInfo[i];
       // restore generic alarm for family for given reminder , this function will also restore the follow up notifications for all users
@@ -40,8 +39,8 @@ const restoreAlarmNotificationsForAllFamilies = async () => {
     }
   }
   catch (error) {
-    alarmLogger.error('restoreAlarmNotificationsForAll error:');
-    alarmLogger.error(error);
+    serverLogger.error('restoreAlarmNotificationsForAll error:');
+    serverLogger.error(error);
   }
 };
 

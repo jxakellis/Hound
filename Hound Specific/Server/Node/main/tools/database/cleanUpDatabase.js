@@ -15,7 +15,7 @@ const cleanUpIsDeleted = async () => {
   );
 
   for (let i = 0; i < result.length; i += 1) {
-    serverLogger.info(`Cleaning up any isDeleted for family ${result[i].familyId}`);
+    serverLogger.info(`cleanUpIsDeleted for familyId: ${result[i].familyId}`);
     // Find the dogReminders for the given familyId
     // Then delete any dogReminders where reminderIsDeleted = 1 && reminderLastModified < lastDogManagerSynchronization. Meaning the reminder was deleted and all current users have synced the change
     await queryPromise(

@@ -1,5 +1,5 @@
 const apn = require('apn');
-const { REMINDER_CATEGORY } = require('../../../server/constants');
+const { REMINDER_CATEGORY, IS_PRODUCTION } = require('../../../server/constants');
 const { apnLogger } = require('../../logging/loggers');
 
 const { formatArray, areAllDefined } = require('../../format/formatObject');
@@ -15,7 +15,9 @@ const { getUserToken, getAllFamilyMemberTokens, getOtherFamilyMemberTokens } = r
  */
 // (token, category, sound, alertTitle, alertBody)
 const sendAPN = (token, category, sound, alertTitle, alertBody, customPayload) => {
-  apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${alertTitle}, ${alertBody}`);
+  if (IS_PRODUCTION === false) {
+    apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${alertTitle}, ${alertBody}`);
+  }
 
   try {
     // sound doesn't have to be defined, its optional
@@ -91,15 +93,19 @@ const sendAPN = (token, category, sound, alertTitle, alertBody, customPayload) =
 
     apnProvider.send(notification, token).then((response) => {
     // response.sent: Array of device tokens to which the notification was sent succesfully
+      if (IS_PRODUCTION === true) {
+        return;
+      }
       if (response.sent.length !== 0) {
-        apnLogger.info(`Response Sent (successful): ${JSON.stringify(response.sent)}`);
+        apnLogger.info(`sendAPN Response Successful: ${JSON.stringify(response.sent)}`);
       }
       // response.failed: Array of objects containing the device token (`device`) and either an `error`, or a `status` and `response` from the API
       if (response.failed.length !== 0) {
-        apnLogger.info(`Response Failed (rejected): ${JSON.stringify(response.failed)}`);
+        apnLogger.info(`sendAPN Response Rejected: ${JSON.stringify(response.failed)}`);
       }
     }).catch((error) => {
-      apnLogger.error(`Response Failed (error): ${JSON.stringify(error)}`);
+      apnLogger.error('sendAPN Response Error:');
+      apnLogger.error(error);
     });
   }
   catch (error) {
@@ -113,7 +119,9 @@ const sendAPN = (token, category, sound, alertTitle, alertBody, customPayload) =
 * Invokes sendAPN with the tokens, alertTitle, and alertBody
 */
 const sendAPNForUser = async (userId, category, alertTitle, alertBody, customPayload) => {
-  apnLogger.debug(`sendAPNForUser ${userId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
+  if (IS_PRODUCTION === false) {
+    apnLogger.debug(`sendAPNForUser ${userId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
+  }
 
   try {
     // get tokens of all qualifying family members that aren't the user
@@ -139,7 +147,9 @@ const sendAPNForUser = async (userId, category, alertTitle, alertBody, customPay
  * Invokes sendAPN with the tokens, alertTitle, and alertBody
  */
 const sendAPNForFamily = async (familyId, category, alertTitle, alertBody, customPayload) => {
-  apnLogger.debug(`sendAPNForFamily ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
+  if (IS_PRODUCTION === false) {
+    apnLogger.debug(`sendAPNForFamily ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
+  }
 
   try {
     // get notification tokens of all qualifying family members
@@ -165,7 +175,10 @@ const sendAPNForFamily = async (familyId, category, alertTitle, alertBody, custo
  * Invokes sendAPN with the tokens, alertTitle, and alertBody
  */
 const sendAPNForFamilyExcludingUser = async (userId, familyId, category, alertTitle, alertBody, customPayload) => {
-  apnLogger.debug(`sendAPNForFamilyExcludingUser ${userId}, ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
+  if (IS_PRODUCTION === false) {
+    apnLogger.debug(`sendAPNForFamilyExcludingUser ${userId}, ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
+  }
+
   try {
     // get tokens of all qualifying family members that aren't the user
     const tokenAndSounds = formatArray(await getOtherFamilyMemberTokens(userId, familyId));

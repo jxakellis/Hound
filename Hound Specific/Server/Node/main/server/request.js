@@ -1,7 +1,7 @@
 const express = require('express');
 
 const { parseFormData, parseJSON } = require('./parse');
-const { logRequest, logResponse } = require('../tools/logging/logQuery');
+const { requestLoggerForRequest, responseLoggerForResponse } = require('../tools/logging/requestLogging');
 const { assignConnection } = require('../tools/database/databaseConnection');
 const { validateAppBuild } = require('../tools/format/validateId');
 const userRouter = require('../../routes/user');
@@ -16,8 +16,8 @@ const configureAppForRequests = (app) => {
 
   // Log request and setup logging for response
 
-  app.use(logRequest);
-  app.use(logResponse);
+  app.use(requestLoggerForRequest);
+  app.use(responseLoggerForResponse);
 
   // Assign the request a pool connection to use
 
