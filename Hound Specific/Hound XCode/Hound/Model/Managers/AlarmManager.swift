@@ -217,7 +217,7 @@ class AlarmManager {
         
     }
     
-    /// The user went to log/skip a reminder on the reminders page. Must updating skipping data and add a log
+    /// The user went to log/skip a reminder on the reminders page. Must updating skipping data and add a log. Only provide a UIViewController if you wish the spinning checkmark animation to happen.
     static func willSkipReminder(forDogId dogId: Int, forReminder reminder: Reminder, forLogAction logAction: LogAction) {
         let log = Log(logAction: logAction, logCustomActionName: reminder.reminderCustomActionName, logDate: Date())
         

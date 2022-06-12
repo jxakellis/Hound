@@ -7,3 +7,4 @@ SELECT * FROM userConfiguration;
 SELECT * FROM dogs;
 SELECT * FROM dogLogs;
 SELECT * FROM dogReminders;
+SELECT * FROM userRequestLogs;

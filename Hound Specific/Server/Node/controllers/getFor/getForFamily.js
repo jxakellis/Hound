@@ -9,6 +9,7 @@ const usersColumns = 'users.userId, users.userFirstName, users.userLastName';
 // Select every column except for familyId, lastPause, lastUnpause, and familyIsDeleted (by not transmitting, increases network efficiency)
 // familyId is already known, lastPause + lastUnpause have no use client-side and familyIsDeleted isn't currently being used
 const familiesColumns = 'userId, familyCode, isLocked, isPaused';
+const familyMembersColumns = 'userId';
 
 /**
  *  If the query is successful, returns the userId, familyCode, isLocked, isPaused, and familyMembers for the familyId.
@@ -59,7 +60,7 @@ const getFamilyMembersForUserId = async (req, userId) => {
   try {
     const result = await queryPromise(
       req,
-      `SELECT ${usersColumns} FROM familyMembers WHERE userId = ? LIMIT 1`,
+      `SELECT ${familyMembersColumns} FROM familyMembers WHERE userId = ? LIMIT 1`,
       [userId],
     );
     return result;

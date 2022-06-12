@@ -104,13 +104,6 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
         }
     }
     
-    func logReminderAnimation() {
-        self.performSpinningCheckmarkAnimation()
-    }
-    func unlogReminderAnimation() {
-        self.performSpinningUndoAnimation()
-    }
-    
     // MARK: - DogManagerControlFlowProtocol
     
     /// If the dog manager was updated in DogsTableViewController, this function is called to reflect that change here with this dogManager

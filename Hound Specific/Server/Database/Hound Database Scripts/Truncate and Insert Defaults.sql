@@ -6,3 +6,4 @@ TRUNCATE TABLE families;
 TRUNCATE TABLE dogs;
 TRUNCATE TABLE dogLogs;
 TRUNCATE TABLE dogReminders;
+TRUNCATE TABLE userRequestLogs; 

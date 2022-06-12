@@ -12,8 +12,8 @@ protocol DogsTableViewControllerDelegate: AnyObject {
     func willOpenDogMenu(forDogId: Int?)
     func willOpenReminderMenu(parentDogId: Int, forReminderId: Int?)
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
-    func logReminderAnimation()
-    func unlogReminderAnimation()
+    func performSpinningCheckmarkAnimation()
+    func performSpinningUndoAnimation()
 }
 
 class DogsTableViewController: UITableViewController, DogManagerControlFlowProtocol, DogsReminderDisplayTableViewCellDelegate {
@@ -297,7 +297,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
                     // logAction not needed as unskipping alarm does not require that component
                     AlarmManager.willUnskipReminder(
                         forDog: dog, forReminder: reminder)
-                    self.delegate.unlogReminderAnimation()
+                    self.delegate.performSpinningUndoAnimation()
 
                 })
             alertActionsForLog.append(alertActionLog)
@@ -313,7 +313,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
                         handler: { (_)  in
                             // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                             AlarmManager.willSkipReminder(forDogId: dog.dogId, forReminder: reminder, forLogAction: pottyKnownType)
-                            self.delegate.logReminderAnimation()
+                            self.delegate.performSpinningCheckmarkAnimation()
                         })
                     alertActionsForLog.append(alertActionLog)
                 }
@@ -324,7 +324,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
                     handler: { (_)  in
                         // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
                         AlarmManager.willSkipReminder(forDogId: dog.dogId, forReminder: reminder, forLogAction: LogAction(rawValue: reminder.reminderAction.rawValue)!)
-                        self.delegate.logReminderAnimation()
+                        self.delegate.performSpinningCheckmarkAnimation()
                     })
                 alertActionsForLog.append(alertActionLog)
             }
