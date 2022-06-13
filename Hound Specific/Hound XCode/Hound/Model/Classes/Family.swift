@@ -12,7 +12,7 @@ class FamilyMember: NSObject {
     
     // MARK: - Main
     
-    init(userId: Int, firstName: String?, lastName: String?) {
+    init(userId: String, firstName: String?, lastName: String?) {
         self.userId = userId
         self.firstName = firstName
         self.lastName = lastName
@@ -21,7 +21,7 @@ class FamilyMember: NSObject {
     
     /// Assume array of family properties
     convenience init(fromBody body: [String: Any]) {
-        let userId = body[ServerDefaultKeys.userId.rawValue] as? Int ?? -1
+        let userId = body[ServerDefaultKeys.userId.rawValue] as? String ?? Hash.defaultSHA256Hash
         let firstName = body[ServerDefaultKeys.userFirstName.rawValue] as? String
         let lastName = body[ServerDefaultKeys.userLastName.rawValue] as? String
         self.init(userId: userId, firstName: firstName, lastName: lastName)
@@ -36,7 +36,7 @@ class FamilyMember: NSObject {
     var lastName: String?
     
     /// The family member's userId
-    var userId: Int
+    var userId: String
     
     /// Indicates where or not this user is the head of the family
     var isFamilyHead: Bool = false
@@ -111,7 +111,7 @@ extension FamilyMember {
         }
     }
     
-    static func findFamilyMember(forUserId userId: Int?) -> FamilyMember? {
+    static func findFamilyMember(forUserId userId: String?) -> FamilyMember? {
         guard userId != nil else {
             return nil
         }

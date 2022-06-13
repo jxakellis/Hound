@@ -2273,7 +2273,7 @@
                                 <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1Z3-fe-wRw" userLabel="containerView">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="405.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="512"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LT0-Mu-JEa" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                                 <rect key="frame" x="10" y="35" width="394" height="24"/>
@@ -2294,13 +2294,13 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="To permanently delete your account, contact support@houndorganizer.com" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SJG-iw-b7H" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="218" width="394" height="30"/>
+                                                <rect key="frame" x="10" y="324.5" width="394" height="30"/>
                                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dFR-dD-PKh">
-                                                <rect key="frame" x="10" y="293" width="394" height="50"/>
+                                                <rect key="frame" x="10" y="399.5" width="394" height="50"/>
                                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="50" id="URf-6W-Isj"/>
@@ -2315,7 +2315,7 @@
                                                 </connections>
                                             </button>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rou-GI-ddQ" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="350.5" width="394" height="45"/>
+                                                <rect key="frame" x="10" y="457" width="394" height="45"/>
                                                 <string key="text">Deletes local storage of all dogs, reminders, and logs to fully redownload them from the Hound server, ensuring that the data displayed locally reflects the data stored server-side.</string>
                                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -2323,6 +2323,18 @@
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="bobsmith@gmail.com" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="30l-2W-Fn1" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                                 <rect key="frame" x="10" y="158" width="394" height="15"/>
+                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
+                                                <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="User Id" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mOU-lW-EAR" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="218" width="394" height="24"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="51c791e9b80baba4af786e2dea29068651b95aec3dc3bba9f0657cbd7ac77fae" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="daV-Jk-tGb" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="249.5" width="394" height="30"/>
                                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                 <nil key="highlightedColor"/>
@@ -2336,14 +2348,19 @@
                                             <constraint firstAttribute="trailing" secondItem="LT0-Mu-JEa" secondAttribute="trailing" constant="10" id="7Mb-R6-x4g"/>
                                             <constraint firstItem="p9S-Oi-kIs" firstAttribute="trailing" secondItem="LT0-Mu-JEa" secondAttribute="trailing" id="8Fu-EM-vVP"/>
                                             <constraint firstItem="dFR-dD-PKh" firstAttribute="leading" secondItem="LT0-Mu-JEa" secondAttribute="leading" id="8wO-Wv-wM1"/>
-                                            <constraint firstItem="SJG-iw-b7H" firstAttribute="top" secondItem="30l-2W-Fn1" secondAttribute="bottom" constant="45" id="E5U-iL-gGY"/>
+                                            <constraint firstItem="mOU-lW-EAR" firstAttribute="top" secondItem="30l-2W-Fn1" secondAttribute="bottom" constant="45" id="9Rm-jB-OTz"/>
+                                            <constraint firstItem="daV-Jk-tGb" firstAttribute="leading" secondItem="LT0-Mu-JEa" secondAttribute="leading" id="B3T-aB-LfA"/>
                                             <constraint firstItem="LT0-Mu-JEa" firstAttribute="top" secondItem="1Z3-fe-wRw" secondAttribute="top" constant="35" id="Jin-fH-UGD"/>
                                             <constraint firstItem="p9S-Oi-kIs" firstAttribute="leading" secondItem="LT0-Mu-JEa" secondAttribute="leading" id="M7m-lJ-GBa"/>
                                             <constraint firstAttribute="bottom" secondItem="Rou-GI-ddQ" secondAttribute="bottom" constant="10" id="SGT-e0-IPK"/>
+                                            <constraint firstItem="mOU-lW-EAR" firstAttribute="leading" secondItem="LT0-Mu-JEa" secondAttribute="leading" id="VI2-dI-PsB"/>
+                                            <constraint firstItem="daV-Jk-tGb" firstAttribute="top" secondItem="mOU-lW-EAR" secondAttribute="bottom" constant="7.5" id="Vpv-KN-Sw0"/>
+                                            <constraint firstItem="mOU-lW-EAR" firstAttribute="trailing" secondItem="LT0-Mu-JEa" secondAttribute="trailing" id="XSE-KA-czn"/>
                                             <constraint firstItem="p9S-Oi-kIs" firstAttribute="top" secondItem="LT0-Mu-JEa" secondAttribute="bottom" constant="7.5" id="Yhb-op-rPi"/>
                                             <constraint firstItem="Rou-GI-ddQ" firstAttribute="leading" secondItem="LT0-Mu-JEa" secondAttribute="leading" id="brc-Mx-l0h"/>
                                             <constraint firstItem="2Iv-or-ivM" firstAttribute="top" secondItem="p9S-Oi-kIs" secondAttribute="bottom" constant="45" id="c8i-dI-zY3"/>
                                             <constraint firstItem="Rou-GI-ddQ" firstAttribute="top" secondItem="dFR-dD-PKh" secondAttribute="bottom" constant="7.5" id="flW-FQ-id2"/>
+                                            <constraint firstItem="SJG-iw-b7H" firstAttribute="top" secondItem="daV-Jk-tGb" secondAttribute="bottom" constant="45" id="ki9-ab-mRs"/>
                                             <constraint firstItem="SJG-iw-b7H" firstAttribute="trailing" secondItem="LT0-Mu-JEa" secondAttribute="trailing" id="lZc-tY-6Tn"/>
                                             <constraint firstItem="Rou-GI-ddQ" firstAttribute="trailing" secondItem="LT0-Mu-JEa" secondAttribute="trailing" id="noR-br-ygi"/>
                                             <constraint firstItem="LT0-Mu-JEa" firstAttribute="leading" secondItem="1Z3-fe-wRw" secondAttribute="leading" constant="10" id="nwR-of-D1X"/>
@@ -2352,6 +2369,7 @@
                                             <constraint firstItem="30l-2W-Fn1" firstAttribute="top" secondItem="2Iv-or-ivM" secondAttribute="bottom" constant="7.5" id="s7K-kp-6H9"/>
                                             <constraint firstItem="dFR-dD-PKh" firstAttribute="top" secondItem="SJG-iw-b7H" secondAttribute="bottom" constant="45" id="uNM-Sw-LGj"/>
                                             <constraint firstItem="SJG-iw-b7H" firstAttribute="leading" secondItem="LT0-Mu-JEa" secondAttribute="leading" id="wl6-2Y-Lwv"/>
+                                            <constraint firstItem="daV-Jk-tGb" firstAttribute="trailing" secondItem="LT0-Mu-JEa" secondAttribute="trailing" id="zUa-Cs-yP1"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -2379,6 +2397,7 @@
                     <connections>
                         <outlet property="redownloadDataButton" destination="dFR-dD-PKh" id="ozY-gk-8g7"/>
                         <outlet property="userEmail" destination="30l-2W-Fn1" id="Z0V-9p-zjs"/>
+                        <outlet property="userId" destination="daV-Jk-tGb" id="bxj-nf-BNE"/>
                         <outlet property="userName" destination="p9S-Oi-kIs" id="rPc-fd-8qo"/>
                     </connections>
                 </viewController>

@@ -137,7 +137,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     required init?(coder aDecoder: NSCoder) {
         self.logId = aDecoder.decodeInteger(forKey: "logId")
-        self.userId = aDecoder.decodeInteger(forKey: "userId")
+        self.userId = aDecoder.decodeObject(forKey: "userId") as? String ?? Hash.defaultSHA256Hash
         self.logAction = LogAction(rawValue: aDecoder.decodeObject(forKey: "logAction") as? String ?? LogConstant.defaultLogAction.rawValue) ?? LogConstant.defaultLogAction
         self.logCustomActionName = aDecoder.decodeObject(forKey: "logCustomActionName") as? String
         self.logDate = aDecoder.decodeObject(forKey: "logDate") as? Date ?? Date()
@@ -161,7 +161,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     convenience init(
         logId: Int = LogConstant.defaultLogId,
-        userId: Int = LogConstant.defaultUserId,
+        userId: String = Hash.defaultSHA256Hash,
         logAction: LogAction = LogConstant.defaultLogAction,
         logCustomActionName: String? = LogConstant.defaultLogCustomActionName,
         logDate: Date = LogConstant.defaultLogDate,
@@ -186,7 +186,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
         
         let logId: Int = body[ServerDefaultKeys.logId.rawValue] as? Int ?? LogConstant.defaultLogId
         // don't user LogConstant.defaultUserId here. if we cannot decode the value, then just leave it as -1, as otherwise it would incorrectly display that this user created the log (as LogConstant.defaultUserId defaults to UserInformation.userId first)
-        let userId: Int = body[ServerDefaultKeys.userId.rawValue] as? Int ?? -1
+        let userId: String = body[ServerDefaultKeys.userId.rawValue] as? String ?? Hash.defaultSHA256Hash
         let logAction: LogAction = LogAction(rawValue: body[ServerDefaultKeys.logAction.rawValue] as? String ?? LogConstant.defaultLogAction.rawValue)!
         let logCustomActionName: String? = body[ServerDefaultKeys.logCustomActionName.rawValue] as? String ?? LogConstant.defaultLogCustomActionName
         
@@ -206,7 +206,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     var logId: Int = LogConstant.defaultLogId
     
-    var userId: Int = LogConstant.defaultUserId
+    var userId: String = Hash.defaultSHA256Hash
     
     private var storedLogIsDeleted: Bool = false
     /// This property a marker leftover from when we went through the process of constructing a new log from JSON and combining with an existing log object. This markers allows us to have a new log to overwrite the old log, then leaves an indicator that this should be deleted. This deletion is handled by DogsRequest

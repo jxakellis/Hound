@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import CryptoKit
 
 protocol LogsAddLogViewControllerDelegate: AnyObject {
     func didRemoveLog(sender: Sender, parentDogId: Int, logId: Int)

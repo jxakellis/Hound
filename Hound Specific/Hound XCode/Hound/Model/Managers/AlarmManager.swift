@@ -22,21 +22,6 @@ class AlarmManager {
     /// Creates AlarmUIAlertController to show the user about their alarm going off. We query the server with the information provided first to make sure it is up to date. 
     static func willShowAlarm(forDogName dogName: String, forDogId dogId: Int, forReminderId reminderId: Int) {
         
-        let localReminder: Reminder? = try? MainTabBarViewController.staticDogManager.findDog(forDogId: dogId).dogReminders.findReminder(forReminderId: reminderId)
-        
-        // To start, either:
-        // 1. we shouldn't have the reminder stored locally (nil) and we will get it from the server
-        // 2. we have the reminder stored locally and it shouldn't be hasAlarmPresentationHandled
-        guard localReminder == nil || localReminder!.hasAlarmPresentationHandled == false else {
-           return
-        }
-        
-        if let localReminder = localReminder {
-            // now we can mark that the localReminder is presentation handled (if we have it), so block above catches any rogue requests
-            localReminder.hasAlarmPresentationHandled = true
-            delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminder: localReminder)
-        }
-        
         // before presenting alarm, make sure we are up to date locally
         RemindersRequest.get(invokeErrorManager: true, forDogId: dogId, forReminderId: reminderId) { reminder, responseStatus in
             
@@ -47,10 +32,6 @@ class AlarmManager {
                     // we only want to refresh if our inital request was able to reach the server
                     delegate.shouldRefreshDogManager(sender: Sender(origin: self, localized: self))
                 }
-                // Now, we want to clear the presentation handled from the reminder. If we don't then the no alarm will be able to display for the reminder until the app is restarted (to clear the hasAlarmPresentationHandled)
-                // HOWEVER, if we were to use delegate.didUpdateReminder to reflect this change. The logic would once again lead to this exact same point (in the case of .noResponse, ~15ms and for .successResponse/.failureResponse ~100ms), causing an infinite loop. Therefore, we clear the hasAlarmPresentationHandled, but don't tell anything to update. Then, when something else causes an update, the values will be correct. If it gets tripped up again, then it sticks at a stalemate here.
-                
-                try? MainTabBarViewController.staticDogManager.findDog(forDogId: dogId).dogReminders.findReminder(forReminderId: reminderId).hasAlarmPresentationHandled = false
                 return
             }
             
@@ -120,7 +101,7 @@ class AlarmManager {
                 reminder!.hasAlarmPresentationHandled = true
                 delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminder: reminder!)
             
-            AlertManager.enqueueAlertForPresentation(alertController)
+                AlertManager.enqueueAlertForPresentation(alertController)
             
         }
     }

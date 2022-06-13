@@ -13,7 +13,7 @@ enum FamilyRequest: RequestProtocol {
     
     static let baseURLWithoutParams: URL = UserRequest.baseURLWithUserId.appendingPathComponent("/family")
     // UserRequest baseURL with the userId path param appended on
-    static var baseURLWithFamilyId: URL { return FamilyRequest.baseURLWithoutParams.appendingPathComponent("/\(UserInformation.familyId ?? -1)") }
+    static var baseURLWithFamilyId: URL { return FamilyRequest.baseURLWithoutParams.appendingPathComponent("/\(UserInformation.familyId ?? Hash.defaultSHA256Hash)") }
     
     // MARK: - Private Functions
     
@@ -107,12 +107,12 @@ extension FamilyRequest {
      completionHandler returns a possible familyId and the ResponseStatus.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func create(invokeErrorManager: Bool, completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
+    static func create(invokeErrorManager: Bool, completionHandler: @escaping (String?, ResponseStatus) -> Void) {
         FamilyRequest.internalCreate(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 // check for familyId
-                if let familyId = responseBody?[ServerDefaultKeys.result.rawValue] as? Int {
+                if let familyId = responseBody?[ServerDefaultKeys.result.rawValue] as? String {
                     completionHandler(familyId, responseStatus)
                 }
                 else {

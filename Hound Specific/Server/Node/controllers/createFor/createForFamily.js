@@ -5,6 +5,7 @@ const { generateVerifiedFamilyCode } = require('../../main/tools/database/genera
 
 const { getFamilyMembersForUserId } = require('../getFor/getForFamily');
 const { areAllDefined } = require('../../main/tools/format/formatObject');
+const { hash } = require('../../main/tools/format/hash');
 
 /**
  *  Queries the database to create a family. If the query is successful, then returns the familyId.
@@ -12,8 +13,10 @@ const { areAllDefined } = require('../../main/tools/format/formatObject');
  */
 const createFamilyQuery = async (req) => {
   const userId = req.params.userId; // required
+  const familyAccountCreationDate = new Date();
+  const familyId = await hash(userId, familyAccountCreationDate.toISOString());
 
-  if (areAllDefined(userId) === false) {
+  if (areAllDefined(userId, familyAccountCreationDate, familyId) === false) {
     throw new ValidationError('userId missing', 'ER_VALUES_MISSING');
   }
 
@@ -28,12 +31,11 @@ const createFamilyQuery = async (req) => {
   try {
     // create a family code for the new family
     const familyCode = await generateVerifiedFamilyCode(req);
-    const result = await queryPromise(
+    await queryPromise(
       req,
-      'INSERT INTO families(userId, familyCode, isLocked, isPaused) VALUES (?, ?, ?, ?)',
-      [userId, familyCode, false, false],
+      'INSERT INTO families(familyId, userId, familyCode, isLocked, isPaused, familyAccountCreationDate) VALUES (?, ?, ?, ?, ?, ?)',
+      [familyId, userId, familyCode, false, false, familyAccountCreationDate],
     );
-    const familyId = result.insertId;
     await queryPromise(
       req,
       'INSERT INTO familyMembers(familyId, userId) VALUES (?, ?)',

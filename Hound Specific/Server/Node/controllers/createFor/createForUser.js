@@ -4,6 +4,7 @@ const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
   formatNumber, formatEmail, formatBoolean, areAllDefined,
 } = require('../../main/tools/format/formatObject');
+const { hash } = require('../../main/tools/format/hash');
 
 /**
  *  Queries the database to create a user. If the query is successful, then returns the userId.
@@ -17,6 +18,8 @@ const createUserQuery = async (req) => {
   } = req.body;
   const userAccountCreationDate = new Date();
 
+  const userId = await hash(userIdentifier, userAccountCreationDate.toISOString());
+
   const isNotificationEnabled = formatBoolean(req.body.isNotificationEnabled); // required
   const isLoudNotification = formatBoolean(req.body.isLoudNotification); // required
   const isFollowUpEnabled = formatBoolean(req.body.isFollowUpEnabled); // required
@@ -29,7 +32,7 @@ const createUserQuery = async (req) => {
 
   // component of the body is missing or invalid
   if (areAllDefined(
-    [userEmail, userIdentifier,
+    [userId, userEmail, userIdentifier,
       isNotificationEnabled, isLoudNotification, isFollowUpEnabled,
       followUpDelay, logsInterfaceScale, remindersInterfaceScale,
       interfaceStyle, snoozeLength, notificationSound],
@@ -39,12 +42,11 @@ const createUserQuery = async (req) => {
   }
 
   try {
-    const result = await queryPromise(
+    await queryPromise(
       req,
-      'INSERT INTO users(userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate) VALUES (?,?,?,?,?,?)',
-      [userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate],
+      'INSERT INTO users(userId, userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate) VALUES (?,?,?,?,?,?,?)',
+      [userId, userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate],
     );
-    const userId = result.insertId;
 
     await queryPromise(
       req,

@@ -19,8 +19,8 @@ const createDogQuery = async (req) => {
   try {
     const result = await queryPromise(
       req,
-      'INSERT INTO dogs(familyId, dogIcon, dogName, dogLastModified) VALUES (?,?,?,?)',
-      [familyId, undefined, dogName, dogLastModified],
+      'INSERT INTO dogs(familyId, dogName, dogLastModified) VALUES (?,?,?)',
+      [familyId, dogName, dogLastModified],
     );
     return result.insertId;
   }

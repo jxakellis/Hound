@@ -34,8 +34,8 @@ enum DogConstant {
 
 enum LogConstant {
     static let defaultLogId: Int = -1
-    static var defaultUserId: Int {
-        return UserInformation.userId ?? -1
+    static var defaultUserId: String {
+        return UserInformation.userId ?? Hash.defaultSHA256Hash
     }
     static let defaultLogAction = LogAction.allCases[0]
     static let defaultLogCustomActionName: String? = nil

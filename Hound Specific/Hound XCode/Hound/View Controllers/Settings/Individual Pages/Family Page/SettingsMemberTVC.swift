@@ -20,7 +20,7 @@ class SettingsFamilyMemberTableViewCell: UITableViewCell {
     
     // MARK: - Properties
     
-    var userId: Int!
+    var userId: String!
     
     // MARK: - Main
     
@@ -38,7 +38,7 @@ class SettingsFamilyMemberTableViewCell: UITableViewCell {
     
     // MARK: - Functions
     
-    func setup(forDisplayFullName displayFullName: String, userId: Int, isUserFamilyHead: Bool) {
+    func setup(forDisplayFullName displayFullName: String, userId: String, isUserFamilyHead: Bool) {
         self.userId = userId
         
         fullNameLabel.text = displayFullName

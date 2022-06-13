@@ -9,8 +9,6 @@
 import UIKit
 import UserNotifications
 import os.log
-import CryptoKit
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 

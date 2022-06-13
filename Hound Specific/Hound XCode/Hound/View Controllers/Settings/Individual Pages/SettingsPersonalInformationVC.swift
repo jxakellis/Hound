@@ -26,6 +26,8 @@ class SettingsPersonalInformationViewController: UIViewController, UIGestureReco
     
     @IBOutlet private weak var userEmail: ScaledUILabel!
     
+    @IBOutlet private weak var userId: ScaledUILabel!
+    
     @IBOutlet private weak var redownloadDataButton: UIButton!
     @IBAction private func didClickRedownloadData(_ sender: Any) {
         
@@ -61,10 +63,6 @@ class SettingsPersonalInformationViewController: UIViewController, UIGestureReco
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        userName.text = UserInformation.displayFullName
-        
-        userEmail.text = UserInformation.userEmail ?? "No Email"
-        
         oneTimeSetup()
     }
 
@@ -93,6 +91,11 @@ class SettingsPersonalInformationViewController: UIViewController, UIGestureReco
     
     /// These properties only need assigned once.
     private func oneTimeSetup() {
+        userName.text = UserInformation.displayFullName
+        
+        userEmail.text = UserInformation.userEmail ?? "Unknown⚠️"
+        
+        userId.text = UserInformation.userId ?? "Unknown⚠️"
         
         redownloadDataButton.layer.cornerRadius = 10.0
     }

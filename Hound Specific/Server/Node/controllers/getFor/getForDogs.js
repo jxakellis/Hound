@@ -7,8 +7,8 @@ const {
 const { getAllLogsForDogId } = require('./getForLogs');
 const { getAllRemindersForDogId } = require('./getForReminders');
 
-// Select every column except for familyId, dogIcon, and dogLastModified (by not transmitting, increases network efficiency)
-// familyId is already known, dogIcon isn't currently being used (client-side storage instead), and dogLastModified has no use client-side
+// Select every column except for familyId, and dogLastModified (by not transmitting, increases network efficiency)
+// familyId is already known, and dogLastModified has no use client-side
 const dogsColumns = 'dogId, dogName, dogIsDeleted';
 
 /**

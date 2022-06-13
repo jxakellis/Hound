@@ -66,7 +66,6 @@ class TimingManager {
                     RunLoop.main.add(isSkippingDisabler, forMode: .common)
                 }
                 
-                print(-1)
                 let timer = Timer(fireAt: reminder.reminderExecutionDate!,
                                   interval: -1,
                                   target: self,
@@ -124,7 +123,6 @@ class TimingManager {
         let dogId: Int = parsedDictionary[ServerDefaultKeys.dogId.rawValue]! as! Int
         let reminderId: Int = parsedDictionary[ServerDefaultKeys.reminderId.rawValue]! as! Int
         
-        print(0)
         AlarmManager.willShowAlarm(forDogName: dogName, forDogId: dogId, forReminderId: reminderId)
     }
     

@@ -38,7 +38,7 @@ enum FamilyConfiguration {
             }
             
             // assign familyHead
-            if let familyHeadUserId = body[ServerDefaultKeys.userId.rawValue] as? Int {
+            if let familyHeadUserId = body[ServerDefaultKeys.userId.rawValue] as? String {
                 for familyMember in familyMembers where familyMember.userId == familyHeadUserId {
                     familyMember.isFamilyHead = true
                 }

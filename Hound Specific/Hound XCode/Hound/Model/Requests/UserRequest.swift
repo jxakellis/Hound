@@ -13,7 +13,7 @@ enum UserRequest: RequestProtocol {
     
     static let baseURLWithoutParams: URL = InternalRequestUtils.baseURLWithoutParams.appendingPathComponent("/user")
     // UserRequest baseURL with the userId URL param appended on
-    static var baseURLWithUserId: URL { return UserRequest.baseURLWithoutParams.appendingPathComponent("/\(UserInformation.userId ?? -1)") }
+    static var baseURLWithUserId: URL { return UserRequest.baseURLWithoutParams.appendingPathComponent("/\(UserInformation.userId ?? Hash.defaultSHA256Hash)") }
     
     // MARK: - Private Functions
     
@@ -27,7 +27,7 @@ enum UserRequest: RequestProtocol {
             URL = baseURLWithUserId
         }
         else {
-            URL =  baseURLWithoutParams
+            URL = baseURLWithoutParams
         }
         InternalRequestUtils.genericGetRequest(invokeErrorManager: invokeErrorManager, forURL: URL) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
@@ -76,18 +76,18 @@ extension UserRequest {
      completionHandler returns a possible familyId and the ResponseStatus.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func get(invokeErrorManager: Bool, completionHandler: @escaping (Int?, Int?, ResponseStatus) -> Void) {
+    static func get(invokeErrorManager: Bool, completionHandler: @escaping (String?, String?, ResponseStatus) -> Void) {
         UserRequest.internalGet(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 // attempt to extract body and userId
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], let userId = result[ServerDefaultKeys.userId.rawValue] as? Int, result.isEmpty == false {
+                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], let userId = result[ServerDefaultKeys.userId.rawValue] as? String, result.isEmpty == false {
                     
                     // set all local configuration equal to whats in the server
                     UserInformation.setup(fromBody: result)
                     UserConfiguration.setup(fromBody: result)
                     
-                    let familyId: Int? = result[ServerDefaultKeys.familyId.rawValue] as? Int
+                    let familyId: String? = result[ServerDefaultKeys.familyId.rawValue] as? String
                     
                     completionHandler(userId, familyId, .successResponse)
                 }
@@ -107,11 +107,11 @@ extension UserRequest {
      completionHandler returns a possible userId and the ResponseStatus.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func create(invokeErrorManager: Bool, completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
+    static func create(invokeErrorManager: Bool, completionHandler: @escaping (String?, ResponseStatus) -> Void) {
         UserRequest.internalCreate(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let userId = responseBody?[ServerDefaultKeys.result.rawValue] as? Int {
+                if let userId = responseBody?[ServerDefaultKeys.result.rawValue] as? String {
                     completionHandler(userId, responseStatus)
                 }
                 else {

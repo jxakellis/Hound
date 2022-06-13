@@ -7,9 +7,10 @@ const { areAllDefined } = require('../../main/tools/format/formatObject');
 // userEmail, userIdentifier, and userNotificationToken are all private so shouldn't be shown. userIsDeleted isn't currently being used
 const usersColumns = 'users.userId, users.userFirstName, users.userLastName';
 // Select every column except for familyId, lastPause, lastUnpause, and familyIsDeleted (by not transmitting, increases network efficiency)
-// familyId is already known, lastPause + lastUnpause have no use client-side and familyIsDeleted isn't currently being used
-const familiesColumns = 'userId, familyCode, isLocked, isPaused';
+// familyId is already known, lastPause + lastUnpause + familyAccountCreationDate have no use client-side and familyIsDeleted isn't currently being used
+const familiesColumns = 'userId, familyCode, isLocked, isPaused, subscriptionId';
 const familyMembersColumns = 'userId';
+const subscriptionTiersColumns = 'subscriptionTiers.subscriptionTier, subscriptionTiers.subscriptionName, subscriptionTiers.subscriptionNumberOfFamilyMembers, subscriptionTiers.subscriptionNumberOfDogs';
 
 /**
  *  If the query is successful, returns the userId, familyCode, isLocked, isPaused, and familyMembers for the familyId.
@@ -47,6 +48,28 @@ const getFamilyInformationForFamilyId = async (req, familyId) => {
   }
 };
 
+const getFamilySubscriptionForFamilyId = async (req, familyId) => {
+  // validate that a familyId was passed, assume that its in the correct format
+  if (areAllDefined(familyId) === false) {
+    throw new ValidationError('familyId missing', 'ER_VALUES_MISSING');
+  }
+  // family id is validated, therefore we know familyMembers is >= 1 for familyId
+  try {
+    // find family then join with corresponding inforamtion
+    let subscriptionInforamtion = await queryPromise(
+      req,
+      `SELECT ${subscriptionTiersColumns} FROM families JOIN subscriptionTiers ON families.subscriptionTier = subscriptionTiers.subscriptionTier WHERE familyId = ? LIMIT 1`,
+      [familyId],
+    );
+
+    subscriptionInforamtion = subscriptionInforamtion[0];
+    return subscriptionInforamtion;
+  }
+  catch (error) {
+    throw new DatabaseError(error.code);
+  }
+};
+
 /**
  *  If the query is successful, returns the family members for the userId.
  *  If a problem is encountered, creates and throws custom error
@@ -70,4 +93,4 @@ const getFamilyMembersForUserId = async (req, userId) => {
   }
 };
 
-module.exports = { getFamilyInformationForFamilyId, getFamilyMembersForUserId };
+module.exports = { getFamilyInformationForFamilyId, getFamilySubscriptionForFamilyId, getFamilyMembersForUserId };

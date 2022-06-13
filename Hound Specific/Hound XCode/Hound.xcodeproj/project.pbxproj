@@ -42,6 +42,7 @@
 		A263D88527FF830C00938EC4 /* LocalDogIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A263D88427FF830C00938EC4 /* LocalDogIcon.swift */; };
 		A263D88727FF85E000938EC4 /* Server Default Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A263D88627FF85E000938EC4 /* Server Default Keys.swift */; };
 		A264AC1D2821B6620041E88A /* Interface Scale.swift in Sources */ = {isa = PBXBuildFile; fileRef = A264AC1C2821B6620041E88A /* Interface Scale.swift */; };
+		A268EAB02856AB9F000A9F3A /* Hash.swift in Sources */ = {isa = PBXBuildFile; fileRef = A268EAAF2856AB9F000A9F3A /* Hash.swift */; };
 		A26A7585263CFF8C0026DE34 /* LogsAddLogVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26A7584263CFF8C0026DE34 /* LogsAddLogVC.swift */; };
 		A26A984A27F658CD002803A6 /* User Default Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26A984927F658CD002803A6 /* User Default Keys.swift */; };
 		A26AF36E25807887005D5DAB /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26AF36D25807887005D5DAB /* DateExtension.swift */; };
@@ -218,6 +219,7 @@
 		A263D88427FF830C00938EC4 /* LocalDogIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDogIcon.swift; sourceTree = "<group>"; };
 		A263D88627FF85E000938EC4 /* Server Default Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Server Default Keys.swift"; sourceTree = "<group>"; };
 		A264AC1C2821B6620041E88A /* Interface Scale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Interface Scale.swift"; sourceTree = "<group>"; };
+		A268EAAF2856AB9F000A9F3A /* Hash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hash.swift; sourceTree = "<group>"; };
 		A26A7584263CFF8C0026DE34 /* LogsAddLogVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsAddLogVC.swift; sourceTree = "<group>"; };
 		A26A984927F658CD002803A6 /* User Default Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User Default Keys.swift"; sourceTree = "<group>"; };
 		A26AF36D25807887005D5DAB /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
@@ -692,6 +694,7 @@
 			isa = PBXGroup;
 			children = (
 				A2581B7927FDE0590099AFB8 /* Visual Constants.swift */,
+				A268EAAF2856AB9F000A9F3A /* Hash.swift */,
 				A2581B7527FDDF350099AFB8 /* Notification Sound.swift */,
 				A264AC1C2821B6620041E88A /* Interface Scale.swift */,
 				A233518F27FB7BAB00CDF1BF /* Dog Constants.swift */,
@@ -1193,6 +1196,7 @@
 				A2B9DAE9262B2DFA00A47D57 /* LogsNavigationVC.swift in Sources */,
 				A2AC8A0227D2D9B500115831 /* LogManager.swift in Sources */,
 				A2AC8A0027D2782C00115831 /* SnoozeComponents.swift in Sources */,
+				A268EAB02856AB9F000A9F3A /* Hash.swift in Sources */,
 				A2BAA07027D6ED8B0041F3C5 /* UserConfiguration.swift in Sources */,
 				A2AA5CDB27FE481C00FD0134 /* DropDownUIView.swift in Sources */,
 				A25070E326DD9D7E0056CFC4 /* UIViewControllerExtension.swift in Sources */,

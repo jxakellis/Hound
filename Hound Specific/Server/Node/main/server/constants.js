@@ -15,7 +15,7 @@ const PREVIOUS_APP_BUILD = 3999;
 
 /// MARK: - Limit the number of items for a given object
 // A user can have <= the number listed below of logs for each dog. E.g. if 100,000 then the family can have <= 100,000 logs per dog
-const NUMBER_OF_LOGS_PER_DOG = 100000;
+const NUMBER_OF_LOGS_PER_DOG = 50000;
 // A user can have <= the number listed below of reminders for each dog. E.g. if 10 then the family can have <= 10 reminders per dog
 const NUMBER_OF_REMINDERS_PER_DOG = 10;
 

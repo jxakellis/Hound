@@ -475,7 +475,7 @@ extension InternalRequestUtils {
         if UserInformation.userId == nil {
             AppDelegate.APIRequestLogger.warning("Warning: userId is nil")
         }
-        else if UserInformation.userId! < 0 {
+        else if UserInformation.userId! == Hash.defaultSHA256Hash {
             AppDelegate.APIRequestLogger.warning("Warning: userId is placeholder \(UserInformation.userId!)")
         }
         if UserInformation.userIdentifier == nil {
@@ -484,7 +484,7 @@ extension InternalRequestUtils {
         if UserInformation.familyId == nil {
             AppDelegate.APIRequestLogger.warning("Warning: familyId is nil")
         }
-        else if UserInformation.familyId! < 0 {
+        else if UserInformation.familyId! == Hash.defaultSHA256Hash {
             AppDelegate.APIRequestLogger.warning("Warning: familyId is placeholder \(UserInformation.familyId!)")
         }
         if dogId != nil && dogId! < 0 {

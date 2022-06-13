@@ -1,5 +1,7 @@
 const { queryPromise } = require('../database/queryPromise');
-const { formatNumber, formatArray, areAllDefined } = require('./formatObject');
+const {
+  formatSHA256Hash, formatNumber, formatArray, areAllDefined,
+} = require('./formatObject');
 const DatabaseError = require('../errors/databaseError');
 const ValidationError = require('../errors/validationError');
 const { CURRENT_APP_BUILD, PREVIOUS_APP_BUILD } = require('../../server/constants');
@@ -36,10 +38,10 @@ const validateAppBuild = async (req, res, next) => {
 const validateUserId = async (req, res, next) => {
   // later on use a token here to validate that they have permission to use the userId
 
-  const userId = formatNumber(req.params.userId);
-  const userIdentifier = req.query.userIdentifier;
+  const userId = formatSHA256Hash(req.params.userId);
+  const userIdentifier = formatSHA256Hash(req.query.userIdentifier);
 
-  if (userId && areAllDefined(userIdentifier)) {
+  if (areAllDefined(userIdentifier, userId)) {
     // if userId is defined and it is a number then continue
     try {
       // queries the database to find if the users table contains a user with the provided ID
@@ -53,6 +55,7 @@ const validateUserId = async (req, res, next) => {
         // userId exists in the table for given userId and identifier, so all valid
         // reassign req.params so that the id there is guarrenteed to be an int and not a string
         req.params.userId = userId;
+        req.query.userIdentifier = userIdentifier;
         return next();
       }
       else {
@@ -80,9 +83,9 @@ const validateUserId = async (req, res, next) => {
 const validateFamilyId = async (req, res, next) => {
   // userId should be validated already
   const userId = req.params.userId;
-  const familyId = formatNumber(req.params.familyId);
+  const familyId = formatSHA256Hash(req.params.familyId);
 
-  if (familyId) {
+  if (areAllDefined(familyId)) {
     // if familyId is defined and it is a number then continue
     try {
       // queries the database to find familyIds associated with the userId

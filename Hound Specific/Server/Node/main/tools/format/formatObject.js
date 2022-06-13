@@ -1,11 +1,11 @@
 /**
  * Takes a string. If the string provided passes the regex and length checks, it is a valid userEmail and the function returns true. Otherwise, function returns false.
  */
-const formatEmail = (userEmail) => {
+const formatEmail = (str) => {
   // eslint-disable-next-line no-useless-escape, max-len
   const emailRegex = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
-
-  if (typeof userEmail !== 'string') {
+  const userEmail = formatString(str);
+  if (areAllDefined(userEmail) === false) {
     return undefined;
   }
   // for our purposes all emails should be in the foo@bar.com format
@@ -72,12 +72,15 @@ const formatDate = (dateParameter) => {
  * Converts the provided string into a boolean. "true", "1", or 1 retuns true; "false", "0", or 0 returns false; all other values return undefined
  * This is needed as Boolean("string") always converts to true unless the string provided is ""
  */
-const formatBoolean = (booleanParameter) => {
-  if (typeof booleanParameter === 'boolean') {
-    // already a boolean object
-    return booleanParameter;
+const formatBoolean = (bool) => {
+  if (areAllDefined(bool) === false) {
+    return undefined;
   }
-  switch (booleanParameter) {
+  if (typeof bool === 'boolean') {
+    // already a boolean object
+    return bool;
+  }
+  switch (bool) {
     case 'true':
     case 1:
     case '1':
@@ -99,9 +102,12 @@ const formatBoolean = (booleanParameter) => {
  * This is needed as Number("foo") converts into NaN with type of number.
  * This result circumvents the typeof bar === 'undefined' logic as its type is number even though its value is null/NaN/undefined.
 */
-const formatNumber = (numberParameter) => {
+const formatNumber = (num) => {
+  if (areAllDefined(num) === false) {
+    return undefined;
+  }
   // forcible convert into a number. If it can't convert, then NaN is typically resolved
-  const potentialNumber = Number(numberParameter);
+  const potentialNumber = Number(num);
 
   /**
 > Number.isFinite(1);
@@ -128,11 +134,32 @@ false
   return potentialNumber;
 };
 
-const formatArray = (string) => {
-  if (Array.isArray(string) === true) {
-    return string;
+const formatArray = (arr) => {
+  if (areAllDefined(arr) === false) {
+    return undefined;
   }
-  return undefined;
+  if (Array.isArray(arr) === false) {
+    return undefined;
+  }
+  return arr;
+};
+
+const formatSHA256Hash = (str) => {
+  const string = formatString(str);
+  if (areAllDefined(string) === false) {
+    return undefined;
+  }
+  if (string.length !== 64) {
+    return undefined;
+  }
+  return string;
+};
+
+const formatString = (str) => {
+  if (areAllDefined(str) === false || typeof str !== 'string') {
+    return undefined;
+  }
+  return str;
 };
 
 /**
@@ -177,5 +204,5 @@ const atLeastOneDefined = (...args) => {
 };
 
 module.exports = {
-  areAllDefined, atLeastOneDefined, formatEmail, formatDate, formatBoolean, formatNumber, formatArray,
+  areAllDefined, atLeastOneDefined, formatEmail, formatDate, formatBoolean, formatNumber, formatArray, formatSHA256Hash, formatString,
 };

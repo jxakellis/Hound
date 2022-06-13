@@ -87,7 +87,7 @@ class ServerSyncViewController: UIViewController, ServerFamilyViewControllerDele
         updateStatusLabel()
         
         // placeholder userId, therefore we need to have them login to even know who they are
-        if UserInformation.userId == nil || UserInformation.userId! < 0 {
+        if UserInformation.userId == nil || UserInformation.userId! == Hash.defaultSHA256Hash {
             // we have the user sign into their apple id, then attempt to first create an account then get an account (if the creates fails) then throw an error message (if the get fails too).
             // if all succeeds, then the user information and user configuration is loaded
             self.performSegueOnceInWindowHierarchy(segueIdentifier: "serverLoginViewController")

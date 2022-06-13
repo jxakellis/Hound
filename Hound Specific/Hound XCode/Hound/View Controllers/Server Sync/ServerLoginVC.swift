@@ -37,8 +37,10 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
             
             let keychain = KeychainSwift()
             
-            let userIdentifier = appleIDCredential.user
+            let userIdentifier = Hash.sha256Hash(forString: appleIDCredential.user)
+           
             UserInformation.userIdentifier = userIdentifier
+            
             keychain.set(userIdentifier, forKey: ServerDefaultKeys.userIdentifier.rawValue)
             
             // IMPORTANT NOTES ABOUT PERSISTANCE AND KEYCHAIN
