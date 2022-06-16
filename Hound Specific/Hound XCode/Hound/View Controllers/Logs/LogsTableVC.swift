@@ -57,7 +57,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.allowsSelection = true
-        self.tableView.separatorInset = UIEdgeInsets.zero
+        self.tableView.separatorInset = .zero
         // allow for refreshing of the information from the server
         self.tableView.refreshControl = UIRefreshControl()
         tableView.refreshControl?.addTarget(self, action: #selector(refreshTable), for: .valueChanged)

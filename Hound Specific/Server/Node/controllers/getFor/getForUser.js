@@ -10,7 +10,7 @@ const userConfigurationColumns = 'userConfiguration.isNotificationEnabled, userC
  * Returns the user for the userId. Errors not handled
  */
 const getUserForUserId = async (req, userId) => {
-  if (areAllDefined(userId) === false) {
+  if (areAllDefined(req, userId) === false) {
     throw new ValidationError('userId missing', 'ER_VALUES_MISSING');
   }
 
@@ -38,7 +38,7 @@ const getUserForUserId = async (req, userId) => {
  * Returns the user for the userIdentifier. Errors not handled
  */
 const getUserForUserIdentifier = async (req, userIdentifier) => {
-  if (areAllDefined(userIdentifier) === false) {
+  if (areAllDefined(req, userIdentifier) === false) {
     throw new ValidationError('userIdentifier missing', 'ER_VALUES_MISSING');
   }
 

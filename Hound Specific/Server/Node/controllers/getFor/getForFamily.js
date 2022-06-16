@@ -8,7 +8,7 @@ const { areAllDefined } = require('../../main/tools/format/formatObject');
 const usersColumns = 'users.userId, users.userFirstName, users.userLastName';
 // Select every column except for familyId, lastPause, lastUnpause, and familyIsDeleted (by not transmitting, increases network efficiency)
 // familyId is already known, lastPause + lastUnpause + familyAccountCreationDate have no use client-side and familyIsDeleted isn't currently being used
-const familiesColumns = 'userId, familyCode, isLocked, isPaused, subscriptionId';
+const familiesColumns = 'userId, familyCode, isLocked, isPaused';
 const familyMembersColumns = 'userId';
 const subscriptionTiersColumns = 'subscriptionTiers.subscriptionTier, subscriptionTiers.subscriptionName, subscriptionTiers.subscriptionNumberOfFamilyMembers, subscriptionTiers.subscriptionNumberOfDogs';
 
@@ -18,7 +18,7 @@ const subscriptionTiersColumns = 'subscriptionTiers.subscriptionTier, subscripti
  */
 const getFamilyInformationForFamilyId = async (req, familyId) => {
   // validate that a familyId was passed, assume that its in the correct format
-  if (areAllDefined(familyId) === false) {
+  if (areAllDefined(req, familyId) === false) {
     throw new ValidationError('familyId missing', 'ER_VALUES_MISSING');
   }
   // family id is validated, therefore we know familyMembers is >= 1 for familyId

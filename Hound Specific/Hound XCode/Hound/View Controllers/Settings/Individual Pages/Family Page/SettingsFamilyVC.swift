@@ -47,7 +47,7 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         }
     }
     
-    // MARK: Properties
+    // MARK: - Properties
     
     /// Returns whether or not the user is the head of the family. This changes whether or not they can kick family members, delete the family, etc.
     var isUserFamilyHead: Bool {
@@ -65,9 +65,6 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // (if head of family)
-        // TO DO add subscription controls
         
         oneTimeSetup()
         
@@ -125,6 +122,7 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         
         tableView.allowsSelection = isUserFamilyHead
         
+        // TO DO could potentially replace this with intrensic size. i.e. have no height constaint on the table view
         var tableViewHeight: CGFloat {
             var height = 0.0
             for index in 0..<FamilyConfiguration.familyMembers.count {
@@ -161,6 +159,7 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
                 FamilyRequest.delete(invokeErrorManager: true) { requestWasSuccessful, _ in
                     if requestWasSuccessful == true {
                         // family was successfully left, restart app to default state
+                        // TO DO make app back out to beginning screen once this process is complete (instead of force crashing) also edit text to not say that hound will restart after process is done
                         exit(0)
                     }
                 }
@@ -187,6 +186,7 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
                 FamilyRequest.delete(invokeErrorManager: true) { requestWasSuccessful, _ in
                     if requestWasSuccessful == true {
                         // family was successfully deleted, restart app to default state
+                        // TO DO make app back out to beginning screen once this process is complete (instead of force crashing). also edit text to not say that hound will restart after process is done
                         exit(0)
                     }
                 }

@@ -14,6 +14,7 @@ const CURRENT_APP_BUILD = 4000;
 const PREVIOUS_APP_BUILD = 3999;
 
 /// MARK: - Limit the number of items for a given object
+const DEFAULT_SUBSCRIPTION_TIER_ID = '3b518c5a274b5726ff7a19a3e5dcb84e8da21aa2f3523bfc1b40f74622602610';
 // A user can have <= the number listed below of logs for each dog. E.g. if 100,000 then the family can have <= 100,000 logs per dog
 const NUMBER_OF_LOGS_PER_DOG = 50000;
 // A user can have <= the number listed below of reminders for each dog. E.g. if 10 then the family can have <= 10 reminders per dog
@@ -35,6 +36,7 @@ module.exports = {
   NUMBER_OF_SCHEDULED_JOBS_ALLOWED,
   CURRENT_APP_BUILD,
   PREVIOUS_APP_BUILD,
+  DEFAULT_SUBSCRIPTION_TIER_ID,
   NUMBER_OF_LOGS_PER_DOG,
   NUMBER_OF_REMINDERS_PER_DOG,
   REMINDER_CATEGORY,

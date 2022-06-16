@@ -99,7 +99,7 @@ class DogsReminderTableViewController: UITableViewController, ReminderManagerCon
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.separatorInset = UIEdgeInsets.zero
+        tableView.separatorInset = .zero
     }
 
     override func viewWillAppear(_ animated: Bool) {

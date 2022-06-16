@@ -17,7 +17,7 @@ class SettingsTableViewController: UITableViewController {
     // MARK: - Properties
 
     // 2 separators, 5 regulars pages, 1 separator, and 1 regular page to allow for proper edge insets
-    private let numberOfCells = (2 + 4 + 1 + 1)
+    private let numberOfCells = (2 + 5 + 1 + 1)
 
     weak var delegate: SettingsTableViewControllerDelegate! = nil
 
@@ -29,7 +29,7 @@ class SettingsTableViewController: UITableViewController {
         tableView.dataSource = self
         tableView.separatorColor = .white
         // make seperator go the whole distance, then individual cells can change it.
-        tableView.separatorInset = UIEdgeInsets.zero
+        tableView.separatorInset = .zero
     }
 
     // MARK: - Table View Data Source
@@ -53,11 +53,11 @@ class SettingsTableViewController: UITableViewController {
         case 0:
             cell = tableView.dequeueReusableCell(withIdentifier: "spaceCellWithoutSeparator", for: indexPath)
             cell!.contentView.addConstraint(NSLayoutConstraint(item: cell!.contentView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 11.25))
-            cell!.separatorInset = UIEdgeInsets.zero
+            cell!.separatorInset = .zero
         case 1:
             cell = tableView.dequeueReusableCell(withIdentifier: "spaceCellWithSeparator", for: indexPath)
             cell!.contentView.addConstraint(NSLayoutConstraint(item: cell!.contentView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 11.25))
-            cell!.separatorInset = UIEdgeInsets.zero
+            cell!.separatorInset = .zero
         case 2:
             cell = tableView.dequeueReusableCell(withIdentifier: "personalInformation", for: indexPath)
             cell!.separatorInset = iconEdgeInset
@@ -65,22 +65,25 @@ class SettingsTableViewController: UITableViewController {
             cell = tableView.dequeueReusableCell(withIdentifier: "family", for: indexPath)
             cell!.separatorInset = iconEdgeInset
         case 4:
-            cell = tableView.dequeueReusableCell(withIdentifier: "appearance", for: indexPath)
+            cell = tableView.dequeueReusableCell(withIdentifier: "subscription", for: indexPath)
             cell!.separatorInset = iconEdgeInset
         case 5:
-            cell = tableView.dequeueReusableCell(withIdentifier: "notifications", for: indexPath)
-            cell!.separatorInset = UIEdgeInsets.zero
+            cell = tableView.dequeueReusableCell(withIdentifier: "appearance", for: indexPath)
+            cell!.separatorInset = iconEdgeInset
         case 6:
+            cell = tableView.dequeueReusableCell(withIdentifier: "notifications", for: indexPath)
+            cell!.separatorInset = .zero
+        case 7:
             cell = tableView.dequeueReusableCell(withIdentifier: "spaceCellWithSeparator", for: indexPath)
             cell!.contentView.addConstraint(NSLayoutConstraint(item: cell!.contentView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 22.5))
-            cell!.separatorInset = UIEdgeInsets.zero
-        case 7:
+            cell!.separatorInset = .zero
+        case 8:
             cell = tableView.dequeueReusableCell(withIdentifier: "about", for: indexPath)
-            cell!.separatorInset = UIEdgeInsets.zero
+            cell!.separatorInset = .zero
         default:
             // fall through
             cell = tableView.dequeueReusableCell(withIdentifier: "about", for: indexPath)
-            cell!.separatorInset = UIEdgeInsets.zero
+            cell!.separatorInset = .zero
         }
         cell!.selectionStyle = .blue
         return cell!

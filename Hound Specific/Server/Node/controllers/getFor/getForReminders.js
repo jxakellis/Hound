@@ -14,7 +14,7 @@ const dogRemindersColumns = 'reminderId, reminderAction, reminderCustomActionNam
 const getReminderForReminderId = async (req, reminderId) => {
   const lastDogManagerSynchronization = formatDate(req.query.lastDogManagerSynchronization);
 
-  if (areAllDefined(reminderId) === false) {
+  if (areAllDefined(req, reminderId) === false) {
     throw new ValidationError('reminderId missing', 'ER_VALUES_MISSING');
   }
 
@@ -54,7 +54,7 @@ const getReminderForReminderId = async (req, reminderId) => {
 const getAllRemindersForDogId = async (req, dogId) => {
   const lastDogManagerSynchronization = formatDate(req.query.lastDogManagerSynchronization);
 
-  if (areAllDefined(dogId) === false) {
+  if (areAllDefined(req, dogId) === false) {
     throw new ValidationError('dogId missing', 'ER_VALUES_MISSING');
   }
 

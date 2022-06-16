@@ -15,7 +15,7 @@ const getLogForLogId = async (req, logId) => {
   const lastDogManagerSynchronization = formatDate(req.query.lastDogManagerSynchronization);
 
   // verify that a logId was passed
-  if (areAllDefined(logId) === false) {
+  if (areAllDefined(req, logId) === false) {
     throw new ValidationError('logId missing', 'ER_VALUES_MISSING');
   }
   try {
@@ -49,7 +49,7 @@ const getLogForLogId = async (req, logId) => {
 const getAllLogsForDogId = async (req, dogId) => {
   const lastDogManagerSynchronization = formatDate(req.query.lastDogManagerSynchronization);
 
-  if (areAllDefined(dogId) === false) {
+  if (areAllDefined(req, dogId) === false) {
     throw new ValidationError('dogId missing', 'ER_VALUES_MISSING');
   }
   try {

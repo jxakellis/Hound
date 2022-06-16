@@ -93,7 +93,7 @@ class DogsTableViewController: UITableViewController, DogManagerControlFlowProto
             tableView.allowsSelection = false
         }
 
-        tableView.separatorInset = UIEdgeInsets.zero
+        tableView.separatorInset = .zero
         // allow for refreshing of the information from the server
         self.tableView.refreshControl = UIRefreshControl()
         tableView.refreshControl?.addTarget(self, action: #selector(refreshTableData), for: .valueChanged)

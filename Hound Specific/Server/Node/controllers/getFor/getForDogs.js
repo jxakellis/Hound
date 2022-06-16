@@ -18,7 +18,7 @@ const dogsColumns = 'dogId, dogName, dogIsDeleted';
 const getDogForDogId = async (req, dogId) => {
   const lastDogManagerSynchronization = formatDate(req.query.lastDogManagerSynchronization);
 
-  if (areAllDefined(dogId) === false) {
+  if (areAllDefined(req, dogId) === false) {
     throw new ValidationError('dogId missing', 'ER_VALUES_MISSING');
   }
 

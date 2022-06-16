@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import StoreKit
 
 protocol SettingsViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
@@ -29,6 +30,8 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
             convertedSegueIdentifier = "settingsPersonalInformationViewController"
         case "family":
             convertedSegueIdentifier = "settingsFamilyViewController"
+        case "subscription":
+            convertedSegueIdentifier = "settingsSubscriptionViewController"
         case "appearance":
             convertedSegueIdentifier = "settingsAppearanceViewController"
         case "notifications":
@@ -39,7 +42,32 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
             convertedSegueIdentifier = "settingsAboutViewController"
         }
         
-        self.performSegueOnceInWindowHierarchy(segueIdentifier: convertedSegueIdentifier)
+        if convertedSegueIdentifier == "settingsSubscriptionViewController" {
+            // TO DO make this query indicator special so it says contacting apple servers as this request isn't related to hound servers
+            RequestUtils.beginAlertControllerQueryIndictator()
+            InAppPurchaseManager.shared.fetchProducts { SKProducts in
+                RequestUtils.endAlertControllerQueryIndictator {
+                    guard SKProducts != nil else {
+                        return
+                    }
+                    
+                    // reset array to zero
+                    self.subscriptionSKProducts = []
+                    // look for products that you can subscribe to
+                    for product in SKProducts! where product.subscriptionPeriod != nil {
+                        self.subscriptionSKProducts.append(product)
+                    }
+                    
+                    // TO DO sort subscriptions in correct order
+                    print("retrieved")
+                    print(self.subscriptionSKProducts.count)
+                    self.performSegueOnceInWindowHierarchy(segueIdentifier: convertedSegueIdentifier)
+                }
+            }
+        }
+        else {
+            self.performSegueOnceInWindowHierarchy(segueIdentifier: convertedSegueIdentifier)
+        }
     }
 
     // MARK: - Properties
@@ -47,6 +75,8 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
     var settingsTableViewController: SettingsTableViewController?
     var settingsPersonalInformationViewController: SettingsPersonalInformationViewController?
     var settingsFamilyViewController: SettingsFamilyViewController?
+    var settingsSubscriptionViewController: SettingsSubscriptionViewController?
+    private var subscriptionSKProducts: [SKProduct] = []
     var settingsAppearanceViewController: SettingsAppearanceViewController?
     var settingsNotificationsViewController: SettingsNotificationsViewController?
     var settingsAboutViewController: SettingsAboutViewController?
@@ -103,6 +133,12 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
             settingsFamilyViewController = segue.destination as? SettingsFamilyViewController
             settingsFamilyViewController?.delegate = self
             settingsFamilyViewController?.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
+        }
+        else if segue.identifier == "settingsSubscriptionViewController" {
+            settingsSubscriptionViewController = segue.destination as? SettingsSubscriptionViewController
+            print("assigned")
+            print(subscriptionSKProducts.count)
+            settingsSubscriptionViewController?.subscriptionSKProducts = subscriptionSKProducts
         }
         else if segue.identifier == "settingsAppearanceViewController" {
             settingsAppearanceViewController = segue.destination as? SettingsAppearanceViewController
