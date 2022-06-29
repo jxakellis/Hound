@@ -10,21 +10,6 @@ import UIKit
 
 /// Configuration that is local to the app only. If the app is reinstalled then this data should be pulled down from the cloud
 enum UserConfiguration {
-    
-    // MARK: - Ordered List
-    // isCompactView
-    // interfaceStyle
-    // snoozeLength
-    // isPaused
-    // isNotificationAuthorized
-    // isNotificationEnabled
-    // isLoudNotification
-    // isFollowUpEnabled
-    // followUpDelay
-    // notificationSound
-    
-    // MARK: - Main
-    
     /// Sets the UserConfiguration values equal to all the values found in the body. The key for the each body value must match the name of the UserConfiguration property exactly in order to be used. The value must also be able to be converted into the proper data type.
     static func setup(fromBody body: [String: Any]) {
         if let logsInterfaceScaleString = body[ServerDefaultKeys.logsInterfaceScale.rawValue] as? String, let logsInterfaceScale = LogsInterfaceScale(rawValue: logsInterfaceScaleString) {
@@ -85,4 +70,23 @@ enum UserConfiguration {
     /// Sound a notification will play
     static var notificationSound: NotificationSound = NotificationSound.radar
     
+}
+
+extension UserConfiguration {
+    // MARK: - Request
+    
+    /// Returns an array literal of the user configurations's properties. This is suitable to be used as the JSON body for a HTTP request
+    static func createBody(addingOntoBody body: [String: Any]?) -> [String: Any] {
+        var body: [String: Any] = body ?? [:]
+        body[ServerDefaultKeys.logsInterfaceScale.rawValue] = UserConfiguration.logsInterfaceScale.rawValue
+        body[ServerDefaultKeys.remindersInterfaceScale.rawValue] = UserConfiguration.remindersInterfaceScale.rawValue
+        body[ServerDefaultKeys.interfaceStyle.rawValue] = UserConfiguration.interfaceStyle.rawValue
+        body[ServerDefaultKeys.snoozeLength.rawValue] = UserConfiguration.snoozeLength
+        body[ServerDefaultKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
+        body[ServerDefaultKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
+        body[ServerDefaultKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
+        body[ServerDefaultKeys.followUpDelay.rawValue] = UserConfiguration.followUpDelay
+        body[ServerDefaultKeys.notificationSound.rawValue] = UserConfiguration.notificationSound.rawValue
+        return body
+    }
 }

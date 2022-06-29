@@ -51,7 +51,7 @@ enum DogsRequest: RequestProtocol {
      */
     private static func internalCreate(invokeErrorManager: Bool, forDog dog: Dog, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         InternalRequestUtils.warnForPlaceholderId()
-        let body = InternalRequestUtils.createDogBody(dog: dog)
+        let body = dog.createBody()
         
         // make put request, assume body valid as constructed with method
         InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
@@ -67,7 +67,7 @@ enum DogsRequest: RequestProtocol {
         InternalRequestUtils.warnForPlaceholderId(dogId: dog.dogId)
         let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dog.dogId)")
         
-        let body = InternalRequestUtils.createDogBody(dog: dog)
+        let body = dog.createBody()
         
         // make put request, assume body valid as constructed with method
         InternalRequestUtils.genericPutRequest(invokeErrorManager: invokeErrorManager, forURL: URLWithParams, forBody: body) { responseBody, responseStatus in

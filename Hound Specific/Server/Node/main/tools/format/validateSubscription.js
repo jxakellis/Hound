@@ -1,22 +1,15 @@
-/*
 const DatabaseError = require('../errors/databaseError');
 const ValidationError = require('../errors/validationError');
-const GeneralError = require('../errors/generalError');
-const { queryPromise } = require('../database/queryPromise');
-const { formatDate, areAllDefined } = require('./formatObject');
-const { DEFAULT_SUBSCRIPTION_TIER_ID } = require('../../server/constants');
-
-const subscriptionTiersColumns = 'subscriptionTiers.tierNumberOfFamilyMembers, subscriptionTiers.tierNumberOfDogs';
+const { formatDate } = require('./formatObject');
+const { areAllDefined } = require('./validateDefined');
+const { getActiveSubscriptionForFamilyId } = require('../../../controllers/getFor/getForSubscription');
 
 /**
- *  Checks the family's subscription
- * If they have paid for a subscription, checks to see if its not expired
- * If they have a free subscription, bypasses expiration check
- * Attaches tierNumberOfFamilyMembers and tierNumberOfDogs to the req object
+ * Checks the family's subscription
+ * Uses getActiveSubscriptionForFamilyId to either get the family's paid subscription or the default free subscription
+ * Attached the information to the req (under req.subscriptionInformation.xxx)
  */
-
-/*
-const validateFamilySubscription = async (req, res, next) => {
+const attachSubscriptionInformation = async (req, res, next) => {
   const familyId = req.params.familyId;
 
   // validate that a familyId was passed, assume that its in the correct format
@@ -25,69 +18,66 @@ const validateFamilySubscription = async (req, res, next) => {
     return res.status(400).json(new ValidationError('familyId missing', 'ER_VALUES_MISSING').toJSON);
   }
 
-  let familySubscription;
   try {
-    // find the tier's most recent subscription (the one with the lastest)
-    familySubscription = await queryPromise(
-      req,
-      `SELECT ${subscriptionTiersColumns}, subscriptions.subscriptionExpiration FROM subscriptions JOIN subscriptionTiers ON subscriptions.tierId = subscriptionTiers.tierId WHERE familyId = ? ORDER BY subscriptions.subscriptionExpiration DESC LIMIT 1`,
-      [familyId],
-    );
+    const subscriptionInformation = await getActiveSubscriptionForFamilyId(req, familyId);
+
+    // Attach the JSON response to the req for future reference
+    /*
+    subscriptionInformation: {
+      productId: ___,
+      subscriptionName: ___,
+      subscriptionDescription: ___,
+      subscriptionPurchaseDate: ___,
+      subscriptionNumberOfFamilyMembers: ___,
+      subscriptionNumberOfDogs: ___,
+      subscriptionExpiration: ___,
+    }
+    */
+    req.subscriptionInformation = subscriptionInformation;
+
+    return next();
   }
   catch (error) {
     await req.rollbackQueries(req);
     return res.status(400).json(new DatabaseError(error.code).toJSON);
   }
+};
 
-  // check to see if we located a familySubscription, if not, then we revert to the default
-  if (familySubscription.length === 0) {
-    console.log('no subscription found');
-    try {
-    // if the family has no subscription, assume that the family is using the default tier and load that info
-      familySubscription = await queryPromise(
-        req,
-        'SELECT tierNumberOfFamilyMembers, tierNumberOfDogs FROM subscriptionTiers WHERE tierId = ? LIMIT 1',
-        [DEFAULT_SUBSCRIPTION_TIER_ID],
-      );
-    }
-    catch (error) {
-      await req.rollbackQueries(req);
-      return res.status(400).json(new DatabaseError(error.code).toJSON);
-    }
-  }
-  // we successfully found a subscription for the family. Check if that subscription is family has expired
-  else {
-    console.log(`subscription found ${familySubscription}`);
-    const subscriptionExpiration = formatDate(familySubscription[0].subscriptionExpiration);
+/**
+ * Checks the family's subscription to see if it's expired. If the request is not a GET and the subscription is expired, returns 400 status
+ */
+const validateSubscription = async (req, res, next) => {
+  const familyId = req.params.familyId;
+  const subscriptionInformation = req.subscriptionInformation;
 
-    if (areAllDefined(subscriptionExpiration) === false) {
-      await req.rollbackQueries(req);
-      return res.status(400).json(new GeneralError("Couldn't load your family's subscription", 'ER_NOT_FOUND').toJSON);
-    }
-
-    // TO DO handle downgrading paid subscription to free subscription. free subscription doesn't add any extries so if there are any paid subscription entires, then this will always trigger
-    // if the current date is more in the future than the subscriptionExpiration, that means the subscription has expired
-    if (new Date() > subscriptionExpiration) {
-      await req.rollbackQueries(req);
-      return res.status(400).json(new ValidationError('Family subscription has expired', 'ER_FAMILY_SUBSCRIPTION_EXPIRED').toJSON);
-    }
-  }
-
-  // in theory, if the familySubscription.length === 0, then the above code should have loaded the defaultSubscription
-  // If the familySubscription is still length 0, then we were unable to load both the family's subscription and the default subscription
-  if (familySubscription.length === 0) {
+  if (areAllDefined(req, familyId, subscriptionInformation) === false) {
     await req.rollbackQueries(req);
-    return res.status(400).json(new GeneralError("Couldn't load your family's subscription", 'ER_NOT_FOUND').toJSON);
+    return res.status(400).json(new ValidationError('familyId or subscriptionInformation missing', 'ER_VALUES_MISSING').toJSON);
   }
 
-  familySubscription = familySubscription[0];
-  req.tierNumberOfFamilyMembers = familySubscription.tierNumberOfFamilyMembers;
-  req.tierNumberOfDogs = familySubscription.tierNumberOfDogs;
-  console.log(req.tierNumberOfFamilyMembers);
-  console.log(req.tierNumberOfDogs);
+  // a subscription doesn't matter for GET requests. We can allow retrieving of information even if expired
+  // We only deny POST, PUT, and DELETE requests if a expired subscription, freezing all information in place.
+  if (req.method === 'GET') {
+    return next();
+  }
+
+  // POST, PUT, or DELETE request, so we validate they still have an active subscription
+  const subscriptionExpiration = formatDate(subscriptionInformation.subscriptionExpiration);
+
+  if (areAllDefined(subscriptionExpiration) === false) {
+    await req.rollbackQueries(req);
+    return res.status(400).json(new ValidationError('subscriptionExpiration missing', 'ER_VALUES_MISSING').toJSON);
+  }
+
+  // TO DO handle downgrading paid subscription to free subscription. free subscription doesn't add any extries so if there are any paid subscription entires, then this will always trigger
+
+  // If the present is greater than the subscription expiration, then the family's subscription has expired
+  if ((new Date()).getTime() > subscriptionExpiration.getTime()) {
+    await req.rollbackQueries(req);
+    return res.status(400).json(new ValidationError('Family subscription has expired', 'ER_FAMILY_SUBSCRIPTION_EXPIRED').toJSON);
+  }
+
   return next();
 };
 
-module.exports = { validateFamilySubscription };
-
-*/
+module.exports = { attachSubscriptionInformation, validateSubscription };

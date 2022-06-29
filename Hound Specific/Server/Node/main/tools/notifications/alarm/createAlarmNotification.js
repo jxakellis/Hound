@@ -4,7 +4,8 @@ const { connectionForAlarms } = require('../../database/databaseConnection');
 
 const { schedule } = require('./schedules');
 
-const { formatDate, areAllDefined } = require('../../format/formatObject');
+const { formatDate } = require('../../format/formatObject');
+const { areAllDefined } = require('../../format/validateDefined');
 const { sendAPNForFamily, sendAPNForUser } = require('../apn/sendAPN');
 
 const { deleteAlarmNotificationsForReminder } = require('./deleteAlarmNotification');

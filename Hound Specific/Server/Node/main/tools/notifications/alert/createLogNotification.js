@@ -1,6 +1,6 @@
 const { connectionForAlerts } = require('../../database/databaseConnection');
 const { alertLogger } = require('../../logging/loggers');
-const { areAllDefined } = require('../../format/formatObject');
+const { areAllDefined } = require('../../format/validateDefined');
 
 const { queryPromise } = require('../../database/queryPromise');
 const { sendAPNForFamilyExcludingUser } = require('../apn/sendAPN');

@@ -1,10 +1,10 @@
 const { getLogForLogId, getAllLogsForDogId } = require('../getFor/getForLogs');
-const { createLogQuery } = require('../createFor/createForLogs');
-const { updateLogQuery } = require('../updateFor/updateForLogs');
+const { createLogForUserIdDogId } = require('../createFor/createForLogs');
+const { updateLogForDogIdLogId } = require('../updateFor/updateForLogs');
 const { deleteLogForLogId } = require('../deleteFor/deleteForLogs');
 const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
 const { createLogNotification } = require('../../main/tools/notifications/alert/createLogNotification');
-const { areAllDefined } = require('../../main/tools/format/formatObject');
+const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 /*
 Known:
@@ -13,13 +13,12 @@ Known:
 - (if appliciable to controller) logId formatted correctly and request has sufficient permissions to use
 */
 
+// TO DO put all get, create, update, and deletes code inside their respective try catch statements
 const getLogs = async (req, res) => {
-  const dogId = req.params.dogId;
-  const logId = req.params.logId;
-
-  let result;
-
   try {
+    const dogId = req.params.dogId;
+    const logId = req.params.logId;
+    let result;
     // if logId is defined and it is a number then continue to find a single log
     if (areAllDefined(logId)) {
       result = await getLogForLogId(req, logId);
@@ -28,27 +27,29 @@ const getLogs = async (req, res) => {
     else {
       result = await getAllLogsForDogId(req, dogId);
     }
+
+    if (result.length === 0) {
+      // successful but empty array, not logs to return
+      await req.commitQueries(req);
+      return res.status(200).json({ result: [] });
+    }
+    else {
+      // array has items, meaning there were logs found, successful!
+      await req.commitQueries(req);
+      return res.status(200).json({ result });
+    }
   }
   catch (error) {
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
-
-  if (result.length === 0) {
-    // successful but empty array, not logs to return
-    await req.commitQueries(req);
-    return res.status(200).json({ result: [] });
-  }
-  else {
-    // array has items, meaning there were logs found, successful!
-    await req.commitQueries(req);
-    return res.status(200).json({ result });
-  }
 };
 
 const createLog = async (req, res) => {
   try {
-    const result = await createLogQuery(req);
+    const userId = req.params.userId;
+    const dogId = req.params.dogId;
+    const result = await createLogForUserIdDogId(req, userId, dogId);
     await req.commitQueries(req);
     createLogNotification(
       req.params.userId,
@@ -67,7 +68,9 @@ const createLog = async (req, res) => {
 
 const updateLog = async (req, res) => {
   try {
-    await updateLogQuery(req);
+    const dogId = req.params.dogId;
+    const logId = req.params.logId;
+    await updateLogForDogIdLogId(req, dogId, logId);
     await req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }

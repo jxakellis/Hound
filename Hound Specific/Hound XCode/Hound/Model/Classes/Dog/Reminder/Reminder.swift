@@ -623,4 +623,81 @@ extension Reminder {
             }
         }
     }
+    
+    // MARK: - Request
+    
+    /// Returns an array literal of the reminders's properties. This is suitable to be used as the JSON body for a HTTP request
+    func createBody() -> [String: Any] {
+        var body: [String: Any] = [:]
+        body[ServerDefaultKeys.reminderId.rawValue] = reminderId
+        body[ServerDefaultKeys.reminderType.rawValue] = reminderType.rawValue
+        body[ServerDefaultKeys.reminderAction.rawValue] = reminderAction.rawValue
+        body[ServerDefaultKeys.reminderCustomActionName.rawValue] = reminderCustomActionName
+        body[ServerDefaultKeys.reminderExecutionBasis.rawValue] = reminderExecutionBasis.ISO8601FormatWithFractionalSeconds()
+        body[ServerDefaultKeys.reminderExecutionDate.rawValue] = reminderExecutionDate?.ISO8601FormatWithFractionalSeconds()
+        body[ServerDefaultKeys.reminderIsEnabled.rawValue] = reminderIsEnabled
+        
+        // snooze
+        body[ServerDefaultKeys.snoozeIsEnabled.rawValue] = snoozeComponents.snoozeIsEnabled
+        body[ServerDefaultKeys.snoozeExecutionInterval.rawValue] = snoozeComponents.executionInterval
+        body[ServerDefaultKeys.snoozeIntervalElapsed.rawValue] = snoozeComponents.intervalElapsed
+        
+        // countdown
+        body[ServerDefaultKeys.countdownExecutionInterval.rawValue] = countdownComponents.executionInterval
+        body[ServerDefaultKeys.countdownIntervalElapsed.rawValue] = countdownComponents.intervalElapsed
+        
+        // weekly
+        body[ServerDefaultKeys.weeklyHour.rawValue] = weeklyComponents.hour
+        body[ServerDefaultKeys.weeklyMinute.rawValue] = weeklyComponents.minute
+        body[ServerDefaultKeys.weeklyIsSkipping.rawValue] = weeklyComponents.isSkipping
+        body[ServerDefaultKeys.weeklyIsSkippingDate.rawValue] = weeklyComponents.isSkippingDate?.ISO8601FormatWithFractionalSeconds()
+        
+        body[ServerDefaultKeys.weeklySunday.rawValue] = false
+        body[ServerDefaultKeys.weeklyMonday.rawValue] = false
+        body[ServerDefaultKeys.weeklyTuesday.rawValue] = false
+        body[ServerDefaultKeys.weeklyWednesday.rawValue] = false
+        body[ServerDefaultKeys.weeklyThursday.rawValue] = false
+        body[ServerDefaultKeys.weeklyFriday.rawValue] = false
+        body[ServerDefaultKeys.weeklySaturday.rawValue] = false
+        
+        for weekday in weeklyComponents.weekdays {
+            switch weekday {
+            case 1:
+                body[ServerDefaultKeys.weeklySunday.rawValue] = true
+            case 2:
+                body[ServerDefaultKeys.weeklyMonday.rawValue] = true
+            case 3:
+                body[ServerDefaultKeys.weeklyTuesday.rawValue] = true
+            case 4:
+                body[ServerDefaultKeys.weeklyWednesday.rawValue] = true
+            case 5:
+                body[ServerDefaultKeys.weeklyThursday.rawValue] = true
+            case 6:
+                body[ServerDefaultKeys.weeklyFriday.rawValue] = true
+            case 7:
+                body[ServerDefaultKeys.weeklySaturday.rawValue] = true
+            default:
+                continue
+            }
+        }
+        
+        // monthly
+        body[ServerDefaultKeys.monthlyDay.rawValue] = monthlyComponents.day
+        body[ServerDefaultKeys.monthlyHour.rawValue] = monthlyComponents.hour
+        body[ServerDefaultKeys.monthlyMinute.rawValue] = monthlyComponents.minute
+        body[ServerDefaultKeys.monthlyIsSkipping.rawValue] = monthlyComponents.isSkipping
+        body[ServerDefaultKeys.monthlyIsSkippingDate.rawValue] = monthlyComponents.isSkippingDate?.ISO8601FormatWithFractionalSeconds()
+        
+        // one time
+        body[ServerDefaultKeys.oneTimeDate.rawValue] = oneTimeComponents.oneTimeDate.ISO8601FormatWithFractionalSeconds()
+        
+        return body
+    }
+    
+    /// Returns an array literal of the reminders's reminderId and no other properties. This is suitable to be used as the JSON body for a HTTP request
+    func createIdBody() -> [String: Any] {
+        var body: [String: Any] = [:]
+        body[ServerDefaultKeys.reminderId.rawValue] = reminderId
+        return body
+    }
 }

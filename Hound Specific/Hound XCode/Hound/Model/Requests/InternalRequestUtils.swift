@@ -10,7 +10,7 @@ import UIKit
 
 /// abstractions used by other endpoint classes to make their request to the server, not used anywhere else in hound so therefore internal to endpoints and api requests.
 enum InternalRequestUtils {
-    static let baseURLWithoutParams: URL = URL(string: "http://172.20.10.2:3000/api/\(UIApplication.appBuild)")!
+    static let baseURLWithoutParams: URL = URL(string: "http://10.0.0.107:3000/api/\(UIApplication.appBuild)")!
     // home URL(string: "http://10.0.0.110:5000/api/v1")!
     //  school URL(string: "http://10.1.11.124:5000/api/v1")!
     // hotspot URL(string: "http://172.20.10.2:5000/api/v1")!
@@ -31,6 +31,8 @@ enum InternalRequestUtils {
     
     /// Takes an already constructed URLRequest and executes it, returning it in a compeltion handler. This is the basis to all URL requests
     private static func genericRequest(forRequest request: URLRequest, completionHandler: @escaping ([String: Any]?, ResponseStatus, Error?) -> Void) {
+        
+        // TO DO add guard statement that checks if the user has an internet connection, instantly rejecting with completionHandler if no connection
         
         var modifiedRequest = request
         
@@ -309,169 +311,10 @@ extension InternalRequestUtils {
         }
     }
     
-    // MARK: - Create Body for Request from Object
-    
-    /// returns an array that contains the user's personal information and userConfiguration and is suitable to be a http request body
-    static func createFullUserBody() -> [String: Any] {
-        var body: [String: Any] = createUserConfigurationBody()
-        body[ServerDefaultKeys.userIdentifier.rawValue] = UserInformation.userIdentifier
-        body[ServerDefaultKeys.userEmail.rawValue] = UserInformation.userEmail
-        body[ServerDefaultKeys.userFirstName.rawValue] = UserInformation.userFirstName
-        body[ServerDefaultKeys.userLastName.rawValue] = UserInformation.userLastName
-        return body
-    }
-    
-    static func createUserInformationBody() -> [String: Any] {
-        var body: [String: Any] = [:]
-        body[ServerDefaultKeys.userIdentifier.rawValue] = UserInformation.userIdentifier
-        body[ServerDefaultKeys.userEmail.rawValue] = UserInformation.userEmail
-        body[ServerDefaultKeys.userFirstName.rawValue] = UserInformation.userFirstName
-        body[ServerDefaultKeys.userLastName.rawValue] = UserInformation.userLastName
-        return body
-    }
-    
-    /// returns an array that only contains the user's userConfiguration and is that is suitable to be a http request body
-    static func createUserConfigurationBody() -> [String: Any] {
-        var body: [String: Any] = [:]
-        // isCompactView
-        // interfaceStyle
-        // snoozeLength
-        // isNotificationAuthorized
-        // isNotificationEnabled
-        // isLoudNotification
-        // isFollowUpEnabled
-        // followUpDelay
-        // notificationSound
-        
-        body[ServerDefaultKeys.logsInterfaceScale.rawValue] = UserConfiguration.logsInterfaceScale.rawValue
-        body[ServerDefaultKeys.remindersInterfaceScale.rawValue] = UserConfiguration.remindersInterfaceScale.rawValue
-        body[ServerDefaultKeys.interfaceStyle.rawValue] = UserConfiguration.interfaceStyle.rawValue
-        body[ServerDefaultKeys.snoozeLength.rawValue] = UserConfiguration.snoozeLength
-        body[ServerDefaultKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
-        body[ServerDefaultKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
-        body[ServerDefaultKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
-        body[ServerDefaultKeys.followUpDelay.rawValue] = UserConfiguration.followUpDelay
-        body[ServerDefaultKeys.notificationSound.rawValue] = UserConfiguration.notificationSound.rawValue
-        return body
-    }
-    
-    /// returns an array that is suitable to be a http request body
-    static func createDogBody(dog: Dog) -> [String: Any] {
-        var body: [String: Any] = [:]
-        body[ServerDefaultKeys.dogName.rawValue] = dog.dogName
-        return body
-    }
-    
-    /// returns an array that is suitable to be a http request body
-    static func createLogBody(log: Log) -> [String: Any] {
-        var body: [String: Any] = [:]
-        body[ServerDefaultKeys.logNote.rawValue] = log.logNote
-        body[ServerDefaultKeys.logDate.rawValue] = log.logDate.ISO8601FormatWithFractionalSeconds()
-        body[ServerDefaultKeys.logAction.rawValue] = log.logAction.rawValue
-        body[ServerDefaultKeys.logCustomActionName.rawValue] = log.logCustomActionName
-        return body
-        
-    }
-    
-    /// returns an array that is suitable to be a http request body
-    static func createReminderBody(reminder: Reminder) -> [String: Any] {
-        var body: [String: Any] = [:]
-        body[ServerDefaultKeys.reminderId.rawValue] = reminder.reminderId
-        body[ServerDefaultKeys.reminderType.rawValue] = reminder.reminderType.rawValue
-        body[ServerDefaultKeys.reminderAction.rawValue] = reminder.reminderAction.rawValue
-        body[ServerDefaultKeys.reminderCustomActionName.rawValue] = reminder.reminderCustomActionName
-        body[ServerDefaultKeys.reminderExecutionBasis.rawValue] = reminder.reminderExecutionBasis.ISO8601FormatWithFractionalSeconds()
-        body[ServerDefaultKeys.reminderExecutionDate.rawValue] = reminder.reminderExecutionDate?.ISO8601FormatWithFractionalSeconds()
-        body[ServerDefaultKeys.reminderIsEnabled.rawValue] = reminder.reminderIsEnabled
-        
-        // snooze
-        body[ServerDefaultKeys.snoozeIsEnabled.rawValue] = reminder.snoozeComponents.snoozeIsEnabled
-        body[ServerDefaultKeys.snoozeExecutionInterval.rawValue] = reminder.snoozeComponents.executionInterval
-        body[ServerDefaultKeys.snoozeIntervalElapsed.rawValue] = reminder.snoozeComponents.intervalElapsed
-        
-        // countdown
-        body[ServerDefaultKeys.countdownExecutionInterval.rawValue] = reminder.countdownComponents.executionInterval
-        body[ServerDefaultKeys.countdownIntervalElapsed.rawValue] = reminder.countdownComponents.intervalElapsed
-        
-        // weekly
-        body[ServerDefaultKeys.weeklyHour.rawValue] = reminder.weeklyComponents.hour
-        body[ServerDefaultKeys.weeklyMinute.rawValue] = reminder.weeklyComponents.minute
-        body[ServerDefaultKeys.weeklyIsSkipping.rawValue] = reminder.weeklyComponents.isSkipping
-        body[ServerDefaultKeys.weeklyIsSkippingDate.rawValue] = reminder.weeklyComponents.isSkippingDate?.ISO8601FormatWithFractionalSeconds()
-        
-        body[ServerDefaultKeys.weeklySunday.rawValue] = false
-        body[ServerDefaultKeys.weeklyMonday.rawValue] = false
-        body[ServerDefaultKeys.weeklyTuesday.rawValue] = false
-        body[ServerDefaultKeys.weeklyWednesday.rawValue] = false
-        body[ServerDefaultKeys.weeklyThursday.rawValue] = false
-        body[ServerDefaultKeys.weeklyFriday.rawValue] = false
-        body[ServerDefaultKeys.weeklySaturday.rawValue] = false
-        
-        for weekday in reminder.weeklyComponents.weekdays {
-            switch weekday {
-            case 1:
-                body[ServerDefaultKeys.weeklySunday.rawValue] = true
-            case 2:
-                body[ServerDefaultKeys.weeklyMonday.rawValue] = true
-            case 3:
-                body[ServerDefaultKeys.weeklyTuesday.rawValue] = true
-            case 4:
-                body[ServerDefaultKeys.weeklyWednesday.rawValue] = true
-            case 5:
-                body[ServerDefaultKeys.weeklyThursday.rawValue] = true
-            case 6:
-                body[ServerDefaultKeys.weeklyFriday.rawValue] = true
-            case 7:
-                body[ServerDefaultKeys.weeklySaturday.rawValue] = true
-            default:
-                continue
-            }
-        }
-        
-        // monthly
-        body[ServerDefaultKeys.monthlyDay.rawValue] = reminder.monthlyComponents.day
-        body[ServerDefaultKeys.monthlyHour.rawValue] = reminder.monthlyComponents.hour
-        body[ServerDefaultKeys.monthlyMinute.rawValue] = reminder.monthlyComponents.minute
-        body[ServerDefaultKeys.monthlyIsSkipping.rawValue] = reminder.monthlyComponents.isSkipping
-        body[ServerDefaultKeys.monthlyIsSkippingDate.rawValue] = reminder.monthlyComponents.isSkippingDate?.ISO8601FormatWithFractionalSeconds()
-        
-        // one time
-        body[ServerDefaultKeys.oneTimeDate.rawValue] = reminder.oneTimeComponents.oneTimeDate.ISO8601FormatWithFractionalSeconds()
-        
-        return body
-    }
-    
-    /// Returns an array of reminder bodies under the key "reminders". E.g. { reminders : [{reminder1}, {reminder2}] }
-    static func createRemindersBody(reminders: [Reminder]) -> [String: [[String: Any]]] {
-        var remindersArray: [[String: Any]] = []
-        for reminder in reminders {
-            remindersArray.append(createReminderBody(reminder: reminder))
-        }
-        let body: [String: [[String: Any]]] = [ServerDefaultKeys.reminders.rawValue: remindersArray]
-        return body
-    }
-    
-    /// returns an array that is suitable to be a http request body
-    static func createReminderIdBody(reminderId: Int) -> [String: Any] {
-        var body: [String: Any] = [:]
-        body[ServerDefaultKeys.reminderId.rawValue] = reminderId
-        return body
-    }
-    
-    /// Returns an array of reminder bodies under the key ."reminders" E.g. { reminders : [{reminder1}, {reminder2}] }
-    static func createReminderIdsBody(reminderIds: [Int]) -> [String: [[String: Any]]] {
-        var reminderIdsArray: [[String: Any]] = []
-        for reminderId in reminderIds {
-            reminderIdsArray.append(createReminderIdBody(reminderId: reminderId))
-        }
-        let body: [String: [[String: Any]]] = [ServerDefaultKeys.reminders.rawValue: reminderIdsArray]
-        return body
-    }
-    
     // MARK: - Warn if a property has an undesired value
     
     /// Provides warning if the id of anything is set to a placeholder value.
-    static func warnForPlaceholderId(dogId: Int? = nil, reminders: [Reminder]? = nil, reminderId: Int? = nil, reminderIds: [Int]? = nil, logId: Int? = nil) {
+    static func warnForPlaceholderId(dogId: Int? = nil, reminderId: Int? = nil, reminders: [Reminder]? = nil, logId: Int? = nil) {
         if UserInformation.userId == nil {
             AppDelegate.APIRequestLogger.warning("Warning: userId is nil")
         }
@@ -493,11 +336,6 @@ extension InternalRequestUtils {
         if reminders != nil {
             for singleReminder in reminders! where singleReminder.reminderId < 0 {
                 AppDelegate.APIRequestLogger.warning("Warning: reminderId is placeholder \(singleReminder.reminderId)")
-            }
-        }
-        if reminderIds != nil {
-            for singleReminderId in reminderIds! where singleReminderId < 0 {
-                AppDelegate.APIRequestLogger.warning("Warning: reminderId is placeholder \(singleReminderId)")
             }
         }
         if reminderId != nil && reminderId! < 0 {

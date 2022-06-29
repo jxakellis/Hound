@@ -128,7 +128,7 @@ class AlarmManager {
        // special case. Once a oneTime reminder executes, it must be delete. Therefore there are special server queries.
         if reminder.reminderType == .oneTime {
             // just make request to delete reminder for oneTime remidner
-            RemindersRequest.delete(invokeErrorManager: true, forDogId: dogId, forReminderId: reminder.reminderId) { requestWasSuccessful, _ in
+            RemindersRequest.delete(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
                     delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId)
                 }
@@ -160,7 +160,7 @@ class AlarmManager {
             // make request to add log, then (if successful) make request to delete reminder
             
             // delete the reminder on the server
-            RemindersRequest.delete(invokeErrorManager: true, forDogId: dogId, forReminderId: reminder.reminderId) { requestWasSuccessful, _ in
+            RemindersRequest.delete(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
                     delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId)
                     // create log on the server and then assign it the logId and then add it to the dog
@@ -206,7 +206,7 @@ class AlarmManager {
             // make request to add log, then (if successful) make request to delete reminder
             
             // delete the reminder on the server
-            RemindersRequest.delete(invokeErrorManager: true, forDogId: dogId, forReminderId: reminder.reminderId) { requestWasSuccessful, _ in
+            RemindersRequest.delete(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
                     delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId)
                     // create log on the server and then assign it the logId and then add it to the dog

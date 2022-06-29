@@ -2,7 +2,7 @@ const { alarmLogger } = require('../../logging/loggers');
 
 const { schedule } = require('./schedules');
 
-const { areAllDefined } = require('../../format/formatObject');
+const { areAllDefined } = require('../../format/validateDefined');
 
 const { IS_PRODUCTION } = require('../../../server/constants');
 

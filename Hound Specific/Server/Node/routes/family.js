@@ -10,17 +10,19 @@ const { validateFamilyId } = require('../main/tools/format/validateId');
 
 router.param('familyId', validateFamilyId);
 
-// const { validateFamilySubscription } = require('../main/tools/format/validateSubscription');
+const { attachSubscriptionInformation } = require('../main/tools/format/validateSubscription');
 
-// TO DO shift this middleware (or break it up into multiple functions)
-// while we need to verify that a subscription is valid, an invalid subscription will deadlock a user
-// preventing them from updating anything family related (leaving family, updating subscription...)
-// router.use('/', validateFamilySubscription);
+router.use('/', attachSubscriptionInformation);
 
 // route to dogs (or nested) related things
 const dogsRouter = require('./dogs');
 
 router.use('/:familyId/dogs', dogsRouter);
+
+// route to subscription related things
+const subscriptionRouter = require('./subscription');
+
+router.use('/:familyId/subscription', subscriptionRouter);
 
 // gets family with userId then return information from families and familyMembers table
 router.get('/', getFamily);

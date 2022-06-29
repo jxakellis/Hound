@@ -1,7 +1,6 @@
 const { queryPromise } = require('../database/queryPromise');
-const {
-  formatSHA256Hash, formatNumber, formatArray, areAllDefined,
-} = require('./formatObject');
+const { formatSHA256Hash, formatNumber, formatArray } = require('./formatObject');
+const { areAllDefined } = require('./validateDefined');
 const DatabaseError = require('../errors/databaseError');
 const ValidationError = require('../errors/validationError');
 const { CURRENT_APP_BUILD, PREVIOUS_APP_BUILD } = require('../../server/constants');

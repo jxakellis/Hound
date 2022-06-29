@@ -94,6 +94,7 @@ class FamilyIntroductionViewController: UIViewController, UITextFieldDelegate, U
                     dog.dogId = dogId!
                     self.dogManager.addDog(newDog: dog)
                     LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = true
+                    self.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController")
                 }
                 self.continueButton.isEnabled = true
             }

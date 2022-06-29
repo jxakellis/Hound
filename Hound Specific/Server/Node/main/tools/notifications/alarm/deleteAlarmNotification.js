@@ -3,7 +3,7 @@ const { queryPromise } = require('../../database/queryPromise');
 const { connectionForAlarms } = require('../../database/databaseConnection');
 const { IS_PRODUCTION } = require('../../../server/constants');
 
-const { areAllDefined } = require('../../format/formatObject');
+const { areAllDefined } = require('../../format/validateDefined');
 const { cancelPrimaryJobForFamilyForReminder, cancelSecondaryJobForUserForReminder } = require('./cancelJob');
 
 const deleteAlarmNotificationsForFamily = async (familyId) => {

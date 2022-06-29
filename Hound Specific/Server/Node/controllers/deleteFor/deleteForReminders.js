@@ -7,7 +7,7 @@ const { deleteAlarmNotificationsForReminder } = require('../../main/tools/notifi
  *  Queries the database to delete a single reminder. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-const deleteReminderForReminderId = async (req, familyId, dogId, reminderId) => {
+const deleteReminderForFamilyIdDogIdReminderId = async (req, familyId, dogId, reminderId) => {
   try {
     const dogLastModified = new Date();
     const reminderLastModified = dogLastModified;
@@ -39,7 +39,7 @@ const deleteReminderForReminderId = async (req, familyId, dogId, reminderId) => 
  *  Queries the database to delete all reminders for a dogId. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-const deleteAllRemindersForDogId = async (req, familyId, dogId) => {
+const deleteAllRemindersForFamilyIdDogId = async (req, familyId, dogId) => {
   try {
     const dogLastModified = new Date();
     const reminderLastModified = dogLastModified;
@@ -80,4 +80,4 @@ const deleteAllRemindersForDogId = async (req, familyId, dogId) => {
   }
 };
 
-module.exports = { deleteReminderForReminderId, deleteAllRemindersForDogId };
+module.exports = { deleteReminderForFamilyIdDogIdReminderId, deleteAllRemindersForFamilyIdDogId };

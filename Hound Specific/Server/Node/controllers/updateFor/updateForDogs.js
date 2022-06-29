@@ -2,14 +2,13 @@ const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 
 const { queryPromise } = require('../../main/tools/database/queryPromise');
-const { areAllDefined } = require('../../main/tools/format/formatObject');
+const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 /**
  *  Queries the database to update a dog. If the query is successful, then returns
  *  If a problem is encountered, creates and throws custom error
  */
-const updateDogQuery = async (req) => {
-  const dogId = req.params.dogId; // required
+const updateDogForDogId = async (req, dogId) => {
   const { dogName } = req.body; // required
   const dogLastModified = new Date(); // manual
 
@@ -33,4 +32,4 @@ const updateDogQuery = async (req) => {
   }
 };
 
-module.exports = { updateDogQuery };
+module.exports = { updateDogForDogId };

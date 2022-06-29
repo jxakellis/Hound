@@ -1,7 +1,8 @@
 const DatabaseError = require('../../errors/databaseError');
 const { queryPromise } = require('../../database/queryPromise');
 const { connectionForTokens } = require('../../database/databaseConnection');
-const { formatBoolean, areAllDefined } = require('../../format/formatObject');
+const { formatBoolean } = require('../../format/formatObject');
+const { areAllDefined } = require('../../format/validateDefined');
 
 const userConfigurationJoin = 'JOIN userConfiguration ON users.userId = userConfiguration.userId';
 const familyMembersJoin = 'JOIN familyMembers ON users.userId = familyMembers.userId';

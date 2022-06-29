@@ -5,7 +5,7 @@ const router = express.Router({ mergeParams: true });
 const { createLogForRequest } = require('../main/tools/logging/requestLogging');
 
 const {
-  getUser, createUser, updateUser, deleteUser,
+  getUser, createUser, updateUser,
 } = require('../controllers/main/user');
 
 const { validateUserId } = require('../main/tools/format/validateId');
@@ -45,9 +45,5 @@ router.put('/:userId', updateUser);
 /* BODY:
 Single: { userInfo }
 */
-
-// deletes user
-router.delete('/:userId', deleteUser);
-// no body
 
 module.exports = router;

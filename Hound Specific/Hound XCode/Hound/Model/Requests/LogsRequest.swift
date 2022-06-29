@@ -45,7 +45,7 @@ enum LogsRequest: RequestProtocol {
     private static func internalCreate(invokeErrorManager: Bool, forDogId dogId: Int, forLog log: Log, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
         InternalRequestUtils.warnForPlaceholderId(dogId: dogId)
-        let body = InternalRequestUtils.createLogBody(log: log)
+        let body = log.createBody()
         
         let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/logs/")
         
@@ -61,7 +61,7 @@ enum LogsRequest: RequestProtocol {
     private static func internalUpdate(invokeErrorManager: Bool, forDogId dogId: Int, forLog log: Log, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
         InternalRequestUtils.warnForPlaceholderId(dogId: dogId, logId: log.logId)
-        let body = InternalRequestUtils.createLogBody(log: log)
+        let body = log.createBody()
         
         let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/logs/\(log.logId)")
         

@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 const mysql2 = require('mysql2');
-const databasePassword = require('./databaseSensitive');
+const databasePassword = require('../../secrets/databasePassword');
 const DatabaseError = require('../errors/databaseError');
 const { poolLogger, queryLogger } = require('../logging/loggers');
 const { IS_PRODUCTION } = require('../../server/constants');
@@ -129,7 +129,8 @@ const rollbackQueries = async (req) => {
 const assignConnection = (req, res, next) => {
   poolForRequests.getConnection((error1, connection) => {
     if (error1) {
-      // no need to release connection as there was a failing in actually creating connection
+      //  no need to release connection as there was a failing in actually creating connection
+      // DONT ROLLBACK CONNECTION, NOT ASSIGNED
       return res.status(500).json(new DatabaseError("Couldn't create a pool connection", 'ER_NO_POOL_CONNECTION').toJSON);
     }
     else {

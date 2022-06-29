@@ -1,7 +1,8 @@
 const DatabaseError = require('../../errors/databaseError');
 const { connectionForAlerts } = require('../../database/databaseConnection');
 const { alertLogger } = require('../../logging/loggers');
-const { formatBoolean, areAllDefined } = require('../../format/formatObject');
+const { formatBoolean } = require('../../format/formatObject');
+const { areAllDefined } = require('../../format/validateDefined');
 
 const { queryPromise } = require('../../database/queryPromise');
 const { sendAPNForFamilyExcludingUser } = require('../apn/sendAPN');

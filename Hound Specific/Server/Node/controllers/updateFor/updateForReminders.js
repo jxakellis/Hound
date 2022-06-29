@@ -3,14 +3,15 @@ const ValidationError = require('../../main/tools/errors/validationError');
 
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
-  formatNumber, formatDate, formatBoolean, formatArray, areAllDefined,
+  formatNumber, formatDate, formatBoolean, formatArray,
 } = require('../../main/tools/format/formatObject');
+const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 /**
  *  Queries the database to create a update reminder. If the query is successful, then returns the provided reminder
  *  If a problem is encountered, creates and throws custom error
  */
-const updateReminderQuery = async (req, reminder) => {
+const updateReminderForReminder = async (req, reminder) => {
   // check that we have a reminder to update in the first place
   if (areAllDefined(reminder) === false) {
     throw new ValidationError('reminder missing', 'ER_VALUES_MISSING');
@@ -125,7 +126,7 @@ const updateReminderQuery = async (req, reminder) => {
  *  Queries the database to update multiple reminders. If the query is successful, then return the provided reminders
  *  If a problem is encountered, creates and throws custom error
  */
-const updateRemindersQuery = async (req, reminders) => {
+const updateRemindersForReminders = async (req, reminders) => {
   const remindersArray = formatArray(reminders);
 
   if (areAllDefined(remindersArray) === false) {
@@ -133,10 +134,10 @@ const updateRemindersQuery = async (req, reminders) => {
   }
 
   for (let i = 0; i < remindersArray.length; i += 1) {
-    await updateReminderQuery(req, remindersArray[i]);
+    await updateReminderForReminder(req, remindersArray[i]);
   }
 
   return remindersArray;
 };
 
-module.exports = { updateReminderQuery, updateRemindersQuery };
+module.exports = { updateReminderForReminder, updateRemindersForReminders };

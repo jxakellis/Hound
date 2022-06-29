@@ -2,7 +2,8 @@ const apn = require('apn');
 const { REMINDER_CATEGORY, IS_PRODUCTION } = require('../../../server/constants');
 const { apnLogger } = require('../../logging/loggers');
 
-const { formatArray, areAllDefined } = require('../../format/formatObject');
+const { formatArray } = require('../../format/formatObject');
+const { areAllDefined } = require('../../format/validateDefined');
 
 const { apnProvider } = require('./apnProvider');
 const { getUserToken, getAllFamilyMemberTokens, getOtherFamilyMemberTokens } = require('./apnTokens');

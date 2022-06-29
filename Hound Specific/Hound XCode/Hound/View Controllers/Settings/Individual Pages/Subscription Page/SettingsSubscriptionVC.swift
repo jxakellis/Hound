@@ -14,12 +14,10 @@ class SettingsSubscriptionViewController: UIViewController, UITableViewDelegate,
     // MARK: - IB
     
     @IBOutlet private weak var tableView: UITableView!
-    // TO DO height temporarily set to 2000. make it dynamic and smart
-    @IBOutlet private weak var tableViewHeightConstraint: NSLayoutConstraint!
     
     // MARK: Properties
     
-    var subscriptionSKProducts: [SKProduct] = []
+    var subscriptionProducts: [SKProduct] = []
     
     // MARK: - Main
 
@@ -61,18 +59,20 @@ class SettingsSubscriptionViewController: UIViewController, UITableViewDelegate,
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // first row in a static "default" subscription, then the rest are subscription SKProducts
-        print("num rows")
-        print(subscriptionSKProducts.count)
-        return 1 + subscriptionSKProducts.count
+        // first row in a static "default" subscription, then the rest are subscription products
+        return 1 + subscriptionProducts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "settingsSubscriptionTierTableViewCell", for: indexPath) as! SettingsSubscriptionTierTableViewCell
         
-        if indexPath.row != 0 {
+        if indexPath.row == 0 {
+            // necessary to make sure defaults are properly used for "Single" tier
+            cell.setup(forProduct: nil)
+        }
+        else {
             // index path 0 is the first row and that is the default subscription
-            cell.setup(forSKProduct: subscriptionSKProducts[indexPath.row - 1])
+            cell.setup(forProduct: subscriptionProducts[indexPath.row - 1])
 
         }
         
@@ -81,6 +81,31 @@ class SettingsSubscriptionViewController: UIViewController, UITableViewDelegate,
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        // indexPath 0 is the default so we won't be making a purchase
+        guard indexPath.row != 0 else {
+            // TO DO let the user downgrade their subscription
+            return
+        }
+        
+        let cell = tableView.cellForRow(at: indexPath) as? SettingsSubscriptionTierTableViewCell
+        
+        // make sure we have a product to query
+        guard let product = cell?.product else {
+            return
+        }
+        
+        RequestUtils.beginAlertControllerQueryIndictator()
+        InAppPurchaseManager.purchaseProduct(forProduct: product) { productIdentifier in
+            RequestUtils.endAlertControllerQueryIndictator {
+                guard productIdentifier != nil else {
+                    print("error")
+                    return
+                }
+                
+                print("success \(productIdentifier)")
+            }
+        }
     }
     
     /*

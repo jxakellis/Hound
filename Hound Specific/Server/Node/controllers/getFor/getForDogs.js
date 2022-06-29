@@ -2,8 +2,9 @@ const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
-  formatBoolean, formatDate, areAllDefined,
+  formatBoolean, formatDate,
 } = require('../../main/tools/format/formatObject');
+const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { getAllLogsForDogId } = require('./getForLogs');
 const { getAllRemindersForDogId } = require('./getForReminders');
 

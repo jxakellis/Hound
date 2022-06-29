@@ -2,18 +2,18 @@ const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
-  formatNumber, formatEmail, formatBoolean, areAllDefined,
+  formatNumber, formatEmail, formatBoolean,
 } = require('../../main/tools/format/formatObject');
+const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { hash } = require('../../main/tools/format/hash');
 
 /**
  *  Queries the database to create a user. If the query is successful, then returns the userId.
  *  If a problem is encountered, creates and throws custom error
  */
-const createUserQuery = async (req) => {
+const createUserForUserIdentifier = async (req, userIdentifier) => {
   const userEmail = formatEmail(req.body.userEmail); // required
   const {
-    userIdentifier, // required
     userFirstName, userLastName, userNotificationToken, // optional
   } = req.body;
   const userAccountCreationDate = new Date();
@@ -61,4 +61,4 @@ const createUserQuery = async (req) => {
   }
 };
 
-module.exports = { createUserQuery };
+module.exports = { createUserForUserIdentifier };

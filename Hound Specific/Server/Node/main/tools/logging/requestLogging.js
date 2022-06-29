@@ -1,7 +1,7 @@
 const { requestLogger, serverLogger } = require('./loggers');
 const { queryPromise } = require('../database/queryPromise');
 const { connectionForLogging } = require('../database/databaseConnection');
-const { areAllDefined } = require('../format/formatObject');
+const { areAllDefined } = require('../format/validateDefined');
 const { responseLogger } = require('./loggers');
 const { IS_PRODUCTION } = require('../../server/constants');
 

@@ -1,4 +1,4 @@
-const { areAllDefined } = require('../../format/formatObject');
+const { areAllDefined } = require('../../format/validateDefined');
 const { sendAPNForUser } = require('../apn/sendAPN');
 const { TERMINATE_CATEGORY } = require('../../../server/constants');
 

@@ -1,17 +1,17 @@
 const DatabaseError = require('../../main/tools/errors/databaseError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { deleteAllLogsForDogId } = require('./deleteForLogs');
-const { deleteAllRemindersForDogId } = require('./deleteForReminders');
+const { deleteAllRemindersForFamilyIdDogId } = require('./deleteForReminders');
 
 /**
  *  Queries the database to delete a dog and everything nested under it. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-const deleteDogForDogId = async (req, familyId, dogId) => {
+const deleteDogForFamilyIdDogId = async (req, familyId, dogId) => {
   const dogLastModified = new Date();
 
   // delete all reminders
-  await deleteAllRemindersForDogId(req, familyId, dogId);
+  await deleteAllRemindersForFamilyIdDogId(req, familyId, dogId);
 
   // deletes all logs
   await deleteAllLogsForDogId(req, dogId);
@@ -51,8 +51,8 @@ const deleteAllDogsForFamilyId = async (req, familyId) => {
 
   // delete all the dogs
   for (let i = 0; i < dogIds.length; i += 1) {
-    await deleteDogForDogId(req, familyId, dogIds[i].dogId);
+    await deleteDogForFamilyIdDogId(req, familyId, dogIds[i].dogId);
   }
 };
 
-module.exports = { deleteDogForDogId, deleteAllDogsForFamilyId };
+module.exports = { deleteDogForFamilyIdDogId, deleteAllDogsForFamilyId };

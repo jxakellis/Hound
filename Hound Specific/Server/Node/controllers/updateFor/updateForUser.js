@@ -2,16 +2,14 @@ const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 
 const { queryPromise } = require('../../main/tools/database/queryPromise');
-const {
-  formatNumber, formatBoolean, atLeastOneDefined, areAllDefined,
-} = require('../../main/tools/format/formatObject');
+const { formatNumber, formatBoolean } = require('../../main/tools/format/formatObject');
+const { atLeastOneDefined, areAllDefined } = require('../../main/tools/format/validateDefined');
 
 /**
  *  Queries the database to update a user. If the query is successful, then returns
  *  If a problem is encountered, creates and throws custom error
  */
-const updateUserQuery = async (req) => {
-  const userId = req.params.userId;
+const updateUserForUserId = async (req, userId) => {
   const { userNotificationToken } = req.body;
 
   const isNotificationEnabled = formatBoolean(req.body.isNotificationEnabled);
@@ -120,4 +118,4 @@ const updateUserQuery = async (req) => {
   }
 };
 
-module.exports = { updateUserQuery };
+module.exports = { updateUserForUserId };

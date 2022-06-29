@@ -39,7 +39,7 @@ enum UserRequest: RequestProtocol {
      completionHandler returns a response data: dictionary of the body and the ResponseStatus
      */
     private static func internalCreate(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: InternalRequestUtils.createFullUserBody()) { responseBody, responseStatus in
+        InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: UserConfiguration.createBody(addingOntoBody: UserInformation.createBody(addingOntoBody: nil))) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
     }

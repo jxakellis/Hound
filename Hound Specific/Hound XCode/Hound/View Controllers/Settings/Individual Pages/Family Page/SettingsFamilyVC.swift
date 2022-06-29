@@ -122,27 +122,6 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         
         tableView.allowsSelection = isUserFamilyHead
         
-        // TO DO could potentially replace this with intrensic size. i.e. have no height constaint on the table view
-        var tableViewHeight: CGFloat {
-            var height = 0.0
-            for index in 0..<FamilyConfiguration.familyMembers.count {
-                // head of family
-                if index == 0 {
-                    // icon size + top/bot constraints
-                    height += 45 + 10 + 10
-                }
-                else {
-                    // icon size + top/bot constraints
-                    height += 35 + 10 + 10
-                }
-            }
-            // add a tiny bit so you can see sepaarator at bottom
-            height += 1
-            return height
-        }
-        
-        tableViewHeightConstraint.constant = tableViewHeight
-        
         // MARK: Leave Family Button
         
         leaveFamilyAlertController = GeneralUIAlertController(title: "placeholder", message: "Hound will restart once this process is complete", preferredStyle: .alert)
@@ -293,8 +272,6 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
     
     // MARK: Family Members
     @IBOutlet private weak var tableView: UITableView!
-    
-    @IBOutlet private weak var tableViewHeightConstraint: NSLayoutConstraint!
     
     func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections

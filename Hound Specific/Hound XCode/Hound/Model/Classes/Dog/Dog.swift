@@ -130,3 +130,14 @@ class Dog: NSObject, NSCoding, NSCopying {
         dogReminders.combine(withOldReminderManager: oldDog.dogReminders)
     }
 }
+
+extension Dog {
+    // MARK: - Request
+    
+    /// Returns an array literal of the dog's properties (does not include nested properties, e.g. logs or reminders). This is suitable to be used as the JSON body for a HTTP request
+    func createBody() -> [String: Any] {
+        var body: [String: Any] = [:]
+        body[ServerDefaultKeys.dogName.rawValue] = dogName
+        return body
+    }
+}

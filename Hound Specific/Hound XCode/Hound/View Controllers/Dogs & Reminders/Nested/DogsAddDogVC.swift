@@ -188,13 +188,8 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                     }
                     // check to see if we need to delete any reminders on the server
                     if deletedReminders.count > 0 {
-                        // find all the ids of the reminders to delete
-                        var deletedReminderIds: [Int] = []
-                        for deletedReminder in deletedReminders {
-                            deletedReminderIds.append(deletedReminder.reminderId)
-                        }
                         
-                        RemindersRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forReminderIds: deletedReminderIds) { requestWasSuccessful2, _ in
+                        RemindersRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forReminders: deletedReminders) { requestWasSuccessful2, _ in
                             if requestWasSuccessful2 == true {
                                 queriedDeletedReminders = true
                             }

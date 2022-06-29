@@ -1,4 +1,4 @@
-const { areAllDefined } = require('./formatObject');
+const { areAllDefined } = require('./validateDefined');
 
 // Returned string with whitespaces and new lines removed. If parameter is not a string, returns undefined
 const formatName = (string) => {

@@ -45,22 +45,19 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
         if convertedSegueIdentifier == "settingsSubscriptionViewController" {
             // TO DO make this query indicator special so it says contacting apple servers as this request isn't related to hound servers
             RequestUtils.beginAlertControllerQueryIndictator()
-            InAppPurchaseManager.shared.fetchProducts { SKProducts in
+            InAppPurchaseManager.fetchProducts { products in
                 RequestUtils.endAlertControllerQueryIndictator {
-                    guard SKProducts != nil else {
+                    guard products != nil else {
                         return
                     }
                     
                     // reset array to zero
-                    self.subscriptionSKProducts = []
+                    self.subscriptionProducts = []
                     // look for products that you can subscribe to
-                    for product in SKProducts! where product.subscriptionPeriod != nil {
-                        self.subscriptionSKProducts.append(product)
+                    for product in products! where product.subscriptionPeriod != nil {
+                        self.subscriptionProducts.append(product)
                     }
                     
-                    // TO DO sort subscriptions in correct order
-                    print("retrieved")
-                    print(self.subscriptionSKProducts.count)
                     self.performSegueOnceInWindowHierarchy(segueIdentifier: convertedSegueIdentifier)
                 }
             }
@@ -76,7 +73,7 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
     var settingsPersonalInformationViewController: SettingsPersonalInformationViewController?
     var settingsFamilyViewController: SettingsFamilyViewController?
     var settingsSubscriptionViewController: SettingsSubscriptionViewController?
-    private var subscriptionSKProducts: [SKProduct] = []
+    private var subscriptionProducts: [SKProduct] = []
     var settingsAppearanceViewController: SettingsAppearanceViewController?
     var settingsNotificationsViewController: SettingsNotificationsViewController?
     var settingsAboutViewController: SettingsAboutViewController?
@@ -136,9 +133,7 @@ class SettingsViewController: UIViewController, SettingsTableViewControllerDeleg
         }
         else if segue.identifier == "settingsSubscriptionViewController" {
             settingsSubscriptionViewController = segue.destination as? SettingsSubscriptionViewController
-            print("assigned")
-            print(subscriptionSKProducts.count)
-            settingsSubscriptionViewController?.subscriptionSKProducts = subscriptionSKProducts
+            settingsSubscriptionViewController?.subscriptionProducts = subscriptionProducts
         }
         else if segue.identifier == "settingsAppearanceViewController" {
             settingsAppearanceViewController = segue.destination as? SettingsAppearanceViewController

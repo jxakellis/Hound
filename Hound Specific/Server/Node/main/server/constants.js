@@ -13,8 +13,27 @@ const CURRENT_APP_BUILD = 4000;
 // The second most recent build of the app, this will be the version most users are on until the app store one processes and they can update
 const PREVIOUS_APP_BUILD = 3999;
 
+/// MARK: - Subscription
+// The amount of milliseconds that we allow a family's subscription to expire before we enforce restrictions
+const SUBSCRIPTION_GRACE_PERIOD = (3 * 60 * 60 * 1000);
+
+/// MARK: - Default subscription details
+// Default subscription's product id
+const DEFAULT_SUBSCRIPTION_PRODUCT_ID = 'com.jonathanxakellis.hound.default';
+// Default subscription's name
+const DEFAULT_SUBSCRIPTION_NAME = 'Single 🧍‍♂️';
+// Default subscription's description
+const DEFAULT_SUBSCRIPTION_DESCRIPTION = "Explore Hound's default subscription tier by yourself with up to two different dogs";
+// Default subscription was never purchased
+const DEFAULT_SUBSCRIPTION_PURCHASE_DATE = undefined;
+// Default subscription can have one family member (the one who created the family)
+const DEFAULT_SUBSCRIPTION_NUMBER_OF_FAMILY_MEMBERS = 1;
+// Default subscription can have two dogs
+const DEFAULT_SUBSCRIPTION_NUMBER_OF_DOGS = 2;
+// Default subscription doesn't expire
+const DEFAULT_SUBSCRIPTION_EXPIRATION = new Date('3000-01-01T00:00:00Z');
+
 /// MARK: - Limit the number of items for a given object
-const DEFAULT_SUBSCRIPTION_TIER_ID = '3b518c5a274b5726ff7a19a3e5dcb84e8da21aa2f3523bfc1b40f74622602610';
 // A user can have <= the number listed below of logs for each dog. E.g. if 100,000 then the family can have <= 100,000 logs per dog
 const NUMBER_OF_LOGS_PER_DOG = 50000;
 // A user can have <= the number listed below of reminders for each dog. E.g. if 10 then the family can have <= 10 reminders per dog
@@ -36,7 +55,14 @@ module.exports = {
   NUMBER_OF_SCHEDULED_JOBS_ALLOWED,
   CURRENT_APP_BUILD,
   PREVIOUS_APP_BUILD,
-  DEFAULT_SUBSCRIPTION_TIER_ID,
+  SUBSCRIPTION_GRACE_PERIOD,
+  DEFAULT_SUBSCRIPTION_PRODUCT_ID,
+  DEFAULT_SUBSCRIPTION_NAME,
+  DEFAULT_SUBSCRIPTION_DESCRIPTION,
+  DEFAULT_SUBSCRIPTION_PURCHASE_DATE,
+  DEFAULT_SUBSCRIPTION_EXPIRATION,
+  DEFAULT_SUBSCRIPTION_NUMBER_OF_FAMILY_MEMBERS,
+  DEFAULT_SUBSCRIPTION_NUMBER_OF_DOGS,
   NUMBER_OF_LOGS_PER_DOG,
   NUMBER_OF_REMINDERS_PER_DOG,
   REMINDER_CATEGORY,

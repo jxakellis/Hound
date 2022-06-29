@@ -10,18 +10,6 @@ import Foundation
 
 /// Information specific to the user.
 enum UserInformation {
-    
-    // MARK: - Ordered List
-    // userId
-    // userIdentifier
-    // userNotificationToken
-    // familyId
-    // userEmail
-    // userFirstName
-    // userLastName
-    
-    // MARK: - Main
-    
     /// Sets the UserInformation values equal to all the values found in the body. The key for the each body value must match the name of the UserConfiguration property exactly in order to be used. The value must also be able to be converted into the proper data type.
     static func setup(fromBody body: [String: Any]) {
         if let userId = body[ServerDefaultKeys.userId.rawValue] as? String {
@@ -57,6 +45,10 @@ enum UserInformation {
     static var userFirstName: String?
     
     static var userLastName: String?
+}
+
+extension UserInformation {
+    // MARK: -
     
     /// The users member's full name. Handles cases where the first name and/or last name may be ""
     static var displayFullName: String {
@@ -79,5 +71,16 @@ enum UserInformation {
         else {
             return "\(trimmedFirstName!) \(trimmedLastName!)"
         }
+    }
+    
+    // MARK: - Request
+    /// Returns an array literal of the user information's properties. This is suitable to be used as the JSON body for a HTTP request
+    static func createBody(addingOntoBody body: [String: Any]?) -> [String: Any] {
+        var body: [String: Any] = body ?? [:]
+        body[ServerDefaultKeys.userIdentifier.rawValue] = UserInformation.userIdentifier
+        body[ServerDefaultKeys.userEmail.rawValue] = UserInformation.userEmail
+        body[ServerDefaultKeys.userFirstName.rawValue] = UserInformation.userFirstName
+        body[ServerDefaultKeys.userLastName.rawValue] = UserInformation.userLastName
+        return body
     }
 }

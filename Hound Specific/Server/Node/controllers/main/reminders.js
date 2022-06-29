@@ -1,9 +1,10 @@
-const { formatArray, areAllDefined } = require('../../main/tools/format/formatObject');
+const { formatArray } = require('../../main/tools/format/formatObject');
+const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 const { getReminderForReminderId, getAllRemindersForDogId } = require('../getFor/getForReminders');
-const { createReminderQuery, createRemindersQuery } = require('../createFor/createForReminders');
-const { updateReminderQuery, updateRemindersQuery } = require('../updateFor/updateForReminders');
-const { deleteReminderForReminderId } = require('../deleteFor/deleteForReminders');
+const { createReminderForDogIdReminder, createRemindersForDogIdReminders } = require('../createFor/createForReminders');
+const { updateReminderForReminder, updateRemindersForReminders } = require('../updateFor/updateForReminders');
+const { deleteReminderForFamilyIdDogIdReminderId } = require('../deleteFor/deleteForReminders');
 const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
 
 const { createAlarmNotificationForFamily } = require('../../main/tools/notifications/alarm/createAlarmNotification');
@@ -16,6 +17,7 @@ Known:
 - (if appliciable to controller) reminders is an array with reminderId that are formatted correctly and request has sufficient permissions to use
 */
 
+// TO DO put all get, create, update, and deletes code inside their respective try catch statements
 const getReminders = async (req, res) => {
   const dogId = req.params.dogId;
   const reminderId = req.params.reminderId;
@@ -51,39 +53,39 @@ const getReminders = async (req, res) => {
 };
 
 const createReminder = async (req, res) => {
-  const reminders = formatArray(req.body.reminders);
-
-  let result;
   try {
+    const dogId = req.params.dogId;
+    const reminders = formatArray(req.body.reminders);
+    let result;
     // reminders are provided
     if (areAllDefined(reminders)) {
       // array of reminders JSON
       // [{reminderInfo1}, {reminderInfo2}...]
-      result = await createRemindersQuery(req, reminders);
+      result = await createRemindersForDogIdReminders(req, dogId, reminders);
     }
     // single reminder
     else {
       // convert single reminder JSON into an array with a single reminder
       // { reminderInfo1 } => [{reminderInfo1}]
-      result = [await createReminderQuery(req, req.body)];
+      result = [await createReminderForDogIdReminder(req, dogId, req.body)];
     }
+
+    await req.commitQueries(req);
+    // create was successful, so we can create all the alarm notifications
+    for (let i = 0; i < result.length; i += 1) {
+      const reminder = result[i];
+      createAlarmNotificationForFamily(
+        req.params.familyId,
+        reminder.reminderId,
+        reminder.reminderExecutionDate,
+      );
+    }
+    return res.status(200).json({ result });
   }
   catch (error) {
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
-
-  await req.commitQueries(req);
-  // create was successful, so we can create all the alarm notifications
-  for (let i = 0; i < result.length; i += 1) {
-    const reminder = result[i];
-    createAlarmNotificationForFamily(
-      req.params.familyId,
-      reminder.reminderId,
-      reminder.reminderExecutionDate,
-    );
-  }
-  return res.status(200).json({ result });
 };
 
 const updateReminder = async (req, res) => {
@@ -94,11 +96,11 @@ const updateReminder = async (req, res) => {
   try {
     // reminders array is provided
     if (areAllDefined(reminders)) {
-      result = await updateRemindersQuery(req, reminders);
+      result = await updateRemindersForReminders(req, reminders);
     }
     // just a single reminder
     else {
-      result = await updateReminderQuery(req, req.body);
+      result = await updateReminderForReminder(req, req.body);
     }
   }
   catch (error) {
@@ -129,12 +131,12 @@ const deleteReminder = async (req, res) => {
     if (areAllDefined(reminders)) {
       for (let i = 0; i < reminders.length; i += 1) {
         const reminderId = reminders[i].reminderId;
-        await deleteReminderForReminderId(req, familyId, dogId, reminderId);
+        await deleteReminderForFamilyIdDogIdReminderId(req, familyId, dogId, reminderId);
       }
     }
     // single reminder
     else {
-      await deleteReminderForReminderId(req, familyId, dogId, req.body.reminderId);
+      await deleteReminderForFamilyIdDogIdReminderId(req, familyId, dogId, req.body.reminderId);
     }
   }
   catch (error) {

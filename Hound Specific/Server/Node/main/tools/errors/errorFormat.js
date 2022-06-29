@@ -1,4 +1,4 @@
-const { areAllDefined } = require('../format/formatObject');
+const { areAllDefined } = require('../format/validateDefined');
 
 const convertErrorToJSON = (error) => {
   // error isn't defined, so further reference would cause additional, uncaught error

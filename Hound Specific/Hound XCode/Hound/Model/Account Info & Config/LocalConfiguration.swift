@@ -119,14 +119,16 @@ enum LocalConfiguration {
     
     /// Keeps track of if the user has viewed AND completed the reminders introduction view controller (which helps the user setup their first reminders)
     static var hasLoadedRemindersIntroductionViewControllerBefore: Bool = false
-    
+}
+
+extension LocalConfiguration {
     // MARK: Functions
     
     /// Resets the values of certain LocalConfiguration variables for when a user is joining a new family. These are certain local configurations that just control some basic user experience things, so can be modified.
     static func resetForNewFamily() {
         // We write these changes to storage immediately. If not, could cause funky issues if not persisted. For example: the dogs from user's old family would combine client side with dogs of new family, but this would only be client-side. Those dogs wouldn't actually exist on the server and would be bugged.
         
-       LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = false
+        LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = false
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedFamilyIntroductionViewControllerBefore.rawValue)
         
         LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
@@ -145,5 +147,4 @@ enum LocalConfiguration {
             UserDefaults.standard.set(dataDogManager, forKey: ServerDefaultKeys.dogManager.rawValue)
         }
     }
-    
 }

@@ -221,3 +221,18 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     var logNote: String = LogConstant.defaultLogNote
     
 }
+
+extension Log {
+    // MARK: - Request
+    
+    /// Returns an array literal of the logs's properties. This is suitable to be used as the JSON body for a HTTP request
+    func createBody() -> [String: Any] {
+        var body: [String: Any] = [:]
+        body[ServerDefaultKeys.logNote.rawValue] = logNote
+        body[ServerDefaultKeys.logDate.rawValue] = logDate.ISO8601FormatWithFractionalSeconds()
+        body[ServerDefaultKeys.logAction.rawValue] = logAction.rawValue
+        body[ServerDefaultKeys.logCustomActionName.rawValue] = logCustomActionName
+        return body
+        
+    }
+}

@@ -1,18 +1,15 @@
 const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
-const {
-  formatDate, areAllDefined,
-} = require('../../main/tools/format/formatObject');
+const { formatDate } = require('../../main/tools/format/formatObject');
+const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { NUMBER_OF_LOGS_PER_DOG } = require('../../main/server/constants');
 
 /**
  *  Queries the database to create a log. If the query is successful, then returns the logId.
  *  If a problem is encountered, creates and throws custom error
  */
-const createLogQuery = async (req) => {
-  const userId = req.params.userId; // required
-  const dogId = req.params.dogId; // required
+const createLogForUserIdDogId = async (req, userId, dogId) => {
   const logDate = formatDate(req.body.logDate); // required
   const { logNote } = req.body; // required
   const { logAction } = req.body; // required
@@ -62,4 +59,4 @@ const createLogQuery = async (req) => {
   }
 };
 
-module.exports = { createLogQuery };
+module.exports = { createLogForUserIdDogId };

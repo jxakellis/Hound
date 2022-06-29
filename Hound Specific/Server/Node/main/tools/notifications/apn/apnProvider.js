@@ -1,7 +1,7 @@
 const apn = require('apn');
 const {
   keyId, teamId,
-} = require('./apnSensitive');
+} = require('../../../secrets/apnIds');
 
 /*
 // use certificate.pem and key.pem
@@ -15,7 +15,7 @@ const options = {
 // use key.p8, keyId, and teamId
 const options = {
   token: {
-    key: `${__dirname}/key.p8`,
+    key: `${__dirname}/apnKey.p8`,
     keyId,
     teamId,
   },

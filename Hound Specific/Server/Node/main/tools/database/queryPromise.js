@@ -1,4 +1,5 @@
-const { formatArray, areAllDefined } = require('../format/formatObject');
+const { formatArray } = require('../format/formatObject');
+const { areAllDefined } = require('../format/validateDefined');
 
 /**
  * Queries the predefined database connection with the given sqlString

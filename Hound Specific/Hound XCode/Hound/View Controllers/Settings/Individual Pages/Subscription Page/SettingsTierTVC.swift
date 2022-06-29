@@ -17,6 +17,10 @@ class SettingsSubscriptionTierTableViewCell: UITableViewCell {
     @IBOutlet private weak var subscriptionTierDescriptionLabel: ScaledUILabel!
     @IBOutlet private weak var subscriptionTierPricingLabel: ScaledUILabel!
     
+    // MARK: - Properties
+    
+    var product: SKProduct?
+    
     // MARK: - Main
 
     override func awakeFromNib() {
@@ -32,31 +36,38 @@ class SettingsSubscriptionTierTableViewCell: UITableViewCell {
     
     // MARK: - Functions
     
-    func setup(forSKProduct SKProduct: SKProduct) {
+    func setup(forProduct product: SKProduct?) {
         
-        guard SKProduct.subscriptionPeriod != nil else {
+        guard let product: SKProduct = product, product.subscriptionPeriod != nil else {
+            subscriptionTierTitleLabel.text = "Single 🧍‍♂️"
+            subscriptionTierDescriptionLabel.text =  "Explore Hound's default subscription tier by yourself with up to two different dogs"
+            subscriptionTierPricingLabel.text = "Completely and always free! You get to benefit from the same features as paid subscribers. The only difference is family member and dog limits."
             return
         }
         
+        self.product = product
+        
         // Add emojis to the localizedTitle since Apple won't let you normally.
+        // TO DO abstract this away into a function
         var localizedTitleWithEmojis: String {
-            switch SKProduct.productIdentifier {
+            switch product.productIdentifier {
             case "com.jonathanxakellis.hound.twofamilymemberstwodogs.monthly":
-                return SKProduct.localizedTitle.appending(" 👫")
+                return product.localizedTitle.appending(" 👫")
             case "com.jonathanxakellis.hound.fourfamilymembersfourdogs.monthly":
-                return SKProduct.localizedTitle.appending(" 👨‍👩‍👧‍👦")
+                return product.localizedTitle.appending(" 👨‍👩‍👧‍👦")
             case "com.jonathanxakellis.hound.sixfamilymemberssixdogs.monthly":
-                return SKProduct.localizedTitle.appending(" 👨‍👩‍👧‍👦👫")
+                return product.localizedTitle.appending(" 👨‍👩‍👧‍👦👫")
             case "com.jonathanxakellis.hound.tenfamilymemberstendogs.monthly":
-                return SKProduct.localizedTitle.appending(" 👨‍👩‍👧‍👦👨‍👩‍👧‍👦👫")
+                return product.localizedTitle.appending(" 👨‍👩‍👧‍👦👨‍👩‍👧‍👦👫")
             default:
-                return SKProduct.localizedTitle
+                return product.localizedTitle
             }
         }
         
         // Expand descriptions as Apple limits to 100 characters
+        // TO DO abstract this away into a function
         var localizedDescriptionExpanded: String {
-            switch SKProduct.productIdentifier {
+            switch product.productIdentifier {
             case "com.jonathanxakellis.hound.twofamilymemberstwodogs.monthly":
                 return "Take the first step in creating your multi-user Hound family. Unlock up to two different family members and dogs."
             case "com.jonathanxakellis.hound.fourfamilymembersfourdogs.monthly":
@@ -66,7 +77,7 @@ class SettingsSubscriptionTierTableViewCell: UITableViewCell {
             case "com.jonathanxakellis.hound.tenfamilymemberstendogs.monthly":
                 return "Take full advantage of Hound and make your family into its best (and biggest) self. Boost up to ten different family members and dogs."
             default:
-                return SKProduct.localizedDescription
+                return product.localizedDescription
             }
            
         }
@@ -76,25 +87,23 @@ class SettingsSubscriptionTierTableViewCell: UITableViewCell {
         
         // now we have to determine what the pricing is like
         // first get the properties
-        let subscriptionPriceWithSymbol = "\(SKProduct.priceLocale.currencySymbol ?? "")\(SKProduct.price)"
-        let subscriptionPeriod = convertSubscriptionPeriodUnits(forUnit: SKProduct.subscriptionPeriod!.unit, forNumberOfUnits: SKProduct.subscriptionPeriod!.numberOfUnits)
+        let subscriptionPriceWithSymbol = "\(product.priceLocale.currencySymbol ?? "")\(product.price)"
+        let subscriptionPeriod = convertSubscriptionPeriodUnits(forUnit: product.subscriptionPeriod!.unit, forNumberOfUnits: product.subscriptionPeriod!.numberOfUnits, isFreeTrialText: false)
         
         // no free trial
-        if SKProduct.introductoryPrice == nil || SKProduct.introductoryPrice!.paymentMode != .freeTrial {
-            subscriptionTierPricingLabel.text = "Enjoy all \(SKProduct.localizedTitle) has to offer for \(subscriptionPriceWithSymbol) per \(subscriptionPeriod)"
+        if product.introductoryPrice == nil || product.introductoryPrice!.paymentMode != .freeTrial {
+            subscriptionTierPricingLabel.text = "Enjoy all \(product.localizedTitle) has to offer for \(subscriptionPriceWithSymbol) per \(subscriptionPeriod)"
         }
         // tier offers a free trial
         else {
-            print(SKProduct.introductoryPrice!.subscriptionPeriod.unit)
-            print(SKProduct.introductoryPrice!.subscriptionPeriod.numberOfUnits)
-            let freeTrialSubscriptionPeriod = convertSubscriptionPeriodUnits(forUnit: SKProduct.introductoryPrice!.subscriptionPeriod.unit, forNumberOfUnits: SKProduct.introductoryPrice!.subscriptionPeriod.numberOfUnits)
+            let freeTrialSubscriptionPeriod = convertSubscriptionPeriodUnits(forUnit: product.introductoryPrice!.subscriptionPeriod.unit, forNumberOfUnits: product.introductoryPrice!.subscriptionPeriod.numberOfUnits, isFreeTrialText: true)
             
-            subscriptionTierPricingLabel.text = "Begin with a free \(freeTrialSubscriptionPeriod) trial then continue your \(SKProduct.localizedTitle) experience for \(subscriptionPriceWithSymbol) per \(subscriptionPeriod)"
+            subscriptionTierPricingLabel.text = "Begin with a free \(freeTrialSubscriptionPeriod) trial then continue your \(product.localizedTitle) experience for \(subscriptionPriceWithSymbol) per \(subscriptionPeriod)"
         }
     }
     
     /// Converts from units (time period: day, week, month, year) and numberOfUnits (duration: 1, 2, 3...) to the correct string. For example: unit = 2 & numerOfUnits = 3 -> "three (3) months"; unit = 1 & numerOfUnits = 2 -> "two (2) weeks"
-    private func convertSubscriptionPeriodUnits(forUnit unit: SKProduct.PeriodUnit, forNumberOfUnits numberOfUnits: Int) -> String {
+    private func convertSubscriptionPeriodUnits(forUnit unit: SKProduct.PeriodUnit, forNumberOfUnits numberOfUnits: Int, isFreeTrialText: Bool) -> String {
         var string = ""
         
         // if the numberOfUnits isn't equal to 1, then we append its value. This is so we get the returns of "month", "two (2) months", "three (3) months"
@@ -142,7 +151,7 @@ class SettingsSubscriptionTierTableViewCell: UITableViewCell {
         }
         
         // If our unit is plural (e.g. 2 days, 3 days), then we need to append that "s" to go from day -> days. Additionally we check to make sure our unit is within a valid range, otherwise we don't want to append "s" to "unknown⚠️"
-        if numberOfUnits != 1 && 0...3 ~= unit.rawValue {
+        if isFreeTrialText == false && numberOfUnits != 1 && 0...3 ~= unit.rawValue {
             string.append("s")
         }
         

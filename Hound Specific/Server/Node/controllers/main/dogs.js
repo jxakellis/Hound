@@ -1,9 +1,9 @@
 const { getDogForDogId, getAllDogsForFamilyId } = require('../getFor/getForDogs');
-const { createDogQuery } = require('../createFor/createForDogs');
-const { updateDogQuery } = require('../updateFor/updateForDogs');
-const { deleteDogForDogId } = require('../deleteFor/deleteForDogs');
+const { createDogForFamilyId } = require('../createFor/createForDogs');
+const { updateDogForDogId } = require('../updateFor/updateForDogs');
+const { deleteDogForFamilyIdDogId } = require('../deleteFor/deleteForDogs');
 const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
-const { areAllDefined } = require('../../main/tools/format/formatObject');
+const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 /*
 Known:
@@ -11,6 +11,7 @@ Known:
 - (if appliciable to controller) dogId formatted correctly and request has sufficient permissions to use
 */
 
+// TO DO put all get, create, update, and deletes code inside their respective try catch statements
 const getDogs = async (req, res) => {
   const familyId = req.params.familyId;
   const dogId = req.params.dogId;
@@ -45,22 +46,26 @@ const getDogs = async (req, res) => {
 
 const createDog = async (req, res) => {
   try {
-    const result = await createDogQuery(req);
+    const familyId = req.params.familyId;
+    const result = await createDogForFamilyId(req, familyId);
     await req.commitQueries(req);
     return res.status(200).json({ result });
   }
   catch (error) {
+    await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
 };
 
 const updateDog = async (req, res) => {
   try {
-    await updateDogQuery(req);
+    const dogId = req.params.dogId;
+    await updateDogForDogId(req, dogId);
     await req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }
   catch (error) {
+    await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
 };
@@ -68,7 +73,7 @@ const updateDog = async (req, res) => {
 const deleteDog = async (req, res) => {
   const dogId = req.params.dogId;
   try {
-    await deleteDogForDogId(req, req.params.familyId, dogId);
+    await deleteDogForFamilyIdDogId(req, req.params.familyId, dogId);
     await req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }

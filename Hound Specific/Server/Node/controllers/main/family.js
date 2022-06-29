@@ -1,17 +1,19 @@
-const { getFamilyInformationForFamilyId } = require('../getFor/getForFamily');
-const { createFamilyQuery } = require('../createFor/createForFamily');
-const { updateFamilyQuery } = require('../updateFor/updateForFamily');
-const { deleteFamilyQuery } = require('../deleteFor/deleteForFamily');
+const { getAllFamilyInformationForFamilyId } = require('../getFor/getForFamily');
+const { createFamilyForUserId } = require('../createFor/createForFamily');
+const { updateFamilyForFamilyId } = require('../updateFor/updateForFamily');
+const { deleteFamilyForUserIdFamilyId } = require('../deleteFor/deleteForFamily');
 const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
 /*
 Known:
 - userId formatted correctly and request has sufficient permissions to use
 - (if appliciable to controller) familyId formatted correctly and request has sufficient permissions to use
 */
+
+// TO DO put all get, create, update, and deletes code inside their respective try catch statements
 const getFamily = async (req, res) => {
   const familyId = req.params.familyId;
   try {
-    const result = await getFamilyInformationForFamilyId(req, familyId);
+    const result = await getAllFamilyInformationForFamilyId(req, familyId);
     await req.commitQueries(req);
     return res.status(200).json({ result });
   }
@@ -23,7 +25,8 @@ const getFamily = async (req, res) => {
 
 const createFamily = async (req, res) => {
   try {
-    const result = await createFamilyQuery(req);
+    const userId = req.params.userId;
+    const result = await createFamilyForUserId(req, userId);
     await req.commitQueries(req);
     return res.status(200).json({ result });
   }
@@ -36,7 +39,8 @@ const createFamily = async (req, res) => {
 
 const updateFamily = async (req, res) => {
   try {
-    await updateFamilyQuery(req);
+    const familyId = req.params.familyId;
+    await updateFamilyForFamilyId(req, familyId);
     await req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }
@@ -51,7 +55,7 @@ const deleteFamily = async (req, res) => {
   const familyId = req.params.familyId;
 
   try {
-    await deleteFamilyQuery(req, userId, familyId);
+    await deleteFamilyForUserIdFamilyId(req, userId, familyId);
     await req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }

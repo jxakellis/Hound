@@ -11,11 +11,6 @@ import Foundation
 /// Configuration that is local to the app only. If the app is reinstalled then this data should be pulled down from the cloud
 enum FamilyConfiguration {
     
-    // MARK: - Ordered List
-    // familyCode
-    // isLocked
-    //
-    
     // MARK: - Main
     
     /// Sets the FamilyConfiguration values equal to all the values found in the body. The key for the each body value must match the name of the FamilyConfiguration property exactly in order to be used. The value must also be able to be converted into the proper data type.

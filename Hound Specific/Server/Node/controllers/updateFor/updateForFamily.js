@@ -2,23 +2,21 @@ const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 
 const { queryPromise } = require('../../main/tools/database/queryPromise');
-const {
-  formatBoolean, formatDate, areAllDefined, formatNumber,
-} = require('../../main/tools/format/formatObject');
+const { formatBoolean, formatDate, formatNumber } = require('../../main/tools/format/formatObject');
+const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 const {
   createFamilyMemberJoinNotification, createFamilyMemberLeaveNotification, createFamilyLockedNotification, createFamilyPausedNotification,
 } = require('../../main/tools/notifications/alert/createFamilyNotification');
 const { createUserKickedNotification } = require('../../main/tools/notifications/alert/createUserKickedNotification');
 const { deleteAlarmNotificationsForFamily, deleteSecondaryAlarmNotificationsForUser } = require('../../main/tools/notifications/alarm/deleteAlarmNotification');
-const { getFamilyMembersForUserId } = require('../getFor/getForFamily');
+const { getAllFamilyMembersForFamilyId, getFamilyMembersForUserId } = require('../getFor/getForFamily');
 
 /**
  *  Queries the database to update a family to add a new user. If the query is successful, then returns
  *  If a problem is encountered, creates and throws custom error
  */
-const updateFamilyQuery = async (req) => {
-  const familyId = req.params.familyId;
+const updateFamilyForFamilyId = async (req, familyId) => {
   const isLocked = formatBoolean(req.body.isLocked);
   const isPaused = formatBoolean(req.body.isPaused);
   const kickUserId = formatNumber(req.body.kickUserId);
@@ -40,7 +38,7 @@ const updateFamilyQuery = async (req) => {
 };
 
 /**
- * Helper method for updateFamilyQuery, goes through checks to attempt to add user to desired family
+ * Helper method for updateFamilyForFamilyId, goes through checks to attempt to add user to desired family
  */
 const addFamilyMemberQuery = async (req) => {
   let familyCode = req.body.familyCode;
@@ -69,6 +67,7 @@ const addFamilyMemberQuery = async (req) => {
     throw new ValidationError('familyCode invalid, not found', 'ER_FAMILY_NOT_FOUND');
   }
   family = family[0];
+  const familyId = formatNumber(family.familyId);
   const isLocked = formatBoolean(family.isLocked);
   // familyCode exists and is linked to a family, now check if family is locked against new members
   if (isLocked) {
@@ -85,13 +84,22 @@ const addFamilyMemberQuery = async (req) => {
     throw new ValidationError('You are already in a family', 'ER_FAMILY_ALREADY');
   }
 
+  // the user is eligible to join the family, check to make sure the family has enough space
+  const subscriptionInformation = req.subscriptionInformation;
+  const familyMembers = await getAllFamilyMembersForFamilyId(req, familyId);
+
+  // the family is either at the limit of family members is exceeds the limit, therefore no new users can join
+  if (familyMembers.length >= subscriptionInformation.subscriptionNumberOfFamilyMembers) {
+    throw new ValidationError(`Family member limit of ${subscriptionInformation.subscriptionNumberOfFamilyMembers} exceeded`, 'ER_FAMILY_MEMBER_LIMIT_EXCEEDED');
+  }
+
   // familyCode validated and user is not a family member in any family
   try {
     // insert the user into the family as a family member.
     await queryPromise(
       req,
       'INSERT INTO familyMembers(familyId, userId) VALUES (?, ?)',
-      [family.familyId, userId],
+      [familyId, userId],
     );
   }
   catch (error) {
@@ -102,7 +110,7 @@ const addFamilyMemberQuery = async (req) => {
 };
 
 /**
- * Helper method for updateFamilyQuery, switches the family isLocked status
+ * Helper method for updateFamilyForFamilyId, switches the family isLocked status
  */
 const updateIsLockedQuery = async (req) => {
   const userId = req.params.userId;
@@ -123,7 +131,7 @@ const updateIsLockedQuery = async (req) => {
 };
 
 /**
- * Helper method for updateFamilyQuery, goes through all of the logic to update isPaused, lastPause, lastUnpause
+ * Helper method for updateFamilyForFamilyId, goes through all of the logic to update isPaused, lastPause, lastUnpause
  * If pausing, saves all intervalElapsed, sets all reminderExecutionDates to nil, and deleteAlarmNotifications
  * If unpausing, sets reminderExecutionBasis to Date(). The new reminderExecutionDates must be calculated by the user and sent to the server
  */
@@ -167,7 +175,7 @@ const updateIsPausedQuery = async (req) => {
 };
 
 /**
- * Helper method for updateFamilyQuery.
+ * Helper method for updateFamilyForFamilyId.
  * Saves all intervalElapsed, sets all reminderExecutionDates to nil, and deleteAlarmNotifications
  */
 const pauseQuery = async (req, lastUnpause) => {
@@ -254,7 +262,7 @@ const pauseQuery = async (req, lastUnpause) => {
 };
 
 /**
- * Helper method for updateFamilyQuery.
+ * Helper method for updateFamilyForFamilyId.
  * Sets reminderExecutionBasis to Date(). The new reminderExecutionDates must be calculated by the user and sent to the server
  */
 const unpauseQuery = async (req) => {
@@ -285,7 +293,7 @@ const unpauseQuery = async (req) => {
 };
 
 /**
- * Helper method for updateFamilyQuery, goes through checks to attempt to kick a user from the family
+ * Helper method for updateFamilyForFamilyId, goes through checks to attempt to kick a user from the family
  */
 const kickFamilyMemberQuery = async (req) => {
   const userId = req.params.userId;
@@ -336,4 +344,4 @@ const kickFamilyMemberQuery = async (req) => {
   createUserKickedNotification(kickUserId);
 };
 
-module.exports = { updateFamilyQuery };
+module.exports = { updateFamilyForFamilyId };

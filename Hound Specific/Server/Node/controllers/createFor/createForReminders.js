@@ -2,17 +2,16 @@ const DatabaseError = require('../../main/tools/errors/databaseError');
 const ValidationError = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
-  formatNumber, formatDate, formatBoolean, formatArray, areAllDefined,
+  formatNumber, formatDate, formatBoolean, formatArray,
 } = require('../../main/tools/format/formatObject');
+const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { NUMBER_OF_REMINDERS_PER_DOG } = require('../../main/server/constants');
 
 /**
  *  Queries the database to create a single reminder. If the query is successful, then returns the reminder with created reminderId added to it.
  *  If a problem is encountered, creates and throws custom error
  */
-const createReminderQuery = async (req, reminder) => {
-  const dogId = req.params.dogId;
-
+const createReminderForDogIdReminder = async (req, dogId, reminder) => {
   if (areAllDefined(dogId, reminder) === false) {
     throw new ValidationError('dogId or reminder missing', 'ER_VALUES_MISSING');
   }
@@ -125,8 +124,7 @@ const createReminderQuery = async (req, reminder) => {
    * Queries the database to create a multiple reminders. If the query is successful, then returns the reminders with their created reminderIds added to them.
  *  If a problem is encountered, creates and throws custom error
    */
-const createRemindersQuery = async (req, reminders) => {
-  const dogId = req.params.dogId; // required
+const createRemindersForDogIdReminders = async (req, dogId, reminders) => {
   const remindersArray = formatArray(reminders); // required
   const createdReminders = [];
 
@@ -136,11 +134,11 @@ const createRemindersQuery = async (req, reminders) => {
 
   for (let i = 0; i < remindersArray.length; i += 1) {
     // retrieve the original provided body AND the created id
-    const createdReminder = await createReminderQuery(req, remindersArray[i]);
+    const createdReminder = await createReminderForDogIdReminder(req, remindersArray[i]);
     createdReminders.push(createdReminder);
   }
   // everything was successful so we return the created reminders
   return createdReminders;
 };
 
-module.exports = { createReminderQuery, createRemindersQuery };
+module.exports = { createReminderForDogIdReminder, createRemindersForDogIdReminders };

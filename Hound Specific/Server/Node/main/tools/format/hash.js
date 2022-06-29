@@ -1,5 +1,6 @@
 const crypto = require('crypto');
-const { formatString, formatSHA256Hash, areAllDefined } = require('./formatObject');
+const { formatString, formatSHA256Hash } = require('./formatObject');
+const { areAllDefined } = require('./validateDefined');
 
 const hash = async (str, sal) => {
   const string = formatSHA256Hash(str);

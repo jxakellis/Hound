@@ -4,15 +4,14 @@ const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { generateVerifiedFamilyCode } = require('../../main/tools/database/generateVerifiedFamilyCode');
 
 const { getFamilyMembersForUserId } = require('../getFor/getForFamily');
-const { areAllDefined } = require('../../main/tools/format/formatObject');
+const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { hash } = require('../../main/tools/format/hash');
 
 /**
  *  Queries the database to create a family. If the query is successful, then returns the familyId.
  *  If a problem is encountered, creates and throws custom error
  */
-const createFamilyQuery = async (req) => {
-  const userId = req.params.userId; // required
+const createFamilyForUserId = async (req, userId) => {
   const familyAccountCreationDate = new Date();
   const familyId = await hash(userId, familyAccountCreationDate.toISOString());
 
@@ -49,4 +48,4 @@ const createFamilyQuery = async (req) => {
   }
 };
 
-module.exports = { createFamilyQuery };
+module.exports = { createFamilyForUserId };

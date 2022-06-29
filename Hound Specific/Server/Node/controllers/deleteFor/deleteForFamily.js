@@ -9,7 +9,7 @@ const { createFamilyMemberLeaveNotification } = require('../../main/tools/notifi
  *  If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-const deleteFamilyQuery = async (req, userId, familyId) => {
+const deleteFamilyForUserIdFamilyId = async (req, userId, familyId) => {
   let familyMembers;
   let family;
   try {
@@ -75,4 +75,4 @@ const deleteFamilyQuery = async (req, userId, familyId) => {
   createFamilyMemberLeaveNotification(userId, familyId);
 };
 
-module.exports = { deleteFamilyQuery };
+module.exports = { deleteFamilyForUserIdFamilyId };

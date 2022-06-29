@@ -1,12 +1,9 @@
 const ValidationError = require('../../main/tools/errors/validationError');
-const {
-  formatBoolean, formatNumber, atLeastOneDefined, areAllDefined,
-} = require('../../main/tools/format/formatObject');
+const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 const { getUserForUserId, getUserForUserIdentifier } = require('../getFor/getForUser');
-const { createUserQuery } = require('../createFor/createForUser');
-const { updateUserQuery } = require('../updateFor/updateForUser');
-const { deleteUserQuery } = require('../deleteFor/deleteForUser');
+const { createUserForUserIdentifier } = require('../createFor/createForUser');
+const { updateUserForUserId } = require('../updateFor/updateForUser');
 const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
 
 /*
@@ -14,6 +11,7 @@ Known:
 - (if appliciable to controller) userId formatted correctly and request has sufficient permissions to use
 */
 
+// TO DO put all get, create, update, and deletes code inside their respective try catch statements
 const getUser = async (req, res) => {
   // apple userIdentifier
   const userIdentifier = req.query.userIdentifier;
@@ -50,55 +48,40 @@ const getUser = async (req, res) => {
   return res.status(200).json({ result });
 };
 
+const { refreshSecondaryAlarmNotificationsForUserId } = require('../../main/tools/notifications/alarm/refreshAlarmNotification');
+
 const createUser = async (req, res) => {
   try {
-    const result = await createUserQuery(req);
+    const userIdentifier = req.body.userIdentifier;
+    const result = await createUserForUserIdentifier(req, userIdentifier);
     await req.commitQueries(req);
 
-    // both parameters should be defined. Therefore, we can create the follow up notifications for the user
-    const isFollowUpEnabled = formatBoolean(req.body.isFollowUpEnabled);
-    const followUpDelay = formatNumber(req.body.followUpDelay);
-    if (areAllDefined(isFollowUpEnabled, followUpDelay)) {
-      refreshSecondaryAlarmNotificationsForUser(req.params.userId, isFollowUpEnabled, followUpDelay);
-    }
+    refreshSecondaryAlarmNotificationsForUserId(req.params.userId, req.body.isFollowUpEnabled, req.body.followUpDelay);
+
     return res.status(200).json({ result });
   }
   catch (error) {
+    await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
 };
-
-const { refreshSecondaryAlarmNotificationsForUser } = require('../../main/tools/notifications/alarm/refreshAlarmNotification');
 
 const updateUser = async (req, res) => {
   try {
-    await updateUserQuery(req);
+    const userId = req.params.userId;
+    await updateUserForUserId(req, userId);
     await req.commitQueries(req);
-    const isFollowUpEnabled = formatBoolean(req.body.isFollowUpEnabled);
-    const followUpDelay = formatNumber(req.body.followUpDelay);
-    // check to see if either of these parameters are defined. If they are, then it means the user has updated them
-    if (atLeastOneDefined(isFollowUpEnabled, followUpDelay)) {
-      refreshSecondaryAlarmNotificationsForUser(req.params.userId, isFollowUpEnabled, followUpDelay);
-    }
+
+    refreshSecondaryAlarmNotificationsForUserId(req.params.userId, req.body.isFollowUpEnabled, req.body.followUpDelay);
 
     return res.status(200).json({ result: '' });
   }
   catch (error) {
-    return res.status(400).json(convertErrorToJSON(error));
-  }
-};
-
-const deleteUser = async (req, res) => {
-  try {
-    await deleteUserQuery();
-    await req.commitQueries(req);
-    return res.status(200).json({ result: '' });
-  }
-  catch (error) {
+    await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
 };
 
 module.exports = {
-  getUser, createUser, updateUser, deleteUser,
+  getUser, createUser, updateUser,
 };

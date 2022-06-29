@@ -15,7 +15,6 @@ enum Hash {
         let hashedString = SHA256.hash(data: dataString)
         // SHA256.digest -> "1f66dxxxxxxxxxxxxxxx"
         let hashedStringBackIntoString = hashedString.compactMap { String(format: "%02x", $0) }.joined()
-        print(hashedStringBackIntoString)
         return hashedStringBackIntoString
     }
     static let defaultSHA256Hash: String = sha256Hash(forString: "-1")

@@ -2,6 +2,10 @@ const express = require('express');
 
 const router = express.Router({ mergeParams: true });
 
+const { validateSubscription } = require('../main/tools/format/validateSubscription');
+
+router.use('/', validateSubscription);
+
 const {
   getDogs, createDog, updateDog, deleteDog,
 } = require('../controllers/main/dogs');
