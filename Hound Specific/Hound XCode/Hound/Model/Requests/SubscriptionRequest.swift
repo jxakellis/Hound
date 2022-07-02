@@ -32,9 +32,10 @@ enum SubscriptionRequest: RequestProtocol {
      */
     private static func internalCreate(invokeErrorManager: Bool, forTransaction transaction: SKPaymentTransaction, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         InternalRequestUtils.warnForPlaceholderId()
-        let base64ReceiptData: String = transaction
+        // TO DO encode transaction app receipt url / data to base 64 string. apple specifiys how to do it
+        // let base64ReceiptData: String = transaction
         
-        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(base64ReceiptData)")
+        // let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(base64ReceiptData)")
         InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: [ : ]) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }

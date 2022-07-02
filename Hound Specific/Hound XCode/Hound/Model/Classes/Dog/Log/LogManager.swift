@@ -14,16 +14,19 @@ class LogManager: NSObject, NSCoding, NSCopying {
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = LogManager()
         copy.storedLogs = self.storedLogs
+        copy.storedCatagorizedLogActions = self.storedCatagorizedLogActions
         return copy
     }
     
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         storedLogs = aDecoder.decodeObject(forKey: "logs") as? [Log] ?? []
+        storedCatagorizedLogActions = aDecoder.decodeObject(forKey: "catagorizedLogActions") as? [(LogAction, [Log])] ?? nil
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(storedLogs, forKey: "logs")
+        aCoder.encode(storedCatagorizedLogActions, forKey: "catagorizedLogActions")
     }
     
     // MARK: - Main
@@ -45,6 +48,9 @@ class LogManager: NSObject, NSCoding, NSCopying {
     private var storedLogs: [Log] = []
     var logs: [Log] { return storedLogs }
     
+    // Stores the result of catagorizedLogActions. This increases efficency as if catagorizedLogActions is called multiple times, without the logs array changing, we return this same stored value. If the logs array is updated, then we invalidate the stored value so its recalculated next time
+    private var storedCatagorizedLogActions: [(LogAction, [Log])]?
+    
     /// Helper function allows us to use the same logic for addLog and addLogs and allows us to only sort at the end. Without this function, addLogs would invoke addLog repeadly and sortLogs() with each call.
     private func addLogWithoutSorting(newLog: Log) {
         // removes any existing logs that have the same logId as they would cause problems. .reversed() is needed to make it work, without it there will be an index of out bounds error.
@@ -54,6 +60,7 @@ class LogManager: NSObject, NSCoding, NSCopying {
             break
         }
         
+        storedCatagorizedLogActions = nil
         storedLogs.append(newLog)
     }
     
@@ -93,22 +100,24 @@ class LogManager: NSObject, NSCoding, NSCopying {
             throw LogManagerError.logIdNotPresent
         }
         else {
+            storedCatagorizedLogActions = nil
             storedLogs.remove(at: logIndex ?? LogConstant.defaultLogId)
         }
     }
     
     func removeLog(forIndex index: Int) {
+        storedCatagorizedLogActions = nil
         storedLogs.remove(at: index)
     }
-    
-}
-
-extension LogManager {
     
     // MARK: Information
     
     /// Returns an array of known log actions. Each known log action has an array of logs attached to it. This means you can find every log for a given log action
     var catagorizedLogActions: [(LogAction, [Log])] {
+        // If we have the output of this calculated property stored, return it. Increases efficency by not doing calculation multiple times. Stored property is set to nil if any logs change, so in that case we would recalculate
+        guard storedCatagorizedLogActions == nil else {
+            return storedCatagorizedLogActions!
+        }
         var catagorizedLogActions: [(LogAction, [Log])] = []
         
         // handles all dog logs and adds to catagorized log actions
@@ -175,8 +184,13 @@ extension LogManager {
             
         }
         
+        storedCatagorizedLogActions = catagorizedLogActions
         return catagorizedLogActions
     }
+    
+}
+
+extension LogManager {
     
     // MARK: Compare
     
@@ -185,6 +199,7 @@ extension LogManager {
         // the addLogs function overwrites logs if it finds them, so we must add the logs to the old log (allowing the newLogManager to overwrite the oldLogManager logs if there is an overlap)
         oldLogManager.addLogs(newLogs: self.logs)
         // now that the oldLogManager contains its original logs, our new logs, and has had its old logs overwritten (in the case old & new both had a log with same logId), we have an updated array.
+        storedCatagorizedLogActions = nil
         self.storedLogs = oldLogManager.logs
     }
 }

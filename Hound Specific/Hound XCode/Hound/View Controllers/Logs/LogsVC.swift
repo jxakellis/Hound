@@ -87,128 +87,6 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         parentDogIdOfSelectedLog = nil
     }
 
-    /// If the last log under a dog for a given type was removed while filtering by that type, updates the drop down to reflect this. Does not update table view as it is trigger by the table view.
-    func didRemoveLastFilterLog() {
-        filterIndexPath = nil
-        filterDogId = nil
-        filterLogAction = nil
-    }
-
-    // MARK: - DropDownUIViewDataSource
-
-    private let filterByDogFont: UIFont = UIFont.systemFont(ofSize: 20, weight: .semibold)
-    private let filterByLogFont: UIFont = UIFont.systemFont(ofSize: 15, weight: .regular)
-
-    func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, dropDownUIViewIdentifier: String) {
-
-            let sudoDogManager = getDogManager()
-
-            let customCell = cell as! DropDownDefaultTableViewCell
-            customCell.adjustLeadingTrailing(newConstant: DropDownUIView.insetForLogFilter)
-
-            // clear filter
-            if indexPath.section == sudoDogManager.dogs.count {
-                customCell.label.attributedText = NSAttributedString(string: "Clear Filter", attributes: [.font: filterByDogFont])
-            }
-            else {
-                let dog = sudoDogManager.dogs[indexPath.section]
-                // header
-                if indexPath.row == 0 {
-                    customCell.label.attributedText = NSAttributedString(string: dog.dogName, attributes: [.font: filterByDogFont])
-                }
-                // dog log filter
-                else {
-                    customCell.label.attributedText = NSAttributedString(string: dog.dogLogs.catagorizedLogActions[indexPath.row-1].0.rawValue, attributes: [.font: filterByLogFont])
-                }
-            }
-
-            if indexPath == filterIndexPath {
-                customCell.didToggleSelect(newSelectionStatus: true)
-            }
-            else {
-                customCell.didToggleSelect(newSelectionStatus: false)
-            }
-
-    }
-
-    func numberOfRows(forSection section: Int, dropDownUIViewIdentifier: String) -> Int {
-        let sudoDogManager = getDogManager()
-        guard sudoDogManager.dogs.isEmpty == false else {
-            return 1
-        }
-        // on additional section used for clear filter
-        if section == sudoDogManager.dogs.count {
-            return 1
-        }
-        else {
-            return sudoDogManager.dogs[section].dogLogs.catagorizedLogActions.count + 1
-        }
-
-    }
-
-    func numberOfSections(dropDownUIViewIdentifier: String) -> Int {
-        let sudoDogManager = getDogManager()
-        var count = 0
-        for _ in sudoDogManager.dogs {
-            count += 1
-        }
-        if count == 0 {
-            return 1
-        }
-        else {
-            return count + 1
-        }
-    }
-
-    func selectItemInDropDown(indexPath: IndexPath, dropDownUIViewIdentifier: String) {
-        let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as! DropDownDefaultTableViewCell
-
-        // reset the filter values to nothing and assign their value below if needed
-        // cannot assign filterIndexPath to nil as need it for logic below, the other two filters are just trackers not used for logic here so can set them to nil
-        filterDogId = nil
-        filterLogAction = nil
-        
-        // clear filter
-        if indexPath.section == getDogManager().dogs.count {
-            selectedCell.didToggleSelect(newSelectionStatus: true)
-            filterIndexPath = nil
-        }
-        // already filtering, now not filtering
-        else if filterIndexPath == indexPath {
-            selectedCell.didToggleSelect(newSelectionStatus: false)
-            filterIndexPath = nil
-        }
-        // not filtering, now will filter
-        else if filterIndexPath == nil {
-            selectedCell.didToggleSelect(newSelectionStatus: true)
-
-            filterIndexPath = indexPath
-            let dog = getDogManager().dogs[indexPath.section]
-            filterDogId = dog.dogId
-
-            if indexPath.row != 0 {
-                filterLogAction = dog.dogLogs.catagorizedLogActions[indexPath.row-1].0
-            }
-        }
-        // switching from one filter to another
-        else {
-            let unselectedCell = dropDown.dropDownTableView!.cellForRow(at: filterIndexPath!) as! DropDownDefaultTableViewCell
-            unselectedCell.didToggleSelect(newSelectionStatus: false)
-            selectedCell.didToggleSelect(newSelectionStatus: true)
-
-            filterIndexPath = indexPath
-            let dog = getDogManager().dogs[indexPath.section]
-            filterDogId = dog.dogId
-            
-            if indexPath.row != 0 {
-                filterLogAction = dog.dogLogs.catagorizedLogActions[indexPath.row-1].0
-            }
-        }
-        logsTableViewController.willApplyFiltering(forFilterDogId: filterDogId, forFilterLogAction: filterLogAction)
-
-        dropDown.hideDropDown()
-    }
-
     // MARK: - DogManagerControlFlowProtocol
 
     private var dogManager: DogManager = DogManager()
@@ -226,10 +104,8 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             logsTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
             
             // logs modified have been added so we need to reset the filter
-            filterIndexPath = nil
-            filterDogId = nil
-            filterLogAction = nil
-            logsTableViewController?.willApplyFiltering(forFilterDogId: filterDogId, forFilterLogAction: filterLogAction)
+            logsFilter = [:]
+            logsTableViewController?.willApplyFiltering(forLogsFilter: logsFilter)
         }
         // we dont want to update MainTabBarViewController with the delegate if its the one providing the update
         if (sender.localized is MainTabBarViewController) == false {
@@ -298,20 +174,15 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             }
 
         }
-        self.dropDown.showDropDown(numberOfRowsToShow: CGFloat(numRowsDisplayed), selectedIndexPath: self.filterIndexPath)
-
+        dropDown.showDropDown(numberOfRowsToShow: CGFloat(numRowsDisplayed))
     }
 
     // MARK: - Properties
 
     private let dropDown = DropDownUIView()
 
-    // IndexPath of a filter selected in the dropDown menu, nil if not filtering
-    private var filterIndexPath: IndexPath?
-    /// the dogId of the current dog that the logs are being filted by
-    private var filterDogId: Int?
-    /// the current log action that the logs are being filtered by
-    private var filterLogAction: LogAction?
+    // Dictionary literal the currently applied logsFilter. [ "currentDogId" : ["filterByAction1","filterByAction2"]]. Filters by selected actions under selected dogs. Note: if the dictionary literal is empty, then shows all
+    private var logsFilter: [Int: [LogAction]] = [:]
 
     var logsTableViewController: LogsTableViewController! = nil
 
@@ -364,11 +235,11 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             var largestLabelWidth: CGFloat {
 
                 let sudoDogManager = getDogManager()
-                var largest: CGFloat = "Clear Filter".boundingFrom(font: filterByDogFont, height: DropDownUIView.rowHeightForLogFilter).width
+                var largest: CGFloat = "Clear Filter".boundingFrom(font: FontConstant.filterByDogFont, height: DropDownUIView.rowHeightForLogFilter).width
 
                 for dogIndex in 0..<sudoDogManager.dogs.count {
                     let dog = sudoDogManager.dogs[dogIndex]
-                    let dogNameWidth = dog.dogName.boundingFrom(font: filterByDogFont, height: DropDownUIView.rowHeightForLogFilter).width
+                    let dogNameWidth = dog.dogName.boundingFrom(font: FontConstant.filterByDogFont, height: DropDownUIView.rowHeightForLogFilter).width
 
                     if dogNameWidth > largest {
                         largest = dogNameWidth
@@ -377,7 +248,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
                     let catagorizedLogActions = dog.dogLogs.catagorizedLogActions
                     for logIndex in 0..<catagorizedLogActions.count {
                         let logAction = catagorizedLogActions[logIndex].0
-                        let logActionWidth = logAction.rawValue.boundingFrom(font: filterByLogFont, height: DropDownUIView.rowHeightForLogFilter).width
+                        let logActionWidth = logAction.rawValue.boundingFrom(font: FontConstant.filterByLogFont, height: DropDownUIView.rowHeightForLogFilter).width
 
                         if logActionWidth > largest {
                             largest = logActionWidth
@@ -404,12 +275,200 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         dropDown.cellReusableIdentifier = "dropDownCell"
         dropDown.dataSource = self
         dropDown.setUpDropDown(viewPositionReference: (CGRect(origin: self.view.safeAreaLayoutGuide.layoutFrame.origin, size: CGSize(width: neededWidthForLabel + (DropDownUIView.insetForLogFilter * 2), height: 0.0))), offset: 0.0)
-        dropDown.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
+        dropDown.nib = UINib(nibName: "DropDownLogFilterTableViewCell", bundle: nil)
         dropDown.setRowHeight(height: DropDownUIView.rowHeightForLogFilter)
         self.view.addSubview(dropDown)
     }
 
     @objc private func hideDropDown() {
+        dropDown.hideDropDown()
+    }
+    
+    // MARK: - Drop Down Functions Data Source
+    
+    func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, dropDownUIViewIdentifier: String) {
+        
+        let sudoDogManager = getDogManager()
+        
+        let customCell = cell as! DropDownLogFilterTableViewCell
+        
+        // clear filter
+        if indexPath.section == sudoDogManager.dogs.count {
+            customCell.setup(forDog: nil, forLogAction: nil)
+        }
+        else {
+            let dog = sudoDogManager.dogs[indexPath.section]
+            // dog name header
+            if indexPath.row == 0 {
+                customCell.setup(forDog: dog, forLogAction: nil)
+            }
+            // dog log filter
+            else {
+                customCell.setup(forDog: dog, forLogAction: dog.dogLogs.catagorizedLogActions[indexPath.row-1].0)
+            }
+        }
+        
+        // check to see if the cell is a "Clear Filter" cell, if it is, then set it to not selected and return
+        guard customCell.dogId != nil else {
+            customCell.willToggleDropDownSelection(forSelected: false)
+            return
+        }
+        
+        for dogId in logsFilter.keys where dogId == customCell.dogId {
+            // the cell has a dogId and no logAction so is displaying a dogName. Its dogId is in the logsFilter dictionary, we can select the cell as that dog is selected
+            if customCell.logAction == nil {
+                customCell.willToggleDropDownSelection(forSelected: true)
+                return
+            }
+            
+            // the cell has a logAction, check to see if that logAction is in the filter dictionary. if it is, then we select the cell and return
+            let logActions = logsFilter[dogId]!
+            
+            for logAction in logActions where logAction == customCell.logAction {
+                // the cell has a dogId and a logAction that match the filter dictionary, therefore we can select the cell
+                customCell.willToggleDropDownSelection(forSelected: true)
+                return
+            }
+        }
+        
+        // the cell didn't match any conditions above, so set it as not selected
+        customCell.willToggleDropDownSelection(forSelected: false)
+    }
+    
+    func numberOfRows(forSection section: Int, dropDownUIViewIdentifier: String) -> Int {
+        let sudoDogManager = getDogManager()
+        guard sudoDogManager.dogs.isEmpty == false else {
+            return 1
+        }
+        // We are on the last section. This one is reserved for "Clear Filter"
+        if section == sudoDogManager.dogs.count {
+            return 1
+        }
+        // Regular section, corresponds to a dog
+        else {
+            // A row for the dogName and rows for all of the logActions
+            return sudoDogManager.dogs[section].dogLogs.catagorizedLogActions.count + 1
+        }
+        
+    }
+    
+    func numberOfSections(dropDownUIViewIdentifier: String) -> Int {
+         // We add an extra section for the "Clear Filter" text at the end
+        return getDogManager().dogs.count + 1
+    }
+    
+    func selectItemInDropDown(indexPath: IndexPath, dropDownUIViewIdentifier: String) {
+        let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as! DropDownLogFilterTableViewCell
+        // flip isSelectedInDropDown status
+        selectedCell.willToggleDropDownSelection(forSelected: !selectedCell.isSelectedInDropDown)
+        
+        print(logsFilter)
+        // dog log filter was selected
+        if selectedCell.dogId != nil && selectedCell.logAction != nil {
+            // find any preexisting logActions that we are filtering by
+            var existingLogActionFilters: [LogAction] = logsFilter[selectedCell.dogId!] ?? []
+            
+            // the cell is now selected, add logAction to logsFilter array
+            if selectedCell.isSelectedInDropDown {
+                // add additional logAction to filter by
+                existingLogActionFilters.append(selectedCell.logAction!)
+                // assign array to dogId
+                logsFilter[selectedCell.dogId!] = existingLogActionFilters
+                
+                // Check to see if we just added the first logAction filter for a certain dog
+                if existingLogActionFilters.count == 1 {
+                    // this is the first logAction selected under the dog. Therefore, the dog cell won't be selected. Therefore, we have to select the dog cell
+                    let dogCell = dropDown.dropDownTableView!.cellForRow(at: IndexPath(row: 0, section: indexPath.section)) as! DropDownLogFilterTableViewCell
+                    dogCell.willToggleDropDownSelection(forSelected: true)
+                }
+            }
+            // cell is now unselected, remove logAction from logsFilter array
+            else {
+                print("1")
+                // find index of logAction to remove from logsFilter array
+                let indexToRemove = existingLogActionFilters.firstIndex(of: selectedCell.logAction!)
+                
+                guard indexToRemove != nil else {
+                    return
+                }
+                print("2")
+                // remove logAction from logsFilter array
+                existingLogActionFilters.remove(at: indexToRemove!)
+                // assign array to dogId
+                logsFilter[selectedCell.dogId!] = existingLogActionFilters
+                
+                print("3")
+                // check to see if we removed the the last logAction.
+                if existingLogActionFilters.count == 0 {
+                    print("4")
+                    // We removed the last logAction for a dog. Remove the logsFilter key and unselect the dog
+                    logsFilter[selectedCell.dogId!] = nil
+                    let dogCell = dropDown.dropDownTableView!.cellForRow(at: IndexPath(row: 0, section: indexPath.section)) as! DropDownLogFilterTableViewCell
+                    dogCell.willToggleDropDownSelection(forSelected: false)
+                }
+            }
+        }
+        // dog fitler was selected
+        else if selectedCell.dogId != nil {
+            let dog = try? getDogManager().findDog(forDogId: selectedCell.dogId!)
+            
+            guard dog != nil else {
+                return
+            }
+            
+            // the dog filter is now selected, make sure every logAction under it is also selected and added to the filter array
+            if selectedCell.isSelectedInDropDown {
+                // make array of logActions to filter by
+                var logActionFilters: [LogAction] = []
+                for catagorizedLogAction in dog!.dogLogs.catagorizedLogActions {
+                    let logAction = catagorizedLogAction.0
+                    logActionFilters.append(logAction)
+                }
+                // assign array to dogId, so logsFilter array is updated
+                logsFilter[selectedCell.dogId!] = logActionFilters
+                
+                // now select all the logAction cells (we have 1 dogCell and x logAction rows, so subtract 1 to correct the count)
+                let numberOfLogActionRows = numberOfRows(forSection: indexPath.section, dropDownUIViewIdentifier: "") - 1
+                for logActionRow in 0..<numberOfLogActionRows {
+                    // shift logActionRow by 1, as first row cell is a dogCell so we select the proper cell
+                    let logActionCell = dropDown.dropDownTableView!.cellForRow(at: IndexPath(row: logActionRow + 1, section: indexPath.section)) as! DropDownLogFilterTableViewCell
+                    logActionCell.willToggleDropDownSelection(forSelected: true)
+                }
+            }
+            // the dog filter is now unselected, make sure every logAction under it is also unselcted
+            else {
+                // clear logsFilter array
+                logsFilter[selectedCell.dogId!] = nil
+                
+                // deselect all the logAction cells (we have 1 dogCell and x logAction rows, so subtract 1 to correct the count)
+                let numberOfLogActionRows = numberOfRows(forSection: indexPath.section, dropDownUIViewIdentifier: "") - 1
+                for logActionRow in 0..<numberOfLogActionRows {
+                    // shift logActionRow by 1, as first row cell is a dogCell so we select the proper cell
+                    let logActionCell = dropDown.dropDownTableView!.cellForRow(at: IndexPath(row: logActionRow + 1, section: indexPath.section)) as! DropDownLogFilterTableViewCell
+                    logActionCell.willToggleDropDownSelection(forSelected: false)
+                }
+            }
+        }
+        // "Clear Filter" row was selected
+        else {
+            logsFilter = [:]
+            
+            // deselect all the dog and logAction cells
+            let numberOfDogSections = numberOfSections(dropDownUIViewIdentifier: "") - 1
+            // go through all of the dog sections
+            for dogSection in 0..<numberOfDogSections {
+                let numberOfRows = numberOfRows(forSection: dogSection, dropDownUIViewIdentifier: "")
+                
+                // for each dog section, go through both the dog and logAction cells
+                for cellRow in 0..<numberOfRows {
+                    let cell = dropDown.dropDownTableView!.cellForRow(at: IndexPath(row: cellRow, section: dogSection)) as! DropDownLogFilterTableViewCell
+                    cell.willToggleDropDownSelection(forSelected: false)
+                }
+            }
+        }
+        
+        logsTableViewController.willApplyFiltering(forLogsFilter: logsFilter)
+        
         dropDown.hideDropDown()
     }
 

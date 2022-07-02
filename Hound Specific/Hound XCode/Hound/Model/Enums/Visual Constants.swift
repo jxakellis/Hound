@@ -6,7 +6,7 @@
 //  Copyright © 2022 Jonathan Xakellis. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 enum ViewTagConstant: Int {
     // reserve 0 through 9999 for use within app. it will never reach anywhere near that level but it costs nothing to reserver some tags.
@@ -23,6 +23,8 @@ enum ViewTagConstant: Int {
 
 enum FontConstant: Double {
     case logCellFontSize = 13.0
+    static let filterByDogFont = UIFont.systemFont(ofSize: 20, weight: .semibold)
+    static let filterByLogFont = UIFont.systemFont(ofSize: 15, weight: .regular)
 }
 
 enum AnimationConstant: Double {

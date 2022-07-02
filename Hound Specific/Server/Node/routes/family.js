@@ -12,7 +12,7 @@ router.param('familyId', validateFamilyId);
 
 const { attachSubscriptionInformation } = require('../main/tools/format/validateSubscription');
 
-router.use('/', attachSubscriptionInformation);
+router.use('/:familyId', attachSubscriptionInformation);
 
 // route to dogs (or nested) related things
 const dogsRouter = require('./dogs');

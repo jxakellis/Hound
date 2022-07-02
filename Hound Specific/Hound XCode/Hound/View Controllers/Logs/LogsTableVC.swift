@@ -11,7 +11,6 @@ import UIKit
 protocol LogsTableViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
     func didSelectLog(parentDogId: Int, log: Log)
-    func didRemoveLastFilterLog()
 }
 
 class LogsTableViewController: UITableViewController, DogManagerControlFlowProtocol {
@@ -41,11 +40,8 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
 
     /// Array of tuples [(uniqueDay, uniqueMonth, uniqueYear, [(parentDogId, log)])]. This array has all of the logs for all of the dogs grouped what unique day/month/year they occured on, first element is furthest in the future and last element is the oldest. Optionally filters by the dogId and logAction provides
     private var chronologicalLogsGroupedByDate: [(Int, Int, Int, [(Int, Log)])] = []
-
-    /// the dogId of the current dog that the logs are being filted by
-    private var filterDogId: Int?
-    /// the current log action that the logs are being filtered by
-    private var filterLogAction: LogAction?
+    
+    private var logsFilter: [Int: [LogAction]] = [:]
 
     /// used for determining if logs interface scale was changed and if the table view needs reloaded
     private var storedLogsInterfaceScale: LogsInterfaceScale = UserConfiguration.logsInterfaceScale
@@ -96,23 +92,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
     
     private func reloadTableDataSource() {
         
-        self.chronologicalLogsGroupedByDate = dogManager.chronologicalLogsGroupedByDate(forDogId: filterDogId, forLogAction: filterLogAction)
-        
-        if filterDogId != nil && filterLogAction != nil, let dog = try? dogManager.findDog(forDogId: filterDogId!) {
-            // checks to see if filter log action still present within the dog, if its not then the user took an action to remove the last log of a certain log action from the dog
-            if dog.dogLogs.catagorizedLogActions.contains(where: { (arg1) in
-                let knownLogAction = arg1.0
-                if knownLogAction == filterLogAction! {
-                    return true
-                }
-                else {
-                    return false
-                }
-            }) == false {
-                // user remove the last log for that particular filter type, so we should clear the current active filter 
-                delegate.didRemoveLastFilterLog()
-            }
-        }
+        self.chronologicalLogsGroupedByDate = dogManager.chronologicalLogsGroupedByDate(forLogsFilter: logsFilter)
         
         if chronologicalLogsGroupedByDate.count == 0 {
             tableView.separatorStyle = .none
@@ -123,10 +103,9 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
     }
 
     /// Will apply a filtering scheme dependent on indexPath, nil means going to no filtering.
-    func willApplyFiltering(forFilterDogId filterDogId: Int?, forFilterLogAction filterLogAction: LogAction?) {
+    func willApplyFiltering(forLogsFilter logsFilter: [Int: [LogAction]]) {
 
-        self.filterDogId = filterDogId
-        self.filterLogAction = filterLogAction
+        self.logsFilter = logsFilter
 
         reloadTable()
     }
@@ -157,7 +136,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         var shouldShowFilterIndicator: Bool {
-            if indexPath.section == 0 && (filterDogId != nil || filterLogAction != nil) {
+            if indexPath.section == 0 && logsFilter != [:] {
                 return true
             }
             else {
@@ -261,7 +240,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
                         tableView.deleteRows(at: [indexPath], with: .fade)
                         
                         var shouldShowFilterIndicator: Bool {
-                            if indexPath.section == 0 && (self.filterDogId != nil || self.filterLogAction != nil) {
+                            if indexPath.section == 0 && self.logsFilter != [:] {
                                 return true
                             }
                             else {

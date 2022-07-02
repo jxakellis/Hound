@@ -4,7 +4,8 @@ const router = express.Router({ mergeParams: true });
 
 const { validateSubscription } = require('../main/tools/format/validateSubscription');
 
-router.use('/', validateSubscription);
+// TO DO reenable vaidate subscription
+// router.use('/', validateSubscription);
 
 const {
   getDogs, createDog, updateDog, deleteDog,

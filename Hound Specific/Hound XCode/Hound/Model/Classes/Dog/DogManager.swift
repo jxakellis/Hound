@@ -205,41 +205,26 @@ extension DogManager {
         return count
     }
     
-    /// Returns an array of tuples [(parentDogId, log]). This array has all the logs for all the dogs sorted chronologically, oldest log at index 0 and newest at end of array. Optionally filters by the dogId and logAction provides
-    func chronologicalLogs(forDogId dogId: Int?, forLogAction logAction: LogAction?) -> [(Int, Log)] {
+    /// Returns an array of tuples [(parentDogId, log]). This array has all the logs for all the dogs sorted chronologically, oldest log at index 0 and newest at end of array. Optionally filters by dictionary literal of [dogIds: [logActions]] provided
+    private func chronologicalLogs(forLogsFilter logsFilter: [Int: [LogAction]]) -> [(Int, Log)] {
         var chronologicalLogs: [(Int, Log)] = []
         
-        // dogId was provided so we look for a specific dog's logs
-        if dogId != nil {
-            for dog in dogs where dog.dogId == dogId {
-                // no logAction was provided so we append all the logs
-                if logAction == nil {
-                    for log in dog.dogLogs.logs {
-                        chronologicalLogs.append((dog.dogId, log))
-                    }
-                }
-                // a log action was provided so we append all the logs that match the logAction
-                else {
-                    for log in dog.dogLogs.logs where log.logAction == logAction {
-                        chronologicalLogs.append((dog.dogId, log))
-                    }
+        // no filter was provided, so we add all logs of all dogs
+        if logsFilter.isEmpty {
+            for dog in dogs {
+                for log in dog.dogLogs.logs {
+                    chronologicalLogs.append((dog.dogId, log))
                 }
             }
         }
-        // dogId was not provided
+        // a filter was provided
         else {
-            for dog in dogs {
-                // no logAction was provided so we append all the logs
-                if logAction == nil {
-                    for log in dog.dogLogs.logs {
-                        chronologicalLogs.append((dog.dogId, log))
-                    }
-                }
-                // a log action was provided so we append all the logs that match the logAction
-                else {
-                    for log in dog.dogLogs.logs where log.logAction == logAction {
-                        chronologicalLogs.append((dog.dogId, log))
-                    }
+            // search for dogs provided in the filter, as we only want logs from dogs specified in the filter
+            for dog in dogs where logsFilter.keys.contains(dog.dogId) {
+                // search for dogLogs in the dog. We only want logs that have a logAction which is provided in the filter (under the dogId)
+                for log in dog.dogLogs.logs where logsFilter[dog.dogId]!.contains(log.logAction) {
+                    // the filter had the dogId stored, specifiying this dog, and had the logAction stored, specifying all logs of this logAction type. This means we can append the log
+                    chronologicalLogs.append((dog.dogId, log))
                 }
             }
         }
@@ -267,8 +252,8 @@ extension DogManager {
     }
     
     /// Returns an array of tuples [(uniqueDay, uniqueMonth, uniqueYear, [(parentDogId, log)])]. This array has all of the logs for all of the dogs grouped what unique day/month/year they occured on, first element is furthest in the future and last element is the oldest. Optionally filters by the dogId and logAction provides
-    func chronologicalLogsGroupedByDate(forDogId dogId: Int?, forLogAction logAction: LogAction?) -> [(Int, Int, Int, [(Int, Log)])] {
-        let ungroupedChronologicalLogs = chronologicalLogs(forDogId: dogId, forLogAction: logAction)
+    func chronologicalLogsGroupedByDate(forLogsFilter logsFilter: [Int: [LogAction]]) -> [(Int, Int, Int, [(Int, Log)])] {
+        let ungroupedChronologicalLogs = chronologicalLogs(forLogsFilter: logsFilter)
         var chronologicalLogsGroupedByDate: [(Int, Int, Int, [(Int, Log)])] = []
         
         // we will be going from oldest logs to newest logs (by logDate)

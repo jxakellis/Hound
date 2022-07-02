@@ -41,14 +41,14 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
     // MARK: - DropDownUIViewDataSource
     
     func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, dropDownUIViewIdentifier: String) {
-        let customCell = cell as! DropDownDefaultTableViewCell
+        let customCell = cell as! DropDownTableViewCell
         customCell.adjustLeadingTrailing(newConstant: DropDownUIView.insetForBorderedUILabel)
         
         if selectedIndexPath == indexPath {
-            customCell.didToggleSelect(newSelectionStatus: true)
+            customCell.willToggleDropDownSelection(forSelected: true)
         }
         else {
-            customCell.didToggleSelect(newSelectionStatus: false)
+            customCell.willToggleDropDownSelection(forSelected: false)
         }
         
         // inside of the predefined ReminderAction
@@ -71,8 +71,8 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
     
     func selectItemInDropDown(indexPath: IndexPath, dropDownUIViewIdentifier: String) {
         
-        let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as! DropDownDefaultTableViewCell
-        selectedCell.didToggleSelect(newSelectionStatus: true)
+        let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as! DropDownTableViewCell
+        selectedCell.willToggleDropDownSelection(forSelected: true)
         selectedIndexPath = indexPath
         
         // inside of the predefined LogAction
@@ -297,7 +297,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             dropDown.cellReusableIdentifier = "dropDownCell"
             dropDown.dataSource = self
             dropDown.setUpDropDown(viewPositionReference: reminderActionLabel.frame, offset: 2.0)
-            dropDown.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
+            dropDown.nib = UINib(nibName: "DropDownTableViewCell", bundle: nil)
             dropDown.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
             view.addSubview(dropDown)
         }

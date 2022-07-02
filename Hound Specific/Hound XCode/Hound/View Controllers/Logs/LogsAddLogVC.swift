@@ -42,27 +42,27 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
     
     func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, dropDownUIViewIdentifier: String) {
         if dropDownUIViewIdentifier == "dropDownParentDog"{
-            let customCell = cell as! DropDownDefaultTableViewCell
+            let customCell = cell as! DropDownTableViewCell
             customCell.adjustLeadingTrailing(newConstant: DropDownUIView.insetForBorderedUILabel)
             
             if selectedParentDogIndexPath == indexPath {
-                customCell.didToggleSelect(newSelectionStatus: true)
+                customCell.willToggleDropDownSelection(forSelected: true)
             }
             else {
-                customCell.didToggleSelect(newSelectionStatus: false)
+                customCell.willToggleDropDownSelection(forSelected: false)
             }
             
             customCell.label.text = dogManager.dogs[indexPath.row].dogName
         }
         else if dropDownUIViewIdentifier == "dropDownLogAction"{
-            let customCell = cell as! DropDownDefaultTableViewCell
+            let customCell = cell as! DropDownTableViewCell
             customCell.adjustLeadingTrailing(newConstant: DropDownUIView.insetForBorderedUILabel)
             
             if selectedLogActionIndexPath == indexPath {
-                customCell.didToggleSelect(newSelectionStatus: true)
+                customCell.willToggleDropDownSelection(forSelected: true)
             }
             else {
-                customCell.didToggleSelect(newSelectionStatus: false)
+                customCell.willToggleDropDownSelection(forSelected: false)
             }
             
             // inside of the predefined LogAction
@@ -100,8 +100,8 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
     
     func selectItemInDropDown(indexPath: IndexPath, dropDownUIViewIdentifier: String) {
         if dropDownUIViewIdentifier == "dropDownParentDog"{
-            let selectedCell = dropDownParentDog.dropDownTableView!.cellForRow(at: indexPath) as! DropDownDefaultTableViewCell
-            selectedCell.didToggleSelect(newSelectionStatus: true)
+            let selectedCell = dropDownParentDog.dropDownTableView!.cellForRow(at: indexPath) as! DropDownTableViewCell
+            selectedCell.willToggleDropDownSelection(forSelected: true)
             
             selectedParentDogIndexPath = indexPath
             
@@ -111,8 +111,8 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
         }
         else if dropDownUIViewIdentifier == "dropDownLogAction"{
             
-            let selectedCell = dropDownLogAction.dropDownTableView!.cellForRow(at: indexPath) as! DropDownDefaultTableViewCell
-            selectedCell.didToggleSelect(newSelectionStatus: true)
+            let selectedCell = dropDownLogAction.dropDownTableView!.cellForRow(at: indexPath) as! DropDownTableViewCell
+            selectedCell.willToggleDropDownSelection(forSelected: true)
             selectedLogActionIndexPath = indexPath
             
             // inside of the predefined LogAction
@@ -490,7 +490,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
             dropDownParentDog.cellReusableIdentifier = "dropDownCell"
             dropDownParentDog.dataSource = self
             dropDownParentDog.setUpDropDown(viewPositionReference: parentDogLabel.frame, offset: 2.0)
-            dropDownParentDog.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
+            dropDownParentDog.nib = UINib(nibName: "DropDownTableViewCell", bundle: nil)
             dropDownParentDog.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
             view.addSubview(dropDownParentDog)
             
@@ -498,7 +498,7 @@ class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextVie
             dropDownLogAction.cellReusableIdentifier = "dropDownCell"
             dropDownLogAction.dataSource = self
             dropDownLogAction.setUpDropDown(viewPositionReference: logActionLabel.frame, offset: 2.0)
-            dropDownLogAction.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
+            dropDownLogAction.nib = UINib(nibName: "DropDownTableViewCell", bundle: nil)
             dropDownLogAction.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
             view.addSubview(dropDownLogAction)
         }

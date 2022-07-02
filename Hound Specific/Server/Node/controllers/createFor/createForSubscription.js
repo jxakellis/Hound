@@ -11,8 +11,6 @@ const createSubscriptionForUserIdFamilyIdRecieptId = async (req, userId, familyI
   if (areAllDefined(userId, familyId, encodedReceiptData) === false) {
     throw new ValidationError('userId, familyId, or encodedReceiptData missing', 'ER_VALUES_MISSING');
   }
-
-  
 };
 
 module.exports = { createSubscriptionForUserIdFamilyIdRecieptId };

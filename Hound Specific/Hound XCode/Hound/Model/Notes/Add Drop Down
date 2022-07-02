@@ -10,7 +10,7 @@ Add conformance to DropDownUIViewDataSource
     private let dropDownRowHeight: CGFloat = 30
     
     func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, dropDownUIViewIdentifier: String) {
-        let customCell = cell as! DropDownDefaultTableViewCell
+        let customCell = cell as! DropDownTableViewCell
             customCell.adjustLeadingTrailing(newConstant: NUMBER)
             
             //adjust customCell based on indexPath
@@ -34,9 +34,9 @@ Add conformance to DropDownUIViewDataSource
         //do actions based on a cell selected at a indexPath given a dropDownUIViewIdentifier
         //want to hide the drop down after something is selected
         
-        let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as! DropDownDefaultTableViewCell
+        let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as! DropDownTableViewCell
             
-        selectedCell.didToggleSelect(newSelectionStatus: BOOL)
+        selectedCell.willToggleDropDownSelection(forSelected: BOOL)
             
         self.dropDown.hideDropDown()
     }
@@ -48,7 +48,7 @@ Add conformance to DropDownUIViewDataSource
         dropDown.cellReusableIdentifier = "dropDownCell"
         dropDown.dataSource = self
         dropDown.setUpDropDown(viewPositionReference: frameOfBorderedLabel, offset: 0.0)
-        dropDown.nib = UINib(nibName: "DropDownDefaultTableViewCell", bundle: nil)
+        dropDown.nib = UINib(nibName: "DropDownTableViewCell", bundle: nil)
         dropDown.setRowHeight(height: self.dropDownRowHeight)
         self.view.addSubview(dropDown)
     }
