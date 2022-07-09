@@ -1,6 +1,6 @@
 const express = require('express');
 
-const router = express.Router({ mergeParams: true });
+const logsRouter = express.Router({ mergeParams: true });
 
 const {
   getLogs, createLog, updateLog, deleteLog,
@@ -8,30 +8,30 @@ const {
 const { validateLogId } = require('../main/tools/format/validateId');
 
 // validation that params are formatted correctly and have adequate permissions
-router.param('logId', validateLogId);
+logsRouter.param('logId', validateLogId);
 
 // gets all logs
-router.get('/', getLogs);
+logsRouter.get('/', getLogs);
 // no body
 
 // gets specific logs
-router.get('/:logId', getLogs);
+logsRouter.get('/:logId', getLogs);
 // no body
 
 // create log
-router.post('/', createLog);
+logsRouter.post('/', createLog);
 /* BODY:
 Single: { logInfo }
 */
 
 // updates log
-router.put('/:logId', updateLog);
+logsRouter.put('/:logId', updateLog);
 /* BODY:
 Single: { logInfo }
 */
 
 // deletes log
-router.delete('/:logId', deleteLog);
+logsRouter.delete('/:logId', deleteLog);
 // no body
 
-module.exports = router;
+module.exports = { logsRouter };

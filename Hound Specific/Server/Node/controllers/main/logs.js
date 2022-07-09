@@ -2,7 +2,7 @@ const { getLogForLogId, getAllLogsForDogId } = require('../getFor/getForLogs');
 const { createLogForUserIdDogId } = require('../createFor/createForLogs');
 const { updateLogForDogIdLogId } = require('../updateFor/updateForLogs');
 const { deleteLogForLogId } = require('../deleteFor/deleteForLogs');
-const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
+const { convertErrorToJSON } = require('../../main/tools/errors/errorFormat');
 const { createLogNotification } = require('../../main/tools/notifications/alert/createLogNotification');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
@@ -12,8 +12,6 @@ Known:
 - dogId formatted correctly and request has sufficient permissions to use
 - (if appliciable to controller) logId formatted correctly and request has sufficient permissions to use
 */
-
-// TO DO put all get, create, update, and deletes code inside their respective try catch statements
 const getLogs = async (req, res) => {
   try {
     const dogId = req.params.dogId;
@@ -81,9 +79,9 @@ const updateLog = async (req, res) => {
 };
 
 const deleteLog = async (req, res) => {
-  const dogId = req.params.dogId;
-  const logId = req.params.logId;
   try {
+    const dogId = req.params.dogId;
+    const logId = req.params.logId;
     await deleteLogForLogId(req, dogId, logId);
     await req.commitQueries(req);
     return res.status(200).json({ result: '' });

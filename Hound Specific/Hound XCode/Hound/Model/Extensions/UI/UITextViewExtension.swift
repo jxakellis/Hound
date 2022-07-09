@@ -39,14 +39,14 @@ extension UITextView {
         get {
             var placeholderText: String?
             
-            if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForUITextView.rawValue) as? UILabel {
+            if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForUITextView) as? UILabel {
                 placeholderText = placeholderLabel.text
             }
             
             return placeholderText
         }
         set {
-            if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForUITextView.rawValue) as? UILabel {
+            if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForUITextView) as? UILabel {
                 placeholderLabel.text = newValue
                 placeholderLabel.sizeToFit()
             }
@@ -60,14 +60,14 @@ extension UITextView {
     ///
     /// - Parameter textView: The UITextView that got updated
     @objc public func textViewDidChange(_ sender: NSNotification) {
-        if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForUITextView.rawValue) as? UILabel {
+        if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForUITextView) as? UILabel {
             placeholderLabel.isHidden = !self.text.isEmpty
         }
     }
     
     /// Resize the placeholder UILabel to make sure it's in the same position as the UITextView text
     private func resizePlaceholder() {
-        if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForUITextView.rawValue) as? UILabel {
+        if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForUITextView) as? UILabel {
             let labelX = self.textContainer.lineFragmentPadding
             let labelY = self.textContainerInset.top - 2
             let labelWidth = self.frame.width - (labelX * 2)
@@ -86,7 +86,7 @@ extension UITextView {
         
         placeholderLabel.font = self.font
         placeholderLabel.textColor = UIColor.systemGray3
-        placeholderLabel.tag = ViewTagConstant.placeholderForUITextView.rawValue
+        placeholderLabel.tag = ViewTagConstant.placeholderForUITextView
         
         placeholderLabel.isHidden = !self.text.isEmpty
         

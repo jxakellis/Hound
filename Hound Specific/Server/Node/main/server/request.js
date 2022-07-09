@@ -4,8 +4,8 @@ const { parseFormData, parseJSON } = require('./parse');
 const { requestLoggerForRequest, responseLoggerForResponse } = require('../tools/logging/requestLogging');
 const { assignConnection } = require('../tools/database/databaseConnection');
 const { validateAppBuild } = require('../tools/format/validateId');
-const userRouter = require('../../routes/user');
-const GeneralError = require('../tools/errors/generalError');
+const { userRouter } = require('../../routes/user');
+const { GeneralError } = require('../tools/errors/generalError');
 
 const configureAppForRequests = (app) => {
 // Parse information possible sent

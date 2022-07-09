@@ -8,7 +8,6 @@ const { areAllDefined, atLeastOneDefined } = require('../../format/validateDefin
 
 const { createSecondaryAlarmNotificationForUser } = require('./createAlarmNotification');
 const { deleteSecondaryAlarmNotificationsForUser } = require('./deleteAlarmNotification');
-const { IS_PRODUCTION } = require('../../../server/constants');
 
 /**
  * Invoke when the user toggles isFollowUpEnabled or changes followUpDelay
@@ -18,7 +17,7 @@ const { IS_PRODUCTION } = require('../../../server/constants');
  */
 const refreshSecondaryAlarmNotificationsForUserId = async (userId, isFollowUpEnabled, followUpDelay) => {
   try {
-    if (IS_PRODUCTION === false) {
+    if (global.constant.server.IS_PRODUCTION === false) {
       alarmLogger.debug(`refreshSecondaryAlarmNotificationsForUserId ${userId}, ${isFollowUpEnabled}, ${followUpDelay}`);
     }
 

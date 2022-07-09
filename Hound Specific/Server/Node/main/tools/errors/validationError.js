@@ -22,4 +22,4 @@ ER_NOT_FOUND
 ER_ALREADY_PRESENT
 */
 
-module.exports = ValidationError;
+module.exports = { ValidationError };

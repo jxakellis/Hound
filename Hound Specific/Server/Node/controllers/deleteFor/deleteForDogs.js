@@ -1,4 +1,6 @@
-const DatabaseError = require('../../main/tools/errors/databaseError');
+const { DatabaseError } = require('../../main/tools/errors/databaseError');
+const { ValidationError } = require('../../main/tools/errors/validationError');
+const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { deleteAllLogsForDogId } = require('./deleteForLogs');
 const { deleteAllRemindersForFamilyIdDogId } = require('./deleteForReminders');
@@ -9,6 +11,10 @@ const { deleteAllRemindersForFamilyIdDogId } = require('./deleteForReminders');
  */
 const deleteDogForFamilyIdDogId = async (req, familyId, dogId) => {
   const dogLastModified = new Date();
+
+  if (areAllDefined(req, familyId, dogId) === false) {
+    throw new ValidationError('req, familyId, or dogId missing', 'ER_VALUES_MISSING');
+  }
 
   // delete all reminders
   await deleteAllRemindersForFamilyIdDogId(req, familyId, dogId);
@@ -36,6 +42,10 @@ const deleteDogForFamilyIdDogId = async (req, familyId, dogId) => {
  */
 const deleteAllDogsForFamilyId = async (req, familyId) => {
   let dogIds;
+
+  if (areAllDefined(req, familyId) === false) {
+    throw new ValidationError('req or familyId missing', 'ER_VALUES_MISSING');
+  }
 
   // attempt to find all dogIds
   try {

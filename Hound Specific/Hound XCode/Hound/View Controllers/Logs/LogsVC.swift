@@ -103,9 +103,8 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             // need to update table view
             logsTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
             
-            // logs modified have been added so we need to reset the filter
+            // logs modified have been added so we need to reset the filter. Note: setting the dogManager of logsTableViewController automatically clears the logsFilter, so don't invoke the log filter method
             logsFilter = [:]
-            logsTableViewController?.willApplyFiltering(forLogsFilter: logsFilter)
         }
         // we dont want to update MainTabBarViewController with the delegate if its the one providing the update
         if (sender.localized is MainTabBarViewController) == false {
@@ -153,7 +152,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             var totalCount: Int {
                 var count = 0
                 for dog in getDogManager().dogs {
-                    count += dog.dogLogs.catagorizedLogActions.count + 1
+                    count += dog.dogLogs.uniqueLogActions.count + 1
                 }
 
                 if count == 0 {
@@ -245,10 +244,8 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
                         largest = dogNameWidth
                     }
 
-                    let catagorizedLogActions = dog.dogLogs.catagorizedLogActions
-                    for logIndex in 0..<catagorizedLogActions.count {
-                        let logAction = catagorizedLogActions[logIndex].0
-                        let logActionWidth = logAction.rawValue.boundingFrom(font: FontConstant.filterByLogFont, height: DropDownUIView.rowHeightForLogFilter).width
+                    for uniqueLogAction in dog.dogLogs.uniqueLogActions {
+                        let logActionWidth = uniqueLogAction.rawValue.boundingFrom(font: FontConstant.filterByLogFont, height: DropDownUIView.rowHeightForLogFilter).width
 
                         if logActionWidth > largest {
                             largest = logActionWidth
@@ -304,7 +301,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             }
             // dog log filter
             else {
-                customCell.setup(forDog: dog, forLogAction: dog.dogLogs.catagorizedLogActions[indexPath.row-1].0)
+                customCell.setup(forDog: dog, forLogAction: dog.dogLogs.uniqueLogActions[indexPath.row-1])
             }
         }
         
@@ -347,7 +344,7 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         // Regular section, corresponds to a dog
         else {
             // A row for the dogName and rows for all of the logActions
-            return sudoDogManager.dogs[section].dogLogs.catagorizedLogActions.count + 1
+            return sudoDogManager.dogs[section].dogLogs.uniqueLogActions.count + 1
         }
         
     }
@@ -362,7 +359,6 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
         // flip isSelectedInDropDown status
         selectedCell.willToggleDropDownSelection(forSelected: !selectedCell.isSelectedInDropDown)
         
-        print(logsFilter)
         // dog log filter was selected
         if selectedCell.dogId != nil && selectedCell.logAction != nil {
             // find any preexisting logActions that we are filtering by
@@ -384,23 +380,19 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             }
             // cell is now unselected, remove logAction from logsFilter array
             else {
-                print("1")
                 // find index of logAction to remove from logsFilter array
                 let indexToRemove = existingLogActionFilters.firstIndex(of: selectedCell.logAction!)
                 
                 guard indexToRemove != nil else {
                     return
                 }
-                print("2")
                 // remove logAction from logsFilter array
                 existingLogActionFilters.remove(at: indexToRemove!)
                 // assign array to dogId
                 logsFilter[selectedCell.dogId!] = existingLogActionFilters
                 
-                print("3")
                 // check to see if we removed the the last logAction.
                 if existingLogActionFilters.count == 0 {
-                    print("4")
                     // We removed the last logAction for a dog. Remove the logsFilter key and unselect the dog
                     logsFilter[selectedCell.dogId!] = nil
                     let dogCell = dropDown.dropDownTableView!.cellForRow(at: IndexPath(row: 0, section: indexPath.section)) as! DropDownLogFilterTableViewCell
@@ -419,13 +411,8 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
             // the dog filter is now selected, make sure every logAction under it is also selected and added to the filter array
             if selectedCell.isSelectedInDropDown {
                 // make array of logActions to filter by
-                var logActionFilters: [LogAction] = []
-                for catagorizedLogAction in dog!.dogLogs.catagorizedLogActions {
-                    let logAction = catagorizedLogAction.0
-                    logActionFilters.append(logAction)
-                }
                 // assign array to dogId, so logsFilter array is updated
-                logsFilter[selectedCell.dogId!] = logActionFilters
+                logsFilter[selectedCell.dogId!] = dog!.dogLogs.uniqueLogActions
                 
                 // now select all the logAction cells (we have 1 dogCell and x logAction rows, so subtract 1 to correct the count)
                 let numberOfLogActionRows = numberOfRows(forSection: indexPath.section, dropDownUIViewIdentifier: "") - 1
@@ -465,11 +452,11 @@ class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogMana
                     cell.willToggleDropDownSelection(forSelected: false)
                 }
             }
+            
+            dropDown.hideDropDown()
         }
         
         logsTableViewController.willApplyFiltering(forLogsFilter: logsFilter)
-        
-        dropDown.hideDropDown()
     }
 
     // MARK: - Navigation

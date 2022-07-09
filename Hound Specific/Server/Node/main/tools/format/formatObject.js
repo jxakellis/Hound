@@ -156,8 +156,8 @@ const formatSHA256Hash = (str) => {
   string = string.toLowerCase();
 
   const regex = /^[A-Fa-f0-9]{64}$/g;
-  const isValidSHA256Hash = regex.test(string);
-  if (isValidSHA256Hash === false) {
+  const isValid = regex.test(string);
+  if (isValid === false) {
     return undefined;
   }
   return string;
@@ -171,8 +171,8 @@ const formatBase64EncodedString = (str) => {
 
   // OUTPUT IS CASE SENSITIVE
   const regex = /^(?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?$/;
-  const isValidSHA256Hash = regex.test(string);
-  if (isValidSHA256Hash === false) {
+  const isValid = regex.test(string);
+  if (isValid === false) {
     return undefined;
   }
   return string;

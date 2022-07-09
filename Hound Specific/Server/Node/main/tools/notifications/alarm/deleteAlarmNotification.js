@@ -1,14 +1,13 @@
 const { alarmLogger } = require('../../logging/loggers');
 const { queryPromise } = require('../../database/queryPromise');
 const { connectionForAlarms } = require('../../database/databaseConnection');
-const { IS_PRODUCTION } = require('../../../server/constants');
 
 const { areAllDefined } = require('../../format/validateDefined');
 const { cancelPrimaryJobForFamilyForReminder, cancelSecondaryJobForUserForReminder } = require('./cancelJob');
 
 const deleteAlarmNotificationsForFamily = async (familyId) => {
   try {
-    if (IS_PRODUCTION === false) {
+    if (global.constant.server.IS_PRODUCTION === false) {
       alarmLogger.debug(`deleteAlarmNotificationsForFamily ${familyId}`);
     }
 
@@ -53,7 +52,7 @@ const deleteAlarmNotificationsForFamily = async (familyId) => {
  */
 const deleteAlarmNotificationsForReminder = async (familyId, reminderId) => {
   try {
-    if (IS_PRODUCTION === false) {
+    if (global.constant.server.IS_PRODUCTION === false) {
       alarmLogger.debug(`deleteAlarmNotificationsForReminder ${familyId}, ${reminderId}`);
     }
 
@@ -87,7 +86,7 @@ const deleteAlarmNotificationsForReminder = async (familyId, reminderId) => {
  */
 const deleteSecondaryAlarmNotificationsForUser = async (userId) => {
   try {
-    if (IS_PRODUCTION === false) {
+    if (global.constant.server.IS_PRODUCTION === false) {
       alarmLogger.debug(`deleteSecondaryAlarmNotificationsForUser ${userId}`);
     }
 

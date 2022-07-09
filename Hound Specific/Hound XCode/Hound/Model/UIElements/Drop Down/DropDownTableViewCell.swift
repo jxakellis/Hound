@@ -39,8 +39,10 @@ class DropDownTableViewCell: UITableViewCell {
     func willToggleDropDownSelection(forSelected selected: Bool) {
         
         isSelectedInDropDown = selected
-        contentView.backgroundColor = selected ? .systemBlue : .systemBackground
-        label.textColor = selected ? .white : .label
+        UIView.animate(withDuration: AnimationConstant.willToggleDropDownSelection) {
+            self.contentView.backgroundColor = selected ? .systemBlue : .systemBackground
+            self.label.textColor = selected ? .white : .label
+        }
         
     }
     

@@ -1,6 +1,8 @@
+// make sure the constants are loaded
+require('./constants');
+
 const express = require('express');
 const { serverLogger } = require('../tools/logging/loggers');
-const { SERVER_PORT, IS_PRODUCTION } = require('./constants');
 
 const app = express();
 
@@ -10,10 +12,10 @@ const { restoreAlarmNotificationsForAllFamilies } = require('../tools/notificati
 const { cleanUpIsDeleted } = require('../tools/database/cleanUpDatabase');
 
 // Make the server listen on a specific port
-const server = app.listen(SERVER_PORT, async () => {
-  serverLogger.info(`Listening on port ${SERVER_PORT}`);
+const server = app.listen(global.constant.server.SERVER_PORT, async () => {
+  serverLogger.info(`Listening on port ${global.constant.server.SERVER_PORT}`);
 
-  if (IS_PRODUCTION) {
+  if (global.constant.server.IS_PRODUCTION) {
     // Server is freshly restarted. Restore notifications that were lost;
     await restoreAlarmNotificationsForAllFamilies();
   }

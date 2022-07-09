@@ -1,9 +1,8 @@
-const DatabaseError = require('../../main/tools/errors/databaseError');
-const ValidationError = require('../../main/tools/errors/validationError');
+const { DatabaseError } = require('../../main/tools/errors/databaseError');
+const { ValidationError } = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { formatDate } = require('../../main/tools/format/formatObject');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
-const { NUMBER_OF_LOGS_PER_DOG } = require('../../main/server/constants');
 
 /**
  *  Queries the database to create a log. If the query is successful, then returns the logId.
@@ -17,16 +16,17 @@ const createLogForUserIdDogId = async (req, userId, dogId) => {
   const dogLastModified = new Date();
   const logLastModified = dogLastModified; // manual
 
-  if (areAllDefined(userId, dogId, logDate, logNote, logAction) === false) {
-    throw new ValidationError('userId, dogId, logDate, logNote, or logAction missing', 'ER_VALUES_MISSING');
+  if (areAllDefined(req, userId, dogId, logDate, logNote, logAction) === false) {
+    throw new ValidationError('req, userId, dogId, logDate, logNote, or logAction missing', 'ER_VALUES_MISSING');
   }
 
   let numberOfLogs;
   try {
+    // only retrieve enough not deleted logs that would exceed the limit
     numberOfLogs = await queryPromise(
       req,
-      'SELECT logId FROM dogLogs WHERE logIsDeleted = 0 AND dogId = ? LIMIT 18446744073709551615',
-      [dogId],
+      'SELECT logId FROM dogLogs WHERE logIsDeleted = 0 AND dogId = ? LIMIT ?',
+      [dogId, global.constant.limit.NUMBER_OF_LOGS_PER_DOG],
     );
   }
   catch (error) {
@@ -34,8 +34,8 @@ const createLogForUserIdDogId = async (req, userId, dogId) => {
   }
 
   // make sure that the user isn't creating too many logs
-  if (numberOfLogs.length >= NUMBER_OF_LOGS_PER_DOG) {
-    throw new ValidationError(`Dog log limit of ${NUMBER_OF_LOGS_PER_DOG} exceeded`, 'ER_LOGS_LIMIT_EXCEEDED');
+  if (numberOfLogs.length >= global.constant.limit.NUMBER_OF_LOGS_PER_DOG) {
+    throw new ValidationError(`Dog log limit of ${global.constant.limit.NUMBER_OF_LOGS_PER_DOG} exceeded`, 'ER_LOGS_LIMIT_EXCEEDED');
   }
 
   try {

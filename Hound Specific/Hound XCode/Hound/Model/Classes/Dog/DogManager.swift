@@ -44,7 +44,6 @@ class DogManager: NSObject, NSCopying, NSCoding {
     
     /// Init from an array of dog JSON
     convenience init?(fromBody dogBodies: [[String: Any]]) {
-       
         var dogArray: [Dog] = []
         
         // Array of dog JSON [{dog1:'foo'},{dog2:'bar'}]
@@ -206,15 +205,13 @@ extension DogManager {
     }
     
     /// Returns an array of tuples [(parentDogId, log]). This array has all the logs for all the dogs sorted chronologically, oldest log at index 0 and newest at end of array. Optionally filters by dictionary literal of [dogIds: [logActions]] provided
-    private func chronologicalLogs(forLogsFilter logsFilter: [Int: [LogAction]]) -> [(Int, Log)] {
-        var chronologicalLogs: [(Int, Log)] = []
+    private func logsByDogId(forLogsFilter logsFilter: [Int: [LogAction]]) -> [Int: [Log]] {
+        var logsByDogId: [Int: [Log]] = [:]
         
         // no filter was provided, so we add all logs of all dogs
         if logsFilter.isEmpty {
             for dog in dogs {
-                for log in dog.dogLogs.logs {
-                    chronologicalLogs.append((dog.dogId, log))
-                }
+                logsByDogId[dog.dogId] = dog.dogLogs.logs
             }
         }
         // a filter was provided
@@ -222,51 +219,44 @@ extension DogManager {
             // search for dogs provided in the filter, as we only want logs from dogs specified in the filter
             for dog in dogs where logsFilter.keys.contains(dog.dogId) {
                 // search for dogLogs in the dog. We only want logs that have a logAction which is provided in the filter (under the dogId)
-                for log in dog.dogLogs.logs where logsFilter[dog.dogId]!.contains(log.logAction) {
+                logsByDogId[dog.dogId] = dog.dogLogs.logs.filter { log in
                     // the filter had the dogId stored, specifiying this dog, and had the logAction stored, specifying all logs of this logAction type. This means we can append the log
-                    chronologicalLogs.append((dog.dogId, log))
+                    return logsFilter[dog.dogId]!.contains(log.logAction)
                 }
             }
         }
         
-        // sorts from earlist in time (e.g. 1970) to most recent (e.g. 2021)
-        chronologicalLogs.sort { (var1, var2) -> Bool in
-            let log1: Log = var1.1
-            let log2: Log = var2.1
-            
-            // Returning true means item1 comes before item2, false means item2 before item1
-            
-            // Returns true if var1's log1 is earlier in time than var2's log2
-            
-            // If date1's distance to date2 is positive, i.e. date2 is later in time, returns false as date2 should be ordered first (most recent (to current Date()) dates first)
-            if log1.logDate.distance(to: log2.logDate) > 0 {
-                return false
-            }
-            // If date1 is later in time than date2, returns true as it should come before date2
-            else {
-                return true
-            }
-        }
-        
-        return chronologicalLogs
+        return logsByDogId
     }
     
     /// Returns an array of tuples [(uniqueDay, uniqueMonth, uniqueYear, [(parentDogId, log)])]. This array has all of the logs for all of the dogs grouped what unique day/month/year they occured on, first element is furthest in the future and last element is the oldest. Optionally filters by the dogId and logAction provides
-    func chronologicalLogsGroupedByDate(forLogsFilter logsFilter: [Int: [LogAction]]) -> [(Int, Int, Int, [(Int, Log)])] {
-        let ungroupedChronologicalLogs = chronologicalLogs(forLogsFilter: logsFilter)
-        var chronologicalLogsGroupedByDate: [(Int, Int, Int, [(Int, Log)])] = []
+    func groupedLogsByUniqueDate(forLogsFilter logsFilter: [Int: [LogAction]]) -> [(Int, Int, Int, [(Int, Log)])] {
+        var dogIdLogsTuples: [(Int, Log)] = []
+        // Put all the dogIds and logs into one array
+        
+        for element in logsByDogId(forLogsFilter: logsFilter) {
+            element.value.forEach { log in
+                dogIdLogsTuples.append((element.key, log))
+            }
+        }
+        
+        // Sort this array chronologically
+        dogIdLogsTuples.sort { tuple1, tuple2 in
+            let (_, log1) = tuple1
+            let (_, log2) = tuple2
+            return log1.logDate.distance(to: log2.logDate) <= 0
+        }
+        
+        var groupedLogsByUniqueDate: [(Int, Int, Int, [(Int, Log)])] = []
         
         // we will be going from oldest logs to newest logs (by logDate)
-        for logTuple in ungroupedChronologicalLogs {
-            // first check to see if chronologicalLogsGroupedByDate contains the day/month/year combination of this log
-            let logDate = logTuple.1.logDate
+        for element in dogIdLogsTuples {
+            let logDay = Calendar.current.component(.day, from: element.1.logDate)
+            let logMonth = Calendar.current.component(.month, from: element.1.logDate)
+            let logYear = Calendar.current.component(.year, from: element.1.logDate)
             
-            let logDay = Calendar.current.component(.day, from: logDate)
-            let logMonth = Calendar.current.component(.month, from: logDate)
-            let logYear = Calendar.current.component(.year, from: logDate)
-            
-            let containsDateCombination = chronologicalLogsGroupedByDate.contains { day, month, year, _ in
-                // chronologicalLogsGroupedByDate already contains a
+            let containsDateCombination = groupedLogsByUniqueDate.contains { day, month, year, _ in
+                // check to see if that day, month, year comboination is already present
                 if day == logDay && month == logMonth && year == logYear {
                     return true
                 }
@@ -276,18 +266,18 @@ extension DogManager {
             }
             
             // there is already a tuple with the same day, month, and year, so we want to add this dogId/log combo to the array attached to that tuple
-            if containsDateCombination == true {
-                // since ungroupedChronologicalLogs is sorted chronologically already, the tuple with the array we want will be at the end of chronologicalLogsGroupedByDate
-                chronologicalLogsGroupedByDate[chronologicalLogsGroupedByDate.count - 1].3.append(logTuple)
+            if containsDateCombination {
+                groupedLogsByUniqueDate[groupedLogsByUniqueDate.count - 1].3.append(element)
+                
             }
             // in the master array, there is not a matching tuple with the specified day, month, and year, so we should add an element that contains the day, month, and year plus this log since its logDate is on this day, month, and year
             else {
-                chronologicalLogsGroupedByDate.append((logDay, logMonth, logYear, [logTuple]))
+                groupedLogsByUniqueDate.append((logDay, logMonth, logYear, [element]))
             }
         }
         
         // Sort the array so that the the tuples with the dates that are furthest in the future are at the beginning of the array and the oldest are at the end
-        chronologicalLogsGroupedByDate.sort { tuple1, tuple2 in
+        groupedLogsByUniqueDate.sort { tuple1, tuple2 in
             let (day1, month1, year1, _) = tuple1
             let (day2, month2, year2, _) = tuple2
             // if the year is bigger and the day is bigger then that comes first (e.g.  (4, 2020) comes first in the array and (2,2020) comes second, so most recent is first)
@@ -322,7 +312,7 @@ extension DogManager {
             }
         }
         
-        return chronologicalLogsGroupedByDate
+        return groupedLogsByUniqueDate
         
     }
     
@@ -334,6 +324,7 @@ extension DogManager {
         oldDogManager.addDogs(newDogs: self.dogs)
         // now that the oldDogManager contains its original dogs, our new dogs, and has had its old dogs overwritten (in the case old & new both had a dog with same dogId), we have an updated array.
         self.storedDogs = oldDogManager.dogs
+        sortDogs()
     }
     
 }

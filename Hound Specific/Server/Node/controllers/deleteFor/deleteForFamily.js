@@ -1,8 +1,15 @@
-const DatabaseError = require('../../main/tools/errors/databaseError');
-const ValidationError = require('../../main/tools/errors/validationError');
+const { DatabaseError } = require('../../main/tools/errors/databaseError');
+const { ValidationError } = require('../../main/tools/errors/validationError');
+
 const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { formatSHA256Hash } = require('../../main/tools/format/formatObject');
+const { areAllDefined } = require('../../main/tools/format/validateDefined');
+
 const { deleteAllDogsForFamilyId } = require('./deleteForDogs');
+
+const { createUserKickedNotification } = require('../../main/tools/notifications/alert/createUserKickedNotification');
 const { createFamilyMemberLeaveNotification } = require('../../main/tools/notifications/alert/createFamilyNotification');
+const { deleteSecondaryAlarmNotificationsForUser } = require('../../main/tools/notifications/alarm/deleteAlarmNotification');
 
 /**
  *  Queries the database to either remove the user from their current family (familyMember) or delete the family and everything nested under it (families).
@@ -10,8 +17,32 @@ const { createFamilyMemberLeaveNotification } = require('../../main/tools/notifi
  *  If an error is encountered, creates and throws custom error
  */
 const deleteFamilyForUserIdFamilyId = async (req, userId, familyId) => {
+  const kickUserId = formatSHA256Hash(req.body.kickUserId);
+
+  if (areAllDefined(req, userId, familyId) === false) {
+    throw new ValidationError('req, userId, or familyId missing', 'ER_VALUES_MISSING');
+  }
+
+  if (areAllDefined(kickUserId)) {
+    await kickFamilyMember(req, userId, familyId);
+  }
+  else {
+    await deleteFamily(req, userId, familyId);
+  }
+};
+
+/**
+ * Helper method for deleteFamilyForUserIdFamilyId, goes through checks to remove a user from their family
+ * If the user is the head of the family (and there are no other family members), we delete the family
+ */
+const deleteFamily = async (req, userId, familyId) => {
   let familyMembers;
   let family;
+
+  if (areAllDefined(req, userId, familyId) === false) {
+    throw new ValidationError('req, userId, or familyId missing', 'ER_VALUES_MISSING');
+  }
+
   try {
     // find the amount of family members in the family
     familyMembers = await queryPromise(
@@ -73,6 +104,56 @@ const deleteFamilyForUserIdFamilyId = async (req, userId, familyId) => {
   // NOTE: in the case of the user being the family head (aka the only family members if we reached this point),
   // this will ultimately find no userNotificationTokens for the other family members and send no APN
   createFamilyMemberLeaveNotification(userId, familyId);
+};
+
+/**
+ * Helper method for deleteFamilyForUserIdFamilyId, goes through checks to attempt to kick a user from the family
+ */
+const kickFamilyMember = async (req, userId, familyId) => {
+  const kickUserId = formatSHA256Hash(req.body.kickUserId);
+
+  // have to specify who to kick from the family
+  if (areAllDefined(req, userId, familyId, kickUserId) === false) {
+    throw new ValidationError('req, userId, familyId, or kickUserId missing', 'ER_VALUES_MISSING');
+  }
+  // a user cannot kick themselves
+  if (userId === kickUserId) {
+    throw new ValidationError('kickUserId invalid', 'ER_VALUES_INVALID');
+  }
+  let family;
+  try {
+    family = await queryPromise(
+      req,
+      'SELECT userId, familyId FROM families WHERE userId = ? AND familyId = ? LIMIT 1',
+      [userId, familyId],
+    );
+  }
+  catch (error) {
+    throw new DatabaseError(error.code);
+  }
+  // check to see if the user is the family head, as only the family head has permissions to kick
+  if (family.length === 0) {
+    throw new ValidationError('Invalid permissions to kick family member', 'ER_NOT_FOUND');
+  }
+
+  // kickUserId is valid, kickUserId is different then the requester, requester is the family head so everything is valid
+  try {
+    // kick the user by deleting them from the family
+    await queryPromise(
+      req,
+      'DELETE FROM familyMembers WHERE userId = ?',
+      [kickUserId],
+    );
+  }
+  catch (error) {
+    throw new DatabaseError(error.code);
+  }
+
+  // remove any pending secondary alarm notifications they have queued
+  // The primary alarm notifications retrieve the notification tokens of familyMembers right as they fire, so the user will not be included
+  deleteSecondaryAlarmNotificationsForUser(kickUserId);
+  createFamilyMemberLeaveNotification(kickUserId, familyId);
+  createUserKickedNotification(kickUserId);
 };
 
 module.exports = { deleteFamilyForUserIdFamilyId };

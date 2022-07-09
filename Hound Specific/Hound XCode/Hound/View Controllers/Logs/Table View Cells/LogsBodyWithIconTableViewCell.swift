@@ -34,7 +34,7 @@ class LogsBodyWithIconTableViewCell: UITableViewCell {
         let familyMemberThatLogged = FamilyMember.findFamilyMember(forUserId: log.userId)
         familyMemberNameLabel.text = familyMemberThatLogged?.displayFirstName ?? "Unknown⚠️"
         
-        let fontSize = FontConstant.logCellFontSize.rawValue
+        let fontSize = FontConstant.logCellFontSize
         let sizeRatio = UserConfiguration.logsInterfaceScale.currentScaleFactor
         
         familyMemberNameLabel.font = familyMemberNameLabel.font.withSize(fontSize * sizeRatio)

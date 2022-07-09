@@ -126,18 +126,19 @@ private class InternalInAppPurchaseManager: NSObject, SKProductsRequestDelegate,
     
     private var currentProductPurchase: SKProduct?
     
+    private var currentProductPurchaseIsLocked: Bool = false
+    
     private var currentProductPurchaseCompletionHandler: ((String?) -> Void)?
     
     // Prompt a product payment transaction
     func purchase(forProduct product: SKProduct, completionHandler: @escaping ((String?) -> Void)) {
-        print("1")
         guard SKPaymentQueue.canMakePayments() else {
-            print("2")
             // TO DO handle case if can't make payments
             return
         }
         
-        print("3")
+      // TO DO reject cases where there is a transaction in progress
+        
         currentProductPurchase = product
         currentProductPurchaseCompletionHandler = completionHandler
         let payment = SKPayment(product: product)
@@ -148,14 +149,20 @@ private class InternalInAppPurchaseManager: NSObject, SKProductsRequestDelegate,
     // Observe a transaction state
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
         // make sure we are only handling the transaction of the product being purhcased
-        print("4")
+        guard currentProductPurchaseIsLocked == false else {
+            return
+        }
+        
         for transaction in transactions where transaction.payment.productIdentifier == self.currentProductPurchase?.productIdentifier {
-            
-            print("5 \(transaction.transactionState.rawValue)")
-            // TO DO only call SKPaymentQueue.default().finishTransaction(transaction) when our app has finished processing the transaction. This would be after a SUCCESSFUL API call to update the server. Need to change how we do it below
             // We use the main thread so completion handler is on main thread
             DispatchQueue.main.async {
                 // Need to be very explict about the transaction payment and what product its for. For example: you queue a purchase then your phone dies. This purchase isn't completed but might still be in the queue. If it's not handled, then could accidently send through a transaction that wasn't actually completed
+                
+                // Use guard statement again. This is because we are executing on the async thread, so inital guard statement could be passed because currentProductPurchaseIsLocked is set to true milliseconds after.
+                guard self.currentProductPurchaseIsLocked == false else {
+                    return
+                }
+                
                 switch transaction.transactionState {
                 case .purchasing:
                     // A transaction that is being processed by the App Store.
@@ -163,6 +170,7 @@ private class InternalInAppPurchaseManager: NSObject, SKProductsRequestDelegate,
                     // transaction is not finished, don't call finishTransaction
                     break
                 case .purchased:
+                    self.currentProductPurchaseIsLocked = true
                     // A successfully processed transaction.
                     // Your application should provide the content the user purchased.
                     
@@ -183,6 +191,7 @@ private class InternalInAppPurchaseManager: NSObject, SKProductsRequestDelegate,
                     self.currentProductPurchaseCompletionHandler?(nil)
                     // transaction is not finished, don't call finishTransaction
                 case .restored:
+                    self.currentProductPurchaseIsLocked = true
                     // A transaction that restores content previously purchased by the user.
                     // Read the original property to obtain information about the original purchase.
                     
@@ -215,6 +224,7 @@ private class InternalInAppPurchaseManager: NSObject, SKProductsRequestDelegate,
     /// Invoke this function when a transaction has reached the end of its processing. This would be in the case that it was successfully purchased and the Hound servers successfully updated, successfully restored and Hound servers sucessfully updated, or a failed ( or unknown) purchase that has been discarded.
     private func finishTransaction(forTransaction transaction: SKPaymentTransaction) {
         currentProductPurchase = nil
+        currentProductPurchaseIsLocked = false
         currentProductPurchaseCompletionHandler = nil
         SKPaymentQueue.default().finishTransaction(transaction)
     }

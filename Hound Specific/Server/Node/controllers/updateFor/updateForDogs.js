@@ -1,5 +1,5 @@
-const DatabaseError = require('../../main/tools/errors/databaseError');
-const ValidationError = require('../../main/tools/errors/validationError');
+const { DatabaseError } = require('../../main/tools/errors/databaseError');
+const { ValidationError } = require('../../main/tools/errors/validationError');
 
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
@@ -13,8 +13,8 @@ const updateDogForDogId = async (req, dogId) => {
   const dogLastModified = new Date(); // manual
 
   // if dogName undefined, then there is nothing to update
-  if (areAllDefined(dogId, dogName) === false) {
-    throw new ValidationError('dogId or dogName missing', 'ER_VALUES_MISSING');
+  if (areAllDefined(req, dogId, dogName) === false) {
+    throw new ValidationError('req, dogId, or dogName missing', 'ER_VALUES_MISSING');
   }
 
   try {

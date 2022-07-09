@@ -18,4 +18,4 @@ ER_NO_POOL_CONNECTION
 ER_NO_POOL_TRANSACTION
 */
 
-module.exports = DatabaseError;
+module.exports = { DatabaseError };

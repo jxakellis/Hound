@@ -27,7 +27,8 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
         dogManager = newDogManager
 
         if !(sender.localized is LogsTableViewController) {
-            self.reloadTable()
+            // if something external made changes (i.e. not having a user swipe on the table view), we should clear the filter as external changes could have made filter invalid
+            willApplyFiltering(forLogsFilter: [:])
         }
         else {
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
@@ -38,8 +39,8 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
 
     // MARK: - Properties
 
-    /// Array of tuples [(uniqueDay, uniqueMonth, uniqueYear, [(parentDogId, log)])]. This array has all of the logs for all of the dogs grouped what unique day/month/year they occured on, first element is furthest in the future and last element is the oldest. Optionally filters by the dogId and logAction provides
-    private var chronologicalLogsGroupedByDate: [(Int, Int, Int, [(Int, Log)])] = []
+    /// Array of tuples [(uniqueDay, uniqueMonth, uniqueYear, [(parentDogId, log)])]. This array has all of the logs for all of the dogs grouped what unique day/month/year they occured on, first element is furthest in the future and last element is the oldest. Optionally filters by the dogId and logAction provides IMPORTANT IMPORTANT IMPORTANT to store this value so we don't recompute more than needed
+    private var groupedLogsByUniqueDate: [(Int, Int, Int, [(Int, Log)])] = []
     
     private var logsFilter: [Int: [LogAction]] = [:]
 
@@ -92,9 +93,10 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
     
     private func reloadTableDataSource() {
         
-        self.chronologicalLogsGroupedByDate = dogManager.chronologicalLogsGroupedByDate(forLogsFilter: logsFilter)
+        // important to store this value so we don't recompute more than needed
+        groupedLogsByUniqueDate = dogManager.groupedLogsByUniqueDate(forLogsFilter: logsFilter)
         
-        if chronologicalLogsGroupedByDate.count == 0 {
+        if groupedLogsByUniqueDate.count == 0 {
             tableView.separatorStyle = .none
         }
         else {
@@ -113,23 +115,23 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
     // MARK: - Table View Data Source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        if chronologicalLogsGroupedByDate.count == 0 {
+        if groupedLogsByUniqueDate.count == 0 {
             return 1
         }
         else {
-            return chronologicalLogsGroupedByDate.count
+            return groupedLogsByUniqueDate.count
         }
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        if chronologicalLogsGroupedByDate.count == 0 {
+        if groupedLogsByUniqueDate.count == 0 {
             return 1
 
         }
         else {
             // find the number of logs for a given unique day/month/year, then add 1 for the header that says the day/month/year
-            return chronologicalLogsGroupedByDate[section].3.count + 1
+            return groupedLogsByUniqueDate[section].3.count + 1
         }
     }
 
@@ -145,7 +147,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
         }
 
         // no logs present
-        if chronologicalLogsGroupedByDate.count == 0 {
+        if groupedLogsByUniqueDate.count == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "logsHeaderTableViewCell", for: indexPath)
             
             let customCell = cell as! LogsHeaderTableViewCell
@@ -156,7 +158,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
         // logs are present and need a header (row being zero indicates that the cell is a header)
         else if indexPath.row == 0 {
 
-            let nestedLogsArray: [(Int, Log)] = chronologicalLogsGroupedByDate[indexPath.section].3
+            let nestedLogsArray: [(Int, Log)] = groupedLogsByUniqueDate[indexPath.section].3
 
             // For the given parent array, we will take the first log in the nested array. The header will extract the date information from that log. It doesn't matter which log we take as all logs will have the same day, month, and year since they were already sorted to be in that array.
 
@@ -170,7 +172,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
         // log
         else {
 
-            let nestedLogsArray: [(Int, Log)] =  chronologicalLogsGroupedByDate[indexPath.section].3
+            let nestedLogsArray: [(Int, Log)] =  groupedLogsByUniqueDate[indexPath.section].3
 
             // indexPath.row -1 corrects for the first row in the section being the header
             let targetTuple = nestedLogsArray[indexPath.row-1]
@@ -216,9 +218,9 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
 
             // identify components needed to remove data
             let sudoDogManager = getDogManager()
-            let originalNumberOfSections = chronologicalLogsGroupedByDate.count
+            let originalNumberOfSections = groupedLogsByUniqueDate.count
 
-            let nestedLogsArray = chronologicalLogsGroupedByDate[indexPath.section].3
+            let nestedLogsArray = groupedLogsByUniqueDate[indexPath.section].3
             let parentDogId = nestedLogsArray[indexPath.row-1].0
             let logId = nestedLogsArray[indexPath.row-1].1.logId
 
@@ -249,18 +251,18 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
                         }
                         
                         // removed final log and must update header (no logs are left at all)
-                        if self.chronologicalLogsGroupedByDate.count == 0 {
+                        if self.groupedLogsByUniqueDate.count == 0 {
                             
                             let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LogsHeaderTableViewCell
                             headerCell.setup(fromDate: nil, shouldShowFilterIndictator: shouldShowFilterIndicator)
                             
                         }
                         // removed final log of a given section and must remove all headers and body in that now gone-from-the-data section
-                        else if originalNumberOfSections != self.chronologicalLogsGroupedByDate.count {
+                        else if originalNumberOfSections != self.groupedLogsByUniqueDate.count {
                             tableView.deleteSections(IndexSet(integer: indexPath.section), with: .automatic)
                             
                             // removed section that has filter indicator
-                            if indexPath.section == 0 && self.chronologicalLogsGroupedByDate.count >= 1 {
+                            if indexPath.section == 0 && self.groupedLogsByUniqueDate.count >= 1 {
                                 // for whatever header will be at the top (section 1 currently but will soon be section 0) the filter indicator will be shown if calculated shouldShowFilterIndicator returnd true (! converts to proper isHidden:)
                                 
                                 let headerCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LogsHeaderTableViewCell
@@ -277,7 +279,7 @@ class LogsTableViewController: UITableViewController, DogManagerControlFlowProto
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let nestedLogsArray = chronologicalLogsGroupedByDate[indexPath.section].3
+        let nestedLogsArray = groupedLogsByUniqueDate[indexPath.section].3
         let dogId = nestedLogsArray[indexPath.row-1].0
         let logId = nestedLogsArray[indexPath.row-1].1.logId
         

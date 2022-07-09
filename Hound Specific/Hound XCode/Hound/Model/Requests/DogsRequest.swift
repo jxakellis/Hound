@@ -168,7 +168,6 @@ extension DogsRequest {
                 switch responseStatus {
                 case .successResponse:
                     if let newDogManagerBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]], let newDogManager = DogManager(fromBody: newDogManagerBody) {
-                        
                         // successful sync, so we can update value
                         LocalConfiguration.lastDogManagerSynchronization = lastDogManagerSynchronization
                         

@@ -1,11 +1,10 @@
 const express = require('express');
 
-const router = express.Router({ mergeParams: true });
+const dogsRouter = express.Router({ mergeParams: true });
 
 const { validateSubscription } = require('../main/tools/format/validateSubscription');
 
-// TO DO reenable vaidate subscription
-// router.use('/', validateSubscription);
+dogsRouter.use('/', validateSubscription);
 
 const {
   getDogs, createDog, updateDog, deleteDog,
@@ -13,40 +12,40 @@ const {
 const { validateDogId } = require('../main/tools/format/validateId');
 
 // validation that params are formatted correctly and have adequate permissions
-router.param('dogId', validateDogId);
+dogsRouter.param('dogId', validateDogId);
 
 // route to dogs
-const logsRouter = require('./logs');
+const { logsRouter } = require('./logs');
 
-router.use('/:dogId/logs', logsRouter);
+dogsRouter.use('/:dogId/logs', logsRouter);
 
 // route to reminders
-const reminderRouter = require('./reminders');
+const { remindersRouter } = require('./reminders');
 
-router.use('/:dogId/reminders', reminderRouter);
+dogsRouter.use('/:dogId/reminders', remindersRouter);
 
 // gets all dogs, query parameter of ?all attaches the logs and the reminders to the dog
-router.get('/', getDogs);
+dogsRouter.get('/', getDogs);
 // no body
 
 // gets specific dog, query parameter of ?all attaches the logs and the reminders to the dogs
-router.get('/:dogId', getDogs);
+dogsRouter.get('/:dogId', getDogs);
 // no body
 
 // creates dog
-router.post('/', createDog);
+dogsRouter.post('/', createDog);
 /* BODY:
 Single: { dogInfo }
 */
 
 // updates dog
-router.put('/:dogId', updateDog);
+dogsRouter.put('/:dogId', updateDog);
 /* BODY:
 Single: { dogInfo }
 */
 
 // deletes dog
-router.delete('/:dogId', deleteDog);
+dogsRouter.delete('/:dogId', deleteDog);
 // no body
 
-module.exports = router;
+module.exports = { dogsRouter };

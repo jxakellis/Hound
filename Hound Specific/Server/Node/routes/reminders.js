@@ -1,6 +1,6 @@
 const express = require('express');
 
-const router = express.Router({ mergeParams: true });
+const remindersRouter = express.Router({ mergeParams: true });
 
 const {
   getReminders, createReminder, updateReminder, deleteReminder,
@@ -13,37 +13,37 @@ const { validateParamsReminderId, validateBodyReminderId } = require('../main/to
 // Validate body for delete at specific route
 
 // validation that params are formatted correctly and have adequate permissions
-router.param('reminderId', validateParamsReminderId);
+remindersRouter.param('reminderId', validateParamsReminderId);
 
 // gets all reminders
-router.get('/', getReminders);
+remindersRouter.get('/', getReminders);
 // no body
 
 // gets specific reminder
-router.get('/:reminderId', getReminders);
+remindersRouter.get('/:reminderId', getReminders);
 // no body
 
 // create reminder(s)
-router.post('/', createReminder);
+remindersRouter.post('/', createReminder);
 /* BODY:
 Single: { reminderInfo }
 Multiple: { reminders: [reminderInfo1, reminderInfo2...] }
 */
 
 // update reminder(s)
-router.put('/', validateBodyReminderId, updateReminder);
-// router.put('/:reminderId', updateReminder);
+remindersRouter.put('/', validateBodyReminderId, updateReminder);
+// remindersRouter.put('/:reminderId', updateReminder);
 /* BODY:
 Single: { reminderInfo }
 Multiple: { reminders: [reminderInfo1, reminderInfo2...] }
 */
 
 // delete reminder(s)
-router.delete('/', validateBodyReminderId, deleteReminder);
-// router.delete('/:reminderId', deleteReminder);
+remindersRouter.delete('/', validateBodyReminderId, deleteReminder);
+// remindersRouter.delete('/:reminderId', deleteReminder);
 /* BODY:
 Single: { reminderId }
 Multiple: { reminders: [reminderId1, reminderId2...] }
 */
 
-module.exports = router;
+module.exports = { remindersRouter };

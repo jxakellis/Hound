@@ -1,5 +1,5 @@
-const DatabaseError = require('../../main/tools/errors/databaseError');
-const ValidationError = require('../../main/tools/errors/validationError');
+const { DatabaseError } = require('../../main/tools/errors/databaseError');
+const { ValidationError } = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
   formatNumber, formatEmail, formatBoolean,
@@ -32,13 +32,21 @@ const createUserForUserIdentifier = async (req, userIdentifier) => {
 
   // component of the body is missing or invalid
   if (areAllDefined(
-    [userId, userEmail, userIdentifier,
-      isNotificationEnabled, isLoudNotification, isFollowUpEnabled,
-      followUpDelay, logsInterfaceScale, remindersInterfaceScale,
-      interfaceStyle, snoozeLength, notificationSound],
+    req,
+    userId,
+    userEmail,
+    userIdentifier,
+    isNotificationEnabled,
+    isLoudNotification,
+    isFollowUpEnabled,
+    followUpDelay,
+    logsInterfaceScale,
+    remindersInterfaceScale,
+    interfaceStyle,
+    snoozeLength,
+    notificationSound,
   ) === false) {
-    // >=1 of the items is undefined
-    throw new ValidationError('userEmail, userIdentifier, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req, userId, userEmail, userIdentifier, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound missing', 'ER_VALUES_MISSING');
   }
 
   try {

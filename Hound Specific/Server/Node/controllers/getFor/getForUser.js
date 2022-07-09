@@ -1,5 +1,5 @@
-const DatabaseError = require('../../main/tools/errors/databaseError');
-const ValidationError = require('../../main/tools/errors/validationError');
+const { DatabaseError } = require('../../main/tools/errors/databaseError');
+const { ValidationError } = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 

@@ -1,26 +1,30 @@
-const DatabaseError = require('../../main/tools/errors/databaseError');
-const ValidationError = require('../../main/tools/errors/validationError');
+const { DatabaseError } = require('../../main/tools/errors/databaseError');
+const { ValidationError } = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
-const { generateVerifiedFamilyCode } = require('../../main/tools/database/generateVerifiedFamilyCode');
-
-const { getFamilyMembersForUserId } = require('../getFor/getForFamily');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { hash } = require('../../main/tools/format/hash');
+
+const { generateVerifiedFamilyCode } = require('../../main/tools/database/generateVerifiedFamilyCode');
+const { getFamilyMemberForUserId } = require('../getFor/getForFamily');
 
 /**
  *  Queries the database to create a family. If the query is successful, then returns the familyId.
  *  If a problem is encountered, creates and throws custom error
  */
 const createFamilyForUserId = async (req, userId) => {
+  if (areAllDefined(req, userId) === false) {
+    throw new ValidationError('req or userId missing', 'ER_VALUES_MISSING');
+  }
+
   const familyAccountCreationDate = new Date();
   const familyId = await hash(userId, familyAccountCreationDate.toISOString());
 
   if (areAllDefined(userId, familyAccountCreationDate, familyId) === false) {
-    throw new ValidationError('userId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('userId, familyAccountCreationDate, or familyId missing', 'ER_VALUES_MISSING');
   }
 
   // check if the user is already in a family
-  const existingFamilyResult = await getFamilyMembersForUserId(req, userId);
+  const existingFamilyResult = await getFamilyMemberForUserId(req, userId);
 
   // validate that the user is not in a family
   if (existingFamilyResult.length !== 0) {

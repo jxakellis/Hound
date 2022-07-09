@@ -4,8 +4,6 @@ const { schedule } = require('./schedules');
 
 const { areAllDefined } = require('../../format/validateDefined');
 
-const { IS_PRODUCTION } = require('../../../server/constants');
-
 /**
  * Cancels primary jobs scheduled with the provided familyId and reminderId
  */
@@ -17,7 +15,7 @@ const cancelPrimaryJobForFamilyForReminder = async (familyId, reminderId) => {
   // attempt to locate job that has the userId and reminderId
   const primaryJob = schedule.scheduledJobs[`Family${familyId}Reminder${reminderId}`];
   if (areAllDefined(primaryJob)) {
-    if (IS_PRODUCTION === false) {
+    if (global.constant.server.IS_PRODUCTION === false) {
       alarmLogger.debug(`Cancelling Primary Job: ${primaryJob.name}`);
       alarmLogger.info(`Cancelled job; count is now ${Object.keys(schedule.scheduledJobs).length - 1}`);
     }
@@ -36,7 +34,7 @@ const cancelSecondaryJobForUserForReminder = async (userId, reminderId) => {
   // attempt to locate job that has the userId and reminderId  (note: names are in strings, so must convert int to string)
   const secondaryJob = schedule.scheduledJobs[`User${userId}Reminder${reminderId}`];
   if (areAllDefined(secondaryJob)) {
-    if (IS_PRODUCTION === false) {
+    if (global.constant.server.IS_PRODUCTION === false) {
       alarmLogger.debug(`Cancelling Secondary Job: ${secondaryJob.name}`);
       alarmLogger.info(`Cancelled job; count is now ${Object.keys(schedule.scheduledJobs).length - 1}`);
     }

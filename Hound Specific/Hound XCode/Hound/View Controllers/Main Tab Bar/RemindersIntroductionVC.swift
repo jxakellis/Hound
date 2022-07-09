@@ -82,17 +82,15 @@ class RemindersIntroductionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if dogManager.hasCreatedReminder == false {
-            remindersBody.text = "We'll create reminders that are useful for most dogs. Do you want to use them?"
-            remindersToggleSwitch.isEnabled = true
-            remindersToggleSwitch.isOn = true
+        remindersBody.text = dogManager.hasCreatedReminder == false ? "We'll create reminders that are useful for most dogs. Do you want to use them? You can always create more or edit reminders later." : "It appears that your family has already created a few reminders for your dog\(dogManager.dogs.count > 1 ? "s" : ""). Hopefully they cover everything you need. If not, you can always create more or edit reminders. Enjoy!"
+        remindersToggleSwitch.isEnabled = !dogManager.hasCreatedReminder
+        remindersToggleSwitch.isOn = !dogManager.hasCreatedReminder
+        
+        if dogManager.hasCreatedReminder == true {
+            remindersToggleSwitch.removeFromSuperview()
+            remindersBody.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor, constant: -10.0).isActive = true
         }
-        else {
-            remindersBody.text = "It appears that your family has already created a few reminders for your dog. Therefore, you don't need to add Hound's default set of reminders."
-            remindersToggleSwitch.isEnabled = false
-            remindersToggleSwitch.isOn = false
-        }
-
+        
         continueButton.layer.cornerRadius = 10.0
     }
     

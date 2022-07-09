@@ -3,11 +3,10 @@ const { queryPromise } = require('../database/queryPromise');
 const { connectionForLogging } = require('../database/databaseConnection');
 const { areAllDefined } = require('../format/validateDefined');
 const { responseLogger } = require('./loggers');
-const { IS_PRODUCTION } = require('../../server/constants');
 
 // Uses requestLogger to output the request from a user in the console
 const requestLoggerForRequest = (req, res, next) => {
-  if (IS_PRODUCTION === false) {
+  if (global.constant.server.IS_PRODUCTION === false) {
     requestLogger.info(`Request for ${req.method} ${req.originalUrl}`);
   }
 
@@ -42,7 +41,7 @@ const createLogForRequest = (req, res, next) => {
 
 // Uses responseLogger to output the response sent to a user in the console
 const responseLoggerForResponse = (req, res, next) => {
-  if (IS_PRODUCTION === false) {
+  if (global.constant.server.IS_PRODUCTION === false) {
     const oldWrite = res.write;
     const oldEnd = res.end;
 

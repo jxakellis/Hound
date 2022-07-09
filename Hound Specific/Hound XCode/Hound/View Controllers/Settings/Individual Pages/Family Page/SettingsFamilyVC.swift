@@ -313,7 +313,7 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
                 // the user wants to kick the family member so query the server
                 let body = [ServerDefaultKeys.kickUserId.rawValue: familyMember.userId]
                 RequestUtils.beginAlertControllerQueryIndictator()
-                FamilyRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
+                FamilyRequest.delete(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
                     RequestUtils.endAlertControllerQueryIndictator {
                         if requestWasSuccessful == true {
                             // invoke the @IBAction function to refresh this page

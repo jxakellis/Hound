@@ -1,5 +1,5 @@
-const DatabaseError = require('../../main/tools/errors/databaseError');
-const ValidationError = require('../../main/tools/errors/validationError');
+const { DatabaseError } = require('../../main/tools/errors/databaseError');
+const { ValidationError } = require('../../main/tools/errors/validationError');
 
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { formatDate } = require('../../main/tools/format/formatObject');
@@ -18,8 +18,8 @@ const updateLogForDogIdLogId = async (req, dogId, logId) => {
   const logLastModified = dogLastModified; // manual
 
   // if all undefined, then there is nothing to update
-  if (areAllDefined(dogId, logId, logDate, logNote, logAction) === false) {
-    throw new ValidationError('dogId, logId, logDate, logNote, or logAction missing', 'ER_VALUE_MISSING');
+  if (areAllDefined(req, dogId, logId, logDate, logNote, logAction) === false) {
+    throw new ValidationError('req, dogId, logId, logDate, logNote, or logAction missing', 'ER_VALUES_MISSING');
   }
 
   try {

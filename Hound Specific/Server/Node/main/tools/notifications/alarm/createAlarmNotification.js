@@ -11,7 +11,6 @@ const { sendAPNForFamily, sendAPNForUser } = require('../apn/sendAPN');
 const { deleteAlarmNotificationsForReminder } = require('./deleteAlarmNotification');
 const { cancelSecondaryJobForUserForReminder } = require('./cancelJob');
 const { formatReminderAction } = require('../../format/formatName');
-const { IS_PRODUCTION, REMINDER_CATEGORY } = require('../../../server/constants');
 
 /**
  * For a given reminder for a given family, handles the alarm notifications
@@ -23,7 +22,7 @@ const createAlarmNotificationForFamily = async (familyId, reminderId, reminderEx
   try {
     // all ids should already be formatted into numbers
     const formattedReminderExecutionDate = formatDate(reminderExecutionDate);
-    if (IS_PRODUCTION === false) {
+    if (global.constant.server.IS_PRODUCTION === false) {
       alarmLogger.debug(`createAlarmNotificationForFamily ${familyId}, ${reminderId}, ${reminderExecutionDate}, ${formattedReminderExecutionDate}`);
     }
 
@@ -49,7 +48,7 @@ const createAlarmNotificationForFamily = async (familyId, reminderId, reminderEx
     }
     // reminderExecutionDate is in the future
     else {
-      if (IS_PRODUCTION === false) {
+      if (global.constant.server.IS_PRODUCTION === false) {
         alarmLogger.info(`Scheduling a new job; count will be ${Object.keys(schedule.scheduledJobs).length + 1}`);
       }
       schedule.scheduleJob(`Family${familyId}Reminder${reminderId}`, formattedReminderExecutionDate, async () => {
@@ -90,7 +89,7 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
 
     // send immediate APN notification for family
     const customPayload = { reminderId: reminder.reminderId, reminderLastModified: reminder.reminderLastModified };
-    sendAPNForFamily(familyId, REMINDER_CATEGORY, alertTitle, alertBody, customPayload);
+    sendAPNForFamily(familyId, global.constant.apn.REMINDER_CATEGORY, alertTitle, alertBody, customPayload);
 
     // createSecondaryAlarmNotificationForFamily, handles the secondary alarm notifications
     // If the reminderExecutionDate is in the past, sends APN notification asap. Otherwise, schedule job to send at reminderExecutionDate.
@@ -131,7 +130,7 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
 const createSecondaryAlarmNotificationForUser = async (userId, reminderId, secondaryExecutionDate) => {
   try {
     const formattedSecondaryExecutionDate = formatDate(secondaryExecutionDate);
-    if (IS_PRODUCTION === false) {
+    if (global.constant.server.IS_PRODUCTION === false) {
       alarmLogger.debug(`createSecondaryAlarmNotificationForUser ${userId}, ${reminderId}, ${secondaryExecutionDate}, ${formattedSecondaryExecutionDate}`);
     }
 
@@ -155,7 +154,7 @@ const createSecondaryAlarmNotificationForUser = async (userId, reminderId, secon
     }
     // formattedSecondaryExecutionDate is in the future
     else {
-      if (IS_PRODUCTION === false) {
+      if (global.constant.server.IS_PRODUCTION === false) {
         alarmLogger.info(`Scheduling a new job; count will be ${Object.keys(schedule.scheduledJobs).length + 1}`);
       }
       schedule.scheduleJob(`User${userId}Reminder${reminderId}`, formattedSecondaryExecutionDate, () => {
@@ -195,7 +194,7 @@ const sendSecondaryAPNForUser = async (userId, reminderId) => {
     const alertBody = `It's been a bit, remember to give your dog a helping hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
 
     const customPayload = { reminderId: reminder.reminderId, reminderLastModified: reminder.reminderLastModified };
-    sendAPNForUser(userId, REMINDER_CATEGORY, alertTitle, alertBody, customPayload);
+    sendAPNForUser(userId, global.constant.apn.REMINDER_CATEGORY, alertTitle, alertBody, customPayload);
   }
   catch (error) {
     alarmLogger.error('sendAPNForUser error:');

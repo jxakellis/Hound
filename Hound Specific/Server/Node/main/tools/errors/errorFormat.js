@@ -26,4 +26,4 @@ const convertErrorToJSON = (error) => {
   }
 };
 
-module.exports = convertErrorToJSON;
+module.exports = { convertErrorToJSON };

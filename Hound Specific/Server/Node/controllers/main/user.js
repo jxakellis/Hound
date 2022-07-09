@@ -1,51 +1,45 @@
-const ValidationError = require('../../main/tools/errors/validationError');
+const { ValidationError } = require('../../main/tools/errors/validationError');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 const { getUserForUserId, getUserForUserIdentifier } = require('../getFor/getForUser');
 const { createUserForUserIdentifier } = require('../createFor/createForUser');
 const { updateUserForUserId } = require('../updateFor/updateForUser');
-const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
+const { convertErrorToJSON } = require('../../main/tools/errors/errorFormat');
 
 /*
 Known:
 - (if appliciable to controller) userId formatted correctly and request has sufficient permissions to use
 */
 
-// TO DO put all get, create, update, and deletes code inside their respective try catch statements
 const getUser = async (req, res) => {
-  // apple userIdentifier
-  const userIdentifier = req.query.userIdentifier;
-  // hound userId
-  const userId = req.params.userId;
-  let result;
-  // user provided userId so we go that route
-  if (areAllDefined(userId)) {
-    try {
+  try {
+    // apple userIdentifier
+    const userIdentifier = req.query.userIdentifier;
+    // hound userId
+    const userId = req.params.userId;
+
+    let result;
+    // user provided userId so we go that route
+    if (areAllDefined(userId)) {
       result = await getUserForUserId(req, userId);
     }
-    catch (error) {
-      await req.rollbackQueries(req);
-      return res.status(400).json(convertErrorToJSON(error));
-    }
-  }
-  // user provided userIdentifier so we find them using that way
-  else if (areAllDefined(userIdentifier)) {
-    try {
+    // user provided userIdentifier so we find them using that way
+    else if (areAllDefined(userIdentifier)) {
       result = await getUserForUserIdentifier(req, userIdentifier);
     }
-    catch (error) {
+    // no identifier provided
+    else {
       await req.rollbackQueries(req);
-      return res.status(400).json(convertErrorToJSON(error));
+      return res.status(400).json(new ValidationError('userId or userIdentifier missing', 'ER_VALUES_MISSING').toJSON);
     }
-  }
-  // no identifier provided
-  else {
-    await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('userId or userIdentifier missing', 'ER_VALUES_MISSING').toJSON);
-  }
 
-  await req.commitQueries(req);
-  return res.status(200).json({ result });
+    await req.commitQueries(req);
+    return res.status(200).json({ result });
+  }
+  catch (error) {
+    await req.rollbackQueries(req);
+    return res.status(400).json(convertErrorToJSON(error));
+  }
 };
 
 const { refreshSecondaryAlarmNotificationsForUserId } = require('../../main/tools/notifications/alarm/refreshAlarmNotification');

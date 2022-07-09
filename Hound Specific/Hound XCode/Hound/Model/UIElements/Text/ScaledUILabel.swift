@@ -33,7 +33,7 @@ class ScaledUILabel: UILabel {
     /// When the UILabel did change, show or hide the label based on if the UITextView is empty or not
     override var text: String? {
         didSet {
-            if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForScaledUILabel.rawValue) as? UILabel {
+            if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForScaledUILabel) as? UILabel {
                 guard placeholderLabel.text?.isEmpty == false else {
                     return
                 }
@@ -59,14 +59,14 @@ class ScaledUILabel: UILabel {
         get {
             var placeholderText: String?
             
-            if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForScaledUILabel.rawValue) as? UILabel {
+            if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForScaledUILabel) as? UILabel {
                 placeholderText = placeholderLabel.text
             }
             
             return placeholderText
         }
         set {
-            if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForScaledUILabel.rawValue) as? UILabel {
+            if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForScaledUILabel) as? UILabel {
                 placeholderLabel.text = newValue
                 placeholderLabel.sizeToFit()
             }
@@ -78,7 +78,7 @@ class ScaledUILabel: UILabel {
     
     /// Resize the placeholder UILabel to make sure it's in the same position as the UILabel text
     private func resizePlaceholder() {
-        if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForScaledUILabel.rawValue) as? UILabel {
+        if let placeholderLabel = self.viewWithTag(ViewTagConstant.placeholderForScaledUILabel) as? UILabel {
             // let labelX = self.frame.minX
             // let labelY = self.frame.minY
             // let labelWidth = self.frame.width - (labelX * 2)
@@ -98,7 +98,7 @@ class ScaledUILabel: UILabel {
         
         placeholderLabel.font = self.font
         placeholderLabel.textColor = UIColor.systemGray3
-        placeholderLabel.tag = ViewTagConstant.placeholderForScaledUILabel.rawValue
+        placeholderLabel.tag = ViewTagConstant.placeholderForScaledUILabel
         
         if self.text == nil {
             placeholderLabel.isHidden = false

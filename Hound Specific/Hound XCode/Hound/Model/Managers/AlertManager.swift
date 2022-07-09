@@ -30,7 +30,7 @@ class AlertManager: NSObject {
         activityIndicator.bottomAnchor.constraint(equalTo: loadingAlertController.view.bottomAnchor, constant: -20).isActive = true
         
         loadingAlertController.view.addSubview(activityIndicator)
-        loadingAlertController.view.tag = ViewTagConstant.loadingViewController.rawValue
+        loadingAlertController.view.tag = ViewTagConstant.loadingViewController
     }
     
         // MARK: - Public Properties
@@ -54,11 +54,11 @@ class AlertManager: NSObject {
     /// Checks to see if the queue has any server related alerts inside of it.
     private var containsServerRelatedAlert: Bool {
         // check queue for server related
-        for alert in alertQueue where alert.view.tag == ViewTagConstant.serverRelatedViewController.rawValue {
+        for alert in alertQueue where alert.view.tag == ViewTagConstant.serverRelatedViewController {
             return true
         }
         // check current presentation
-        if currentAlertPresented?.view.tag == ViewTagConstant.serverRelatedViewController.rawValue {
+        if currentAlertPresented?.view.tag == ViewTagConstant.serverRelatedViewController {
             return true
         }
         else {
@@ -69,11 +69,11 @@ class AlertManager: NSObject {
     /// Checks to see if the queue has any loading view controllers
     private var containsLoadingViewController: Bool {
         // check queue for loading view controller
-        for alert in alertQueue where alert.view.tag == ViewTagConstant.loadingViewController.rawValue {
+        for alert in alertQueue where alert.view.tag == ViewTagConstant.loadingViewController {
             return true
         }
         // check current presentation
-        if currentAlertPresented?.view.tag == ViewTagConstant.loadingViewController.rawValue {
+        if currentAlertPresented?.view.tag == ViewTagConstant.loadingViewController {
             return true
         }
         else {
@@ -87,11 +87,11 @@ class AlertManager: NSObject {
     
     private func enqueue(_ alertController: GeneralUIAlertController) {
          // if this is a server related alert and there is already a server related alert, we don't want to add a second one. no need to barrage the user with server failure messages.
-        if alertController.view.tag == ViewTagConstant.serverRelatedViewController.rawValue && containsServerRelatedAlert == true {
+        if alertController.view.tag == ViewTagConstant.serverRelatedViewController && containsServerRelatedAlert == true {
                 return
         }
         // if this is a loading view controller and loading view controller, we don't want to add a second one.
-        else if alertController.view.tag == ViewTagConstant.loadingViewController.rawValue && containsLoadingViewController == true {
+        else if alertController.view.tag == ViewTagConstant.loadingViewController && containsLoadingViewController == true {
             return
         }
         
@@ -112,7 +112,7 @@ class AlertManager: NSObject {
             title: title,
             message: trimmedMessage,
             preferredStyle: .alert)
-        alertController.view.tag = ViewTagConstant.serverRelatedViewController.rawValue
+        alertController.view.tag = ViewTagConstant.serverRelatedViewController
         
         if hasOKAlertAction == true {
             let alertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)

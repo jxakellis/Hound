@@ -1,5 +1,5 @@
-const DatabaseError = require('../../main/tools/errors/databaseError');
-const ValidationError = require('../../main/tools/errors/validationError');
+const { DatabaseError } = require('../../main/tools/errors/databaseError');
+const { ValidationError } = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
   formatBoolean, formatDate,
@@ -20,7 +20,7 @@ const getDogForDogId = async (req, dogId) => {
   const lastDogManagerSynchronization = formatDate(req.query.lastDogManagerSynchronization);
 
   if (areAllDefined(req, dogId) === false) {
-    throw new ValidationError('dogId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req or dogId missing', 'ER_VALUES_MISSING');
   }
 
   try {
@@ -75,8 +75,8 @@ const getAllDogsForFamilyId = async (req, familyId) => {
   const userId = req.params.userId;
   const lastDogManagerSynchronization = formatDate(req.query.lastDogManagerSynchronization);
 
-  if (areAllDefined(familyId) === false) {
-    throw new ValidationError('familyId missing', 'ER_VALUES_MISSING');
+  if (areAllDefined(req, familyId) === false) {
+    throw new ValidationError('req or familyId missing', 'ER_VALUES_MISSING');
   }
 
   try {

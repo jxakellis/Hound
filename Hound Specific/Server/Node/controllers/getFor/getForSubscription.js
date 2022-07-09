@@ -1,20 +1,10 @@
-const DatabaseError = require('../../main/tools/errors/databaseError');
-const ValidationError = require('../../main/tools/errors/validationError');
+const { DatabaseError } = require('../../main/tools/errors/databaseError');
+const { ValidationError } = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
-const {
-  SUBSCRIPTION_GRACE_PERIOD,
-  DEFAULT_SUBSCRIPTION_PRODUCT_ID,
-  DEFAULT_SUBSCRIPTION_NAME,
-  DEFAULT_SUBSCRIPTION_DESCRIPTION,
-  DEFAULT_SUBSCRIPTION_PURCHASE_DATE,
-  DEFAULT_SUBSCRIPTION_EXPIRATION,
-  DEFAULT_SUBSCRIPTION_NUMBER_OF_FAMILY_MEMBERS,
-  DEFAULT_SUBSCRIPTION_NUMBER_OF_DOGS,
-} = require('../../main/server/constants');
 
-// receiptId, familyId, userId, subscriptionLastModified
-const subscriptionColumns = 'productId, subscriptionName, subscriptionDescription, subscriptionPurchaseDate, subscriptionExpiration, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs';
+// familyId, userId, subscriptionLastModified
+const subscriptionColumns = 'transactionId, productId, subscriptionPurchaseDate, subscriptionExpiration, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs';
 
 /**
  *  If the query is successful, returns the most recent subscription for the familyId (if no most recent subscription, fills in default subscription details).
@@ -35,11 +25,11 @@ const getActiveSubscriptionForFamilyId = async (req, familyId) => {
     // If we subtract the SUBSCRIPTION_GRACE_PERIOD from currentDate, we get a date that is that amount of time in the past. E.g. currentDate: 6:00 PM, gracePeriod: 1:00 -> currentDate: 5:00PM
     // Therefore when currentDate is compared to subscriptionExpiration, we allow for the subscriptionExpiration to be SUBSCRIPTION_GRACE_PERIOD amount of time expired.
     // This effect could also be achieved by adding SUBSCRIPTION_GRACE_PERIOD to subscriptionExpiration, making it appear to expire later than it actually does.
-    currentDate.setTime(currentDate.getTime() - SUBSCRIPTION_GRACE_PERIOD);
+    currentDate.setTime(currentDate.getTime() - global.constant.subscription.SUBSCRIPTION_GRACE_PERIOD);
 
     familySubscription = await queryPromise(
       req,
-      `SELECT ${subscriptionColumns} FROM subscriptions WHERE familyId = ? AND subscriptionExpiration >= ? ORDER BY subscriptionExpiration DESC LIMIT 1`,
+      `SELECT ${subscriptionColumns} FROM subscriptions WHERE familyId = ? AND subscriptionExpiration >= ? ORDER BY subscriptionExpiration DESC, subscriptionPurchaseDate DESC LIMIT 1`,
       [familyId, currentDate],
     );
   }
@@ -49,33 +39,21 @@ const getActiveSubscriptionForFamilyId = async (req, familyId) => {
 
   // since we found no family subscription, assign the family to the default subscription
   if (familySubscription.length === 0) {
-    familySubscription = {
-      productId: DEFAULT_SUBSCRIPTION_PRODUCT_ID,
-      subscriptionName: DEFAULT_SUBSCRIPTION_NAME,
-      subscriptionDescription: DEFAULT_SUBSCRIPTION_DESCRIPTION,
-      subscriptionPurchaseDate: DEFAULT_SUBSCRIPTION_PURCHASE_DATE,
-      subscriptionExpiration: DEFAULT_SUBSCRIPTION_EXPIRATION,
-      subscriptionNumberOfFamilyMembers: DEFAULT_SUBSCRIPTION_NUMBER_OF_FAMILY_MEMBERS,
-      subscriptionNumberOfDogs: DEFAULT_SUBSCRIPTION_NUMBER_OF_DOGS,
-    };
+    familySubscription = global.constant.subscription.SUBSCRIPTIONS.find((subscription) => subscription.productId === global.constant.subscription.DEFAULT_SUBSCRIPTION_PRODUCT_ID);
+    familySubscription.transactionId = undefined;
+    familySubscription.subscriptionPurchaseDate = undefined;
+    familySubscription.subscriptionExpiration = new Date('3000-01-01T00:00:00Z');
   }
   else {
     // we found a subscription, so get rid of the one entry array
     familySubscription = familySubscription[0];
   }
-  console.log(familySubscription.productId);
-  console.log(familySubscription.subscriptionName);
-  console.log(familySubscription.subscriptionDescription);
-  console.log(familySubscription.subscriptionPurchaseDate);
-  console.log(familySubscription.subscriptionNumberOfFamilyMembers);
-  console.log(familySubscription.subscriptionNumberOfDogs);
-  console.log(familySubscription.subscriptionExpiration);
 
   return familySubscription;
 };
 
 /**
- *  If the query is successful, returns all subscriptions for the familyId (if no most recent subscription, fills in default subscription details).
+ *  If the query is successful, returns the subscription history and active subscription for the familyId.
  *  If a problem is encountered, creates and throws custom error
  */
 const getAllSubscriptionsForFamilyId = async (req, familyId) => {
@@ -84,14 +62,14 @@ const getAllSubscriptionsForFamilyId = async (req, familyId) => {
     throw new ValidationError('familyId missing', 'ER_VALUES_MISSING');
   }
 
-  // TO DO implement last subscription sync property for this so we only sync new subscriptions
-  let familySubscription;
+  // TO DO implement lastSubscriptionSyncronization properly for this so we only sync new subscriptions that the user doesn't have stored
+  let subscriptionHistory;
   try {
     // find all of the family's subscriptions
 
-    familySubscription = await queryPromise(
+    subscriptionHistory = await queryPromise(
       req,
-      `SELECT ${subscriptionColumns} FROM subscriptions WHERE familyId = ? ORDER BY subscriptionExpiration DESC LIMIT 18446744073709551615`,
+      `SELECT ${subscriptionColumns} FROM subscriptions WHERE familyId = ? ORDER BY subscriptionPurchaseDate DESC LIMIT 18446744073709551615`,
       [familyId],
     );
   }
@@ -99,22 +77,14 @@ const getAllSubscriptionsForFamilyId = async (req, familyId) => {
     throw new DatabaseError(error.code);
   }
 
-  // since we found no family subscription, assign the family to the default subscription
-  if (familySubscription.length === 0) {
-    // use a one item array as the output is expecting an array
-    familySubscription = [{
-      productId: DEFAULT_SUBSCRIPTION_PRODUCT_ID,
-      subscriptionName: DEFAULT_SUBSCRIPTION_NAME,
-      subscriptionDescription: DEFAULT_SUBSCRIPTION_DESCRIPTION,
-      subscriptionPurchaseDate: DEFAULT_SUBSCRIPTION_PURCHASE_DATE,
-      subscriptionExpiration: DEFAULT_SUBSCRIPTION_EXPIRATION,
-      subscriptionNumberOfFamilyMembers: DEFAULT_SUBSCRIPTION_NUMBER_OF_FAMILY_MEMBERS,
-      subscriptionNumberOfDogs: DEFAULT_SUBSCRIPTION_NUMBER_OF_DOGS,
-    }];
-  }
-  console.log(familySubscription);
+  const subscriptionActive = await getActiveSubscriptionForFamilyId(req, familyId);
 
-  return familySubscription;
+  const result = {
+    subscriptionActive,
+    subscriptionHistory,
+  };
+
+  return result;
 };
 
 module.exports = { getActiveSubscriptionForFamilyId, getAllSubscriptionsForFamilyId };

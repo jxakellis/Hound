@@ -6,14 +6,13 @@ const { queryPromise } = require('../../database/queryPromise');
 const { sendAPNForFamilyExcludingUser } = require('../apn/sendAPN');
 const { formatIntoAbreviatedFullName } = require('../../format/formatName');
 const { formatLogAction } = require('../../format/formatName');
-const { LOG_CATEGORY, IS_PRODUCTION } = require('../../../server/constants');
 
 /**
  * Sends an alert to all of the family members that one of them has logged something.
  */
 const createLogNotification = async (userId, familyId, dogId, logAction, logCustomActionName) => {
   try {
-    if (IS_PRODUCTION === false) {
+    if (global.constant.server.IS_PRODUCTION === false) {
       alertLogger.debug(`createLogNotification ${userId}, ${familyId}, ${dogId}, ${logAction}, ${logCustomActionName}`);
     }
 
@@ -50,7 +49,7 @@ const createLogNotification = async (userId, familyId, dogId, logAction, logCust
     const alertBody = `${name} lent a helping hand with '${formatLogAction(logAction, logCustomActionName)}'`;
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, LOG_CATEGORY, alertTitle, alertBody, {});
+    sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.LOG_CATEGORY, alertTitle, alertBody, {});
   }
   catch (error) {
     alertLogger.error('createLogNotification error:');

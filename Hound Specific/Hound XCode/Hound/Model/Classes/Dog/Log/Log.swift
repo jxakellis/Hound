@@ -137,7 +137,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     required init?(coder aDecoder: NSCoder) {
         self.logId = aDecoder.decodeInteger(forKey: "logId")
-        self.userId = aDecoder.decodeObject(forKey: "userId") as? String ?? Hash.defaultSHA256Hash
+        self.userId = aDecoder.decodeObject(forKey: "userId") as? String ?? LogConstant.defaultUserId
         self.logAction = LogAction(rawValue: aDecoder.decodeObject(forKey: "logAction") as? String ?? LogConstant.defaultLogAction.rawValue) ?? LogConstant.defaultLogAction
         self.logCustomActionName = aDecoder.decodeObject(forKey: "logCustomActionName") as? String
         self.logDate = aDecoder.decodeObject(forKey: "logDate") as? Date ?? Date()
@@ -161,7 +161,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     convenience init(
         logId: Int = LogConstant.defaultLogId,
-        userId: String = Hash.defaultSHA256Hash,
+        userId: String = LogConstant.defaultUserId,
         logAction: LogAction = LogConstant.defaultLogAction,
         logCustomActionName: String? = LogConstant.defaultLogCustomActionName,
         logDate: Date = LogConstant.defaultLogDate,
@@ -206,7 +206,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     var logId: Int = LogConstant.defaultLogId
     
-    var userId: String = Hash.defaultSHA256Hash
+    var userId: String = LogConstant.defaultUserId
     
     private var storedLogIsDeleted: Bool = false
     /// This property a marker leftover from when we went through the process of constructing a new log from JSON and combining with an existing log object. This markers allows us to have a new log to overwrite the old log, then leaves an indicator that this should be deleted. This deletion is handled by DogsRequest

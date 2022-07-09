@@ -1,5 +1,5 @@
 const bodyParser = require('body-parser');
-const ParseError = require('../tools/errors/parseError');
+const { ParseError } = require('../tools/errors/parseError');
 
 const parseFormData = (req, res, next) => {
   bodyParser.urlencoded({ extended: true })(req, res, (error) => {

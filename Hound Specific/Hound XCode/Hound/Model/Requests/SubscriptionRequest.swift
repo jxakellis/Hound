@@ -32,14 +32,24 @@ enum SubscriptionRequest: RequestProtocol {
      */
     private static func internalCreate(invokeErrorManager: Bool, forTransaction transaction: SKPaymentTransaction, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         InternalRequestUtils.warnForPlaceholderId()
-        // TO DO encode transaction app receipt url / data to base 64 string. apple specifiys how to do it
-        // let base64ReceiptData: String = transaction
         
-        // let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(base64ReceiptData)")
-        InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: [ : ]) { responseBody, responseStatus in
-            completionHandler(responseBody, responseStatus)
+        // Get the receipt if it's available
+        if let appStoreReceiptURL = Bundle.main.appStoreReceiptURL,
+           FileManager.default.fileExists(atPath: appStoreReceiptURL.path) {
+            
+            do {
+                let receiptData = try Data(contentsOf: appStoreReceiptURL, options: .alwaysMapped)
+                
+                let receiptString = receiptData.base64EncodedString(options: [])
+                
+                let body = [ServerDefaultKeys.base64EncodedReceiptData.rawValue: receiptString]
+                InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
+                    completionHandler(responseBody, responseStatus)
+                }
+            }
+            // TO DO implement proper error handling for this
+            catch { print("Couldn't read receipt data with error: " + error.localizedDescription) }
         }
-        
     }
 }
 

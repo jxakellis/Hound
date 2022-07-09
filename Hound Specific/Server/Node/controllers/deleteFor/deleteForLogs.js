@@ -1,4 +1,6 @@
-const DatabaseError = require('../../main/tools/errors/databaseError');
+const { DatabaseError } = require('../../main/tools/errors/databaseError');
+const { ValidationError } = require('../../main/tools/errors/validationError');
+const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 
 /**
@@ -9,6 +11,10 @@ const deleteLogForLogId = async (req, dogId, logId) => {
   try {
     const dogLastModified = new Date();
     const logLastModified = dogLastModified;
+
+    if (areAllDefined(req, dogId, logId) === false) {
+      throw new ValidationError('req, dogId, or logId missing', 'ER_VALUES_MISSING');
+    }
 
     await queryPromise(
       req,
@@ -38,6 +44,10 @@ const deleteAllLogsForDogId = async (req, dogId) => {
   try {
     const dogLastModified = new Date();
     const logLastModified = dogLastModified;
+
+    if (areAllDefined(req, dogId) === false) {
+      throw new ValidationError('req or dogId missing', 'ER_VALUES_MISSING');
+    }
 
     await queryPromise(
       req,

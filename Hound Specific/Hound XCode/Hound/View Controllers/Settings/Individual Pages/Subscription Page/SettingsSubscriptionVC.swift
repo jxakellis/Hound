@@ -23,9 +23,11 @@ class SettingsSubscriptionViewController: UIViewController, UITableViewDelegate,
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // (if head of family)
-        // TO DO add subscription controls
+        
+        // TO DO lock subscription controls to only the head of the family
+        // TO DO add subscription history
+        // TO DO add active subscription
+        // TO DO add disclaimer about grace period, after that say that if subscription expires, y
         
         oneTimeSetup()
         
@@ -84,7 +86,7 @@ class SettingsSubscriptionViewController: UIViewController, UITableViewDelegate,
         
         // indexPath 0 is the default so we won't be making a purchase
         guard indexPath.row != 0 else {
-            // TO DO let the user downgrade their subscription
+            // TO DO let the user downgrade their subscription to free
             return
         }
         
@@ -97,6 +99,9 @@ class SettingsSubscriptionViewController: UIViewController, UITableViewDelegate,
         
         RequestUtils.beginAlertControllerQueryIndictator()
         InAppPurchaseManager.purchaseProduct(forProduct: product) { productIdentifier in
+            // TO DO update how message appears, change to contacting Apple Server
+            // TO DO add spinning checkmark if everything is successful
+            // BUG, the completionHandler isn't being called when everything completed successfully. stuck on contacting hound server
             RequestUtils.endAlertControllerQueryIndictator {
                 guard productIdentifier != nil else {
                     print("error")

@@ -347,7 +347,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                 view.addSubview(buttonBackground)
                 view.addSubview(button)
                 
-                UIView.animate(withDuration: AnimationConstant.largeButtonShow.rawValue) {
+                UIView.animate(withDuration: AnimationConstant.largeButtonShow) {
                     self.willAddButton.transform = CGAffineTransform(rotationAngle: -.pi/4)
                     self.willAddButtonBackground.transform = CGAffineTransform(rotationAngle: -.pi/4)
                     self.willAddButton.tintColor = .systemRed
@@ -382,7 +382,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                 
                 let originYWithAlignedMiddle = willAddButton.frame.midY - (button.frame.height/2)
                 
-                UIView.animate(withDuration: AnimationConstant.largeButtonShow.rawValue) {
+                UIView.animate(withDuration: AnimationConstant.largeButtonShow) {
                     self.willAddButton.transform = .identity
                     self.willAddButtonBackground.transform = .identity
                     self.willAddButton.tintColor = .systemBlue
@@ -398,7 +398,7 @@ class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsA
                     MainTabBarViewController.mainTabBarViewController.dogsNavigationViewController.navigationBar.alpha = 1
                     
                 } completion: { (_) in
-                    DispatchQueue.main.asyncAfter(deadline: .now() + AnimationConstant.largeButtonHide.rawValue) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + AnimationConstant.largeButtonHide) {
                         button.isHidden = true
                         button.removeFromSuperview()
                         buttonBackground.isHidden = true

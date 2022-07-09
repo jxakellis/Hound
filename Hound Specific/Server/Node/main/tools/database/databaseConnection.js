@@ -1,9 +1,8 @@
 /* eslint-disable max-len */
 const mysql2 = require('mysql2');
 const databasePassword = require('../../secrets/databasePassword');
-const DatabaseError = require('../errors/databaseError');
+const { DatabaseError } = require('../errors/databaseError');
 const { poolLogger, queryLogger } = require('../logging/loggers');
-const { IS_PRODUCTION } = require('../../server/constants');
 
 /// The connection used by the server when querying the database for log notifications
 const connectionForGeneral = mysql2.createConnection({
@@ -70,14 +69,14 @@ const poolForRequests = mysql2.createPool({
 });
 
 poolForRequests.on('acquire', (connection) => {
-  if (IS_PRODUCTION === false) {
+  if (global.constant.server.IS_PRODUCTION === false) {
     const currentDate = new Date();
     poolLogger.debug(`Pool connection ${connection.threadId} acquired at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
   }
 });
 
 poolForRequests.on('release', (connection) => {
-  if (IS_PRODUCTION === false) {
+  if (global.constant.server.IS_PRODUCTION === false) {
     const currentDate = new Date();
     poolLogger.debug(`Pool connection ${connection.threadId} released at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
   }

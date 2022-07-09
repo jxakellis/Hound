@@ -1,5 +1,4 @@
 const apn = require('apn');
-const { REMINDER_CATEGORY, IS_PRODUCTION } = require('../../../server/constants');
 const { apnLogger } = require('../../logging/loggers');
 
 const { formatArray } = require('../../format/formatObject');
@@ -16,7 +15,7 @@ const { getUserToken, getAllFamilyMemberTokens, getOtherFamilyMemberTokens } = r
  */
 // (token, category, sound, alertTitle, alertBody)
 const sendAPN = (token, category, sound, alertTitle, alertBody, customPayload) => {
-  if (IS_PRODUCTION === false) {
+  if (global.constant.server.IS_PRODUCTION === false) {
     apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${alertTitle}, ${alertBody}`);
   }
 
@@ -73,7 +72,7 @@ const sendAPN = (token, category, sound, alertTitle, alertBody, customPayload) =
     };
 
     // if there is a sound for the reminder alarm alert, then we add it to the rawPayload
-    if (category === REMINDER_CATEGORY && areAllDefined(sound, notification, notification.rawPayload, notification.rawPayload.aps)) {
+    if (category === global.constant.apn.REMINDER_CATEGORY && areAllDefined(sound, notification, notification.rawPayload, notification.rawPayload.aps)) {
       notification.rawPayload.aps.sound = `${sound}30.wav`;
     }
 
@@ -94,7 +93,7 @@ const sendAPN = (token, category, sound, alertTitle, alertBody, customPayload) =
 
     apnProvider.send(notification, token).then((response) => {
     // response.sent: Array of device tokens to which the notification was sent succesfully
-      if (IS_PRODUCTION === true) {
+      if (global.constant.server.IS_PRODUCTION === true) {
         return;
       }
       if (response.sent.length !== 0) {
@@ -120,7 +119,7 @@ const sendAPN = (token, category, sound, alertTitle, alertBody, customPayload) =
 * Invokes sendAPN with the tokens, alertTitle, and alertBody
 */
 const sendAPNForUser = async (userId, category, alertTitle, alertBody, customPayload) => {
-  if (IS_PRODUCTION === false) {
+  if (global.constant.server.IS_PRODUCTION === false) {
     apnLogger.debug(`sendAPNForUser ${userId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
   }
 
@@ -148,7 +147,7 @@ const sendAPNForUser = async (userId, category, alertTitle, alertBody, customPay
  * Invokes sendAPN with the tokens, alertTitle, and alertBody
  */
 const sendAPNForFamily = async (familyId, category, alertTitle, alertBody, customPayload) => {
-  if (IS_PRODUCTION === false) {
+  if (global.constant.server.IS_PRODUCTION === false) {
     apnLogger.debug(`sendAPNForFamily ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
   }
 
@@ -176,7 +175,7 @@ const sendAPNForFamily = async (familyId, category, alertTitle, alertBody, custo
  * Invokes sendAPN with the tokens, alertTitle, and alertBody
  */
 const sendAPNForFamilyExcludingUser = async (userId, familyId, category, alertTitle, alertBody, customPayload) => {
-  if (IS_PRODUCTION === false) {
+  if (global.constant.server.IS_PRODUCTION === false) {
     apnLogger.debug(`sendAPNForFamilyExcludingUser ${userId}, ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
   }
 

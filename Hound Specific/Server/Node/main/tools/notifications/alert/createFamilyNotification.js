@@ -1,4 +1,4 @@
-const DatabaseError = require('../../errors/databaseError');
+const { DatabaseError } = require('../../errors/databaseError');
 const { connectionForAlerts } = require('../../database/databaseConnection');
 const { alertLogger } = require('../../logging/loggers');
 const { formatBoolean } = require('../../format/formatObject');
@@ -7,14 +7,13 @@ const { areAllDefined } = require('../../format/validateDefined');
 const { queryPromise } = require('../../database/queryPromise');
 const { sendAPNForFamilyExcludingUser } = require('../apn/sendAPN');
 const { formatIntoAbreviatedFullName } = require('../../format/formatName');
-const { GENERAL_CATEGORY, IS_PRODUCTION } = require('../../../server/constants');
 
 /**
  * Sends an alert to all of the family members that a new member has joined
  */
 const createFamilyMemberJoinNotification = async (userId, familyId) => {
   try {
-    if (IS_PRODUCTION === false) {
+    if (global.constant.server.IS_PRODUCTION === false) {
       alertLogger.debug(`createFamilyMemberJoinNotification ${userId}, ${familyId}`);
     }
 
@@ -34,7 +33,7 @@ const createFamilyMemberJoinNotification = async (userId, familyId) => {
     const alertBody = `Welcome ${abreviatedFullName} into your Hound family`;
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, GENERAL_CATEGORY, alertTitle, alertBody, {});
+    sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.GENERAL_CATEGORY, alertTitle, alertBody, {});
   }
   catch (error) {
     alertLogger.error('createFamilyMemberJoinNotification error:');
@@ -47,7 +46,7 @@ const createFamilyMemberJoinNotification = async (userId, familyId) => {
  */
 const createFamilyMemberLeaveNotification = async (userId, familyId) => {
   try {
-    if (IS_PRODUCTION === false) {
+    if (global.constant.server.IS_PRODUCTION === false) {
       alertLogger.debug(`createFamilyMemberLeaveNotification ${userId}, ${familyId}`);
     }
 
@@ -67,7 +66,7 @@ const createFamilyMemberLeaveNotification = async (userId, familyId) => {
     const alertBody = `${abreviatedFullName} has parted ways with your Hound family`;
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, GENERAL_CATEGORY, alertTitle, alertBody, {});
+    sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.GENERAL_CATEGORY, alertTitle, alertBody, {});
   }
   catch (error) {
     alertLogger.error('createFamilyMemberLeaveNotification error:');
@@ -80,7 +79,7 @@ const createFamilyMemberLeaveNotification = async (userId, familyId) => {
  */
 const createFamilyLockedNotification = async (userId, familyId, newIsLocked) => {
   try {
-    if (IS_PRODUCTION === false) {
+    if (global.constant.server.IS_PRODUCTION === false) {
       alertLogger.debug(`createFamilyLockedNotification ${userId}, ${familyId}, ${newIsLocked}`);
     }
 
@@ -109,7 +108,7 @@ const createFamilyLockedNotification = async (userId, familyId, newIsLocked) => 
     }
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, GENERAL_CATEGORY, alertTitle, alertBody, {});
+    sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.GENERAL_CATEGORY, alertTitle, alertBody, {});
   }
   catch (error) {
     alertLogger.error('createFamilyLockedNotification error:');
@@ -122,7 +121,7 @@ const createFamilyLockedNotification = async (userId, familyId, newIsLocked) => 
  */
 const createFamilyPausedNotification = async (userId, familyId, newIsPaused) => {
   try {
-    if (IS_PRODUCTION === false) {
+    if (global.constant.server.IS_PRODUCTION === false) {
       alertLogger.debug(`createFamilyPausedNotification ${userId}, ${familyId}, ${newIsPaused}`);
     }
 
@@ -151,7 +150,7 @@ const createFamilyPausedNotification = async (userId, familyId, newIsPaused) => 
     }
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, GENERAL_CATEGORY, alertTitle, alertBody, {});
+    sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.GENERAL_CATEGORY, alertTitle, alertBody, {});
   }
   catch (error) {
     alertLogger.error('createFamilyPausedNotification error:');

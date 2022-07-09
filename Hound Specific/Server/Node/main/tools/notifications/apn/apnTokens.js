@@ -1,4 +1,4 @@
-const DatabaseError = require('../../errors/databaseError');
+const { DatabaseError } = require('../../errors/databaseError');
 const { queryPromise } = require('../../database/queryPromise');
 const { connectionForTokens } = require('../../database/databaseConnection');
 const { formatBoolean } = require('../../format/formatObject');

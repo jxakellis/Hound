@@ -1,9 +1,7 @@
 const { getAllSubscriptionsForFamilyId } = require('../getFor/getForSubscription');
 const { createSubscriptionForUserIdFamilyIdRecieptId } = require('../createFor/createForSubscription');
-const { formatBase64EncodedString } = require('../../main/tools/format/formatObject');
-const convertErrorToJSON = require('../../main/tools/errors/errorFormat');
+const { convertErrorToJSON } = require('../../main/tools/errors/errorFormat');
 
-// TO DO put all get, create, update, and deletes code inside their respective try catch statements
 const getSubscription = async (req, res) => {
   try {
     const familyId = req.params.familyId;
@@ -21,8 +19,8 @@ const createSubscription = async (req, res) => {
   try {
     const userId = req.params.userId;
     const familyId = req.params.familyId;
-    const encodedReceiptData = formatBase64EncodedString(req.params.encodedReceiptData);
-    const result = createSubscriptionForUserIdFamilyIdRecieptId(req, userId, familyId, encodedReceiptData);
+    const base64EncodedReceiptData = req.body.base64EncodedReceiptData;
+    const result = await createSubscriptionForUserIdFamilyIdRecieptId(req, userId, familyId, base64EncodedReceiptData);
     await req.commitQueries(req);
     return res.status(200).json({ result });
   }

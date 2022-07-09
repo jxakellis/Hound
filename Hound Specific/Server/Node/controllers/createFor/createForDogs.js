@@ -1,8 +1,7 @@
-const DatabaseError = require('../../main/tools/errors/databaseError');
-const ValidationError = require('../../main/tools/errors/validationError');
+const { DatabaseError } = require('../../main/tools/errors/databaseError');
+const { ValidationError } = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
-const { getAllDogsForFamilyId } = require('../getFor/getForDogs');
 
 /**
  *  Queries the database to create a dog. If the query is successful, then returns the dogId.
@@ -12,19 +11,31 @@ const createDogForFamilyId = async (req, familyId) => {
   const dogName = req.body.dogName; // required
   const dogLastModified = new Date(); // manual
 
-  if (areAllDefined(familyId, dogName) === false) {
-    throw new ValidationError('familyId or dogName missing', 'ER_VALUES_MISSING');
+  if (areAllDefined(req, familyId, dogName) === false) {
+    throw new ValidationError('req, familyId, or dogName missing', 'ER_VALUES_MISSING');
   }
 
   const subscriptionInformation = req.subscriptionInformation;
-  const dogs = await getAllDogsForFamilyId(req, familyId);
 
-  if (areAllDefined(subscriptionInformation, dogs) === false) {
-    throw new ValidationError('subscriptionInformation or dogs missing', 'ER_VALUES_MISSING');
+  let numberOfDogs;
+  try {
+    // only retrieve enough not deleted dogs that would exceed the limit
+    numberOfDogs = await queryPromise(
+      req,
+      'SELECT dogId FROM dogs WHERE dogIsDeleted = 0 AND familyId = ? LIMIT ?',
+      [familyId, subscriptionInformation.subscriptionNumberOfDogs],
+    );
+  }
+  catch (error) {
+    throw new DatabaseError(error.code);
+  }
+
+  if (areAllDefined(subscriptionInformation, numberOfDogs) === false) {
+    throw new ValidationError('subscriptionInformation or numberOfDogs missing', 'ER_VALUES_MISSING');
   }
 
   // Creating a new dog would exceed the limit
-  if (dogs.length >= subscriptionInformation.subscriptionNumberOfDogs) {
+  if (numberOfDogs.length >= subscriptionInformation.subscriptionNumberOfDogs) {
     throw new ValidationError(`Dog limit of ${subscriptionInformation.subscriptionNumberOfDogs} exceeded`, 'ER_DOG_LIMIT_EXCEEDED');
   }
 

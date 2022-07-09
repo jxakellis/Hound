@@ -52,6 +52,9 @@ enum ServerDefaultKeys: String {
     case followUpDelay
     case notificationSound
     
+    // MARK: Purchase
+    case base64EncodedReceiptData
+    
     // MARK: - Special Local Configuration
     
     case lastDogManagerSynchronization

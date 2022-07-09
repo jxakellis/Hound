@@ -13,20 +13,20 @@ class LogManager: NSObject, NSCoding, NSCopying {
     // MARK: - NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = LogManager()
-        copy.storedLogs = self.storedLogs
-        copy.storedCatagorizedLogActions = self.storedCatagorizedLogActions
+        copy.storedLogs = storedLogs
+        copy.storedUniqueLogActions = storedUniqueLogActions
         return copy
     }
     
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         storedLogs = aDecoder.decodeObject(forKey: "logs") as? [Log] ?? []
-        storedCatagorizedLogActions = aDecoder.decodeObject(forKey: "catagorizedLogActions") as? [(LogAction, [Log])] ?? nil
+        storedUniqueLogActions = aDecoder.decodeObject(forKey: "uniqueLogActions") as? [LogAction] ?? nil
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(storedLogs, forKey: "logs")
-        aCoder.encode(storedCatagorizedLogActions, forKey: "catagorizedLogActions")
+        aCoder.encode(storedUniqueLogActions, forKey: "uniqueLogActions")
     }
     
     // MARK: - Main
@@ -48,8 +48,8 @@ class LogManager: NSObject, NSCoding, NSCopying {
     private var storedLogs: [Log] = []
     var logs: [Log] { return storedLogs }
     
-    // Stores the result of catagorizedLogActions. This increases efficency as if catagorizedLogActions is called multiple times, without the logs array changing, we return this same stored value. If the logs array is updated, then we invalidate the stored value so its recalculated next time
-    private var storedCatagorizedLogActions: [(LogAction, [Log])]?
+    // Stores the result of uniqueLogActions. This increases efficency as if uniqueLogActions is called multiple times, without the logs array changing, we return this same stored value. If the logs array is updated, then we invalidate the stored value so its recalculated next time
+    private var storedUniqueLogActions: [LogAction]?
     
     /// Helper function allows us to use the same logic for addLog and addLogs and allows us to only sort at the end. Without this function, addLogs would invoke addLog repeadly and sortLogs() with each call.
     private func addLogWithoutSorting(newLog: Log) {
@@ -59,9 +59,9 @@ class LogManager: NSObject, NSCoding, NSCopying {
             storedLogs.remove(at: logIndex)
             break
         }
-        
-        storedCatagorizedLogActions = nil
         storedLogs.append(newLog)
+        
+        storedUniqueLogActions = nil
     }
     
     func addLog(newLog: Log) {
@@ -82,110 +82,66 @@ class LogManager: NSObject, NSCoding, NSCopying {
         
     }
     
-    /// No sort currently used
     private func sortLogs() {
-        // no sort currently used
+        storedLogs.sort { (log1, log2) -> Bool in
+            // Returning true means item1 comes before item2, false means item2 before item1
+            
+            // Returns true if var1's log1 is earlier in time than var2's log2
+            
+            // If date1's distance to date2 is positive, i.e. date2 is later in time, returns false as date2 should be ordered first (most recent (to current Date()) dates first)
+            // If date1 is later in time than date2, returns true as it should come before date2
+            return log1.logDate.distance(to: log2.logDate) <= 0
+        }
     }
     
     func removeLog(forLogId logId: Int) throws {
         // check to find the index of targetted log
-        var logIndex: Int?
-        
-        for i in 0..<logs.count where logs[i].logId == logId {
-            logIndex = i
-            break
+        let logIndex: Int? = logs.firstIndex { log in
+            return log.logId == logId
         }
         
         if logIndex == nil {
             throw LogManagerError.logIdNotPresent
         }
         else {
-            storedCatagorizedLogActions = nil
             storedLogs.remove(at: logIndex ?? LogConstant.defaultLogId)
+            storedUniqueLogActions = nil
         }
     }
     
     func removeLog(forIndex index: Int) {
-        storedCatagorizedLogActions = nil
         storedLogs.remove(at: index)
+        storedUniqueLogActions = nil
     }
     
     // MARK: Information
     
     /// Returns an array of known log actions. Each known log action has an array of logs attached to it. This means you can find every log for a given log action
-    var catagorizedLogActions: [(LogAction, [Log])] {
+    var uniqueLogActions: [LogAction] {
         // If we have the output of this calculated property stored, return it. Increases efficency by not doing calculation multiple times. Stored property is set to nil if any logs change, so in that case we would recalculate
-        guard storedCatagorizedLogActions == nil else {
-            return storedCatagorizedLogActions!
-        }
-        var catagorizedLogActions: [(LogAction, [Log])] = []
-        
-        // handles all dog logs and adds to catagorized log actions
-        for dogLog in logs {
-            // already contains that dog log action, needs to append
-            if catagorizedLogActions.contains(where: { (arg1) -> Bool in
-                let logAction = arg1.0
-                if dogLog.logAction == logAction {
-                    return true
-                }
-                else {
-                    return false
-                }
-            }) == true {
-                // since logAction is already present, append on dogLog that is of that same action to the arry of logs with the given logAction
-                let targetIndex: Int! = catagorizedLogActions.firstIndex(where: { (arg1) -> Bool in
-                    let logAction = arg1.0
-                    if logAction == dogLog.logAction {
-                        return true
-                    }
-                    else {
-                        return false
-                    }
-                })
-                
-                catagorizedLogActions[targetIndex].1.append(dogLog)
-            }
-            // does not contain that dog Log's Action
-            else {
-                catagorizedLogActions.append((dogLog.logAction, [dogLog]))
-            }
+        guard storedUniqueLogActions == nil else {
+            return storedUniqueLogActions!
         }
         
-        // sorts by the order defined by the enum, so whatever case is first in the code of the enum that is the order of the catagorizedLogActions
-        catagorizedLogActions.sort { arg1, arg2 in
-            let (logAction1, _) = arg1
-            let (logAction2, _) = arg2
-            
-            // finds corrosponding index
-            let logAction1Index: Int! = LogAction.allCases.firstIndex { arg1 in
-                if logAction1.rawValue == arg1.rawValue {
-                    return true
-                }
-                else {
-                    return false
-                }
-            }
-            // finds corrosponding index
-            let logAction2Index: Int! = LogAction.allCases.firstIndex { arg1 in
-                if logAction2.rawValue == arg1.rawValue {
-                    return true
-                }
-                else {
-                    return false
-                }
-            }
-            
-            if logAction1Index <= logAction2Index {
-                return true
-            }
-            else {
-                return false
-            }
-            
+        var logActions: [LogAction] = []
+        
+        // find all unique logActions
+        for dogLog in logs where logActions.contains(dogLog.logAction) == false {
+            logActions.append(dogLog.logAction)
         }
         
-        storedCatagorizedLogActions = catagorizedLogActions
-        return catagorizedLogActions
+        // sorts by the order defined by the enum, so whatever case is first in the code of the enum that is the order of the uniqueLogActions
+        logActions.sort { logAction1, logAction2 in
+            
+            // finds corrosponding indexs
+            let logAction1Index: Int! = LogAction.allCases.firstIndex(of: logAction1)
+            let logAction2Index: Int! = LogAction.allCases.firstIndex(of: logAction2)
+            
+            return logAction1Index <= logAction2Index
+        }
+        
+        storedUniqueLogActions = logActions
+        return logActions
     }
     
 }
@@ -199,7 +155,8 @@ extension LogManager {
         // the addLogs function overwrites logs if it finds them, so we must add the logs to the old log (allowing the newLogManager to overwrite the oldLogManager logs if there is an overlap)
         oldLogManager.addLogs(newLogs: self.logs)
         // now that the oldLogManager contains its original logs, our new logs, and has had its old logs overwritten (in the case old & new both had a log with same logId), we have an updated array.
-        storedCatagorizedLogActions = nil
-        self.storedLogs = oldLogManager.logs
+        storedLogs = oldLogManager.logs
+        storedUniqueLogActions = nil
+        sortLogs()
     }
 }

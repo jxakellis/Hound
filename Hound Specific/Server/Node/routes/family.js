@@ -1,6 +1,6 @@
 const express = require('express');
 
-const router = express.Router({ mergeParams: true });
+const familyRouter = express.Router({ mergeParams: true });
 
 const {
   getFamily, createFamily, updateFamily, deleteFamily,
@@ -8,45 +8,39 @@ const {
 
 const { validateFamilyId } = require('../main/tools/format/validateId');
 
-router.param('familyId', validateFamilyId);
+familyRouter.param('familyId', validateFamilyId);
 
 const { attachSubscriptionInformation } = require('../main/tools/format/validateSubscription');
 
-router.use('/:familyId', attachSubscriptionInformation);
+familyRouter.use('/:familyId', attachSubscriptionInformation);
 
 // route to dogs (or nested) related things
-const dogsRouter = require('./dogs');
+const { dogsRouter } = require('./dogs');
 
-router.use('/:familyId/dogs', dogsRouter);
+familyRouter.use('/:familyId/dogs', dogsRouter);
 
 // route to subscription related things
-const subscriptionRouter = require('./subscription');
+const { subscriptionRouter } = require('./subscription');
 
-router.use('/:familyId/subscription', subscriptionRouter);
-
-// gets family with userId then return information from families and familyMembers table
-router.get('/', getFamily);
-// no body
+familyRouter.use('/:familyId/subscription', subscriptionRouter);
 
 // gets family with familyId then return information from families and familyMembers table
-router.get('/:familyId', getFamily);
+familyRouter.get('/:familyId', getFamily);
 // no body
 
 // creates family
-router.post('/', createFamily);
+familyRouter.post('/', createFamily);
 /* BODY:
 */
-
-// lets a user join a new family
-router.put('/', updateFamily);
 
 // updates family
-router.put('/:familyId', updateFamily);
-/* BODY:
-*/
+// no familyId indicates that the user might be joining a family with a familyCode.
+familyRouter.put('/', updateFamily);
+// familyId indicates that the user might be updating the family
+familyRouter.put('/:familyId', updateFamily);
 
 // deletes family
-router.delete('/:familyId', deleteFamily);
+familyRouter.delete('/:familyId', deleteFamily);
 // no body
 
-module.exports = router;
+module.exports = { familyRouter };

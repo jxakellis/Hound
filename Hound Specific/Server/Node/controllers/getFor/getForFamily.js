@@ -1,5 +1,5 @@
-const DatabaseError = require('../../main/tools/errors/databaseError');
-const ValidationError = require('../../main/tools/errors/validationError');
+const { DatabaseError } = require('../../main/tools/errors/databaseError');
+const { ValidationError } = require('../../main/tools/errors/validationError');
 const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
@@ -10,7 +10,6 @@ const usersColumns = 'users.userId, users.userFirstName, users.userLastName';
 // familyId is already known, lastPause + lastUnpause + familyAccountCreationDate have no use client-side and familyIsDeleted isn't currently being used
 const familiesColumns = 'userId, familyCode, isLocked, isPaused';
 const familyMembersColumns = 'userId';
-const subscriptionTiersColumns = 'subscriptionTiers.subscriptionTier, subscriptionTiers.subscriptionName, subscriptionTiers.subscriptionNumberOfFamilyMembers, subscriptionTiers.subscriptionNumberOfDogs';
 
 /**
  *  If the query is successful, returns the userId, familyCode, isLocked, isPaused, and familyMembers for the familyId.
@@ -19,7 +18,7 @@ const subscriptionTiersColumns = 'subscriptionTiers.subscriptionTier, subscripti
 const getAllFamilyInformationForFamilyId = async (req, familyId) => {
   // validate that a familyId was passed, assume that its in the correct format
   if (areAllDefined(req, familyId) === false) {
-    throw new ValidationError('familyId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req or familyId missing', 'ER_VALUES_MISSING');
   }
   // family id is validated, therefore we know familyMembers is >= 1 for familyId
   try {
@@ -48,36 +47,14 @@ const getAllFamilyInformationForFamilyId = async (req, familyId) => {
   }
 };
 
-const getFamilySubscriptionForFamilyId = async (req, familyId) => {
-  // validate that a familyId was passed, assume that its in the correct format
-  if (areAllDefined(familyId) === false) {
-    throw new ValidationError('familyId missing', 'ER_VALUES_MISSING');
-  }
-  // family id is validated, therefore we know familyMembers is >= 1 for familyId
-  try {
-    // find family then join with corresponding inforamtion
-    let subscriptionInformation = await queryPromise(
-      req,
-      `SELECT ${subscriptionTiersColumns} FROM families JOIN subscriptionTiers ON families.subscriptionTier = subscriptionTiers.subscriptionTier WHERE familyId = ? LIMIT 1`,
-      [familyId],
-    );
-
-    subscriptionInformation = subscriptionInformation[0];
-    return subscriptionInformation;
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
-};
-
 /**
  *  If the query is successful, returns the family members for the familyId.
  *  If a problem is encountered, creates and throws custom error
  */
 const getAllFamilyMembersForFamilyId = async (req, familyId) => {
   // validate that a familyId was passed, assume that its in the correct format
-  if (areAllDefined(familyId) === false) {
-    throw new ValidationError('familyId missing', 'ER_VALUES_MISSING');
+  if (areAllDefined(req, familyId) === false) {
+    throw new ValidationError('req or familyId missing', 'ER_VALUES_MISSING');
   }
 
   try {
@@ -97,10 +74,10 @@ const getAllFamilyMembersForFamilyId = async (req, familyId) => {
  *  If the query is successful, returns the family members for the userId.
  *  If a problem is encountered, creates and throws custom error
  */
-const getFamilyMembersForUserId = async (req, userId) => {
+const getFamilyMemberForUserId = async (req, userId) => {
   // validate that a userId was passed, assume that its in the correct format
-  if (areAllDefined(userId) === false) {
-    throw new ValidationError('userId missing', 'ER_VALUES_MISSING');
+  if (areAllDefined(req, userId) === false) {
+    throw new ValidationError('req, userId missing', 'ER_VALUES_MISSING');
   }
 
   try {
@@ -117,5 +94,5 @@ const getFamilyMembersForUserId = async (req, userId) => {
 };
 
 module.exports = {
-  getAllFamilyInformationForFamilyId, getFamilySubscriptionForFamilyId, getAllFamilyMembersForFamilyId, getFamilyMembersForUserId,
+  getAllFamilyInformationForFamilyId, getAllFamilyMembersForFamilyId, getFamilyMemberForUserId,
 };

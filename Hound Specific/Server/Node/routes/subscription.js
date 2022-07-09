@@ -1,18 +1,18 @@
 const express = require('express');
 
-const router = express.Router({ mergeParams: true });
+const subscriptionRouter = express.Router({ mergeParams: true });
 
 const {
   getSubscription, createSubscription,
 } = require('../controllers/main/subscription');
 
 //
-router.get('/', getSubscription);
+subscriptionRouter.get('/', getSubscription);
 // no body
 
 //
-router.post('/:encodedReceiptData', createSubscription);
+subscriptionRouter.post('/', createSubscription);
 /* BODY:
 */
 
-module.exports = router;
+module.exports = { subscriptionRouter };
