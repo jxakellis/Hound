@@ -30,7 +30,7 @@ const getUser = async (req, res) => {
     // no identifier provided
     else {
       await req.rollbackQueries(req);
-      return res.status(400).json(new ValidationError('userId or userIdentifier missing', 'ER_VALUES_MISSING').toJSON);
+      return res.status(400).json(new ValidationError('userId or userIdentifier missing', global.constant.error.value.MISSING).toJSON);
     }
 
     await req.commitQueries(req);

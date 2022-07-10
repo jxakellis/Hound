@@ -4,7 +4,7 @@ const { queryPromise } = require('../../main/tools/database/queryPromise');
 const {
   formatBoolean, formatDate,
 } = require('../../main/tools/format/formatObject');
-const { areAllDefined } = require('../../main/tools/format/validateDefined');
+const { areAllDefined, atLeastOneDefined } = require('../../main/tools/format/validateDefined');
 const { getAllLogsForDogId } = require('./getForLogs');
 const { getAllRemindersForDogId } = require('./getForReminders');
 
@@ -16,22 +16,22 @@ const dogsColumns = 'dogId, dogName, dogIsDeleted';
  *  If the query is successful, returns the dog for the dogId.
  *  If a problem is encountered, creates and throws custom error
  */
-const getDogForDogId = async (req, dogId) => {
-  const lastDogManagerSynchronization = formatDate(req.query.lastDogManagerSynchronization);
-
+const getDogForDogId = async (req, dogId, lastDogManagerSynchronization, shouldRetrieveReminders, shouldRetrieveLogs) => {
   if (areAllDefined(req, dogId) === false) {
-    throw new ValidationError('req or dogId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req or dogId missing', global.constant.error.value.MISSING);
   }
+
+  const lastSynchronization = formatDate(lastDogManagerSynchronization);
 
   try {
     let result;
     // if the user provides a last sync, then we look for dogs that were modified after this last sync. Therefore, only providing dogs that were modified and the local client is outdated on
-    if (areAllDefined(lastDogManagerSynchronization)) {
+    if (areAllDefined(lastSynchronization)) {
       // therefore, a log/remidner could be updated in a dog but the server won't send back the updated info (since this information is nested under the dog which we never process)
       result = await queryPromise(
         req,
         `SELECT ${dogsColumns} FROM dogs WHERE dogLastModified >= ? AND dogId = ? LIMIT 1`,
-        [lastDogManagerSynchronization, dogId],
+        [lastSynchronization, dogId],
       );
     }
     else {
@@ -47,19 +47,27 @@ const getDogForDogId = async (req, dogId) => {
       return result;
     }
 
-    const shouldRetrieveReminders = formatBoolean(req.query.reminders);
-    const shouldRetrieveLogs = formatBoolean(req.query.logs);
-    // if the query parameter indicates that they want the logs and the reminders too, we add them
-    if (areAllDefined(shouldRetrieveReminders) && shouldRetrieveReminders) {
-      const remindersResult = await getAllRemindersForDogId(req, dogId);
-
-      result[0].reminders = remindersResult;
+    const reminders = formatBoolean(shouldRetrieveReminders);
+    const logs = formatBoolean(shouldRetrieveLogs);
+    if (atLeastOneDefined(reminders, logs) === false) {
+      return result;
     }
-    if (areAllDefined(shouldRetrieveLogs) && shouldRetrieveLogs) {
-      const logsResult = await getAllLogsForDogId(req, dogId);
 
-      result[0].logs = logsResult;
+    // if the query parameter indicates that they want the logs and the reminders too, we add them.
+    if (areAllDefined(reminders) && reminders) {
+      for (let i = 0; i < result.length; i += 1) {
+        const reminderResult = await getAllRemindersForDogId(req, result[i].dogId);
+        result[i].reminders = reminderResult;
+      }
     }
+
+    if (areAllDefined(logs) && logs) {
+      for (let i = 0; i < result.length; i += 1) {
+        const logResult = await getAllLogsForDogId(req, result[i].dogId);
+        result[i].logs = logResult;
+      }
+    }
+
     return result;
   }
   catch (error) {
@@ -71,23 +79,23 @@ const getDogForDogId = async (req, dogId) => {
  *  If the query is successful, returns an array of all the dogs for the familyId.
  *  If a problem is encountered, creates and throws custom error
  */
-const getAllDogsForFamilyId = async (req, familyId) => {
-  const userId = req.params.userId;
-  const lastDogManagerSynchronization = formatDate(req.query.lastDogManagerSynchronization);
-
+const getAllDogsForUserIdFamilyId = async (req, userId, familyId, lastDogManagerSynchronization, shouldRetrieveReminders, shouldRetrieveLogs) => {
+  // userId part is optional until later
   if (areAllDefined(req, familyId) === false) {
-    throw new ValidationError('req or familyId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req or familyId missing', global.constant.error.value.MISSING);
   }
+
+  const lastSynchronization = formatDate(lastDogManagerSynchronization);
 
   try {
     let result;
     // if the user provides a last sync, then we look for dogs that were modified after this last sync. Therefore, only providing dogs that were modified and the local client is outdated on
-    if (areAllDefined(lastDogManagerSynchronization)) {
+    if (areAllDefined(lastSynchronization)) {
       // therefore, a log/remidner could be updated in a dog but the server won't send back the updated info (since this information is nested under the dog which we never process)
       result = await queryPromise(
         req,
         `SELECT ${dogsColumns} FROM dogs WHERE dogLastModified >= ? AND familyId = ? LIMIT 18446744073709551615`,
-        [lastDogManagerSynchronization, familyId],
+        [lastSynchronization, familyId],
       );
     }
     else {
@@ -98,30 +106,41 @@ const getAllDogsForFamilyId = async (req, familyId) => {
       );
     }
 
-    const shouldRetrieveReminders = formatBoolean(req.query.reminders);
-    const shouldRetrieveLogs = formatBoolean(req.query.logs);
+    // no need to do anything else as there are no dogs
+    if (result.length === 0) {
+      return result;
+    }
+
+    const reminders = formatBoolean(shouldRetrieveReminders);
+    const logs = formatBoolean(shouldRetrieveLogs);
+    if (atLeastOneDefined(reminders, logs) === false) {
+      return result;
+    }
+
     // if the query parameter indicates that they want the logs and the reminders too, we add them.
-    if (areAllDefined(shouldRetrieveReminders) && shouldRetrieveReminders) {
+    if (areAllDefined(reminders) && reminders) {
       for (let i = 0; i < result.length; i += 1) {
         const reminderResult = await getAllRemindersForDogId(req, result[i].dogId);
         result[i].reminders = reminderResult;
       }
     }
-    if (areAllDefined(shouldRetrieveLogs) && shouldRetrieveLogs) {
+
+    if (areAllDefined(logs) && logs) {
       for (let i = 0; i < result.length; i += 1) {
         const logResult = await getAllLogsForDogId(req, result[i].dogId);
         result[i].logs = logResult;
       }
     }
 
-    if (areAllDefined(lastDogManagerSynchronization, shouldRetrieveReminders, shouldRetrieveLogs) && shouldRetrieveReminders && shouldRetrieveLogs) {
-    // This function is retrieving the all dogs for a given familyId.
-    // If the user also specified to get reminders and logs, that means this query is retrieving the ENTIRE dog manager
-    // Therefore, the user's lastDogManagerSynchronization should be saved as this counts as a dogManagerSyncronization
+    // If the user retrieved the most updated information from the dog (by getting reminders and logs and providing a lastSynchronization), we update
+    if (areAllDefined(userId, lastSynchronization, reminders, logs) && reminders && logs) {
+      // This function is retrieving the all dogs for a given familyId.
+      // If the user also specified to get reminders and logs, that means this query is retrieving the ENTIRE dog manager
+      // Therefore, the user's lastDogManagerSynchronization should be saved as this counts as a dogManagerSyncronization
       await queryPromise(
         req,
         'UPDATE userConfiguration SET lastDogManagerSynchronization = ? WHERE userId = ?',
-        [lastDogManagerSynchronization, userId],
+        [lastSynchronization, userId],
       );
     }
 
@@ -132,4 +151,4 @@ const getAllDogsForFamilyId = async (req, familyId) => {
   }
 };
 
-module.exports = { getDogForDogId, getAllDogsForFamilyId };
+module.exports = { getDogForDogId, getAllDogsForUserIdFamilyId };

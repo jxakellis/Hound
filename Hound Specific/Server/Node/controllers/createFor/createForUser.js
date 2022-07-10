@@ -46,7 +46,7 @@ const createUserForUserIdentifier = async (req, userIdentifier) => {
     snoozeLength,
     notificationSound,
   ) === false) {
-    throw new ValidationError('req, userId, userEmail, userIdentifier, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req, userId, userEmail, userIdentifier, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound missing', global.constant.error.value.MISSING);
   }
 
   try {

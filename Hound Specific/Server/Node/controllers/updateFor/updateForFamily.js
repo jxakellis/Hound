@@ -21,7 +21,7 @@ const updateFamilyForUserIdFamilyId = async (req, userId, familyId) => {
   const isPaused = formatBoolean(req.body.isPaused);
 
   if (areAllDefined(req) === false) {
-    throw new ValidationError('req missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req missing', global.constant.error.value.MISSING);
   }
 
   // familyId doesn't exist, so user must want to join a family
@@ -35,7 +35,7 @@ const updateFamilyForUserIdFamilyId = async (req, userId, familyId) => {
     await updateIsPaused(req, familyId);
   }
   else {
-    throw new ValidationError('No value provided', 'ER_VALUES_MISSING');
+    throw new ValidationError('No value provided', global.constant.error.value.MISSING);
   }
 };
 
@@ -46,7 +46,7 @@ const addFamilyMember = async (req, userId) => {
   let familyCode = req.body.familyCode;
   // make sure familyCode was provided
   if (areAllDefined(req, familyCode) === false) {
-    throw new ValidationError('req or familyCode missing', 'ER_FAMILY_CODE_INVALID');
+    throw new ValidationError('req or familyCode missing', global.constant.error.value.MISSING);
   }
   familyCode = familyCode.toUpperCase();
 
@@ -66,14 +66,14 @@ const addFamilyMember = async (req, userId) => {
   // make sure the familyCode was valid by checking if it matched a family
   if (family.length === 0) {
     // result length is zero so there are no families with that familyCode
-    throw new ValidationError('familyCode invalid, not found', 'ER_FAMILY_NOT_FOUND');
+    throw new ValidationError('familyCode invalid, not found', global.constant.error.family.join.FAMILY_CODE_INVALID);
   }
   family = family[0];
   const familyId = formatSHA256Hash(family.familyId);
   const isLocked = formatBoolean(family.isLocked);
   // familyCode exists and is linked to a family, now check if family is locked against new members
   if (isLocked) {
-    throw new ValidationError('Family is locked', 'ER_FAMILY_LOCKED');
+    throw new ValidationError('Family is locked', global.constant.error.family.join.FAMILY_LOCKED);
   }
 
   // the familyCode is valid and linked to an UNLOCKED family
@@ -82,7 +82,7 @@ const addFamilyMember = async (req, userId) => {
 
   if (isFamilyMember.length !== 0) {
     // user is already in a family
-    throw new ValidationError('You are already in a family', 'ER_FAMILY_ALREADY');
+    throw new ValidationError('You are already in a family', global.constant.error.family.join.IN_FAMILY_ALREADY);
   }
 
   // the user is eligible to join the family, check to make sure the family has enough space
@@ -92,7 +92,7 @@ const addFamilyMember = async (req, userId) => {
 
   // the family is either at the limit of family members is exceeds the limit, therefore no new users can join
   if (familyMembers.length >= subscriptionInformation.subscriptionNumberOfFamilyMembers) {
-    throw new ValidationError(`Family member limit of ${subscriptionInformation.subscriptionNumberOfFamilyMembers} exceeded`, 'ER_FAMILY_MEMBER_LIMIT_EXCEEDED');
+    throw new ValidationError(`Family member limit of ${subscriptionInformation.subscriptionNumberOfFamilyMembers} exceeded`, global.constant.error.family.limit.FAMILY_MEMBER_TOO_LOW);
   }
 
   // familyCode validated and user is not a family member in any family
@@ -119,7 +119,7 @@ const updateIsLocked = async (req, familyId) => {
   const isLocked = formatBoolean(req.body.isLocked);
 
   if (areAllDefined(req, userId, familyId, isLocked) === false) {
-    throw new ValidationError('req, userId, familyId, or isLocked missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req, userId, familyId, or isLocked missing', global.constant.error.value.MISSING);
   }
 
   try {
@@ -146,7 +146,7 @@ const updateIsPaused = async (req, familyId) => {
   const isPaused = formatBoolean(req.body.isPaused);
 
   if (areAllDefined(req, userId, familyId, isPaused) === false) {
-    throw new ValidationError('req, userId, familyId, or isPaused missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req, userId, familyId, or isPaused missing', global.constant.error.value.MISSING);
   }
 
   let familyConfiguration;
@@ -191,7 +191,7 @@ const pause = async (req, familyId, lastUnpause) => {
 
   // lastUnpause can be null if not paused before, not a deal breaker
   if (areAllDefined(req, familyId) === false) {
-    throw new ValidationError('req or familyId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req or familyId missing', global.constant.error.value.MISSING);
   }
 
   await queryPromise(
@@ -276,7 +276,7 @@ const unpause = async (req, familyId) => {
   const reminderLastModified = lastUnpause;
 
   if (areAllDefined(req, familyId) === false) {
-    throw new ValidationError('req or familyId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req or familyId missing', global.constant.error.value.MISSING);
   }
 
   // update the family's pause configuration to reflect changes

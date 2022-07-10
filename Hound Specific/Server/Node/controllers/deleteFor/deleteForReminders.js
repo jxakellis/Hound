@@ -15,7 +15,7 @@ const deleteReminderForFamilyIdDogIdReminderId = async (req, familyId, dogId, re
     const reminderLastModified = dogLastModified;
 
     if (areAllDefined(req, familyId, dogId, reminderId) === false) {
-      throw new ValidationError('req, familyId, dogId, or reminderId missing', 'ER_VALUES_MISSING');
+      throw new ValidationError('req, familyId, dogId, or reminderId missing', global.constant.error.value.MISSING);
     }
 
     // deletes reminder
@@ -51,7 +51,7 @@ const deleteAllRemindersForFamilyIdDogId = async (req, familyId, dogId) => {
     const reminderLastModified = dogLastModified;
 
     if (areAllDefined(req, familyId, dogId) === false) {
-      throw new ValidationError('req, familyId, or dogId missing', 'ER_VALUES_MISSING');
+      throw new ValidationError('req, familyId, or dogId missing', global.constant.error.value.MISSING);
     }
 
     // find all the reminderIds

@@ -4,6 +4,7 @@ const { connectionForAlarms } = require('../../database/databaseConnection');
 
 const { areAllDefined } = require('../../format/validateDefined');
 const { cancelPrimaryJobForFamilyForReminder, cancelSecondaryJobForUserForReminder } = require('./cancelJob');
+const { getAllFamilyMembersForFamilyId } = require('../../../../controllers/getFor/getForFamily');
 
 const deleteAlarmNotificationsForFamily = async (familyId) => {
   try {
@@ -23,11 +24,7 @@ const deleteAlarmNotificationsForFamily = async (familyId) => {
       [familyId],
     );
       // finds all the users in the family
-    const users = await queryPromise(
-      connectionForAlarms,
-      'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
-      [familyId],
-    );
+    const users = await getAllFamilyMembersForFamilyId(connectionForAlarms, familyId);
 
     for (let i = 0; i < reminders.length; i += 1) {
       const reminderId = reminders[i].reminderId;
@@ -64,12 +61,9 @@ const deleteAlarmNotificationsForReminder = async (familyId, reminderId) => {
     cancelPrimaryJobForFamilyForReminder(familyId, reminderId);
 
     // finds all the users in the family
-    const users = await queryPromise(
-      connectionForAlarms,
-      'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
-      [familyId],
-    );
-      // iterate through all users for the family
+    const users = await getAllFamilyMembersForFamilyId(connectionForAlarms, familyId);
+
+    // iterate through all users for the family
     for (let i = 0; i < users.length; i += 1) {
       // if the users have any jobs on the secondary schedule for the reminder, remove them
       cancelSecondaryJobForUserForReminder(users[i].userId, reminderId);

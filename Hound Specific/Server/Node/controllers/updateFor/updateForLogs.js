@@ -19,7 +19,7 @@ const updateLogForDogIdLogId = async (req, dogId, logId) => {
 
   // if all undefined, then there is nothing to update
   if (areAllDefined(req, dogId, logId, logDate, logNote, logAction) === false) {
-    throw new ValidationError('req, dogId, logId, logDate, logNote, or logAction missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req, dogId, logId, logDate, logNote, or logAction missing', global.constant.error.value.MISSING);
   }
 
   try {

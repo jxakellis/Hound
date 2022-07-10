@@ -25,11 +25,11 @@ const getReminders = async (req, res) => {
     let result;
     // reminderId was provided, look for single reminder
     if (areAllDefined(reminderId)) {
-      result = await getReminderForReminderId(req, reminderId);
+      result = await getReminderForReminderId(req, reminderId, req.query.lastDogManagerSynchronization);
     }
     // look for multiple reminders
     else {
-      result = await getAllRemindersForDogId(req, dogId);
+      result = await getAllRemindersForDogId(req, dogId, req.query.lastDogManagerSynchronization);
     }
 
     if (result.length === 0) {

@@ -14,7 +14,7 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const updateReminderForReminder = async (req, reminder) => {
   // check that we have a reminder to update in the first place
   if (areAllDefined(reminder) === false) {
-    throw new ValidationError('reminder missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('reminder missing', global.constant.error.value.MISSING);
   }
 
   // general reminder components
@@ -61,36 +61,36 @@ const updateReminderForReminder = async (req, reminder) => {
 
   // check to see that necessary generic reminder components are present
   if (areAllDefined(reminderId, reminderAction, reminderType, reminderIsEnabled, reminderExecutionBasis) === false) {
-    throw new ValidationError('reminderId, reminderAction, reminderType, reminderIsEnabled, or reminderExecutionBasis missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('reminderId, reminderAction, reminderType, reminderIsEnabled, or reminderExecutionBasis missing', global.constant.error.value.MISSING);
   }
   else if (reminderType !== 'countdown' && reminderType !== 'weekly' && reminderType !== 'monthly' && reminderType !== 'oneTime') {
-    throw new ValidationError('reminderType invalid', 'ER_VALUES_INVALID');
+    throw new ValidationError('reminderType invalid', global.constant.error.value.INVALID);
   }
   // snooze
   else if (areAllDefined(snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed) === false) {
-    throw new ValidationError('snoozeIsEnabled, snoozeExecutionInterval, or snoozeIntervalElapsed missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('snoozeIsEnabled, snoozeExecutionInterval, or snoozeIntervalElapsed missing', global.constant.error.value.MISSING);
   }
   // countdown
   else if (areAllDefined(countdownExecutionInterval, countdownIntervalElapsed) === false) {
-    throw new ValidationError('countdownExecutionInterval or countdownIntervalElapsed missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('countdownExecutionInterval or countdownIntervalElapsed missing', global.constant.error.value.MISSING);
   }
   // weekly
   else if (areAllDefined(weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklyIsSkipping) === false) {
-    throw new ValidationError('weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, or weeklyIsSkipping missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, or weeklyIsSkipping missing', global.constant.error.value.MISSING);
   }
   else if (weeklyIsSkipping === true && areAllDefined(weeklyIsSkippingDate) === false) {
-    throw new ValidationError('weeklyIsSkippingDate missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('weeklyIsSkippingDate missing', global.constant.error.value.MISSING);
   }
   // monthly
   else if (areAllDefined(monthlyDay, monthlyHour, monthlyMinute, monthlyIsSkipping) === false) {
-    throw new ValidationError('monthlyDay, monthlyHour, monthlyMinute, or monthlyIsSkipping missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('monthlyDay, monthlyHour, monthlyMinute, or monthlyIsSkipping missing', global.constant.error.value.MISSING);
   }
   else if (monthlyIsSkipping === true && areAllDefined(monthlyIsSkippingDate) === false) {
-    throw new ValidationError('monthlyIsSkippingDate missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('monthlyIsSkippingDate missing', global.constant.error.value.MISSING);
   }
   // oneTime
   else if (areAllDefined(oneTimeDate) === false) {
-    throw new ValidationError('oneTimeDate missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('oneTimeDate missing', global.constant.error.value.MISSING);
   }
 
   try {
@@ -130,7 +130,7 @@ const updateRemindersForReminders = async (req, reminders) => {
   const remindersArray = formatArray(reminders);
 
   if (areAllDefined(remindersArray) === false) {
-    throw new ValidationError('reminders missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('reminders missing', global.constant.error.value.MISSING);
   }
 
   for (let i = 0; i < remindersArray.length; i += 1) {

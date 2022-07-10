@@ -12,22 +12,22 @@ const dogRemindersColumns = 'reminderId, reminderAction, reminderCustomActionNam
  *  If the query is successful, returns the reminder for the reminderId.
  *  If a problem is encountered, creates and throws custom error
  */
-const getReminderForReminderId = async (req, reminderId) => {
-  const lastDogManagerSynchronization = formatDate(req.query.lastDogManagerSynchronization);
-
+const getReminderForReminderId = async (req, reminderId, lastDogManagerSynchronization) => {
   if (areAllDefined(req, reminderId) === false) {
-    throw new ValidationError('reminderId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req or reminderId missing', global.constant.error.value.MISSING);
   }
+
+  const lastSynchronization = formatDate(lastDogManagerSynchronization);
 
   try {
     let result;
 
-    if (areAllDefined(lastDogManagerSynchronization)) {
+    if (areAllDefined(lastSynchronization)) {
       // find reminder that matches the id
       result = await queryPromise(
         req,
         `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderLastModified >= ? AND reminderId = ? LIMIT 1`,
-        [lastDogManagerSynchronization, reminderId],
+        [lastSynchronization, reminderId],
       );
     }
     else {
@@ -52,21 +52,21 @@ const getReminderForReminderId = async (req, reminderId) => {
  *  If the query is successful, returns an array of all the reminders for the dogId.
  *  If a problem is encountered, creates and throws custom error
  */
-const getAllRemindersForDogId = async (req, dogId) => {
-  const lastDogManagerSynchronization = formatDate(req.query.lastDogManagerSynchronization);
-
+const getAllRemindersForDogId = async (req, dogId, lastDogManagerSynchronization) => {
   if (areAllDefined(req, dogId) === false) {
-    throw new ValidationError('dogId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req or dogId missing', global.constant.error.value.MISSING);
   }
+
+  const lastSynchronization = formatDate(lastDogManagerSynchronization);
 
   try {
     let result;
 
-    if (areAllDefined(lastDogManagerSynchronization)) {
+    if (areAllDefined(lastSynchronization)) {
       result = await queryPromise(
         req,
         `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderLastModified >= ? AND dogId = ? LIMIT 18446744073709551615`,
-        [lastDogManagerSynchronization, dogId],
+        [lastSynchronization, dogId],
       );
     }
     else {

@@ -35,7 +35,7 @@ const updateUserForUserId = async (req, userId) => {
     snoozeLength,
     notificationSound,
   ) === false) {
-    throw new ValidationError('No userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound provided', 'ER_NO_VALUES_PROVIDED');
+    throw new ValidationError('No userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound provided', global.constant.error.value.MISSING);
   }
 
   try {

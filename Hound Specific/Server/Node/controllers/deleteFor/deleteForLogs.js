@@ -13,7 +13,7 @@ const deleteLogForLogId = async (req, dogId, logId) => {
     const logLastModified = dogLastModified;
 
     if (areAllDefined(req, dogId, logId) === false) {
-      throw new ValidationError('req, dogId, or logId missing', 'ER_VALUES_MISSING');
+      throw new ValidationError('req, dogId, or logId missing', global.constant.error.value.MISSING);
     }
 
     await queryPromise(
@@ -46,7 +46,7 @@ const deleteAllLogsForDogId = async (req, dogId) => {
     const logLastModified = dogLastModified;
 
     if (areAllDefined(req, dogId) === false) {
-      throw new ValidationError('req or dogId missing', 'ER_VALUES_MISSING');
+      throw new ValidationError('req or dogId missing', global.constant.error.value.MISSING);
     }
 
     await queryPromise(

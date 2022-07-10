@@ -12,9 +12,4 @@ class ParseError extends Error {
   }
 }
 
-/*
-ER_NO_PARSE_FORM_DATA
-ER_NO_PARSE_JSON
-*/
-
 module.exports = { ParseError };

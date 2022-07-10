@@ -17,13 +17,13 @@ const createLogForUserIdDogId = async (req, userId, dogId) => {
   const logLastModified = dogLastModified; // manual
 
   if (areAllDefined(req, userId, dogId, logDate, logNote, logAction) === false) {
-    throw new ValidationError('req, userId, dogId, logDate, logNote, or logAction missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req, userId, dogId, logDate, logNote, or logAction missing', global.constant.error.value.MISSING);
   }
 
-  let numberOfLogs;
+  let logs;
   try {
     // only retrieve enough not deleted logs that would exceed the limit
-    numberOfLogs = await queryPromise(
+    logs = await queryPromise(
       req,
       'SELECT logId FROM dogLogs WHERE logIsDeleted = 0 AND dogId = ? LIMIT ?',
       [dogId, global.constant.limit.NUMBER_OF_LOGS_PER_DOG],
@@ -34,8 +34,8 @@ const createLogForUserIdDogId = async (req, userId, dogId) => {
   }
 
   // make sure that the user isn't creating too many logs
-  if (numberOfLogs.length >= global.constant.limit.NUMBER_OF_LOGS_PER_DOG) {
-    throw new ValidationError(`Dog log limit of ${global.constant.limit.NUMBER_OF_LOGS_PER_DOG} exceeded`, 'ER_LOGS_LIMIT_EXCEEDED');
+  if (logs.length >= global.constant.limit.NUMBER_OF_LOGS_PER_DOG) {
+    throw new ValidationError(`Dog log limit of ${global.constant.limit.NUMBER_OF_LOGS_PER_DOG} exceeded`, global.constant.error.family.limit.LOG_TOO_LOW);
   }
 
   try {

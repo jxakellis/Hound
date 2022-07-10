@@ -130,13 +130,13 @@ const assignConnection = (req, res, next) => {
     if (error1) {
       //  no need to release connection as there was a failing in actually creating connection
       // DONT ROLLBACK CONNECTION, NOT ASSIGNED
-      return res.status(500).json(new DatabaseError("Couldn't create a pool connection", 'ER_NO_POOL_CONNECTION').toJSON);
+      return res.status(500).json(new DatabaseError("Couldn't create a pool connection", global.constant.error.general.POOL_CONNECTION_FAILED).toJSON);
     }
     else {
       return connection.beginTransaction((error2) => {
         if (error2) {
           req.connection.release();
-          return res.status(500).json(new DatabaseError("Couldn't begin a transaction with pool connection", 'ER_NO_POOL_TRANSACTION').toJSON);
+          return res.status(500).json(new DatabaseError("Couldn't begin a transaction with pool connection", global.constant.error.general.POOL_TRANSACTION_FAILED).toJSON);
         }
         else {
           req.connection = connection;

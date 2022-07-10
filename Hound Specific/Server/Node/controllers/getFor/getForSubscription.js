@@ -13,7 +13,7 @@ const subscriptionColumns = 'transactionId, productId, subscriptionPurchaseDate,
 const getActiveSubscriptionForFamilyId = async (req, familyId) => {
   // validate that a familyId was passed, assume that its in the correct format
   if (areAllDefined(req, familyId) === false) {
-    throw new ValidationError('familyId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('familyId missing', global.constant.error.value.MISSING);
   }
 
   let familySubscription;
@@ -59,7 +59,7 @@ const getActiveSubscriptionForFamilyId = async (req, familyId) => {
 const getAllSubscriptionsForFamilyId = async (req, familyId) => {
   // validate that a familyId was passed, assume that its in the correct format
   if (areAllDefined(req, familyId) === false) {
-    throw new ValidationError('familyId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('familyId missing', global.constant.error.value.MISSING);
   }
 
   // TO DO implement lastSubscriptionSyncronization properly for this so we only sync new subscriptions that the user doesn't have stored

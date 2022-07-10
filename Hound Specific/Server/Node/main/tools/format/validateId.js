@@ -18,12 +18,12 @@ const validateAppBuild = async (req, res, next) => {
   const appBuild = formatNumber(req.params.appBuild);
   if (areAllDefined(appBuild) === false) {
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('appBuild missing', 'ER_VALUES_MISSING').toJSON);
+    return res.status(400).json(new ValidationError('appBuild missing', global.constant.error.value.MISSING).toJSON);
   }
   // the user isn't on the previous or current app build
   else if (appBuild !== global.constant.server.PREVIOUS_APP_BUILD && appBuild !== global.constant.server.CURRENT_APP_BUILD) {
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError(`appBuild of ${appBuild} is invalid. Acceptable builds are ${global.constant.server.PREVIOUS_APP_BUILD} and ${global.constant.server.CURRENT_APP_BUILD}`, 'ER_APP_BUILD_OUTDATED').toJSON);
+    return res.status(400).json(new ValidationError(`appBuild of ${appBuild} is invalid. Acceptable builds are ${global.constant.server.PREVIOUS_APP_BUILD} and ${global.constant.server.CURRENT_APP_BUILD}`, global.constant.error.general.APP_BUILD_OUTDATED).toJSON);
   }
   else {
     return next();
@@ -59,7 +59,7 @@ const validateUserId = async (req, res, next) => {
       else {
         // userId does not exist in the table
         await req.rollbackQueries(req);
-        return res.status(404).json(new ValidationError('No user found or invalid permissions', 'ER_NOT_FOUND').toJSON);
+        return res.status(404).json(new ValidationError('No user found or invalid permissions', global.constant.error.value.INVALID).toJSON);
       }
     }
     catch (error) {
@@ -71,7 +71,7 @@ const validateUserId = async (req, res, next) => {
   else {
     // userId was not provided or is invalid format OR userIdentifier was not provided or is invalid format
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('userId or userIdentifier Invalid', 'ER_ID_INVALID').toJSON);
+    return res.status(400).json(new ValidationError('userId or userIdentifier Invalid', global.constant.error.value.INVALID).toJSON);
   }
 };
 
@@ -102,7 +102,7 @@ const validateFamilyId = async (req, res, next) => {
       else {
         // familyId does not exist in the table
         await req.rollbackQueries(req);
-        return res.status(404).json(new ValidationError('No family found or invalid permissions', 'ER_NOT_FOUND').toJSON);
+        return res.status(404).json(new ValidationError('No family found or invalid permissions', global.constant.error.value.INVALID).toJSON);
       }
     }
     catch (error) {
@@ -114,7 +114,7 @@ const validateFamilyId = async (req, res, next) => {
   else {
     // familyId was not provided or is invalid format
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('familyId Invalid', 'ER_ID_INVALID').toJSON);
+    return res.status(400).json(new ValidationError('familyId Invalid', global.constant.error.value.INVALID).toJSON);
   }
 };
 
@@ -150,7 +150,7 @@ const validateDogId = async (req, res, next) => {
       else {
         // the dogId does not exist and/or the user does not have access to that dogId
         await req.rollbackQueries(req);
-        return res.status(404).json(new ValidationError('No dogs found or invalid permissions', 'ER_ID_INVALID').toJSON);
+        return res.status(404).json(new ValidationError('No dogs found or invalid permissions', global.constant.error.value.INVALID).toJSON);
       }
     }
     catch (error) {
@@ -161,7 +161,7 @@ const validateDogId = async (req, res, next) => {
   else {
     // dogId was not provided or is invalid
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('dogId Invalid', 'ER_VALUES_INVALID').toJSON);
+    return res.status(400).json(new ValidationError('dogId Invalid', global.constant.error.value.INVALID).toJSON);
   }
 };
 
@@ -197,7 +197,7 @@ const validateLogId = async (req, res, next) => {
       else {
         // the logId does not exist and/or the dog does not have access to that logId
         await req.rollbackQueries(req);
-        return res.status(404).json(new ValidationError('No logs found or invalid permissions', 'ER_NOT_FOUND').toJSON);
+        return res.status(404).json(new ValidationError('No logs found or invalid permissions', global.constant.error.value.INVALID).toJSON);
       }
     }
     catch (error) {
@@ -208,7 +208,7 @@ const validateLogId = async (req, res, next) => {
   else {
     // logId was not provided or is invalid
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('logId Invalid', 'ER_VALUES_INVALID').toJSON);
+    return res.status(400).json(new ValidationError('logId Invalid', global.constant.error.value.INVALID).toJSON);
   }
 };
 
@@ -244,7 +244,7 @@ const validateParamsReminderId = async (req, res, next) => {
       else {
         // the reminderId does not exist and/or the dog does not have access to that reminderId
         await req.rollbackQueries(req);
-        return res.status(404).json(new ValidationError('No reminders found or invalid permissions', 'ER_NOT_FOUND').toJSON);
+        return res.status(404).json(new ValidationError('No reminders found or invalid permissions', global.constant.error.value.INVALID).toJSON);
       }
     }
     catch (error) {
@@ -255,7 +255,7 @@ const validateParamsReminderId = async (req, res, next) => {
   else {
     // reminderId was not provided or is invalid
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('reminderId Invalid', 'ER_VALUES_INVALID').toJSON);
+    return res.status(400).json(new ValidationError('reminderId Invalid', global.constant.error.value.INVALID).toJSON);
   }
 };
 
@@ -296,7 +296,7 @@ const validateBodyReminderId = async (req, res, next) => {
           else {
             // the reminderId does not exist and/or the dog does not have access to that reminderId
             await req.rollbackQueries(req);
-            return res.status(404).json(new ValidationError('No reminders found or invalid permissions', 'ER_NOT_FOUND').toJSON);
+            return res.status(404).json(new ValidationError('No reminders found or invalid permissions', global.constant.error.value.INVALID).toJSON);
           }
         }
         catch (error) {
@@ -307,7 +307,7 @@ const validateBodyReminderId = async (req, res, next) => {
       else {
         // reminderId was not provided or is invalid
         await req.rollbackQueries(req);
-        return res.status(400).json(new ValidationError('reminderId Invalid', 'ER_VALUES_INVALID').toJSON);
+        return res.status(400).json(new ValidationError('reminderId Invalid', global.constant.error.value.INVALID).toJSON);
       }
     }
     // successfully checked all reminderIds
@@ -336,7 +336,7 @@ const validateBodyReminderId = async (req, res, next) => {
       else {
         // the reminderId does not exist and/or the dog does not have access to that reminderId
         await req.rollbackQueries(req);
-        return res.status(404).json(new ValidationError('No reminders found or invalid permissions', 'ER_NOT_FOUND').toJSON);
+        return res.status(404).json(new ValidationError('No reminders found or invalid permissions', global.constant.error.value.INVALID).toJSON);
       }
     }
     catch (error) {
@@ -347,7 +347,7 @@ const validateBodyReminderId = async (req, res, next) => {
   else {
     // reminders array was not provided or is invalid
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('reminders or reminderId Invalid', 'ER_VALUES_INVALID').toJSON);
+    return res.status(400).json(new ValidationError('reminders or reminderId Invalid', global.constant.error.value.INVALID).toJSON);
   }
 };
 

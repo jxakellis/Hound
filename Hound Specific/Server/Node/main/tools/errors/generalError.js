@@ -12,8 +12,4 @@ class GeneralError extends Error {
   }
 }
 
-/*
-ER_NOT_FOUND
-*/
-
 module.exports = { GeneralError };

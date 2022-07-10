@@ -12,20 +12,20 @@ const dogLogsColumns = 'logId, userId, logDate, logNote, logAction, logCustomAct
  *  If the query is successful, returns the log for the dogId.
  *  If a problem is encountered, creates and throws custom error
 */
-const getLogForLogId = async (req, logId) => {
-  const lastDogManagerSynchronization = formatDate(req.query.lastDogManagerSynchronization);
-
-  // verify that a logId was passed
+const getLogForLogId = async (req, logId, lastDogManagerSynchronization) => {
   if (areAllDefined(req, logId) === false) {
-    throw new ValidationError('logId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req or logId missing', global.constant.error.value.MISSING);
   }
+
+  const lastSynchronization = formatDate(lastDogManagerSynchronization);
+
   try {
     let result;
-    if (areAllDefined(lastDogManagerSynchronization)) {
+    if (areAllDefined(lastSynchronization)) {
       result = await queryPromise(
         req,
         `SELECT ${dogLogsColumns} FROM dogLogs WHERE logLastModified >= ? AND logId = ? LIMIT 1`,
-        [lastDogManagerSynchronization, logId],
+        [lastSynchronization, logId],
       );
     }
     else {
@@ -47,19 +47,20 @@ const getLogForLogId = async (req, logId) => {
  *  If the query is successful, returns an array of all the logs for the dogId. Errors not handled
  *  If a problem is encountered, creates and throws custom error
  */
-const getAllLogsForDogId = async (req, dogId) => {
-  const lastDogManagerSynchronization = formatDate(req.query.lastDogManagerSynchronization);
-
+const getAllLogsForDogId = async (req, dogId, lastDogManagerSynchronization) => {
   if (areAllDefined(req, dogId) === false) {
-    throw new ValidationError('dogId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req or dogId missing', global.constant.error.value.MISSING);
   }
+
+  const lastSynchronization = formatDate(lastDogManagerSynchronization);
+
   try {
     let result;
-    if (areAllDefined(lastDogManagerSynchronization)) {
+    if (areAllDefined(lastSynchronization)) {
       result = await queryPromise(
         req,
         `SELECT ${dogLogsColumns} FROM dogLogs WHERE logLastModified >= ? AND dogId = ? LIMIT 18446744073709551615`,
-        [lastDogManagerSynchronization, dogId],
+        [lastSynchronization, dogId],
       );
     }
     else {

@@ -14,7 +14,7 @@ const updateDogForDogId = async (req, dogId) => {
 
   // if dogName undefined, then there is nothing to update
   if (areAllDefined(req, dogId, dogName) === false) {
-    throw new ValidationError('req, dogId, or dogName missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req, dogId, or dogName missing', global.constant.error.value.MISSING);
   }
 
   try {

@@ -7,6 +7,7 @@ const { queryPromise } = require('../../main/tools/database/queryPromise');
 const { houndSharedSecret } = require('../../main/secrets/houndSharedSecret');
 const { formatBase64EncodedString, formatArray, formatNumber } = require('../../main/tools/format/formatObject');
 const { getActiveSubscriptionForFamilyId } = require('../getFor/getForSubscription');
+const { getFamilyHeadForFamilyId } = require('../getFor/getForFamily');
 
 /**
  *  Queries the database to create a ___. If the query is successful, then returns the ___.
@@ -16,10 +17,14 @@ const createSubscriptionForUserIdFamilyIdRecieptId = async (req, userId, familyI
   // Takes a base64 encoded appStoreReceiptURL from a user
   const base64EncodedReceiptData = formatBase64EncodedString(recieptData);
 
-  // TO DO lock out requests that modify the subscription requests to the family head only
-
   if (areAllDefined(req, userId, familyId, base64EncodedReceiptData) === false) {
-    throw new ValidationError('req, userId, familyId, or base64EncodedReceiptData missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req, userId, familyId, or base64EncodedReceiptData missing', global.constant.error.value.MISSING);
+  }
+
+  const familyHeadUserId = await getFamilyHeadForFamilyId(req, familyId);
+
+  if (familyHeadUserId !== userId) {
+    throw new ValidationError('You are not the family head. Only the family head can modify the family subscription', global.constant.error.family.permission.INVALID);
   }
 
   const requestBody = {
@@ -41,24 +46,24 @@ const createSubscriptionForUserIdFamilyIdRecieptId = async (req, userId, familyI
     }
   }
   catch (error) {
-    throw new GeneralError("There was an error querying Apple's iTunes server to verify the receipt", 'ER_APPLE_SERVER');
+    throw new GeneralError("There was an error querying Apple's iTunes server to verify the receipt", global.constant.error.general.APPLE_SERVER_FAILED);
   }
 
   // verify that the status is successful
   if (formatNumber(result.data.status) !== 0) {
-    throw new GeneralError("There was an error querying Apple's iTunes server to verify the receipt", 'ER_APPLE_SERVER');
+    throw new GeneralError("There was an error querying Apple's iTunes server to verify the receipt", global.constant.error.general.APPLE_SERVER_FAILED);
   }
 
   // check to see the result has a body
   const resultBody = result.data;
   if (areAllDefined(resultBody) === false) {
-    throw new ValidationError("Unable to parse the responseBody from Apple's iTunes servers", 'ER_VALUES_MISSING');
+    throw new ValidationError("Unable to parse the responseBody from Apple's iTunes servers", global.constant.error.value.MISSING);
   }
 
   // check to see .latest_receipt_info array exists
   const resultLatestReceiptInfo = formatArray(resultBody.latest_receipt_info);
   if (areAllDefined(resultLatestReceiptInfo) === false) {
-    throw new ValidationError("Unable to parse the responseBody from Apple's iTunes servers", 'ER_VALUES_MISSING');
+    throw new ValidationError("Unable to parse the responseBody from Apple's iTunes servers", global.constant.error.value.MISSING);
   }
 
   // update the records stored for all receipts returned
@@ -80,7 +85,7 @@ const updateReceiptRecords = async (req, latestReceiptInfo) => {
   const subscriptionLastModified = new Date();
 
   if (areAllDefined(req, userId, familyId, receipts) === false) {
-    throw new ValidationError('req, userId, familyId, or latestReceiptInfo missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req, userId, familyId, or latestReceiptInfo missing', global.constant.error.value.MISSING);
   }
 
   // Filter the receipts. Only include one which their productIds are known, and assign values if receipt is valid

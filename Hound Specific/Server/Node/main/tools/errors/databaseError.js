@@ -12,10 +12,4 @@ class DatabaseError extends Error {
   }
 }
 
-/*
-error.code
-ER_NO_POOL_CONNECTION
-ER_NO_POOL_TRANSACTION
-*/
-
 module.exports = { DatabaseError };

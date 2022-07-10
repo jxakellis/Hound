@@ -35,7 +35,7 @@ const configureAppForRequests = (app) => {
   app.use('*', async (req, res) => {
   // release connection
     await req.rollbackQueries(req);
-    return res.status(404).json(new GeneralError('Path not found', 'ER_NOT_FOUND').toJSON);
+    return res.status(404).json(new GeneralError('Path not found', global.constant.error.value.INVALID).toJSON);
   });
 };
 

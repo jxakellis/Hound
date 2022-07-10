@@ -6,6 +6,7 @@ const { formatSHA256Hash } = require('../../main/tools/format/formatObject');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 const { deleteAllDogsForFamilyId } = require('./deleteForDogs');
+const { getFamilyHeadForFamilyId } = require('../getFor/getForFamily');
 
 const { createUserKickedNotification } = require('../../main/tools/notifications/alert/createUserKickedNotification');
 const { createFamilyMemberLeaveNotification } = require('../../main/tools/notifications/alert/createFamilyNotification');
@@ -20,7 +21,7 @@ const deleteFamilyForUserIdFamilyId = async (req, userId, familyId) => {
   const kickUserId = formatSHA256Hash(req.body.kickUserId);
 
   if (areAllDefined(req, userId, familyId) === false) {
-    throw new ValidationError('req, userId, or familyId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req, userId, or familyId missing', global.constant.error.value.MISSING);
   }
 
   if (areAllDefined(kickUserId)) {
@@ -40,7 +41,7 @@ const deleteFamily = async (req, userId, familyId) => {
   let family;
 
   if (areAllDefined(req, userId, familyId) === false) {
-    throw new ValidationError('req, userId, or familyId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req, userId, or familyId missing', global.constant.error.value.MISSING);
   }
 
   try {
@@ -65,7 +66,7 @@ const deleteFamily = async (req, userId, familyId) => {
   if (family.length === 1) {
     if (familyMembers.length !== 1) {
       // Cannot destroy family until other members are gone
-      throw new ValidationError('Family still contains multiple members', 'ER_VALUES_INVALID');
+      throw new ValidationError('Family still contains multiple members', global.constant.error.value.INVALID);
     }
 
     // can destroy the family
@@ -114,26 +115,17 @@ const kickFamilyMember = async (req, userId, familyId) => {
 
   // have to specify who to kick from the family
   if (areAllDefined(req, userId, familyId, kickUserId) === false) {
-    throw new ValidationError('req, userId, familyId, or kickUserId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req, userId, familyId, or kickUserId missing', global.constant.error.value.MISSING);
   }
   // a user cannot kick themselves
   if (userId === kickUserId) {
-    throw new ValidationError('kickUserId invalid', 'ER_VALUES_INVALID');
+    throw new ValidationError('kickUserId invalid', global.constant.error.value.INVALID);
   }
-  let family;
-  try {
-    family = await queryPromise(
-      req,
-      'SELECT userId, familyId FROM families WHERE userId = ? AND familyId = ? LIMIT 1',
-      [userId, familyId],
-    );
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  const familyHeadUserId = await getFamilyHeadForFamilyId(req, familyId);
+
   // check to see if the user is the family head, as only the family head has permissions to kick
-  if (family.length === 0) {
-    throw new ValidationError('Invalid permissions to kick family member', 'ER_NOT_FOUND');
+  if (familyHeadUserId !== userId) {
+    throw new ValidationError('You are not the family head. Only the family head can kick family members', global.constant.error.family.permission.INVALID);
   }
 
   // kickUserId is valid, kickUserId is different then the requester, requester is the family head so everything is valid

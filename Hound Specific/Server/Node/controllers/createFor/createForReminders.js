@@ -12,13 +12,13 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
  */
 const createReminderForDogIdReminder = async (req, dogId, reminder) => {
   if (areAllDefined(req, dogId, reminder) === false) {
-    throw new ValidationError('req, dogId, or reminder missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req, dogId, or reminder missing', global.constant.error.value.MISSING);
   }
 
-  let numberOfReminders;
+  let reminders;
   try {
     // only retrieve enough not deleted reminders that would exceed the limit
-    numberOfReminders = await queryPromise(
+    reminders = await queryPromise(
       req,
       'SELECT reminderId FROM dogReminders WHERE reminderIsDeleted = 0 AND dogId = ? LIMIT ?',
       [dogId, global.constant.limit.NUMBER_OF_REMINDERS_PER_DOG],
@@ -29,8 +29,8 @@ const createReminderForDogIdReminder = async (req, dogId, reminder) => {
   }
 
   // make sure that the user isn't creating too many reminders
-  if (numberOfReminders.length >= global.constant.limit.NUMBER_OF_REMINDERS_PER_DOG) {
-    throw new ValidationError(`Dog reminder limit of ${global.constant.limit.NUMBER_OF_REMINDERS_PER_DOG} exceeded`, 'ER_REMINDER_LIMIT_EXCEEDED');
+  if (reminders.length >= global.constant.limit.NUMBER_OF_REMINDERS_PER_DOG) {
+    throw new ValidationError(`Dog reminder limit of ${global.constant.limit.NUMBER_OF_REMINDERS_PER_DOG} exceeded`, global.constant.error.family.limit.REMINDER_TOO_LOW);
   }
 
   // general reminder components
@@ -65,26 +65,26 @@ const createReminderForDogIdReminder = async (req, dogId, reminder) => {
 
   // check to see that necessary generic reminder components are present
   if (areAllDefined(reminderAction, reminderType, reminderIsEnabled, reminderExecutionBasis) === false) {
-    throw new ValidationError('reminderAction, reminderType, reminderIsEnabled, or reminderExecutionBasis missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('reminderAction, reminderType, reminderIsEnabled, or reminderExecutionBasis missing', global.constant.error.value.MISSING);
   }
   else if (reminderType !== 'countdown' && reminderType !== 'weekly' && reminderType !== 'monthly' && reminderType !== 'oneTime') {
-    throw new ValidationError('reminderType invalid', 'ER_VALUES_INVALID');
+    throw new ValidationError('reminderType invalid', global.constant.error.value.INVALID);
   }
   // no need to check snooze components as a newly created reminder can't be snoozed yet
   // no need to check for countdownIntervalElapsed as newly created reminder couldn't have elapsed time
   else if (areAllDefined(countdownExecutionInterval) === false) {
-    throw new ValidationError('countdownExecutionInterval missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('countdownExecutionInterval missing', global.constant.error.value.MISSING);
   }
   // no need to check weeklyIsSkipping && weeklyIsSkippingDate validity as newly created reminder can't be skipped yet
   else if (areAllDefined(weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday) === false) {
-    throw new ValidationError('weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, or weeklySaturday missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, or weeklySaturday missing', global.constant.error.value.MISSING);
   }
   // no need to check monthlyIsSkipping && monthlyIsSkippingDate validity as newly created reminder can't be skipped yet
   else if (areAllDefined(monthlyDay, monthlyHour, monthlyMinute) === false) {
-    throw new ValidationError('monthlyDay, monthlyHour, or monthlyMinute missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('monthlyDay, monthlyHour, or monthlyMinute missing', global.constant.error.value.MISSING);
   }
   else if (areAllDefined(oneTimeDate) === false) {
-    throw new ValidationError('oneTimeDate missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('oneTimeDate missing', global.constant.error.value.MISSING);
   }
 
   try {
@@ -129,7 +129,7 @@ const createRemindersForDogIdReminders = async (req, dogId, reminders) => {
   const createdReminders = [];
 
   if (areAllDefined(req, dogId, remindersArray) === false) {
-    throw new ValidationError('req, dogId, or reminders missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('req, dogId, or reminders missing', global.constant.error.value.MISSING);
   }
 
   for (let i = 0; i < remindersArray.length; i += 1) {

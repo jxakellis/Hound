@@ -11,7 +11,7 @@ const userConfigurationColumns = 'userConfiguration.isNotificationEnabled, userC
  */
 const getUserForUserId = async (req, userId) => {
   if (areAllDefined(req, userId) === false) {
-    throw new ValidationError('userId missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('userId missing', global.constant.error.value.MISSING);
   }
 
   let userInformation;
@@ -39,7 +39,7 @@ const getUserForUserId = async (req, userId) => {
  */
 const getUserForUserIdentifier = async (req, userIdentifier) => {
   if (areAllDefined(req, userIdentifier) === false) {
-    throw new ValidationError('userIdentifier missing', 'ER_VALUES_MISSING');
+    throw new ValidationError('userIdentifier missing', global.constant.error.value.MISSING);
   }
 
   // userIdentifier method of finding corresponding user(s)
@@ -61,7 +61,7 @@ const getUserForUserIdentifier = async (req, userIdentifier) => {
   if (userInformation.length === 0) {
     // successful but empty array, no user to return.
     // Theoretically could be multiple users found but that means the table is broken. Just do catch all
-    throw new ValidationError('No user found or invalid permissions', 'ER_NOT_FOUND');
+    throw new ValidationError('No user found or invalid permissions', global.constant.error.value.INVALID);
   }
   userInformation = userInformation[0];
 

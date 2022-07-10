@@ -1,5 +1,5 @@
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
-const { getDogForDogId, getAllDogsForFamilyId } = require('../getFor/getForDogs');
+const { getDogForDogId, getAllDogsForUserIdFamilyId } = require('../getFor/getForDogs');
 const { createDogForFamilyId } = require('../createFor/createForDogs');
 const { updateDogForDogId } = require('../updateFor/updateForDogs');
 const { deleteDogForFamilyIdDogId } = require('../deleteFor/deleteForDogs');
@@ -12,16 +12,17 @@ Known:
 */
 const getDogs = async (req, res) => {
   try {
+    const userId = req.params.userId;
     const familyId = req.params.familyId;
     const dogId = req.params.dogId;
     let result;
     // if dogId is defined and it is a number then continue to find a single dog
     if (areAllDefined(dogId)) {
-      result = await getDogForDogId(req, dogId);
+      result = await getDogForDogId(req, dogId, req.query.lastDogManagerSynchronization, req.query.reminders, req.query.logs);
     }
     // looking for multiple dogs
     else {
-      result = await getAllDogsForFamilyId(req, familyId);
+      result = await getAllDogsForUserIdFamilyId(req, userId, familyId, req.query.lastDogManagerSynchronization, req.query.reminders, req.query.logs);
     }
 
     if (result.length === 0) {

@@ -12,14 +12,4 @@ class ValidationError extends Error {
   }
 }
 
-/*
-ER_VALUES_MISSING
-ER_VALUES_INVALID
-ER_ID_MISSING
-ER_ID_INVALID
-ER_NO_VALUES_PROVIDED
-ER_NOT_FOUND
-ER_ALREADY_PRESENT
-*/
-
 module.exports = { ValidationError };

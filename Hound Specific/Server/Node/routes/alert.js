@@ -13,7 +13,7 @@ alertRouter.post('/:alertType', async (req, res) => {
   const alertType = req.params.alertType;
   if (areAllDefined(alertType) === false) {
     await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(new ValidationError('No alert type provided', 'ER_VALUES_INVALID')));
+    return res.status(400).json(convertErrorToJSON(new ValidationError('No alert type provided', global.constant.error.value.INVALID)));
   }
   // the user has terminated the app
   if (alertType === global.constant.apn.TERMINATE_CATEGORY) {

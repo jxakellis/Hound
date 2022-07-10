@@ -19,11 +19,11 @@ const getLogs = async (req, res) => {
     let result;
     // if logId is defined and it is a number then continue to find a single log
     if (areAllDefined(logId)) {
-      result = await getLogForLogId(req, logId);
+      result = await getLogForLogId(req, logId, req.query.lastDogManagerSynchronization);
     }
     // query for multiple logs
     else {
-      result = await getAllLogsForDogId(req, dogId);
+      result = await getAllLogsForDogId(req, dogId, req.query.lastDogManagerSynchronization);
     }
 
     if (result.length === 0) {
