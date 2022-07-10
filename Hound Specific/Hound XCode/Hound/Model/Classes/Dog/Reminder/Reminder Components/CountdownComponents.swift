@@ -8,22 +8,22 @@
 
 import Foundation
 
-class CountdownComponents: Component, NSCoding, NSCopying, GeneralCountdownProtocol {
+class CountdownComponents: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = CountdownComponents()
-        copy.changeExecutionInterval(newExecutionInterval: self.storedExecutionInterval)
-        copy.changeIntervalElapsed(newIntervalElapsed: self.storedIntervalElapsed)
+        copy.executionInterval = executionInterval
+        copy.intervalElapsed = intervalElapsed
         return copy
     }
     
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        self.storedExecutionInterval = aDecoder.decodeDouble(forKey: "executionInterval")
-        self.storedIntervalElapsed = aDecoder.decodeDouble(forKey: "intervalElapsed")
+        self.executionInterval = aDecoder.decodeDouble(forKey: "executionInterval")
+        self.intervalElapsed = aDecoder.decodeDouble(forKey: "intervalElapsed")
     }
     
     func encode(with aCoder: NSCoder) {
@@ -40,26 +40,20 @@ class CountdownComponents: Component, NSCoding, NSCopying, GeneralCountdownProto
     convenience init(executionInterval: TimeInterval?, intervalElapsed: TimeInterval?) {
         self.init()
         
-        if executionInterval != nil {
-            storedExecutionInterval = executionInterval!
+        if let executionInterval = executionInterval {
+            self.executionInterval = executionInterval
         }
-        if intervalElapsed != nil {
-            storedIntervalElapsed = intervalElapsed!
+        if let intervalElapsed = intervalElapsed {
+            self.intervalElapsed = intervalElapsed
         }
     }
     
     // MARK: - GeneralCountdownProtocol
     
-    private var storedExecutionInterval: TimeInterval = ReminderComponentConstant.defaultCountdownExecutionInterval
-    var executionInterval: TimeInterval { return storedExecutionInterval }
-    func changeExecutionInterval(newExecutionInterval: TimeInterval) {
-        storedExecutionInterval = newExecutionInterval
-    }
+    /// Interval at which a timer should be triggered for reminder
+    var executionInterval: TimeInterval = ReminderComponentConstant.defaultCountdownExecutionInterval
     
-    private var storedIntervalElapsed: TimeInterval = TimeInterval(0)
-    var intervalElapsed: TimeInterval { return storedIntervalElapsed }
-    func changeIntervalElapsed(newIntervalElapsed: TimeInterval) {
-        storedIntervalElapsed = newIntervalElapsed
-    }
+    /// How much time of the interval of been used up, this is used for when a timer is paused and then unpaused and have to calculate remaining time
+    var intervalElapsed: TimeInterval = TimeInterval(0)
     
 }

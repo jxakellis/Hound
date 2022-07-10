@@ -16,7 +16,7 @@ protocol AlarmManagerDelegate {
     func shouldRefreshDogManager(sender: Sender)
 }
 
-class AlarmManager {
+final class AlarmManager {
     static var delegate: AlarmManagerDelegate! = nil
     
     /// Creates AlarmUIAlertController to show the user about their alarm going off. We query the server with the information provided first to make sure it is up to date. 
@@ -111,7 +111,7 @@ class AlarmManager {
         // update information
         reminder.prepareForNextAlarm()
         
-        reminder.snoozeComponents.changeSnooze(newSnoozeStatus: true)
+        reminder.snoozeComponents.changeSnoozeIsEnabled(newSnoozeStatus: true)
         
         // make request to the server, if successful then we persist the data. If there is an error, then we discard to data to keep client and server in sync (as server wasn't able to update)
         RemindersRequest.update(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in

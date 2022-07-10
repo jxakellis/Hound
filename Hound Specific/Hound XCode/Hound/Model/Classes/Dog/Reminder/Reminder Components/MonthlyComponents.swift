@@ -8,15 +8,15 @@
 
 import Foundation
 
-class MonthlyComponents: Component, NSCoding, NSCopying {
+class MonthlyComponents: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = MonthlyComponents()
-        copy.storedDay = self.day
-        copy.storedHour = self.hour
-        copy.storedMinute = self.minute
+        copy.day = self.day
+        copy.hour = self.hour
+        copy.minute = self.minute
         copy.isSkipping = self.isSkipping
         copy.isSkippingDate = self.isSkippingDate
         return copy
@@ -25,17 +25,17 @@ class MonthlyComponents: Component, NSCoding, NSCopying {
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        storedDay = aDecoder.decodeInteger(forKey: "day")
-        storedHour = aDecoder.decodeInteger(forKey: "hour")
-        storedMinute = aDecoder.decodeInteger(forKey: "minute")
+        day = aDecoder.decodeInteger(forKey: "day")
+        hour = aDecoder.decodeInteger(forKey: "hour")
+        minute = aDecoder.decodeInteger(forKey: "minute")
         isSkipping = aDecoder.decodeBool(forKey: "isSkipping")
         isSkippingDate = aDecoder.decodeObject(forKey: "isSkippingDate") as? Date
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(storedDay, forKey: "day")
-        aCoder.encode(storedHour, forKey: "hour")
-        aCoder.encode(storedMinute, forKey: "minute")
+        aCoder.encode(day, forKey: "day")
+        aCoder.encode(hour, forKey: "hour")
+        aCoder.encode(minute, forKey: "minute")
         aCoder.encode(isSkipping, forKey: "isSkipping")
         aCoder.encode(isSkippingDate, forKey: "isSkippingDate")
     }
@@ -48,9 +48,9 @@ class MonthlyComponents: Component, NSCoding, NSCopying {
     
     convenience init(day: Int?, hour: Int?, minute: Int?, isSkipping: Bool?, isSkippingDate: Date?) {
         self.init()
-        storedDay = day ?? self.day
-        storedHour = hour ?? self.hour
-        storedMinute = minute ?? self.minute
+        self.day = day ?? self.day
+        self.hour = hour ?? self.hour
+        self.minute = minute ?? self.minute
         self.isSkipping = isSkipping ?? self.isSkipping
         self.isSkippingDate = isSkippingDate
         
@@ -58,21 +58,19 @@ class MonthlyComponents: Component, NSCoding, NSCopying {
     
     // MARK: - Properties
     
-    private var storedDay: Int = 1
     /// Day of the month that a reminder will fire
-    var day: Int { return storedDay }
+    private(set) var day: Int = 1
     /// Throws if not within the range of [1,31]
     func changeDay(newDay: Int) throws {
         guard newDay >= 1 && newDay <= 31 else {
             throw MonthlyComponentsError.dayInvalid
         }
-        storedDay = newDay
+        day = newDay
         
     }
     
-    private var storedHour: Int = 7
     /// Hour of the day that the reminder will fire
-    var hour: Int { return storedHour }
+    private(set) var hour: Int = 7
     
     ///  Throws if not within the range of [0,24]
     func changeHour(newHour: Int) throws {
@@ -80,12 +78,11 @@ class MonthlyComponents: Component, NSCoding, NSCopying {
             throw MonthlyComponentsError.hourInvalid
         }
         
-        storedHour = newHour
+        hour = newHour
     }
     
-    private var storedMinute: Int = 0
     /// Minute of the hour that the reminder will fire
-    var minute: Int { return storedMinute }
+    private(set) var minute: Int = 0
     
     /// Throws if not within the range of [0,60]
     func changeMinute(newMinute: Int) throws {
@@ -93,7 +90,7 @@ class MonthlyComponents: Component, NSCoding, NSCopying {
             throw MonthlyComponentsError.minuteInvalid
         }
         
-        storedMinute = newMinute
+        minute = newMinute
     }
     
     /// Whether or not the next alarm will be skipped

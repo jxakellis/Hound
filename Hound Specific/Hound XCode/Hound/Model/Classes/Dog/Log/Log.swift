@@ -199,7 +199,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
         
         self.init(logId: logId, userId: userId, logAction: logAction, logCustomActionName: logCustomActionName, logDate: logDate, logNote: logNote)
         
-        storedLogIsDeleted = body[ServerDefaultKeys.logIsDeleted.rawValue] as? Bool ?? false
+        logIsDeleted = body[ServerDefaultKeys.logIsDeleted.rawValue] as? Bool ?? false
     }
     
     // MARK: Properties
@@ -208,9 +208,8 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     var userId: String = LogConstant.defaultUserId
     
-    private var storedLogIsDeleted: Bool = false
     /// This property a marker leftover from when we went through the process of constructing a new log from JSON and combining with an existing log object. This markers allows us to have a new log to overwrite the old log, then leaves an indicator that this should be deleted. This deletion is handled by DogsRequest
-    var logIsDeleted: Bool { return storedLogIsDeleted }
+    private(set) var logIsDeleted: Bool = false
     
     var logAction: LogAction = LogConstant.defaultLogAction
     

@@ -338,7 +338,7 @@ class DogsReminderManagerViewController: UIViewController, UITextFieldDelegate, 
             case 1:
                 reminder.reminderType = .countdown
                 
-                reminder.countdownComponents.changeExecutionInterval(newExecutionInterval: dogsReminderCountdownViewController.countdown.countDownDuration)
+                reminder.countdownComponents.intervalElapsed = dogsReminderCountdownViewController.countdown.countDownDuration
             case 2:
                 let weekdays = dogsReminderWeeklyViewController.weekdays
                 if weekdays == nil {

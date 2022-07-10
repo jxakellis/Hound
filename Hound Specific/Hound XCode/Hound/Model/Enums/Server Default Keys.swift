@@ -55,6 +55,13 @@ enum ServerDefaultKeys: String {
     // MARK: Purchase
     case base64EncodedReceiptData
     
+    case transactionId
+    case productId
+    case subscriptionPurchaseDate
+    case subscriptionExpiration
+    case subscriptionNumberOfFamilyMembers
+    case subscriptionNumberOfDogs
+    
     // MARK: - Special Local Configuration
     
     case lastDogManagerSynchronization

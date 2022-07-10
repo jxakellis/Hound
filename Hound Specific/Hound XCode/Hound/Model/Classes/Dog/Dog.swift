@@ -15,7 +15,7 @@ class Dog: NSObject, NSCoding, NSCopying {
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = try! Dog(dogName: self.dogName)
         copy.dogId = self.dogId
-        copy.storedDogName = self.storedDogName
+        copy.dogName = self.dogName
         copy.dogIcon = self.dogIcon
         copy.dogReminders = self.dogReminders.copy() as? ReminderManager ?? ReminderManager()
         copy.dogLogs = self.dogLogs.copy() as? LogManager ?? LogManager()
@@ -26,7 +26,7 @@ class Dog: NSObject, NSCoding, NSCopying {
     required init?(coder aDecoder: NSCoder) {
         super.init()
         dogId = aDecoder.decodeInteger(forKey: "dogId")
-        storedDogName = aDecoder.decodeObject(forKey: "dogName") as? String ?? UUID().uuidString
+        dogName = aDecoder.decodeObject(forKey: "dogName") as? String ?? UUID().uuidString
         dogIcon = aDecoder.decodeObject(forKey: "dogIcon") as? UIImage ?? DogConstant.defaultDogIcon
         dogLogs = aDecoder.decodeObject(forKey: "dogLogs") as? LogManager ?? LogManager()
         dogReminders = aDecoder.decodeObject(forKey: "dogReminders") as? ReminderManager ?? ReminderManager()
@@ -34,7 +34,7 @@ class Dog: NSObject, NSCoding, NSCopying {
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(dogId, forKey: "dogId")
-        aCoder.encode(storedDogName, forKey: "dogName")
+        aCoder.encode(dogName, forKey: "dogName")
         aCoder.encode(dogIcon, forKey: "dogIcon")
         aCoder.encode(dogLogs, forKey: "dogLogs")
         aCoder.encode(dogReminders, forKey: "dogReminders")
@@ -50,7 +50,7 @@ class Dog: NSObject, NSCoding, NSCopying {
         else if dogName!.trimmingCharacters(in: .whitespacesAndNewlines) == ""{
             throw DogError.dogNameBlank
         }
-        self.storedDogName = dogName!
+        self.dogName = dogName!
     }
     
     convenience init(dogId: Int = DogConstant.defaultDogId, dogName: String?, dogIcon: UIImage = DogConstant.defaultDogIcon) throws {
@@ -73,7 +73,7 @@ class Dog: NSObject, NSCoding, NSCopying {
         
         try! self.init(dogId: dogId, dogName: dogName, dogIcon: LocalDogIcon.getIcon(forDogId: dogId) ?? DogConstant.defaultDogIcon)
         
-        storedDogIsDeleted = body[ServerDefaultKeys.dogIsDeleted.rawValue] as? Bool ?? false
+        dogIsDeleted = body[ServerDefaultKeys.dogIsDeleted.rawValue] as? Bool ?? false
         
         // check for any reminders
         if let reminderBodies = body[ServerDefaultKeys.reminders.rawValue] as? [[String: Any]] {
@@ -90,9 +90,8 @@ class Dog: NSObject, NSCoding, NSCopying {
     
     var dogId: Int = DogConstant.defaultDogId
     
-    private var storedDogIsDeleted: Bool = false
     /// This property a marker leftover from when we went through the process of constructing a new dog from JSON and combining with an existing dog object. This markers allows us to have a new dog to overwrite the old dog, then leaves an indicator that this should be deleted. This deletion is handled by DogsRequest
-    var dogIsDeleted: Bool { return storedDogIsDeleted }
+    private(set) var dogIsDeleted: Bool = false
     
     // MARK: - Traits
     
@@ -102,8 +101,7 @@ class Dog: NSObject, NSCoding, NSCopying {
         dogIcon = DogConstant.defaultDogIcon
     }
     
-    private var storedDogName: String = DogConstant.defaultDogName
-    var dogName: String { return storedDogName }
+    private(set) var dogName: String = DogConstant.defaultDogName
     func changeDogName(newDogName: String?) throws {
         if newDogName == nil {
             throw DogError.dogNameNil
@@ -112,7 +110,7 @@ class Dog: NSObject, NSCoding, NSCopying {
             throw DogError.dogNameBlank
         }
         else {
-            storedDogName = newDogName!
+            dogName = newDogName!
         }
     }
     

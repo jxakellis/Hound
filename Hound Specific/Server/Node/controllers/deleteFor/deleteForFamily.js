@@ -66,7 +66,7 @@ const deleteFamily = async (req, userId, familyId) => {
   if (family.length === 1) {
     if (familyMembers.length !== 1) {
       // Cannot destroy family until other members are gone
-      throw new ValidationError('Family still contains multiple members', global.constant.error.value.INVALID);
+      throw new ValidationError('Family still contains multiple members', global.constant.error.family.leave.INVALID);
     }
 
     // can destroy the family

@@ -12,27 +12,31 @@ import UIKit
 enum InternalRequestUtils {
     static let baseURLWithoutParams: URL = URL(string: "http://10.0.0.108:3000/api/\(UIApplication.appBuild)")!
     // home URL(string: "http://10.0.0.110:5000/api/v1")!
-    //  school URL(string: "http://10.1.11.124:5000/api/v1")!
     // hotspot URL(string: "http://172.20.10.2:5000/api/v1")!
     // no wifi / local simulator URL(string: "http://localhost:5000/api/v1")!
-    /*
-     let sessionConfig = URLSessionConfiguration.default
-     sessionConfig.timeoutIntervalForRequest = 30.0
-     sessionConfig.timeoutIntervalForResource = 60.0
-     let session = URLSession(configuration: sessionConfig)
-     */
+    
     private static var sessionConfig: URLSessionConfiguration {
         let sessionConfig = URLSessionConfiguration.default
         sessionConfig.timeoutIntervalForRequest = 7.5
         sessionConfig.timeoutIntervalForResource = 15.0
+        sessionConfig.waitsForConnectivity = false
         return sessionConfig
     }
     private static let session = URLSession(configuration: sessionConfig)
     
     /// Takes an already constructed URLRequest and executes it, returning it in a compeltion handler. This is the basis to all URL requests
-    private static func genericRequest(forRequest request: URLRequest, completionHandler: @escaping ([String: Any]?, ResponseStatus, Error?) -> Void) {
+    private static func genericRequest(forRequest request: URLRequest, invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
-        // TO DO add guard statement that checks if the user has an internet connection, instantly rejecting with completionHandler if no connection
+        guard NetworkManager.shared.isConnected else {
+            DispatchQueue.main.async {
+                if invokeErrorManager == true {
+                    ErrorManager.alert(forError: RequestError.noInternetConnection)
+                }
+                
+                completionHandler(nil, .noResponse)
+            }
+            return
+        }
         
         var modifiedRequest = request
         
@@ -51,68 +55,100 @@ enum InternalRequestUtils {
         // send request
         let task = session.dataTask(with: modifiedRequest) { data, response, error in
             // extract status code from URLResponse
-            var responseStatusCode: Int?
-            if let httpResponse = response as? HTTPURLResponse {
-                responseStatusCode = httpResponse.statusCode
-            }
+            let responseStatusCode: Int? = (response as? HTTPURLResponse)?.statusCode
             
             // parse response from json
             var responseBody: [String: Any]?
             // if no data or if no status code, then request failed
-            if data != nil && responseStatusCode != nil {
-                do {
-                    // try to serialize data as "result" form with array of info first, if that fails, revert to regular "message" and "error" format
-                    responseBody = try JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as? [String: [[String: Any]]] ?? JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as? [String: Any]
-                }
-                catch {
-                    AppDelegate.APIRequestLogger.error("Error When Serializing Data Into JSON \(error.localizedDescription)")
-                }
+            if let data = data {
+                // try to serialize data as "result" form with array of info first, if that fails, revert to regular "message" and "error" format
+                responseBody = try?
+                JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as? [String: [[String: Any]]]
+                ?? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as? [String: Any]
             }
             
-            // pass out information
-            if error != nil || (data == nil && response == nil) {
+            guard error == nil, let responseBody = responseBody, let responseStatusCode = responseStatusCode else {
                 // assume an error is no response as that implies request/response failure, meaning the end result of no response is the same
                 AppDelegate.APIResponseLogger.warning(
                     "No \(request.httpMethod ?? "unknown") Response for \(request.url?.description ?? "unknown")\nData Task Error: \(error?.localizedDescription ?? "unknown")")
-                completionHandler(responseBody, .noResponse, nil)
-            }
-            else if responseStatusCode != nil {
-                // we got a response from the server
-                if 200...299 ~= responseStatusCode! && responseBody != nil {
-                    // our request was valid and successful
-                    AppDelegate.APIResponseLogger.notice("Success \(request.httpMethod ?? "unknown") Response for \(request.url?.description ?? "unknown")")
-                    completionHandler(responseBody, .successResponse, nil)
+                
+                var responseError: GeneralResponseError = .getNoResponse
+                
+                switch request.httpMethod {
+                case "GET":
+                    responseError = .getNoResponse
+                case "POST":
+                    responseError = .postNoResponse
+                case "PUT":
+                    responseError = .putNoResponse
+                case "DELETE":
+                    responseError = .deleteNoResponse
+                default:
+                    break
                 }
-                else {
-                    // our request was invalid or some other problem
-                    AppDelegate.APIResponseLogger.warning(
-                        "Failure \(request.httpMethod ?? "unknown") Response for \(request.url?.description ?? "unknown")\n Message: \(responseBody?[ServerDefaultKeys.message.rawValue] as? String ?? "unknown")\n Code: \(responseBody?[ServerDefaultKeys.code.rawValue] as? String ?? "unknown")\n Type:\(responseBody?[ServerDefaultKeys.name.rawValue] as? String ?? "unknown")")
-                    var responseCode: Error?
-                    
-                    if let responseCodeString = responseBody?[ServerDefaultKeys.code.rawValue] as? String {
-                        responseCode = AppBuildResponseError(rawValue: responseCodeString) ?? FamilyResponseError(rawValue: responseCodeString) ?? LimitResponseError(rawValue: responseCodeString)
-                        // TO DO add family/dog/reminderlimit exceeded as a proper error message
-                        // TO DO add subscription expired as proper error message
+                
+                DispatchQueue.main.async {
+                    if invokeErrorManager == true {
+                        ErrorManager.alert(forError: responseError, forErrorCode: nil)
                     }
                     
-                    guard (responseCode is AppBuildResponseError) == false else {
-                        // If we experience an app build response error, that means the user's local app is outdated. If this is the case, then nothing will work until the user updates their app. Therefore we stop everything and do not return a completion handler. This might break something but we don't care.
-                        DispatchQueue.main.async {
-                            ErrorManager.alert(forError: responseCode!)
-                        }
-                        return
-                    }
-                    
-                    completionHandler(responseBody, .failureResponse, responseCode)
+                    completionHandler(responseBody, .failureResponse)
                 }
-            }
-            else {
-                // something happened and we got no response
-                AppDelegate.APIResponseLogger.warning(
-                    "No \(request.httpMethod ?? "unknown") Response for \(request.url?.description ?? "unknown")")
-                completionHandler(responseBody, .noResponse, nil)
+                
+                return
             }
             
+            guard 200...299 ~= responseStatusCode else {
+                // Our request went through but was invalid
+                AppDelegate.APIResponseLogger.warning(
+                    "Failure \(request.httpMethod ?? "unknown") Response for \(request.url?.description ?? "unknown")\n Message: \(responseBody[ServerDefaultKeys.message.rawValue] as? String ?? "unknown")\n Code: \(responseBody[ServerDefaultKeys.code.rawValue] as? String ?? "unknown")\n Type:\(responseBody[ServerDefaultKeys.name.rawValue] as? String ?? "unknown")")
+                
+                var responseError: Error?
+                let responseErrorCode: String? = responseBody[ServerDefaultKeys.code.rawValue] as? String
+                
+                if let responseErrorCode = responseErrorCode {
+                    responseError = GeneralResponseError(rawValue: responseErrorCode) ?? FamilyResponseError(rawValue: responseErrorCode)
+                }
+                
+                // If response error was unable to be cast to an error type from the response error code, assign a default general error
+                if responseError == nil {
+                    switch request.httpMethod {
+                    case "GET":
+                        responseError = GeneralResponseError.getFailureResponse
+                    case "POST":
+                        responseError = GeneralResponseError.postFailureResponse
+                    case "PUT":
+                        responseError = GeneralResponseError.putFailureResponse
+                    case "DELETE":
+                        responseError = GeneralResponseError.deleteFailureResponse
+                    default:
+                        responseError = GeneralResponseError.getFailureResponse
+                    }
+                }
+                
+                guard (responseError as? GeneralResponseError) != .appBuildOutdated else {
+                    // If we experience an app build response error, that means the user's local app is outdated. If this is the case, then nothing will work until the user updates their app. Therefore we stop everything and do not return a completion handler. This might break something but we don't care.
+                    DispatchQueue.main.async {
+                        ErrorManager.alert(forError: responseError!, forErrorCode: responseErrorCode)
+                    }
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    if invokeErrorManager == true {
+                        ErrorManager.alert(forError: responseError!, forErrorCode: responseErrorCode)
+                    }
+                    
+                    completionHandler(responseBody, .failureResponse)
+                }
+                return
+            }
+            
+            // Our request was valid and successful
+            AppDelegate.APIResponseLogger.notice("Success \(request.httpMethod ?? "unknown") Response for \(request.url?.description ?? "unknown")")
+            DispatchQueue.main.async {
+                completionHandler(responseBody, .successResponse)
+            }
         }
         
         // free up task when request is pushed
@@ -133,22 +169,8 @@ extension InternalRequestUtils {
         // specify http method
         request.httpMethod = "GET"
         
-        genericRequest(forRequest: request) { responseBody, responseStatus, responseCode in
-            DispatchQueue.main.async {
-                completionHandler(responseBody, responseStatus)
-                // the user wants to invoke the error manager, so we check to see if it needs invoked
-                if invokeErrorManager == true {
-                    if responseCode != nil {
-                        ErrorManager.alert(forError: responseCode!)
-                    }
-                    else if responseStatus == .failureResponse {
-                        ErrorManager.alert(forError: GeneralResponseError.failureGetResponse)
-                    }
-                    else if responseStatus == .noResponse {
-                        ErrorManager.alert(forError: GeneralResponseError.noGetResponse)
-                    }
-                }
-            }
+        genericRequest(forRequest: request, invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
+            completionHandler(responseBody, responseStatus)
         }
     }
     
@@ -163,37 +185,12 @@ extension InternalRequestUtils {
         // specify http method
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        do {
-            let jsonData = try JSONSerialization.data(withJSONObject: body)
-            request.httpBody = jsonData
-            
-            genericRequest(forRequest: request) { responseBody, responseStatus, responseCode in
-                DispatchQueue.main.async {
-                    completionHandler(responseBody, responseStatus)
-                    // the user wants to invoke the error manager, so we check to see if it needs invoked
-                    if invokeErrorManager == true {
-                        if responseCode != nil {
-                            ErrorManager.alert(forError: responseCode!)
-                        }
-                        else if responseStatus == .failureResponse {
-                            ErrorManager.alert(forError: GeneralResponseError.failurePostResponse)
-                        }
-                        else if responseStatus == .noResponse {
-                            ErrorManager.alert(forError: GeneralResponseError.noPostResponse)
-                        }
-                    }
-                }
-            }
-        }
-        catch {
-            DispatchQueue.main.async {
-                completionHandler(nil, .noResponse)
-                // the user wants to invoke the error manager, so we check to see if it needs invoked
-                if invokeErrorManager == true {
-                    ErrorManager.alert(forError: GeneralResponseError.noPostResponse)
-                }
-                
-            }
+        
+        let jsonData = try? JSONSerialization.data(withJSONObject: body)
+        request.httpBody = jsonData
+        
+        genericRequest(forRequest: request, invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
+            completionHandler(responseBody, responseStatus)
         }
         
     }
@@ -209,37 +206,12 @@ extension InternalRequestUtils {
         // specify http method
         request.httpMethod = "PUT"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        do {
-            let jsonData = try JSONSerialization.data(withJSONObject: body)
-            request.httpBody = jsonData
-            
-            genericRequest(forRequest: request) { responseBody, responseStatus, responseCode in
-                DispatchQueue.main.async {
-                    completionHandler(responseBody, responseStatus)
-                    // the user wants to invoke the error manager, so we check to see if it needs invoked
-                    if invokeErrorManager == true {
-                        if responseCode != nil {
-                            ErrorManager.alert(forError: responseCode!)
-                        }
-                        else if responseStatus == .failureResponse {
-                            ErrorManager.alert(forError: GeneralResponseError.failurePutResponse)
-                        }
-                        else if responseStatus == .noResponse {
-                            ErrorManager.alert(forError: GeneralResponseError.noPutResponse)
-                        }
-                    }
-                }
-            }
-        }
-        catch {
-            DispatchQueue.main.async {
-                completionHandler(nil, .noResponse)
-                // the user wants to invoke the error manager, so we check to see if it needs invoked
-                if invokeErrorManager == true {
-                    ErrorManager.alert(forError: GeneralResponseError.noPutResponse)
-                }
-                
-            }
+        
+        let jsonData = try? JSONSerialization.data(withJSONObject: body)
+        request.httpBody = jsonData
+        
+        genericRequest(forRequest: request, invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
+            completionHandler(responseBody, responseStatus)
         }
         
     }
@@ -258,58 +230,15 @@ extension InternalRequestUtils {
         // specify http method
         request.httpMethod = "DELETE"
         
-        if body == nil {
-            genericRequest(forRequest: request) { responseBody, responseStatus, responseCode in
-                DispatchQueue.main.async {
-                    completionHandler(responseBody, responseStatus)
-                    // the user wants to invoke the error manager, so we check to see if it needs invoked
-                    if invokeErrorManager == true {
-                        if responseCode != nil {
-                            ErrorManager.alert(forError: responseCode!)
-                        }
-                        else if responseStatus == .failureResponse {
-                            ErrorManager.alert(forError: GeneralResponseError.failureDeleteResponse)
-                        }
-                        else if responseStatus == .noResponse {
-                            ErrorManager.alert(forError: GeneralResponseError.noDeleteResponse)
-                        }
-                    }
-                }
-            }
-        }
-        else {
+        if body != nil {
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            do {
-                let jsonData = try JSONSerialization.data(withJSONObject: body!)
-                request.httpBody = jsonData
-                
-                genericRequest(forRequest: request) { responseBody, responseStatus, responseCode in
-                    DispatchQueue.main.async {
-                        completionHandler(responseBody, responseStatus)
-                        // the user wants to invoke the error manager, so we check to see if it needs invoked
-                        if invokeErrorManager == true {
-                            if responseCode != nil {
-                                ErrorManager.alert(forError: responseCode!)
-                            }
-                            else if responseStatus == .failureResponse {
-                                ErrorManager.alert(forError: GeneralResponseError.failureDeleteResponse)
-                            }
-                            else if responseStatus == .failureResponse {
-                                ErrorManager.alert(forError: GeneralResponseError.noDeleteResponse)
-                            }
-                        }
-                    }
-                }
-            }
-            catch {
-                DispatchQueue.main.async {
-                    completionHandler(nil, .noResponse)
-                    // the user wants to invoke the error manager, so we check to see if it needs invoked
-                    if invokeErrorManager == true {
-                        ErrorManager.alert(forError: GeneralResponseError.noDeleteResponse)
-                    }
-                }
-            }
+            
+            let jsonData = try? JSONSerialization.data(withJSONObject: body!)
+            request.httpBody = jsonData
+        }
+        
+        genericRequest(forRequest: request, invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
+            completionHandler(responseBody, responseStatus)
         }
     }
     

@@ -244,7 +244,7 @@ class ServerLoginViewController: UIViewController, ASAuthorizationControllerDele
                 self.signInUser()
             case .noResponse:
                 RequestUtils.endAlertControllerQueryIndictator {
-                    ErrorManager.alert(forError: GeneralResponseError.noPostResponse)
+                    ErrorManager.alert(forError: GeneralResponseError.postNoResponse)
                 }
             }
         }

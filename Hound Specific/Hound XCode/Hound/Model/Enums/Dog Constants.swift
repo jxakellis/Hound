@@ -59,7 +59,7 @@ enum ReminderConstant {
         let reminder = Reminder()
         reminder.reminderAction = .potty
         reminder.reminderType = .countdown
-        reminder.countdownComponents.changeExecutionInterval(newExecutionInterval: ReminderComponentConstant.defaultCountdownExecutionInterval)
+        reminder.countdownComponents.executionInterval = ReminderComponentConstant.defaultCountdownExecutionInterval
         return reminder
     }
     private static var defaultReminderTwo: Reminder {

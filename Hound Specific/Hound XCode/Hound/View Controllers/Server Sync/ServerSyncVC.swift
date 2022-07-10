@@ -43,8 +43,8 @@ class ServerSyncViewController: UIViewController, ServerFamilyViewControllerDele
     
     // MARK: - Properties
     /// Called to prompt the user to retry a server connection
-    private var failureResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: GeneralResponseError.failureGetResponse.rawValue, preferredStyle: .alert)
-    private var noResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: GeneralResponseError.noGetResponse.rawValue, preferredStyle: .alert)
+    private var failureResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: GeneralResponseError.getFailureResponse.rawValue, preferredStyle: .alert)
+    private var noResponseAlertController = GeneralUIAlertController(title: "Uh oh! There was a problem.", message: GeneralResponseError.getNoResponse.rawValue, preferredStyle: .alert)
     
     /// DogManager that all of the retrieved information will be added too.
     static var dogManager = DogManager()

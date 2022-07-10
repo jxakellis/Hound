@@ -12,7 +12,7 @@ protocol TimingManagerDelegate {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class TimingManager {
+final class TimingManager {
     
     // MARK: - Properties
     

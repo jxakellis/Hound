@@ -13,20 +13,20 @@ class LogManager: NSObject, NSCoding, NSCopying {
     // MARK: - NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = LogManager()
-        copy.storedLogs = storedLogs
-        copy.storedUniqueLogActions = storedUniqueLogActions
+        copy.logs = logs
+        copy.uniqueLogActionsResult = uniqueLogActionsResult
         return copy
     }
     
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
-        storedLogs = aDecoder.decodeObject(forKey: "logs") as? [Log] ?? []
-        storedUniqueLogActions = aDecoder.decodeObject(forKey: "uniqueLogActions") as? [LogAction] ?? nil
+        logs = aDecoder.decodeObject(forKey: "logs") as? [Log] ?? []
+        uniqueLogActionsResult = aDecoder.decodeObject(forKey: "uniqueLogActions") as? [LogAction] ?? nil
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(storedLogs, forKey: "logs")
-        aCoder.encode(storedUniqueLogActions, forKey: "uniqueLogActions")
+        aCoder.encode(logs, forKey: "logs")
+        aCoder.encode(uniqueLogActionsResult, forKey: "uniqueLogActions")
     }
     
     // MARK: - Main
@@ -45,23 +45,22 @@ class LogManager: NSObject, NSCoding, NSCopying {
     }
     
     // MARK: - Properties
-    private var storedLogs: [Log] = []
-    var logs: [Log] { return storedLogs }
+    private (set) var logs: [Log] = []
     
     // Stores the result of uniqueLogActions. This increases efficency as if uniqueLogActions is called multiple times, without the logs array changing, we return this same stored value. If the logs array is updated, then we invalidate the stored value so its recalculated next time
-    private var storedUniqueLogActions: [LogAction]?
+    private var uniqueLogActionsResult: [LogAction]?
     
     /// Helper function allows us to use the same logic for addLog and addLogs and allows us to only sort at the end. Without this function, addLogs would invoke addLog repeadly and sortLogs() with each call.
     private func addLogWithoutSorting(newLog: Log) {
         // removes any existing logs that have the same logId as they would cause problems. .reversed() is needed to make it work, without it there will be an index of out bounds error.
         for (logIndex, log) in logs.enumerated().reversed() where log.logId == newLog.logId {
             // replace the log
-            storedLogs.remove(at: logIndex)
+            logs.remove(at: logIndex)
             break
         }
-        storedLogs.append(newLog)
+        logs.append(newLog)
         
-        storedUniqueLogActions = nil
+        uniqueLogActionsResult = nil
     }
     
     func addLog(newLog: Log) {
@@ -83,7 +82,7 @@ class LogManager: NSObject, NSCoding, NSCopying {
     }
     
     private func sortLogs() {
-        storedLogs.sort { (log1, log2) -> Bool in
+        logs.sort { (log1, log2) -> Bool in
             // Returning true means item1 comes before item2, false means item2 before item1
             
             // Returns true if var1's log1 is earlier in time than var2's log2
@@ -104,14 +103,14 @@ class LogManager: NSObject, NSCoding, NSCopying {
             throw LogManagerError.logIdNotPresent
         }
         else {
-            storedLogs.remove(at: logIndex ?? LogConstant.defaultLogId)
-            storedUniqueLogActions = nil
+            logs.remove(at: logIndex ?? LogConstant.defaultLogId)
+            uniqueLogActionsResult = nil
         }
     }
     
     func removeLog(forIndex index: Int) {
-        storedLogs.remove(at: index)
-        storedUniqueLogActions = nil
+        logs.remove(at: index)
+        uniqueLogActionsResult = nil
     }
     
     // MARK: Information
@@ -119,8 +118,8 @@ class LogManager: NSObject, NSCoding, NSCopying {
     /// Returns an array of known log actions. Each known log action has an array of logs attached to it. This means you can find every log for a given log action
     var uniqueLogActions: [LogAction] {
         // If we have the output of this calculated property stored, return it. Increases efficency by not doing calculation multiple times. Stored property is set to nil if any logs change, so in that case we would recalculate
-        guard storedUniqueLogActions == nil else {
-            return storedUniqueLogActions!
+        guard uniqueLogActionsResult == nil else {
+            return uniqueLogActionsResult!
         }
         
         var logActions: [LogAction] = []
@@ -140,7 +139,7 @@ class LogManager: NSObject, NSCoding, NSCopying {
             return logAction1Index <= logAction2Index
         }
         
-        storedUniqueLogActions = logActions
+        uniqueLogActionsResult = logActions
         return logActions
     }
     
@@ -155,8 +154,8 @@ extension LogManager {
         // the addLogs function overwrites logs if it finds them, so we must add the logs to the old log (allowing the newLogManager to overwrite the oldLogManager logs if there is an overlap)
         oldLogManager.addLogs(newLogs: self.logs)
         // now that the oldLogManager contains its original logs, our new logs, and has had its old logs overwritten (in the case old & new both had a log with same logId), we have an updated array.
-        storedLogs = oldLogManager.logs
-        storedUniqueLogActions = nil
+        logs = oldLogManager.logs
+        uniqueLogActionsResult = nil
         sortLogs()
     }
 }

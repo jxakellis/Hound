@@ -34,21 +34,18 @@ enum SubscriptionRequest: RequestProtocol {
         InternalRequestUtils.warnForPlaceholderId()
         
         // Get the receipt if it's available
-        if let appStoreReceiptURL = Bundle.main.appStoreReceiptURL,
-           FileManager.default.fileExists(atPath: appStoreReceiptURL.path) {
-            
-            do {
-                let receiptData = try Data(contentsOf: appStoreReceiptURL, options: .alwaysMapped)
-                
-                let receiptString = receiptData.base64EncodedString(options: [])
-                
-                let body = [ServerDefaultKeys.base64EncodedReceiptData.rawValue: receiptString]
-                InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
-                    completionHandler(responseBody, responseStatus)
-                }
-            }
-            // TO DO implement proper error handling for this
-            catch { print("Couldn't read receipt data with error: " + error.localizedDescription) }
+        guard let appStoreReceiptURL = Bundle.main.appStoreReceiptURL,
+           FileManager.default.fileExists(atPath: appStoreReceiptURL.path), let receiptData = try? Data(contentsOf: appStoreReceiptURL, options: .alwaysMapped) else {
+               // TO DO implement proper error handling for this
+            print("Couldn't read receipt data")
+            return
+        }
+        
+        let receiptString = receiptData.base64EncodedString(options: [])
+        
+        let body = [ServerDefaultKeys.base64EncodedReceiptData.rawValue: receiptString]
+        InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
+            completionHandler(responseBody, responseStatus)
         }
     }
 }
@@ -85,14 +82,13 @@ extension SubscriptionRequest {
     /**
      TO DO complete function and documentation
      */
-    static func create(invokeErrorManager: Bool, forTransaction transaction: SKPaymentTransaction, completionHandler: @escaping (String?, ResponseStatus) -> Void) {
+    static func create(invokeErrorManager: Bool, forTransaction transaction: SKPaymentTransaction, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         
         SubscriptionRequest.internalCreate(invokeErrorManager: invokeErrorManager, forTransaction: transaction) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                // check id
-                if let subscriptionId = responseBody?[ServerDefaultKeys.result.rawValue] as? String {
-                    completionHandler(subscriptionId, responseStatus)
+                if let transaction = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any] {
+                    completionHandler(transaction, responseStatus)
                 }
                 else {
                     completionHandler(nil, responseStatus)

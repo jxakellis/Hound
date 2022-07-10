@@ -84,6 +84,8 @@ class SettingsSubscriptionViewController: UIViewController, UITableViewDelegate,
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        // TO DO block user from attempting to downgrade if they have too many dogs or family members, give them an error
+        
         // indexPath 0 is the default so we won't be making a purchase
         guard indexPath.row != 0 else {
             // TO DO let the user downgrade their subscription to free
@@ -99,14 +101,14 @@ class SettingsSubscriptionViewController: UIViewController, UITableViewDelegate,
         
         RequestUtils.beginAlertControllerQueryIndictator()
         InAppPurchaseManager.purchaseProduct(forProduct: product) { productIdentifier in
-            // TO DO update how message appears, change to contacting Apple Server
-            // TO DO add spinning checkmark if everything is successful
-            // BUG, the completionHandler isn't being called when everything completed successfully. stuck on contacting hound server
+            // TO DO update how message appears, change to "Contacting Apple Server..."
             RequestUtils.endAlertControllerQueryIndictator {
                 guard productIdentifier != nil else {
                     print("error")
                     return
                 }
+                
+                self.performSpinningCheckmarkAnimation()
                 
                 print("success \(productIdentifier)")
             }

@@ -21,11 +21,11 @@ class ReminderManager: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
-        storedReminders = aDecoder.decodeObject(forKey: "reminders") as? [Reminder] ?? []
+        reminders = aDecoder.decodeObject(forKey: "reminders") as? [Reminder] ?? []
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(storedReminders, forKey: "reminders")
+        aCoder.encode(reminders, forKey: "reminders")
     }
     
     // MARK: - Main
@@ -47,8 +47,7 @@ class ReminderManager: NSObject, NSCoding, NSCopying {
     // MARK: Properties
     
     /// Array of reminders
-    private var storedReminders: [Reminder] = []
-    var reminders: [Reminder] { return storedReminders }
+    private(set) var reminders: [Reminder] = []
     
     // MARK: Add Reminders
     
@@ -62,7 +61,7 @@ class ReminderManager: NSObject, NSCoding, NSCopying {
             reminder.timer?.invalidate()
             // there shouldn't be a matching reminder with an alarm presented, but if there is, we don't want to duplicate. therefore we should copy the presentation handled
             newReminder.hasAlarmPresentationHandled = reminder.hasAlarmPresentationHandled
-            storedReminders.remove(at: reminderIndex)
+            reminders.remove(at: reminderIndex)
             break
         }
         
@@ -83,7 +82,7 @@ class ReminderManager: NSObject, NSCoding, NSCopying {
            
         }
         
-        storedReminders.append(newReminder)
+        reminders.append(newReminder)
     }
     
     /// Checks to see if a reminder is already present. If its reminderId is, then is removes the old one and replaces it with the new. If the reminder has a placeholder reminderId and a reminder with the same reminderId already exists, then the placeholder id is shifted and the reminder is added
@@ -122,7 +121,7 @@ class ReminderManager: NSObject, NSCoding, NSCopying {
                 return reminderId1 > 0
             }
         }
-        storedReminders.sort { (reminder1, reminder2) -> Bool in
+        reminders.sort { (reminder1, reminder2) -> Bool in
             // both countdown
             if reminder1.reminderType == .countdown && reminder2.reminderType == .countdown {
                 let reminder1ExecutionInterval = reminder1.countdownComponents.executionInterval
@@ -229,10 +228,10 @@ class ReminderManager: NSObject, NSCoding, NSCopying {
             
             // remove the old reminder
             reminder.timer?.invalidate()
-            storedReminders.remove(at: reminderIndex)
+            reminders.remove(at: reminderIndex)
         }
         
-        storedReminders.append(updatedReminder)
+        reminders.append(updatedReminder)
     }
     
     /// Checks to see if a reminder is already present. If its reminderId is, then is removes the old one and replaces it with the new. If the reminder has a placeholder reminderId and a reminder with the same reminderId already exists, then the existing reminder is overridden
@@ -279,14 +278,14 @@ class ReminderManager: NSObject, NSCoding, NSCopying {
                 return nil
             }
             
-            storedReminders[indexOfRemovalTarget ?? ReminderConstant.defaultReminderId].timer?.invalidate()
-            storedReminders.remove(at: indexOfRemovalTarget ?? -1)
+            reminders[indexOfRemovalTarget ?? ReminderConstant.defaultReminderId].timer?.invalidate()
+            reminders.remove(at: indexOfRemovalTarget ?? -1)
         }
     }
     
     func removeReminder(forIndex index: Int) {
-        storedReminders[index].timer?.invalidate()
-        storedReminders.remove(at: index)
+        reminders[index].timer?.invalidate()
+        reminders.remove(at: index)
     }
     
 }
@@ -344,7 +343,7 @@ extension ReminderManager {
         // the addReminders function overwrites reminders if it finds them, so we must add the reminders to the old reminders (allowing the newReminderManager to overwrite the oldReminderManager reminders if there is an overlap)
         oldReminderManager.addReminders(newReminders: self.reminders)
         // now that the oldReminderManager contains its original reminders, our new reminders, and has had its old reminders overwritten (in the case old & new both had a reminder with same reminderId), we have an updated array.
-        self.storedReminders = oldReminderManager.reminders
+        self.reminders = oldReminderManager.reminders
     }
     
     /// Compares newReminders against the reminders stored in this reminders manager. The first array is reminders that haven't changed, therefore they are in sync with the server. The second array is reminders that have been created and must be communicated to the server. The third array is reminders that have been updated so the server must be notified of their changes. The fourth array is reminders that have been deleted so the server must be notified of their deletion (this function also invalidates the timers of the reminders in the deleted array).

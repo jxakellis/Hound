@@ -18,14 +18,14 @@ enum RequestUtils {
         }
     }
     
-    /// Presents a custom made loadingAlertController on the global presentor that blocks everything until endAlertControllerQueryIndictator is called
+    /// Presents a custom made contactingHoundServerAlertController on the global presentor that blocks everything until endAlertControllerQueryIndictator is called
     static func beginAlertControllerQueryIndictator() {
-        AlertManager.enqueueAlertForPresentation(AlertManager.shared.loadingAlertController)
+        AlertManager.enqueueAlertForPresentation(AlertManager.shared.contactingHoundServerAlertController)
     }
     
-    /// Dismisses the custom made loadingAlertController. Allow the app to resume normal execution once the completion handler is called (as that indicates the loadingAlertController was dismissed and new things can be presented/segued to).
+    /// Dismisses the custom made contactingHoundServerAlertController. Allow the app to resume normal execution once the completion handler is called (as that indicates the contactingHoundServerAlertController was dismissed and new things can be presented/segued to).
     static func endAlertControllerQueryIndictator(completionHandler: @escaping () -> Void) {
-        AlertManager.shared.loadingAlertController.dismiss(animated: false) {
+        AlertManager.shared.contactingHoundServerAlertController.dismiss(animated: false) {
             completionHandler()
         }
     }

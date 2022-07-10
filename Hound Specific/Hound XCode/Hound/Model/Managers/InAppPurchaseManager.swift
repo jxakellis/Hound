@@ -10,7 +10,7 @@ import Foundation
 import StoreKit
 
 // This main class provides a streamlined way to perform the main two queries
-class InAppPurchaseManager {
+final class InAppPurchaseManager {
     
     /// Query apple servers to retrieve all available products. If there is an error, ErrorManager is automatically invoked and nil is returned.
     static func fetchProducts(completionHandler: @escaping ([SKProduct]?) -> Void) {
@@ -133,11 +133,14 @@ private class InternalInAppPurchaseManager: NSObject, SKProductsRequestDelegate,
     // Prompt a product payment transaction
     func purchase(forProduct product: SKProduct, completionHandler: @escaping ((String?) -> Void)) {
         guard SKPaymentQueue.canMakePayments() else {
-            // TO DO handle case if can't make payments
+            // TO DO handle case if can't make payments, show error
             return
         }
         
-      // TO DO reject cases where there is a transaction in progress
+        guard currentProductPurchase == nil && currentProductPurchaseCompletionHandler == nil else {
+            // TO DO reject cases where there is a transaction in progress, show error
+            return
+        }
         
         currentProductPurchase = product
         currentProductPurchaseCompletionHandler = completionHandler
@@ -224,8 +227,8 @@ private class InternalInAppPurchaseManager: NSObject, SKProductsRequestDelegate,
     /// Invoke this function when a transaction has reached the end of its processing. This would be in the case that it was successfully purchased and the Hound servers successfully updated, successfully restored and Hound servers sucessfully updated, or a failed ( or unknown) purchase that has been discarded.
     private func finishTransaction(forTransaction transaction: SKPaymentTransaction) {
         currentProductPurchase = nil
-        currentProductPurchaseIsLocked = false
         currentProductPurchaseCompletionHandler = nil
+        currentProductPurchaseIsLocked = false
         SKPaymentQueue.default().finishTransaction(transaction)
     }
 }

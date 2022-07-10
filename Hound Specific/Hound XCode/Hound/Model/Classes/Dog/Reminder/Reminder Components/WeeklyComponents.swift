@@ -8,15 +8,15 @@
 
 import Foundation
 
-class WeeklyComponents: Component, NSCoding, NSCopying {
+class WeeklyComponents: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = WeeklyComponents()
-        copy.storedWeekdays = self.storedWeekdays
-        copy.storedHour = self.hour
-        copy.storedMinute = self.minute
+        copy.weekdays = self.weekdays
+        copy.hour = self.hour
+        copy.minute = self.minute
         copy.isSkipping = self.isSkipping
         copy.isSkippingDate = self.isSkippingDate
         
@@ -26,18 +26,18 @@ class WeeklyComponents: Component, NSCoding, NSCopying {
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        storedWeekdays = aDecoder.decodeObject(forKey: "weekdays") as? [Int] ?? storedWeekdays
-        storedHour = aDecoder.decodeInteger(forKey: "hour")
-        storedMinute = aDecoder.decodeInteger(forKey: "minute")
+        weekdays = aDecoder.decodeObject(forKey: "weekdays") as? [Int] ?? weekdays
+        hour = aDecoder.decodeInteger(forKey: "hour")
+        minute = aDecoder.decodeInteger(forKey: "minute")
         isSkipping = aDecoder.decodeBool(forKey: "isSkipping")
         isSkippingDate = aDecoder.decodeObject(forKey: "isSkippingDate") as? Date
         
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(storedWeekdays, forKey: "weekdays")
-        aCoder.encode(storedHour, forKey: "hour")
-        aCoder.encode(storedMinute, forKey: "minute")
+        aCoder.encode(weekdays, forKey: "weekdays")
+        aCoder.encode(hour, forKey: "hour")
+        aCoder.encode(minute, forKey: "minute")
         aCoder.encode(isSkipping, forKey: "isSkipping")
         aCoder.encode(isSkippingDate, forKey: "isSkippingDate")
         
@@ -51,8 +51,8 @@ class WeeklyComponents: Component, NSCoding, NSCopying {
     
     convenience init(hour: Int?, minute: Int?, isSkipping: Bool?, isSkippingDate: Date?, sunday: Bool?, monday: Bool?, tuesday: Bool?, wednesday: Bool?, thursday: Bool?, friday: Bool?, saturday: Bool?) {
         self.init()
-        storedHour = hour ?? self.hour
-        storedMinute = minute ?? self.minute
+        self.hour = hour ?? self.hour
+        self.minute = minute ?? self.minute
         self.isSkipping = isSkipping ?? self.isSkipping
         self.isSkippingDate = isSkippingDate
         
@@ -80,28 +80,26 @@ class WeeklyComponents: Component, NSCoding, NSCopying {
         }
         
         // if the array has at least one week day in it (aka its valid) then we can save it
-        storedWeekdays = (weekdays.isEmpty == false) ? weekdays : storedWeekdays
+        weekdays = (weekdays.isEmpty == false) ? weekdays : weekdays
         
     }
     
     // MARK: - Properties
     
-    private var storedWeekdays: [Int] = [1, 2, 3, 4, 5, 6, 7]
     /// The weekdays on which the reminder should fire. 1 - 7, where 1 is sunday and 7 is saturday.
-    var weekdays: [Int] { return storedWeekdays }
+    private(set) var weekdays: [Int] = [1, 2, 3, 4, 5, 6, 7]
     /// Changes the weekdays, if empty throws an error due to the fact that there needs to be at least one time of week.
     func changeWeekdays(newWeekdays: [Int]) throws {
         if newWeekdays.isEmpty {
             throw WeeklyComponentsError.weekdayArrayInvalid
         }
-        else if storedWeekdays != newWeekdays {
-            storedWeekdays = newWeekdays
+        else if weekdays != newWeekdays {
+            weekdays = newWeekdays
         }
     }
     
-    private var storedHour: Int = 7
     /// Hour of the day that the reminder will fire
-    var hour: Int { return storedHour }
+    private(set) var hour: Int = 7
     
     ///  Throws if not within the range of [0,24]
     func changeHour(newHour: Int) throws {
@@ -109,12 +107,11 @@ class WeeklyComponents: Component, NSCoding, NSCopying {
             throw WeeklyComponentsError.hourInvalid
         }
         
-        storedHour = newHour
+        hour = newHour
     }
     
-    private var storedMinute: Int = 0
     /// Minute of the hour that the reminder will fire
-    var minute: Int { return storedMinute }
+    private(set) var minute: Int = 0
     
     /// Throws if not within the range of [0,60]
     func changeMinute(newMinute: Int) throws {
@@ -122,7 +119,7 @@ class WeeklyComponents: Component, NSCoding, NSCopying {
             throw WeeklyComponentsError.minuteInvalid
         }
         
-        storedMinute = newMinute
+        minute = newMinute
     }
     
     /// Whether or not the next alarm will be skipped

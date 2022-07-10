@@ -87,7 +87,6 @@
 		A29390732608480800879C79 /* DogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29390722608480800879C79 /* DogManager.swift */; };
 		A29400AB2652DA2100725F1C /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29400AA2652DA2100725F1C /* SettingsVC.swift */; };
 		A29400AD2652DA2700725F1C /* SettingsNavigationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29400AC2652DA2600725F1C /* SettingsNavigationVC.swift */; };
-		A2987E9A2831F02300884E97 /* LimitResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2987E992831F02300884E97 /* LimitResponseError.swift */; };
 		A299EAA027E2C4E60042F8F4 /* SettingsPersonalInformationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EA9F27E2C4E50042F8F4 /* SettingsPersonalInformationVC.swift */; };
 		A299EAA427E2C5050042F8F4 /* SettingsAppearanceVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EAA327E2C5050042F8F4 /* SettingsAppearanceVC.swift */; };
 		A299EAA827E2C5220042F8F4 /* SettingsNotificationsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A299EAA727E2C5220042F8F4 /* SettingsNotificationsVC.swift */; };
@@ -95,8 +94,9 @@
 		A29C985227CE6D8E00B9C8E4 /* LogsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29C985127CE6D8E00B9C8E4 /* LogsRequest.swift */; };
 		A29C985427CE724300B9C8E4 /* RemindersRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29C985327CE724300B9C8E4 /* RemindersRequest.swift */; };
 		A29C985627CE726300B9C8E4 /* RequestProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29C985527CE726300B9C8E4 /* RequestProtocol.swift */; };
+		A2A29D4B287A893A00770993 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A29D4A287A893A00770993 /* NetworkManager.swift */; };
+		A2A29D4D287A8AF400770993 /* RequestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A29D4C287A8AF400770993 /* RequestError.swift */; };
 		A2A45CCF2644914A0050E5A1 /* RemindersIntroductionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A45CCE2644914A0050E5A1 /* RemindersIntroductionVC.swift */; };
-		A2A91117282C18380078B857 /* AppBuildResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A91116282C18380078B857 /* AppBuildResponseError.swift */; };
 		A2AA5CBD27FE391400FD0134 /* ResponseUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CBC27FE391400FD0134 /* ResponseUtils.swift */; };
 		A2AA5CBF27FE421B00FD0134 /* InternalRequestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CBE27FE421B00FD0134 /* InternalRequestUtils.swift */; };
 		A2AA5CC127FE446700FD0134 /* DogManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CC027FE446700FD0134 /* DogManagerError.swift */; };
@@ -124,7 +124,6 @@
 		A2AB7CD0285817AE00851FF2 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2AB7CCF285817AE00851FF2 /* StoreKit.framework */; };
 		A2AC1D30285D1275000F2CD0 /* AdjustedHeightUITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AC1D2F285D1275000F2CD0 /* AdjustedHeightUITableView.swift */; };
 		A2AC89F627D2778900115831 /* CountdownComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AC89F527D2778900115831 /* CountdownComponents.swift */; };
-		A2AC89F827D277A400115831 /* Component.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AC89F727D277A400115831 /* Component.swift */; };
 		A2AC89FA27D2780500115831 /* WeeklyComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AC89F927D2780500115831 /* WeeklyComponents.swift */; };
 		A2AC89FC27D2781600115831 /* MonthlyComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AC89FB27D2781600115831 /* MonthlyComponents.swift */; };
 		A2AC89FE27D2782100115831 /* OneTimeComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AC89FD27D2782100115831 /* OneTimeComponents.swift */; };
@@ -272,7 +271,6 @@
 		A29390722608480800879C79 /* DogManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogManager.swift; sourceTree = "<group>"; };
 		A29400AA2652DA2100725F1C /* SettingsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		A29400AC2652DA2600725F1C /* SettingsNavigationVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsNavigationVC.swift; sourceTree = "<group>"; };
-		A2987E992831F02300884E97 /* LimitResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LimitResponseError.swift; sourceTree = "<group>"; };
 		A299EA9F27E2C4E50042F8F4 /* SettingsPersonalInformationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPersonalInformationVC.swift; sourceTree = "<group>"; };
 		A299EAA327E2C5050042F8F4 /* SettingsAppearanceVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAppearanceVC.swift; sourceTree = "<group>"; };
 		A299EAA727E2C5220042F8F4 /* SettingsNotificationsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNotificationsVC.swift; sourceTree = "<group>"; };
@@ -280,8 +278,9 @@
 		A29C985127CE6D8E00B9C8E4 /* LogsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsRequest.swift; sourceTree = "<group>"; };
 		A29C985327CE724300B9C8E4 /* RemindersRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersRequest.swift; sourceTree = "<group>"; };
 		A29C985527CE726300B9C8E4 /* RequestProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestProtocol.swift; sourceTree = "<group>"; };
+		A2A29D4A287A893A00770993 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		A2A29D4C287A8AF400770993 /* RequestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestError.swift; sourceTree = "<group>"; };
 		A2A45CCE2644914A0050E5A1 /* RemindersIntroductionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersIntroductionVC.swift; sourceTree = "<group>"; };
-		A2A91116282C18380078B857 /* AppBuildResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBuildResponseError.swift; sourceTree = "<group>"; };
 		A2AA5CBC27FE391400FD0134 /* ResponseUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseUtils.swift; sourceTree = "<group>"; };
 		A2AA5CBE27FE421B00FD0134 /* InternalRequestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalRequestUtils.swift; sourceTree = "<group>"; };
 		A2AA5CC027FE446700FD0134 /* DogManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogManagerError.swift; sourceTree = "<group>"; };
@@ -309,7 +308,6 @@
 		A2AB7CCF285817AE00851FF2 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		A2AC1D2F285D1275000F2CD0 /* AdjustedHeightUITableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustedHeightUITableView.swift; sourceTree = "<group>"; };
 		A2AC89F527D2778900115831 /* CountdownComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownComponents.swift; sourceTree = "<group>"; };
-		A2AC89F727D277A400115831 /* Component.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Component.swift; sourceTree = "<group>"; };
 		A2AC89F927D2780500115831 /* WeeklyComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyComponents.swift; sourceTree = "<group>"; };
 		A2AC89FB27D2781600115831 /* MonthlyComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyComponents.swift; sourceTree = "<group>"; };
 		A2AC89FD27D2782100115831 /* OneTimeComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneTimeComponents.swift; sourceTree = "<group>"; };
@@ -490,6 +488,7 @@
 		A247236B27F63446005DF848 /* Errors */ = {
 			isa = PBXGroup;
 			children = (
+				A2A29D4C287A8AF400770993 /* RequestError.swift */,
 				A2AA5CD027FE456400FD0134 /* FamilyRequestError.swift */,
 				A2A91115282C181B0078B857 /* Response */,
 				A2AA5CC027FE446700FD0134 /* DogManagerError.swift */,
@@ -558,6 +557,7 @@
 				A290F38925D4B10400429C9D /* CheckManager.swift */,
 				A207F79F280610D6003248E8 /* ImageManager.swift */,
 				A2AB7CCB28580BE600851FF2 /* InAppPurchaseManager.swift */,
+				A2A29D4A287A893A00770993 /* NetworkManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -760,8 +760,6 @@
 		A2A91115282C181B0078B857 /* Response */ = {
 			isa = PBXGroup;
 			children = (
-				A2A91116282C18380078B857 /* AppBuildResponseError.swift */,
-				A2987E992831F02300884E97 /* LimitResponseError.swift */,
 				A2581B7327FDD35E0099AFB8 /* FamilyResponseError.swift */,
 				A2B565F727E923510091CA25 /* GeneralResponseError.swift */,
 			);
@@ -781,7 +779,6 @@
 		A2AC89F427D2776400115831 /* Reminder Components */ = {
 			isa = PBXGroup;
 			children = (
-				A2AC89F727D277A400115831 /* Component.swift */,
 				A2AC89F527D2778900115831 /* CountdownComponents.swift */,
 				A2AC89F927D2780500115831 /* WeeklyComponents.swift */,
 				A2AC89FB27D2781600115831 /* MonthlyComponents.swift */,
@@ -1187,11 +1184,9 @@
 				A23F6B6B2864B72300D08841 /* SubscriptionRequest.swift in Sources */,
 				A2AA5CCF27FE454D00FD0134 /* MonthlyComponentsError.swift in Sources */,
 				A2AA5CD327FE459200FD0134 /* TimingManagerError.swift in Sources */,
-				A2A91117282C18380078B857 /* AppBuildResponseError.swift in Sources */,
 				A2DC23A8264D822F00EB287A /* DogsReminderMonthlyVC.swift in Sources */,
 				A2B565F627E825690091CA25 /* AlarmManager.swift in Sources */,
 				A2BAA06C27D6C5520041F3C5 /* ServerLoginVC.swift in Sources */,
-				A2987E9A2831F02300884E97 /* LimitResponseError.swift in Sources */,
 				A26A984A27F658CD002803A6 /* User Default Keys.swift in Sources */,
 				A299EAA827E2C5220042F8F4 /* SettingsNotificationsVC.swift in Sources */,
 				A29400AB2652DA2100725F1C /* SettingsVC.swift in Sources */,
@@ -1215,7 +1210,6 @@
 				A2E66C9B25534A880068CCA6 /* AppDelegate.swift in Sources */,
 				A299EAAD27E2D3350042F8F4 /* SettingsAboutVC.swift in Sources */,
 				A2536B54260843E900E2FF6A /* Reminder.swift in Sources */,
-				A2AC89F827D277A400115831 /* Component.swift in Sources */,
 				A2F1791C263F3E5C006824A7 /* DropDownTableViewCell.swift in Sources */,
 				A23DB63427CDBDDB00A3F470 /* UserRequest.swift in Sources */,
 				A2B9DAED262B2E0A00A47D57 /* LogsVC.swift in Sources */,
@@ -1252,12 +1246,14 @@
 				A2B565F827E923510091CA25 /* GeneralResponseError.swift in Sources */,
 				A2AC89FC27D2781600115831 /* MonthlyComponents.swift in Sources */,
 				A25070E926DD9DDD0056CFC4 /* UIColorExtension.swift in Sources */,
+				A2A29D4B287A893A00770993 /* NetworkManager.swift in Sources */,
 				A20C99972568671F00E2C9C8 /* ReminderManager.swift in Sources */,
 				A278ED882610FF05000575FC /* DogsReminderManagerVC.swift in Sources */,
 				A2AA5CC527FE449100FD0134 /* LogManagerError.swift in Sources */,
 				A2E66C9D25534A880068CCA6 /* SceneDelegate.swift in Sources */,
 				A29C985227CE6D8E00B9C8E4 /* LogsRequest.swift in Sources */,
 				A2C4091E27C9D41300073420 /* RequestUtils.swift in Sources */,
+				A2A29D4D287A8AF400770993 /* RequestError.swift in Sources */,
 				A2AA5CED27FE486500FD0134 /* SettingsFamilyVC.swift in Sources */,
 				A278ED8C2610FF3D000575FC /* DogsReminderCountDownVC.swift in Sources */,
 				A2B678E527D13AD100424FB0 /* ServerSyncVC.swift in Sources */,

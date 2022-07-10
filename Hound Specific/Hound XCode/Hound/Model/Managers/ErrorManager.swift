@@ -29,24 +29,38 @@ enum ErrorManager {
     }
     
     /// Handles a given error, uses helper functions to compare against all known (custom) error types
-    static func alert(forError error: Error) {
+    static func alert(forError error: Error, forErrorCode errorCode: String? = nil) {
+        
+        func createErrorMessage(forErrorRawValue errorRawValue: String) -> String {
+            guard let errorCode = errorCode else {
+                return errorRawValue
+            }
+            
+            // TO DO disable for production, error message isn't clean with this on
+            // blah blah some message ("ER_SOME_MESSAGE")
+            return errorRawValue.appending(" (\"\(errorCode)\")")
+        }
         
         // Request Related
-        if let castError = error as? FamilyRequestError {
+        if let castError = error as? RequestError {
+            ErrorManager.alert(forMessage: castError.rawValue)
+        }
+        else if let castError = error as? FamilyRequestError {
             ErrorManager.alert(forMessage: castError.rawValue)
         }
         // Response Related
-        else if let castError = error as? AppBuildResponseError {
-            ErrorManager.alert(forMessage: castError.rawValue, hasOKAlertAction: false, serverRelated: true)
-        }
         else if let castError = error as? GeneralResponseError {
-            ErrorManager.alert(forMessage: castError.rawValue, serverRelated: true)
+            guard castError != .appBuildOutdated else {
+                ErrorManager.alert(
+                    forMessage: createErrorMessage(forErrorRawValue: castError.rawValue),
+                    hasOKAlertAction: false,
+                    serverRelated: true)
+                return
+            }
+            ErrorManager.alert(forMessage: createErrorMessage(forErrorRawValue: castError.rawValue), serverRelated: true)
         }
         else if let castError = error as? FamilyResponseError {
-            ErrorManager.alert(forMessage: castError.rawValue, serverRelated: true)
-        }
-        else if let castError = error as? LimitResponseError {
-            ErrorManager.alert(forMessage: castError.rawValue, serverRelated: true)
+            ErrorManager.alert(forMessage: createErrorMessage(forErrorRawValue: castError.rawValue), serverRelated: true)
         }
         // Dog Object Related
         else if let castError = error as? DogManagerError {

@@ -8,30 +8,30 @@
 
 import Foundation
 
-class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountdownProtocol {
+class SnoozeComponents: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = SnoozeComponents()
-        copy.changeSnooze(newSnoozeStatus: self.snoozeIsEnabled)
-        copy.changeIntervalElapsed(newIntervalElapsed: self.intervalElapsed)
-        copy.changeExecutionInterval(newExecutionInterval: self.executionInterval)
+        copy.snoozeIsEnabled = snoozeIsEnabled
+        copy.executionInterval = executionInterval
+        copy.intervalElapsed = intervalElapsed
         return copy
     }
     
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        self.storedSnoozeIsEnabled = aDecoder.decodeBool(forKey: "snoozeIsEnabled")
-        self.storedExecutionInterval = aDecoder.decodeDouble(forKey: "executionInterval")
-        self.storedIntervalElapsed = aDecoder.decodeDouble(forKey: "intervalElapsed")
+        self.snoozeIsEnabled = aDecoder.decodeBool(forKey: "snoozeIsEnabled")
+        self.executionInterval = aDecoder.decodeDouble(forKey: "executionInterval")
+        self.intervalElapsed = aDecoder.decodeDouble(forKey: "intervalElapsed")
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(storedSnoozeIsEnabled, forKey: "snoozeIsEnabled")
-        aCoder.encode(storedExecutionInterval, forKey: "executionInterval")
-        aCoder.encode(storedIntervalElapsed, forKey: "intervalElapsed")
+        aCoder.encode(snoozeIsEnabled, forKey: "snoozeIsEnabled")
+        aCoder.encode(executionInterval, forKey: "executionInterval")
+        aCoder.encode(intervalElapsed, forKey: "intervalElapsed")
     }
     
     // MARK: Main
@@ -42,44 +42,30 @@ class SnoozeComponents: Component, NSCoding, NSCopying, GeneralCountdownProtocol
     
     convenience init(snoozeIsEnabled: Bool?, executionInterval: TimeInterval?, intervalElapsed: TimeInterval?) {
         self.init()
-        
-        if snoozeIsEnabled != nil {
-            storedSnoozeIsEnabled = snoozeIsEnabled!
-        }
-        if executionInterval != nil {
-            storedExecutionInterval = executionInterval!
-        }
-        if intervalElapsed != nil {
-            storedIntervalElapsed = intervalElapsed!
-        }
+
+        self.snoozeIsEnabled = snoozeIsEnabled ?? self.snoozeIsEnabled
+        self.executionInterval = executionInterval ?? self.executionInterval
+        self.intervalElapsed = intervalElapsed ?? self.intervalElapsed
     }
     
     // MARK: - Properties
     
-    private var storedSnoozeIsEnabled: Bool = false
     /// Bool on whether or not the parent reminder is snoozed
-    var snoozeIsEnabled: Bool { return storedSnoozeIsEnabled }
+    private(set) var snoozeIsEnabled: Bool = false
     /// Change snoozeIsEnabled to new status and does accompanying changes
-    func changeSnooze(newSnoozeStatus: Bool) {
+    func changeSnoozeIsEnabled(newSnoozeStatus: Bool) {
         if newSnoozeStatus == true {
-            storedExecutionInterval = UserConfiguration.snoozeLength
+            executionInterval = UserConfiguration.snoozeLength
         }
         
-        storedSnoozeIsEnabled = newSnoozeStatus
+        snoozeIsEnabled = newSnoozeStatus
     }
     
     // MARK: - GeneralCountdownProtocol
     
-    private var storedExecutionInterval = UserConfiguration.snoozeLength
-    var executionInterval: TimeInterval { return storedExecutionInterval }
-    func changeExecutionInterval(newExecutionInterval: TimeInterval) {
-        storedExecutionInterval = newExecutionInterval
-    }
+    /// Interval at which a timer should be triggered for reminder
+    var executionInterval: TimeInterval = UserConfiguration.snoozeLength
     
-    private var storedIntervalElapsed: TimeInterval = TimeInterval(0)
-    // this is necessary due to the pause feature. If you snooze an alarm then pause all alarms, you want the alarm to pick up where it left off, without storing this and just storing 5 minutes (default snooze length) after the reminderExecutionBasis then the alarm couldn't have progress
-    var intervalElapsed: TimeInterval { return storedIntervalElapsed }
-    func changeIntervalElapsed(newIntervalElapsed: TimeInterval) {
-        storedIntervalElapsed = newIntervalElapsed
-    }
+    /// How much time of the interval of been used up, this is used for when a timer is paused and then unpaused and have to calculate remaining time
+    var intervalElapsed: TimeInterval = TimeInterval(0)
 }

@@ -14,7 +14,7 @@ class DogManager: NSObject, NSCopying, NSCoding {
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = DogManager()
         for i in 0..<dogs.count {
-            copy.storedDogs.append(dogs[i].copy() as! Dog)
+            copy.dogs.append(dogs[i].copy() as! Dog)
         }
         return copy
     }
@@ -22,11 +22,11 @@ class DogManager: NSObject, NSCopying, NSCoding {
     // MARK: - NSCoding
     
     required init?(coder aDecoder: NSCoder) {
-        storedDogs = aDecoder.decodeObject(forKey: "dogs") as? [Dog] ?? []
+        dogs = aDecoder.decodeObject(forKey: "dogs") as? [Dog] ?? []
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(storedDogs, forKey: "dogs")
+        aCoder.encode(dogs, forKey: "dogs")
     }
     
     // MARK: - Main
@@ -58,9 +58,8 @@ class DogManager: NSObject, NSCopying, NSCoding {
         self.init(forDogs: dogArray)
     }
     
-    private var storedDogs: [Dog] = []
     /// Stores all the dogs. This is get only to make sure integrite of dogs added is kept
-    var dogs: [Dog] { return storedDogs }
+    private(set) var dogs: [Dog] = []
     
     /// Helper function allows us to use the same logic for addDog and addDogs and allows us to only sort at the end. Without this function, addDogs would invoke addDog repeadly and sortDogs() with each call.
     func addDogWithoutSorting(newDog: Dog) {
@@ -69,11 +68,11 @@ class DogManager: NSObject, NSCopying, NSCoding {
             // we should combine the currentDog's reminders/logs into the new dog
             newDog.combine(withOldDog: currentDog)
             newDog.dogIcon = currentDog.dogIcon
-            storedDogs.remove(at: currentDogIndex)
+            dogs.remove(at: currentDogIndex)
             break
         }
         
-        storedDogs.append(newDog)
+        dogs.append(newDog)
     }
     
     /// Adds a dog to dogs, checks to see if the dog itself is valid, e.g. its dogId is unique. Currently override other dog with the same dogId
@@ -95,7 +94,7 @@ class DogManager: NSObject, NSCopying, NSCoding {
     
     /// Sorts the dogs based upon their dogId
     private func sortDogs() {
-        storedDogs.sort { dog1, dog2 in
+        dogs.sort { dog1, dog2 in
             return dog1.dogId <= dog2.dogId
         }
     }
@@ -117,7 +116,7 @@ class DogManager: NSObject, NSCopying, NSCoding {
             throw DogManagerError.dogIdNotPresent
         }
         else {
-            storedDogs.remove(at: matchingDogIndex!)
+            dogs.remove(at: matchingDogIndex!)
         }
     }
     
@@ -131,7 +130,7 @@ class DogManager: NSObject, NSCopying, NSCoding {
             reminder.timer?.invalidate()
         }
         
-        storedDogs.remove(at: index)
+        dogs.remove(at: index)
     }
     
 }
@@ -323,7 +322,7 @@ extension DogManager {
         // the addDogs function overwrites the dog info (e.g. dogName) but combines the reminders / logs in the event that the oldDogManager and the newDogManager both contain a dog with the same dogId. Therefore, we must add the dogs to the oldDogManager (allowing the newDogManager to overwrite the oldDogManager dogs if there is an overlap)
         oldDogManager.addDogs(newDogs: self.dogs)
         // now that the oldDogManager contains its original dogs, our new dogs, and has had its old dogs overwritten (in the case old & new both had a dog with same dogId), we have an updated array.
-        self.storedDogs = oldDogManager.dogs
+        self.dogs = oldDogManager.dogs
         sortDogs()
     }
     

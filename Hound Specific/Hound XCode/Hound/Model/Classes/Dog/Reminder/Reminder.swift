@@ -216,7 +216,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
         
         self.init(reminderId: reminderId, reminderAction: reminderAction, reminderCustomActionName: reminderCustomActionName, reminderType: reminderType, reminderExecutionBasis: reminderExecutionBasis, reminderIsEnabled: reminderIsEnabled)
         
-        storedReminderIsDeleted = body[ServerDefaultKeys.reminderIsDeleted.rawValue] as? Bool ?? false
+        reminderIsDeleted = body[ServerDefaultKeys.reminderIsDeleted.rawValue] as? Bool ?? false
         
         // snooze
         snoozeComponents = SnoozeComponents(snoozeIsEnabled: body[ServerDefaultKeys.snoozeIsEnabled.rawValue] as? Bool, executionInterval: body[ServerDefaultKeys.snoozeExecutionInterval.rawValue] as? TimeInterval, intervalElapsed: body[ServerDefaultKeys.snoozeIntervalElapsed.rawValue] as? TimeInterval)
@@ -271,9 +271,8 @@ class Reminder: NSObject, NSCoding, NSCopying {
     
     var reminderId: Int = ReminderConstant.defaultReminderId
     
-    private var storedReminderIsDeleted: Bool = false
     /// This property a marker leftover from when we went through the process of constructing a new reminder from JSON and combining with an existing reminder object. This markers allows us to have a new reminder to overwrite the old reminder, then leaves an indicator that this should be deleted. This deletion is handled by DogsRequest
-    var reminderIsDeleted: Bool { return storedReminderIsDeleted }
+    private(set) var reminderIsDeleted: Bool = false
     
     /// This is a user selected label for the reminder. It dictates the name that is displayed in the UI for this reminder.
     var reminderAction: ReminderAction = ReminderConstant.defaultReminderAction
@@ -283,7 +282,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
     
     // Timing
     
-    private var storedReminderType: ReminderType = ReminderConstant.defaultReminderType
+     var storedReminderType: ReminderType = ReminderConstant.defaultReminderType
     /// Tells the reminder what components to use to make sure its in the correct timing style. Changing this changes between countdown, weekly, monthly, and oneTime mode.
     var reminderType: ReminderType {
         get {
@@ -308,8 +307,8 @@ class Reminder: NSObject, NSCoding, NSCopying {
         }
         set (newReminderExecutionBasis) {
             // If resetting the reminderExecutionBasis to the current time (and not changing it to another reminderExecutionBasis of some other reminder) then resets interval elasped as timers would have to be fresh
-            countdownComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
-            snoozeComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
+            countdownComponents.intervalElapsed = 0.0
+            snoozeComponents.intervalElapsed = 0.0
             
             storedReminderExecutionBasis = newReminderExecutionBasis
         }
@@ -443,11 +442,11 @@ class Reminder: NSObject, NSCoding, NSCopying {
         
         hasAlarmPresentationHandled = false
         
-        snoozeComponents.changeSnooze(newSnoozeStatus: false)
-        snoozeComponents.changeIntervalElapsed(newIntervalElapsed: TimeInterval(0))
+        snoozeComponents.changeSnoozeIsEnabled(newSnoozeStatus: false)
+        snoozeComponents.intervalElapsed = 0.0
         
         if reminderType == .countdown {
-            countdownComponents.changeIntervalElapsed(newIntervalElapsed: 0)
+            countdownComponents.intervalElapsed = 0.0
         }
         else if reminderType == .weekly {
             weeklyComponents.isSkippingDate = nil
