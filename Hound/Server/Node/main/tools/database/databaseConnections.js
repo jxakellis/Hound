@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 const mysql2 = require('mysql2');
 const databasePassword = require('../../secrets/databasePassword');
 const { poolLogger } = require('../logging/loggers');

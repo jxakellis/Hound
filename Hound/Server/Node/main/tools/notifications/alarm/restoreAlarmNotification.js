@@ -10,7 +10,7 @@ const { connectionForAlarms } = require('../../database/databaseConnections');
  * Restores all of the notifications for the primarySchedule and secondarySchedule
  * Use if the schedule gets destroyed (e.g. server crashes/restarts)
  */
-const restoreAlarmNotificationsForAllFamilies = async () => {
+async function restoreAlarmNotificationsForAllFamilies() {
   try {
     serverLogger.debug('restoreAlarmNotificationsForAll');
 
@@ -42,7 +42,7 @@ const restoreAlarmNotificationsForAllFamilies = async () => {
     serverLogger.error('restoreAlarmNotificationsForAll error:');
     serverLogger.error(error);
   }
-};
+}
 
 module.exports = {
   restoreAlarmNotificationsForAllFamilies,

@@ -9,14 +9,14 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
  *  Queries the database to create a single reminder. If the query is successful, then returns the reminder with created reminderId added to it.
  *  If a problem is encountered, creates and throws custom error
  */
-const createReminderForDogIdReminder = async (req, dogId, reminder) => {
-  if (areAllDefined(req, dogId, reminder) === false) {
-    throw new ValidationError('req, dogId, or reminder missing', global.constant.error.value.MISSING);
+async function createReminderForDogIdReminder(connection, dogId, reminder) {
+  if (areAllDefined(connection, dogId, reminder) === false) {
+    throw new ValidationError('connection, dogId, or reminder missing', global.constant.error.value.MISSING);
   }
 
   // only retrieve enough not deleted reminders that would exceed the limit
   const reminders = await databaseQuery(
-    req,
+    connection,
     'SELECT reminderId FROM dogReminders WHERE reminderIsDeleted = 0 AND dogId = ? LIMIT ?',
     [dogId, global.constant.limit.NUMBER_OF_REMINDERS_PER_DOG],
   );
@@ -81,7 +81,7 @@ const createReminderForDogIdReminder = async (req, dogId, reminder) => {
   }
 
   const result = await databaseQuery(
-    req,
+    connection,
     'INSERT INTO dogReminders(dogId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderExecutionDate, reminderLastModified, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed, countdownExecutionInterval, countdownIntervalElapsed, weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklyIsSkipping, weeklyIsSkippingDate, monthlyDay, monthlyHour, monthlyMinute, monthlyIsSkipping, monthlyIsSkippingDate, oneTimeDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     [
       dogId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderExecutionDate, reminderLastModified,
@@ -95,7 +95,7 @@ const createReminderForDogIdReminder = async (req, dogId, reminder) => {
 
   // update the dog last modified since one of its compoents was updated
   await databaseQuery(
-    req,
+    connection,
     'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
     [dogLastModified, dogId],
   );
@@ -106,27 +106,26 @@ const createReminderForDogIdReminder = async (req, dogId, reminder) => {
     ...reminder,
     reminderId: result.insertId,
   };
-};
+}
 
 /**
    * Queries the database to create a multiple reminders. If the query is successful, then returns the reminders with their created reminderIds added to them.
  *  If a problem is encountered, creates and throws custom error
    */
-const createRemindersForDogIdReminders = async (req, dogId, reminders) => {
-  const remindersArray = formatArray(reminders); // required
+async function createRemindersForDogIdReminders(connection, dogId, reminders) {
+  const castedReminders = formatArray(reminders); // required
+  if (areAllDefined(connection, dogId, castedReminders) === false) {
+    throw new ValidationError('connection, dogId, or reminders missing', global.constant.error.value.MISSING);
+  }
+
   const createdReminders = [];
-
-  if (areAllDefined(req, dogId, remindersArray) === false) {
-    throw new ValidationError('req, dogId, or reminders missing', global.constant.error.value.MISSING);
-  }
-
-  for (let i = 0; i < remindersArray.length; i += 1) {
+  for (let i = 0; i < castedReminders.length; i += 1) {
     // retrieve the original provided body AND the created id
-    const createdReminder = await createReminderForDogIdReminder(req, dogId, remindersArray[i]);
-    createdReminders.push(createdReminder);
+    createdReminders.push(createReminderForDogIdReminder(connection, dogId, castedReminders[i]));
   }
-  // everything was successful so we return the created reminders
+  await Promise.all(createdReminders);
+
   return createdReminders;
-};
+}
 
 module.exports = { createReminderForDogIdReminder, createRemindersForDogIdReminders };

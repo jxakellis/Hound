@@ -7,7 +7,7 @@ const { areAllDefined } = require('../../format/validateDefined');
 /**
  * Cancels primary jobs scheduled with the provided familyId and reminderId
  */
-const cancelPrimaryJobForFamilyForReminder = async (familyId, reminderId) => {
+async function cancelPrimaryJobForFamilyForReminder(familyId, reminderId) {
   // cannot cancel job without familyId and reminderId
   if (areAllDefined(familyId, reminderId) === false) {
     return;
@@ -21,12 +21,12 @@ const cancelPrimaryJobForFamilyForReminder = async (familyId, reminderId) => {
     }
     primaryJob.cancel();
   }
-};
+}
 
 /**
  * Cancels any secondary jobs scheduled with the provided userId and reminderId
  */
-const cancelSecondaryJobForUserForReminder = async (userId, reminderId) => {
+async function cancelSecondaryJobForUserForReminder(userId, reminderId) {
   // cannot cancel job without userId and reminderId
   if (areAllDefined(userId, reminderId) === false) {
     return;
@@ -40,6 +40,6 @@ const cancelSecondaryJobForUserForReminder = async (userId, reminderId) => {
     }
     secondaryJob.cancel();
   }
-};
+}
 
 module.exports = { cancelPrimaryJobForFamilyForReminder, cancelSecondaryJobForUserForReminder };

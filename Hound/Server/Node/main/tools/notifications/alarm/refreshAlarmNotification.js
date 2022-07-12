@@ -15,7 +15,7 @@ const { deleteSecondaryAlarmNotificationsForUser } = require('./deleteAlarmNotif
  * No need to call upon user delete (as sendAPN checks for user tokens before sending and if the user was deleted then no tokens linked to the userId)
  * No need to call if the user updates their isNotificationEnabled (as sendAPN checks to see if the user is notification enabled before sending)
  */
-const refreshSecondaryAlarmNotificationsForUserId = async (userId, isFollowUpEnabled, followUpDelay) => {
+async function refreshSecondaryAlarmNotificationsForUserId(userId, isFollowUpEnabled, followUpDelay) {
   try {
     if (global.constant.server.IS_PRODUCTION === false) {
       alarmLogger.debug(`refreshSecondaryAlarmNotificationsForUserId ${userId}, ${isFollowUpEnabled}, ${followUpDelay}`);
@@ -87,7 +87,7 @@ const refreshSecondaryAlarmNotificationsForUserId = async (userId, isFollowUpEna
     alarmLogger.error('refreshSecondaryAlarmNotificationsForUserId error:');
     alarmLogger.error(error);
   }
-};
+}
 
 module.exports = {
   refreshSecondaryAlarmNotificationsForUserId,

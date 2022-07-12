@@ -16,45 +16,48 @@ const { deleteSecondaryAlarmNotificationsForUser } = require('../../main/tools/n
  *  If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-const deleteFamilyForUserIdFamilyId = async (req, userId, familyId) => {
-  const kickUserId = formatSHA256Hash(req.body.kickUserId);
+async function deleteFamilyForUserIdFamilyId(connection, userId, familyId, kickUserId) {
+  const castedKickUserId = formatSHA256Hash(kickUserId);
 
-  if (areAllDefined(req, userId, familyId) === false) {
-    throw new ValidationError('req, userId, or familyId missing', global.constant.error.value.MISSING);
+  // kickUserId is optional
+  if (areAllDefined(connection, userId, familyId) === false) {
+    throw new ValidationError('connection, userId, or familyId missing', global.constant.error.value.MISSING);
   }
 
   // TO DO add table for previousFamilyMembers.
   // This will only store the familyId, userId, userFirstName, and userLastName of any one in the family that has left / been kicked
   // Therefore, when trying to see who created a log (even if they have left the family), you can still see a corresponding name.
-  if (areAllDefined(kickUserId)) {
-    await kickFamilyMember(req, userId, familyId);
+  if (areAllDefined(castedKickUserId)) {
+    await kickFamilyMember(connection, userId, familyId, castedKickUserId);
   }
   else {
-    await deleteFamily(req, userId, familyId);
+    await deleteFamily(connection, userId, familyId);
   }
-};
+}
 
 /**
  * Helper method for deleteFamilyForUserIdFamilyId, goes through checks to remove a user from their family
  * If the user is the head of the family (and there are no other family members), we delete the family
  */
-const deleteFamily = async (req, userId, familyId) => {
-  if (areAllDefined(req, userId, familyId) === false) {
-    throw new ValidationError('req, userId, or familyId missing', global.constant.error.value.MISSING);
+async function deleteFamily(connection, userId, familyId) {
+  if (areAllDefined(connection, userId, familyId) === false) {
+    throw new ValidationError('connection, userId, or familyId missing', global.constant.error.value.MISSING);
   }
 
-  // find the amount of family members in the family
-  const familyMembers = await databaseQuery(
-    req,
-    'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
-    [familyId],
-  );
   // find out if the user is the family head
-  const family = await databaseQuery(
-    req,
+  const family = databaseQuery(
+    connection,
     'SELECT userId FROM families WHERE familyId = ? AND userId = ? LIMIT 18446744073709551615',
     [familyId, userId],
   );
+  // find the amount of family members in the family
+  const familyMembers = databaseQuery(
+    connection,
+    'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
+    [familyId],
+  );
+
+  await Promise.all(family, familyMembers);
 
   // User is the head of the family, so has obligation to it.
   if (family.length === 1) {
@@ -65,47 +68,59 @@ const deleteFamily = async (req, userId, familyId) => {
 
     // can destroy the family
     // delete all the family heads (should be one)
-    await databaseQuery(req, 'DELETE FROM families WHERE familyId = ?', [familyId]);
+    await databaseQuery(
+      connection,
+      'DELETE FROM families WHERE familyId = ?',
+      [familyId],
+    );
     // deletes all users from the family
-    await databaseQuery(req, 'DELETE FROM familyMembers WHERE familyId = ?', [familyId]);
+    await databaseQuery(
+      connection,
+      'DELETE FROM familyMembers WHERE familyId = ?',
+      [familyId],
+    );
     // delete all the corresponding dog, reminder, and log data
     await databaseQuery(
-      req,
+      connection,
       'DELETE dogs, dogReminders, dogLogs FROM dogs LEFT JOIN dogLogs ON dogs.dogId = dogLogs.dogId LEFT JOIN dogReminders ON dogs.dogId = dogReminders.dogId WHERE dogs.familyId = ?',
       [familyId],
     );
 
     // delete all the dogs
-    await deleteAllDogsForFamilyId(req, familyId);
+    await deleteAllDogsForFamilyId(connection, familyId);
   }
   // User is not the head of the family, so no obligation
   else {
   // can leave the family
     // deletes user from family
-    await databaseQuery(req, 'DELETE FROM familyMembers WHERE userId = ?', [userId]);
+    await databaseQuery(
+      connection,
+      'DELETE FROM familyMembers WHERE userId = ?',
+      [userId],
+    );
   }
 
   // now that the user has successfully left their family (or destroyed it), we can send a notification to remaining members
   // NOTE: in the case of the user being the family head (aka the only family members if we reached this point),
   // this will ultimately find no userNotificationTokens for the other family members and send no APN
   createFamilyMemberLeaveNotification(userId, familyId);
-};
+}
 
 /**
  * Helper method for deleteFamilyForUserIdFamilyId, goes through checks to attempt to kick a user from the family
  */
-const kickFamilyMember = async (req, userId, familyId) => {
-  const kickUserId = formatSHA256Hash(req.body.kickUserId);
+async function kickFamilyMember(connection, userId, familyId, kickUserId) {
+  const castedKickUserId = formatSHA256Hash(kickUserId);
 
   // have to specify who to kick from the family
-  if (areAllDefined(req, userId, familyId, kickUserId) === false) {
-    throw new ValidationError('req, userId, familyId, or kickUserId missing', global.constant.error.value.MISSING);
+  if (areAllDefined(connection, userId, familyId, castedKickUserId) === false) {
+    throw new ValidationError('connection, userId, familyId, or kickUserId missing', global.constant.error.value.MISSING);
   }
   // a user cannot kick themselves
-  if (userId === kickUserId) {
-    throw new ValidationError('kickUserId invalid', global.constant.error.value.INVALID);
+  if (userId === castedKickUserId) {
+    throw new ValidationError("You can't kick yourself from your family", global.constant.error.value.INVALID);
   }
-  const familyHeadUserId = await getFamilyHeadUserIdForFamilyId(req, familyId);
+  const familyHeadUserId = await getFamilyHeadUserIdForFamilyId(connection, familyId);
 
   // check to see if the user is the family head, as only the family head has permissions to kick
   if (familyHeadUserId !== userId) {
@@ -115,16 +130,16 @@ const kickFamilyMember = async (req, userId, familyId) => {
   // kickUserId is valid, kickUserId is different then the requester, requester is the family head so everything is valid
   // kick the user by deleting them from the family
   await databaseQuery(
-    req,
+    connection,
     'DELETE FROM familyMembers WHERE userId = ?',
-    [kickUserId],
+    [castedKickUserId],
   );
 
   // remove any pending secondary alarm notifications they have queued
   // The primary alarm notifications retrieve the notification tokens of familyMembers right as they fire, so the user will not be included
-  deleteSecondaryAlarmNotificationsForUser(kickUserId);
-  createFamilyMemberLeaveNotification(kickUserId, familyId);
-  createUserKickedNotification(kickUserId);
-};
+  deleteSecondaryAlarmNotificationsForUser(castedKickUserId);
+  createFamilyMemberLeaveNotification(castedKickUserId, familyId);
+  createUserKickedNotification(castedKickUserId);
+}
 
 module.exports = { deleteFamilyForUserIdFamilyId };

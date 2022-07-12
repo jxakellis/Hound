@@ -18,7 +18,7 @@ const { formatReminderAction } = require('../../format/formatName');
  * If a job with that name from reminderId already exists, then we cancel and replace that job
  * Additionally, handles secondaryAlarmNotification for any eligible users with createSecondaryAlarmNotificationForFamily.
  */
-const createAlarmNotificationForFamily = async (familyId, reminderId, reminderExecutionDate) => {
+async function createAlarmNotificationForFamily(familyId, reminderId, reminderExecutionDate) {
   try {
     // all ids should already be formatted into numbers
     const formattedReminderExecutionDate = formatDate(reminderExecutionDate);
@@ -61,13 +61,13 @@ const createAlarmNotificationForFamily = async (familyId, reminderId, reminderEx
     alarmLogger.error('createAlarmNotificationForFamily error:');
     alarmLogger.error(error);
   }
-};
+}
 
 /**
  * Helper method for createAlarmNotificationForFamily, actually queries database to get most updated version of dog and reminder.
  * Physically sends the primary APN then createSecondaryAlarmNotificationForUser for all eligible users in the family
  */
-const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (familyId, reminderId) => {
+async function sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(familyId, reminderId) {
   try {
     // get the dogName, reminderAction, and reminderCustomActionName for the given reminderId
     // the reminderId has to exist to search and we check to make sure the dogId isn't null (to make sure the dog still exists too)
@@ -84,6 +84,7 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
     }
 
     // make information for notification
+    // TO DO add checks that make sure these messages don't go over the title/body APN character limit
     const alertTitle = `Reminder for ${reminder.dogName}`;
     const alertBody = `Give your dog a helping hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
 
@@ -118,7 +119,7 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
     alarmLogger.error('sendPrimaryAPNAndCreateSecondaryNotificationForFamily error:');
     alarmLogger.error(error);
   }
-};
+}
 
 /**
  * Doesn't check for isFollowUpEnabled status, so ensure the user is enabled
@@ -127,7 +128,7 @@ const sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily = async (family
  * If a job with that name from reminderId already exists, then we cancel and replace that job
  * Once date is reached, job executes to sendAPNForAll with userId, constructed alertTitle, and constructed alertBody
  */
-const createSecondaryAlarmNotificationForUser = async (userId, reminderId, secondaryExecutionDate) => {
+async function createSecondaryAlarmNotificationForUser(userId, reminderId, secondaryExecutionDate) {
   try {
     const formattedSecondaryExecutionDate = formatDate(secondaryExecutionDate);
     if (global.constant.server.IS_PRODUCTION === false) {
@@ -167,13 +168,13 @@ const createSecondaryAlarmNotificationForUser = async (userId, reminderId, secon
     alarmLogger.error('createSecondaryAlarmNotificationForUser error:');
     alarmLogger.error(error);
   }
-};
+}
 
 /**
  * Helper method for createSecondaryAlarmNotificationForUser, actually queries database to get most updated version of dog and reminder.
  * Physically sends the secondary APN notification
  */
-const sendSecondaryAPNForUser = async (userId, reminderId) => {
+async function sendSecondaryAPNForUser(userId, reminderId) {
   try {
     // get the dogName, reminderAction, and reminderCustomActionName for the given reminderId
     // the reminderId has to exist to search and we check to make sure the dogId isn't null (to make sure the dog still exists too)
@@ -190,6 +191,7 @@ const sendSecondaryAPNForUser = async (userId, reminderId) => {
     }
 
     // form secondary alert title and body for secondary notification
+    // TO DO add checks that make sure these messages don't go over the title/body APN character limit
     const alertTitle = `Follow up reminder for ${reminder.dogName}`;
     const alertBody = `It's been a bit, remember to give your dog a helping hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
 
@@ -200,7 +202,7 @@ const sendSecondaryAPNForUser = async (userId, reminderId) => {
     alarmLogger.error('sendAPNForUser error:');
     alarmLogger.error(error);
   }
-};
+}
 
 // Don't export sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily or sendSecondaryAPNForUser as they are helper methods
 module.exports = {

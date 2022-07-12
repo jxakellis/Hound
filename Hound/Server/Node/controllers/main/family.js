@@ -8,9 +8,9 @@ Known:
 - userId formatted correctly and request has sufficient permissions to use
 - (if appliciable to controller) familyId formatted correctly and request has sufficient permissions to use
 */
-const getFamily = async (req, res) => {
+async function getFamily(req, res) {
   try {
-    const familyId = req.params.familyId;
+    const { familyId } = req.params;
     const result = await getAllFamilyInformationForFamilyId(req, familyId);
     await req.commitQueries(req);
     return res.status(200).json({ result });
@@ -19,11 +19,11 @@ const getFamily = async (req, res) => {
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
-};
+}
 
-const createFamily = async (req, res) => {
+async function createFamily(req, res) {
   try {
-    const userId = req.params.userId;
+    const { userId } = req.params;
     const result = await createFamilyForUserId(req, userId);
     await req.commitQueries(req);
     return res.status(200).json({ result });
@@ -33,13 +33,13 @@ const createFamily = async (req, res) => {
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
-};
+}
 
-const updateFamily = async (req, res) => {
+async function updateFamily(req, res) {
   try {
-    const userId = req.params.userId;
-    const familyId = req.params.familyId;
-    await updateFamilyForUserIdFamilyId(req, userId, familyId);
+    const { userId, familyId } = req.params;
+    const { familyCode, isLocked, isPaused } = req.body;
+    await updateFamilyForUserIdFamilyId(req, userId, familyId, familyCode, isLocked, isPaused);
     await req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }
@@ -47,13 +47,13 @@ const updateFamily = async (req, res) => {
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
-};
+}
 
-const deleteFamily = async (req, res) => {
+async function deleteFamily(req, res) {
   try {
-    const userId = req.params.userId;
-    const familyId = req.params.familyId;
-    await deleteFamilyForUserIdFamilyId(req, userId, familyId);
+    const { userId, familyId } = req.params;
+    const { kickUserId } = req.body;
+    await deleteFamilyForUserIdFamilyId(req, userId, familyId, kickUserId);
     await req.commitQueries(req);
     return res.status(200).json({ result: '' });
   }
@@ -61,7 +61,7 @@ const deleteFamily = async (req, res) => {
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
-};
+}
 
 module.exports = {
   getFamily, createFamily, updateFamily, deleteFamily,

@@ -11,60 +11,52 @@ const dogLogsColumns = 'logId, userId, logDate, logNote, logAction, logCustomAct
  *  If the query is successful, returns the log for the dogId.
  *  If a problem is encountered, creates and throws custom error
 */
-const getLogForLogId = async (req, logId, lastDogManagerSynchronization) => {
-  if (areAllDefined(req, logId) === false) {
-    throw new ValidationError('req or logId missing', global.constant.error.value.MISSING);
+async function getLogForLogId(connection, logId, lastDogManagerSynchronization) {
+  if (areAllDefined(connection, logId) === false) {
+    throw new ValidationError('connection or logId missing', global.constant.error.value.MISSING);
   }
 
-  const lastSynchronization = formatDate(lastDogManagerSynchronization);
+  const castedLastDogManagerSynchronization = formatDate(lastDogManagerSynchronization);
 
-  let result;
-  if (areAllDefined(lastSynchronization)) {
-    result = await databaseQuery(
-      req,
+  const result = areAllDefined(castedLastDogManagerSynchronization)
+    ? await databaseQuery(
+      connection,
       `SELECT ${dogLogsColumns} FROM dogLogs WHERE logLastModified >= ? AND logId = ? LIMIT 1`,
-      [lastSynchronization, logId],
-    );
-  }
-  else {
-    result = await databaseQuery(
-      req,
+      [castedLastDogManagerSynchronization, logId],
+    )
+    : await databaseQuery(
+      connection,
       `SELECT ${dogLogsColumns} FROM dogLogs WHERE logId = ? LIMIT 1`,
       [logId],
     );
-  }
 
   return result;
-};
+}
 
 /**
  *  If the query is successful, returns an array of all the logs for the dogId. Errors not handled
  *  If a problem is encountered, creates and throws custom error
  */
-const getAllLogsForDogId = async (req, dogId, lastDogManagerSynchronization) => {
-  if (areAllDefined(req, dogId) === false) {
-    throw new ValidationError('req or dogId missing', global.constant.error.value.MISSING);
+async function getAllLogsForDogId(connection, dogId, lastDogManagerSynchronization) {
+  if (areAllDefined(connection, dogId) === false) {
+    throw new ValidationError('connection or dogId missing', global.constant.error.value.MISSING);
   }
 
-  const lastSynchronization = formatDate(lastDogManagerSynchronization);
+  const castedLastDogManagerSynchronization = formatDate(lastDogManagerSynchronization);
 
-  let result;
-  if (areAllDefined(lastSynchronization)) {
-    result = await databaseQuery(
-      req,
+  const result = areAllDefined(castedLastDogManagerSynchronization)
+    ? await databaseQuery(
+      connection,
       `SELECT ${dogLogsColumns} FROM dogLogs WHERE logLastModified >= ? AND dogId = ? LIMIT 18446744073709551615`,
-      [lastSynchronization, dogId],
-    );
-  }
-  else {
-    result = await databaseQuery(
-      req,
+      [castedLastDogManagerSynchronization, dogId],
+    )
+    : await databaseQuery(
+      connection,
       `SELECT ${dogLogsColumns} FROM dogLogs WHERE dogId = ? LIMIT 18446744073709551615`,
       [dogId],
     );
-  }
 
   return result;
-};
+}
 
 module.exports = { getLogForLogId, getAllLogsForDogId };

@@ -10,57 +10,70 @@ const { hash } = require('../../main/tools/format/hash');
  *  Queries the database to create a user. If the query is successful, then returns the userId.
  *  If a problem is encountered, creates and throws custom error
  */
-const createUserForUserIdentifier = async (req, userIdentifier) => {
-  const userEmail = formatEmail(req.body.userEmail); // required
-  const {
-    userFirstName, userLastName, userNotificationToken, // optional
-  } = req.body;
-  const userAccountCreationDate = new Date();
-
-  const userId = await hash(userIdentifier, userAccountCreationDate.toISOString());
-
-  const isNotificationEnabled = formatBoolean(req.body.isNotificationEnabled); // required
-  const isLoudNotification = formatBoolean(req.body.isLoudNotification); // required
-  const isFollowUpEnabled = formatBoolean(req.body.isFollowUpEnabled); // required
-  const followUpDelay = formatNumber(req.body.followUpDelay); // required
-  const logsInterfaceScale = req.body.logsInterfaceScale; // required
-  const remindersInterfaceScale = req.body.remindersInterfaceScale; // required
-  const interfaceStyle = formatNumber(req.body.interfaceStyle); // required
-  const snoozeLength = formatNumber(req.body.snoozeLength); // required
-  const notificationSound = req.body.notificationSound; // required
-
-  // component of the body is missing or invalid
-  if (areAllDefined(
-    req,
-    userId,
-    userEmail,
-    userIdentifier,
-    isNotificationEnabled,
-    isLoudNotification,
-    isFollowUpEnabled,
-    followUpDelay,
-    logsInterfaceScale,
-    remindersInterfaceScale,
-    interfaceStyle,
-    snoozeLength,
-    notificationSound,
-  ) === false) {
-    throw new ValidationError('req, userId, userEmail, userIdentifier, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound missing', global.constant.error.value.MISSING);
+async function createUserForUserIdentifier(
+  connection,
+  userIdentifier,
+  userEmail,
+  userFirstName,
+  userLastName,
+  userNotificationToken,
+  isNotificationEnabled,
+  isLoudNotification,
+  isFollowUpEnabled,
+  followUpDelay,
+  snoozeLength,
+  notificationSound,
+  interfaceStyle,
+  logsInterfaceScale,
+  remindersInterfaceScale,
+) {
+  if (areAllDefined(connection, userIdentifier) === false) {
+    throw new ValidationError('connection or userIdentifier missing', global.constant.error.value.MISSING);
   }
 
-  await databaseQuery(
-    req,
-    'INSERT INTO users(userId, userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate) VALUES (?,?,?,?,?,?,?)',
-    [userId, userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate],
-  );
+  const userAccountCreationDate = new Date();
+  const userId = hash(userIdentifier, userAccountCreationDate.toISOString());
 
-  await databaseQuery(
-    req,
-    'INSERT INTO userConfiguration(userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, notificationSound) VALUES (?,?,?,?,?,?,?,?,?,?)',
-    [userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, notificationSound],
-  );
+  const castedUserEmail = formatEmail(userEmail);
+  const castedIsNotificationEnabled = formatBoolean(isNotificationEnabled);
+  const castedIsLoudNotification = formatBoolean(isLoudNotification);
+  const castedIsFollowUpEnabled = formatBoolean(isFollowUpEnabled);
+  const castedFollowUpDelay = formatNumber(followUpDelay);
+  const castedSnoozeLength = formatNumber(snoozeLength);
+  const castedInterfaceStyle = formatNumber(interfaceStyle);
+
+  // checks to see that all needed components are provided
+  if (areAllDefined(
+    userId,
+    castedUserEmail,
+    userNotificationToken,
+    castedIsNotificationEnabled,
+    castedIsLoudNotification,
+    castedIsFollowUpEnabled,
+    castedFollowUpDelay,
+    castedSnoozeLength,
+    notificationSound,
+    logsInterfaceScale,
+    remindersInterfaceScale,
+    castedInterfaceStyle,
+  ) === false) {
+    throw new ValidationError('userId, userEmail, userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, snoozeLength, notificationSound, interfaceStyle, logsInterfaceScale, or remindersInterfaceScale missing', global.constant.error.value.MISSING);
+  }
+
+  const promises = [
+    databaseQuery(
+      connection,
+      'INSERT INTO users(userId, userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate) VALUES (?,?,?,?,?,?,?)',
+      [userId, userIdentifier, userNotificationToken, castedUserEmail, userFirstName, userLastName, userAccountCreationDate],
+    ),
+    databaseQuery(
+      connection,
+      'INSERT INTO userConfiguration(userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, notificationSound) VALUES (?,?,?,?,?,?,?,?,?,?)',
+      [userId, castedIsNotificationEnabled, castedIsLoudNotification, castedIsFollowUpEnabled, castedFollowUpDelay, logsInterfaceScale, remindersInterfaceScale, castedInterfaceStyle, castedSnoozeLength, notificationSound],
+    )];
+  await Promise.all(promises);
 
   return userId;
-};
+}
 
 module.exports = { createUserForUserIdentifier };

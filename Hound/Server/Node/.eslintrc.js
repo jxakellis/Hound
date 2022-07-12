@@ -14,10 +14,7 @@ module.exports = {
     'max-len': ['error', { code: 9999, ignoreComments: true }],
     'brace-style': ['error', 'stroustrup', { allowSingleLine: false }],
     'no-console': 'off',
-    'no-else-return': 'off',
-    'no-await-in-loop': 'off',
-    'no-use-before-define': 'off',
-    'prefer-destructuring': 'off',
+    'no-use-before-define': ['error', { functions: false, classes: true, variables: true }],
     'no-restricted-syntax': 'off',
   },
 };

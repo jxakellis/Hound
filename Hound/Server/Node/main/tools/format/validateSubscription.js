@@ -9,9 +9,9 @@ const { getAllDogsForUserIdFamilyId } = require('../../../controllers/getFor/get
  * Uses getActiveSubscriptionForFamilyId to either get the family's paid subscription or the default free subscription
  * Attached the information to the req (under req.subscriptionInformation.xxx)
  */
-const attachSubscriptionInformation = async (req, res, next) => {
+async function attachSubscriptionInformation(req, res, next) {
   try {
-    const familyId = req.params.familyId;
+    const { familyId } = req.params;
 
     // validate that a familyId was passed, assume that its in the correct format
     if (areAllDefined(req, familyId) === false) {
@@ -28,16 +28,15 @@ const attachSubscriptionInformation = async (req, res, next) => {
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
-};
+}
 
 /**
  * Checks the family's subscription to see if it's expired
  * If the request's method isn't GET or DELETE and the subscription is expired, returns 400 status
  */
-const validateSubscription = async (req, res, next) => {
+async function validateSubscription(req, res, next) {
   try {
-    const userId = req.params.userId;
-    const familyId = req.params.familyId;
+    const { userId, familyId } = req.params;
     const { subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs } = req.subscriptionInformation;
 
     if (areAllDefined(req, userId, familyId, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs) === false) {
@@ -68,6 +67,6 @@ const validateSubscription = async (req, res, next) => {
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
-};
+}
 
 module.exports = { attachSubscriptionInformation, validateSubscription };

@@ -13,215 +13,288 @@ const { ValidationError, convertErrorToJSON } = require('../general/errors');
  * We reject the build 1000 user but support build 1500 and build 2000.
  * Build 1500 will no longer be supported once a new build (e.g. 2500) comes out.
  */
-const validateAppBuild = async (req, res, next) => {
+async function validateAppBuild(req, res, next) {
   const appBuild = formatNumber(req.params.appBuild);
   if (areAllDefined(appBuild) === false) {
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(new ValidationError('appBuild missing', global.constant.error.value.MISSING)));
   }
   // the user isn't on the previous or current app build
-  else if (appBuild !== global.constant.server.PREVIOUS_APP_BUILD && appBuild !== global.constant.server.CURRENT_APP_BUILD) {
+  if (appBuild !== global.constant.server.PREVIOUS_APP_BUILD && appBuild !== global.constant.server.CURRENT_APP_BUILD) {
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(new ValidationError(`appBuild of ${appBuild} is invalid. Acceptable builds are ${global.constant.server.PREVIOUS_APP_BUILD} and ${global.constant.server.CURRENT_APP_BUILD}`, global.constant.error.general.APP_BUILD_OUTDATED)));
   }
-  else {
-    return next();
-  }
-};
+
+  return next();
+}
 
 /**
  * Checks to see that userId and userIdentifier are defined, are valid, and exist in the database.
  */
-const validateUserId = async (req, res, next) => {
+async function validateUserId(req, res, next) {
   // later on use a token here to validate that they have permission to use the userId
 
   const userId = formatSHA256Hash(req.params.userId);
   const userIdentifier = formatSHA256Hash(req.query.userIdentifier);
 
-  if (areAllDefined(userIdentifier, userId)) {
-    // if userId is defined and it is a number then continue
-    try {
-      // queries the database to find if the users table contains a user with the provided ID
-      const result = await databaseQuery(
-        req,
-        'SELECT userId FROM users WHERE userId = ? AND userIdentifier = ? LIMIT 1',
-        [userId, userIdentifier],
-      );
-
-      if (result.length === 1) {
-        // userId exists in the table for given userId and identifier, so all valid
-        // reassign req.params so that the id there is guarrenteed to be an int and not a string
-        req.params.userId = userId;
-        req.query.userIdentifier = userIdentifier;
-        return next();
-      }
-      else {
-        // userId does not exist in the table
-        await req.rollbackQueries(req);
-        return res.status(404).json(convertErrorToJSON(new ValidationError('No user found or invalid permissions', global.constant.error.value.INVALID)));
-      }
-    }
-    catch (error) {
-      // couldn't query database to find userId
-      await req.rollbackQueries(req);
-      return res.status(400).json(convertErrorToJSON(error));
-    }
-  }
-  else {
+  if (areAllDefined(userIdentifier, userId) === false) {
     // userId was not provided or is invalid format OR userIdentifier was not provided or is invalid format
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(new ValidationError('userId or userIdentifier Invalid', global.constant.error.value.INVALID)));
   }
-};
+
+  // if userId is defined and it is a number then continue
+  try {
+    // queries the database to find if the users table contains a user with the provided ID
+    const result = await databaseQuery(
+      req,
+      'SELECT userId FROM users WHERE userId = ? AND userIdentifier = ? LIMIT 1',
+      [userId, userIdentifier],
+    );
+
+    if (result.length === 0) {
+      // userId does not exist in the table
+      await req.rollbackQueries(req);
+      return res.status(404).json(convertErrorToJSON(new ValidationError('No user found or invalid permissions', global.constant.error.value.INVALID)));
+    }
+
+    // userId exists in the table for given userId and identifier, so all valid
+    // reassign req.params so that the id there is guarrenteed to be an int and not a string
+    req.params.userId = userId;
+    req.query.userIdentifier = userIdentifier;
+    return next();
+  }
+  catch (error) {
+    // couldn't query database to find userId
+    await req.rollbackQueries(req);
+    return res.status(400).json(convertErrorToJSON(error));
+  }
+}
 
 /**
  * Checks to see that familyId is defined, is a number, and exists in the database
  */
-const validateFamilyId = async (req, res, next) => {
+async function validateFamilyId(req, res, next) {
   // userId should be validated already
-  const userId = req.params.userId;
+  const { userId } = req.params;
   const familyId = formatSHA256Hash(req.params.familyId);
 
-  if (areAllDefined(familyId)) {
-    // if familyId is defined and it is a number then continue
-    try {
-      // queries the database to find familyIds associated with the userId
-      const result = await databaseQuery(
-        req,
-        'SELECT familyId, userId FROM familyMembers WHERE userId = ? AND familyId = ? LIMIT 1',
-        [userId, familyId],
-      );
-
-      if (result.length === 1) {
-        // familyId exists in the table, therefore userId is  part of the family
-        // reassign req.params so that the id there is guarrenteed to be an int and not a string
-        req.params.familyId = familyId;
-        return next();
-      }
-      else {
-        // familyId does not exist in the table
-        await req.rollbackQueries(req);
-        return res.status(404).json(convertErrorToJSON(new ValidationError('No family found or invalid permissions', global.constant.error.value.INVALID)));
-      }
-    }
-    catch (error) {
-      // couldn't query database to find familyId
-      await req.rollbackQueries(req);
-      return res.status(400).json(convertErrorToJSON(error));
-    }
-  }
-  else {
+  if (areAllDefined(familyId) === false) {
     // familyId was not provided or is invalid format
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(new ValidationError('familyId Invalid', global.constant.error.value.INVALID)));
   }
-};
+
+  // if familyId is defined and it is a number then continue
+  try {
+    // queries the database to find familyIds associated with the userId
+    const result = await databaseQuery(
+      req,
+      'SELECT familyId, userId FROM familyMembers WHERE userId = ? AND familyId = ? LIMIT 1',
+      [userId, familyId],
+    );
+
+    if (result.length === 0) {
+      // familyId does not exist in the table
+      await req.rollbackQueries(req);
+      return res.status(404).json(convertErrorToJSON(new ValidationError('No family found or invalid permissions', global.constant.error.value.INVALID)));
+    }
+
+    // familyId exists in the table, therefore userId is  part of the family
+    // reassign req.params so that the id there is guarrenteed to be an int and not a string
+    req.params.familyId = familyId;
+    return next();
+  }
+  catch (error) {
+    // couldn't query database to find familyId
+    await req.rollbackQueries(req);
+    return res.status(400).json(convertErrorToJSON(error));
+  }
+}
 
 /**
  * Checks to see that dogId is defined, a number, and exists in the database under familyId provided. If it does then the user owns the dog and invokes next().
  */
-const validateDogId = async (req, res, next) => {
+async function validateDogId(req, res, next) {
   // familyId should be validated already
 
-  const familyId = req.params.familyId;
+  const { familyId } = req.params;
   const dogId = formatNumber(req.params.dogId);
 
-  // if dogId is defined and it is a number then continue
-  if (dogId) {
-    // query database to find out if user has permission for that dogId
-    try {
-      // finds what dogId (s) the user has linked to their familyId
-      // JOIN families as dog must have a family attached to it
-      const dog = await databaseQuery(
-        req,
-        'SELECT dogs.dogId FROM dogs JOIN families ON dogs.familyId = families.familyId WHERE dogs.dogIsDeleted = 0 AND dogs.familyId = ? AND dogs.dogId = ? LIMIT 1',
-        [familyId, dogId],
-      );
-
-      // search query result to find if the dogIds linked to the familyId match the dogId provided, match means the user owns that dogId
-
-      if (dog.length === 1) {
-        // the dogId exists and it is linked to the familyId, valid!
-        // reassign req.params so that the id there is guarrenteed to be an int and not a string
-        req.params.dogId = dogId;
-        return next();
-      }
-      else {
-        // the dogId does not exist and/or the user does not have access to that dogId
-        await req.rollbackQueries(req);
-        return res.status(404).json(convertErrorToJSON(new ValidationError('familyId Invalid', global.constant.error.value.INVALID)));
-      }
-    }
-    catch (error) {
-      await req.rollbackQueries(req);
-      return res.status(400).json(convertErrorToJSON(error));
-    }
-  }
-  else {
+  if (areAllDefined(dogId) === false) {
     // dogId was not provided or is invalid
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(new ValidationError('dogId Invalid', global.constant.error.value.INVALID)));
   }
-};
+
+  // query database to find out if user has permission for that dogId
+  try {
+    // finds what dogId (s) the user has linked to their familyId
+    // JOIN families as dog must have a family attached to it
+    const dog = await databaseQuery(
+      req,
+      'SELECT dogs.dogId FROM dogs JOIN families ON dogs.familyId = families.familyId WHERE dogs.dogIsDeleted = 0 AND dogs.familyId = ? AND dogs.dogId = ? LIMIT 1',
+      [familyId, dogId],
+    );
+
+    // search query result to find if the dogIds linked to the familyId match the dogId provided, match means the user owns that dogId
+
+    if (dog.length === 0) {
+      // the dogId does not exist and/or the user does not have access to that dogId
+      await req.rollbackQueries(req);
+      return res.status(404).json(convertErrorToJSON(new ValidationError('familyId Invalid', global.constant.error.value.INVALID)));
+    }
+
+    // the dogId exists and it is linked to the familyId, valid!
+    // reassign req.params so that the id there is guarrenteed to be an int and not a string
+    req.params.dogId = dogId;
+    return next();
+  }
+  catch (error) {
+    await req.rollbackQueries(req);
+    return res.status(400).json(convertErrorToJSON(error));
+  }
+}
 
 /**
  * Checks to see that logId is defined, a number. and exists in the database under dogId provided. If it does then the dog owns that log and invokes next().
  */
-const validateLogId = async (req, res, next) => {
+async function validateLogId(req, res, next) {
   // dogId should be validated already
 
-  const dogId = req.params.dogId;
+  const { dogId } = req.params;
   const logId = formatNumber(req.params.logId);
 
-  // if logId is defined and it is a number then continue
-  if (logId) {
-    // query database to find out if user has permission for that logId
-    try {
-      // finds what logId (s) the user has linked to their dogId
-      // JOIN dogs as log has to have dog still attached to it
-      const log = await databaseQuery(
-        req,
-        'SELECT dogLogs.logId FROM dogLogs JOIN dogs ON dogLogs.dogId = dogs.dogId WHERE dogLogs.logIsDeleted = 0 AND dogLogs.dogId = ? AND dogLogs.logId = ? LIMIT 1',
-        [dogId, logId],
-      );
+  if (areAllDefined(logId) === false) {
+    // logId was not provided or is invalid
+    await req.rollbackQueries(req);
+    return res.status(400).json(convertErrorToJSON(new ValidationError('logId Invalid', global.constant.error.value.INVALID)));
+  }
 
-      // search query result to find if the logIds linked to the dogIds match the logId provided, match means the user owns that logId
+  // query database to find out if user has permission for that logId
+  try {
+    // finds what logId (s) the user has linked to their dogId
+    // JOIN dogs as log has to have dog still attached to it
+    const log = await databaseQuery(
+      req,
+      'SELECT dogLogs.logId FROM dogLogs JOIN dogs ON dogLogs.dogId = dogs.dogId WHERE dogLogs.logIsDeleted = 0 AND dogLogs.dogId = ? AND dogLogs.logId = ? LIMIT 1',
+      [dogId, logId],
+    );
 
-      if (log.length === 1) {
-        // the logId exists and it is linked to the dogId, valid!
-        // reassign req.params so that the id there is guarrenteed to be an int and not a string
-        req.params.logId = logId;
-        return next();
-      }
-      else {
-        // the logId does not exist and/or the dog does not have access to that logId
+    // search query result to find if the logIds linked to the dogIds match the logId provided, match means the user owns that logId
+
+    if (log.length === 0) {
+      // the logId does not exist and/or the dog does not have access to that logId
+      await req.rollbackQueries(req);
+      return res.status(404).json(convertErrorToJSON(new ValidationError('No logs found or invalid permissions', global.constant.error.value.INVALID)));
+    }
+
+    // the logId exists and it is linked to the dogId, valid!
+    // reassign req.params so that the id there is guarrenteed to be an int and not a string
+    req.params.logId = logId;
+    return next();
+  }
+  catch (error) {
+    await req.rollbackQueries(req);
+    return res.status(400).json(convertErrorToJSON(error));
+  }
+}
+
+/**
+ * Checks to see that reminderId is defined, a number, and exists in the database under the dogId provided. If it does then the dog owns that reminder and invokes next().
+ */
+async function validateParamsReminderId(req, res, next) {
+  // dogId should be validated already
+
+  const { dogId } = req.params;
+  const reminderId = formatNumber(req.params.reminderId);
+
+  if (areAllDefined(reminderId) === false) {
+    // reminderId was not provided or is invalid
+    await req.rollbackQueries(req);
+    return res.status(400).json(convertErrorToJSON(new ValidationError('reminderId Invalid', global.constant.error.value.INVALID)));
+  }
+
+  // query database to find out if user has permission for that reminderId
+  try {
+    // finds what reminderId (s) the user has linked to their dogId
+    // JOIN dogs as reminder must have dog attached to it
+    const reminder = await databaseQuery(
+      req,
+      'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
+      [dogId, reminderId],
+    );
+
+    // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
+
+    if (reminder.length === 0) {
+      // the reminderId does not exist and/or the dog does not have access to that reminderId
+      await req.rollbackQueries(req);
+      return res.status(404).json(convertErrorToJSON(new ValidationError('No reminders found or invalid permissions', global.constant.error.value.INVALID)));
+    }
+
+    // the reminderId exists and it is linked to the dogId, valid!
+    // reassign req.params so that the id there is guarrenteed to be an int and not a string
+    req.params.reminderId = reminderId;
+    return next();
+  }
+  catch (error) {
+    await req.rollbackQueries(req);
+    return res.status(400).json(convertErrorToJSON(error));
+  }
+}
+
+async function validateBodyReminderId(req, res, next) {
+  // dogId should be validated already
+
+  const { dogId } = req.params;
+  // multiple reminders
+  const remindersArray = formatArray(req.body.reminders);
+  // single reminder
+  const singleReminderId = formatNumber(req.body.reminderId);
+
+  if (areAllDefined(remindersArray)) {
+    const reminderPromises = [];
+    for (let i = 0; i < remindersArray.length; i += 1) {
+      const reminderId = formatNumber(remindersArray[i].reminderId);
+
+      if (areAllDefined(reminderId) === false) {
+        // eslint-disable-next-line no-await-in-loop
         await req.rollbackQueries(req);
-        return res.status(404).json(convertErrorToJSON(new ValidationError('No logs found or invalid permissions', global.constant.error.value.INVALID)));
+        return res.status(400).json(convertErrorToJSON(new ValidationError('reminderId Invalid', global.constant.error.value.INVALID)));
       }
+
+      // Attempt to locate a reminder. It must match the reminderId provided while being attached to a dog that the user has permission to use
+      reminderPromises.push(databaseQuery(
+        req,
+        'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
+        [dogId, reminderId],
+      ));
+    }
+
+    try {
+      await Promise.all(reminderPromises);
     }
     catch (error) {
       await req.rollbackQueries(req);
       return res.status(400).json(convertErrorToJSON(error));
     }
+
+    for (let i = 0; i < reminderPromises.length; i += 1) {
+      if (reminderPromises[i].length === 0) {
+        // the reminderId does not exist and/or the dog does not have access to that reminderId
+        // eslint-disable-next-line no-await-in-loop
+        await req.rollbackQueries(req);
+        return res.status(404).json(convertErrorToJSON(new ValidationError('No reminders found or invalid permissions', global.constant.error.value.INVALID)));
+      }
+      // The reminderId exists and it is linked to the dogId! Reassign reminderId to guarantee integer and not a string
+      remindersArray[i].reminderId = formatNumber(remindersArray[i].reminderId);
+    }
+    // successfully checked all reminderIds
+    return next();
   }
-  else {
-    // logId was not provided or is invalid
-    await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(new ValidationError('logId Invalid', global.constant.error.value.INVALID)));
-  }
-};
-
-/**
- * Checks to see that reminderId is defined, a number, and exists in the database under the dogId provided. If it does then the dog owns that reminder and invokes next().
- */
-const validateParamsReminderId = async (req, res, next) => {
-  // dogId should be validated already
-
-  const dogId = req.params.dogId;
-  const reminderId = formatNumber(req.params.reminderId);
-
   // if reminderId is defined and it is a number then continue
-  if (reminderId) {
+  if (areAllDefined(singleReminderId)) {
     // query database to find out if user has permission for that reminderId
     try {
       // finds what reminderId (s) the user has linked to their dogId
@@ -229,114 +302,21 @@ const validateParamsReminderId = async (req, res, next) => {
       const reminder = await databaseQuery(
         req,
         'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
-        [dogId, reminderId],
-      );
-
-      // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
-
-      if (reminder.length === 1) {
-        // the reminderId exists and it is linked to the dogId, valid!
-        // reassign req.params so that the id there is guarrenteed to be an int and not a string
-        req.params.reminderId = reminderId;
-        return next();
-      }
-      else {
-        // the reminderId does not exist and/or the dog does not have access to that reminderId
-        await req.rollbackQueries(req);
-        return res.status(404).json(convertErrorToJSON(new ValidationError('No reminders found or invalid permissions', global.constant.error.value.INVALID)));
-      }
-    }
-    catch (error) {
-      await req.rollbackQueries(req);
-      return res.status(400).json(convertErrorToJSON(error));
-    }
-  }
-  else {
-    // reminderId was not provided or is invalid
-    await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(new ValidationError('reminderId Invalid', global.constant.error.value.INVALID)));
-  }
-};
-
-const validateBodyReminderId = async (req, res, next) => {
-  // dogId should be validated already
-
-  const dogId = req.params.dogId;
-  // multiple reminders
-  const reminders = formatArray(req.body.reminders);
-  // single reminder
-  const singleReminderId = formatNumber(req.body.reminderId);
-
-  // if reminders array is defined and array then continue
-  if (reminders) {
-    for (let i = 0; i < reminders.length; i += 1) {
-      const reminderId = formatNumber(reminders[i].reminderId);
-
-      // if reminderId is defined and it is a number then continue
-      if (reminderId) {
-        // query database to find out if user has permission for that reminderId
-        try {
-          // finds what reminderId (s) the user has linked to their dogId
-          // JOIN dogs as reminder must still have dog attached to it
-          const reminder = await databaseQuery(
-            req,
-            'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId  WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
-            [dogId, reminderId],
-          );
-
-          // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
-
-          if (reminder.length === 1) {
-            // the reminderId exists and it is linked to the dogId, valid!
-            // reassign reminder body so that the id there is guarrenteed to be an int and not a string
-            reminders[i].reminderId = reminderId;
-            // Check next reminder
-          }
-          else {
-            // the reminderId does not exist and/or the dog does not have access to that reminderId
-            await req.rollbackQueries(req);
-            return res.status(404).json(convertErrorToJSON(new ValidationError('No reminders found or invalid permissions', global.constant.error.value.INVALID)));
-          }
-        }
-        catch (error) {
-          await req.rollbackQueries(req);
-          return res.status(400).json(convertErrorToJSON(error));
-        }
-      }
-      else {
-        // reminderId was not provided or is invalid
-        await req.rollbackQueries(req);
-        return res.status(400).json(convertErrorToJSON(new ValidationError('reminderId Invalid', global.constant.error.value.INVALID)));
-      }
-    }
-    // successfully checked all reminderIds
-    return next();
-  }
-  // if reminderId is defined and it is a number then continue
-  else if (singleReminderId) {
-    // query database to find out if user has permission for that reminderId
-    try {
-      // finds what reminderId (s) the user has linked to their dogId
-      // JOIN dogs as reminder must have dog attached to it
-      const reminder = await databaseQuery(
-        req,
-        'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ?',
         [dogId, singleReminderId],
       );
 
       // search query result to find if the reminderIds linked to the dogIds match the reminderId provided, match means the user owns that reminderId
 
-      if (reminder.length === 1) {
-        // the reminderId exists and it is linked to the dogId, valid!
-        // reassign req.body so that the id there is guarrenteed to be an int and not a string
-        req.body.reminderId = singleReminderId;
-        return next();
-      }
-      else {
+      if (reminder.length === 0) {
         // the reminderId does not exist and/or the dog does not have access to that reminderId
         await req.rollbackQueries(req);
         return res.status(404).json(convertErrorToJSON(new ValidationError('No reminders found or invalid permissions', global.constant.error.value.INVALID)));
       }
+
+      // the reminderId exists and it is linked to the dogId, valid!
+      // reassign req.body so that the id there is guarrenteed to be an int and not a string
+      req.body.reminderId = singleReminderId;
+      return next();
     }
     catch (error) {
       await req.rollbackQueries(req);
@@ -348,7 +328,7 @@ const validateBodyReminderId = async (req, res, next) => {
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(new ValidationError('reminders or reminderId Invalid', global.constant.error.value.INVALID)));
   }
-};
+}
 
 module.exports = {
   validateAppBuild, validateUserId, validateFamilyId, validateDogId, validateLogId, validateParamsReminderId, validateBodyReminderId,

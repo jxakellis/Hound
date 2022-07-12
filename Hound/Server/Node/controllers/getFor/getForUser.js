@@ -7,38 +7,39 @@ const userNameColumns = 'users.userFirstName, users.userLastName';
 const userConfigurationColumns = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.logsInterfaceScale, userConfiguration.remindersInterfaceScale, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';
 
 /**
- * Returns the user for the userId. Errors not handled
+ * If the query is successful, returns the user for the userId.
+ *  If a problem is encountered, creates and throws custom error
  */
-const getUserForUserId = async (req, userId) => {
-  if (areAllDefined(req, userId) === false) {
-    throw new ValidationError('req or userId missing', global.constant.error.value.MISSING);
+async function getUserForUserId(connection, userId) {
+  if (areAllDefined(connection, userId) === false) {
+    throw new ValidationError('connection or userId missing', global.constant.error.value.MISSING);
   }
 
   // have to specifically reference the columns, otherwise familyMembers.userId will override users.userId.
   // Therefore setting userId to null (if there is no family member) even though the userId isn't null.
   const userInformation = await databaseQuery(
-    req,
+    connection,
     `SELECT ${userColumns}, familyMembers.familyId, ${userConfigurationColumns} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userId = ? LIMIT 1`,
     [userId],
   );
 
-  // array has item(s), meaning there was a user found, successful!
   return userInformation[0];
-};
+}
 
 /**
- * Returns the user for the userIdentifier. Errors not handled
+* If the query is successful, returns the user for the userIdentifier.
+ *  If a problem is encountered, creates and throws custom error
  */
-const getUserForUserIdentifier = async (req, userIdentifier) => {
-  if (areAllDefined(req, userIdentifier) === false) {
-    throw new ValidationError('req or userIdentifier missing', global.constant.error.value.MISSING);
+async function getUserForUserIdentifier(connection, userIdentifier) {
+  if (areAllDefined(connection, userIdentifier) === false) {
+    throw new ValidationError('connection or userIdentifier missing', global.constant.error.value.MISSING);
   }
 
   // userIdentifier method of finding corresponding user(s)
   // have to specifically reference the columns, otherwise familyMembers.userId will override users.userId.
   // Therefore setting userId to null (if there is no family member) even though the userId isn't null.
   const userInformation = await databaseQuery(
-    req,
+    connection,
     `SELECT ${userColumns}, familyMembers.familyId, ${userConfigurationColumns} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userIdentifier = ? LIMIT 1`,
     [userIdentifier],
   );
@@ -52,19 +53,19 @@ const getUserForUserIdentifier = async (req, userIdentifier) => {
 
   // array has item(s), meaning there was a user found, successful!
   return userInformation[0];
-};
+}
 
-const getUserFirstNameLastNameForUserId = async (req, userId) => {
-  if (areAllDefined(req, userId) === false) {
-    throw new ValidationError('req or userId missing', global.constant.error.value.MISSING);
+async function getUserFirstNameLastNameForUserId(connection, userId) {
+  if (areAllDefined(connection, userId) === false) {
+    throw new ValidationError('connection or userId missing', global.constant.error.value.MISSING);
   }
 
   const userInformation = await databaseQuery(
-    req,
+    connection,
     `SELECT ${userNameColumns} FROM users WHERE users.userId = ? LIMIT 1`,
     [userId],
   );
   return userInformation[0];
-};
+}
 
 module.exports = { getUserForUserId, getUserForUserIdentifier, getUserFirstNameLastNameForUserId };

@@ -1,7 +1,7 @@
 /**
  * Takes single object or array of objects. If ALL objects provided are defined, returns true. Otherwise, returns false. Behaves the same as atLeastOneDefined for single object.
  */
-const areAllDefined = (...args) => {
+function areAllDefined(...args) {
   // make sure ...args is an array, which it should be
   if (Array.isArray(args) === false) {
     return undefined;
@@ -15,12 +15,12 @@ const areAllDefined = (...args) => {
   }
   // all items are defined
   return true;
-};
+}
 
 /**
    * Take single object or array of objects. If at least one object provided is defined, returns true. Otherwise, returns false. Behaves the same as areAllDefined for single object.
    */
-const atLeastOneDefined = (...args) => {
+function atLeastOneDefined(...args) {
   // make sure ...args is an array, which it should be
   if (Array.isArray(args) === false) {
     return undefined;
@@ -37,7 +37,7 @@ const atLeastOneDefined = (...args) => {
 
   // everything in the array was undefined (or the array was empty), return false
   return false;
-};
+}
 
 module.exports = {
   areAllDefined, atLeastOneDefined,

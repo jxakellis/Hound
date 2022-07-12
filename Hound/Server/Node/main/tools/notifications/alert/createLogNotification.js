@@ -11,7 +11,7 @@ const { formatLogAction } = require('../../format/formatName');
 /**
  * Sends an alert to all of the family members that one of them has logged something.
  */
-const createLogNotification = async (userId, familyId, dogId, logAction, logCustomActionName) => {
+async function createLogNotification(userId, familyId, dogId, logAction, logCustomActionName) {
   try {
     if (global.constant.server.IS_PRODUCTION === false) {
       alertLogger.debug(`createLogNotification ${userId}, ${familyId}, ${dogId}, ${logAction}, ${logCustomActionName}`);
@@ -33,6 +33,7 @@ const createLogNotification = async (userId, familyId, dogId, logAction, logCust
 
     // now we can construct the messages
     // Log for Fido
+    // TO DO add checks that make sure these messages don't go over the title/body APN character limit
     const alertTitle = `Log for ${dog.dogName}`;
     const name = formatIntoAbreviatedFullName(user.userFirstName, user.userLastName);
     const alertBody = `${name} lent a helping hand with '${formatLogAction(logAction, logCustomActionName)}'`;
@@ -44,6 +45,6 @@ const createLogNotification = async (userId, familyId, dogId, logAction, logCust
     alertLogger.error('createLogNotification error:');
     alertLogger.error(error);
   }
-};
+}
 
 module.exports = { createLogNotification };

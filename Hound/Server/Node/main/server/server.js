@@ -56,7 +56,7 @@ process.on('SIGUSR2', () => {
  * Gracefully closes/ends everything
  * This includes the connection pool for the database for general requests, the connection for server notifications, the server itself, and the notification schedule
  */
-const shutdown = () => {
+async function shutdown() {
   serverLogger.info('HoundServer.js Program Is Shutting Down');
 
   try {
@@ -92,9 +92,14 @@ const shutdown = () => {
     serverLogger.info(`HoundServer.js Error: ${error}`);
   }
 
-  schedule.gracefulShutdown()
-    .then(() => serverLogger.info('Node Schedule Gracefully Shutdown'))
-    .catch((error) => serverLogger.info(`Node Primary Schedule Couldn't Shutdown: ${JSON.stringify(error)}`));
-};
+  try {
+    await schedule.gracefulShutdown();
+    serverLogger.info('Node Schedule Gracefully Shutdown');
+  }
+  catch (error) {
+    serverLogger.error('Node Primary Schedule Couldn\'t Shutdown:');
+    serverLogger.error(error);
+  }
+}
 
 module.exports = { app };

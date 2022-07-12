@@ -43,7 +43,7 @@ enum SubscriptionRequest: RequestProtocol {
             return receiptData.base64EncodedString(options: [])
         }
         
-        let body: [String: Any] = [ServerDefaultKeys.base64EncodedReceiptData.rawValue: base64EncodedReceiptString ?? "unknown"]
+        let body: [String: Any] = [ServerDefaultKeys.base64EncodedAppStoreReceiptURL.rawValue: base64EncodedReceiptString ?? "unknown"]
         InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }

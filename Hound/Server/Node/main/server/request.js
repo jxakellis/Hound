@@ -7,7 +7,7 @@ const { validateAppBuild } = require('../tools/format/validateId');
 const { userRouter } = require('../../routes/user');
 const { GeneralError, convertErrorToJSON } = require('../tools/general/errors');
 
-const configureAppForRequests = (app) => {
+function configureAppForRequests(app) {
 // Parse information possible sent
 
   app.use(parseFormData);
@@ -37,6 +37,6 @@ const configureAppForRequests = (app) => {
     await req.rollbackQueries(req);
     return res.status(404).json(convertErrorToJSON(new GeneralError('Path not found', global.constant.error.value.INVALID)));
   });
-};
+}
 
 module.exports = { configureAppForRequests };

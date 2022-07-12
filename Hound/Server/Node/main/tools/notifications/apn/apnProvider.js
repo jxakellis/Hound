@@ -3,15 +3,6 @@ const {
   keyId, teamId,
 } = require('../../../secrets/apnIds');
 
-/*
-// use certificate.pem and key.pem
-const options = {
-  cert: `${__dirname}/certificate.pem`,
-  key: `${__dirname}/key.pem`,
-  production: false,
-};
-*/
-
 // use key.p8, keyId, and teamId
 const options = {
   token: {

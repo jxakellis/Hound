@@ -6,19 +6,16 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
  *  Queries the database to create a dog. If the query is successful, then returns the dogId.
  *  If a problem is encountered, creates and throws custom error
  */
-const createDogForFamilyId = async (req, familyId) => {
-  const dogName = req.body.dogName; // required
-  const dogLastModified = new Date(); // manual
+async function createDogForFamilyId(connection, familyId, subscriptionInformation, dogName) {
+  const dogLastModified = new Date();
 
-  if (areAllDefined(req, familyId, dogName) === false) {
-    throw new ValidationError('req, familyId, or dogName missing', global.constant.error.value.MISSING);
+  if (areAllDefined(connection, familyId, subscriptionInformation, subscriptionInformation.subscriptionNumberOfDogs, dogName) === false) {
+    throw new ValidationError('connection, familyId, subscriptionInformation, or dogName missing', global.constant.error.value.MISSING);
   }
-
-  const subscriptionInformation = req.subscriptionInformation;
 
   // only retrieve enough not deleted dogs that would exceed the limit
   const dogs = await databaseQuery(
-    req,
+    connection,
     'SELECT dogId FROM dogs WHERE dogIsDeleted = 0 AND familyId = ? LIMIT ?',
     [familyId, subscriptionInformation.subscriptionNumberOfDogs],
   );
@@ -33,11 +30,11 @@ const createDogForFamilyId = async (req, familyId) => {
   }
 
   const result = await databaseQuery(
-    req,
+    connection,
     'INSERT INTO dogs(familyId, dogName, dogLastModified) VALUES (?,?,?)',
     [familyId, dogName, dogLastModified],
   );
   return result.insertId;
-};
+}
 
 module.exports = { createDogForFamilyId };

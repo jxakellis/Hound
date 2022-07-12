@@ -7,21 +7,19 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
  *  Queries the database to create a log. If the query is successful, then returns the logId.
  *  If a problem is encountered, creates and throws custom error
  */
-const createLogForUserIdDogId = async (req, userId, dogId) => {
-  const logDate = formatDate(req.body.logDate); // required
-  const { logNote } = req.body; // required
-  const { logAction } = req.body; // required
-  const { logCustomActionName } = req.body; // optional
+async function createLogForUserIdDogId(connection, userId, dogId, logDate, logAction, logCustomActionName, logNote) {
+  const castedLogDate = formatDate(logDate);
   const dogLastModified = new Date();
-  const logLastModified = dogLastModified; // manual
+  const logLastModified = dogLastModified;
 
-  if (areAllDefined(req, userId, dogId, logDate, logNote, logAction) === false) {
-    throw new ValidationError('req, userId, dogId, logDate, logNote, or logAction missing', global.constant.error.value.MISSING);
+  // logCustomActionName optional
+  if (areAllDefined(connection, userId, dogId, castedLogDate, logAction, logNote) === false) {
+    throw new ValidationError('connection, userId, dogId, logDate, logAction, or logNote missing', global.constant.error.value.MISSING);
   }
 
   // only retrieve enough not deleted logs that would exceed the limit
   const logs = await databaseQuery(
-    req,
+    connection,
     'SELECT logId FROM dogLogs WHERE logIsDeleted = 0 AND dogId = ? LIMIT ?',
     [dogId, global.constant.limit.NUMBER_OF_LOGS_PER_DOG],
   );
@@ -32,19 +30,19 @@ const createLogForUserIdDogId = async (req, userId, dogId) => {
   }
 
   const result = await databaseQuery(
-    req,
+    connection,
     'INSERT INTO dogLogs(userId, dogId, logDate, logNote, logAction, logCustomActionName, logLastModified) VALUES (?, ?, ?, ?, ?, ?, ?)',
-    [userId, dogId, logDate, logNote, logAction, logCustomActionName, logLastModified],
+    [userId, dogId, castedLogDate, logNote, logAction, logCustomActionName, logLastModified],
   );
 
   // update the dog last modified since one of its compoents was updated
   await databaseQuery(
-    req,
+    connection,
     'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
     [dogLastModified, dogId],
   );
 
   return result.insertId;
-};
+}
 
 module.exports = { createLogForUserIdDogId };

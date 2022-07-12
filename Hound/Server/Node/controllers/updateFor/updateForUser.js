@@ -8,107 +8,119 @@ const { atLeastOneDefined, areAllDefined } = require('../../main/tools/format/va
  *  Queries the database to update a user. If the query is successful, then returns
  *  If a problem is encountered, creates and throws custom error
  */
-const updateUserForUserId = async (req, userId) => {
-  const { userNotificationToken } = req.body;
+async function updateUserForUserId(
+  connection,
+  userId,
+  userNotificationToken,
+  isNotificationEnabled,
+  isLoudNotification,
+  isFollowUpEnabled,
+  followUpDelay,
+  snoozeLength,
+  notificationSound,
+  interfaceStyle,
+  logsInterfaceScale,
+  remindersInterfaceScale,
+) {
+  if (areAllDefined(connection, userId) === false) {
+    throw new ValidationError('connection or userId missing', global.constant.error.value.MISSING);
+  }
 
-  const isNotificationEnabled = formatBoolean(req.body.isNotificationEnabled);
-  const isLoudNotification = formatBoolean(req.body.isLoudNotification);
-  const isFollowUpEnabled = formatBoolean(req.body.isFollowUpEnabled);
-  const followUpDelay = formatNumber(req.body.followUpDelay);
-  const logsInterfaceScale = req.body.logsInterfaceScale;
-  const remindersInterfaceScale = req.body.remindersInterfaceScale;
-  const interfaceStyle = formatNumber(req.body.interfaceStyle);
-  const snoozeLength = formatNumber(req.body.snoozeLength);
-  const { notificationSound } = req.body;
+  const castedIsNotificationEnabled = formatBoolean(isNotificationEnabled);
+  const castedIsLoudNotification = formatBoolean(isLoudNotification);
+  const castedIsFollowUpEnabled = formatBoolean(isFollowUpEnabled);
+  const castedFollowUpDelay = formatNumber(followUpDelay);
+  const castedSnoozeLength = formatNumber(snoozeLength);
+  const castedInterfaceStyle = formatNumber(interfaceStyle);
 
   // checks to see that all needed components are provided
   if (atLeastOneDefined(
     userNotificationToken,
-    isNotificationEnabled,
-    isLoudNotification,
-    isFollowUpEnabled,
-    followUpDelay,
+    castedIsNotificationEnabled,
+    castedIsLoudNotification,
+    castedIsFollowUpEnabled,
+    castedFollowUpDelay,
+    castedSnoozeLength,
+    notificationSound,
     logsInterfaceScale,
     remindersInterfaceScale,
-    interfaceStyle,
-    snoozeLength,
-    notificationSound,
+    castedInterfaceStyle,
   ) === false) {
-    throw new ValidationError('No userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound provided', global.constant.error.value.MISSING);
+    throw new ValidationError('No userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, snoozeLength, notificationSound, interfaceStyle, logsInterfaceScale, or remindersInterfaceScale provided', global.constant.error.value.MISSING);
   }
 
   if (areAllDefined(userNotificationToken)) {
     await databaseQuery(
-      req,
+      connection,
       'UPDATE users SET userNotificationToken = ? WHERE userId = ?',
       [userNotificationToken, userId],
     );
   }
-  if (areAllDefined(isNotificationEnabled)) {
+  if (areAllDefined(castedIsNotificationEnabled)) {
     await databaseQuery(
-      req,
+      connection,
       'UPDATE userConfiguration SET isNotificationEnabled = ? WHERE userId = ?',
-      [isNotificationEnabled, userId],
+      [castedIsNotificationEnabled, userId],
     );
   }
-  if (areAllDefined(isLoudNotification)) {
+  if (areAllDefined(castedIsLoudNotification)) {
     await databaseQuery(
-      req,
+      connection,
       'UPDATE userConfiguration SET isLoudNotification = ? WHERE userId = ?',
-      [isLoudNotification, userId],
+      [castedIsLoudNotification, userId],
     );
   }
   // don't refresh secondary jobs here, it will be handled by the main controller
-  if (areAllDefined(isFollowUpEnabled)) {
+  if (areAllDefined(castedIsFollowUpEnabled)) {
     await databaseQuery(
-      req,
+      connection,
       'UPDATE userConfiguration SET isFollowUpEnabled = ? WHERE userId = ?',
-      [isFollowUpEnabled, userId],
+      [castedIsFollowUpEnabled, userId],
     );
   }
   // don't refresh secondary jobs here, it will be handled by the main controller
-  if (areAllDefined(followUpDelay)) {
+  if (areAllDefined(castedFollowUpDelay)) {
     await databaseQuery(
-      req,
+      connection,
       'UPDATE userConfiguration SET followUpDelay = ? WHERE userId = ?',
-      [followUpDelay, userId],
+      [castedFollowUpDelay, userId],
+    );
+  }
+  if (areAllDefined(castedSnoozeLength)) {
+    await databaseQuery(
+      connection,
+      'UPDATE userConfiguration SET snoozeLength = ? WHERE userId = ?',
+      [castedSnoozeLength, userId],
+    );
+  }
+  if (areAllDefined(notificationSound)) {
+    await databaseQuery(
+      connection,
+      'UPDATE userConfiguration SET notificationSound = ? WHERE userId = ?',
+      [notificationSound, userId],
+    );
+  }
+  if (areAllDefined(castedInterfaceStyle)) {
+    await databaseQuery(
+      connection,
+      'UPDATE userConfiguration SET interfaceStyle = ? WHERE userId = ?',
+      [castedInterfaceStyle, userId],
     );
   }
   if (areAllDefined(logsInterfaceScale)) {
     await databaseQuery(
-      req,
+      connection,
       'UPDATE userConfiguration SET logsInterfaceScale = ? WHERE userId = ?',
       [logsInterfaceScale, userId],
     );
   }
   if (areAllDefined(remindersInterfaceScale)) {
     await databaseQuery(
-      req,
+      connection,
       'UPDATE userConfiguration SET remindersInterfaceScale = ? WHERE userId = ?',
       [remindersInterfaceScale, userId],
     );
   }
-  if (areAllDefined(interfaceStyle)) {
-    await databaseQuery(
-      req,
-      'UPDATE userConfiguration SET interfaceStyle = ? WHERE userId = ?',
-      [interfaceStyle, userId],
-    );
-  }
-  if (areAllDefined(snoozeLength)) {
-    await databaseQuery(
-      req,
-      'UPDATE userConfiguration SET snoozeLength = ? WHERE userId = ?',
-      [snoozeLength, userId],
-    );
-  }
-  if (areAllDefined(notificationSound)) {
-    await databaseQuery(
-      req,
-      'UPDATE userConfiguration SET notificationSound = ? WHERE userId = ?',
-      [notificationSound, userId],
-    );
-  }
-};
+}
 
 module.exports = { updateUserForUserId };

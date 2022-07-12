@@ -8,7 +8,7 @@ const { createTerminateNotification } = require('../main/tools/notifications/ale
 
 // User has done some action that warrents us sending them a special notification
 alertRouter.post('/:alertType', async (req, res) => {
-  const alertType = req.params.alertType;
+  const { alertType } = req.params;
   if (areAllDefined(alertType) === false) {
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(new ValidationError('No alert type provided', global.constant.error.value.INVALID)));

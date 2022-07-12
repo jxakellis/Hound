@@ -53,7 +53,7 @@ enum ServerDefaultKeys: String {
     case notificationSound
     
     // MARK: Purchase
-    case base64EncodedReceiptData
+    case base64EncodedAppStoreReceiptURL
     
     case transactionId
     case productId

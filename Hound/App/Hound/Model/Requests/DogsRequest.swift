@@ -33,8 +33,8 @@ enum DogsRequest: RequestProtocol {
         
         // if we are querying about a dog, we always want its reminders and logs
         urlComponents.queryItems = [
-            URLQueryItem(name: "reminders", value: "true"),
-            URLQueryItem(name: "logs", value: "true"),
+            URLQueryItem(name: "isRetrievingReminders", value: "true"),
+            URLQueryItem(name: "isRetrievingLogs", value: "true"),
             URLQueryItem(name: "lastDogManagerSynchronization", value: LocalConfiguration.lastDogManagerSynchronization.ISO8601FormatWithFractionalSeconds())
         ]
         

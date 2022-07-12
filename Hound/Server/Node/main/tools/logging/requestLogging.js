@@ -5,22 +5,21 @@ const { areAllDefined } = require('../format/validateDefined');
 const { responseLogger } = require('./loggers');
 
 // Uses requestLogger to output the request from a user in the console
-const requestLoggerForRequest = (req, res, next) => {
+function requestLoggerForRequest(req, res, next) {
   if (global.constant.server.IS_PRODUCTION === false) {
     requestLogger.info(`Request for ${req.method} ${req.originalUrl}`);
   }
 
   next();
-};
+}
 
 // Inserts request information into the userRequestLogs table. This should only be called after the user is verified.
-const createLogForRequest = (req, res, next) => {
+function createLogForRequest(req, res, next) {
   const requestIP = req.ip; // can be undefined
   const requestDate = new Date();
   const requestMethod = req.method;
   const requestOriginalURL = req.originalUrl;
-  const appBuild = req.params.appBuild;
-  const userId = req.params.userId; // can be undefined
+  const { appBuild, userId } = req.params;
 
   if (areAllDefined(requestDate, requestMethod, requestOriginalURL, appBuild) && areAllDefined(req.hasBeenLogged) === false) {
     req.hasBeenLogged = true;
@@ -37,10 +36,10 @@ const createLogForRequest = (req, res, next) => {
   }
 
   next();
-};
+}
 
 // Uses responseLogger to output the response sent to a user in the console
-const responseLoggerForResponse = (req, res, next) => {
+function responseLoggerForResponse(req, res, next) {
   if (global.constant.server.IS_PRODUCTION === false) {
     const oldWrite = res.write;
     const oldEnd = res.end;
@@ -64,6 +63,6 @@ const responseLoggerForResponse = (req, res, next) => {
   }
 
   next();
-};
+}
 
 module.exports = { requestLoggerForRequest, createLogForRequest, responseLoggerForResponse };

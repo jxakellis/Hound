@@ -1,4 +1,5 @@
 const { databaseQuery } = require('../database/databaseQuery');
+const { areAllDefined } = require('../format/validateDefined');
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
@@ -18,23 +19,28 @@ const generateFamilyCode = () => {
   return result;
 };
 
-// Makes a verified unique code for a family to use that consists of A-Z and 0-9
-// eslint-disable-next-line consistent-return
-const generateVerifiedFamilyCode = async (req) => {
-  let uniqueCodeGenerated = false;
-  while (uniqueCodeGenerated === false) {
-    const code = generateFamilyCode();
+// Generate a verified unique code for a family to use that consists of A-Z and 0-9 (excludes I, L, O, and 0 due to how similar they look)
+async function generateVerifiedFamilyCode(connection) {
+  if (areAllDefined(connection) === false) {
+    return undefined;
+  }
+
+  let uniqueFamilyCode;
+  while (areAllDefined(uniqueFamilyCode) === false) {
+    const potentialFamilyCode = generateFamilyCode();
+    // Necessary to disable no-await-in-loop as we can't use Promise.all() for a while loop. We have a unknown amount of promises
+    // eslint-disable-next-line no-await-in-loop
     const result = await databaseQuery(
-      req,
+      connection,
       'SELECT familyCode FROM families WHERE familyCode = ? LIMIT 1',
-      [code],
+      [potentialFamilyCode],
     );
     // if the result's length is zero, that means there wasn't a match for the family code and the code is unique
     if (result.length === 0) {
-      uniqueCodeGenerated = true;
-      return code;
+      uniqueFamilyCode = potentialFamilyCode;
     }
   }
-};
+  return uniqueFamilyCode;
+}
 
 module.exports = { generateVerifiedFamilyCode };

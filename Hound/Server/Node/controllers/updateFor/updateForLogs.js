@@ -8,31 +8,28 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
  *  Queries the database to update a log. If the query is successful, then returns
  *  If a problem is encountered, creates and throws custom error
  */
-const updateLogForDogIdLogId = async (req, dogId, logId) => {
-  const logDate = formatDate(req.body.logDate); // required
-  const { logNote } = req.body; // required
-  const { logAction } = req.body; // required
-  const { logCustomActionName } = req.body; // optional
+async function updateLogForDogIdLogId(connection, dogId, logId, logDate, logAction, logCustomActionName, logNote) {
+  const castedLogDate = formatDate(logDate);
   const dogLastModified = new Date();
   const logLastModified = dogLastModified; // manual
 
-  // if all undefined, then there is nothing to update
-  if (areAllDefined(req, dogId, logId, logDate, logNote, logAction) === false) {
-    throw new ValidationError('req, dogId, logId, logDate, logNote, or logAction missing', global.constant.error.value.MISSING);
+  // logCustomActionName optional
+  if (areAllDefined(connection, dogId, logId, castedLogDate, logAction, logNote) === false) {
+    throw new ValidationError('connection, dogId, logId, logDate, logAction, or logNote missing', global.constant.error.value.MISSING);
   }
 
   await databaseQuery(
-    req,
+    connection,
     'UPDATE dogLogs SET logDate = ?, logAction = ?, logCustomActionName = ?, logNote = ?, logLastModified = ? WHERE logId = ?',
-    [logDate, logAction, logCustomActionName, logNote, logLastModified, logId],
+    [castedLogDate, logAction, logCustomActionName, logNote, logLastModified, logId],
   );
 
   // update the dog last modified since one of its compoents was updated
   await databaseQuery(
-    req,
+    connection,
     'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
     [dogLastModified, dogId],
   );
-};
+}
 
 module.exports = { updateLogForDogIdLogId };

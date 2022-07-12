@@ -1,15 +1,15 @@
 const { areAllDefined } = require('./validateDefined');
 
 // Returned string with whitespaces and new lines removed. If parameter is not a string, returns undefined
-const formatName = (string) => {
+function formatName(string) {
   if (typeof string !== 'string') {
     return undefined;
   }
   // removes whitespaces and newLines from beginning / end of string
   return string.trim();
-};
+}
 
-const formatIntoFullName = (userFirstName, userLastName) => {
+function formatIntoFullName(userFirstName, userLastName) {
   // TO DO add int parameter for existing message length. APN have a limited length for their messages
   // If the name is too long, them important parts of the APN message could be cut off
   // Therefore, we pass through the existing message length, then we limit the size of the fullName returned
@@ -21,20 +21,19 @@ const formatIntoFullName = (userFirstName, userLastName) => {
     return 'No Name';
   }
   // we know one of OR both of the trimmedFirstName and trimmedLast name are != nil && != ""
-  else if (areAllDefined(trimmedFirstName) === false && trimmedFirstName === '') {
+  if (areAllDefined(trimmedFirstName) === false && trimmedFirstName === '') {
     // no first name but has last name
     return trimmedLastName;
   }
-  else if (areAllDefined(trimmedLastName) === false && trimmedLastName === '') {
+  if (areAllDefined(trimmedLastName) === false && trimmedLastName === '') {
     // no last name but has first name
     return trimmedFirstName;
   }
-  else {
-    return `${trimmedFirstName} ${trimmedLastName}`;
-  }
-};
 
-const formatIntoAbreviatedFullName = (userFirstName, userLastName) => {
+  return `${trimmedFirstName} ${trimmedLastName}`;
+}
+
+function formatIntoAbreviatedFullName(userFirstName, userLastName) {
   // TO DO add int parameter for existing message length. APN have a limited length for their messages
   // If the name is too long, them important parts of the APN message could be cut off
   // Therefore, we pass through the existing message length, then we limit the size of the abreviatedFullName returned
@@ -46,20 +45,19 @@ const formatIntoAbreviatedFullName = (userFirstName, userLastName) => {
     return 'No Name';
   }
   // we know one of OR both of the trimmedFirstName and trimmedLast name are != nil && != ""
-  else if (areAllDefined(trimmedFirstName) === false && trimmedFirstName === '') {
+  if (areAllDefined(trimmedFirstName) === false && trimmedFirstName === '') {
     // no first name but has last name
     return trimmedLastName;
   }
-  else if (areAllDefined(trimmedLastName) === false && trimmedLastName === '') {
+  if (areAllDefined(trimmedLastName) === false && trimmedLastName === '') {
     // no last name but has first name
     return trimmedFirstName;
   }
-  else {
-    return `${trimmedFirstName} ${trimmedLastName.charAt(0)}`;
-  }
-};
 
-const formatLogAction = (logAction, logCustomActionName) => {
+  return `${trimmedFirstName} ${trimmedLastName.charAt(0)}`;
+}
+
+function formatLogAction(logAction, logCustomActionName) {
   if (areAllDefined(logAction) === false) {
     return undefined;
   }
@@ -108,9 +106,9 @@ const formatLogAction = (logAction, logCustomActionName) => {
     default:
       return undefined;
   }
-};
+}
 
-const formatReminderAction = (reminderAction, reminderCustomActionName) => {
+function formatReminderAction(reminderAction, reminderCustomActionName) {
   if (areAllDefined(reminderAction) === false) {
     return undefined;
   }
@@ -145,7 +143,7 @@ const formatReminderAction = (reminderAction, reminderCustomActionName) => {
     default:
       return undefined;
   }
-};
+}
 
 module.exports = {
   formatIntoFullName, formatIntoAbreviatedFullName, formatLogAction, formatReminderAction,

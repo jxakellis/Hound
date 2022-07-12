@@ -9,10 +9,9 @@ const subscriptionColumns = 'transactionId, productId, subscriptionPurchaseDate,
  *  If the query is successful, returns the most recent subscription for the familyId (if no most recent subscription, fills in default subscription details).
  *  If a problem is encountered, creates and throws custom error
  */
-const getActiveSubscriptionForFamilyId = async (req, familyId) => {
-  // validate that a familyId was passed, assume that its in the correct format
-  if (areAllDefined(req, familyId) === false) {
-    throw new ValidationError('familyId missing', global.constant.error.value.MISSING);
+async function getActiveSubscriptionForFamilyId(connection, familyId) {
+  if (areAllDefined(connection, familyId) === false) {
+    throw new ValidationError('connection or familyId missing', global.constant.error.value.MISSING);
   }
 
   // find the family's most recent subscription
@@ -25,7 +24,7 @@ const getActiveSubscriptionForFamilyId = async (req, familyId) => {
   currentDate.setTime(currentDate.getTime() - global.constant.subscription.SUBSCRIPTION_GRACE_PERIOD);
 
   let familySubscription = await databaseQuery(
-    req,
+    connection,
     `SELECT ${subscriptionColumns} FROM subscriptions WHERE familyId = ? AND subscriptionExpiration >= ? ORDER BY subscriptionExpiration DESC, subscriptionPurchaseDate DESC LIMIT 1`,
     [familyId, currentDate],
   );
@@ -39,32 +38,32 @@ const getActiveSubscriptionForFamilyId = async (req, familyId) => {
   }
   else {
     // we found a subscription, so get rid of the one entry array
-    familySubscription = familySubscription[0];
+    [familySubscription] = familySubscription;
   }
 
   return familySubscription;
-};
+}
 
 /**
  *  If the query is successful, returns the subscription history and active subscription for the familyId.
  *  If a problem is encountered, creates and throws custom error
  */
-const getAllSubscriptionsForFamilyId = async (req, familyId) => {
+async function getAllSubscriptionsForFamilyId(connection, familyId) {
   // validate that a familyId was passed, assume that its in the correct format
-  if (areAllDefined(req, familyId) === false) {
-    throw new ValidationError('familyId missing', global.constant.error.value.MISSING);
+  if (areAllDefined(connection, familyId) === false) {
+    throw new ValidationError('connection or familyId missing', global.constant.error.value.MISSING);
   }
 
   // TO DO implement lastSubscriptionSyncronization properly for this so we only sync new subscriptions that the user doesn't have stored
 
   // find all of the family's subscriptions
   const subscriptionHistory = await databaseQuery(
-    req,
+    connection,
     `SELECT ${subscriptionColumns} FROM subscriptions WHERE familyId = ? ORDER BY subscriptionPurchaseDate DESC LIMIT 18446744073709551615`,
     [familyId],
   );
 
-  const subscriptionActive = await getActiveSubscriptionForFamilyId(req, familyId);
+  const subscriptionActive = await getActiveSubscriptionForFamilyId(connection, familyId);
 
   const result = {
     subscriptionActive,
@@ -72,6 +71,6 @@ const getAllSubscriptionsForFamilyId = async (req, familyId) => {
   };
 
   return result;
-};
+}
 
 module.exports = { getActiveSubscriptionForFamilyId, getAllSubscriptionsForFamilyId };

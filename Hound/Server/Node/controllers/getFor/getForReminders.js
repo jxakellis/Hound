@@ -11,69 +11,56 @@ const dogRemindersColumns = 'reminderId, reminderAction, reminderCustomActionNam
  *  If the query is successful, returns the reminder for the reminderId.
  *  If a problem is encountered, creates and throws custom error
  */
-const getReminderForReminderId = async (req, reminderId, lastDogManagerSynchronization) => {
-  if (areAllDefined(req, reminderId) === false) {
-    throw new ValidationError('req or reminderId missing', global.constant.error.value.MISSING);
+async function getReminderForReminderId(connection, reminderId, lastDogManagerSynchronization) {
+  if (areAllDefined(connection, reminderId) === false) {
+    throw new ValidationError('connection or reminderId missing', global.constant.error.value.MISSING);
   }
 
-  const lastSynchronization = formatDate(lastDogManagerSynchronization);
+  const castedLastDogManagerSynchronization = formatDate(lastDogManagerSynchronization);
 
-  let result;
-
-  if (areAllDefined(lastSynchronization)) {
-    // find reminder that matches the id
-    result = await databaseQuery(
-      req,
+  const result = areAllDefined(castedLastDogManagerSynchronization)
+    ? await databaseQuery(
+      connection,
       `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderLastModified >= ? AND reminderId = ? LIMIT 1`,
-      [lastSynchronization, reminderId],
-    );
-  }
-  else {
-    // find reminder that matches the id
-    result = await databaseQuery(
-      req,
+      [castedLastDogManagerSynchronization, reminderId],
+    )
+    : await databaseQuery(
+      connection,
       `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderId = ? LIMIT 1`,
       [reminderId],
     );
-  }
 
   // don't trim 'unnecessary' components (e.g. if weekly only send back weekly components)
   // its unnecessary processing and its easier for the reminders to remember their old states
   return result;
-};
+}
 
 /**
  *  If the query is successful, returns an array of all the reminders for the dogId.
  *  If a problem is encountered, creates and throws custom error
  */
-const getAllRemindersForDogId = async (req, dogId, lastDogManagerSynchronization) => {
-  if (areAllDefined(req, dogId) === false) {
-    throw new ValidationError('req or dogId missing', global.constant.error.value.MISSING);
+async function getAllRemindersForDogId(connection, dogId, lastDogManagerSynchronization) {
+  if (areAllDefined(connection, dogId) === false) {
+    throw new ValidationError('connection or dogId missing', global.constant.error.value.MISSING);
   }
 
-  const lastSynchronization = formatDate(lastDogManagerSynchronization);
+  const castedLastDogManagerSynchronization = formatDate(lastDogManagerSynchronization);
 
-  let result;
-
-  if (areAllDefined(lastSynchronization)) {
-    result = await databaseQuery(
-      req,
+  const result = areAllDefined(castedLastDogManagerSynchronization)
+    ? await databaseQuery(
+      connection,
       `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderLastModified >= ? AND dogId = ? LIMIT 18446744073709551615`,
-      [lastSynchronization, dogId],
-    );
-  }
-  else {
-    // find reminder that matches the dogId
-    result = await databaseQuery(
-      req,
+      [castedLastDogManagerSynchronization, dogId],
+    )
+    : await databaseQuery(
+      connection,
       `SELECT ${dogRemindersColumns} FROM dogReminders WHERE dogId = ? LIMIT 18446744073709551615`,
       [dogId],
     );
-  }
 
   // don't trim 'unnecessary' components (e.g. if weekly only send back weekly components)
   // its unnecessary processing and its easier for the reminders to remember their old states
   return result;
-};
+}
 
 module.exports = { getReminderForReminderId, getAllRemindersForDogId };

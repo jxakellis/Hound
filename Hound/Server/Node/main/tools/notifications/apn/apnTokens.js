@@ -1,6 +1,6 @@
 const { databaseQuery } = require('../../database/databaseQuery');
 const { connectionForTokens } = require('../../database/databaseConnections');
-const { formatBoolean } = require('../../format/formatObject');
+const { formatBoolean, formatArray } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 
 const userConfigurationJoin = 'JOIN userConfiguration ON users.userId = userConfiguration.userId';
@@ -11,7 +11,10 @@ const familyMembersJoin = 'JOIN familyMembers ON users.userId = familyMembers.us
  *  Returns the userNotificationToken and (optionally) notificationSound of the user if they have a defined userNotificationToken and are notificationEnabled
  *  If an error is encountered, creates and throws custom error
  */
-const getUserToken = async (userId) => {
+async function getUserToken(userId) {
+  if (areAllDefined(userId) === false) {
+    return [];
+  }
   // retrieve userNotificationToken, notificationSound, and isLoudNotificaiton of a user with the userId, non-null userNotificationToken, and isNotificationEnabled
   const result = await databaseQuery(
     connectionForTokens,
@@ -20,14 +23,17 @@ const getUserToken = async (userId) => {
   );
 
   return parseNotificatonTokenQuery(result);
-};
+}
 
 /**
  *  Takes a familyId
  *  Returns the userNotificationToken of users that are in the family, have a defined userNotificationToken, and are notificationEnabled
  * If an error is encountered, creates and throws custom error
  */
-const getAllFamilyMemberTokens = async (familyId) => {
+async function getAllFamilyMemberTokens(familyId) {
+  if (areAllDefined(familyId) === false) {
+    return [];
+  }
   // retrieve userNotificationToken that fit the criteria
   const result = await databaseQuery(
     connectionForTokens,
@@ -36,14 +42,17 @@ const getAllFamilyMemberTokens = async (familyId) => {
   );
 
   return parseNotificatonTokenQuery(result);
-};
+}
 
 /**
  *  Takes a userId and familyId
  *  Returns the userNotificationToken of users that aren't the userId, are in the family, have a defined userNotificationToken, and are notificationEnabled
  * If an error is encountered, creates and throws custom error
  */
-const getOtherFamilyMemberTokens = async (userId, familyId) => {
+async function getOtherFamilyMemberTokens(userId, familyId) {
+  if (areAllDefined(userId, familyId) === false) {
+    return [];
+  }
   // retrieve userNotificationToken that fit the criteria
   const result = await databaseQuery(
     connectionForTokens,
@@ -52,36 +61,39 @@ const getOtherFamilyMemberTokens = async (userId, familyId) => {
   );
 
   return parseNotificatonTokenQuery(result);
-};
+}
 
 /**
  * Helper method for this file
  * Takes the result from a query for userNotificationToken, notificationSound, and isLoudNotification
  * Returns an array of JSON with userNotificationToken and (if isLoudNotification disabled) notificationSound
  */
-const parseNotificatonTokenQuery = (result) => {
-  const formattedArray = [];
-  if (areAllDefined(result) === false) {
-    return formattedArray;
+function parseNotificatonTokenQuery(userNotificationTokens) {
+  const castedUserNotificationTokens = formatArray(userNotificationTokens);
+  if (areAllDefined(castedUserNotificationTokens) === false) {
+    return [];
   }
+
+  const userNotificationTokensNotificationSounds = [];
+
   // If the user isLoudNotification enabled, no need for sound in rawPayload as app plays a sound
   // If the user isLoudNotification disabled, the APN itself have a sound (which will play if the ringer is on)
-  for (let i = 0; i < result.length; i += 1) {
-    if (formatBoolean(result[i].isLoudNotification) === false && areAllDefined(result[i].notificationSound)) {
+  for (let i = 0; i < castedUserNotificationTokens.length; i += 1) {
+    if (formatBoolean(castedUserNotificationTokens[i].isLoudNotification) === false && areAllDefined(castedUserNotificationTokens[i].notificationSound)) {
       // no loud notification so the APN itself should have a notification sound
-      formattedArray.push({
-        userNotificationToken: result[i].userNotificationToken,
-        notificationSound: result[i].notificationSound.toLowerCase(),
+      userNotificationTokensNotificationSounds.push({
+        userNotificationToken: castedUserNotificationTokens[i].userNotificationToken,
+        notificationSound: castedUserNotificationTokens[i].notificationSound.toLowerCase(),
       });
     }
     else {
       // loud notification so app plays audio and no need for notification to play audio
-      formattedArray.push({
-        userNotificationToken: result[i].userNotificationToken,
+      userNotificationTokensNotificationSounds.push({
+        userNotificationToken: castedUserNotificationTokens[i].userNotificationToken,
       });
     }
   }
-  return formattedArray;
-};
+  return userNotificationTokensNotificationSounds;
+}
 
 module.exports = { getUserToken, getAllFamilyMemberTokens, getOtherFamilyMemberTokens };

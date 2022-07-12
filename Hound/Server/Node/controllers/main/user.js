@@ -1,5 +1,5 @@
 const { ValidationError, convertErrorToJSON } = require('../../main/tools/general/errors');
-const { areAllDefined } = require('../../main/tools/format/validateDefined');
+const { atLeastOneDefined, areAllDefined } = require('../../main/tools/format/validateDefined');
 
 const { getUserForUserId, getUserForUserIdentifier } = require('../getFor/getForUser');
 const { createUserForUserIdentifier } = require('../createFor/createForUser');
@@ -10,27 +10,22 @@ Known:
 - (if appliciable to controller) userId formatted correctly and request has sufficient permissions to use
 */
 
-const getUser = async (req, res) => {
+async function getUser(req, res) {
   try {
-    // apple userIdentifier
-    const userIdentifier = req.query.userIdentifier;
     // hound userId
-    const userId = req.params.userId;
+    const { userId } = req.params;
+    // apple userIdentifier
+    const { userIdentifier } = req.query;
 
-    let result;
+    if (atLeastOneDefined(userId, userIdentifier) === false) {
+      throw new ValidationError('userId or userIdentifier missing', global.constant.error.value.MISSING);
+    }
+
+    const result = areAllDefined(userId)
     // user provided userId so we go that route
-    if (areAllDefined(userId)) {
-      result = await getUserForUserId(req, userId);
-    }
+      ? await getUserForUserId(req, userId)
     // user provided userIdentifier so we find them using that way
-    else if (areAllDefined(userIdentifier)) {
-      result = await getUserForUserIdentifier(req, userIdentifier);
-    }
-    // no identifier provided
-    else {
-      await req.rollbackQueries(req);
-      return res.status(400).json(convertErrorToJSON(new ValidationError('userId or userIdentifier missing', global.constant.error.value.MISSING)));
-    }
+      : await getUserForUserIdentifier(req, userIdentifier);
 
     await req.commitQueries(req);
     return res.status(200).json({ result });
@@ -39,33 +34,89 @@ const getUser = async (req, res) => {
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
-};
+}
 
 const { refreshSecondaryAlarmNotificationsForUserId } = require('../../main/tools/notifications/alarm/refreshAlarmNotification');
 
-const createUser = async (req, res) => {
+async function createUser(req, res) {
   try {
-    const userIdentifier = req.body.userIdentifier;
-    const result = await createUserForUserIdentifier(req, userIdentifier);
+    const {
+      userIdentifier,
+      userEmail,
+      userFirstName,
+      userLastName,
+      userNotificationToken,
+      isNotificationEnabled,
+      isLoudNotification,
+      isFollowUpEnabled,
+      followUpDelay,
+      snoozeLength,
+      notificationSound,
+      interfaceStyle,
+      logsInterfaceScale,
+      remindersInterfaceScale,
+    } = req.body;
+    const userId = await createUserForUserIdentifier(
+      req,
+      userIdentifier,
+      userEmail,
+      userFirstName,
+      userLastName,
+      userNotificationToken,
+      isNotificationEnabled,
+      isLoudNotification,
+      isFollowUpEnabled,
+      followUpDelay,
+      snoozeLength,
+      notificationSound,
+      interfaceStyle,
+      logsInterfaceScale,
+      remindersInterfaceScale,
+    );
     await req.commitQueries(req);
 
-    refreshSecondaryAlarmNotificationsForUserId(req.params.userId, req.body.isFollowUpEnabled, req.body.followUpDelay);
+    refreshSecondaryAlarmNotificationsForUserId(userId, isFollowUpEnabled, followUpDelay);
 
-    return res.status(200).json({ result });
+    return res.status(200).json({ userId });
   }
   catch (error) {
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
-};
+}
 
-const updateUser = async (req, res) => {
+async function updateUser(req, res) {
   try {
-    const userId = req.params.userId;
-    await updateUserForUserId(req, userId);
+    const { userId } = req.params;
+    const {
+      userNotificationToken,
+      isNotificationEnabled,
+      isLoudNotification,
+      isFollowUpEnabled,
+      followUpDelay,
+      snoozeLength,
+      notificationSound,
+      interfaceStyle,
+      logsInterfaceScale,
+      remindersInterfaceScale,
+    } = req.body;
+    await updateUserForUserId(
+      req,
+      userId,
+      userNotificationToken,
+      isNotificationEnabled,
+      isLoudNotification,
+      isFollowUpEnabled,
+      followUpDelay,
+      snoozeLength,
+      notificationSound,
+      interfaceStyle,
+      logsInterfaceScale,
+      remindersInterfaceScale,
+    );
     await req.commitQueries(req);
 
-    refreshSecondaryAlarmNotificationsForUserId(req.params.userId, req.body.isFollowUpEnabled, req.body.followUpDelay);
+    refreshSecondaryAlarmNotificationsForUserId(userId, isFollowUpEnabled, followUpDelay);
 
     return res.status(200).json({ result: '' });
   }
@@ -73,7 +124,7 @@ const updateUser = async (req, res) => {
     await req.rollbackQueries(req);
     return res.status(400).json(convertErrorToJSON(error));
   }
-};
+}
 
 module.exports = {
   getUser, createUser, updateUser,

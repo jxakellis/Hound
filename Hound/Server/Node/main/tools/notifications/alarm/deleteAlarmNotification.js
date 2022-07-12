@@ -6,7 +6,7 @@ const { areAllDefined } = require('../../format/validateDefined');
 const { cancelPrimaryJobForFamilyForReminder, cancelSecondaryJobForUserForReminder } = require('./cancelJob');
 const { getAllFamilyMemberUserIdsForFamilyId } = require('../../../../controllers/getFor/getForFamily');
 
-const deleteAlarmNotificationsForFamily = async (familyId) => {
+async function deleteAlarmNotificationsForFamily(familyId) {
   try {
     if (global.constant.server.IS_PRODUCTION === false) {
       alarmLogger.debug(`deleteAlarmNotificationsForFamily ${familyId}`);
@@ -27,12 +27,12 @@ const deleteAlarmNotificationsForFamily = async (familyId) => {
     const users = await getAllFamilyMemberUserIdsForFamilyId(connectionForAlarms, familyId);
 
     for (let i = 0; i < reminders.length; i += 1) {
-      const reminderId = reminders[i].reminderId;
+      const { reminderId } = reminders[i];
       cancelPrimaryJobForFamilyForReminder(familyId, reminderId);
 
       // iterate through all users for the family
       for (let j = 0; j < users.length; j += 1) {
-        const userId = users[j].userId;
+        const { userId } = users[j];
         // if the users have any jobs on the secondary schedule for the reminder, remove them
         cancelSecondaryJobForUserForReminder(userId, reminderId);
       }
@@ -42,12 +42,12 @@ const deleteAlarmNotificationsForFamily = async (familyId) => {
     alarmLogger.error('deleteAlarmNotificationsForFamily error:');
     alarmLogger.error(error);
   }
-};
+}
 
 /**
  * Cancels and deletes any primary and secondary job scheduled with the provided reminderId
  */
-const deleteAlarmNotificationsForReminder = async (familyId, reminderId) => {
+async function deleteAlarmNotificationsForReminder(familyId, reminderId) {
   try {
     if (global.constant.server.IS_PRODUCTION === false) {
       alarmLogger.debug(`deleteAlarmNotificationsForReminder ${familyId}, ${reminderId}`);
@@ -73,12 +73,12 @@ const deleteAlarmNotificationsForReminder = async (familyId, reminderId) => {
     alarmLogger.error('deleteAlarmNotificationsForReminder error:');
     alarmLogger.error(error);
   }
-};
+}
 
 /**
  * Cancels and deletes any secondary jobs scheduled with the provided userId
  */
-const deleteSecondaryAlarmNotificationsForUser = async (userId) => {
+async function deleteSecondaryAlarmNotificationsForUser(userId) {
   try {
     if (global.constant.server.IS_PRODUCTION === false) {
       alarmLogger.debug(`deleteSecondaryAlarmNotificationsForUser ${userId}`);
@@ -105,7 +105,7 @@ const deleteSecondaryAlarmNotificationsForUser = async (userId) => {
     alarmLogger.error('deleteSecondaryAlarmNotificationsForUser error:');
     alarmLogger.error(error);
   }
-};
+}
 
 module.exports = {
   deleteAlarmNotificationsForFamily, deleteAlarmNotificationsForReminder, deleteSecondaryAlarmNotificationsForUser,

@@ -10,7 +10,7 @@ const { formatIntoAbreviatedFullName } = require('../../format/formatName');
 /**
  * Sends an alert to all of the family members that a new member has joined
  */
-const createFamilyMemberJoinNotification = async (userId, familyId) => {
+async function createFamilyMemberJoinNotification(userId, familyId) {
   try {
     if (global.constant.server.IS_PRODUCTION === false) {
       alertLogger.debug(`createFamilyMemberJoinNotification ${userId}, ${familyId}`);
@@ -38,12 +38,12 @@ const createFamilyMemberJoinNotification = async (userId, familyId) => {
     alertLogger.error('createFamilyMemberJoinNotification error:');
     alertLogger.error(error);
   }
-};
+}
 
 /**
  * Sends an alert to all of the family members that one of them has left
  */
-const createFamilyMemberLeaveNotification = async (userId, familyId) => {
+async function createFamilyMemberLeaveNotification(userId, familyId) {
   try {
     if (global.constant.server.IS_PRODUCTION === false) {
       alertLogger.debug(`createFamilyMemberLeaveNotification ${userId}, ${familyId}`);
@@ -71,12 +71,12 @@ const createFamilyMemberLeaveNotification = async (userId, familyId) => {
     alertLogger.error('createFamilyMemberLeaveNotification error:');
     alertLogger.error(error);
   }
-};
+}
 
 /**
  * Sends an alert to all of the family members that one of them has left
  */
-const createFamilyLockedNotification = async (userId, familyId, newIsLocked) => {
+async function createFamilyLockedNotification(userId, familyId, newIsLocked) {
   try {
     if (global.constant.server.IS_PRODUCTION === false) {
       alertLogger.debug(`createFamilyLockedNotification ${userId}, ${familyId}, ${newIsLocked}`);
@@ -113,12 +113,12 @@ const createFamilyLockedNotification = async (userId, familyId, newIsLocked) => 
     alertLogger.error('createFamilyLockedNotification error:');
     alertLogger.error(error);
   }
-};
+}
 
 /**
  * Sends an alert to all of the family members that one of them has left
  */
-const createFamilyPausedNotification = async (userId, familyId, newIsPaused) => {
+async function createFamilyPausedNotification(userId, familyId, newIsPaused) {
   try {
     if (global.constant.server.IS_PRODUCTION === false) {
       alertLogger.debug(`createFamilyPausedNotification ${userId}, ${familyId}, ${newIsPaused}`);
@@ -155,12 +155,12 @@ const createFamilyPausedNotification = async (userId, familyId, newIsPaused) => 
     alertLogger.error('createFamilyPausedNotification error:');
     alertLogger.error(error);
   }
-};
+}
 
 /**
  * Helper function for createFamilyMemberJoinNotification, createFamilyMemberLeaveNotification, createFamilyLockedNotification, and createFamilyPausedNotification
  */
-const abreviatedFullNameForUserId = async (userId) => {
+async function abreviatedFullNameForUserId(userId) {
   if (areAllDefined(userId) === false) {
     return undefined;
   }
@@ -174,7 +174,7 @@ const abreviatedFullNameForUserId = async (userId) => {
   const abreviatedFullName = formatIntoAbreviatedFullName(result.userFirstName, result.userLastName);
 
   return abreviatedFullName;
-};
+}
 
 module.exports = {
   createFamilyMemberJoinNotification, createFamilyMemberLeaveNotification, createFamilyLockedNotification, createFamilyPausedNotification,

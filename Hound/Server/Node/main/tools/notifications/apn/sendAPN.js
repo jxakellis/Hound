@@ -14,7 +14,7 @@ const { getUserToken, getAllFamilyMemberTokens, getOtherFamilyMemberTokens } = r
  * Takes a string that will be the body of the notification
  */
 // (token, category, sound, alertTitle, alertBody)
-const sendAPN = (token, category, sound, alertTitle, alertBody, customPayload) => {
+async function sendAPN(token, category, sound, alertTitle, alertBody, customPayload) {
   if (global.constant.server.IS_PRODUCTION === false) {
     apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${alertTitle}, ${alertBody}`);
   }
@@ -91,8 +91,9 @@ const sendAPN = (token, category, sound, alertTitle, alertBody, customPayload) =
     // sound Dictionary Keys
     // https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2990112
 
-    apnProvider.send(notification, token).then((response) => {
-    // response.sent: Array of device tokens to which the notification was sent succesfully
+    try {
+      const response = await apnProvider.send(notification, token);
+      // response.sent: Array of device tokens to which the notification was sent succesfully
       if (global.constant.server.IS_PRODUCTION === true) {
         return;
       }
@@ -103,22 +104,23 @@ const sendAPN = (token, category, sound, alertTitle, alertBody, customPayload) =
       if (response.failed.length !== 0) {
         apnLogger.info(`sendAPN Response Rejected: ${JSON.stringify(response.failed)}`);
       }
-    }).catch((error) => {
+    }
+    catch (error) {
       apnLogger.error('sendAPN Response Error:');
       apnLogger.error(error);
-    });
+    }
   }
   catch (error) {
     apnLogger.error('sendAPN error:');
     apnLogger.error(error);
   }
-};
+}
 
 /**
 * Takes a userId and retrieves the userNotificationToken for the user
 * Invokes sendAPN with the tokens, alertTitle, and alertBody
 */
-const sendAPNForUser = async (userId, category, alertTitle, alertBody, customPayload) => {
+async function sendAPNForUser(userId, category, alertTitle, alertBody, customPayload) {
   if (global.constant.server.IS_PRODUCTION === false) {
     apnLogger.debug(`sendAPNForUser ${userId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
   }
@@ -140,13 +142,13 @@ const sendAPNForUser = async (userId, category, alertTitle, alertBody, customPay
     apnLogger.error('sendAPNForUser error:');
     apnLogger.error(error);
   }
-};
+}
 
 /**
  * Takes a familyId and retrieves the userNotificationToken for all familyMembers
  * Invokes sendAPN with the tokens, alertTitle, and alertBody
  */
-const sendAPNForFamily = async (familyId, category, alertTitle, alertBody, customPayload) => {
+async function sendAPNForFamily(familyId, category, alertTitle, alertBody, customPayload) {
   if (global.constant.server.IS_PRODUCTION === false) {
     apnLogger.debug(`sendAPNForFamily ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
   }
@@ -168,13 +170,13 @@ const sendAPNForFamily = async (familyId, category, alertTitle, alertBody, custo
     apnLogger.error('sendAPNForFamily error:');
     apnLogger.error(error);
   }
-};
+}
 
 /**
  * Takes a familyId and retrieves the userNotificationToken for all familyMembers (excluding the userId provided)
  * Invokes sendAPN with the tokens, alertTitle, and alertBody
  */
-const sendAPNForFamilyExcludingUser = async (userId, familyId, category, alertTitle, alertBody, customPayload) => {
+async function sendAPNForFamilyExcludingUser(userId, familyId, category, alertTitle, alertBody, customPayload) {
   if (global.constant.server.IS_PRODUCTION === false) {
     apnLogger.debug(`sendAPNForFamilyExcludingUser ${userId}, ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
   }
@@ -196,7 +198,7 @@ const sendAPNForFamilyExcludingUser = async (userId, familyId, category, alertTi
     apnLogger.error('sendAPNForFamilyExcludingUser error');
     apnLogger.error(error);
   }
-};
+}
 
 module.exports = {
   sendAPNForUser, sendAPNForFamily, sendAPNForFamilyExcludingUser,

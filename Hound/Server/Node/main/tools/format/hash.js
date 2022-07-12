@@ -2,15 +2,15 @@ const crypto = require('crypto');
 const { formatString, formatSHA256Hash } = require('./formatObject');
 const { areAllDefined } = require('./validateDefined');
 
-const hash = async (str, sal) => {
-  const string = formatSHA256Hash(str);
-  const salt = formatString(sal);
+function hash(string, salt) {
+  const castedString = formatSHA256Hash(string);
+  const castedSalt = formatString(salt);
 
-  if (areAllDefined(string, salt) === false) {
+  if (areAllDefined(castedString, castedSalt) === false) {
     return undefined;
   }
-  const hashHex = crypto.createHash('sha256').update(string + salt).digest('hex');
+  const hashHex = crypto.createHash('sha256').update(castedString + castedSalt).digest('hex');
   return hashHex;
-};
+}
 
 module.exports = { hash };
