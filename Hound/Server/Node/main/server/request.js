@@ -2,7 +2,7 @@ const express = require('express');
 
 const { parseFormData, parseJSON } = require('./parse');
 const { requestLoggerForRequest, responseLoggerForResponse } = require('../tools/logging/requestLogging');
-const { assignDatabaseConnection } = require('../tools/database/databaseConnections');
+const { assignDatabaseConnection } = require('../tools/database/assignDatabaseConnection');
 const { validateAppBuild } = require('../tools/format/validateId');
 const { userRouter } = require('../../routes/user');
 const { GeneralError, convertErrorToJSON } = require('../tools/general/errors');
