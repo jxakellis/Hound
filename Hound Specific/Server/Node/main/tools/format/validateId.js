@@ -1,8 +1,7 @@
-const { queryPromise } = require('../database/queryPromise');
+const { databaseQuery } = require('../database/databaseQuery');
 const { formatSHA256Hash, formatNumber, formatArray } = require('./formatObject');
 const { areAllDefined } = require('./validateDefined');
-const { DatabaseError } = require('../errors/databaseError');
-const { ValidationError } = require('../errors/validationError');
+const { ValidationError, convertErrorToJSON } = require('../general/errors');
 
 /**
  * Checks to see that the appBuild of the requester is either up to date or one version behind.
@@ -18,12 +17,12 @@ const validateAppBuild = async (req, res, next) => {
   const appBuild = formatNumber(req.params.appBuild);
   if (areAllDefined(appBuild) === false) {
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('appBuild missing', global.constant.error.value.MISSING).toJSON);
+    return res.status(400).json(convertErrorToJSON(new ValidationError('appBuild missing', global.constant.error.value.MISSING)));
   }
   // the user isn't on the previous or current app build
   else if (appBuild !== global.constant.server.PREVIOUS_APP_BUILD && appBuild !== global.constant.server.CURRENT_APP_BUILD) {
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError(`appBuild of ${appBuild} is invalid. Acceptable builds are ${global.constant.server.PREVIOUS_APP_BUILD} and ${global.constant.server.CURRENT_APP_BUILD}`, global.constant.error.general.APP_BUILD_OUTDATED).toJSON);
+    return res.status(400).json(convertErrorToJSON(new ValidationError(`appBuild of ${appBuild} is invalid. Acceptable builds are ${global.constant.server.PREVIOUS_APP_BUILD} and ${global.constant.server.CURRENT_APP_BUILD}`, global.constant.error.general.APP_BUILD_OUTDATED)));
   }
   else {
     return next();
@@ -43,7 +42,7 @@ const validateUserId = async (req, res, next) => {
     // if userId is defined and it is a number then continue
     try {
       // queries the database to find if the users table contains a user with the provided ID
-      const result = await queryPromise(
+      const result = await databaseQuery(
         req,
         'SELECT userId FROM users WHERE userId = ? AND userIdentifier = ? LIMIT 1',
         [userId, userIdentifier],
@@ -59,19 +58,19 @@ const validateUserId = async (req, res, next) => {
       else {
         // userId does not exist in the table
         await req.rollbackQueries(req);
-        return res.status(404).json(new ValidationError('No user found or invalid permissions', global.constant.error.value.INVALID).toJSON);
+        return res.status(404).json(convertErrorToJSON(new ValidationError('No user found or invalid permissions', global.constant.error.value.INVALID)));
       }
     }
     catch (error) {
       // couldn't query database to find userId
       await req.rollbackQueries(req);
-      return res.status(400).json(new DatabaseError(error.code).toJSON);
+      return res.status(400).json(convertErrorToJSON(error));
     }
   }
   else {
     // userId was not provided or is invalid format OR userIdentifier was not provided or is invalid format
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('userId or userIdentifier Invalid', global.constant.error.value.INVALID).toJSON);
+    return res.status(400).json(convertErrorToJSON(new ValidationError('userId or userIdentifier Invalid', global.constant.error.value.INVALID)));
   }
 };
 
@@ -87,7 +86,7 @@ const validateFamilyId = async (req, res, next) => {
     // if familyId is defined and it is a number then continue
     try {
       // queries the database to find familyIds associated with the userId
-      const result = await queryPromise(
+      const result = await databaseQuery(
         req,
         'SELECT familyId, userId FROM familyMembers WHERE userId = ? AND familyId = ? LIMIT 1',
         [userId, familyId],
@@ -102,19 +101,19 @@ const validateFamilyId = async (req, res, next) => {
       else {
         // familyId does not exist in the table
         await req.rollbackQueries(req);
-        return res.status(404).json(new ValidationError('No family found or invalid permissions', global.constant.error.value.INVALID).toJSON);
+        return res.status(404).json(convertErrorToJSON(new ValidationError('No family found or invalid permissions', global.constant.error.value.INVALID)));
       }
     }
     catch (error) {
       // couldn't query database to find familyId
       await req.rollbackQueries(req);
-      return res.status(400).json(new DatabaseError(error.code).toJSON);
+      return res.status(400).json(convertErrorToJSON(error));
     }
   }
   else {
     // familyId was not provided or is invalid format
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('familyId Invalid', global.constant.error.value.INVALID).toJSON);
+    return res.status(400).json(convertErrorToJSON(new ValidationError('familyId Invalid', global.constant.error.value.INVALID)));
   }
 };
 
@@ -133,7 +132,7 @@ const validateDogId = async (req, res, next) => {
     try {
       // finds what dogId (s) the user has linked to their familyId
       // JOIN families as dog must have a family attached to it
-      const dog = await queryPromise(
+      const dog = await databaseQuery(
         req,
         'SELECT dogs.dogId FROM dogs JOIN families ON dogs.familyId = families.familyId WHERE dogs.dogIsDeleted = 0 AND dogs.familyId = ? AND dogs.dogId = ? LIMIT 1',
         [familyId, dogId],
@@ -150,18 +149,18 @@ const validateDogId = async (req, res, next) => {
       else {
         // the dogId does not exist and/or the user does not have access to that dogId
         await req.rollbackQueries(req);
-        return res.status(404).json(new ValidationError('No dogs found or invalid permissions', global.constant.error.value.INVALID).toJSON);
+        return res.status(404).json(convertErrorToJSON(new ValidationError('familyId Invalid', global.constant.error.value.INVALID)));
       }
     }
     catch (error) {
       await req.rollbackQueries(req);
-      return res.status(400).json(new DatabaseError(error.code).toJSON);
+      return res.status(400).json(convertErrorToJSON(error));
     }
   }
   else {
     // dogId was not provided or is invalid
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('dogId Invalid', global.constant.error.value.INVALID).toJSON);
+    return res.status(400).json(convertErrorToJSON(new ValidationError('dogId Invalid', global.constant.error.value.INVALID)));
   }
 };
 
@@ -180,7 +179,7 @@ const validateLogId = async (req, res, next) => {
     try {
       // finds what logId (s) the user has linked to their dogId
       // JOIN dogs as log has to have dog still attached to it
-      const log = await queryPromise(
+      const log = await databaseQuery(
         req,
         'SELECT dogLogs.logId FROM dogLogs JOIN dogs ON dogLogs.dogId = dogs.dogId WHERE dogLogs.logIsDeleted = 0 AND dogLogs.dogId = ? AND dogLogs.logId = ? LIMIT 1',
         [dogId, logId],
@@ -197,18 +196,18 @@ const validateLogId = async (req, res, next) => {
       else {
         // the logId does not exist and/or the dog does not have access to that logId
         await req.rollbackQueries(req);
-        return res.status(404).json(new ValidationError('No logs found or invalid permissions', global.constant.error.value.INVALID).toJSON);
+        return res.status(404).json(convertErrorToJSON(new ValidationError('No logs found or invalid permissions', global.constant.error.value.INVALID)));
       }
     }
     catch (error) {
       await req.rollbackQueries(req);
-      return res.status(400).json(new DatabaseError(error.code).toJSON);
+      return res.status(400).json(convertErrorToJSON(error));
     }
   }
   else {
     // logId was not provided or is invalid
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('logId Invalid', global.constant.error.value.INVALID).toJSON);
+    return res.status(400).json(convertErrorToJSON(new ValidationError('logId Invalid', global.constant.error.value.INVALID)));
   }
 };
 
@@ -227,7 +226,7 @@ const validateParamsReminderId = async (req, res, next) => {
     try {
       // finds what reminderId (s) the user has linked to their dogId
       // JOIN dogs as reminder must have dog attached to it
-      const reminder = await queryPromise(
+      const reminder = await databaseQuery(
         req,
         'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
         [dogId, reminderId],
@@ -244,18 +243,18 @@ const validateParamsReminderId = async (req, res, next) => {
       else {
         // the reminderId does not exist and/or the dog does not have access to that reminderId
         await req.rollbackQueries(req);
-        return res.status(404).json(new ValidationError('No reminders found or invalid permissions', global.constant.error.value.INVALID).toJSON);
+        return res.status(404).json(convertErrorToJSON(new ValidationError('No reminders found or invalid permissions', global.constant.error.value.INVALID)));
       }
     }
     catch (error) {
       await req.rollbackQueries(req);
-      return res.status(400).json(new DatabaseError(error.code).toJSON);
+      return res.status(400).json(convertErrorToJSON(error));
     }
   }
   else {
     // reminderId was not provided or is invalid
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('reminderId Invalid', global.constant.error.value.INVALID).toJSON);
+    return res.status(400).json(convertErrorToJSON(new ValidationError('reminderId Invalid', global.constant.error.value.INVALID)));
   }
 };
 
@@ -279,7 +278,7 @@ const validateBodyReminderId = async (req, res, next) => {
         try {
           // finds what reminderId (s) the user has linked to their dogId
           // JOIN dogs as reminder must still have dog attached to it
-          const reminder = await queryPromise(
+          const reminder = await databaseQuery(
             req,
             'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId  WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
             [dogId, reminderId],
@@ -296,18 +295,18 @@ const validateBodyReminderId = async (req, res, next) => {
           else {
             // the reminderId does not exist and/or the dog does not have access to that reminderId
             await req.rollbackQueries(req);
-            return res.status(404).json(new ValidationError('No reminders found or invalid permissions', global.constant.error.value.INVALID).toJSON);
+            return res.status(404).json(convertErrorToJSON(new ValidationError('No reminders found or invalid permissions', global.constant.error.value.INVALID)));
           }
         }
         catch (error) {
           await req.rollbackQueries(req);
-          return res.status(400).json(new DatabaseError(error.code).toJSON);
+          return res.status(400).json(convertErrorToJSON(error));
         }
       }
       else {
         // reminderId was not provided or is invalid
         await req.rollbackQueries(req);
-        return res.status(400).json(new ValidationError('reminderId Invalid', global.constant.error.value.INVALID).toJSON);
+        return res.status(400).json(convertErrorToJSON(new ValidationError('reminderId Invalid', global.constant.error.value.INVALID)));
       }
     }
     // successfully checked all reminderIds
@@ -319,7 +318,7 @@ const validateBodyReminderId = async (req, res, next) => {
     try {
       // finds what reminderId (s) the user has linked to their dogId
       // JOIN dogs as reminder must have dog attached to it
-      const reminder = await queryPromise(
+      const reminder = await databaseQuery(
         req,
         'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ?',
         [dogId, singleReminderId],
@@ -336,18 +335,18 @@ const validateBodyReminderId = async (req, res, next) => {
       else {
         // the reminderId does not exist and/or the dog does not have access to that reminderId
         await req.rollbackQueries(req);
-        return res.status(404).json(new ValidationError('No reminders found or invalid permissions', global.constant.error.value.INVALID).toJSON);
+        return res.status(404).json(convertErrorToJSON(new ValidationError('No reminders found or invalid permissions', global.constant.error.value.INVALID)));
       }
     }
     catch (error) {
       await req.rollbackQueries(req);
-      return res.status(400).json(new DatabaseError(error.code).toJSON);
+      return res.status(400).json(convertErrorToJSON(error));
     }
   }
   else {
     // reminders array was not provided or is invalid
     await req.rollbackQueries(req);
-    return res.status(400).json(new ValidationError('reminders or reminderId Invalid', global.constant.error.value.INVALID).toJSON);
+    return res.status(400).json(convertErrorToJSON(new ValidationError('reminders or reminderId Invalid', global.constant.error.value.INVALID)));
   }
 };
 

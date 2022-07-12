@@ -2,10 +2,10 @@ const express = require('express');
 
 const { parseFormData, parseJSON } = require('./parse');
 const { requestLoggerForRequest, responseLoggerForResponse } = require('../tools/logging/requestLogging');
-const { assignConnection } = require('../tools/database/databaseConnection');
+const { assignDatabaseConnection } = require('../tools/database/databaseConnections');
 const { validateAppBuild } = require('../tools/format/validateId');
 const { userRouter } = require('../../routes/user');
-const { GeneralError } = require('../tools/errors/generalError');
+const { GeneralError, convertErrorToJSON } = require('../tools/general/errors');
 
 const configureAppForRequests = (app) => {
 // Parse information possible sent
@@ -21,7 +21,7 @@ const configureAppForRequests = (app) => {
 
   // Assign the request a pool connection to use
 
-  app.use(assignConnection);
+  app.use(assignDatabaseConnection);
 
   // Make sure the user is on an updated version
 
@@ -35,7 +35,7 @@ const configureAppForRequests = (app) => {
   app.use('*', async (req, res) => {
   // release connection
     await req.rollbackQueries(req);
-    return res.status(404).json(new GeneralError('Path not found', global.constant.error.value.INVALID).toJSON);
+    return res.status(404).json(convertErrorToJSON(new GeneralError('Path not found', global.constant.error.value.INVALID)));
   });
 };
 

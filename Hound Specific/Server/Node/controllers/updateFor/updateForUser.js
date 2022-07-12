@@ -1,7 +1,6 @@
-const { DatabaseError } = require('../../main/tools/errors/databaseError');
-const { ValidationError } = require('../../main/tools/errors/validationError');
+const { ValidationError } = require('../../main/tools/general/errors');
 
-const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { formatNumber, formatBoolean } = require('../../main/tools/format/formatObject');
 const { atLeastOneDefined, areAllDefined } = require('../../main/tools/format/validateDefined');
 
@@ -38,83 +37,77 @@ const updateUserForUserId = async (req, userId) => {
     throw new ValidationError('No userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound provided', global.constant.error.value.MISSING);
   }
 
-  try {
-    if (areAllDefined(userNotificationToken)) {
-      await queryPromise(
-        req,
-        'UPDATE users SET userNotificationToken = ? WHERE userId = ?',
-        [userNotificationToken, userId],
-      );
-    }
-    if (areAllDefined(isNotificationEnabled)) {
-      await queryPromise(
-        req,
-        'UPDATE userConfiguration SET isNotificationEnabled = ? WHERE userId = ?',
-        [isNotificationEnabled, userId],
-      );
-    }
-    if (areAllDefined(isLoudNotification)) {
-      await queryPromise(
-        req,
-        'UPDATE userConfiguration SET isLoudNotification = ? WHERE userId = ?',
-        [isLoudNotification, userId],
-      );
-    }
-    // don't refresh secondary jobs here, it will be handled by the main controller
-    if (areAllDefined(isFollowUpEnabled)) {
-      await queryPromise(
-        req,
-        'UPDATE userConfiguration SET isFollowUpEnabled = ? WHERE userId = ?',
-        [isFollowUpEnabled, userId],
-      );
-    }
-    // don't refresh secondary jobs here, it will be handled by the main controller
-    if (areAllDefined(followUpDelay)) {
-      await queryPromise(
-        req,
-        'UPDATE userConfiguration SET followUpDelay = ? WHERE userId = ?',
-        [followUpDelay, userId],
-      );
-    }
-    if (areAllDefined(logsInterfaceScale)) {
-      await queryPromise(
-        req,
-        'UPDATE userConfiguration SET logsInterfaceScale = ? WHERE userId = ?',
-        [logsInterfaceScale, userId],
-      );
-    }
-    if (areAllDefined(remindersInterfaceScale)) {
-      await queryPromise(
-        req,
-        'UPDATE userConfiguration SET remindersInterfaceScale = ? WHERE userId = ?',
-        [remindersInterfaceScale, userId],
-      );
-    }
-    if (areAllDefined(interfaceStyle)) {
-      await queryPromise(
-        req,
-        'UPDATE userConfiguration SET interfaceStyle = ? WHERE userId = ?',
-        [interfaceStyle, userId],
-      );
-    }
-    if (areAllDefined(snoozeLength)) {
-      await queryPromise(
-        req,
-        'UPDATE userConfiguration SET snoozeLength = ? WHERE userId = ?',
-        [snoozeLength, userId],
-      );
-    }
-    if (areAllDefined(notificationSound)) {
-      await queryPromise(
-        req,
-        'UPDATE userConfiguration SET notificationSound = ? WHERE userId = ?',
-        [notificationSound, userId],
-      );
-    }
-    return;
+  if (areAllDefined(userNotificationToken)) {
+    await databaseQuery(
+      req,
+      'UPDATE users SET userNotificationToken = ? WHERE userId = ?',
+      [userNotificationToken, userId],
+    );
   }
-  catch (error) {
-    throw new DatabaseError(error.code);
+  if (areAllDefined(isNotificationEnabled)) {
+    await databaseQuery(
+      req,
+      'UPDATE userConfiguration SET isNotificationEnabled = ? WHERE userId = ?',
+      [isNotificationEnabled, userId],
+    );
+  }
+  if (areAllDefined(isLoudNotification)) {
+    await databaseQuery(
+      req,
+      'UPDATE userConfiguration SET isLoudNotification = ? WHERE userId = ?',
+      [isLoudNotification, userId],
+    );
+  }
+  // don't refresh secondary jobs here, it will be handled by the main controller
+  if (areAllDefined(isFollowUpEnabled)) {
+    await databaseQuery(
+      req,
+      'UPDATE userConfiguration SET isFollowUpEnabled = ? WHERE userId = ?',
+      [isFollowUpEnabled, userId],
+    );
+  }
+  // don't refresh secondary jobs here, it will be handled by the main controller
+  if (areAllDefined(followUpDelay)) {
+    await databaseQuery(
+      req,
+      'UPDATE userConfiguration SET followUpDelay = ? WHERE userId = ?',
+      [followUpDelay, userId],
+    );
+  }
+  if (areAllDefined(logsInterfaceScale)) {
+    await databaseQuery(
+      req,
+      'UPDATE userConfiguration SET logsInterfaceScale = ? WHERE userId = ?',
+      [logsInterfaceScale, userId],
+    );
+  }
+  if (areAllDefined(remindersInterfaceScale)) {
+    await databaseQuery(
+      req,
+      'UPDATE userConfiguration SET remindersInterfaceScale = ? WHERE userId = ?',
+      [remindersInterfaceScale, userId],
+    );
+  }
+  if (areAllDefined(interfaceStyle)) {
+    await databaseQuery(
+      req,
+      'UPDATE userConfiguration SET interfaceStyle = ? WHERE userId = ?',
+      [interfaceStyle, userId],
+    );
+  }
+  if (areAllDefined(snoozeLength)) {
+    await databaseQuery(
+      req,
+      'UPDATE userConfiguration SET snoozeLength = ? WHERE userId = ?',
+      [snoozeLength, userId],
+    );
+  }
+  if (areAllDefined(notificationSound)) {
+    await databaseQuery(
+      req,
+      'UPDATE userConfiguration SET notificationSound = ? WHERE userId = ?',
+      [notificationSound, userId],
+    );
   }
 };
 

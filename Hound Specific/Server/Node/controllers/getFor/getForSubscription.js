@@ -1,6 +1,5 @@
-const { DatabaseError } = require('../../main/tools/errors/databaseError');
-const { ValidationError } = require('../../main/tools/errors/validationError');
-const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { ValidationError } = require('../../main/tools/general/errors');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 // familyId, userId, subscriptionLastModified
@@ -16,26 +15,20 @@ const getActiveSubscriptionForFamilyId = async (req, familyId) => {
     throw new ValidationError('familyId missing', global.constant.error.value.MISSING);
   }
 
-  let familySubscription;
-  try {
-    // find the family's most recent subscription
-    // If it doesn't exist or its more expired than the SUBSCRIPTION_GRACE_PERIOD allows for, we get no result.
+  // find the family's most recent subscription
+  // If it doesn't exist or its more expired than the SUBSCRIPTION_GRACE_PERIOD allows for, we get no result.
 
-    const currentDate = new Date();
-    // If we subtract the SUBSCRIPTION_GRACE_PERIOD from currentDate, we get a date that is that amount of time in the past. E.g. currentDate: 6:00 PM, gracePeriod: 1:00 -> currentDate: 5:00PM
-    // Therefore when currentDate is compared to subscriptionExpiration, we allow for the subscriptionExpiration to be SUBSCRIPTION_GRACE_PERIOD amount of time expired.
-    // This effect could also be achieved by adding SUBSCRIPTION_GRACE_PERIOD to subscriptionExpiration, making it appear to expire later than it actually does.
-    currentDate.setTime(currentDate.getTime() - global.constant.subscription.SUBSCRIPTION_GRACE_PERIOD);
+  const currentDate = new Date();
+  // If we subtract the SUBSCRIPTION_GRACE_PERIOD from currentDate, we get a date that is that amount of time in the past. E.g. currentDate: 6:00 PM, gracePeriod: 1:00 -> currentDate: 5:00PM
+  // Therefore when currentDate is compared to subscriptionExpiration, we allow for the subscriptionExpiration to be SUBSCRIPTION_GRACE_PERIOD amount of time expired.
+  // This effect could also be achieved by adding SUBSCRIPTION_GRACE_PERIOD to subscriptionExpiration, making it appear to expire later than it actually does.
+  currentDate.setTime(currentDate.getTime() - global.constant.subscription.SUBSCRIPTION_GRACE_PERIOD);
 
-    familySubscription = await queryPromise(
-      req,
-      `SELECT ${subscriptionColumns} FROM subscriptions WHERE familyId = ? AND subscriptionExpiration >= ? ORDER BY subscriptionExpiration DESC, subscriptionPurchaseDate DESC LIMIT 1`,
-      [familyId, currentDate],
-    );
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  let familySubscription = await databaseQuery(
+    req,
+    `SELECT ${subscriptionColumns} FROM subscriptions WHERE familyId = ? AND subscriptionExpiration >= ? ORDER BY subscriptionExpiration DESC, subscriptionPurchaseDate DESC LIMIT 1`,
+    [familyId, currentDate],
+  );
 
   // since we found no family subscription, assign the family to the default subscription
   if (familySubscription.length === 0) {
@@ -63,19 +56,13 @@ const getAllSubscriptionsForFamilyId = async (req, familyId) => {
   }
 
   // TO DO implement lastSubscriptionSyncronization properly for this so we only sync new subscriptions that the user doesn't have stored
-  let subscriptionHistory;
-  try {
-    // find all of the family's subscriptions
 
-    subscriptionHistory = await queryPromise(
-      req,
-      `SELECT ${subscriptionColumns} FROM subscriptions WHERE familyId = ? ORDER BY subscriptionPurchaseDate DESC LIMIT 18446744073709551615`,
-      [familyId],
-    );
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  // find all of the family's subscriptions
+  const subscriptionHistory = await databaseQuery(
+    req,
+    `SELECT ${subscriptionColumns} FROM subscriptions WHERE familyId = ? ORDER BY subscriptionPurchaseDate DESC LIMIT 18446744073709551615`,
+    [familyId],
+  );
 
   const subscriptionActive = await getActiveSubscriptionForFamilyId(req, familyId);
 

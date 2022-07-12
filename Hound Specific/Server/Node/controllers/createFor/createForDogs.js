@@ -1,6 +1,5 @@
-const { DatabaseError } = require('../../main/tools/errors/databaseError');
-const { ValidationError } = require('../../main/tools/errors/validationError');
-const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { ValidationError } = require('../../main/tools/general/errors');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 /**
@@ -17,18 +16,12 @@ const createDogForFamilyId = async (req, familyId) => {
 
   const subscriptionInformation = req.subscriptionInformation;
 
-  let dogs;
-  try {
-    // only retrieve enough not deleted dogs that would exceed the limit
-    dogs = await queryPromise(
-      req,
-      'SELECT dogId FROM dogs WHERE dogIsDeleted = 0 AND familyId = ? LIMIT ?',
-      [familyId, subscriptionInformation.subscriptionNumberOfDogs],
-    );
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  // only retrieve enough not deleted dogs that would exceed the limit
+  const dogs = await databaseQuery(
+    req,
+    'SELECT dogId FROM dogs WHERE dogIsDeleted = 0 AND familyId = ? LIMIT ?',
+    [familyId, subscriptionInformation.subscriptionNumberOfDogs],
+  );
 
   if (areAllDefined(subscriptionInformation, dogs) === false) {
     throw new ValidationError('subscriptionInformation or dogs missing', global.constant.error.value.MISSING);
@@ -39,17 +32,12 @@ const createDogForFamilyId = async (req, familyId) => {
     throw new ValidationError(`Dog limit of ${subscriptionInformation.subscriptionNumberOfDogs} exceeded`, global.constant.error.family.limit.DOG_TOO_LOW);
   }
 
-  try {
-    const result = await queryPromise(
-      req,
-      'INSERT INTO dogs(familyId, dogName, dogLastModified) VALUES (?,?,?)',
-      [familyId, dogName, dogLastModified],
-    );
-    return result.insertId;
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  const result = await databaseQuery(
+    req,
+    'INSERT INTO dogs(familyId, dogName, dogLastModified) VALUES (?,?,?)',
+    [familyId, dogName, dogLastModified],
+  );
+  return result.insertId;
 };
 
 module.exports = { createDogForFamilyId };

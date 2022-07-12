@@ -1,8 +1,9 @@
-const { connectionForAlerts } = require('../../database/databaseConnection');
+const { connectionForAlerts } = require('../../database/databaseConnections');
 const { alertLogger } = require('../../logging/loggers');
 const { areAllDefined } = require('../../format/validateDefined');
 
-const { queryPromise } = require('../../database/queryPromise');
+const { getDogForDogId } = require('../../../../controllers/getFor/getForDogs');
+const { getUserFirstNameLastNameForUserId } = require('../../../../controllers/getFor/getForUser');
 const { sendAPNForFamilyExcludingUser } = require('../apn/sendAPN');
 const { formatIntoAbreviatedFullName } = require('../../format/formatName');
 const { formatLogAction } = require('../../format/formatName');
@@ -21,24 +22,12 @@ const createLogNotification = async (userId, familyId, dogId, logAction, logCust
       return;
     }
 
-    // get the first and last name of the user who logged the event
-    let user = await queryPromise(
-      connectionForAlerts,
-      'SELECT userFirstName, userLastName FROM users WHERE userId = ? LIMIT 1',
-      [userId],
-    );
-    user = user[0];
+    const user = await getUserFirstNameLastNameForUserId(connectionForAlerts, userId);
 
-    // get the name of the dog who got logged
-    let dog = await queryPromise(
-      connectionForAlerts,
-      'SELECT dogName FROM dogs WHERE dogIsDeleted = 0 AND dogId = ? LIMIT 1',
-      [dogId],
-    );
-    dog = dog[0];
+    const dog = await getDogForDogId(connectionForAlerts, dogId, undefined, undefined, undefined);
 
     // check to see if we were able to retrieve the properties of the user who logged the event and the dog that the log was under
-    if (areAllDefined(user, dog, dog.dogName) === false) {
+    if (areAllDefined(user, user.userFirstName, user.userLastName, dog, dog.dogName) === false) {
       return;
     }
 

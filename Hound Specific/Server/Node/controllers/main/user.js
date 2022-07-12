@@ -1,10 +1,9 @@
-const { ValidationError } = require('../../main/tools/errors/validationError');
+const { ValidationError, convertErrorToJSON } = require('../../main/tools/general/errors');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 const { getUserForUserId, getUserForUserIdentifier } = require('../getFor/getForUser');
 const { createUserForUserIdentifier } = require('../createFor/createForUser');
 const { updateUserForUserId } = require('../updateFor/updateForUser');
-const { convertErrorToJSON } = require('../../main/tools/errors/errorFormat');
 
 /*
 Known:
@@ -30,7 +29,7 @@ const getUser = async (req, res) => {
     // no identifier provided
     else {
       await req.rollbackQueries(req);
-      return res.status(400).json(new ValidationError('userId or userIdentifier missing', global.constant.error.value.MISSING).toJSON);
+      return res.status(400).json(convertErrorToJSON(new ValidationError('userId or userIdentifier missing', global.constant.error.value.MISSING)));
     }
 
     await req.commitQueries(req);

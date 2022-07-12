@@ -1,12 +1,11 @@
-const { DatabaseError } = require('../../main/tools/errors/databaseError');
-const { ValidationError } = require('../../main/tools/errors/validationError');
+const { ValidationError } = require('../../main/tools/general/errors');
 
-const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { formatBoolean, formatDate, formatSHA256Hash } = require('../../main/tools/format/formatObject');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 const { createFamilyMemberJoinNotification } = require('../../main/tools/notifications/alert/createFamilyNotification');
-const { getAllFamilyMembersForFamilyId, getFamilyMemberForUserId } = require('../getFor/getForFamily');
+const { getAllFamilyMemberUserIdsForFamilyId, getFamilyMemberUserIdForUserId } = require('../getFor/getForFamily');
 const { getActiveSubscriptionForFamilyId } = require('../getFor/getForSubscription');
 
 const { createFamilyLockedNotification, createFamilyPausedNotification } = require('../../main/tools/notifications/alert/createFamilyNotification');
@@ -50,18 +49,12 @@ const addFamilyMember = async (req, userId) => {
   }
   familyCode = familyCode.toUpperCase();
 
-  let family;
-  try {
-    // retrieve information about the family linked to the familyCode
-    family = await queryPromise(
-      req,
-      'SELECT familyId, isLocked FROM families WHERE familyCode = ? LIMIT 1',
-      [familyCode],
-    );
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  // retrieve information about the family linked to the familyCode
+  let family = await databaseQuery(
+    req,
+    'SELECT familyId, isLocked FROM families WHERE familyCode = ? LIMIT 1',
+    [familyCode],
+  );
 
   // make sure the familyCode was valid by checking if it matched a family
   if (family.length === 0) {
@@ -78,7 +71,7 @@ const addFamilyMember = async (req, userId) => {
 
   // the familyCode is valid and linked to an UNLOCKED family
 
-  const isFamilyMember = await getFamilyMemberForUserId(req, userId);
+  const isFamilyMember = await getFamilyMemberUserIdForUserId(req, userId);
 
   if (isFamilyMember.length !== 0) {
     // user is already in a family
@@ -88,7 +81,7 @@ const addFamilyMember = async (req, userId) => {
   // the user is eligible to join the family, check to make sure the family has enough space
   // we can't access req.subscriptionInformation currently as it wasn't assigned earlier due to the user not being in a fmaily
   const subscriptionInformation = await getActiveSubscriptionForFamilyId(req, familyId);
-  const familyMembers = await getAllFamilyMembersForFamilyId(req, familyId);
+  const familyMembers = await getAllFamilyMemberUserIdsForFamilyId(req, familyId);
 
   // the family is either at the limit of family members is exceeds the limit, therefore no new users can join
   if (familyMembers.length >= subscriptionInformation.subscriptionNumberOfFamilyMembers) {
@@ -96,17 +89,12 @@ const addFamilyMember = async (req, userId) => {
   }
 
   // familyCode validated and user is not a family member in any family
-  try {
-    // insert the user into the family as a family member.
-    await queryPromise(
-      req,
-      'INSERT INTO familyMembers(familyId, userId) VALUES (?, ?)',
-      [familyId, userId],
-    );
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  // insert the user into the family as a family member.
+  await databaseQuery(
+    req,
+    'INSERT INTO familyMembers(familyId, userId) VALUES (?, ?)',
+    [familyId, userId],
+  );
 
   createFamilyMemberJoinNotification(userId, family.familyId);
 };
@@ -122,16 +110,11 @@ const updateIsLocked = async (req, familyId) => {
     throw new ValidationError('req, userId, familyId, or isLocked missing', global.constant.error.value.MISSING);
   }
 
-  try {
-    await queryPromise(
-      req,
-      'UPDATE families SET isLocked = ? WHERE familyId = ?',
-      [isLocked, familyId],
-    );
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  await databaseQuery(
+    req,
+    'UPDATE families SET isLocked = ? WHERE familyId = ?',
+    [isLocked, familyId],
+  );
 
   createFamilyLockedNotification(userId, familyId, isLocked);
 };
@@ -149,18 +132,12 @@ const updateIsPaused = async (req, familyId) => {
     throw new ValidationError('req, userId, familyId, or isPaused missing', global.constant.error.value.MISSING);
   }
 
-  let familyConfiguration;
-  try {
-    // find out the family's current pause status
-    familyConfiguration = await queryPromise(
-      req,
-      'SELECT isPaused, lastPause, lastUnpause FROM families WHERE familyId = ? LIMIT 1',
-      [familyId],
-    );
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  // find out the family's current pause status
+  const familyConfiguration = await databaseQuery(
+    req,
+    'SELECT isPaused, lastPause, lastUnpause FROM families WHERE familyId = ? LIMIT 1',
+    [familyId],
+  );
 
   // if we got a result for the family configuration and if the new pause status is different from the current one, then continue
   if (familyConfiguration.length === 0 || isPaused === formatBoolean(familyConfiguration[0].isPaused)) {
@@ -194,7 +171,7 @@ const pause = async (req, familyId, lastUnpause) => {
     throw new ValidationError('req or familyId missing', global.constant.error.value.MISSING);
   }
 
-  await queryPromise(
+  await databaseQuery(
     req,
     'UPDATE families SET isPaused = ?, lastPause = ? WHERE familyId = ?',
     [true, lastPause, familyId],
@@ -202,7 +179,7 @@ const pause = async (req, familyId, lastUnpause) => {
 
   // retrieves reminders that match the familyId, have a non-null reminderExecutionDate, and either have isSnoozeEnabled = 1 or reminderType = 'countdown'
   // there are the reminders that will need their intervals elapsed saved before we pause, everything else doesn't need touched.
-  const reminders = await queryPromise(
+  const reminders = await databaseQuery(
     req,
     'SELECT reminderId, reminderType, reminderExecutionBasis, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed, countdownExecutionInterval, countdownIntervalElapsed FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogs.familyId = ? AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderExecutionDate IS NOT NULL AND (snoozeIsEnabled = 1 OR reminderType = \'countdown\') LIMIT 18446744073709551615',
     [familyId],
@@ -225,7 +202,7 @@ const pause = async (req, familyId, lastUnpause) => {
         millisecondsElapsed = Math.abs(lastPause.getTime() - formatDate(lastUnpause).getTime());
       }
       // reminderLastModified is modified below when we set all the executionDates to null
-      await queryPromise(
+      await databaseQuery(
         req,
         'UPDATE dogReminders SET countdownIntervalElapsed = ? WHERE reminderId = ?',
         [(millisecondsElapsed / 1000) + reminder.countdownIntervalElapsed, reminder.reminderId],
@@ -245,7 +222,7 @@ const pause = async (req, familyId, lastUnpause) => {
         millisecondsElapsed = Math.abs(lastPause.getTime() - formatDate(lastUnpause).getTime());
       }
       // reminderLastModified is modified below when all executionDates are set to null
-      await queryPromise(
+      await databaseQuery(
         req,
         'UPDATE dogReminders SET snoozeIntervalElapsed = ? WHERE reminderId = ?',
         [(millisecondsElapsed / 1000) + reminder.snoozeIntervalElapsed, reminder.reminderId],
@@ -256,7 +233,7 @@ const pause = async (req, familyId, lastUnpause) => {
   // none of the reminders will be going off since their paused, meaning their executionDates will be null.
   // Update the reminderExecutionDates to NULL for all of the family's reminders
   // update both the dogLastModified and reminderLastModified
-  await queryPromise(
+  await databaseQuery(
     req,
     'UPDATE dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId SET dogs.dogLastModified = ?, dogReminders.reminderExecutionDate = ?, dogReminders.reminderLastModified = ? WHERE dogs.familyId = ?',
     [dogLastModified, undefined, reminderLastModified, familyId],
@@ -280,7 +257,7 @@ const unpause = async (req, familyId) => {
   }
 
   // update the family's pause configuration to reflect changes
-  await queryPromise(
+  await databaseQuery(
     req,
     'UPDATE families SET isPaused = ?, lastUnpause = ? WHERE familyId = ?',
     [false, lastUnpause, familyId],
@@ -288,7 +265,7 @@ const unpause = async (req, familyId) => {
 
   // once reminders are unpaused, they have an up to date intervalElapsed so need to base their timing off of the lastUnpause.
   // Update the reminderExecutionBasis to lastUnpause for all of the family's reminders
-  await queryPromise(
+  await databaseQuery(
     req,
     'UPDATE dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId SET dogs.dogLastModified = ?, dogReminders.reminderExecutionBasis = ?, dogReminders.reminderLastModified = ? WHERE dogs.familyId = ?',
     [dogLastModified, lastUnpause, reminderLastModified, familyId],

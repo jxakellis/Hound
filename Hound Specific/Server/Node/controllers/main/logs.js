@@ -2,7 +2,7 @@ const { getLogForLogId, getAllLogsForDogId } = require('../getFor/getForLogs');
 const { createLogForUserIdDogId } = require('../createFor/createForLogs');
 const { updateLogForDogIdLogId } = require('../updateFor/updateForLogs');
 const { deleteLogForLogId } = require('../deleteFor/deleteForLogs');
-const { convertErrorToJSON } = require('../../main/tools/errors/errorFormat');
+const { convertErrorToJSON } = require('../../main/tools/general/errors');
 const { createLogNotification } = require('../../main/tools/notifications/alert/createLogNotification');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 

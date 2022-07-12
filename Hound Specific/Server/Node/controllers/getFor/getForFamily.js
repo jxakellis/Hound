@@ -1,6 +1,5 @@
-const { DatabaseError } = require('../../main/tools/errors/databaseError');
-const { ValidationError } = require('../../main/tools/errors/validationError');
-const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { ValidationError } = require('../../main/tools/general/errors');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { formatSHA256Hash } = require('../../main/tools/format/formatObject');
 
@@ -21,105 +20,85 @@ const getAllFamilyInformationForFamilyId = async (req, familyId) => {
     throw new ValidationError('req or familyId missing', global.constant.error.value.MISSING);
   }
   // family id is validated, therefore we know familyMembers is >= 1 for familyId
-  try {
-    // get family members
-    const familyMembers = await queryPromise(
-      req,
-      `SELECT ${usersColumns} FROM familyMembers LEFT JOIN users ON familyMembers.userId = users.userId WHERE familyMembers.familyId = ? LIMIT 18446744073709551615`,
-      [familyId],
-    );
-    // find which family member is the head
-    let family = await queryPromise(
-      req,
-      `SELECT ${familiesColumns} FROM families WHERE familyId = ? LIMIT 1`,
-      [familyId],
-    );
+  // get family members
+  const familyMembers = await databaseQuery(
+    req,
+    `SELECT ${usersColumns} FROM familyMembers LEFT JOIN users ON familyMembers.userId = users.userId WHERE familyMembers.familyId = ? LIMIT 18446744073709551615`,
+    [familyId],
+  );
+  // find which family member is the head
+  let family = await databaseQuery(
+    req,
+    `SELECT ${familiesColumns} FROM families WHERE familyId = ? LIMIT 1`,
+    [familyId],
+  );
 
-    family = family[0];
-    const result = {
-      ...family,
-      familyMembers,
-    };
-    return result;
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  family = family[0];
+  const result = {
+    ...family,
+    familyMembers,
+  };
+  return result;
 };
 
 /**
  *  If the query is successful, returns the family members for the familyId.
  *  If a problem is encountered, creates and throws custom error
  */
-const getAllFamilyMembersForFamilyId = async (req, familyId) => {
+const getAllFamilyMemberUserIdsForFamilyId = async (req, familyId) => {
   // validate that a familyId was passed, assume that its in the correct format
   if (areAllDefined(req, familyId) === false) {
     throw new ValidationError('req or familyId missing', global.constant.error.value.MISSING);
   }
 
-  try {
-    const result = await queryPromise(
-      req,
-      'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
-      [familyId],
-    );
-    return result;
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  const result = await databaseQuery(
+    req,
+    'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
+    [familyId],
+  );
+  return result;
 };
 
 /**
  *  If the query is successful, returns the family member for the userId.
  *  If a problem is encountered, creates and throws custom error
  */
-const getFamilyMemberForUserId = async (req, userId) => {
+const getFamilyMemberUserIdForUserId = async (req, userId) => {
   // validate that a userId was passed, assume that its in the correct format
   if (areAllDefined(req, userId) === false) {
     throw new ValidationError('req or userId missing', global.constant.error.value.MISSING);
   }
 
-  try {
-    const result = await queryPromise(
-      req,
-      'SELECT userId FROM familyMembers WHERE userId = ? LIMIT 1',
-      [userId],
-    );
-    return result;
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  const result = await databaseQuery(
+    req,
+    'SELECT userId FROM familyMembers WHERE userId = ? LIMIT 1',
+    [userId],
+  );
+  return result;
 };
 
 /**
  *  If the query is successful, returns the userId of the family head
  *  If a problem is encountered, creates and throws custom error
  */
-const getFamilyHeadForFamilyId = async (req, familyId) => {
+const getFamilyHeadUserIdForFamilyId = async (req, familyId) => {
   if (areAllDefined(req, familyId) === false) {
     throw new ValidationError('req or familyId missing', global.constant.error.value.MISSING);
   }
 
-  try {
-    const result = await queryPromise(
-      req,
-      'SELECT userId FROM families WHERE familyId = ? LIMIT 1',
-      [familyId],
-    );
+  const result = await databaseQuery(
+    req,
+    'SELECT userId FROM families WHERE familyId = ? LIMIT 1',
+    [familyId],
+  );
 
-    if (result.length === 0) {
-      return undefined;
-    }
+  if (result.length === 0) {
+    return undefined;
+  }
 
-    return formatSHA256Hash(result[0].userId);
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  return formatSHA256Hash(result[0].userId);
 };
 
 module.exports = {
-  getAllFamilyInformationForFamilyId, getAllFamilyMembersForFamilyId, getFamilyMemberForUserId, getFamilyHeadForFamilyId,
+  getAllFamilyInformationForFamilyId, getAllFamilyMemberUserIdsForFamilyId, getFamilyMemberUserIdForUserId, getFamilyHeadUserIdForFamilyId,
 };

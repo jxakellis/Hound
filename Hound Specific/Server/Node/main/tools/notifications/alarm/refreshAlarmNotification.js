@@ -1,6 +1,6 @@
 const { alarmLogger } = require('../../logging/loggers');
-const { queryPromise } = require('../../database/queryPromise');
-const { connectionForAlarms } = require('../../database/databaseConnection');
+const { databaseQuery } = require('../../database/databaseQuery');
+const { connectionForAlarms } = require('../../database/databaseConnections');
 
 const { formatBoolean, formatNumber, formatDate } = require('../../format/formatObject');
 
@@ -37,7 +37,7 @@ const refreshSecondaryAlarmNotificationsForUserId = async (userId, isFollowUpEna
       return;
     }
 
-    const result = await queryPromise(
+    const result = await databaseQuery(
       connectionForAlarms,
       'SELECT isFollowUpEnabled, followUpDelay FROM userConfiguration WHERE userId = ? LIMIT 1',
       [userId],
@@ -64,7 +64,7 @@ const refreshSecondaryAlarmNotificationsForUserId = async (userId, isFollowUpEna
       // follow up is enabled and followUpDelay is potentially updated. Therefore recreate secondary jobs
       // no need to invoke deleteSecondaryAlarmNotificationsForUser as createSecondaryAlarmNotificationForUser will delete/override by itself
       // get all the reminders for the given userId
-      const remindersWithInfo = await queryPromise(
+      const remindersWithInfo = await databaseQuery(
         connectionForAlarms,
         'SELECT dogReminders.reminderId, dogReminders.reminderExecutionDate FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE familyMembers.userId = ? AND dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
         [userId],

@@ -1,11 +1,10 @@
-const { DatabaseError } = require('../../main/tools/errors/databaseError');
-const { ValidationError } = require('../../main/tools/errors/validationError');
-const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { ValidationError } = require('../../main/tools/general/errors');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { hash } = require('../../main/tools/format/hash');
 
-const { generateVerifiedFamilyCode } = require('../../main/tools/database/generateVerifiedFamilyCode');
-const { getFamilyMemberForUserId } = require('../getFor/getForFamily');
+const { generateVerifiedFamilyCode } = require('../../main/tools/general/generateVerifiedFamilyCode');
+const { getFamilyMemberUserIdForUserId } = require('../getFor/getForFamily');
 
 /**
  *  Queries the database to create a family. If the query is successful, then returns the familyId.
@@ -24,32 +23,27 @@ const createFamilyForUserId = async (req, userId) => {
   }
 
   // check if the user is already in a family
-  const existingFamilyResult = await getFamilyMemberForUserId(req, userId);
+  const existingFamilyResult = await getFamilyMemberUserIdForUserId(req, userId);
 
   // validate that the user is not in a family
   if (existingFamilyResult.length !== 0) {
     throw new ValidationError('User is already in a family', global.constant.error.family.join.IN_FAMILY_ALREADY);
   }
 
-  try {
-    // create a family code for the new family
-    const familyCode = await generateVerifiedFamilyCode(req);
-    await queryPromise(
-      req,
-      'INSERT INTO families(familyId, userId, familyCode, isLocked, isPaused, familyAccountCreationDate) VALUES (?, ?, ?, ?, ?, ?)',
-      [familyId, userId, familyCode, false, false, familyAccountCreationDate],
-    );
-    await queryPromise(
-      req,
-      'INSERT INTO familyMembers(familyId, userId) VALUES (?, ?)',
-      [familyId, userId],
-    );
+  // create a family code for the new family
+  const familyCode = await generateVerifiedFamilyCode(req);
+  await databaseQuery(
+    req,
+    'INSERT INTO families(familyId, userId, familyCode, isLocked, isPaused, familyAccountCreationDate) VALUES (?, ?, ?, ?, ?, ?)',
+    [familyId, userId, familyCode, false, false, familyAccountCreationDate],
+  );
+  await databaseQuery(
+    req,
+    'INSERT INTO familyMembers(familyId, userId) VALUES (?, ?)',
+    [familyId, userId],
+  );
 
-    return familyId;
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  return familyId;
 };
 
 module.exports = { createFamilyForUserId };

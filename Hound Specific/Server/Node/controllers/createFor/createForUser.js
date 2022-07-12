@@ -1,6 +1,5 @@
-const { DatabaseError } = require('../../main/tools/errors/databaseError');
-const { ValidationError } = require('../../main/tools/errors/validationError');
-const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { ValidationError } = require('../../main/tools/general/errors');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const {
   formatNumber, formatEmail, formatBoolean,
 } = require('../../main/tools/format/formatObject');
@@ -49,24 +48,19 @@ const createUserForUserIdentifier = async (req, userIdentifier) => {
     throw new ValidationError('req, userId, userEmail, userIdentifier, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, or notificationSound missing', global.constant.error.value.MISSING);
   }
 
-  try {
-    await queryPromise(
-      req,
-      'INSERT INTO users(userId, userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate) VALUES (?,?,?,?,?,?,?)',
-      [userId, userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate],
-    );
+  await databaseQuery(
+    req,
+    'INSERT INTO users(userId, userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate) VALUES (?,?,?,?,?,?,?)',
+    [userId, userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate],
+  );
 
-    await queryPromise(
-      req,
-      'INSERT INTO userConfiguration(userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, notificationSound) VALUES (?,?,?,?,?,?,?,?,?,?)',
-      [userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, notificationSound],
-    );
+  await databaseQuery(
+    req,
+    'INSERT INTO userConfiguration(userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, notificationSound) VALUES (?,?,?,?,?,?,?,?,?,?)',
+    [userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, notificationSound],
+  );
 
-    return userId;
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  return userId;
 };
 
 module.exports = { createUserForUserIdentifier };

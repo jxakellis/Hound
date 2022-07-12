@@ -3,7 +3,7 @@ const { getDogForDogId, getAllDogsForUserIdFamilyId } = require('../getFor/getFo
 const { createDogForFamilyId } = require('../createFor/createForDogs');
 const { updateDogForDogId } = require('../updateFor/updateForDogs');
 const { deleteDogForFamilyIdDogId } = require('../deleteFor/deleteForDogs');
-const { convertErrorToJSON } = require('../../main/tools/errors/errorFormat');
+const { convertErrorToJSON } = require('../../main/tools/general/errors');
 
 /*
 Known:

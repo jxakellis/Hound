@@ -1,13 +1,11 @@
 const axios = require('axios').default;
-const { GeneralError } = require('../../main/tools/errors/generalError');
-const { DatabaseError } = require('../../main/tools/errors/databaseError');
-const { ValidationError } = require('../../main/tools/errors/validationError');
+const { GeneralError, ValidationError } = require('../../main/tools/general/errors');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
-const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { houndSharedSecret } = require('../../main/secrets/houndSharedSecret');
 const { formatBase64EncodedString, formatArray, formatNumber } = require('../../main/tools/format/formatObject');
 const { getActiveSubscriptionForFamilyId } = require('../getFor/getForSubscription');
-const { getFamilyHeadForFamilyId } = require('../getFor/getForFamily');
+const { getFamilyHeadUserIdForFamilyId } = require('../getFor/getForFamily');
 
 /**
  *  Queries the database to create a ___. If the query is successful, then returns the ___.
@@ -21,7 +19,7 @@ const createSubscriptionForUserIdFamilyIdRecieptId = async (req, userId, familyI
     throw new ValidationError('req, userId, familyId, or base64EncodedReceiptData missing', global.constant.error.value.MISSING);
   }
 
-  const familyHeadUserId = await getFamilyHeadForFamilyId(req, familyId);
+  const familyHeadUserId = await getFamilyHeadUserIdForFamilyId(req, familyId);
 
   if (familyHeadUserId !== userId) {
     throw new ValidationError('You are not the family head. Only the family head can modify the family subscription', global.constant.error.family.permission.INVALID);
@@ -109,17 +107,11 @@ const updateReceiptRecords = async (req, latestReceiptInfo) => {
   // find all of our currently stored transactions for the user
   // Specifically don't filter by familyId, as we want to reflect all of the stored transactions for a user (regardless of what family they were in at the time)
 
-  let storedTransactions;
-  try {
-    storedTransactions = await queryPromise(
-      req,
-      'SELECT transactionId FROM subscriptions WHERE userId = ? LIMIT 18446744073709551615',
-      [userId],
-    );
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  const storedTransactions = await databaseQuery(
+    req,
+    'SELECT transactionId FROM subscriptions WHERE userId = ? LIMIT 18446744073709551615',
+    [userId],
+  );
 
   // iterate through all the receipts that exist
   for (let i = 0; i < receipts.length; i += 1) {
@@ -129,16 +121,11 @@ const updateReceiptRecords = async (req, latestReceiptInfo) => {
     // check to see if we have that receipt stored in the database
     if (storedTransactions.some((storedTransaction) => formatNumber(storedTransaction.transactionId) === transactionId) === false) {
       // we don't have that receipt stored, insert it into the database
-      try {
-        await queryPromise(
-          req,
-          'INSERT INTO subscriptions(transactionId, productId, familyId, userId, subscriptionPurchaseDate, subscriptionLastModified, subscriptionExpiration, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs) VALUES (?,?,?,?,?,?,?,?,?)',
-          [transactionId, receipt.product_id, familyId, userId, new Date(formatNumber(receipt.purchase_date_ms)), subscriptionLastModified, new Date(formatNumber(receipt.expires_date_ms)), receipt.subscriptionNumberOfDogs, receipt.subscriptionNumberOfFamilyMembers],
-        );
-      }
-      catch (error) {
-        throw new DatabaseError(error.code);
-      }
+      await databaseQuery(
+        req,
+        'INSERT INTO subscriptions(transactionId, productId, familyId, userId, subscriptionPurchaseDate, subscriptionLastModified, subscriptionExpiration, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs) VALUES (?,?,?,?,?,?,?,?,?)',
+        [transactionId, receipt.product_id, familyId, userId, new Date(formatNumber(receipt.purchase_date_ms)), subscriptionLastModified, new Date(formatNumber(receipt.expires_date_ms)), receipt.subscriptionNumberOfDogs, receipt.subscriptionNumberOfFamilyMembers],
+      );
     }
   }
 

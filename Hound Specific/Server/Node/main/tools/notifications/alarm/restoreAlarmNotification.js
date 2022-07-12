@@ -2,8 +2,8 @@ const { serverLogger } = require('../../logging/loggers');
 const { schedule } = require('./schedules');
 const { createAlarmNotificationForFamily } = require('./createAlarmNotification');
 
-const { queryPromise } = require('../../database/queryPromise');
-const { connectionForAlarms } = require('../../database/databaseConnection');
+const { databaseQuery } = require('../../database/databaseQuery');
+const { connectionForAlarms } = require('../../database/databaseConnections');
 
 /**
  * Assumes an empty schedule
@@ -20,7 +20,7 @@ const restoreAlarmNotificationsForAllFamilies = async () => {
     }
 
     // for ALL reminders get: familyId, reminderId, dogName, reminderExecutionDate, reminderAction, and reminderCustomActionName
-    const remindersWithInfo = await queryPromise(
+    const remindersWithInfo = await databaseQuery(
       connectionForAlarms,
       'SELECT dogs.familyId, dogReminders.reminderId, dogReminders.reminderExecutionDate FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
     );

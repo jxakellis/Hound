@@ -2,9 +2,7 @@ const express = require('express');
 
 const alertRouter = express.Router({ mergeParams: true });
 
-const { ValidationError } = require('../main/tools/errors/validationError');
-
-const { convertErrorToJSON } = require('../main/tools/errors/errorFormat');
+const { ValidationError, convertErrorToJSON } = require('../main/tools/general/errors');
 const { areAllDefined } = require('../main/tools/format/validateDefined');
 const { createTerminateNotification } = require('../main/tools/notifications/alert/createTerminateNotification');
 

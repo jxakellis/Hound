@@ -5,7 +5,7 @@ const { getReminderForReminderId, getAllRemindersForDogId } = require('../getFor
 const { createReminderForDogIdReminder, createRemindersForDogIdReminders } = require('../createFor/createForReminders');
 const { updateReminderForReminder, updateRemindersForReminders } = require('../updateFor/updateForReminders');
 const { deleteReminderForFamilyIdDogIdReminderId } = require('../deleteFor/deleteForReminders');
-const { convertErrorToJSON } = require('../../main/tools/errors/errorFormat');
+const { convertErrorToJSON } = require('../../main/tools/general/errors');
 
 const { createAlarmNotificationForFamily } = require('../../main/tools/notifications/alarm/createAlarmNotification');
 

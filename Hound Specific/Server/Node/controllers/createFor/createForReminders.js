@@ -1,6 +1,5 @@
-const { DatabaseError } = require('../../main/tools/errors/databaseError');
-const { ValidationError } = require('../../main/tools/errors/validationError');
-const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { ValidationError } = require('../../main/tools/general/errors');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const {
   formatNumber, formatDate, formatBoolean, formatArray,
 } = require('../../main/tools/format/formatObject');
@@ -15,18 +14,12 @@ const createReminderForDogIdReminder = async (req, dogId, reminder) => {
     throw new ValidationError('req, dogId, or reminder missing', global.constant.error.value.MISSING);
   }
 
-  let reminders;
-  try {
-    // only retrieve enough not deleted reminders that would exceed the limit
-    reminders = await queryPromise(
-      req,
-      'SELECT reminderId FROM dogReminders WHERE reminderIsDeleted = 0 AND dogId = ? LIMIT ?',
-      [dogId, global.constant.limit.NUMBER_OF_REMINDERS_PER_DOG],
-    );
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  // only retrieve enough not deleted reminders that would exceed the limit
+  const reminders = await databaseQuery(
+    req,
+    'SELECT reminderId FROM dogReminders WHERE reminderIsDeleted = 0 AND dogId = ? LIMIT ?',
+    [dogId, global.constant.limit.NUMBER_OF_REMINDERS_PER_DOG],
+  );
 
   // make sure that the user isn't creating too many reminders
   if (reminders.length >= global.constant.limit.NUMBER_OF_REMINDERS_PER_DOG) {
@@ -87,37 +80,32 @@ const createReminderForDogIdReminder = async (req, dogId, reminder) => {
     throw new ValidationError('oneTimeDate missing', global.constant.error.value.MISSING);
   }
 
-  try {
-    const result = await queryPromise(
-      req,
-      'INSERT INTO dogReminders(dogId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderExecutionDate, reminderLastModified, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed, countdownExecutionInterval, countdownIntervalElapsed, weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklyIsSkipping, weeklyIsSkippingDate, monthlyDay, monthlyHour, monthlyMinute, monthlyIsSkipping, monthlyIsSkippingDate, oneTimeDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [
-        dogId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderExecutionDate, reminderLastModified,
-        false, 0, 0,
-        countdownExecutionInterval, 0,
-        weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, false, undefined,
-        monthlyDay, monthlyHour, monthlyMinute, false, undefined,
-        oneTimeDate,
-      ],
-    );
+  const result = await databaseQuery(
+    req,
+    'INSERT INTO dogReminders(dogId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderExecutionDate, reminderLastModified, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed, countdownExecutionInterval, countdownIntervalElapsed, weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklyIsSkipping, weeklyIsSkippingDate, monthlyDay, monthlyHour, monthlyMinute, monthlyIsSkipping, monthlyIsSkippingDate, oneTimeDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [
+      dogId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderExecutionDate, reminderLastModified,
+      false, 0, 0,
+      countdownExecutionInterval, 0,
+      weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, false, undefined,
+      monthlyDay, monthlyHour, monthlyMinute, false, undefined,
+      oneTimeDate,
+    ],
+  );
 
-    // update the dog last modified since one of its compoents was updated
-    await queryPromise(
-      req,
-      'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
-      [dogLastModified, dogId],
-    );
+  // update the dog last modified since one of its compoents was updated
+  await databaseQuery(
+    req,
+    'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
+    [dogLastModified, dogId],
+  );
 
-    // ...reminder must come first otherwise its placeholder reminderId will override the real one
-    // was able to successfully create reminder, return the provided reminder with its added to the body
-    return {
-      ...reminder,
-      reminderId: result.insertId,
-    };
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  // ...reminder must come first otherwise its placeholder reminderId will override the real one
+  // was able to successfully create reminder, return the provided reminder with its added to the body
+  return {
+    ...reminder,
+    reminderId: result.insertId,
+  };
 };
 
 /**

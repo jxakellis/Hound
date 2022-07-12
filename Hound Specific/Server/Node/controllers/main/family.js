@@ -2,7 +2,7 @@ const { getAllFamilyInformationForFamilyId } = require('../getFor/getForFamily')
 const { createFamilyForUserId } = require('../createFor/createForFamily');
 const { updateFamilyForUserIdFamilyId } = require('../updateFor/updateForFamily');
 const { deleteFamilyForUserIdFamilyId } = require('../deleteFor/deleteForFamily');
-const { convertErrorToJSON } = require('../../main/tools/errors/errorFormat');
+const { convertErrorToJSON } = require('../../main/tools/general/errors');
 /*
 Known:
 - userId formatted correctly and request has sufficient permissions to use

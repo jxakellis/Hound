@@ -1,4 +1,4 @@
-const { queryPromise } = require('./queryPromise');
+const { databaseQuery } = require('../database/databaseQuery');
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
@@ -24,7 +24,7 @@ const generateVerifiedFamilyCode = async (req) => {
   let uniqueCodeGenerated = false;
   while (uniqueCodeGenerated === false) {
     const code = generateFamilyCode();
-    const result = await queryPromise(
+    const result = await databaseQuery(
       req,
       'SELECT familyCode FROM families WHERE familyCode = ? LIMIT 1',
       [code],

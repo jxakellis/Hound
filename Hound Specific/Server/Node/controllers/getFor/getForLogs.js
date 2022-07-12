@@ -1,6 +1,5 @@
-const { DatabaseError } = require('../../main/tools/errors/databaseError');
-const { ValidationError } = require('../../main/tools/errors/validationError');
-const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { ValidationError } = require('../../main/tools/general/errors');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { formatDate } = require('../../main/tools/format/formatObject');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
@@ -19,28 +18,23 @@ const getLogForLogId = async (req, logId, lastDogManagerSynchronization) => {
 
   const lastSynchronization = formatDate(lastDogManagerSynchronization);
 
-  try {
-    let result;
-    if (areAllDefined(lastSynchronization)) {
-      result = await queryPromise(
-        req,
-        `SELECT ${dogLogsColumns} FROM dogLogs WHERE logLastModified >= ? AND logId = ? LIMIT 1`,
-        [lastSynchronization, logId],
-      );
-    }
-    else {
-      result = await queryPromise(
-        req,
-        `SELECT ${dogLogsColumns} FROM dogLogs WHERE logId = ? LIMIT 1`,
-        [logId],
-      );
-    }
+  let result;
+  if (areAllDefined(lastSynchronization)) {
+    result = await databaseQuery(
+      req,
+      `SELECT ${dogLogsColumns} FROM dogLogs WHERE logLastModified >= ? AND logId = ? LIMIT 1`,
+      [lastSynchronization, logId],
+    );
+  }
+  else {
+    result = await databaseQuery(
+      req,
+      `SELECT ${dogLogsColumns} FROM dogLogs WHERE logId = ? LIMIT 1`,
+      [logId],
+    );
+  }
 
-    return result;
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  return result;
 };
 
 /**
@@ -54,28 +48,23 @@ const getAllLogsForDogId = async (req, dogId, lastDogManagerSynchronization) => 
 
   const lastSynchronization = formatDate(lastDogManagerSynchronization);
 
-  try {
-    let result;
-    if (areAllDefined(lastSynchronization)) {
-      result = await queryPromise(
-        req,
-        `SELECT ${dogLogsColumns} FROM dogLogs WHERE logLastModified >= ? AND dogId = ? LIMIT 18446744073709551615`,
-        [lastSynchronization, dogId],
-      );
-    }
-    else {
-      result = await queryPromise(
-        req,
-        `SELECT ${dogLogsColumns} FROM dogLogs WHERE dogId = ? LIMIT 18446744073709551615`,
-        [dogId],
-      );
-    }
+  let result;
+  if (areAllDefined(lastSynchronization)) {
+    result = await databaseQuery(
+      req,
+      `SELECT ${dogLogsColumns} FROM dogLogs WHERE logLastModified >= ? AND dogId = ? LIMIT 18446744073709551615`,
+      [lastSynchronization, dogId],
+    );
+  }
+  else {
+    result = await databaseQuery(
+      req,
+      `SELECT ${dogLogsColumns} FROM dogLogs WHERE dogId = ? LIMIT 18446744073709551615`,
+      [dogId],
+    );
+  }
 
-    return result;
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  return result;
 };
 
 module.exports = { getLogForLogId, getAllLogsForDogId };

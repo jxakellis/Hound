@@ -1,10 +1,9 @@
-const { DatabaseError } = require('../../errors/databaseError');
-const { connectionForAlerts } = require('../../database/databaseConnection');
+const { connectionForAlerts } = require('../../database/databaseConnections');
 const { alertLogger } = require('../../logging/loggers');
 const { formatBoolean } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 
-const { queryPromise } = require('../../database/queryPromise');
+const { getUserFirstNameLastNameForUserId } = require('../../../../controllers/getFor/getForUser');
 const { sendAPNForFamilyExcludingUser } = require('../apn/sendAPN');
 const { formatIntoAbreviatedFullName } = require('../../format/formatName');
 
@@ -22,7 +21,7 @@ const createFamilyMemberJoinNotification = async (userId, familyId) => {
       return;
     }
 
-    const abreviatedFullName = abreviatedFullNameQuery(userId);
+    const abreviatedFullName = await abreviatedFullNameForUserId(userId);
 
     if (areAllDefined(abreviatedFullName) === false) {
       return;
@@ -55,7 +54,7 @@ const createFamilyMemberLeaveNotification = async (userId, familyId) => {
       return;
     }
 
-    const abreviatedFullName = abreviatedFullNameQuery(userId);
+    const abreviatedFullName = await abreviatedFullNameForUserId(userId);
 
     if (areAllDefined(abreviatedFullName) === false) {
       return;
@@ -89,7 +88,7 @@ const createFamilyLockedNotification = async (userId, familyId, newIsLocked) => 
       return;
     }
 
-    const abreviatedFullName = await abreviatedFullNameQuery(userId);
+    const abreviatedFullName = await abreviatedFullNameForUserId(userId);
 
     if (areAllDefined(abreviatedFullName) === false) {
       return;
@@ -131,7 +130,7 @@ const createFamilyPausedNotification = async (userId, familyId, newIsPaused) => 
       return;
     }
 
-    const abreviatedFullName = abreviatedFullNameQuery(userId);
+    const abreviatedFullName = await abreviatedFullNameForUserId(userId);
 
     if (areAllDefined(abreviatedFullName) === false) {
       return;
@@ -161,32 +160,18 @@ const createFamilyPausedNotification = async (userId, familyId, newIsPaused) => 
 /**
  * Helper function for createFamilyMemberJoinNotification, createFamilyMemberLeaveNotification, createFamilyLockedNotification, and createFamilyPausedNotification
  */
-const abreviatedFullNameQuery = async (userId) => {
+const abreviatedFullNameForUserId = async (userId) => {
   if (areAllDefined(userId) === false) {
     return undefined;
   }
 
-  // retrieve the userFirstName and userLastName of the user
-  let result;
-  try {
-    result = await queryPromise(
-      connectionForAlerts,
-      'SELECT userFirstName, userLastName FROM users WHERE userId = ? LIMIT 1',
-      [userId],
-    );
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  const result = await getUserFirstNameLastNameForUserId(connectionForAlerts, userId);
 
-  // make sure we got a result
-  if (result.length !== 1) {
+  if (areAllDefined(result, result.userFirstName, result.userLastName) === false) {
     return undefined;
   }
-  // convert into proper format with formatIntoAbreviatedFullName
-  const userFirstName = result[0].userFirstName;
-  const userLastName = result[0].userLastName;
-  const abreviatedFullName = formatIntoAbreviatedFullName(userFirstName, userLastName);
+
+  const abreviatedFullName = formatIntoAbreviatedFullName(result.userFirstName, result.userLastName);
 
   return abreviatedFullName;
 };

@@ -1,6 +1,6 @@
 const { getAllSubscriptionsForFamilyId } = require('../getFor/getForSubscription');
 const { createSubscriptionForUserIdFamilyIdRecieptId } = require('../createFor/createForSubscription');
-const { convertErrorToJSON } = require('../../main/tools/errors/errorFormat');
+const { convertErrorToJSON } = require('../../main/tools/general/errors');
 
 const getSubscription = async (req, res) => {
   try {

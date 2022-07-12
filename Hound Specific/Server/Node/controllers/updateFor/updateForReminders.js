@@ -1,7 +1,6 @@
-const { DatabaseError } = require('../../main/tools/errors/databaseError');
-const { ValidationError } = require('../../main/tools/errors/validationError');
+const { ValidationError } = require('../../main/tools/general/errors');
 
-const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const {
   formatNumber, formatDate, formatBoolean, formatArray,
 } = require('../../main/tools/format/formatObject');
@@ -93,33 +92,28 @@ const updateReminderForReminder = async (req, reminder) => {
     throw new ValidationError('oneTimeDate missing', global.constant.error.value.MISSING);
   }
 
-  try {
-    await queryPromise(
-      req,
-      'UPDATE dogReminders SET reminderAction = ?, reminderCustomActionName = ?, reminderType = ?, reminderIsEnabled = ?, reminderExecutionBasis = ?, reminderExecutionDate = ?, reminderLastModified = ?, snoozeIsEnabled = ?, snoozeExecutionInterval = ?, snoozeIntervalElapsed = ?, countdownExecutionInterval = ?, countdownIntervalElapsed = ?, weeklyHour = ?, weeklyMinute = ?, weeklySunday = ?, weeklyMonday = ?, weeklyTuesday = ?, weeklyWednesday = ?, weeklyThursday = ?, weeklyFriday = ?, weeklySaturday = ?, weeklyIsSkipping = ?, weeklyIsSkippingDate = ?, monthlyDay = ?, monthlyHour = ?, monthlyMinute = ?, monthlyIsSkipping = ?, monthlyIsSkippingDate = ?, oneTimeDate = ? WHERE reminderId = ?',
-      [
-        reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderExecutionDate, reminderLastModified,
-        snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed,
-        countdownExecutionInterval, countdownIntervalElapsed,
-        weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklyIsSkipping, weeklyIsSkippingDate,
-        monthlyDay, monthlyHour, monthlyMinute, monthlyIsSkipping, monthlyIsSkippingDate,
-        oneTimeDate,
-        reminderId,
-      ],
-    );
+  await databaseQuery(
+    req,
+    'UPDATE dogReminders SET reminderAction = ?, reminderCustomActionName = ?, reminderType = ?, reminderIsEnabled = ?, reminderExecutionBasis = ?, reminderExecutionDate = ?, reminderLastModified = ?, snoozeIsEnabled = ?, snoozeExecutionInterval = ?, snoozeIntervalElapsed = ?, countdownExecutionInterval = ?, countdownIntervalElapsed = ?, weeklyHour = ?, weeklyMinute = ?, weeklySunday = ?, weeklyMonday = ?, weeklyTuesday = ?, weeklyWednesday = ?, weeklyThursday = ?, weeklyFriday = ?, weeklySaturday = ?, weeklyIsSkipping = ?, weeklyIsSkippingDate = ?, monthlyDay = ?, monthlyHour = ?, monthlyMinute = ?, monthlyIsSkipping = ?, monthlyIsSkippingDate = ?, oneTimeDate = ? WHERE reminderId = ?',
+    [
+      reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderExecutionDate, reminderLastModified,
+      snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed,
+      countdownExecutionInterval, countdownIntervalElapsed,
+      weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklyIsSkipping, weeklyIsSkippingDate,
+      monthlyDay, monthlyHour, monthlyMinute, monthlyIsSkipping, monthlyIsSkippingDate,
+      oneTimeDate,
+      reminderId,
+    ],
+  );
 
-    // update the dog last modified since one of its compoents was updated
-    await queryPromise(
-      req,
-      'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
-      [dogLastModified, dogId],
-    );
+  // update the dog last modified since one of its compoents was updated
+  await databaseQuery(
+    req,
+    'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
+    [dogLastModified, dogId],
+  );
 
-    return [reminder];
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  return [reminder];
 };
 
 /**

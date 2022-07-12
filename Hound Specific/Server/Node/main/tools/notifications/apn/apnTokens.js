@@ -1,6 +1,5 @@
-const { DatabaseError } = require('../../errors/databaseError');
-const { queryPromise } = require('../../database/queryPromise');
-const { connectionForTokens } = require('../../database/databaseConnection');
+const { databaseQuery } = require('../../database/databaseQuery');
+const { connectionForTokens } = require('../../database/databaseConnections');
 const { formatBoolean } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 
@@ -13,18 +12,12 @@ const familyMembersJoin = 'JOIN familyMembers ON users.userId = familyMembers.us
  *  If an error is encountered, creates and throws custom error
  */
 const getUserToken = async (userId) => {
-  let result;
-  try {
-    // retrieve userNotificationToken, notificationSound, and isLoudNotificaiton of a user with the userId, non-null userNotificationToken, and isNotificationEnabled
-    result = await queryPromise(
-      connectionForTokens,
-      `SELECT users.userNotificationToken, userConfiguration.notificationSound, userConfiguration.isLoudNotification FROM users ${userConfigurationJoin} WHERE users.userId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 1`,
-      [userId],
-    );
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  // retrieve userNotificationToken, notificationSound, and isLoudNotificaiton of a user with the userId, non-null userNotificationToken, and isNotificationEnabled
+  const result = await databaseQuery(
+    connectionForTokens,
+    `SELECT users.userNotificationToken, userConfiguration.notificationSound, userConfiguration.isLoudNotification FROM users ${userConfigurationJoin} WHERE users.userId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 1`,
+    [userId],
+  );
 
   return parseNotificatonTokenQuery(result);
 };
@@ -35,18 +28,12 @@ const getUserToken = async (userId) => {
  * If an error is encountered, creates and throws custom error
  */
 const getAllFamilyMemberTokens = async (familyId) => {
-  let result;
-  try {
-    // retrieve userNotificationToken that fit the criteria
-    result = await queryPromise(
-      connectionForTokens,
-      `SELECT users.userNotificationToken, userConfiguration.notificationSound, userConfiguration.isLoudNotification FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
-      [familyId],
-    );
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  // retrieve userNotificationToken that fit the criteria
+  const result = await databaseQuery(
+    connectionForTokens,
+    `SELECT users.userNotificationToken, userConfiguration.notificationSound, userConfiguration.isLoudNotification FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
+    [familyId],
+  );
 
   return parseNotificatonTokenQuery(result);
 };
@@ -57,18 +44,12 @@ const getAllFamilyMemberTokens = async (familyId) => {
  * If an error is encountered, creates and throws custom error
  */
 const getOtherFamilyMemberTokens = async (userId, familyId) => {
-  let result;
-  try {
-    // retrieve userNotificationToken that fit the criteria
-    result = await queryPromise(
-      connectionForTokens,
-      `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userId != ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
-      [familyId, userId],
-    );
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  // retrieve userNotificationToken that fit the criteria
+  const result = await databaseQuery(
+    connectionForTokens,
+    `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userId != ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
+    [familyId, userId],
+  );
 
   return parseNotificatonTokenQuery(result);
 };

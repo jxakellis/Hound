@@ -1,7 +1,6 @@
-const { DatabaseError } = require('../../main/tools/errors/databaseError');
-const { ValidationError } = require('../../main/tools/errors/validationError');
+const { ValidationError } = require('../../main/tools/general/errors');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
-const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { deleteAllLogsForDogId } = require('./deleteForLogs');
 const { deleteAllRemindersForFamilyIdDogId } = require('./deleteForReminders');
 
@@ -22,18 +21,12 @@ const deleteDogForFamilyIdDogId = async (req, familyId, dogId) => {
   // deletes all logs
   await deleteAllLogsForDogId(req, dogId);
 
-  try {
-    // deletes dog
-    await queryPromise(
-      req,
-      'UPDATE dogs SET dogIsDeleted = 1, dogLastModified = ? WHERE dogId = ?',
-      [dogLastModified, dogId],
-    );
-    return;
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  // deletes dog
+  await databaseQuery(
+    req,
+    'UPDATE dogs SET dogIsDeleted = 1, dogLastModified = ? WHERE dogId = ?',
+    [dogLastModified, dogId],
+  );
 };
 
 /**
@@ -41,23 +34,16 @@ const deleteDogForFamilyIdDogId = async (req, familyId, dogId) => {
  *  If an error is encountered, creates and throws custom error
  */
 const deleteAllDogsForFamilyId = async (req, familyId) => {
-  let dogIds;
-
   if (areAllDefined(req, familyId) === false) {
     throw new ValidationError('req or familyId missing', global.constant.error.value.MISSING);
   }
 
   // attempt to find all dogIds
-  try {
-    dogIds = await queryPromise(
-      req,
-      'SELECT dogId FROM dogs WHERE dogIsDeleted = 0 AND familyId = ? LIMIT 18446744073709551615',
-      [familyId],
-    );
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  const dogIds = await databaseQuery(
+    req,
+    'SELECT dogId FROM dogs WHERE dogIsDeleted = 0 AND familyId = ? LIMIT 18446744073709551615',
+    [familyId],
+  );
 
   // delete all the dogs
   for (let i = 0; i < dogIds.length; i += 1) {

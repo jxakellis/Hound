@@ -1,6 +1,5 @@
-const { DatabaseError } = require('../../main/tools/errors/databaseError');
-const { ValidationError } = require('../../main/tools/errors/validationError');
-const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { ValidationError } = require('../../main/tools/general/errors');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { formatDate } = require('../../main/tools/format/formatObject');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
@@ -19,33 +18,28 @@ const getReminderForReminderId = async (req, reminderId, lastDogManagerSynchroni
 
   const lastSynchronization = formatDate(lastDogManagerSynchronization);
 
-  try {
-    let result;
+  let result;
 
-    if (areAllDefined(lastSynchronization)) {
-      // find reminder that matches the id
-      result = await queryPromise(
-        req,
-        `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderLastModified >= ? AND reminderId = ? LIMIT 1`,
-        [lastSynchronization, reminderId],
-      );
-    }
-    else {
-      // find reminder that matches the id
-      result = await queryPromise(
-        req,
-        `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderId = ? LIMIT 1`,
-        [reminderId],
-      );
-    }
+  if (areAllDefined(lastSynchronization)) {
+    // find reminder that matches the id
+    result = await databaseQuery(
+      req,
+      `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderLastModified >= ? AND reminderId = ? LIMIT 1`,
+      [lastSynchronization, reminderId],
+    );
+  }
+  else {
+    // find reminder that matches the id
+    result = await databaseQuery(
+      req,
+      `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderId = ? LIMIT 1`,
+      [reminderId],
+    );
+  }
 
-    // don't trim 'unnecessary' components (e.g. if weekly only send back weekly components)
-    // its unnecessary processing and its easier for the reminders to remember their old states
-    return result;
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  // don't trim 'unnecessary' components (e.g. if weekly only send back weekly components)
+  // its unnecessary processing and its easier for the reminders to remember their old states
+  return result;
 };
 
 /**
@@ -59,33 +53,27 @@ const getAllRemindersForDogId = async (req, dogId, lastDogManagerSynchronization
 
   const lastSynchronization = formatDate(lastDogManagerSynchronization);
 
-  try {
-    let result;
+  let result;
 
-    if (areAllDefined(lastSynchronization)) {
-      result = await queryPromise(
-        req,
-        `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderLastModified >= ? AND dogId = ? LIMIT 18446744073709551615`,
-        [lastSynchronization, dogId],
-      );
-    }
-    else {
-      // find reminder that matches the dogId
-      result = await queryPromise(
-        req,
-        `SELECT ${dogRemindersColumns} FROM dogReminders WHERE dogId = ? LIMIT 18446744073709551615`,
-        [dogId],
-      );
-    }
-
-    // don't trim 'unnecessary' components (e.g. if weekly only send back weekly components)
-    // its unnecessary processing and its easier for the reminders to remember their old states
-
-    return result;
+  if (areAllDefined(lastSynchronization)) {
+    result = await databaseQuery(
+      req,
+      `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderLastModified >= ? AND dogId = ? LIMIT 18446744073709551615`,
+      [lastSynchronization, dogId],
+    );
   }
-  catch (error) {
-    throw new DatabaseError(error.code);
+  else {
+    // find reminder that matches the dogId
+    result = await databaseQuery(
+      req,
+      `SELECT ${dogRemindersColumns} FROM dogReminders WHERE dogId = ? LIMIT 18446744073709551615`,
+      [dogId],
+    );
   }
+
+  // don't trim 'unnecessary' components (e.g. if weekly only send back weekly components)
+  // its unnecessary processing and its easier for the reminders to remember their old states
+  return result;
 };
 
 module.exports = { getReminderForReminderId, getAllRemindersForDogId };

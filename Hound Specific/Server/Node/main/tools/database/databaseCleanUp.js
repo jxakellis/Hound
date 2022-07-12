@@ -1,5 +1,5 @@
-const { connectionForGeneral } = require('./databaseConnection');
-const { queryPromise } = require('./queryPromise');
+const { connectionForGeneral } = require('./databaseConnections');
+const { databaseQuery } = require('./databaseQuery');
 const { serverLogger } = require('../logging/loggers');
 
 /**
@@ -9,7 +9,7 @@ const { serverLogger } = require('../logging/loggers');
  */
 const cleanUpIsDeleted = async () => {
 // retrieve the familyId and oldest lastDogManagerSynchronization for each family
-  const result = await queryPromise(
+  const result = await databaseQuery(
     connectionForGeneral,
     'SELECT familyMembers.familyId, MIN(userConfiguration.lastDogManagerSynchronization) AS lastDogManagerSynchronization FROM userConfiguration JOIN familyMembers ON userConfiguration.userId = familyMembers.userId GROUP BY familyMembers.familyId',
   );
@@ -18,21 +18,21 @@ const cleanUpIsDeleted = async () => {
     serverLogger.info(`cleanUpIsDeleted for familyId: ${result[i].familyId}`);
     // Find the dogReminders for the given familyId
     // Then delete any dogReminders where reminderIsDeleted = 1 && reminderLastModified < lastDogManagerSynchronization. Meaning the reminder was deleted and all current users have synced the change
-    await queryPromise(
+    await databaseQuery(
       connectionForGeneral,
       'DELETE dogReminders FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.familyId = ? AND dogReminders.reminderLastModified < ? AND dogReminders.reminderIsDeleted = 1',
       [result[i].familyId, result[i].lastDogManagerSynchronization],
     );
     // Find the dogLogs for the given familyId
     // Then delete any dogLogs where logIsDeleted = 1 && logLastModified < lastDogManagerSynchronization. Meaning the log was deleted and all current users have synced the change
-    await queryPromise(
+    await databaseQuery(
       connectionForGeneral,
       'DELETE dogLogs FROM dogLogs JOIN dogs ON dogLogs.dogId = dogs.dogId WHERE dogs.familyId = ? AND dogLogs.logLastModified < ? AND dogLogs.logIsDeleted = 1',
       [result[i].familyId, result[i].lastDogManagerSynchronization],
     );
     // Find the dogs for the given familyId
     // Then delete any dogs where dogIsDeleted = 1 && dogLastModified < lastDogManagerSynchronization. Meaning the dog was deleted and all current users have synced the change
-    await queryPromise(
+    await databaseQuery(
       connectionForGeneral,
       'DELETE FROM dogs WHERE familyId = ? AND dogLastModified < ? AND dogIsDeleted = 1',
       [result[i].familyId, result[i].lastDogManagerSynchronization],

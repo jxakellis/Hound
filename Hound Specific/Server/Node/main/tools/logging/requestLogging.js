@@ -1,6 +1,6 @@
 const { requestLogger, serverLogger } = require('./loggers');
-const { queryPromise } = require('../database/queryPromise');
-const { connectionForLogging } = require('../database/databaseConnection');
+const { databaseQuery } = require('../database/databaseQuery');
+const { connectionForLogging } = require('../database/databaseConnections');
 const { areAllDefined } = require('../format/validateDefined');
 const { responseLogger } = require('./loggers');
 
@@ -24,7 +24,7 @@ const createLogForRequest = (req, res, next) => {
 
   if (areAllDefined(requestDate, requestMethod, requestOriginalURL, appBuild) && areAllDefined(req.hasBeenLogged) === false) {
     req.hasBeenLogged = true;
-    queryPromise(
+    databaseQuery(
       connectionForLogging,
       'INSERT INTO userRequestLogs(requestIP, requestDate, requestMethod, requestOriginalURL, appBuild, userId) VALUES (?,?,?,?,?,?)',
       [requestIP, requestDate, requestMethod, requestOriginalURL, appBuild, userId],

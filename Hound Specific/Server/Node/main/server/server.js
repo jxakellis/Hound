@@ -9,7 +9,7 @@ const app = express();
 // MARK: Create the server
 
 const { restoreAlarmNotificationsForAllFamilies } = require('../tools/notifications/alarm/restoreAlarmNotification');
-const { cleanUpIsDeleted } = require('../tools/database/cleanUpDatabase');
+const { cleanUpIsDeleted } = require('../tools/database/databaseCleanUp');
 
 // Make the server listen on a specific port
 const server = app.listen(global.constant.server.SERVER_PORT, async () => {
@@ -32,7 +32,7 @@ configureAppForRequests(app);
 
 const {
   connectionForGeneral, connectionForLogging, connectionForAlerts, connectionForAlarms, connectionForTokens, poolForRequests,
-} = require('../tools/database/databaseConnection');
+} = require('../tools/database/databaseConnections');
 const { schedule } = require('../tools/notifications/alarm/schedules');
 
 process.on('SIGTERM', () => {

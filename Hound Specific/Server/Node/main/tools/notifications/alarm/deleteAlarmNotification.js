@@ -1,10 +1,10 @@
 const { alarmLogger } = require('../../logging/loggers');
-const { queryPromise } = require('../../database/queryPromise');
-const { connectionForAlarms } = require('../../database/databaseConnection');
+const { databaseQuery } = require('../../database/databaseQuery');
+const { connectionForAlarms } = require('../../database/databaseConnections');
 
 const { areAllDefined } = require('../../format/validateDefined');
 const { cancelPrimaryJobForFamilyForReminder, cancelSecondaryJobForUserForReminder } = require('./cancelJob');
-const { getAllFamilyMembersForFamilyId } = require('../../../../controllers/getFor/getForFamily');
+const { getAllFamilyMemberUserIdsForFamilyId } = require('../../../../controllers/getFor/getForFamily');
 
 const deleteAlarmNotificationsForFamily = async (familyId) => {
   try {
@@ -18,13 +18,13 @@ const deleteAlarmNotificationsForFamily = async (familyId) => {
     }
 
     // get all the reminders for the family
-    const reminders = await queryPromise(
+    const reminders = await databaseQuery(
       connectionForAlarms,
       'SELECT reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogs.familyId = ? LIMIT 18446744073709551615',
       [familyId],
     );
       // finds all the users in the family
-    const users = await getAllFamilyMembersForFamilyId(connectionForAlarms, familyId);
+    const users = await getAllFamilyMemberUserIdsForFamilyId(connectionForAlarms, familyId);
 
     for (let i = 0; i < reminders.length; i += 1) {
       const reminderId = reminders[i].reminderId;
@@ -61,7 +61,7 @@ const deleteAlarmNotificationsForReminder = async (familyId, reminderId) => {
     cancelPrimaryJobForFamilyForReminder(familyId, reminderId);
 
     // finds all the users in the family
-    const users = await getAllFamilyMembersForFamilyId(connectionForAlarms, familyId);
+    const users = await getAllFamilyMemberUserIdsForFamilyId(connectionForAlarms, familyId);
 
     // iterate through all users for the family
     for (let i = 0; i < users.length; i += 1) {
@@ -89,7 +89,7 @@ const deleteSecondaryAlarmNotificationsForUser = async (userId) => {
     }
     // get all the reminders for the given userId
     // specifically use JOIN to excluse resulst where reminder, dog, family, or family member are missing
-    const reminderIds = await queryPromise(
+    const reminderIds = await databaseQuery(
       connectionForAlarms,
       'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND familyMembers.userId = ? AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
       [userId],

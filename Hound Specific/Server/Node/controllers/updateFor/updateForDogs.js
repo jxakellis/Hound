@@ -1,7 +1,6 @@
-const { DatabaseError } = require('../../main/tools/errors/databaseError');
-const { ValidationError } = require('../../main/tools/errors/validationError');
+const { ValidationError } = require('../../main/tools/general/errors');
 
-const { queryPromise } = require('../../main/tools/database/queryPromise');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 /**
@@ -17,19 +16,14 @@ const updateDogForDogId = async (req, dogId) => {
     throw new ValidationError('req, dogId, or dogName missing', global.constant.error.value.MISSING);
   }
 
-  try {
-    // updates the dogName for the dogId provided
-    return queryPromise(
-      req,
-      'UPDATE dogs SET dogName = ?, dogLastModified = ? WHERE dogId = ?',
-      [dogName, dogLastModified, dogId],
-    );
+  // updates the dogName for the dogId provided
+  const result = await databaseQuery(
+    req,
+    'UPDATE dogs SET dogName = ?, dogLastModified = ? WHERE dogId = ?',
+    [dogName, dogLastModified, dogId],
+  );
 
-    // TO DO implement storage of dogIcon on server
-  }
-  catch (error) {
-    throw new DatabaseError(error.code);
-  }
+  return result;
 };
 
 module.exports = { updateDogForDogId };
