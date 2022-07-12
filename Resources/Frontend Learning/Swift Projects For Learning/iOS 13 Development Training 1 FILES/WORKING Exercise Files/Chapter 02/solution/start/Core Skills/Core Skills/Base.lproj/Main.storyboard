@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Core_Skills" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="My New Text Modified" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JEF-Fs-Fyu">
+                                <rect key="frame" x="20" y="64" width="374" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="d4Y-pZ-Pht"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M0H-xa-VQe">
+                                <rect key="frame" x="20" y="119" width="374" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="pqV-yE-KC0"/>
+                                </constraints>
+                                <state key="normal" title="My Button"/>
+                                <connections>
+                                    <action selector="buttonWasPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="fxx-GF-sge"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Your First Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bWr-Ju-bQd">
+                                <rect key="frame" x="20" y="174" width="374" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="WBc-vd-nnA"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="done"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Your Last Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fTK-JJ-Q2Q">
+                                <rect key="frame" x="20" y="229" width="374" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="Lag-Mg-dLV"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="bWr-Ju-bQd" secondAttribute="trailing" constant="20" id="4kj-e5-cKr"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="M0H-xa-VQe" secondAttribute="trailing" constant="20" id="5sa-hM-ksN"/>
+                            <constraint firstItem="fTK-JJ-Q2Q" firstAttribute="top" secondItem="bWr-Ju-bQd" secondAttribute="bottom" constant="10" id="7Bz-S2-pjN"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="fTK-JJ-Q2Q" secondAttribute="trailing" constant="20" id="7Il-YZ-1oP"/>
+                            <constraint firstItem="M0H-xa-VQe" firstAttribute="top" secondItem="JEF-Fs-Fyu" secondAttribute="bottom" constant="10" id="8Dv-JW-pEq"/>
+                            <constraint firstItem="JEF-Fs-Fyu" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="IEe-SM-FwG"/>
+                            <constraint firstItem="M0H-xa-VQe" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="PFg-oN-a1k"/>
+                            <constraint firstItem="bWr-Ju-bQd" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="Pm7-qo-VRW"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="JEF-Fs-Fyu" secondAttribute="trailing" constant="20" id="SWT-Gi-NA1"/>
+                            <constraint firstItem="fTK-JJ-Q2Q" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="bKQ-CI-TXq"/>
+                            <constraint firstItem="JEF-Fs-Fyu" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="gf4-OK-BeV"/>
+                            <constraint firstItem="M0H-xa-VQe" firstAttribute="top" secondItem="JEF-Fs-Fyu" secondAttribute="bottom" constant="10" id="hLl-lh-0hm"/>
+                            <constraint firstItem="fTK-JJ-Q2Q" firstAttribute="top" secondItem="bWr-Ju-bQd" secondAttribute="bottom" constant="10" id="rmt-6V-RA2"/>
+                            <constraint firstItem="bWr-Ju-bQd" firstAttribute="top" secondItem="M0H-xa-VQe" secondAttribute="bottom" constant="10" id="vj8-DE-xRi"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                    </view>
+                    <connections>
+                        <outlet property="lastNameField" destination="fTK-JJ-Q2Q" id="gYq-Wv-jKe"/>
+                        <outlet property="myLabel" destination="JEF-Fs-Fyu" id="D5U-MM-rSi"/>
+                        <outlet property="myTextField" destination="bWr-Ju-bQd" id="eR1-9O-ac7"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-65.217391304347828" y="101.78571428571428"/>
+        </scene>
+    </scenes>
+</document>
