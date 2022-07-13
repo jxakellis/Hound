@@ -181,7 +181,7 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
                 FamilyRequest.delete(invokeErrorManager: true) { requestWasSuccessful, _ in
                     if requestWasSuccessful == true {
                         // family was successfully deleted, revert to server sync view controller
-                        dismissViewControllersUntilServerSyncViewController() 
+                        dismissViewControllersUntilServerSyncViewController()
                     }
                 }
             }

@@ -5,7 +5,6 @@ const { getReminderForReminderId, getAllRemindersForDogId } = require('../getFor
 const { createReminderForDogIdReminder, createRemindersForDogIdReminders } = require('../createFor/createForReminders');
 const { updateReminderForDogIdReminder, updateRemindersForDogIdReminders } = require('../updateFor/updateForReminders');
 const { deleteReminderForFamilyIdDogIdReminderId } = require('../deleteFor/deleteForReminders');
-const { convertErrorToJSON } = require('../../main/tools/general/errors');
 
 const { createAlarmNotificationForFamily } = require('../../main/tools/notifications/alarm/createAlarmNotification');
 
@@ -24,17 +23,14 @@ async function getReminders(req, res) {
 
     const result = areAllDefined(reminderId)
     // reminderId was provided, look for single reminder
-      ? await getReminderForReminderId(req, reminderId, lastDogManagerSynchronization)
+      ? await getReminderForReminderId(req.connection, reminderId, lastDogManagerSynchronization)
     // look for multiple reminders
-      : await getAllRemindersForDogId(req, dogId, lastDogManagerSynchronization);
+      : await getAllRemindersForDogId(req.connection, dogId, lastDogManagerSynchronization);
 
-    await req.commitQueries(req);
-    return res.status(200).json({ result });
+    return res.sendResponseForStatusJSONError(200, { result }, undefined);
   }
   catch (error) {
-    // error when trying to do query to database
-    await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(error));
+    return res.sendResponseForStatusJSONError(400, undefined, error);
   }
 }
 
@@ -43,9 +39,8 @@ async function createReminder(req, res) {
     const { familyId, dogId } = req.params;
     const reminder = req.body;
     const reminders = formatArray(req.body.reminders);
-    const result = areAllDefined(reminders) ? await createRemindersForDogIdReminders(req, dogId, reminders) : [await createReminderForDogIdReminder(req, dogId, reminder)];
+    const result = areAllDefined(reminders) ? await createRemindersForDogIdReminders(req.connection, dogId, reminders) : [await createReminderForDogIdReminder(req.connection, dogId, reminder)];
 
-    await req.commitQueries(req);
     // create was successful, so we can create all the alarm notifications
     for (let i = 0; i < result.length; i += 1) {
       createAlarmNotificationForFamily(
@@ -54,11 +49,10 @@ async function createReminder(req, res) {
         result[i].reminderExecutionDate,
       );
     }
-    return res.status(200).json({ result });
+    return res.sendResponseForStatusJSONError(200, { result }, undefined);
   }
   catch (error) {
-    await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(error));
+    return res.sendResponseForStatusJSONError(400, undefined, error);
   }
 }
 
@@ -68,9 +62,8 @@ async function updateReminder(req, res) {
     const reminder = req.body;
     const reminders = formatArray(req.body.reminders);
 
-    const result = areAllDefined(reminders) ? await updateRemindersForDogIdReminders(req, dogId, reminders) : await updateReminderForDogIdReminder(req, dogId, reminder);
+    const result = areAllDefined(reminders) ? await updateRemindersForDogIdReminders(req.connection, dogId, reminders) : await updateReminderForDogIdReminder(req.connection, dogId, reminder);
 
-    await req.commitQueries(req);
     // update was successful, so we can create all new alarm notifications
     for (let i = 0; i < result.length; i += 1) {
       createAlarmNotificationForFamily(
@@ -79,11 +72,10 @@ async function updateReminder(req, res) {
         result[i].reminderExecutionDate,
       );
     }
-    return res.status(200).json({ result: '' });
+    return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);
   }
   catch (error) {
-    await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(error));
+    return res.sendResponseForStatusJSONError(400, undefined, error);
   }
 }
 
@@ -97,21 +89,19 @@ async function deleteReminder(req, res) {
     if (areAllDefined(reminders)) {
       const promises = [];
       for (let i = 0; i < reminders.length; i += 1) {
-        promises.push(deleteReminderForFamilyIdDogIdReminderId(req, familyId, dogId, reminders[i].reminderId));
+        promises.push(deleteReminderForFamilyIdDogIdReminderId(req.connection, familyId, dogId, reminders[i].reminderId));
       }
       await Promise.all(promises);
     }
     // single reminder
     else {
-      await deleteReminderForFamilyIdDogIdReminderId(req, familyId, dogId, reminderId);
+      await deleteReminderForFamilyIdDogIdReminderId(req.connection, familyId, dogId, reminderId);
     }
 
-    await req.commitQueries(req);
-    return res.status(200).json({ result: '' });
+    return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);
   }
   catch (error) {
-    await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(error));
+    return res.sendResponseForStatusJSONError(400, undefined, error);
   }
 }
 

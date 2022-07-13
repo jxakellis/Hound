@@ -2,7 +2,6 @@ const { getAllFamilyInformationForFamilyId } = require('../getFor/getForFamily')
 const { createFamilyForUserId } = require('../createFor/createForFamily');
 const { updateFamilyForUserIdFamilyId } = require('../updateFor/updateForFamily');
 const { deleteFamilyForUserIdFamilyId } = require('../deleteFor/deleteForFamily');
-const { convertErrorToJSON } = require('../../main/tools/general/errors');
 /*
 Known:
 - userId formatted correctly and request has sufficient permissions to use
@@ -11,27 +10,22 @@ Known:
 async function getFamily(req, res) {
   try {
     const { familyId } = req.params;
-    const result = await getAllFamilyInformationForFamilyId(req, familyId);
-    await req.commitQueries(req);
-    return res.status(200).json({ result });
+    const result = await getAllFamilyInformationForFamilyId(req.connection, familyId);
+    return res.sendResponseForStatusJSONError(200, { result }, undefined);
   }
   catch (error) {
-    await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(error));
+    return res.sendResponseForStatusJSONError(400, undefined, error);
   }
 }
 
 async function createFamily(req, res) {
   try {
     const { userId } = req.params;
-    const result = await createFamilyForUserId(req, userId);
-    await req.commitQueries(req);
-    return res.status(200).json({ result });
+    const result = await createFamilyForUserId(req.connection, userId);
+    return res.sendResponseForStatusJSONError(200, { result }, undefined);
   }
   catch (error) {
-    // create family failed
-    await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(error));
+    return res.sendResponseForStatusJSONError(400, undefined, error);
   }
 }
 
@@ -39,13 +33,11 @@ async function updateFamily(req, res) {
   try {
     const { userId, familyId } = req.params;
     const { familyCode, isLocked, isPaused } = req.body;
-    await updateFamilyForUserIdFamilyId(req, userId, familyId, familyCode, isLocked, isPaused);
-    await req.commitQueries(req);
-    return res.status(200).json({ result: '' });
+    await updateFamilyForUserIdFamilyId(req.connection, userId, familyId, familyCode, isLocked, isPaused);
+    return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);
   }
   catch (error) {
-    await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(error));
+    return res.sendResponseForStatusJSONError(400, undefined, error);
   }
 }
 
@@ -53,13 +45,11 @@ async function deleteFamily(req, res) {
   try {
     const { userId, familyId } = req.params;
     const { kickUserId } = req.body;
-    await deleteFamilyForUserIdFamilyId(req, userId, familyId, kickUserId);
-    await req.commitQueries(req);
-    return res.status(200).json({ result: '' });
+    await deleteFamilyForUserIdFamilyId(req.connection, userId, familyId, kickUserId);
+    return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);
   }
   catch (error) {
-    await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(error));
+    return res.sendResponseForStatusJSONError(400, undefined, error);
   }
 }
 

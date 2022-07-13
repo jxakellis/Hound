@@ -1,4 +1,4 @@
-const { ValidationError, convertErrorToJSON } = require('../general/errors');
+const { ValidationError } = require('../general/errors');
 const { areAllDefined } = require('./validateDefined');
 const { getActiveSubscriptionForFamilyId } = require('../../../controllers/getFor/getForSubscription');
 const { getAllFamilyMemberUserIdsForFamilyId } = require('../../../controllers/getFor/getForFamily');
@@ -14,19 +14,18 @@ async function attachSubscriptionInformation(req, res, next) {
     const { familyId } = req.params;
 
     // validate that a familyId was passed, assume that its in the correct format
-    if (areAllDefined(req, familyId) === false) {
+    if (areAllDefined(familyId) === false) {
       throw new ValidationError('familyId missing', global.constant.error.value.MISSING);
     }
 
-    const subscriptionInformation = await getActiveSubscriptionForFamilyId(req, familyId);
+    const subscriptionInformation = await getActiveSubscriptionForFamilyId(req.connection, familyId);
 
     req.subscriptionInformation = subscriptionInformation;
 
     return next();
   }
   catch (error) {
-    await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(error));
+    return res.sendResponseForStatusJSONError(400, undefined, error);
   }
 }
 
@@ -39,8 +38,8 @@ async function validateSubscription(req, res, next) {
     const { userId, familyId } = req.params;
     const { subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs } = req.subscriptionInformation;
 
-    if (areAllDefined(req, userId, familyId, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs) === false) {
-      throw new ValidationError('req, userId, familyId, subscriptionNumberOfFamilyMembers, or subscriptionNumberOfDogs missing', global.constant.error.value.MISSING);
+    if (areAllDefined(userId, familyId, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs) === false) {
+      throw new ValidationError('userId, familyId, subscriptionNumberOfFamilyMembers, or subscriptionNumberOfDogs missing', global.constant.error.value.MISSING);
     }
 
     // a subscription doesn't matter for GET or DELETE requests. We can allow retrieving/deleting of information even if expired
@@ -49,13 +48,13 @@ async function validateSubscription(req, res, next) {
       return next();
     }
 
-    const familyMembers = await getAllFamilyMemberUserIdsForFamilyId(req, familyId);
+    const familyMembers = await getAllFamilyMemberUserIdsForFamilyId(req.connection, familyId);
 
     if (familyMembers.length > subscriptionNumberOfFamilyMembers) {
       throw new ValidationError(`Family member limit of ${subscriptionNumberOfFamilyMembers} exceeded`, global.constant.error.family.limit.FAMILY_MEMBER_EXCEEDED);
     }
 
-    const dogs = await getAllDogsForUserIdFamilyId(req, userId, familyId, undefined, false, false);
+    const dogs = await getAllDogsForUserIdFamilyId(req.connection, userId, familyId, undefined, false, false);
 
     if (dogs.length > subscriptionNumberOfDogs) {
       throw new ValidationError(`Dog limit of ${subscriptionNumberOfDogs} exceeded`, global.constant.error.family.limit.DOG_EXCEEDED);
@@ -64,8 +63,7 @@ async function validateSubscription(req, res, next) {
     return next();
   }
   catch (error) {
-    await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(error));
+    return res.sendResponseForStatusJSONError(400, undefined, error);
   }
 }
 

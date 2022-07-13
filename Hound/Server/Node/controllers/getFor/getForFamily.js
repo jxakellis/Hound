@@ -27,13 +27,13 @@ async function getAllFamilyInformationForFamilyId(connection, familyId) {
     [familyId],
   );
   // get family members
-  const familyMembers = databaseQuery(
+  let familyMembers = databaseQuery(
     connection,
     `SELECT ${usersColumns} FROM familyMembers LEFT JOIN users ON familyMembers.userId = users.userId WHERE familyMembers.familyId = ? LIMIT 18446744073709551615`,
     [familyId],
   );
 
-  await Promise.all([family, familyMembers]);
+  [family, familyMembers] = await Promise.all([family, familyMembers]);
 
   [family] = family;
   const result = {

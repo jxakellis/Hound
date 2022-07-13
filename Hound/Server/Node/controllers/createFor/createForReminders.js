@@ -118,12 +118,12 @@ async function createRemindersForDogIdReminders(connection, dogId, reminders) {
     throw new ValidationError('connection, dogId, or reminders missing', global.constant.error.value.MISSING);
   }
 
-  const createdReminders = [];
+  let createdReminders = [];
   for (let i = 0; i < castedReminders.length; i += 1) {
     // retrieve the original provided body AND the created id
     createdReminders.push(createReminderForDogIdReminder(connection, dogId, castedReminders[i]));
   }
-  await Promise.all(createdReminders);
+  createdReminders = await Promise.all(createdReminders);
 
   return createdReminders;
 }

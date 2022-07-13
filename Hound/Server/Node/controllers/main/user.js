@@ -1,4 +1,4 @@
-const { ValidationError, convertErrorToJSON } = require('../../main/tools/general/errors');
+const { ValidationError } = require('../../main/tools/general/errors');
 const { atLeastOneDefined, areAllDefined } = require('../../main/tools/format/validateDefined');
 
 const { getUserForUserId, getUserForUserIdentifier } = require('../getFor/getForUser');
@@ -23,16 +23,14 @@ async function getUser(req, res) {
 
     const result = areAllDefined(userId)
     // user provided userId so we go that route
-      ? await getUserForUserId(req, userId)
+      ? await getUserForUserId(req.connection, userId)
     // user provided userIdentifier so we find them using that way
-      : await getUserForUserIdentifier(req, userIdentifier);
+      : await getUserForUserIdentifier(req.connection, userIdentifier);
 
-    await req.commitQueries(req);
-    return res.status(200).json({ result });
+    return res.sendResponseForStatusJSONError(200, { result }, undefined);
   }
   catch (error) {
-    await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(error));
+    return res.sendResponseForStatusJSONError(400, undefined, error);
   }
 }
 
@@ -56,8 +54,8 @@ async function createUser(req, res) {
       logsInterfaceScale,
       remindersInterfaceScale,
     } = req.body;
-    const userId = await createUserForUserIdentifier(
-      req,
+    const result = await createUserForUserIdentifier(
+      req.connection,
       userIdentifier,
       userEmail,
       userFirstName,
@@ -73,15 +71,13 @@ async function createUser(req, res) {
       logsInterfaceScale,
       remindersInterfaceScale,
     );
-    await req.commitQueries(req);
 
-    refreshSecondaryAlarmNotificationsForUserId(userId, isFollowUpEnabled, followUpDelay);
+    refreshSecondaryAlarmNotificationsForUserId(result, isFollowUpEnabled, followUpDelay);
 
-    return res.status(200).json({ userId });
+    return res.sendResponseForStatusJSONError(200, { result }, undefined);
   }
   catch (error) {
-    await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(error));
+    return res.sendResponseForStatusJSONError(400, undefined, error);
   }
 }
 
@@ -101,7 +97,7 @@ async function updateUser(req, res) {
       remindersInterfaceScale,
     } = req.body;
     await updateUserForUserId(
-      req,
+      req.connection,
       userId,
       userNotificationToken,
       isNotificationEnabled,
@@ -114,15 +110,13 @@ async function updateUser(req, res) {
       logsInterfaceScale,
       remindersInterfaceScale,
     );
-    await req.commitQueries(req);
 
     refreshSecondaryAlarmNotificationsForUserId(userId, isFollowUpEnabled, followUpDelay);
 
-    return res.status(200).json({ result: '' });
+    return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);
   }
   catch (error) {
-    await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(error));
+    return res.sendResponseForStatusJSONError(400, undefined, error);
   }
 }
 

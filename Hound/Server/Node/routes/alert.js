@@ -2,7 +2,7 @@ const express = require('express');
 
 const alertRouter = express.Router({ mergeParams: true });
 
-const { ValidationError, convertErrorToJSON } = require('../main/tools/general/errors');
+const { ValidationError } = require('../main/tools/general/errors');
 const { areAllDefined } = require('../main/tools/format/validateDefined');
 const { createTerminateNotification } = require('../main/tools/notifications/alert/createTerminateNotification');
 
@@ -10,15 +10,13 @@ const { createTerminateNotification } = require('../main/tools/notifications/ale
 alertRouter.post('/:alertType', async (req, res) => {
   const { alertType } = req.params;
   if (areAllDefined(alertType) === false) {
-    await req.rollbackQueries(req);
-    return res.status(400).json(convertErrorToJSON(new ValidationError('No alert type provided', global.constant.error.value.INVALID)));
+    return res.sendResponseForStatusJSONError(400, undefined, new ValidationError('No alert type provided', global.constant.error.value.INVALID));
   }
   // the user has terminated the app
   if (alertType === global.constant.apn.TERMINATE_CATEGORY) {
     createTerminateNotification(req.params.userId);
   }
-  await req.commitQueries(req);
-  return res.status(200).json({ result: '' });
+  return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);
 });
 // no body
 

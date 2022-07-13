@@ -45,19 +45,19 @@ async function deleteFamily(connection, userId, familyId) {
   }
 
   // find out if the user is the family head
-  const family = databaseQuery(
+  let family = databaseQuery(
     connection,
     'SELECT userId FROM families WHERE familyId = ? AND userId = ? LIMIT 18446744073709551615',
     [familyId, userId],
   );
   // find the amount of family members in the family
-  const familyMembers = databaseQuery(
+  let familyMembers = databaseQuery(
     connection,
     'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
     [familyId],
   );
 
-  await Promise.all(family, familyMembers);
+  [family, familyMembers] = await Promise.all(family, familyMembers);
 
   // User is the head of the family, so has obligation to it.
   if (family.length === 1) {
@@ -68,26 +68,28 @@ async function deleteFamily(connection, userId, familyId) {
 
     // can destroy the family
     // delete all the family heads (should be one)
-    await databaseQuery(
-      connection,
-      'DELETE FROM families WHERE familyId = ?',
-      [familyId],
-    );
-    // deletes all users from the family
-    await databaseQuery(
-      connection,
-      'DELETE FROM familyMembers WHERE familyId = ?',
-      [familyId],
-    );
-    // delete all the corresponding dog, reminder, and log data
-    await databaseQuery(
-      connection,
-      'DELETE dogs, dogReminders, dogLogs FROM dogs LEFT JOIN dogLogs ON dogs.dogId = dogLogs.dogId LEFT JOIN dogReminders ON dogs.dogId = dogReminders.dogId WHERE dogs.familyId = ?',
-      [familyId],
-    );
-
-    // delete all the dogs
-    await deleteAllDogsForFamilyId(connection, familyId);
+    const promises = [
+      databaseQuery(
+        connection,
+        'DELETE FROM families WHERE familyId = ?',
+        [familyId],
+      ),
+      // deletes all users from the family
+      databaseQuery(
+        connection,
+        'DELETE FROM familyMembers WHERE familyId = ?',
+        [familyId],
+      ),
+      // delete all the corresponding dog, reminder, and log data
+      databaseQuery(
+        connection,
+        'DELETE dogs, dogReminders, dogLogs FROM dogs LEFT JOIN dogLogs ON dogs.dogId = dogLogs.dogId LEFT JOIN dogReminders ON dogs.dogId = dogReminders.dogId WHERE dogs.familyId = ?',
+        [familyId],
+      ),
+      // delete all the dogs
+      deleteAllDogsForFamilyId(connection, familyId),
+    ];
+    await Promise.all(promises);
   }
   // User is not the head of the family, so no obligation
   else {

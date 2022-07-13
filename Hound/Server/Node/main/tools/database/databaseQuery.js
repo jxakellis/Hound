@@ -6,8 +6,9 @@ const { areAllDefined } = require('../format/validateDefined');
  * Queries the predefined database connection with the given sqlString
  */
 const databaseQuery = (potentialConnection, potentialSQLString, potentialSQLVariables = undefined) => new Promise((resolve, reject) => {
-  const connection = areAllDefined(potentialConnection.connection) ? potentialConnection.connection : potentialConnection;
-
+  const connection = areAllDefined(potentialConnection, potentialConnection.connection)
+    ? potentialConnection.connection
+    : potentialConnection;
   if (areAllDefined(connection) === false) {
     reject(new ValidationError('Connection missing for databaseQuery', global.constant.error.value.MISSING));
   }

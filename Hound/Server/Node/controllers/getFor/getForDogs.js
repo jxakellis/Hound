@@ -49,14 +49,14 @@ async function getDogForDogId(connection, dogId, lastDogManagerSynchronization, 
 
   // if the query parameter indicates that they want the logs and the reminders too, we add them.
   if (areAllDefined(castedIsRetrievingReminders) && castedIsRetrievingReminders) {
-    const reminderPromises = [];
+    let reminderPromises = [];
     // add all the reminders we want to retrieving into an array, 1:1 corresponding to dogs
     for (let i = 0; i < dogs.length; i += 1) {
       reminderPromises.push(getAllRemindersForDogId(connection, dogs[i].dogId, castedLastDogManagerSynchronization));
     }
 
     // resolve this array (or throw error for whole request if there is a problem)
-    await Promise.all(reminderPromises);
+    reminderPromises = await Promise.all(reminderPromises);
 
     // since reminderPromises is 1:1 and index the same as dogs, we can take the resolved reminderPromises and assign to the dogs in the dogs array
     for (let i = 0; i < reminderPromises.length; i += 1) {
@@ -65,14 +65,14 @@ async function getDogForDogId(connection, dogId, lastDogManagerSynchronization, 
   }
 
   if (areAllDefined(castedIsRetrievingLogs) && castedIsRetrievingLogs) {
-    const logPromises = [];
+    let logPromises = [];
     // add all the logs we want to retrieving into an array, 1:1 corresponding to dogs
     for (let i = 0; i < dogs.length; i += 1) {
       logPromises.push(getAllLogsForDogId(connection, dogs[i].dogId, castedLastDogManagerSynchronization));
     }
 
     // resolve this array (or throw error for whole request if there is a problem)
-    await Promise.all(logPromises);
+    logPromises = await Promise.all(logPromises);
 
     // since logPromises is 1:1 and index the same as dogs, we can take the resolved logPromises and assign to the dogs in the dogs array
     for (let i = 0; i < logPromises.length; i += 1) {
@@ -121,14 +121,14 @@ async function getAllDogsForUserIdFamilyId(connection, userId, familyId, lastDog
 
   // if the query parameter indicates that they want the logs and the reminders too, we add them.
   if (areAllDefined(castedIsRetrievingReminders) && castedIsRetrievingReminders) {
-    const reminderPromises = [];
+    let reminderPromises = [];
     // add all the reminders we want to retrieving into an array, 1:1 corresponding to dogs
     for (let i = 0; i < dogs.length; i += 1) {
       reminderPromises.push(getAllRemindersForDogId(connection, dogs[i].dogId, castedLastDogManagerSynchronization));
     }
 
     // resolve this array (or throw error for whole request if there is a problem)
-    await Promise.all(reminderPromises);
+    reminderPromises = await Promise.all(reminderPromises);
 
     // since reminderPromises is 1:1 and index the same as dogs, we can take the resolved reminderPromises and assign to the dogs in the dogs array
     for (let i = 0; i < reminderPromises.length; i += 1) {
@@ -137,14 +137,14 @@ async function getAllDogsForUserIdFamilyId(connection, userId, familyId, lastDog
   }
 
   if (areAllDefined(castedIsRetrievingLogs) && castedIsRetrievingLogs) {
-    const logPromises = [];
+    let logPromises = [];
     // add all the logs we want to retrieving into an array, 1:1 corresponding to dogs
     for (let i = 0; i < dogs.length; i += 1) {
       logPromises.push(getAllLogsForDogId(connection, dogs[i].dogId, castedLastDogManagerSynchronization));
     }
 
     // resolve this array (or throw error for whole request if there is a problem)
-    await Promise.all(logPromises);
+    logPromises = await Promise.all(logPromises);
 
     // since logPromises is 1:1 and index the same as dogs, we can take the resolved logPromises and assign to the dogs in the dogs array
     for (let i = 0; i < logPromises.length; i += 1) {

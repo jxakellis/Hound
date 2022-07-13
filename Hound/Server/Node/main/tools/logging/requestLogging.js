@@ -2,7 +2,6 @@ const { requestLogger, serverLogger } = require('./loggers');
 const { databaseQuery } = require('../database/databaseQuery');
 const { connectionForLogging } = require('../database/databaseConnections');
 const { areAllDefined } = require('../format/validateDefined');
-const { responseLogger } = require('./loggers');
 
 // Uses requestLogger to output the request from a user in the console
 function requestLoggerForRequest(req, res, next) {
@@ -38,31 +37,4 @@ function createLogForRequest(req, res, next) {
   next();
 }
 
-// Uses responseLogger to output the response sent to a user in the console
-function responseLoggerForResponse(req, res, next) {
-  if (global.constant.server.IS_PRODUCTION === false) {
-    const oldWrite = res.write;
-    const oldEnd = res.end;
-
-    const chunks = [];
-
-    res.write = (chunk, ...args) => {
-      chunks.push(chunk);
-      return oldWrite.apply(res, [chunk, ...args]);
-    };
-
-    res.end = (chunk, ...args) => {
-      if (chunk) {
-        chunks.push(chunk);
-      }
-      const body = Buffer.concat(chunks).toString('utf8');
-      // Log response
-      responseLogger.info(`Response for ${req.method} ${req.originalUrl}\n With body: ${body}`);
-      return oldEnd.apply(res, [chunk, ...args]);
-    };
-  }
-
-  next();
-}
-
-module.exports = { requestLoggerForRequest, createLogForRequest, responseLoggerForResponse };
+module.exports = { requestLoggerForRequest, createLogForRequest };
