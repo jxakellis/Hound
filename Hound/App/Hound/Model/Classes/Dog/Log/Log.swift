@@ -213,6 +213,7 @@ class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     var logAction: LogAction = LogConstant.defaultLogAction
     
+    // TO DO limit logCustomActionName to 32 characters
     var logCustomActionName: String? = LogConstant.defaultLogCustomActionName
     
     var logDate: Date = LogConstant.defaultLogDate

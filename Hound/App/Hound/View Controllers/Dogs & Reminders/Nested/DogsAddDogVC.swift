@@ -100,8 +100,16 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
                     // dog was successfully created
                     dog.dogId = dogId!
                     
-                    // if dog succeeded then high change of reminders succeeding too
-                    RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: self.modifiableDogReminders.reminders) { reminders, _ in
+                    // If the user created countdown reminder(s) and then sat on the create a dog page, those countdown reminders will be 'counting down' as time has passed from their reminderExecutionBasis's. Therefore we must reset their executionBasis so they are fresh.
+                    let createdReminders = self.modifiableDogReminders.reminders
+                    createdReminders.forEach { reminder in
+                        guard reminder.reminderType == .countdown else {
+                            return
+                        }
+                        reminder.prepareForNextAlarm()
+                    }
+                    
+                    RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: createdReminders) { reminders, _ in
                         self.addDogButton.endQuerying()
                         self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
                         if reminders != nil {
@@ -129,6 +137,14 @@ class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewCont
             // same reminders, not used currently
             _ = reminderDifference.0
             let createdReminders = reminderDifference.1
+            // If the user created countdown reminder(s) and then sat on the create a dog page, those countdown reminders will be 'counting down' as time has passed from their reminderExecutionBasis's. Therefore we must reset their executionBasis so they are fresh.
+            createdReminders.forEach { reminder in
+                guard reminder.reminderType == .countdown else {
+                    return
+                }
+                reminder.prepareForNextAlarm()
+            }
+            
             let updatedReminders = reminderDifference.2
             let deletedReminders = reminderDifference.3
             

@@ -42,11 +42,10 @@ async function createUserForUserIdentifier(
   const castedSnoozeLength = formatNumber(snoozeLength);
   const castedInterfaceStyle = formatNumber(interfaceStyle);
 
-  // checks to see that all needed components are provided
+  // userNotificationToken OPTIONAL
   if (areAllDefined(
     userId,
     castedUserEmail,
-    userNotificationToken,
     castedIsNotificationEnabled,
     castedIsLoudNotification,
     castedIsFollowUpEnabled,
@@ -57,7 +56,7 @@ async function createUserForUserIdentifier(
     remindersInterfaceScale,
     castedInterfaceStyle,
   ) === false) {
-    throw new ValidationError('userId, userEmail, userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, snoozeLength, notificationSound, interfaceStyle, logsInterfaceScale, or remindersInterfaceScale missing', global.constant.error.value.MISSING);
+    throw new ValidationError('userId, userEmail, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, snoozeLength, notificationSound, interfaceStyle, logsInterfaceScale, or remindersInterfaceScale missing', global.constant.error.value.MISSING);
   }
 
   const promises = [

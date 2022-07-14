@@ -101,6 +101,7 @@ class Dog: NSObject, NSCoding, NSCopying {
         dogIcon = DogConstant.defaultDogIcon
     }
     
+    // TO DO limit dogName to 32 characters
     private(set) var dogName: String = DogConstant.defaultDogName
     func changeDogName(newDogName: String?) throws {
         if newDogName == nil {

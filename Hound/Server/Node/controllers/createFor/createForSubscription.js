@@ -8,7 +8,9 @@ const { getActiveSubscriptionForFamilyId } = require('../getFor/getForSubscripti
 const { getFamilyHeadUserIdForFamilyId } = require('../getFor/getForFamily');
 
 /**
- *  Queries the database to create a ___. If the query is successful, then returns the ___.
+ *  Contacts Apple's server to retrieve records of any transaction, given the base64EncodedAppStoreReceiptURL
+ *  Queries the database to update all transaction records, so that all transactions returned by Apple are stored correctly.
+ *  If the query is successful, then returns the active subscription for the family.
  *  If a problem is encountered, creates and throws custom error
  */
 async function createSubscriptionForUserIdFamilyIdRecieptId(connection, userId, familyId, base64EncodedAppStoreReceiptURL) {
@@ -72,7 +74,7 @@ async function createSubscriptionForUserIdFamilyIdRecieptId(connection, userId, 
 }
 
 /**
- * Takes array of latest_receipt_info from the Apple /processReceipt API endpoint
+ * Takes array of latest_receipt_info from the Apple /verifyReceipt API endpoint
  * Filters the receipts against productIds that are known
  * Compare receipts to stored transactions, inserting receipts into the database that aren't stored
  */

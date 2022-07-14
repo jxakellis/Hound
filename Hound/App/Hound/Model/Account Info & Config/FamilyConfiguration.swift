@@ -26,17 +26,11 @@ enum FamilyConfiguration {
         }
         if let familyMembersBody = body[ServerDefaultKeys.familyMembers.rawValue] as? [[String: Any]] {
             familyMembers.removeAll()
+            let familyHeadUserId = body[ServerDefaultKeys.userId.rawValue] as? String
             // get individual bodies for members
             for familyMemberBody in familyMembersBody {
                 // convert body into family member
-                familyMembers.append(FamilyMember(fromBody: familyMemberBody))
-            }
-            
-            // assign familyHead
-            if let familyHeadUserId = body[ServerDefaultKeys.userId.rawValue] as? String {
-                for familyMember in familyMembers where familyMember.userId == familyHeadUserId {
-                    familyMember.isFamilyHead = true
-                }
+                familyMembers.append(FamilyMember(fromBody: familyMemberBody, familyHeadUserId: familyHeadUserId))
             }
             
             // sort so family head is first then users in ascending userid order
@@ -66,7 +60,7 @@ enum FamilyConfiguration {
     static var isPaused: Bool = false
     
     /// The code used by new users to join the family
-    static var familyCode: String = ""
+    static private(set) var familyCode: String = ""
     
     /// If a family is locked, then no new members can join. Only the family head can lock and unlock the family.
     static var isLocked: Bool = false

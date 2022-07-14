@@ -12,34 +12,35 @@ class FamilyMember: NSObject {
     
     // MARK: - Main
     
-    init(userId: String, firstName: String?, lastName: String?) {
+    init(userId: String, firstName: String?, lastName: String?, isFamilyHead: Bool) {
         self.userId = userId
         self.firstName = firstName
         self.lastName = lastName
+        self.isFamilyHead = isFamilyHead
         super.init()
     }
     
     /// Assume array of family properties
-    convenience init(fromBody body: [String: Any]) {
+    convenience init(fromBody body: [String: Any], familyHeadUserId: String?) {
         let userId = body[ServerDefaultKeys.userId.rawValue] as? String ?? Hash.defaultSHA256Hash
         let firstName = body[ServerDefaultKeys.userFirstName.rawValue] as? String
         let lastName = body[ServerDefaultKeys.userLastName.rawValue] as? String
-        self.init(userId: userId, firstName: firstName, lastName: lastName)
+        self.init(userId: userId, firstName: firstName, lastName: lastName, isFamilyHead: familyHeadUserId == userId)
     }
     
     // MARK: - Properties
     
     /// The family member's first name
-    var firstName: String?
+    private(set) var firstName: String?
     
     /// The family member's last name
-    var lastName: String?
+    private(set) var lastName: String?
     
     /// The family member's userId
-    var userId: String
+    private(set) var userId: String
     
     /// Indicates where or not this user is the head of the family
-    var isFamilyHead: Bool = false
+    private(set) var isFamilyHead: Bool = false
     
 }
 

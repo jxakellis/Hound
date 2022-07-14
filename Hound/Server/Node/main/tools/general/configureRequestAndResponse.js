@@ -21,15 +21,15 @@ function configureResponse(req, res) {
     const hasActiveConnection = formatBoolean(req.hasActiveConnection);
     const hasActiveTransaction = formatBoolean(req.hasActiveTransaction);
     const castedStatus = formatNumber(status);
-    // Check to see if a response has been sent yet
-    if (hasSentResponse === true) {
-      return;
-    }
 
     // Check to see if the request has an active connection
     // If it does, then we attempt to COMMIT or ROLLBACK (and if they fail, the functions release() anyways)
     if (hasActiveConnection === true) {
-      if (castedStatus >= 200 && castedStatus <= 299) {
+      // if there is no active transaction, then we attempt to release the connection
+      if (hasActiveTransaction === false) {
+        releaseConnection(req, req.connection, hasActiveConnection);
+      }
+      else if (castedStatus >= 200 && castedStatus <= 299) {
         // attempt to commit transaction
         await commitTransaction(req, req.connection, hasActiveConnection, hasActiveTransaction);
       }
@@ -39,13 +39,21 @@ function configureResponse(req, res) {
       }
     }
 
+    // Check to see if a response has been sent yet
+    if (hasSentResponse === true) {
+      return;
+    }
+
     // If we user provided an error, then we convert that error to JSON and use it as the body
     const JSONResponse = areAllDefined(error)
       ? convertErrorToJSON(error)
       : json;
 
+    let JSONResponseString = JSON.stringify(JSONResponse);
+    JSONResponseString = JSONResponseString.substring(0, 1000);
+
     if (global.constant.server.IS_PRODUCTION === false) {
-      responseLogger.info(`Response for ${req.method} ${req.originalUrl}\n With body: ${JSON.stringify(JSONResponse)}`);
+      responseLogger.info(`Response for ${req.method} ${req.originalUrl}\n With body: ${JSON.stringify(JSONResponseString)}`);
     }
 
     res.hasSentResponse = true;
@@ -87,9 +95,7 @@ async function commitTransaction(req, connection, hasActiveConnection, hasActive
     }
   }
 
-  // finally, no matter the result above, we release the connection
-  connection.release();
-  req.hasActiveConnection = false;
+  releaseConnection(req, connection, castedHasActiveConnection);
 }
 
 async function rollbackTransaction(req, connection, hasActiveConnection, hasActiveTransaction) {
@@ -114,6 +120,14 @@ async function rollbackTransaction(req, connection, hasActiveConnection, hasActi
     }
   }
 
+  releaseConnection(req, connection, castedHasActiveConnection);
+}
+
+function releaseConnection(req, connection, hasActiveConnection) {
+  const castedHasActiveConnection = formatBoolean(hasActiveConnection);
+  if (areAllDefined(req, connection, castedHasActiveConnection) === false || castedHasActiveConnection === false) {
+    return;
+  }
   // finally, no matter the result above, we release the connection
   connection.release();
   req.hasActiveConnection = false;

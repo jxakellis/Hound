@@ -28,11 +28,6 @@ const { familyRouter } = require('./family');
 
 userRouter.use('/:userId/family', familyRouter);
 
-userRouter.use((req, res, next) => {
-  console.log(res.sendResponseForStatusJSONError);
-  next();
-})
-
 // gets user with userIdentifier then return information from users and userConfiguration table
 userRouter.get('/', getUser);
 // gets user with userId && userIdentifier then return information from users and userConfiguration table

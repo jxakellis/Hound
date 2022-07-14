@@ -57,7 +57,7 @@ async function deleteFamily(connection, userId, familyId) {
     [familyId],
   );
 
-  [family, familyMembers] = await Promise.all(family, familyMembers);
+  [family, familyMembers] = await Promise.all([family, familyMembers]);
 
   // User is the head of the family, so has obligation to it.
   if (family.length === 1) {

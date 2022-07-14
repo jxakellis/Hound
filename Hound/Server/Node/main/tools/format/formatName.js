@@ -10,10 +10,6 @@ function formatName(string) {
 }
 
 function formatIntoFullName(userFirstName, userLastName) {
-  // TO DO add int parameter for existing message length. APN have a limited length for their messages
-  // If the name is too long, them important parts of the APN message could be cut off
-  // Therefore, we pass through the existing message length, then we limit the size of the fullName returned
-  // So, fullName.length + existingMessage.length <= maxiumumLengthOfAPNBody / maxiumumLengthOfAPNTitle
   const trimmedFirstName = formatName(userFirstName);
   const trimmedLastName = formatName(userLastName);
 
@@ -34,10 +30,6 @@ function formatIntoFullName(userFirstName, userLastName) {
 }
 
 function formatIntoAbreviatedFullName(userFirstName, userLastName) {
-  // TO DO add int parameter for existing message length. APN have a limited length for their messages
-  // If the name is too long, them important parts of the APN message could be cut off
-  // Therefore, we pass through the existing message length, then we limit the size of the abreviatedFullName returned
-  // So, abreviatedFullName.length + existingMessage.length <= maxiumumLengthOfAPNBody / maxiumumLengthOfAPNTitle
   const trimmedFirstName = formatName(userFirstName);
   const trimmedLastName = formatName(userLastName);
 

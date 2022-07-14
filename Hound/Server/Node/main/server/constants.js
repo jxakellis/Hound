@@ -20,14 +20,36 @@ const limit = {
 };
 
 const apn = {
-// for APN about reminder's alarms
-  REMINDER_CATEGORY: 'reminder',
-  // for APN telling the user that they terminated the Hound app accidentally (disabling their loud notifications)
-  TERMINATE_CATEGORY: 'terminate',
-  // for APN telling family that a user logged a certain reminder (i.e. took care of something for a dog)
-  LOG_CATEGORY: 'log',
-  // for APN just some generic alert, e.g. someone joined/left the family
-  GENERAL_CATEGORY: 'generalAlert',
+  length: {
+    /*
+      Tested different title & body length APN to see how much of the notification was displayed
+
+      180 title & 0 body:     31 char title & 0 body
+      0 title & 180 body:     0 char title & 128 char body
+      180 title & 180 body:   31 char title & 128 char body
+      29 title & 123 body:    29 char title & 123 char body
+      30 title & 123 body:    30 char title & 123 char body
+      29 title & 124 body:    29 char title & 124 char body
+      30 title & 124 body:    30 char title & 124 char body
+      31 title & 128 body:    31 char title & 128 char body
+      32 title & 128 body:    32 char title & 128 char body
+
+      NOTE: If the notification changes from showing 'now' next to it and shows '1m ago' (or similar),
+      this increased text length (indicating time since notification arrived) can cause the title to be shortened (the time text expands)
+      */
+    ALERT_TITLE: 32,
+    ALERT_BODY: 128,
+  },
+  category: {
+    // for APN about reminder's alarms
+    REMINDER: 'reminder',
+    // for APN telling the user that they terminated the Hound app accidentally (disabling their loud notifications)
+    TERMINATE: 'terminate',
+    // for APN telling family that a user logged a certain reminder (i.e. took care of something for a dog)
+    LOG: 'log',
+    // for APN just some generic alert, e.g. someone joined/left the family
+    GENERAL: 'general',
+  },
 };
 
 const subscription = {

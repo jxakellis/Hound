@@ -1,7 +1,7 @@
 const apn = require('apn');
 const { apnLogger } = require('../../logging/loggers');
 
-const { formatArray } = require('../../format/formatObject');
+const { formatArray, formatString } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 
 const { apnProvider } = require('./apnProvider');
@@ -15,15 +15,21 @@ const { getUserToken, getAllFamilyMemberTokens, getOtherFamilyMemberTokens } = r
  */
 // (token, category, sound, alertTitle, alertBody)
 async function sendAPN(token, category, sound, alertTitle, alertBody, customPayload) {
+  let castedAlertTitle = formatString(alertTitle);
+  let castedAlertBody = formatString(alertBody);
+
   if (global.constant.server.IS_PRODUCTION === false) {
-    apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${alertTitle}, ${alertBody}`);
+    apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${castedAlertTitle}, ${castedAlertBody}`);
   }
 
   try {
     // sound doesn't have to be defined, its optional
-    if (areAllDefined(token, category, alertTitle, alertBody, customPayload) === false) {
+    if (areAllDefined(token, category, castedAlertTitle, castedAlertBody, customPayload) === false) {
       return;
     }
+
+    castedAlertTitle = castedAlertTitle.substring(0, global.constant.apn.length.ALERT_TITLE);
+    castedAlertBody = castedAlertBody.substring(0, global.constant.apn.length.ALERT_BODY);
 
     // the tokens array is defined and has at least one element
 
@@ -64,15 +70,15 @@ async function sendAPN(token, category, sound, alertTitle, alertBody, customPayl
         // alert Dictionary
         alert: {
         // The title of the notification. Apple Watch displays this string in the short look notification interface. Specify a string that’s quickly understood by the user.
-          title: alertTitle,
+          title: castedAlertTitle,
           // The content of the alert message.
-          body: alertBody,
+          body: castedAlertBody,
         },
       },
     };
 
     // if there is a sound for the reminder alarm alert, then we add it to the rawPayload
-    if (category === global.constant.apn.REMINDER_CATEGORY && areAllDefined(sound, notification, notification.rawPayload, notification.rawPayload.aps)) {
+    if (category === global.constant.apn.category.REMINDER && areAllDefined(sound, notification, notification.rawPayload, notification.rawPayload.aps)) {
       notification.rawPayload.aps.sound = `${sound}30.wav`;
     }
 
@@ -123,6 +129,10 @@ async function sendAPN(token, category, sound, alertTitle, alertBody, customPayl
 async function sendAPNForUser(userId, category, alertTitle, alertBody, customPayload) {
   if (global.constant.server.IS_PRODUCTION === false) {
     apnLogger.debug(`sendAPNForUser ${userId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
+  }
+
+  if (areAllDefined(userId) === false) {
+    return;
   }
 
   try {

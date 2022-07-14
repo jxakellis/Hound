@@ -24,22 +24,35 @@ async function createLogNotification(userId, familyId, dogId, logAction, logCust
 
     const user = await getUserFirstNameLastNameForUserId(connectionForAlerts, userId);
 
-    const dog = await getDogForDogId(connectionForAlerts, dogId, undefined, undefined, undefined);
+    let dog = await getDogForDogId(connectionForAlerts, dogId, undefined, undefined, undefined);
+    [dog] = dog;
 
     // check to see if we were able to retrieve the properties of the user who logged the event and the dog that the log was under
     if (areAllDefined(user, user.userFirstName, user.userLastName, dog, dog.dogName) === false) {
       return;
     }
 
+    const abreviatedFullName = formatIntoAbreviatedFullName(user.userFirstName, user.userLastName);
+    const formattedLogAction = formatLogAction(logAction, logCustomActionName);
+
     // now we can construct the messages
-    // Log for Fido
-    // TO DO add checks that make sure these messages don't go over the title/body APN character limit
+    // Maxmium possible length: 8 (raw) + 32 (variable) = 40
     const alertTitle = `Log for ${dog.dogName}`;
-    const name = formatIntoAbreviatedFullName(user.userFirstName, user.userLastName);
-    const alertBody = `${name} lent a helping hand with '${formatLogAction(logAction, logCustomActionName)}'`;
+
+    // Maxmium possible length: 28 (raw) + 34 (variable) + 32 (variable) = 94
+    let alertBody = `${''} lent a helping hand with '${''}'`;
+    const maximumLengthForFormattedLogAction = global.constant.apn.length.ALERT_BODY - alertBody.length;
+    formattedLogAction.substring(0, maximumLengthForFormattedLogAction);
+
+    alertBody = `${''} lent a helping hand with '${formattedLogAction}'`;
+
+    const maximumLengthForAbreviatedFullName = global.constant.apn.length.ALERT_BODY - alertBody.length;
+    abreviatedFullName.substring(0, maximumLengthForAbreviatedFullName);
+
+    alertBody = `${abreviatedFullName} lent a helping hand with '${formattedLogAction}'`;
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.LOG_CATEGORY, alertTitle, alertBody, {});
+    sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.category.LOG, alertTitle, alertBody, {});
   }
   catch (error) {
     alertLogger.error('createLogNotification error:');

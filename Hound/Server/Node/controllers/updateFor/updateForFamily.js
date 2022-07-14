@@ -170,8 +170,8 @@ async function pause(connection, familyId, lastUnpause) {
   const reminderLastModified = lastPause;
 
   // lastUnpause can be null if not paused before, not a deal breaker
-  if (areAllDefined(connection, familyId, castedLastUnpause) === false) {
-    throw new ValidationError('connection, familyId, or lastUnpause missing', global.constant.error.value.MISSING);
+  if (areAllDefined(connection, familyId) === false) {
+    throw new ValidationError('connection or familyId missing', global.constant.error.value.MISSING);
   }
 
   await databaseQuery(

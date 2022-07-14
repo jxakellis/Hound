@@ -277,6 +277,7 @@ class Reminder: NSObject, NSCoding, NSCopying {
     /// This is a user selected label for the reminder. It dictates the name that is displayed in the UI for this reminder.
     var reminderAction: ReminderAction = ReminderConstant.defaultReminderAction
     
+    // TO DO limit reminderCustomActionName to 32 characters
     /// If the reminder's type is custom, this is the name for it.
     var reminderCustomActionName: String? = ReminderConstant.defaultReminderCustomActionName
     

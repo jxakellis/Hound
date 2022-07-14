@@ -84,13 +84,15 @@ async function sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(family
     }
 
     // make information for notification
-    // TO DO add checks that make sure these messages don't go over the title/body APN character limit
+    // Maxmium possible length: 13 (raw) + 32 (variable) = 45
     const alertTitle = `Reminder for ${reminder.dogName}`;
+
+    // Maxmium possible length: 36 (raw) + 32 (variable) = 68
     const alertBody = `Give your dog a helping hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
 
     // send immediate APN notification for family
     const customPayload = { reminderId: reminder.reminderId, reminderLastModified: reminder.reminderLastModified };
-    sendAPNForFamily(familyId, global.constant.apn.REMINDER_CATEGORY, alertTitle, alertBody, customPayload);
+    sendAPNForFamily(familyId, global.constant.apn.category.REMINDER, alertTitle, alertBody, customPayload);
 
     // createSecondaryAlarmNotificationForFamily, handles the secondary alarm notifications
     // If the reminderExecutionDate is in the past, sends APN notification asap. Otherwise, schedule job to send at reminderExecutionDate.
@@ -191,12 +193,14 @@ async function sendSecondaryAPNForUser(userId, reminderId) {
     }
 
     // form secondary alert title and body for secondary notification
-    // TO DO add checks that make sure these messages don't go over the title/body APN character limit
+    // Maxmium possible length: 23 (raw) + 32 (variable) = 55
     const alertTitle = `Follow up reminder for ${reminder.dogName}`;
+
+    // Maxmium possible length: 65 (raw) + 32 (variable) = 97
     const alertBody = `It's been a bit, remember to give your dog a helping hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
 
     const customPayload = { reminderId: reminder.reminderId, reminderLastModified: reminder.reminderLastModified };
-    sendAPNForUser(userId, global.constant.apn.REMINDER_CATEGORY, alertTitle, alertBody, customPayload);
+    sendAPNForUser(userId, global.constant.apn.category.REMINDER, alertTitle, alertBody, customPayload);
   }
   catch (error) {
     alarmLogger.error('sendAPNForUser error:');
