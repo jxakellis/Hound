@@ -1,7 +1,7 @@
 const { ValidationError } = require('../general/errors');
 const { areAllDefined } = require('./validateDefined');
 const { getActiveSubscriptionForFamilyId } = require('../../../controllers/getFor/getForSubscription');
-const { getAllFamilyMemberUserIdsForFamilyId } = require('../../../controllers/getFor/getForFamily');
+const { getAllFamilyMembersForFamilyId } = require('../../../controllers/getFor/getForFamily');
 const { getAllDogsForUserIdFamilyId } = require('../../../controllers/getFor/getForDogs');
 
 /**
@@ -48,7 +48,7 @@ async function validateSubscription(req, res, next) {
       return next();
     }
 
-    const familyMembers = await getAllFamilyMemberUserIdsForFamilyId(req.connection, familyId);
+    const familyMembers = await getAllFamilyMembersForFamilyId(req.connection, familyId);
 
     if (familyMembers.length > subscriptionNumberOfFamilyMembers) {
       throw new ValidationError(`Family member limit of ${subscriptionNumberOfFamilyMembers} exceeded`, global.constant.error.family.limit.FAMILY_MEMBER_EXCEEDED);

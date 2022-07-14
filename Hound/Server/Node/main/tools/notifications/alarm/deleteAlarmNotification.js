@@ -4,7 +4,7 @@ const { connectionForAlarms } = require('../../database/databaseConnections');
 
 const { areAllDefined } = require('../../format/validateDefined');
 const { cancelPrimaryJobForFamilyForReminder, cancelSecondaryJobForUserForReminder } = require('./cancelJob');
-const { getAllFamilyMemberUserIdsForFamilyId } = require('../../../../controllers/getFor/getForFamily');
+const { getAllFamilyMembersForFamilyId } = require('../../../../controllers/getFor/getForFamily');
 
 async function deleteAlarmNotificationsForFamily(familyId) {
   try {
@@ -24,7 +24,7 @@ async function deleteAlarmNotificationsForFamily(familyId) {
       [familyId],
     );
       // finds all the users in the family
-    const users = await getAllFamilyMemberUserIdsForFamilyId(connectionForAlarms, familyId);
+    const users = await getAllFamilyMembersForFamilyId(connectionForAlarms, familyId);
 
     for (let i = 0; i < reminders.length; i += 1) {
       const { reminderId } = reminders[i];
@@ -61,7 +61,7 @@ async function deleteAlarmNotificationsForReminder(familyId, reminderId) {
     cancelPrimaryJobForFamilyForReminder(familyId, reminderId);
 
     // finds all the users in the family
-    const users = await getAllFamilyMemberUserIdsForFamilyId(connectionForAlarms, familyId);
+    const users = await getAllFamilyMembersForFamilyId(connectionForAlarms, familyId);
 
     // iterate through all users for the family
     for (let i = 0; i < users.length; i += 1) {

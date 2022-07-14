@@ -5,6 +5,7 @@ const { formatSHA256Hash } = require('../../main/tools/format/formatObject');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 const { deleteAllDogsForFamilyId } = require('./deleteForDogs');
+const { getUserFirstNameLastNameForUserId } = require('../getFor/getForUser');
 const { getFamilyHeadUserIdForFamilyId } = require('../getFor/getForFamily');
 
 const { createUserKickedNotification } = require('../../main/tools/notifications/alert/createUserKickedNotification');
@@ -24,7 +25,6 @@ async function deleteFamilyForUserIdFamilyId(connection, userId, familyId, kickU
     throw new ValidationError('connection, userId, or familyId missing', global.constant.error.value.MISSING);
   }
 
-  // TO DO add table for previousFamilyMembers.
   // This will only store the familyId, userId, userFirstName, and userLastName of any one in the family that has left / been kicked
   // Therefore, when trying to see who created a log (even if they have left the family), you can still see a corresponding name.
   if (areAllDefined(castedKickUserId)) {
@@ -66,19 +66,42 @@ async function deleteFamily(connection, userId, familyId) {
       throw new ValidationError('Family still contains multiple members', global.constant.error.family.leave.INVALID);
     }
 
-    // can destroy the family
-    // delete all the family heads (should be one)
+    // There is only one user left in the family, which is the API requester
+    const leftUserFullName = await getUserFirstNameLastNameForUserId(connection, userId);
+    let familyAccountCreationDate = await databaseQuery(
+      connection,
+      'SELECT familyAccountCreationDate FROM families WHERE familyId = ? LIMIT 1',
+      [familyId],
+    );
+    // only one element
+    [familyAccountCreationDate] = familyAccountCreationDate;
+    // take familyAccountCreationDate JSON
+    familyAccountCreationDate = familyAccountCreationDate.familyAccountCreationDate;
+
+    // Destroy the family now that it is ok to do so
     const promises = [
       databaseQuery(
         connection,
         'DELETE FROM families WHERE familyId = ?',
         [familyId],
       ),
-      // deletes all users from the family
+      // keep record of family being delted
+      databaseQuery(
+        connection,
+        'INSERT INTO previousFamilies(familyId, userId, familyAccountCreationDate, familyAccountDeletionDate) VALUES (?,?,?,?)',
+        [familyId, userId, familyAccountCreationDate, new Date()],
+      ),
+      // deletes all users from the family (should only be one)
       databaseQuery(
         connection,
         'DELETE FROM familyMembers WHERE familyId = ?',
         [familyId],
+      ),
+      // keep record of user leaving
+      databaseQuery(
+        connection,
+        'INSERT INTO previousFamilyMembers(familyId, userId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
+        [familyId, userId, leftUserFullName.userFirstName, leftUserFullName.userLastName, new Date(), 'familyDeleted'],
       ),
       // delete all the corresponding dog, reminder, and log data
       databaseQuery(
@@ -93,13 +116,25 @@ async function deleteFamily(connection, userId, familyId) {
   }
   // User is not the head of the family, so no obligation
   else {
-  // can leave the family
-    // deletes user from family
-    await databaseQuery(
-      connection,
-      'DELETE FROM familyMembers WHERE userId = ?',
-      [userId],
-    );
+    const leftUserFullName = await getUserFirstNameLastNameForUserId(connection, userId);
+
+    const promises = [
+      // can leave the family
+      // deletes user from family
+      databaseQuery(
+        connection,
+        'DELETE FROM familyMembers WHERE userId = ?',
+        [userId],
+      ),
+      // keep record of user leaving
+      databaseQuery(
+        connection,
+        'INSERT INTO previousFamilyMembers(familyId, userId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
+        [familyId, userId, leftUserFullName.userFirstName, leftUserFullName.userLastName, new Date(), 'userLeft'],
+      ),
+    ];
+
+    await Promise.all(promises);
   }
 
   // now that the user has successfully left their family (or destroyed it), we can send a notification to remaining members
@@ -129,13 +164,26 @@ async function kickFamilyMember(connection, userId, familyId, kickUserId) {
     throw new ValidationError('You are not the family head. Only the family head can kick family members', global.constant.error.family.permission.INVALID);
   }
 
-  // kickUserId is valid, kickUserId is different then the requester, requester is the family head so everything is valid
+  const kickedUserFullName = await getUserFirstNameLastNameForUserId(connection, castedKickUserId);
+  const { userFirstName, userLastName } = kickedUserFullName;
+
+  const promises = [
+    // kickUserId is valid, kickUserId is different then the requester, requester is the family head so everything is valid
   // kick the user by deleting them from the family
-  await databaseQuery(
-    connection,
-    'DELETE FROM familyMembers WHERE userId = ?',
-    [castedKickUserId],
-  );
+    databaseQuery(
+      connection,
+      'DELETE FROM familyMembers WHERE userId = ?',
+      [castedKickUserId],
+    ),
+    // keep a record of user kicked
+    databaseQuery(
+      connection,
+      'INSERT INTO previousFamilyMembers(familyId, userId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
+      [familyId, castedKickUserId, userFirstName, userLastName, new Date(), 'userKicked'],
+    ),
+  ];
+
+  await Promise.all(promises);
 
   // remove any pending secondary alarm notifications they have queued
   // The primary alarm notifications retrieve the notification tokens of familyMembers right as they fire, so the user will not be included

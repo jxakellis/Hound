@@ -2,6 +2,7 @@ const { requestLogger, serverLogger } = require('./loggers');
 const { databaseQuery } = require('../database/databaseQuery');
 const { connectionForLogging } = require('../database/databaseConnections');
 const { areAllDefined } = require('../format/validateDefined');
+const { formatBoolean } = require('../format/formatObject');
 
 // Uses requestLogger to output the request from a user in the console
 function requestLoggerForRequest(req, res, next) {
@@ -12,7 +13,7 @@ function requestLoggerForRequest(req, res, next) {
   next();
 }
 
-// Inserts request information into the userRequestLogs table. This should only be called after the user is verified.
+// Inserts request information into the previousRequests table. This should only be called after the user is verified.
 function createLogForRequest(req, res, next) {
   const requestIP = req.ip; // can be undefined
   const requestDate = new Date();
@@ -20,11 +21,13 @@ function createLogForRequest(req, res, next) {
   const requestOriginalURL = req.originalUrl;
   const { appBuild, userId } = req.params;
 
-  if (areAllDefined(requestDate, requestMethod, requestOriginalURL, appBuild) && areAllDefined(req.hasBeenLogged) === false) {
+  const hasBeenLogged = formatBoolean(req.hasBeenLogged);
+
+  if (areAllDefined(requestDate, requestMethod, requestOriginalURL, appBuild) && hasBeenLogged === false) {
     req.hasBeenLogged = true;
     databaseQuery(
       connectionForLogging,
-      'INSERT INTO userRequestLogs(requestIP, requestDate, requestMethod, requestOriginalURL, appBuild, userId) VALUES (?,?,?,?,?,?)',
+      'INSERT INTO previousRequests(requestIP, requestDate, requestMethod, requestOriginalURL, appBuild, userId) VALUES (?,?,?,?,?,?)',
       [requestIP, requestDate, requestMethod, requestOriginalURL, appBuild, userId],
     ).catch(
       (error) => {

@@ -7,7 +7,7 @@ const {
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 const { createFamilyMemberJoinNotification } = require('../../main/tools/notifications/alert/createFamilyNotification');
-const { getAllFamilyMemberUserIdsForFamilyId, getFamilyMemberUserIdForUserId } = require('../getFor/getForFamily');
+const { getAllFamilyMembersForFamilyId, getFamilyMemberUserIdForUserId } = require('../getFor/getForFamily');
 const { getActiveSubscriptionForFamilyId } = require('../getFor/getForSubscription');
 
 const { createFamilyLockedNotification, createFamilyPausedNotification } = require('../../main/tools/notifications/alert/createFamilyNotification');
@@ -85,7 +85,7 @@ async function addFamilyMember(connection, userId, familyCode) {
   // the user is eligible to join the family, check to make sure the family has enough space
   // we can't access req.subscriptionInformation currently as it wasn't assigned earlier due to the user not being in a fmaily
   const subscriptionInformation = await getActiveSubscriptionForFamilyId(connection, familyId);
-  const familyMembers = await getAllFamilyMemberUserIdsForFamilyId(connection, familyId);
+  const familyMembers = await getAllFamilyMembersForFamilyId(connection, familyId);
 
   // the family is either at the limit of family members is exceeds the limit, therefore no new users can join
   if (familyMembers.length >= subscriptionInformation.subscriptionNumberOfFamilyMembers) {
