@@ -49,7 +49,7 @@ Your app can check the transaction queue on launch and handle the renewal the sa
 If your app is already running when the subscription renews, the transaction observer is not called;
 your app finds out about the renewal the next time the app launches.
 
-// TO DO potentially detect plan changes for future renewals
+TO DO potentially detect plan changes for future renewals
 You can check the receipt’s auto_renew_product_id field to learn
 about any plan changes the user selected that will go into effect at the next renewal date.
 */

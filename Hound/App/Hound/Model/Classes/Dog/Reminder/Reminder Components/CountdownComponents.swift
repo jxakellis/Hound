@@ -48,8 +48,6 @@ final class CountdownComponents: NSObject, NSCoding, NSCopying {
         }
     }
     
-    // MARK: - GeneralCountdownProtocol
-    
     /// Interval at which a timer should be triggered for reminder
     var executionInterval: TimeInterval = ReminderComponentConstant.defaultCountdownExecutionInterval
     

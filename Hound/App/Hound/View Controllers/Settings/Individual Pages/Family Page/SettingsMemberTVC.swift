@@ -27,7 +27,7 @@ final class SettingsFamilyMemberTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        // BUG if head of family is transferred to a family member and the page is reloaded, then this cell will break. Make this cell more dynamic so it can properly shift between family head and non family head.
+        // TO DO BUG if head of family is transferred to a family member and the page is reloaded, then this cell will break. Make this cell more dynamic so it can properly shift between family head and non family head. Check that anything accross all of Hound accessing certain properties is also dynamic (e.g. FamilyConfiguration.isFamilyHead)
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {

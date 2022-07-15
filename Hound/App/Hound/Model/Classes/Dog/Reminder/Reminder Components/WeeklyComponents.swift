@@ -89,12 +89,12 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     /// The weekdays on which the reminder should fire. 1 - 7, where 1 is sunday and 7 is saturday.
     private(set) var weekdays: [Int] = [1, 2, 3, 4, 5, 6, 7]
     /// Changes the weekdays, if empty throws an error due to the fact that there needs to be at least one time of week.
-    func changeWeekdays(newWeekdays: [Int]) throws {
-        if newWeekdays.isEmpty {
+    func changeWeekdays(forWeekdays: [Int]) throws {
+        if forWeekdays.isEmpty {
             throw WeeklyComponentsError.weekdayArrayInvalid
         }
-        else if weekdays != newWeekdays {
-            weekdays = newWeekdays
+        else if weekdays != forWeekdays {
+            weekdays = forWeekdays
         }
     }
     
@@ -102,24 +102,24 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     private(set) var hour: Int = 7
     
     ///  Throws if not within the range of [0,24]
-    func changeHour(newHour: Int) throws {
-        guard newHour >= 0 && newHour <= 24 else {
+    func changeHour(forHour: Int) throws {
+        guard forHour >= 0 && forHour <= 24 else {
             throw WeeklyComponentsError.hourInvalid
         }
         
-        hour = newHour
+        hour = forHour
     }
     
     /// Minute of the hour that the reminder will fire
     private(set) var minute: Int = 0
     
     /// Throws if not within the range of [0,60]
-    func changeMinute(newMinute: Int) throws {
-        guard newMinute >= 0 && newMinute <= 60 else {
+    func changeMinute(forMinute: Int) throws {
+        guard forMinute >= 0 && forMinute <= 60 else {
             throw WeeklyComponentsError.minuteInvalid
         }
         
-        minute = newMinute
+        minute = forMinute
     }
     
     /// Whether or not the next alarm will be skipped
@@ -131,9 +131,9 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     // MARK: - Functions
     
     /// This find the next execution date that takes place after the reminderExecutionBasis. It purposelly not factoring in isSkipping.
-    func notSkippingExecutionDate(reminderExecutionBasis: Date) -> Date {
+    func notSkippingExecutionDate(forReminderExecutionBasis reminderExecutionBasis: Date) -> Date {
         
-        let calculatedDates = futureExecutionDates(reminderExecutionBasis: reminderExecutionBasis)
+        let calculatedDates = futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis)
         
         // want to start with the date furthest away in time
         var soonestCalculatedDate: Date = calculatedDates.last!
@@ -150,13 +150,13 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     }
     
     /// Returns the date that the reminder should have last sounded an alarm at. This helps in finding alarms that might have been missed
-    func previousExecutionDate(reminderExecutionBasis: Date) -> Date {
+    func previousExecutionDate(forReminderExecutionBasis reminderExecutionBasis: Date) -> Date {
         
-        let traditionalNextTOD = notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
+        let traditionalNextTOD = notSkippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
         
         // multiple days of week so need to do math to figure out correct
         if weekdays.count > 1 {
-            var preceedingExecutionDates = futureExecutionDates(reminderExecutionBasis: reminderExecutionBasis)
+            var preceedingExecutionDates = futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis)
             
             // Subtracts a week from all futureExecutionDates
             for futureExecutionDateIndex in 0..<preceedingExecutionDates.count {
@@ -186,19 +186,19 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     }
     
     /// Factors in isSkipping to figure out the next time of day
-    func nextExecutionDate(reminderExecutionBasis: Date) -> Date {
+    func nextExecutionDate(forReminderExecutionBasis reminderExecutionBasis: Date) -> Date {
         if isSkipping == true {
-            return skippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
+            return skippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
         }
         else {
-            return notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
+            return notSkippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
         }
     }
     
     // MARK: - Private Helper Functions
     
     /// Produces an array of at least two with all of the future dates that the reminder will fire given the weekday(s), hour, and minute
-    private func futureExecutionDates(reminderExecutionBasis: Date) -> [Date] {
+    private func futureExecutionDates(forReminderExecutionBasis reminderExecutionBasis: Date) -> [Date] {
         
         // the dates calculated to be reminderExecutionDates
         var calculatedDates: [Date] = []
@@ -239,13 +239,13 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     }
     
     /// If a reminder is skipping, then we must find the next soonest reminderExecutionDate. We have to find the execution date that takes place after the skipped execution date (but before any other execution date).
-    private func skippingExecutionDate(reminderExecutionBasis: Date) -> Date {
+    private func skippingExecutionDate(forReminderExecutionBasis reminderExecutionBasis: Date) -> Date {
         
-        let traditionalNextTOD = notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
+        let traditionalNextTOD = notSkippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
         
         // If there are multiple dates to be sorted through to find the date that is closer in time to traditionalNextTimeOfDay but still in the future
         if weekdays.count > 1 {
-            let calculatedDates = futureExecutionDates(reminderExecutionBasis: reminderExecutionBasis)
+            let calculatedDates = futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis)
             var nextSoonestCalculatedDate: Date = calculatedDates.last!
             
             for calculatedDate in calculatedDates {

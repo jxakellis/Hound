@@ -107,24 +107,7 @@ enum LogAction: String, CaseIterable {
     }
 }
 
-protocol LogProtocol {
-    
-    /// Date at which the log is assigned
-    var logDate: Date { get set }
-    
-    /// Note attached to the log
-    var logNote: String { get set }
-    
-    var logAction: LogAction { get set }
-    
-    /// If the reminder's action is custom, this is the name for it
-    var logCustomActionName: String? { get set }
-    
-    var logId: Int { get set }
-    
-}
-
-final class Log: NSObject, NSCoding, NSCopying, LogProtocol {
+final class Log: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying
     
@@ -179,11 +162,6 @@ final class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     convenience init(fromBody body: [String: Any]) {
         
-        // if log was deleted, then don't create a new one
-        // guard body[ServerDefaultKeys.logIsDeleted.rawValue] as? Bool ?? false == false else {
-        //     return nil
-        // }
-        
         let logId: Int = body[ServerDefaultKeys.logId.rawValue] as? Int ?? LogConstant.defaultLogId
         // don't user LogConstant.defaultUserId here. if we cannot decode the value, then just leave it as -1, as otherwise it would incorrectly display that this user created the log (as LogConstant.defaultUserId defaults to UserInformation.userId first)
         let userId: String = body[ServerDefaultKeys.userId.rawValue] as? String ?? Hash.defaultSHA256Hash
@@ -213,8 +191,14 @@ final class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     var logAction: LogAction = LogConstant.defaultLogAction
     
-    // TO DO limit logCustomActionName to 32 characters
-    var logCustomActionName: String? = LogConstant.defaultLogCustomActionName
+    private(set) var logCustomActionName: String? = LogConstant.defaultLogCustomActionName
+    func changeLogCustomActionName(forLogCustomActionName: String?) throws {
+        guard forLogCustomActionName?.count ?? 0 <= LogConstant.logCustomActionNameCharacterLimit else {
+            throw LogError.logCustomActionNameCharacterLimitExceeded
+        }
+        
+        logCustomActionName = forLogCustomActionName
+    }
     
     var logDate: Date = LogConstant.defaultLogDate
     

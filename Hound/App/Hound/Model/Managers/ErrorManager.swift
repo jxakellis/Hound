@@ -36,7 +36,7 @@ enum ErrorManager {
                 return errorRawValue
             }
             
-            // TO DO disable for production, error message isn't clean with this on
+            // TO DO FUTURE disable for production, error message isn't clean with this on
             // foo bar some message ("ER_SOME_MESSAGE")
             return errorRawValue.appending(" (\"\(errorCode)\")")
         }
@@ -73,14 +73,14 @@ enum ErrorManager {
         else if let castError = error as? LogManagerError {
             ErrorManager.alert(forMessage: castError.rawValue)
         }
-        else if let castError = error as? LogActionError {
+        else if let castError = error as? LogError {
             ErrorManager.alert(forMessage: castError.rawValue)
         }
         // Reminder Object Related
         else if let castError = error as? ReminderManagerError {
             ErrorManager.alert(forMessage: castError.rawValue)
         }
-        else if let castError = error as? ReminderActionError {
+        else if let castError = error as? ReminderError {
             ErrorManager.alert(forMessage: castError.rawValue)
         }
         else if let castError = error as? WeeklyComponentsError {

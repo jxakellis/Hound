@@ -55,8 +55,8 @@ enum FamilyResponseError: String, Error {
     
     // MARK: Limit
     // Too Low
-    case limitFamilyMemberTooLow = "This family can only have a limited number of family members! Please have existing family member leave or the family head upgrade their subscription before attempting to join this family."
-    case limitDogTooLow = "Your family can only have a limited number of dogs! Please remove an existing dog or have the family head upgrade your family's subscription before attempting to add a new dog."
+    case limitFamilyMemberTooLow = "This family can only have a limited number of family members! Please have the family head upgrade their subscription before attempting to join this family."
+    case limitDogTooLow = "Your family can only have a limited number of dogs! Please have the family head upgrade your family's subscription before attempting to add a new dog."
     case limitLogTooLow = "Your dog can only have a limited number of logs! Please remove an existing log before trying to add a new one. If you are having difficulty with this limit, please contact Hound support."
     case limitReminderTooLow = "Your dog can only have a limited number of reminders! Please remove an existing reminder before trying to add a new one."
     

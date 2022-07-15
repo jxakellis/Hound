@@ -44,13 +44,7 @@ final class Dog: NSObject, NSCoding, NSCopying {
     
     init(dogName: String?) throws {
         super.init()
-        if dogName == nil {
-            throw DogError.dogNameNil
-        }
-        else if dogName!.trimmingCharacters(in: .whitespacesAndNewlines) == ""{
-            throw DogError.dogNameBlank
-        }
-        self.dogName = dogName!
+        try changeDogName(forDogName: dogName)
     }
     
     convenience init(dogId: Int = DogConstant.defaultDogId, dogName: String?, dogIcon: UIImage = DogConstant.defaultDogIcon) throws {
@@ -101,18 +95,21 @@ final class Dog: NSObject, NSCoding, NSCopying {
         dogIcon = DogConstant.defaultDogIcon
     }
     
-    // TO DO limit dogName to 32 characters
     private(set) var dogName: String = DogConstant.defaultDogName
-    func changeDogName(newDogName: String?) throws {
-        if newDogName == nil {
+    func changeDogName(forDogName: String?) throws {
+        guard let forDogName = forDogName else {
             throw DogError.dogNameNil
         }
-        else if newDogName!.trimmingCharacters(in: .whitespacesAndNewlines) == ""{
+
+        guard forDogName.trimmingCharacters(in: .whitespacesAndNewlines) != "" else {
             throw DogError.dogNameBlank
         }
-        else {
-            dogName = newDogName!
+        
+        guard forDogName.count <= DogConstant.dogNameCharacterLimit else {
+            throw DogError.dogNameCharacterLimitExceeded
         }
+                
+        dogName = forDogName
     }
     
     /// ReminderManager that handles all specified reminders for a dog, e.g. being taken to the outside every time interval or being fed.

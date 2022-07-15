@@ -29,6 +29,12 @@ final class InAppPurchaseManager {
             completionHandler(productIdentifier)
         }
     }
+    
+    static func restorePurchases(completionHandler: @escaping (Bool) -> Void) {
+        InternalInAppPurchaseManager.shared.restorePurchases { bool in
+            completionHandler(bool)
+        }
+    }
 }
 
 // Handles the important code of InAppPurchases with Apple server communication. Segmented from main class to reduce clutter
@@ -38,9 +44,17 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
     
     static let shared = InternalInAppPurchaseManager()
     
+    // TO DO test receiptProperties:
+    // Receipt properties include SKReceiptPropertyIsExpired, SKReceiptPropertyIsRevoked, and SKReceiptPropertyIsVolumePurchase.
+    let refresh = SKReceiptRefreshRequest(receiptProperties: nil)
+    
+    /// Keeps track of if the system is asyncronously, in the background, updating the transaction records on the hound server. This can occur if there is a subscription renewal which gets added to the paymentQueue.
+    var backgroundPurchaseInProgress: Bool = false
+    
     override init() {
         super.init()
         SKPaymentQueue.default().add(self)
+        refresh.delegate = self
     }
     
     // MARK: - Fetch Products
@@ -128,25 +142,43 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
     // Prompt a product payment transaction
     func purchase(forProduct product: SKProduct, completionHandler: @escaping ((String?) -> Void)) {
         
-        // TO DO test interrupted purchases, restored purchases, 'Ask to Buy' purchases, failed purchases, etc.
+        // Make sure the user has the Hound permissions to perform such a request
         guard FamilyConfiguration.isFamilyHead else {
             ErrorManager.alert(forError: InAppPurchaseError.purchasePermission)
             completionHandler(nil)
             return
         }
         
+        // Make sure that the user has the correct Apple permissions to perform such a request
         guard SKPaymentQueue.canMakePayments() else {
             ErrorManager.alert(forError: InAppPurchaseError.purchaseRestricted)
             completionHandler(nil)
             return
         }
         
-        // Make sure there is no purchase transaction ongoing or pending transactions in the payment queue before trying to start a new purchase
-        guard productPurchaseCompletionHandler == nil && SKPaymentQueue.default().transactions.count == 0 else {
+        // Make sure there isn't a purchase transaction in process
+        guard productPurchaseCompletionHandler == nil else {
             ErrorManager.alert(forError: InAppPurchaseError.purchaseInProgress)
             completionHandler(nil)
             return
         }
+        
+        // Make sure there isn't a restore request in process
+        guard InternalInAppPurchaseManager.shared.productRestoreCompletionHandler == nil else {
+            ErrorManager.alert(forError: InAppPurchaseError.restoreInProgress)
+            completionHandler(nil)
+            return
+        }
+        
+        // Make sure the system isn't doing anything async in the background
+        guard backgroundPurchaseInProgress == false else {
+            ErrorManager.alert(forError: InAppPurchaseError.backgroundPurchaseInProgress)
+            completionHandler(nil)
+            return
+        }
+        
+        // Don't test for SKPaymentQueue.default().transactions. This could lock the code from ever executing. E.g. the user goes to buy something (so its in the payment queue) but they stop mid way (maybe leaving the transaction as .purchasing or .deferred). Then the background async processing isn't invoked to start (or it simply can't process whats in the queue) so we are left with transactions in the queue that are stuck and are locking
+        
         
         productPurchaseCompletionHandler = completionHandler
         let payment = SKPayment(product: product)
@@ -158,14 +190,17 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
       print("queue called: \(transactions.count)")
         
         // If either of these are nil, there is not an ongoing manual request by a user (as there is no callback to provide information to). Therefore, we are dealing with asyncronously bought transactions (e.g. renewals, phone died while purchasing, etc.) that should be processed in the background.
-        guard let completionHandler = productPurchaseCompletionHandler else {
+        guard productPurchaseCompletionHandler != nil || productRestoreCompletionHandler != nil else {
+            
+            self.backgroundPurchaseInProgress = true
             print("async background")
             // These are transactions that we know have completely failed. Clear them.
             let failedTransactionsInQueue = transactions.filter { transaction in
                 return transaction.transactionState == .failed
             }
+            
+            print("failed background count \(failedTransactionsInQueue.count)")
             failedTransactionsInQueue.forEach { failedTransaction in
-                print("failed transaction background")
                 SKPaymentQueue.default().finishTransaction(failedTransaction)
             }
             
@@ -176,26 +211,75 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
             
             // If we have succeeded transactions, silently contact the server in the background to let it know
             guard completedTransactionsInQueue.count >= 1 else {
+                backgroundPurchaseInProgress = false
                 return
             }
+            
+            print("begin background count \(completedTransactionsInQueue.count)")
+            
             SubscriptionRequest.create(invokeErrorManager: false) { requestWasSuccessful, _ in
+                self.backgroundPurchaseInProgress = false
                 guard requestWasSuccessful else {
                     return
                 }
                 
+                print("completed background count \(completedTransactionsInQueue.count)")
+                
                 // If successful, then we know ALL of the completed transactions in queue have been updated
                 completedTransactionsInQueue.forEach { completedTransaction in
-                    print("compelted transaction background")
+                    
                     SKPaymentQueue.default().finishTransaction(completedTransaction)
                 }
             }
             return
         }
         
+        // Check if the user is attempting to purchase a product
+        guard let productPurchaseCompletionHandler = productPurchaseCompletionHandler else {
+            print("restore")
+            // User is restoring a transaction
+            guard let productRestoreCompletionHandler = productRestoreCompletionHandler else {
+                return
+            }
+           
+            let restoredTransactionsInQueue = transactions.filter { transaction in
+                return transaction.transactionState == .restored
+            }
+            
+            print("begin restore count \(restoredTransactionsInQueue.count)")
+            
+            // If we have restored transactions, contact the server to let it know
+            guard restoredTransactionsInQueue.count >= 1 else {
+                productRestoreCompletionHandler(false)
+                self.productRestoreCompletionHandler = nil
+                return
+            }
+            SubscriptionRequest.create(invokeErrorManager: true) { requestWasSuccessful, _ in
+                guard requestWasSuccessful else {
+                    productRestoreCompletionHandler(false)
+                    self.productRestoreCompletionHandler = nil
+                    return
+                }
+                
+                print("completed restore count \(restoredTransactionsInQueue.count)")
+                
+                // If successful, then we know ALL of the completed transactions in queue have been updated
+                restoredTransactionsInQueue.forEach { restoredTransaction in
+                    
+                    SKPaymentQueue.default().finishTransaction(restoredTransaction)
+                }
+                
+                productRestoreCompletionHandler(true)
+                self.productRestoreCompletionHandler = nil
+            }
+            return
+        }
+        
+        // User is purchasing a product
         print("sync foreground")
         
-        // We know there is an ongoing synchronous request by the user for a transaction
         for transaction in transactions {
+            print("sync \(transaction.transactionState)")
             // We use the main thread so completion handler is on main thread
             DispatchQueue.main.async {
                 switch transaction.transactionState {
@@ -210,36 +294,12 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
                     
                     SubscriptionRequest.create(invokeErrorManager: true) { requestWasSuccessful, _ in
                         guard requestWasSuccessful else {
-                            completionHandler(nil)
+                            productPurchaseCompletionHandler(nil)
                             self.productPurchaseCompletionHandler = nil
                             return
                         }
                         
-                        completionHandler(transaction.payment.productIdentifier)
-                        self.productPurchaseCompletionHandler = nil
-                        SKPaymentQueue.default().finishTransaction(transaction)
-                    }
-                case .deferred:
-                    // A transaction that is in the queue, but its final status is pending external action such as Ask to Buy
-                    // Update your UI to show the deferred state, and wait for another callback that indicates the final status.
-                    
-                    ErrorManager.alert(forError: InAppPurchaseError.purchaseDeferred)
-                    completionHandler(nil)
-                    self.productPurchaseCompletionHandler = nil
-                    //  Don't finish transaction, it is still in a processing state
-                case .restored:
-                    // if we have a productPurchaseCompletionHandler, then we lock the transaction queue from other things from interfering
-                    // A transaction that restores content previously purchased by the user.
-                    // Read the original property to obtain information about the original purchase.
-                    
-                    SubscriptionRequest.create(invokeErrorManager: true) { requestWasSuccessful, _ in
-                        guard requestWasSuccessful else {
-                            completionHandler(nil)
-                            self.productPurchaseCompletionHandler = nil
-                            return
-                        }
-                        
-                        completionHandler(transaction.payment.productIdentifier)
+                        productPurchaseCompletionHandler(transaction.payment.productIdentifier)
                         self.productPurchaseCompletionHandler = nil
                         SKPaymentQueue.default().finishTransaction(transaction)
                     }
@@ -248,12 +308,36 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
                     // Check the error property to determine what happened.
                     
                     ErrorManager.alert(forError: InAppPurchaseError.purchaseFailed)
-                    completionHandler(nil)
+                    productPurchaseCompletionHandler(nil)
                     self.productPurchaseCompletionHandler = nil
                     SKPaymentQueue.default().finishTransaction(transaction)
+                case .restored:
+                    // if we have a productPurchaseCompletionHandler, then we lock the transaction queue from other things from interfering
+                    // A transaction that restores content previously purchased by the user.
+                    // Read the original property to obtain information about the original purchase.
+                    
+                    SubscriptionRequest.create(invokeErrorManager: true) { requestWasSuccessful, _ in
+                        guard requestWasSuccessful else {
+                            productPurchaseCompletionHandler(nil)
+                            self.productPurchaseCompletionHandler = nil
+                            return
+                        }
+                        
+                        productPurchaseCompletionHandler(transaction.payment.productIdentifier)
+                        self.productPurchaseCompletionHandler = nil
+                        SKPaymentQueue.default().finishTransaction(transaction)
+                    }
+                case .deferred:
+                    // A transaction that is in the queue, but its final status is pending external action such as Ask to Buy
+                    // Update your UI to show the deferred state, and wait for another callback that indicates the final status.
+                    
+                    ErrorManager.alert(forError: InAppPurchaseError.purchaseDeferred)
+                    productPurchaseCompletionHandler(nil)
+                    self.productPurchaseCompletionHandler = nil
+                    //  Don't finish transaction, it is still in a processing state
                 @unknown default:
                     ErrorManager.alert(forError: InAppPurchaseError.purchaseUnknown)
-                    completionHandler(nil)
+                    productPurchaseCompletionHandler(nil)
                     self.productPurchaseCompletionHandler = nil
                     // Don't finish transaction, we can't confirm if it succeeded or failed
                 }
@@ -261,4 +345,47 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
             }
         }
     }
+    
+    // MARK: - Restore Purchases
+    
+    private var productRestoreCompletionHandler: ((Bool) -> Void)?
+    
+    /// Checks to see if the user is eligible to perform a restore transaction request. If they are, invokes  SKPaymentQueue.default().restoreCompletedTransactions() which then will invoke  paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]).
+    func restorePurchases(completionHandler: @escaping (Bool) -> Void) {
+        // Make sure the user has the permissions to perform such a request
+        guard FamilyConfiguration.isFamilyHead else {
+            ErrorManager.alert(forError: InAppPurchaseError.restorePermission)
+            completionHandler(false)
+            return
+        }
+        
+        // Don't check for SKPaymentQueue.canMakePayments(), as we are only restoring and not making any purchases
+        
+        // Make sure there isn't a restore request in process
+        guard InternalInAppPurchaseManager.shared.productRestoreCompletionHandler == nil else {
+            ErrorManager.alert(forError: InAppPurchaseError.restoreInProgress)
+            completionHandler(false)
+            return
+        }
+        
+        // Make sure there is no purchase request ongoing
+        guard productPurchaseCompletionHandler == nil else {
+            ErrorManager.alert(forError: InAppPurchaseError.purchaseInProgress)
+            completionHandler(false)
+            return
+        }
+        
+        // Make sure the system isn't doing anything async in the background
+        guard backgroundPurchaseInProgress == false else {
+            ErrorManager.alert(forError: InAppPurchaseError.backgroundPurchaseInProgress)
+            completionHandler(false)
+            return
+        }
+        
+        // Don't test for SKPaymentQueue.default().transactions. This could lock the code from ever executing. E.g. the user goes to buy something (so its in the payment queue) but they stop mid way (maybe leaving the transaction as .purchasing or .deferred). Then the background async processing isn't invoked to start (or it simply can't process whats in the queue) so we are left with transactions in the queue that are stuck and are locking
+        
+        InternalInAppPurchaseManager.shared.productRestoreCompletionHandler = completionHandler
+        SKPaymentQueue.default().restoreCompletedTransactions()
+    }
+    
 }

@@ -53,15 +53,13 @@ final class SnoozeComponents: NSObject, NSCoding, NSCopying {
     /// Bool on whether or not the parent reminder is snoozed
     private(set) var snoozeIsEnabled: Bool = false
     /// Change snoozeIsEnabled to new status and does accompanying changes
-    func changeSnoozeIsEnabled(newSnoozeStatus: Bool) {
-        if newSnoozeStatus == true {
+    func changeSnoozeIsEnabled(forSnoozeIsEnabled: Bool) {
+        if forSnoozeIsEnabled == true {
             executionInterval = UserConfiguration.snoozeLength
         }
         
-        snoozeIsEnabled = newSnoozeStatus
+        snoozeIsEnabled = forSnoozeIsEnabled
     }
-    
-    // MARK: - GeneralCountdownProtocol
     
     /// Interval at which a timer should be triggered for reminder
     var executionInterval: TimeInterval = UserConfiguration.snoozeLength

@@ -26,7 +26,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
         let sudoDogManager = getDogManager()
         if sudoDogManager.dogs.isEmpty == false {
             do {
-                try sudoDogManager.findDog(forDogId: parentDogId).dogLogs.addLog(newLog: newLog)
+                try sudoDogManager.findDog(forDogId: parentDogId).dogLogs.addLog(forLog: newLog)
             }
             catch {
                 ErrorManager.alert(forError: error)
@@ -44,7 +44,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
 
          if sudoDogManager.dogs.isEmpty == false {
                 let dog = try! sudoDogManager.findDog(forDogId: parentDogId)
-             dog.dogLogs.addLog(newLog: updatedLog)
+             dog.dogLogs.addLog(forLog: updatedLog)
 
          }
 
@@ -213,7 +213,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        setUpDropDown()
+        setupDropDown()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -223,7 +223,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
 
     // MARK: - Drop Down Functions
 
-    private func setUpDropDown() {
+    private func setupDropDown() {
 
         /// Finds the widthNeeded by the largest label, has a minimum and maximum possible along with subtracting the space taken by leading and trailing constraints.
         var neededWidthForLabel: CGFloat {
@@ -271,7 +271,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
         dropDown.dropDownUIViewIdentifier = ""
         dropDown.cellReusableIdentifier = "dropDownCell"
         dropDown.dataSource = self
-        dropDown.setUpDropDown(viewPositionReference: (CGRect(origin: self.view.safeAreaLayoutGuide.layoutFrame.origin, size: CGSize(width: neededWidthForLabel + (DropDownUIView.insetForLogFilter * 2), height: 0.0))), offset: 0.0)
+        dropDown.setupDropDown(viewPositionReference: (CGRect(origin: self.view.safeAreaLayoutGuide.layoutFrame.origin, size: CGSize(width: neededWidthForLabel + (DropDownUIView.insetForLogFilter * 2), height: 0.0))), offset: 0.0)
         dropDown.nib = UINib(nibName: "DropDownLogFilterTableViewCell", bundle: nil)
         dropDown.setRowHeight(height: DropDownUIView.rowHeightForLogFilter)
         self.view.addSubview(dropDown)

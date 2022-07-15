@@ -25,7 +25,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     func didAddReminder(sender: Sender, parentDogId: Int, forReminder reminder: Reminder) {
         let sudoDogManager = getDogManager()
         
-        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.addReminder(newReminder: reminder)
+        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.addReminder(forReminder: reminder)
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
         
@@ -35,7 +35,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     func didUpdateReminder(sender: Sender, parentDogId: Int, forReminder reminder: Reminder) {
         let sudoDogManager = getDogManager()
         
-        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.updateReminder(updatedReminder: reminder)
+        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.updateReminder(forReminder: reminder)
         
         setDogManager(sender: sender, newDogManager: sudoDogManager)
         
@@ -122,7 +122,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
         }
         
         let sudoDogManager = getDogManager()
-        sudoDogManager.addDog(newDog: newDog)
+        sudoDogManager.addDog(forDog: newDog)
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     
@@ -130,7 +130,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     func didUpdateDog(sender: Sender, updatedDog: Dog) {
         let sudoDogManager = getDogManager()
         // this function both can add new dogs or override old ones
-        sudoDogManager.addDog(newDog: updatedDog)
+        sudoDogManager.addDog(forDog: updatedDog)
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     
@@ -187,9 +187,6 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
         
     }
     
-    @IBOutlet private weak var didLogEventConfirmation: ScaledUIButton!
-    @IBOutlet private weak var didLogEventConfirmationBackground: ScaledUIButton!
-    
     @IBOutlet private weak var willAddButton: ScaledUIButton!
     @IBOutlet private weak var willAddButtonBackground: ScaledUIButton!
     
@@ -225,10 +222,6 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
         
         self.view.bringSubviewToFront(willAddButtonBackground)
         self.view.bringSubviewToFront(willAddButton)
-        
-        self.view.bringSubviewToFront(didLogEventConfirmationBackground)
-        self.view.bringSubviewToFront(didLogEventConfirmation)
-        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -246,7 +239,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     @objc private func willCreateNew(sender: UIButton) {
         // the senders tag indicates the parentDogId, if -1 then it means we are creating a new dog and if != -1 then it means we are creating a new reminder (as it has a parent dog)
         if sender.tag == -1 {
-            // BUG occassionally, when the user hits create a new dog, then menu 'freezes' for a 5ish seconds before opening menu
+            // TO DO BUG occassionally, when the user hits create a new dog, then menu 'freezes' for a 5ish seconds before opening menu
             self.willOpenDogMenu(forDogId: nil)
         }
         else {

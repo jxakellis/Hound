@@ -111,7 +111,7 @@ final class AlarmManager {
         // update information
         reminder.prepareForNextAlarm()
         
-        reminder.snoozeComponents.changeSnoozeIsEnabled(newSnoozeStatus: true)
+        reminder.snoozeComponents.changeSnoozeIsEnabled(forSnoozeIsEnabled: true)
         
         // make request to the server, if successful then we persist the data. If there is an error, then we discard to data to keep client and server in sync (as server wasn't able to update)
         RemindersRequest.update(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
@@ -223,7 +223,7 @@ final class AlarmManager {
         // Nest all the other cases inside this else statement as otherwise .oneTime alarms would make request with the above code then again down here.
         else {
             
-            reminder.changeIsSkipping(newSkipStatus: true)
+            reminder.changeIsSkipping(forIsSkipping: true)
             
             // make request to the server, if successful then we persist the data. If there is an error, then we discard to data to keep client and server in sync (as server wasn't able to update)
             RemindersRequest.update(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
@@ -262,7 +262,7 @@ final class AlarmManager {
         // this is the time that the reminder's next alarm was skipped. at this same moment, a log was added. If this log is still there, with it's date unmodified by the user, then we remove it.
         let dateOfLogToRemove = isSkippingLogDate
         
-        reminder.changeIsSkipping(newSkipStatus: false)
+        reminder.changeIsSkipping(forIsSkipping: false)
         
         // make request to the server, if successful then we persist the data. If there is an error, then we discard to data to keep client and server in sync (as server wasn't able to update)
         RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminder: reminder) { requestWasSuccessful1, _ in

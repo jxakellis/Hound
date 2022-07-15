@@ -60,6 +60,8 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // TO DO add introduction page that says a few sentences. Importantly, mention the dog and family member limits
+        
         oneTimeSetup()
         
         repeatableSetup()
@@ -210,7 +212,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
                 // update the local information to reflect the server change
                 FamilyConfiguration.isPaused = isPaused
                 if isPaused == false {
-                    // TO DO have server calculate reminderExecutionDates itself
+                    // TO DO FUTURE have server calculate reminderExecutionDates itself
                     // reminders are now unpaused, we must update the server with the new executionDates (can't calculate them itself)
                     DogsRequest.get(invokeErrorManager: true, dogManager: self.getDogManager()) { newDogManager, _ in
                         guard newDogManager != nil else {

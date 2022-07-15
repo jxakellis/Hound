@@ -41,6 +41,8 @@ final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
     
     func setup(forProduct product: SKProduct?) {
         
+        self.product = product
+        
         let activeFamilySubscriptionProduct = FamilyConfiguration.activeFamilySubscription.product
         
         guard let product: SKProduct = product, product.subscriptionPeriod != nil else {
@@ -52,8 +54,6 @@ final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
             subscriptionTierPricingDescriptionLabel.text = "Completely and always free! You get to benefit from the same features as paid subscribers. The only difference is family member and dog limits."
             return
         }
-        
-        self.product = product
         
         self.inAppPurchaseProduct = InAppPurchaseProduct(rawValue: product.productIdentifier) ?? .unknown
         

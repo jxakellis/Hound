@@ -23,6 +23,20 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         return false
     }
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        // get the current text, or use an empty string if that failed
+        let currentText = textField.text ?? ""
+        
+        // attempt to read the range they are trying to change, or exit if we can't
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        
+        // add their new text to the existing text
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        
+        // make sure the result is logCustomActionNameCharacterLimit
+        return updatedText.count <= LogConstant.logCustomActionNameCharacterLimit
+    }
+    
     // MARK: - UITextViewDelegate
     // if extra space is added, removes it and ends editing, makes done button function like done instead of adding new line
     func textViewDidChange(_ textView: UITextView) {
@@ -171,77 +185,85 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     @IBAction private func willAddLog(_ sender: Any) {
         dismissKeyboard()
         
-            // updating log
-            if parentDogIdToUpdate != nil && logToUpdate != nil {
-                logToUpdate!.logDate = logDateDatePicker.date
-                logToUpdate!.logNote = logNoteTextView.text ?? LogConstant.defaultLogNote
-                logToUpdate!.logAction = selectedLogAction ?? LogConstant.defaultLogAction
-                
-                if selectedLogAction == LogAction.custom {
-                    logToUpdate!.logCustomActionName = logCustomActionNameTextField.text
-                }
-                else {
-                    logToUpdate!.logCustomActionName = nil
-                }
+        do {
+            guard let selectedLogAction = selectedLogAction else {
+                throw LogError.logActionBlank
+            }
+            
+            // Check to see if we are updating or adding a log
+            guard let parentDogIdToUpdate = parentDogIdToUpdate, let logToUpdate = logToUpdate else {
+                // Adding a log
+                let newLog = Log(logAction: selectedLogAction, logCustomActionName: logCustomActionNameTextField.text, logDate: logDateDatePicker.date, logNote: logNoteTextView.text ?? LogConstant.defaultLogNote)
                 
                 addLogButton.beginQuerying()
                 addLogButtonBackground.beginQuerying(isBackgroundButton: true)
-                LogsRequest.update(invokeErrorManager: true, forDogId: parentDogIdToUpdate!, forLog: logToUpdate!) { requestWasSuccessful, _ in
+                LogsRequest.create(invokeErrorManager: true, forDogId: parentDogLabel.tag, forLog: newLog) { logId, _ in
                     self.addLogButton.endQuerying()
                     self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
-                    if requestWasSuccessful == true {
-                        // request was successful so we can now add the new logCustomActionName (if present)
-                        if self.logToUpdate!.logCustomActionName != nil && self.logToUpdate!.logCustomActionName!.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-                            LocalConfiguration.addLogCustomAction(forName: self.logToUpdate!.logCustomActionName!)
-                        }
-                        self.delegate.didUpdateLog(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogIdToUpdate!, updatedLog: self.logToUpdate!)
-                        self.navigationController?.popViewController(animated: true)
+                    
+                    guard let logId = logId else {
+                        return
                     }
                     
+                    // request was successful so we can now add the new logCustomActionName (if present)
+                    if newLog.logCustomActionName != nil && newLog.logCustomActionName!.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                        LocalConfiguration.addLogCustomAction(forName: newLog.logCustomActionName!)
+                    }
+                    newLog.logId = logId
+                    
+                    self.delegate.didAddLog(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogLabel.tag, newLog: newLog)
+                    self.navigationController?.popViewController(animated: true)
+                }
+                return
+            }
+            
+            // Updating a log
+            logToUpdate.logDate = logDateDatePicker.date
+            logToUpdate.logNote = logNoteTextView.text ?? LogConstant.defaultLogNote
+            logToUpdate.logAction = selectedLogAction
+            try logToUpdate.changeLogCustomActionName(forLogCustomActionName:
+                                                    selectedLogAction == LogAction.custom
+                                                  ? logCustomActionNameTextField.text
+                                                  : nil)
+            
+            addLogButton.beginQuerying()
+            addLogButtonBackground.beginQuerying(isBackgroundButton: true)
+            LogsRequest.update(invokeErrorManager: true, forDogId: parentDogIdToUpdate, forLog: logToUpdate) { requestWasSuccessful, _ in
+                self.addLogButton.endQuerying()
+                self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
+                if requestWasSuccessful == true {
+                    // request was successful so we can now add the new logCustomActionName (if present)
+                    if let logCustomActionName = logToUpdate.logCustomActionName, logCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                        LocalConfiguration.addLogCustomAction(forName: logCustomActionName)
+                    }
+                    self.delegate.didUpdateLog(sender: Sender(origin: self, localized: self), parentDogId: parentDogIdToUpdate, updatedLog: logToUpdate)
+                    self.navigationController?.popViewController(animated: true)
                 }
                 
             }
-            // adding log
-            else {
-                guard selectedLogAction != nil else {
-                    return ErrorManager.alert(forError: LogActionError.blankLogAction)
-                }
-                
-                let newLog = Log(logAction: selectedLogAction!, logCustomActionName: logCustomActionNameTextField.text, logDate: logDateDatePicker.date, logNote: logNoteTextView.text ?? LogConstant.defaultLogNote)
-                    
-                    addLogButton.beginQuerying()
-                    addLogButtonBackground.beginQuerying(isBackgroundButton: true)
-                    LogsRequest.create(invokeErrorManager: true, forDogId: parentDogLabel.tag, forLog: newLog) { logId, _ in
-                        self.addLogButton.endQuerying()
-                        self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
-                        if logId != nil {
-                            // request was successful so we can now add the new logCustomActionName (if present)
-                            if newLog.logCustomActionName != nil && newLog.logCustomActionName!.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-                                LocalConfiguration.addLogCustomAction(forName: newLog.logCustomActionName!)
-                            }
-                            newLog.logId = logId!
-                            
-                            self.delegate.didAddLog(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogLabel.tag, newLog: newLog)
-                            self.navigationController?.popViewController(animated: true)
-                        }
-                        
-                    }
-            }
-        
+        }
+        catch {
+            ErrorManager.alert(forError: error)
+        }
     }
     
     @IBOutlet private weak var removeLogBarButton: UIBarButtonItem!
     @IBAction private func willRemoveLog(_ sender: Any) {
+        
+        guard let parentDogIdToUpdate = parentDogIdToUpdate, let logToUpdate = logToUpdate else {
+            return
+        }
+        
         let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete this log?", message: nil, preferredStyle: .alert)
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
             
             // the user decided to delete so we must query server
-            LogsRequest.delete(invokeErrorManager: true, forDogId: self.parentDogIdToUpdate!, forLogId: self.logToUpdate!.logId) { requestWasSuccessful, _ in
+            LogsRequest.delete(invokeErrorManager: true, forDogId: parentDogIdToUpdate, forLogId: logToUpdate.logId) { requestWasSuccessful, _ in
                     if requestWasSuccessful == true {
                         self.delegate.didRemoveLog(sender: Sender(origin: self, localized: self),
-                                                   parentDogId: self.parentDogIdToUpdate!,
-                                                   logId: self.logToUpdate!.logId)
+                                                   parentDogId: parentDogIdToUpdate,
+                                                   logId: logToUpdate.logId)
                         self.navigationController?.popViewController(animated: true)
                     }
                 }
@@ -371,25 +393,25 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     private func oneTimeSetup() {
         setupViews()
         setupValues()
-        setUpGestures()
+        setupGestures()
         
         /// Requires log information to be present. Sets up the values of different variables that is found out from information passed
         func setupValues() {
-            
-            // updating log
-            if parentDogIdToUpdate != nil && logToUpdate != nil {
+             if let parentDogIdToUpdate = parentDogIdToUpdate, let logToUpdate = logToUpdate {
                 pageTitle!.title = "Edit Log"
                 removeLogBarButton.isEnabled = true
                 
-                familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: logToUpdate?.userId)?.displayFullName ?? "Unknown⚠️"
+                familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: logToUpdate.userId)?.displayFullName ?? "Unknown⚠️"
                 
-                let dog = try! dogManager.findDog(forDogId: parentDogIdToUpdate!)
+                let dog = try! dogManager.findDog(forDogId: parentDogIdToUpdate)
                 parentDogLabel.text = dog.dogName
                 parentDogLabel.tag = dog.dogId
                 
-                selectedLogActionIndexPath = IndexPath(row: LogAction.allCases.firstIndex(of: logToUpdate!.logAction)!, section: 0)
+                selectedLogActionIndexPath = IndexPath(row: LogAction.allCases.firstIndex(of: logToUpdate.logAction)!, section: 0)
+                
+                familyMemberNameLabel.isUserInteractionEnabled = false
+                familyMemberNameLabel.isEnabled = false
             }
-            // not updating
             else {
                 pageTitle!.title = "Create Log"
                 removeLogBarButton.isEnabled = false
@@ -400,10 +422,10 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 parentDogLabel.tag = dogManager.dogs[0].dogId
                 
                 selectedLogActionIndexPath = nil
+                
+                familyMemberNameLabel.isUserInteractionEnabled = true
+                familyMemberNameLabel.isEnabled = true
             }
-            
-            familyMemberNameLabel.isUserInteractionEnabled = false
-            familyMemberNameLabel.isEnabled = false
             
             // this is for the label for the logAction dropdown, so we only want the names to be the defaults. I.e. if our log is "Custom" with "someCustomActionName", the logActionLabel should only show "Custom" and then the logCustomActionNameTextField should be "someCustomActionName".
             logActionLabel.text = logToUpdate?.logAction.displayActionName(logCustomActionName: nil, isShowingAbreviatedCustomActionName: false)
@@ -429,22 +451,17 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             initalLogCustomActionName = logCustomActionNameTextField.text
             initalLogDate = logDateDatePicker.date
             initalLogNote = logNoteTextView.text
-            
         }
         
         /// Requires log information to be present. Sets up gestureRecognizer for dog selector drop down
-        func setUpGestures() {
-            // updating a log
-            if parentDogIdToUpdate != nil && logToUpdate != nil {
-                // cannot edit the parent dog
-                parentDogLabel.isUserInteractionEnabled = false
-                parentDogLabel.isEnabled = false
-            }
+        func setupGestures() {
+            // Only allow use of parentDogLabel if they are creating a log, not updating
+            parentDogLabel.isUserInteractionEnabled = parentDogIdToUpdate == nil
+            parentDogLabel.isEnabled = parentDogIdToUpdate == nil
+            
             // adding a log
-            else {
+            if parentDogIdToUpdate == nil && logToUpdate == nil {
                 // can edit the parent dog, have to explictly enable isUserInteractionEnabled to be able to click
-                parentDogLabel.isUserInteractionEnabled = true
-                parentDogLabel.isEnabled = true
                 let parentDogLabelTapGesture = UITapGestureRecognizer(target: self, action: #selector(parentDogLabelTapped))
                 parentDogLabelTapGesture.delegate = self
                 parentDogLabelTapGesture.cancelsTouchesInView = false
@@ -484,12 +501,12 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     }
     
     private func repeatableSetup() {
-        setUpDropDowns()
-        func setUpDropDowns() {
+        setupDropDowns()
+        func setupDropDowns() {
             dropDownParentDog.dropDownUIViewIdentifier = "dropDownParentDog"
             dropDownParentDog.cellReusableIdentifier = "dropDownCell"
             dropDownParentDog.dataSource = self
-            dropDownParentDog.setUpDropDown(viewPositionReference: parentDogLabel.frame, offset: 2.0)
+            dropDownParentDog.setupDropDown(viewPositionReference: parentDogLabel.frame, offset: 2.0)
             dropDownParentDog.nib = UINib(nibName: "DropDownTableViewCell", bundle: nil)
             dropDownParentDog.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
             view.addSubview(dropDownParentDog)
@@ -497,7 +514,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             dropDownLogAction.dropDownUIViewIdentifier = "dropDownLogAction"
             dropDownLogAction.cellReusableIdentifier = "dropDownCell"
             dropDownLogAction.dataSource = self
-            dropDownLogAction.setUpDropDown(viewPositionReference: logActionLabel.frame, offset: 2.0)
+            dropDownLogAction.setupDropDown(viewPositionReference: logActionLabel.frame, offset: 2.0)
             dropDownLogAction.nib = UINib(nibName: "DropDownTableViewCell", bundle: nil)
             dropDownLogAction.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
             view.addSubview(dropDownLogAction)

@@ -1,5 +1,5 @@
 //
-//  ReminderActionError.swift
+//  ReminderError.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 4/6/22.
@@ -8,6 +8,7 @@
 
 import Foundation
 
-enum ReminderActionError: String, Error {
-    case blankReminderAction = "Your reminder has no action, try selecting one!"
+enum ReminderError: String, Error {
+    case reminderActionBlank = "Your reminder has no action, try selecting one!"
+    case reminderCustomActionNameCharacterLimitExceeded = "Your reminders's custom name is too long, please try a shorter one."
 }

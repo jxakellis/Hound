@@ -280,7 +280,7 @@ async function unpause(connection, familyId) {
   // currently no need to recreate/refresh alarm notifications. This is because the executionDates will all still be nil
   // User needs to update reminders with the executioDates calculated on their device
 
-  // TO DO have the server calculate the new reminderExecutionDates (if we do this, then have alarm notifications created for family)
+  // TO DO FUTURE have the server calculate the new reminderExecutionDates (if we do this, then have alarm notifications created for family)
 }
 
 module.exports = { updateFamilyForUserIdFamilyId };

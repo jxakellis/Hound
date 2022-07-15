@@ -277,9 +277,15 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     /// This is a user selected label for the reminder. It dictates the name that is displayed in the UI for this reminder.
     var reminderAction: ReminderAction = ReminderConstant.defaultReminderAction
     
-    // TO DO limit reminderCustomActionName to 32 characters
     /// If the reminder's type is custom, this is the name for it.
-    var reminderCustomActionName: String? = ReminderConstant.defaultReminderCustomActionName
+    private(set) var reminderCustomActionName: String? = ReminderConstant.defaultReminderCustomActionName
+    func changeReminderCustomActionName(forReminderCustomActionName: String?) throws {
+        guard forReminderCustomActionName?.count ?? 0 <= ReminderConstant.reminderCustomActionNameCharacterLimit else {
+            throw ReminderError.reminderCustomActionNameCharacterLimitExceeded
+        }
+        
+        reminderCustomActionName = forReminderCustomActionName
+    }
     
     // Timing
     
@@ -381,19 +387,19 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             // the time is supposed to countdown for minus the time it has countdown
             return countdownComponents.executionInterval - countdownComponents.intervalElapsed
         case .weekly:
-            if self.reminderExecutionBasis.distance(to: self.weeklyComponents.previousExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis)) > 0 {
+            if self.reminderExecutionBasis.distance(to: self.weeklyComponents.previousExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis)) > 0 {
                 return nil
             }
             else {
-                return Date().distance(to: self.weeklyComponents.nextExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis))
+                return Date().distance(to: self.weeklyComponents.nextExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis))
             }
         case .monthly:
             if self.reminderExecutionBasis.distance(to:
-                                                self.monthlyComponents.previousExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis)) > 0 {
+                                                self.monthlyComponents.previousExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis)) > 0 {
                 return nil
             }
             else {
-                return Date().distance(to: self.monthlyComponents.nextExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis))
+                return Date().distance(to: self.monthlyComponents.nextExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis))
             }
         case .snooze:
             // the time is supposed to countdown for minus the time it has countdown
@@ -418,7 +424,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
                 return Date()
             }
             else {
-                return weeklyComponents.nextExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis)
+                return weeklyComponents.nextExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis)
             }
         case .monthly:
             // If the intervalRemaining is nil than means there is no time left
@@ -426,7 +432,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
                 return Date()
             }
             else {
-                return monthlyComponents.nextExecutionDate(reminderExecutionBasis: self.reminderExecutionBasis)
+                return monthlyComponents.nextExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis)
             }
         case .snooze:
             return Date.reminderExecutionDate(lastExecution: reminderExecutionBasis, interval: intervalRemaining!)
@@ -443,7 +449,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         
         hasAlarmPresentationHandled = false
         
-        snoozeComponents.changeSnoozeIsEnabled(newSnoozeStatus: false)
+        snoozeComponents.changeSnoozeIsEnabled(forSnoozeIsEnabled: false)
         snoozeComponents.intervalElapsed = 0.0
         
         if reminderType == .countdown {
@@ -463,10 +469,10 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     /// Finds the date which the reminder should be transformed from isSkipping to not isSkipping. This is the date at which the skipped reminder would have occured.
     func unskipDate() -> Date? {
         if currentReminderMode == .monthly && monthlyComponents.isSkipping == true {
-            return monthlyComponents.notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
+            return monthlyComponents.notSkippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
         }
         else if currentReminderMode == .weekly && weeklyComponents.isSkipping == true {
-            return weeklyComponents.notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
+            return weeklyComponents.notSkippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
         }
         else {
             return nil
@@ -474,26 +480,26 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     }
     
     /// Call this function when a user driven action directly intends to change the skip status of the weekly or monthy components. This function only timing related data, no logs are added or removed. Additioanlly, if oneTime is getting skipped, it must be deleted externally.
-    func changeIsSkipping(newSkipStatus: Bool) {
+    func changeIsSkipping(forIsSkipping isSkipping: Bool) {
         switch reminderType {
         case .oneTime: break
             // can only skip, can't unskip
             // do nothing inside the reminder, this is handled externally
         case .countdown:
             // can only skip, can't unskip
-            if newSkipStatus == true {
+            if isSkipping == true {
                 // skipped, reset to now so the reminder will start counting down all over again
                 reminderExecutionBasis = Date()
             }
         case .weekly:
             // weekly can skip and unskip
-            guard newSkipStatus != weeklyComponents.isSkipping else {
+            guard isSkipping != weeklyComponents.isSkipping else {
                 break
             }
             // store new state
-            weeklyComponents.isSkipping = newSkipStatus
+            weeklyComponents.isSkipping = isSkipping
             
-            if newSkipStatus == true {
+            if isSkipping == true {
                 // skipping
                 weeklyComponents.isSkippingDate = Date()
             }
@@ -503,13 +509,13 @@ final class Reminder: NSObject, NSCoding, NSCopying {
                 weeklyComponents.isSkippingDate = nil
             }
         case .monthly:
-            guard newSkipStatus != monthlyComponents.isSkipping else {
+            guard isSkipping != monthlyComponents.isSkipping else {
                 return
             }
             // store new state
-            monthlyComponents.isSkipping = newSkipStatus
+            monthlyComponents.isSkipping = isSkipping
             
-            if newSkipStatus == true {
+            if isSkipping == true {
                 // skipping
                 monthlyComponents.isSkippingDate = Date()
             }

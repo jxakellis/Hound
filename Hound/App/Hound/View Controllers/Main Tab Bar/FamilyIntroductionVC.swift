@@ -92,7 +92,7 @@ final class FamilyIntroductionViewController: UIViewController, UITextFieldDeleg
                 if dogId != nil {
                     // go to next page if dog good
                     dog.dogId = dogId!
-                    self.dogManager.addDog(newDog: dog)
+                    self.dogManager.addDog(forDog: dog)
                     LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = true
                     self.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController")
                 }

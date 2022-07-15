@@ -1,5 +1,5 @@
 //
-//  LogActionError.swift
+//  LogError.swift
 //  Hound
 //
 //  Created by Jonathan Xakellis on 4/6/22.
@@ -8,6 +8,7 @@
 
 import Foundation
 
-enum LogActionError: String, Error {
-    case blankLogAction = "Your log has no action, try selecting one!"
+enum LogError: String, Error {
+    case logActionBlank = "Your log has no action, try selecting one!"
+    case logCustomActionNameCharacterLimitExceeded = "Your log's custom name is too long, please try a shorter one."
 }

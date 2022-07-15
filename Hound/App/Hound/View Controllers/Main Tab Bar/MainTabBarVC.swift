@@ -40,7 +40,7 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
     func didAddLog(sender: Sender, dogId: Int, log: Log) {
         let sudoDogManager = getDogManager()
         let dog = try! sudoDogManager.findDog(forDogId: dogId)
-        dog.dogLogs.addLog(newLog: log)
+        dog.dogLogs.addLog(forLog: log)
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     
@@ -54,7 +54,7 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
     func didUpdateReminder(sender: Sender, dogId: Int, reminder: Reminder) {
         let sudoDogManager = getDogManager()
         let dog = try! sudoDogManager.findDog(forDogId: dogId)
-        dog.dogReminders.updateReminder(updatedReminder: reminder)
+        dog.dogReminders.updateReminder(forReminder: reminder)
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
     

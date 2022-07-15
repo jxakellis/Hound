@@ -39,12 +39,12 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
     
     func didAddReminder(forReminder reminder: Reminder) {
         shouldPromptSaveWarning = true
-        modifiableDogReminders.addReminder(newReminder: reminder)
+        modifiableDogReminders.addReminder(forReminder: reminder)
     }
     
     func didUpdateReminder(forReminder reminder: Reminder) {
         shouldPromptSaveWarning = true
-        modifiableDogReminders.updateReminder(updatedReminder: reminder)
+        modifiableDogReminders.updateReminder(forReminder: reminder)
     }
     
     func didRemoveReminder(reminderId: Int) {
@@ -59,11 +59,23 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         return false
     }
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        // get the current text, or use an empty string if that failed
+        let currentText = textField.text ?? ""
+        
+        // attempt to read the range they are trying to change, or exit if we can't
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        
+        // add their new text to the existing text
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        
+        // make sure the result is under dogNameCharacterLimit
+        return updatedText.count <= DogConstant.dogNameCharacterLimit
+    }
+    
     // MARK: - IB
     
     @IBOutlet private weak var dogName: BorderedUITextField!
-    
-    @IBOutlet private weak var embeddedTableView: UIView!
     
     @IBOutlet weak var dogIcon: ScaledUIButton!
     
@@ -80,7 +92,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         do {
             // try to initalize from a passed dog, if non exists, then we make a new one
             dog = try dogToUpdate ?? Dog(dogName: dogName.text)
-            try dog.changeDogName(newDogName: dogName.text)
+            try dog.changeDogName(forDogName: dogName.text)
             if dogIcon.imageView?.image != nil && dogIcon.imageView!.image != DogConstant.chooseIconForDog {
                 dog.dogIcon = dogIcon.imageView!.image!
             }
@@ -90,49 +102,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
             return
         }
         
-        // not updating, therefore the dog is being created new and the reminders are too
-        if isUpdating == false {
-            
-            addDogButton.beginQuerying()
-            addDogButtonBackground.beginQuerying(isBackgroundButton: true)
-            DogsRequest.create(invokeErrorManager: true, forDog: dog) { dogId, _ in
-                if dogId != nil {
-                    // dog was successfully created
-                    dog.dogId = dogId!
-                    
-                    // If the user created countdown reminder(s) and then sat on the create a dog page, those countdown reminders will be 'counting down' as time has passed from their reminderExecutionBasis's. Therefore we must reset their executionBasis so they are fresh.
-                    let createdReminders = self.modifiableDogReminders.reminders
-                    createdReminders.forEach { reminder in
-                        guard reminder.reminderType == .countdown else {
-                            return
-                        }
-                        reminder.prepareForNextAlarm()
-                    }
-                    
-                    RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: createdReminders) { reminders, _ in
-                        self.addDogButton.endQuerying()
-                        self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
-                        if reminders != nil {
-                            // dog and reminders successfully created, so we can proceed
-                            dog.dogReminders.addReminders(newReminders: reminders!)
-                            self.delegate.didAddDog(sender: Sender(origin: self, localized: self), newDog: dog)
-                            self.navigationController?.popViewController(animated: true)
-                        }
-                        else {
-                            // reminders were unable to be created so we delete the dog to remove everything.
-                            DogsRequest.delete(invokeErrorManager: false, forDogId: dog.dogId) { _, _ in
-                                // do nothing, we can't do more even if it fails.
-                            }
-                        }
-                    }
-                }
-                else {
-                    self.addDogButton.endQuerying()
-                    self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
-                }
-            }
-        }
-        else {
+        if dogToUpdate != nil {
             let reminderDifference = dog.dogReminders.groupReminders(newReminders: modifiableDogReminders.reminders)
             // same reminders, not used currently
             _ = reminderDifference.0
@@ -151,7 +121,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
             // do nothing with reminders that are the same
             // add created reminders when they are created and assigned their id
             // add updated reminders as they already have their reminderId
-            dog.dogReminders.updateReminder(updatedReminders: updatedReminders)
+            dog.dogReminders.updateReminders(forReminders: updatedReminders)
             for deletedReminder in deletedReminders {
                 try! dog.dogReminders.removeReminder(forReminderId: deletedReminder.reminderId)
             }
@@ -159,92 +129,131 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
             addDogButtonBackground.beginQuerying(isBackgroundButton: true)
             // first query to update the dog itself (independent of any reminders)
             DogsRequest.update(invokeErrorManager: true, forDog: dog) { requestWasSuccessful1, _ in
-                if requestWasSuccessful1 == true {
-                    // the dog was successfully updated, so we attempt to take actions for the reminders
-                    var queryFailure = false
-                    var queriedCreatedReminders = false
-                    var queriedUpdatedReminders = false
-                    var queriedDeletedReminders = false
-                    
-                    // check to see if we need to create any reminders on the server
-                    if createdReminders.count > 0 {
-                        // we have reminders created that need to be created on the server
-                        RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: createdReminders) { reminders, _ in
-                            if reminders != nil {
-                                dog.dogReminders.addReminders(newReminders: reminders!)
-                                queriedCreatedReminders = true
-                            }
-                            else {
-                                queryFailure = true
-                            }
-                            checkForCompletion()
-                        }
-                    }
-                    // no reminders to be created on the server
-                    else {
-                        queriedCreatedReminders = true
-                        checkForCompletion()
-                    }
-                    // check to see if we need to update any reminders on the server
-                    if updatedReminders.count > 0 {
-                        RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: updatedReminders) { requestWasSuccessful2, _ in
-                            if requestWasSuccessful2 == true {
-                                queriedUpdatedReminders = true
-                            }
-                            else {
-                                queryFailure = true
-                            }
-                            checkForCompletion()
-                        }
-                    }
-                    // no reminders to be updated on the server
-                    else {
-                        queriedUpdatedReminders = true
-                        checkForCompletion()
-                    }
-                    // check to see if we need to delete any reminders on the server
-                    if deletedReminders.count > 0 {
-                        
-                        RemindersRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forReminders: deletedReminders) { requestWasSuccessful2, _ in
-                            if requestWasSuccessful2 == true {
-                                queriedDeletedReminders = true
-                            }
-                            else {
-                                queryFailure = true
-                            }
-                            checkForCompletion()
-                        }
-                    }
-                    // no reminders to be deleted on the server
-                    else {
-                        queriedDeletedReminders = true
-                        checkForCompletion()
-                    }
-                    
-                    // we want to send a message about updating the dog if everything compelted
-                    func checkForCompletion() {
-                        guard queryFailure == false else {
-                            self.addDogButton.endQuerying()
-                            self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
-                            return
-                        }
-                        if queriedCreatedReminders == true && queriedUpdatedReminders == true && queriedDeletedReminders == true {
-                            self.addDogButton.endQuerying()
-                            self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
-                            self.delegate.didUpdateDog(sender: Sender(origin: self, localized: self), updatedDog: dog)
-                            self.navigationController?.popViewController(animated: true)
-                        }
-                    }
-                    
-                }
-                else {
+                guard requestWasSuccessful1 else {
                     self.addDogButton.endQuerying()
                     self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
+                    return
+                }
+                // the dog was successfully updated, so we attempt to take actions for the reminders
+                var queryFailure = false
+                var queriedCreatedReminders = false
+                var queriedUpdatedReminders = false
+                var queriedDeletedReminders = false
+                
+                // check to see if we need to create any reminders on the server
+                if createdReminders.count > 0 {
+                    // we have reminders created that need to be created on the server
+                    RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: createdReminders) { reminders, _ in
+                        if reminders != nil {
+                            dog.dogReminders.addReminders(forReminders: reminders!)
+                            queriedCreatedReminders = true
+                        }
+                        else {
+                            queryFailure = true
+                        }
+                        checkForCompletion()
+                    }
+                }
+                // no reminders to be created on the server
+                else {
+                    queriedCreatedReminders = true
+                    checkForCompletion()
+                }
+                // check to see if we need to update any reminders on the server
+                if updatedReminders.count > 0 {
+                    RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: updatedReminders) { requestWasSuccessful2, _ in
+                        if requestWasSuccessful2 == true {
+                            queriedUpdatedReminders = true
+                        }
+                        else {
+                            queryFailure = true
+                        }
+                        checkForCompletion()
+                    }
+                }
+                // no reminders to be updated on the server
+                else {
+                    queriedUpdatedReminders = true
+                    checkForCompletion()
+                }
+                // check to see if we need to delete any reminders on the server
+                if deletedReminders.count > 0 {
+                    
+                    RemindersRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forReminders: deletedReminders) { requestWasSuccessful2, _ in
+                        if requestWasSuccessful2 == true {
+                            queriedDeletedReminders = true
+                        }
+                        else {
+                            queryFailure = true
+                        }
+                        checkForCompletion()
+                    }
+                }
+                // no reminders to be deleted on the server
+                else {
+                    queriedDeletedReminders = true
+                    checkForCompletion()
+                }
+                
+                // we want to send a message about updating the dog if everything compelted
+                func checkForCompletion() {
+                    guard queryFailure == false else {
+                        self.addDogButton.endQuerying()
+                        self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
+                        return
+                    }
+                    if queriedCreatedReminders == true && queriedUpdatedReminders == true && queriedDeletedReminders == true {
+                        self.addDogButton.endQuerying()
+                        self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
+                        self.delegate.didUpdateDog(sender: Sender(origin: self, localized: self), updatedDog: dog)
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                }
+                
+            }
+        }
+        else {
+            // not updating, therefore the dog is being created new and the reminders are too
+            
+            addDogButton.beginQuerying()
+            addDogButtonBackground.beginQuerying(isBackgroundButton: true)
+            DogsRequest.create(invokeErrorManager: true, forDog: dog) { dogId, _ in
+                guard let dogId = dogId else {
+                    self.addDogButton.endQuerying()
+                    self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
+                    return
+                }
+                
+                // dog was successfully created
+                dog.dogId = dogId
+                
+                // If the user created countdown reminder(s) and then sat on the create a dog page, those countdown reminders will be 'counting down' as time has passed from their reminderExecutionBasis's. Therefore we must reset their executionBasis so they are fresh.
+                let createdReminders = self.modifiableDogReminders.reminders
+                createdReminders.forEach { reminder in
+                    guard reminder.reminderType == .countdown else {
+                        return
+                    }
+                    reminder.prepareForNextAlarm()
+                }
+                
+                RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: createdReminders) { reminders, _ in
+                    self.addDogButton.endQuerying()
+                    self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
+                    if reminders != nil {
+                        // dog and reminders successfully created, so we can proceed
+                        dog.dogReminders.addReminders(forReminders: reminders!)
+                        self.delegate.didAddDog(sender: Sender(origin: self, localized: self), newDog: dog)
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                    else {
+                        // reminders were unable to be created so we delete the dog to remove everything.
+                        DogsRequest.delete(invokeErrorManager: false, forDogId: dog.dogId) { _, _ in
+                            // do nothing, we can't do more even if it fails.
+                        }
+                    }
                 }
             }
-            
         }
-        
     }
     
     @IBOutlet weak var dogRemoveButton: UIBarButtonItem!
@@ -314,13 +323,6 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
     
     /// VC uses this to initalize its values, its absense or presense indicates whether or not we are editing or creating a dog
     var dogToUpdate: Dog?
-    var isUpdating: Bool {
-        if dogToUpdate == nil {
-            return false
-        }
-        else {
-            return true
-        }}
     
     var initalDogName: String?
     var initalDogIcon: UIImage?
@@ -378,8 +380,24 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         dogIcon.layer.masksToBounds = true
         dogIcon.layer.cornerRadius = dogIcon.frame.width/2
         
-        // new dog
-        if dogToUpdate == nil {
+        if let dogToUpdate = dogToUpdate {
+            // Updating a dog
+            dogRemoveButton.isEnabled = true
+            self.navigationItem.title = "Edit Dog"
+            
+            dogName.text = dogToUpdate.dogName
+            if dogToUpdate.dogIcon.isEqualToImage(image: DogConstant.defaultDogIcon) {
+                dogIcon.setImage(DogConstant.chooseIconForDog, for: .normal)
+            }
+            else {
+                dogIcon.setImage(dogToUpdate.dogIcon, for: .normal)
+            }
+            // has to copy reminders so changed that arent saved don't use reference data property to make actual modification
+            modifiableDogReminders = dogToUpdate.dogReminders.copy() as? ReminderManager
+            dogsReminderNavigationViewController.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: modifiableDogReminders.copy() as! ReminderManager)
+        }
+        else {
+            // New dog
             dogRemoveButton.isEnabled = false
             self.navigationItem.title = "Create Dog"
             
@@ -388,22 +406,6 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
             modifiableDogReminders = ReminderManager(initReminders: ReminderConstant.defaultReminders)
             dogsReminderNavigationViewController.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: modifiableDogReminders.copy() as! ReminderManager)
             // no need to pass reminders to dogsReminderNavigationViewController as reminders are empty
-        }
-        // updating dog
-        else {
-            dogRemoveButton.isEnabled = true
-            self.navigationItem.title = "Edit Dog"
-            
-            dogName.text = dogToUpdate!.dogName
-            if dogToUpdate!.dogIcon.isEqualToImage(image: DogConstant.defaultDogIcon) {
-                dogIcon.setImage(DogConstant.chooseIconForDog, for: .normal)
-            }
-            else {
-                dogIcon.setImage(dogToUpdate!.dogIcon, for: .normal)
-            }
-            // has to copy reminders so changed that arent saved don't use reference data property to make actual modification
-            modifiableDogReminders = dogToUpdate!.dogReminders.copy() as? ReminderManager
-            dogsReminderNavigationViewController.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: modifiableDogReminders.copy() as! ReminderManager)
         }
         
         initalDogName = dogName.text

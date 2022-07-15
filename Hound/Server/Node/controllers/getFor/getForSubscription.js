@@ -56,7 +56,7 @@ async function getAllSubscriptionsForFamilyId(connection, familyId) {
     throw new ValidationError('connection or familyId missing', global.constant.error.value.MISSING);
   }
 
-  // TO DO implement lastSubscriptionSyncronization properly for this so we only sync new subscriptions that the user doesn't have stored
+  // TO DO FUTURE implement lastSubscriptionSyncronization properly for this so we only sync new subscriptions that the user doesn't have stored
 
   // find all of the family's subscriptions
   const subscriptionHistory = await databaseQuery(

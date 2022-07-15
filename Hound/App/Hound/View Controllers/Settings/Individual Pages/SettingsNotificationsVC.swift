@@ -69,7 +69,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        setUpDropDown()
+        setupDropDown()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -353,12 +353,12 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     
     // MARK: Notification Sound Drop Down Functions
     
-    private func setUpDropDown() {
+    private func setupDropDown() {
         /// only one dropdown used on the dropdown instance so no identifier needed
         dropDown.dropDownUIViewIdentifier = ""
         dropDown.cellReusableIdentifier = "dropDownCell"
         dropDown.dataSource = self
-        dropDown.setUpDropDown(viewPositionReference: notificationSoundLabel.frame, offset: 0.0)
+        dropDown.setupDropDown(viewPositionReference: notificationSoundLabel.frame, offset: 0.0)
         dropDown.nib = UINib(nibName: "DropDownTableViewCell", bundle: nil)
         dropDown.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
         scrollView.addSubview(dropDown)

@@ -6,7 +6,11 @@ function createTerminateNotification(userId) {
     return;
   }
   // don't perform any checks as there are too many. we would have to make sure the user has notifications on, has loud notifications on, has an enabled/upcoming reminder, etc.
-  sendAPNForUser(userId, global.constant.apn.category.TERMINATE, 'Oops, you may have terminated Hound!', "Your notifications won't ring properly if the app isn't running.", {});
+  // Maxmium possible length: 27 (raw) + 0 (variable) = 27
+  const alertTitle = 'Oops, you terminated Hound!';
+  // Maxmium possible length: 64 (raw) + 0 (variable) = 64
+  const alertBody = "Your upcoming alarms won't ring properly if Hound isn't running.";
+  sendAPNForUser(userId, global.constant.apn.category.TERMINATE, alertTitle, alertBody, {});
 }
 
 module.exports = { createTerminateNotification };

@@ -33,7 +33,7 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
     /// When this function is called through a delegate, it adds the information to the list of reminders and updates the cells to display it
     func didAddReminder(sender: Sender, forReminder reminder: Reminder) {
         let sudoReminderManager = getReminderManager()
-        sudoReminderManager.addReminder(newReminder: reminder)
+        sudoReminderManager.addReminder(forReminder: reminder)
         setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
         
         delegate.didAddReminder(forReminder: reminder)
@@ -42,7 +42,7 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
     /// When this function is called through a delegate, it adds the information to the list of reminders and updates the cells to display it
     func didUpdateReminder(sender: Sender, forReminder reminder: Reminder) {
         let sudoReminderManager = getReminderManager()
-        sudoReminderManager.updateReminder(updatedReminder: reminder)
+        sudoReminderManager.updateReminder(forReminder: reminder)
         setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
         
         delegate.didUpdateReminder(forReminder: reminder)

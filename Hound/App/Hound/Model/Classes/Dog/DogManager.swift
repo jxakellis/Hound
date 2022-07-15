@@ -39,7 +39,7 @@ final class DogManager: NSObject, NSCopying, NSCoding {
     convenience init(forDogs dogs: [Dog]) {
         self.init()
         // verifys dogs and fixes if broken
-        self.addDogs(newDogs: dogs)
+        self.addDogs(forDogs: dogs)
     }
     
     /// Init from an array of dog JSON
@@ -62,31 +62,31 @@ final class DogManager: NSObject, NSCopying, NSCoding {
     private(set) var dogs: [Dog] = []
     
     /// Helper function allows us to use the same logic for addDog and addDogs and allows us to only sort at the end. Without this function, addDogs would invoke addDog repeadly and sortDogs() with each call.
-    func addDogWithoutSorting(newDog: Dog) {
+    func addDogWithoutSorting(forDog: Dog) {
         // If we discover a newDog has the same dogId as an existing dog, we replace that existing dog with the new dog BUT we first add the existing reminders and logs to the new dog's reminders and logs.
-        for (currentDogIndex, currentDog) in dogs.enumerated().reversed() where currentDog.dogId == newDog.dogId {
+        for (dogIndex, dog) in dogs.enumerated().reversed() where dog.dogId == forDog.dogId {
             // we should combine the currentDog's reminders/logs into the new dog
-            newDog.combine(withOldDog: currentDog)
-            newDog.dogIcon = currentDog.dogIcon
-            dogs.remove(at: currentDogIndex)
+            forDog.combine(withOldDog: dog)
+            forDog.dogIcon = dog.dogIcon
+            dogs.remove(at: dogIndex)
             break
         }
         
-        dogs.append(newDog)
+        dogs.append(forDog)
     }
     
     /// Adds a dog to dogs, checks to see if the dog itself is valid, e.g. its dogId is unique. Currently override other dog with the same dogId
-    func addDog(newDog: Dog) {
+    func addDog(forDog dog: Dog) {
         
-        addDogWithoutSorting(newDog: newDog)
+        addDogWithoutSorting(forDog: dog)
         
         sortDogs()
     }
     
-    /// Adds array of dogs with addDog(newDog: Dog) repition  (but only sorts once at the end to be more efficent)
-    func addDogs(newDogs: [Dog]) {
-        for newDog in newDogs {
-            addDogWithoutSorting(newDog: newDog)
+    /// Adds array of dogs with addDog(forDog: Dog) repition  (but only sorts once at the end to be more efficent)
+    func addDogs(forDogs: [Dog]) {
+        for dog in forDogs {
+            addDogWithoutSorting(forDog: dog)
         }
         
         sortDogs()
@@ -320,7 +320,7 @@ extension DogManager {
     /// Combines all of the dogs, reminders, and logs in union fashion to the dogManager. If a dog, reminder, or log exists in either of the dogManagers, then they will be present after this function is done. Dogs, reminders, or logs in the newDogManager (this object) overwrite dogs, reminders, or logs in the oldDogManager. Note: if one dog is to overwrite another dog, it will first combine the reminder/logs, again the reminders/logs of the newDog will take precident over the reminders/logs of the oldDog.
     func combine(withOldDogManager oldDogManager: DogManager) {
         // the addDogs function overwrites the dog info (e.g. dogName) but combines the reminders / logs in the event that the oldDogManager and the newDogManager both contain a dog with the same dogId. Therefore, we must add the dogs to the oldDogManager (allowing the newDogManager to overwrite the oldDogManager dogs if there is an overlap)
-        oldDogManager.addDogs(newDogs: self.dogs)
+        oldDogManager.addDogs(forDogs: self.dogs)
         // now that the oldDogManager contains its original dogs, our new dogs, and has had its old dogs overwritten (in the case old & new both had a dog with same dogId), we have an updated array.
         self.dogs = oldDogManager.dogs
         sortDogs()

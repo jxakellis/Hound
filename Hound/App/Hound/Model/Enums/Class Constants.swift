@@ -11,6 +11,7 @@ import UIKit
 enum SubscriptionConstant {
     static var defaultSubscription: Subscription { return Subscription(transactionId: nil, product: defaultSubscriptionProduct, userId: nil, subscriptionPurchaseDate: nil, subscriptionExpiration: nil, subscriptionNumberOfFamilyMembers: defaultSubscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs: defaultSubscriptionNumberOfDogs, subscriptionIsActive: true) }
     static var defaultSubscriptionProduct = InAppPurchaseProduct.default
+    static var defaultUnknownProduct = InAppPurchaseProduct.unknown
     static var defaultSubscriptionNumberOfFamilyMembers = 1
     static var defaultSubscriptionNumberOfDogs = 2
 }
@@ -26,7 +27,7 @@ enum DogManagerConstant {
     static var defaultDogManager: DogManager {
         let dogManager = DogManager()
         
-        dogManager.addDog(newDog: DogManagerConstant.userDefaultDog)
+        dogManager.addDog(forDog: DogManagerConstant.userDefaultDog)
         
         return dogManager
     }
@@ -37,6 +38,7 @@ enum DogConstant {
     static let defaultDogIcon: UIImage = UIImage.init(named: "pawFullResolutionWhite")!
     static let defaultDogId: Int = -1
     static let chooseIconForDog: UIImage = UIImage.init(named: "chooseIconForDog")!
+    static let dogNameCharacterLimit: Int = 32
 }
 
 enum LogConstant {
@@ -50,6 +52,7 @@ enum LogConstant {
     static var defaultLogDate: Date { return Date() }
     /// when looking to unskip a reminder, we look for a log that has its time unmodified. if its logDate within a certain percision of the skipdate, then we assume that log is from that reminder skipping.
     static let logRemovalPrecision: Double = 0.025
+    static let logCustomActionNameCharacterLimit: Int = 32
 }
 
 enum ReminderConstant {
@@ -59,6 +62,7 @@ enum ReminderConstant {
     static let defaultReminderType = ReminderType.countdown
     static var defaultReminderExecutionBasis: Date { return Date() }
     static let defaultReminderIsEnabled = true
+    static let reminderCustomActionNameCharacterLimit: Int = 32
     static var defaultReminders: [Reminder] {
         return [ defaultReminderOne, defaultReminderTwo, defaultReminderThree, defaultReminderFour ]
     }
@@ -73,25 +77,25 @@ enum ReminderConstant {
         let reminder = Reminder()
         reminder.reminderAction = .feed
         reminder.reminderType = .weekly
-        try! reminder.weeklyComponents.changeHour(newHour: 7)
-        try! reminder.weeklyComponents.changeMinute(newMinute: 0)
+        try! reminder.weeklyComponents.changeHour(forHour: 7)
+        try! reminder.weeklyComponents.changeMinute(forMinute: 0)
         return reminder
     }
     private static var defaultReminderThree: Reminder {
         let reminder = Reminder()
         reminder.reminderAction = .feed
         reminder.reminderType = .weekly
-        try! reminder.weeklyComponents.changeHour(newHour: 5+12)
-        try! reminder.weeklyComponents.changeMinute(newMinute: 0)
+        try! reminder.weeklyComponents.changeHour(forHour: 5+12)
+        try! reminder.weeklyComponents.changeMinute(forMinute: 0)
         return reminder
     }
     private static var defaultReminderFour: Reminder {
         let reminder = Reminder()
         reminder.reminderAction = .medicine
         reminder.reminderType = .monthly
-        try! reminder.monthlyComponents.changeDay(newDay: 1)
-        try! reminder.monthlyComponents.changeHour(newHour: 9)
-        try! reminder.monthlyComponents.changeMinute(newMinute: 0)
+        try! reminder.monthlyComponents.changeDay(forDay: 1)
+        try! reminder.monthlyComponents.changeHour(forHour: 9)
+        try! reminder.monthlyComponents.changeMinute(forMinute: 0)
         return reminder
     }
 }

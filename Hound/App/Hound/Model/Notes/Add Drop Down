@@ -43,11 +43,11 @@ Add conformance to DropDownUIViewDataSource
     
     //MARK: - Drop Down Functions
     
-    private func setUpDropDown(){
+    private func setupDropDown(){
         dropDown.dropDownUIViewIdentifier = "DROP_DOWN_NEW"
         dropDown.cellReusableIdentifier = "dropDownCell"
         dropDown.dataSource = self
-        dropDown.setUpDropDown(viewPositionReference: frameOfBorderedLabel, offset: 0.0)
+        dropDown.setupDropDown(viewPositionReference: frameOfBorderedLabel, offset: 0.0)
         dropDown.nib = UINib(nibName: "DropDownTableViewCell", bundle: nil)
         dropDown.setRowHeight(height: self.dropDownRowHeight)
         self.view.addSubview(dropDown)
@@ -61,7 +61,7 @@ Add conformance to DropDownUIViewDataSource
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        setUpDropDown()
+        setupDropDown()
     }
     
     override func viewWillDisappear(_ animated: Bool) {

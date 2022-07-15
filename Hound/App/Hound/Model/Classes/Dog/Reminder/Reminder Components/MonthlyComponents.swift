@@ -61,11 +61,11 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
     /// Day of the month that a reminder will fire
     private(set) var day: Int = 1
     /// Throws if not within the range of [1,31]
-    func changeDay(newDay: Int) throws {
-        guard newDay >= 1 && newDay <= 31 else {
+    func changeDay(forDay: Int) throws {
+        guard forDay >= 1 && forDay <= 31 else {
             throw MonthlyComponentsError.dayInvalid
         }
-        day = newDay
+        day = forDay
         
     }
     
@@ -73,24 +73,24 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
     private(set) var hour: Int = 7
     
     ///  Throws if not within the range of [0,24]
-    func changeHour(newHour: Int) throws {
-        guard newHour >= 0 && newHour <= 24 else {
+    func changeHour(forHour: Int) throws {
+        guard forHour >= 0 && forHour <= 24 else {
             throw MonthlyComponentsError.hourInvalid
         }
         
-        hour = newHour
+        hour = forHour
     }
     
     /// Minute of the hour that the reminder will fire
     private(set) var minute: Int = 0
     
     /// Throws if not within the range of [0,60]
-    func changeMinute(newMinute: Int) throws {
-        guard newMinute >= 0 && newMinute <= 60 else {
+    func changeMinute(forMinute: Int) throws {
+        guard forMinute >= 0 && forMinute <= 60 else {
             throw MonthlyComponentsError.minuteInvalid
         }
         
-        minute = newMinute
+        minute = forMinute
     }
     
     /// Whether or not the next alarm will be skipped
@@ -102,44 +102,44 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
     // MARK: - Functions
     
     /// This find the next execution date that takes place after the reminderExecutionBasis. It purposelly not factoring in isSkipping.
-    func notSkippingExecutionDate(reminderExecutionBasis: Date) -> Date {
+    func notSkippingExecutionDate(forReminderExecutionBasis reminderExecutionBasis: Date) -> Date {
         
         // there will only be two future executions dates for a day, so we take the first one is the one.
-        return futureExecutionDates(reminderExecutionBasis: reminderExecutionBasis).first!
+        return futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis).first!
     }
     
-    func previousExecutionDate(reminderExecutionBasis: Date) -> Date {
+    func previousExecutionDate(forReminderExecutionBasis reminderExecutionBasis: Date) -> Date {
         
         // use non skipping version
-        let nextTimeOfDay = notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
+        let nextTimeOfDay = notSkippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
         
         var preceedingExecutionDate: Date = Calendar.current.date(byAdding: .month, value: -1, to: nextTimeOfDay)!
-        preceedingExecutionDate = fallShortCorrection(dateToCorrect: preceedingExecutionDate)
+        preceedingExecutionDate = fallShortCorrection(forDate: preceedingExecutionDate)
         return preceedingExecutionDate
     }
     
     /// Factors in isSkipping to figure out the next time of day
-    func nextExecutionDate(reminderExecutionBasis: Date) -> Date {
+    func nextExecutionDate(forReminderExecutionBasis reminderExecutionBasis: Date) -> Date {
         if isSkipping == true {
-            return skippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
+            return skippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
         }
         else {
-            return notSkippingExecutionDate(reminderExecutionBasis: reminderExecutionBasis)
+            return notSkippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
         }
     }
     
     // MARK: - Private Helper Functions
     
     //// If we add a month to the date, then it might be incorrect and lose accuracy. For example, our day is 31. We are in April so there is only 30 days. Therefore we get a calculated date of April 30th. After adding a month, the result date is May 30th, but it should be 31st because of our day and that May has 31 days. This corrects that.
-    private func fallShortCorrection(dateToCorrect: Date) -> Date {
+    private func fallShortCorrection(forDate date: Date) -> Date {
         
-        let dayForCalculatedDate = Calendar.current.component(.day, from: dateToCorrect)
+        let dayForCalculatedDate = Calendar.current.component(.day, from: date)
         // when adding a month, the day set fell short of what was needed. We need to correct it
         if day > dayForCalculatedDate {
             // We need to find the maximum possible day to set the date to without having it accidentially roll into the next month.
             var calculatedDay: Int {
                 let neededDay = day
-                let maximumDay = Calendar.current.range(of: .day, in: .month, for: dateToCorrect)!.count
+                let maximumDay = Calendar.current.range(of: .day, in: .month, for: date)!.count
                 if neededDay <= maximumDay {
                     return neededDay
                 }
@@ -149,17 +149,17 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
             }
             
             // We have the correct day to set the date to, now we can change it.
-            return Calendar.current.date(bySetting: .day, value: calculatedDay, of: dateToCorrect)!
+            return Calendar.current.date(bySetting: .day, value: calculatedDay, of: date)!
         }
         // when adding a month, the day did not fall short of what was needed
         else {
-            return dateToCorrect
+            return date
         }
         
     }
     
     /// Produces an array of at least two with all of the future dates that the reminder will fire given the day of month, hour, and minute
-    private func futureExecutionDates(reminderExecutionBasis: Date) -> [Date] {
+    private func futureExecutionDates(forReminderExecutionBasis reminderExecutionBasis: Date) -> [Date] {
         
         var calculatedDates: [Date] = []
         
@@ -184,7 +184,7 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
         // We are looking for future dates, not past. If the calculated date is in the past, we correct to make it in the future.
         if reminderExecutionBasis.distance(to: calculatedDate) < 0 {
             calculatedDate = Calendar.current.date(byAdding: .month, value: 1, to: calculatedDate)!
-            calculatedDate = fallShortCorrection(dateToCorrect: calculatedDate)
+            calculatedDate = fallShortCorrection(forDate: calculatedDate)
             
         }
         calculatedDates.append(calculatedDate)
@@ -195,7 +195,7 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
         // should have at least two dates
         else if calculatedDates.count == 1 {
             var appendedDate = Calendar.current.date(byAdding: .month, value: 1, to: calculatedDates[0])!
-            appendedDate = fallShortCorrection(dateToCorrect: appendedDate)
+            appendedDate = fallShortCorrection(forDate: appendedDate)
             
             calculatedDates.append(appendedDate)
         }
@@ -210,9 +210,9 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
     }
     
     /// If a reminder is skipping, then we must find the next soonest reminderExecutionDate. We have to find the execution date that takes place after the skipped execution date (but before any other execution date).
-    private func skippingExecutionDate(reminderExecutionBasis: Date) -> Date {
+    private func skippingExecutionDate(forReminderExecutionBasis reminderExecutionBasis: Date) -> Date {
         // there will only be two future executions dates for a day, so we take the second one. The first one is the one used for a not skipping
-        return futureExecutionDates(reminderExecutionBasis: reminderExecutionBasis).last!
+        return futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis).last!
         
     }
     

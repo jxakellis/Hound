@@ -38,17 +38,41 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
         }
     }
     
+    @IBOutlet private weak var restoreTransactionsButton: UIButton!
+    @IBAction private func didClickRestoreTransactions(_ sender: Any) {
+        // The user doesn't have permission to perform this action
+        guard FamilyConfiguration.isFamilyHead else {
+            AlertManager.enqueueAlertForPresentation(familyPermissionAlertController)
+            return
+        }
+        
+        restoreTransactionsButton.isEnabled = false
+        RequestUtils.beginRequestIndictator(forRequestIndicatorType: .apple)
+        
+        InAppPurchaseManager.restorePurchases { requestWasSuccessful in
+            RequestUtils.endRequestIndictator {
+                self.restoreTransactionsButton.isEnabled = true
+                guard requestWasSuccessful else {
+                    return
+                }
+                
+                self.performSpinningCheckmarkAnimation()
+            }
+        }
+    }
+    
     // MARK: Properties
     
     var subscriptionProducts: [SKProduct] = []
+    
+    let familyPermissionAlertController = GeneralUIAlertController(title: "You don't have permission to perform this action", message: "Only the family head can modify your family's subscription. Please contact the family head and have them complete this action. If this issue persists, please contact Hound support.", preferredStyle: .alert)
     
     // MARK: - Main
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TO DO add subscription history
-        // TO DO add restore button to restore purchases
+        // TO DO FUTURE add subscription history
         
         oneTimeSetup()
     }
@@ -67,6 +91,10 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
         
         tableView.separatorInset = .zero
         
+        restoreTransactionsButton.layer.cornerRadius = 10.0
+        
+        familyPermissionAlertController.addAction(UIAlertAction(title: "OK", style: .cancel))
+        
     }
     
     /// These properties can be reassigned. Does not reload anything, rather just configures.
@@ -75,8 +103,6 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
         if FamilyConfiguration.isFamilyHead {
             InAppPurchaseManager.initalizeInAppPurchaseManager()
         }
-        
-        tableView.allowsSelection = FamilyConfiguration.isFamilyHead
         
         setupActiveSubscriptionLabels()
     }
@@ -146,10 +172,19 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let cell = tableView.cellForRow(at: indexPath) as! SettingsSubscriptionTierTableViewCell
+        // The user doesn't have permission to perform this action
+        guard FamilyConfiguration.isFamilyHead else {
+            AlertManager.enqueueAlertForPresentation(familyPermissionAlertController)
+            return
+        }
         
-        let indexOfActiveSubscription = InAppPurchaseProduct.allCases.firstIndex(of: FamilyConfiguration.activeFamilySubscription.product)!
-        let indexOfSelectedRow = InAppPurchaseProduct.allCases.firstIndex(of: cell.inAppPurchaseProduct)!
+        guard let cell = tableView.cellForRow(at: indexPath) as? SettingsSubscriptionTierTableViewCell else {
+            return
+        }
+        
+        guard let indexOfActiveSubscription = InAppPurchaseProduct.allCases.firstIndex(of: FamilyConfiguration.activeFamilySubscription.product), let indexOfSelectedRow = InAppPurchaseProduct.allCases.firstIndex(of: cell.inAppPurchaseProduct) else {
+            return
+        }
         
         // Make sure the user didn't select the cell of the subscription that they are currently subscribed to
         guard indexOfSelectedRow != indexOfActiveSubscription else {
@@ -159,7 +194,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
         // Make sure that the user didn't try to downgrade
         guard indexOfSelectedRow > indexOfActiveSubscription else {
             // The user is downgrading their subscription, show a disclaimer
-            let downgradeSubscriptionDisclaimer = GeneralUIAlertController(title: "Are you sure you want to downgrade your Hound subscription?", message: "If you exceed your new family member or dog limit, you won't be able to add or update any information. This means you might have to delete family members or dogs to restore functionality.", preferredStyle: .alert)
+            let downgradeSubscriptionDisclaimer = GeneralUIAlertController(title: "Are you sure you want to downgrade your Hound subscription?", message: "If you exceed your new family member or dog limit, you won't be able to add or update any dogs, reminders, or logs. This means you might have to delete family members or dogs to restore functionality.", preferredStyle: .alert)
             downgradeSubscriptionDisclaimer.addAction(UIAlertAction(title: "Yes, I understand", style: .default, handler: { _ in
                 purchaseSelectedProduct()
             }))
@@ -173,13 +208,13 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
         
         func purchaseSelectedProduct() {
             // indexPath 0 is the default so the user is attempting to downgrade their subscription
-            guard indexPath.row != 0 else {
+            guard let product = cell.product else {
                 UIApplication.shared.open(URL(string: "https://apps.apple.com/account/subscriptions")!)
                 return
             }
             
             RequestUtils.beginRequestIndictator(forRequestIndicatorType: .apple)
-            InAppPurchaseManager.purchaseProduct(forProduct: cell.product!) { productIdentifier in
+            InAppPurchaseManager.purchaseProduct(forProduct: product) { productIdentifier in
                 RequestUtils.endRequestIndictator {
                     guard productIdentifier != nil else {
                         // ErrorManager already invoked by purchaseProduct

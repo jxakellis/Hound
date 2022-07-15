@@ -59,7 +59,7 @@ final class DropDownUIView: UIView {
     // MARK: - DropDown Methods
     
     /// Make Table View Programatically
-    func setUpDropDown(viewPositionReference: CGRect, offset: CGFloat) {
+    func setupDropDown(viewPositionReference: CGRect, offset: CGFloat) {
         self.addBorders()
         self.addShadowToView()
         // dropDownStyle = UserConfiguration.interfaceStyle

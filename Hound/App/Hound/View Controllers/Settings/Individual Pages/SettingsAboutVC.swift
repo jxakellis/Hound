@@ -22,7 +22,7 @@ final class SettingsAboutViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // TO DO update Hound Organizer website, Hound Organizer privacy policy, old Hound Organizer @gmail accounts, and Hound Organizer App Store listing to reflect:
+        // TO DO FUTURE update Hound Organizer website, Hound Organizer privacy policy, old Hound Organizer @gmail accounts, and Hound Organizer App Store listing to reflect:
         // 1. new support@houndorganizer.com address
         // 2. Hound is a family, cloud-connected app
         // 3. Hound is a student project
