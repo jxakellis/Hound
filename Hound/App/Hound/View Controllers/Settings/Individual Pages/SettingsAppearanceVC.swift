@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDelegate {
+final class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDelegate {
 
     // MARK: - UIGestureRecognizerDelegate
 

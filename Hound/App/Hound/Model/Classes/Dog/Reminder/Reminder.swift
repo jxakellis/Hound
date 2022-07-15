@@ -106,7 +106,7 @@ enum ReminderAction: String, CaseIterable {
     }
 }
 
-class Reminder: NSObject, NSCoding, NSCopying {
+final class Reminder: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying
     

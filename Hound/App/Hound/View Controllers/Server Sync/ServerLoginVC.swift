@@ -10,7 +10,7 @@ import UIKit
 import AuthenticationServices
 import KeychainSwift
 
-class ServerLoginViewController: UIViewController, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+final class ServerLoginViewController: UIViewController, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     
     // MARK: - ASAuthorizationControllerPresentationContextProviding
     

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsAboutViewController: UIViewController {
+final class SettingsAboutViewController: UIViewController {
 
     // MARK: - Properties
     

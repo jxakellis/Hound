@@ -13,7 +13,7 @@ protocol DogsReminderDisplayTableViewCellDelegate: AnyObject {
     func didUpdateReminderEnable(sender: Sender, parentDogId: Int, reminder: Reminder)
 }
 
-class DogsReminderDisplayTableViewCell: UITableViewCell {
+final class DogsReminderDisplayTableViewCell: UITableViewCell {
     
     // MARK: - IB
     

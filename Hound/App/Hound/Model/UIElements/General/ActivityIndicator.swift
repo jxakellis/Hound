@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class ActivityIndicator {
+final class ActivityIndicator {
     private init() {
         // make the label the same as the bold blue text for our navigation controllers
         activityLabel.font = UIFont.systemFont(ofSize: 20.0, weight: .bold)

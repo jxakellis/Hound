@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SnoozeComponents: NSObject, NSCoding, NSCopying {
+final class SnoozeComponents: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying
     

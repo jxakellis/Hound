@@ -8,7 +8,7 @@
 
 import Foundation
 
-class FamilyMember: NSObject {
+final class FamilyMember: NSObject {
     
     // MARK: - Main
     

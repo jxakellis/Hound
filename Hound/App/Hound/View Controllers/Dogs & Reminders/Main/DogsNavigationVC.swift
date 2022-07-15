@@ -13,7 +13,7 @@ protocol DogsNavigationViewControllerDelegate: AnyObject {
     func checkForRemindersIntroductionPage()
 }
 
-class DogsNavigationViewController: UINavigationController, DogsViewControllerDelegate {
+final class DogsNavigationViewController: UINavigationController, DogsViewControllerDelegate {
 
     // MARK: - DogsViewControllerDelegate
 

@@ -10,7 +10,13 @@ import UIKit
 import UserNotifications
 import os.log
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+    
+    /*
+     TO DO add handling for consent of subscription price increase
+     When you increase the price of a subscription, the system asks your delegate’s function paymentQueueShouldShowPriceConsent(_:) whether to immediately display the price consent sheet, or to delay displaying the sheet until later. For example, you may want to delay showing the sheet if it would interrupt a multistep user interaction, such as setting up a user account. Return false in paymentQueueShouldShowPriceConsent(_:) to prevent the dialog from displaying immediately.
+     To show the price consent sheet after a delay, call showPriceConsentIfNeeded(), which shows the sheet only if the user hasn’t responded to the price increase notifications.
+     */
 
     static var generalLogger = Logger(subsystem: "com.example.Pupotty", category: "General")
     static var lifeCycleLogger = Logger(subsystem: "com.example.Pupotty", category: "Life Cycle")

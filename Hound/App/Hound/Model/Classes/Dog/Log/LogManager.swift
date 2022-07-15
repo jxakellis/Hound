@@ -8,7 +8,7 @@
 
 import Foundation
 
-class LogManager: NSObject, NSCoding, NSCopying {
+final class LogManager: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying
     func copy(with zone: NSZone? = nil) -> Any {

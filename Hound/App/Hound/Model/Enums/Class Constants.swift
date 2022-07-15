@@ -8,6 +8,13 @@
 
 import UIKit
 
+enum SubscriptionConstant {
+    static var defaultSubscription: Subscription { return Subscription(transactionId: nil, product: defaultSubscriptionProduct, userId: nil, subscriptionPurchaseDate: nil, subscriptionExpiration: nil, subscriptionNumberOfFamilyMembers: defaultSubscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs: defaultSubscriptionNumberOfDogs, subscriptionIsActive: true) }
+    static var defaultSubscriptionProduct = InAppPurchaseProduct.default
+    static var defaultSubscriptionNumberOfFamilyMembers = 1
+    static var defaultSubscriptionNumberOfDogs = 2
+}
+
 enum DogManagerConstant {
     
     static var userDefaultDog: Dog {

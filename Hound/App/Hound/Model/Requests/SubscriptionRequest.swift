@@ -30,7 +30,7 @@ enum SubscriptionRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func internalCreate(invokeErrorManager: Bool, forTransaction transaction: SKPaymentTransaction, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    private static func internalCreate(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
         InternalRequestUtils.warnForPlaceholderId()
         
         // Get the receipt if it's available. If the receipt isn't available, we sent through an invalid base64EncodedString, then the server will return us an error
@@ -55,16 +55,22 @@ extension SubscriptionRequest {
     // MARK: - Public Functions
     
     /**
-     TO DO complete function and documentation
+     Retrieves the family's subscriptions, automatically setting it up if the information is successfully retrieved.
+     completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
+     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
     static func getAll(invokeErrorManager: Bool, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
         
         SubscriptionRequest.internalGet(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any] {
-                    // set up
-                    print(result)
+                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
+                    
+                    var subscriptions: [Subscription] = []
+                    for subscription in result {
+                        subscriptions.append(Subscription(fromBody: subscription))
+                    }
+                    FamilyConfiguration.familySubscriptions = subscriptions
                     
                     completionHandler(true, responseStatus)
                 }
@@ -80,23 +86,40 @@ extension SubscriptionRequest {
     }
     
     /**
-     TO DO complete function and documentation
+     Sends a request for the user to create a subscription
+     Hound uses the provided base64 encoded appStoreReceiptURL to retrieving all transactions for the user, parsing through them and updating its records
+     completionHandler returns a Bool  and the ResponseStatus, indicating whether or not the transaction was successful
+     If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func create(invokeErrorManager: Bool, forTransaction transaction: SKPaymentTransaction, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    static func create(invokeErrorManager: Bool, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
         
-        SubscriptionRequest.internalCreate(invokeErrorManager: invokeErrorManager, forTransaction: transaction) { responseBody, responseStatus in
+        SubscriptionRequest.internalCreate(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let transaction = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any] {
-                    completionHandler(transaction, responseStatus)
+                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any] {
+                    let activeSubscription = Subscription(fromBody: result)
+                    // Remove any subscriptions that have the same transactionId
+                    FamilyConfiguration.familySubscriptions.removeAll { subscription in
+                        return subscription.transactionId == activeSubscription.transactionId
+                    }
+                    // Set all other subscriptions to inactive, as we have a new active subscription
+                    FamilyConfiguration.familySubscriptions.forEach { subscription in
+                        subscription.subscriptionIsActive = false
+                    }
+                    
+                    // add active subscription to the beginning of the array
+                    FamilyConfiguration.familySubscriptions.insert(activeSubscription, at: 0)
+                    
+                    // subscriptionPurchaseDate
+                    completionHandler(true, responseStatus)
                 }
                 else {
-                    completionHandler(nil, responseStatus)
+                    completionHandler(false, responseStatus)
                 }
             case .failureResponse:
-                completionHandler(nil, responseStatus)
+                completionHandler(false, responseStatus)
             case .noResponse:
-                completionHandler(nil, responseStatus)
+                completionHandler(false, responseStatus)
             }
         }
     }

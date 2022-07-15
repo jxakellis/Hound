@@ -8,7 +8,7 @@
 
 import Foundation
 
-class WeeklyComponents: NSObject, NSCoding, NSCopying {
+final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying
     

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FamilyIntroductionViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
+final class FamilyIntroductionViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
     
     // MARK: - UIGestureRecognizerDelegate
     

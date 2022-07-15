@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BorderedUITextField: UITextField {
+final class BorderedUITextField: UITextField {
     
     override init(frame: CGRect) {
         super.init(frame: frame)

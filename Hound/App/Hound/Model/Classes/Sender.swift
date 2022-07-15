@@ -8,7 +8,7 @@
 
 import UIKit
 
-class Sender {
+final class Sender {
     
     let origin: AnyObject?
     var localized: AnyObject?

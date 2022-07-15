@@ -132,7 +132,7 @@ async function validateDogId(req, res, next) {
 
     if (dog.length === 0) {
       // the dogId does not exist and/or the user does not have access to that dogId
-      return res.sendResponseForStatusJSONError(404, undefined, new ValidationError('familyId Invalid', global.constant.error.value.INVALID));
+      return res.sendResponseForStatusJSONError(404, undefined, new ValidationError('No dog found or invalid permissions', global.constant.error.value.INVALID));
     }
 
     // the dogId exists and it is linked to the familyId, valid!

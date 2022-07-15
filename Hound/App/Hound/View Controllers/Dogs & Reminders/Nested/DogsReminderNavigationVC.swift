@@ -14,7 +14,7 @@ protocol DogsReminderNavigationViewControllerDelegate: AnyObject {
     func didRemoveReminder(reminderId: Int)
 }
 
-class DogsReminderNavigationViewController: UINavigationController, DogsReminderTableViewControllerDelegate {
+final class DogsReminderNavigationViewController: UINavigationController, DogsReminderTableViewControllerDelegate {
     
     // MARK: - DogsReminderTableViewControllerDelegate
 

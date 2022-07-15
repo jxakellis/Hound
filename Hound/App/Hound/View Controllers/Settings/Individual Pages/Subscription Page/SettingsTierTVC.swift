@@ -9,17 +9,20 @@
 import UIKit
 import StoreKit
 
-class SettingsSubscriptionTierTableViewCell: UITableViewCell {
+final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
     
     // MARK: - IB
     
     @IBOutlet private weak var subscriptionTierTitleLabel: ScaledUILabel!
     @IBOutlet private weak var subscriptionTierDescriptionLabel: ScaledUILabel!
-    @IBOutlet private weak var subscriptionTierPricingLabel: ScaledUILabel!
+    
+    @IBOutlet weak var subscriptionTierPricingTitleLabel: ScaledUILabel!
+    @IBOutlet private weak var subscriptionTierPricingDescriptionLabel: ScaledUILabel!
     
     // MARK: - Properties
     
     var product: SKProduct?
+    var inAppPurchaseProduct: InAppPurchaseProduct = InAppPurchaseProduct.default
     
     // MARK: - Main
 
@@ -38,17 +41,33 @@ class SettingsSubscriptionTierTableViewCell: UITableViewCell {
     
     func setup(forProduct product: SKProduct?) {
         
+        let activeFamilySubscriptionProduct = FamilyConfiguration.activeFamilySubscription.product
+        
         guard let product: SKProduct = product, product.subscriptionPeriod != nil else {
-            subscriptionTierTitleLabel.text = "Single 🧍‍♂️"
-            subscriptionTierDescriptionLabel.text =  "Explore Hound's default subscription tier by yourself with up to two different dogs"
-            subscriptionTierPricingLabel.text = "Completely and always free! You get to benefit from the same features as paid subscribers. The only difference is family member and dog limits."
+            self.inAppPurchaseProduct = .default
+            
+            changeCellColors(isProductActiveSubscription: activeFamilySubscriptionProduct == InAppPurchaseProduct.default)
+            subscriptionTierTitleLabel.text = InAppPurchaseProduct.localizedTitleExpanded(forInAppPurchaseProduct: InAppPurchaseProduct.default)
+            subscriptionTierDescriptionLabel.text =  InAppPurchaseProduct.localizedDescriptionExpanded(forInAppPurchaseProduct: InAppPurchaseProduct.default)
+            subscriptionTierPricingDescriptionLabel.text = "Completely and always free! You get to benefit from the same features as paid subscribers. The only difference is family member and dog limits."
             return
         }
         
         self.product = product
         
-        subscriptionTierTitleLabel.text = product.localizedTitleExpanded
-        subscriptionTierDescriptionLabel.text = product.localizedDescriptionExpanded
+        self.inAppPurchaseProduct = InAppPurchaseProduct(rawValue: product.productIdentifier) ?? .unknown
+        
+        changeCellColors(isProductActiveSubscription: inAppPurchaseProduct == activeFamilySubscriptionProduct)
+        
+        if inAppPurchaseProduct != .unknown {
+            // if we know what product it is, then highlight the cell if its product is the current, active subscription
+            subscriptionTierTitleLabel.text = InAppPurchaseProduct.localizedTitleExpanded(forInAppPurchaseProduct: inAppPurchaseProduct)
+            subscriptionTierDescriptionLabel.text = InAppPurchaseProduct.localizedDescriptionExpanded(forInAppPurchaseProduct: inAppPurchaseProduct)
+        }
+        else {
+            subscriptionTierTitleLabel.text = product.localizedTitle
+            subscriptionTierTitleLabel.text = product.localizedDescription
+        }
         
         // now we have to determine what the pricing is like
         // first get the properties
@@ -57,14 +76,34 @@ class SettingsSubscriptionTierTableViewCell: UITableViewCell {
         
         // no free trial
         if product.introductoryPrice == nil || product.introductoryPrice!.paymentMode != .freeTrial {
-            subscriptionTierPricingLabel.text = "Enjoy all \(product.localizedTitle) has to offer for \(subscriptionPriceWithSymbol) per \(subscriptionPeriod)"
+            subscriptionTierPricingDescriptionLabel.text = "Enjoy all \(product.localizedTitle) has to offer for \(subscriptionPriceWithSymbol) per \(subscriptionPeriod)"
         }
         // tier offers a free trial
         else {
             let freeTrialSubscriptionPeriod = convertSubscriptionPeriodUnits(forUnit: product.introductoryPrice!.subscriptionPeriod.unit, forNumberOfUnits: product.introductoryPrice!.subscriptionPeriod.numberOfUnits, isFreeTrialText: true)
             
-            subscriptionTierPricingLabel.text = "Begin with a free \(freeTrialSubscriptionPeriod) trial then continue your \(product.localizedTitle) experience for \(subscriptionPriceWithSymbol) per \(subscriptionPeriod)"
+            subscriptionTierPricingDescriptionLabel.text = "Begin with a free \(freeTrialSubscriptionPeriod) trial then continue your \(product.localizedTitle) experience for \(subscriptionPriceWithSymbol) per \(subscriptionPeriod)"
         }
+    }
+    
+    /// If the cell has a product identifier that is the same as the family's active subscription, then we change the colors of the cell to make it highlighted
+    private func changeCellColors(isProductActiveSubscription: Bool) {
+        self.backgroundColor = isProductActiveSubscription
+        ? .systemBlue
+        : .systemBackground
+        subscriptionTierTitleLabel.textColor = isProductActiveSubscription
+        ? .white
+        : .label
+        subscriptionTierDescriptionLabel.textColor = isProductActiveSubscription
+        ? .white
+        : .secondaryLabel
+        
+        subscriptionTierPricingTitleLabel.textColor = isProductActiveSubscription
+        ? .white
+        : .label
+        subscriptionTierPricingDescriptionLabel.textColor = isProductActiveSubscription
+        ? .white
+        : .secondaryLabel
     }
     
     /// Converts from units (time period: day, week, month, year) and numberOfUnits (duration: 1, 2, 3...) to the correct string. For example: unit = 2 & numerOfUnits = 3 -> "three (3) months"; unit = 1 & numerOfUnits = 2 -> "two (2) weeks"

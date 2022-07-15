@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DogsDogDisplayTableViewCell: UITableViewCell {
+final class DogsDogDisplayTableViewCell: UITableViewCell {
 
     // MARK: - IB
 

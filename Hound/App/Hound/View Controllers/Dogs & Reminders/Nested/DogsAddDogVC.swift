@@ -16,7 +16,7 @@ protocol DogsAddDogViewControllerDelegate: AnyObject {
     func didCancel(sender: Sender)
 }
 
-class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewControllerDelegate, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIGestureRecognizerDelegate {
+final class DogsAddDogViewController: UIViewController, DogsReminderNavigationViewControllerDelegate, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIGestureRecognizerDelegate {
     
     // MARK: - UIImagePickerControllerDelegate
     

@@ -66,5 +66,21 @@ enum FamilyConfiguration {
     static var isLocked: Bool = false
     
     static var familyMembers: [FamilyMember] = []
+    
+    /// Returns whether or not the user is the head of the family. This changes whether or not they can kick family members, delete the family, etc.
+    static var isFamilyHead: Bool {
+        let familyMember = FamilyMember.findFamilyMember(forUserId: UserInformation.userId!)
+        return familyMember?.isFamilyHead ?? false
+    }
+    
+    static var familySubscriptions: [Subscription] = []
+    
+    static var activeFamilySubscription: Subscription {
+        let potentialSubscription = familySubscriptions.first { subscription in
+            return subscription.subscriptionIsActive
+        }
+        
+        return potentialSubscription ?? SubscriptionConstant.defaultSubscription
+    }
    
 }

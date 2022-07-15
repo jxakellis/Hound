@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LocalDogIcon: NSObject, NSCoding {
+final class LocalDogIcon: NSObject, NSCoding {
     
     // MARK: - NSCoding
     

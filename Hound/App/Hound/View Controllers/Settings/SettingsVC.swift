@@ -13,7 +13,7 @@ protocol SettingsViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class SettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, SettingsFamilyViewControllerDelegate, SettingsPersonalInformationViewControllerDelegate, DogManagerControlFlowProtocol {
+final class SettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, SettingsFamilyViewControllerDelegate, SettingsPersonalInformationViewControllerDelegate, DogManagerControlFlowProtocol {
     
     // MARK: - SettingsFamilyViewControllerDelegate & SettingsPersonalInformationViewControllerDelegate
     
@@ -143,16 +143,9 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         
         if identifier == "settingsSubscriptionViewController" {
             RequestUtils.beginRequestIndictator(forRequestIndicatorType: .apple)
-            InAppPurchaseManager.fetchProducts { products, inAppPurchaseError  in
+            InAppPurchaseManager.fetchProducts { products  in
                 RequestUtils.endRequestIndictator {
-                    
-                    if let inAppPurchaseError = inAppPurchaseError {
-                        ErrorManager.alert(forError: inAppPurchaseError)
-                        return
-                    }
-                    
                     guard let products = products else {
-                        ErrorManager.alert(forError: InAppPurchaseError.productRequestFailed)
                         return
                     }
                     
@@ -163,7 +156,13 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
                         self.subscriptionProducts.append(product)
                     }
                     
-                    self.performSegueOnceInWindowHierarchy(segueIdentifier: identifier)
+                    SubscriptionRequest.getAll(invokeErrorManager: true) { requestWasSuccessful, _ in
+                        guard requestWasSuccessful else {
+                            return
+                        }
+                        
+                        self.performSegueOnceInWindowHierarchy(segueIdentifier: identifier)
+                    }
                 }
             }
         }

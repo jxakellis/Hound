@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ServerSyncViewController: UIViewController, ServerFamilyViewControllerDelegate, DogManagerControlFlowProtocol {
+final class ServerSyncViewController: UIViewController, ServerFamilyViewControllerDelegate, DogManagerControlFlowProtocol {
 
     // MARK: - ServerFamilyViewControllerDelegate
     

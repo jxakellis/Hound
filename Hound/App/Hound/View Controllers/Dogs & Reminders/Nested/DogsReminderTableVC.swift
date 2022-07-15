@@ -14,7 +14,7 @@ protocol DogsReminderTableViewControllerDelegate: AnyObject {
     func didRemoveReminder(reminderId: Int)
 }
 
-class DogsReminderTableViewController: UITableViewController, ReminderManagerControlFlowProtocol, DogsNestedReminderViewControllerDelegate, DogsReminderTableViewCellDelegate {
+final class DogsReminderTableViewController: UITableViewController, ReminderManagerControlFlowProtocol, DogsNestedReminderViewControllerDelegate, DogsReminderTableViewCellDelegate {
     
     // MARK: - Dogs Reminder Table View Cell
     

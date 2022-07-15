@@ -12,7 +12,7 @@ protocol LogsNavigationViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class LogsNavigationViewController: UINavigationController, LogsViewControllerDelegate {
+final class LogsNavigationViewController: UINavigationController, LogsViewControllerDelegate {
 
     // MARK: - LogsViewControllerDelegate
 

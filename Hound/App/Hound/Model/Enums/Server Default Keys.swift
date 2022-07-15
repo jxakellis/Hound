@@ -61,6 +61,7 @@ enum ServerDefaultKeys: String {
     case subscriptionExpiration
     case subscriptionNumberOfFamilyMembers
     case subscriptionNumberOfDogs
+    case subscriptionIsActive
     
     // MARK: - Special Local Configuration
     

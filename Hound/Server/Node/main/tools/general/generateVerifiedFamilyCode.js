@@ -1,22 +1,23 @@
 const { databaseQuery } = require('../database/databaseQuery');
 const { areAllDefined } = require('../format/validateDefined');
 
-function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
-}
-
-const familyCodeLength = 8;
-
 // Makes a code for a family to use that consists of A-Z and 0-9
 const generateFamilyCode = () => {
-  let result = '';
+  let familyCode = '';
   // O and 0 + L and I are all removed because they look similar
   const characters = 'ABCDEFGHJKMNPQRSTUVWXYZ123456789';
   const charactersLength = characters.length;
-  for (let i = 0; i < familyCodeLength; i += 1) {
-    result += characters.charAt(getRandomInt(charactersLength));
+  const familyCodeLength = 8;
+
+  function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
   }
-  return result;
+
+  for (let i = 0; i < familyCodeLength; i += 1) {
+    familyCode += characters.charAt(getRandomInt(charactersLength));
+  }
+
+  return familyCode;
 };
 
 // Generate a verified unique code for a family to use that consists of A-Z and 0-9 (excludes I, L, O, and 0 due to how similar they look)

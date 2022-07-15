@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BorderedUILabel: ScaledUILabel {
+final class BorderedUILabel: ScaledUILabel {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -61,14 +61,14 @@ class BorderedUILabel: ScaledUILabel {
     }
     
     /// Resize the placeholder when the UILabel bounds change
-    override open var bounds: CGRect {
+    override var bounds: CGRect {
         didSet {
             self.resizePlaceholder()
         }
     }
     
     /// The UILabel placeholder text
-    override public var placeholder: String? {
+    override var placeholder: String? {
         get {
             var placeholderText: String?
             

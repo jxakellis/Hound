@@ -20,11 +20,14 @@ enum InAppPurchaseError: String, Error {
     /// User can't make any In-App purchase because SKPaymentQueue.canMakePayment() == false
     case purchaseRestricted = "Your device is restricted from accessing the Apple App Store and is unable to make In-App Purchases. Please remove this restriction before attempting to make another In-App Purchase."
     
-    /// There is a In-App Purchases in progress, so a new one cannot be initiated currentProductPurchase != nil || currentProductPurchaseCompletionHandler != nil
+    /// User can't make any in-app purchase because they are not the family head
+    case purchasePermission = "You are attempting to perform an action that only the family head can perform. Please contact the family head and have them complete this action. If this issue persists, please contact Hound support."
+    
+    /// There is a In-App Purchases in progress, so a new one cannot be initiated currentProductPurchase != nil || productPurchaseCompletionHandler != nil
     case purchaseInProgress = "There is an In-App Purchase currently in progress. You are unable to initiate another In-App Purchase until the first one has finished processing. If the issue persists, please restart and retry."
     
     /// Deferred. Most likely due to pending parent approval from Ask to Buy
-    case purchaseDeferred = "Your In-App Purchase is pending an approval from your parent. To complete your purchase, please have your parent respond to the request within 24 hours."
+    case purchaseDeferred = "Your In-App Purchase is pending an approval from your parent. To complete your purchase, please have your parent approve the request within 24 hours."
     
     /// The in app purchase failed and was not completed
     case purchaseFailed = "Your In-App Purchase has failed. If the issue persists, please restart and retry."

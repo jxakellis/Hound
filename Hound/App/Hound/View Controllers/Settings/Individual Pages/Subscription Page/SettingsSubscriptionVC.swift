@@ -9,11 +9,34 @@
 import UIKit
 import StoreKit
 
-class SettingsSubscriptionViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+final class SettingsSubscriptionViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     // MARK: - IB
     
     @IBOutlet private weak var tableView: UITableView!
+    
+    @IBOutlet private weak var activeSubscriptionTitleLabel: ScaledUILabel!
+    @IBOutlet private weak var activeSubscriptionDescriptionLabel: ScaledUILabel!
+    @IBOutlet private weak var activeSubscriptionPurchaseDateLabel: ScaledUILabel!
+    @IBOutlet private weak var activeSubscriptionExpirationLabel: ScaledUILabel!
+    
+    @IBOutlet private weak var refreshButton: UIBarButtonItem!
+    @IBAction private func willRefresh(_ sender: Any) {
+        self.refreshButton.isEnabled = false
+        ActivityIndicator.shared.beginAnimating(title: navigationItem.title ?? "", view: self.view, navigationItem: navigationItem)
+        
+        SubscriptionRequest.getAll(invokeErrorManager: true) { requestWasSuccessful, _ in
+            self.refreshButton.isEnabled = true
+            ActivityIndicator.shared.stopAnimating(navigationItem: self.navigationItem)
+            
+            guard requestWasSuccessful else {
+                return
+            }
+            
+            self.performSpinningCheckmarkAnimation()
+            self.reloadTableAndLabels()
+        }
+    }
     
     // MARK: Properties
     
@@ -24,20 +47,17 @@ class SettingsSubscriptionViewController: UIViewController, UITableViewDelegate,
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TO DO lock subscription controls to only the head of the family
         // TO DO add subscription history
-        // TO DO add active subscription
-        // TO DO add disclaimer about grace period, after that say that if subscription expires, you have x amount of time
         // TO DO add restore button to restore purchases
         
         oneTimeSetup()
-        
-        repeatableSetup()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         AlertManager.globalPresenter = self
+        
+        repeatableSetup()
     }
     
     // MARK: - Functions
@@ -52,6 +72,47 @@ class SettingsSubscriptionViewController: UIViewController, UITableViewDelegate,
     /// These properties can be reassigned. Does not reload anything, rather just configures.
     private func repeatableSetup() {
         
+        if FamilyConfiguration.isFamilyHead {
+            InAppPurchaseManager.initalizeInAppPurchaseManager()
+        }
+        
+        tableView.allowsSelection = FamilyConfiguration.isFamilyHead
+        
+        setupActiveSubscriptionLabels()
+    }
+    
+    private func setupActiveSubscriptionLabels() {
+        let activeSubscription = FamilyConfiguration.activeFamilySubscription
+        
+        activeSubscriptionTitleLabel.text = InAppPurchaseProduct.localizedTitleExpanded(forInAppPurchaseProduct: activeSubscription.product)
+        activeSubscriptionDescriptionLabel.text = InAppPurchaseProduct.localizedDescriptionExpanded(forInAppPurchaseProduct: activeSubscription.product)
+        
+        var purchaseDateString: String {
+            guard let subscriptionPurchaseDate = activeSubscription.subscriptionPurchaseDate else {
+                return "Never"
+            }
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEE, MMMM d, yyyy", options: 0, locale: Calendar.current.locale)
+            return dateFormatter.string(from: subscriptionPurchaseDate)
+        }
+        
+        activeSubscriptionPurchaseDateLabel.text = "Purchased: \(purchaseDateString)"
+        
+        var expirationDateString: String {
+            guard let subscriptionExpiration = activeSubscription.subscriptionExpiration else {
+                return "Never"
+            }
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEE, MMMM d, yyyy", options: 0, locale: Calendar.current.locale)
+            return dateFormatter.string(from: subscriptionExpiration)
+        }
+        
+        activeSubscriptionExpirationLabel.text = "Expires: \(expirationDateString)"
+    }
+    
+    private func reloadTableAndLabels() {
+        setupActiveSubscriptionLabels()
+        tableView.reloadData()
     }
     
     // MARK: - Table View
@@ -85,33 +146,50 @@ class SettingsSubscriptionViewController: UIViewController, UITableViewDelegate,
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        // TO DO block user from attempting to downgrade if they have too many dogs or family members, give them an error
+        let cell = tableView.cellForRow(at: indexPath) as! SettingsSubscriptionTierTableViewCell
         
-        // indexPath 0 is the default so we won't be making a purchase
-        guard indexPath.row != 0 else {
-            // TO DO let the user downgrade their subscription to free
+        let indexOfActiveSubscription = InAppPurchaseProduct.allCases.firstIndex(of: FamilyConfiguration.activeFamilySubscription.product)!
+        let indexOfSelectedRow = InAppPurchaseProduct.allCases.firstIndex(of: cell.inAppPurchaseProduct)!
+        
+        // Make sure the user didn't select the cell of the subscription that they are currently subscribed to
+        guard indexOfSelectedRow != indexOfActiveSubscription else {
             return
         }
         
-        let cell = tableView.cellForRow(at: indexPath) as? SettingsSubscriptionTierTableViewCell
-        
-        // make sure we have a product to query
-        guard let product = cell?.product else {
+        // Make sure that the user didn't try to downgrade
+        guard indexOfSelectedRow > indexOfActiveSubscription else {
+            // The user is downgrading their subscription, show a disclaimer
+            let downgradeSubscriptionDisclaimer = GeneralUIAlertController(title: "Are you sure you want to downgrade your Hound subscription?", message: "If you exceed your new family member or dog limit, you won't be able to add or update any information. This means you might have to delete family members or dogs to restore functionality.", preferredStyle: .alert)
+            downgradeSubscriptionDisclaimer.addAction(UIAlertAction(title: "Yes, I understand", style: .default, handler: { _ in
+                purchaseSelectedProduct()
+            }))
+            downgradeSubscriptionDisclaimer.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            AlertManager.enqueueAlertForPresentation(downgradeSubscriptionDisclaimer)
             return
         }
         
-        RequestUtils.beginRequestIndictator()
-        InAppPurchaseManager.purchaseProduct(forProduct: product) { productIdentifier, inAppPurchaseError in
-            // TO DO update how message appears, change to "Contacting Apple Server..."
-            RequestUtils.endRequestIndictator {
-                if let inAppPurchaseError = inAppPurchaseError {
-                    ErrorManager.alert(forError: inAppPurchaseError)
-                    return
+        // The user is upgrading their subscription so no need for a disclaimer
+        purchaseSelectedProduct()
+        
+        func purchaseSelectedProduct() {
+            // indexPath 0 is the default so the user is attempting to downgrade their subscription
+            guard indexPath.row != 0 else {
+                UIApplication.shared.open(URL(string: "https://apps.apple.com/account/subscriptions")!)
+                return
+            }
+            
+            RequestUtils.beginRequestIndictator(forRequestIndicatorType: .apple)
+            InAppPurchaseManager.purchaseProduct(forProduct: cell.product!) { productIdentifier in
+                RequestUtils.endRequestIndictator {
+                    guard productIdentifier != nil else {
+                        // ErrorManager already invoked by purchaseProduct
+                        return
+                    }
+                    
+                    self.performSpinningCheckmarkAnimation()
+                    
+                    self.reloadTableAndLabels()
                 }
-                
-                self.performSpinningCheckmarkAnimation()
-                
-                print("success \(productIdentifier)")
             }
         }
     }

@@ -8,6 +8,7 @@
 
 import UIKit
 
+// NOT final class
 class DropDownTableViewCell: UITableViewCell {
     
     // MARK: IB

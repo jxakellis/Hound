@@ -9,7 +9,7 @@
 import MediaPlayer
 import UIKit
 
-class GeneralUIAlertController: UIAlertController {
+final class GeneralUIAlertController: UIAlertController {
     
     override func viewDidDisappear(_ animated: Bool) {
         AlertManager.shared.alertDidComplete()

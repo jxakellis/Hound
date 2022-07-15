@@ -12,7 +12,7 @@ protocol SettingsNavigationViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class SettingsNavigationViewController: UINavigationController, SettingsViewControllerDelegate {
+final class SettingsNavigationViewController: UINavigationController, SettingsViewControllerDelegate {
     
     // MARK: - SettingsViewControllerDelegate
     

@@ -124,7 +124,7 @@ protocol LogProtocol {
     
 }
 
-class Log: NSObject, NSCoding, NSCopying, LogProtocol {
+final class Log: NSObject, NSCoding, NSCopying, LogProtocol {
     
     // MARK: - NSCopying
     

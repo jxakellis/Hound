@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsNotificationsViewController: UIViewController, UIGestureRecognizerDelegate, DropDownUIViewDataSource {
+final class SettingsNotificationsViewController: UIViewController, UIGestureRecognizerDelegate, DropDownUIViewDataSource {
     
     // MARK: - UIGestureRecognizerDelegate
     

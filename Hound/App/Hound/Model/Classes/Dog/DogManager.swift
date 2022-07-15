@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DogManager: NSObject, NSCopying, NSCoding {
+final class DogManager: NSObject, NSCopying, NSCoding {
     
     // MARK: - NSCopying
     func copy(with zone: NSZone? = nil) -> Any {

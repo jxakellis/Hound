@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsFamilyMemberTableViewCell: UITableViewCell {
+final class SettingsFamilyMemberTableViewCell: UITableViewCell {
 
     // MARK: - IB
     

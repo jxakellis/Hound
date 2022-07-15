@@ -16,7 +16,7 @@ protocol DogsTableViewControllerDelegate: AnyObject {
     func performSpinningUndoAnimation()
 }
 
-class DogsTableViewController: UITableViewController, DogManagerControlFlowProtocol, DogsReminderDisplayTableViewCellDelegate {
+final class DogsTableViewController: UITableViewController, DogManagerControlFlowProtocol, DogsReminderDisplayTableViewCellDelegate {
     
     // MARK: - DogsReminderDisplayTableViewCellDelegate
     

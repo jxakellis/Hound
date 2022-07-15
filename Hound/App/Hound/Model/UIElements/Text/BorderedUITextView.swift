@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BorderedUITextView: UITextView {
+final class BorderedUITextView: UITextView {
     
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)

@@ -96,6 +96,9 @@ enum ErrorManager {
         else if let castError = error as? SignInWithAppleError {
             ErrorManager.alert(forMessage: castError.rawValue)
         }
+        else if let castError = error as? InAppPurchaseError {
+            ErrorManager.alert(forMessage: castError.rawValue)
+        }
         else {
             alertForUnknown(error: error)
         }

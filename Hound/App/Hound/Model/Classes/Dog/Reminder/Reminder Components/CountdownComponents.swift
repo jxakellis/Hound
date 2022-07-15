@@ -8,7 +8,7 @@
 
 import Foundation
 
-class CountdownComponents: NSObject, NSCoding, NSCopying {
+final class CountdownComponents: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying
     

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ReminderManager: NSObject, NSCoding, NSCopying {
+final class ReminderManager: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying
     func copy(with zone: NSZone? = nil) -> Any {

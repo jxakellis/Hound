@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DropDownLogFilterTableViewCell: DropDownTableViewCell {
+final class DropDownLogFilterTableViewCell: DropDownTableViewCell {
     
     // MARK: Properties
     

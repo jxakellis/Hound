@@ -8,7 +8,7 @@
 
 import Foundation
 
-class OneTimeComponents: NSObject, NSCoding, NSCopying {
+final class OneTimeComponents: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying
     

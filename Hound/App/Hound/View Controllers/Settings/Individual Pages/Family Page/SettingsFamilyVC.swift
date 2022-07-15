@@ -12,7 +12,7 @@ protocol SettingsFamilyViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource, DogManagerControlFlowProtocol {
+final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource, DogManagerControlFlowProtocol {
     
     // MARK: - UIGestureRecognizerDelegate
 
@@ -48,12 +48,6 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
     }
     
     // MARK: - Properties
-    
-    /// Returns whether or not the user is the head of the family. This changes whether or not they can kick family members, delete the family, etc.
-    var isUserFamilyHead: Bool {
-        let familyMember = FamilyMember.findFamilyMember(forUserId: UserInformation.userId!)
-        return familyMember?.isFamilyHead ?? false
-    }
     
     var leaveFamilyAlertController: GeneralUIAlertController!
     
@@ -120,7 +114,7 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         
         // MARK: Family Members
         
-        tableView.allowsSelection = isUserFamilyHead
+        tableView.allowsSelection = FamilyConfiguration.isFamilyHead
         
         // MARK: Leave Family Button
         
@@ -144,7 +138,7 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         leaveFamilyAlertController = GeneralUIAlertController(title: "placeholder", message: nil, preferredStyle: .alert)
         
         // user is not the head of the family, so the button is enabled for them
-        if isUserFamilyHead == false {
+        if FamilyConfiguration.isFamilyHead == false {
             leaveFamilyButton.isEnabled = true
             
             leaveFamilyButton.setTitle("Leave Family", for: .normal)
@@ -310,7 +304,7 @@ class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegat
         }
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "settingsFamilyMemberTableViewCell", for: indexPath) as! SettingsFamilyMemberTableViewCell
-            cell.setup(forDisplayFullName: familyMember.displayFullName, userId: familyMember.userId, isUserFamilyHead: isUserFamilyHead)
+            cell.setup(forDisplayFullName: familyMember.displayFullName, userId: familyMember.userId, isUserFamilyHead: FamilyConfiguration.isFamilyHead)
             
             return cell
         }

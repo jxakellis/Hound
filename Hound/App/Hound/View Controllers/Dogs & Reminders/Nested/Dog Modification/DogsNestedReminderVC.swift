@@ -15,7 +15,7 @@ protocol DogsNestedReminderViewControllerDelegate: AnyObject {
     func didRemoveReminder(sender: Sender, reminderId: Int)
 }
 
-class DogsNestedReminderViewController: UIViewController {
+final class DogsNestedReminderViewController: UIViewController {
 
     // MARK: - IB
 

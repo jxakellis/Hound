@@ -12,7 +12,7 @@ protocol RemindersIntroductionViewControllerDelegate: AnyObject {
     func didComplete(sender: Sender, forDogManager dogManager: DogManager)
 }
 
-class RemindersIntroductionViewController: UIViewController {
+final class RemindersIntroductionViewController: UIViewController {
 
     // MARK: - IB
 

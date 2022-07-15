@@ -12,7 +12,7 @@ protocol DogsReminderOneTimeViewControllerDelegate: AnyObject {
     func willDismissKeyboard()
 }
 
-class DogsReminderOneTimeViewController: UIViewController, UIGestureRecognizerDelegate {
+final class DogsReminderOneTimeViewController: UIViewController, UIGestureRecognizerDelegate {
 
     // MARK: - UIGestureRecognizerDelegate
 

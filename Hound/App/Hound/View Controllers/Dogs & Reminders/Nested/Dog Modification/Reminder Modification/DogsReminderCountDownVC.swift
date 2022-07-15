@@ -12,7 +12,7 @@ protocol DogsReminderCountdownViewControllerDelegate: AnyObject {
     func willDismissKeyboard()
 }
 
-class DogsReminderCountdownViewController: UIViewController, UIGestureRecognizerDelegate {
+final class DogsReminderCountdownViewController: UIViewController, UIGestureRecognizerDelegate {
 
     // MARK: - UIGestureRecognizerDelegate
 

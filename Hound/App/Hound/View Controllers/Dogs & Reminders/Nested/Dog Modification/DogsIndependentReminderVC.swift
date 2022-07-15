@@ -16,7 +16,7 @@ protocol DogsIndependentReminderViewControllerDelegate: AnyObject {
     func didCancel(sender: Sender)
 }
 
-class DogsIndependentReminderViewController: UIViewController {
+final class DogsIndependentReminderViewController: UIViewController {
     
     // MARK: - IB
     

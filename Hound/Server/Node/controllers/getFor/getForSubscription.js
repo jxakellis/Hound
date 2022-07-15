@@ -2,8 +2,8 @@ const { ValidationError } = require('../../main/tools/general/errors');
 const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
-// familyId, userId, subscriptionLastModified
-const subscriptionColumns = 'transactionId, productId, subscriptionPurchaseDate, subscriptionExpiration, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs';
+// transactionId, familyId, and subscriptionLastModified omitted
+const subscriptionColumns = 'transactionId, productId, userId, subscriptionPurchaseDate, subscriptionExpiration, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs';
 
 /**
  *  If the query is successful, returns the most recent subscription for the familyId (if no most recent subscription, fills in default subscription details).
@@ -32,7 +32,7 @@ async function getActiveSubscriptionForFamilyId(connection, familyId) {
   // since we found no family subscription, assign the family to the default subscription
   if (familySubscription.length === 0) {
     familySubscription = global.constant.subscription.SUBSCRIPTIONS.find((subscription) => subscription.productId === global.constant.subscription.DEFAULT_SUBSCRIPTION_PRODUCT_ID);
-    familySubscription.transactionId = undefined;
+    familySubscription.userId = undefined;
     familySubscription.subscriptionPurchaseDate = undefined;
     familySubscription.subscriptionExpiration = new Date('3000-01-01T00:00:00Z');
   }
@@ -40,6 +40,8 @@ async function getActiveSubscriptionForFamilyId(connection, familyId) {
     // we found a subscription, so get rid of the one entry array
     [familySubscription] = familySubscription;
   }
+
+  familySubscription.subscriptionIsActive = true;
 
   return familySubscription;
 }
@@ -59,18 +61,18 @@ async function getAllSubscriptionsForFamilyId(connection, familyId) {
   // find all of the family's subscriptions
   const subscriptionHistory = await databaseQuery(
     connection,
-    `SELECT ${subscriptionColumns} FROM subscriptions WHERE familyId = ? ORDER BY subscriptionPurchaseDate DESC LIMIT 18446744073709551615`,
+    `SELECT ${subscriptionColumns} FROM subscriptions WHERE familyId = ? ORDER BY subscriptionExpiration DESC, subscriptionPurchaseDate DESC LIMIT 18446744073709551615`,
     [familyId],
   );
 
   const subscriptionActive = await getActiveSubscriptionForFamilyId(connection, familyId);
 
-  const result = {
-    subscriptionActive,
-    subscriptionHistory,
-  };
+  for (let i = 0; i < subscriptionHistory.length; i += 1) {
+    const subscription = subscriptionHistory[i];
+    subscription.subscriptionIsActive = subscription.transactionId === subscriptionActive.transactionId;
+  }
 
-  return result;
+  return subscriptionHistory;
 }
 
 module.exports = { getActiveSubscriptionForFamilyId, getAllSubscriptionsForFamilyId };

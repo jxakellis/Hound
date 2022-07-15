@@ -55,7 +55,7 @@ const apn = {
 const subscription = {
   DEFAULT_SUBSCRIPTION_PRODUCT_ID: 'com.jonathanxakellis.hound.default',
   // The amount of milliseconds that we allow a family's subscription to expire before we enforce restrictions
-  SUBSCRIPTION_GRACE_PERIOD: (3 * 60 * 60 * 1000),
+  SUBSCRIPTION_GRACE_PERIOD: (0 * 60 * 60 * 1000),
   // The in app purchase offerings for subscriptions (default indicates free / no payment)
   SUBSCRIPTIONS: [
     {

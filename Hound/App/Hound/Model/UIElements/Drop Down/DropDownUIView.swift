@@ -19,7 +19,7 @@ protocol DropDownUIViewDataSource {
     func selectItemInDropDown(indexPath: IndexPath, dropDownUIViewIdentifier: String)
 }
 
-class DropDownUIView: UIView {
+final class DropDownUIView: UIView {
     
     // MARK: - Static
     

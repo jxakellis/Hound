@@ -12,7 +12,7 @@ protocol ServerFamilyViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class ServerFamilyViewController: UIViewController {
+final class ServerFamilyViewController: UIViewController {
     
     // MARK: IB
 

@@ -8,6 +8,7 @@
 
 import UIKit
 
+// NOT final class
 class ScaledUILabel: UILabel {
     
     // MARK: Main

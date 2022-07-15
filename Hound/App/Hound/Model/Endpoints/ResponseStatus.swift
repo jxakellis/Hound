@@ -8,7 +8,7 @@
 import Foundation
 
 /*
-class ResponseInformation {
+final class ResponseInformation {
     var status: ResponseStatus
     var errorCode: String?
     var error: Error?

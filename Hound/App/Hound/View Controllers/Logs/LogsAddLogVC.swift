@@ -14,7 +14,7 @@ protocol LogsAddLogViewControllerDelegate: AnyObject {
     func didUpdateLog(sender: Sender, parentDogId: Int, updatedLog: Log)
 }
 
-class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, DropDownUIViewDataSource {
+final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, DropDownUIViewDataSource {
     
     // MARK: - UITextFieldDelegate
     

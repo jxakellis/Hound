@@ -12,7 +12,7 @@ protocol SettingsPersonalInformationViewControllerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
 }
 
-class SettingsPersonalInformationViewController: UIViewController, UIGestureRecognizerDelegate, DogManagerControlFlowProtocol {
+final class SettingsPersonalInformationViewController: UIViewController, UIGestureRecognizerDelegate, DogManagerControlFlowProtocol {
 
     // MARK: - UIGestureRecognizerDelegate
 

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LogsBodyWithoutIconTableViewCell: UITableViewCell {
+final class LogsBodyWithoutIconTableViewCell: UITableViewCell {
     
     // MARK: - IB
     

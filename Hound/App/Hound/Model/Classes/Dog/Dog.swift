@@ -8,7 +8,7 @@
 
 import UIKit
 
-class Dog: NSObject, NSCoding, NSCopying {
+final class Dog: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying
     

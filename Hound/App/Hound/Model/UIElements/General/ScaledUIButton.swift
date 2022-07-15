@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ScaledUIButton: UIButton {
+final class ScaledUIButton: UIButton {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
