@@ -19,7 +19,6 @@ enum AudioManager {
 
     static func playAudio(forAudioPath audioPath: String) {
         DispatchQueue.global().async {
-            AppDelegate.generalLogger.notice("playAudio: \(audioPath)")
             let path = Bundle.main.path(forResource: audioPath, ofType: "mp3")!
             let url = URL(fileURLWithPath: path)
             
@@ -44,7 +43,6 @@ enum AudioManager {
     
     static func stopAudio() {
         DispatchQueue.global().async {
-            // AppDelegate.generalLogger.notice("stopAudio")
             if AudioManager.sharedPlayer != nil {
                 AudioManager.sharedPlayer.stop()
             }
@@ -57,7 +55,6 @@ enum AudioManager {
     static func playSilenceAudio() {
         
         DispatchQueue.global().async {
-            AppDelegate.generalLogger.notice("playSilenceAudio")
             let path = Bundle.main.path(forResource: "silence", ofType: "mp3")!
             let url = URL(fileURLWithPath: path)
             
@@ -76,7 +73,7 @@ enum AudioManager {
                 
             }
             catch {
-                AppDelegate.generalLogger.notice("playSilenceAudio error: \(error.localizedDescription)")
+                AppDelegate.generalLogger.error("playSilenceAudio error: \(error.localizedDescription)")
             }
             
         }
@@ -89,9 +86,6 @@ enum AudioManager {
     
     /// Checks to see if the user has notifications enabled, loud notifications enabled, and the app is in the background and, if all conditions are met, then begins loud notification and vibration.
     static func playLoudNotification() {
-        
-        AppDelegate.generalLogger.notice("playLoudNotification")
-        
         // make sure the user wants loud notifications
         // don't check for if there are enabled reminders, as client could be out of sync with server which has a reminder
         guard UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification && UIApplication.shared.applicationState == .background else {
@@ -139,7 +133,6 @@ enum AudioManager {
     
     /// No matter the user eligibility for isLoudNotiifcation, stops loud notification and vibration.
     static func stopLoudNotification() {
-        AppDelegate.generalLogger.notice("stopLoudNotification")
         shouldVibrate = false
         AudioManager.stopAudio()
     }

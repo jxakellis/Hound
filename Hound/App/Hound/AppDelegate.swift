@@ -13,7 +13,7 @@ import os.log
 final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
     /*
-     TO DO add handling for consent of subscription price increase
+     TO DO NOW add handling for consent of subscription price increase
      When you increase the price of a subscription, the system asks your delegate’s function paymentQueueShouldShowPriceConsent(_:) whether to immediately display the price consent sheet, or to delay displaying the sheet until later. For example, you may want to delay showing the sheet if it would interrupt a multistep user interaction, such as setting up a user account. Return false in paymentQueueShouldShowPriceConsent(_:) to prevent the dialog from displaying immediately.
      To show the price consent sheet after a delay, call showPriceConsentIfNeeded(), which shows the sheet only if the user hasn’t responded to the price increase notifications.
      */
@@ -66,12 +66,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        AppDelegate.generalLogger.warning("Failed to register for remote notifications with error: \(error.localizedDescription)")
+        AppDelegate.generalLogger.error("Failed to register for remote notifications with error: \(error.localizedDescription)")
     }
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        AppDelegate.generalLogger.notice("Received \(userInfo)")
-        
         // look for the aps body
         guard let aps = userInfo["aps"] as? [String: Any] else {
             completionHandler(.noData)

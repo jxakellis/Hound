@@ -27,7 +27,7 @@ final class Dog: NSObject, NSCoding, NSCopying {
         super.init()
         dogId = aDecoder.decodeInteger(forKey: "dogId")
         dogName = aDecoder.decodeObject(forKey: "dogName") as? String ?? UUID().uuidString
-        dogIcon = aDecoder.decodeObject(forKey: "dogIcon") as? UIImage ?? DogConstant.defaultDogIcon
+        dogIcon = aDecoder.decodeObject(forKey: "dogIcon") as? UIImage ?? ClassConstant.DogConstant.defaultDogIcon
         dogLogs = aDecoder.decodeObject(forKey: "dogLogs") as? LogManager ?? LogManager()
         dogReminders = aDecoder.decodeObject(forKey: "dogReminders") as? ReminderManager ?? ReminderManager()
     }
@@ -47,7 +47,7 @@ final class Dog: NSObject, NSCoding, NSCopying {
         try changeDogName(forDogName: dogName)
     }
     
-    convenience init(dogId: Int = DogConstant.defaultDogId, dogName: String?, dogIcon: UIImage = DogConstant.defaultDogIcon) throws {
+    convenience init(dogId: Int = ClassConstant.DogConstant.defaultDogId, dogName: String?, dogIcon: UIImage = ClassConstant.DogConstant.defaultDogIcon) throws {
         try self.init(dogName: dogName)
         
         self.dogId = dogId
@@ -62,10 +62,10 @@ final class Dog: NSObject, NSCoding, NSCopying {
         //   return nil
         // }
         
-        let dogId = body[ServerDefaultKeys.dogId.rawValue] as? Int ?? DogConstant.defaultDogId
-        let dogName = body[ServerDefaultKeys.dogName.rawValue] as? String ?? DogConstant.defaultDogName
+        let dogId = body[ServerDefaultKeys.dogId.rawValue] as? Int ?? ClassConstant.DogConstant.defaultDogId
+        let dogName = body[ServerDefaultKeys.dogName.rawValue] as? String ?? ClassConstant.DogConstant.defaultDogName
         
-        try! self.init(dogId: dogId, dogName: dogName, dogIcon: LocalDogIcon.getIcon(forDogId: dogId) ?? DogConstant.defaultDogIcon)
+        try! self.init(dogId: dogId, dogName: dogName, dogIcon: LocalDogIcon.getIcon(forDogId: dogId) ?? ClassConstant.DogConstant.defaultDogIcon)
         
         dogIsDeleted = body[ServerDefaultKeys.dogIsDeleted.rawValue] as? Bool ?? false
         
@@ -82,20 +82,20 @@ final class Dog: NSObject, NSCoding, NSCopying {
     
     // MARK: - Properties
     
-    var dogId: Int = DogConstant.defaultDogId
+    var dogId: Int = ClassConstant.DogConstant.defaultDogId
     
     /// This property a marker leftover from when we went through the process of constructing a new dog from JSON and combining with an existing dog object. This markers allows us to have a new dog to overwrite the old dog, then leaves an indicator that this should be deleted. This deletion is handled by DogsRequest
     private(set) var dogIsDeleted: Bool = false
     
     // MARK: - Traits
     
-    var dogIcon: UIImage = DogConstant.defaultDogIcon
+    var dogIcon: UIImage = ClassConstant.DogConstant.defaultDogIcon
     
     func resetIcon() {
-        dogIcon = DogConstant.defaultDogIcon
+        dogIcon = ClassConstant.DogConstant.defaultDogIcon
     }
     
-    private(set) var dogName: String = DogConstant.defaultDogName
+    private(set) var dogName: String = ClassConstant.DogConstant.defaultDogName
     func changeDogName(forDogName: String?) throws {
         guard let forDogName = forDogName else {
             throw DogError.dogNameNil
@@ -105,7 +105,7 @@ final class Dog: NSObject, NSCoding, NSCopying {
             throw DogError.dogNameBlank
         }
         
-        guard forDogName.count <= DogConstant.dogNameCharacterLimit else {
+        guard forDogName.count <= ClassConstant.DogConstant.dogNameCharacterLimit else {
             throw DogError.dogNameCharacterLimitExceeded
         }
                 

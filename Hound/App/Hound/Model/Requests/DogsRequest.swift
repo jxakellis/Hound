@@ -126,7 +126,7 @@ extension DogsRequest {
                     newDog.combine(withOldDog: currentDog)
                     // If we have an image stored locally for a dog, then we apply the icon.
                     // If the dog has no icon (because someone else in the family made it and the user hasn't selected their own icon OR because the user made it and never added an icon) then the dog just gets the defaultDogIcon
-                    newDog.dogIcon = LocalDogIcon.getIcon(forDogId: newDog.dogId) ?? DogConstant.defaultDogIcon
+                    newDog.dogIcon = LocalDogIcon.getIcon(forDogId: newDog.dogId) ?? ClassConstant.DogConstant.defaultDogIcon
                     
                     // delete any newReminder with the marker that they should be deleted
                     for newReminder in newDog.dogReminders.reminders where newReminder.reminderIsDeleted == true {

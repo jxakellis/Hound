@@ -82,7 +82,7 @@ final class Subscription: NSObject {
     convenience init(fromBody body: [String: Any]) {
         let transactionId = body[ServerDefaultKeys.transactionId.rawValue] as? Int
         
-        let product = InAppPurchaseProduct(rawValue: body[ServerDefaultKeys.productId.rawValue] as? String ?? InAppPurchaseProduct.unknown.rawValue) ?? SubscriptionConstant.defaultSubscriptionProduct
+        let product = InAppPurchaseProduct(rawValue: body[ServerDefaultKeys.productId.rawValue] as? String ?? InAppPurchaseProduct.unknown.rawValue) ?? ClassConstant.SubscriptionConstant.defaultSubscriptionProduct
         
         let userId = body[ServerDefaultKeys.userId.rawValue] as? String
         
@@ -96,9 +96,9 @@ final class Subscription: NSObject {
             subscriptionExpiration = ResponseUtils.dateFormatter(fromISO8601String: subscriptionExpirationString)
         }
         
-        let subscriptionNumberOfFamilyMembers = body[ServerDefaultKeys.subscriptionNumberOfFamilyMembers.rawValue] as? Int ?? SubscriptionConstant.defaultSubscriptionNumberOfFamilyMembers
+        let subscriptionNumberOfFamilyMembers = body[ServerDefaultKeys.subscriptionNumberOfFamilyMembers.rawValue] as? Int ?? ClassConstant.SubscriptionConstant.defaultSubscriptionNumberOfFamilyMembers
         
-        let subscriptionNumberOfDogs = body[ServerDefaultKeys.subscriptionNumberOfDogs.rawValue] as? Int ?? SubscriptionConstant.defaultSubscriptionNumberOfDogs
+        let subscriptionNumberOfDogs = body[ServerDefaultKeys.subscriptionNumberOfDogs.rawValue] as? Int ?? ClassConstant.SubscriptionConstant.defaultSubscriptionNumberOfDogs
         
         let subscriptionIsActive = body[ServerDefaultKeys.subscriptionIsActive.rawValue] as? Bool ?? false
 

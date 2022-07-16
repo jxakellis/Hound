@@ -44,17 +44,12 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
     
     static let shared = InternalInAppPurchaseManager()
     
-    // TO DO test receiptProperties:
-    // Receipt properties include SKReceiptPropertyIsExpired, SKReceiptPropertyIsRevoked, and SKReceiptPropertyIsVolumePurchase.
-    let refresh = SKReceiptRefreshRequest(receiptProperties: nil)
-    
     /// Keeps track of if the system is asyncronously, in the background, updating the transaction records on the hound server. This can occur if there is a subscription renewal which gets added to the paymentQueue.
     var backgroundPurchaseInProgress: Bool = false
     
     override init() {
         super.init()
         SKPaymentQueue.default().add(self)
-        refresh.delegate = self
     }
     
     // MARK: - Fetch Products
@@ -141,7 +136,6 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
     
     // Prompt a product payment transaction
     func purchase(forProduct product: SKProduct, completionHandler: @escaping ((String?) -> Void)) {
-        
         // Make sure the user has the Hound permissions to perform such a request
         guard FamilyConfiguration.isFamilyHead else {
             ErrorManager.alert(forError: InAppPurchaseError.purchasePermission)
@@ -179,7 +173,6 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
         
         // Don't test for SKPaymentQueue.default().transactions. This could lock the code from ever executing. E.g. the user goes to buy something (so its in the payment queue) but they stop mid way (maybe leaving the transaction as .purchasing or .deferred). Then the background async processing isn't invoked to start (or it simply can't process whats in the queue) so we are left with transactions in the queue that are stuck and are locking
         
-        
         productPurchaseCompletionHandler = completionHandler
         let payment = SKPayment(product: product)
         SKPaymentQueue.default().add(payment)
@@ -187,19 +180,14 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
     
     // Observe a transaction state
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-      print("queue called: \(transactions.count)")
-        
         // If either of these are nil, there is not an ongoing manual request by a user (as there is no callback to provide information to). Therefore, we are dealing with asyncronously bought transactions (e.g. renewals, phone died while purchasing, etc.) that should be processed in the background.
         guard productPurchaseCompletionHandler != nil || productRestoreCompletionHandler != nil else {
             
-            self.backgroundPurchaseInProgress = true
-            print("async background")
             // These are transactions that we know have completely failed. Clear them.
             let failedTransactionsInQueue = transactions.filter { transaction in
                 return transaction.transactionState == .failed
             }
             
-            print("failed background count \(failedTransactionsInQueue.count)")
             failedTransactionsInQueue.forEach { failedTransaction in
                 SKPaymentQueue.default().finishTransaction(failedTransaction)
             }
@@ -215,15 +203,11 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
                 return
             }
             
-            print("begin background count \(completedTransactionsInQueue.count)")
-            
             SubscriptionRequest.create(invokeErrorManager: false) { requestWasSuccessful, _ in
                 self.backgroundPurchaseInProgress = false
                 guard requestWasSuccessful else {
                     return
                 }
-                
-                print("completed background count \(completedTransactionsInQueue.count)")
                 
                 // If successful, then we know ALL of the completed transactions in queue have been updated
                 completedTransactionsInQueue.forEach { completedTransaction in
@@ -236,7 +220,6 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
         
         // Check if the user is attempting to purchase a product
         guard let productPurchaseCompletionHandler = productPurchaseCompletionHandler else {
-            print("restore")
             // User is restoring a transaction
             guard let productRestoreCompletionHandler = productRestoreCompletionHandler else {
                 return
@@ -245,8 +228,6 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
             let restoredTransactionsInQueue = transactions.filter { transaction in
                 return transaction.transactionState == .restored
             }
-            
-            print("begin restore count \(restoredTransactionsInQueue.count)")
             
             // If we have restored transactions, contact the server to let it know
             guard restoredTransactionsInQueue.count >= 1 else {
@@ -261,8 +242,6 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
                     return
                 }
                 
-                print("completed restore count \(restoredTransactionsInQueue.count)")
-                
                 // If successful, then we know ALL of the completed transactions in queue have been updated
                 restoredTransactionsInQueue.forEach { restoredTransaction in
                     
@@ -276,10 +255,8 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
         }
         
         // User is purchasing a product
-        print("sync foreground")
         
         for transaction in transactions {
-            print("sync \(transaction.transactionState)")
             // We use the main thread so completion handler is on main thread
             DispatchQueue.main.async {
                 switch transaction.transactionState {

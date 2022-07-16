@@ -60,7 +60,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TO DO add introduction page that says a few sentences. Importantly, mention the dog and family member limits
+        // TO DO NOW add introduction page that says a few sentences. Importantly, mention the dog and family member limits
         
         oneTimeSetup()
         

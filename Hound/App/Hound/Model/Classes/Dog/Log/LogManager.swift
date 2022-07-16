@@ -103,7 +103,7 @@ final class LogManager: NSObject, NSCoding, NSCopying {
             throw LogManagerError.logIdNotPresent
         }
         else {
-            logs.remove(at: logIndex ?? LogConstant.defaultLogId)
+            logs.remove(at: logIndex ?? ClassConstant.LogConstant.defaultLogId)
             uniqueLogActionsResult = nil
         }
     }
@@ -126,6 +126,10 @@ final class LogManager: NSObject, NSCoding, NSCopying {
         
         // find all unique logActions
         for dogLog in logs where logActions.contains(dogLog.logAction) == false {
+            // If we have added all of the logActions possible, then stop the loop as there is no point for more iteration
+            guard logActions.count != LogAction.allCases.count else {
+                break
+            }
             logActions.append(dogLog.logAction)
         }
         

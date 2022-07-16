@@ -80,7 +80,7 @@ enum FamilyConfiguration {
             return subscription.subscriptionIsActive
         }
         
-        return potentialSubscription ?? SubscriptionConstant.defaultSubscription
+        return potentialSubscription ?? ClassConstant.SubscriptionConstant.defaultSubscription
     }
    
 }

@@ -49,7 +49,7 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
         let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
         
         // make sure the result is under reminderCustomActionNameCharacterLimit
-        return updatedText.count <= ReminderConstant.reminderCustomActionNameCharacterLimit
+        return updatedText.count <= ClassConstant.ReminderConstant.reminderCustomActionNameCharacterLimit
     }
     
     // MARK: - DropDownUIViewDataSource
@@ -244,9 +244,9 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
             // if == is true, that means it is custom, which means it shouldn't hide so ! reverses to input isHidden: false, reverse for if type is not custom. This is because this text input field is only used for custom types.
             toggleReminderCustomActionNameTextField(isHidden: !(targetReminder?.reminderAction == .custom))
             
-            reminderIsEnabledSwitch.isOn = targetReminder?.reminderIsEnabled ?? ReminderConstant.defaultReminderIsEnabled
+            reminderIsEnabledSwitch.isOn = targetReminder?.reminderIsEnabled ?? ClassConstant.ReminderConstant.defaultReminderIsEnabled
             
-            initalReminderIsEnabled = targetReminder?.reminderIsEnabled ?? ReminderConstant.defaultReminderIsEnabled
+            initalReminderIsEnabled = targetReminder?.reminderIsEnabled ?? ClassConstant.ReminderConstant.defaultReminderIsEnabled
         }
         
         /// Sets up gestureRecognizer for dog selector drop down

@@ -32,7 +32,7 @@ final class LogsBodyWithoutIconTableViewCell: UITableViewCell {
         
         self.dogNameLabel.text = dogName
         
-        let fontSize = FontConstant.logCellFontSize
+        let fontSize = VisualConstant.FontConstant.logCellFontSize
         let sizeRatio = UserConfiguration.logsInterfaceScale.currentScaleFactor
         
         dogNameLabel.font =  dogNameLabel.font.withSize(fontSize * sizeRatio)

@@ -40,17 +40,17 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
         let senderButton = sender as! ScaledUIButton
         var targetColor: UIColor!
 
-        if senderButton.tag == ViewTagConstant.weekdayEnabled {
+        if senderButton.tag == VisualConstant.ViewTagConstant.weekdayEnabled {
             targetColor = UIColor.systemGray4
-            senderButton.tag = ViewTagConstant.weekdayDisabled
+            senderButton.tag = VisualConstant.ViewTagConstant.weekdayDisabled
         }
         else {
             targetColor = UIColor.systemBlue
-            senderButton.tag = ViewTagConstant.weekdayEnabled
+            senderButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
         }
 
         senderButton.isUserInteractionEnabled = false
-        UIView.animate(withDuration: AnimationConstant.weekdayButton) {
+        UIView.animate(withDuration: VisualConstant.AnimationConstant.weekdayButton) {
             senderButton.tintColor = targetColor
         } completion: { (_) in
             senderButton.isUserInteractionEnabled = true
@@ -119,38 +119,38 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
 
         for dayOfWeekButton in dayOfWeekButtons where dayOfWeekButton != nil {
             dayOfWeekButton!.tintColor = UIColor.systemGray4
-            dayOfWeekButton!.tag = ViewTagConstant.weekdayDisabled
+            dayOfWeekButton!.tag = VisualConstant.ViewTagConstant.weekdayDisabled
         }
         
-        guard passedWeekDays != nil else {
+        guard let passedWeekDays = passedWeekDays else {
             return
         }
 
-        for dayOfWeek in passedWeekDays! {
+        for dayOfWeek in passedWeekDays {
             switch dayOfWeek {
             case 1:
                 sundayButton.tintColor = .systemBlue
-                sundayButton.tag = ViewTagConstant.weekdayEnabled
+                sundayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
             case 2:
                 mondayButton.tintColor = .systemBlue
-                mondayButton.tag = ViewTagConstant.weekdayEnabled
+                mondayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
             case 3:
                 tuesdayButton.tintColor = .systemBlue
-                tuesdayButton.tag = ViewTagConstant.weekdayEnabled
+                tuesdayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
             case 4:
                 wednesdayButton.tintColor = .systemBlue
-                wednesdayButton.tag = ViewTagConstant.weekdayEnabled
+                wednesdayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
             case 5:
                 thursdayButton.tintColor = .systemBlue
-                thursdayButton.tag = ViewTagConstant.weekdayEnabled
+                thursdayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
             case 6:
                 fridayButton.tintColor = .systemBlue
-                fridayButton.tag = ViewTagConstant.weekdayEnabled
+                fridayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
             case 7:
                 saturdayButton.tintColor = .systemBlue
-                saturdayButton.tag = ViewTagConstant.weekdayEnabled
+                saturdayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
             default:
-                AppDelegate.generalLogger.fault("unknown day of week: \(dayOfWeek) while synchronizeWeekdays for DogsReminderWeeklyViewController")
+                break
             }
         }
 
@@ -161,7 +161,7 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
             var days: [Int] = []
             let dayOfWeekButtons = [sundayButton, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton]
 
-            for dayOfWeekIndex in 0..<dayOfWeekButtons.count where dayOfWeekButtons[dayOfWeekIndex]?.tag == ViewTagConstant.weekdayEnabled {
+            for dayOfWeekIndex in 0..<dayOfWeekButtons.count where dayOfWeekButtons[dayOfWeekIndex]?.tag == VisualConstant.ViewTagConstant.weekdayEnabled {
                 days.append(dayOfWeekIndex+1)
             }
 

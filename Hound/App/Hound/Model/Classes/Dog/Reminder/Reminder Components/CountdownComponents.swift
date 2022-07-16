@@ -49,7 +49,7 @@ final class CountdownComponents: NSObject, NSCoding, NSCopying {
     }
     
     /// Interval at which a timer should be triggered for reminder
-    var executionInterval: TimeInterval = ReminderComponentConstant.defaultCountdownExecutionInterval
+    var executionInterval: TimeInterval = ClassConstant.ReminderComponentConstant.defaultCountdownExecutionInterval
     
     /// How much time of the interval of been used up, this is used for when a timer is paused and then unpaused and have to calculate remaining time
     var intervalElapsed: TimeInterval = TimeInterval(0)

@@ -34,7 +34,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
         
         // make sure the result is logCustomActionNameCharacterLimit
-        return updatedText.count <= LogConstant.logCustomActionNameCharacterLimit
+        return updatedText.count <= ClassConstant.LogConstant.logCustomActionNameCharacterLimit
     }
     
     // MARK: - UITextViewDelegate
@@ -193,7 +193,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             // Check to see if we are updating or adding a log
             guard let parentDogIdToUpdate = parentDogIdToUpdate, let logToUpdate = logToUpdate else {
                 // Adding a log
-                let newLog = Log(logAction: selectedLogAction, logCustomActionName: logCustomActionNameTextField.text, logDate: logDateDatePicker.date, logNote: logNoteTextView.text ?? LogConstant.defaultLogNote)
+                let newLog = Log(logAction: selectedLogAction, logCustomActionName: logCustomActionNameTextField.text, logDate: logDateDatePicker.date, logNote: logNoteTextView.text ?? ClassConstant.LogConstant.defaultLogNote)
                 
                 addLogButton.beginQuerying()
                 addLogButtonBackground.beginQuerying(isBackgroundButton: true)
@@ -219,7 +219,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             
             // Updating a log
             logToUpdate.logDate = logDateDatePicker.date
-            logToUpdate.logNote = logNoteTextView.text ?? LogConstant.defaultLogNote
+            logToUpdate.logNote = logNoteTextView.text ?? ClassConstant.LogConstant.defaultLogNote
             logToUpdate.logAction = selectedLogAction
             try logToUpdate.changeLogCustomActionName(forLogCustomActionName:
                                                     selectedLogAction == LogAction.custom

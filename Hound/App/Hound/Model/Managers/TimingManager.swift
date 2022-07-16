@@ -138,27 +138,24 @@ final class TimingManager {
         let passedReminderId: Int = parsedDictionary[ServerDefaultKeys.reminderId.rawValue]! as! Int
         let dogManager = MainTabBarViewController.staticDogManager
         
-        do {
-            let dog = try dogManager.findDog(forDogId: dogId)
-            let reminder = try dog.dogReminders.findReminder(forReminderId: passedReminderId)
-            
-            if reminder.reminderType == .weekly {
-                reminder.weeklyComponents.isSkipping = false
-                reminder.weeklyComponents.isSkippingDate = nil
-            }
-            else if reminder.reminderType == .monthly {
-                reminder.monthlyComponents.isSkipping = false
-                reminder.monthlyComponents.isSkippingDate = nil
-                
-            }
-            reminder.reminderExecutionBasis = Date()
-            
-            delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
-            
+        let dog = try? dogManager.findDog(forDogId: dogId)
+        let reminder = try? dog?.dogReminders.findReminder(forReminderId: passedReminderId)
+        
+        guard let reminder = reminder else {
+            return
         }
-        catch {
-            AppDelegate.generalLogger.notice("willUpdateIsSkipping failure in finding dog or reminder")
+        
+        if reminder.reminderType == .weekly {
+            reminder.weeklyComponents.isSkipping = false
+            reminder.weeklyComponents.isSkippingDate = nil
         }
+        else if reminder.reminderType == .monthly {
+            reminder.monthlyComponents.isSkipping = false
+            reminder.monthlyComponents.isSkippingDate = nil
+        }
+        reminder.reminderExecutionBasis = Date()
+        
+        delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
         
     }
     

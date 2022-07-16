@@ -30,7 +30,7 @@ final class AlertManager: NSObject {
         activityIndicator.bottomAnchor.constraint(equalTo: contactingServerAlertController.view.bottomAnchor, constant: -20).isActive = true
         
         contactingServerAlertController.view.addSubview(activityIndicator)
-        contactingServerAlertController.view.tag = ViewTagConstant.contactingServerAlertController
+        contactingServerAlertController.view.tag = VisualConstant.ViewTagConstant.contactingServerAlertController
         
     }
     
@@ -55,11 +55,11 @@ final class AlertManager: NSObject {
     /// Checks to see if the queue has any server related alerts inside of it.
     private var containsServerRelatedAlert: Bool {
         // check queue for server related
-        for alert in alertQueue where alert.view.tag == ViewTagConstant.serverRelatedViewController {
+        for alert in alertQueue where alert.view.tag == VisualConstant.ViewTagConstant.serverRelatedViewController {
             return true
         }
         // check current presentation
-        if currentAlertPresented?.view.tag == ViewTagConstant.serverRelatedViewController {
+        if currentAlertPresented?.view.tag == VisualConstant.ViewTagConstant.serverRelatedViewController {
             return true
         }
         else {
@@ -70,11 +70,11 @@ final class AlertManager: NSObject {
     /// Checks to see if the queue has any loading view controllers
     private var containsContactingServerAlertController: Bool {
         // check queue for loading view controller
-        for alert in alertQueue where alert.view.tag == ViewTagConstant.contactingServerAlertController {
+        for alert in alertQueue where alert.view.tag == VisualConstant.ViewTagConstant.contactingServerAlertController {
             return true
         }
         // check current presentation
-        if currentAlertPresented?.view.tag == ViewTagConstant.contactingServerAlertController {
+        if currentAlertPresented?.view.tag == VisualConstant.ViewTagConstant.contactingServerAlertController {
             return true
         }
         else {
@@ -84,11 +84,11 @@ final class AlertManager: NSObject {
     
     private func enqueue(_ alertController: GeneralUIAlertController) {
          // if this is a server related alert and there is already a server related alert, we don't want to add a second one. no need to barrage the user with server failure messages.
-        if alertController.view.tag == ViewTagConstant.serverRelatedViewController && containsServerRelatedAlert == true {
+        if alertController.view.tag == VisualConstant.ViewTagConstant.serverRelatedViewController && containsServerRelatedAlert == true {
                 return
         }
         // if this is a loading view controller and loading view controller, we don't want to add a second one.
-        else if alertController.view.tag == ViewTagConstant.contactingServerAlertController && containsContactingServerAlertController == true {
+        else if alertController.view.tag == VisualConstant.ViewTagConstant.contactingServerAlertController && containsContactingServerAlertController == true {
             return
         }
         
@@ -109,7 +109,7 @@ final class AlertManager: NSObject {
             title: title,
             message: trimmedMessage,
             preferredStyle: .alert)
-        alertController.view.tag = ViewTagConstant.serverRelatedViewController
+        alertController.view.tag = VisualConstant.ViewTagConstant.serverRelatedViewController
         
         if hasOKAlertAction == true {
             let alertAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
@@ -166,12 +166,9 @@ final class AlertManager: NSObject {
         }
         
         if AlertManager.globalPresenter == nil {
-            AppDelegate.generalLogger.notice("AlertManager.globalPresenter is nil, initiating waitLoop")
             waitLoop()
-            
         }
         else if AlertManager.globalPresenter!.isBeingDismissed {
-            AppDelegate.generalLogger.notice("AlertManager.globalPresenter is being dismissed, initiating waitLoop")
             waitLoop()
         }
         else {

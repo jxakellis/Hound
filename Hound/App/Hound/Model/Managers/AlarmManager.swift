@@ -271,7 +271,7 @@ final class AlarmManager {
                 
                 // find log that is incredibly close the time where the reminder was skipped, once found, then we delete it.
                 var logToRemove: Log?
-                for log in dog.dogLogs.logs where dateOfLogToRemove.distance(to: log.logDate) < LogConstant.logRemovalPrecision && dateOfLogToRemove.distance(to: log.logDate) > -LogConstant.logRemovalPrecision {
+                for log in dog.dogLogs.logs where dateOfLogToRemove.distance(to: log.logDate) < ClassConstant.LogConstant.logRemovalPrecision && dateOfLogToRemove.distance(to: log.logDate) > -ClassConstant.LogConstant.logRemovalPrecision {
                     logToRemove = log
                     break
                 }

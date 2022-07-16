@@ -11,11 +11,6 @@ import UIKit
 enum LogAction: String, CaseIterable {
     
     init?(rawValue: String) {
-        // backwards compatible
-        if rawValue == "Other"{
-            self = .custom
-            return
-        }
         // regular
         for action in LogAction.allCases {
             if action.rawValue.lowercased() == rawValue.lowercased() {
@@ -24,7 +19,6 @@ enum LogAction: String, CaseIterable {
             }
         }
         
-        AppDelegate.generalLogger.fault("logAction Not Found")
         self = .custom
     }
     
@@ -120,11 +114,11 @@ final class Log: NSObject, NSCoding, NSCopying {
     
     required init?(coder aDecoder: NSCoder) {
         self.logId = aDecoder.decodeInteger(forKey: "logId")
-        self.userId = aDecoder.decodeObject(forKey: "userId") as? String ?? LogConstant.defaultUserId
-        self.logAction = LogAction(rawValue: aDecoder.decodeObject(forKey: "logAction") as? String ?? LogConstant.defaultLogAction.rawValue) ?? LogConstant.defaultLogAction
+        self.userId = aDecoder.decodeObject(forKey: "userId") as? String ?? ClassConstant.LogConstant.defaultUserId
+        self.logAction = LogAction(rawValue: aDecoder.decodeObject(forKey: "logAction") as? String ?? ClassConstant.LogConstant.defaultLogAction.rawValue) ?? ClassConstant.LogConstant.defaultLogAction
         self.logCustomActionName = aDecoder.decodeObject(forKey: "logCustomActionName") as? String
         self.logDate = aDecoder.decodeObject(forKey: "logDate") as? Date ?? Date()
-        self.logNote = aDecoder.decodeObject(forKey: "logNote") as? String ?? LogConstant.defaultLogNote
+        self.logNote = aDecoder.decodeObject(forKey: "logNote") as? String ?? ClassConstant.LogConstant.defaultLogNote
     }
     
     func encode(with aCoder: NSCoder) {
@@ -143,12 +137,12 @@ final class Log: NSObject, NSCoding, NSCopying {
     }
     
     convenience init(
-        logId: Int = LogConstant.defaultLogId,
-        userId: String = LogConstant.defaultUserId,
-        logAction: LogAction = LogConstant.defaultLogAction,
-        logCustomActionName: String? = LogConstant.defaultLogCustomActionName,
-        logDate: Date = LogConstant.defaultLogDate,
-        logNote: String = LogConstant.defaultLogNote
+        logId: Int = ClassConstant.LogConstant.defaultLogId,
+        userId: String = ClassConstant.LogConstant.defaultUserId,
+        logAction: LogAction = ClassConstant.LogConstant.defaultLogAction,
+        logCustomActionName: String? = ClassConstant.LogConstant.defaultLogCustomActionName,
+        logDate: Date = ClassConstant.LogConstant.defaultLogDate,
+        logNote: String = ClassConstant.LogConstant.defaultLogNote
     ) {
         self.init()
         
@@ -162,18 +156,18 @@ final class Log: NSObject, NSCoding, NSCopying {
     
     convenience init(fromBody body: [String: Any]) {
         
-        let logId: Int = body[ServerDefaultKeys.logId.rawValue] as? Int ?? LogConstant.defaultLogId
-        // don't user LogConstant.defaultUserId here. if we cannot decode the value, then just leave it as -1, as otherwise it would incorrectly display that this user created the log (as LogConstant.defaultUserId defaults to UserInformation.userId first)
+        let logId: Int = body[ServerDefaultKeys.logId.rawValue] as? Int ?? ClassConstant.LogConstant.defaultLogId
+        // don't user ClassConstant.LogConstant.defaultUserId here. if we cannot decode the value, then just leave it as -1, as otherwise it would incorrectly display that this user created the log (as ClassConstant.LogConstant.defaultUserId defaults to UserInformation.userId first)
         let userId: String = body[ServerDefaultKeys.userId.rawValue] as? String ?? Hash.defaultSHA256Hash
-        let logAction: LogAction = LogAction(rawValue: body[ServerDefaultKeys.logAction.rawValue] as? String ?? LogConstant.defaultLogAction.rawValue)!
-        let logCustomActionName: String? = body[ServerDefaultKeys.logCustomActionName.rawValue] as? String ?? LogConstant.defaultLogCustomActionName
+        let logAction: LogAction = LogAction(rawValue: body[ServerDefaultKeys.logAction.rawValue] as? String ?? ClassConstant.LogConstant.defaultLogAction.rawValue)!
+        let logCustomActionName: String? = body[ServerDefaultKeys.logCustomActionName.rawValue] as? String ?? ClassConstant.LogConstant.defaultLogCustomActionName
         
-        var logDate: Date = LogConstant.defaultLogDate
+        var logDate: Date = ClassConstant.LogConstant.defaultLogDate
         if let logDateString = body[ServerDefaultKeys.logDate.rawValue] as? String {
-            logDate = ResponseUtils.dateFormatter(fromISO8601String: logDateString) ?? LogConstant.defaultLogDate
+            logDate = ResponseUtils.dateFormatter(fromISO8601String: logDateString) ?? ClassConstant.LogConstant.defaultLogDate
         }
         
-        let logNote: String = body[ServerDefaultKeys.logNote.rawValue] as? String ?? LogConstant.defaultLogNote
+        let logNote: String = body[ServerDefaultKeys.logNote.rawValue] as? String ?? ClassConstant.LogConstant.defaultLogNote
         
         self.init(logId: logId, userId: userId, logAction: logAction, logCustomActionName: logCustomActionName, logDate: logDate, logNote: logNote)
         
@@ -182,27 +176,27 @@ final class Log: NSObject, NSCoding, NSCopying {
     
     // MARK: Properties
     
-    var logId: Int = LogConstant.defaultLogId
+    var logId: Int = ClassConstant.LogConstant.defaultLogId
     
-    var userId: String = LogConstant.defaultUserId
+    var userId: String = ClassConstant.LogConstant.defaultUserId
     
     /// This property a marker leftover from when we went through the process of constructing a new log from JSON and combining with an existing log object. This markers allows us to have a new log to overwrite the old log, then leaves an indicator that this should be deleted. This deletion is handled by DogsRequest
     private(set) var logIsDeleted: Bool = false
     
-    var logAction: LogAction = LogConstant.defaultLogAction
+    var logAction: LogAction = ClassConstant.LogConstant.defaultLogAction
     
-    private(set) var logCustomActionName: String? = LogConstant.defaultLogCustomActionName
+    private(set) var logCustomActionName: String? = ClassConstant.LogConstant.defaultLogCustomActionName
     func changeLogCustomActionName(forLogCustomActionName: String?) throws {
-        guard forLogCustomActionName?.count ?? 0 <= LogConstant.logCustomActionNameCharacterLimit else {
+        guard forLogCustomActionName?.count ?? 0 <= ClassConstant.LogConstant.logCustomActionNameCharacterLimit else {
             throw LogError.logCustomActionNameCharacterLimitExceeded
         }
         
         logCustomActionName = forLogCustomActionName
     }
     
-    var logDate: Date = LogConstant.defaultLogDate
+    var logDate: Date = ClassConstant.LogConstant.defaultLogDate
     
-    var logNote: String = LogConstant.defaultLogNote
+    var logNote: String = ClassConstant.LogConstant.defaultLogNote
     
 }
 

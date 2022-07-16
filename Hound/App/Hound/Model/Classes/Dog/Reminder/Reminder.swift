@@ -18,8 +18,7 @@ enum ReminderType: String, CaseIterable {
             }
         }
         
-        AppDelegate.generalLogger.fault("reminderType Not Found")
-        self = .oneTime
+        self = .countdown
         return
     }
     case oneTime
@@ -46,8 +45,7 @@ enum ReminderAction: String, CaseIterable {
             }
         }
         
-        AppDelegate.generalLogger.fault("reminderAction Not Found")
-        self = .custom
+        self = ReminderAction.feed
         return
     }
     // common
@@ -139,7 +137,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         super.init()
         
         self.reminderId = aDecoder.decodeInteger(forKey: "reminderId")
-        self.reminderAction = ReminderAction(rawValue: aDecoder.decodeObject(forKey: "reminderAction") as? String ?? ReminderConstant.defaultReminderAction.rawValue)!
+        self.reminderAction = ReminderAction(rawValue: aDecoder.decodeObject(forKey: "reminderAction") as? String ?? ClassConstant.ReminderConstant.defaultReminderAction.rawValue)!
         
         self.reminderCustomActionName = aDecoder.decodeObject(forKey: "reminderCustomActionName") as? String
         
@@ -181,12 +179,12 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     }
     
     convenience init(
-        reminderId: Int = ReminderConstant.defaultReminderId,
-        reminderAction: ReminderAction = ReminderConstant.defaultReminderAction,
-        reminderCustomActionName: String? = ReminderConstant.defaultReminderCustomActionName,
-        reminderType: ReminderType = ReminderConstant.defaultReminderType,
-        reminderExecutionBasis: Date = ReminderConstant.defaultReminderExecutionBasis,
-        reminderIsEnabled: Bool = ReminderConstant.defaultReminderIsEnabled) {
+        reminderId: Int = ClassConstant.ReminderConstant.defaultReminderId,
+        reminderAction: ReminderAction = ClassConstant.ReminderConstant.defaultReminderAction,
+        reminderCustomActionName: String? = ClassConstant.ReminderConstant.defaultReminderCustomActionName,
+        reminderType: ReminderType = ClassConstant.ReminderConstant.defaultReminderType,
+        reminderExecutionBasis: Date = ClassConstant.ReminderConstant.defaultReminderExecutionBasis,
+        reminderIsEnabled: Bool = ClassConstant.ReminderConstant.defaultReminderIsEnabled) {
             self.init()
             
             self.reminderId = reminderId
@@ -204,15 +202,15 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         //     return nil
         // }
         
-        let reminderId = body[ServerDefaultKeys.reminderId.rawValue] as? Int ?? ReminderConstant.defaultReminderId
-        let reminderAction = ReminderAction(rawValue: body[ServerDefaultKeys.reminderAction.rawValue] as? String ?? ReminderConstant.defaultReminderAction.rawValue) ?? ReminderConstant.defaultReminderAction
-        let reminderCustomActionName = body[ServerDefaultKeys.reminderCustomActionName.rawValue] as? String ?? ReminderConstant.defaultReminderCustomActionName
-        let reminderType = ReminderType(rawValue: body[ServerDefaultKeys.reminderType.rawValue] as? String ?? ReminderConstant.defaultReminderType.rawValue) ?? ReminderConstant.defaultReminderType
-        var reminderExecutionBasis = ReminderConstant.defaultReminderExecutionBasis
+        let reminderId = body[ServerDefaultKeys.reminderId.rawValue] as? Int ?? ClassConstant.ReminderConstant.defaultReminderId
+        let reminderAction = ReminderAction(rawValue: body[ServerDefaultKeys.reminderAction.rawValue] as? String ?? ClassConstant.ReminderConstant.defaultReminderAction.rawValue) ?? ClassConstant.ReminderConstant.defaultReminderAction
+        let reminderCustomActionName = body[ServerDefaultKeys.reminderCustomActionName.rawValue] as? String ?? ClassConstant.ReminderConstant.defaultReminderCustomActionName
+        let reminderType = ReminderType(rawValue: body[ServerDefaultKeys.reminderType.rawValue] as? String ?? ClassConstant.ReminderConstant.defaultReminderType.rawValue) ?? ClassConstant.ReminderConstant.defaultReminderType
+        var reminderExecutionBasis = ClassConstant.ReminderConstant.defaultReminderExecutionBasis
         if let reminderExecutionBasisString = body[ServerDefaultKeys.reminderExecutionBasis.rawValue] as? String {
-            reminderExecutionBasis = ResponseUtils.dateFormatter(fromISO8601String: reminderExecutionBasisString) ?? ReminderConstant.defaultReminderExecutionBasis
+            reminderExecutionBasis = ResponseUtils.dateFormatter(fromISO8601String: reminderExecutionBasisString) ?? ClassConstant.ReminderConstant.defaultReminderExecutionBasis
         }
-        let reminderIsEnabled = body[ServerDefaultKeys.reminderIsEnabled.rawValue] as? Bool ?? ReminderConstant.defaultReminderIsEnabled
+        let reminderIsEnabled = body[ServerDefaultKeys.reminderIsEnabled.rawValue] as? Bool ?? ClassConstant.ReminderConstant.defaultReminderIsEnabled
         
         self.init(reminderId: reminderId, reminderAction: reminderAction, reminderCustomActionName: reminderCustomActionName, reminderType: reminderType, reminderExecutionBasis: reminderExecutionBasis, reminderIsEnabled: reminderIsEnabled)
         
@@ -269,18 +267,18 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     
     // General
     
-    var reminderId: Int = ReminderConstant.defaultReminderId
+    var reminderId: Int = ClassConstant.ReminderConstant.defaultReminderId
     
     /// This property a marker leftover from when we went through the process of constructing a new reminder from JSON and combining with an existing reminder object. This markers allows us to have a new reminder to overwrite the old reminder, then leaves an indicator that this should be deleted. This deletion is handled by DogsRequest
     private(set) var reminderIsDeleted: Bool = false
     
     /// This is a user selected label for the reminder. It dictates the name that is displayed in the UI for this reminder.
-    var reminderAction: ReminderAction = ReminderConstant.defaultReminderAction
+    var reminderAction: ReminderAction = ClassConstant.ReminderConstant.defaultReminderAction
     
     /// If the reminder's type is custom, this is the name for it.
-    private(set) var reminderCustomActionName: String? = ReminderConstant.defaultReminderCustomActionName
+    private(set) var reminderCustomActionName: String? = ClassConstant.ReminderConstant.defaultReminderCustomActionName
     func changeReminderCustomActionName(forReminderCustomActionName: String?) throws {
-        guard forReminderCustomActionName?.count ?? 0 <= ReminderConstant.reminderCustomActionNameCharacterLimit else {
+        guard forReminderCustomActionName?.count ?? 0 <= ClassConstant.ReminderConstant.reminderCustomActionNameCharacterLimit else {
             throw ReminderError.reminderCustomActionNameCharacterLimitExceeded
         }
         
@@ -289,7 +287,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     
     // Timing
     
-     var storedReminderType: ReminderType = ReminderConstant.defaultReminderType
+     var storedReminderType: ReminderType = ClassConstant.ReminderConstant.defaultReminderType
     /// Tells the reminder what components to use to make sure its in the correct timing style. Changing this changes between countdown, weekly, monthly, and oneTime mode.
     var reminderType: ReminderType {
         get {
@@ -306,7 +304,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         }
     }
     
-    private var storedReminderExecutionBasis: Date = ReminderConstant.defaultReminderExecutionBasis
+    private var storedReminderExecutionBasis: Date = ClassConstant.ReminderConstant.defaultReminderExecutionBasis
     /// This is what the reminder should base its timing off it. This is either the last time a user responded to a reminder alarm or the last time a user changed a timing related property of the reminder. For example, 5 minutes into the timer you change the countdown from 30 minutes to 15. To start the timer fresh, having it count down from the moment it was changed, reset reminderExecutionBasis to Date()
     var reminderExecutionBasis: Date {
         get {
@@ -324,7 +322,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     
     // Enable
     
-    private var storedReminderIsEnabled: Bool = ReminderConstant.defaultReminderIsEnabled
+    private var storedReminderIsEnabled: Bool = ClassConstant.ReminderConstant.defaultReminderIsEnabled
     /// Whether or not the reminder  is enabled, if disabled all reminders will not fire.
     var reminderIsEnabled: Bool {
         get {

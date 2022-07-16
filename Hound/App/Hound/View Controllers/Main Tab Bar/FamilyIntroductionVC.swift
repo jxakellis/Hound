@@ -73,7 +73,7 @@ final class FamilyIntroductionViewController: UIViewController, UITextFieldDeleg
         }
         
         var dogIcon: UIImage? {
-            if self.dogIcon.imageView!.image != DogConstant.chooseIconForDog {
+            if self.dogIcon.imageView!.image != ClassConstant.DogConstant.chooseIconForDog {
                 return self.dogIcon.imageView!.image
             }
             else {
@@ -85,7 +85,7 @@ final class FamilyIntroductionViewController: UIViewController, UITextFieldDeleg
         // no dogs so we create a new one for the user
         if dogManager.hasCreatedDog == false {
             // can only fail if dogName == "", but already checked for that and corrected if there was a problem
-            let dog = try! Dog(dogName: dogName ?? DogConstant.defaultDogName, dogIcon: dogIcon ?? DogConstant.defaultDogIcon)
+            let dog = try! Dog(dogName: dogName ?? ClassConstant.DogConstant.defaultDogName, dogIcon: dogIcon ?? ClassConstant.DogConstant.defaultDogIcon)
             
             // contact server to make their dog
             DogsRequest.create(invokeErrorManager: true, forDog: dog) { dogId, _ in
@@ -145,7 +145,7 @@ final class FamilyIntroductionViewController: UIViewController, UITextFieldDeleg
         
         // Dog Icon
         
-        dogIcon.setImage(DogConstant.chooseIconForDog, for: .normal)
+        dogIcon.setImage(ClassConstant.DogConstant.chooseIconForDog, for: .normal)
         dogIcon.imageView!.layer.masksToBounds = true
         dogIcon.imageView!.layer.cornerRadius = dogIcon.frame.width/2
         

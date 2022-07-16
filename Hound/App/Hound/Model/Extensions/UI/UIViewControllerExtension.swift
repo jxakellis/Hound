@@ -32,7 +32,6 @@ extension UIViewController {
                 self.performSegue(withIdentifier: segueIdentifier, sender: self)
             }
             else {
-                AppDelegate.generalLogger.warning("waitloop for performSegueOnceInWindowHierarchy")
                 DispatchQueue.main.asyncAfter(deadline: .now()+0.05) {
                     waitLoop()
                 }

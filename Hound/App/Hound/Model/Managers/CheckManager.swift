@@ -13,17 +13,18 @@ enum CheckManager {
 
     /// Checks to see if the user is eligible for a notification to review Hound and if so presents the notification
     static func checkForReview() {
+        // TO DO FUTURE add alert controller that asks if the user wants to review the app before attempting to show the alert controller
         // slight delay so it pops once some things are done
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
             func requestReview() {
-                if let window = UIApplication.keyWindow?.windowScene {
-                    AppDelegate.generalLogger.notice("Asking user to review Hound")
-                    SKStoreReviewController.requestReview(in: window)
-                    LocalConfiguration.reviewRequestDates.append(Date())
+                guard let window = UIApplication.keyWindow?.windowScene else {
+                    AppDelegate.generalLogger.error("checkForReview unable to fire, window not established")
+                    return
                 }
-                else {
-                    AppDelegate.generalLogger.fault("checkForReview unable to fire, window not established")
-                }
+                
+                AppDelegate.generalLogger.notice("Asking user to review Hound")
+                SKStoreReviewController.requestReview(in: window)
+                LocalConfiguration.reviewRequestDates.append(Date())
             }
             
             switch LocalConfiguration.reviewRequestDates.count {

@@ -32,15 +32,15 @@ final class DropDownLogFilterTableViewCell: DropDownTableViewCell {
         
         // first: try dog log setup
         if logAction != nil {
-            label.attributedText = NSAttributedString(string: logAction!.rawValue, attributes: [.font: FontConstant.filterByLogFont])
+            label.attributedText = NSAttributedString(string: logAction!.rawValue, attributes: [.font: VisualConstant.FontConstant.filterByLogFont])
         }
         // second: try dog setup
         else if dogId != nil {
-            label.attributedText = NSAttributedString(string: dog!.dogName, attributes: [.font: FontConstant.filterByDogFont])
+            label.attributedText = NSAttributedString(string: dog!.dogName, attributes: [.font: VisualConstant.FontConstant.filterByDogFont])
         }
         // last: no dog or log action
         else {
-            label.attributedText = NSAttributedString(string: "Clear Filter", attributes: [.font: FontConstant.filterByDogFont])
+            label.attributedText = NSAttributedString(string: "Clear Filter", attributes: [.font: VisualConstant.FontConstant.filterByDogFont])
         }
     }
 }

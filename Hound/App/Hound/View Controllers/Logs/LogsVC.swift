@@ -194,6 +194,8 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.bringSubviewToFront(willAddLog)
+        
+        // TO DO FUTURE add export logs button 
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(hideDropDown))
         tap.delegate = self
@@ -234,18 +236,18 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
             var largestLabelWidth: CGFloat {
 
                 let sudoDogManager = getDogManager()
-                var largest: CGFloat = "Clear Filter".boundingFrom(font: FontConstant.filterByDogFont, height: DropDownUIView.rowHeightForLogFilter).width
+                var largest: CGFloat = "Clear Filter".boundingFrom(font: VisualConstant.FontConstant.filterByDogFont, height: DropDownUIView.rowHeightForLogFilter).width
 
                 for dogIndex in 0..<sudoDogManager.dogs.count {
                     let dog = sudoDogManager.dogs[dogIndex]
-                    let dogNameWidth = dog.dogName.boundingFrom(font: FontConstant.filterByDogFont, height: DropDownUIView.rowHeightForLogFilter).width
+                    let dogNameWidth = dog.dogName.boundingFrom(font: VisualConstant.FontConstant.filterByDogFont, height: DropDownUIView.rowHeightForLogFilter).width
 
                     if dogNameWidth > largest {
                         largest = dogNameWidth
                     }
 
                     for uniqueLogAction in dog.dogLogs.uniqueLogActions {
-                        let logActionWidth = uniqueLogAction.rawValue.boundingFrom(font: FontConstant.filterByLogFont, height: DropDownUIView.rowHeightForLogFilter).width
+                        let logActionWidth = uniqueLogAction.rawValue.boundingFrom(font: VisualConstant.FontConstant.filterByLogFont, height: DropDownUIView.rowHeightForLogFilter).width
 
                         if logActionWidth > largest {
                             largest = logActionWidth

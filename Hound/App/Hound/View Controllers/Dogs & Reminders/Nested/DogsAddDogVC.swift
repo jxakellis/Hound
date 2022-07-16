@@ -70,7 +70,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
         
         // make sure the result is under dogNameCharacterLimit
-        return updatedText.count <= DogConstant.dogNameCharacterLimit
+        return updatedText.count <= ClassConstant.DogConstant.dogNameCharacterLimit
     }
     
     // MARK: - IB
@@ -93,7 +93,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
             // try to initalize from a passed dog, if non exists, then we make a new one
             dog = try dogToUpdate ?? Dog(dogName: dogName.text)
             try dog.changeDogName(forDogName: dogName.text)
-            if dogIcon.imageView?.image != nil && dogIcon.imageView!.image != DogConstant.chooseIconForDog {
+            if dogIcon.imageView?.image != nil && dogIcon.imageView!.image != ClassConstant.DogConstant.chooseIconForDog {
                 dog.dogIcon = dogIcon.imageView!.image!
             }
         }
@@ -331,7 +331,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         if dogName.text != initalDogName {
             return true
         }
-        else if dogIcon.imageView!.image != DogConstant.chooseIconForDog && dogIcon.imageView!.image != initalDogIcon {
+        else if dogIcon.imageView!.image != ClassConstant.DogConstant.chooseIconForDog && dogIcon.imageView!.image != initalDogIcon {
             return true
         }
         else if shouldPromptSaveWarning == true {
@@ -386,8 +386,8 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
             self.navigationItem.title = "Edit Dog"
             
             dogName.text = dogToUpdate.dogName
-            if dogToUpdate.dogIcon.isEqualToImage(image: DogConstant.defaultDogIcon) {
-                dogIcon.setImage(DogConstant.chooseIconForDog, for: .normal)
+            if dogToUpdate.dogIcon.isEqualToImage(image: ClassConstant.DogConstant.defaultDogIcon) {
+                dogIcon.setImage(ClassConstant.DogConstant.chooseIconForDog, for: .normal)
             }
             else {
                 dogIcon.setImage(dogToUpdate.dogIcon, for: .normal)
@@ -402,8 +402,8 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
             self.navigationItem.title = "Create Dog"
             
             dogName.text = ""
-            dogIcon.setImage(DogConstant.chooseIconForDog, for: .normal)
-            modifiableDogReminders = ReminderManager(initReminders: ReminderConstant.defaultReminders)
+            dogIcon.setImage(ClassConstant.DogConstant.chooseIconForDog, for: .normal)
+            modifiableDogReminders = ReminderManager(initReminders: ClassConstant.ReminderConstant.defaultReminders)
             dogsReminderNavigationViewController.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: modifiableDogReminders.copy() as! ReminderManager)
             // no need to pass reminders to dogsReminderNavigationViewController as reminders are empty
         }

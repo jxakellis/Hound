@@ -278,7 +278,7 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
                 return nil
             }
             
-            reminders[indexOfRemovalTarget ?? ReminderConstant.defaultReminderId].timer?.invalidate()
+            reminders[indexOfRemovalTarget ?? ClassConstant.ReminderConstant.defaultReminderId].timer?.invalidate()
             reminders.remove(at: indexOfRemovalTarget ?? -1)
         }
     }

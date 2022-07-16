@@ -20,6 +20,8 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // TO DO NOW make logsTableViewControllerMaximumNumberOfDisplayedLogs a UserConfiguration settings
 
         // Dark Mode
         interfaceStyleSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 15), .foregroundColor: UIColor.white], for: .normal)
