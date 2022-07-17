@@ -3049,6 +3049,94 @@
             </objects>
             <point key="canvasLocation" x="3622" y="2877"/>
         </scene>
+        <!--Settings Family Introduction View Controller-->
+        <scene sceneID="aoU-TK-enl">
+            <objects>
+                <viewController id="sk4-zO-T0c" customClass="SettingsFamilyIntroductionViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="eWQ-K1-TFN">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7ci-Ma-IgL">
+                                <rect key="frame" x="10" y="782" width="394" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="ROc-kg-wOR"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
+                                <state key="normal" title="All Done!">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <buttonConfiguration key="configuration" style="filled" title="All Done!">
+                                    <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="30"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="willContinue:" destination="sk4-zO-T0c" eventType="touchUpInside" id="HfS-AI-n86"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="755" verticalCompressionResistancePriority="755" text="Family" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9or-uh-lU0" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="10" y="54" width="394" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="dEu-Ky-zT8"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="50"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="254" verticalHuggingPriority="254" horizontalCompressionResistancePriority="754" verticalCompressionResistancePriority="754" text="Upgrading Your Family" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zpN-K9-eLQ" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="192" width="414" height="40"/>
+                                <color key="backgroundColor" systemColor="systemBlueColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="wCQ-AK-N2m"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="755" verticalCompressionResistancePriority="755" text="Use this page to oversee and manage your family. " textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TSi-UD-2ed" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="10" y="124" width="394" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LgA-Zp-pSY" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                <rect key="frame" x="10" y="252" width="394" height="119.5"/>
+                                <string key="text">Your family is currently limited to _ family members and _ dogs. If you would like to increase these limits, visit the Subscriptions page to try a one week free trial of any subscription tier.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vj4-p8-hIK"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="zpN-K9-eLQ" firstAttribute="leading" secondItem="vj4-p8-hIK" secondAttribute="leading" id="4cO-AR-TLD"/>
+                            <constraint firstItem="zpN-K9-eLQ" firstAttribute="top" secondItem="TSi-UD-2ed" secondAttribute="bottom" constant="20" id="Lhc-az-JC6"/>
+                            <constraint firstItem="vj4-p8-hIK" firstAttribute="trailing" secondItem="zpN-K9-eLQ" secondAttribute="trailing" id="Nid-lp-MuQ"/>
+                            <constraint firstItem="vj4-p8-hIK" firstAttribute="trailing" secondItem="7ci-Ma-IgL" secondAttribute="trailing" constant="10" id="Od8-AI-Fzs"/>
+                            <constraint firstItem="LgA-Zp-pSY" firstAttribute="leading" secondItem="9or-uh-lU0" secondAttribute="leading" id="XEH-Av-nNv"/>
+                            <constraint firstItem="9or-uh-lU0" firstAttribute="leading" secondItem="vj4-p8-hIK" secondAttribute="leading" constant="10" id="bAT-mt-QkE"/>
+                            <constraint firstItem="7ci-Ma-IgL" firstAttribute="leading" secondItem="vj4-p8-hIK" secondAttribute="leading" constant="10" id="g2t-Ne-y9E"/>
+                            <constraint firstItem="LgA-Zp-pSY" firstAttribute="top" secondItem="zpN-K9-eLQ" secondAttribute="bottom" constant="20" id="kRU-U1-HMf"/>
+                            <constraint firstItem="LgA-Zp-pSY" firstAttribute="trailing" secondItem="9or-uh-lU0" secondAttribute="trailing" id="kd9-ga-KU3"/>
+                            <constraint firstItem="9or-uh-lU0" firstAttribute="top" secondItem="vj4-p8-hIK" secondAttribute="top" constant="10" id="m5f-np-mrA"/>
+                            <constraint firstItem="7ci-Ma-IgL" firstAttribute="top" relation="greaterThanOrEqual" secondItem="LgA-Zp-pSY" secondAttribute="bottom" constant="20" id="mTr-Q4-rU8"/>
+                            <constraint firstItem="vj4-p8-hIK" firstAttribute="bottom" secondItem="7ci-Ma-IgL" secondAttribute="bottom" constant="10" id="nyL-5y-cUR"/>
+                            <constraint firstItem="TSi-UD-2ed" firstAttribute="top" secondItem="9or-uh-lU0" secondAttribute="bottom" constant="10" id="ozT-Bf-G8y"/>
+                            <constraint firstItem="vj4-p8-hIK" firstAttribute="trailing" secondItem="9or-uh-lU0" secondAttribute="trailing" constant="10" id="q74-EG-8fb"/>
+                            <constraint firstItem="TSi-UD-2ed" firstAttribute="leading" secondItem="9or-uh-lU0" secondAttribute="leading" id="uNc-GR-f8i"/>
+                            <constraint firstItem="TSi-UD-2ed" firstAttribute="trailing" secondItem="9or-uh-lU0" secondAttribute="trailing" id="uRa-BQ-bm2"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="gP2-WE-E7I"/>
+                    <connections>
+                        <outlet property="continueButton" destination="7ci-Ma-IgL" id="MnR-gD-Lbe"/>
+                        <outlet property="upgradeFamilyWithSubscriptionLabel" destination="LgA-Zp-pSY" id="VGd-P0-X5L"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3o7-rg-ZT7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1800" y="3557"/>
+        </scene>
         <!--Family-->
         <scene sceneID="aV8-wv-ZtM">
             <objects>
@@ -3316,6 +3404,7 @@
                         <outlet property="leaveFamilyButton" destination="J2T-a0-Efm" id="LkJ-jL-UBk"/>
                         <outlet property="refreshButton" destination="wfk-YL-HVU" id="mEB-qw-Yn2"/>
                         <outlet property="tableView" destination="HFj-2e-poA" id="zxm-Nj-USb"/>
+                        <segue destination="sk4-zO-T0c" kind="presentation" identifier="SettingsFamilyIntroductionViewController" modalPresentationStyle="automatic" id="ly9-Ds-tcQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rCA-Cz-mm1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -3670,7 +3759,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Jqw-FR-46g"/>
+        <segue reference="nsH-qM-K4m"/>
         <segue reference="GZX-3R-sVV"/>
     </inferredMetricsTieBreakers>
     <resources>

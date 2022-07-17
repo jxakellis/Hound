@@ -91,7 +91,7 @@ final class RemindersIntroductionViewController: UIViewController {
             remindersBody.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor, constant: -10.0).isActive = true
         }
         
-        continueButton.layer.cornerRadius = 10.0
+        continueButton.layer.cornerRadius = VisualConstant.SizeConstant.largeRectangularButtonCornerRadious
     }
     
     override func viewWillAppear(_ animated: Bool) {

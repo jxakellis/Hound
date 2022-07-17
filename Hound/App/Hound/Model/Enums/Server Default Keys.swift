@@ -28,6 +28,7 @@ enum ServerDefaultKeys: String {
     case isLocked
     case isPaused
     case kickUserId
+    case activeSubscription
     
     // MARK: User Information
     

@@ -64,14 +64,6 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         try! dog.dogReminders.removeReminder(forReminderId: reminderId)
         setDogManager(sender: sender, newDogManager: sudoDogManager)
     }
-    
-    func shouldRefreshDogManager(sender: Sender) {
-        DogsRequest.get(invokeErrorManager: true, dogManager: getDogManager()) { newDogManager, _ in
-            if newDogManager != nil {
-                self.setDogManager(sender: sender, newDogManager: newDogManager!)
-            }
-        }
-    }
 
     // MARK: - DogManagerControlFlowProtocol + ParentDogManager
 
@@ -171,6 +163,10 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
 
+        if FamilyConfiguration.isFamilyHead {
+            InAppPurchaseManager.initalizeInAppPurchaseManager()
+            InAppPurchaseManager.showPriceConsentIfNeeded()
+        }
         CheckManager.checkForReleaseNotes()
         CheckManager.checkForNotificationSettingImbalance()
         TimingManager.willInitalize(forDogManager: getDogManager())

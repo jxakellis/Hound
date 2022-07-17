@@ -83,13 +83,13 @@ async function addFamilyMember(connection, userId, familyCode) {
   }
 
   // the user is eligible to join the family, check to make sure the family has enough space
-  // we can't access req.subscriptionInformation currently as it wasn't assigned earlier due to the user not being in a fmaily
-  const subscriptionInformation = await getActiveSubscriptionForFamilyId(connection, familyId);
+  // we can't access req.activeSubscription currently as it wasn't assigned earlier due to the user not being in a fmaily
+  const activeSubscription = await getActiveSubscriptionForFamilyId(connection, familyId);
   const familyMembers = await getAllFamilyMembersForFamilyId(connection, familyId);
 
   // the family is either at the limit of family members is exceeds the limit, therefore no new users can join
-  if (familyMembers.length >= subscriptionInformation.subscriptionNumberOfFamilyMembers) {
-    throw new ValidationError(`Family member limit of ${subscriptionInformation.subscriptionNumberOfFamilyMembers} exceeded`, global.constant.error.family.limit.FAMILY_MEMBER_TOO_LOW);
+  if (familyMembers.length >= activeSubscription.subscriptionNumberOfFamilyMembers) {
+    throw new ValidationError(`Family member limit of ${activeSubscription.subscriptionNumberOfFamilyMembers} exceeded`, global.constant.error.family.limit.FAMILY_MEMBER_TOO_LOW);
   }
 
   // familyCode validated and user is not a family member in any family

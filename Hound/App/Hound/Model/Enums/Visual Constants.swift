@@ -31,6 +31,12 @@ enum VisualConstant {
         static let logCellFontSize = 13.0
         static let filterByDogFont = UIFont.systemFont(ofSize: 20, weight: .semibold)
         static let filterByLogFont = UIFont.systemFont(ofSize: 15, weight: .regular)
+        static let regularLabelRegularTextFont = UIFont.systemFont(ofSize: 20, weight: .regular)
+        static let regularLabelEmphaziedTextFont = UIFont.systemFont(ofSize: 20, weight: .bold)
+    }
+    
+    enum SizeConstant {
+        static let largeRectangularButtonCornerRadious = 10.0
     }
     
     enum AnimationConstant {

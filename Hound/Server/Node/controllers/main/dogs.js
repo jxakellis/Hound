@@ -29,8 +29,8 @@ async function createDog(req, res) {
   try {
     const { familyId } = req.params;
     const { dogName } = req.body;
-    const { subscriptionInformation } = req;
-    const result = await createDogForFamilyId(req.connection, familyId, subscriptionInformation, dogName);
+    const { activeSubscription } = req;
+    const result = await createDogForFamilyId(req.connection, familyId, activeSubscription, dogName);
     return res.sendResponseForStatusJSONError(200, { result }, undefined);
   }
   catch (error) {

@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import StoreKit
 
 /// Static word needed to conform to protocol. Enum preferred to a class as you can't instance an enum that is all static
 enum SubscriptionRequest: RequestProtocol {
@@ -66,11 +65,10 @@ extension SubscriptionRequest {
             case .successResponse:
                 if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
                     
-                    var subscriptions: [Subscription] = []
+                    FamilyConfiguration.clearAllFamilySubscriptions()
                     for subscription in result {
-                        subscriptions.append(Subscription(fromBody: subscription))
+                        FamilyConfiguration.addFamilySubscription(forSubscription: Subscription(fromBody: subscription))
                     }
-                    FamilyConfiguration.familySubscriptions = subscriptions
                     
                     completionHandler(true, responseStatus)
                 }
@@ -98,17 +96,7 @@ extension SubscriptionRequest {
             case .successResponse:
                 if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any] {
                     let activeSubscription = Subscription(fromBody: result)
-                    // Remove any subscriptions that have the same transactionId
-                    FamilyConfiguration.familySubscriptions.removeAll { subscription in
-                        return subscription.transactionId == activeSubscription.transactionId
-                    }
-                    // Set all other subscriptions to inactive, as we have a new active subscription
-                    FamilyConfiguration.familySubscriptions.forEach { subscription in
-                        subscription.subscriptionIsActive = false
-                    }
-                    
-                    // add active subscription to the beginning of the array
-                    FamilyConfiguration.familySubscriptions.insert(activeSubscription, at: 0)
+                    FamilyConfiguration.addFamilySubscription(forSubscription: activeSubscription)
                     
                     // subscriptionPurchaseDate
                     completionHandler(true, responseStatus)

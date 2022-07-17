@@ -52,6 +52,10 @@ enum FamilyConfiguration {
                 }
             }
         }
+        if let activeSubscriptionBody = body[ServerDefaultKeys.activeSubscription.rawValue] as? [String: Any] {
+            let activeSubscription = Subscription(fromBody: activeSubscriptionBody)
+            addFamilySubscription(forSubscription: activeSubscription)
+        }
     }
     
     // MARK: - Main
@@ -73,7 +77,31 @@ enum FamilyConfiguration {
         return familyMember?.isFamilyHead ?? false
     }
     
-    static var familySubscriptions: [Subscription] = []
+    static private(set) var familySubscriptions: [Subscription] = []
+    
+    static func addFamilySubscription(forSubscription subscription: Subscription) {
+        // Remove any transactions that match the transactionId
+        familySubscriptions.removeAll { existingSubscription in
+            return existingSubscription.transactionId == subscription.transactionId
+        }
+        
+        if subscription.subscriptionIsActive {
+            // There can only be one active subscription, so remove tag from others
+            familySubscriptions.forEach { existingSubscription in
+                existingSubscription.subscriptionIsActive = false
+            }
+            // Active subscription goes at the beginning
+            familySubscriptions.insert(subscription, at: 0)
+        }
+        else {
+            // Other subscriptions go at the end
+            familySubscriptions.append(subscription)
+        }
+    }
+    
+    static func clearAllFamilySubscriptions() {
+        familySubscriptions.removeAll()
+    }
     
     static var activeFamilySubscription: Subscription {
         let potentialSubscription = familySubscriptions.first { subscription in

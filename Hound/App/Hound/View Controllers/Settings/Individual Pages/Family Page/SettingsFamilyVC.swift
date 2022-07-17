@@ -60,16 +60,14 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TO DO NOW add introduction page that says a few sentences. Importantly, mention the dog and family member limits
-        
         oneTimeSetup()
-        
-        repeatableSetup()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         AlertManager.globalPresenter = self
+        
+        repeatableSetup()
     }
     
     // MARK: - Dog Manager
@@ -95,7 +93,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         
         tableView.separatorInset = .zero
         
-        leaveFamilyButton.layer.cornerRadius = 10.0
+        leaveFamilyButton.layer.cornerRadius = VisualConstant.SizeConstant.largeRectangularButtonCornerRadious
     }
     
     /// These properties can be reassigned. Does not reload anything, rather just configures.
@@ -186,6 +184,12 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         
         let cancelAlertAction = UIAlertAction(title: "Cancel", style: .cancel)
         leaveFamilyAlertController.addAction(cancelAlertAction)
+        
+        // MARK: Introduct Page
+        
+        if LocalConfiguration.hasLoadedSettingsFamilyIntroductionViewControllerBefore == false {
+            self.performSegueOnceInWindowHierarchy(segueIdentifier: "SettingsFamilyIntroductionViewController")
+        }
     }
     
     // MARK: - Individual Settings

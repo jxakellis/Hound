@@ -259,7 +259,7 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
             // manually reload table as the self sender doesn't do that
             self.tableView.reloadData()
             
-            // TO DO BUG, if the number of logs that exist is greater than the logsTableViewControllerMaximumNumberOfDisplayedLogs, then when one log gets deleted, another will take its place. This will cause a crash as there is a mismatch. Solution is to probably insert the new row (that took the place of the old one since there is now room) at the same time we delete.
+            // TO DO BUG, if the number of logs that exist is greater than the logsTableViewControllerMaximumNumberOfDisplayedLogs, then when one log gets deleted, another will take its place. This will cause a crash as the tableView is expecting there to be one less row but there is the same amount still. Solution is to probably insert the new row using the tableView.insert thing at the same time we delete.
             /*
             // batch update so doesn't freak out
             tableView.performBatchUpdates {

@@ -97,6 +97,6 @@ final class SettingsPersonalInformationViewController: UIViewController, UIGestu
         
         userId.text = UserInformation.userId ?? "Unknown⚠️"
         
-        redownloadDataButton.layer.cornerRadius = 10.0
+        redownloadDataButton.layer.cornerRadius = VisualConstant.SizeConstant.largeRectangularButtonCornerRadious
     }
 }

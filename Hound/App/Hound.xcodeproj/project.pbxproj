@@ -147,6 +147,7 @@
 		A2BD897C2669A8D200E7BBE5 /* UIApplicationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2BD897B2669A8D200E7BBE5 /* UIApplicationExtension.swift */; };
 		A2C014D52628AEEE00DDE288 /* DogsNavigationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C014D42628AEEE00DDE288 /* DogsNavigationVC.swift */; };
 		A2C4091E27C9D41300073420 /* RequestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C4091D27C9D41300073420 /* RequestUtils.swift */; };
+		A2CCA99728826B3100DB92F0 /* SettingsFamilyIntroductionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2CCA99628826B3100DB92F0 /* SettingsFamilyIntroductionVC.swift */; };
 		A2DC23A8264D822F00EB287A /* DogsReminderMonthlyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DC23A7264D822F00EB287A /* DogsReminderMonthlyVC.swift */; };
 		A2E66C9B25534A880068CCA6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E66C9A25534A880068CCA6 /* AppDelegate.swift */; };
 		A2E66C9D25534A880068CCA6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E66C9C25534A880068CCA6 /* SceneDelegate.swift */; };
@@ -207,6 +208,7 @@
 		A23F6B6A2864B72300D08841 /* SubscriptionRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionRequest.swift; sourceTree = "<group>"; };
 		A23F6B6C2870DAAA00D08841 /* DropDownLogFilterTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropDownLogFilterTableViewCell.swift; sourceTree = "<group>"; };
 		A23F6B6E2870FCC100D08841 /* DropDownLogFilterTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DropDownLogFilterTableViewCell.xib; sourceTree = "<group>"; };
+		A240BCA32883A98700838606 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
 		A2458B5D2759374500912550 /* circuit30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = circuit30.wav; sourceTree = "<group>"; };
 		A2458B5F2759376200912550 /* circuit.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = circuit.mp3; sourceTree = "<group>"; };
 		A247236C27F63456005DF848 /* SignInWithAppleError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithAppleError.swift; sourceTree = "<group>"; };
@@ -332,6 +334,7 @@
 		A2BD897B2669A8D200E7BBE5 /* UIApplicationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationExtension.swift; sourceTree = "<group>"; };
 		A2C014D42628AEEE00DDE288 /* DogsNavigationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsNavigationVC.swift; sourceTree = "<group>"; };
 		A2C4091D27C9D41300073420 /* RequestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestUtils.swift; sourceTree = "<group>"; };
+		A2CCA99628826B3100DB92F0 /* SettingsFamilyIntroductionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFamilyIntroductionVC.swift; sourceTree = "<group>"; };
 		A2DC23A7264D822F00EB287A /* DogsReminderMonthlyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsReminderMonthlyVC.swift; sourceTree = "<group>"; };
 		A2E66C9725534A880068CCA6 /* Hound.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hound.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2E66C9A25534A880068CCA6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -449,6 +452,7 @@
 			isa = PBXGroup;
 			children = (
 				A2AA5CEC27FE486500FD0134 /* SettingsFamilyVC.swift */,
+				A2CCA99628826B3100DB92F0 /* SettingsFamilyIntroductionVC.swift */,
 				A2AF01B627FC9CF500D06638 /* SettingsHeadTVC.swift */,
 				A2F6F4C427FC9D3200CAA320 /* SettingsMemberTVC.swift */,
 			);
@@ -878,6 +882,7 @@
 				A2E66C9C25534A880068CCA6 /* SceneDelegate.swift */,
 				A2E66CA525534A8A0068CCA6 /* Assets.xcassets */,
 				A2E66CAA25534A8A0068CCA6 /* Info.plist */,
+				A240BCA32883A98700838606 /* Configuration.storekit */,
 			);
 			path = Hound;
 			sourceTree = "<group>";
@@ -1267,6 +1272,7 @@
 				A2AA5CD927FE480000FD0134 /* Log.swift in Sources */,
 				A2BAA06E27D6ED720041F3C5 /* UserInformation.swift in Sources */,
 				A299EAA427E2C5050042F8F4 /* SettingsAppearanceVC.swift in Sources */,
+				A2CCA99728826B3100DB92F0 /* SettingsFamilyIntroductionVC.swift in Sources */,
 				A2B18E3825E8A4C000951AC3 /* AlertManager.swift in Sources */,
 				A29400AD2652DA2700725F1C /* SettingsNavigationVC.swift in Sources */,
 			);

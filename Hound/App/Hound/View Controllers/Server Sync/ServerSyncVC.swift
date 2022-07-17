@@ -205,8 +205,8 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
         DogsRequest.get(invokeErrorManager: false, dogManager: ServerSyncViewController.dogManager) { newDogManager, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if newDogManager != nil {
-                    ServerSyncViewController.dogManager = newDogManager!
+                if let newDogManager = newDogManager {
+                    ServerSyncViewController.dogManager = newDogManager
                     // Now its known getDogManager was successful which also implied that getFamily was successful
                     self.getFamilyFinished = true
                     self.getDogsFinished = true

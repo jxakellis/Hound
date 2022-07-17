@@ -15,7 +15,9 @@ enum ClassConstant {
         static let defaultSubscriptionProduct = InAppPurchaseProduct.default
         static let defaultUnknownProduct = InAppPurchaseProduct.unknown
         static let defaultSubscriptionNumberOfFamilyMembers = 1
+        static let defaultSubscriptionSpelledOutNumberOfFamilyMembers = "one"
         static let defaultSubscriptionNumberOfDogs = 2
+        static let defaultSubscriptionSpelledOutNumberOfDogs = "two"
     }
     
     enum DogConstant {

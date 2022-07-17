@@ -10,9 +10,9 @@ const { validateFamilyId } = require('../main/tools/format/validateId');
 
 familyRouter.param('familyId', validateFamilyId);
 
-const { attachSubscriptionInformation } = require('../main/tools/format/validateSubscription');
+const { attachActiveSubscription } = require('../main/tools/format/validateSubscription');
 
-familyRouter.use('/:familyId', attachSubscriptionInformation);
+familyRouter.use('/:familyId', attachActiveSubscription);
 
 // route to dogs (or nested) related things
 const { dogsRouter } = require('./dogs');

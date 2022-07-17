@@ -119,6 +119,9 @@ enum LocalConfiguration {
     
     /// Keeps track of if the user has viewed AND completed the reminders introduction view controller (which helps the user setup their first reminders)
     static var hasLoadedRemindersIntroductionViewControllerBefore: Bool = false
+    
+    /// Keeps track of if the user has viewed AND completed the settings family introduction view controller (which helps notify the user of their family limits)
+    static var hasLoadedSettingsFamilyIntroductionViewControllerBefore: Bool = false
 }
 
 extension LocalConfiguration {
@@ -140,6 +143,9 @@ extension LocalConfiguration {
         
         LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue)
+        
+        LocalConfiguration.hasLoadedSettingsFamilyIntroductionViewControllerBefore = false
+        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedSettingsFamilyIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedSettingsFamilyIntroductionViewControllerBefore.rawValue)
         
         LocalConfiguration.lastDogManagerSynchronization = LocalConfiguration.defaultLastDogManagerSynchronization
         UserDefaults.standard.set(LocalConfiguration.lastDogManagerSynchronization, forKey: ServerDefaultKeys.lastDogManagerSynchronization.rawValue)

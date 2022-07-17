@@ -13,13 +13,19 @@ enum PersistenceManager {
     /// Called by App or Scene Delegate when setting up in didFinishLaunchingWithOptions, can be either the first time setup or a recurring setup (i.e. not the app isnt being opened for the first time)
     static func setup() {
         
+        // MARK: Log Launch
+        
         AppDelegate.generalLogger.notice("\n-----Device Info-----\n Model: \(UIDevice.current.model) \n Name: \(UIDevice.current.name) \n System Name: \(UIDevice.current.systemName) \n System Version: \(UIDevice.current.systemVersion)")
+        
+        // MARK: Save Certain Values
         
         UIApplication.previousAppBuild = UserDefaults.standard.object(forKey: UserDefaultsKeys.appBuild.rawValue) as? Int
         
         UserDefaults.standard.setValue(UIApplication.appBuild, forKey: UserDefaultsKeys.appBuild.rawValue)
         
         UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
+        
+        // MARK: Load Stored Keychain
         
         // These values are retrieved from Sign In With Apple so therefore need to be persisted specially. All other values can be retrieved using these values.
         let keychain = KeychainSwift()
@@ -29,19 +35,16 @@ enum PersistenceManager {
         UserInformation.userFirstName = keychain.get(ServerDefaultKeys.userFirstName.rawValue) ?? UserInformation.userFirstName
         UserInformation.userLastName = keychain.get(ServerDefaultKeys.userLastName.rawValue) ?? UserInformation.userLastName
         
-        // If the user hasn't completed the dogs and reminders introduction page, then we put them on the logs page (index 0). Otherwise, if they have configured their first dog and reminder, then they get put on the dogs page (index 1)
-        MainTabBarViewController.selectedEntryIndex = (LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore && LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore) ? 1 : 0
-        
-        // MARK: User Information
+        // MARK: Load Stored User Information
         
         UserInformation.userId = UserDefaults.standard.value(forKey: ServerDefaultKeys.userId.rawValue) as? String ?? UserInformation.userId
         UserInformation.familyId = UserDefaults.standard.value(forKey: ServerDefaultKeys.familyId.rawValue) as? String ?? UserInformation.familyId
         
-        // MARK: User Configuration
+        // MARK: Load Stored User Configuration
         
         // Data is retrieved from the server, so no need to store/persist locally
         
-        // MARK: Local Configuration
+        // MARK: Load Stored Local Configuration
         
         LocalConfiguration.lastDogManagerSynchronization = UserDefaults.standard.value(forKey: ServerDefaultKeys.lastDogManagerSynchronization.rawValue) as? Date ?? LocalConfiguration.lastDogManagerSynchronization
         
@@ -86,6 +89,12 @@ enum PersistenceManager {
         
         LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedFamilyIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore
         LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore
+        LocalConfiguration.hasLoadedSettingsFamilyIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedSettingsFamilyIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedSettingsFamilyIntroductionViewControllerBefore
+        
+        // MARK: Configure Other
+        
+        // If the user hasn't completed the dogs and reminders introduction page, then we put them on the logs page (index 0). Otherwise, if they have configured their first dog and reminder, then they get put on the dogs page (index 1)
+        MainTabBarViewController.selectedEntryIndex = (LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore && LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore) ? 1 : 0
     
     }
     
@@ -145,7 +154,7 @@ enum PersistenceManager {
         
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedFamilyIntroductionViewControllerBefore.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue)
-        
+        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedSettingsFamilyIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedSettingsFamilyIntroductionViewControllerBefore.rawValue)
     }
     
     static func willEnterForeground() {

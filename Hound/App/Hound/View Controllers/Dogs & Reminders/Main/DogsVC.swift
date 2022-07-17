@@ -354,8 +354,6 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
                     MainTabBarViewController.mainTabBarViewController.tabBar.alpha = 0.06
                     MainTabBarViewController.mainTabBarViewController.dogsNavigationViewController.navigationBar.alpha = 0.06
                     
-                } completion: { (_) in
-                    //
                 }
                 
             }

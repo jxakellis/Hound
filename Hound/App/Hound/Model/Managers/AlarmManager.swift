@@ -13,7 +13,6 @@ protocol AlarmManagerDelegate {
     func didRemoveLog(sender: Sender, dogId: Int, logId: Int)
     func didUpdateReminder(sender: Sender, dogId: Int, reminder: Reminder)
     func didRemoveReminder(sender: Sender, dogId: Int, reminderId: Int)
-    func shouldRefreshDogManager(sender: Sender)
 }
 
 final class AlarmManager {
@@ -23,22 +22,44 @@ final class AlarmManager {
     static func willShowAlarm(forDogName dogName: String, forDogId dogId: Int, forReminderId reminderId: Int) {
         
         // before presenting alarm, make sure we are up to date locally
-        RemindersRequest.get(invokeErrorManager: true, forDogId: dogId, forReminderId: reminderId) { reminder, responseStatus in
+        RemindersRequest.get(invokeErrorManager: false, forDogId: dogId, forReminderId: reminderId) { reminder, _ in
             
-            // if the distance from the present to the executionDate is positive, then the executionDate is in the future, else if negative then the executionDate is in the past
-            guard reminder != nil && reminder!.reminderExecutionDate != nil && Date().distance(to: reminder!.reminderExecutionDate!) < 0 else {
-                // We were able to retrieve the reminder and something was wrong with it. and we should refresh the local dog/reminder data. The reminder might have been deleted, had it's timing updated, or something else
-                if responseStatus == .successResponse || responseStatus == .failureResponse {
-                    // we only want to refresh if our inital request was able to reach the server
-                    delegate.shouldRefreshDogManager(sender: Sender(origin: self, localized: self))
-                }
+            // TO DO BUG if the reminder is deleted and the user still thinks an alarm will happen, then the reminder just freezes as No More Time Left. Replace RemindersRequest.get with a dogManager get to completely refresh the dogManager. This the reminder whether is was deleted, updated, disabled, etc. AND it has the added benefit of updating other reminders so they reflect accurately
+            
+            // MARK: IMPORTANT
+            // MARK: IMPORTANT
+            // MARK: IMPORTANT
+            // MARK: IMPORTANT
+            // MARK: IMPORTANT
+            // If the guard statements/request fail, it could be a number of reasons. The reminder could have been deleted, the reminder could have it's timing updated, the user could have been kicked from the family, or etc.. The important point is, we can't know for certain why this reminder request failed. Therefore, we CANNOT invoke shouldRefreshDogManager or any other API request from here. Because those would eventually loop back here (within a few milliseconds). This API request would then fail again, causing loop and 'DDOS' attack on the Hound server.
+            // MARK: IMPORTANT
+            // MARK: IMPORTANT
+            // MARK: IMPORTANT
+            // MARK: IMPORTANT
+            // MARK: IMPORTANT
+
+            guard let reminder = reminder else {
+                // We weren't able to retrieve the reminder. The reminder might have been deleted
+                // MARK: IMPORTANT - Do not try to refresh DogManager as that can (and does) cause an infinite loop
+                
+                // Do not call self.delegate.didRemoveReminder. A .failureReponse and nil reminder doesn't necessarily mean that the reminder was deleted (although it is likely).
+                return
+            }
+            
+            // If reminder.reminderExecutionDate is nil, then something potentially was disabled or paused
+            // If distance from present to executionDate is positive, then executionDate in future. If distance is negative, then executionDate in past
+            guard reminder.reminderExecutionDate != nil && Date().distance(to: reminder.reminderExecutionDate!) < 0 else {
+                // We were able to retrieve the reminder and something was wrong with it. Something was disabled/paused or the reminder was pushed back to the future.
+                // MARK: IMPORTANT - Do not try to refresh DogManager as that can (and does) cause an infinite loop
+                
+                self.delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminder: reminder)
                 return
             }
             
             // the reminder exists, its executionDate exists, and its executionDate is in the past (meaning it should be valid).
         
                 // the dogId and reminderId exist if we got a reminder back
-            let title = "\(reminder!.reminderAction.displayActionName(reminderCustomActionName: reminder?.reminderCustomActionName, isShowingAbreviatedCustomActionName: true)) - \(dogName)"
+            let title = "\(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true)) - \(dogName)"
                 
                 let alertController = GeneralUIAlertController(
                     title: title,
@@ -50,13 +71,13 @@ final class AlarmManager {
                     style: .cancel,
                     handler: { (_: UIAlertAction!)  in
                         // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                        AlarmManager.willDismissAlarm(forDogId: dogId, forReminder: reminder!)
+                        AlarmManager.willDismissAlarm(forDogId: dogId, forReminder: reminder)
                         CheckManager.checkForReview()
                     })
                 
                 var alertActionsForLog: [UIAlertAction] = []
                 
-                switch reminder!.reminderAction {
+                switch reminder.reminderAction {
                 case .potty:
                     let pottyKnownTypes: [LogAction] = [.pee, .poo, .both, .neither, .accident]
                     for pottyKnownType in pottyKnownTypes {
@@ -65,18 +86,18 @@ final class AlarmManager {
                             style: .default,
                             handler: { (_)  in
                                 // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                                AlarmManager.willLogAlarm(forDogId: dogId, forReminder: reminder!, forLogAction: pottyKnownType)
+                                AlarmManager.willLogAlarm(forDogId: dogId, forReminder: reminder, forLogAction: pottyKnownType)
                                 CheckManager.checkForReview()
                             })
                         alertActionsForLog.append(alertActionLog)
                     }
                 default:
                     let alertActionLog = UIAlertAction(
-                        title: "Log \(reminder!.reminderAction.displayActionName(reminderCustomActionName: reminder?.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))",
+                        title: "Log \(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))",
                         style: .default,
                         handler: { (_)  in
                             // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                            AlarmManager.willLogAlarm(forDogId: dogId, forReminder: reminder!, forLogAction: LogAction(rawValue: reminder!.reminderAction.rawValue)!)
+                            AlarmManager.willLogAlarm(forDogId: dogId, forReminder: reminder, forLogAction: LogAction(rawValue: reminder.reminderAction.rawValue)!)
                             CheckManager.checkForReview()
                         })
                     alertActionsForLog.append(alertActionLog)
@@ -87,7 +108,7 @@ final class AlarmManager {
                     style: .default,
                     handler: { (_: UIAlertAction!)  in
                         // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                        AlarmManager.willSnoozeAlarm(forDogId: dogId, forReminder: reminder!)
+                        AlarmManager.willSnoozeAlarm(forDogId: dogId, forReminder: reminder)
                         CheckManager.checkForReview()
                     })
                 
@@ -98,8 +119,8 @@ final class AlarmManager {
                 alertController.addAction(alertActionDismiss)
                 
                 // we have successfully constructed our alert
-                reminder!.hasAlarmPresentationHandled = true
-                delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminder: reminder!)
+                reminder.hasAlarmPresentationHandled = true
+                delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminder: reminder)
             
                 AlertManager.enqueueAlertForPresentation(alertController)
             

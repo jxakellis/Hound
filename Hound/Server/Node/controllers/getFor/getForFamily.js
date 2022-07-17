@@ -14,7 +14,7 @@ const familiesColumns = 'userId, familyCode, isLocked, isPaused';
  *  If the query is successful, returns the userId, familyCode, isLocked, isPaused, and familyMembers for the familyId.
  *  If a problem is encountered, creates and throws custom error
  */
-async function getAllFamilyInformationForFamilyId(connection, familyId) {
+async function getAllFamilyInformationForFamilyId(connection, familyId, activeSubscription) {
   // validate that a familyId was passed, assume that its in the correct format
   if (areAllDefined(connection, familyId) === false) {
     throw new ValidationError('connection or familyId missing', global.constant.error.value.MISSING);
@@ -35,7 +35,9 @@ async function getAllFamilyInformationForFamilyId(connection, familyId) {
   const result = {
     ...family,
     familyMembers,
+    activeSubscription,
   };
+
   return result;
 }
 

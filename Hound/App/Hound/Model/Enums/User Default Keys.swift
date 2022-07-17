@@ -28,6 +28,7 @@ enum UserDefaultsKeys: String {
     case appBuildsWithReleaseNotesShown
     case hasLoadedFamilyIntroductionViewControllerBefore
     case hasLoadedRemindersIntroductionViewControllerBefore
+    case hasLoadedSettingsFamilyIntroductionViewControllerBefore
     
     // MARK: Other
     case hasDoneFirstTimeSetup

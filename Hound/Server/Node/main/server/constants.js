@@ -52,16 +52,22 @@ const apn = {
   },
 };
 
+const DEFAULT_SUBSCRIPTION_PRODUCT_ID = 'com.jonathanxakellis.hound.default';
+const DEFAULT_SUBSCRIPTION_NUMBER_OF_FAMILY_MEMBERS = 1;
+const DEFAULT_SUBSCRIPTION_NUMBER_OF_DOGS = 2;
+
 const subscription = {
-  DEFAULT_SUBSCRIPTION_PRODUCT_ID: 'com.jonathanxakellis.hound.default',
+  DEFAULT_SUBSCRIPTION_PRODUCT_ID,
+  DEFAULT_SUBSCRIPTION_NUMBER_OF_FAMILY_MEMBERS,
+  DEFAULT_SUBSCRIPTION_NUMBER_OF_DOGS,
   // The amount of milliseconds that we allow a family's subscription to expire before we enforce restrictions
   SUBSCRIPTION_GRACE_PERIOD: (0 * 60 * 60 * 1000),
   // The in app purchase offerings for subscriptions (default indicates free / no payment)
   SUBSCRIPTIONS: [
     {
-      productId: 'com.jonathanxakellis.hound.default',
-      subscriptionNumberOfFamilyMembers: 1,
-      subscriptionNumberOfDogs: 2,
+      productId: DEFAULT_SUBSCRIPTION_PRODUCT_ID,
+      subscriptionNumberOfFamilyMembers: DEFAULT_SUBSCRIPTION_NUMBER_OF_FAMILY_MEMBERS,
+      subscriptionNumberOfDogs: DEFAULT_SUBSCRIPTION_NUMBER_OF_DOGS,
     },
     {
       productId: 'com.jonathanxakellis.hound.twofamilymemberstwodogs.monthly',

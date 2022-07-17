@@ -7,9 +7,9 @@ const { getAllDogsForUserIdFamilyId } = require('../../../controllers/getFor/get
 /**
  * Checks the family's subscription
  * Uses getActiveSubscriptionForFamilyId to either get the family's paid subscription or the default free subscription
- * Attached the information to the req (under req.subscriptionInformation.xxx)
+ * Attached the information to the req (under req.activeSubscription.xxx)
  */
-async function attachSubscriptionInformation(req, res, next) {
+async function attachActiveSubscription(req, res, next) {
   try {
     const { familyId } = req.params;
 
@@ -18,9 +18,9 @@ async function attachSubscriptionInformation(req, res, next) {
       throw new ValidationError('familyId missing', global.constant.error.value.MISSING);
     }
 
-    const subscriptionInformation = await getActiveSubscriptionForFamilyId(req.connection, familyId);
+    const activeSubscription = await getActiveSubscriptionForFamilyId(req.connection, familyId);
 
-    req.subscriptionInformation = subscriptionInformation;
+    req.activeSubscription = activeSubscription;
 
     return next();
   }
@@ -36,7 +36,7 @@ async function attachSubscriptionInformation(req, res, next) {
 async function validateSubscription(req, res, next) {
   try {
     const { userId, familyId } = req.params;
-    const { subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs } = req.subscriptionInformation;
+    const { subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs } = req.activeSubscription;
 
     if (areAllDefined(userId, familyId, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs) === false) {
       throw new ValidationError('userId, familyId, subscriptionNumberOfFamilyMembers, or subscriptionNumberOfDogs missing', global.constant.error.value.MISSING);
@@ -67,4 +67,4 @@ async function validateSubscription(req, res, next) {
   }
 }
 
-module.exports = { attachSubscriptionInformation, validateSubscription };
+module.exports = { attachActiveSubscription, validateSubscription };

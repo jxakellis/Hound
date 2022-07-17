@@ -164,7 +164,7 @@ final class FamilyIntroductionViewController: UIViewController, UITextFieldDeleg
         
         // Other
         
-        continueButton.layer.cornerRadius = 10.0
+        continueButton.layer.cornerRadius = VisualConstant.SizeConstant.largeRectangularButtonCornerRadious
     }
     
     override func viewWillAppear(_ animated: Bool) {

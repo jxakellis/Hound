@@ -43,6 +43,8 @@ enum InAppPurchaseError: String, Error {
     /// There is a In-App Purchases restoration in progress, so a new one cannot be initiated
     case restoreInProgress = "There is an In-App Purchase restoration currently in progress. You are unable to initiate another In-App Purchase restoration until the first one has finished processing. If the issue persists, please restart and retry."
     
+    case restoreFailed = "Your In-App Purchase restoration has failed. If the issue persists, please restart and retry."
+    
     // MARK: System Is Processing Transaction In The Background
     case backgroundPurchaseInProgress = "There is a transaction currently being processed in the background. This is likely due to a subscription renewal. Please wait a moment for this to finish processing. If the issue persists, please restart and retry."
 }

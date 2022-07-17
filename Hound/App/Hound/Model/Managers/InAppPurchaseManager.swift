@@ -12,8 +12,14 @@ import StoreKit
 // This main class provides a streamlined way to perform the main two queries
 final class InAppPurchaseManager {
     
+    /// Initalized InternalInAppPurchaseManager.shared. This creates the InternalInAppPurchaseManager() object, and this in turn sets that object as a observer for the PaymentQueue and as a observer for the price increase consent
     static func initalizeInAppPurchaseManager() {
         _ = InternalInAppPurchaseManager.shared
+    }
+    
+    /// When you increase the price of a subscription, the system asks your delegate’s function paymentQueueShouldShowPriceConsent() whether to immediately display the price consent sheet, or to delay displaying the sheet until later. For example, you may want to delay showing the sheet if it would interrupt a multistep user interaction, such as setting up a user account. Return false in paymentQueueShouldShowPriceConsent() to prevent the dialog from displaying immediately. To show the price consent sheet after a delay, call showPriceConsentIfNeeded(), which shows the sheet only if the user hasn’t responded to the price increase notifications.
+    static func showPriceConsentIfNeeded() {
+        InternalInAppPurchaseManager.shared.showPriceConsentIfNeeded()
     }
     
     /// Query apple servers to retrieve all available products. If there is an error, ErrorManager is automatically invoked and nil is returned.
@@ -38,7 +44,7 @@ final class InAppPurchaseManager {
 }
 
 // Handles the important code of InAppPurchases with Apple server communication. Segmented from main class to reduce clutter
-private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObserver {
+private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObserver, SKPaymentQueueDelegate {
     
     // MARK: - Properties
     
@@ -49,7 +55,32 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
     
     override init() {
         super.init()
+        // Observe Price Increase Consent
+        SKPaymentQueue.default().delegate = self
+        // Observe Pending Transactions
         SKPaymentQueue.default().add(self)
+    }
+    
+    // MARK: - Consent To Subscription Price Increase
+    
+    func paymentQueueShouldShowPriceConsent(_ paymentQueue: SKPaymentQueue) -> Bool {
+        print("paymentQueueShouldShowPriceConsent")
+            // Check to make sure that mainTabBarViewController exists and is loaded. If it is not loaded, then we defer
+            guard let mainTabBarViewController = MainTabBarViewController.mainTabBarViewController else {
+                // The mainTabBarViewController doesn't exist yet and/or isn't loaded. Therefore we should defer until its loaded. mainTabBarViewController will call showPriceConsentIfNeeded once it loads and take care of the deferrment
+                print(false)
+                return false
+            }
+            
+            // mainTabBarViewController exists and is loaded, so lets show the price consent
+            print(true)
+            return true
+    }
+    
+    /// When you increase the price of a subscription, the system asks your delegate’s function paymentQueueShouldShowPriceConsent() whether to immediately display the price consent sheet, or to delay displaying the sheet until later. For example, you may want to delay showing the sheet if it would interrupt a multistep user interaction, such as setting up a user account. Return false in paymentQueueShouldShowPriceConsent() to prevent the dialog from displaying immediately. To show the price consent sheet after a delay, call showPriceConsentIfNeeded(), which shows the sheet only if the user hasn’t responded to the price increase notifications.
+    func showPriceConsentIfNeeded() {
+        print("showPriceConsentIfNeeded")
+        SKPaymentQueue.default().showPriceConsentIfNeeded()
     }
     
     // MARK: - Fetch Products
@@ -180,8 +211,21 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
     
     // Observe a transaction state
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+        
+        print("Queue Count \(transactions.count)")
+        for transaction in transactions {
+            print(transaction.payment.productIdentifier, transaction.transactionState.rawValue)
+        }
+        
+        // Only the family head can perform in-app purchases. This guard statement is here to stop background purchases from attempting to process. They will always fail if the user isn't the family head so no reason to even attempt them.
+        guard FamilyConfiguration.isFamilyHead else {
+            return
+        }
+        
         // If either of these are nil, there is not an ongoing manual request by a user (as there is no callback to provide information to). Therefore, we are dealing with asyncronously bought transactions (e.g. renewals, phone died while purchasing, etc.) that should be processed in the background.
         guard productPurchaseCompletionHandler != nil || productRestoreCompletionHandler != nil else {
+            
+            backgroundPurchaseInProgress = true
             
             // These are transactions that we know have completely failed. Clear them.
             let failedTransactionsInQueue = transactions.filter { transaction in
@@ -213,6 +257,11 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
                 completedTransactionsInQueue.forEach { completedTransaction in
                     
                     SKPaymentQueue.default().finishTransaction(completedTransaction)
+                }
+                
+                // If the subscriptions page is loaded and onscreen, then we reload it
+                if let settingsSubscriptionViewController = MainTabBarViewController.mainTabBarViewController?.settingsViewController?.settingsSubscriptionViewController, settingsSubscriptionViewController.isViewLoaded && settingsSubscriptionViewController.view.window != nil {
+                    settingsSubscriptionViewController.willRefreshAfterTransactionsSyncronizedInBackground()
                 }
             }
             return
@@ -323,6 +372,13 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
         }
     }
     
+    /// This delegate method is called when the user starts an in-app purchase in the App Store, and the transaction continues in your app. Specifically, if your app is already installed, the method is called automatically. If your app is not yet installed when the user starts the in-app purchase in the App Store, the user gets a notification when the app installation is complete. This method is called when the user taps the notification. Otherwise, if the user opens the app manually, this method is called only if the app is opened soon after the purchase was started.
+    func paymentQueue(_ queue: SKPaymentQueue, shouldAddStorePayment payment: SKPayment, for product: SKProduct) -> Bool {
+        print("shouldAddStorePayment", payment.productIdentifier)
+        SKPaymentQueue.default().add(payment)
+        return true
+    }
+    
     // MARK: - Restore Purchases
     
     private var productRestoreCompletionHandler: ((Bool) -> Void)?
@@ -363,6 +419,16 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
         
         InternalInAppPurchaseManager.shared.productRestoreCompletionHandler = completionHandler
         SKPaymentQueue.default().restoreCompletedTransactions()
+    }
+    
+    func paymentQueue(_ queue: SKPaymentQueue, restoreCompletedTransactionsFailedWithError error: Error) {
+        DispatchQueue.main.async {
+            if self.productRestoreCompletionHandler != nil {
+                ErrorManager.alert(forError: InAppPurchaseError.restoreFailed)
+            }
+            self.productRestoreCompletionHandler?(false)
+            self.productRestoreCompletionHandler = nil
+        }
     }
     
 }

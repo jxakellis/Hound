@@ -22,18 +22,28 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     
     @IBOutlet private weak var refreshButton: UIBarButtonItem!
     @IBAction private func willRefresh(_ sender: Any) {
-        self.refreshButton.isEnabled = false
-        ActivityIndicator.shared.beginAnimating(title: navigationItem.title ?? "", view: self.view, navigationItem: navigationItem)
+        // If a transaction was syncronized to the Hound server from the background, i.e. the system recognized there was a transaction sitting in the queue so silently contacted Hound to process it, we don't want to cause any visual indicators that would confuse the user. Instead we just update the information on the server then reload the labels. No fancy animations or error messages if anything fails.
+        let refreshWasInvokedByUser = sender as? Bool ?? true
         
-        SubscriptionRequest.getAll(invokeErrorManager: true) { requestWasSuccessful, _ in
+        self.refreshButton.isEnabled = false
+        if refreshWasInvokedByUser {
+            ActivityIndicator.shared.beginAnimating(title: navigationItem.title ?? "", view: self.view, navigationItem: navigationItem)
+        }
+        
+        SubscriptionRequest.getAll(invokeErrorManager: refreshWasInvokedByUser) { requestWasSuccessful, _ in
             self.refreshButton.isEnabled = true
-            ActivityIndicator.shared.stopAnimating(navigationItem: self.navigationItem)
+            if refreshWasInvokedByUser {
+                ActivityIndicator.shared.stopAnimating(navigationItem: self.navigationItem)
+            }
             
             guard requestWasSuccessful else {
                 return
             }
             
-            self.performSpinningCheckmarkAnimation()
+            if refreshWasInvokedByUser {
+                self.performSpinningCheckmarkAnimation()
+            }
+            
             self.reloadTableAndLabels()
         }
     }
@@ -86,12 +96,17 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     
     // MARK: - Functions
     
+    /// If a transaction was syncronized to the Hound server from the background, i.e. the system recognized there was a transaction sitting in the queue so silently contacted Hound to process it, call this function. It will refresh the page without any animations that would confuse the user
+    func willRefreshAfterTransactionsSyncronizedInBackground() {
+        self.willRefresh(false)
+    }
+    
     /// These properties only need assigned once.
     private func oneTimeSetup() {
         
         tableView.separatorInset = .zero
         
-        restoreTransactionsButton.layer.cornerRadius = 10.0
+        restoreTransactionsButton.layer.cornerRadius = VisualConstant.SizeConstant.largeRectangularButtonCornerRadious
         
         familyPermissionAlertController.addAction(UIAlertAction(title: "OK", style: .cancel))
         
@@ -99,10 +114,6 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     
     /// These properties can be reassigned. Does not reload anything, rather just configures.
     private func repeatableSetup() {
-        
-        if FamilyConfiguration.isFamilyHead {
-            InAppPurchaseManager.initalizeInAppPurchaseManager()
-        }
         
         setupActiveSubscriptionLabels()
     }
@@ -207,9 +218,22 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
         purchaseSelectedProduct()
         
         func purchaseSelectedProduct() {
-            // indexPath 0 is the default so the user is attempting to downgrade their subscription
+            // If the cell has no SKProduct, that means it's the default subscription cell
             guard let product = cell.product else {
-                UIApplication.shared.open(URL(string: "https://apps.apple.com/account/subscriptions")!)
+                guard let windowScene = UIApplication.windowScene else {
+                    UIApplication.shared.open(URL(string: "https://apps.apple.com/account/subscriptions")!)
+                    return
+                }
+                
+                Task {
+                    do {
+                        try await AppStore.showManageSubscriptions(in: windowScene)
+                    }
+                    catch {
+                        print(error)
+                        await UIApplication.shared.open(URL(string: "https://apps.apple.com/account/subscriptions")!)
+                    }
+                }
                 return
             }
             

@@ -34,7 +34,7 @@ async function getActiveSubscriptionForFamilyId(connection, familyId) {
     familySubscription = global.constant.subscription.SUBSCRIPTIONS.find((subscription) => subscription.productId === global.constant.subscription.DEFAULT_SUBSCRIPTION_PRODUCT_ID);
     familySubscription.userId = undefined;
     familySubscription.subscriptionPurchaseDate = undefined;
-    familySubscription.subscriptionExpiration = new Date('3000-01-01T00:00:00Z');
+    familySubscription.subscriptionExpiration = undefined;
   }
   else {
     // we found a subscription, so get rid of the one entry array

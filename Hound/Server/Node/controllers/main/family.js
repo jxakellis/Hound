@@ -10,7 +10,7 @@ Known:
 async function getFamily(req, res) {
   try {
     const { familyId } = req.params;
-    const result = await getAllFamilyInformationForFamilyId(req.connection, familyId);
+    const result = await getAllFamilyInformationForFamilyId(req.connection, familyId, req.activeSubscription);
     return res.sendResponseForStatusJSONError(200, { result }, undefined);
   }
   catch (error) {
