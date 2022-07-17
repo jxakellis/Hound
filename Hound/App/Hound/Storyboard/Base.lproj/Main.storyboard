@@ -425,7 +425,7 @@
                                     <constraint firstAttribute="width" secondItem="0wN-6J-sYm" secondAttribute="height" multiplier="1:1" id="gBy-YM-VtU"/>
                                     <constraint firstAttribute="height" constant="90" id="i3W-ju-ron"/>
                                 </constraints>
-                                <state key="normal" image="chooseIconForDog"/>
+                                <state key="normal" image="chooseImageForDog"/>
                                 <connections>
                                     <action selector="didClickIcon:" destination="yj4-3A-FdI" eventType="touchUpInside" id="aox-YT-sgx"/>
                                 </connections>
@@ -684,7 +684,7 @@
                                                 <constraint firstAttribute="width" secondItem="Tcd-Tf-WCx" secondAttribute="height" multiplier="1:1" id="HRV-em-G6b"/>
                                                 <constraint firstAttribute="width" constant="60" id="xab-po-KLh"/>
                                             </constraints>
-                                            <imageReference key="image" image="pawFullResolutionWhite" symbolScale="large"/>
+                                            <imageReference key="image" image="whitePawWithHands" symbolScale="large"/>
                                         </imageView>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.75" contentMode="scaleAspectFit" horizontalHuggingPriority="290" verticalHuggingPriority="290" horizontalCompressionResistancePriority="790" verticalCompressionResistancePriority="790" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="2Cv-gS-fE5">
                                             <rect key="frame" x="384" y="30" width="20" height="26.5"/>
@@ -1609,7 +1609,7 @@
                                     <constraint firstAttribute="height" constant="90" id="Ay3-La-q5a"/>
                                     <constraint firstAttribute="width" secondItem="CJ5-mJ-d5P" secondAttribute="height" multiplier="1:1" id="jqt-Om-9qR"/>
                                 </constraints>
-                                <state key="normal" image="chooseIconForDog"/>
+                                <state key="normal" image="chooseImageForDog"/>
                                 <connections>
                                     <action selector="didClickIcon:" destination="w3D-Ib-MEE" eventType="touchUpInside" id="Y8U-LT-yh9"/>
                                 </connections>
@@ -2042,7 +2042,7 @@
         <scene sceneID="3cf-I6-Jg6">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="c3p-F3-kMn" customClass="DogsNavigationViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Reminders" image="pawTabBar" selectedImage="pawTabBar" id="cPa-gy-q4n"/>
+                    <tabBarItem key="tabBarItem" title="Reminders" image="blackPaw" selectedImage="blackPaw" id="cPa-gy-q4n"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="qxF-gX-J4v">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
@@ -2167,12 +2167,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="800" verticalHuggingPriority="800" horizontalCompressionResistancePriority="800" verticalCompressionResistancePriority="800" image="pawFullResolutionWhite" translatesAutoresizingMaskIntoConstraints="NO" id="3dG-2F-DxQ">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="800" verticalHuggingPriority="800" horizontalCompressionResistancePriority="800" verticalCompressionResistancePriority="800" translatesAutoresizingMaskIntoConstraints="NO" id="3dG-2F-DxQ">
                                 <rect key="frame" x="132" y="373" width="150" height="150"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="150" id="WDd-Gv-mYH"/>
                                     <constraint firstAttribute="width" constant="150" id="qp1-80-syR"/>
                                 </constraints>
+                                <imageReference key="image" image="whitePawWithHands" symbolScale="large"/>
                             </imageView>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="775" verticalHuggingPriority="775" horizontalCompressionResistancePriority="775" verticalCompressionResistancePriority="775" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="ffm-7i-C0x">
                                 <rect key="frame" x="189.5" y="558" width="35" height="35"/>
@@ -3759,19 +3760,20 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="nsH-qM-K4m"/>
+        <segue reference="Jqw-FR-46g"/>
         <segue reference="GZX-3R-sVV"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="alarm" catalog="system" width="124" height="128"/>
         <image name="arrow.backward.circle.fill" catalog="system" width="128" height="121"/>
         <image name="arrow.triangle.2.circlepath" catalog="system" width="128" height="101"/>
+        <image name="blackPaw" width="25" height="25"/>
         <image name="brain.head.profile" catalog="system" width="114" height="128"/>
         <image name="checkmark.circle.fill" catalog="system" width="128" height="121"/>
         <image name="chevron.backward" catalog="system" width="96" height="128"/>
         <image name="chevron.left" catalog="system" width="96" height="128"/>
         <image name="chevron.right" catalog="system" width="96" height="128"/>
-        <image name="chooseIconForDog" width="150" height="150"/>
+        <image name="chooseImageForDog" width="128" height="128"/>
         <image name="circle.fill" catalog="system" width="128" height="121"/>
         <image name="creditcard" catalog="system" width="128" height="88"/>
         <image name="f.circle.fill" catalog="system" width="128" height="121"/>
@@ -3781,8 +3783,6 @@
         <image name="list.bullet.rectangle" catalog="system" width="128" height="93"/>
         <image name="m.circle.fill" catalog="system" width="128" height="121"/>
         <image name="paintpalette" catalog="system" width="128" height="105"/>
-        <image name="pawFullResolutionWhite" width="490" height="490.5"/>
-        <image name="pawTabBar" width="25" height="25"/>
         <image name="person.3.fill" catalog="system" width="128" height="61"/>
         <image name="person.crop.circle" catalog="system" width="128" height="121"/>
         <image name="person.fill" catalog="system" width="128" height="120"/>
@@ -3793,6 +3793,7 @@
         <image name="t.circle.fill" catalog="system" width="128" height="121"/>
         <image name="trash" catalog="system" width="121" height="128"/>
         <image name="w.circle.fill" catalog="system" width="128" height="121"/>
+        <image name="whitePawWithHands" width="622" height="621.5"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

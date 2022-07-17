@@ -39,6 +39,10 @@ enum VisualConstant {
         static let largeRectangularButtonCornerRadious = 10.0
     }
     
+    enum TextConstant {
+        static let unknownText = "Unknown ⚠️"
+    }
+    
     enum AnimationConstant {
         static let largeButtonShow = 0.3
         static let largeButtonHide = 0.15

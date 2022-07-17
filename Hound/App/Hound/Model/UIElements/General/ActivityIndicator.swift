@@ -20,7 +20,7 @@ final class ActivityIndicator {
     static let shared = ActivityIndicator()
     
     // 2
-    let activityLabel = UILabel(frame: CGRect(x: 24, y: 0, width: 0, height: 0))
+    let activityLabel = ScaledUILabel(frame: CGRect(x: 24, y: 0, width: 0, height: 0))
     
     let activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
     let activityView = UIView()

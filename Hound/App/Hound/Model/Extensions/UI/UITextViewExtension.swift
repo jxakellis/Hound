@@ -39,14 +39,14 @@ extension UITextView {
         get {
             var placeholderText: String?
             
-            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForUITextView) as? UILabel {
+            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForUITextView) as? ScaledUILabel {
                 placeholderText = placeholderLabel.text
             }
             
             return placeholderText
         }
         set {
-            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForUITextView) as? UILabel {
+            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForUITextView) as? ScaledUILabel {
                 placeholderLabel.text = newValue
                 placeholderLabel.sizeToFit()
             }
@@ -60,14 +60,14 @@ extension UITextView {
     ///
     /// - Parameter textView: The UITextView that got updated
     @objc public func textViewDidChange(_ sender: NSNotification) {
-        if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForUITextView) as? UILabel {
+        if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForUITextView) as? ScaledUILabel {
             placeholderLabel.isHidden = !self.text.isEmpty
         }
     }
     
-    /// Resize the placeholder UILabel to make sure it's in the same position as the UITextView text
+    /// Resize the placeholder ScaledUILabel to make sure it's in the same position as the UITextView text
     private func resizePlaceholder() {
-        if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForUITextView) as? UILabel {
+        if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForUITextView) as? ScaledUILabel {
             let labelX = self.textContainer.lineFragmentPadding
             let labelY = self.textContainerInset.top - 2
             let labelWidth = self.frame.width - (labelX * 2)
@@ -77,9 +77,9 @@ extension UITextView {
         }
     }
     
-    /// Adds a placeholder UILabel to this UITextView
+    /// Adds a placeholder ScaledUILabel to this UITextView
     private func addPlaceholder(_ placeholderText: String) {
-        let placeholderLabel = UILabel()
+        let placeholderLabel = ScaledUILabel()
         
         placeholderLabel.text = placeholderText
         placeholderLabel.sizeToFit()

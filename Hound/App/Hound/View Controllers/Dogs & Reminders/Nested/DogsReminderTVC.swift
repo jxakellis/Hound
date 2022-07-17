@@ -17,7 +17,7 @@ final class DogsReminderTableViewCell: UITableViewCell {
 
     // MARK: - IB
 
-    @IBOutlet private weak var reminderLabel: UILabel!
+    @IBOutlet private weak var reminderLabel: ScaledUILabel!
     @IBOutlet private weak var reminderIsEnabledSwitch: UISwitch!
 
     @IBAction func didToggleReminderIsEnabled(_ sender: Any) {

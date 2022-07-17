@@ -12,8 +12,6 @@ import os.log
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
-    
-    // TO DO NOW change launchscreen icon from Hound paw to Hound paw with clock hands
 
     static var generalLogger = Logger(subsystem: "com.example.Pupotty", category: "General")
     static var lifeCycleLogger = Logger(subsystem: "com.example.Pupotty", category: "Life Cycle")

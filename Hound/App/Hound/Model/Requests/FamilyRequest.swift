@@ -13,7 +13,7 @@ enum FamilyRequest: RequestProtocol {
     
     static var baseURLWithoutParams: URL { return UserRequest.baseURLWithUserId.appendingPathComponent("/family") }
     // UserRequest baseURL with the userId path param appended on
-    static var baseURLWithFamilyId: URL { return FamilyRequest.baseURLWithoutParams.appendingPathComponent("/\(UserInformation.familyId ?? Hash.defaultSHA256Hash)") }
+    static var baseURLWithFamilyId: URL { return FamilyRequest.baseURLWithoutParams.appendingPathComponent("/\(UserInformation.familyId ?? EnumConstant.HashConstant.defaultSHA256Hash)") }
     
     // MARK: - Private Functions
     

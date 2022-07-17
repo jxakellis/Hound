@@ -158,7 +158,7 @@ final class Log: NSObject, NSCoding, NSCopying {
         
         let logId: Int = body[ServerDefaultKeys.logId.rawValue] as? Int ?? ClassConstant.LogConstant.defaultLogId
         // don't user ClassConstant.LogConstant.defaultUserId here. if we cannot decode the value, then just leave it as -1, as otherwise it would incorrectly display that this user created the log (as ClassConstant.LogConstant.defaultUserId defaults to UserInformation.userId first)
-        let userId: String = body[ServerDefaultKeys.userId.rawValue] as? String ?? Hash.defaultSHA256Hash
+        let userId: String = body[ServerDefaultKeys.userId.rawValue] as? String ?? EnumConstant.HashConstant.defaultSHA256Hash
         let logAction: LogAction = LogAction(rawValue: body[ServerDefaultKeys.logAction.rawValue] as? String ?? ClassConstant.LogConstant.defaultLogAction.rawValue)!
         let logCustomActionName: String? = body[ServerDefaultKeys.logCustomActionName.rawValue] as? String ?? ClassConstant.LogConstant.defaultLogCustomActionName
         

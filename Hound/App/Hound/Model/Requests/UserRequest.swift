@@ -13,7 +13,7 @@ enum UserRequest: RequestProtocol {
     
     static var baseURLWithoutParams: URL { return InternalRequestUtils.baseURLWithoutParams.appendingPathComponent("/user")}
     // UserRequest baseURL with the userId URL param appended on
-    static var baseURLWithUserId: URL { return UserRequest.baseURLWithoutParams.appendingPathComponent("/\(UserInformation.userId ?? Hash.defaultSHA256Hash)") }
+    static var baseURLWithUserId: URL { return UserRequest.baseURLWithoutParams.appendingPathComponent("/\(UserInformation.userId ?? EnumConstant.HashConstant.defaultSHA256Hash)") }
     
     // MARK: - Private Functions
     

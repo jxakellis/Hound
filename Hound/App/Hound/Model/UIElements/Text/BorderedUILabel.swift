@@ -44,7 +44,7 @@ final class BorderedUILabel: ScaledUILabel {
             }
             
             // check to see placeholderlabel exists
-            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForBorderedUILabel) as? UILabel {
+            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForBorderedUILabel) as? ScaledUILabel {
                 // check to see if placeholder label has actual text in it
                 guard placeholderLabel.text != nil && placeholderLabel.text!.trimmingCharacters(in: .whitespacesAndNewlines) != "" else {
                     return
@@ -60,19 +60,19 @@ final class BorderedUILabel: ScaledUILabel {
         }
     }
     
-    /// Resize the placeholder when the UILabel bounds change
+    /// Resize the placeholder when the ScaledUILabel bounds change
     override var bounds: CGRect {
         didSet {
             self.resizePlaceholder()
         }
     }
     
-    /// The UILabel placeholder text
+    /// The ScaledUILabel placeholder text
     override var placeholder: String? {
         get {
             var placeholderText: String?
             
-            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForBorderedUILabel) as? UILabel {
+            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForBorderedUILabel) as? ScaledUILabel {
                 var withRemovedPadding = placeholderLabel.text
                 withRemovedPadding?.removeFirst(2)
                 placeholderText = withRemovedPadding
@@ -82,7 +82,7 @@ final class BorderedUILabel: ScaledUILabel {
         }
         set {
             // add two space offset to placeholder label.
-            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForBorderedUILabel) as? UILabel {
+            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForBorderedUILabel) as? ScaledUILabel {
                 // placeholder label exists
                 if newValue == nil {
                     placeholderLabel.text = nil
@@ -99,22 +99,16 @@ final class BorderedUILabel: ScaledUILabel {
         }
     }
     
-    /// Resize the placeholder UILabel to make sure it's in the same position as the UILabel text
+    /// Resize the placeholder ScaledUILabel to make sure it's in the same position as the ScaledUILabel text
      private func resizePlaceholder() {
-         if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForBorderedUILabel) as? UILabel {
-            // let labelX = self.frame.minX
-            // let labelY = self.frame.minY
-            // let labelWidth = self.frame.width - (labelX * 2)
-            //  let labelHeight = placeholderLabel.frame.height
-            
-            // placeholderLabel.frame = CGRect(x: labelX, y: labelY, width: labelWidth, height: labelHeight)
+         if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForBorderedUILabel) as? ScaledUILabel {
             placeholderLabel.frame = self.bounds
         }
     }
     
-    /// Adds a placeholder UILabel to this UILabel
+    /// Adds a placeholder ScaledUILabel to this ScaledUILabel
   private func addPlaceholder(_ placeholderText: String) {
-        let placeholderLabel = UILabel()
+        let placeholderLabel = ScaledUILabel()
         
         placeholderLabel.text = placeholderText
         placeholderLabel.sizeToFit()

@@ -28,7 +28,7 @@ final class ServerFamilyViewController: UIViewController {
             }
         }
     }
-    @IBOutlet private weak var createFamilyDisclaimerLabel: UILabel!
+    @IBOutlet private weak var createFamilyDisclaimerLabel: ScaledUILabel!
     @IBOutlet private weak var createFamilyDisclaimerLeadingConstraint: NSLayoutConstraint!
     @IBOutlet private weak var createFamilyDisclaimerTrailingConstraint: NSLayoutConstraint!
     

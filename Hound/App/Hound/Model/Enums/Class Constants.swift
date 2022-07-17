@@ -22,16 +22,16 @@ enum ClassConstant {
     
     enum DogConstant {
         static let defaultDogName: String = "Bella"
-        static let defaultDogIcon: UIImage = UIImage.init(named: "pawFullResolutionWhite")!
+        static let defaultDogIcon: UIImage = UIImage.init(named: "whitePawWithHands")!
         static let defaultDogId: Int = -1
-        static let chooseIconForDog: UIImage = UIImage.init(named: "chooseIconForDog")!
+        static let chooseImageForDog: UIImage = UIImage.init(named: "chooseImageForDog")!
         static let dogNameCharacterLimit: Int = 32
     }
     
     enum LogConstant {
         static let defaultLogId: Int = -1
         static var defaultUserId: String {
-            return UserInformation.userId ?? Hash.defaultSHA256Hash
+            return UserInformation.userId ?? EnumConstant.HashConstant.defaultSHA256Hash
         }
         static let defaultLogAction = LogAction.feed
         static let defaultLogCustomActionName: String? = nil

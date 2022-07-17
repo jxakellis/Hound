@@ -73,7 +73,7 @@ final class FamilyIntroductionViewController: UIViewController, UITextFieldDeleg
         }
         
         var dogIcon: UIImage? {
-            if self.dogIcon.imageView!.image != ClassConstant.DogConstant.chooseIconForDog {
+            if self.dogIcon.imageView!.image != ClassConstant.DogConstant.chooseImageForDog {
                 return self.dogIcon.imageView!.image
             }
             else {
@@ -145,7 +145,7 @@ final class FamilyIntroductionViewController: UIViewController, UITextFieldDeleg
         
         // Dog Icon
         
-        dogIcon.setImage(ClassConstant.DogConstant.chooseIconForDog, for: .normal)
+        dogIcon.setImage(ClassConstant.DogConstant.chooseImageForDog, for: .normal)
         dogIcon.imageView!.layer.masksToBounds = true
         dogIcon.imageView!.layer.cornerRadius = dogIcon.frame.width/2
         

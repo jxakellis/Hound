@@ -257,8 +257,8 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     
     private var addButtons: [ScaledUIButton] = []
     private var addButtonsBackground: [ScaledUIButton] = []
-    private var addButtonsLabel: [UILabel] = []
-    private var addButtonsLabelBackground: [UILabel] = []
+    private var addButtonsLabel: [ScaledUILabel] = []
+    private var addButtonsLabelBackground: [ScaledUILabel] = []
     
     /// For selector in UITapGestureRecognizer
     @objc private func toggleAddStatusToFalse() {
@@ -413,10 +413,10 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     // MARK: - changeAddStatus Helper Functions
     
     /// Creates a label for a given add button with the specified text, handles all frame, origin, and size related things
-    private func createAddButtonLabel(_ button: ScaledUIButton, text: String) -> UILabel {
+    private func createAddButtonLabel(_ button: ScaledUIButton, text: String) -> ScaledUILabel {
         let buttonLabelFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
         let buttonLabelSize = text.bounding(font: buttonLabelFont)
-        let buttonLabel = UILabel(frame: CGRect(origin: CGPoint(x: button.frame.origin.x - buttonLabelSize.width, y: button.frame.midY - (buttonLabelSize.height/2)), size: buttonLabelSize ))
+        let buttonLabel = ScaledUILabel(frame: CGRect(origin: CGPoint(x: button.frame.origin.x - buttonLabelSize.width, y: button.frame.midY - (buttonLabelSize.height/2)), size: buttonLabelSize ))
         buttonLabel.minimumScaleFactor = 1.0
         
         if buttonLabel.frame.origin.x < 10 {
@@ -436,8 +436,8 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     }
     
     /// Creates a label for a given add button with the specified text, handles all frame, origin, and size related things
-    private func createAddButtonLabelBackground(_ label: UILabel) -> UILabel {
-        let buttonLabel = UILabel(frame: label.frame)
+    private func createAddButtonLabelBackground(_ label: ScaledUILabel) -> ScaledUILabel {
+        let buttonLabel = ScaledUILabel(frame: label.frame)
         buttonLabel.font = label.font
         buttonLabel.text = label.text
         buttonLabel.outline(outlineColor: .systemBlue, insideColor: .systemBlue, outlineWidth: 15)
