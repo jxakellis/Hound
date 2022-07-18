@@ -50,7 +50,7 @@ enum InternalRequestUtils {
             modifiedRequest.url = deconstructedURLComponents?.url ?? request.url
         }
         
-        AppDelegate.APIRequestLogger.notice("\(modifiedRequest.httpMethod ?? "unknown") Request for \(modifiedRequest.url?.description ?? "unknown")")
+        AppDelegate.APIRequestLogger.notice("\(modifiedRequest.httpMethod ?? VisualConstant.TextConstant.unknownText) Request for \(modifiedRequest.url?.description ?? VisualConstant.TextConstant.unknownText)")
         
         // send request
         let task = session.dataTask(with: modifiedRequest) { data, response, error in
@@ -70,7 +70,7 @@ enum InternalRequestUtils {
             guard error == nil, let responseBody = responseBody, let responseStatusCode = responseStatusCode else {
                 // assume an error is no response as that implies request/response failure, meaning the end result of no response is the same
                 AppDelegate.APIResponseLogger.warning(
-                    "No \(request.httpMethod ?? "unknown") Response for \(request.url?.description ?? "unknown")\nData Task Error: \(error?.localizedDescription ?? "unknown")")
+                    "No \(request.httpMethod ?? VisualConstant.TextConstant.unknownText) Response for \(request.url?.description ?? VisualConstant.TextConstant.unknownText)\nData Task Error: \(error?.localizedDescription ?? VisualConstant.TextConstant.unknownText)")
                 
                 var responseError: GeneralResponseError = .getNoResponse
                 
@@ -101,7 +101,7 @@ enum InternalRequestUtils {
             guard 200...299 ~= responseStatusCode else {
                 // Our request went through but was invalid
                 AppDelegate.APIResponseLogger.warning(
-                    "Failure \(request.httpMethod ?? "unknown") Response for \(request.url?.description ?? "unknown")\n Message: \(responseBody[ServerDefaultKeys.message.rawValue] as? String ?? "unknown")\n Code: \(responseBody[ServerDefaultKeys.code.rawValue] as? String ?? "unknown")\n Type:\(responseBody[ServerDefaultKeys.name.rawValue] as? String ?? "unknown")")
+                    "Failure \(request.httpMethod ?? VisualConstant.TextConstant.unknownText) Response for \(request.url?.description ?? VisualConstant.TextConstant.unknownText)\n Message: \(responseBody[ServerDefaultKeys.message.rawValue] as? String ?? VisualConstant.TextConstant.unknownText)\n Code: \(responseBody[ServerDefaultKeys.code.rawValue] as? String ?? VisualConstant.TextConstant.unknownText)\n Type:\(responseBody[ServerDefaultKeys.name.rawValue] as? String ?? VisualConstant.TextConstant.unknownText)")
                 
                 var responseError: Error?
                 let responseErrorCode: String? = responseBody[ServerDefaultKeys.code.rawValue] as? String
@@ -145,7 +145,7 @@ enum InternalRequestUtils {
             }
             
             // Our request was valid and successful
-            AppDelegate.APIResponseLogger.notice("Success \(request.httpMethod ?? "unknown") Response for \(request.url?.description ?? "unknown")")
+            AppDelegate.APIResponseLogger.notice("Success \(request.httpMethod ?? VisualConstant.TextConstant.unknownText) Response for \(request.url?.description ?? VisualConstant.TextConstant.unknownText)")
             DispatchQueue.main.async {
                 completionHandler(responseBody, .successResponse)
             }

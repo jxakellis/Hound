@@ -4,7 +4,7 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 const userColumns = 'users.userId, users.userNotificationToken, users.userFirstName, users.userLastName, users.userEmail';
 const userNameColumns = 'users.userFirstName, users.userLastName';
-const userConfigurationColumns = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.logsInterfaceScale, userConfiguration.remindersInterfaceScale, userConfiguration.interfaceStyle, userConfiguration.snoozeLength, userConfiguration.notificationSound';
+const userConfigurationColumns = 'userConfiguration.isNotificationEnabled, userConfiguration.isLoudNotification, userConfiguration.isFollowUpEnabled, userConfiguration.followUpDelay, userConfiguration.snoozeLength, userConfiguration.notificationSound, userConfiguration.logsInterfaceScale, userConfiguration.remindersInterfaceScale, userConfiguration.interfaceStyle, userConfiguration.maximumNumberOfLogsDisplayed';
 
 /**
  * If the query is successful, returns the user for the userId.

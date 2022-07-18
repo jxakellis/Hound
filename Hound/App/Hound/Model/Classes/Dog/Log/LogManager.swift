@@ -21,12 +21,21 @@ final class LogManager: NSObject, NSCoding, NSCopying {
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         logs = aDecoder.decodeObject(forKey: "logs") as? [Log] ?? []
-        uniqueLogActionsResult = aDecoder.decodeObject(forKey: "uniqueLogActions") as? [LogAction] ?? nil
+        let convertedUniqueLogActionsResult = aDecoder.decodeObject(forKey: "uniqueLogActions") as? [String] ?? nil
+        // Map back into uniqueLogActionsResult from strings
+        uniqueLogActionsResult = convertedUniqueLogActionsResult?
+            .map({ string in
+            return LogAction(rawValue: string)
+        }) as? [LogAction] ?? nil
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(logs, forKey: "logs")
-        aCoder.encode(uniqueLogActionsResult, forKey: "uniqueLogActions")
+        // attempting to encode uniqueLogActionsResult produces an error as it doesn't (and can't because its an enum) conform to NSCoding. Therefore, we need to convert it to something that is actually encodeable
+        let convertedUniqueLogActionsResult: [String]? = uniqueLogActionsResult?.map({ logAction in
+            return logAction.rawValue
+        })
+        aCoder.encode(convertedUniqueLogActionsResult, forKey: "uniqueLogActions")
     }
     
     // MARK: - Main

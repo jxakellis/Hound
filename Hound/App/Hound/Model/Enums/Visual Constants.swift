@@ -23,10 +23,6 @@ enum VisualConstant {
         static let serverRelatedViewController = 1000000008
     }
     
-    enum ViewControllerConstant {
-        static let logsTableViewControllerMaximumNumberOfDisplayedLogs = 100
-    }
-    
     enum FontConstant {
         static let logCellFontSize = 13.0
         static let filterByDogFont = UIFont.systemFont(ofSize: 20, weight: .semibold)

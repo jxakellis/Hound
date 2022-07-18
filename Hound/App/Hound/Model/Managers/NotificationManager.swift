@@ -114,7 +114,7 @@ enum NotificationManager {
             case .ephemeral:
                 AppDelegate.generalLogger.notice(".ephemeral")
             @unknown default:
-                AppDelegate.generalLogger.notice("unknown auth status")
+                AppDelegate.generalLogger.notice("\(VisualConstant.TextConstant.unknownText) notification authorization status")
             }
         }
         

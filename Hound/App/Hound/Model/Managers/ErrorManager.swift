@@ -24,7 +24,7 @@ enum ErrorManager {
         
         AlertManager.willShowAlert(title: "Bizzare, there seems to be an unknown issue occuring!", message: "Please restart and/or reinstall Hound if issues persist. Issue description: \(error.localizedDescription)")
         
-        AppDelegate.generalLogger.error("Unknown error: \(error.localizedDescription)")
+        AppDelegate.generalLogger.error("\(VisualConstant.TextConstant.unknownText) error: \(error.localizedDescription)")
         
     }
     
@@ -32,13 +32,13 @@ enum ErrorManager {
     static func alert(forError error: Error, forErrorCode errorCode: String? = nil) {
         
         func createErrorMessage(forErrorRawValue errorRawValue: String) -> String {
-            guard let errorCode = errorCode else {
+            guard errorCode != nil else {
                 return errorRawValue
             }
             
-            // TO DO FUTURE disable for production, error message isn't clean with this on
             // foo bar some message ("ER_SOME_MESSAGE")
-            return errorRawValue.appending(" (\"\(errorCode)\")")
+            // return errorRawValue.appending(" (\"\(errorCode)\")")
+            return errorRawValue
         }
         
         // Request Related

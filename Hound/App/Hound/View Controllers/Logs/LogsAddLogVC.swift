@@ -401,7 +401,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 pageTitle!.title = "Edit Log"
                 removeLogBarButton.isEnabled = true
                 
-                familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: logToUpdate.userId)?.displayFullName ?? "Unknown⚠️"
+                familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: logToUpdate.userId)?.displayFullName ?? VisualConstant.TextConstant.unknownText
                 
                 let dog = try! dogManager.findDog(forDogId: parentDogIdToUpdate)
                 parentDogLabel.text = dog.dogName
@@ -416,7 +416,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 pageTitle!.title = "Create Log"
                 removeLogBarButton.isEnabled = false
                 
-                familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: UserInformation.userId)?.displayFullName ?? "Unknown⚠️"
+                familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: UserInformation.userId)?.displayFullName ?? VisualConstant.TextConstant.unknownText
                 
                 parentDogLabel.text = dogManager.dogs[0].dogName
                 parentDogLabel.tag = dogManager.dogs[0].dogId

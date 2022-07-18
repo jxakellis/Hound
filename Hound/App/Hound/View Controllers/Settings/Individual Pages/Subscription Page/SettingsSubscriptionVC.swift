@@ -230,7 +230,6 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
                         try await AppStore.showManageSubscriptions(in: windowScene)
                     }
                     catch {
-                        print(error)
                         await UIApplication.shared.open(URL(string: "https://apps.apple.com/account/subscriptions")!)
                     }
                 }

@@ -23,7 +23,7 @@
 		A23F6B6B2864B72300D08841 /* SubscriptionRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23F6B6A2864B72300D08841 /* SubscriptionRequest.swift */; };
 		A23F6B6D2870DAAA00D08841 /* DropDownLogFilterTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23F6B6C2870DAAA00D08841 /* DropDownLogFilterTableViewCell.swift */; };
 		A23F6B6F2870FCC100D08841 /* DropDownLogFilterTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A23F6B6E2870FCC100D08841 /* DropDownLogFilterTableViewCell.xib */; };
-		A240BCA52884565E00838606 /* EnumConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = A240BCA42884565E00838606 /* EnumConstant.swift */; };
+		A240BCA52884565E00838606 /* Enum Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A240BCA42884565E00838606 /* Enum Constants.swift */; };
 		A2458B5E2759374500912550 /* circuit30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2458B5D2759374500912550 /* circuit30.wav */; };
 		A2458B602759376200912550 /* circuit.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2458B5F2759376200912550 /* circuit.mp3 */; };
 		A247236D27F63456005DF848 /* SignInWithAppleError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A247236C27F63456005DF848 /* SignInWithAppleError.swift */; };
@@ -210,7 +210,7 @@
 		A23F6B6C2870DAAA00D08841 /* DropDownLogFilterTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropDownLogFilterTableViewCell.swift; sourceTree = "<group>"; };
 		A23F6B6E2870FCC100D08841 /* DropDownLogFilterTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DropDownLogFilterTableViewCell.xib; sourceTree = "<group>"; };
 		A240BCA32883A98700838606 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
-		A240BCA42884565E00838606 /* EnumConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumConstant.swift; sourceTree = "<group>"; };
+		A240BCA42884565E00838606 /* Enum Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Enum Constants.swift"; sourceTree = "<group>"; };
 		A2458B5D2759374500912550 /* circuit30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = circuit30.wav; sourceTree = "<group>"; };
 		A2458B5F2759376200912550 /* circuit.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = circuit.mp3; sourceTree = "<group>"; };
 		A247236C27F63456005DF848 /* SignInWithAppleError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithAppleError.swift; sourceTree = "<group>"; };
@@ -727,7 +727,7 @@
 				A2581B7527FDDF350099AFB8 /* Notification Sound.swift */,
 				A264AC1C2821B6620041E88A /* Interface Scale.swift */,
 				A233518F27FB7BAB00CDF1BF /* Class Constants.swift */,
-				A240BCA42884565E00838606 /* EnumConstant.swift */,
+				A240BCA42884565E00838606 /* Enum Constants.swift */,
 				A26A984927F658CD002803A6 /* User Default Keys.swift */,
 				A263D88627FF85E000938EC4 /* Server Default Keys.swift */,
 			);
@@ -1170,7 +1170,7 @@
 				A2AB7CCC28580BE600851FF2 /* InAppPurchaseManager.swift in Sources */,
 				A2AA5CC927FE44C300FD0134 /* LogActionError.swift in Sources */,
 				A25070DF26DD9BFF0056CFC4 /* ScaledUILabel.swift in Sources */,
-				A240BCA52884565E00838606 /* EnumConstant.swift in Sources */,
+				A240BCA52884565E00838606 /* Enum Constants.swift in Sources */,
 				A2AC89FE27D2782100115831 /* OneTimeComponents.swift in Sources */,
 				A2121DBD26649C7E00647682 /* DogsReminderOneTimeVC.swift in Sources */,
 				A2AF01B727FC9CF500D06638 /* SettingsHeadTVC.swift in Sources */,

@@ -132,7 +132,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
             case .ephemeral:
                 AppDelegate.generalLogger.fault(".ephemeral")
             @unknown default:
-                AppDelegate.generalLogger.fault("unknown auth status")
+                AppDelegate.generalLogger.fault("\(VisualConstant.TextConstant.unknownText) notification authorization status")
             }
         }
         

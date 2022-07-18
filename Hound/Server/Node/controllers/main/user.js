@@ -53,6 +53,7 @@ async function createUser(req, res) {
       interfaceStyle,
       logsInterfaceScale,
       remindersInterfaceScale,
+      maximumNumberOfLogsDisplayed,
     } = req.body;
     const result = await createUserForUserIdentifier(
       req.connection,
@@ -70,6 +71,7 @@ async function createUser(req, res) {
       interfaceStyle,
       logsInterfaceScale,
       remindersInterfaceScale,
+      maximumNumberOfLogsDisplayed,
     );
 
     refreshSecondaryAlarmNotificationsForUserId(result, isFollowUpEnabled, followUpDelay);
@@ -95,6 +97,7 @@ async function updateUser(req, res) {
       interfaceStyle,
       logsInterfaceScale,
       remindersInterfaceScale,
+      maximumNumberOfLogsDisplayed,
     } = req.body;
     await updateUserForUserId(
       req.connection,
@@ -109,6 +112,7 @@ async function updateUser(req, res) {
       interfaceStyle,
       logsInterfaceScale,
       remindersInterfaceScale,
+      maximumNumberOfLogsDisplayed,
     );
 
     refreshSecondaryAlarmNotificationsForUserId(userId, isFollowUpEnabled, followUpDelay);

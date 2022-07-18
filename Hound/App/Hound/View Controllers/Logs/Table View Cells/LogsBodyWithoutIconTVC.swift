@@ -45,8 +45,7 @@ final class LogsBodyWithoutIconTableViewCell: UITableViewCell {
         logDateLabel.font =  logDateLabel.font.withSize(fontSize * sizeRatio)
         logNoteLabel.font =  logNoteLabel.font.withSize(fontSize * sizeRatio)
         
-        // TO DO NOW make "unknown" a constant
-        familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: log.userId)?.displayFirstName ?? "Unknown⚠️"
+        familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: log.userId)?.displayFirstName ?? VisualConstant.TextConstant.unknownText
         
         self.logActionLabel.text = log.logAction.displayActionName(logCustomActionName: log.logCustomActionName, isShowingAbreviatedCustomActionName: true)
         

@@ -53,6 +53,9 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
     /// used for determining if logs interface scale was changed and if the table view needs reloaded
     private var storedLogsInterfaceScale: LogsInterfaceScale = UserConfiguration.logsInterfaceScale
     
+    /// used for determing if the maximumNumberOfLogsDisplayed was changed and if the table view needs reloaded
+    private var storedMaximumNumberOfLogsDisplayed: Int = UserConfiguration.maximumNumberOfLogsDisplayed
+    
     /// We only want to refresh the tableViewDataSource when the viewController is visible. Otherwise, its a drain on resources to perform all of these calculations
     private var tableViewDataSourceHasBeenUpdated: Bool = false
     
@@ -83,6 +86,11 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
             // Leaves filter alone and reloads table
             reloadTable()
         }
+        else if storedMaximumNumberOfLogsDisplayed != UserConfiguration.maximumNumberOfLogsDisplayed {
+            storedMaximumNumberOfLogsDisplayed = UserConfiguration.maximumNumberOfLogsDisplayed
+            // Leaves filter alone and reloads table
+            reloadTable()
+        }
         
     }
     /// Makes a query to the server to retrieve new information then refreshed the tableView
@@ -109,7 +117,7 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
     private func reloadTableDataSource() {
         
         // important to store this value so we don't recompute more than needed
-        groupedLogsByUniqueDate = dogManager.groupedLogsByUniqueDate(forLogsFilter: logsFilter, forMaximumNumberOfLogsPerDog: VisualConstant.ViewControllerConstant.logsTableViewControllerMaximumNumberOfDisplayedLogs)
+        groupedLogsByUniqueDate = dogManager.groupedLogsByUniqueDate(forLogsFilter: logsFilter, forMaximumNumberOfLogsPerDog: UserConfiguration.maximumNumberOfLogsDisplayed)
         
         if groupedLogsByUniqueDate.count == 0 {
             tableView.separatorStyle = .none
@@ -259,7 +267,7 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
             // manually reload table as the self sender doesn't do that
             self.tableView.reloadData()
             
-            // TO DO BUG, if the number of logs that exist is greater than the logsTableViewControllerMaximumNumberOfDisplayedLogs, then when one log gets deleted, another will take its place. This will cause a crash as the tableView is expecting there to be one less row but there is the same amount still. Solution is to probably insert the new row using the tableView.insert thing at the same time we delete.
+            // TO DO BUG, if the number of logs that exist is greater than the logsTableViewControllermaximumNumberOfLogsDisplayed, then when one log gets deleted, another will take its place. This will cause a crash as the tableView is expecting there to be one less row but there is the same amount still. Solution is to probably insert the new row using the tableView.insert thing at the same time we delete.
             /*
             // batch update so doesn't freak out
             tableView.performBatchUpdates {

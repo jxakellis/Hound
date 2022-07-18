@@ -8,8 +8,8 @@
 
 import UIKit
 
-final class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDelegate {
-
+final class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDelegate, UIPickerViewDataSource, UIPickerViewDelegate {
+    
     // MARK: - UIGestureRecognizerDelegate
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -20,8 +20,6 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // TO DO NOW make logsTableViewControllerMaximumNumberOfDisplayedLogs a UserConfiguration settings
 
         // Dark Mode
         interfaceStyleSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 15), .foregroundColor: UIColor.white], for: .normal)
@@ -38,6 +36,17 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
         remindersInterfaceScaleSegmentedControl.backgroundColor = .systemGray4
         
         remindersInterfaceScaleSegmentedControl.selectedSegmentIndex = RemindersInterfaceScale.allCases.firstIndex(of: UserConfiguration.remindersInterfaceScale)!
+        
+        // Maximum Number Of Displayed Logs
+        maximumNumberOfLogsDisplayedPickerView.delegate = self
+        maximumNumberOfLogsDisplayedPickerView.dataSource = self
+        
+        if let maximumNumberOfLogsDisplayedRowSelected =  UserConfiguration.maximumNumberOfLogsDisplayedOptions.firstIndex(of: UserConfiguration.maximumNumberOfLogsDisplayed) {
+            self.maximumNumberOfLogsDisplayedPickerView.selectRow(
+                maximumNumberOfLogsDisplayedRowSelected,
+                inComponent: 0,
+                animated: false)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -67,7 +76,9 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
     @IBOutlet private weak var interfaceStyleSegmentedControl: UISegmentedControl!
 
     @IBAction private func didUpdateInterfaceStyle(_ sender: Any) {
-        (sender as! UISegmentedControl).updateInterfaceStyle()
+        if let sender = sender as? UISegmentedControl {
+            sender.updateInterfaceStyle()
+        }
     }
 
     // MARK: Logs Interface Scale
@@ -108,6 +119,46 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
                 // error, revert to previous
                 UserConfiguration.remindersInterfaceScale = beforeUpdateRemindersInterfaceScale
                 self.remindersInterfaceScaleSegmentedControl.selectedSegmentIndex = RemindersInterfaceScale.allCases.firstIndex(of: UserConfiguration.remindersInterfaceScale)!
+            }
+        }
+    }
+    
+    // MARK: Maximum Number Of Displayed Logs
+    
+    @IBOutlet private weak var maximumNumberOfLogsDisplayedPickerView: UIPickerView!
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return UserConfiguration.maximumNumberOfLogsDisplayedOptions.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return "\(UserConfiguration.maximumNumberOfLogsDisplayedOptions[row])"
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        let beforeUpdateMaximumNumberOfLogsDisplayed = UserConfiguration.maximumNumberOfLogsDisplayed
+        
+        // selected segement index is in the same order as all cases
+        UserConfiguration.maximumNumberOfLogsDisplayed = UserConfiguration.maximumNumberOfLogsDisplayedOptions[row]
+        
+        let body = [ServerDefaultKeys.maximumNumberOfLogsDisplayed.rawValue: UserConfiguration.maximumNumberOfLogsDisplayed]
+        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
+            guard requestWasSuccessful else {
+                // error, revert to previous
+                UserConfiguration.maximumNumberOfLogsDisplayed = beforeUpdateMaximumNumberOfLogsDisplayed
+                
+                if let beforeUpdateMaximumNumberOfLogsDisplayedRowSelected =  UserConfiguration.maximumNumberOfLogsDisplayedOptions.firstIndex(of: beforeUpdateMaximumNumberOfLogsDisplayed) {
+                    self.maximumNumberOfLogsDisplayedPickerView.selectRow(
+                        beforeUpdateMaximumNumberOfLogsDisplayedRowSelected,
+                        inComponent: component,
+                        animated: true)
+                }
+               
+                return
             }
         }
     }

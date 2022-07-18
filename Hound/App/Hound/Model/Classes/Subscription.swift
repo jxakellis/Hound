@@ -20,7 +20,7 @@ enum InAppPurchaseProduct: String, CaseIterable {
     static func localizedTitleExpanded(forInAppPurchaseProduct inAppPurchaseProduct: InAppPurchaseProduct) -> String {
         switch inAppPurchaseProduct {
         case .unknown:
-            return "Unknown ⚠️"
+            return VisualConstant.TextConstant.unknownText
         case .`default`:
             return "Single 🧍‍♂️"
         case .twoFMTwoDogs:
@@ -38,7 +38,7 @@ enum InAppPurchaseProduct: String, CaseIterable {
     static func localizedDescriptionExpanded(forInAppPurchaseProduct inAppPurchaseProduct: InAppPurchaseProduct) -> String {
         switch inAppPurchaseProduct {
         case .unknown:
-            return "Unknown ⚠️"
+            return VisualConstant.TextConstant.unknownText
         case .`default`:
             return "Explore Hound's default subscription tier by yourself with up to two different dogs"
         case .twoFMTwoDogs:

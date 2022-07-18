@@ -91,7 +91,7 @@ final class DogsReminderTableViewCell: UITableViewCell {
                         case 7:
                             reminderLabel.text?.append(" Saturday")
                         default:
-                            reminderLabel.text?.append("unknown")
+                            reminderLabel.text?.append(VisualConstant.TextConstant.unknownText)
                         }
                     }
                 }
@@ -113,7 +113,7 @@ final class DogsReminderTableViewCell: UITableViewCell {
                         case 7:
                             reminderLabel.text?.append(" Sa,")
                         default:
-                            reminderLabel.text?.append("unknown")
+                            reminderLabel.text?.append(VisualConstant.TextConstant.unknownText)
                         }
                     }
                 }

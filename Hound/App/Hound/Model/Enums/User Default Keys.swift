@@ -20,12 +20,19 @@ enum UserDefaultsKeys: String {
     
     // MARK: Local Configuration
     case dogIcons
+    
     case logCustomActionNames
     case reminderCustomActionNames
+    
     case isNotificationAuthorized
-    case reviewRequestDates
+    
+    case userAskedToReviewHoundDates
+    case rateReviewRequestedDates
+    case writeReviewRequestedDates
+    
     case shouldShowReleaseNotes
     case appBuildsWithReleaseNotesShown
+    
     case hasLoadedFamilyIntroductionViewControllerBefore
     case hasLoadedRemindersIntroductionViewControllerBefore
     case hasLoadedSettingsFamilyIntroductionViewControllerBefore

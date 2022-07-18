@@ -155,7 +155,6 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     }
     
     func encode(with aCoder: NSCoder) {
-        
         aCoder.encode(reminderId, forKey: "reminderId")
         aCoder.encode(reminderAction.rawValue, forKey: "reminderAction")
         aCoder.encode(reminderCustomActionName, forKey: "reminderCustomActionName")

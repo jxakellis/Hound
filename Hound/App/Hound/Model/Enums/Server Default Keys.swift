@@ -45,6 +45,7 @@ enum ServerDefaultKeys: String {
     case logsInterfaceScale
     case remindersInterfaceScale
     case interfaceStyle
+    case maximumNumberOfLogsDisplayed
     case snoozeLength
     case isNotificationAuthorized
     case isNotificationEnabled

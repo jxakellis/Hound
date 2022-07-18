@@ -26,6 +26,7 @@ async function createUserForUserIdentifier(
   interfaceStyle,
   logsInterfaceScale,
   remindersInterfaceScale,
+  maximumNumberOfLogsDisplayed, 
 ) {
   if (areAllDefined(connection, userIdentifier) === false) {
     throw new ValidationError('connection or userIdentifier missing', global.constant.error.value.MISSING);
@@ -41,6 +42,7 @@ async function createUserForUserIdentifier(
   const castedFollowUpDelay = formatNumber(followUpDelay);
   const castedSnoozeLength = formatNumber(snoozeLength);
   const castedInterfaceStyle = formatNumber(interfaceStyle);
+  const castedMaximumNumberOfDisplayedLogs = formatNumber(maximumNumberOfLogsDisplayed);
 
   // userNotificationToken OPTIONAL
   if (areAllDefined(
@@ -55,8 +57,9 @@ async function createUserForUserIdentifier(
     logsInterfaceScale,
     remindersInterfaceScale,
     castedInterfaceStyle,
+    castedMaximumNumberOfDisplayedLogs,
   ) === false) {
-    throw new ValidationError('userId, userEmail, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, snoozeLength, notificationSound, interfaceStyle, logsInterfaceScale, or remindersInterfaceScale missing', global.constant.error.value.MISSING);
+    throw new ValidationError('userId, userEmail, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, snoozeLength, notificationSound, interfaceStyle, logsInterfaceScale, remindersInterfaceScale, or maximumNumberOfLogsDisplayed missing', global.constant.error.value.MISSING);
   }
 
   const promises = [
@@ -67,8 +70,8 @@ async function createUserForUserIdentifier(
     ),
     databaseQuery(
       connection,
-      'INSERT INTO userConfiguration(userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, snoozeLength, notificationSound) VALUES (?,?,?,?,?,?,?,?,?,?)',
-      [userId, castedIsNotificationEnabled, castedIsLoudNotification, castedIsFollowUpEnabled, castedFollowUpDelay, logsInterfaceScale, remindersInterfaceScale, castedInterfaceStyle, castedSnoozeLength, notificationSound],
+      'INSERT INTO userConfiguration(userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, snoozeLength, notificationSound, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, maximumNumberOfLogsDisplayed, ) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+      [userId, castedIsNotificationEnabled, castedIsLoudNotification, castedIsFollowUpEnabled, castedFollowUpDelay, castedSnoozeLength, notificationSound, logsInterfaceScale, remindersInterfaceScale, castedInterfaceStyle, maximumNumberOfLogsDisplayed],
     )];
   await Promise.all(promises);
 

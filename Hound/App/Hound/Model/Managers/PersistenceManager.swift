@@ -83,7 +83,11 @@ enum PersistenceManager {
         
         LocalConfiguration.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as? Bool ?? LocalConfiguration.isNotificationAuthorized
         
-        LocalConfiguration.reviewRequestDates = UserDefaults.standard.value(forKey: UserDefaultsKeys.reviewRequestDates.rawValue) as? [Date] ?? LocalConfiguration.reviewRequestDates
+        LocalConfiguration.userAskedToReviewHoundDates = UserDefaults.standard.value(forKey: UserDefaultsKeys.userAskedToReviewHoundDates.rawValue) as? [Date] ?? LocalConfiguration.userAskedToReviewHoundDates
+        // reviewRequestDates depreciated as of Hound 2.0
+        LocalConfiguration.rateReviewRequestedDates = UserDefaults.standard.value(forKey: UserDefaultsKeys.rateReviewRequestedDates.rawValue) as? [Date] ?? UserDefaults.standard.value(forKey: "reviewRequestDates") as? [Date] ?? LocalConfiguration.rateReviewRequestedDates
+        LocalConfiguration.writeReviewRequestedDates = UserDefaults.standard.value(forKey: UserDefaultsKeys.writeReviewRequestedDates.rawValue) as? [Date] ?? LocalConfiguration.writeReviewRequestedDates
+        
         LocalConfiguration.shouldShowReleaseNotes = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue) as? Bool ?? LocalConfiguration.shouldShowReleaseNotes
         LocalConfiguration.appBuildsWithReleaseNotesShown = UserDefaults.standard.value(forKey: UserDefaultsKeys.appBuildsWithReleaseNotesShown.rawValue) as? [Int] ?? LocalConfiguration.appBuildsWithReleaseNotesShown
         
@@ -139,16 +143,19 @@ enum PersistenceManager {
         if let dataDogIcons = try? NSKeyedArchiver.archivedData(withRootObject: LocalConfiguration.dogIcons, requiringSecureCoding: false) {
             UserDefaults.standard.set(dataDogIcons, forKey: UserDefaultsKeys.dogIcons.rawValue)
         }
-        if let dataDogManager = try? NSKeyedArchiver.archivedData(withRootObject: MainTabBarViewController.staticDogManager, requiringSecureCoding: false) {
+         if let dataDogManager = try? NSKeyedArchiver.archivedData(withRootObject: MainTabBarViewController.staticDogManager, requiringSecureCoding: false) {
             UserDefaults.standard.set(dataDogManager, forKey: ServerDefaultKeys.dogManager.rawValue)
-        }
+       }
         
         UserDefaults.standard.set(LocalConfiguration.logCustomActionNames, forKey: UserDefaultsKeys.logCustomActionNames.rawValue)
         UserDefaults.standard.set(LocalConfiguration.reminderCustomActionNames, forKey: UserDefaultsKeys.reminderCustomActionNames.rawValue)
         
         UserDefaults.standard.setValue(LocalConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
         
-        UserDefaults.standard.setValue(LocalConfiguration.reviewRequestDates, forKeyPath: UserDefaultsKeys.reviewRequestDates.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.userAskedToReviewHoundDates, forKeyPath: UserDefaultsKeys.userAskedToReviewHoundDates.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.rateReviewRequestedDates, forKeyPath: UserDefaultsKeys.rateReviewRequestedDates.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.writeReviewRequestedDates, forKeyPath: UserDefaultsKeys.writeReviewRequestedDates.rawValue)
+        
         UserDefaults.standard.setValue(LocalConfiguration.shouldShowReleaseNotes, forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.appBuildsWithReleaseNotesShown, forKey: UserDefaultsKeys.appBuildsWithReleaseNotesShown.rawValue)
         

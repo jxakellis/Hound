@@ -21,6 +21,7 @@ async function updateUserForUserId(
   interfaceStyle,
   logsInterfaceScale,
   remindersInterfaceScale,
+  maximumNumberOfLogsDisplayed,
 ) {
   if (areAllDefined(connection, userId) === false) {
     throw new ValidationError('connection or userId missing', global.constant.error.value.MISSING);
@@ -32,6 +33,7 @@ async function updateUserForUserId(
   const castedFollowUpDelay = formatNumber(followUpDelay);
   const castedSnoozeLength = formatNumber(snoozeLength);
   const castedInterfaceStyle = formatNumber(interfaceStyle);
+  const castedMaximumNumberOfDisplayedLogs = formatNumber(maximumNumberOfLogsDisplayed);
 
   // checks to see that all needed components are provided
   if (atLeastOneDefined(
@@ -45,82 +47,93 @@ async function updateUserForUserId(
     logsInterfaceScale,
     remindersInterfaceScale,
     castedInterfaceStyle,
+    castedMaximumNumberOfDisplayedLogs,
   ) === false) {
-    throw new ValidationError('No userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, snoozeLength, notificationSound, interfaceStyle, logsInterfaceScale, or remindersInterfaceScale provided', global.constant.error.value.MISSING);
+    throw new ValidationError('No userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, snoozeLength, notificationSound, interfaceStyle, logsInterfaceScale, remindersInterfaceScale, or maximumNumberOfLogsDisplayed provided', global.constant.error.value.MISSING);
   }
 
+  const promises = [];
   if (areAllDefined(userNotificationToken)) {
-    await databaseQuery(
+    promises.push(databaseQuery(
       connection,
       'UPDATE users SET userNotificationToken = ? WHERE userId = ?',
       [userNotificationToken, userId],
-    );
+    ));
   }
   if (areAllDefined(castedIsNotificationEnabled)) {
-    await databaseQuery(
+    promises.push(databaseQuery(
       connection,
       'UPDATE userConfiguration SET isNotificationEnabled = ? WHERE userId = ?',
       [castedIsNotificationEnabled, userId],
-    );
+    ));
   }
   if (areAllDefined(castedIsLoudNotification)) {
-    await databaseQuery(
+    promises.push(databaseQuery(
       connection,
       'UPDATE userConfiguration SET isLoudNotification = ? WHERE userId = ?',
       [castedIsLoudNotification, userId],
-    );
+    ));
   }
   // don't refresh secondary jobs here, it will be handled by the main controller
   if (areAllDefined(castedIsFollowUpEnabled)) {
-    await databaseQuery(
+    promises.push(databaseQuery(
       connection,
       'UPDATE userConfiguration SET isFollowUpEnabled = ? WHERE userId = ?',
       [castedIsFollowUpEnabled, userId],
-    );
+    ));
   }
   // don't refresh secondary jobs here, it will be handled by the main controller
   if (areAllDefined(castedFollowUpDelay)) {
-    await databaseQuery(
+    promises.push(databaseQuery(
       connection,
       'UPDATE userConfiguration SET followUpDelay = ? WHERE userId = ?',
       [castedFollowUpDelay, userId],
-    );
+    ));
   }
   if (areAllDefined(castedSnoozeLength)) {
-    await databaseQuery(
+    promises.push(databaseQuery(
       connection,
       'UPDATE userConfiguration SET snoozeLength = ? WHERE userId = ?',
       [castedSnoozeLength, userId],
-    );
+    ));
   }
   if (areAllDefined(notificationSound)) {
-    await databaseQuery(
+    promises.push(databaseQuery(
       connection,
       'UPDATE userConfiguration SET notificationSound = ? WHERE userId = ?',
       [notificationSound, userId],
-    );
+    ));
   }
   if (areAllDefined(castedInterfaceStyle)) {
-    await databaseQuery(
+    promises.push(databaseQuery(
       connection,
       'UPDATE userConfiguration SET interfaceStyle = ? WHERE userId = ?',
       [castedInterfaceStyle, userId],
-    );
+    ));
   }
   if (areAllDefined(logsInterfaceScale)) {
-    await databaseQuery(
+    promises.push(databaseQuery(
       connection,
       'UPDATE userConfiguration SET logsInterfaceScale = ? WHERE userId = ?',
       [logsInterfaceScale, userId],
-    );
+    ));
   }
   if (areAllDefined(remindersInterfaceScale)) {
-    await databaseQuery(
+    promises.push(databaseQuery(
       connection,
       'UPDATE userConfiguration SET remindersInterfaceScale = ? WHERE userId = ?',
       [remindersInterfaceScale, userId],
-    );
+    ));
   }
+  if (areAllDefined(castedMaximumNumberOfDisplayedLogs)) {
+    promises.push(databaseQuery(
+      connection,
+      'UPDATE userConfiguration SET maximumNumberOfLogsDisplayed = ? WHERE userId = ?',
+      [castedMaximumNumberOfDisplayedLogs, userId],
+    ));
+  }
+
+  await Promise.all(promises);
 }
 
 module.exports = { updateUserForUserId };

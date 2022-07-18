@@ -239,7 +239,6 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     @objc private func willCreateNew(sender: UIButton) {
         // the senders tag indicates the parentDogId, if -1 then it means we are creating a new dog and if != -1 then it means we are creating a new reminder (as it has a parent dog)
         if sender.tag == -1 {
-            // TO DO BUG occassionally, when the user hits create a new dog, then menu 'freezes' for a 5ish seconds before opening menu
             self.willOpenDogMenu(forDogId: nil)
         }
         else {

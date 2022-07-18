@@ -154,14 +154,15 @@ final class AlertManager: NSObject {
     
     private func showNextAlert() {
         func waitLoop() {
-            if AlertManager.globalPresenter == nil || AlertManager.globalPresenter!.isBeingDismissed {
+            AppDelegate.generalLogger.info("showNextAlert waitLoop")
+            guard let globalPresenter = AlertManager.globalPresenter, globalPresenter.isBeingDismissed == false, globalPresenter.presentedViewController == nil else {
                 DispatchQueue.main.asyncAfter(deadline: .now()+0.05) {
                     waitLoop()
                 }
+                return
             }
-            else {
-                showNextAlert()
-            }
+            
+            showNextAlert()
             
         }
         

@@ -151,7 +151,7 @@ final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
         case 3:
             string.append("year")
         default:
-            string.append("unknown⚠️")
+            string.append(VisualConstant.TextConstant.unknownText)
         }
         
         // If our unit is plural (e.g. 2 days, 3 days), then we need to append that "s" to go from day -> days. Additionally we check to make sure our unit is within a valid range, otherwise we don't want to append "s" to "unknown⚠️"

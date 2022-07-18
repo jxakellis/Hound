@@ -64,22 +64,18 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
     // MARK: - Consent To Subscription Price Increase
     
     func paymentQueueShouldShowPriceConsent(_ paymentQueue: SKPaymentQueue) -> Bool {
-        print("paymentQueueShouldShowPriceConsent")
-            // Check to make sure that mainTabBarViewController exists and is loaded. If it is not loaded, then we defer
-            guard let mainTabBarViewController = MainTabBarViewController.mainTabBarViewController else {
+            // Check to make sure that mainTabBarViewController exists and is loaded.
+        guard MainTabBarViewController.mainTabBarViewController != nil else {
                 // The mainTabBarViewController doesn't exist yet and/or isn't loaded. Therefore we should defer until its loaded. mainTabBarViewController will call showPriceConsentIfNeeded once it loads and take care of the deferrment
-                print(false)
                 return false
             }
             
             // mainTabBarViewController exists and is loaded, so lets show the price consent
-            print(true)
             return true
     }
     
     /// When you increase the price of a subscription, the system asks your delegate’s function paymentQueueShouldShowPriceConsent() whether to immediately display the price consent sheet, or to delay displaying the sheet until later. For example, you may want to delay showing the sheet if it would interrupt a multistep user interaction, such as setting up a user account. Return false in paymentQueueShouldShowPriceConsent() to prevent the dialog from displaying immediately. To show the price consent sheet after a delay, call showPriceConsentIfNeeded(), which shows the sheet only if the user hasn’t responded to the price increase notifications.
     func showPriceConsentIfNeeded() {
-        print("showPriceConsentIfNeeded")
         SKPaymentQueue.default().showPriceConsentIfNeeded()
     }
     

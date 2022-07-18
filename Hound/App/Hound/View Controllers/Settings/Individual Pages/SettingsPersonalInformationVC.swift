@@ -93,9 +93,9 @@ final class SettingsPersonalInformationViewController: UIViewController, UIGestu
     private func oneTimeSetup() {
         userName.text = UserInformation.displayFullName
         
-        userEmail.text = UserInformation.userEmail ?? "Unknown⚠️"
+        userEmail.text = UserInformation.userEmail ?? VisualConstant.TextConstant.unknownText
         
-        userId.text = UserInformation.userId ?? "Unknown⚠️"
+        userId.text = UserInformation.userId ?? VisualConstant.TextConstant.unknownText
         
         redownloadDataButton.layer.cornerRadius = VisualConstant.SizeConstant.largeRectangularButtonCornerRadious
     }
