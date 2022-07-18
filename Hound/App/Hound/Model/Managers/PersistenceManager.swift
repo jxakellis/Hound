@@ -103,17 +103,15 @@ enum PersistenceManager {
     }
     
     /// Called by App or Scene Delegate when entering the background, used to save information, can be called when terminating for a slightly modifed case.
-    static func willEnterBackground(isTerminating: Bool = false) {
+    static func didEnterBackground(isTerminating: Bool = false) {
         
         // MARK: Loud Notifications and Silent Audio
         
         // Check to see if the user is eligible for loud notifications
-        // don't check for if there are enabled reminders/ isPaused, as client could be out of sync with server which has a reminder/ different pause status
+        // Don't check for enabled reminders/isPaused, as client could be out of sync with server
         if UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification {
-            // the user can have loud notifications
             if isTerminating == true {
-                // send the user an alert since their loud notifications won't work
-                // TO DO BUG if the user directly termiantes the app, without letting it go to background first, then the API request doesn't get sent off and the user doesn't get their notification warning them
+                // Send notification to user that their loud notifications won't work
                 RequestUtils.createTerminationNotification()
             }
             else {
@@ -153,7 +151,7 @@ enum PersistenceManager {
         UserDefaults.standard.setValue(LocalConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
         
         UserDefaults.standard.setValue(LocalConfiguration.userAskedToReviewHoundDates, forKeyPath: UserDefaultsKeys.userAskedToReviewHoundDates.rawValue)
-        UserDefaults.standard.setValue(LocalConfiguration.rateReviewRequestedDates, forKeyPath: UserDefaultsKeys.rateReviewRequestedDates.rawValue)
+        PersistenceManager.persistRateReviewRequestedDates()
         UserDefaults.standard.setValue(LocalConfiguration.writeReviewRequestedDates, forKeyPath: UserDefaultsKeys.writeReviewRequestedDates.rawValue)
         
         UserDefaults.standard.setValue(LocalConfiguration.shouldShowReleaseNotes, forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue)
@@ -173,6 +171,11 @@ enum PersistenceManager {
         
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
         
+    }
+    
+    /// It is important to persist this value to memory immediately. Apple keeps track of when we ask the user for a rate review and we must keep accurate track. But, if Hound crashes before we can save an updated value of rateReviewRequestedDates, then our value and Apple's true value is mismatched.
+    static func persistRateReviewRequestedDates() {
+        UserDefaults.standard.setValue(LocalConfiguration.rateReviewRequestedDates, forKeyPath: UserDefaultsKeys.rateReviewRequestedDates.rawValue)
     }
     
 }

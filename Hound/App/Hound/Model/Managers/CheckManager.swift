@@ -25,6 +25,7 @@ enum CheckManager {
                 AppDelegate.generalLogger.notice("Asking user to rate Hound")
                 SKStoreReviewController.requestReview(in: window)
                 LocalConfiguration.rateReviewRequestedDates.append(Date())
+                PersistenceManager.persistRateReviewRequestedDates()
             }
             // Open web page where the user can write a review on Hound
             func requestUserToWriteReview() {
@@ -103,7 +104,6 @@ enum CheckManager {
             let timeWaitedSinceLastAsk = lastUserAskedToReviewHoundDate.distance(to: Date())
             let timeNeededToWaitForNextAsk = numberOfDaysToWaitForNextReview * 24 * 60 * 60
             
-            askUserToReview()
             if timeWaitedSinceLastAsk > timeNeededToWaitForNextAsk {
                 askUserToReview()
             }

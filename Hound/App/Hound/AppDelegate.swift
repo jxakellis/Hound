@@ -36,20 +36,27 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
         // Use this method to select a configuration to create the new scene with.
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
+    
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        AppDelegate.lifeCycleLogger.notice("Application Will Enter Foreground")
+    }
+    
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        AppDelegate.lifeCycleLogger.notice("Application Did Enter Background")
+    }
 
     func applicationWillTerminate(_ application: UIApplication) {
         AppDelegate.lifeCycleLogger.notice("Application Will Terminate")
-        PersistenceManager.willEnterBackground(isTerminating: true)
-
+        PersistenceManager.didEnterBackground(isTerminating: true)
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
         let token = tokenParts.joined()
+        // TO DO add user default to track if the user was successfully registered for remote notifications. If they weren't, keep retrying upon launch.
         AppDelegate.generalLogger.notice("Successfully registered for remote notifications for token: \(token)")
         
         if token != UserInformation.userNotificationToken {
-            
             // don't sent the user an alert if this request fails as there is no point
             UserRequest.update(invokeErrorManager: false, body: [ServerDefaultKeys.userNotificationToken.rawValue: token]) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {

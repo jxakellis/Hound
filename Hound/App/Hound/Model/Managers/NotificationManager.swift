@@ -25,6 +25,8 @@ enum NotificationManager {
                 UserConfiguration.isFollowUpEnabled = isGranted
                 
                 if LocalConfiguration.isNotificationAuthorized == true {
+                    // write isNotificationAuthorized to memory immediately. If app crashes,
+                    // UserDefaults.standard.set(LocalConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
                     DispatchQueue.main.async {
                         UIApplication.shared.registerForRemoteNotifications()
                     }
@@ -43,7 +45,7 @@ enum NotificationManager {
             
         }
         else {
-            // there is a potential that the user could be notification authorized but unregistered for remoteNotications. This could happen if the user account was deleted but the local app was not. Therefore the the LocalConfiguration could indicate isNotificationAuthorized == true and we would not registerForRemoteNotifications, but in reality if the user creates an account again the userNotificationToken would be null
+            // A user could potentially be isNotificationAuthorized == true but unregistered for remoteNotications. Therefore
             UIApplication.shared.registerForRemoteNotifications()
             completionHandler()
         }
