@@ -144,8 +144,8 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
                 if createdReminders.count > 0 {
                     // we have reminders created that need to be created on the server
                     RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: createdReminders) { reminders, _ in
-                        if reminders != nil {
-                            dog.dogReminders.addReminders(forReminders: reminders!)
+                        if let reminders = reminders {
+                            dog.dogReminders.addReminders(forReminders: reminders)
                             queriedCreatedReminders = true
                         }
                         else {
@@ -239,9 +239,9 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
                 RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: createdReminders) { reminders, _ in
                     self.addDogButton.endQuerying()
                     self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
-                    if reminders != nil {
+                    if let reminders = reminders {
                         // dog and reminders successfully created, so we can proceed
-                        dog.dogReminders.addReminders(forReminders: reminders!)
+                        dog.dogReminders.addReminders(forReminders: reminders)
                         self.delegate.didAddDog(sender: Sender(origin: self, localized: self), newDog: dog)
                         self.navigationController?.popViewController(animated: true)
                     }
@@ -260,15 +260,15 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
     
     @IBAction func willRemoveDog(_ sender: Any) {
         // button should only be able to be clicked if targetDog != nil but always good to double check
-        guard dogToUpdate != nil else {
+        guard let dogToUpdate = dogToUpdate else {
             return
         }
-        let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogName.text ?? dogToUpdate!.dogName)?", message: nil, preferredStyle: .alert)
+        let removeDogConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogName.text ?? dogToUpdate.dogName)?", message: nil, preferredStyle: .alert)
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-            DogsRequest.delete(invokeErrorManager: true, forDogId: self.dogToUpdate!.dogId) { requestWasSuccessful, _ in
+            DogsRequest.delete(invokeErrorManager: true, forDogId: dogToUpdate.dogId) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
-                    self.delegate.didRemoveDog(sender: Sender(origin: self, localized: self), dogId: self.dogToUpdate!.dogId)
+                    self.delegate.didRemoveDog(sender: Sender(origin: self, localized: self), dogId: dogToUpdate.dogId)
                     self.navigationController?.popViewController(animated: true)
                 }
                 

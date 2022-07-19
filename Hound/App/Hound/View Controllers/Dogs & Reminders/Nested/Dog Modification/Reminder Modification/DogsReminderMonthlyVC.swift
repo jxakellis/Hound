@@ -43,8 +43,8 @@ final class DogsReminderMonthlyViewController: UIViewController, UIGestureRecogn
         super.viewDidLoad()
 
         // keep duplicate as without it the user can see the .asyncafter visual scroll, but this duplicate stops a value changed not being called on first value change bug
-        if self.passedTimeOfDay != nil {
-            self.timeOfDayDatePicker.date = self.passedTimeOfDay!
+        if let passedTimeOfDay = passedTimeOfDay {
+            self.timeOfDayDatePicker.date = passedTimeOfDay
         }
         else {
             self.timeOfDayDatePicker.date = Date.roundDate(targetDate: Date(), roundingInterval: TimeInterval(60 * timeOfDayDatePicker.minuteInterval), roundingMethod: .up)

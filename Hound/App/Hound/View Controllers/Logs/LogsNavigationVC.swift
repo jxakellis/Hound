@@ -9,15 +9,15 @@
 import UIKit
 
 protocol LogsNavigationViewControllerDelegate: AnyObject {
-    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
 final class LogsNavigationViewController: UINavigationController, LogsViewControllerDelegate {
 
     // MARK: - LogsViewControllerDelegate
 
-    func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
-        passThroughDelegate.didUpdateDogManager(sender: sender, newDogManager: newDogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager) {
+        passThroughDelegate.didUpdateDogManager(sender: sender, forDogManager: forDogManager)
     }
 
     // MARK: - Properties

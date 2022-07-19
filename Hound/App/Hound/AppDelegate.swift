@@ -97,10 +97,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
             
             // Note: we also individually fetch a reminder before immediately constructing its alertController for its alarm. This ensure, even if the user has notifications turned off (meaning this piece of code right here won't be executed), that the reminder they are being show is up to date.
             RequestUtils.getFamilyGetDog(invokeErrorManager: false, dogManager: MainTabBarViewController.staticDogManager) { newDogManager, _ in
-                guard newDogManager != nil else {
+                guard let newDogManager = newDogManager else {
                     return
                 }
-                MainTabBarViewController.mainTabBarViewController?.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager!)
+                MainTabBarViewController.mainTabBarViewController?.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
             }
         }
         

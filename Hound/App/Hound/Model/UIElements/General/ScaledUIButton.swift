@@ -25,10 +25,8 @@ final class ScaledUIButton: UIButton {
             }
         }
         
-        if currentImage != nil && currentImage!.isSymbolImage == true {
-            // DispatchQueue.main.async {
-                super.setImage(self.currentImage?.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: smallestDimension)), for: .normal)
-            // }
+        if let currentImage = currentImage, currentImage.isSymbolImage == true {
+            super.setImage(currentImage.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: smallestDimension)), for: .normal)
         }
         
     }
@@ -87,13 +85,13 @@ final class ScaledUIButton: UIButton {
         self.isQuerying = false
         self.transform = .identity
         if isBackgroundButton == false {
-            if initalColor != nil {
-                self.tintColor = initalColor!
-                initalColor = nil
+            if let initalColor = initalColor {
+                self.tintColor = initalColor
+                self.initalColor = nil
             }
-            if initalIsUserInteractionEnabled != nil {
-                self.isUserInteractionEnabled = initalIsUserInteractionEnabled!
-                initalIsUserInteractionEnabled = nil
+            if let initalIsUserInteractionEnabled = initalIsUserInteractionEnabled {
+                self.isUserInteractionEnabled = initalIsUserInteractionEnabled
+                self.initalIsUserInteractionEnabled = nil
             }
         }
     }

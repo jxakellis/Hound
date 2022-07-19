@@ -9,7 +9,7 @@
 import UIKit
 
 protocol SettingsFamilyViewControllerDelegate: AnyObject {
-    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
 final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource, DogManagerControlFlowProtocol {
@@ -74,15 +74,11 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     
     private var dogManager: DogManager = DogManager()
     
-    func getDogManager() -> DogManager {
-        return dogManager
-    }
-    
-    func setDogManager(sender: Sender, newDogManager: DogManager) {
-        dogManager = newDogManager
+    func setDogManager(sender: Sender, forDogManager: DogManager) {
+        dogManager = forDogManager
         
         if (sender.localized is SettingsViewController) == false {
-            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: newDogManager)
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: forDogManager)
         }
     }
     
@@ -225,10 +221,9 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
                 TimingManager.invalidateAll(forDogManager: dogManager)
                 return
             }
-            // TO DO FUTURE have server calculate reminderExecutionDates itself
             // Reminders are now unpaused, we must update the server with the new executionDates (can't calculate them itself).
             // Don't use the getFamilyGetDogs function. In this case, only the isPaused variable would apply. However, we just updated isPaused so there is no point to retrieve it again since we know its updated value.
-            _ = DogsRequest.get(invokeErrorManager: true, dogManager: self.getDogManager()) { newDogManager, _ in
+            _ = DogsRequest.get(invokeErrorManager: true, dogManager: self.dogManager) { newDogManager, _ in
                 guard let newDogManager = newDogManager else {
                     return
                 }
@@ -241,7 +236,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
                     RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: remindersToUpdate) { requestWasSuccessful, _ in
                         if requestWasSuccessful == true {
                             // the call to update the server on the reminder unpause was successful, now send to delegate
-                            self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager)
+                            self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
                         }
                     }
                 }

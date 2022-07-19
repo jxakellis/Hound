@@ -63,9 +63,8 @@ final class FamilyIntroductionViewController: UIViewController, UITextFieldDeleg
         
         // synchronizes data when setup is done (aka disappearing)
         var dogName: String? {
-            if self.dogName.text != nil && self.dogName.text!.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-                return self.dogName.text!.trimmingCharacters(in: .whitespacesAndNewlines)
-                
+            if let dogName = self.dogName.text, dogName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                return dogName.trimmingCharacters(in: .whitespacesAndNewlines)
             }
             else {
                 return nil
@@ -89,14 +88,16 @@ final class FamilyIntroductionViewController: UIViewController, UITextFieldDeleg
             
             // contact server to make their dog
             DogsRequest.create(invokeErrorManager: true, forDog: dog) { dogId, _ in
-                if dogId != nil {
-                    // go to next page if dog good
-                    dog.dogId = dogId!
-                    self.dogManager.addDog(forDog: dog)
-                    LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = true
-                    self.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController")
-                }
                 self.continueButton.isEnabled = true
+                
+                guard let dogId = dogId else {
+                    return
+                }
+                // go to next page if dog good
+                dog.dogId = dogId
+                self.dogManager.addDog(forDog: dog)
+                LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = true
+                self.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController")
             }
         }
         // updating the icon of an existing dog
@@ -178,7 +179,7 @@ final class FamilyIntroductionViewController: UIViewController, UITextFieldDeleg
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "mainTabBarViewController"{
             let mainTabBarViewController: MainTabBarViewController = segue.destination as! MainTabBarViewController
-            mainTabBarViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
+            mainTabBarViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         }
     }
 }

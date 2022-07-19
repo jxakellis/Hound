@@ -9,7 +9,7 @@
 import UIKit
 
 protocol DogsNavigationViewControllerDelegate: AnyObject {
-    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
     func checkForRemindersIntroductionPage()
 }
 
@@ -17,8 +17,8 @@ final class DogsNavigationViewController: UINavigationController, DogsViewContro
 
     // MARK: - DogsViewControllerDelegate
 
-    func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
-        passThroughDelegate.didUpdateDogManager(sender: sender, newDogManager: newDogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager) {
+        passThroughDelegate.didUpdateDogManager(sender: sender, forDogManager: forDogManager)
     }
 
     // MARK: - Properties

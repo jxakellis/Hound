@@ -29,20 +29,20 @@ final class DogsNestedReminderViewController: UIViewController {
         
         let reminder = dogsReminderManagerViewController.applyReminderSettings()
         // updatedReminder will be nil if a setting was invalid. If this is the case, dogsReminderManagerViewController will send a message to the user about it.
-        guard reminder != nil else {
+        guard let reminder = reminder else {
             return
         }
         
         // we were able to add the reminder successfully, so persist the possible reminderCustomActionName to the local storage. Technically, we should wait until the server query to complete to add this to memory but that will add significantly more complexity as this VC is nested.
-        if reminder!.reminderCustomActionName != nil && reminder!.reminderCustomActionName?.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-            LocalConfiguration.addReminderCustomAction(forName: reminder!.reminderCustomActionName!)
+        if let reminderCustomActionName = reminder.reminderCustomActionName, reminderCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+            LocalConfiguration.addReminderCustomAction(forName: reminderCustomActionName)
         }
         
         if isUpdating == true {
-            delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), forReminder: reminder!)
+            delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), forReminder: reminder)
         }
         else {
-            delegate.didAddReminder(sender: Sender(origin: self, localized: self), forReminder: reminder!)
+            delegate.didAddReminder(sender: Sender(origin: self, localized: self), forReminder: reminder)
         }
         
         navigationController?.popViewController(animated: true)

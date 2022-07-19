@@ -12,8 +12,8 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
 
     // MARK: - ServerFamilyViewControllerDelegate
     
-    func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
-        setDogManager(sender: sender, newDogManager: newDogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager) {
+        setDogManager(sender: sender, forDogManager: forDogManager)
     }
     
     // MARK: - IB
@@ -60,12 +60,8 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
     /// DogManager that all of the retrieved information will be added too.
     static var dogManager = DogManager()
     
-    func getDogManager() -> DogManager {
-        return ServerSyncViewController.dogManager
-    }
-    
-    func setDogManager(sender: Sender, newDogManager: DogManager) {
-        ServerSyncViewController.dogManager = newDogManager
+    func setDogManager(sender: Sender, forDogManager: DogManager) {
+        ServerSyncViewController.dogManager = forDogManager
     }
     
     /// What fraction of the loading/progress bar the user request is worth when completed
@@ -140,11 +136,20 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
             case .noResponse:
                 AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)
             }
-        }?.progress
-        
-        getUserProgressObserver = observe(\.getUserProgress?.fractionCompleted, options: [.new]) { _, _ in
-            self.didObserveProgressChange()
         }
+        
+        if getUserProgress != nil {
+            // We can't use if let getUserProgress = getUserProgress here. We need to observe the actual getUserProgress (not an if let "copy" of it) variable that is defined in this class for the KeyValueObservation to work.
+            getUserProgressObserver = observe(\.getUserProgress?.fractionCompleted, options: [.new]) { _, change in
+                self.didObserveProgressChange()
+                
+                // If the get request progress is complete (indicated by the fractionCompleted being 1.0), then we can invalidate the observer as it is no longer needed
+                if let optionalNewValue = change.newValue, let newValue = optionalNewValue, newValue == 1.0 {
+                    self.getUserProgressObserver?.invalidate()
+                }
+            }
+        }
+        
     }
     
     private func getFamilyConfiguration() {
@@ -157,10 +162,18 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
             case .noResponse:
                 AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)
             }
-        }?.progress
+        }
         
-        getFamilyProgressObserver = observe(\.getFamilyProgress?.fractionCompleted, options: [.new]) { _, _ in
-            self.didObserveProgressChange()
+        if getFamilyProgress != nil {
+            // We can't use if let getFamilyProgress = getFamilyProgress here. We need to observe the actual getFamilyProgress (not an if let "copy" of it) variable that is defined in this class for the KeyValueObservation to work.
+            getFamilyProgressObserver = observe(\.getFamilyProgress?.fractionCompleted, options: [.new]) { _, change in
+                self.didObserveProgressChange()
+                
+                // If the get request progress is complete (indicated by the fractionCompleted being 1.0), then we can invalidate the observer as it is no longer needed
+                if let optionalNewValue = change.newValue, let newValue = optionalNewValue, newValue == 1.0 {
+                    self.getFamilyProgressObserver?.invalidate()
+                }
+            }
         }
     }
 
@@ -194,11 +207,20 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
             case .noResponse:
                 AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)
             }
-        }?.progress
-        
-        getDogsProgressObserver = observe(\.getDogsProgress?.fractionCompleted, options: [.new]) { _, _ in
-            self.didObserveProgressChange()
         }
+        
+        if getDogsProgress != nil {
+            // We can't use if let getDogsProgress = getDogsProgress here. We need to observe the actual getDogsProgress (not an if let "copy" of it) variable that is defined in this class for the KeyValueObservation to work.
+            getDogsProgressObserver = observe(\.getDogsProgress?.fractionCompleted, options: [.new]) { _, change in
+                self.didObserveProgressChange()
+                
+                // If the get request progress is complete (indicated by the fractionCompleted being 1.0), then we can invalidate the observer as it is no longer needed
+                if let optionalNewValue = change.newValue, let newValue = optionalNewValue, newValue == 1.0 {
+                    self.getDogsProgressObserver?.invalidate()
+                }
+            }
+        }
+        
     }
     
     // The .fractionCompleted variable on one of the progress objects was updated. Therefore, we must update our loading bar
@@ -224,7 +246,7 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
         // Pass the selected object to the new view controller.
         if segue.identifier == "mainTabBarViewController"{
             let mainTabBarViewController: MainTabBarViewController = segue.destination as! MainTabBarViewController
-            mainTabBarViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: ServerSyncViewController.dogManager)
+            mainTabBarViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: ServerSyncViewController.dogManager)
         }
         else if segue.identifier == "familyIntroductionViewController"{
             let familyIntroductionViewController: FamilyIntroductionViewController = segue.destination as! FamilyIntroductionViewController

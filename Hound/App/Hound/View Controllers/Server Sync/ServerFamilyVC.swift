@@ -9,7 +9,7 @@
 import UIKit
 
 protocol ServerFamilyViewControllerDelegate: AnyObject {
-    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
 final class ServerFamilyViewController: UIViewController {
@@ -107,7 +107,7 @@ final class ServerFamilyViewController: UIViewController {
         
         LocalConfiguration.resetForNewFamily()
         
-        delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: DogManager())
+        delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: DogManager())
     }
     
     // MARK: - Setup

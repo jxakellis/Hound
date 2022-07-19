@@ -47,8 +47,8 @@ final class DogsReminderCountdownViewController: UIViewController, UIGestureReco
     override func viewDidLoad() {
 
         // keep duplicate as without it the user can see the .asyncafter visual scroll, but this duplicate stops a value changed not being called on first value change bug
-        if self.passedInterval != nil {
-            self.countdown.countDownDuration = self.passedInterval!
+        if let passedInterval = passedInterval {
+            self.countdown.countDownDuration = passedInterval
         }
         else {
             self.countdown.countDownDuration = ClassConstant.ReminderComponentConstant.defaultCountdownExecutionInterval
@@ -57,8 +57,8 @@ final class DogsReminderCountdownViewController: UIViewController, UIGestureReco
 
         // fix bug with datePicker value changed not triggering on first go
         DispatchQueue.main.asyncAfter(deadline: .now()) {
-            if self.passedInterval != nil {
-                self.countdown.countDownDuration = self.passedInterval!
+            if let passedInterval = self.passedInterval {
+                self.countdown.countDownDuration = passedInterval
             }
             else {
                 self.countdown.countDownDuration = ClassConstant.ReminderComponentConstant.defaultCountdownExecutionInterval

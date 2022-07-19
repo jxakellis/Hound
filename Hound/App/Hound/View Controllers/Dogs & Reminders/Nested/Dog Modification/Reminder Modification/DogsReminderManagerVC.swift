@@ -220,11 +220,8 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
         /// Sets up the values of different variables that is found out from information passed
         func setupValues() {
             
-            if targetReminder != nil {
-                selectedIndexPath = IndexPath(row: ReminderAction.allCases.firstIndex(of: targetReminder!.reminderAction)!, section: 0)
-            }
-            
             if let targetReminder = targetReminder {
+                selectedIndexPath = IndexPath(row: ReminderAction.allCases.firstIndex(of: targetReminder.reminderAction)!, section: 0)
                 // this is for the label for the reminderAction dropdown, so we only want the names to be the defaults. I.e. if our reminder is "Custom" with "someCustomActionName", the reminderActionLabel should only show "Custom" and then the logCustomActionNameTextField should be "someCustomActionName".
                 reminderActionLabel.text = targetReminder.reminderAction.displayActionName(reminderCustomActionName: nil, isShowingAbreviatedCustomActionName: false)
             }
@@ -457,43 +454,43 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
             dogsReminderCountdownViewController = segue.destination as! DogsReminderCountdownViewController
             dogsReminderCountdownViewController.delegate = self
             
-            guard targetReminder != nil && targetReminder!.reminderType == .countdown else {
+            guard let targetReminder = targetReminder, targetReminder.reminderType == .countdown else {
                 return
             }
             
-            dogsReminderCountdownViewController.passedInterval = targetReminder!.countdownComponents.executionInterval
+            dogsReminderCountdownViewController.passedInterval = targetReminder.countdownComponents.executionInterval
             
         }
         else if segue.identifier == "dogsReminderWeeklyViewController"{
             dogsReminderWeeklyViewController = segue.destination as! DogsReminderWeeklyViewController
             dogsReminderWeeklyViewController.delegate = self
             
-            guard targetReminder != nil && targetReminder!.reminderType == .weekly else {
+            guard let targetReminder = targetReminder, targetReminder.reminderType == .weekly else {
                 return
             }
-                dogsReminderWeeklyViewController.passedTimeOfDay = targetReminder!.weeklyComponents.notSkippingExecutionDate(forReminderExecutionBasis: targetReminder!.reminderExecutionBasis)
-                dogsReminderWeeklyViewController.passedWeekDays = targetReminder!.weeklyComponents.weekdays
+                dogsReminderWeeklyViewController.passedTimeOfDay = targetReminder.weeklyComponents.notSkippingExecutionDate(forReminderExecutionBasis: targetReminder.reminderExecutionBasis)
+                dogsReminderWeeklyViewController.passedWeekDays = targetReminder.weeklyComponents.weekdays
             
         }
         else if segue.identifier == "dogsReminderMonthlyViewController"{
             dogsReminderMonthlyViewController = segue.destination as! DogsReminderMonthlyViewController
             dogsReminderMonthlyViewController.delegate = self
            
-            guard targetReminder != nil && targetReminder!.reminderType == .monthly else {
+            guard let targetReminder = targetReminder, targetReminder.reminderType == .monthly else {
                 return
             }
             
-            dogsReminderMonthlyViewController.passedTimeOfDay = targetReminder!.monthlyComponents.notSkippingExecutionDate(forReminderExecutionBasis: targetReminder!.reminderExecutionBasis)
+            dogsReminderMonthlyViewController.passedTimeOfDay = targetReminder.monthlyComponents.notSkippingExecutionDate(forReminderExecutionBasis: targetReminder.reminderExecutionBasis)
         }
         else if segue.identifier == "dogsReminderOneTimeViewController"{
             dogsReminderOneTimeViewController = segue.destination as! DogsReminderOneTimeViewController
             dogsReminderOneTimeViewController.delegate = self
             
-            guard targetReminder != nil && targetReminder!.reminderType == .oneTime && Date().distance(to: targetReminder!.oneTimeComponents.oneTimeDate) > 0 else {
+            guard let targetReminder = targetReminder, targetReminder.reminderType == .oneTime && Date().distance(to: targetReminder.oneTimeComponents.oneTimeDate) > 0 else {
                 return
             }
             
-            dogsReminderOneTimeViewController.passedDate = targetReminder!.oneTimeComponents.oneTimeDate
+            dogsReminderOneTimeViewController.passedDate = targetReminder.oneTimeComponents.oneTimeDate
         }
         
     }

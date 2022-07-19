@@ -17,13 +17,13 @@ enum DogsRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func internalGet(invokeErrorManager: Bool, forDogId dogId: Int?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
+    private static func internalGet(invokeErrorManager: Bool, forDogId dogId: Int?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         let URLWithParams: URL
         var urlComponents: URLComponents!
         // special case where we append the query parameter of all. Its value doesn't matter but it just tells the server that we want the logs and reminders of the dog too.
-        if dogId != nil {
-            urlComponents = URLComponents(url: baseURLWithoutParams.appendingPathComponent("/\(dogId!)"), resolvingAgainstBaseURL: false)!
+        if let dogId = dogId {
+            urlComponents = URLComponents(url: baseURLWithoutParams.appendingPathComponent("/\(dogId)"), resolvingAgainstBaseURL: false)!
         }
         else {
             urlComponents = URLComponents(url: baseURLWithoutParams.appendingPathComponent(""), resolvingAgainstBaseURL: false)!
@@ -48,7 +48,7 @@ enum DogsRequest: RequestProtocol {
     /**
      completionHandler returns response data: dogId for the created dog and the ResponseStatus
      */
-    private static func internalCreate(invokeErrorManager: Bool, forDog dog: Dog, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
+    private static func internalCreate(invokeErrorManager: Bool, forDog dog: Dog, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         let body = dog.createBody()
         
         // make put request, assume body valid as constructed with method
@@ -60,7 +60,7 @@ enum DogsRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func internalUpdate(invokeErrorManager: Bool, forDog dog: Dog, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
+    private static func internalUpdate(invokeErrorManager: Bool, forDog dog: Dog, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dog.dogId)")
         
@@ -76,7 +76,7 @@ enum DogsRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func internalDelete(invokeErrorManager: Bool, forDogId dogId: Int, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
+    private static func internalDelete(invokeErrorManager: Bool, forDogId dogId: Int, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)")
         
@@ -149,7 +149,7 @@ extension DogsRequest {
      completionHandler returns a dogManager and responseStatus.
      If the query returned a 200 status and is successful, then the dogManager is returned (the client-side dogManager is combined with the server-side updated dogManager). Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
      */
-    static func get(invokeErrorManager: Bool, dogManager currentDogManager: DogManager, completionHandler: @escaping (DogManager?, ResponseStatus) -> Void) -> URLSessionDataTask? {
+    static func get(invokeErrorManager: Bool, dogManager currentDogManager: DogManager, completionHandler: @escaping (DogManager?, ResponseStatus) -> Void) -> Progress? {
         
         // we want this Date() to be slightly in the past. If we set  LocalConfiguration.lastDogManagerSynchronization = Date() after the request is successful then any changes that might have occured DURING our query (e.g. we are querying and at the exact same moment a family member creates a log) will not be saved. Therefore, this is more redundant and makes sure nothing is missed
         let lastDogManagerSynchronization = Date()

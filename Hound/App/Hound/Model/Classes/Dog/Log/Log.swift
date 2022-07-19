@@ -86,12 +86,12 @@ enum LogAction: String, CaseIterable {
         case .doctor:
             return self.rawValue.appending(" 🩺")
         case .custom:
-            if logCustomActionName != nil && logCustomActionName!.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+            if let logCustomActionName = logCustomActionName, logCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
                 if isShowingAbreviatedCustomActionName == true {
-                    return logCustomActionName!
+                    return logCustomActionName
                 }
                 else {
-                    return self.rawValue.appending(" 📝: \(logCustomActionName!)")
+                    return self.rawValue.appending(" 📝: \(logCustomActionName)")
                 }
             }
             else {

@@ -111,11 +111,8 @@ final class DropDownUIView: UIView {
     /// If switched from light to dark mode or vise versa, cgColor based border and shadow do not update on their own, must do manually. Must be called whenever dropdown is shown
     private func reloadBorderShadowColor() {
         // We have to update the borderShadowColor every time we show due to .unspecified for dark mode style. In this mode, if the user uses the control center to switch from dark to light (or vise versa), we have no way of knowing that our app switched colors. There fore must reload always
-        // if dropDownStyle != nil && dropDownStyle != UserConfiguration.interfaceStyle{
         self.addBorders()
         self.addShadowToView()
-        // }
-        // dropDownStyle = UserConfiguration.interfaceStyle
     }
     
     /// Sets Row Height of your Custom XIB

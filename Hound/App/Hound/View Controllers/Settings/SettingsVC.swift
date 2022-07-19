@@ -10,15 +10,15 @@ import UIKit
 import StoreKit
 
 protocol SettingsViewControllerDelegate: AnyObject {
-    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
 final class SettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, SettingsFamilyViewControllerDelegate, SettingsPersonalInformationViewControllerDelegate, DogManagerControlFlowProtocol {
     
     // MARK: - SettingsFamilyViewControllerDelegate & SettingsPersonalInformationViewControllerDelegate
     
-    func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
-        setDogManager(sender: sender, newDogManager: newDogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager) {
+        setDogManager(sender: sender, forDogManager: forDogManager)
     }
     
     // MARK: - IB
@@ -58,23 +58,19 @@ final class SettingsViewController: UIViewController, UITableViewDelegate, UITab
     
     private var dogManager: DogManager = DogManager()
     
-    func getDogManager() -> DogManager {
-        return dogManager
-    }
-    
-    func setDogManager(sender: Sender, newDogManager: DogManager) {
-        dogManager = newDogManager
+    func setDogManager(sender: Sender, forDogManager: DogManager) {
+        dogManager = forDogManager
         
         // pass down
         if (sender.localized is SettingsFamilyViewController) == false {
-            settingsFamilyViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: newDogManager)
+            settingsFamilyViewController?.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: forDogManager)
         }
         if (sender.localized is SettingsPersonalInformationViewControllerDelegate) == false {
-            settingsPersonalInformationViewController?.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: newDogManager)
+            settingsPersonalInformationViewController?.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: forDogManager)
         }
         // pass up
         if (sender.localized is MainTabBarViewController) == false {
-            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: newDogManager)
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: forDogManager)
         }
     }
     
@@ -177,12 +173,12 @@ final class SettingsViewController: UIViewController, UITableViewDelegate, UITab
         if segue.identifier == "settingsPersonalInformationViewController" {
             settingsPersonalInformationViewController = segue.destination as? SettingsPersonalInformationViewController
             settingsPersonalInformationViewController?.delegate = self
-            settingsPersonalInformationViewController?.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
+            settingsPersonalInformationViewController?.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         }
         else if segue.identifier == "settingsFamilyViewController" {
             settingsFamilyViewController = segue.destination as? SettingsFamilyViewController
             settingsFamilyViewController?.delegate = self
-            settingsFamilyViewController?.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
+            settingsFamilyViewController?.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         }
         else if segue.identifier == "settingsSubscriptionViewController" {
             settingsSubscriptionViewController = segue.destination as? SettingsSubscriptionViewController

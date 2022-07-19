@@ -359,10 +359,7 @@ extension DogManager {
 
 protocol DogManagerControlFlowProtocol {
     
-    /// Returns a copy of DogManager, used to avoid accidental changes (due to reference type) by classes which get their dog manager from here
-    func getDogManager() -> DogManager
-    
-    /// Sets DogManger equal to newDogManager, depending on sender will also call methods to propogate change.
-    func setDogManager(sender: Sender, newDogManager: DogManager)
+    /// Sets DogManger equal to forDogManager, depending on sender will also call methods to propogate change.
+    func setDogManager(sender: Sender, forDogManager: DogManager)
     
 }

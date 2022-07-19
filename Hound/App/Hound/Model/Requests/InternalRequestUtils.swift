@@ -25,7 +25,7 @@ enum InternalRequestUtils {
     private static let session = URLSession(configuration: sessionConfig)
     
     /// Takes an already constructed URLRequest and executes it, returning it in a compeltion handler. This is the basis to all URL requests
-    private static func genericRequest(forRequest request: URLRequest, invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
+    private static func genericRequest(forRequest request: URLRequest, invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         guard NetworkManager.shared.isConnected else {
             DispatchQueue.main.async {
@@ -154,7 +154,7 @@ enum InternalRequestUtils {
         // free up task when request is pushed
         task.resume()
         
-        return task
+        return task.progress
     }
 }
 
@@ -163,7 +163,7 @@ extension InternalRequestUtils {
     // MARK: - Generic GET, POST, PUT, and DELETE requests
     
     /// Perform a generic get request at the specified url, assuming URL params are already provided. completionHandler is on the .main thread.
-    static func genericGetRequest(invokeErrorManager: Bool, forURL URL: URL, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
+    static func genericGetRequest(invokeErrorManager: Bool, forURL URL: URL, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         // create request to send
         var request = URLRequest(url: URL)
@@ -177,7 +177,7 @@ extension InternalRequestUtils {
     }
     
     /// Perform a generic get request at the specified url with provided body. completionHandler is on the .main thread.
-    static func genericPostRequest(invokeErrorManager: Bool, forURL URL: URL, forBody body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
+    static func genericPostRequest(invokeErrorManager: Bool, forURL URL: URL, forBody body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         // create request to send
         var request = URLRequest(url: URL)
@@ -196,7 +196,7 @@ extension InternalRequestUtils {
     }
     
     /// Perform a generic get request at the specified url with provided body, assuming URL params are already provided. completionHandler is on the .main thread.
-    static func genericPutRequest(invokeErrorManager: Bool, forURL URL: URL, forBody body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
+    static func genericPutRequest(invokeErrorManager: Bool, forURL URL: URL, forBody body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         // create request to send
         var request = URLRequest(url: URL)
@@ -215,7 +215,7 @@ extension InternalRequestUtils {
     }
     
     /// Perform a generic get request at the specified url, assuming URL params are already provided. completionHandler is on the .main thread.
-    static func genericDeleteRequest(invokeErrorManager: Bool, forURL URL: URL, forBody body: [String: Any]? = nil, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
+    static func genericDeleteRequest(invokeErrorManager: Bool, forURL URL: URL, forBody body: [String: Any]? = nil, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
         // create request to send
         var request = URLRequest(url: URL)
@@ -223,10 +223,10 @@ extension InternalRequestUtils {
         // specify http method
         request.httpMethod = "DELETE"
         
-        if body != nil {
+        if let body = body {
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             
-            let jsonData = try? JSONSerialization.data(withJSONObject: body!)
+            let jsonData = try? JSONSerialization.data(withJSONObject: body)
             request.httpBody = jsonData
         }
         

@@ -9,7 +9,7 @@
 import UIKit
 
 protocol DogsViewControllerDelegate: AnyObject {
-    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
 final class DogsViewController: UIViewController, DogManagerControlFlowProtocol, DogsAddDogViewControllerDelegate, DogsTableViewControllerDelegate, DogsIndependentReminderViewControllerDelegate {
@@ -17,37 +17,34 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     // MARK: - Dual Delegate Implementation
     
     func didCancel(sender: Sender) {
-        setDogManager(sender: sender, newDogManager: getDogManager())
+        setDogManager(sender: sender, forDogManager: dogManager)
     }
     
     // MARK: - DogsIndependentReminderViewControllerDelegate
     
     func didAddReminder(sender: Sender, parentDogId: Int, forReminder reminder: Reminder) {
-        let sudoDogManager = getDogManager()
         
-        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.addReminder(forReminder: reminder)
+        try? dogManager.findDog(forDogId: parentDogId).dogReminders.addReminder(forReminder: reminder)
         
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
+        setDogManager(sender: sender, forDogManager: dogManager)
         
         CheckManager.checkForReview()
     }
     
     func didUpdateReminder(sender: Sender, parentDogId: Int, forReminder reminder: Reminder) {
-        let sudoDogManager = getDogManager()
         
-        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.updateReminder(forReminder: reminder)
+        try? dogManager.findDog(forDogId: parentDogId).dogReminders.updateReminder(forReminder: reminder)
         
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
+        setDogManager(sender: sender, forDogManager: dogManager)
         
         CheckManager.checkForReview()
     }
     
     func didRemoveReminder(sender: Sender, parentDogId: Int, reminderId: Int) {
-        let sudoDogManager = getDogManager()
         
-        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.removeReminder(forReminderId: reminderId)
+        try? dogManager.findDog(forDogId: parentDogId).dogReminders.removeReminder(forReminderId: reminderId)
         
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
+        setDogManager(sender: sender, forDogManager: dogManager)
         
         CheckManager.checkForReview()
     }
@@ -61,7 +58,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
             self.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsAddDogViewController")
         }
         else {
-            if let currentDog = try? getDogManager().findDog(forDogId: dogId!) {
+            if let currentDog = try? dogManager.findDog(forDogId: dogId!) {
             RequestUtils.beginRequestIndictator()
             
             DogsRequest.get(invokeErrorManager: true, dog: currentDog) { newDog, _ in
@@ -107,8 +104,8 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     // MARK: - DogManagerControlFlowProtocol
     
     /// If the dog manager was updated in DogsTableViewController, this function is called to reflect that change here with this dogManager
-    func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
-        setDogManager(sender: sender, newDogManager: newDogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager) {
+        setDogManager(sender: sender, forDogManager: forDogManager)
     }
     
     // MARK: - DogsAddDogViewControllerDelegate
@@ -121,35 +118,30 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
             reminder.reminderExecutionBasis = Date()
         }
         
-        let sudoDogManager = getDogManager()
-        sudoDogManager.addDog(forDog: newDog)
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
+        dogManager.addDog(forDog: newDog)
+        setDogManager(sender: sender, forDogManager: dogManager)
     }
     
     /// If a dog was updated, its former name (as its name could have been changed) and new dog instance is passed here, matching old dog is found and replaced with new
     func didUpdateDog(sender: Sender, updatedDog: Dog) {
-        let sudoDogManager = getDogManager()
+        
         // this function both can add new dogs or override old ones
-        sudoDogManager.addDog(forDog: updatedDog)
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
+        dogManager.addDog(forDog: updatedDog)
+        setDogManager(sender: sender, forDogManager: dogManager)
     }
     
     func didRemoveDog(sender: Sender, dogId: Int) {
-        let sudoDogManager = getDogManager()
-        try! sudoDogManager.removeDog(forDogId: dogId)
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
+        
+        try? dogManager.removeDog(forDogId: dogId)
+        setDogManager(sender: sender, forDogManager: dogManager)
     }
     
     // MARK: - DogManagerControlFlowProtocol
     
     private var dogManager = DogManager()
     
-    func getDogManager() -> DogManager {
-        return dogManager
-    }
-    
-    func setDogManager(sender: Sender, newDogManager: DogManager) {
-        dogManager = newDogManager
+    func setDogManager(sender: Sender, forDogManager: DogManager) {
+        dogManager = forDogManager
         
         // possible senders
         // DogsTableViewController
@@ -157,11 +149,11 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
         // MainTabBarViewController
         
         if !(sender.localized is DogsTableViewController) {
-            dogsMainScreenTableViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+            dogsMainScreenTableViewController.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
         }
         
         if !(sender.localized is MainTabBarViewController) {
-            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
         }
         
     }
@@ -173,16 +165,16 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     @IBAction private func willRefresh(_ sender: Any) {
         self.refreshButton.isEnabled = false
         ActivityIndicator.shared.beginAnimating(title: navigationItem.title ?? "", view: self.view, navigationItem: navigationItem)
-        RequestUtils.getFamilyGetDog(invokeErrorManager: true, dogManager: getDogManager()) { newDogManager, _ in
+        RequestUtils.getFamilyGetDog(invokeErrorManager: true, dogManager: dogManager) { newDogManager, _ in
             self.refreshButton.isEnabled = true
             ActivityIndicator.shared.stopAnimating(navigationItem: self.navigationItem)
             
-            guard newDogManager != nil else {
+            guard let newDogManager = newDogManager else {
                 return
             }
             
             self.performSpinningCheckmarkAnimation()
-            self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager!)
+            self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
         }
         
     }
@@ -291,7 +283,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
             addButtonsLabelBackground.append(willAddDogButtonLabelBackground)
             
             // Goes through all the dogs and create a corresponding button for them so you can add a reminder ro them
-            for dog in getDogManager().dogs {
+            for dog in dogManager.dogs {
                 guard maximumSubButtonCount > addButtons.count else {
                     break
                 }

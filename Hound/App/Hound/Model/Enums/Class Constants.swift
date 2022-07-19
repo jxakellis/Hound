@@ -64,25 +64,25 @@ enum ClassConstant {
             let reminder = Reminder()
             reminder.reminderAction = .feed
             reminder.reminderType = .weekly
-            try! reminder.weeklyComponents.changeHour(forHour: 7)
-            try! reminder.weeklyComponents.changeMinute(forMinute: 0)
+            try? reminder.weeklyComponents.changeHour(forHour: 7)
+            try? reminder.weeklyComponents.changeMinute(forMinute: 0)
             return reminder
         }
         private static var defaultReminderThree: Reminder {
             let reminder = Reminder()
             reminder.reminderAction = .feed
             reminder.reminderType = .weekly
-            try! reminder.weeklyComponents.changeHour(forHour: 5+12)
-            try! reminder.weeklyComponents.changeMinute(forMinute: 0)
+            try? reminder.weeklyComponents.changeHour(forHour: 5+12)
+            try? reminder.weeklyComponents.changeMinute(forMinute: 0)
             return reminder
         }
         private static var defaultReminderFour: Reminder {
             let reminder = Reminder()
             reminder.reminderAction = .medicine
             reminder.reminderType = .monthly
-            try! reminder.monthlyComponents.changeDay(forDay: 1)
-            try! reminder.monthlyComponents.changeHour(forHour: 9)
-            try! reminder.monthlyComponents.changeMinute(forMinute: 0)
+            try? reminder.monthlyComponents.changeDay(forDay: 1)
+            try? reminder.monthlyComponents.changeHour(forHour: 9)
+            try? reminder.monthlyComponents.changeMinute(forMinute: 0)
             return reminder
         }
     }

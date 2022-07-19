@@ -31,7 +31,7 @@ final class DogsIndependentReminderViewController: UIViewController {
         
         let reminder = dogsReminderManagerViewController.applyReminderSettings()
         
-        guard reminder != nil else {
+        guard let reminder = reminder else {
             return
         }
         
@@ -40,37 +40,39 @@ final class DogsIndependentReminderViewController: UIViewController {
         
         // reminder settings were valid
         if isUpdating == true {
-            RemindersRequest.update(invokeErrorManager: true, forDogId: parentDogId, forReminder: reminder!) { requestWasSuccessful, _ in
+            RemindersRequest.update(invokeErrorManager: true, forDogId: parentDogId, forReminder: reminder) { requestWasSuccessful, _ in
                 self.saveReminderButton.endQuerying()
                 self.saveReminderButtonBackground.endQuerying(isBackgroundButton: true)
                 if requestWasSuccessful == true {
                     // the query was successful so we should now persist the reminderCustomActionName to LocalConfiguration if there was one
-                    if reminder!.reminderCustomActionName != nil && reminder!.reminderCustomActionName?.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-                        LocalConfiguration.addReminderCustomAction(forName: reminder!.reminderCustomActionName!)
+                    if let reminderCustomActionName = reminder.reminderCustomActionName, reminderCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                        LocalConfiguration.addReminderCustomAction(forName: reminderCustomActionName)
                     }
                     
                     // successful so persist the data locally
-                    self.delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, forReminder: reminder!)
+                    self.delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, forReminder: reminder)
                     self.navigationController?.popViewController(animated: true)
                 }
             }
         }
         else {
-            RemindersRequest.create(invokeErrorManager: true, forDogId: parentDogId, forReminder: reminder!) { createdReminder, _ in
+            RemindersRequest.create(invokeErrorManager: true, forDogId: parentDogId, forReminder: reminder) { createdReminder, _ in
                 self.saveReminderButton.endQuerying()
                 self.saveReminderButtonBackground.endQuerying(isBackgroundButton: true)
-                // query complete
-                if createdReminder != nil {
-                    // the query was successful so we should now persist the reminderCustomActionName to LocalConfiguration if there was one
-                    if reminder!.reminderCustomActionName != nil && reminder!.reminderCustomActionName?.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-                        LocalConfiguration.addReminderCustomAction(forName: reminder!.reminderCustomActionName!)
-                    }
-                    
-                    // successful and able to get reminderId, persist locally
-                    reminder!.reminderId = createdReminder!.reminderId
-                    self.delegate.didAddReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, forReminder: reminder!)
-                    self.navigationController?.popViewController(animated: true)
+                
+                guard let createdReminder = createdReminder else {
+                    return
                 }
+
+                // the query was successful so we should now persist the reminderCustomActionName to LocalConfiguration if there was one
+                if let reminderCustomActionName = reminder.reminderCustomActionName, reminderCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                    LocalConfiguration.addReminderCustomAction(forName: reminderCustomActionName)
+                }
+                
+                // successful and able to get reminderId, persist locally
+                reminder.reminderId = createdReminder.reminderId
+                self.delegate.didAddReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, forReminder: reminder)
+                self.navigationController?.popViewController(animated: true)
             }
         }
         
@@ -81,17 +83,17 @@ final class DogsIndependentReminderViewController: UIViewController {
         
         // Since this is the independent reminders view controller, meaning its not nested in a larger Add Dog VC, we perform the server queries then exit.
         
-        guard targetReminder != nil else {
+        guard let targetReminder = targetReminder else {
             reminderRemoveButton.isEnabled = false
             return
         }
-        let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.selectedReminderAction?.displayActionName(reminderCustomActionName: targetReminder!.reminderCustomActionName, isShowingAbreviatedCustomActionName: true) ?? targetReminder!.reminderAction.displayActionName(reminderCustomActionName: targetReminder!.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))?", message: nil, preferredStyle: .alert)
+        let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogsReminderManagerViewController.selectedReminderAction?.displayActionName(reminderCustomActionName: targetReminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true) ?? targetReminder.reminderAction.displayActionName(reminderCustomActionName: targetReminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))?", message: nil, preferredStyle: .alert)
         
         let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-            RemindersRequest.delete(invokeErrorManager: true, forDogId: self.parentDogId, forReminder: self.targetReminder!) { requestWasSuccessful, _ in
+            RemindersRequest.delete(invokeErrorManager: true, forDogId: self.parentDogId, forReminder: targetReminder) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
                     // persist data locally
-                    self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, reminderId: self.targetReminder!.reminderId)
+                    self.delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, reminderId: targetReminder.reminderId)
                     self.navigationController?.popViewController(animated: true)
                 }
             }

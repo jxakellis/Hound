@@ -26,66 +26,61 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
     // MARK: - RemindersIntroductionViewControllerDelegate
 
     func didComplete(sender: Sender, forDogManager dogManager: DogManager) {
-        setDogManager(sender: sender, newDogManager: dogManager)
+        setDogManager(sender: sender, forDogManager: dogManager)
     }
 
     // MARK: - TimingManagerDelegate && DogsViewControllerDelegate && SettingsNavigationViewControllerDelegate
 
-    func didUpdateDogManager(sender: Sender, newDogManager: DogManager) {
-        setDogManager(sender: sender, newDogManager: newDogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager) {
+        setDogManager(sender: sender, forDogManager: forDogManager)
     }
     
     // MARK: - AlarmManagerDelegate
     
-    func didAddLog(sender: Sender, dogId: Int, log: Log) {
-        let sudoDogManager = getDogManager()
-        let dog = try! sudoDogManager.findDog(forDogId: dogId)
+    func didAddLog(sender: Sender, forDogId dogId: Int, forLog log: Log) {
+        
+        let dog = try! dogManager.findDog(forDogId: dogId)
         dog.dogLogs.addLog(forLog: log)
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
+        setDogManager(sender: sender, forDogManager: dogManager)
     }
     
-    func didRemoveLog(sender: Sender, dogId: Int, logId: Int) {
-        let sudoDogManager = getDogManager()
-        let dog = try! sudoDogManager.findDog(forDogId: dogId)
+    func didRemoveLog(sender: Sender, forDogId dogId: Int, forLogId logId: Int) {
+        
+        let dog = try! dogManager.findDog(forDogId: dogId)
         try! dog.dogLogs.removeLog(forLogId: logId)
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
+        setDogManager(sender: sender, forDogManager: dogManager)
     }
     
-    func didUpdateReminder(sender: Sender, dogId: Int, reminder: Reminder) {
-        let sudoDogManager = getDogManager()
-        let dog = try! sudoDogManager.findDog(forDogId: dogId)
+    func didUpdateReminder(sender: Sender, forDogId dogId: Int, forReminder reminder: Reminder) {
+        
+        let dog = try! dogManager.findDog(forDogId: dogId)
         dog.dogReminders.updateReminder(forReminder: reminder)
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
+        setDogManager(sender: sender, forDogManager: dogManager)
     }
     
-    func didRemoveReminder(sender: Sender, dogId: Int, reminderId: Int) {
-        let sudoDogManager = getDogManager()
-        let dog = try! sudoDogManager.findDog(forDogId: dogId)
+    func didRemoveReminder(sender: Sender, forDogId dogId: Int, forReminderId reminderId: Int) {
+        
+        let dog = try! dogManager.findDog(forDogId: dogId)
         try! dog.dogReminders.removeReminder(forReminderId: reminderId)
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
+        setDogManager(sender: sender, forDogManager: dogManager)
     }
 
     // MARK: - DogManagerControlFlowProtocol + ParentDogManager
 
-    private var parentDogManager: DogManager = DogManager()
+    private var dogManager: DogManager = DogManager()
 
     static var staticDogManager: DogManager = DogManager()
 
-    // Get method, returns a copy of dogManager to remove possible editting of dog manager through class reference type
-    func getDogManager() -> DogManager {
-        return parentDogManager
-    }
-
     // Sets dog manager, when the value of dog manager is changed it not only changes the variable but calls other needed functions to reflect the change
-    func setDogManager(sender: Sender, newDogManager: DogManager) {
+    func setDogManager(sender: Sender, forDogManager: DogManager) {
         
         // MainTabBarViewController may not have been fully initalized by the time setDogManager is called on it, leading to TimingManager throwing an error possibly
         if !(sender.localized is MainTabBarViewController) {
-            TimingManager.willReinitalize(forOldDogManager: getDogManager(), forNewDogManager: newDogManager)
+            TimingManager.willReinitalize(forOldDogManager: dogManager, forNewDogManager: forDogManager)
         }
 
-        parentDogManager = newDogManager
-        MainTabBarViewController.staticDogManager = newDogManager
+        dogManager = forDogManager
+        MainTabBarViewController.staticDogManager = forDogManager
         
         // If the dogManager is sent from ServerSyncViewController or IntroductionViewController, then, at that point in time, nothing here is initalized and will cause a crash
         guard !(sender.localized is ServerSyncViewController) && !(sender.origin is ServerSyncViewController) &&  !(sender.localized is FamilyIntroductionViewController) && !(sender.origin is FamilyIntroductionViewController) else {
@@ -93,13 +88,13 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         }
         
         if (sender.localized is DogsViewController) == false {
-            dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+            dogsViewController.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
         }
         if (sender.localized is LogsViewController) == false {
-            logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+            logsViewController.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
         }
         if (sender.localized is SettingsViewController) == false {
-            settingsViewController.setDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+            settingsViewController.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
         }
 
     }
@@ -132,17 +127,17 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         logsNavigationViewController = self.viewControllers![0] as? LogsNavigationViewController
         logsNavigationViewController.passThroughDelegate = self
         logsViewController = logsNavigationViewController.viewControllers[0] as? LogsViewController
-        logsViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
+        logsViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
 
         dogsNavigationViewController = self.viewControllers![1] as? DogsNavigationViewController
         dogsNavigationViewController.passThroughDelegate = self
         dogsViewController = dogsNavigationViewController.viewControllers[0] as? DogsViewController
-        dogsViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
+        dogsViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
 
         settingsNavigationViewController = self.viewControllers![2] as? SettingsNavigationViewController
         settingsNavigationViewController.passThroughDelegate = self
         settingsViewController = settingsNavigationViewController.viewControllers[0] as? SettingsViewController
-        settingsViewController.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: getDogManager())
+        settingsViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
 
         MainTabBarViewController.mainTabBarViewController = self
 
@@ -170,7 +165,7 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         CheckManager.checkForReleaseNotes()
         CheckManager.checkForNotificationSettingImbalance()
         CheckManager.checkForRemoteNotificationImbalance()
-        TimingManager.willInitalize(forDogManager: getDogManager())
+        TimingManager.willInitalize(forDogManager: dogManager)
     }
 
     override public var shouldAutorotate: Bool {
@@ -188,7 +183,7 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         if segue.identifier == "remindersIntroductionViewController"{
             let remindersIntroductionViewController: RemindersIntroductionViewController = segue.destination as! RemindersIntroductionViewController
             remindersIntroductionViewController.delegate = self
-            remindersIntroductionViewController.dogManager = getDogManager()
+            remindersIntroductionViewController.dogManager = dogManager
         }
      }
 

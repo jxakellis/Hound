@@ -143,7 +143,7 @@ enum CheckManager {
                 message = nil
             }
             
-            guard message != nil else {
+            guard let message = message else {
                 return
             }
             

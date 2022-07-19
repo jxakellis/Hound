@@ -9,7 +9,7 @@
 import UIKit
 
 protocol SettingsPersonalInformationViewControllerDelegate: AnyObject {
-    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
 final class SettingsPersonalInformationViewController: UIViewController, UIGestureRecognizerDelegate, DogManagerControlFlowProtocol {
@@ -41,7 +41,7 @@ final class SettingsPersonalInformationViewController: UIViewController, UIGestu
         RequestUtils.getFamilyGetDog(invokeErrorManager: true, dogManager: DogManager()) { newDogManager, _ in
             RequestUtils.endRequestIndictator {
                 
-                guard newDogManager != nil else {
+                guard let newDogManager = newDogManager else {
                     // failed query to fully redownload the dogManager
                     // revert lastDogManagerSynchronization previous value. This is necessary as we circumvented the DogsRequest automatic handling of it to allow us to retrieve all entries.
                     LocalConfiguration.lastDogManagerSynchronization = currentLastDogManagerSynchronization
@@ -50,7 +50,7 @@ final class SettingsPersonalInformationViewController: UIViewController, UIGestu
                 
                 self.performSpinningCheckmarkAnimation()
                 // successful query to fully redownload the dogManager, no need to mess with lastDogManagerSynchronization as that is automatically handled
-                self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager!)
+                self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
             }
         }
     }
@@ -75,15 +75,11 @@ final class SettingsPersonalInformationViewController: UIViewController, UIGestu
     
     private var dogManager: DogManager = DogManager()
     
-    func getDogManager() -> DogManager {
-        return dogManager
-    }
-    
-    func setDogManager(sender: Sender, newDogManager: DogManager) {
-        dogManager = newDogManager
+    func setDogManager(sender: Sender, forDogManager: DogManager) {
+        dogManager = forDogManager
         
         if (sender.localized is SettingsViewController) == false {
-            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: newDogManager)
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: forDogManager)
         }
     }
     

@@ -9,7 +9,7 @@
 import UIKit
 
 protocol LogsTableViewControllerDelegate: AnyObject {
-    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
     func didSelectLog(parentDogId: Int, log: Log)
 }
 
@@ -19,12 +19,8 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
     
     private var dogManager: DogManager = DogManager()
     
-    func getDogManager() -> DogManager {
-        return dogManager
-    }
-    
-    func setDogManager(sender: Sender, newDogManager: DogManager) {
-        dogManager = newDogManager
+    func setDogManager(sender: Sender, forDogManager: DogManager) {
+        dogManager = forDogManager
         
         if !(sender.localized is LogsTableViewController) {
             // if something external made changes (i.e. not having a user swipe on the table view), we should clear the filter as external changes could have made filter invalid
@@ -37,7 +33,7 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
             }
         }
         else {
-            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: dogManager)
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
             self.reloadTableDataSource()
         }
         
@@ -95,14 +91,17 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
     }
     /// Makes a query to the server to retrieve new information then refreshed the tableView
     @objc private func refreshTable() {
-        RequestUtils.getFamilyGetDog(invokeErrorManager: true, dogManager: getDogManager()) { newDogManager, _ in
+        RequestUtils.getFamilyGetDog(invokeErrorManager: true, dogManager: dogManager) { newDogManager, _ in
             // end refresh first otherwise there will be a weird visual issue
             self.tableView.refreshControl?.endRefreshing()
-            if newDogManager != nil {
-                self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager!)
-                // manually reload table as the self sender doesn't do that
-                self.tableView.reloadData()
+            
+            guard let newDogManager = newDogManager else {
+                return
             }
+
+            self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
+            // manually reload table as the self sender doesn't do that
+            self.tableView.reloadData()
         }
     }
     
@@ -199,7 +198,7 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
             
             // indexPath.row -1 corrects for the first row in the section being the header
             let targetTuple = nestedLogsArray[indexPath.row-1]
-            let dog = try! getDogManager().findDog(forDogId: targetTuple.0)
+            let dog = try! dogManager.findDog(forDogId: targetTuple.0)
             let log = targetTuple.1
             
             // has dogIcon
@@ -242,7 +241,7 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
         }
         
         // identify components needed to remove data
-        let sudoDogManager = getDogManager()
+        
         // let originalNumberOfSections = groupedLogsByUniqueDate.count
         
         let nestedLogsArray = groupedLogsByUniqueDate[indexPath.section].3
@@ -250,19 +249,18 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
         let logId = nestedLogsArray[indexPath.row-1].1.logId
         
         LogsRequest.delete(invokeErrorManager: true, forDogId: parentDogId, forLogId: logId) { requestWasSuccessful, _ in
-            guard requestWasSuccessful else {
+            guard requestWasSuccessful, let dog = try? self.dogManager.findDog(forDogId: parentDogId) else {
                 return
             }
             
             // Remove the row from the data source
-            let dog = try! sudoDogManager.findDog(forDogId: parentDogId)
             // find log in dog and remove
             for dogLogIndex in 0..<dog.dogLogs.logs.count where dog.dogLogs.logs[dogLogIndex].logId == logId {
                 dog.dogLogs.removeLog(forIndex: dogLogIndex)
                 break
             }
             
-            self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
+            self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
             
             // manually reload table as the self sender doesn't do that
             self.tableView.reloadData()
@@ -316,10 +314,11 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
         RequestUtils.beginRequestIndictator()
         LogsRequest.get(invokeErrorManager: true, forDogId: dogId, forLogId: logId) { log, _ in
             RequestUtils.endRequestIndictator {
-                if log != nil {
-                    self.delegate.didSelectLog(parentDogId: dogId, log: log!)
-                }
                 self.tableView.deselectRow(at: indexPath, animated: true)
+                
+                if let log = log {
+                    self.delegate.didSelectLog(parentDogId: dogId, log: log)
+                }
             }
         }
     }

@@ -206,8 +206,8 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                     }
                     
                     // request was successful so we can now add the new logCustomActionName (if present)
-                    if newLog.logCustomActionName != nil && newLog.logCustomActionName!.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-                        LocalConfiguration.addLogCustomAction(forName: newLog.logCustomActionName!)
+                    if let logCustomActionName = newLog.logCustomActionName, logCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                        LocalConfiguration.addLogCustomAction(forName: logCustomActionName)
                     }
                     newLog.logId = logId
                     

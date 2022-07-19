@@ -13,7 +13,7 @@ import MediaPlayer
 
 enum AudioManager {
     
-    static var sharedPlayer: AVAudioPlayer!
+    static var sharedPlayer: AVAudioPlayer?
     
     // MARK: - General Audio
 
@@ -26,14 +26,14 @@ enum AudioManager {
                 stopAudio()
                 
                 AudioManager.sharedPlayer = try AVAudioPlayer(contentsOf: url)
-                AudioManager.sharedPlayer.numberOfLoops = -1
-                AudioManager.sharedPlayer.volume = 1.0
+                AudioManager.sharedPlayer?.numberOfLoops = -1
+                AudioManager.sharedPlayer?.volume = 1.0
                 
                 // generic .playback audio that mixes with others. most compatible and non intrustive
                 try AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
                 try AVAudioSession.sharedInstance().setActive(true)
                 
-                AudioManager.sharedPlayer.play()
+                AudioManager.sharedPlayer?.play()
             }
             catch {
                 AppDelegate.generalLogger.error("playAudio error: \(error.localizedDescription)")
@@ -43,9 +43,7 @@ enum AudioManager {
     
     static func stopAudio() {
         DispatchQueue.global().async {
-            if AudioManager.sharedPlayer != nil {
-                AudioManager.sharedPlayer.stop()
-            }
+            AudioManager.sharedPlayer?.stop()
         }
         
     }
@@ -62,14 +60,14 @@ enum AudioManager {
                 stopAudio()
                 
                 AudioManager.sharedPlayer = try AVAudioPlayer(contentsOf: url)
-                AudioManager.sharedPlayer.numberOfLoops = -1
-                AudioManager.sharedPlayer.volume = 0
+                AudioManager.sharedPlayer?.numberOfLoops = -1
+                AudioManager.sharedPlayer?.volume = 0
                 
                 // generic .playback audio that mixes with others. most compatible and non intrustive
                 try AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
                 try AVAudioSession.sharedInstance().setActive(true)
                 
-                AudioManager.sharedPlayer.play()
+                AudioManager.sharedPlayer?.play()
                 
             }
             catch {
@@ -114,15 +112,15 @@ enum AudioManager {
                 stopAudio()
                 
                 AudioManager.sharedPlayer = try AVAudioPlayer(contentsOf: url)
-                AudioManager.sharedPlayer.numberOfLoops = -1
-                AudioManager.sharedPlayer.volume = 1.0
+                AudioManager.sharedPlayer?.numberOfLoops = -1
+                AudioManager.sharedPlayer?.volume = 1.0
                 
                 MPVolumeView.setVolume(1.0)
                 
                 try AVAudioSession.sharedInstance().setCategory(.playback, options: [])
                 try AVAudioSession.sharedInstance().setActive(true)
                 
-                AudioManager.sharedPlayer.play()
+                AudioManager.sharedPlayer?.play()
                 
             }
             catch {

@@ -59,23 +59,23 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
             // 6. the user is stuck. they have no account on the server and can't create one since we are unable to access the email, first name, and last name. The only way to fix this would be having them go into the iCloud 'Password & Security' settings and deleting Hound, giving them a fresh start.
             
             let email = appleIDCredential.email
-            if email != nil {
-                keychain.set(email!, forKey: ServerDefaultKeys.userEmail.rawValue)
+            if let email = email {
+                keychain.set(email, forKey: ServerDefaultKeys.userEmail.rawValue)
                 UserInformation.userEmail = email
             }
             
             let fullName = appleIDCredential.fullName
             
             let firstName = fullName?.givenName
-            if firstName != nil {
-                keychain.set(firstName!, forKey: ServerDefaultKeys.userFirstName.rawValue)
-                UserInformation.userFirstName = firstName!
+            if let firstName = firstName {
+                keychain.set(firstName, forKey: ServerDefaultKeys.userFirstName.rawValue)
+                UserInformation.userFirstName = firstName
             }
             
             let lastName = fullName?.familyName
-            if lastName != nil {
-                keychain.set(lastName!, forKey: ServerDefaultKeys.userLastName.rawValue)
-                UserInformation.userLastName = lastName!
+            if let lastName = lastName {
+                keychain.set(lastName, forKey: ServerDefaultKeys.userLastName.rawValue)
+                UserInformation.userLastName = lastName
             }
             
             self.signUpUser()
@@ -229,9 +229,9 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
             switch responseStatus {
             case .successResponse:
                 // successful, continue
-                if userId != nil {
+                if let userId = userId {
                     RequestUtils.endRequestIndictator {
-                        UserInformation.userId = userId!
+                        UserInformation.userId = userId
                         self.dismiss(animated: true, completion: nil)
                     }
                 }

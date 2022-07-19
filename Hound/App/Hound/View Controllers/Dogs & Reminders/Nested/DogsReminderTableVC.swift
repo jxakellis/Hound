@@ -209,11 +209,8 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
             dogsNestedReminderViewController = segue.destination as! DogsNestedReminderViewController
             dogsNestedReminderViewController.delegate = self
             
-             if selectedReminder != nil {
-                dogsNestedReminderViewController.targetReminder = selectedReminder!
-                selectedReminder = nil
-            }
-
+            dogsNestedReminderViewController.targetReminder = selectedReminder
+            selectedReminder = nil
         }
     }
 

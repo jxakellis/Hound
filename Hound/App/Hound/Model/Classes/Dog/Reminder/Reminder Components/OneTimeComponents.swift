@@ -36,9 +36,7 @@ final class OneTimeComponents: NSObject, NSCoding, NSCopying {
     
     convenience init(date: Date?) {
         self.init()
-        if date != nil {
-            oneTimeDate = date!
-        }
+        oneTimeDate = date ?? oneTimeDate
     }
     
     // MARK: Properties

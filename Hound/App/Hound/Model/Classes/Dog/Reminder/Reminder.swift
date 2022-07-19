@@ -89,12 +89,12 @@ enum ReminderAction: String, CaseIterable {
         case .doctor:
             return self.rawValue.appending(" 🩺")
         case .custom:
-            if reminderCustomActionName != nil && reminderCustomActionName!.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+            if let reminderCustomActionName = reminderCustomActionName, reminderCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
                 if isShowingAbreviatedCustomActionName == true {
-                    return reminderCustomActionName!
+                    return reminderCustomActionName
                 }
                 else {
-                    return self.rawValue.appending(" 📝: \(reminderCustomActionName!)")
+                    return self.rawValue.appending(" 📝: \(reminderCustomActionName)")
                 }
             }
             else {

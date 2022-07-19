@@ -11,10 +11,8 @@ import UIKit
 extension UITableView {
     /// Deselects all rows
     func deselectAll() {
-        if indexPathsForSelectedRows != nil {
-            for indexPath in self.indexPathsForSelectedRows! {
-                self.deselectRow(at: indexPath, animated: false)
-            }
-        }
+        indexPathsForSelectedRows?.forEach({ indexPath in
+            self.deselectRow(at: indexPath, animated: false)
+        })
     }
 }

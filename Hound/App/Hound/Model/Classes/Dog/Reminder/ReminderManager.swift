@@ -323,17 +323,20 @@ extension ReminderManager {
     
     /// Returns the reminderExecutionDate that is closest to the present but still in the future.
     var soonestReminderExecutionDate: Date? {
-        var closestExecutionDate: Date?
+        var soonestExecutionDate: Date?
         // no point to interate through reminders with a nil reminderExecutionDate
-        for reminder in reminders where reminder.reminderExecutionDate != nil {
-            if closestExecutionDate == nil {
-                closestExecutionDate = reminder.reminderExecutionDate!
+        for reminder in reminders {
+            guard let reminderExecutionDate = reminder.reminderExecutionDate else {
+                continue
             }
-            else if Date().distance(to: reminder.reminderExecutionDate!) < Date().distance(to: closestExecutionDate!) {
-                closestExecutionDate = reminder.reminderExecutionDate!
+            if let executionDate = soonestExecutionDate, Date().distance(to: reminderExecutionDate) < Date().distance(to: executionDate) {
+                soonestExecutionDate = executionDate
+            }
+            else if soonestExecutionDate == nil {
+                soonestExecutionDate = reminderExecutionDate
             }
         }
-        return closestExecutionDate
+        return soonestExecutionDate
     }
     
     // MARK: Compare

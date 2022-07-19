@@ -90,8 +90,8 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
         synchronizeWeekdays()
 
         // keep duplicate as without it the user can see the .asyncafter visual scroll, but this duplicate stops a value changed not being called on first value change bug
-        if self.passedTimeOfDay != nil {
-            self.timeOfDayDatePicker.date = self.passedTimeOfDay!
+        if let passedTimeOfDay = passedTimeOfDay {
+            self.timeOfDayDatePicker.date = passedTimeOfDay
         }
         else {
             self.timeOfDayDatePicker.date = Date.roundDate(targetDate: Date(), roundingInterval: TimeInterval(60 * timeOfDayDatePicker.minuteInterval), roundingMethod: .up)
@@ -117,9 +117,12 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
     private func synchronizeWeekdays() {
         let dayOfWeekButtons = [sundayButton, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton]
 
-        for dayOfWeekButton in dayOfWeekButtons where dayOfWeekButton != nil {
-            dayOfWeekButton!.tintColor = UIColor.systemGray4
-            dayOfWeekButton!.tag = VisualConstant.ViewTagConstant.weekdayDisabled
+        for dayOfWeekButton in dayOfWeekButtons {
+            guard let dayOfWeekButton = dayOfWeekButton else {
+                continue
+            }
+            dayOfWeekButton.tintColor = UIColor.systemGray4
+            dayOfWeekButton.tag = VisualConstant.ViewTagConstant.weekdayDisabled
         }
         
         guard let passedWeekDays = passedWeekDays else {

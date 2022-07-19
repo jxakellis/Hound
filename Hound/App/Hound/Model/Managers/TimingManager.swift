@@ -9,7 +9,7 @@
 import UIKit
 
 protocol TimingManagerDelegate {
-    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
 final class TimingManager {
@@ -33,15 +33,12 @@ final class TimingManager {
             return
         }
         
-        let sudoDogManager = dogManager
         // goes through all dogs
-        for d in 0..<sudoDogManager.dogs.count {
+        for dog in dogManager.dogs {
             // makes sure current dog is enabled, as if it isn't then all of its timers arent either
             
             // goes through all reminders in a dog
-            for r in 0..<sudoDogManager.dogs[d].dogReminders.reminders.count {
-                
-                let reminder = sudoDogManager.dogs[d].dogReminders.reminders[r]
+            for reminder in dog.dogReminders.reminders {
                 
                 // makes sure a reminder is enabled and its presentation is not being handled
                 guard reminder.reminderIsEnabled == true && reminder.hasAlarmPresentationHandled == false
@@ -53,12 +50,12 @@ final class TimingManager {
                 let unskipDate = reminder.unskipDate()
                 
                 // if the a date to unskip exists, then creates a timer to do so when it is time
-                if unskipDate != nil {
-                    let isSkippingDisabler = Timer(fireAt: unskipDate!,
+                if let unskipDate = unskipDate {
+                    let isSkippingDisabler = Timer(fireAt: unskipDate,
                                                    interval: -1,
                                                    target: self,
                                                    selector: #selector(willUpdateIsSkipping(sender:)),
-                                                   userInfo: [ServerDefaultKeys.dogId.rawValue: dogManager.dogs[d].dogId, ServerDefaultKeys.reminderId.rawValue: reminder.reminderId],
+                                                   userInfo: [ServerDefaultKeys.dogId.rawValue: dog.dogId, ServerDefaultKeys.reminderId.rawValue: reminder.reminderId],
                                                    repeats: false)
                     
                     isSkippingDisablingTimers.append(isSkippingDisabler)
@@ -71,8 +68,8 @@ final class TimingManager {
                                   target: self,
                                   selector: #selector(self.didExecuteTimer(sender:)),
                                   userInfo: [
-                                    ServerDefaultKeys.dogId.rawValue: dogManager.dogs[d].dogId,
-                                    ServerDefaultKeys.dogName.rawValue: dogManager.dogs[d].dogName,
+                                    ServerDefaultKeys.dogManager.rawValue: dogManager,
+                                    ServerDefaultKeys.dogId.rawValue: dog.dogId,
                                     ServerDefaultKeys.reminderId.rawValue: reminder.reminderId],
                                   repeats: false)
                 RunLoop.main.add(timer, forMode: .common)
@@ -119,11 +116,15 @@ final class TimingManager {
             return
         }
         
-        let dogName: String = parsedDictionary[ServerDefaultKeys.dogName.rawValue]! as! String
-        let dogId: Int = parsedDictionary[ServerDefaultKeys.dogId.rawValue]! as! Int
-        let reminderId: Int = parsedDictionary[ServerDefaultKeys.reminderId.rawValue]! as! Int
+        let dogManager = parsedDictionary[ServerDefaultKeys.dogManager.rawValue] as? DogManager
+        let dogId = parsedDictionary[ServerDefaultKeys.dogId.rawValue] as? Int
+        let reminderId = parsedDictionary[ServerDefaultKeys.reminderId.rawValue] as? Int
         
-        AlarmManager.willShowAlarm(forDogName: dogName, forDogId: dogId, forReminderId: reminderId)
+        guard let dogManager = dogManager, let dogId = dogId, let reminderId = reminderId else {
+            return
+        }
+        
+        AlarmManager.willShowAlarm(forDogManager: dogManager, forDogId: dogId, forReminderId: reminderId)
     }
     
     /// If a reminder is skipping the next time of day alarm, at some point it will go from 1+ day away to 23 hours and 59 minutes. When that happens then the timer should be changed from isSkipping to normal mode because it just skipped that alarm that should have happened
@@ -155,7 +156,7 @@ final class TimingManager {
         }
         reminder.reminderExecutionBasis = Date()
         
-        delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), newDogManager: dogManager)
+        delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         
     }
     

@@ -9,57 +9,59 @@
 import UIKit
 
 protocol AlarmManagerDelegate {
-    func didAddLog(sender: Sender, dogId: Int, log: Log)
-    func didRemoveLog(sender: Sender, dogId: Int, logId: Int)
-    func didUpdateReminder(sender: Sender, dogId: Int, reminder: Reminder)
-    func didRemoveReminder(sender: Sender, dogId: Int, reminderId: Int)
+    func didAddLog(sender: Sender, forDogId: Int, forLog: Log)
+    func didRemoveLog(sender: Sender, forDogId: Int, forLogId: Int)
+    func didUpdateReminder(sender: Sender, forDogId: Int, forReminder: Reminder)
+    func didRemoveReminder(sender: Sender, forDogId: Int, forReminderId: Int)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
 final class AlarmManager {
     static var delegate: AlarmManagerDelegate! = nil
     
     /// Creates AlarmUIAlertController to show the user about their alarm going off. We query the server with the information provided first to make sure it is up to date. 
-    static func willShowAlarm(forDogName dogName: String, forDogId dogId: Int, forReminderId reminderId: Int) {
+    static func willShowAlarm(forDogManager dogManager: DogManager, forDogId dogId: Int, forReminderId reminderId: Int) {
+        
+        // See if we can find a corresponding dog for the dogId. If we can't, then no point to go any further
+        guard let dog = try? dogManager.findDog(forDogId: dogId) else {
+            return
+        }
         
         // before presenting alarm, make sure we are up to date locally
-        RemindersRequest.get(invokeErrorManager: false, forDogId: dogId, forReminderId: reminderId) { reminder, _ in
+        RemindersRequest.get(invokeErrorManager: false, forDogId: dogId, forReminderId: reminderId) { reminder, responseStatus in
             
-            // TO DO BUG if the reminder is deleted and the user still thinks an alarm will happen, then the reminder just freezes as No More Time Left. Replace RemindersRequest.get with a dogManager get to completely refresh the dogManager. This the reminder whether is was deleted, updated, disabled, etc. AND it has the added benefit of updating other reminders so they reflect accurately
-            
-            // MARK: IMPORTANT
-            // MARK: IMPORTANT
-            // MARK: IMPORTANT
-            // MARK: IMPORTANT
-            // MARK: IMPORTANT
-            // If the guard statements/request fail, it could be a number of reasons. The reminder could have been deleted, the reminder could have it's timing updated, the user could have been kicked from the family, or etc.. The important point is, we can't know for certain why this reminder request failed. Therefore, we CANNOT invoke shouldRefreshDogManager or any other API request from here. Because those would eventually loop back here (within a few milliseconds). This API request would then fail again, causing loop and 'DDOS' attack on the Hound server.
-            // MARK: IMPORTANT
-            // MARK: IMPORTANT
-            // MARK: IMPORTANT
-            // MARK: IMPORTANT
-            // MARK: IMPORTANT
-
-            guard let reminder = reminder else {
-                // We weren't able to retrieve the reminder. The reminder might have been deleted
-                // MARK: IMPORTANT - Do not try to refresh DogManager as that can (and does) cause an infinite loop
-                
-                // Do not call self.delegate.didRemoveReminder. A .failureReponse and nil reminder doesn't necessarily mean that the reminder was deleted (although it is likely).
+            // If we got no response, then halt here as we were unable to retrieve the updated reminder
+            guard responseStatus != .noResponse else {
                 return
             }
             
-            // If reminder.reminderExecutionDate is nil, then something potentially was disabled or paused
+            guard let reminder = reminder else {
+                // We weren't able to retrieve the reminder. The reminder might have been deleted, the dog might have been deleted, or some other error with the query
+                // We can attempt to refresh the dog manager. If the reminder or dog were deleted, then this will update our local storage to remove them. If the query failed for other reasons, then this dogManager query will fail as well
+                RequestUtils.getFamilyGetDog(invokeErrorManager: false, dogManager: dogManager) { newDogManager, _ in
+                    guard let newDogManager = newDogManager else {
+                        return
+                    }
+                    
+                    delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
+                }
+                return
+            }
+            
+            // If reminder.reminderExecutionDate is nil, then something potentially was disabled / paused or the reminder's timing components are broken.
             // If distance from present to executionDate is positive, then executionDate in future. If distance is negative, then executionDate in past
             guard reminder.reminderExecutionDate != nil && Date().distance(to: reminder.reminderExecutionDate!) < 0 else {
-                // We were able to retrieve the reminder and something was wrong with it. Something was disabled/paused or the reminder was pushed back to the future.
-                // MARK: IMPORTANT - Do not try to refresh DogManager as that can (and does) cause an infinite loop
+                // We were able to retrieve the reminder and something was wrong with it. Something was disabled/paused, the reminder was pushed back to the future, or it simply just has invalid timing components
+                // MARK: IMPORTANT - Do not try to refresh DogManager as that can (and does) cause an infinite loop. The reminder can exist but for some reason have invalid data leading to a nil executionDate. If we refresh the DogManager, we could retrieve the same invalid reminder data which leads back to this statement (and thus starts the infinite loop)
                 
-                self.delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminder: reminder)
+                self.delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminder: reminder)
                 return
             }
             
             // the reminder exists, its executionDate exists, and its executionDate is in the past (meaning it should be valid).
         
                 // the dogId and reminderId exist if we got a reminder back
-            let title = "\(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true)) - \(dogName)"
+            let title = "\(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true)) - \(dog.dogName)"
                 
                 let alertController = GeneralUIAlertController(
                     title: title,
@@ -120,7 +122,7 @@ final class AlarmManager {
                 
                 // we have successfully constructed our alert
                 reminder.hasAlarmPresentationHandled = true
-                delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminder: reminder)
+            delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminder: reminder)
             
                 AlertManager.enqueueAlertForPresentation(alertController)
             
@@ -138,7 +140,7 @@ final class AlarmManager {
         RemindersRequest.update(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
             if requestWasSuccessful == true {
                 // no log or anything created, so we can just proceed to updating locally
-                delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminder: reminder)
+                delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminder: reminder)
             }
         }
         
@@ -151,7 +153,7 @@ final class AlarmManager {
             // just make request to delete reminder for oneTime remidner
             RemindersRequest.delete(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
-                    delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId)
+                    delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminderId: reminder.reminderId)
                 }
             }
         }
@@ -164,7 +166,7 @@ final class AlarmManager {
             RemindersRequest.update(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
                 // we dont need to persist a log
                 if requestWasSuccessful == true {
-                    delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminder: reminder)
+                    delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminder: reminder)
                 }
             }
         }
@@ -183,14 +185,16 @@ final class AlarmManager {
             // delete the reminder on the server
             RemindersRequest.delete(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
-                    delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId)
+                    delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminderId: reminder.reminderId)
                     // create log on the server and then assign it the logId and then add it to the dog
                     LogsRequest.create(invokeErrorManager: true, forDogId: dogId, forLog: log) { logId, _ in
-                        if logId != nil {
-                            // creating the log succeeded. we can persist the changes locally.
-                            log.logId = logId!
-                            delegate.didAddLog(sender: Sender(origin: self, localized: self), dogId: dogId, log: log)
+                        guard let logId = logId else {
+                            return
                         }
+
+                        // persist log successful, therefore we can save the info locally
+                        log.logId = logId
+                        delegate.didAddLog(sender: Sender(origin: self, localized: self), forDogId: dogId, forLog: log)
                     }
                 }
             }
@@ -203,14 +207,15 @@ final class AlarmManager {
             // make request to the server, if successful then we persist the data. If there is an error, then we discard to data to keep client and server in sync (as server wasn't able to update)
             RemindersRequest.update(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
-                    delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminder: reminder)
+                    delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminder: reminder)
                     // we need to persist a log as well
                     LogsRequest.create(invokeErrorManager: true, forDogId: dogId, forLog: log) { logId, _ in
-                        // persist log successful, therefore we can save the info locally
-                        if logId != nil {
-                            log.logId = logId!
-                            delegate.didAddLog(sender: Sender(origin: self, localized: self), dogId: dogId, log: log)
+                        guard let logId = logId else {
+                            return
                         }
+                        // persist log successful, therefore we can save the info locally
+                        log.logId = logId
+                        delegate.didAddLog(sender: Sender(origin: self, localized: self), forDogId: dogId, forLog: log)
                     }
                 }
             }
@@ -229,14 +234,15 @@ final class AlarmManager {
             // delete the reminder on the server
             RemindersRequest.delete(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
-                    delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminderId: reminder.reminderId)
+                    delegate.didRemoveReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminderId: reminder.reminderId)
                     // create log on the server and then assign it the logId and then add it to the dog
                     LogsRequest.create(invokeErrorManager: true, forDogId: dogId, forLog: log) { logId, _ in
-                        if logId != nil {
-                            // creating the log succeeded. we can persist the changes locally.
-                            log.logId = logId!
-                            delegate.didAddLog(sender: Sender(origin: self, localized: self), dogId: dogId, log: log)
+                        guard let logId = logId else {
+                            return
                         }
+                        // persist log successful, therefore we can save the info locally
+                        log.logId = logId
+                        delegate.didAddLog(sender: Sender(origin: self, localized: self), forDogId: dogId, forLog: log)
                     }
                 }
             }
@@ -249,14 +255,15 @@ final class AlarmManager {
             // make request to the server, if successful then we persist the data. If there is an error, then we discard to data to keep client and server in sync (as server wasn't able to update)
             RemindersRequest.update(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
                 if requestWasSuccessful == true {
-                    delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), dogId: dogId, reminder: reminder)
+                    delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminder: reminder)
                     // we need to persist a log as well
                     LogsRequest.create(invokeErrorManager: true, forDogId: dogId, forLog: log) { logId, _ in
-                        // persist log successful, therefore we can save the info locally
-                        if logId != nil {
-                            log.logId = logId!
-                            delegate.didAddLog(sender: Sender(origin: self, localized: self), dogId: dogId, log: log)
+                        guard let logId = logId else {
+                            return
                         }
+                        // persist log successful, therefore we can save the info locally
+                        log.logId = logId
+                        delegate.didAddLog(sender: Sender(origin: self, localized: self), forDogId: dogId, forLog: log)
                     }
                 }
             }
@@ -288,7 +295,7 @@ final class AlarmManager {
         // make request to the server, if successful then we persist the data. If there is an error, then we discard to data to keep client and server in sync (as server wasn't able to update)
         RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminder: reminder) { requestWasSuccessful1, _ in
             if requestWasSuccessful1 == true {
-                delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), dogId: dog.dogId, reminder: reminder)
+                delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), forDogId: dog.dogId, forReminder: reminder)
                 
                 // find log that is incredibly close the time where the reminder was skipped, once found, then we delete it.
                 var logToRemove: Log?
@@ -297,13 +304,14 @@ final class AlarmManager {
                     break
                 }
                 
-                // log to remove from unlog event
-                if logToRemove != nil {
-                    // attempt to delete the log server side
-                    LogsRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forLogId: logToRemove!.logId) { requestWasSuccessful2, _ in
-                        if requestWasSuccessful2 == true {
-                            delegate.didRemoveLog(sender: Sender(origin: self, localized: self), dogId: dog.dogId, logId: logToRemove!.logId)
-                        }
+                guard let logToRemove = logToRemove else {
+                    return
+                }
+                
+                // log to remove from unlog event. Attempt to delete the log server side
+                LogsRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forLogId: logToRemove.logId) { requestWasSuccessful2, _ in
+                    if requestWasSuccessful2 == true {
+                        delegate.didRemoveLog(sender: Sender(origin: self, localized: self), forDogId: dog.dogId, forLogId: logToRemove.logId)
                     }
                 }
             }

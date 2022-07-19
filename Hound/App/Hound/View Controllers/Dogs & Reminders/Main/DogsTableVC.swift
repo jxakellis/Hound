@@ -11,7 +11,7 @@ import UIKit
 protocol DogsTableViewControllerDelegate: AnyObject {
     func willOpenDogMenu(forDogId: Int?)
     func willOpenReminderMenu(parentDogId: Int, forReminderId: Int?)
-    func didUpdateDogManager(sender: Sender, newDogManager: DogManager)
+    func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
     func performSpinningCheckmarkAnimation()
     func performSpinningUndoAnimation()
 }
@@ -21,28 +21,24 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
     // MARK: - DogsReminderDisplayTableViewCellDelegate
     
     func didUpdateReminderEnable(sender: Sender, parentDogId: Int, reminder: Reminder) {
-        let sudoDogManager = getDogManager()
-        try! sudoDogManager.findDog(forDogId: parentDogId).dogReminders.findReminder(forReminderId: reminder.reminderId).reminderIsEnabled = reminder.reminderIsEnabled
-        setDogManager(sender: sender, newDogManager: sudoDogManager)
+        
+        try? dogManager.findDog(forDogId: parentDogId).dogReminders.findReminder(forReminderId: reminder.reminderId).reminderIsEnabled = reminder.reminderIsEnabled
+        setDogManager(sender: sender, forDogManager: dogManager)
     }
 
     // MARK: - DogManagerControlFlowProtocol
 
     private var dogManager: DogManager = DogManager()
 
-    func getDogManager() -> DogManager {
-        return dogManager
-    }
-
-    func setDogManager(sender: Sender, newDogManager: DogManager) {
-        dogManager = newDogManager
+    func setDogManager(sender: Sender, forDogManager: DogManager) {
+        dogManager = forDogManager
 
         // possible senders
         // DogsReminderTableViewCell
         // DogsDogDisplayTableViewCell
         // DogsViewController
         if !(sender.localized is DogsViewController) {
-            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), newDogManager: getDogManager())
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
         }
         if !(sender.localized is DogsReminderDisplayTableViewCell) && !(sender.origin is DogsTableViewController) {
             self.reloadTable()
@@ -53,7 +49,7 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
 
         // start up loop timer, normally done in view will appear but sometimes view has appeared and doesn't need a loop but then it can get a dogManager update which requires a loop. This happens due to reminder added in DogsIntroduction page.
         if viewIsBeingViewed == true && loopTimer == nil {
-            guard  getDogManager().hasEnabledReminder else {
+            guard  dogManager.hasEnabledReminder else {
                 return
             }
             loopTimer = Timer(fireAt: Date(), interval: 1.0, target: self, selector: #selector(self.loopReload), userInfo: nil, repeats: true)
@@ -65,7 +61,7 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
     }
 
     private func reloadTableConstraints() {
-        if getDogManager().dogs.count > 0 {
+        if dogManager.dogs.count > 0 {
             tableView.allowsSelection = true
             self.tableView.rowHeight = -1.0
         }
@@ -89,7 +85,7 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
         self.dogManager = MainTabBarViewController.staticDogManager
         super.viewDidLoad()
 
-        if getDogManager().dogs.count == 0 {
+        if dogManager.dogs.count == 0 {
             tableView.allowsSelection = false
         }
 
@@ -107,7 +103,7 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
 
         self.reloadTable()
 
-        if getDogManager().hasEnabledReminder {
+        if dogManager.hasEnabledReminder {
             loopTimer = Timer(fireAt: Date(), interval: 1.0, target: self, selector: #selector(self.loopReload), userInfo: nil, repeats: true)
 
             RunLoop.main.add(loopTimer!, forMode: .default)
@@ -117,14 +113,16 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
     
     /// Makes a query to the server to retrieve new information then refreshed the tableView
     @objc private func refreshTableData() {
-        RequestUtils.getFamilyGetDog(invokeErrorManager: true, dogManager: getDogManager()) { newDogManager, _ in
+        RequestUtils.getFamilyGetDog(invokeErrorManager: true, dogManager: dogManager) { newDogManager, _ in
             // end refresh first otherwise there will be a weird visual issue
             self.tableView.refreshControl?.endRefreshing()
-            if newDogManager != nil {
-                self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager!)
-                // manually reload table as the self sernder doesn't do that
-                self.reloadTable()
+            
+            guard let newDogManager = newDogManager else {
+                return
             }
+            self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
+            // manually reload table as the self sernder doesn't do that
+            self.reloadTable()
         }
     }
 
@@ -135,18 +133,14 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
     override func viewWillDisappear(_ animated: Bool) {
         viewIsBeingViewed = false
 
-        if loopTimer != nil {
-            loopTimer!.invalidate()
-            loopTimer = nil
-        }
+        loopTimer?.invalidate()
+        loopTimer = nil
     }
 
     @objc private func loopReload() {
         if tableView.visibleCells.count == 0 {
-            if loopTimer != nil {
-                loopTimer!.invalidate()
-                loopTimer = nil
-            }
+            loopTimer?.invalidate()
+            loopTimer = nil
         }
         else {
             reloadVisibleCellsTimeLeftLabel()
@@ -169,11 +163,12 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
     /// Shows action sheet of possible optiosn to do to dog
     private func willShowDogActionSheet(forCell cell: DogsDogDisplayTableViewCell, forIndexPath indexPath: IndexPath) {
         // properties
-        let sudoDogManager = self.getDogManager()
         let dog: Dog = cell.dog
         let dogName = dog.dogName
         let dogId = dog.dogId
-        let section = try! self.dogManager.findIndex(forDogId: dogId)
+        guard let section = try? self.dogManager.findIndex(forDogId: dogId) else {
+            return
+        }
         
         let alertController = GeneralUIAlertController(title: "You Selected: \(dogName)", message: nil, preferredStyle: .actionSheet)
 
@@ -198,8 +193,8 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
             let removeDogConfirmationRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                 DogsRequest.delete(invokeErrorManager: true, forDogId: dogId) { requestWasSuccessful, _ in
                     if requestWasSuccessful == true {
-                            try! sudoDogManager.removeDog(forDogId: dogId)
-                            self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
+                        try? self.dogManager.removeDog(forDogId: dogId)
+                        self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                             self.tableView.deleteSections([section], with: .automatic)
                         }
                     
@@ -227,8 +222,8 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
 
     /// Called when a reminder is clicked by the user, display an action sheet of possible modifcations to the alarm/reminder.
     private func willShowReminderActionSheet(forCell cell: DogsReminderDisplayTableViewCell, forIndexPath indexPath: IndexPath) {
-        let sudoDogManager = self.getDogManager()
-        let dog: Dog = try! sudoDogManager.findDog(forDogId: cell.parentDogId)
+        let dogManager = self.dogManager
+        let dog: Dog = try! dogManager.findDog(forDogId: cell.parentDogId)
         let reminder: Reminder = cell.reminder
        
         let selectedReminderAlertController = GeneralUIAlertController(title: "You Selected: \(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true)) for \(dog.dogName)", message: nil, preferredStyle: .actionSheet)
@@ -249,7 +244,7 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
                 RemindersRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forReminder: reminder) { requestWasSuccessful, _ in
                         if requestWasSuccessful == true {
                             try! dog.dogReminders.removeReminder(forReminderId: reminder.reminderId)
-                            self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
+                            self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
 
                             self.tableView.deleteRows(at: [indexPath], with: .automatic)
                         }
@@ -350,18 +345,18 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        // if getDogManager().dogs.count == 0 {
+        // if dogManager.dogs.count == 0 {
         //    return 1
         // }
-        return getDogManager().dogs.count
+        return dogManager.dogs.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if getDogManager().dogs.count == 0 {
+        if dogManager.dogs.count == 0 {
             return 1
         }
 
-        return getDogManager().dogs[section].dogReminders.reminders.count+1
+        return dogManager.dogs[section].dogReminders.reminders.count+1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -370,15 +365,15 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
             let cell = tableView.dequeueReusableCell(withIdentifier: "dogsDogDisplayTableViewCell", for: indexPath)
 
             let customCell = cell as! DogsDogDisplayTableViewCell
-            customCell.setup(forDog: getDogManager().dogs[indexPath.section])
+            customCell.setup(forDog: dogManager.dogs[indexPath.section])
             return cell
         }
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "dogsReminderDisplayTableViewCell", for: indexPath)
 
             let customCell = cell as! DogsReminderDisplayTableViewCell
-            customCell.setup(forParentDogId: getDogManager().dogs[indexPath.section].dogId,
-                             forReminder: getDogManager().dogs[indexPath.section].dogReminders.reminders[indexPath.row-1])
+            customCell.setup(forParentDogId: dogManager.dogs[indexPath.section].dogId,
+                             forReminder: dogManager.dogs[indexPath.section].dogReminders.reminders[indexPath.row-1])
             customCell.delegate = self
             return cell
         }
@@ -386,7 +381,7 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        if getDogManager().dogs.count > 0 {
+        if dogManager.dogs.count > 0 {
             if indexPath.row == 0 {
                 willShowDogActionSheet(forCell: tableView.cellForRow(at: indexPath)! as! DogsDogDisplayTableViewCell, forIndexPath: indexPath)
             }
@@ -400,15 +395,15 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete && getDogManager().dogs.count > 0 {
+        if editingStyle == .delete && dogManager.dogs.count > 0 {
             let removeConfirmation: GeneralUIAlertController!
-            let sudoDogManager = getDogManager()
+            
             // delete reminder
             if indexPath.row > 0 {
                 // cell in question
                 let reminderCell = tableView.cellForRow(at: indexPath) as! DogsReminderDisplayTableViewCell
                 let dogId: Int = reminderCell.parentDogId
-                let dog: Dog = try! sudoDogManager.findDog(forDogId: dogId)
+                let dog: Dog = try! dogManager.findDog(forDogId: dogId)
                 let reminder: Reminder = reminderCell.reminder
 
                 removeConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))?", message: nil, preferredStyle: .alert)
@@ -417,7 +412,7 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
                     RemindersRequest.delete(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
                         if requestWasSuccessful == true {
                                 try! dog.dogReminders.removeReminder(forReminderId: reminder.reminderId)
-                                self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
+                            self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                                 self.tableView.deleteRows(at: [indexPath], with: .automatic)
                             }
                     }
@@ -438,8 +433,8 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
                 let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
                     DogsRequest.delete(invokeErrorManager: true, forDogId: dogId) { requestWasSuccessful, _ in
                          if requestWasSuccessful == true {
-                                try! sudoDogManager.removeDog(forDogId: dogId)
-                                self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: sudoDogManager)
+                             try? self.dogManager.removeDog(forDogId: dogId)
+                                self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
                                 self.tableView.deleteSections([indexPath.section], with: .automatic)
                             }
                         
@@ -456,7 +451,7 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
     }
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        if self.getDogManager().dogs.count == 0 {
+        if self.dogManager.dogs.count == 0 {
             return false
         }
         else {
