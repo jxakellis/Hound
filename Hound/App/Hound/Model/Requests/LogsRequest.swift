@@ -18,9 +18,8 @@ enum LogsRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func internalGet(invokeErrorManager: Bool, forDogId dogId: Int, forLogId logId: Int?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    private static func internalGet(invokeErrorManager: Bool, forDogId dogId: Int, forLogId logId: Int?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
         
-        InternalRequestUtils.warnForPlaceholderId(dogId: dogId, logId: logId)
         let URLWithParams: URL
         
         // looking for single log
@@ -33,7 +32,7 @@ enum LogsRequest: RequestProtocol {
         }
         
         // make get request
-        InternalRequestUtils.genericGetRequest(invokeErrorManager: invokeErrorManager, forURL: URLWithParams) { responseBody, responseStatus in
+        return InternalRequestUtils.genericGetRequest(invokeErrorManager: invokeErrorManager, forURL: URLWithParams) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -42,15 +41,14 @@ enum LogsRequest: RequestProtocol {
     /**
      completionHandler returns response data: logId for the created log and the ResponseStatus
      */
-    private static func internalCreate(invokeErrorManager: Bool, forDogId dogId: Int, forLog log: Log, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    private static func internalCreate(invokeErrorManager: Bool, forDogId dogId: Int, forLog log: Log, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
         
-        InternalRequestUtils.warnForPlaceholderId(dogId: dogId)
         let body = log.createBody()
         
         let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/logs/")
         
         // make post request, assume body valid as constructed with method
-        InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
+        return InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
     }
@@ -58,15 +56,14 @@ enum LogsRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func internalUpdate(invokeErrorManager: Bool, forDogId dogId: Int, forLog log: Log, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    private static func internalUpdate(invokeErrorManager: Bool, forDogId dogId: Int, forLog log: Log, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
         
-        InternalRequestUtils.warnForPlaceholderId(dogId: dogId, logId: log.logId)
         let body = log.createBody()
         
         let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/logs/\(log.logId)")
         
         // make put request, assume body valid as constructed with method
-        InternalRequestUtils.genericPutRequest(invokeErrorManager: invokeErrorManager, forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
+        return InternalRequestUtils.genericPutRequest(invokeErrorManager: invokeErrorManager, forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
     }
@@ -74,13 +71,12 @@ enum LogsRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func internalDelete(invokeErrorManager: Bool, forDogId dogId: Int, forLogId logId: Int, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    private static func internalDelete(invokeErrorManager: Bool, forDogId dogId: Int, forLogId logId: Int, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
         
-        InternalRequestUtils.warnForPlaceholderId(dogId: dogId, logId: logId)
         let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/logs/\(logId)")
         
         // make delete request
-        InternalRequestUtils.genericDeleteRequest(invokeErrorManager: invokeErrorManager, forURL: URLWithParams) { responseBody, responseStatus in
+        return InternalRequestUtils.genericDeleteRequest(invokeErrorManager: invokeErrorManager, forURL: URLWithParams) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -98,7 +94,7 @@ extension LogsRequest {
      */
     static func get(invokeErrorManager: Bool, forDogId dogId: Int, forLogId logId: Int, completionHandler: @escaping (Log?, ResponseStatus) -> Void) {
         
-        LogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: logId) { responseBody, responseStatus in
+        _ = LogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: logId) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
@@ -121,7 +117,7 @@ extension LogsRequest {
      */
     static func getAll(invokeErrorManager: Bool, forDogId dogId: Int, completionHandler: @escaping ([Log]?, ResponseStatus) -> Void) {
         
-        LogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: nil) { responseBody, responseStatus in
+        _ = LogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: nil) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 // Array of log JSON [{log1:'foo'},{log2:'bar'}]
@@ -150,7 +146,7 @@ extension LogsRequest {
      */
     static func create(invokeErrorManager: Bool, forDogId dogId: Int, forLog log: Log, completionHandler: @escaping (Int?, ResponseStatus) -> Void) {
         
-        LogsRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLog: log) { responseBody, responseStatus in
+        _ = LogsRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLog: log) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 if let logId = responseBody?[ServerDefaultKeys.result.rawValue] as? Int {
@@ -173,7 +169,7 @@ extension LogsRequest {
      */
     static func update(invokeErrorManager: Bool, forDogId dogId: Int, forLog log: Log, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
         
-        LogsRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLog: log) { _, responseStatus in
+        _ = LogsRequest.internalUpdate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLog: log) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
                 completionHandler(true, responseStatus)
@@ -190,7 +186,7 @@ extension LogsRequest {
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
     static func delete(invokeErrorManager: Bool, forDogId dogId: Int, forLogId logId: Int, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
-        LogsRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: logId) { _, responseStatus in
+        _ = LogsRequest.internalDelete(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: logId) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
                 completionHandler(true, responseStatus)

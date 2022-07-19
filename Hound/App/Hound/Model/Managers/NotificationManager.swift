@@ -25,8 +25,6 @@ enum NotificationManager {
                 UserConfiguration.isFollowUpEnabled = isGranted
                 
                 if LocalConfiguration.isNotificationAuthorized == true {
-                    // write isNotificationAuthorized to memory immediately. If app crashes,
-                    // UserDefaults.standard.set(LocalConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
                     DispatchQueue.main.async {
                         UIApplication.shared.registerForRemoteNotifications()
                     }
@@ -94,6 +92,12 @@ enum NotificationManager {
                 
                 // going from off to on, meaning the user has gone into the settings app and turned notifications from disabled to enabled
                 LocalConfiguration.isNotificationAuthorized = true
+                // The user isn't registered for remote notifications but should be
+                if UserInformation.userNotificationToken == nil {
+                    DispatchQueue.main.async {
+                        UIApplication.shared.registerForRemoteNotifications()
+                    }
+                }
                 
             case .denied:
                 

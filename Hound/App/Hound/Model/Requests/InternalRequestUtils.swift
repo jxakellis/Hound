@@ -25,7 +25,7 @@ enum InternalRequestUtils {
     private static let session = URLSession(configuration: sessionConfig)
     
     /// Takes an already constructed URLRequest and executes it, returning it in a compeltion handler. This is the basis to all URL requests
-    private static func genericRequest(forRequest request: URLRequest, invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    private static func genericRequest(forRequest request: URLRequest, invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
         
         guard NetworkManager.shared.isConnected else {
             DispatchQueue.main.async {
@@ -35,7 +35,7 @@ enum InternalRequestUtils {
                 
                 completionHandler(nil, .noResponse)
             }
-            return
+            return nil
         }
         
         var modifiedRequest = request
@@ -153,6 +153,8 @@ enum InternalRequestUtils {
         
         // free up task when request is pushed
         task.resume()
+        
+        return task
     }
 }
 
@@ -161,7 +163,7 @@ extension InternalRequestUtils {
     // MARK: - Generic GET, POST, PUT, and DELETE requests
     
     /// Perform a generic get request at the specified url, assuming URL params are already provided. completionHandler is on the .main thread.
-    static func genericGetRequest(invokeErrorManager: Bool, forURL URL: URL, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
+    static func genericGetRequest(invokeErrorManager: Bool, forURL URL: URL, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
         
         // create request to send
         var request = URLRequest(url: URL)
@@ -169,15 +171,13 @@ extension InternalRequestUtils {
         // specify http method
         request.httpMethod = "GET"
         
-        genericRequest(forRequest: request, invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
+        return genericRequest(forRequest: request, invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
     }
     
     /// Perform a generic get request at the specified url with provided body. completionHandler is on the .main thread.
-    static func genericPostRequest(invokeErrorManager: Bool, forURL URL: URL, forBody body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        
-        InternalRequestUtils.warnForEmptyBody(forURL: URL, forBody: body)
+    static func genericPostRequest(invokeErrorManager: Bool, forURL URL: URL, forBody body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
         
         // create request to send
         var request = URLRequest(url: URL)
@@ -189,16 +189,14 @@ extension InternalRequestUtils {
         let jsonData = try? JSONSerialization.data(withJSONObject: body)
         request.httpBody = jsonData
         
-        genericRequest(forRequest: request, invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
+        return genericRequest(forRequest: request, invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
     }
     
     /// Perform a generic get request at the specified url with provided body, assuming URL params are already provided. completionHandler is on the .main thread.
-    static func genericPutRequest(invokeErrorManager: Bool, forURL URL: URL, forBody body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        
-        InternalRequestUtils.warnForEmptyBody(forURL: URL, forBody: body)
+    static func genericPutRequest(invokeErrorManager: Bool, forURL URL: URL, forBody body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
         
         // create request to send
         var request = URLRequest(url: URL)
@@ -210,19 +208,14 @@ extension InternalRequestUtils {
         let jsonData = try? JSONSerialization.data(withJSONObject: body)
         request.httpBody = jsonData
         
-        genericRequest(forRequest: request, invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
+        return genericRequest(forRequest: request, invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
     }
     
     /// Perform a generic get request at the specified url, assuming URL params are already provided. completionHandler is on the .main thread.
-    static func genericDeleteRequest(invokeErrorManager: Bool, forURL URL: URL, forBody body: [String: Any]? = nil, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        
-        // if a body is present, we want to make sure it isn't empty
-        if body != nil {
-            InternalRequestUtils.warnForEmptyBody(forURL: URL, forBody: body!)
-        }
+    static func genericDeleteRequest(invokeErrorManager: Bool, forURL URL: URL, forBody body: [String: Any]? = nil, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
         
         // create request to send
         var request = URLRequest(url: URL)
@@ -237,49 +230,8 @@ extension InternalRequestUtils {
             request.httpBody = jsonData
         }
         
-        genericRequest(forRequest: request, invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
+        return genericRequest(forRequest: request, invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
-        }
-    }
-    
-    // MARK: - Warn if a property has an undesired value
-    
-    /// Provides warning if the id of anything is set to a placeholder value.
-    static func warnForPlaceholderId(dogId: Int? = nil, reminderId: Int? = nil, reminders: [Reminder]? = nil, logId: Int? = nil) {
-        if UserInformation.userId == nil {
-            AppDelegate.APIRequestLogger.warning("Warning: userId is nil")
-        }
-        else if UserInformation.userId! == EnumConstant.HashConstant.defaultSHA256Hash {
-            AppDelegate.APIRequestLogger.warning("Warning: userId is placeholder \(UserInformation.userId!)")
-        }
-        if UserInformation.userIdentifier == nil {
-            AppDelegate.APIRequestLogger.warning("Warning: userIdentifier is nil")
-        }
-        if UserInformation.familyId == nil {
-            AppDelegate.APIRequestLogger.warning("Warning: familyId is nil")
-        }
-        else if UserInformation.familyId! == EnumConstant.HashConstant.defaultSHA256Hash {
-            AppDelegate.APIRequestLogger.warning("Warning: familyId is placeholder \(UserInformation.familyId!)")
-        }
-        if dogId != nil && dogId! < 0 {
-            AppDelegate.APIRequestLogger.warning("Warning: dogId is placeholder \(dogId!)")
-        }
-        if reminders != nil {
-            for singleReminder in reminders! where singleReminder.reminderId < 0 {
-                AppDelegate.APIRequestLogger.warning("Warning: reminderId is placeholder \(singleReminder.reminderId)")
-            }
-        }
-        if reminderId != nil && reminderId! < 0 {
-            AppDelegate.APIRequestLogger.warning("Warning: reminderId is placeholder \(reminderId!)")
-        }
-        if logId != nil && logId! < 0 {
-            AppDelegate.APIRequestLogger.warning("Warning: logId is placeholder \(logId!)")
-        }
-    }
-    /// Provides warning if the id of anything is set to a placeholder value.
-    private static func warnForEmptyBody(forURL URL: URL, forBody body: [String: Any]) {
-        if body.keys.count == 0 {
-            AppDelegate.APIRequestLogger.warning("Warning: Body is empty \nFor URL: \(URL)")
         }
     }
     

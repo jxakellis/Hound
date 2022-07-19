@@ -53,7 +53,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
         let token = tokenParts.joined()
-        // TO DO add user default to track if the user was successfully registered for remote notifications. If they weren't, keep retrying upon launch.
         AppDelegate.generalLogger.notice("Successfully registered for remote notifications for token: \(token)")
         
         if token != UserInformation.userNotificationToken {
@@ -97,7 +96,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
             // Once everything is synced again, the alarm will be shown as expected.
             
             // Note: we also individually fetch a reminder before immediately constructing its alertController for its alarm. This ensure, even if the user has notifications turned off (meaning this piece of code right here won't be executed), that the reminder they are being show is up to date.
-            DogsRequest.get(invokeErrorManager: false, dogManager: MainTabBarViewController.staticDogManager) { newDogManager, _ in
+            RequestUtils.getFamilyGetDog(invokeErrorManager: false, dogManager: MainTabBarViewController.staticDogManager) { newDogManager, _ in
                 guard newDogManager != nil else {
                     return
                 }

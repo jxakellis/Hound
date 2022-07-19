@@ -20,9 +20,9 @@ enum FamilyRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func internalGet(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        InternalRequestUtils.warnForPlaceholderId()
-        InternalRequestUtils.genericGetRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithFamilyId) { responseBody, responseStatus in
+    private static func internalGet(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
+       
+        return InternalRequestUtils.genericGetRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithFamilyId) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -31,9 +31,9 @@ enum FamilyRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func internalCreate(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        InternalRequestUtils.warnForPlaceholderId()
-        InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: [ : ]) { responseBody, responseStatus in
+    private static func internalCreate(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
+        
+        return InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: [ : ]) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -42,17 +42,17 @@ enum FamilyRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func internalUpdate(invokeErrorManager: Bool, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        InternalRequestUtils.warnForPlaceholderId()
+    private static func internalUpdate(invokeErrorManager: Bool, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
+       
         // the user is trying to join a family with the family code, so omit familyId (as we don't have one)
         if body[ServerDefaultKeys.familyCode.rawValue] != nil {
-            InternalRequestUtils.genericPutRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
+            return InternalRequestUtils.genericPutRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
                 completionHandler(responseBody, responseStatus)
             }
         }
         // user isn't trying to join a family, so add familyId
         else {
-            InternalRequestUtils.genericPutRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithFamilyId, forBody: body) { responseBody, responseStatus in
+            return InternalRequestUtils.genericPutRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithFamilyId, forBody: body) { responseBody, responseStatus in
                 completionHandler(responseBody, responseStatus)
             }
         }
@@ -61,9 +61,9 @@ enum FamilyRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func internalDelete(invokeErrorManager: Bool, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        InternalRequestUtils.warnForPlaceholderId()
-        InternalRequestUtils.genericDeleteRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithFamilyId, forBody: body) { responseBody, responseStatus in
+    private static func internalDelete(invokeErrorManager: Bool, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
+        
+        return InternalRequestUtils.genericDeleteRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithFamilyId, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -79,9 +79,9 @@ extension FamilyRequest {
      completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func get(invokeErrorManager: Bool, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
+    static func get(invokeErrorManager: Bool, completionHandler: @escaping (Bool, ResponseStatus) -> Void) -> URLSessionDataTask? {
         
-        FamilyRequest.internalGet(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
+        return FamilyRequest.internalGet(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any] {
@@ -108,7 +108,7 @@ extension FamilyRequest {
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
     static func create(invokeErrorManager: Bool, completionHandler: @escaping (String?, ResponseStatus) -> Void) {
-        FamilyRequest.internalCreate(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
+        _ = FamilyRequest.internalCreate(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 // check for familyId
@@ -132,7 +132,7 @@ extension FamilyRequest {
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
     static func update(invokeErrorManager: Bool, body: [String: Any], completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
-        FamilyRequest.internalUpdate(invokeErrorManager: invokeErrorManager, body: body) { _, responseStatus in
+        _ = FamilyRequest.internalUpdate(invokeErrorManager: invokeErrorManager, body: body) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
                 completionHandler(true, responseStatus)
@@ -151,7 +151,7 @@ extension FamilyRequest {
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
     static func delete(invokeErrorManager: Bool, body: [String: Any] = [:], completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
-        FamilyRequest.internalDelete(invokeErrorManager: invokeErrorManager, body: body) { _, responseStatus in
+        _ = FamilyRequest.internalDelete(invokeErrorManager: invokeErrorManager, body: body) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
                 completionHandler(true, responseStatus)

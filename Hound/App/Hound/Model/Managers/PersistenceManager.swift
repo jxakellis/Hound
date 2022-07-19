@@ -112,7 +112,9 @@ enum PersistenceManager {
         if UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification {
             if isTerminating == true {
                 // Send notification to user that their loud notifications won't work
-                RequestUtils.createTerminationNotification()
+                AlertRequest.create(invokeErrorManager: false, completionHandler: { _, _ in
+                    //
+                })
             }
             else {
                 // app isn't terminating so add background silence

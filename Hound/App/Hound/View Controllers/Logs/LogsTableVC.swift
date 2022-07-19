@@ -95,7 +95,7 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
     }
     /// Makes a query to the server to retrieve new information then refreshed the tableView
     @objc private func refreshTable() {
-        DogsRequest.get(invokeErrorManager: true, dogManager: getDogManager()) { newDogManager, _ in
+        RequestUtils.getFamilyGetDog(invokeErrorManager: true, dogManager: getDogManager()) { newDogManager, _ in
             // end refresh first otherwise there will be a weird visual issue
             self.tableView.refreshControl?.endRefreshing()
             if newDogManager != nil {

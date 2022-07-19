@@ -128,7 +128,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
         self.refreshButton.isEnabled = false
         ActivityIndicator.shared.beginAnimating(title: navigationItem.title ?? "", view: self.view, navigationItem: navigationItem)
         
-        DogsRequest.get(invokeErrorManager: true, dogManager: getDogManager()) { newDogManager, _ in
+        RequestUtils.getFamilyGetDog(invokeErrorManager: true, dogManager: getDogManager()) { newDogManager, _ in
             self.refreshButton.isEnabled = true
             ActivityIndicator.shared.stopAnimating(navigationItem: self.navigationItem)
             

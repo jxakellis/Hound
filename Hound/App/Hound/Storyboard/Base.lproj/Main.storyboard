@@ -2183,28 +2183,29 @@
                                 </constraints>
                                 <color key="color" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </activityIndicatorView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Fetching" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0jo-Zc-MLN" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="628" width="414" height="24"/>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H4Q-f7-mxG">
+                                <rect key="frame" x="10" y="628" width="394" height="5"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="5" id="1cT-rC-46S"/>
+                                </constraints>
+                                <color key="progressTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="trackTintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </progressView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="TR9-Eu-OqZ"/>
                         <color key="backgroundColor" systemColor="systemBlueColor"/>
                         <constraints>
-                            <constraint firstItem="0jo-Zc-MLN" firstAttribute="top" secondItem="ffm-7i-C0x" secondAttribute="bottom" priority="900" constant="35" id="4Nw-68-mWp"/>
-                            <constraint firstItem="TR9-Eu-OqZ" firstAttribute="trailing" secondItem="0jo-Zc-MLN" secondAttribute="trailing" id="IHP-1U-R9V"/>
+                            <constraint firstItem="TR9-Eu-OqZ" firstAttribute="trailing" secondItem="H4Q-f7-mxG" secondAttribute="trailing" constant="10" id="1J5-6R-e4n"/>
+                            <constraint firstItem="H4Q-f7-mxG" firstAttribute="leading" secondItem="TR9-Eu-OqZ" secondAttribute="leading" constant="10" id="FWt-Zs-YtK"/>
                             <constraint firstItem="ffm-7i-C0x" firstAttribute="top" secondItem="3dG-2F-DxQ" secondAttribute="bottom" priority="900" constant="35" id="Y1h-kD-kDf"/>
-                            <constraint firstItem="0jo-Zc-MLN" firstAttribute="leading" secondItem="TR9-Eu-OqZ" secondAttribute="leading" id="aXe-k5-RgJ"/>
                             <constraint firstItem="3dG-2F-DxQ" firstAttribute="centerY" secondItem="5oC-hS-dcf" secondAttribute="centerY" id="cOg-Uk-4IL"/>
                             <constraint firstItem="ffm-7i-C0x" firstAttribute="centerX" secondItem="5oC-hS-dcf" secondAttribute="centerX" id="hMx-GJ-sg9"/>
-                            <constraint firstItem="TR9-Eu-OqZ" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="0jo-Zc-MLN" secondAttribute="bottom" constant="10" id="n51-Yk-ZtY"/>
                             <constraint firstItem="3dG-2F-DxQ" firstAttribute="centerX" secondItem="5oC-hS-dcf" secondAttribute="centerX" id="uXo-B9-3xV"/>
+                            <constraint firstItem="H4Q-f7-mxG" firstAttribute="top" secondItem="ffm-7i-C0x" secondAttribute="bottom" constant="35" id="zRZ-21-ECl"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="statusLabel" destination="0jo-Zc-MLN" id="X55-oX-axt"/>
+                        <outlet property="getRequestsProgressView" destination="H4Q-f7-mxG" id="QFe-hL-RUW"/>
                         <segue destination="49e-Tb-3d3" kind="presentation" identifier="mainTabBarViewController" modalPresentationStyle="fullScreen" id="Jqw-FR-46g"/>
                         <segue destination="w3D-Ib-MEE" kind="presentation" identifier="familyIntroductionViewController" modalPresentationStyle="fullScreen" id="3AW-Zf-Dxq"/>
                         <segue destination="58r-r7-NND" kind="presentation" identifier="serverLoginViewController" modalPresentationStyle="fullScreen" id="bqE-nO-Ztf"/>
@@ -3814,7 +3815,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="nsH-qM-K4m"/>
+        <segue reference="Jqw-FR-46g"/>
         <segue reference="GZX-3R-sVV"/>
     </inferredMetricsTieBreakers>
     <resources>

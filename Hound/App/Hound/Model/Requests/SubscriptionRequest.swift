@@ -18,9 +18,9 @@ enum SubscriptionRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func internalGet(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        InternalRequestUtils.warnForPlaceholderId()
-        InternalRequestUtils.genericGetRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams) { responseBody, responseStatus in
+    private static func internalGet(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
+        
+        return InternalRequestUtils.genericGetRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         
@@ -29,8 +29,7 @@ enum SubscriptionRequest: RequestProtocol {
     /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
-    private static func internalCreate(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) {
-        InternalRequestUtils.warnForPlaceholderId()
+    private static func internalCreate(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> URLSessionDataTask? {
         
         // Get the receipt if it's available. If the receipt isn't available, we sent through an invalid base64EncodedString, then the server will return us an error
         var base64EncodedReceiptString: String? {
@@ -43,7 +42,7 @@ enum SubscriptionRequest: RequestProtocol {
         }
         
         let body: [String: Any] = [ServerDefaultKeys.base64EncodedAppStoreReceiptURL.rawValue: base64EncodedReceiptString ?? VisualConstant.TextConstant.unknownText]
-        InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
+        return InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
     }
@@ -60,7 +59,7 @@ extension SubscriptionRequest {
      */
     static func getAll(invokeErrorManager: Bool, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
         
-        SubscriptionRequest.internalGet(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
+        _ = SubscriptionRequest.internalGet(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
@@ -91,7 +90,7 @@ extension SubscriptionRequest {
      */
     static func create(invokeErrorManager: Bool, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
         
-        SubscriptionRequest.internalCreate(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
+        _ = SubscriptionRequest.internalCreate(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
                 if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any] {

@@ -38,7 +38,7 @@ final class SettingsPersonalInformationViewController: UIViewController, UIGestu
         // manually set lastDogManagerSynchronization to default value so we will retrieve everything from the server
         LocalConfiguration.lastDogManagerSynchronization = LocalConfiguration.defaultLastDogManagerSynchronization
         
-        DogsRequest.get(invokeErrorManager: true, dogManager: DogManager()) { newDogManager, _ in
+        RequestUtils.getFamilyGetDog(invokeErrorManager: true, dogManager: DogManager()) { newDogManager, _ in
             RequestUtils.endRequestIndictator {
                 
                 guard newDogManager != nil else {

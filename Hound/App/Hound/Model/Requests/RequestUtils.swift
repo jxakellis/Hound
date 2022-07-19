@@ -10,14 +10,6 @@ import Foundation
 
 enum RequestUtils {
     
-    /**
-     Invoke function when the user is terminating the app. Sends a query to the server to send an APN to the user, warning against terminating the app
-     */
-    static func createTerminationNotification() {
-        InternalRequestUtils.genericPostRequest(invokeErrorManager: false, forURL: UserRequest.baseURLWithUserId.appendingPathComponent("/alert/terminate"), forBody: [:]) { _, _ in
-        }
-    }
-    
     enum RequestIndicatorType {
         case apple
         case hound
@@ -40,5 +32,26 @@ enum RequestUtils {
         AlertManager.shared.contactingServerAlertController.dismiss(animated: false) {
             completionHandler()
         }
+    }
+    
+    /**
+     Invokes FamilyRequest.get to refresh the FamilyConfiguration, making sure everything is synced up (e.g. isPaused).
+     Invokes DogsRequest.get to refresh the DogManager, making sure everything is synced up with the locally stored DogManager
+     completionHandler returns a dogManager and responseStatus.
+     If the query returned a 200 status and is successful, then the dogManager is returned. Otherwise, if there was a problem, nil is returned and ErrorManager is automatically invoked.
+     */
+    static func getFamilyGetDog(invokeErrorManager: Bool, dogManager currentDogManager: DogManager, completionHandler: @escaping (DogManager?, ResponseStatus) -> Void) {
+        
+        // We want to sync the isPaused status before getting the newDogManager. Otherwise, reminder could be up to date but alarms could be going off locally since the local app doesn't realized that the app was paused (the opposite with an unpause could also be possible
+        _ = FamilyRequest.get(invokeErrorManager: invokeErrorManager) { requestWasSuccessful, responseStatus in
+            guard requestWasSuccessful == true else {
+                return completionHandler(nil, responseStatus)
+            }
+            
+            _ = DogsRequest.get(invokeErrorManager: invokeErrorManager, dogManager: currentDogManager) { newDogManager, responseStatus in
+                completionHandler(newDogManager, responseStatus)
+            }
+        }
+        
     }
 }

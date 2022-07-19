@@ -26,8 +26,6 @@ final class SettingsFamilyMemberTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
-        // TO DO BUG if head of family is transferred to a family member and the page is reloaded, then this cell will break. Make this cell more dynamic so it can properly shift between family head and non family head. Check that anything accross all of Hound accessing certain properties is also dynamic (e.g. FamilyConfiguration.isFamilyHead)
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -38,18 +36,21 @@ final class SettingsFamilyMemberTableViewCell: UITableViewCell {
     
     // MARK: - Functions
     
-    func setup(forDisplayFullName displayFullName: String, userId: String, isUserFamilyHead: Bool) {
+    func setup(forDisplayFullName displayFullName: String, userId: String) {
         self.userId = userId
         
         fullNameLabel.text = displayFullName
         
+        let isFamilyHead = FamilyConfiguration.isFamilyHead
         // if the user is not the family head, that means the cell should not be selectable nor should we show the chevron that indicates selectability
-        isUserInteractionEnabled = isUserFamilyHead
-        rightChevronImageView.isHidden = !isUserFamilyHead
+        isUserInteractionEnabled = isFamilyHead
+        rightChevronImageView.isHidden = !isFamilyHead
         
-        if isUserFamilyHead == false {
-            rightChevronLeadingConstraint.constant = 0.0
-            if rightChevronAspectRatio != nil {
+        rightChevronLeadingConstraint.constant = isFamilyHead ? 10.0 : 0.0
+        
+        if isFamilyHead == false {
+            
+            if let rightChevronAspectRatio = rightChevronAspectRatio {
                 // upon cell reload, the rightChevronAspectRatio can be nil if deactived already
                 NSLayoutConstraint.deactivate([rightChevronAspectRatio])
             }

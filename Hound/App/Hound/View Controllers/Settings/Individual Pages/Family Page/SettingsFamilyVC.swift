@@ -15,7 +15,7 @@ protocol SettingsFamilyViewControllerDelegate: AnyObject {
 final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource, DogManagerControlFlowProtocol {
     
     // MARK: - UIGestureRecognizerDelegate
-
+    
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
@@ -29,7 +29,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     @IBAction private func willRefresh(_ sender: Any) {
         self.refreshButton.isEnabled = false
         ActivityIndicator.shared.beginAnimating(title: navigationItem.title ?? "", view: self.view, navigationItem: navigationItem)
-        FamilyRequest.get(invokeErrorManager: true) { requestWasSuccessful, _ in
+        _ = FamilyRequest.get(invokeErrorManager: true) { requestWasSuccessful, _ in
             self.refreshButton.isEnabled = true
             ActivityIndicator.shared.stopAnimating(navigationItem: self.navigationItem)
             
@@ -56,13 +56,13 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     weak var delegate: SettingsFamilyViewControllerDelegate!
     
     // MARK: - Main
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         oneTimeSetup()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         AlertManager.globalPresenter = self
@@ -212,39 +212,39 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         ]
         
         FamilyRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
-            if requestWasSuccessful == true {
-                // update the local information to reflect the server change
-                FamilyConfiguration.isPaused = isPaused
-                if isPaused == false {
-                    // TO DO FUTURE have server calculate reminderExecutionDates itself
-                    // reminders are now unpaused, we must update the server with the new executionDates (can't calculate them itself)
-                    DogsRequest.get(invokeErrorManager: true, dogManager: self.getDogManager()) { newDogManager, _ in
-                        guard newDogManager != nil else {
-                            return
-                        }
-                        
-                        for dog in newDogManager!.dogs {
-                            // update the Hound server with
-                            let remindersToUpdate = dog.dogReminders.reminders.filter({ reminder in
-                                // create an array of reminders with non-nil executionDates, as we are providing the Hound server with a list of reminders with the newly calculated executionDates
-                                return (reminder.reminderExecutionDate == nil) == false
-                            })
-                            RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: remindersToUpdate) { requestWasSuccessful, _ in
-                                if requestWasSuccessful == true {
-                                    // the call to update the server on the reminder unpause was successful, now send to delegate
-                                    self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager!)
-                                }
-                            }
+            
+            guard requestWasSuccessful else {
+                self.isPausedSwitch.setOn(!isPaused, animated: true)
+                return
+            }
+            // update the local information to reflect the server change
+            FamilyConfiguration.isPaused = isPaused
+            
+            guard isPaused == false else {
+                // reminders are now paused, so remove the timers
+                TimingManager.invalidateAll(forDogManager: dogManager)
+                return
+            }
+            // TO DO FUTURE have server calculate reminderExecutionDates itself
+            // Reminders are now unpaused, we must update the server with the new executionDates (can't calculate them itself).
+            // Don't use the getFamilyGetDogs function. In this case, only the isPaused variable would apply. However, we just updated isPaused so there is no point to retrieve it again since we know its updated value.
+            _ = DogsRequest.get(invokeErrorManager: true, dogManager: self.getDogManager()) { newDogManager, _ in
+                guard let newDogManager = newDogManager else {
+                    return
+                }
+                
+                for dog in newDogManager.dogs {
+                    // The Hound server can't calculate reminderExecutionDates itself. Therefore, create an array of enabled reminders that have a non-nil reminderExecutionDate. We then send this to the Hound server to provide it with the now-unpaused reminderExecutionDates so it can have the correct values stored
+                    let remindersToUpdate = dog.dogReminders.reminders.filter({ reminder in
+                        return reminder.reminderIsEnabled && reminder.reminderExecutionDate != nil
+                    })
+                    RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: remindersToUpdate) { requestWasSuccessful, _ in
+                        if requestWasSuccessful == true {
+                            // the call to update the server on the reminder unpause was successful, now send to delegate
+                            self.setDogManager(sender: Sender(origin: self, localized: self), newDogManager: newDogManager)
                         }
                     }
                 }
-                else {
-                    // reminders are now paused, so remove the timers
-                    TimingManager.invalidateAll(forDogManager: dogManager)
-                }
-            }
-            else {
-                self.isPausedSwitch.setOn(!isPaused, animated: true)
             }
         }
     }
@@ -310,7 +310,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         }
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "settingsFamilyMemberTableViewCell", for: indexPath) as! SettingsFamilyMemberTableViewCell
-            cell.setup(forDisplayFullName: familyMember.displayFullName, userId: familyMember.userId, isUserFamilyHead: FamilyConfiguration.isFamilyHead)
+            cell.setup(forDisplayFullName: familyMember.displayFullName, userId: familyMember.userId)
             
             return cell
         }

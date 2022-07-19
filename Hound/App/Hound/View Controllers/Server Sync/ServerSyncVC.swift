@@ -18,7 +18,7 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
     
     // MARK: - IB
     
-    @IBOutlet private weak var statusLabel: ScaledUILabel!
+    @IBOutlet private weak var getRequestsProgressView: UIProgressView!
     
     // MARK: - Main
     override func viewDidLoad() {
@@ -26,8 +26,7 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
         
         oneTimeSetup()
         
-        // TO DO NOW change from text checkmark boxes to progressive loading bar. this loading bar uses the progress property of the URLSessionDataTask object to actually tell how far each query is done.
-    }
+}
     
     override func viewWillAppear(_ animated: Bool) {
         // Called before the view is added to the windows’ view hierarchy
@@ -39,6 +38,18 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
         UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
         
         repeatableSetup()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // As soon as this view disappears, we want to halt the observers to clean up / deallocate resources.
+        getUserProgressObserver?.invalidate()
+        getUserProgressObserver = nil
+        getFamilyProgressObserver?.invalidate()
+        getFamilyProgressObserver = nil
+        getDogsProgressObserver?.invalidate()
+        getDogsProgressObserver = nil
     }
     
     // MARK: - Properties
@@ -57,15 +68,24 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
         ServerSyncViewController.dogManager = newDogManager
     }
     
-    private var serverContacted = false
-    private var getUserFinished = false
-    private var getFamilyFinished = false
-    private var getDogsFinished = false
+    /// What fraction of the loading/progress bar the user request is worth when completed
+    private var getUserProgressFractionOfWhole = 0.2
+    @objc dynamic private var getUserProgress: Progress?
+    private var getUserProgressObserver: NSKeyValueObservation?
+    
+    /// What fraction of the loading/progress bar the family request is worth when completed
+    private var getFamilyProgressFractionOfWhole = 0.2
+    @objc dynamic private var getFamilyProgress: Progress?
+    private var getFamilyProgressObserver: NSKeyValueObservation?
+    
+    /// What fraction of the loading/progress bar the dogs request is worth when completed
+    private var getDogsProgressFractionOfWhole = 0.6
+    @objc dynamic private var getDogsProgress: Progress?
+    private var getDogsProgressObserver: NSKeyValueObservation?
     
     // MARK: - Functions
     
     private func oneTimeSetup() {
-        updateStatusLabel()
         let retryAlertAction = UIAlertAction(title: "Retry Login", style: .default) { _ in
             self.repeatableSetup()
         }
@@ -80,11 +100,12 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
     }
     
     private func repeatableSetup() {
-        serverContacted = false
-        getUserFinished = false
-        getFamilyFinished = false
-        getDogsFinished = false
-        updateStatusLabel()
+        getUserProgress = nil
+        getUserProgressObserver = nil
+        getFamilyProgress = nil
+        getFamilyProgressObserver = nil
+        getDogsProgress = nil
+        getDogsProgressObserver = nil
         
         // placeholder userId, therefore we need to have them login to even know who they are
         if UserInformation.userId == nil || UserInformation.userId! == EnumConstant.HashConstant.defaultSHA256Hash {
@@ -98,92 +119,16 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
         }
     }
     
-    /// If all the request has successfully completed, persist the new dogManager to memory and continue into the hound app.
-    private func checkSynchronizationStatus() {
-        
-        guard serverContacted && getUserFinished && getFamilyFinished && getDogsFinished else {
-            return
-        }
-        
-        // figure out where to go next, if the user is new and has no dogs (aka probably no family yet either) then we help them make their first dog
-        
-        // hasn't shown configuration to create/update dog
-        if LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore == false {
-            // Created family, no dogs present
-            // OR joined family, no dogs present
-            // OR joined family, dogs already present
-            self.performSegueOnceInWindowHierarchy(segueIdentifier: "familyIntroductionViewController")
-            
-        }
-        // has shown configuration before
-        else {
-            self.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController")
-        }
-        
-    }
-    
-    /// Update status label from a synchronous code. This will produce a 'purple' error if used from a callback or other sync function
-    private func updateStatusLabel() {
-        let finishedContact = "      Contacting Server ✅\n"
-        let inProgressContact = "      Contacting Server ❌\n"
-        if self.serverContacted == true {
-            self.statusLabel.text! = finishedContact
-        }
-        else {
-            self.statusLabel.text! = inProgressContact
-        }
-        
-        let finishedUser = "      Fetching User ✅\n"
-        let inProgressUser = "      Fetching User ❌\n"
-        if self.getUserFinished == true {
-            self.statusLabel.text!.append(finishedUser)
-        }
-        else {
-            self.statusLabel.text!.append(inProgressUser)
-        }
-        
-        let finishedUserConfiguration = "      Fetching User Configuration ✅\n"
-        let inProgressUserConfiguration = "      Fetching User Configuration ❌\n"
-        if self.getUserFinished == true {
-            self.statusLabel.text!.append(finishedUserConfiguration)
-        }
-        else {
-            self.statusLabel.text!.append(inProgressUserConfiguration)
-        }
-        
-        let finishedFamily = "      Fetching Family ✅\n"
-        let inProgressFamily = "      Fetching Family ❌\n"
-        if self.getFamilyFinished == true {
-            self.statusLabel.text!.append(finishedFamily)
-        }
-        else {
-            self.statusLabel.text!.append(inProgressFamily)
-        }
-        
-        let finishedDogs = "      Fetching Dogs ✅"
-        let inProgressDogs = "      Fetching Dogs ❌"
-        if self.getDogsFinished == true {
-            self.statusLabel.text!.append(finishedDogs)
-        }
-        else {
-            self.statusLabel.text!.append(inProgressDogs)
-        }
-    }
-    
     // MARK: - Get Functions
     
-    /// Retrieve the user
     private func getUser() {
-        UserRequest.get(invokeErrorManager: false) { _, familyId, responseStatus in
+        getUserProgress = UserRequest.get(invokeErrorManager: false) { _, familyId, responseStatus in
             switch responseStatus {
             case .successResponse:
                 // we got the user information back and have setup the user config based off of that info
-                self.serverContacted = true
-                self.getUserFinished = true
-                self.updateStatusLabel()
                 // user has family
                 if familyId != nil {
-                    self.getFamilyConfigurationAndDogs()
+                    self.getFamilyConfiguration()
                 }
                 // no family for user
                 else {
@@ -195,32 +140,79 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
             case .noResponse:
                 AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)
             }
+        }?.progress
+        
+        getUserProgressObserver = observe(\.getUserProgress?.fractionCompleted, options: [.new]) { _, _ in
+            self.didObserveProgressChange()
         }
     }
     
-    /// Retrieves the family configuration then any dogs the user may have
-    private func getFamilyConfigurationAndDogs() {
-        // we want to use our own custom error message
-        // Additionally, getDogManager first makes sure the familyConfiguration is up to date with inital query then if successful it sends a second query to get our dogManager
-        DogsRequest.get(invokeErrorManager: false, dogManager: ServerSyncViewController.dogManager) { newDogManager, responseStatus in
+    private func getFamilyConfiguration() {
+        getFamilyProgress = FamilyRequest.get(invokeErrorManager: false) { _, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let newDogManager = newDogManager {
-                    ServerSyncViewController.dogManager = newDogManager
-                    // Now its known getDogManager was successful which also implied that getFamily was successful
-                    self.getFamilyFinished = true
-                    self.getDogsFinished = true
-                    self.updateStatusLabel()
-                    self.checkSynchronizationStatus()
-                }
-                else {
+                self.getDogs()
+            case .failureResponse:
+                AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
+            case .noResponse:
+                AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)
+            }
+        }?.progress
+        
+        getFamilyProgressObserver = observe(\.getFamilyProgress?.fractionCompleted, options: [.new]) { _, _ in
+            self.didObserveProgressChange()
+        }
+    }
+
+    private func getDogs() {
+        // we want to use our own custom error message
+        // Additionally, getDogManager first makes sure the familyConfiguration is up to date with inital query then if successful it sends a second query to get our dogManager
+        getDogsProgress = DogsRequest.get(invokeErrorManager: false, dogManager: ServerSyncViewController.dogManager) { newDogManager, responseStatus in
+            switch responseStatus {
+            case .successResponse:
+                guard let newDogManager = newDogManager else {
                     AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
+                    return
+                }
+                
+                ServerSyncViewController.dogManager = newDogManager
+                
+                // hasn't shown configuration to create/update dog
+                if LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore == false {
+                    // Created family, no dogs present
+                    // OR joined family, no dogs present
+                    // OR joined family, dogs already present
+                    self.performSegueOnceInWindowHierarchy(segueIdentifier: "familyIntroductionViewController")
+                    
+                }
+                // has shown configuration before
+                else {
+                    self.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController")
                 }
             case .failureResponse:
                 AlertManager.enqueueAlertForPresentation(self.failureResponseAlertController)
             case .noResponse:
                 AlertManager.enqueueAlertForPresentation(self.noResponseAlertController)
             }
+        }?.progress
+        
+        getDogsProgressObserver = observe(\.getDogsProgress?.fractionCompleted, options: [.new]) { _, _ in
+            self.didObserveProgressChange()
+        }
+    }
+    
+    // The .fractionCompleted variable on one of the progress objects was updated. Therefore, we must update our loading bar
+    private func didObserveProgressChange() {
+        DispatchQueue.main.async {
+            let userProgress = (self.getUserProgress?.fractionCompleted ?? 0.0) * self.getUserProgressFractionOfWhole
+            
+            let familyProgress =
+            (self.getFamilyProgress?.fractionCompleted ?? 0.0) * self.getFamilyProgressFractionOfWhole
+            
+            let dogsProgress =
+            (self.getDogsProgress?.fractionCompleted ?? 0.0) * self.getDogsProgressFractionOfWhole
+            
+            self.getRequestsProgressView.progress = Float(userProgress + familyProgress + dogsProgress)
         }
     }
     

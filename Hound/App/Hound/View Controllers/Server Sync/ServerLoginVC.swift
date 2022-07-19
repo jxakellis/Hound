@@ -253,7 +253,7 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
     private func signInUser() {
         // start query indictator, if there is already one present then its fine as alertmanager will throw away the duplicate. we remove the query indicator when we finish interpreting our response
         RequestUtils.beginRequestIndictator()
-        UserRequest.get(invokeErrorManager: true) { userId, _, _ in
+        _ = UserRequest.get(invokeErrorManager: true) { userId, _, _ in
             // the user config is already automatically setup with this function
             RequestUtils.endRequestIndictator {
                 if userId != nil {

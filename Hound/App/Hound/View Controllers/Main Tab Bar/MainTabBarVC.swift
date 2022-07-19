@@ -169,6 +169,7 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         }
         CheckManager.checkForReleaseNotes()
         CheckManager.checkForNotificationSettingImbalance()
+        CheckManager.checkForRemoteNotificationImbalance()
         TimingManager.willInitalize(forDogManager: getDogManager())
     }
 

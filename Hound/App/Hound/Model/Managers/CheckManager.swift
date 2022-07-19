@@ -177,4 +177,14 @@ enum CheckManager {
         }
     }
     
+    /// If a user is isNotificationAuthorized but their userNotificationToken is nil, then that means they aren't properly registered for remote notifications. This in turn means they cannot recieve push notifications. Therefore, if a user is isNotificationAuthorized then they must also be registered for remote notifications
+    static func checkForRemoteNotificationImbalance() {
+        if LocalConfiguration.isNotificationAuthorized == true && UserInformation.userNotificationToken == nil {
+            // User isn't registered for remote notifications but should be
+            DispatchQueue.main.async {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+        }
+    }
+    
 }
