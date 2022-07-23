@@ -10,10 +10,7 @@ import UIKit
 
 /// abstractions used by other endpoint classes to make their request to the server, not used anywhere else in hound so therefore internal to endpoints and api requests.
 enum InternalRequestUtils {
-    static var baseURLWithoutParams: URL { return URL(string: "http://api.houndorganizer.com/api/\(UIApplication.appBuild)")! }
-    // home URL(string: "http://10.0.0.110:5000/api/v1")!
-    // hotspot URL(string: "http://172.20.10.2:5000/api/v1")!
-    // no wifi / local simulator URL(string: "http://localhost:5000/api/v1")!
+    static var baseURLWithoutParams: URL { return URL(string: "https://api.houndorganizer.com/api/\(UIApplication.appBuild)")! }
     
     private static var sessionConfig: URLSessionConfiguration {
         let sessionConfig = URLSessionConfiguration.default

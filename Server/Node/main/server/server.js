@@ -1,19 +1,27 @@
 // make sure the constants are loaded
 require('./constants');
 
+// Import builtin NodeJS modules to instantiate the service
+const https = require('https');
+// const fs = require('fs');
+
+// Import the express module
 const express = require('express');
 const { serverLogger } = require('../tools/logging/loggers');
 
+// Instantiate an Express application
 const app = express();
 
 // MARK: Create the server
 
 const { restoreAlarmNotificationsForAllFamilies } = require('../tools/notifications/alarm/restoreAlarmNotification');
 const { cleanUpIsDeleted } = require('../tools/database/databaseCleanUp');
+const { configureAppForRequests } = require('./request');
 
-// Make the server listen on a specific port
-const server = app.listen(global.constant.server.SERVER_PORT, async () => {
-  serverLogger.info(`Listening on port ${global.constant.server.SERVER_PORT}`);
+// Create a NodeJS HTTPS listener on port that points to the Express app
+// Use a callback function to tell when the server is created.
+const server = https.createServer(app).listen(global.constant.server.SERVER_PORT, async () => {
+  serverLogger.info(`HTTPS server running on port ${global.constant.server.SERVER_PORT}`);
 
   // TO DO NOW create previousServerErrors table that gets a row every time an async server action fails. E.g. sending an APN.
   // Normal errors get sent back to the user if something fails, but we need to log if there is a server error that isn't sent to the user
@@ -26,13 +34,10 @@ const server = app.listen(global.constant.server.SERVER_PORT, async () => {
     await restoreAlarmNotificationsForAllFamilies();
   }
   await cleanUpIsDeleted();
+
+  // Setup the app to process requests
+  configureAppForRequests(app);
 });
-
-// MARK: Setup the app to process requests
-
-const { configureAppForRequests } = require('./request');
-
-configureAppForRequests(app);
 
 // MARK:  Handle termination of the server
 

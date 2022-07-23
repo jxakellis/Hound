@@ -26,11 +26,11 @@ function configureAppForRequests(app) {
 
   // Make sure the user is on an updated version
 
-  app.use('/production/:appBuild', validateAppBuild);
+  app.use('/prod/:appBuild', validateAppBuild);
 
   // Route the request to the userRouter
 
-  app.use('/production/:appBuild/user', userRouter);
+  app.use('/prod/:appBuild/user', userRouter);
 
   // Throw back the request if an unknown path is used
   app.use('*', async (req, res) => res.sendResponseForStatusJSONError(404, undefined, new GeneralError('Path not found', global.constant.error.value.INVALID)));

@@ -1,5 +1,5 @@
 const server = {
-  SERVER_PORT: 3000,
+  SERVER_PORT: 443,
   // If true, then when the server restarts we recreate all of the alarm notifications. Only output xxxLogger.error and serverLogger.* console messages
   // If false, then assume dev environment and output all xxxLogger.* console messages
   IS_PRODUCTION: false,
