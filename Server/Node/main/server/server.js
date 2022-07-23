@@ -2,8 +2,9 @@
 require('./constants');
 
 // Import builtin NodeJS modules to instantiate the service
+const http = require('http');
 const https = require('https');
-// const fs = require('fs');
+const fs = require('fs');
 
 // Import the express module
 const express = require('express');
@@ -19,25 +20,32 @@ const { cleanUpIsDeleted } = require('../tools/database/databaseCleanUp');
 const { configureAppForRequests } = require('./request');
 
 // Create a NodeJS HTTPS listener on port that points to the Express app
-// Use a callback function to tell when the server is created.
-const server = https.createServer(app).listen(global.constant.server.SERVER_PORT, async () => {
-  serverLogger.info(`HTTPS server running on port ${global.constant.server.SERVER_PORT}`);
+// If we are in production, then create an HTTPS only server. Otherwise for development, create an HTTP only server.
+const HTTPOrHTTPSServer = global.constant.server.IS_PRODUCTION
+  ? https.createServer({
+    key: fs.readFileSync('/etc/letsencrypt/live/my_api_url/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/my_api_url/fullchain.pem'),
+  }, app)
+  : http.createServer(app);
 
+const port = global.constant.server.IS_PRODUCTION ? 443 : 80;
+HTTPOrHTTPSServer.listen(port, async () => {
+  serverLogger.info(`HTTP Server running on port ${port}`);
   // TO DO NOW create previousServerErrors table that gets a row every time an async server action fails. E.g. sending an APN.
   // Normal errors get sent back to the user if something fails, but we need to log if there is a server error that isn't sent to the user
   // TO DO NOW review previousRequests table to ensure it is logging everything.
   // TO DO NOW create previousResponses table that gets a row everytime a response is sent
   // Don't store much of the response body as that could take up a lot of space
+  // Server is freshly restarted. Restore notifications that were lost;
 
   if (global.constant.server.IS_PRODUCTION) {
-    // Server is freshly restarted. Restore notifications that were lost;
     await restoreAlarmNotificationsForAllFamilies();
+    await cleanUpIsDeleted();
   }
-  await cleanUpIsDeleted();
-
-  // Setup the app to process requests
-  configureAppForRequests(app);
 });
+
+// Setup the app to process requests
+configureAppForRequests(app);
 
 // MARK:  Handle termination of the server
 
@@ -95,7 +103,7 @@ async function shutdown() {
       serverLogger.info('Pool For Requests Ended');
     });
 
-    server.close(() => {
+    HTTPOrHTTPSServer.close(() => {
       serverLogger.info('Hound Server Closed');
     });
   }

@@ -10,8 +10,10 @@ import UIKit
 
 /// abstractions used by other endpoint classes to make their request to the server, not used anywhere else in hound so therefore internal to endpoints and api requests.
 enum InternalRequestUtils {
-    static var baseURLWithoutParams: URL { return URL(string: "https://api.houndorganizer.com/api/\(UIApplication.appBuild)")! }
+    static var baseURLWithoutParams: URL { return URL(string: "https://api.houndorganizer.com/prod/\(UIApplication.appBuild)")! }
     
+    // https://api.houndorganizer.com/prod
+    // http://10.0.0.108/prod
     private static var sessionConfig: URLSessionConfiguration {
         let sessionConfig = URLSessionConfiguration.default
         sessionConfig.timeoutIntervalForRequest = 7.5

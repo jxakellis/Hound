@@ -26,7 +26,7 @@ async function createUserForUserIdentifier(
   interfaceStyle,
   logsInterfaceScale,
   remindersInterfaceScale,
-  maximumNumberOfLogsDisplayed, 
+  maximumNumberOfLogsDisplayed,
 ) {
   if (areAllDefined(connection, userIdentifier) === false) {
     throw new ValidationError('connection or userIdentifier missing', global.constant.error.value.MISSING);
@@ -70,7 +70,7 @@ async function createUserForUserIdentifier(
     ),
     databaseQuery(
       connection,
-      'INSERT INTO userConfiguration(userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, snoozeLength, notificationSound, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, maximumNumberOfLogsDisplayed, ) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+      'INSERT INTO userConfiguration(userId, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, snoozeLength, notificationSound, logsInterfaceScale, remindersInterfaceScale, interfaceStyle, maximumNumberOfLogsDisplayed) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
       [userId, castedIsNotificationEnabled, castedIsLoudNotification, castedIsFollowUpEnabled, castedFollowUpDelay, castedSnoozeLength, notificationSound, logsInterfaceScale, remindersInterfaceScale, castedInterfaceStyle, maximumNumberOfLogsDisplayed],
     )];
   await Promise.all(promises);
