@@ -67,14 +67,14 @@ const poolForRequests = mysql2.createPool({
 });
 
 poolForRequests.on('acquire', (connection) => {
-  if (global.constant.server.IS_PRODUCTION === false) {
+  if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
     const currentDate = new Date();
     poolLogger.debug(`Pool connection ${connection.threadId} acquired at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
   }
 });
 
 poolForRequests.on('release', (connection) => {
-  if (global.constant.server.IS_PRODUCTION === false) {
+  if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
     const currentDate = new Date();
     poolLogger.debug(`Pool connection ${connection.threadId} released at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
   }

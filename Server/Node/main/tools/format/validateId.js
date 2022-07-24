@@ -19,8 +19,8 @@ async function validateAppBuild(req, res, next) {
     return res.sendResponseForStatusJSONError(400, undefined, new ValidationError('appBuild missing', global.constant.error.value.MISSING));
   }
   // the user isn't on the previous or current app build
-  if (appBuild !== global.constant.server.PREVIOUS_APP_BUILD && appBuild !== global.constant.server.CURRENT_APP_BUILD) {
-    return res.sendResponseForStatusJSONError(400, undefined, new ValidationError(`appBuild of ${appBuild} is invalid. Acceptable builds are ${global.constant.server.PREVIOUS_APP_BUILD} and ${global.constant.server.CURRENT_APP_BUILD}`, global.constant.error.general.APP_BUILD_OUTDATED));
+  if (global.constant.server.COMPATIBLE_IOS_APP_BUILDS.includes(appBuild) === false) {
+    return res.sendResponseForStatusJSONError(400, undefined, new ValidationError(`App build of ${appBuild} is incompatible. Compatible builds: ${global.constant.server.COMPATIBLE_IOS_APP_BUILDS}`, global.constant.error.general.APP_BUILD_OUTDATED));
   }
 
   return next();

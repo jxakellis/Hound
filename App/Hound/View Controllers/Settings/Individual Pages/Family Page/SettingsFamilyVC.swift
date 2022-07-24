@@ -60,6 +60,8 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // TO DO add button to copy paste family code
+        
         oneTimeSetup()
     }
     

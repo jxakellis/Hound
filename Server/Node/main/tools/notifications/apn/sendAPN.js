@@ -1,6 +1,7 @@
 const apn = require('apn');
 const { apnLogger } = require('../../logging/loggers');
 
+const { logServerError } = require('../../logging/logServerError');
 const { formatArray, formatString } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 
@@ -18,7 +19,7 @@ async function sendAPN(token, category, sound, alertTitle, alertBody, customPayl
   let castedAlertTitle = formatString(alertTitle);
   let castedAlertBody = formatString(alertBody);
 
-  if (global.constant.server.IS_PRODUCTION === false) {
+  if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
     apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${castedAlertTitle}, ${castedAlertBody}`);
   }
 
@@ -100,7 +101,7 @@ async function sendAPN(token, category, sound, alertTitle, alertBody, customPayl
     try {
       const response = await apnProvider.send(notification, token);
       // response.sent: Array of device tokens to which the notification was sent succesfully
-      if (global.constant.server.IS_PRODUCTION === true) {
+      if (global.constant.server.SHOW_CONSOLE_MESSAGES === false) {
         return;
       }
       if (response.sent.length !== 0) {
@@ -112,13 +113,11 @@ async function sendAPN(token, category, sound, alertTitle, alertBody, customPayl
       }
     }
     catch (error) {
-      apnLogger.error('sendAPN Response Error:');
-      apnLogger.error(error);
+      logServerError('sendAPN Response', error);
     }
   }
   catch (error) {
-    apnLogger.error('sendAPN error:');
-    apnLogger.error(error);
+    logServerError('sendAPN', error);
   }
 }
 
@@ -127,7 +126,7 @@ async function sendAPN(token, category, sound, alertTitle, alertBody, customPayl
 * Invokes sendAPN with the tokens, alertTitle, and alertBody
 */
 async function sendAPNForUser(userId, category, alertTitle, alertBody, customPayload) {
-  if (global.constant.server.IS_PRODUCTION === false) {
+  if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
     apnLogger.debug(`sendAPNForUser ${userId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
   }
 
@@ -149,8 +148,7 @@ async function sendAPNForUser(userId, category, alertTitle, alertBody, customPay
     }
   }
   catch (error) {
-    apnLogger.error('sendAPNForUser error:');
-    apnLogger.error(error);
+    logServerError('sendAPNForUser', error);
   }
 }
 
@@ -159,7 +157,7 @@ async function sendAPNForUser(userId, category, alertTitle, alertBody, customPay
  * Invokes sendAPN with the tokens, alertTitle, and alertBody
  */
 async function sendAPNForFamily(familyId, category, alertTitle, alertBody, customPayload) {
-  if (global.constant.server.IS_PRODUCTION === false) {
+  if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
     apnLogger.debug(`sendAPNForFamily ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
   }
 
@@ -177,8 +175,7 @@ async function sendAPNForFamily(familyId, category, alertTitle, alertBody, custo
     }
   }
   catch (error) {
-    apnLogger.error('sendAPNForFamily error:');
-    apnLogger.error(error);
+    logServerError('sendAPNForFamily', error);
   }
 }
 
@@ -187,7 +184,7 @@ async function sendAPNForFamily(familyId, category, alertTitle, alertBody, custo
  * Invokes sendAPN with the tokens, alertTitle, and alertBody
  */
 async function sendAPNForFamilyExcludingUser(userId, familyId, category, alertTitle, alertBody, customPayload) {
-  if (global.constant.server.IS_PRODUCTION === false) {
+  if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
     apnLogger.debug(`sendAPNForFamilyExcludingUser ${userId}, ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
   }
 
@@ -205,8 +202,7 @@ async function sendAPNForFamilyExcludingUser(userId, familyId, category, alertTi
     }
   }
   catch (error) {
-    apnLogger.error('sendAPNForFamilyExcludingUser error');
-    apnLogger.error(error);
+    logServerError('sendAPNForFamilyExcludingUser', error);
   }
 }
 

@@ -8,6 +8,7 @@ const { formatDate } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 const { sendAPNForFamily, sendAPNForUser } = require('../apn/sendAPN');
 
+const { logServerError } = require('../../logging/logServerError');
 const { deleteAlarmNotificationsForReminder } = require('./deleteAlarmNotification');
 const { cancelSecondaryJobForUserForReminder } = require('./cancelJob');
 const { formatReminderAction } = require('../../format/formatName');
@@ -22,7 +23,7 @@ async function createAlarmNotificationForFamily(familyId, reminderId, reminderEx
   try {
     // all ids should already be formatted into numbers
     const formattedReminderExecutionDate = formatDate(reminderExecutionDate);
-    if (global.constant.server.IS_PRODUCTION === false) {
+    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
       alarmLogger.debug(`createAlarmNotificationForFamily ${familyId}, ${reminderId}, ${reminderExecutionDate}, ${formattedReminderExecutionDate}`);
     }
 
@@ -48,7 +49,7 @@ async function createAlarmNotificationForFamily(familyId, reminderId, reminderEx
     }
     // reminderExecutionDate is in the future
     else {
-      if (global.constant.server.IS_PRODUCTION === false) {
+      if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
         alarmLogger.info(`Scheduling a new job; count will be ${Object.keys(schedule.scheduledJobs).length + 1}`);
       }
       schedule.scheduleJob(`Family${familyId}Reminder${reminderId}`, formattedReminderExecutionDate, async () => {
@@ -58,8 +59,7 @@ async function createAlarmNotificationForFamily(familyId, reminderId, reminderEx
     }
   }
   catch (error) {
-    alarmLogger.error('createAlarmNotificationForFamily error:');
-    alarmLogger.error(error);
+    logServerError('createAlarmNotificationForFamily', error);
   }
 }
 
@@ -118,8 +118,7 @@ async function sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(family
     }
   }
   catch (error) {
-    alarmLogger.error('sendPrimaryAPNAndCreateSecondaryNotificationForFamily error:');
-    alarmLogger.error(error);
+    logServerError('sendPrimaryAPNAndCreateSecondaryNotificationForFamily', error);
   }
 }
 
@@ -133,7 +132,7 @@ async function sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(family
 async function createSecondaryAlarmNotificationForUser(userId, reminderId, secondaryExecutionDate) {
   try {
     const formattedSecondaryExecutionDate = formatDate(secondaryExecutionDate);
-    if (global.constant.server.IS_PRODUCTION === false) {
+    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
       alarmLogger.debug(`createSecondaryAlarmNotificationForUser ${userId}, ${reminderId}, ${secondaryExecutionDate}, ${formattedSecondaryExecutionDate}`);
     }
 
@@ -157,7 +156,7 @@ async function createSecondaryAlarmNotificationForUser(userId, reminderId, secon
     }
     // formattedSecondaryExecutionDate is in the future
     else {
-      if (global.constant.server.IS_PRODUCTION === false) {
+      if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
         alarmLogger.info(`Scheduling a new job; count will be ${Object.keys(schedule.scheduledJobs).length + 1}`);
       }
       schedule.scheduleJob(`User${userId}Reminder${reminderId}`, formattedSecondaryExecutionDate, () => {
@@ -167,8 +166,7 @@ async function createSecondaryAlarmNotificationForUser(userId, reminderId, secon
     }
   }
   catch (error) {
-    alarmLogger.error('createSecondaryAlarmNotificationForUser error:');
-    alarmLogger.error(error);
+    logServerError('createSecondaryAlarmNotificationForUser', error);
   }
 }
 
@@ -203,8 +201,7 @@ async function sendSecondaryAPNForUser(userId, reminderId) {
     sendAPNForUser(userId, global.constant.apn.category.REMINDER, alertTitle, alertBody, customPayload);
   }
   catch (error) {
-    alarmLogger.error('sendAPNForUser error:');
-    alarmLogger.error(error);
+    logServerError('sendAPNForUser', error);
   }
 }
 

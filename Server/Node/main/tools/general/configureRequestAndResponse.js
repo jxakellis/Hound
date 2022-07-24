@@ -1,7 +1,8 @@
+const { logResponse } = require('../logging/logResponse');
+const { logServerError } = require('../logging/logServerError');
 const { formatNumber, formatBoolean } = require('../format/formatObject');
 const { DatabaseError, convertErrorToJSON } = require('./errors');
 const { poolForRequests } = require('../database/databaseConnections');
-const { queryLogger, responseLogger } = require('../logging/loggers');
 const { areAllDefined } = require('../format/validateDefined');
 const { databaseQuery } = require('../database/databaseQuery');
 
@@ -10,6 +11,7 @@ function configureRequestForResponse(req, res, next) {
   req.hasActiveConnection = false;
   req.hasActiveTransaction = false;
   req.hasBeenLogged = false;
+  res.hasBeenLogged = false;
   configureResponse(req, res);
 
   return next();
@@ -45,19 +47,14 @@ function configureResponse(req, res) {
     }
 
     // If we user provided an error, then we convert that error to JSON and use it as the body
-    const JSONResponse = areAllDefined(error)
+    const body = areAllDefined(error)
       ? convertErrorToJSON(error)
       : json;
 
-    let JSONResponseString = JSON.stringify(JSONResponse);
-    JSONResponseString = JSONResponseString.substring(0, 1000);
-
-    if (global.constant.server.IS_PRODUCTION === false) {
-      responseLogger.info(`Response for ${req.method} ${req.originalUrl}\n With body: ${JSON.stringify(JSONResponseString)}`);
-    }
+    logResponse(req, res, body);
 
     res.hasSentResponse = true;
-    res.status(castedStatus).json(JSONResponse);
+    res.status(castedStatus).json(body);
   };
 }
 
@@ -80,17 +77,15 @@ async function commitTransaction(req, connection, hasActiveConnection, hasActive
     }
     catch (commitError) {
       // COMMIT failed, attempt to rollback
-      queryLogger.error(`COMMIT Query Error: ${commitError}`);
+      logServerError('commitTransaction COMMIT', commitError);
       try {
         await databaseQuery(connection, 'ROLLBACK');
         req.hasActiveTransaction = false;
         // Backup Rollback succeeded
-        queryLogger.error('C_Q ROLLBACK Successful');
       }
       catch (rollbackError) {
         // Backup ROLLBACK failed, skip COMMIT and ROLLBACK since both failed
-        queryLogger.error('C_Q Rollback Error:');
-        queryLogger.error(rollbackError);
+        logServerError('commitTransaction ROLLBACK', rollbackError);
       }
     }
   }
@@ -116,7 +111,7 @@ async function rollbackTransaction(req, connection, hasActiveConnection, hasActi
     }
     catch (rollbackError) {
       // ROLLBACK failed, continue as there is nothing we can do
-      queryLogger.error(`ROLLBACK Error: ${rollbackError}`);
+      logServerError('rollbackTransaction ROLLBACK', rollbackError);
     }
   }
 

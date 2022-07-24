@@ -2,6 +2,7 @@ const { connectionForAlerts } = require('../../database/databaseConnections');
 const { alertLogger } = require('../../logging/loggers');
 const { areAllDefined } = require('../../format/validateDefined');
 
+const { logServerError } = require('../../logging/logServerError');
 const { getDogForDogId } = require('../../../../controllers/getFor/getForDogs');
 const { getUserFirstNameLastNameForUserId } = require('../../../../controllers/getFor/getForUser');
 const { sendAPNForFamilyExcludingUser } = require('../apn/sendAPN');
@@ -13,7 +14,7 @@ const { formatLogAction } = require('../../format/formatName');
  */
 async function createLogNotification(userId, familyId, dogId, logAction, logCustomActionName) {
   try {
-    if (global.constant.server.IS_PRODUCTION === false) {
+    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
       alertLogger.debug(`createLogNotification ${userId}, ${familyId}, ${dogId}, ${logAction}, ${logCustomActionName}`);
     }
 
@@ -55,8 +56,7 @@ async function createLogNotification(userId, familyId, dogId, logAction, logCust
     sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.category.LOG, alertTitle, alertBody, {});
   }
   catch (error) {
-    alertLogger.error('createLogNotification error:');
-    alertLogger.error(error);
+    logServerError('createLogNotification', error);
   }
 }
 

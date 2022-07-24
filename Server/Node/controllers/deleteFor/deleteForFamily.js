@@ -17,7 +17,7 @@ const { deleteSecondaryAlarmNotificationsForUser } = require('../../main/tools/n
  *  If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-async function deleteFamilyForUserIdFamilyId(connection, userId, familyId, kickUserId) {
+async function deleteFamilyForUserIdFamilyId(connection, userId, familyId, kickUserId, activeSubscription) {
   const castedKickUserId = formatSHA256Hash(kickUserId);
 
   // kickUserId is optional
@@ -31,7 +31,7 @@ async function deleteFamilyForUserIdFamilyId(connection, userId, familyId, kickU
     await kickFamilyMember(connection, userId, familyId, castedKickUserId);
   }
   else {
-    await deleteFamily(connection, userId, familyId);
+    await deleteFamily(connection, userId, familyId, activeSubscription);
   }
 }
 
@@ -39,9 +39,9 @@ async function deleteFamilyForUserIdFamilyId(connection, userId, familyId, kickU
  * Helper method for deleteFamilyForUserIdFamilyId, goes through checks to remove a user from their family
  * If the user is the head of the family (and there are no other family members), we delete the family
  */
-async function deleteFamily(connection, userId, familyId) {
-  if (areAllDefined(connection, userId, familyId) === false) {
-    throw new ValidationError('connection, userId, or familyId missing', global.constant.error.value.MISSING);
+async function deleteFamily(connection, userId, familyId, activeSubscription) {
+  if (areAllDefined(connection, userId, familyId, activeSubscription) === false) {
+    throw new ValidationError('connection, userId, familyId, or activeSubscription missing', global.constant.error.value.MISSING);
   }
 
   // find out if the user is the family head
@@ -66,9 +66,12 @@ async function deleteFamily(connection, userId, familyId) {
       throw new ValidationError('Family still contains multiple members', global.constant.error.family.leave.INVALID);
     }
 
-    // TO DO NOW check if the family has an active subscription. Only let them delete their family once their subscription expires
-    // In the future, we could check if the user's subscription is renewing.
-    // so if it is non-renewing / the user canceled it & is letting it expire, we can let them delete their family
+    // if the active subscription's isn't the default subscription, that means the family has an active subscription
+    if (activeSubscription.productId !== global.constant.subscription.DEFAULT_SUBSCRIPTION_PRODUCT_ID) {
+      throw new ValidationError('Family still has an active subscription', global.constant.error.family.leave.SUBSCRIPTION_ACTIVE);
+    }
+
+    // TO DO FUTURE check if the user's subscription is renewing. If it is non-renewing / is going to expire, we can let them delete their family
     // We just don't want a user with a renewing subscription to delete their family as then their subscription is paying for nothing
 
     // There is only one user left in the family, which is the API requester

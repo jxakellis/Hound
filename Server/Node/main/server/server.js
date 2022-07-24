@@ -23,19 +23,14 @@ const { configureAppForRequests } = require('./request');
 // If we are in production, then create an HTTPS only server. Otherwise for development, create an HTTP only server.
 const HTTPOrHTTPSServer = global.constant.server.IS_PRODUCTION
   ? https.createServer({
-    key: fs.readFileSync('/etc/letsencrypt/live/my_api_url/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/my_api_url/fullchain.pem'),
+    key: fs.readFileSync('/etc/letsencrypt/live/api.houndorganizer.com/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/api.houndorganizer.com/fullchain.pem'),
   }, app)
   : http.createServer(app);
 
 const port = global.constant.server.IS_PRODUCTION ? 443 : 80;
 HTTPOrHTTPSServer.listen(port, async () => {
   serverLogger.info(`HTTP Server running on port ${port}`);
-  // TO DO NOW create previousServerErrors table that gets a row every time an async server action fails. E.g. sending an APN.
-  // Normal errors get sent back to the user if something fails, but we need to log if there is a server error that isn't sent to the user
-  // TO DO NOW review previousRequests table to ensure it is logging everything.
-  // TO DO NOW create previousResponses table that gets a row everytime a response is sent
-  // Don't store much of the response body as that could take up a lot of space
   // Server is freshly restarted. Restore notifications that were lost;
 
   if (global.constant.server.IS_PRODUCTION) {

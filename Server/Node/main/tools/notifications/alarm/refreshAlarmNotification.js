@@ -2,10 +2,10 @@ const { alarmLogger } = require('../../logging/loggers');
 const { databaseQuery } = require('../../database/databaseQuery');
 const { connectionForAlarms } = require('../../database/databaseConnections');
 
+const { logServerError } = require('../../logging/logServerError');
 const { formatBoolean, formatNumber, formatDate } = require('../../format/formatObject');
 
 const { areAllDefined, atLeastOneDefined } = require('../../format/validateDefined');
-
 const { createSecondaryAlarmNotificationForUser } = require('./createAlarmNotification');
 const { deleteSecondaryAlarmNotificationsForUser } = require('./deleteAlarmNotification');
 
@@ -17,7 +17,7 @@ const { deleteSecondaryAlarmNotificationsForUser } = require('./deleteAlarmNotif
  */
 async function refreshSecondaryAlarmNotificationsForUserId(userId, isFollowUpEnabled, followUpDelay) {
   try {
-    if (global.constant.server.IS_PRODUCTION === false) {
+    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
       alarmLogger.debug(`refreshSecondaryAlarmNotificationsForUserId ${userId}, ${isFollowUpEnabled}, ${followUpDelay}`);
     }
 
@@ -84,8 +84,7 @@ async function refreshSecondaryAlarmNotificationsForUserId(userId, isFollowUpEna
     }
   }
   catch (error) {
-    alarmLogger.error('refreshSecondaryAlarmNotificationsForUserId error:');
-    alarmLogger.error(error);
+    logServerError('refreshSecondaryAlarmNotificationsForUserId', error);
   }
 }
 

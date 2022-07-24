@@ -45,7 +45,7 @@ async function deleteFamily(req, res) {
   try {
     const { userId, familyId } = req.params;
     const { kickUserId } = req.body;
-    await deleteFamilyForUserIdFamilyId(req.connection, userId, familyId, kickUserId);
+    await deleteFamilyForUserIdFamilyId(req.connection, userId, familyId, kickUserId, req.activeSubscription);
     return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);
   }
   catch (error) {

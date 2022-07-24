@@ -17,6 +17,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
     static var lifeCycleLogger = Logger(subsystem: "com.example.Pupotty", category: "Life Cycle")
     static var APIRequestLogger = Logger(subsystem: "com.example.Pupotty", category: "API Request")
     static var APIResponseLogger = Logger(subsystem: "com.example.Pupotty", category: "API Response")
+    
+    // TO DO NOW when archiving build. Specify whether it's a debug or release build. This decides whether or not the user will recieve a dev or prod notification token respectively
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.

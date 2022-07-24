@@ -2,10 +2,10 @@ const server = {
   // If true, then when the server restarts we recreate all of the alarm notifications. Only output xxxLogger.error and serverLogger.* console messages
   // If false, then assume dev environment and output all xxxLogger.* console messages
   IS_PRODUCTION: false,
-  // The most recent build of the app published to the app store
-  CURRENT_APP_BUILD: 4000,
-  // The second most recent build of the app, this will be the version most users are on until the app store one processes and they can update
-  PREVIOUS_APP_BUILD: 3999,
+  SHOW_CONSOLE_MESSAGES: true,
+  // App builds of the iOS Hound app that work properly with the server.
+  // A version would be depreciated if an endpoint path is changed or endpoint data return format is changed
+  COMPATIBLE_IOS_APP_BUILDS: [4000, 5000],
 };
 
 const limit = {
@@ -150,6 +150,7 @@ ER_FAMILY_PERMISSION_INVALID                (ER_FAMILY_PERMISSION_INVALID)
       IN_FAMILY_ALREADY: 'ER_FAMILY_JOIN_IN_FAMILY_ALREADY',
     },
     leave: {
+      SUBSCRIPTION_ACTIVE: 'ER_FAMILY_LEAVE_SUBSCRIPTION_ACTIVE',
       INVALID: 'ER_FAMILY_LEAVE_INVALID',
     },
     permission: {

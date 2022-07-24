@@ -2,6 +2,7 @@ const { serverLogger } = require('../../logging/loggers');
 const { schedule } = require('./schedules');
 const { createAlarmNotificationForFamily } = require('./createAlarmNotification');
 
+const { logServerError } = require('../../logging/logServerError');
 const { databaseQuery } = require('../../database/databaseQuery');
 const { connectionForAlarms } = require('../../database/databaseConnections');
 
@@ -39,8 +40,7 @@ async function restoreAlarmNotificationsForAllFamilies() {
     }
   }
   catch (error) {
-    serverLogger.error('restoreAlarmNotificationsForAll error:');
-    serverLogger.error(error);
+    logServerError('restoreAlarmNotificationsForAll', error);
   }
 }
 

@@ -1,7 +1,7 @@
 const express = require('express');
 
 const { parseFormData, parseJSON } = require('../tools/general/parseBody');
-const { requestLoggerForRequest } = require('../tools/logging/requestLogging');
+const { logRequest } = require('../tools/logging/logRequest');
 const { configureRequestForResponse, aquirePoolConnectionBeginTransaction } = require('../tools/general/configureRequestAndResponse');
 const { validateAppBuild } = require('../tools/format/validateId');
 const { userRouter } = require('../../routes/user');
@@ -22,15 +22,15 @@ function configureAppForRequests(app) {
 
   // Log request and setup logging for response
 
-  app.use(requestLoggerForRequest);
+  app.use('/app/:appBuild', logRequest);
 
   // Make sure the user is on an updated version
 
-  app.use('/prod/:appBuild', validateAppBuild);
+  app.use('/app/:appBuild', validateAppBuild);
 
   // Route the request to the userRouter
 
-  app.use('/prod/:appBuild/user', userRouter);
+  app.use('/app/:appBuild/user', userRouter);
 
   // Throw back the request if an unknown path is used
   app.use('*', async (req, res) => res.sendResponseForStatusJSONError(404, undefined, new GeneralError('Path not found', global.constant.error.value.INVALID)));

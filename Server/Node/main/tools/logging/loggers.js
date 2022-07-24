@@ -1,6 +1,6 @@
 const parentLogger = require('pino')();
 
-parentLogger.level = 'info';
+parentLogger.level = 'debug';
 
 // Logs general server information, unrelated to an individual request
 const serverLogger = parentLogger.child({ module: 'Server' });
@@ -14,9 +14,6 @@ const responseLogger = parentLogger.child({ module: 'Response' });
 // Logs pool connecion aquision and release for requests
 const poolLogger = parentLogger.child({ module: 'Pool' });
 
-// Logs database dueries (e.g. commit and rollback transactions)
-const queryLogger = parentLogger.child({ module: 'Query' });
-
 // Logs functions related to alarms and schedules (e.g. scheduling job for reminder)
 const alarmLogger = parentLogger.child({ module: 'Alarm' });
 
@@ -27,5 +24,5 @@ const alertLogger = parentLogger.child({ module: 'Alert' });
 const apnLogger = parentLogger.child({ module: 'APN' });
 
 module.exports = {
-  serverLogger, requestLogger, responseLogger, poolLogger, queryLogger, alarmLogger, alertLogger, apnLogger,
+  serverLogger, requestLogger, responseLogger, poolLogger, alarmLogger, alertLogger, apnLogger,
 };

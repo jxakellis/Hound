@@ -3,6 +3,7 @@ const { alertLogger } = require('../../logging/loggers');
 const { formatBoolean } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 
+const { logServerError } = require('../../logging/logServerError');
 const { getUserFirstNameLastNameForUserId } = require('../../../../controllers/getFor/getForUser');
 const { sendAPNForFamilyExcludingUser } = require('../apn/sendAPN');
 const { formatIntoAbreviatedFullName } = require('../../format/formatName');
@@ -12,7 +13,7 @@ const { formatIntoAbreviatedFullName } = require('../../format/formatName');
  */
 async function createFamilyMemberJoinNotification(userId, familyId) {
   try {
-    if (global.constant.server.IS_PRODUCTION === false) {
+    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
       alertLogger.debug(`createFamilyMemberJoinNotification ${userId}, ${familyId}`);
     }
 
@@ -42,8 +43,7 @@ async function createFamilyMemberJoinNotification(userId, familyId) {
     sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
   }
   catch (error) {
-    alertLogger.error('createFamilyMemberJoinNotification error:');
-    alertLogger.error(error);
+    logServerError('createFamilyMemberJoinNotification', error);
   }
 }
 
@@ -52,7 +52,7 @@ async function createFamilyMemberJoinNotification(userId, familyId) {
  */
 async function createFamilyMemberLeaveNotification(userId, familyId) {
   try {
-    if (global.constant.server.IS_PRODUCTION === false) {
+    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
       alertLogger.debug(`createFamilyMemberLeaveNotification ${userId}, ${familyId}`);
     }
 
@@ -82,8 +82,7 @@ async function createFamilyMemberLeaveNotification(userId, familyId) {
     sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
   }
   catch (error) {
-    alertLogger.error('createFamilyMemberLeaveNotification error:');
-    alertLogger.error(error);
+    logServerError('createFamilyMemberLeaveNotification', error);
   }
 }
 
@@ -92,7 +91,7 @@ async function createFamilyMemberLeaveNotification(userId, familyId) {
  */
 async function createFamilyLockedNotification(userId, familyId, newIsLocked) {
   try {
-    if (global.constant.server.IS_PRODUCTION === false) {
+    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
       alertLogger.debug(`createFamilyLockedNotification ${userId}, ${familyId}, ${newIsLocked}`);
     }
 
@@ -129,8 +128,7 @@ async function createFamilyLockedNotification(userId, familyId, newIsLocked) {
     sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
   }
   catch (error) {
-    alertLogger.error('createFamilyLockedNotification error:');
-    alertLogger.error(error);
+    logServerError('createFamilyLockedNotification', error);
   }
 }
 
@@ -139,7 +137,7 @@ async function createFamilyLockedNotification(userId, familyId, newIsLocked) {
  */
 async function createFamilyPausedNotification(userId, familyId, newIsPaused) {
   try {
-    if (global.constant.server.IS_PRODUCTION === false) {
+    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
       alertLogger.debug(`createFamilyPausedNotification ${userId}, ${familyId}, ${newIsPaused}`);
     }
 
@@ -176,8 +174,7 @@ async function createFamilyPausedNotification(userId, familyId, newIsPaused) {
     sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
   }
   catch (error) {
-    alertLogger.error('createFamilyPausedNotification error:');
-    alertLogger.error(error);
+    logServerError('createFamilyPausedNotification', error);
   }
 }
 

@@ -2,13 +2,14 @@ const { alarmLogger } = require('../../logging/loggers');
 const { databaseQuery } = require('../../database/databaseQuery');
 const { connectionForAlarms } = require('../../database/databaseConnections');
 
+const { logServerError } = require('../../logging/logServerError');
 const { areAllDefined } = require('../../format/validateDefined');
 const { cancelPrimaryJobForFamilyForReminder, cancelSecondaryJobForUserForReminder } = require('./cancelJob');
 const { getAllFamilyMembersForFamilyId } = require('../../../../controllers/getFor/getForFamily');
 
 async function deleteAlarmNotificationsForFamily(familyId) {
   try {
-    if (global.constant.server.IS_PRODUCTION === false) {
+    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
       alarmLogger.debug(`deleteAlarmNotificationsForFamily ${familyId}`);
     }
 
@@ -39,8 +40,7 @@ async function deleteAlarmNotificationsForFamily(familyId) {
     }
   }
   catch (error) {
-    alarmLogger.error('deleteAlarmNotificationsForFamily error:');
-    alarmLogger.error(error);
+    logServerError('deleteAlarmNotificationsForFamily', error);
   }
 }
 
@@ -49,7 +49,7 @@ async function deleteAlarmNotificationsForFamily(familyId) {
  */
 async function deleteAlarmNotificationsForReminder(familyId, reminderId) {
   try {
-    if (global.constant.server.IS_PRODUCTION === false) {
+    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
       alarmLogger.debug(`deleteAlarmNotificationsForReminder ${familyId}, ${reminderId}`);
     }
 
@@ -70,8 +70,7 @@ async function deleteAlarmNotificationsForReminder(familyId, reminderId) {
     }
   }
   catch (error) {
-    alarmLogger.error('deleteAlarmNotificationsForReminder error:');
-    alarmLogger.error(error);
+    logServerError('deleteAlarmNotificationsForReminder', error);
   }
 }
 
@@ -80,7 +79,7 @@ async function deleteAlarmNotificationsForReminder(familyId, reminderId) {
  */
 async function deleteSecondaryAlarmNotificationsForUser(userId) {
   try {
-    if (global.constant.server.IS_PRODUCTION === false) {
+    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
       alarmLogger.debug(`deleteSecondaryAlarmNotificationsForUser ${userId}`);
     }
 
@@ -102,8 +101,7 @@ async function deleteSecondaryAlarmNotificationsForUser(userId) {
     }
   }
   catch (error) {
-    alarmLogger.error('deleteSecondaryAlarmNotificationsForUser error:');
-    alarmLogger.error(error);
+    logServerError('deleteSecondaryAlarmNotificationsForUser', error);
   }
 }
 
