@@ -19,9 +19,7 @@ async function sendAPN(token, category, sound, alertTitle, alertBody, customPayl
   let castedAlertTitle = formatString(alertTitle);
   let castedAlertBody = formatString(alertBody);
 
-  if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-    apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${castedAlertTitle}, ${castedAlertBody}`);
-  }
+  apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${castedAlertTitle}, ${castedAlertBody}`);
 
   try {
     // sound doesn't have to be defined, its optional
@@ -101,9 +99,6 @@ async function sendAPN(token, category, sound, alertTitle, alertBody, customPayl
     try {
       const response = await apnProvider.send(notification, token);
       // response.sent: Array of device tokens to which the notification was sent succesfully
-      if (global.constant.server.SHOW_CONSOLE_MESSAGES === false) {
-        return;
-      }
       if (response.sent.length !== 0) {
         apnLogger.info(`sendAPN Response Successful: ${JSON.stringify(response.sent)}`);
       }
@@ -126,9 +121,7 @@ async function sendAPN(token, category, sound, alertTitle, alertBody, customPayl
 * Invokes sendAPN with the tokens, alertTitle, and alertBody
 */
 async function sendAPNForUser(userId, category, alertTitle, alertBody, customPayload) {
-  if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-    apnLogger.debug(`sendAPNForUser ${userId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
-  }
+  apnLogger.debug(`sendAPNForUser ${userId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
 
   if (areAllDefined(userId) === false) {
     return;
@@ -157,9 +150,7 @@ async function sendAPNForUser(userId, category, alertTitle, alertBody, customPay
  * Invokes sendAPN with the tokens, alertTitle, and alertBody
  */
 async function sendAPNForFamily(familyId, category, alertTitle, alertBody, customPayload) {
-  if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-    apnLogger.debug(`sendAPNForFamily ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
-  }
+  apnLogger.debug(`sendAPNForFamily ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
 
   try {
     // get notification tokens of all qualifying family members
@@ -184,9 +175,7 @@ async function sendAPNForFamily(familyId, category, alertTitle, alertBody, custo
  * Invokes sendAPN with the tokens, alertTitle, and alertBody
  */
 async function sendAPNForFamilyExcludingUser(userId, familyId, category, alertTitle, alertBody, customPayload) {
-  if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-    apnLogger.debug(`sendAPNForFamilyExcludingUser ${userId}, ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
-  }
+  apnLogger.debug(`sendAPNForFamilyExcludingUser ${userId}, ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
 
   try {
     // get tokens of all qualifying family members that aren't the user

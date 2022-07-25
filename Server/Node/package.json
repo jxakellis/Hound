@@ -4,8 +4,10 @@
   "description": "Hound Server",
   "main": "./main/server/server.js",
   "scripts": {
-    "start": "node --max-old-space-size=2048 main/server/server.js | pino-pretty -c -t",
-    "startWithOptions": "nodemon main/server/server.js"
+    "dev": "node --max-old-space-size=2048 main/server/server.js | pino-pretty -c -t",
+    "devNodemon": "nodemon --max-old-space-size=2048 main/server/server.js | pino-pretty -c -t",
+    "prod": "node main/server/server.js | pino-pretty -c -t",
+    "prodNodemon": "node main/server/server.js | pino-pretty -c -t"
   },
   "author": "",
   "license": "ISC",

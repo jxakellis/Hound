@@ -9,9 +9,7 @@ const { getAllFamilyMembersForFamilyId } = require('../../../../controllers/getF
 
 async function deleteAlarmNotificationsForFamily(familyId) {
   try {
-    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-      alarmLogger.debug(`deleteAlarmNotificationsForFamily ${familyId}`);
-    }
+    alarmLogger.debug(`deleteAlarmNotificationsForFamily ${familyId}`);
 
     // make sure reminderId is defined
     if (areAllDefined(familyId) === false) {
@@ -49,9 +47,7 @@ async function deleteAlarmNotificationsForFamily(familyId) {
  */
 async function deleteAlarmNotificationsForReminder(familyId, reminderId) {
   try {
-    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-      alarmLogger.debug(`deleteAlarmNotificationsForReminder ${familyId}, ${reminderId}`);
-    }
+    alarmLogger.debug(`deleteAlarmNotificationsForReminder ${familyId}, ${reminderId}`);
 
     // make sure reminderId is defined
     if (areAllDefined(familyId, reminderId) === false) {
@@ -79,9 +75,7 @@ async function deleteAlarmNotificationsForReminder(familyId, reminderId) {
  */
 async function deleteSecondaryAlarmNotificationsForUser(userId) {
   try {
-    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-      alarmLogger.debug(`deleteSecondaryAlarmNotificationsForUser ${userId}`);
-    }
+    alarmLogger.debug(`deleteSecondaryAlarmNotificationsForUser ${userId}`);
 
     if (areAllDefined(userId) === false) {
       return;

@@ -17,9 +17,7 @@ const { deleteSecondaryAlarmNotificationsForUser } = require('./deleteAlarmNotif
  */
 async function refreshSecondaryAlarmNotificationsForUserId(userId, isFollowUpEnabled, followUpDelay) {
   try {
-    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-      alarmLogger.debug(`refreshSecondaryAlarmNotificationsForUserId ${userId}, ${isFollowUpEnabled}, ${followUpDelay}`);
-    }
+    alarmLogger.debug(`refreshSecondaryAlarmNotificationsForUserId ${userId}, ${isFollowUpEnabled}, ${followUpDelay}`);
 
     if (areAllDefined(userId) === false) {
       return;

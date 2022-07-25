@@ -18,9 +18,7 @@ function logResponse(req, res, body) {
 
   const requestDate = new Date();
 
-  if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-    responseLogger.info(`Response for ${req.method} ${requestOriginalUrl}\n With body: ${JSON.stringify(responseBody)}`);
-  }
+  responseLogger.info(`Response for ${req.method} ${requestOriginalUrl}\n With body: ${JSON.stringify(responseBody)}`);
 
   const hasBeenLogged = formatBoolean(res.hasBeenLogged);
 

@@ -8,7 +8,7 @@ const fs = require('fs');
 
 // Import the express module
 const express = require('express');
-const { serverLogger } = require('../tools/logging/loggers');
+const { serverLogger, apnLogger } = require('../tools/logging/loggers');
 
 // Instantiate an Express application
 const app = express();
@@ -18,6 +18,7 @@ const app = express();
 const { restoreAlarmNotificationsForAllFamilies } = require('../tools/notifications/alarm/restoreAlarmNotification');
 const { cleanUpIsDeleted } = require('../tools/database/databaseCleanUp');
 const { configureAppForRequests } = require('./request');
+const { logServerError } = require('../tools/logging/logServerError');
 
 // Create a NodeJS HTTPS listener on port that points to the Express app
 // If we are in production, then create an HTTPS only server. Otherwise for development, create an HTTP only server.
@@ -30,9 +31,8 @@ const HTTPOrHTTPSServer = global.constant.server.IS_PRODUCTION
 
 const port = global.constant.server.IS_PRODUCTION ? 443 : 80;
 HTTPOrHTTPSServer.listen(port, async () => {
-  serverLogger.info(`HTTP Server running on port ${port}`);
-  // Server is freshly restarted. Restore notifications that were lost;
-
+  serverLogger.info(`${global.constant.server.IS_PRODUCTION ? 'Production' : 'Development'} HTTP${port === 443 ? 'S' : ''} server running on port ${port}`);
+  apnLogger.info('foo');
   if (global.constant.server.IS_PRODUCTION) {
     await restoreAlarmNotificationsForAllFamilies();
     await cleanUpIsDeleted();
@@ -49,21 +49,35 @@ const {
 } = require('../tools/database/databaseConnections');
 const { schedule } = require('../tools/notifications/alarm/schedules');
 
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
   serverLogger.info('SIGTERM');
-  shutdown();
+  await shutdown();
 });
 
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
   // manual kill with ^C
   serverLogger.info('SIGINT');
-  shutdown();
+  await shutdown();
 });
 
-process.on('SIGUSR2', () => {
+process.on('SIGUSR2', async () => {
   // nodemon restart
   serverLogger.info('SIGUSR2');
-  shutdown();
+  await shutdown();
+});
+
+process.on('uncaughtException', async (error, origin) => {
+  // uncaught error happened somewhere
+  serverLogger.info(`Uncaught exception from origin: ${origin}`);
+  await logServerError('uncaughtException', error);
+  await shutdown();
+
+  throw Error('Crashing Node... Unsafe to resume after uncaughtException');
+});
+
+process.on('uncaughtRejection', async (reason, promise) => {
+  // uncaught rejection of a promise happened somewhere
+  serverLogger.info(`Uncaught rejection of promise: ${promise}`, `reason: ${reason}`);
 });
 
 /**

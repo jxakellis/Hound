@@ -1,8 +1,6 @@
 const server = {
-  // If true, then when the server restarts we recreate all of the alarm notifications. Only output xxxLogger.error and serverLogger.* console messages
-  // If false, then assume dev environment and output all xxxLogger.* console messages
-  IS_PRODUCTION: false,
-  SHOW_CONSOLE_MESSAGES: true,
+  IS_PRODUCTION: process.platform === 'linux',
+  CONSOLE_LOGGING_ENABLED: true,
   // App builds of the iOS Hound app that work properly with the server.
   // A version would be depreciated if an endpoint path is changed or endpoint data return format is changed
   COMPATIBLE_IOS_APP_BUILDS: [4000, 5000],

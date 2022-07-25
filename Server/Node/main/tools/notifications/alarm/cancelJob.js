@@ -15,10 +15,8 @@ async function cancelPrimaryJobForFamilyForReminder(familyId, reminderId) {
   // attempt to locate job that has the userId and reminderId
   const primaryJob = schedule.scheduledJobs[`Family${familyId}Reminder${reminderId}`];
   if (areAllDefined(primaryJob)) {
-    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-      alarmLogger.debug(`Cancelling Primary Job: ${primaryJob.name}`);
-      alarmLogger.info(`Cancelled job; count is now ${Object.keys(schedule.scheduledJobs).length - 1}`);
-    }
+    alarmLogger.debug(`Cancelling Primary Job: ${primaryJob.name}`);
+    alarmLogger.info(`Cancelled job; count is now ${Object.keys(schedule.scheduledJobs).length - 1}`);
     primaryJob.cancel();
   }
 }
@@ -34,10 +32,8 @@ async function cancelSecondaryJobForUserForReminder(userId, reminderId) {
   // attempt to locate job that has the userId and reminderId  (note: names are in strings, so must convert int to string)
   const secondaryJob = schedule.scheduledJobs[`User${userId}Reminder${reminderId}`];
   if (areAllDefined(secondaryJob)) {
-    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-      alarmLogger.debug(`Cancelling Secondary Job: ${secondaryJob.name}`);
-      alarmLogger.info(`Cancelled job; count is now ${Object.keys(schedule.scheduledJobs).length - 1}`);
-    }
+    alarmLogger.debug(`Cancelling Secondary Job: ${secondaryJob.name}`);
+    alarmLogger.info(`Cancelled job; count is now ${Object.keys(schedule.scheduledJobs).length - 1}`);
     secondaryJob.cancel();
   }
 }

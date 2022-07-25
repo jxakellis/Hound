@@ -23,9 +23,7 @@ async function createAlarmNotificationForFamily(familyId, reminderId, reminderEx
   try {
     // all ids should already be formatted into numbers
     const formattedReminderExecutionDate = formatDate(reminderExecutionDate);
-    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-      alarmLogger.debug(`createAlarmNotificationForFamily ${familyId}, ${reminderId}, ${reminderExecutionDate}, ${formattedReminderExecutionDate}`);
-    }
+    alarmLogger.debug(`createAlarmNotificationForFamily ${familyId}, ${reminderId}, ${reminderExecutionDate}, ${formattedReminderExecutionDate}`);
 
     if (areAllDefined(familyId, reminderId) === false) {
       return;
@@ -49,9 +47,7 @@ async function createAlarmNotificationForFamily(familyId, reminderId, reminderEx
     }
     // reminderExecutionDate is in the future
     else {
-      if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-        alarmLogger.info(`Scheduling a new job; count will be ${Object.keys(schedule.scheduledJobs).length + 1}`);
-      }
+      alarmLogger.info(`Scheduling a new job; count will be ${Object.keys(schedule.scheduledJobs).length + 1}`);
       schedule.scheduleJob(`Family${familyId}Reminder${reminderId}`, formattedReminderExecutionDate, async () => {
         // do these async, no need to await
         sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(familyId, reminderId);
@@ -132,9 +128,7 @@ async function sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(family
 async function createSecondaryAlarmNotificationForUser(userId, reminderId, secondaryExecutionDate) {
   try {
     const formattedSecondaryExecutionDate = formatDate(secondaryExecutionDate);
-    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-      alarmLogger.debug(`createSecondaryAlarmNotificationForUser ${userId}, ${reminderId}, ${secondaryExecutionDate}, ${formattedSecondaryExecutionDate}`);
-    }
+    alarmLogger.debug(`createSecondaryAlarmNotificationForUser ${userId}, ${reminderId}, ${secondaryExecutionDate}, ${formattedSecondaryExecutionDate}`);
 
     // make sure the required parameters are defined
     if (areAllDefined(userId, reminderId) === false) {
@@ -156,9 +150,7 @@ async function createSecondaryAlarmNotificationForUser(userId, reminderId, secon
     }
     // formattedSecondaryExecutionDate is in the future
     else {
-      if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-        alarmLogger.info(`Scheduling a new job; count will be ${Object.keys(schedule.scheduledJobs).length + 1}`);
-      }
+      alarmLogger.info(`Scheduling a new job; count will be ${Object.keys(schedule.scheduledJobs).length + 1}`);
       schedule.scheduleJob(`User${userId}Reminder${reminderId}`, formattedSecondaryExecutionDate, () => {
         // no need to await, let it go
         sendSecondaryAPNForUser(userId, reminderId);

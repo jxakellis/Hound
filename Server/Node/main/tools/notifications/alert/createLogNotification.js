@@ -14,9 +14,7 @@ const { formatLogAction } = require('../../format/formatName');
  */
 async function createLogNotification(userId, familyId, dogId, logAction, logCustomActionName) {
   try {
-    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-      alertLogger.debug(`createLogNotification ${userId}, ${familyId}, ${dogId}, ${logAction}, ${logCustomActionName}`);
-    }
+    alertLogger.debug(`createLogNotification ${userId}, ${familyId}, ${dogId}, ${logAction}, ${logCustomActionName}`);
 
     // make sure all params are defined
     if (areAllDefined(userId, familyId, dogId, logAction) === false) {

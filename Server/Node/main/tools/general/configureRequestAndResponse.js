@@ -42,7 +42,14 @@ function configureResponse(req, res) {
     }
 
     // Check to see if a response has been sent yet
-    if (hasSentResponse === true) {
+    if (areAllDefined(hasSentResponse) === false || hasSentResponse === true) {
+      return;
+    }
+
+    const socketDestroyed = formatBoolean(res && res.socket && res.socket.destroyed);
+    console.log(socketDestroyed);
+
+    if (areAllDefined(socketDestroyed) === false || socketDestroyed === true) {
       return;
     }
 

@@ -1,27 +1,43 @@
 const parentLogger = require('pino')();
 
-parentLogger.level = 'debug';
+// Important server state information. This should always be logged to the console as it indicates critical functions
+const serverLogger = parentLogger.child({ name: 'Server' });
+// Passing 'level' as an option doesn't configure the logger as it should. Have to set manually
+serverLogger.level = 'trace';
 
-// Logs general server information, unrelated to an individual request
-const serverLogger = parentLogger.child({ module: 'Server' });
+// trace: 10, debug: 20, info: 30, warn: 40, error: 50, fatal: 60, silent: infinity
+// The silent logging level is a specialized level which will disable all logging, the silent log method is a noop function.
+const level = global.constant.server.CONSOLE_LOGGING_ENABLED === true ? 'debug' : 'silent';
 
-// Logs requests from users
-const requestLogger = parentLogger.child({ module: 'Request' });
+// API Requests from users
+const requestLogger = parentLogger.child({ name: 'Request', level });
+// Passing 'level' as an option doesn't configure the logger as it should. Have to set manually
+requestLogger.level = level;
 
-// Logs responses sent to users
-const responseLogger = parentLogger.child({ module: 'Response' });
+// API Responses sent to users
+const responseLogger = parentLogger.child({ name: 'Response', level });
+// Passing 'level' as an option doesn't configure the logger as it should. Have to set manually
+responseLogger.level = level;
 
-// Logs pool connecion aquision and release for requests
-const poolLogger = parentLogger.child({ module: 'Pool' });
+// Pool connecion aquision and release for requests
+const poolLogger = parentLogger.child({ name: 'Pool', level });
+// Passing 'level' as an option doesn't configure the logger as it should. Have to set manually
+poolLogger.level = level;
 
-// Logs functions related to alarms and schedules (e.g. scheduling job for reminder)
-const alarmLogger = parentLogger.child({ module: 'Alarm' });
+// Alarms and scheduling events (e.g. scheduling job for reminder)
+const alarmLogger = parentLogger.child({ name: 'Alarm', level });
+// Passing 'level' as an option doesn't configure the logger as it should. Have to set manually
+alarmLogger.level = level;
 
-// Logs functions related to general alerts (e.g. someone logged Poty for Fido)
-const alertLogger = parentLogger.child({ module: 'Alert' });
+// General APN alerts (e.g. someone logged Poty for Fido)
+const alertLogger = parentLogger.child({ name: 'Alert', level });
+// Passing 'level' as an option doesn't configure the logger as it should. Have to set manually
+alertLogger.level = level;
 
-// Logs functions related to sending an APN
-const apnLogger = parentLogger.child({ module: 'APN' });
+// Sending an APN
+const apnLogger = parentLogger.child({ name: 'APN', level });
+// Passing 'level' as an option doesn't configure the logger as it should. Have to set manually
+apnLogger.level = level;
 
 module.exports = {
   serverLogger, requestLogger, responseLogger, poolLogger, alarmLogger, alertLogger, apnLogger,

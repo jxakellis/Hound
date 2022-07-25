@@ -14,9 +14,7 @@ function logRequest(req, res, next) {
   let requestOriginalUrl = formatString(req.originalUrl);
   requestOriginalUrl = areAllDefined(requestOriginalUrl) ? requestOriginalUrl.substring(0, 500) : requestOriginalUrl;
 
-  if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-    requestLogger.info(`Request for ${req.method} ${requestOriginalUrl}`);
-  }
+  requestLogger.info(`Request for ${req.method} ${requestOriginalUrl}`);
 
   const hasBeenLogged = formatBoolean(req.hasBeenLogged);
 

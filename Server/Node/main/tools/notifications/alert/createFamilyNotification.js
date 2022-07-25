@@ -13,9 +13,7 @@ const { formatIntoAbreviatedFullName } = require('../../format/formatName');
  */
 async function createFamilyMemberJoinNotification(userId, familyId) {
   try {
-    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-      alertLogger.debug(`createFamilyMemberJoinNotification ${userId}, ${familyId}`);
-    }
+    alertLogger.debug(`createFamilyMemberJoinNotification ${userId}, ${familyId}`);
 
     // make sure all params are defined
     if (areAllDefined(userId, familyId) === false) {
@@ -52,9 +50,7 @@ async function createFamilyMemberJoinNotification(userId, familyId) {
  */
 async function createFamilyMemberLeaveNotification(userId, familyId) {
   try {
-    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-      alertLogger.debug(`createFamilyMemberLeaveNotification ${userId}, ${familyId}`);
-    }
+    alertLogger.debug(`createFamilyMemberLeaveNotification ${userId}, ${familyId}`);
 
     // make sure all params are defined
     if (areAllDefined(userId, familyId) === false) {
@@ -91,9 +87,7 @@ async function createFamilyMemberLeaveNotification(userId, familyId) {
  */
 async function createFamilyLockedNotification(userId, familyId, newIsLocked) {
   try {
-    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-      alertLogger.debug(`createFamilyLockedNotification ${userId}, ${familyId}, ${newIsLocked}`);
-    }
+    alertLogger.debug(`createFamilyLockedNotification ${userId}, ${familyId}, ${newIsLocked}`);
 
     const isLocked = formatBoolean(newIsLocked);
     // make sure all params are defined
@@ -137,9 +131,7 @@ async function createFamilyLockedNotification(userId, familyId, newIsLocked) {
  */
 async function createFamilyPausedNotification(userId, familyId, newIsPaused) {
   try {
-    if (global.constant.server.SHOW_CONSOLE_MESSAGES) {
-      alertLogger.debug(`createFamilyPausedNotification ${userId}, ${familyId}, ${newIsPaused}`);
-    }
+    alertLogger.debug(`createFamilyPausedNotification ${userId}, ${familyId}, ${newIsPaused}`);
 
     const isPaused = formatBoolean(newIsPaused);
     // make sure all params are defined
