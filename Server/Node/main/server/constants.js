@@ -3,7 +3,7 @@ const server = {
   CONSOLE_LOGGING_ENABLED: true,
   // App builds of the iOS Hound app that work properly with the server.
   // A version would be depreciated if an endpoint path is changed or endpoint data return format is changed
-  COMPATIBLE_IOS_APP_BUILDS: [4000, 5000],
+  COMPATIBLE_IOS_APP_BUILDS: [5500],
 };
 
 const limit = {

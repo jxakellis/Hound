@@ -47,7 +47,6 @@ function configureResponse(req, res) {
     }
 
     const socketDestroyed = formatBoolean(res && res.socket && res.socket.destroyed);
-    console.log(socketDestroyed);
 
     if (areAllDefined(socketDestroyed) === false || socketDestroyed === true) {
       return;

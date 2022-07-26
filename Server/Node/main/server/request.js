@@ -4,8 +4,13 @@ const { parseFormData, parseJSON } = require('../tools/general/parseBody');
 const { logRequest } = require('../tools/logging/logRequest');
 const { configureRequestForResponse, aquirePoolConnectionBeginTransaction } = require('../tools/general/configureRequestAndResponse');
 const { validateAppBuild } = require('../tools/format/validateId');
+const { serverToServerRouter } = require('../../routes/serverToServer');
 const { userRouter } = require('../../routes/user');
 const { GeneralError } = require('../tools/general/errors');
+
+const productionPath = global.constant.server.IS_PRODUCTION ? 'prod' : 'dev';
+const serverToServerPath = `/${productionPath}/s2s`;
+const userPath = `/${productionPath}/app/:appBuild`;
 
 function configureAppForRequests(app) {
   // Setup defaults and custom res.status method
@@ -20,17 +25,20 @@ function configureAppForRequests(app) {
   app.use(express.urlencoded({ extended: false }));
   app.use(parseJSON);
 
+  // Check to see if the request is a server to server communication from Apple
+  app.use(serverToServerPath, serverToServerRouter);
+
   // Log request and setup logging for response
 
-  app.use('/app/:appBuild', logRequest);
+  app.use(userPath, logRequest);
 
   // Make sure the user is on an updated version
 
-  app.use('/app/:appBuild', validateAppBuild);
+  app.use(userPath, validateAppBuild);
 
   // Route the request to the userRouter
 
-  app.use('/app/:appBuild/user', userRouter);
+  app.use(`${userPath}/user`, userRouter);
 
   // Throw back the request if an unknown path is used
   app.use('*', async (req, res) => res.sendResponseForStatusJSONError(404, undefined, new GeneralError('Path not found', global.constant.error.value.INVALID)));

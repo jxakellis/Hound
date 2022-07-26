@@ -8,7 +8,7 @@ const fs = require('fs');
 
 // Import the express module
 const express = require('express');
-const { serverLogger, apnLogger } = require('../tools/logging/loggers');
+const { serverLogger } = require('../tools/logging/loggers');
 
 // Instantiate an Express application
 const app = express();
@@ -32,7 +32,7 @@ const HTTPOrHTTPSServer = global.constant.server.IS_PRODUCTION
 const port = global.constant.server.IS_PRODUCTION ? 443 : 80;
 HTTPOrHTTPSServer.listen(port, async () => {
   serverLogger.info(`${global.constant.server.IS_PRODUCTION ? 'Production' : 'Development'} HTTP${port === 443 ? 'S' : ''} server running on port ${port}`);
-  apnLogger.info('foo');
+
   if (global.constant.server.IS_PRODUCTION) {
     await restoreAlarmNotificationsForAllFamilies();
     await cleanUpIsDeleted();
@@ -72,7 +72,7 @@ process.on('uncaughtException', async (error, origin) => {
   await logServerError('uncaughtException', error);
   await shutdown();
 
-  throw Error('Crashing Node... Unsafe to resume after uncaughtException');
+  throw error;
 });
 
 process.on('uncaughtRejection', async (reason, promise) => {
