@@ -1,11 +1,10 @@
-const apn = require('apn');
 const { apnLogger } = require('../../logging/loggers');
 
 const { logServerError } = require('../../logging/logServerError');
 const { formatArray, formatString } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 
-const { apnProvider } = require('./apnProvider');
+const { apn, apnProvider } = require('./apnProvider');
 const { getUserToken, getAllFamilyMemberTokens, getOtherFamilyMemberTokens } = require('./apnTokens');
 
 /**
@@ -21,83 +20,82 @@ async function sendAPN(token, category, sound, alertTitle, alertBody, customPayl
 
   apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${castedAlertTitle}, ${castedAlertBody}`);
 
-  try {
-    // sound doesn't have to be defined, its optional
-    if (areAllDefined(token, category, castedAlertTitle, castedAlertBody, customPayload) === false) {
-      return;
-    }
+  // sound doesn't have to be defined, its optional
+  if (areAllDefined(token, category, castedAlertTitle, castedAlertBody, customPayload) === false) {
+    return;
+  }
 
-    castedAlertTitle = castedAlertTitle.substring(0, global.constant.apn.length.ALERT_TITLE);
-    castedAlertBody = castedAlertBody.substring(0, global.constant.apn.length.ALERT_BODY);
+  castedAlertTitle = castedAlertTitle.substring(0, global.constant.apn.length.ALERT_TITLE);
+  castedAlertBody = castedAlertBody.substring(0, global.constant.apn.length.ALERT_BODY);
 
-    // the tokens array is defined and has at least one element
+  // the tokens array is defined and has at least one element
 
-    const notification = new apn.Notification();
+  const notification = new apn.Notification();
 
-    // Properties are sent along side the payload and are defined by node-apn
+  // Properties are sent along side the payload and are defined by node-apn
 
-    // App Bundle Id
-    notification.topic = 'com.example.Pupotty';
+  // App Bundle Id
+  notification.topic = 'com.example.Pupotty';
 
-    // A UNIX timestamp when the notification should expire. If the notification cannot be delivered to the device, APNS will retry until it expires
-    // An expiry of 0 indicates that the notification expires immediately, therefore no retries will be attempted.
-    notification.expiry = Math.floor(Date.now() / 1000) + 300;
+  // A UNIX timestamp when the notification should expire. If the notification cannot be delivered to the device, APNS will retry until it expires
+  // An expiry of 0 indicates that the notification expires immediately, therefore no retries will be attempted.
+  notification.expiry = Math.floor(Date.now() / 1000) + 300;
 
-    // The type of the notification. The value of this header is alert or background. Specify alert when the delivery of your notification displays an alert, plays a sound, or badges your app's icon. Specify background for silent notifications that do not interact with the user.
-    // The value of this header must accurately reflect the contents of your notification's payload. If there is a mismatch, or if the header is missing on required systems, APNs may delay the delivery of the notification or drop it altogether.
-    notification.pushType = 'alert';
+  // The type of the notification. The value of this header is alert or background. Specify alert when the delivery of your notification displays an alert, plays a sound, or badges your app's icon. Specify background for silent notifications that do not interact with the user.
+  // The value of this header must accurately reflect the contents of your notification's payload. If there is a mismatch, or if the header is missing on required systems, APNs may delay the delivery of the notification or drop it altogether.
+  notification.pushType = 'alert';
 
-    // Multiple notifications with same collapse identifier are displayed to the user as a single notification. The value should not exceed 64 bytes.
-    // notification.collapseId = 1;
+  // Multiple notifications with same collapse identifier are displayed to the user as a single notification. The value should not exceed 64 bytes.
+  // notification.collapseId = 1;
 
-    /// Raw Payload takes after apple's definition of the APS body
-    notification.rawPayload = {
-      aps: {
+  /// Raw Payload takes after apple's definition of the APS body
+  notification.rawPayload = {
+    aps: {
       // The notification’s type
       // This string must correspond to the identifier of one of the UNNotificationCategory objects you register at launch time.
-        category,
-        // The background notification flag.
-        // To perform a silent background update, specify the value 1 and don’t include the alert, badge, or sound keys in your payload.
-        'content-available': 1,
-        // The notification service app extension flag
-        // If the value is 1, the system passes the notification to your notification service app extension before delivery.
-        // Use your extension to modify the notification’s content.
-        'mutable-content': 1,
-        // A string that indicates the importance and delivery timing of a notification
-        // The string values “passive”, “active”, “time-sensitive”, or “critical” correspond to the
-        'interruption-level': 'active',
-        // alert Dictionary
-        alert: {
+      category,
+      // The background notification flag.
+      // To perform a silent background update, specify the value 1 and don’t include the alert, badge, or sound keys in your payload.
+      'content-available': 1,
+      // The notification service app extension flag
+      // If the value is 1, the system passes the notification to your notification service app extension before delivery.
+      // Use your extension to modify the notification’s content.
+      'mutable-content': 1,
+      // A string that indicates the importance and delivery timing of a notification
+      // The string values “passive”, “active”, “time-sensitive”, or “critical” correspond to the
+      'interruption-level': 'active',
+      // alert Dictionary
+      alert: {
         // The title of the notification. Apple Watch displays this string in the short look notification interface. Specify a string that’s quickly understood by the user.
-          title: castedAlertTitle,
-          // The content of the alert message.
-          body: castedAlertBody,
-        },
+        title: castedAlertTitle,
+        // The content of the alert message.
+        body: castedAlertBody,
       },
-    };
+    },
+  };
 
-    // if there is a sound for the reminder alarm alert, then we add it to the rawPayload
-    if (category === global.constant.apn.category.REMINDER && areAllDefined(sound, notification, notification.rawPayload, notification.rawPayload.aps)) {
-      notification.rawPayload.aps.sound = `${sound}30.wav`;
-    }
+  // if there is a sound for the reminder alarm alert, then we add it to the rawPayload
+  if (category === global.constant.apn.category.REMINDER && areAllDefined(sound, notification, notification.rawPayload, notification.rawPayload.aps)) {
+    notification.rawPayload.aps.sound = `${sound}30.wav`;
+  }
 
-    // add customPayload into rawPayload
-    notification.rawPayload = {
-      ...customPayload,
-      ...notification.rawPayload,
-    };
+  // add customPayload into rawPayload
+  notification.rawPayload = {
+    ...customPayload,
+    ...notification.rawPayload,
+  };
 
-    // aps Dictionary Keys
-    // https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2943363
+  // aps Dictionary Keys
+  // https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2943363
 
-    // alert Dictionary Keys
-    // https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2943365
+  // alert Dictionary Keys
+  // https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2943365
 
-    // sound Dictionary Keys
-    // https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2990112
+  // sound Dictionary Keys
+  // https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2990112
 
-    try {
-      const response = await apnProvider.send(notification, token);
+  apnProvider.send(notification, token)
+    .then((response) => {
       // response.sent: Array of device tokens to which the notification was sent succesfully
       if (response.sent.length !== 0) {
         apnLogger.info(`sendAPN Response Successful: ${JSON.stringify(response.sent)}`);
@@ -106,14 +104,10 @@ async function sendAPN(token, category, sound, alertTitle, alertBody, customPayl
       if (response.failed.length !== 0) {
         apnLogger.info(`sendAPN Response Rejected: ${JSON.stringify(response.failed)}`);
       }
-    }
-    catch (error) {
+    })
+    .catch((error) => {
       logServerError('sendAPN Response', error);
-    }
-  }
-  catch (error) {
-    logServerError('sendAPN', error);
-  }
+    });
 }
 
 /**
