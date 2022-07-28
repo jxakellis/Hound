@@ -1,20 +1,20 @@
 const { apnLogger } = require('../../logging/loggers');
 
 const { logServerError } = require('../../logging/logServerError');
-const { formatArray, formatString } = require('../../format/formatObject');
+const { formatString } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 
-const { apn, apnProvider } = require('./apnProvider');
-const { getUserToken, getAllFamilyMemberTokens, getOtherFamilyMemberTokens } = require('./apnTokens');
+const { apn, productionAPNProvider, developmentAPNProvider } = require('./apnProvider');
 
 /**
- * Creates a notification that is immediately sent to Apple Push Services and informs users
+ * Creates a notification object from the provided information
+ * Sends notification object with provided token to Apple's production APN server, if .failed response then sends to development APN server
  * Takes an array of notificationTokens that identifies all the recipients of the notification
  * Takes a string that will be the title of the notification
  * Takes a string that will be the body of the notification
  */
 // (token, category, sound, alertTitle, alertBody)
-async function sendAPN(token, category, sound, alertTitle, alertBody, customPayload) {
+function sendAPN(token, category, sound, alertTitle, alertBody, customPayload) {
   let castedAlertTitle = formatString(alertTitle);
   let castedAlertBody = formatString(alertBody);
 
@@ -64,6 +64,8 @@ async function sendAPN(token, category, sound, alertTitle, alertBody, customPayl
       // A string that indicates the importance and delivery timing of a notification
       // The string values “passive”, “active”, “time-sensitive”, or “critical” correspond to the
       'interruption-level': 'active',
+      // The number to display in a badge on your app’s icon. Specify 0 to remove the current badge, if any.
+      badge: 0,
       // alert Dictionary
       alert: {
         // The title of the notification. Apple Watch displays this string in the short look notification interface. Specify a string that’s quickly understood by the user.
@@ -94,101 +96,57 @@ async function sendAPN(token, category, sound, alertTitle, alertBody, customPayl
   // sound Dictionary Keys
   // https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2990112
 
-  apnProvider.send(notification, token)
-    .then((response) => {
-      // response.sent: Array of device tokens to which the notification was sent succesfully
-      if (response.sent.length !== 0) {
-        apnLogger.info(`sendAPN Response Successful: ${JSON.stringify(response.sent)}`);
-      }
-      // response.failed: Array of objects containing the device token (`device`) and either an `error`, or a `status` and `response` from the API
-      if (response.failed.length !== 0) {
-        apnLogger.info(`sendAPN Response Rejected: ${JSON.stringify(response.failed)}`);
-      }
-    })
-    .catch((error) => {
-      logServerError('sendAPN Response', error);
-    });
+  sendProductionAPN(notification, token);
 }
 
 /**
-* Takes a userId and retrieves the userNotificationToken for the user
-* Invokes sendAPN with the tokens, alertTitle, and alertBody
-*/
-async function sendAPNForUser(userId, category, alertTitle, alertBody, customPayload) {
-  apnLogger.debug(`sendAPNForUser ${userId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
-
-  if (areAllDefined(userId) === false) {
+ * Takes a constructed notification object and a token string, then attempts to send the contents to Apple's production APN server
+ * If a .failed response is recieved
+ */
+function sendProductionAPN(notification, token) {
+  if (areAllDefined(notification, token) === false) {
     return;
   }
 
-  try {
-    // get tokens of all qualifying family members that aren't the user
-    const tokenAndSounds = formatArray(await getUserToken(userId));
-
-    if (areAllDefined(tokenAndSounds, category, alertTitle, alertBody, customPayload) === false || tokenAndSounds.length === 0) {
-      return;
-    }
-
-    // sendAPN if there are > 0 user notification tokens
-    for (let i = 0; i < tokenAndSounds.length; i += 1) {
-      sendAPN(tokenAndSounds[i].userNotificationToken, category, tokenAndSounds[i].notificationSound, alertTitle, alertBody, customPayload);
-    }
-  }
-  catch (error) {
-    logServerError('sendAPNForUser', error);
-  }
+  productionAPNProvider.send(notification, token)
+    .then((response) => {
+      // response.sent: Array of device tokens to which the notification was sent succesfully
+      if (response.sent.length !== 0) {
+        apnLogger.info(`sendProductionAPN Response Successful: ${JSON.stringify(response.sent)}`);
+        return;
+      }
+      // response.failed: Array of objects containing the device token (`device`) and either an `error`, or a `status` and `response` from the API
+      if (response.failed.length !== 0) {
+        apnLogger.info(`sendProductionAPN Response Rejected: ${JSON.stringify(response.failed)}`);
+        sendDevelopmentAPN(notification, token);
+      }
+    })
+    .catch((error) => {
+      logServerError('sendProductionAPN Response', error);
+    });
 }
 
-/**
- * Takes a familyId and retrieves the userNotificationToken for all familyMembers
- * Invokes sendAPN with the tokens, alertTitle, and alertBody
- */
-async function sendAPNForFamily(familyId, category, alertTitle, alertBody, customPayload) {
-  apnLogger.debug(`sendAPNForFamily ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
-
-  try {
-    // get notification tokens of all qualifying family members
-    const tokenAndSounds = formatArray(await getAllFamilyMemberTokens(familyId));
-
-    if (areAllDefined(tokenAndSounds, category, alertTitle, alertBody, customPayload) === false || tokenAndSounds.length === 0) {
-      return;
-    }
-
-    // sendAPN if there are > 0 user notification tokens
-    for (let i = 0; i < tokenAndSounds.length; i += 1) {
-      sendAPN(tokenAndSounds[i].userNotificationToken, category, tokenAndSounds[i].notificationSound, alertTitle, alertBody, customPayload);
-    }
+function sendDevelopmentAPN(notification, token) {
+  if (areAllDefined(notification, token) === false) {
+    return;
   }
-  catch (error) {
-    logServerError('sendAPNForFamily', error);
-  }
-}
 
-/**
- * Takes a familyId and retrieves the userNotificationToken for all familyMembers (excluding the userId provided)
- * Invokes sendAPN with the tokens, alertTitle, and alertBody
- */
-async function sendAPNForFamilyExcludingUser(userId, familyId, category, alertTitle, alertBody, customPayload) {
-  apnLogger.debug(`sendAPNForFamilyExcludingUser ${userId}, ${familyId}, ${category}, ${alertTitle}, ${alertBody}, ${customPayload}`);
-
-  try {
-    // get tokens of all qualifying family members that aren't the user
-    const tokenAndSounds = formatArray(await getOtherFamilyMemberTokens(userId, familyId));
-
-    if (areAllDefined(tokenAndSounds, category, alertTitle, alertBody, customPayload) === false || tokenAndSounds.length === 0) {
-      return;
-    }
-
-    // sendAPN if there are > 0 user notification tokens
-    for (let i = 0; i < tokenAndSounds.length; i += 1) {
-      sendAPN(tokenAndSounds[i].userNotificationToken, category, tokenAndSounds[i].notificationSound, alertTitle, alertBody, customPayload);
-    }
-  }
-  catch (error) {
-    logServerError('sendAPNForFamilyExcludingUser', error);
-  }
+  developmentAPNProvider.send(notification, token)
+    .then((response) => {
+      // response.sent: Array of device tokens to which the notification was sent succesfully
+      if (response.sent.length !== 0) {
+        apnLogger.info(`sendDevelopmentAPN Response Successful: ${JSON.stringify(response.sent)}`);
+      }
+      // response.failed: Array of objects containing the device token (`device`) and either an `error`, or a `status` and `response` from the API
+      if (response.failed.length !== 0) {
+        apnLogger.info(`sendDevelopmentAPN Response Rejected: ${JSON.stringify(response.failed)}`);
+      }
+    })
+    .catch((error) => {
+      logServerError('sendDevelopmentAPN Response', error);
+    });
 }
 
 module.exports = {
-  sendAPNForUser, sendAPNForFamily, sendAPNForFamilyExcludingUser,
+  sendAPN,
 };

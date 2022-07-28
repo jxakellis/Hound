@@ -2501,7 +2501,7 @@
                                             </button>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kz4-Qh-Lak" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
                                                 <rect key="frame" x="10" y="684" width="394" height="45"/>
-                                                <string key="text">Contacts Hound's and Apple's servers to retrieve all subscription purchases you've made with your Apple Id. Any transaction thats missing from Hound's database is a then added.</string>
+                                                <string key="text">Contacts Apple's servers to retrieve all Hound subscription purchases you've made with your Apple Id. Any transaction that's missing from Hound's database is added.</string>
                                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                 <nil key="highlightedColor"/>

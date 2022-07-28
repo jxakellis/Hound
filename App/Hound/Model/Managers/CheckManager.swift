@@ -160,31 +160,4 @@ enum CheckManager {
             LocalConfiguration.appBuildsWithReleaseNotesShown.append(UIApplication.appBuild)
     }
     
-    /// If a user has an account with notifications enabled, then notifcaiton authorized, enabled, etc. will all be true. If they reinstall, then notification authorizaed will be false but the rest will be the previous values. Therefore, we must check and either get notifcations authorized again or set them all to false.
-    static func checkForNotificationSettingImbalance() {
-        guard LocalConfiguration.isNotificationAuthorized == false else {
-            return
-        }
-        
-        // If isNotificationAuthorized is false, check if any of the settings that should false are true
-        if UserConfiguration.isNotificationEnabled == true || UserConfiguration.isFollowUpEnabled == true || UserConfiguration.isLoudNotification == true {
-            // we request authorization again.
-            // if permission is granted, then everything is updated to true and its ok
-            // if permission is denied, then everything is updated to false
-            NotificationManager.requestNotificationAuthorization {
-                // everything already handled
-            }
-        }
-    }
-    
-    /// If a user is isNotificationAuthorized but their userNotificationToken is nil, then that means they aren't properly registered for remote notifications. This in turn means they cannot recieve push notifications. Therefore, if a user is isNotificationAuthorized then they must also be registered for remote notifications
-    static func checkForRemoteNotificationImbalance() {
-        if LocalConfiguration.isNotificationAuthorized == true && UserInformation.userNotificationToken == nil {
-            // User isn't registered for remote notifications but should be
-            DispatchQueue.main.async {
-                UIApplication.shared.registerForRemoteNotifications()
-            }
-        }
-    }
-    
 }

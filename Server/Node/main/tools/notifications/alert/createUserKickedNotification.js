@@ -1,5 +1,5 @@
 const { areAllDefined } = require('../../format/validateDefined');
-const { sendAPNForUser } = require('../apn/sendAPN');
+const { sendNotificationForUser } = require('../apn/sendNotification');
 
 function createUserKickedNotification(userId) {
   if (areAllDefined(userId) === false) {
@@ -10,7 +10,7 @@ function createUserKickedNotification(userId) {
   const alertTitle = 'You have been kicked';
   // Maxmium possible length: 99 (raw) + 0 (variable) = 99
   const alertBody = 'You are no longer a part of your Hound family. However, you can still create or join another family';
-  sendAPNForUser(userId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
+  sendNotificationForUser(userId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
 }
 
 module.exports = { createUserKickedNotification };

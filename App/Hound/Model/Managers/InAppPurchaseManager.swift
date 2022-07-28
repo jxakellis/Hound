@@ -207,13 +207,7 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
     
     // Observe a transaction state
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-        
-        print("Queue Count \(transactions.count)")
-        for transaction in transactions {
-            print(transaction.payment.productIdentifier, transaction.transactionState.rawValue)
-        }
-        
-        // Only the family head can perform in-app purchases. This guard statement is here to stop background purchases from attempting to process. They will always fail if the user isn't the family head so no reason to even attempt them.
+    // Only the family head can perform in-app purchases. This guard statement is here to stop background purchases from attempting to process. They will always fail if the user isn't the family head so no reason to even attempt them.
         guard FamilyConfiguration.isFamilyHead else {
             return
         }
@@ -370,7 +364,6 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
     
     /// This delegate method is called when the user starts an in-app purchase in the App Store, and the transaction continues in your app. Specifically, if your app is already installed, the method is called automatically. If your app is not yet installed when the user starts the in-app purchase in the App Store, the user gets a notification when the app installation is complete. This method is called when the user taps the notification. Otherwise, if the user opens the app manually, this method is called only if the app is opened soon after the purchase was started.
     func paymentQueue(_ queue: SKPaymentQueue, shouldAddStorePayment payment: SKPayment, for product: SKProduct) -> Bool {
-        print("shouldAddStorePayment", payment.productIdentifier)
         SKPaymentQueue.default().add(payment)
         return true
     }

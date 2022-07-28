@@ -124,7 +124,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
                     
                 }
             case .notDetermined:
-                NotificationManager.requestNotificationAuthorization {
+                NotificationManager.requestNotificationAuthorization(shouldAdviseUserBeforeRequestingNotifications: false) {
                     self.synchronizeAllNotificationSwitches(animated: true)
                 }
             case .provisional:

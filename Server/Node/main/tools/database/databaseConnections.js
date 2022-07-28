@@ -2,53 +2,40 @@ const mysql2 = require('mysql2');
 const databasePassword = require('../../secrets/databasePassword');
 const { poolLogger } = require('../logging/loggers');
 
+const user = 'admin';
+const host = 'localhost';
+const password = databasePassword;
+const database = global.constant.server.IS_PRODUCTION_DATABASE ? 'productionHound' : 'developmentHound';
+const connectTimeout = 30000;
+const connectionConfiguration = {
+  user,
+  host,
+  password,
+  database,
+  connectTimeout,
+};
+
 /// The connection used by the server when querying the database for log notifications
-const connectionForGeneral = mysql2.createConnection({
-  connectTimeout: 30000,
-  host: 'localhost',
-  user: 'admin',
-  password: databasePassword,
-  database: 'Hound',
-});
+const connectionForGeneral = mysql2.createConnection(connectionConfiguration);
 
 /// The connection used by the server when querying the database to add logs about requests
-const connectionForLogging = mysql2.createConnection({
-  connectTimeout: 30000,
-  host: 'localhost',
-  user: 'admin',
-  password: databasePassword,
-  database: 'Hound',
-});
+const connectionForLogging = mysql2.createConnection(connectionConfiguration);
 
 /// The connection used by the server when querying the database for notifications
-const connectionForAlerts = mysql2.createConnection({
-  connectTimeout: 30000,
-  host: 'localhost',
-  user: 'admin',
-  password: databasePassword,
-  database: 'Hound',
-});
+const connectionForAlerts = mysql2.createConnection(connectionConfiguration);
 
 /// The connection used by the server when querying the database for notifications
-const connectionForAlarms = mysql2.createConnection({
-  connectTimeout: 30000,
-  host: 'localhost',
-  user: 'admin',
-  password: databasePassword,
-  database: 'Hound',
-});
+const connectionForAlarms = mysql2.createConnection(connectionConfiguration);
 
 /// The connection used by the server when querying the database for user tokens
-const connectionForTokens = mysql2.createConnection({
-  connectTimeout: 30000,
-  host: 'localhost',
-  user: 'admin',
-  password: databasePassword,
-  database: 'Hound',
-});
+const connectionForTokens = mysql2.createConnection(connectionConfiguration);
 
 /// the pool used by users when quering the database for their requests
 const poolForRequests = mysql2.createPool({
+  user,
+  host,
+  password,
+  database,
   // Determines the pool's action when no connections are available and the limit has been reached.
   // If true, the pool will queue the connection request and call it when one becomes available.
   // If false, the pool will immediately call back with an error.
@@ -59,11 +46,6 @@ const poolForRequests = mysql2.createPool({
   // The maximum number of connections to create at once.
   connectionLimit: 10,
   connectTimeout: 10000,
-  // acquireTimeout: 10000,
-  host: 'localhost',
-  user: 'admin',
-  password: databasePassword,
-  database: 'Hound',
 });
 
 poolForRequests.on('acquire', (connection) => {

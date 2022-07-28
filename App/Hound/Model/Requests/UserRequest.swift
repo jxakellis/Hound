@@ -21,14 +21,8 @@ enum UserRequest: RequestProtocol {
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
     private static func internalGet(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
-        let URL: URL!
-        if UserInformation.userId != nil {
-            URL = baseURLWithUserId
-        }
-        else {
-            URL = baseURLWithoutParams
-        }
-        return InternalRequestUtils.genericGetRequest(invokeErrorManager: invokeErrorManager, forURL: URL) { responseBody, responseStatus in
+        // We don't need to add the userId for a get request as we simply only need the userIdentifier
+        return InternalRequestUtils.genericGetRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
         

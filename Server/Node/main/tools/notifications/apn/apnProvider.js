@@ -11,11 +11,12 @@ const options = {
     keyId,
     teamId,
   },
-  production: global.constant.server.IS_PRODUCTION,
+  production: undefined,
   requestTimeout: 2000,
 };
 
 // Because http/2 already uses multiplexing, you probably don't need to use more than one client unless you are hitting http/2 concurrent request limits.
-const apnProvider = new apn.MultiProvider(options);
+const productionAPNProvider = new apn.MultiProvider({ ...options, production: true });
+const developmentAPNProvider = new apn.MultiProvider({ ...options, production: false });
 
-module.exports = { apn, apnProvider };
+module.exports = { apn, productionAPNProvider, developmentAPNProvider };

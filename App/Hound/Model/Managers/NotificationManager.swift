@@ -11,13 +11,43 @@ import UIKit
 enum NotificationManager {
     
     /**
+     If shouldAdviseUserBeforeRequestingNotifications is true, presents an alert controller that asks the user if they want to turn on notifications. This alert controller tells them the benefits of turning on notifications. Additionally, this alert prevents the user from interacting with Apple's "turn on notifications" message until they say they want to turn on notifications, reducing the chance that they hit "Don't Allow (notifications)"
+     
      DOES update local UserConfiguration. Requests permission to send notifications to the user then invokes updateServerUserNotificationConfiguration. If the server returned a 200 status and is successful, then return. Otherwise, if the user didn't grant permission or there was a problem with the  query, then return and (if needed) ErrorManager is automatically invoked
      */
-    static func requestNotificationAuthorization(completionHandler: @escaping () -> Void) {
-        let beforeUpdateIsNotificationEnabled = UserConfiguration.isNotificationEnabled
-        let beforeUpdateIsLoudNotification = UserConfiguration.isLoudNotification
-        let beforeUpdateIsFollowUpEnabled = UserConfiguration.isFollowUpEnabled
-        if LocalConfiguration.isNotificationAuthorized == false {
+    static func requestNotificationAuthorization(shouldAdviseUserBeforeRequestingNotifications: Bool, completionHandler: @escaping () -> Void) {
+        guard LocalConfiguration.isNotificationAuthorized == false else {
+            // A user could potentially be isNotificationAuthorized == true but unregistered for remoteNotications
+            UIApplication.shared.registerForRemoteNotifications()
+            completionHandler()
+            return
+        }
+        
+        // Check to see if we need to ask the user first about wanting notifications, before showing Apple's notification prompt. This helps reduce the chances that a user will disable notifications when they really should have turned them on.
+        guard shouldAdviseUserBeforeRequestingNotifications == true else {
+            performNotificationAuthorizationRequest()
+            return
+        }
+        
+        let askUserAlertController = GeneralUIAlertController(title: "Do you want to turn on notifications?", message: "Hound's notifications alert you about important events, such as your dog needing a helping hand or logs of care being added.", preferredStyle: .alert)
+        
+        let turnOnNotificationsAlertAction = UIAlertAction(title: "Turn On Notifications", style: .default) { _ in
+            performNotificationAuthorizationRequest()
+        }
+        
+        let notNowAlertAction = UIAlertAction(title: "Not Now", style: .cancel) { _ in
+            completionHandler()
+        }
+        
+        askUserAlertController.addAction(turnOnNotificationsAlertAction)
+        askUserAlertController.addAction(notNowAlertAction)
+        
+        AlertManager.enqueueAlertForPresentation(askUserAlertController)
+        
+        func performNotificationAuthorizationRequest() {
+            let beforeUpdateIsNotificationEnabled = UserConfiguration.isNotificationEnabled
+            let beforeUpdateIsLoudNotification = UserConfiguration.isLoudNotification
+            let beforeUpdateIsFollowUpEnabled = UserConfiguration.isFollowUpEnabled
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (isGranted, _) in
                 LocalConfiguration.isNotificationAuthorized = isGranted
                 UserConfiguration.isNotificationEnabled = isGranted
@@ -30,57 +60,24 @@ enum NotificationManager {
                     }
                 }
                 
-                NotificationManager.updateServerUserNotificationConfiguration(
-                    updatedIsNotificationEnabled: UserConfiguration.isNotificationEnabled, updatedIsLoudNotification: UserConfiguration.isLoudNotification, updatedIsFollowUpEnabled: UserConfiguration.isFollowUpEnabled) { requestWasSuccessful in
-                        if requestWasSuccessful == false {
-                            UserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
-                            UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
-                            UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
-                        }
-                        completionHandler()
+                // Contact the server about the updated values and, if there is no response or a bad response, revert the values to their previous values. isNotificationAuthorized purposefully excluded as server doesn't need to know that and its value cant exactly just be flipped (as tied to apple notif auth status)
+                let body: [String: Any] = [
+                    ServerDefaultKeys.isNotificationEnabled.rawValue: UserConfiguration.isNotificationEnabled, ServerDefaultKeys.isLoudNotification.rawValue: UserConfiguration.isLoudNotification, ServerDefaultKeys.isFollowUpEnabled.rawValue: UserConfiguration.isFollowUpEnabled
+                ]
+                UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
+                    if requestWasSuccessful == false {
+                        UserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
+                        UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
+                        UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
                     }
+                    completionHandler()
+                }
             }
-            
         }
-        else {
-            // A user could potentially be isNotificationAuthorized == true but unregistered for remoteNotications. Therefore
-            UIApplication.shared.registerForRemoteNotifications()
-            completionHandler()
-        }
+        
     }
     
-    /**
-     DOES NOT update local UserConfiguration. Updates the server based on the new status of the parameters provided.  If the server returned a 200 status and is successful, then true is returned. Otherwise, if there was a problem with the query, false is returned and ErrorManager is automatically invoked.
-     */
-    private static func updateServerUserNotificationConfiguration(updatedIsNotificationEnabled: Bool? = nil, updatedIsLoudNotification: Bool? = nil, updatedIsFollowUpEnabled: Bool? = nil, completionHandler: @escaping (Bool) -> Void) {
-        // Contact the server about the updated values and, if there is no response or a bad response, revert the values to their previous values. isNotificationAuthorized purposefully excluded as server doesn't need to know that and its value cant exactly just be flipped (as tied to apple notif auth status)
-        var body: [String: Any] = [:]
-        // check for if values were changed, if there were then tell the server
-        if let updatedIsNotificationEnabled = updatedIsNotificationEnabled {
-            body[ServerDefaultKeys.isNotificationEnabled.rawValue] = updatedIsNotificationEnabled
-        }
-        if let updatedIsLoudNotification = updatedIsLoudNotification {
-            body[ServerDefaultKeys.isLoudNotification.rawValue] = updatedIsLoudNotification
-        }
-        if let updatedIsFollowUpEnabled = updatedIsFollowUpEnabled {
-            body[ServerDefaultKeys.isFollowUpEnabled.rawValue] = updatedIsFollowUpEnabled
-        }
-        if body.keys.isEmpty == false {
-            // something to update
-            UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
-                completionHandler(requestWasSuccessful)
-            }
-        }
-        // body is empty so there was nothing to query, return completion handler
-        else {
-            // DONT REMOVE THIS .main, UNUserNotificationCenter.current().requestAuthorization invokes this function inside is compeltionHandler and that is not on the main thread. Will cause issues since UserRequest part is main thread but this isn't
-            DispatchQueue.main.async {
-                completionHandler(true)
-            }
-        }
-    }
-    
-    /// Checks to see if a change in notification permissions has occured, if it has then update to reflect
+    /// Checks to see that the status of isNotificationAuthorized matches the status of other notification settings. If there is an imbalance in notification settings or a change has occured, then updates the local settings and server settings to fix the issue
     static func synchronizeNotificationAuthorization() {
         let beforeUpdateIsNotificationEnabled = UserConfiguration.isNotificationEnabled
         let beforeUpdateIsLoudNotification = UserConfiguration.isLoudNotification
@@ -89,43 +86,46 @@ enum NotificationManager {
         UNUserNotificationCenter.current().getNotificationSettings { (permission) in
             switch permission.authorizationStatus {
             case .authorized:
-                
-                // going from off to on, meaning the user has gone into the settings app and turned notifications from disabled to enabled
-                LocalConfiguration.isNotificationAuthorized = true
-                // The user isn't registered for remote notifications but should be
-                if UserInformation.userNotificationToken == nil {
-                    DispatchQueue.main.async {
-                        UIApplication.shared.registerForRemoteNotifications()
-                    }
-                }
-                
+                authorizeNotifications()
             case .denied:
-                
-                LocalConfiguration.isNotificationAuthorized = false
-                UserConfiguration.isNotificationEnabled = false
-                UserConfiguration.isLoudNotification = false
-                UserConfiguration.isFollowUpEnabled = false
-                // Updates switch to reflect change, if the last view open was the settings page then the app is exitted and property changed in the settings app then this app is reopened, VWL will not be called as the settings page was already opened, weird edge case.
-                // keep .main as UNUserNotificationCenter.current().getNotificationSettings is on seperate thread
-                DispatchQueue.main.async {
-                    let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController?.settingsViewController
-                    settingsVC?.settingsNotificationsViewController?.synchronizeAllNotificationSwitches(animated: false)
-                }
-                updateServerUserConfiguration()
-                
+                denyNotifications()
             case .notDetermined:
-                AppDelegate.generalLogger.notice(".notDetermined")
+                denyNotifications()
             case .provisional:
-                AppDelegate.generalLogger.notice(".provisional")
+                authorizeNotifications()
             case .ephemeral:
-                AppDelegate.generalLogger.notice(".ephemeral")
+                authorizeNotifications()
             @unknown default:
-                AppDelegate.generalLogger.notice("\(VisualConstant.TextConstant.unknownText) notification authorization status")
+                denyNotifications()
             }
         }
         
-        /// Contact the server about the updated values and, if there is no response or a bad response, revert the values to their previous values. isNotificationAuthorized purposefully excluded as server doesn't need to know that and its value cant exactly just be flipped (as tied to apple notif auth status)
-        func updateServerUserConfiguration() {
+        /// Enables isNotificationAuthorized and checks to make sure that the user is registered for remote notifications
+        func authorizeNotifications() {
+            // Notifications are authorized
+            LocalConfiguration.isNotificationAuthorized = true
+            // Never cache device tokens in your app; instead, get them from the system when you need them. APNs issues a new device token to your app when certain events happen.
+            DispatchQueue.main.async {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+        }
+        
+        /// Disables isNotificationAuthorized and checks to make sure that the other notification settings align (making sure there is no imbalance, e.g. isNotificationEnabled == true but isNotificationAuthorized == false)
+        func denyNotifications() {
+            LocalConfiguration.isNotificationAuthorized = false
+            
+            // The user isn't authorized for notifications, therefore all of those settings should be false. If any of those settings aren't false, representing an imbalance, then we should fix this imbalance and update the Hound server
+            guard UserConfiguration.isNotificationEnabled == true || UserConfiguration.isFollowUpEnabled == true || UserConfiguration.isLoudNotification == true else {
+                return
+            }
+            
+            UserConfiguration.isNotificationEnabled = false
+            UserConfiguration.isLoudNotification = false
+            UserConfiguration.isFollowUpEnabled = false
+            // Updates switch to reflect change, if the last view open was the settings page then the app is exitted and property changed in the settings app then this app is reopened, VWL will not be called as the settings page was already opened, weird edge case.
+            DispatchQueue.main.async {
+                MainTabBarViewController.mainTabBarViewController?.settingsViewController?.settingsNotificationsViewController?.synchronizeAllNotificationSwitches(animated: false)
+            }
             var body: [String: Any] = [:]
             // check for if values were changed, if there were then tell the server
             if UserConfiguration.isNotificationEnabled != beforeUpdateIsNotificationEnabled {
@@ -137,20 +137,21 @@ enum NotificationManager {
             if UserConfiguration.isFollowUpEnabled != beforeUpdateIsFollowUpEnabled {
                 body[ServerDefaultKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
             }
-            if body.keys.isEmpty == false {
-                UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
-                    if requestWasSuccessful == false {
-                        // error, revert to previous
-                        UserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
-                        UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
-                        UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
-                        
-                        let settingsVC: SettingsViewController? = MainTabBarViewController.mainTabBarViewController?.settingsViewController
-                        settingsVC?.settingsNotificationsViewController?.synchronizeAllNotificationSwitches(animated: false)
-                    }
-                }
-            }
             
+            guard body.keys.isEmpty == false else {
+                return
+            }
+            UserRequest.update(invokeErrorManager: false, body: body) { requestWasSuccessful, _ in
+                guard requestWasSuccessful == false else {
+                    return
+                }
+                // error, revert to previous
+                UserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
+                UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
+                UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
+                
+                MainTabBarViewController.mainTabBarViewController?.settingsViewController?.settingsNotificationsViewController?.synchronizeAllNotificationSwitches(animated: false)
+            }
         }
     }
     

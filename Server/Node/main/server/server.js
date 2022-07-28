@@ -15,27 +15,36 @@ const app = express();
 
 // MARK: Create the server
 
+// TO DO NOW upon start of node server, first have it run console commands to stop/start MariaDB
+
+// TO DO NOW add 2fa to AWS
+// TO DO NOW add database backups to AWS
+// TO DO NOW add watchdog to AWS to make sure node and database are running
+// TO DO NOW add PM2 to AWS to better manage the node instance
+// TO DO NOW add RDP IP constraints to AWS firewall
+
 const { restoreAlarmNotificationsForAllFamilies } = require('../tools/notifications/alarm/restoreAlarmNotification');
-const { cleanUpIsDeleted } = require('../tools/database/databaseCleanUp');
+// const { cleanUpIsDeleted } = require('../tools/database/databaseCleanUp');
 const { configureAppForRequests } = require('./request');
 const { logServerError } = require('../tools/logging/logServerError');
 
 // Create a NodeJS HTTPS listener on port that points to the Express app
-// If we are in production, then create an HTTPS only server. Otherwise for development, create an HTTP only server.
-const HTTPOrHTTPSServer = global.constant.server.IS_PRODUCTION
+// We can only create an HTTPS server on the AWS instance. Otherwise we create a HTTP server.
+const HTTPOrHTTPSServer = global.constant.server.IS_PRODUCTION_SERVER
   ? https.createServer({
     key: fs.readFileSync('/etc/letsencrypt/live/api.houndorganizer.com/privkey.pem'),
     cert: fs.readFileSync('/etc/letsencrypt/live/api.houndorganizer.com/fullchain.pem'),
   }, app)
   : http.createServer(app);
 
-const port = global.constant.server.IS_PRODUCTION ? 443 : 80;
+// We can only create an HTTPS server on the AWS instance. Otherwise we create a HTTP server.
+const port = global.constant.server.IS_PRODUCTION_SERVER ? 443 : 80;
 HTTPOrHTTPSServer.listen(port, async () => {
-  serverLogger.info(`${global.constant.server.IS_PRODUCTION ? 'Production' : 'Development'} HTTP${port === 443 ? 'S' : ''} server running on port ${port}`);
+  serverLogger.info(`Running HTTP${global.constant.server.IS_PRODUCTION_SERVER ? 'S' : ''} server on port ${port}; ${global.constant.server.IS_PRODUCTION_DATABASE ? 'production' : 'development'} database`);
 
-  if (global.constant.server.IS_PRODUCTION) {
+  if (global.constant.server.IS_PRODUCTION_DATABASE) {
     await restoreAlarmNotificationsForAllFamilies();
-    await cleanUpIsDeleted();
+    // await cleanUpIsDeleted();
   }
 });
 

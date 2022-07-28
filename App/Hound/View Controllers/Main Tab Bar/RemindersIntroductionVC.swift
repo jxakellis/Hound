@@ -31,7 +31,7 @@ final class RemindersIntroductionViewController: UIViewController {
         
         continueButton.isEnabled = false
         
-        NotificationManager.requestNotificationAuthorization {
+        NotificationManager.requestNotificationAuthorization(shouldAdviseUserBeforeRequestingNotifications: true) {
             // wait the user to select an grant or deny notification permission (and for the server to response if situation requires the use of it) before continuing
             
             // the user has no reminders so they are therefore able to add default reminders AND they chose to add default reminders

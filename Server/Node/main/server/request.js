@@ -8,9 +8,9 @@ const { serverToServerRouter } = require('../../routes/serverToServer');
 const { userRouter } = require('../../routes/user');
 const { GeneralError } = require('../tools/general/errors');
 
-const productionPath = global.constant.server.IS_PRODUCTION ? 'prod' : 'dev';
-const serverToServerPath = `/${productionPath}/s2s`;
-const userPath = `/${productionPath}/app/:appBuild`;
+const databasePath = global.constant.server.IS_PRODUCTION_DATABASE ? 'prod' : 'dev';
+const serverToServerPath = `/${databasePath}/s2s`;
+const userPath = `/${databasePath}/app/:appBuild`;
 
 function configureAppForRequests(app) {
   // Setup defaults and custom res.status method

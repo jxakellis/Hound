@@ -5,7 +5,7 @@ const { areAllDefined } = require('../../format/validateDefined');
 
 const { logServerError } = require('../../logging/logServerError');
 const { getUserFirstNameLastNameForUserId } = require('../../../../controllers/getFor/getForUser');
-const { sendAPNForFamilyExcludingUser } = require('../apn/sendAPN');
+const { sendNotificationForFamilyExcludingUser } = require('../apn/sendNotification');
 const { formatIntoAbreviatedFullName } = require('../../format/formatName');
 
 /**
@@ -38,7 +38,7 @@ async function createFamilyMemberJoinNotification(userId, familyId) {
     alertBody = `Welcome ${abreviatedFullName} into your Hound family`;
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
+    sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
   }
   catch (error) {
     logServerError('createFamilyMemberJoinNotification', error);
@@ -75,7 +75,7 @@ async function createFamilyMemberLeaveNotification(userId, familyId) {
     alertBody = `${abreviatedFullName} has parted ways with your Hound family`;
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
+    sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
   }
   catch (error) {
     logServerError('createFamilyMemberLeaveNotification', error);
@@ -119,7 +119,7 @@ async function createFamilyLockedNotification(userId, familyId, newIsLocked) {
       : `${abreviatedFullName}'s updated your family settings to allow new users to join`;
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
+    sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
   }
   catch (error) {
     logServerError('createFamilyLockedNotification', error);
@@ -163,7 +163,7 @@ async function createFamilyPausedNotification(userId, familyId, newIsPaused) {
       : `${abreviatedFullName}'s updated your family settings to resume all your alarms`;
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
+    sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
   }
   catch (error) {
     logServerError('createFamilyPausedNotification', error);

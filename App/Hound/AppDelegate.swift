@@ -17,8 +17,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
     static var lifeCycleLogger = Logger(subsystem: "com.example.Pupotty", category: "Life Cycle")
     static var APIRequestLogger = Logger(subsystem: "com.example.Pupotty", category: "API Request")
     static var APIResponseLogger = Logger(subsystem: "com.example.Pupotty", category: "API Response")
-    
-    // TO DO NOW when archiving build. Specify whether it's a debug or release build. This decides whether or not the user will recieve a dev or prod notification token respectively
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -57,6 +55,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
         let token = tokenParts.joined()
         AppDelegate.generalLogger.notice("Successfully registered for remote notifications for token: \(token)")
         
+        // If the token is different that what we have saved (i.e. there is a new token or there was no token saved), then update the server
         if token != UserInformation.userNotificationToken {
             // don't sent the user an alert if this request fails as there is no point
             UserRequest.update(invokeErrorManager: false, body: [ServerDefaultKeys.userNotificationToken.rawValue: token]) { requestWasSuccessful, _ in
@@ -83,6 +82,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
             completionHandler(.noData)
             return
         }
+        
+        // TO DO NOW when a log / reminder come through, trigger an indicator that the dogmanager must be refreshed in order to show the change
 
         // if the notification is a reminder, then check to see if loud notification can be played
         guard category == "reminder" else {

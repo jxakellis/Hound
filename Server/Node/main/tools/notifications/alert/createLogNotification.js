@@ -5,7 +5,7 @@ const { areAllDefined } = require('../../format/validateDefined');
 const { logServerError } = require('../../logging/logServerError');
 const { getDogForDogId } = require('../../../../controllers/getFor/getForDogs');
 const { getUserFirstNameLastNameForUserId } = require('../../../../controllers/getFor/getForUser');
-const { sendAPNForFamilyExcludingUser } = require('../apn/sendAPN');
+const { sendNotificationForFamilyExcludingUser } = require('../apn/sendNotification');
 const { formatIntoAbreviatedFullName } = require('../../format/formatName');
 const { formatLogAction } = require('../../format/formatName');
 
@@ -51,7 +51,7 @@ async function createLogNotification(userId, familyId, dogId, logAction, logCust
     alertBody = `${abreviatedFullName} lent a helping hand with '${formattedLogAction}'`;
 
     // we now have the messages and can send our APN
-    sendAPNForFamilyExcludingUser(userId, familyId, global.constant.apn.category.LOG, alertTitle, alertBody, {});
+    sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.apn.category.LOG, alertTitle, alertBody, {});
   }
   catch (error) {
     logServerError('createLogNotification', error);

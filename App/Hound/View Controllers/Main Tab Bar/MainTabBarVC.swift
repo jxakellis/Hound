@@ -163,8 +163,10 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
             InAppPurchaseManager.showPriceConsentIfNeeded()
         }
         CheckManager.checkForReleaseNotes()
-        CheckManager.checkForNotificationSettingImbalance()
-        CheckManager.checkForRemoteNotificationImbalance()
+        // Invocation of synchronizeNotificationAuthorization from willEnterForeground will only be accurate in conjuction with invocation of synchronizeNotificationAuthorization in viewDidAppear of MainTabBarViewController. This makes it so every time Hound is opened, either from the background or from terminated, notifications are properly synced.
+        // 1. Hound entering foreground from being terminated. willEnterForeground isn't called upon inital launch of Hound, only once Hound is sent to background then brought back to foreground, but viewDidAppear MainTabBarViewController will catch as it's invoked once ServerSyncViewController is done loading
+        // 2. Hound entering foreground after entering background. viewDidAppear MainTabBarViewController won't catch as MainTabBarViewController's view isn't appearing anymore but willEnterForeground will catch any imbalance as it's called once app is loaded to foreground
+        NotificationManager.synchronizeNotificationAuthorization()
         TimingManager.willInitalize(forDogManager: dogManager)
     }
 
