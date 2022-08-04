@@ -1,6 +1,6 @@
 const { serverLogger } = require('./loggers');
-const { databaseQuery } = require('../database/databaseQuery');
-const { connectionForLogging } = require('../database/databaseConnections');
+const { serverConnectionForLogging } = require('../database/databaseConnections');
+const { databaseQuery } = require('../database/queryDatabase');
 const { formatString } = require('../format/formatObject');
 const { areAllDefined } = require('../format/validateDefined');
 
@@ -28,7 +28,7 @@ async function logServerError(forFunction, forError) {
 
   try {
     await databaseQuery(
-      connectionForLogging,
+      serverConnectionForLogging,
       'INSERT INTO previousServerErrors(errorDate, errorFunction, errorName, errorMessage, errorCode, errorStack) VALUES (?,?,?,?,?,?)',
       [errorDate, errorFunction, errorName, errorMessage, errorCode, errorStack],
     );

@@ -1,6 +1,6 @@
 const { alarmLogger } = require('../../logging/loggers');
-const { databaseQuery } = require('../../database/databaseQuery');
-const { connectionForAlarms } = require('../../database/databaseConnections');
+const { serverConnectionForAlarms } = require('../../database/databaseConnections');
+const { databaseQuery } = require('../../database/queryDatabase');
 
 const { logServerError } = require('../../logging/logServerError');
 const { formatBoolean, formatNumber, formatDate } = require('../../format/formatObject');
@@ -17,14 +17,13 @@ const { deleteSecondaryAlarmNotificationsForUser } = require('./deleteAlarmNotif
  */
 async function refreshSecondaryAlarmNotificationsForUserId(userId, forIsFollowUpEnabled, forFollowUpDelay) {
   try {
-    // TO DO BUG somewhere in refreshSecondaryAlarmNotifications there is invalid code that produces invalid date
     alarmLogger.debug(`refreshSecondaryAlarmNotificationsForUserId ${userId}, ${forIsFollowUpEnabled}, ${forFollowUpDelay}`);
 
     let isFollowUpEnabled = formatBoolean(forIsFollowUpEnabled);
     let followUpDelay = formatNumber(forFollowUpDelay);
 
     // Have to be careful isFollowUpEnabled and followUpDelay are accessed as there will be uncommited transactions involved
-    // If the transaction is uncommited and querying from an outside connection (connectionForAlarms), the values from a SELECT query will be the old values
+    // If the transaction is uncommited and querying from an outside connection (serverConnectionForAlarms), the values from a SELECT query will be the old values
     // If the transaction is uncommited and querying from the updating connection (req.connection), the values from the SELECT query will be the updated values
     // If the transaction is committed, then any connection will reflect the new values
 
@@ -33,7 +32,7 @@ async function refreshSecondaryAlarmNotificationsForUserId(userId, forIsFollowUp
     }
 
     let result = await databaseQuery(
-      connectionForAlarms,
+      serverConnectionForAlarms,
       'SELECT isFollowUpEnabled, followUpDelay FROM userConfiguration WHERE userId = ? LIMIT 1',
       [userId],
     );
@@ -57,7 +56,7 @@ async function refreshSecondaryAlarmNotificationsForUserId(userId, forIsFollowUp
     // no need to invoke deleteSecondaryAlarmNotificationsForUser as createSecondaryAlarmNotificationForUser will delete/override by itself
     // get all the reminders for the given userId
     const remindersWithInfo = await databaseQuery(
-      connectionForAlarms,
+      serverConnectionForAlarms,
       'SELECT dogReminders.reminderId, dogReminders.reminderExecutionDate FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE familyMembers.userId = ? AND dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
       [userId],
     );

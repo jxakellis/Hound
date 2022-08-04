@@ -1,5 +1,6 @@
 // make sure the constants are loaded
 require('./constants');
+const { exec } = require('child_process');
 
 // Import builtin NodeJS modules to instantiate the service
 const http = require('http');
@@ -24,9 +25,12 @@ const app = express();
 // TO DO NOW add RDP IP constraints to AWS firewall
 
 const { restoreAlarmNotificationsForAllFamilies } = require('../tools/notifications/alarm/restoreAlarmNotification');
-// const { cleanUpIsDeleted } = require('../tools/database/databaseCleanUp');
 const { configureAppForRequests } = require('./request');
 const { logServerError } = require('../tools/logging/logServerError');
+const {
+  serverConnectionForGeneral, serverConnectionForLogging, serverConnectionForAlarms, poolForRequests,
+} = require('../tools/database/databaseConnections');
+const { verifyDatabaseConnections } = require('../tools/database/verifyConnections');
 
 // Create a NodeJS HTTPS listener on port that points to the Express app
 // We can only create an HTTPS server on the AWS instance. Otherwise we create a HTTP server.
@@ -42,6 +46,8 @@ const port = global.constant.server.IS_PRODUCTION_SERVER ? 443 : 80;
 HTTPOrHTTPSServer.listen(port, async () => {
   serverLogger.info(`Running HTTP${global.constant.server.IS_PRODUCTION_SERVER ? 'S' : ''} server on port ${port}; ${global.constant.server.IS_PRODUCTION_DATABASE ? 'production' : 'development'} database`);
 
+  await verifyDatabaseConnections();
+
   if (global.constant.server.IS_PRODUCTION_DATABASE) {
     await restoreAlarmNotificationsForAllFamilies();
     // await cleanUpIsDeleted();
@@ -53,10 +59,92 @@ configureAppForRequests(app);
 
 // MARK:  Handle termination of the server
 
-const {
-  connectionForGeneral, connectionForLogging, connectionForAlerts, connectionForAlarms, connectionForTokens, poolForRequests,
-} = require('../tools/database/databaseConnections');
 const { schedule } = require('../tools/notifications/alarm/schedules');
+
+/**
+ * Gracefully closes/ends everything
+ * This includes the connection pool for the database for general requests, the connection for server notifications, the server itself, and the notification schedule
+ */
+const shutdown = () => new Promise((resolve) => {
+  serverLogger.info('Shutdown Initiated');
+
+  const numberOfShutdownsNeeded = 6;
+  let numberOfShutdownsCompleted = 0;
+
+  schedule.gracefulShutdown()
+    .then(() => {
+      serverLogger.info('Schedule Gracefully Shutdown');
+    })
+    .catch((error) => {
+      serverLogger.error('Schedule Couldn\'t Shutdown', error);
+    })
+    .finally(() => {
+      numberOfShutdownsCompleted += 1;
+      checkForShutdownCompletion();
+    });
+
+  serverConnectionForGeneral.end((error) => {
+    if (error) {
+      serverLogger.info('General Server Connection Couldn\'t Shutdown', error);
+    }
+    else {
+      serverLogger.info('General Server Connection Gracefully Shutdown');
+    }
+    numberOfShutdownsCompleted += 1;
+    checkForShutdownCompletion();
+  });
+
+  serverConnectionForLogging.end((error) => {
+    if (error) {
+      serverLogger.info('Logging Server Connection Couldn\'t Shutdown', error);
+    }
+    else {
+      serverLogger.info('Logging Server Connection Gracefully Shutdown');
+    }
+    numberOfShutdownsCompleted += 1;
+    checkForShutdownCompletion();
+  });
+
+  serverConnectionForAlarms.end((error) => {
+    if (error) {
+      serverLogger.info('Alarms Server Connection Couldn\'t Shutdown', error);
+    }
+    else {
+      serverLogger.info('Alarms Server Connection Gracefully Shutdown');
+    }
+    numberOfShutdownsCompleted += 1;
+    checkForShutdownCompletion();
+  });
+
+  poolForRequests.end((error) => {
+    if (error) {
+      serverLogger.info('Pool For Requests Couldn\'t Shutdown', error);
+    }
+    else {
+      serverLogger.info('Pool For Requests Gracefully Shutdown');
+    }
+    numberOfShutdownsCompleted += 1;
+    checkForShutdownCompletion();
+  });
+
+  HTTPOrHTTPSServer.close((error) => {
+    if (error) {
+      serverLogger.info('Server Couldn\'t Shutdown', error);
+    }
+    else {
+      serverLogger.info('Server Gracefully Shutdown');
+    }
+    numberOfShutdownsCompleted += 1;
+    checkForShutdownCompletion();
+  });
+
+  function checkForShutdownCompletion() {
+    if (numberOfShutdownsCompleted === numberOfShutdownsNeeded) {
+      serverLogger.info('Shutdown Complete');
+      resolve();
+    }
+  }
+});
 
 process.on('SIGTERM', async () => {
   serverLogger.info('SIGTERM');
@@ -81,62 +169,26 @@ process.on('uncaughtException', async (error, origin) => {
   await logServerError('uncaughtException', error);
   await shutdown();
 
-  throw error;
+  if (error.code === 'EADDRINUSE') {
+    // The first command is a killall command for linux, the second is for mac
+    const consoleCommand = global.constant.server.IS_PRODUCTION_SERVER ? 'sudo killall -9 node' : 'killall -9 node';
+    /**
+   * The previous Node Application did not shut down properly
+   * process.on('exit', ...) isn't called when the process crashes or is killed.
+   */
+    exec(consoleCommand, () => {
+      serverLogger.info('EADDRINUSE; All Node applications killed ');
+      process.exit(1);
+    });
+    return;
+  }
+
+  process.exit(1);
 });
 
 process.on('uncaughtRejection', async (reason, promise) => {
   // uncaught rejection of a promise happened somewhere
   serverLogger.info(`Uncaught rejection of promise: ${promise}`, `reason: ${reason}`);
 });
-
-/**
- * Gracefully closes/ends everything
- * This includes the connection pool for the database for general requests, the connection for server notifications, the server itself, and the notification schedule
- */
-async function shutdown() {
-  serverLogger.info('HoundServer.js Program Is Shutting Down');
-
-  try {
-    connectionForGeneral.end(() => {
-      serverLogger.info('Connection For General Ended');
-    });
-
-    connectionForLogging.end(() => {
-      serverLogger.info('Connection For Logging Ended');
-    });
-
-    connectionForAlerts.end(() => {
-      serverLogger.info('Connection For Alerts Ended');
-    });
-
-    connectionForAlarms.end(() => {
-      serverLogger.info('Connection For Alarms Ended');
-    });
-
-    connectionForTokens.end(() => {
-      serverLogger.info('Connection For Tokens Ended');
-    });
-
-    poolForRequests.end(() => {
-      serverLogger.info('Pool For Requests Ended');
-    });
-
-    HTTPOrHTTPSServer.close(() => {
-      serverLogger.info('Hound Server Closed');
-    });
-  }
-  catch (error) {
-    serverLogger.info(`HoundServer.js Error: ${error}`);
-  }
-
-  try {
-    await schedule.gracefulShutdown();
-    serverLogger.info('Node Schedule Gracefully Shutdown');
-  }
-  catch (error) {
-    serverLogger.error('Node Primary Schedule Couldn\'t Shutdown:');
-    serverLogger.error(error);
-  }
-}
 
 module.exports = { app };

@@ -2,7 +2,7 @@ const express = require('express');
 
 const { parseFormData, parseJSON } = require('../tools/general/parseBody');
 const { logRequest } = require('../tools/logging/logRequest');
-const { configureRequestForResponse, aquirePoolConnectionBeginTransaction } = require('../tools/general/configureRequestAndResponse');
+const { configureRequestForResponse } = require('../tools/general/configureRequestAndResponse');
 const { validateAppBuild } = require('../tools/format/validateId');
 const { serverToServerRouter } = require('../../routes/serverToServer');
 const { userRouter } = require('../../routes/user');
@@ -15,9 +15,6 @@ const userPath = `/${databasePath}/app/:appBuild`;
 function configureAppForRequests(app) {
   // Setup defaults and custom res.status method
   app.use(configureRequestForResponse);
-
-  // Assign the request a pool connection to use
-  app.use(aquirePoolConnectionBeginTransaction);
 
   // Parse information possible sent
 

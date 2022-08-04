@@ -1,5 +1,5 @@
-const { connectionForAlerts } = require('../../database/databaseConnections');
 const { alertLogger } = require('../../logging/loggers');
+const { serverConnectionForGeneral } = require('../../database/databaseConnections');
 const { formatBoolean } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 
@@ -178,7 +178,7 @@ async function abreviatedFullNameForUserId(userId) {
     return undefined;
   }
 
-  const result = await getUserFirstNameLastNameForUserId(connectionForAlerts, userId);
+  const result = await getUserFirstNameLastNameForUserId(serverConnectionForGeneral, userId);
 
   if (areAllDefined(result, result.userFirstName, result.userLastName) === false) {
     return undefined;

@@ -1,6 +1,6 @@
 const { alarmLogger } = require('../../logging/loggers');
-const { databaseQuery } = require('../../database/databaseQuery');
-const { connectionForAlarms } = require('../../database/databaseConnections');
+const { serverConnectionForAlarms } = require('../../database/databaseConnections');
+const { databaseQuery } = require('../../database/queryDatabase');
 
 const { logServerError } = require('../../logging/logServerError');
 const { areAllDefined } = require('../../format/validateDefined');
@@ -18,12 +18,12 @@ async function deleteAlarmNotificationsForFamily(familyId) {
 
     // get all the reminders for the family
     const reminders = await databaseQuery(
-      connectionForAlarms,
+      serverConnectionForAlarms,
       'SELECT reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogs.familyId = ? LIMIT 18446744073709551615',
       [familyId],
     );
       // finds all the users in the family
-    const users = await getAllFamilyMembersForFamilyId(connectionForAlarms, familyId);
+    const users = await getAllFamilyMembersForFamilyId(serverConnectionForAlarms, familyId);
 
     for (let i = 0; i < reminders.length; i += 1) {
       const { reminderId } = reminders[i];
@@ -57,7 +57,7 @@ async function deleteAlarmNotificationsForReminder(familyId, reminderId) {
     cancelPrimaryJobForFamilyForReminder(familyId, reminderId);
 
     // finds all the users in the family
-    const users = await getAllFamilyMembersForFamilyId(connectionForAlarms, familyId);
+    const users = await getAllFamilyMembersForFamilyId(serverConnectionForAlarms, familyId);
 
     // iterate through all users for the family
     for (let i = 0; i < users.length; i += 1) {
@@ -83,7 +83,7 @@ async function deleteSecondaryAlarmNotificationsForUser(userId) {
     // get all the reminders for the given userId
     // specifically use JOIN to excluse resulst where reminder, dog, family, or family member are missing
     const reminderIds = await databaseQuery(
-      connectionForAlarms,
+      serverConnectionForAlarms,
       'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId JOIN familyMembers ON dogs.familyId = familyMembers.familyId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND familyMembers.userId = ? AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
       [userId],
     );

@@ -1,12 +1,13 @@
+const { DatabaseError } = require('./errors');
 const { logResponse } = require('../logging/logResponse');
 const { logServerError } = require('../logging/logServerError');
 const { formatNumber, formatBoolean } = require('../format/formatObject');
-const { DatabaseError, convertErrorToJSON } = require('./errors');
-const { poolForRequests } = require('../database/databaseConnections');
+const { convertErrorToJSON } = require('./errors');
 const { areAllDefined } = require('../format/validateDefined');
-const { databaseQuery } = require('../database/databaseQuery');
+const { databaseQuery } = require('../database/queryDatabase');
+const { poolForRequests } = require('../database/databaseConnections');
 
-function configureRequestForResponse(req, res, next) {
+async function configureRequestForResponse(req, res, next) {
   res.hasSentResponse = false;
   req.hasActiveConnection = false;
   req.hasActiveTransaction = false;
@@ -14,7 +15,32 @@ function configureRequestForResponse(req, res, next) {
   res.hasBeenLogged = false;
   configureResponse(req, res);
 
-  return next();
+  const hasActiveConnection = formatBoolean(req.hasActiveConnection);
+  const hasActiveTransaction = formatBoolean(req.hasActiveTransaction);
+
+  if (hasActiveConnection === true || hasActiveTransaction === true) {
+    return;
+  }
+
+  try {
+    const requestPoolConnection = await poolForRequests.promise().getConnection();
+    req.hasActiveConnection = true;
+    try {
+      await requestPoolConnection.beginTransaction();
+      req.connection = requestPoolConnection.connection;
+      req.hasActiveTransaction = true;
+    }
+    catch (transactionError) {
+      res.sendResponseForStatusJSONError(500, undefined, new DatabaseError("Couldn't begin a transaction with request pool connection", global.constant.error.general.POOL_TRANSACTION_FAILED));
+      return;
+    }
+  }
+  catch (connectionError) {
+    res.sendResponseForStatusJSONError(500, undefined, new DatabaseError("Couldn't create a request pool connection", global.constant.error.general.POOL_CONNECTION_FAILED));
+    return;
+  }
+
+  next();
 }
 
 function configureResponse(req, res) {
@@ -134,29 +160,4 @@ function releaseConnection(req, connection, hasActiveConnection) {
   req.hasActiveConnection = false;
 }
 
-async function aquirePoolConnectionBeginTransaction(req, res, next) {
-  const hasActiveConnection = formatBoolean(req.hasActiveConnection);
-  const hasActiveTransaction = formatBoolean(req.hasActiveTransaction);
-
-  if (hasActiveConnection === true || hasActiveTransaction === true) {
-    return next();
-  }
-  try {
-    const poolConnection = await poolForRequests.promise().getConnection();
-    req.hasActiveConnection = true;
-    try {
-      await poolConnection.beginTransaction();
-      req.connection = poolConnection.connection;
-      req.hasActiveTransaction = true;
-      return next();
-    }
-    catch (transactionError) {
-      return res.sendResponseForStatusJSONError(500, undefined, new DatabaseError("Couldn't begin a transaction with pool connection", global.constant.error.general.POOL_TRANSACTION_FAILED));
-    }
-  }
-  catch (connectionError) {
-    return res.sendResponseForStatusJSONError(500, undefined, new DatabaseError("Couldn't create a pool connection", global.constant.error.general.POOL_CONNECTION_FAILED));
-  }
-}
-
-module.exports = { configureRequestForResponse, aquirePoolConnectionBeginTransaction };
+module.exports = { configureRequestForResponse };

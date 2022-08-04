@@ -47,6 +47,11 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         }
     }
     
+    @IBAction func didClickCopyFamilyCode(_ sender: Any) {
+        UIPasteboard.general.string = familyCode
+        self.performSpinningCheckmarkAnimation()
+    }
+    
     // MARK: - Properties
     
     var leaveFamilyAlertController: GeneralUIAlertController!
@@ -55,12 +60,16 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     
     weak var delegate: SettingsFamilyViewControllerDelegate!
     
+    private var familyCode: String {
+        var code = FamilyConfiguration.familyCode
+        code.insert("-", at: code.index(code.startIndex, offsetBy: 4))
+        return code
+    }
+    
     // MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // TO DO NOW add button to copy paste family code
         
         oneTimeSetup()
     }
@@ -101,9 +110,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         isPausedSwitch.isOn = FamilyConfiguration.isPaused
         
         // MARK: Family Code
-        var code = FamilyConfiguration.familyCode
-        code.insert("-", at: code.index(code.startIndex, offsetBy: 4))
-        familyCode.text = "Code: \(code)"
+        familyCodeLabel.text = "Code: \(familyCode)"
         
         // MARK: Family Lock
         
@@ -247,7 +254,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     }
     
     // MARK: Family Code
-    @IBOutlet private weak var familyCode: ScaledUILabel!
+    @IBOutlet private weak var familyCodeLabel: ScaledUILabel!
     
     // MARK: Family Lock
     @IBOutlet private weak var isLockedLabel: ScaledUILabel!

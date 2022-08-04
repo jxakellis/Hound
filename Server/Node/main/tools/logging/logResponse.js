@@ -1,7 +1,7 @@
 const { responseLogger } = require('./loggers');
 const { logServerError } = require('./logServerError');
-const { databaseQuery } = require('../database/databaseQuery');
-const { connectionForLogging } = require('../database/databaseConnections');
+const { serverConnectionForLogging } = require('../database/databaseConnections');
+const { databaseQuery } = require('../database/queryDatabase');
 const { formatBoolean, formatString } = require('../format/formatObject');
 const { areAllDefined } = require('../format/validateDefined');
 
@@ -26,7 +26,7 @@ function logResponse(req, res, body) {
     res.hasBeenLogged = true;
 
     databaseQuery(
-      connectionForLogging,
+      serverConnectionForLogging,
       'INSERT INTO previousResponses(appBuild, requestIP, requestDate, requestMethod, requestOriginalURL, responseBody) VALUES (?,?,?,?,?,?)',
       [appBuild, ip, requestDate, method, requestOriginalUrl, responseBody],
     ).catch(

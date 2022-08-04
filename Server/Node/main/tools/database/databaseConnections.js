@@ -1,6 +1,5 @@
 const mysql2 = require('mysql2');
-const databasePassword = require('../../secrets/databasePassword');
-const { poolLogger } = require('../logging/loggers');
+const { databasePassword } = require('../../secrets/databasePassword');
 
 const user = 'admin';
 const host = 'localhost';
@@ -15,20 +14,11 @@ const connectionConfiguration = {
   connectTimeout,
 };
 
-/// The connection used by the server when querying the database for log notifications
-const connectionForGeneral = mysql2.createConnection(connectionConfiguration);
+const serverConnectionForGeneral = mysql2.createConnection(connectionConfiguration);
 
-/// The connection used by the server when querying the database to add logs about requests
-const connectionForLogging = mysql2.createConnection(connectionConfiguration);
+const serverConnectionForLogging = mysql2.createConnection(connectionConfiguration);
 
-/// The connection used by the server when querying the database for notifications
-const connectionForAlerts = mysql2.createConnection(connectionConfiguration);
-
-/// The connection used by the server when querying the database for notifications
-const connectionForAlarms = mysql2.createConnection(connectionConfiguration);
-
-/// The connection used by the server when querying the database for user tokens
-const connectionForTokens = mysql2.createConnection(connectionConfiguration);
+const serverConnectionForAlarms = mysql2.createConnection(connectionConfiguration);
 
 /// the pool used by users when quering the database for their requests
 const poolForRequests = mysql2.createPool({
@@ -48,16 +38,6 @@ const poolForRequests = mysql2.createPool({
   connectTimeout: 10000,
 });
 
-poolForRequests.on('acquire', (connection) => {
-  const currentDate = new Date();
-  poolLogger.debug(`Pool connection ${connection.threadId} acquired at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
-});
-
-poolForRequests.on('release', (connection) => {
-  const currentDate = new Date();
-  poolLogger.debug(`Pool connection ${connection.threadId} released at H:M:S:ms ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}:${currentDate.getMilliseconds()}`);
-});
-
 module.exports = {
-  connectionForGeneral, connectionForLogging, connectionForAlerts, connectionForAlarms, connectionForTokens, poolForRequests,
+  serverConnectionForGeneral, serverConnectionForLogging, serverConnectionForAlarms, poolForRequests,
 };

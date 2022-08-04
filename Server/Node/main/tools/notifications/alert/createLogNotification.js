@@ -1,5 +1,5 @@
-const { connectionForAlerts } = require('../../database/databaseConnections');
 const { alertLogger } = require('../../logging/loggers');
+const { serverConnectionForGeneral } = require('../../database/databaseConnections');
 const { areAllDefined } = require('../../format/validateDefined');
 
 const { logServerError } = require('../../logging/logServerError');
@@ -21,9 +21,9 @@ async function createLogNotification(userId, familyId, dogId, logAction, logCust
       return;
     }
 
-    const user = await getUserFirstNameLastNameForUserId(connectionForAlerts, userId);
+    const user = await getUserFirstNameLastNameForUserId(serverConnectionForGeneral, userId);
 
-    let dog = await getDogForDogId(connectionForAlerts, dogId, undefined, undefined, undefined);
+    let dog = await getDogForDogId(serverConnectionForGeneral, dogId, undefined, undefined, undefined);
     [dog] = dog;
 
     // check to see if we were able to retrieve the properties of the user who logged the event and the dog that the log was under

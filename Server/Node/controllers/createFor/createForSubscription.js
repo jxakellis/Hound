@@ -1,7 +1,7 @@
 const axios = require('axios').default;
 const { GeneralError, ValidationError } = require('../../main/tools/general/errors');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
-const { databaseQuery } = require('../../main/tools/database/databaseQuery');
+const { databaseQuery } = require('../../main/tools/database/queryDatabase');
 const { houndSharedSecret } = require('../../main/secrets/houndSharedSecret');
 const { formatBase64EncodedString, formatArray, formatNumber } = require('../../main/tools/format/formatObject');
 const { getActiveSubscriptionForFamilyId } = require('../getFor/getForSubscription');

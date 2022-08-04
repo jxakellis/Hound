@@ -1,4 +1,4 @@
-const { databaseQuery } = require('../database/databaseQuery');
+const { databaseQuery } = require('../database/queryDatabase');
 const { areAllDefined } = require('../format/validateDefined');
 
 // Makes a code for a family to use that consists of A-Z and 0-9

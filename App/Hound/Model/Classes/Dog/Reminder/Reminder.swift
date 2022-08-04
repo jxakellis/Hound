@@ -11,11 +11,9 @@ import UIKit
 enum ReminderType: String, CaseIterable {
     
     init?(rawValue: String) {
-        for type in ReminderType.allCases {
-            if type.rawValue.lowercased() == rawValue.lowercased() {
-                self = type
-                return
-            }
+        for type in ReminderType.allCases where type.rawValue.lowercased() == rawValue.lowercased() {
+            self = type
+            return
         }
         
         self = .countdown
@@ -38,11 +36,9 @@ enum ReminderMode {
 enum ReminderAction: String, CaseIterable {
     
     init?(rawValue: String) {
-       for action in ReminderAction.allCases {
-            if action.rawValue.lowercased() == rawValue.lowercased() {
-                self = action
-                return
-            }
+       for action in ReminderAction.allCases where action.rawValue.lowercased() == rawValue.lowercased() {
+           self = action
+           return
         }
         
         self = ReminderAction.feed

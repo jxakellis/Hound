@@ -1,5 +1,5 @@
-const { databaseQuery } = require('../../database/databaseQuery');
-const { connectionForTokens } = require('../../database/databaseConnections');
+const { serverConnectionForGeneral } = require('../../database/databaseConnections');
+const { databaseQuery } = require('../../database/queryDatabase');
 const { formatBoolean, formatArray } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 
@@ -17,7 +17,7 @@ async function getUserToken(userId) {
   }
   // retrieve userNotificationToken, notificationSound, and isLoudNotificaiton of a user with the userId, non-null userNotificationToken, and isNotificationEnabled
   const result = await databaseQuery(
-    connectionForTokens,
+    serverConnectionForGeneral,
     `SELECT users.userNotificationToken, userConfiguration.notificationSound, userConfiguration.isLoudNotification FROM users ${userConfigurationJoin} WHERE users.userId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 1`,
     [userId],
   );
@@ -36,7 +36,7 @@ async function getAllFamilyMemberTokens(familyId) {
   }
   // retrieve userNotificationToken that fit the criteria
   const result = await databaseQuery(
-    connectionForTokens,
+    serverConnectionForGeneral,
     `SELECT users.userNotificationToken, userConfiguration.notificationSound, userConfiguration.isLoudNotification FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
     [familyId],
   );
@@ -55,7 +55,7 @@ async function getOtherFamilyMemberTokens(userId, familyId) {
   }
   // retrieve userNotificationToken that fit the criteria
   const result = await databaseQuery(
-    connectionForTokens,
+    serverConnectionForGeneral,
     `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userId != ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
     [familyId, userId],
   );

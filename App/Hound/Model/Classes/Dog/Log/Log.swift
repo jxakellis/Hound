@@ -12,11 +12,9 @@ enum LogAction: String, CaseIterable {
     
     init?(rawValue: String) {
         // regular
-        for action in LogAction.allCases {
-            if action.rawValue.lowercased() == rawValue.lowercased() {
-                self = action
-                return
-            }
+        for action in LogAction.allCases where action.rawValue.lowercased() == rawValue.lowercased() {
+            self = action
+            return
         }
         
         self = .custom

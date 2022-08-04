@@ -40,7 +40,7 @@ final class AlertManager: NSObject {
     
     static var shared = AlertManager()
     
-    /// Default sender used to present, this is necessary if an alert to be shown is called from a non UIViewController class as that is not in the view heirarchy and physically cannot present a view, so this is used instead.
+    /// Default sender used to present, this is necessary if an alert to be shown is called from a non GeneralUIAlertController class as that is not in the view heirarchy and physically cannot present a view, so this is used instead.
     static var globalPresenter: UIViewController?
     
     // MARK: - Private Properties
