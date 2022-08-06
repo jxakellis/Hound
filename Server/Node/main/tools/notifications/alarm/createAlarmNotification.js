@@ -1,5 +1,5 @@
 const { alarmLogger } = require('../../logging/loggers');
-const { serverConnectionForAlarms } = require('../../database/databaseConnections');
+const { databaseConnectionForAlarms } = require('../../database/establishDatabaseConnections');
 const { databaseQuery } = require('../../database/databaseQuery');
 
 const { schedule } = require('./schedules');
@@ -68,7 +68,7 @@ async function sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(family
     // get the dogName, reminderAction, and reminderCustomActionName for the given reminderId
     // the reminderId has to exist to search and we check to make sure the dogId isn't null (to make sure the dog still exists too)
     const reminderWithInfo = await databaseQuery(
-      serverConnectionForAlarms,
+      databaseConnectionForAlarms,
       'SELECT dogs.dogName, dogReminders.reminderId, dogReminders.reminderExecutionDate, dogReminders.reminderAction, dogReminders.reminderCustomActionName, dogReminders.reminderLastModified FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
       [reminderId],
     );
@@ -97,7 +97,7 @@ async function sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(family
     // get all the users for a given family that have secondary notifications enabled
     // if familyId is missing, we will have no results. If a userConfiguration is missing, then there will be no userId for that user in the results
     const users = await databaseQuery(
-      serverConnectionForAlarms,
+      databaseConnectionForAlarms,
       'SELECT familyMembers.userId, userConfiguration.followUpDelay FROM familyMembers JOIN userConfiguration ON familyMembers.userId = userConfiguration.userId WHERE familyMembers.familyId = ? AND userConfiguration.isFollowUpEnabled = 1 LIMIT 18446744073709551615',
       [familyId],
     );
@@ -171,7 +171,7 @@ async function sendSecondaryAPNForUser(userId, reminderId) {
     // get the dogName, reminderAction, and reminderCustomActionName for the given reminderId
     // the reminderId has to exist to search and we check to make sure the dogId isn't null (to make sure the dog still exists too)
     const reminderWithInfo = await databaseQuery(
-      serverConnectionForAlarms,
+      databaseConnectionForAlarms,
       'SELECT dogs.dogName, dogReminders.reminderId, dogReminders.reminderAction, dogReminders.reminderCustomActionName, dogReminders.reminderLastModified FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
       [reminderId],
     );

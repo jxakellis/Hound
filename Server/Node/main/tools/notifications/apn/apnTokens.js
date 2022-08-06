@@ -1,4 +1,4 @@
-const { serverConnectionForGeneral } = require('../../database/databaseConnections');
+const { databaseConnectionForGeneral } = require('../../database/establishDatabaseConnections');
 const { databaseQuery } = require('../../database/databaseQuery');
 const { formatBoolean, formatArray } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
@@ -17,7 +17,7 @@ async function getUserToken(userId) {
   }
   // retrieve userNotificationToken, notificationSound, and isLoudNotificaiton of a user with the userId, non-null userNotificationToken, and isNotificationEnabled
   const result = await databaseQuery(
-    serverConnectionForGeneral,
+    databaseConnectionForGeneral,
     `SELECT users.userNotificationToken, userConfiguration.notificationSound, userConfiguration.isLoudNotification FROM users ${userConfigurationJoin} WHERE users.userId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 1`,
     [userId],
   );
@@ -36,7 +36,7 @@ async function getAllFamilyMemberTokens(familyId) {
   }
   // retrieve userNotificationToken that fit the criteria
   const result = await databaseQuery(
-    serverConnectionForGeneral,
+    databaseConnectionForGeneral,
     `SELECT users.userNotificationToken, userConfiguration.notificationSound, userConfiguration.isLoudNotification FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
     [familyId],
   );
@@ -55,7 +55,7 @@ async function getOtherFamilyMemberTokens(userId, familyId) {
   }
   // retrieve userNotificationToken that fit the criteria
   const result = await databaseQuery(
-    serverConnectionForGeneral,
+    databaseConnectionForGeneral,
     `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userId != ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
     [familyId, userId],
   );
@@ -68,9 +68,9 @@ async function getOtherFamilyMemberTokens(userId, familyId) {
  * Takes the result from a query for userNotificationToken, notificationSound, and isLoudNotification
  * Returns an array of JSON with userNotificationToken and (if isLoudNotification disabled) notificationSound
  */
-function parseNotificatonTokenQuery(userNotificationTokens) {
-  const castedUserNotificationTokens = formatArray(userNotificationTokens);
-  if (areAllDefined(castedUserNotificationTokens) === false) {
+function parseNotificatonTokenQuery(forUserNotificationTokens) {
+  const userNotificationTokens = formatArray(forUserNotificationTokens);
+  if (areAllDefined(userNotificationTokens) === false) {
     return [];
   }
 
@@ -78,18 +78,18 @@ function parseNotificatonTokenQuery(userNotificationTokens) {
 
   // If the user isLoudNotification enabled, no need for sound in rawPayload as app plays a sound
   // If the user isLoudNotification disabled, the APN itself have a sound (which will play if the ringer is on)
-  for (let i = 0; i < castedUserNotificationTokens.length; i += 1) {
-    if (formatBoolean(castedUserNotificationTokens[i].isLoudNotification) === false && areAllDefined(castedUserNotificationTokens[i].notificationSound)) {
+  for (let i = 0; i < userNotificationTokens.length; i += 1) {
+    if (formatBoolean(userNotificationTokens[i].isLoudNotification) === false && areAllDefined(userNotificationTokens[i].notificationSound)) {
       // no loud notification so the APN itself should have a notification sound
       userNotificationTokensNotificationSounds.push({
-        userNotificationToken: castedUserNotificationTokens[i].userNotificationToken,
-        notificationSound: castedUserNotificationTokens[i].notificationSound.toLowerCase(),
+        userNotificationToken: userNotificationTokens[i].userNotificationToken,
+        notificationSound: userNotificationTokens[i].notificationSound.toLowerCase(),
       });
     }
     else {
       // loud notification so app plays audio and no need for notification to play audio
       userNotificationTokensNotificationSounds.push({
-        userNotificationToken: castedUserNotificationTokens[i].userNotificationToken,
+        userNotificationToken: userNotificationTokens[i].userNotificationToken,
       });
     }
   }

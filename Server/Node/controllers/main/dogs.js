@@ -15,8 +15,8 @@ async function getDogs(req, res) {
     const { lastDogManagerSynchronization, isRetrievingReminders, isRetrievingLogs } = req.query;
     // if dogId is defined and it is a number then continue to find a single dog, otherwise, we are looking for all dogs
     const result = areAllDefined(dogId)
-      ? await getDogForDogId(req.connection, dogId, lastDogManagerSynchronization, isRetrievingReminders, isRetrievingLogs)
-      : await getAllDogsForUserIdFamilyId(req.connection, userId, familyId, lastDogManagerSynchronization, isRetrievingReminders, isRetrievingLogs);
+      ? await getDogForDogId(req.databaseConnection, dogId, lastDogManagerSynchronization, isRetrievingReminders, isRetrievingLogs)
+      : await getAllDogsForUserIdFamilyId(req.databaseConnection, userId, familyId, lastDogManagerSynchronization, isRetrievingReminders, isRetrievingLogs);
 
     return res.sendResponseForStatusJSONError(200, { result }, undefined);
   }
@@ -30,7 +30,7 @@ async function createDog(req, res) {
     const { familyId } = req.params;
     const { dogName } = req.body;
     const { activeSubscription } = req;
-    const result = await createDogForFamilyId(req.connection, familyId, activeSubscription, dogName);
+    const result = await createDogForFamilyId(req.databaseConnection, familyId, activeSubscription, dogName);
     return res.sendResponseForStatusJSONError(200, { result }, undefined);
   }
   catch (error) {
@@ -42,7 +42,7 @@ async function updateDog(req, res) {
   try {
     const { dogId } = req.params;
     const { dogName } = req.body;
-    await updateDogForDogId(req.connection, dogId, dogName);
+    await updateDogForDogId(req.databaseConnection, dogId, dogName);
     return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);
   }
   catch (error) {
@@ -53,7 +53,7 @@ async function updateDog(req, res) {
 async function deleteDog(req, res) {
   try {
     const { familyId, dogId } = req.params;
-    await deleteDogForFamilyIdDogId(req.connection, familyId, dogId);
+    await deleteDogForFamilyIdDogId(req.databaseConnection, familyId, dogId);
     return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);
   }
   catch (error) {

@@ -1,4 +1,4 @@
-const { serverConnectionForGeneral } = require('./databaseConnections');
+const { databaseConnectionForGeneral } = require('./establishDatabaseConnections');
 const { databaseQuery } = require('./databaseQuery');
 const { serverLogger } = require('../logging/loggers');
 
@@ -10,7 +10,7 @@ const { serverLogger } = require('../logging/loggers');
 async function cleanUpIsDeleted() {
 // retrieve the familyId and oldest lastDogManagerSynchronization for each family
   const result = await databaseQuery(
-    serverConnectionForGeneral,
+    databaseConnectionForGeneral,
     'SELECT familyMembers.familyId, MIN(userConfiguration.lastDogManagerSynchronization) AS lastDogManagerSynchronization FROM userConfiguration JOIN familyMembers ON userConfiguration.userId = familyMembers.userId GROUP BY familyMembers.familyId',
   );
 

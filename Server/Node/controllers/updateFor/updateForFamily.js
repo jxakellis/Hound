@@ -17,24 +17,24 @@ const { deleteAlarmNotificationsForFamily } = require('../../main/tools/notifica
  *  Queries the database to update a family to add a new user. If the query is successful, then returns
  *  If a problem is encountered, creates and throws custom error
  */
-async function updateFamilyForUserIdFamilyId(connection, userId, familyId, familyCode, isLocked, isPaused) {
-  const castedFamilyCode = formatString(familyCode);
-  const castedIsLocked = formatBoolean(isLocked);
-  const castedIsPaused = formatBoolean(isPaused);
+async function updateFamilyForUserIdFamilyId(databaseConnection, userId, familyId, forFamilyCode, forIsLocked, forIsPaused) {
+  const familyCode = formatString(forFamilyCode);
+  const isLocked = formatBoolean(forIsLocked);
+  const isPaused = formatBoolean(forIsPaused);
 
-  if (areAllDefined(connection, userId) === false) {
-    throw new ValidationError('connection or userId missing', global.constant.error.value.MISSING);
+  if (areAllDefined(databaseConnection, userId) === false) {
+    throw new ValidationError('databaseConnection or userId missing', global.constant.error.value.MISSING);
   }
 
   // familyId doesn't exist, so user must want to join a family
-  if (areAllDefined(familyId) === false && areAllDefined(castedFamilyCode)) {
-    await addFamilyMember(connection, userId, castedFamilyCode);
+  if (areAllDefined(familyId) === false && areAllDefined(familyCode)) {
+    await addFamilyMember(databaseConnection, userId, familyCode);
   }
-  else if (areAllDefined(castedIsLocked)) {
-    await updateIsLocked(connection, userId, familyId, castedIsLocked);
+  else if (areAllDefined(isLocked)) {
+    await updateIsLocked(databaseConnection, userId, familyId, isLocked);
   }
-  else if (areAllDefined(castedIsPaused)) {
-    await updateIsPaused(connection, userId, familyId, castedIsPaused);
+  else if (areAllDefined(isPaused)) {
+    await updateIsPaused(databaseConnection, userId, familyId, isPaused);
   }
   else {
     throw new ValidationError('No value provided', global.constant.error.value.MISSING);
@@ -44,20 +44,20 @@ async function updateFamilyForUserIdFamilyId(connection, userId, familyId, famil
 /**
  * Helper method for createFamilyForUserId, goes through checks to attempt to add user to desired family
  */
-async function addFamilyMember(connection, userId, familyCode) {
+async function addFamilyMember(databaseConnection, userId, forFamilyCode) {
   // make sure familyCode was provided
-  let castedFamilyCode = formatString(familyCode);
+  let familyCode = formatString(forFamilyCode);
 
-  if (areAllDefined(connection, userId, castedFamilyCode) === false) {
-    throw new ValidationError('connection, userId, or familyCode missing', global.constant.error.value.MISSING);
+  if (areAllDefined(databaseConnection, userId, familyCode) === false) {
+    throw new ValidationError('databaseConnection, userId, or familyCode missing', global.constant.error.value.MISSING);
   }
-  castedFamilyCode = castedFamilyCode.toUpperCase();
+  familyCode = familyCode.toUpperCase();
 
   // retrieve information about the family linked to the familyCode
   let family = await databaseQuery(
-    connection,
+    databaseConnection,
     'SELECT familyId, isLocked FROM families WHERE familyCode = ? LIMIT 1',
-    [castedFamilyCode],
+    [familyCode],
   );
 
   // make sure the familyCode was valid by checking if it matched a family
@@ -75,7 +75,7 @@ async function addFamilyMember(connection, userId, familyCode) {
 
   // the familyCode is valid and linked to an UNLOCKED family
 
-  const isFamilyMember = await getFamilyMemberUserIdForUserId(connection, userId);
+  const isFamilyMember = await getFamilyMemberUserIdForUserId(databaseConnection, userId);
 
   if (isFamilyMember.length !== 0) {
     // user is already in a family
@@ -83,8 +83,8 @@ async function addFamilyMember(connection, userId, familyCode) {
   }
 
   // Don't use .activeSubscription property: the property wasn't assigned to the request due to the user not being in a family (only assigned with familyId is path param)
-  const activeSubscription = await getActiveSubscriptionForFamilyId(connection, familyId);
-  const familyMembers = await getAllFamilyMembersForFamilyId(connection, familyId);
+  const activeSubscription = await getActiveSubscriptionForFamilyId(databaseConnection, familyId);
+  const familyMembers = await getAllFamilyMembersForFamilyId(databaseConnection, familyId);
 
   // the family is either at the limit of family members is exceeds the limit, therefore no new users can join
   if (familyMembers.length >= activeSubscription.subscriptionNumberOfFamilyMembers) {
@@ -94,7 +94,7 @@ async function addFamilyMember(connection, userId, familyCode) {
   // familyCode validated and user is not a family member in any family
   // insert the user into the family as a family member.
   await databaseQuery(
-    connection,
+    databaseConnection,
     'INSERT INTO familyMembers(familyId, userId) VALUES (?, ?)',
     [familyId, userId],
   );
@@ -105,20 +105,20 @@ async function addFamilyMember(connection, userId, familyCode) {
 /**
  * Helper method for updateFamilyForFamilyId, switches the family isLocked status
  */
-async function updateIsLocked(connection, userId, familyId, isLocked) {
-  const castedIsLocked = formatBoolean(isLocked);
+async function updateIsLocked(databaseConnection, userId, familyId, forIsLocked) {
+  const isLocked = formatBoolean(forIsLocked);
 
-  if (areAllDefined(connection, userId, familyId, castedIsLocked) === false) {
-    throw new ValidationError('connection, userId, familyId, or isLocked missing', global.constant.error.value.MISSING);
+  if (areAllDefined(databaseConnection, userId, familyId, isLocked) === false) {
+    throw new ValidationError('databaseConnection, userId, familyId, or isLocked missing', global.constant.error.value.MISSING);
   }
 
   await databaseQuery(
-    connection,
+    databaseConnection,
     'UPDATE families SET isLocked = ? WHERE familyId = ?',
-    [castedIsLocked, familyId],
+    [isLocked, familyId],
   );
 
-  createFamilyLockedNotification(userId, familyId, castedIsLocked);
+  createFamilyLockedNotification(userId, familyId, isLocked);
 }
 
 /**
@@ -126,55 +126,55 @@ async function updateIsLocked(connection, userId, familyId, isLocked) {
  * If pausing, saves all intervalElapsed, sets all reminderExecutionDates to nil, and deleteAlarmNotifications
  * If unpausing, sets reminderExecutionBasis to Date(). The new reminderExecutionDates must be calculated by the user and sent to the server
  */
-async function updateIsPaused(connection, userId, familyId, isPaused) {
-  const castedIsPaused = formatBoolean(isPaused);
+async function updateIsPaused(databaseConnection, userId, familyId, forIsPaused) {
+  const isPaused = formatBoolean(forIsPaused);
 
-  if (areAllDefined(connection, userId, familyId, castedIsPaused) === false) {
-    throw new ValidationError('connection, userId, familyId, or isPaused missing', global.constant.error.value.MISSING);
+  if (areAllDefined(databaseConnection, userId, familyId, isPaused) === false) {
+    throw new ValidationError('databaseConnection, userId, familyId, or isPaused missing', global.constant.error.value.MISSING);
   }
 
   // find out the family's current pause status
   const familyConfiguration = await databaseQuery(
-    connection,
+    databaseConnection,
     'SELECT isPaused, lastPause, lastUnpause FROM families WHERE familyId = ? LIMIT 1',
     [familyId],
   );
 
   // if we got a result for the family configuration and if the new pause status is different from the current one, then continue
-  if (familyConfiguration.length === 0 || castedIsPaused === formatBoolean(familyConfiguration[0].isPaused)) {
+  if (familyConfiguration.length === 0 || isPaused === formatBoolean(familyConfiguration[0].isPaused)) {
     return;
   }
 
   // toggling everything to paused from unpaused
-  if (castedIsPaused) {
-    await pause(connection, familyId, familyConfiguration[0].lastUnpause);
+  if (isPaused) {
+    await pause(databaseConnection, familyId, familyConfiguration[0].lastUnpause);
   }
   // toggling everything to unpaused from paused
   else {
-    await unpause(connection, familyId);
+    await unpause(databaseConnection, familyId);
   }
 
   // was successful in either pausing or unpausing
-  createFamilyPausedNotification(userId, familyId, castedIsPaused);
+  createFamilyPausedNotification(userId, familyId, isPaused);
 }
 
 /**
  * Helper method for updateFamilyForFamilyId.
  * Saves all intervalElapsed, sets all reminderExecutionDates to nil, and deleteAlarmNotifications
  */
-async function pause(connection, familyId, lastUnpause) {
-  const castedLastUnpause = formatDate(lastUnpause);
+async function pause(databaseConnection, familyId, forLastUnpause) {
+  const lastUnpause = formatDate(forLastUnpause);
   const lastPause = new Date();
   const dogLastModified = lastPause;
   const reminderLastModified = lastPause;
 
   // lastUnpause can be null if not paused before, not a deal breaker
-  if (areAllDefined(connection, familyId) === false) {
-    throw new ValidationError('connection or familyId missing', global.constant.error.value.MISSING);
+  if (areAllDefined(databaseConnection, familyId) === false) {
+    throw new ValidationError('databaseConnection or familyId missing', global.constant.error.value.MISSING);
   }
 
   await databaseQuery(
-    connection,
+    databaseConnection,
     'UPDATE families SET isPaused = ?, lastPause = ? WHERE familyId = ?',
     [true, lastPause, familyId],
   );
@@ -182,7 +182,7 @@ async function pause(connection, familyId, lastUnpause) {
   // retrieves reminders that match the familyId, have a non-null reminderExecutionDate, and either have isSnoozeEnabled = 1 or reminderType = 'countdown'
   // there are the reminders that will need their intervals elapsed saved before we pause, everything else doesn't need touched.
   const reminders = await databaseQuery(
-    connection,
+    databaseConnection,
     'SELECT reminderId, reminderType, reminderExecutionBasis, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed, countdownExecutionInterval, countdownIntervalElapsed FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogs.familyId = ? AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderExecutionDate IS NOT NULL AND (snoozeIsEnabled = 1 OR reminderType = \'countdown\') LIMIT 18446744073709551615',
     [familyId],
   );
@@ -202,11 +202,11 @@ async function pause(connection, familyId, lastUnpause) {
       // the reminder has had its interval elapsed changed, meaning it's been paused or unpaused since its current reminderExecutionBasis
       else {
         // since the reminder has been paused before, we must find the time elapsed since the last unpause to this pause
-        millisecondsElapsed = Math.abs(lastPause.getTime() - formatDate(castedLastUnpause).getTime());
+        millisecondsElapsed = Math.abs(lastPause.getTime() - formatDate(lastUnpause).getTime());
       }
       // reminderLastModified is modified below when we set all the executionDates to null
       promises.push(databaseQuery(
-        connection,
+        databaseConnection,
         'UPDATE dogReminders SET countdownIntervalElapsed = ? WHERE reminderId = ?',
         [(millisecondsElapsed / 1000) + reminder.countdownIntervalElapsed, reminder.reminderId],
       ));
@@ -222,11 +222,11 @@ async function pause(connection, familyId, lastUnpause) {
       // the reminder has had its interval elapsed changed, meaning it's been paused or unpaused since its current reminderExecutionBasis
       else {
         // since the reminder has been paused before, we must find the time elapsed since the last unpause to this pause
-        millisecondsElapsed = Math.abs(lastPause.getTime() - formatDate(castedLastUnpause).getTime());
+        millisecondsElapsed = Math.abs(lastPause.getTime() - formatDate(lastUnpause).getTime());
       }
       // reminderLastModified is modified below when all executionDates are set to null
       promises.push(databaseQuery(
-        connection,
+        databaseConnection,
         'UPDATE dogReminders SET snoozeIntervalElapsed = ? WHERE reminderId = ?',
         [(millisecondsElapsed / 1000) + reminder.snoozeIntervalElapsed, reminder.reminderId],
       ));
@@ -239,7 +239,7 @@ async function pause(connection, familyId, lastUnpause) {
   // Update the reminderExecutionDates to NULL for all of the family's reminders
   // update both the dogLastModified and reminderLastModified
   await databaseQuery(
-    connection,
+    databaseConnection,
     'UPDATE dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId SET dogs.dogLastModified = ?, dogReminders.reminderExecutionDate = ?, dogReminders.reminderLastModified = ? WHERE dogs.familyId = ?',
     [dogLastModified, undefined, reminderLastModified, familyId],
   );
@@ -252,18 +252,18 @@ async function pause(connection, familyId, lastUnpause) {
  * Helper method for updateFamilyForFamilyId.
  * Sets reminderExecutionBasis to Date(). The new reminderExecutionDates must be calculated by the user and sent to the server
  */
-async function unpause(connection, familyId) {
+async function unpause(databaseConnection, familyId) {
   const lastUnpause = new Date();
   const dogLastModified = lastUnpause;
   const reminderLastModified = lastUnpause;
 
-  if (areAllDefined(connection, familyId) === false) {
-    throw new ValidationError('connection or familyId missing', global.constant.error.value.MISSING);
+  if (areAllDefined(databaseConnection, familyId) === false) {
+    throw new ValidationError('databaseConnection or familyId missing', global.constant.error.value.MISSING);
   }
 
   // update the family's pause configuration to reflect changes
   await databaseQuery(
-    connection,
+    databaseConnection,
     'UPDATE families SET isPaused = ?, lastUnpause = ? WHERE familyId = ?',
     [false, lastUnpause, familyId],
   );
@@ -271,7 +271,7 @@ async function unpause(connection, familyId) {
   // once reminders are unpaused, they have an up to date intervalElapsed so need to base their timing off of the lastUnpause.
   // Update the reminderExecutionBasis to lastUnpause for all of the family's reminders
   await databaseQuery(
-    connection,
+    databaseConnection,
     'UPDATE dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId SET dogs.dogLastModified = ?, dogReminders.reminderExecutionBasis = ?, dogReminders.reminderLastModified = ? WHERE dogs.familyId = ?',
     [dogLastModified, lastUnpause, reminderLastModified, familyId],
   );

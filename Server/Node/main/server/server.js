@@ -16,20 +16,17 @@ const app = express();
 
 // MARK: Create the server
 
-// TO DO NOW upon start of node server, first have it run console commands to stop/start MariaDB
-
 // TO DO NOW add 2fa to AWS
-// TO DO NOW add database backups to AWS
-// TO DO NOW add watchdog to AWS to make sure node are running
+// TO DO NOW add watchdog to Hound Server to make sure node is running and can touch database
 // TO DO NOW add PM2 to AWS to better manage the node instance
 
 const { restoreAlarmNotificationsForAllFamilies } = require('../tools/notifications/alarm/restoreAlarmNotification');
 const { configureAppForRequests } = require('./request');
 const { logServerError } = require('../tools/logging/logServerError');
 const {
-  serverConnectionForGeneral, serverConnectionForLogging, serverConnectionForAlarms, poolForRequests,
-} = require('../tools/database/databaseConnections');
-const { verifyDatabaseConnections } = require('../tools/database/verifyConnections');
+  databaseConnectionForGeneral, databaseConnectionForLogging, databaseConnectionForAlarms, databaseConnectionPoolForRequests,
+} = require('../tools/database/establishDatabaseConnections');
+const { verifyDatabaseConnections } = require('../tools/database/verifyDatabaseConnection');
 
 // Create a NodeJS HTTPS listener on port that points to the Express app
 // We can only create an HTTPS server on the AWS instance. Otherwise we create a HTTP server.
@@ -62,7 +59,7 @@ const { schedule } = require('../tools/notifications/alarm/schedules');
 
 /**
  * Gracefully closes/ends everything
- * This includes the connection pool for the database for general requests, the connection for server notifications, the server itself, and the notification schedule
+ * This includes the databaseConnection pool for the database for general requests, the databaseConnection for server notifications, the server itself, and the notification schedule
  */
 const shutdown = () => new Promise((resolve) => {
   serverLogger.info('Shutdown Initiated');
@@ -82,40 +79,40 @@ const shutdown = () => new Promise((resolve) => {
       checkForShutdownCompletion();
     });
 
-  serverConnectionForGeneral.end((error) => {
+  databaseConnectionForGeneral.end((error) => {
     if (error) {
-      serverLogger.info('General Server Connection Couldn\'t Shutdown', error);
+      serverLogger.info('General Database Connection Couldn\'t Shutdown', error);
     }
     else {
-      serverLogger.info('General Server Connection Gracefully Shutdown');
+      serverLogger.info('General Database Connection Gracefully Shutdown');
     }
     numberOfShutdownsCompleted += 1;
     checkForShutdownCompletion();
   });
 
-  serverConnectionForLogging.end((error) => {
+  databaseConnectionForLogging.end((error) => {
     if (error) {
-      serverLogger.info('Logging Server Connection Couldn\'t Shutdown', error);
+      serverLogger.info('Logging Database Connection Couldn\'t Shutdown', error);
     }
     else {
-      serverLogger.info('Logging Server Connection Gracefully Shutdown');
+      serverLogger.info('Logging Database Connection Gracefully Shutdown');
     }
     numberOfShutdownsCompleted += 1;
     checkForShutdownCompletion();
   });
 
-  serverConnectionForAlarms.end((error) => {
+  databaseConnectionForAlarms.end((error) => {
     if (error) {
-      serverLogger.info('Alarms Server Connection Couldn\'t Shutdown', error);
+      serverLogger.info('Alarms Database Connection Couldn\'t Shutdown', error);
     }
     else {
-      serverLogger.info('Alarms Server Connection Gracefully Shutdown');
+      serverLogger.info('Alarms Database Connection Gracefully Shutdown');
     }
     numberOfShutdownsCompleted += 1;
     checkForShutdownCompletion();
   });
 
-  poolForRequests.end((error) => {
+  databaseConnectionPoolForRequests.end((error) => {
     if (error) {
       serverLogger.info('Pool For Requests Couldn\'t Shutdown', error);
     }

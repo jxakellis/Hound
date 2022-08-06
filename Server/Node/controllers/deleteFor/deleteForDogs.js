@@ -8,22 +8,22 @@ const { deleteAllRemindersForFamilyIdDogId } = require('./deleteForReminders');
  *  Queries the database to delete a dog and everything nested under it. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-async function deleteDogForFamilyIdDogId(connection, familyId, dogId) {
+async function deleteDogForFamilyIdDogId(databaseConnection, familyId, dogId) {
   const dogLastModified = new Date();
 
-  if (areAllDefined(connection, familyId, dogId) === false) {
-    throw new ValidationError('connection, familyId, or dogId missing', global.constant.error.value.MISSING);
+  if (areAllDefined(databaseConnection, familyId, dogId) === false) {
+    throw new ValidationError('databaseConnection, familyId, or dogId missing', global.constant.error.value.MISSING);
   }
 
   // delete all reminders
-  await deleteAllRemindersForFamilyIdDogId(connection, familyId, dogId);
+  await deleteAllRemindersForFamilyIdDogId(databaseConnection, familyId, dogId);
 
   // deletes all logs
-  await deleteAllLogsForDogId(connection, dogId);
+  await deleteAllLogsForDogId(databaseConnection, dogId);
 
   // deletes dog
   await databaseQuery(
-    connection,
+    databaseConnection,
     'UPDATE dogs SET dogIsDeleted = 1, dogLastModified = ? WHERE dogId = ?',
     [dogLastModified, dogId],
   );
@@ -33,14 +33,14 @@ async function deleteDogForFamilyIdDogId(connection, familyId, dogId) {
  * Queries the database to delete all dog and everything nested under them. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-async function deleteAllDogsForFamilyId(connection, familyId) {
-  if (areAllDefined(connection, familyId) === false) {
-    throw new ValidationError('connection or familyId missing', global.constant.error.value.MISSING);
+async function deleteAllDogsForFamilyId(databaseConnection, familyId) {
+  if (areAllDefined(databaseConnection, familyId) === false) {
+    throw new ValidationError('databaseConnection or familyId missing', global.constant.error.value.MISSING);
   }
 
   // attempt to find all dogIds
   const dogIds = await databaseQuery(
-    connection,
+    databaseConnection,
     'SELECT dogId FROM dogs WHERE dogIsDeleted = 0 AND familyId = ? LIMIT 18446744073709551615',
     [familyId],
   );
@@ -48,7 +48,7 @@ async function deleteAllDogsForFamilyId(connection, familyId) {
   // delete all the dogs
   const promises = [];
   for (let i = 0; i < dogIds.length; i += 1) {
-    promises.push(deleteDogForFamilyIdDogId(connection, familyId, dogIds[i].dogId));
+    promises.push(deleteDogForFamilyIdDogId(databaseConnection, familyId, dogIds[i].dogId));
   }
   await Promise.all(promises);
 }

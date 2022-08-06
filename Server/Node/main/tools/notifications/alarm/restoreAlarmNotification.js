@@ -3,7 +3,7 @@ const { schedule } = require('./schedules');
 const { createAlarmNotificationForFamily } = require('./createAlarmNotification');
 
 const { logServerError } = require('../../logging/logServerError');
-const { serverConnectionForAlarms } = require('../../database/databaseConnections');
+const { databaseConnectionForAlarms } = require('../../database/establishDatabaseConnections');
 const { databaseQuery } = require('../../database/databaseQuery');
 
 /**
@@ -22,7 +22,7 @@ async function restoreAlarmNotificationsForAllFamilies() {
 
     // for ALL reminders get: familyId, reminderId, dogName, reminderExecutionDate, reminderAction, and reminderCustomActionName
     const remindersWithInfo = await databaseQuery(
-      serverConnectionForAlarms,
+      databaseConnectionForAlarms,
       'SELECT dogs.familyId, dogReminders.reminderId, dogReminders.reminderExecutionDate FROM dogReminders JOIN dogs ON dogs.dogId = dogReminders.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderExecutionDate IS NOT NULL LIMIT 18446744073709551615',
     );
     // for every reminder that exists (with a valid reminderExecutionDate), we invoke createAlarmNotificationForAll for it

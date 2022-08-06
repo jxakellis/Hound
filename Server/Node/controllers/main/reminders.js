@@ -23,9 +23,9 @@ async function getReminders(req, res) {
 
     const result = areAllDefined(reminderId)
     // reminderId was provided, look for single reminder
-      ? await getReminderForReminderId(req.connection, reminderId, lastDogManagerSynchronization)
+      ? await getReminderForReminderId(req.databaseConnection, reminderId, lastDogManagerSynchronization)
     // look for multiple reminders
-      : await getAllRemindersForDogId(req.connection, dogId, lastDogManagerSynchronization);
+      : await getAllRemindersForDogId(req.databaseConnection, dogId, lastDogManagerSynchronization);
 
     return res.sendResponseForStatusJSONError(200, { result }, undefined);
   }
@@ -39,7 +39,7 @@ async function createReminder(req, res) {
     const { familyId, dogId } = req.params;
     const reminder = req.body;
     const reminders = formatArray(req.body.reminders);
-    const result = areAllDefined(reminders) ? await createRemindersForDogIdReminders(req.connection, dogId, reminders) : [await createReminderForDogIdReminder(req.connection, dogId, reminder)];
+    const result = areAllDefined(reminders) ? await createRemindersForDogIdReminders(req.databaseConnection, dogId, reminders) : [await createReminderForDogIdReminder(req.databaseConnection, dogId, reminder)];
 
     // create was successful, so we can create all the alarm notifications
     for (let i = 0; i < result.length; i += 1) {
@@ -62,7 +62,7 @@ async function updateReminder(req, res) {
     const reminder = req.body;
     const reminders = formatArray(req.body.reminders);
 
-    const result = areAllDefined(reminders) ? await updateRemindersForDogIdReminders(req.connection, dogId, reminders) : await updateReminderForDogIdReminder(req.connection, dogId, reminder);
+    const result = areAllDefined(reminders) ? await updateRemindersForDogIdReminders(req.databaseConnection, dogId, reminders) : await updateReminderForDogIdReminder(req.databaseConnection, dogId, reminder);
 
     // update was successful, so we can create all new alarm notifications
     for (let i = 0; i < result.length; i += 1) {
@@ -89,13 +89,13 @@ async function deleteReminder(req, res) {
     if (areAllDefined(reminders)) {
       const promises = [];
       for (let i = 0; i < reminders.length; i += 1) {
-        promises.push(deleteReminderForFamilyIdDogIdReminderId(req.connection, familyId, dogId, reminders[i].reminderId));
+        promises.push(deleteReminderForFamilyIdDogIdReminderId(req.databaseConnection, familyId, dogId, reminders[i].reminderId));
       }
       await Promise.all(promises);
     }
     // single reminder
     else {
-      await deleteReminderForFamilyIdDogIdReminderId(req.connection, familyId, dogId, reminderId);
+      await deleteReminderForFamilyIdDogIdReminderId(req.databaseConnection, familyId, dogId, reminderId);
     }
 
     return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);

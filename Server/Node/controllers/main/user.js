@@ -23,9 +23,9 @@ async function getUser(req, res) {
 
     const result = areAllDefined(userId)
     // user provided userId so we go that route
-      ? await getUserForUserId(req.connection, userId)
+      ? await getUserForUserId(req.databaseConnection, userId)
     // user provided userIdentifier so we find them using that way
-      : await getUserForUserIdentifier(req.connection, userIdentifier);
+      : await getUserForUserIdentifier(req.databaseConnection, userIdentifier);
 
     return res.sendResponseForStatusJSONError(200, { result }, undefined);
   }
@@ -56,7 +56,7 @@ async function createUser(req, res) {
       maximumNumberOfLogsDisplayed,
     } = req.body;
     const result = await createUserForUserIdentifier(
-      req.connection,
+      req.databaseConnection,
       userIdentifier,
       userEmail,
       userFirstName,
@@ -100,7 +100,7 @@ async function updateUser(req, res) {
       maximumNumberOfLogsDisplayed,
     } = req.body;
     await updateUserForUserId(
-      req.connection,
+      req.databaseConnection,
       userId,
       userNotificationToken,
       isNotificationEnabled,

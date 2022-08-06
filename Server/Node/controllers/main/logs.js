@@ -17,9 +17,9 @@ async function getLogs(req, res) {
     const { lastDogManagerSynchronization } = req.query;
     const result = areAllDefined(logId)
     // if logId is defined and it is a number then continue to find a single log
-      ? await getLogForLogId(req.connection, logId, lastDogManagerSynchronization)
+      ? await getLogForLogId(req.databaseConnection, logId, lastDogManagerSynchronization)
     // query for multiple logs
-      : await getAllLogsForDogId(req.connection, dogId, lastDogManagerSynchronization);
+      : await getAllLogsForDogId(req.databaseConnection, dogId, lastDogManagerSynchronization);
 
     return res.sendResponseForStatusJSONError(200, { result }, undefined);
   }
@@ -34,7 +34,7 @@ async function createLog(req, res) {
     const {
       logDate, logAction, logCustomActionName, logNote,
     } = req.body;
-    const result = await createLogForUserIdDogId(req.connection, userId, dogId, logDate, logAction, logCustomActionName, logNote);
+    const result = await createLogForUserIdDogId(req.databaseConnection, userId, dogId, logDate, logAction, logCustomActionName, logNote);
     createLogNotification(
       userId,
       familyId,
@@ -55,7 +55,7 @@ async function updateLog(req, res) {
     const {
       logDate, logAction, logCustomActionName, logNote,
     } = req.body;
-    await updateLogForDogIdLogId(req.connection, dogId, logId, logDate, logAction, logCustomActionName, logNote);
+    await updateLogForDogIdLogId(req.databaseConnection, dogId, logId, logDate, logAction, logCustomActionName, logNote);
     return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);
   }
   catch (error) {
@@ -66,7 +66,7 @@ async function updateLog(req, res) {
 async function deleteLog(req, res) {
   try {
     const { dogId, logId } = req.params;
-    await deleteLogForLogId(req.connection, dogId, logId);
+    await deleteLogForLogId(req.databaseConnection, dogId, logId);
     return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);
   }
   catch (error) {

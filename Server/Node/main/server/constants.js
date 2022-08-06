@@ -2,7 +2,7 @@ const server = {
   // Calculated boolean. True if the node application is being run on a linux environment (i.e. on AWS Ubuntu instance), otherwise false (i.e. on Macbook)
   IS_PRODUCTION_SERVER: process.platform === 'linux',
   // True if we are launching a production server for real users, false if we are launching a development server for testing
-  IS_PRODUCTION_DATABASE: false,
+  IS_PRODUCTION_DATABASE: process.platform === 'linux',
   CONSOLE_LOGGING_ENABLED: true,
   // App builds of the iOS Hound app that work properly with the server.
   // A version would be depreciated if an endpoint path is changed or endpoint data return format is changed

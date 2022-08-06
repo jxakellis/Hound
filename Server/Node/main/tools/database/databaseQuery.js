@@ -1,15 +1,15 @@
 const { ValidationError, DatabaseError } = require('../general/errors');
 const { formatArray, formatString } = require('../format/formatObject');
 const { areAllDefined } = require('../format/validateDefined');
-const { serverConnectionForGeneral } = require('./databaseConnections');
+const { databaseConnectionForGeneral } = require('./establishDatabaseConnections');
 
 /**
- * Queries the database with the given sqlString. If a connection is provided, then uses that connection, otherwise uses the serverConnectionForGeneral
+ * Queries the database with the given sqlString. If a databaseConnection is provided, then uses that databaseConnection, otherwise uses the databaseConnectionForGeneral
  */
-const databaseQuery = (forConnection, forSQLString, forSQLVariables) => new Promise((resolve, reject) => {
-  const connection = areAllDefined(forConnection) ? forConnection : serverConnectionForGeneral;
-  if (areAllDefined(connection) === false) {
-    reject(new ValidationError('Connection missing for databaseQuery', global.constant.error.value.MISSING));
+const databaseQuery = (forDatabaseConnection, forSQLString, forSQLVariables) => new Promise((resolve, reject) => {
+  const databaseConnection = areAllDefined(forDatabaseConnection) ? forDatabaseConnection : databaseConnectionForGeneral;
+  if (areAllDefined(databaseConnection) === false) {
+    reject(new ValidationError('databaseConnection missing for databaseQuery', global.constant.error.value.MISSING));
   }
 
   const SQLString = formatString(forSQLString);
@@ -20,7 +20,7 @@ const databaseQuery = (forConnection, forSQLString, forSQLVariables) => new Prom
 
   const SQLVariables = areAllDefined(forSQLVariables) ? formatArray(forSQLVariables) : [];
 
-  connection.query(
+  databaseConnection.query(
     SQLString,
     SQLVariables,
     (error, result) => {

@@ -14,20 +14,20 @@ const familiesColumns = 'userId, familyCode, isLocked, isPaused';
  *  If the query is successful, returns the userId, familyCode, isLocked, isPaused, and familyMembers for the familyId.
  *  If a problem is encountered, creates and throws custom error
  */
-async function getAllFamilyInformationForFamilyId(connection, familyId, activeSubscription) {
+async function getAllFamilyInformationForFamilyId(databaseConnection, familyId, activeSubscription) {
   // validate that a familyId was passed, assume that its in the correct format
-  if (areAllDefined(connection, familyId) === false) {
-    throw new ValidationError('connection or familyId missing', global.constant.error.value.MISSING);
+  if (areAllDefined(databaseConnection, familyId) === false) {
+    throw new ValidationError('databaseConnection or familyId missing', global.constant.error.value.MISSING);
   }
   // family id is validated, therefore we know familyMembers is >= 1 for familyId
   // find which family member is the head
   let family = databaseQuery(
-    connection,
+    databaseConnection,
     `SELECT ${familiesColumns} FROM families WHERE familyId = ? LIMIT 1`,
     [familyId],
   );
   // get family members
-  let familyMembers = getAllFamilyMembersForFamilyId(connection, familyId);
+  let familyMembers = getAllFamilyMembersForFamilyId(databaseConnection, familyId);
 
   [family, familyMembers] = await Promise.all([family, familyMembers]);
 
@@ -41,15 +41,15 @@ async function getAllFamilyInformationForFamilyId(connection, familyId, activeSu
   return result;
 }
 
-async function getAllFamilyMembersForFamilyId(connection, familyId) {
+async function getAllFamilyMembersForFamilyId(databaseConnection, familyId) {
   // validate that a familyId was passed, assume that its in the correct format
-  if (areAllDefined(connection, familyId) === false) {
-    throw new ValidationError('connection or familyId missing', global.constant.error.value.MISSING);
+  if (areAllDefined(databaseConnection, familyId) === false) {
+    throw new ValidationError('databaseConnection or familyId missing', global.constant.error.value.MISSING);
   }
 
   // get family members
   const result = databaseQuery(
-    connection,
+    databaseConnection,
     `SELECT ${usersColumns} FROM familyMembers LEFT JOIN users ON familyMembers.userId = users.userId WHERE familyMembers.familyId = ? LIMIT 18446744073709551615`,
     [familyId],
   );
@@ -61,14 +61,14 @@ async function getAllFamilyMembersForFamilyId(connection, familyId) {
  *  If the query is successful, returns the family member for the userId.
  *  If a problem is encountered, creates and throws custom error
  */
-async function getFamilyMemberUserIdForUserId(connection, userId) {
+async function getFamilyMemberUserIdForUserId(databaseConnection, userId) {
   // validate that a userId was passed, assume that its in the correct format
-  if (areAllDefined(connection, userId) === false) {
-    throw new ValidationError('connection or userId missing', global.constant.error.value.MISSING);
+  if (areAllDefined(databaseConnection, userId) === false) {
+    throw new ValidationError('databaseConnection or userId missing', global.constant.error.value.MISSING);
   }
 
   const result = await databaseQuery(
-    connection,
+    databaseConnection,
     'SELECT userId FROM familyMembers WHERE userId = ? LIMIT 1',
     [userId],
   );
@@ -80,13 +80,13 @@ async function getFamilyMemberUserIdForUserId(connection, userId) {
  *  If the query is successful, returns the userId of the family head
  *  If a problem is encountered, creates and throws custom error
  */
-async function getFamilyHeadUserIdForFamilyId(connection, familyId) {
-  if (areAllDefined(connection, familyId) === false) {
-    throw new ValidationError('connection or familyId missing', global.constant.error.value.MISSING);
+async function getFamilyHeadUserIdForFamilyId(databaseConnection, familyId) {
+  if (areAllDefined(databaseConnection, familyId) === false) {
+    throw new ValidationError('databaseConnection or familyId missing', global.constant.error.value.MISSING);
   }
 
   const result = await databaseQuery(
-    connection,
+    databaseConnection,
     'SELECT userId FROM families WHERE familyId = ? LIMIT 1',
     [familyId],
   );

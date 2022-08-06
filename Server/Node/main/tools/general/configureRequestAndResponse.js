@@ -5,38 +5,38 @@ const { formatNumber, formatBoolean } = require('../format/formatObject');
 const { convertErrorToJSON } = require('./errors');
 const { areAllDefined } = require('../format/validateDefined');
 const { databaseQuery } = require('../database/databaseQuery');
-const { poolForRequests } = require('../database/databaseConnections');
+const { databaseConnectionPoolForRequests } = require('../database/establishDatabaseConnections');
 
 async function configureRequestForResponse(req, res, next) {
   res.hasSentResponse = false;
-  req.hasActiveConnection = false;
-  req.hasActiveTransaction = false;
+  req.hasActiveDatabaseConnection = false;
+  req.hasActiveDatabaseTransaction = false;
   req.hasBeenLogged = false;
   res.hasBeenLogged = false;
   configureResponse(req, res);
 
-  const hasActiveConnection = formatBoolean(req.hasActiveConnection);
-  const hasActiveTransaction = formatBoolean(req.hasActiveTransaction);
+  const hasActiveDatabaseConnection = formatBoolean(req.hasActiveDatabaseConnection);
+  const hasActiveDatabaseTransaction = formatBoolean(req.hasActiveDatabaseTransaction);
 
-  if (hasActiveConnection === true || hasActiveTransaction === true) {
+  if (hasActiveDatabaseConnection === true || hasActiveDatabaseTransaction === true) {
     return;
   }
 
   try {
-    const requestPoolConnection = await poolForRequests.promise().getConnection();
-    req.hasActiveConnection = true;
+    const requestPoolConnection = await databaseConnectionPoolForRequests.promise().getConnection();
+    req.hasActiveDatabaseConnection = true;
     try {
       await requestPoolConnection.beginTransaction();
-      req.connection = requestPoolConnection.connection;
-      req.hasActiveTransaction = true;
+      req.databaseConnection = requestPoolConnection.connection;
+      req.hasActiveDatabaseTransaction = true;
     }
     catch (transactionError) {
-      res.sendResponseForStatusJSONError(500, undefined, new DatabaseError("Couldn't begin a transaction with request pool connection", global.constant.error.general.POOL_TRANSACTION_FAILED));
+      res.sendResponseForStatusJSONError(500, undefined, new DatabaseError("Couldn't begin a transaction with databaseConnection", global.constant.error.general.POOL_TRANSACTION_FAILED));
       return;
     }
   }
-  catch (connectionError) {
-    res.sendResponseForStatusJSONError(500, undefined, new DatabaseError("Couldn't create a request pool connection", global.constant.error.general.POOL_CONNECTION_FAILED));
+  catch (databaseConnectionError) {
+    res.sendResponseForStatusJSONError(500, undefined, new DatabaseError("Couldn't get a connection from databaseConnectionPoolForRequests", global.constant.error.general.POOL_CONNECTION_FAILED));
     return;
   }
 
@@ -44,26 +44,26 @@ async function configureRequestForResponse(req, res, next) {
 }
 
 function configureResponse(req, res) {
-  res.sendResponseForStatusJSONError = async function sendResponseForStatusJSONError(status, json, error) {
+  res.sendResponseForStatusJSONError = async function sendResponseForStatusJSONError(forStatus, json, error) {
     const hasSentResponse = formatBoolean(res.hasSentResponse);
-    const hasActiveConnection = formatBoolean(req.hasActiveConnection);
-    const hasActiveTransaction = formatBoolean(req.hasActiveTransaction);
-    const castedStatus = formatNumber(status);
+    const hasActiveDatabaseConnection = formatBoolean(req.hasActiveDatabaseConnection);
+    const hasActiveDatabaseTransaction = formatBoolean(req.hasActiveDatabaseTransaction);
+    const status = formatNumber(forStatus);
 
-    // Check to see if the request has an active connection
+    // Check to see if the request has an active databaseConnection
     // If it does, then we attempt to COMMIT or ROLLBACK (and if they fail, the functions release() anyways)
-    if (hasActiveConnection === true) {
-      // if there is no active transaction, then we attempt to release the connection
-      if (hasActiveTransaction === false) {
-        releaseConnection(req, req.connection, hasActiveConnection);
+    if (hasActiveDatabaseConnection === true) {
+      // if there is no active transaction, then we attempt to release the databaseConnection
+      if (hasActiveDatabaseTransaction === false) {
+        releaseDatabaseConnection(req, req.databaseConnection, hasActiveDatabaseConnection);
       }
-      else if (castedStatus >= 200 && castedStatus <= 299) {
+      else if (status >= 200 && status <= 299) {
         // attempt to commit transaction
-        await commitTransaction(req, req.connection, hasActiveConnection, hasActiveTransaction);
+        await commitTransaction(req, req.databaseConnection, hasActiveDatabaseConnection, hasActiveDatabaseTransaction);
       }
       else {
         // attempt to rollback transaction
-        await rollbackTransaction(req, req.connection, hasActiveConnection, hasActiveTransaction);
+        await rollbackTransaction(req, req.databaseConnection, hasActiveDatabaseConnection, hasActiveDatabaseTransaction);
       }
     }
 
@@ -86,33 +86,33 @@ function configureResponse(req, res) {
     logResponse(req, res, body);
 
     res.hasSentResponse = true;
-    res.status(castedStatus).json(body);
+    res.status(status).json(body);
   };
 }
 
-async function commitTransaction(req, connection, hasActiveConnection, hasActiveTransaction) {
-  const castedHasActiveConnection = formatBoolean(hasActiveConnection);
-  const castedHasActiveTransaction = formatBoolean(hasActiveTransaction);
-  if (areAllDefined(req, connection, castedHasActiveConnection, castedHasActiveTransaction) === false) {
+async function commitTransaction(req, databaseConnection, forHasActiveDatabaseConnection, forHasActiveDatabaseTransaction) {
+  const hasActiveConnection = formatBoolean(forHasActiveDatabaseConnection);
+  const hasActiveTransaction = formatBoolean(forHasActiveDatabaseTransaction);
+  if (areAllDefined(req, databaseConnection, hasActiveConnection, hasActiveTransaction) === false) {
     return;
   }
 
-  if (castedHasActiveConnection === false) {
+  if (hasActiveConnection === false) {
     return;
   }
 
-  if (castedHasActiveTransaction === true) {
+  if (hasActiveTransaction === true) {
     try {
       // Attempt to COMMIT the transaction
-      await databaseQuery(connection, 'COMMIT');
-      req.hasActiveTransaction = false;
+      await databaseQuery(databaseConnection, 'COMMIT');
+      req.hasActiveDatabaseTransaction = false;
     }
     catch (commitError) {
       // COMMIT failed, attempt to rollback
       logServerError('commitTransaction COMMIT', commitError);
       try {
-        await databaseQuery(connection, 'ROLLBACK');
-        req.hasActiveTransaction = false;
+        await databaseQuery(databaseConnection, 'ROLLBACK');
+        req.hasActiveDatabaseTransaction = false;
         // Backup Rollback succeeded
       }
       catch (rollbackError) {
@@ -122,24 +122,24 @@ async function commitTransaction(req, connection, hasActiveConnection, hasActive
     }
   }
 
-  releaseConnection(req, connection, castedHasActiveConnection);
+  releaseDatabaseConnection(req, databaseConnection, hasActiveConnection);
 }
 
-async function rollbackTransaction(req, connection, hasActiveConnection, hasActiveTransaction) {
-  const castedHasActiveConnection = formatBoolean(hasActiveConnection);
-  const castedHasActiveTransaction = formatBoolean(hasActiveTransaction);
-  if (areAllDefined(req, connection, castedHasActiveConnection, castedHasActiveTransaction) === false) {
+async function rollbackTransaction(req, databaseConnection, hasActiveDatabaseConnection, hasActiveDatabaseTransaction) {
+  const hasActiveConnection = formatBoolean(hasActiveDatabaseConnection);
+  const hasActiveTransaction = formatBoolean(hasActiveDatabaseTransaction);
+  if (areAllDefined(req, databaseConnection, hasActiveConnection, hasActiveTransaction) === false) {
     return;
   }
 
-  if (castedHasActiveConnection === false) {
+  if (hasActiveConnection === false) {
     return;
   }
 
-  if (castedHasActiveTransaction === true) {
+  if (hasActiveTransaction === true) {
     try {
-      await databaseQuery(connection, 'ROLLBACK');
-      req.hasActiveTransaction = false;
+      await databaseQuery(databaseConnection, 'ROLLBACK');
+      req.hasActiveDatabaseTransaction = false;
     }
     catch (rollbackError) {
       // ROLLBACK failed, continue as there is nothing we can do
@@ -147,17 +147,17 @@ async function rollbackTransaction(req, connection, hasActiveConnection, hasActi
     }
   }
 
-  releaseConnection(req, connection, castedHasActiveConnection);
+  releaseDatabaseConnection(req, databaseConnection, hasActiveConnection);
 }
 
-function releaseConnection(req, connection, hasActiveConnection) {
-  const castedHasActiveConnection = formatBoolean(hasActiveConnection);
-  if (areAllDefined(req, connection, castedHasActiveConnection) === false || castedHasActiveConnection === false) {
+function releaseDatabaseConnection(req, databaseConnection, hasActiveDatabaseConnection) {
+  const hasActiveConnection = formatBoolean(hasActiveDatabaseConnection);
+  if (areAllDefined(req, databaseConnection, hasActiveConnection) === false || hasActiveConnection === false) {
     return;
   }
-  // finally, no matter the result above, we release the connection
-  connection.release();
-  req.hasActiveConnection = false;
+  // finally, no matter the result above, we release the databaseConnection
+  databaseConnection.release();
+  req.hasActiveDatabaseConnection = false;
 }
 
 module.exports = { configureRequestForResponse };

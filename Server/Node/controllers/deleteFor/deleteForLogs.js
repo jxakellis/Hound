@@ -6,23 +6,23 @@ const { databaseQuery } = require('../../main/tools/database/databaseQuery');
  *  Queries the database to delete a log. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-async function deleteLogForLogId(connection, dogId, logId) {
+async function deleteLogForLogId(databaseConnection, dogId, logId) {
   const dogLastModified = new Date();
   const logLastModified = dogLastModified;
 
-  if (areAllDefined(connection, dogId, logId) === false) {
-    throw new ValidationError('connection, dogId, or logId missing', global.constant.error.value.MISSING);
+  if (areAllDefined(databaseConnection, dogId, logId) === false) {
+    throw new ValidationError('databaseConnection, dogId, or logId missing', global.constant.error.value.MISSING);
   }
 
   const promises = [
     databaseQuery(
-      connection,
+      databaseConnection,
       'UPDATE dogLogs SET logIsDeleted = 1, logLastModified = ? WHERE logId = ?',
       [logLastModified, logId],
     ),
     // update the dog last modified since one of its compoents was updated
     databaseQuery(
-      connection,
+      databaseConnection,
       'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
       [dogLastModified, dogId],
     )];
@@ -33,23 +33,23 @@ async function deleteLogForLogId(connection, dogId, logId) {
  *  Queries the database to delete all logs for a dogId. If the query is successful, then returns
  *  If an error is encountered, creates and throws custom error
  */
-async function deleteAllLogsForDogId(connection, dogId) {
+async function deleteAllLogsForDogId(databaseConnection, dogId) {
   const dogLastModified = new Date();
   const logLastModified = dogLastModified;
 
-  if (areAllDefined(connection, dogId) === false) {
-    throw new ValidationError('connection or dogId missing', global.constant.error.value.MISSING);
+  if (areAllDefined(databaseConnection, dogId) === false) {
+    throw new ValidationError('databaseConnection or dogId missing', global.constant.error.value.MISSING);
   }
 
   const promises = [
     databaseQuery(
-      connection,
+      databaseConnection,
       'UPDATE dogLogs SET logIsDeleted = 1, logLastModified = ? WHERE dogId = ?',
       [logLastModified, dogId],
     ),
     // update the dog last modified since one of its compoents was updated
     databaseQuery(
-      connection,
+      databaseConnection,
       'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
       [dogLastModified, dogId],
     ),

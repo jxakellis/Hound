@@ -14,19 +14,19 @@ const { apn, productionAPNProvider, developmentAPNProvider } = require('./apnPro
  * Takes a string that will be the body of the notification
  */
 // (token, category, sound, alertTitle, alertBody)
-function sendAPN(token, category, sound, alertTitle, alertBody, customPayload) {
-  let castedAlertTitle = formatString(alertTitle);
-  let castedAlertBody = formatString(alertBody);
+function sendAPN(token, category, sound, forAlertTitle, forAlertBody, customPayload) {
+  let alertTitle = formatString(forAlertTitle);
+  let alertBody = formatString(forAlertBody);
 
-  apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${castedAlertTitle}, ${castedAlertBody}`);
+  apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${alertTitle}, ${alertBody}`);
 
   // sound doesn't have to be defined, its optional
-  if (areAllDefined(token, category, castedAlertTitle, castedAlertBody, customPayload) === false) {
+  if (areAllDefined(token, category, alertTitle, alertBody, customPayload) === false) {
     return;
   }
 
-  castedAlertTitle = castedAlertTitle.substring(0, global.constant.apn.length.ALERT_TITLE);
-  castedAlertBody = castedAlertBody.substring(0, global.constant.apn.length.ALERT_BODY);
+  alertTitle = alertTitle.substring(0, global.constant.apn.length.ALERT_TITLE);
+  alertBody = alertBody.substring(0, global.constant.apn.length.ALERT_BODY);
 
   // the tokens array is defined and has at least one element
 
@@ -69,9 +69,9 @@ function sendAPN(token, category, sound, alertTitle, alertBody, customPayload) {
       // alert Dictionary
       alert: {
         // The title of the notification. Apple Watch displays this string in the short look notification interface. Specify a string that’s quickly understood by the user.
-        title: castedAlertTitle,
+        title: alertTitle,
         // The content of the alert message.
-        body: castedAlertBody,
+        body: alertBody,
       },
     },
   };

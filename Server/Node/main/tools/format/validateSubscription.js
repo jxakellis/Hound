@@ -18,7 +18,7 @@ async function attachActiveSubscription(req, res, next) {
       throw new ValidationError('familyId missing', global.constant.error.value.MISSING);
     }
 
-    const activeSubscription = await getActiveSubscriptionForFamilyId(req.connection, familyId);
+    const activeSubscription = await getActiveSubscriptionForFamilyId(req.databaseConnection, familyId);
 
     req.activeSubscription = activeSubscription;
 
@@ -48,13 +48,13 @@ async function validateSubscription(req, res, next) {
       return next();
     }
 
-    const familyMembers = await getAllFamilyMembersForFamilyId(req.connection, familyId);
+    const familyMembers = await getAllFamilyMembersForFamilyId(req.databaseConnection, familyId);
 
     if (familyMembers.length > subscriptionNumberOfFamilyMembers) {
       throw new ValidationError(`Family member limit of ${subscriptionNumberOfFamilyMembers} exceeded`, global.constant.error.family.limit.FAMILY_MEMBER_EXCEEDED);
     }
 
-    const dogs = await getAllDogsForUserIdFamilyId(req.connection, userId, familyId, undefined, false, false);
+    const dogs = await getAllDogsForUserIdFamilyId(req.databaseConnection, userId, familyId, undefined, false, false);
 
     if (dogs.length > subscriptionNumberOfDogs) {
       throw new ValidationError(`Dog limit of ${subscriptionNumberOfDogs} exceeded`, global.constant.error.family.limit.DOG_EXCEEDED);

@@ -11,21 +11,21 @@ const dogRemindersColumns = 'reminderId, reminderAction, reminderCustomActionNam
  *  If the query is successful, returns the reminder for the reminderId.
  *  If a problem is encountered, creates and throws custom error
  */
-async function getReminderForReminderId(connection, reminderId, lastDogManagerSynchronization) {
-  if (areAllDefined(connection, reminderId) === false) {
-    throw new ValidationError('connection or reminderId missing', global.constant.error.value.MISSING);
+async function getReminderForReminderId(databaseConnection, reminderId, forLastDogManagerSynchronization) {
+  if (areAllDefined(databaseConnection, reminderId) === false) {
+    throw new ValidationError('databaseConnection or reminderId missing', global.constant.error.value.MISSING);
   }
 
-  const castedLastDogManagerSynchronization = formatDate(lastDogManagerSynchronization);
+  const lastDogManagerSynchronization = formatDate(forLastDogManagerSynchronization);
 
-  const result = areAllDefined(castedLastDogManagerSynchronization)
+  const result = areAllDefined(lastDogManagerSynchronization)
     ? await databaseQuery(
-      connection,
+      databaseConnection,
       `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderLastModified >= ? AND reminderId = ? LIMIT 1`,
-      [castedLastDogManagerSynchronization, reminderId],
+      [lastDogManagerSynchronization, reminderId],
     )
     : await databaseQuery(
-      connection,
+      databaseConnection,
       `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderId = ? LIMIT 1`,
       [reminderId],
     );
@@ -39,21 +39,21 @@ async function getReminderForReminderId(connection, reminderId, lastDogManagerSy
  *  If the query is successful, returns an array of all the reminders for the dogId.
  *  If a problem is encountered, creates and throws custom error
  */
-async function getAllRemindersForDogId(connection, dogId, lastDogManagerSynchronization) {
-  if (areAllDefined(connection, dogId) === false) {
-    throw new ValidationError('connection or dogId missing', global.constant.error.value.MISSING);
+async function getAllRemindersForDogId(databaseConnection, dogId, forLastDogManagerSynchronization) {
+  if (areAllDefined(databaseConnection, dogId) === false) {
+    throw new ValidationError('databaseConnection or dogId missing', global.constant.error.value.MISSING);
   }
 
-  const castedLastDogManagerSynchronization = formatDate(lastDogManagerSynchronization);
+  const lastDogManagerSynchronization = formatDate(forLastDogManagerSynchronization);
 
-  const result = areAllDefined(castedLastDogManagerSynchronization)
+  const result = areAllDefined(lastDogManagerSynchronization)
     ? await databaseQuery(
-      connection,
+      databaseConnection,
       `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderLastModified >= ? AND dogId = ? LIMIT 18446744073709551615`,
-      [castedLastDogManagerSynchronization, dogId],
+      [lastDogManagerSynchronization, dogId],
     )
     : await databaseQuery(
-      connection,
+      databaseConnection,
       `SELECT ${dogRemindersColumns} FROM dogReminders WHERE dogId = ? LIMIT 18446744073709551615`,
       [dogId],
     );

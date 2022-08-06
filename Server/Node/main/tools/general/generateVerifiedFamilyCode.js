@@ -21,8 +21,8 @@ const generateFamilyCode = () => {
 };
 
 // Generate a verified unique code for a family to use that consists of A-Z and 0-9 (excludes I, L, O, and 0 due to how similar they look)
-async function generateVerifiedFamilyCode(connection) {
-  if (areAllDefined(connection) === false) {
+async function generateVerifiedFamilyCode(databaseConnection) {
+  if (areAllDefined(databaseConnection) === false) {
     return undefined;
   }
 
@@ -32,7 +32,7 @@ async function generateVerifiedFamilyCode(connection) {
     // Necessary to disable no-await-in-loop as we can't use Promise.all() for a while loop. We have a unknown amount of promises
     // eslint-disable-next-line no-await-in-loop
     const result = await databaseQuery(
-      connection,
+      databaseConnection,
       'SELECT familyCode FROM families WHERE familyCode = ? LIMIT 1',
       [potentialFamilyCode],
     );

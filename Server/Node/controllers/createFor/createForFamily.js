@@ -10,9 +10,9 @@ const { getFamilyMemberUserIdForUserId } = require('../getFor/getForFamily');
  *  Queries the database to create a family. If the query is successful, then returns the familyId.
  *  If a problem is encountered, creates and throws custom error
  */
-async function createFamilyForUserId(connection, userId) {
-  if (areAllDefined(connection, userId) === false) {
-    throw new ValidationError('connection or userId missing', global.constant.error.value.MISSING);
+async function createFamilyForUserId(databaseConnection, userId) {
+  if (areAllDefined(databaseConnection, userId) === false) {
+    throw new ValidationError('databaseConnection or userId missing', global.constant.error.value.MISSING);
   }
 
   const familyAccountCreationDate = new Date();
@@ -23,7 +23,7 @@ async function createFamilyForUserId(connection, userId) {
   }
 
   // check if the user is already in a family
-  const existingFamilyResult = await getFamilyMemberUserIdForUserId(connection, userId);
+  const existingFamilyResult = await getFamilyMemberUserIdForUserId(databaseConnection, userId);
 
   // validate that the user is not in a family
   if (existingFamilyResult.length !== 0) {
@@ -31,14 +31,14 @@ async function createFamilyForUserId(connection, userId) {
   }
 
   // create a family code for the new family
-  const familyCode = await generateVerifiedFamilyCode(connection);
+  const familyCode = await generateVerifiedFamilyCode(databaseConnection);
   await databaseQuery(
-    connection,
+    databaseConnection,
     'INSERT INTO families(familyId, userId, familyCode, isLocked, isPaused, familyAccountCreationDate) VALUES (?, ?, ?, ?, ?, ?)',
     [familyId, userId, familyCode, false, false, familyAccountCreationDate],
   );
   await databaseQuery(
-    connection,
+    databaseConnection,
     'INSERT INTO familyMembers(familyId, userId) VALUES (?, ?)',
     [familyId, userId],
   );

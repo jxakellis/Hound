@@ -10,15 +10,15 @@ const userConfigurationColumns = 'userConfiguration.isNotificationEnabled, userC
  * If the query is successful, returns the user for the userId.
  *  If a problem is encountered, creates and throws custom error
  */
-async function getUserForUserId(connection, userId) {
-  if (areAllDefined(connection, userId) === false) {
-    throw new ValidationError('connection or userId missing', global.constant.error.value.MISSING);
+async function getUserForUserId(databaseConnection, userId) {
+  if (areAllDefined(databaseConnection, userId) === false) {
+    throw new ValidationError('databaseConnection or userId missing', global.constant.error.value.MISSING);
   }
 
   // have to specifically reference the columns, otherwise familyMembers.userId will override users.userId.
   // Therefore setting userId to null (if there is no family member) even though the userId isn't null.
   const userInformation = await databaseQuery(
-    connection,
+    databaseConnection,
     `SELECT ${userColumns}, familyMembers.familyId, ${userConfigurationColumns} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userId = ? LIMIT 1`,
     [userId],
   );
@@ -30,16 +30,16 @@ async function getUserForUserId(connection, userId) {
 * If the query is successful, returns the user for the userIdentifier.
  *  If a problem is encountered, creates and throws custom error
  */
-async function getUserForUserIdentifier(connection, userIdentifier) {
-  if (areAllDefined(connection, userIdentifier) === false) {
-    throw new ValidationError('connection or userIdentifier missing', global.constant.error.value.MISSING);
+async function getUserForUserIdentifier(databaseConnection, userIdentifier) {
+  if (areAllDefined(databaseConnection, userIdentifier) === false) {
+    throw new ValidationError('databaseConnection or userIdentifier missing', global.constant.error.value.MISSING);
   }
 
   // userIdentifier method of finding corresponding user(s)
   // have to specifically reference the columns, otherwise familyMembers.userId will override users.userId.
   // Therefore setting userId to null (if there is no family member) even though the userId isn't null.
   const userInformation = await databaseQuery(
-    connection,
+    databaseConnection,
     `SELECT ${userColumns}, familyMembers.familyId, ${userConfigurationColumns} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userIdentifier = ? LIMIT 1`,
     [userIdentifier],
   );
@@ -55,13 +55,13 @@ async function getUserForUserIdentifier(connection, userIdentifier) {
   return userInformation[0];
 }
 
-async function getUserFirstNameLastNameForUserId(connection, userId) {
-  if (areAllDefined(connection, userId) === false) {
-    throw new ValidationError('connection or userId missing', global.constant.error.value.MISSING);
+async function getUserFirstNameLastNameForUserId(databaseConnection, userId) {
+  if (areAllDefined(databaseConnection, userId) === false) {
+    throw new ValidationError('databaseConnection or userId missing', global.constant.error.value.MISSING);
   }
 
   const userInformation = await databaseQuery(
-    connection,
+    databaseConnection,
     `SELECT ${userNameColumns} FROM users WHERE users.userId = ? LIMIT 1`,
     [userId],
   );
