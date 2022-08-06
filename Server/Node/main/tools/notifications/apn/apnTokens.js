@@ -1,5 +1,5 @@
 const { serverConnectionForGeneral } = require('../../database/databaseConnections');
-const { databaseQuery } = require('../../database/queryDatabase');
+const { databaseQuery } = require('../../database/databaseQuery');
 const { formatBoolean, formatArray } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 

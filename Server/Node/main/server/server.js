@@ -20,9 +20,8 @@ const app = express();
 
 // TO DO NOW add 2fa to AWS
 // TO DO NOW add database backups to AWS
-// TO DO NOW add watchdog to AWS to make sure node and database are running
+// TO DO NOW add watchdog to AWS to make sure node are running
 // TO DO NOW add PM2 to AWS to better manage the node instance
-// TO DO NOW add RDP IP constraints to AWS firewall
 
 const { restoreAlarmNotificationsForAllFamilies } = require('../tools/notifications/alarm/restoreAlarmNotification');
 const { configureAppForRequests } = require('./request');

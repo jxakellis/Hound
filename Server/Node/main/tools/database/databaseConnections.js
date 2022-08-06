@@ -1,10 +1,19 @@
 const mysql2 = require('mysql2');
-const { databasePassword } = require('../../secrets/databasePassword');
+const {
+  developmentHoundUser,
+  developmentHoundHost,
+  developmentHoundPassword,
+  developmentHoundDatabase,
+  productionHoundUser,
+  productionHoundHost,
+  productionHoundPassword,
+  productionHoundDatabase,
+} = require('../../secrets/databaseCredentials');
 
-const user = 'admin';
-const host = 'localhost';
-const password = databasePassword;
-const database = global.constant.server.IS_PRODUCTION_DATABASE ? 'productionHound' : 'developmentHound';
+const user = global.constant.server.IS_PRODUCTION_DATABASE ? productionHoundUser : developmentHoundUser;
+const host = global.constant.server.IS_PRODUCTION_DATABASE ? productionHoundHost : developmentHoundHost;
+const password = global.constant.server.IS_PRODUCTION_DATABASE ? productionHoundPassword : developmentHoundPassword;
+const database = global.constant.server.IS_PRODUCTION_DATABASE ? productionHoundDatabase : developmentHoundDatabase;
 const connectTimeout = 30000;
 const connectionConfiguration = {
   user,
@@ -13,6 +22,8 @@ const connectionConfiguration = {
   database,
   connectTimeout,
 };
+
+// TO DO NOW add test loop that re tests the connections to ensure that they are working, if they aren't then initiate a shutdown/crash
 
 const serverConnectionForGeneral = mysql2.createConnection(connectionConfiguration);
 

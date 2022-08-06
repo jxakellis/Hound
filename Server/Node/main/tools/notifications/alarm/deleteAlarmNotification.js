@@ -1,6 +1,6 @@
 const { alarmLogger } = require('../../logging/loggers');
 const { serverConnectionForAlarms } = require('../../database/databaseConnections');
-const { databaseQuery } = require('../../database/queryDatabase');
+const { databaseQuery } = require('../../database/databaseQuery');
 
 const { logServerError } = require('../../logging/logServerError');
 const { areAllDefined } = require('../../format/validateDefined');

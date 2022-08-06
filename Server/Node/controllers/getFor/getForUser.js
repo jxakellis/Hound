@@ -1,5 +1,5 @@
 const { ValidationError } = require('../../main/tools/general/errors');
-const { databaseQuery } = require('../../main/tools/database/queryDatabase');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 const userColumns = 'users.userId, users.userNotificationToken, users.userFirstName, users.userLastName, users.userEmail';

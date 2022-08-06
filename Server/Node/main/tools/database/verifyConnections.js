@@ -2,7 +2,7 @@ const { serverLogger } = require('../logging/loggers');
 const {
   serverConnectionForGeneral, serverConnectionForLogging, serverConnectionForAlarms, poolForRequests,
 } = require('./databaseConnections');
-const { databaseQuery } = require('./queryDatabase');
+const { databaseQuery } = require('./databaseQuery');
 
 async function verifyDatabaseConnections() {
   // First make sure all connetions are connected to the database, then test to make sure they can access a basic table
@@ -31,6 +31,9 @@ async function verifyDatabaseConnections() {
   threadsConnected = threadsConnected.Value;
   serverLogger.info(`Currently ${threadsConnected} threads connected to MySQL`);
 
+  // TO DO NOW test the wait_timeout on pool for requests.
+  // does the pool itself time out ever or is the wait_timeout for the connections pooled from the pool
+  // If the former, the we want a low timeout (want individual request connections to time out), if latter then high time out (don't want pool to ever timeout)
   const connections = [serverConnectionForGeneral, serverConnectionForLogging, serverConnectionForAlarms, poolForRequests];
   const promises = [];
   // Iterate through all the connections
@@ -48,6 +51,12 @@ async function verifyDatabaseConnections() {
   }
 
   await Promise.all(promises);
+
+  await databaseQuery(
+    poolForRequests,
+    'SET session wait_timeout = ?',
+    [5],
+  );
 }
 
 module.exports = { verifyDatabaseConnections };

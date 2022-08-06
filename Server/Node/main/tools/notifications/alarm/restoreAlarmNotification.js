@@ -4,7 +4,7 @@ const { createAlarmNotificationForFamily } = require('./createAlarmNotification'
 
 const { logServerError } = require('../../logging/logServerError');
 const { serverConnectionForAlarms } = require('../../database/databaseConnections');
-const { databaseQuery } = require('../../database/queryDatabase');
+const { databaseQuery } = require('../../database/databaseQuery');
 
 /**
  * Assumes an empty schedule

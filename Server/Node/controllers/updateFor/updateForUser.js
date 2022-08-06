@@ -1,6 +1,6 @@
 const { ValidationError } = require('../../main/tools/general/errors');
 
-const { databaseQuery } = require('../../main/tools/database/queryDatabase');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { formatNumber, formatBoolean } = require('../../main/tools/format/formatObject');
 const { atLeastOneDefined, areAllDefined } = require('../../main/tools/format/validateDefined');
 

@@ -1,6 +1,6 @@
 const { ValidationError } = require('../../main/tools/general/errors');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
-const { databaseQuery } = require('../../main/tools/database/queryDatabase');
+const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 
 const { deleteAlarmNotificationsForReminder } = require('../../main/tools/notifications/alarm/deleteAlarmNotification');
 

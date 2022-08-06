@@ -1,5 +1,5 @@
 const { serverConnectionForGeneral } = require('./databaseConnections');
-const { databaseQuery } = require('./queryDatabase');
+const { databaseQuery } = require('./databaseQuery');
 const { serverLogger } = require('../logging/loggers');
 
 /**

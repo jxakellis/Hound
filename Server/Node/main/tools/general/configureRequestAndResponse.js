@@ -4,7 +4,7 @@ const { logServerError } = require('../logging/logServerError');
 const { formatNumber, formatBoolean } = require('../format/formatObject');
 const { convertErrorToJSON } = require('./errors');
 const { areAllDefined } = require('../format/validateDefined');
-const { databaseQuery } = require('../database/queryDatabase');
+const { databaseQuery } = require('../database/databaseQuery');
 const { poolForRequests } = require('../database/databaseConnections');
 
 async function configureRequestForResponse(req, res, next) {
