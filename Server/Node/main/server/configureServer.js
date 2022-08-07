@@ -4,6 +4,7 @@ const { testDatabaseConnections } = require('../tools/database/testDatabaseConne
 const {
   databaseConnectionForGeneral, databaseConnectionForLogging, databaseConnectionForAlarms, databaseConnectionPoolForRequests,
 } = require('../tools/database/establishDatabaseConnections');
+const { logServerError } = require('../tools/logging/logServerError');
 const { restoreAlarmNotificationsForAllFamilies } = require('../tools/notifications/alarm/restoreAlarmNotification');
 
 const configureServerForRequests = (server) => new Promise((resolve) => {
@@ -17,9 +18,14 @@ const configureServerForRequests = (server) => new Promise((resolve) => {
     const testDatabaseConnectionIntervalObject = setInterval(() => {
       testDatabaseConnections(databaseConnectionForGeneral, databaseConnectionForLogging, databaseConnectionForAlarms, databaseConnectionPoolForRequests)
         .catch((databaseConnectionError) => {
-          // If a database connection fails to be able to be tested, meaning it isn't working
-          // then we catch the uncaught rejection and instead cause an uncaught exception (causing node to crash)
-          throw databaseConnectionError;
+          /*
+            If a database connection fails its test, it means there is a problem.
+            We attempt to log this problem
+            However, the logServerError will probably fail as well, as
+            it requires a database connection to insert the log into the table.
+            If this happens, the failure is caught and output to console
+          */
+          logServerError(databaseConnectionError);
         });
     }, global.constant.server.DATABASE_CONNECTION_TEST_INTERVAL);
 
