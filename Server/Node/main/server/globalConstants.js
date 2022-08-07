@@ -7,6 +7,8 @@ const server = {
   // App builds of the iOS Hound app that work properly with the server.
   // A version would be depreciated if an endpoint path is changed or endpoint data return format is changed
   COMPATIBLE_IOS_APP_BUILDS: [5500],
+  // How often each of the database connections are tested as being connected (in milliseconds)
+  DATABASE_CONNECTION_TEST_INTERVAL: 1000 * 60 * 5,
 };
 
 const limit = {
@@ -168,5 +170,5 @@ global.constant = {
   error,
 };
 
-// Make sure that constants can't be modified
+// Freeze every object so nothing can be mutated as constants are final
 Object.freeze(global.constant);

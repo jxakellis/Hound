@@ -24,19 +24,13 @@ async function logServerError(forFunction, forError) {
   let errorStack = formatString((forError && forError.stack) || forError);
   errorStack = areAllDefined(errorStack) ? errorStack.substring(0, 2500) : errorStack;
 
-  serverLogger.error(`Function ${errorFunction} generated an uncaught ${errorName}: ${errorMessage} ${errorCode} ${errorStack}`);
+  serverLogger.error(`UNCAUGHT '${errorName}' FROM FUNCTION: ${errorFunction}\n MESSAGE: ${errorMessage}\n CODE: ${errorCode}\n STACK: ${errorStack}`);
 
-  try {
-    await databaseQuery(
-      databaseConnectionForLogging,
-      'INSERT INTO previousServerErrors(errorDate, errorFunction, errorName, errorMessage, errorCode, errorStack) VALUES (?,?,?,?,?,?)',
-      [errorDate, errorFunction, errorName, errorMessage, errorCode, errorStack],
-    );
-  }
-  catch (databaseError) {
-    // Failed to log error
-    serverLogger.error(`Function logServerError generated an uncaught error: ${databaseError}`);
-  }
+  await databaseQuery(
+    databaseConnectionForLogging,
+    'INSERT INTO previousServerErrors(errorDate, errorFunction, errorName, errorMessage, errorCode, errorStack) VALUES (?,?,?,?,?,?)',
+    [errorDate, errorFunction, errorName, errorMessage, errorCode, errorStack],
+  ).catch((databaseError) => serverLogger.error(`UNCAUGHT '${databaseError.name}' FROM FUNCTION: logServerError\n MESSAGE: ${databaseError.message}\n CODE: ${databaseError.code}\n STACK: ${databaseError.stack}`));
 }
 
 module.exports = { logServerError };

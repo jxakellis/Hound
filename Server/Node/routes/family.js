@@ -4,7 +4,7 @@ const familyRouter = express.Router({ mergeParams: true });
 
 const {
   getFamily, createFamily, updateFamily, deleteFamily,
-} = require('../controllers/main/family');
+} = require('../controllers/ controllerRoutes/family');
 
 const { validateFamilyId } = require('../main/tools/format/validateId');
 

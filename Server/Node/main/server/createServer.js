@@ -1,32 +1,33 @@
-// make sure the constants are loaded
-require('./constants');
+//
+//
+// Import modules to create the server
+//
+//
+
+// Import the global constant values to instantiate tem
+require('./globalConstants');
+
+// Import module required to execute console commands
 const { exec } = require('child_process');
 
-// Import builtin NodeJS modules to instantiate the service
+// Import builtin NodeJS modules to instantiate the server
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
 
 // Import the express module
-const express = require('express');
+const app = require('express')();
 const { serverLogger } = require('../tools/logging/loggers');
 
-// Instantiate an Express application
-const app = express();
-
-// MARK: Create the server
+//
+//
+// Create the server
+//
+//
 
 // TO DO NOW add 2fa to AWS
 // TO DO NOW add watchdog to Hound Server to make sure node is running and can touch database
 // TO DO NOW add PM2 to AWS to better manage the node instance
-
-const { restoreAlarmNotificationsForAllFamilies } = require('../tools/notifications/alarm/restoreAlarmNotification');
-const { configureAppForRequests } = require('./request');
-const { logServerError } = require('../tools/logging/logServerError');
-const {
-  databaseConnectionForGeneral, databaseConnectionForLogging, databaseConnectionForAlarms, databaseConnectionPoolForRequests,
-} = require('../tools/database/establishDatabaseConnections');
-const { verifyDatabaseConnections } = require('../tools/database/verifyDatabaseConnection');
 
 // Create a NodeJS HTTPS listener on port that points to the Express app
 // We can only create an HTTPS server on the AWS instance. Otherwise we create a HTTP server.
@@ -37,25 +38,36 @@ const HTTPOrHTTPSServer = global.constant.server.IS_PRODUCTION_SERVER
   }, app)
   : http.createServer(app);
 
-// We can only create an HTTPS server on the AWS instance. Otherwise we create a HTTP server.
-const port = global.constant.server.IS_PRODUCTION_SERVER ? 443 : 80;
-HTTPOrHTTPSServer.listen(port, async () => {
-  serverLogger.info(`Running HTTP${global.constant.server.IS_PRODUCTION_SERVER ? 'S' : ''} server on port ${port}; ${global.constant.server.IS_PRODUCTION_DATABASE ? 'production' : 'development'} database`);
+//
+//
+// Configure the server to recieve requests
+//
+//
 
-  await verifyDatabaseConnections();
+const { configureServerForRequests } = require('./configureServer');
+const { configureAppForRequests } = require('./configureApp');
 
-  if (global.constant.server.IS_PRODUCTION_DATABASE) {
-    await restoreAlarmNotificationsForAllFamilies();
-    // await cleanUpIsDeleted();
-  }
+// Setup the server to process requests
+let testDatabaseConnectionInterval;
+configureServerForRequests(HTTPOrHTTPSServer).then((intervalObject) => {
+  testDatabaseConnectionInterval = intervalObject;
 });
 
 // Setup the app to process requests
 configureAppForRequests(app);
 
-// MARK:  Handle termination of the server
+//
+//
+// Configure the server to handle a shutdown
+//
+//
 
+const { logServerError } = require('../tools/logging/logServerError');
+const { areAllDefined } = require('../tools/format/validateDefined');
 const { schedule } = require('../tools/notifications/alarm/schedules');
+const {
+  databaseConnectionForGeneral, databaseConnectionForLogging, databaseConnectionForAlarms, databaseConnectionPoolForRequests,
+} = require('../tools/database/establishDatabaseConnections');
 
 /**
  * Gracefully closes/ends everything
@@ -66,6 +78,10 @@ const shutdown = () => new Promise((resolve) => {
 
   const numberOfShutdownsNeeded = 6;
   let numberOfShutdownsCompleted = 0;
+
+  if (areAllDefined(testDatabaseConnectionInterval)) {
+    clearInterval(testDatabaseConnectionInterval);
+  }
 
   schedule.gracefulShutdown()
     .then(() => {
@@ -162,8 +178,10 @@ process.on('SIGUSR2', async () => {
 process.on('uncaughtException', async (error, origin) => {
   // uncaught error happened somewhere
   serverLogger.info(`Uncaught exception from origin: ${origin}`);
-  await logServerError('uncaughtException', error);
-  await shutdown();
+  await logServerError('uncaughtException', error)
+    .catch((shutdownError) => serverLogger.error('Experienced error while attempting to shutdown (logServerError):', shutdownError));
+  await shutdown()
+    .catch((shutdownError) => serverLogger.error('Experienced error while attempting to shutdown (shutdown):', shutdownError));
 
   if (error.code === 'EADDRINUSE') {
     // The first command is a killall command for linux, the second is for mac
@@ -173,7 +191,7 @@ process.on('uncaughtException', async (error, origin) => {
    * process.on('exit', ...) isn't called when the process crashes or is killed.
    */
     exec(consoleCommand, () => {
-      serverLogger.info('EADDRINUSE; All Node applications killed ');
+      serverLogger.info('EADDRINUSE; All Node applications killed');
       process.exit(1);
     });
     return;

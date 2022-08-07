@@ -2,36 +2,38 @@ const { serverLogger } = require('../logging/loggers');
 const {
   databaseConnectionForGeneral, databaseConnectionForLogging, databaseConnectionForAlarms, databaseConnectionPoolForRequests,
 } = require('./establishDatabaseConnections');
-const { testDatabaseConnection } = require('./testDatabaseConnection');
+const { testDatabaseConnections } = require('./testDatabaseConnection');
+const { areAllDefined } = require('../format/validateDefined');
 const { databaseQuery } = require('./databaseQuery');
+const { formatArray } = require('../format/formatObject');
 
 async function verifyDatabaseConnections() {
-  // First make sure all connetions are connected to the database, then test to make sure they can access a basic table
-  await databaseConnectionForGeneral.promise().connect();
-  await testDatabaseConnection(databaseConnectionForGeneral);
-  serverLogger.info(`databaseConnectionForGeneral connected with thread id ${databaseConnectionForGeneral.threadId}`);
+  // First make sure all connetions are connected to the database
+  const promises = [
+    databaseConnectionForGeneral.promise().connect(),
+    databaseConnectionForLogging.promise().connect(),
+    databaseConnectionForAlarms.promise().connect(),
+  ];
 
-  await databaseConnectionForLogging.promise().connect();
-  await testDatabaseConnection(databaseConnectionForLogging);
-  serverLogger.info(`databaseConnectionForLogging connected with thread id ${databaseConnectionForLogging.threadId}`);
+  await Promise.all(promises);
 
-  await databaseConnectionForAlarms.promise().connect();
-  await testDatabaseConnection(databaseConnectionForAlarms);
-  serverLogger.info(`databaseConnectionForAlarms connected with thread id ${databaseConnectionForAlarms.threadId}`);
-
-  await testDatabaseConnection(databaseConnectionPoolForRequests);
-  serverLogger.info('databaseConnectionPoolForRequests verified as connected');
+  // Test to make sure all connections (or pools) can access a basic table
+  await testDatabaseConnections(databaseConnectionForGeneral, databaseConnectionForLogging, databaseConnectionForAlarms, databaseConnectionPoolForRequests);
 
   // Once all databaseConnections verified, find the number of active threads to the MySQL server
-  serverLogger.info(`Currently ${await findNumberOfThreadsConnectedToDatabase(databaseConnectionForGeneral)} threads connected to MySQL`);
+  serverLogger.info(`Currently ${await findNumberOfThreadsConnectedToDatabase(databaseConnectionForGeneral)} threads connected to MariaDB Database Server`);
 
-  await updateDatabaseConnectionsWaitTimeouts([databaseConnectionForGeneral, databaseConnectionForLogging, databaseConnectionForAlarms, databaseConnectionPoolForRequests]);
+  await updateDatabaseConnectionsWaitTimeouts(databaseConnectionForGeneral, databaseConnectionForLogging, databaseConnectionForAlarms, databaseConnectionPoolForRequests);
 }
 
 /// Uses an existing database databaseConnection to find the number of active databaseConnections to said database
-async function findNumberOfThreadsConnectedToDatabase(forDatabaseConnection) {
+async function findNumberOfThreadsConnectedToDatabase(databaseConnection) {
+  if (areAllDefined(databaseConnection) === false) {
+    return -1;
+  }
+
   let threadsConnected = await databaseQuery(
-    forDatabaseConnection,
+    databaseConnection,
     'SHOW STATUS WHERE variable_name = ?',
     ['Threads_connected'],
   );
@@ -41,11 +43,16 @@ async function findNumberOfThreadsConnectedToDatabase(forDatabaseConnection) {
 }
 
 /// Takes an array of database databaseConnections and updates their wait_timeout so the databaseConnections can idle for that number of seconds (before being disconnected)
-async function updateDatabaseConnectionsWaitTimeouts(forDatabaseConnections) {
+async function updateDatabaseConnectionsWaitTimeouts(...forDatabaseConnections) {
+  const databaseConnections = formatArray(forDatabaseConnections);
+  if (areAllDefined(databaseConnections) === false) {
+    return;
+  }
+
   const promises = [];
   // Iterate through all the databaseConnections
-  for (let i = 0; i < forDatabaseConnections.length; i += 1) {
-    const databaseConnection = forDatabaseConnections[i];
+  for (let i = 0; i < databaseConnections.length; i += 1) {
+    const databaseConnection = databaseConnections[i];
     // Update the wait_timeout so that the databaseConnections can idle for up to the specified number of seconds (before being killed)
     // This case, we allow the databaseConnection to idle for 7 days
     promises.push(
@@ -60,4 +67,4 @@ async function updateDatabaseConnectionsWaitTimeouts(forDatabaseConnections) {
   await Promise.all(promises);
 }
 
-module.exports = { verifyDatabaseConnections, testDatabaseConnection };
+module.exports = { verifyDatabaseConnections };

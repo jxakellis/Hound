@@ -4,7 +4,7 @@ const subscriptionRouter = express.Router({ mergeParams: true });
 
 const {
   getSubscription, createSubscription,
-} = require('../controllers/main/subscription');
+} = require('../controllers/ controllerRoutes/subscription');
 
 //
 subscriptionRouter.get('/', getSubscription);

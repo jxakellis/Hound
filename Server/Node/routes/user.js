@@ -4,7 +4,7 @@ const userRouter = express.Router({ mergeParams: true });
 
 const {
   getUser, createUser, updateUser,
-} = require('../controllers/main/user');
+} = require('../controllers/ controllerRoutes/user');
 
 const { validateUserId } = require('../main/tools/format/validateId');
 

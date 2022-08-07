@@ -2,12 +2,11 @@
   "name": "node",
   "version": "1.0.0",
   "description": "Hound Server",
-  "main": "./main/server/server.js",
+  "main": "./main/server/createServer.js",
   "scripts": {
-    "dev": "node --max-old-space-size=2048 main/server/server.js | pino-pretty -c -t",
-    "devNodemon": "nodemon --max-old-space-size=2048 main/server/server.js | pino-pretty -c -t",
-    "prod": "node main/server/server.js | pino-pretty -c -t",
-    "prodNodemon": "node main/server/server.js | pino-pretty -c -t"
+    "dev": "node --max-old-space-size=2048 main/server/createServer.js | pino-pretty -c -t",
+    "devNodemon": "nodemon --max-old-space-size=2048 main/server/createServer.js | pino-pretty -c -t",
+    "prod": "node main/server/createServer.js | pino-pretty -c -t"
   },
   "author": "",
   "license": "ISC",

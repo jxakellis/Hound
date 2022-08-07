@@ -23,8 +23,6 @@ const databaseConnectionConfiguration = {
   connectTimeout,
 };
 
-// TO DO NOW add test loop that re tests the databaseConnections to ensure that they are working, if they aren't then initiate a shutdown/crash
-
 const databaseConnectionForGeneral = mysql2.createConnection(databaseConnectionConfiguration);
 
 const databaseConnectionForLogging = mysql2.createConnection(databaseConnectionConfiguration);
