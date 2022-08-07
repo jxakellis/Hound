@@ -2,7 +2,7 @@ const { ValidationError } = require('../general/errors');
 const { areAllDefined } = require('./validateDefined');
 const { getActiveSubscriptionForFamilyId } = require('../../../controllers/getFor/getForSubscription');
 const { getAllFamilyMembersForFamilyId } = require('../../../controllers/getFor/getForFamily');
-const { getAllDogsForUserIdFamilyId } = require('../../../controllers/getFor/getForDogs');
+const { databaseQuery } = require('../database/databaseQuery');
 
 /**
  * Checks the family's subscription
@@ -54,7 +54,12 @@ async function validateSubscription(req, res, next) {
       throw new ValidationError(`Family member limit of ${subscriptionNumberOfFamilyMembers} exceeded`, global.constant.error.family.limit.FAMILY_MEMBER_EXCEEDED);
     }
 
-    const dogs = await getAllDogsForUserIdFamilyId(req.databaseConnection, userId, familyId, undefined, false, false);
+    // only retrieve enough not deleted dogs that would exceed the limit
+    const dogs = await databaseQuery(
+      req.databaseConnection,
+      'SELECT dogId FROM dogs WHERE dogIsDeleted = 0 AND familyId = ? LIMIT ?',
+      [familyId, subscriptionNumberOfDogs],
+    );
 
     if (dogs.length > subscriptionNumberOfDogs) {
       throw new ValidationError(`Dog limit of ${subscriptionNumberOfDogs} exceeded`, global.constant.error.family.limit.DOG_EXCEEDED);

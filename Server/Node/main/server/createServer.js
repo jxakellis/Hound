@@ -27,7 +27,6 @@ const { serverLogger } = require('../tools/logging/loggers');
 
 // TO DO NOW add 2fa to AWS
 // TO DO NOW add watchdog to Hound Server to make sure node is running and can touch database
-// TO DO NOW add PM2 to AWS to better manage the node instance
 
 // Create a NodeJS HTTPS listener on port that points to the Express app
 // We can only create an HTTPS server on the AWS instance. Otherwise we create a HTTP server.
@@ -184,14 +183,12 @@ process.on('uncaughtException', async (error, origin) => {
     .catch((shutdownError) => serverLogger.error('Experienced error while attempting to shutdown (shutdown):', shutdownError));
 
   if (error.code === 'EADDRINUSE') {
-    // The first command is a killall command for linux, the second is for mac
-    const consoleCommand = global.constant.server.IS_PRODUCTION_SERVER ? 'sudo killall -9 node' : 'killall -9 node';
     /**
    * The previous Node Application did not shut down properly
    * process.on('exit', ...) isn't called when the process crashes or is killed.
    */
-    exec(consoleCommand, () => {
-      serverLogger.info('EADDRINUSE; All Node applications killed');
+    exec(`npx kill-port ${global.constant.server.SERVER_PORT}`, () => {
+      serverLogger.info(`EADDRINUSE; Process(es) on port ${global.constant.server.SERVER_PORT} killed`);
       process.exit(1);
     });
     return;
