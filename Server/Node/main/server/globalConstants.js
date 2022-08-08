@@ -1,11 +1,13 @@
-const IS_PRODUCTION_SERVER = process.platform === 'linux';
+const IS_PRODUCTION_SERVER = process.env.ENVIRONMENT === 'production';
+const IS_PRODUCTION_DATABASE = process.env.DATABASE === 'production';
 const server = {
-  // Calculated boolean. True if the node application is being run on a linux environment (i.e. on AWS Ubuntu instance), otherwise false (i.e. on Macbook)
+  // True if the node application is being run on a linux environment that supports HTTPS (i.e. on AWS Ubuntu instance), otherwise false (i.e. on Macbook)
   IS_PRODUCTION_SERVER,
-  // True if we are launching a production server for real users, false if we are launching a development server for testing
-  IS_PRODUCTION_DATABASE: IS_PRODUCTION_SERVER,
+  // True if we are using the production database that houses real users, false if we are launching a development server for testing
+  IS_PRODUCTION_DATABASE,
   SERVER_PORT: IS_PRODUCTION_SERVER ? 443 : 80,
-  CONSOLE_LOGGING_ENABLED: true,
+  // True if we are using a development database, false if we are using a production database as we don't want lots of console logs from users (note: serverLogger logs regardless of this settings)
+  CONSOLE_LOGGING_ENABLED: !IS_PRODUCTION_DATABASE,
   // App builds of the iOS Hound app that work properly with the server.
   // A version would be depreciated if an endpoint path is changed or endpoint data return format is changed
   COMPATIBLE_IOS_APP_BUILDS: [5500],

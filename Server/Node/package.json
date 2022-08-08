@@ -4,9 +4,10 @@
   "description": "Hound Server",
   "main": "./main/server/createServer.js",
   "scripts": {
-    "dev": "node --max-old-space-size=2048 main/server/createServer.js | pino-pretty -c -t",
-    "devNodemon": "nodemon --max-old-space-size=2048 main/server/createServer.js | pino-pretty -c -t",
-    "prod": "node main/server/createServer.js | pino-pretty -c -t"
+    "developmentServerDevelopmentDatabase": "ENVIRONMENT=development DATABASE=development node --max-old-space-size=2048 main/server/createServer.js | pino-pretty -c -t",
+    "developmentServerProductionDatabase": "DO NOT IMPLEMENT, DEVELOPMENT SERVER SHOULD NEVER USE PRODUCTION DATABASE",
+    "productionServerDevelopmentDatabase": "ENVIRONMENT=production DATABASE=development node main/server/createServer.js | pino-pretty -c -t",
+    "productionServerProductionDatabase": "ENVIRONMENT=production DATABASE=production node main/server/createServer.js | pino-pretty -c -t"
   },
   "author": "",
   "license": "ISC",
@@ -14,7 +15,6 @@
     "eslint": "^8.19.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
-    "nodemon": "^2.0.19",
     "pino-pretty": "^8.1.0"
   },
   "dependencies": {
