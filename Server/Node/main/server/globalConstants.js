@@ -1,5 +1,5 @@
-const IS_PRODUCTION_SERVER = process.env.ENVIRONMENT === 'production';
-const IS_PRODUCTION_DATABASE = process.env.DATABASE === 'production';
+const IS_PRODUCTION_SERVER = process.env.SERVER_ENVIRONMENT === 'production';
+const IS_PRODUCTION_DATABASE = process.env.SERVER_DATABASE === 'production';
 const server = {
   // True if the node application is being run on a linux environment that supports HTTPS (i.e. on AWS Ubuntu instance), otherwise false (i.e. on Macbook)
   IS_PRODUCTION_SERVER,
