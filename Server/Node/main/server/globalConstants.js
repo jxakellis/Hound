@@ -1,11 +1,25 @@
 const IS_PRODUCTION_SERVER = process.env.SERVER_ENVIRONMENT === 'production';
 const IS_PRODUCTION_DATABASE = process.env.SERVER_DATABASE === 'production';
+
+let SERVER_PORT;
+if (IS_PRODUCTION_SERVER && IS_PRODUCTION_DATABASE) {
+  SERVER_PORT = 443;
+}
+else if (IS_PRODUCTION_SERVER && !IS_PRODUCTION_DATABASE) {
+  SERVER_PORT = 8443;
+}
+else {
+  SERVER_PORT = 80;
+}
+
 const server = {
   // True if the node application is being run on a linux environment that supports HTTPS (i.e. on AWS Ubuntu instance), otherwise false (i.e. on Macbook)
   IS_PRODUCTION_SERVER,
   // True if we are using the production database that houses real users, false if we are launching a development server for testing
   IS_PRODUCTION_DATABASE,
-  SERVER_PORT: IS_PRODUCTION_SERVER ? 443 : 80,
+  // If we are on the production server, then we use HTTPS. The productionDatabase uses port 443 and developmentDatabse uses port 443.
+  // If we are on a development server, then we use HTTP. This is always on port 80
+  SERVER_PORT,
   // True if we are using a development database, false if we are using a production database as we don't want lots of console logs from users (note: serverLogger logs regardless of this settings)
   CONSOLE_LOGGING_ENABLED: !IS_PRODUCTION_DATABASE,
   // App builds of the iOS Hound app that work properly with the server.
