@@ -19,11 +19,6 @@ enum NotificationSound: String, CaseIterable {
         self = .radar
         return
         
-        // case playtime = "Playtime"
-        // case radiate = "Radiate"
-        // case slowRise = "Slow Rise"
-        // case summit = "Summit"
-        // case uplift = "Uplift"
     }
     case radar = "Radar"
     case apex = "Apex"
@@ -33,9 +28,9 @@ enum NotificationSound: String, CaseIterable {
     case chimes  = "Chimes"
     case circuit = "Circuit"
     case constellation = "Constellation"
-    case cosmic = "Cosmic"
+    // case cosmic = "Cosmic"
     case crystals = "Crystals"
-    case hillside = "Hillside"
+    // case hillside = "Hillside"
     case illuminate = "Illuminate"
     case nightOwl = "Night Owl"
     case opening = "Opening"
