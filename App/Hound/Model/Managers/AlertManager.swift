@@ -166,20 +166,34 @@ final class AlertManager: NSObject {
             
         }
         
-        if AlertManager.globalPresenter == nil {
+        guard let globalPresenter = AlertManager.globalPresenter else {
             waitLoop()
+            return
         }
-        else if AlertManager.globalPresenter!.isBeingDismissed {
+        
+        guard globalPresenter.isBeingDismissed == false else {
             waitLoop()
+            return
         }
-        else {
-            if alertQueue.isEmpty == false && locked == false {
-                locked = true
-                currentAlertPresented = alertQueue.first
-                alertQueue.removeFirst()
-                AlertManager.globalPresenter!.present(currentAlertPresented!, animated: true)
-            }
+        
+        guard globalPresenter.presentedViewController == nil else {
+            waitLoop()
+            return
         }
+        
+        guard alertQueue.isEmpty == false && locked == false else {
+            return
+        }
+        
+        locked = true
+        currentAlertPresented = alertQueue.removeFirst()
+        
+        guard let currentAlertPresented = currentAlertPresented else {
+            locked = false
+            return
+        }
+        
+       globalPresenter.present(currentAlertPresented, animated: true)
         
     }
     

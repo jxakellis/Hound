@@ -67,10 +67,10 @@ enum UserConfiguration {
     /// Determines if the app should send the user loud notifications. Loud notification bypass most iPhone settings to play at max volume (Do Not Disturb, ringer off, volume off...)
     static var isLoudNotification: Bool = false
     
-    /// Sends a secondary, follow up notifcation if the first, primary notification about a reminder's alarm is not addressed.
+    /// Sends a secondary, follow up notification if the first, primary notification about a reminder's alarm is not addressed.
     static var isFollowUpEnabled: Bool = false
     
-    /// The delay between the inital, primary notifcation of a reminder and a seconary, followup notification of a reminder.
+    /// The delay between the inital, primary notification of a reminder and a seconary, followup notification of a reminder.
     static var followUpDelay: TimeInterval = 5.0 * 60.0
     
     /// Sound a notification will play

@@ -116,6 +116,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
 
     @IBOutlet private weak var containerView: UIView!
     
+    // TO DO NOW disable filter button if there is no logs to filter by
     @IBOutlet private weak var filterButton: UIBarButtonItem!
 
     @IBOutlet private weak var refreshButton: UIBarButtonItem!

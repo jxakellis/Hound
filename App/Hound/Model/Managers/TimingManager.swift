@@ -106,7 +106,7 @@ final class TimingManager {
     
     // MARK: - Timer Actions
     
-    /// Used as a selector when constructing timer in willInitalize, when called at an unknown point in time by the timer it triggers helper functions to create both in app notifcations and iOS notifcations
+    /// Used as a selector when constructing timer in willInitalize, when called at an unknown point in time by the timer it triggers helper functions to create both in app notifications and iOS notifications
     @objc private static func didExecuteTimer(sender: Timer) {
         
         // Parses the sender info needed to figure out which reminder's timer fired

@@ -29,6 +29,10 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // TO DO NOW add do not disturb hours. This setting will have a start hour and an end hour. E.g. 2:00 AM to 5:00 AM OR 10:00 PM to 5:00 AM. During this time period, no notifications will be pushed to the individual user. However, rest of family and reminders unaffected.
+        // Implement this in sendAPN. When we get the user's token, we also get their UTC dnd start and end hours. If the server's time is inside that UTC time range, then don't send that individual notification
+        // This will leave alarm timing intact. We don't cancel any scheduled jobs. Therefore, when the time changes to not be inside dnd hours or dnd settings are changed, we don't have to reconfigure schedule a user's jobs (or build a sendAPNForFamily function that can exclude users).
+        
         // Follow Up Delay
         followUpDelayDatePicker.countDownDuration = UserConfiguration.followUpDelay
         
@@ -112,18 +116,26 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
             case .denied:
                 // needed as  UNUserNotificationCenter.current().getNotificationSettings on other thread
                 DispatchQueue.main.async {
-                    AlertManager.willShowAlert(title: "Notifcations Disabled", message: "To enable notifications go to the Settings App -> Notifications -> Hound and enable \"Allow Notifications\"")
+                    // nothing to update (as permissions denied) so we don't tell the server anything
                     
+                    // Permission is denied, so we want to flip the switch back to its proper off position
                     let switchDisableTimer = Timer(fire: Date().addingTimeInterval(0.22), interval: -1, repeats: false) { _ in
                         self.synchronizeAllNotificationSwitches(animated: true)
                     }
                     
                     RunLoop.main.add(switchDisableTimer, forMode: .common)
                     
-                    // nothing to update (as permissions denied) so we don't tell the server anything
-                    
+                    // Attempt to re-direct the user to their iPhone's settings for Hound, so they can enable notifications
+                    if let url = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(url) {
+                        UIApplication.shared.open(url)
+                    }
+                    // If we can't redirect the user, then just user a generic pop-up
+                    else {
+                        AlertManager.willShowAlert(title: "Notifications Disabled", message: "To enable notifications go to the Settings App -> Notifications -> Hound and enable \"Allow Notifications\"")
+                    }
                 }
             case .notDetermined:
+                // don't advise the user if they want to turn on notifications. we already know that the user wants to turn on notification because they just toggle a switch to do so
                 NotificationManager.requestNotificationAuthorization(shouldAdviseUserBeforeRequestingNotifications: false) {
                     self.synchronizeAllNotificationSwitches(animated: true)
                 }

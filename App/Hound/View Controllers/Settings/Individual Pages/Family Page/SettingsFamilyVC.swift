@@ -47,6 +47,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         }
     }
     
+    // TO DO NOW change copy family code to share. Have a sentence about what hound is/how it helps. Have a sentence about joining the family and include the family code. Then, provide a link to Hound at the very bottom. NOTE: add disclaimer to the user if they are trying to share a locked family
     @IBAction func didClickCopyFamilyCode(_ sender: Any) {
         UIPasteboard.general.string = familyCode
         self.performSpinningCheckmarkAnimation()

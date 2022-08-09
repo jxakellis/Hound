@@ -41,6 +41,7 @@ final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
     
     func setup(forProduct product: SKProduct?) {
         
+        // TO DO NOW if a user has already used their free trial, don't tell them that they get a free trial in subscriptionTierPricingDescriptionLabel. Have to figure out way to check if a user has used the free trial for a giving in app purchase group
         self.product = product
         
         let activeFamilySubscriptionProduct = FamilyConfiguration.activeFamilySubscription.product

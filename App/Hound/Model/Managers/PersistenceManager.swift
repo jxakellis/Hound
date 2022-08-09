@@ -97,8 +97,10 @@ enum PersistenceManager {
         
         // MARK: Configure Other
         
+        // For family Hound, always put the user on the logs of care page first. This is most likely the most pertinant information. There isn't much reason to visit the dogs/reminders page unless updating a dog/reminder (or logging a reminder early).
+        MainTabBarViewController.selectedEntryIndex = 0
         // If the user hasn't completed the dogs and reminders introduction page, then we put them on the logs page (index 0). Otherwise, if they have configured their first dog and reminder, then they get put on the dogs page (index 1)
-        MainTabBarViewController.selectedEntryIndex = (LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore && LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore) ? 1 : 0
+       //  MainTabBarViewController.selectedEntryIndex = (LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore && LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore) ? 1 : 0
     
     }
     

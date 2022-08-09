@@ -155,13 +155,13 @@ extension UIViewController {
     }
     
     func performSpinningCheckmarkAnimation() {
-        
+        // TO DO NOW change green spinning checkmark to a brief, non-interruptive/non-blocking pop down (not pop up) that includes a piece of text. E.g. you successfully refresh the dog manager with the refresh button. Instead of spinning green checkmark, a little pop down says "successfully refreshed dogManager/logs". This way the user knows what action was successful
         performSpinningAnimation(forForegroundImage: UIImage.init(systemName: "checkmark.circle.fill"), forForegroundColor: UIColor.systemGreen, forBackgroundImage: UIImage.init(systemName: "circle.fill"))
         
     }
     
     func performSpinningUndoAnimation() {
-        
+        // TO DO NOW change gray spinning undo to a brief, non-interruptive/non-blocking pop down (not pop up) that includes a piece of text. E.g. you unskip a reminder. Instead of spinning gray undo, a little pop down says "successfully unskipped reminder and removed log". This way the user knows what action was successful
         performSpinningAnimation(forForegroundImage: UIImage.init(systemName: "arrow.uturn.backward.circle.fill"), forForegroundColor: UIColor.systemGray2, forBackgroundImage: UIImage.init(systemName: "circle.fill"))
         
     }
