@@ -8,7 +8,7 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 const { createFamilyMemberJoinNotification } = require('../../main/tools/notifications/alert/createFamilyNotification');
 const { getAllFamilyMembersForFamilyId, getFamilyMemberUserIdForUserId } = require('../getFor/getForFamily');
-const { getActiveSubscriptionForFamilyId } = require('../getFor/getForSubscription');
+const { getActiveInAppSubscriptionForFamilyId } = require('../getFor/getForInAppSubscriptions');
 
 const { createFamilyLockedNotification, createFamilyPausedNotification } = require('../../main/tools/notifications/alert/createFamilyNotification');
 const { deleteAlarmNotificationsForFamily } = require('../../main/tools/notifications/alarm/deleteAlarmNotification');
@@ -83,7 +83,7 @@ async function addFamilyMember(databaseConnection, userId, forFamilyCode) {
   }
 
   // Don't use .activeSubscription property: the property wasn't assigned to the request due to the user not being in a family (only assigned with familyId is path param)
-  const activeSubscription = await getActiveSubscriptionForFamilyId(databaseConnection, familyId);
+  const activeSubscription = await getActiveInAppSubscriptionForFamilyId(databaseConnection, familyId);
   const familyMembers = await getAllFamilyMembersForFamilyId(databaseConnection, familyId);
 
   // the family is either at the limit of family members is exceeds the limit, therefore no new users can join

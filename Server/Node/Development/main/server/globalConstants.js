@@ -26,7 +26,7 @@ const server = {
   // A version would be depreciated if an endpoint path is changed or endpoint data return format is changed
 
   // Allows for testing of new versions in development but leave production alone
-  COMPATIBLE_IOS_APP_BUILDS: IS_PRODUCTION_DATABASE ? [5500] : [6000],
+  COMPATIBLE_IOS_APP_BUILDS: IS_PRODUCTION_DATABASE ? [5500, 6000] : [6000],
   // How often each of the database connections are tested as being connected (in milliseconds)
   DATABASE_CONNECTION_TEST_INTERVAL: 1000 * 60 * 5,
 };

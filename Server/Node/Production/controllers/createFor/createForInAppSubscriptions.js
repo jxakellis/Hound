@@ -4,7 +4,7 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { houndSharedSecret } = require('../../main/secrets/houndSharedSecret');
 const { formatBase64EncodedString, formatArray, formatNumber } = require('../../main/tools/format/formatObject');
-const { getActiveSubscriptionForFamilyId } = require('../getFor/getForSubscription');
+const { getActiveInAppSubscriptionForFamilyId } = require('../getFor/getForInAppSubscriptions');
 const { getFamilyHeadUserIdForFamilyId } = require('../getFor/getForFamily');
 
 /**
@@ -13,7 +13,7 @@ const { getFamilyHeadUserIdForFamilyId } = require('../getFor/getForFamily');
  *  If the query is successful, then returns the active subscription for the family.
  *  If a problem is encountered, creates and throws custom error
  */
-async function createSubscriptionForUserIdFamilyIdRecieptId(databaseConnection, userId, familyId, forBase64EncodedAppStoreReceiptURL) {
+async function createInAppSubscriptionForUserIdFamilyIdRecieptId(databaseConnection, userId, familyId, forBase64EncodedAppStoreReceiptURL) {
   // Takes a base64 encoded appStoreReceiptURL from a user
   const base64EncodedAppStoreReceiptURL = formatBase64EncodedString(forBase64EncodedAppStoreReceiptURL);
 
@@ -70,7 +70,7 @@ async function createSubscriptionForUserIdFamilyIdRecieptId(databaseConnection, 
   await updateReceiptRecords(databaseConnection, userId, familyId, receipts);
 
   // Can't user .activeSubscription property as subscription was updated. Therefore, get the most recent subscription to return to the user
-  return getActiveSubscriptionForFamilyId(databaseConnection, familyId);
+  return getActiveInAppSubscriptionForFamilyId(databaseConnection, familyId);
 }
 
 /**
@@ -135,4 +135,4 @@ async function updateReceiptRecords(databaseConnection, userId, familyId, forRec
   // now all of the receipts returned by apple (who's productId's match one that is known to us) are stored in our database
 }
 
-module.exports = { createSubscriptionForUserIdFamilyIdRecieptId };
+module.exports = { createInAppSubscriptionForUserIdFamilyIdRecieptId };

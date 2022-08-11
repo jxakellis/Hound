@@ -9,7 +9,7 @@ const subscriptionColumns = 'transactionId, productId, userId, subscriptionPurch
  *  If the query is successful, returns the most recent subscription for the familyId (if no most recent subscription, fills in default subscription details).
  *  If a problem is encountered, creates and throws custom error
  */
-async function getActiveSubscriptionForFamilyId(databaseConnection, familyId) {
+async function getActiveInAppSubscriptionForFamilyId(databaseConnection, familyId) {
   if (areAllDefined(databaseConnection, familyId) === false) {
     throw new ValidationError('databaseConnection or familyId missing', global.constant.error.value.MISSING);
   }
@@ -50,7 +50,7 @@ async function getActiveSubscriptionForFamilyId(databaseConnection, familyId) {
  *  If the query is successful, returns the subscription history and active subscription for the familyId.
  *  If a problem is encountered, creates and throws custom error
  */
-async function getAllSubscriptionsForFamilyId(databaseConnection, familyId) {
+async function getAllInAppSubscriptionsForFamilyId(databaseConnection, familyId) {
   // validate that a familyId was passed, assume that its in the correct format
   if (areAllDefined(databaseConnection, familyId) === false) {
     throw new ValidationError('databaseConnection or familyId missing', global.constant.error.value.MISSING);
@@ -64,7 +64,7 @@ async function getAllSubscriptionsForFamilyId(databaseConnection, familyId) {
   );
 
   // Don't use .activeSubscription property: Want to make sure this function always returns the most updated/accurate information
-  const subscriptionActive = await getActiveSubscriptionForFamilyId(databaseConnection, familyId);
+  const subscriptionActive = await getActiveInAppSubscriptionForFamilyId(databaseConnection, familyId);
 
   for (let i = 0; i < subscriptionHistory.length; i += 1) {
     const subscription = subscriptionHistory[i];
@@ -74,4 +74,4 @@ async function getAllSubscriptionsForFamilyId(databaseConnection, familyId) {
   return subscriptionHistory;
 }
 
-module.exports = { getActiveSubscriptionForFamilyId, getAllSubscriptionsForFamilyId };
+module.exports = { getActiveInAppSubscriptionForFamilyId, getAllInAppSubscriptionsForFamilyId };

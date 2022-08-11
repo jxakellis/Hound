@@ -86,7 +86,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
         // Always refresh the dog manager when we recieve a log notification, as that means another user logged something.
         // If we invoke on 'ALERT_CATEGORY_REMINDER' as well, then everytime a reminder triggers its alarm and a notification comes thru, it will cause a refresh. This will cause a weird interaction as we will be simultaneously showing an alert in app
         
-        // TO DO NOW remove 'log' and 'reminder' after updating server to reflect naming change
         if category == "ALERT_CATEGORY_LOG" {
             MainTabBarViewController.mainTabBarViewController?.shouldRefreshDogManager = true
             completionHandler(.newData)

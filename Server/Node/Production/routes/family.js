@@ -4,7 +4,7 @@ const familyRouter = express.Router({ mergeParams: true });
 
 const {
   getFamily, createFamily, updateFamily, deleteFamily,
-} = require('../controllers/ controllerRoutes/family');
+} = require('../controllers/controllerRoutes/family');
 
 const { validateFamilyId } = require('../main/tools/format/validateId');
 
@@ -20,7 +20,7 @@ const { dogsRouter } = require('./dogs');
 familyRouter.use('/:familyId/dogs', dogsRouter);
 
 // route to subscription related things
-const { subscriptionRouter } = require('./subscription');
+const { subscriptionRouter } = require('./inAppSubscriptions');
 
 familyRouter.use('/:familyId/subscription', subscriptionRouter);
 

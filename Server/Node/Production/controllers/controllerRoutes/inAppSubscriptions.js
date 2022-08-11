@@ -1,10 +1,10 @@
-const { getAllSubscriptionsForFamilyId } = require('../getFor/getForSubscription');
-const { createSubscriptionForUserIdFamilyIdRecieptId } = require('../createFor/createForSubscription');
+const { getAllInAppSubscriptionsForFamilyId } = require('../getFor/getForInAppSubscriptions');
+const { createInAppSubscriptionForUserIdFamilyIdRecieptId } = require('../createFor/createForInAppSubscriptions');
 
-async function getSubscription(req, res) {
+async function getInAppSubscriptions(req, res) {
   try {
     const { familyId } = req.params;
-    const result = await getAllSubscriptionsForFamilyId(req.databaseConnection, familyId);
+    const result = await getAllInAppSubscriptionsForFamilyId(req.databaseConnection, familyId);
     return res.sendResponseForStatusJSONError(200, { result }, undefined);
   }
   catch (error) {
@@ -12,11 +12,11 @@ async function getSubscription(req, res) {
   }
 }
 
-async function createSubscription(req, res) {
+async function createInAppSubscription(req, res) {
   try {
     const { userId, familyId } = req.params;
     const { base64EncodedAppStoreReceiptURL } = req.body;
-    const result = await createSubscriptionForUserIdFamilyIdRecieptId(req.databaseConnection, userId, familyId, base64EncodedAppStoreReceiptURL);
+    const result = await createInAppSubscriptionForUserIdFamilyIdRecieptId(req.databaseConnection, userId, familyId, base64EncodedAppStoreReceiptURL);
     return res.sendResponseForStatusJSONError(200, { result }, undefined);
   }
   catch (error) {
@@ -55,5 +55,5 @@ about any plan changes the user selected that will go into effect at the next re
 */
 
 module.exports = {
-  getSubscription, createSubscription,
+  getInAppSubscriptions, createInAppSubscription,
 };
