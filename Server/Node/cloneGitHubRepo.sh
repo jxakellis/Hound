@@ -20,5 +20,5 @@ npm --prefix /home/jxakellis/Documents/Hound/Server/Production/Node install
 # Grant privileges AGAIN so that jxakellis has read/write privileges on node_modules folder
 chmod -R a+rwx /home/jxakellis/Documents
 echo "Completed Hound Github repo clone"
-echo "Please manually copy the 'secret' folder into /home/jxakellis/Documents/Hound/Server/Production/Node/main"
 echo "Please manually copy the 'secret' folder into /home/jxakellis/Documents/Hound/Server/Development/Node/main"
+echo "Please manually copy the 'secret' folder into /home/jxakellis/Documents/Hound/Server/Production/Node/main"
