@@ -25,7 +25,6 @@ const { serverLogger } = require('../tools/logging/loggers');
 //
 //
 
-// TO DO NOW add 2fa to AWS
 // TO DO NOW add watchdog to Hound Server to make sure node is running and can touch database
 
 // Create a NodeJS HTTPS listener on port that points to the Express app

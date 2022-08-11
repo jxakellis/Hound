@@ -48,7 +48,6 @@ final class AlertManager: NSObject {
         set (newGlobalPresenter) {
             // If we new global presenter is just nil, then simply set to nil and return
             guard let newGlobalPresenter = newGlobalPresenter else {
-                print("setting global presenter to nil")
                 storedGlobalPresenter = nil
                 return
             }
@@ -59,7 +58,6 @@ final class AlertManager: NSObject {
                 // Check to make sure the view controller has a parent
                 guard let parentViewController = viewController.parent else {
                     // The view controller has no parent, therefore we stop and set the global presenter equal to this view controller
-                    print("no parent, setting global presenter to: \(viewController)")
                     storedGlobalPresenter = viewController
                     return
                 }
@@ -69,7 +67,6 @@ final class AlertManager: NSObject {
                 
                 guard parentViewController.isViewLoaded == true && parentViewController.view.window != nil else {
                     // The parent view controller is not eligible to be a global presenter, therefore stop and set global presenter equal to this view controller
-                    print("invalid parent, setting global presenter to: \(viewController)")
                     storedGlobalPresenter = viewController
                     return
                 }

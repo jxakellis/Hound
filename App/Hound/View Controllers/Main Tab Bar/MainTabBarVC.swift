@@ -114,21 +114,17 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         }
         set (newShouldRefreshDogManager) {
             
-            print("newShouldRefreshDogManager")
             guard newShouldRefreshDogManager == true else {
-                print("false")
                 storedShouldRefreshDogManager = false
                 return
             }
             
             guard self.isViewLoaded == true && self.view.window != nil else {
                 // MainTabBarViewController isn't currently in the view hierarchy, therefore indicate that once it enters the view hierarchy it needs to refresh
-                print("not hierarchy")
                 storedShouldRefreshDogManager = true
                 return
             }
             
-            print("refreshing")
             // MainTabBarViewController is in the hierarchy so have it refresh
             _ = DogsRequest.get(invokeErrorManager: false, dogManager: dogManager) { newDogManager, _ in
                 // No matter the outcome, set storedShouldRefreshDogManager to false so we don't keep invoking refreshDogManager
@@ -182,9 +178,7 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
 
         UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
         
-        print("MTBVC viewWillAppear")
         if shouldRefreshDogManager == true {
-            print("refreshing")
             _ = DogsRequest.get(invokeErrorManager: false, dogManager: dogManager) { newDogManager, _ in
                 // No matter the outcome, set storedShouldRefreshDogManager to false so we don't keep invoking refreshDogManager
                 self.storedShouldRefreshDogManager = false

@@ -88,7 +88,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
         
         // TO DO NOW remove 'log' and 'reminder' after updating server to reflect naming change
         if category == "ALERT_CATEGORY_LOG" || category == "log" {
-            print("recieved log, setting should refresh to true")
             MainTabBarViewController.mainTabBarViewController?.shouldRefreshDogManager = true
             completionHandler(.newData)
         }
