@@ -49,8 +49,8 @@ final class SettingsViewController: UIViewController, UITableViewDelegate, UITab
         settingsPagesTableView.separatorInset = .zero
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
     }
     
@@ -89,42 +89,42 @@ final class SettingsViewController: UIViewController, UITableViewDelegate, UITab
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell?
         
-        let iconEdgeInset = UIEdgeInsets.init(top: 0, left: (5.0+35.5+2.5), bottom: 0, right: 0)
+        let iconEdgeInset = UIEdgeInsets.init(top: 0, left: (5.0 + 35.5 + 2.5), bottom: 0, right: 0)
         switch indexPath.row {
             // we want two separators cells at the top. since the first cell has a separators on both the top and bottom, we hide it. The second cell (and all following cells) only have separators on the bottom, therefore the second cell makes it look like a full size separator is on the top of the third cell. Meanwhile, the third cell has a partial separator to stylize it.
         case 0:
-            cell = tableView.dequeueReusableCell(withIdentifier: "spaceCellWithoutSeparator", for: indexPath)
+            cell = tableView.dequeueReusableCell(withIdentifier: "SpaceCellWithoutSeparatorTableViewCell", for: indexPath)
             cell!.contentView.addConstraint(NSLayoutConstraint(item: cell!.contentView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 11.25))
             cell!.separatorInset = .zero
         case 1:
-            cell = tableView.dequeueReusableCell(withIdentifier: "spaceCellWithSeparator", for: indexPath)
+            cell = tableView.dequeueReusableCell(withIdentifier: "SpaceCellWithSeparatorTableViewCell", for: indexPath)
             cell!.contentView.addConstraint(NSLayoutConstraint(item: cell!.contentView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 11.25))
             cell!.separatorInset = .zero
         case 2:
-            cell = tableView.dequeueReusableCell(withIdentifier: "settingsPersonalInformationViewController", for: indexPath)
+            cell = tableView.dequeueReusableCell(withIdentifier: "SettingsPersonalInformationViewController", for: indexPath)
             cell!.separatorInset = iconEdgeInset
         case 3:
-            cell = tableView.dequeueReusableCell(withIdentifier: "settingsFamilyViewController", for: indexPath)
+            cell = tableView.dequeueReusableCell(withIdentifier: "SettingsFamilyViewController", for: indexPath)
             cell!.separatorInset = iconEdgeInset
         case 4:
-            cell = tableView.dequeueReusableCell(withIdentifier: "settingsSubscriptionViewController", for: indexPath)
+            cell = tableView.dequeueReusableCell(withIdentifier: "SettingsSubscriptionViewController", for: indexPath)
             cell!.separatorInset = iconEdgeInset
         case 5:
-            cell = tableView.dequeueReusableCell(withIdentifier: "settingsAppearanceViewController", for: indexPath)
+            cell = tableView.dequeueReusableCell(withIdentifier: "SettingsAppearanceViewController", for: indexPath)
             cell!.separatorInset = iconEdgeInset
         case 6:
-            cell = tableView.dequeueReusableCell(withIdentifier: "settingsNotificationsViewController", for: indexPath)
+            cell = tableView.dequeueReusableCell(withIdentifier: "SettingsNotificationsViewController", for: indexPath)
             cell!.separatorInset = .zero
         case 7:
-            cell = tableView.dequeueReusableCell(withIdentifier: "spaceCellWithSeparator", for: indexPath)
+            cell = tableView.dequeueReusableCell(withIdentifier: "SpaceCellWithSeparatorTableViewCell", for: indexPath)
             cell!.contentView.addConstraint(NSLayoutConstraint(item: cell!.contentView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 22.5))
             cell!.separatorInset = .zero
         case 8:
-            cell = tableView.dequeueReusableCell(withIdentifier: "settingsAboutViewController", for: indexPath)
+            cell = tableView.dequeueReusableCell(withIdentifier: "SettingsAboutViewController", for: indexPath)
             cell!.separatorInset = .zero
         default:
             // fall through
-            cell = tableView.dequeueReusableCell(withIdentifier: "settingsAboutViewController", for: indexPath)
+            cell = tableView.dequeueReusableCell(withIdentifier: "SettingsAboutViewController", for: indexPath)
             cell!.separatorInset = .zero
         }
         cell!.selectionStyle = .blue
@@ -137,7 +137,7 @@ final class SettingsViewController: UIViewController, UITableViewDelegate, UITab
         let cell = tableView.cellForRow(at: indexPath)
         let identifier = cell!.reuseIdentifier!
         
-        if identifier == "settingsSubscriptionViewController" {
+        if identifier == "SettingsSubscriptionViewController" {
             RequestUtils.beginRequestIndictator(forRequestIndicatorType: .apple)
             InAppPurchaseManager.fetchProducts { products  in
                 RequestUtils.endRequestIndictator {
@@ -170,28 +170,29 @@ final class SettingsViewController: UIViewController, UITableViewDelegate, UITab
     // MARK: - Navigation
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "settingsPersonalInformationViewController" {
-            settingsPersonalInformationViewController = segue.destination as? SettingsPersonalInformationViewController
-            settingsPersonalInformationViewController?.delegate = self
-            settingsPersonalInformationViewController?.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
+        if let settingsPersonalInformationViewController = segue.destination as? SettingsPersonalInformationViewController {
+            self.settingsPersonalInformationViewController = settingsPersonalInformationViewController
+            
+            settingsPersonalInformationViewController.delegate = self
+            settingsPersonalInformationViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         }
-        else if segue.identifier == "settingsFamilyViewController" {
-            settingsFamilyViewController = segue.destination as? SettingsFamilyViewController
-            settingsFamilyViewController?.delegate = self
-            settingsFamilyViewController?.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
+        else if let settingsFamilyViewController = segue.destination as? SettingsFamilyViewController {
+            self.settingsFamilyViewController = settingsFamilyViewController
+            settingsFamilyViewController.delegate = self
+            settingsFamilyViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         }
-        else if segue.identifier == "settingsSubscriptionViewController" {
-            settingsSubscriptionViewController = segue.destination as? SettingsSubscriptionViewController
-            settingsSubscriptionViewController?.subscriptionProducts = subscriptionProducts
+        else if let settingsSubscriptionViewController = segue.destination as? SettingsSubscriptionViewController {
+            self.settingsSubscriptionViewController = settingsSubscriptionViewController
+            settingsSubscriptionViewController.subscriptionProducts = subscriptionProducts
         }
-        else if segue.identifier == "settingsAppearanceViewController" {
-            settingsAppearanceViewController = segue.destination as? SettingsAppearanceViewController
+        else if let settingsAppearanceViewController = segue.destination as? SettingsAppearanceViewController {
+            self.settingsAppearanceViewController = settingsAppearanceViewController
         }
-        else if segue.identifier == "settingsNotificationsViewController" {
-            settingsNotificationsViewController = segue.destination as? SettingsNotificationsViewController
+        else if let settingsNotificationsViewController = segue.destination as? SettingsNotificationsViewController {
+            self.settingsNotificationsViewController = settingsNotificationsViewController
         }
-        else if segue.identifier == "settingsAboutViewController" {
-            settingsAboutViewController = segue.destination as? SettingsAboutViewController
+        else if let settingsAboutViewController = segue.destination as? SettingsAboutViewController {
+            self.settingsAboutViewController = settingsAboutViewController
         }
     }
 

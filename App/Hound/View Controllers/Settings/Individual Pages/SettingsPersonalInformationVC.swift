@@ -48,7 +48,8 @@ final class SettingsPersonalInformationViewController: UIViewController, UIGestu
                     return
                 }
                 
-                self.performSpinningCheckmarkAnimation()
+                AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.redownloadDataTitle, forSubtitle: VisualConstant.BannerTextConstant.redownloadDataSubtitle, forStyle: .success)
+                
                 // successful query to fully redownload the dogManager, no need to mess with lastDogManagerSynchronization as that is automatically handled
                 self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
             }
@@ -66,8 +67,8 @@ final class SettingsPersonalInformationViewController: UIViewController, UIGestu
         oneTimeSetup()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
     }
     

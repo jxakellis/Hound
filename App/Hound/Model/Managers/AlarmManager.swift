@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol AlarmManagerDelegate {
+protocol AlarmManagerDelegate: AnyObject {
     func didAddLog(sender: Sender, forDogId: Int, forLog: Log)
     func didRemoveLog(sender: Sender, forDogId: Int, forLogId: Int)
     func didUpdateReminder(sender: Sender, forDogId: Int, forReminder: Reminder)
@@ -274,7 +274,7 @@ final class AlarmManager {
     static func willUnskipReminder(forDog dog: Dog, forReminder reminder: Reminder) {
         
         // we can only unskip a weekly/monthly reminder that is currently isSkipping == true
-        guard (reminder.reminderType == .weekly && reminder.weeklyComponents.isSkipping == true)  || (reminder.reminderType == .monthly && reminder.monthlyComponents.isSkipping == true) else {
+        guard (reminder.reminderType == .weekly && reminder.weeklyComponents.isSkipping == true) || (reminder.reminderType == .monthly && reminder.monthlyComponents.isSkipping == true) else {
             return
         }
         

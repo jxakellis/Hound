@@ -20,7 +20,7 @@ final class DogsIndependentReminderViewController: UIViewController {
     
     // MARK: - IB
     
-    @IBOutlet weak var pageNavigationBar: UINavigationItem!
+    @IBOutlet private weak var pageNavigationBar: UINavigationItem!
     
     @IBOutlet private weak var saveReminderButton: ScaledUIButton!
     @IBOutlet private weak var saveReminderButtonBackground: ScaledUIButton!
@@ -78,8 +78,8 @@ final class DogsIndependentReminderViewController: UIViewController {
         
     }
     
-    @IBOutlet weak var reminderRemoveButton: UIBarButtonItem!
-    @IBAction func willRemoveReminder(_ sender: Any) {
+    @IBOutlet private weak var reminderRemoveButton: UIBarButtonItem!
+    @IBAction private func willRemoveReminder(_ sender: Any) {
         
         // Since this is the independent reminders view controller, meaning its not nested in a larger Add Dog VC, we perform the server queries then exit.
         
@@ -173,8 +173,8 @@ final class DogsIndependentReminderViewController: UIViewController {
         self.view.bringSubviewToFront(cancelUpdateReminderButton)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
     }
     
@@ -182,10 +182,9 @@ final class DogsIndependentReminderViewController: UIViewController {
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "dogsReminderManagerViewController"{
-            dogsReminderManagerViewController = segue.destination as! DogsReminderManagerViewController
+        if let dogsReminderManagerViewController = segue.destination as? DogsReminderManagerViewController {
+            self.dogsReminderManagerViewController = dogsReminderManagerViewController
             dogsReminderManagerViewController.targetReminder = self.targetReminder
-            // dogsReminderManagerViewController.delegate = self
         }
     }
     

@@ -1,4 +1,4 @@
-framework module Pods_Hound {
+module Pods_Hound {
   umbrella header "Pods-Hound-umbrella.h"
 
   export *

@@ -76,7 +76,7 @@ final class DogsDogDisplayTableViewCell: UITableViewCell {
         dogIconWidthConstraint.constant = dogIconWidth
 
         if dogIconImageView.image?.isEqualToImage(image: ClassConstant.DogConstant.defaultDogIcon) == false {
-            dogIconImageView.layer.cornerRadius = dogIconWidth/2
+            dogIconImageView.layer.cornerRadius = dogIconWidth / 2
         }
         else {
             dogIconImageView.layer.cornerRadius = 0.0

@@ -19,17 +19,17 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     // MARK: - Properties
     
     /// holds all the views inside except for the notification sound label. Alls for hiding of the dropDown when anywhere else is clocked
-    @IBOutlet weak var containerViewForAll: UIView!
+    @IBOutlet private weak var containerViewForAll: UIView!
     
     /// Holds containerViewForAll, notificationSound label, and notificationSound drop down
-    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet private weak var scrollView: UIScrollView!
     
     // MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TO DO NOW add do not disturb hours. This setting will have a start hour and an end hour. E.g. 2:00 AM to 5:00 AM OR 10:00 PM to 5:00 AM. During this time period, no notifications will be pushed to the individual user. However, rest of family and reminders unaffected.
+        // TO DO FUTURE add do not disturb hours. This setting will have a start hour and an end hour. E.g. 2:00 AM to 5:00 AM OR 10:00 PM to 5:00 AM. During this time period, no notifications will be pushed to the individual user. However, rest of family and reminders unaffected.
         // Implement this in sendAPN. When we get the user's token, we also get their UTC dnd start and end hours. If the server's time is inside that UTC time range, then don't send that individual notification
         // This will leave alarm timing intact. We don't cancel any scheduled jobs. Therefore, when the time changes to not be inside dnd hours or dnd settings are changed, we don't have to reconfigure schedule a user's jobs (or build a sendAPNForFamily function that can exclude users).
         
@@ -66,13 +66,14 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        AlertManager.globalPresenter = self
         
         synchronizeAllNotificationSwitches(animated: false)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        AlertManager.globalPresenter = self
+        
         setupDropDown()
     }
     
@@ -131,7 +132,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
                     }
                     // If we can't redirect the user, then just user a generic pop-up
                     else {
-                        AlertManager.willShowAlert(title: "Notifications Disabled", message: "To enable notifications go to the Settings App -> Notifications -> Hound and enable \"Allow Notifications\"")
+                        AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.notificationsDisabledTitle, forSubtitle: VisualConstant.BannerTextConstant.notificationsDisabledSubtitle, forStyle: .danger)
                     }
                 }
             case .notDetermined:
@@ -192,7 +193,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     @IBAction private func didToggleIsFollowUpEnabled(_ sender: Any) {
         self.hideDropDown()
         
-        let beforeUpdateIsFollowUpEnabled =  UserConfiguration.isFollowUpEnabled
+        let beforeUpdateIsFollowUpEnabled = UserConfiguration.isFollowUpEnabled
         UserConfiguration.isFollowUpEnabled = isFollowUpEnabledSwitch.isOn
         
         if isFollowUpEnabledSwitch.isOn == true {
@@ -260,7 +261,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     
     // MARK: Follow Up Delay
     
-    @IBOutlet weak var followUpDelayDatePicker: UIDatePicker!
+    @IBOutlet private weak var followUpDelayDatePicker: UIDatePicker!
     
     @IBAction private func didUpdateFollowUpDelay(_ sender: Any) {
         self.hideDropDown()
@@ -280,7 +281,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     
     // MARK: Notification Sound
     
-    @IBOutlet weak var notificationSoundLabel: BorderedUILabel!
+    @IBOutlet private weak var notificationSoundLabel: BorderedUILabel!
     
     @objc private func willShowNotificationSoundDropDown(_ sender: Any) {
         if dropDown.isDown == false {
@@ -297,7 +298,9 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     private let dropDown = DropDownUIView()
     
     func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, dropDownUIViewIdentifier: String) {
-        let customCell = cell as! DropDownTableViewCell
+        guard let customCell = cell as? DropDownTableViewCell else {
+            return
+        }
         customCell.adjustLeadingTrailing(newConstant: DropDownUIView.insetForBorderedUILabel)
         
         customCell.label.text = NotificationSound.allCases[indexPath.row].rawValue
@@ -329,36 +332,35 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
         // do actions based on a cell selected at a indexPath given a dropDownUIViewIdentifier
         // want to hide the drop down after something is selected
         
-        let beforeUpdateNotificationSound = UserConfiguration.notificationSound
-        let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as! DropDownTableViewCell
         let selectedNotificationSound = NotificationSound.allCases[indexPath.row]
         
-        // the new cell selected is different that the current sound saved
-        if selectedNotificationSound != UserConfiguration.notificationSound {
-            
-                let unselectedCellIndexPath: IndexPath! = IndexPath(row: NotificationSound.allCases.firstIndex(of: UserConfiguration.notificationSound)!, section: 0)
-                let unselectedCell = self.dropDown.dropDownTableView!.cellForRow(at: unselectedCellIndexPath) as? DropDownTableViewCell
-                unselectedCell?.willToggleDropDownSelection(forSelected: false)
-                
-                selectedCell.willToggleDropDownSelection(forSelected: true)
-                UserConfiguration.notificationSound = selectedNotificationSound
-                self.notificationSoundLabel.text = selectedNotificationSound.rawValue
-                
-                AudioManager.playAudio(forAudioPath: "\(UserConfiguration.notificationSound.rawValue.lowercased())")
-                
-                let body = [ServerDefaultKeys.notificationSound.rawValue: UserConfiguration.notificationSound.rawValue]
-            UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
-                    if requestWasSuccessful == false {
-                        // error, revert to previous
-                        UserConfiguration.notificationSound = beforeUpdateNotificationSound
-                        self.notificationSoundLabel.text = beforeUpdateNotificationSound.rawValue
-                    }
-                }
-        }
-        // cell selected is the same as the current sound saved
-        else {
+        guard selectedNotificationSound != UserConfiguration.notificationSound, let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as? DropDownTableViewCell else {
+            // cell selected is the same as the current sound saved
             AudioManager.stopAudio()
             self.dropDown.hideDropDown()
+            return
+        }
+        
+        let beforeUpdateNotificationSound = UserConfiguration.notificationSound
+        
+        // the new cell selected is different that the current sound saved
+        let unselectedCellIndexPath: IndexPath! = IndexPath(row: NotificationSound.allCases.firstIndex(of: UserConfiguration.notificationSound)!, section: 0)
+        let unselectedCell = self.dropDown.dropDownTableView!.cellForRow(at: unselectedCellIndexPath) as? DropDownTableViewCell
+        unselectedCell?.willToggleDropDownSelection(forSelected: false)
+        
+        selectedCell.willToggleDropDownSelection(forSelected: true)
+        UserConfiguration.notificationSound = selectedNotificationSound
+        self.notificationSoundLabel.text = selectedNotificationSound.rawValue
+        
+        AudioManager.playAudio(forAudioPath: "\(UserConfiguration.notificationSound.rawValue.lowercased())")
+        
+        let body = [ServerDefaultKeys.notificationSound.rawValue: UserConfiguration.notificationSound.rawValue]
+    UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
+            if requestWasSuccessful == false {
+                // error, revert to previous
+                UserConfiguration.notificationSound = beforeUpdateNotificationSound
+                self.notificationSoundLabel.text = beforeUpdateNotificationSound.rawValue
+            }
         }
         
     }
@@ -368,7 +370,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     private func setupDropDown() {
         /// only one dropdown used on the dropdown instance so no identifier needed
         dropDown.dropDownUIViewIdentifier = ""
-        dropDown.cellReusableIdentifier = "dropDownCell"
+        dropDown.cellReusableIdentifier = "DropDownCell"
         dropDown.dataSource = self
         dropDown.setupDropDown(viewPositionReference: notificationSoundLabel.frame, offset: 0.0)
         dropDown.nib = UINib(nibName: "DropDownTableViewCell", bundle: nil)

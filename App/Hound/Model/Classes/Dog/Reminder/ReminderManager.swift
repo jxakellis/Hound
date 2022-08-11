@@ -14,7 +14,9 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = ReminderManager()
         for reminder in reminders {
-            copy.addReminder(forReminder: reminder.copy() as! Reminder)
+            if let reminderCopy = reminder.copy() as? Reminder {
+                copy.addReminder(forReminder: reminderCopy)
+            }
         }
         return copy
     }

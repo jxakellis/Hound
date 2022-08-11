@@ -94,6 +94,17 @@ const shutdown = () => new Promise((resolve) => {
       checkForShutdownCompletion();
     });
 
+  HTTPOrHTTPSServer.close((error) => {
+    if (error) {
+      serverLogger.info('Server Couldn\'t Shutdown', error);
+    }
+    else {
+      serverLogger.info('Server Gracefully Shutdown');
+    }
+    numberOfShutdownsCompleted += 1;
+    checkForShutdownCompletion();
+  });
+
   databaseConnectionForGeneral.end((error) => {
     if (error) {
       serverLogger.info('General Database Connection Couldn\'t Shutdown', error);
@@ -138,17 +149,6 @@ const shutdown = () => new Promise((resolve) => {
     checkForShutdownCompletion();
   });
 
-  HTTPOrHTTPSServer.close((error) => {
-    if (error) {
-      serverLogger.info('Server Couldn\'t Shutdown', error);
-    }
-    else {
-      serverLogger.info('Server Gracefully Shutdown');
-    }
-    numberOfShutdownsCompleted += 1;
-    checkForShutdownCompletion();
-  });
-
   function checkForShutdownCompletion() {
     if (numberOfShutdownsCompleted === numberOfShutdownsNeeded) {
       serverLogger.info('Shutdown Complete');
@@ -178,9 +178,9 @@ process.on('uncaughtException', async (error, origin) => {
   // uncaught error happened somewhere
   serverLogger.info(`Uncaught exception from origin: ${origin}`);
   await logServerError('uncaughtException', error)
-    .catch((shutdownError) => serverLogger.error('Experienced error while attempting to shutdown (logServerError):', shutdownError));
+    .catch((shutdownError) => serverLogger.error(`Experienced error while attempting to shutdown (logServerError): ${shutdownError}`));
   await shutdown()
-    .catch((shutdownError) => serverLogger.error('Experienced error while attempting to shutdown (shutdown):', shutdownError));
+    .catch((shutdownError) => serverLogger.error(`Experienced error while attempting to shutdown (shutdown): ${shutdownError}`));
 
   if (error.code === 'EADDRINUSE') {
     /**

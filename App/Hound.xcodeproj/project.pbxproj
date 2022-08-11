@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		213BEB01BC15BA8E95D699CA /* libPods-Hound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C6BA7C2F91F8CB1DF213275F /* libPods-Hound.a */; };
 		A2040BA3262A13B000D9667E /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2040BA2262A13B000D9667E /* PersistenceManager.swift */; };
 		A207F7A0280610D6003248E8 /* ImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A207F79F280610D6003248E8 /* ImageManager.swift */; };
 		A20C99972568671F00E2C9C8 /* ReminderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20C99962568671F00E2C9C8 /* ReminderManager.swift */; };
@@ -29,7 +30,7 @@
 		A247236D27F63456005DF848 /* SignInWithAppleError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A247236C27F63456005DF848 /* SignInWithAppleError.swift */; };
 		A247B96825C883680017FE66 /* DogsTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A247B96725C883680017FE66 /* DogsTableVC.swift */; };
 		A249619027E3A642006CFDCC /* MainTabBarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A249618E27E3A642006CFDCC /* MainTabBarVC.swift */; };
-		A249619127E3A642006CFDCC /* FamilyIntroductionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A249618F27E3A642006CFDCC /* FamilyIntroductionVC.swift */; };
+		A249619127E3A642006CFDCC /* HoundIntroductionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A249618F27E3A642006CFDCC /* HoundIntroductionVC.swift */; };
 		A249619327E3A75E006CFDCC /* DogsReminderTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A249619227E3A75E006CFDCC /* DogsReminderTVC.swift */; };
 		A24F1326264064D70023BB84 /* BorderedUILabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24F1325264064D70023BB84 /* BorderedUILabel.swift */; };
 		A25070DF26DD9BFF0056CFC4 /* ScaledUILabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25070DE26DD9BFF0056CFC4 /* ScaledUILabel.swift */; };
@@ -54,7 +55,6 @@
 		A26CFCE027545EF9001C92D8 /* stargaze30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCC427545EF9001C92D8 /* stargaze30.wav */; };
 		A26CFCE127545EF9001C92D8 /* radar30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCC527545EF9001C92D8 /* radar30.wav */; };
 		A26CFCE227545EF9001C92D8 /* illuminate30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCC627545EF9001C92D8 /* illuminate30.wav */; };
-		A26CFCE327545EF9001C92D8 /* cosmic30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCC727545EF9001C92D8 /* cosmic30.wav */; };
 		A26CFCE427545EF9001C92D8 /* by the seaside30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCC827545EF9001C92D8 /* by the seaside30.wav */; };
 		A26CFCE527545EF9001C92D8 /* presto30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCC927545EF9001C92D8 /* presto30.wav */; };
 		A26CFCE627545EF9001C92D8 /* chimes30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCCA27545EF9001C92D8 /* chimes30.wav */; };
@@ -66,7 +66,6 @@
 		A26CFCEC27545EF9001C92D8 /* signal30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD027545EF9001C92D8 /* signal30.wav */; };
 		A26CFCED27545EF9001C92D8 /* ripples30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD127545EF9001C92D8 /* ripples30.wav */; };
 		A26CFCEE27545EF9001C92D8 /* opening30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD227545EF9001C92D8 /* opening30.wav */; };
-		A26CFCEF27545EF9001C92D8 /* hillside30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD327545EF9001C92D8 /* hillside30.wav */; };
 		A26CFCF127545EF9001C92D8 /* crystals30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD527545EF9001C92D8 /* crystals30.wav */; };
 		A26CFCF227545EF9001C92D8 /* constellation30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD627545EF9001C92D8 /* constellation30.wav */; };
 		A26CFCF327545EF9001C92D8 /* twinkle30.wav in Resources */ = {isa = PBXBuildFile; fileRef = A26CFCD727545EF9001C92D8 /* twinkle30.wav */; };
@@ -180,7 +179,6 @@
 		A2F996CE27569F4400605D03 /* radar.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B127569F4400605D03 /* radar.mp3 */; };
 		A2F996CF27569F4400605D03 /* bulletin.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B227569F4400605D03 /* bulletin.mp3 */; };
 		A2F996D127569F4400605D03 /* signal.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B427569F4400605D03 /* signal.mp3 */; };
-		A2F996D227569F4400605D03 /* hillside.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B527569F4400605D03 /* hillside.mp3 */; };
 		A2F996D327569F4400605D03 /* presto.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B627569F4400605D03 /* presto.mp3 */; };
 		A2F996D427569F4400605D03 /* ripples.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B727569F4400605D03 /* ripples.mp3 */; };
 		A2F996D527569F4400605D03 /* reflection.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996B827569F4400605D03 /* reflection.mp3 */; };
@@ -188,9 +186,7 @@
 		A2F996D727569F4400605D03 /* twinkle.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996BA27569F4400605D03 /* twinkle.mp3 */; };
 		A2F996D827569F4400605D03 /* stargaze.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996BB27569F4400605D03 /* stargaze.mp3 */; };
 		A2F996D927569F4400605D03 /* silk.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996BC27569F4400605D03 /* silk.mp3 */; };
-		A2F996DA27569F4400605D03 /* cosmic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996BD27569F4400605D03 /* cosmic.mp3 */; };
 		A2F996DB27569F4400605D03 /* night owl.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A2F996BE27569F4400605D03 /* night owl.mp3 */; };
-		A54D605A48008A667A282016 /* Pods_Hound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A73DA2CFECD46DAD3542FD59 /* Pods_Hound.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -217,7 +213,7 @@
 		A247236C27F63456005DF848 /* SignInWithAppleError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithAppleError.swift; sourceTree = "<group>"; };
 		A247B96725C883680017FE66 /* DogsTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsTableVC.swift; sourceTree = "<group>"; };
 		A249618E27E3A642006CFDCC /* MainTabBarVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBarVC.swift; sourceTree = "<group>"; };
-		A249618F27E3A642006CFDCC /* FamilyIntroductionVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FamilyIntroductionVC.swift; sourceTree = "<group>"; };
+		A249618F27E3A642006CFDCC /* HoundIntroductionVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HoundIntroductionVC.swift; sourceTree = "<group>"; };
 		A249619227E3A75E006CFDCC /* DogsReminderTVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DogsReminderTVC.swift; sourceTree = "<group>"; };
 		A24F1325264064D70023BB84 /* BorderedUILabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedUILabel.swift; sourceTree = "<group>"; };
 		A25070DE26DD9BFF0056CFC4 /* ScaledUILabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaledUILabel.swift; sourceTree = "<group>"; };
@@ -243,7 +239,6 @@
 		A26CFCC427545EF9001C92D8 /* stargaze30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = stargaze30.wav; sourceTree = "<group>"; };
 		A26CFCC527545EF9001C92D8 /* radar30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = radar30.wav; sourceTree = "<group>"; };
 		A26CFCC627545EF9001C92D8 /* illuminate30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = illuminate30.wav; sourceTree = "<group>"; };
-		A26CFCC727545EF9001C92D8 /* cosmic30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cosmic30.wav; sourceTree = "<group>"; };
 		A26CFCC827545EF9001C92D8 /* by the seaside30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "by the seaside30.wav"; sourceTree = "<group>"; };
 		A26CFCC927545EF9001C92D8 /* presto30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = presto30.wav; sourceTree = "<group>"; };
 		A26CFCCA27545EF9001C92D8 /* chimes30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = chimes30.wav; sourceTree = "<group>"; };
@@ -255,7 +250,6 @@
 		A26CFCD027545EF9001C92D8 /* signal30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = signal30.wav; sourceTree = "<group>"; };
 		A26CFCD127545EF9001C92D8 /* ripples30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ripples30.wav; sourceTree = "<group>"; };
 		A26CFCD227545EF9001C92D8 /* opening30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = opening30.wav; sourceTree = "<group>"; };
-		A26CFCD327545EF9001C92D8 /* hillside30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hillside30.wav; sourceTree = "<group>"; };
 		A26CFCD527545EF9001C92D8 /* crystals30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crystals30.wav; sourceTree = "<group>"; };
 		A26CFCD627545EF9001C92D8 /* constellation30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = constellation30.wav; sourceTree = "<group>"; };
 		A26CFCD727545EF9001C92D8 /* twinkle30.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = twinkle30.wav; sourceTree = "<group>"; };
@@ -371,7 +365,6 @@
 		A2F996B127569F4400605D03 /* radar.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = radar.mp3; sourceTree = "<group>"; };
 		A2F996B227569F4400605D03 /* bulletin.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bulletin.mp3; sourceTree = "<group>"; };
 		A2F996B427569F4400605D03 /* signal.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = signal.mp3; sourceTree = "<group>"; };
-		A2F996B527569F4400605D03 /* hillside.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = hillside.mp3; sourceTree = "<group>"; };
 		A2F996B627569F4400605D03 /* presto.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = presto.mp3; sourceTree = "<group>"; };
 		A2F996B727569F4400605D03 /* ripples.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ripples.mp3; sourceTree = "<group>"; };
 		A2F996B827569F4400605D03 /* reflection.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = reflection.mp3; sourceTree = "<group>"; };
@@ -379,11 +372,10 @@
 		A2F996BA27569F4400605D03 /* twinkle.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = twinkle.mp3; sourceTree = "<group>"; };
 		A2F996BB27569F4400605D03 /* stargaze.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = stargaze.mp3; sourceTree = "<group>"; };
 		A2F996BC27569F4400605D03 /* silk.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = silk.mp3; sourceTree = "<group>"; };
-		A2F996BD27569F4400605D03 /* cosmic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = cosmic.mp3; sourceTree = "<group>"; };
 		A2F996BE27569F4400605D03 /* night owl.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "night owl.mp3"; sourceTree = "<group>"; };
 		A2FC4EBC274AF59F006A872F /* Add Drop Down */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Add Drop Down"; sourceTree = "<group>"; };
 		A2FC4EBE274AF980006A872F /* Add Tool Tip */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Add Tool Tip"; sourceTree = "<group>"; };
-		A73DA2CFECD46DAD3542FD59 /* Pods_Hound.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Hound.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6BA7C2F91F8CB1DF213275F /* libPods-Hound.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Hound.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7B3D19811D2D739602885E4 /* Pods-Hound.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hound.release.xcconfig"; path = "Target Support Files/Pods-Hound/Pods-Hound.release.xcconfig"; sourceTree = "<group>"; };
 		F1A5C1841BA2129D46477D9A /* Pods-Hound.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hound.debug.xcconfig"; path = "Target Support Files/Pods-Hound/Pods-Hound.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -393,8 +385,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A54D605A48008A667A282016 /* Pods_Hound.framework in Frameworks */,
 				A2AB7CD0285817AE00851FF2 /* StoreKit.framework in Frameworks */,
+				213BEB01BC15BA8E95D699CA /* libPods-Hound.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -613,9 +605,7 @@
 				A26CFCCA27545EF9001C92D8 /* chimes30.wav */,
 				A2458B5D2759374500912550 /* circuit30.wav */,
 				A26CFCD627545EF9001C92D8 /* constellation30.wav */,
-				A26CFCC727545EF9001C92D8 /* cosmic30.wav */,
 				A26CFCD527545EF9001C92D8 /* crystals30.wav */,
-				A26CFCD327545EF9001C92D8 /* hillside30.wav */,
 				A26CFCC627545EF9001C92D8 /* illuminate30.wav */,
 				A26CFCCD27545EF9001C92D8 /* night owl30.wav */,
 				A26CFCD227545EF9001C92D8 /* opening30.wav */,
@@ -851,7 +841,7 @@
 		A2E447032636FF9A0087B1A3 /* Main Tab Bar */ = {
 			isa = PBXGroup;
 			children = (
-				A249618F27E3A642006CFDCC /* FamilyIntroductionVC.swift */,
+				A249618F27E3A642006CFDCC /* HoundIntroductionVC.swift */,
 				A2A45CCE2644914A0050E5A1 /* RemindersIntroductionVC.swift */,
 				A249618E27E3A642006CFDCC /* MainTabBarVC.swift */,
 			);
@@ -912,9 +902,7 @@
 				A2458B5F2759376200912550 /* circuit.mp3 */,
 				A2F996AE27569F4400605D03 /* chimes.mp3 */,
 				A2F996A527569F4400605D03 /* constellation.mp3 */,
-				A2F996BD27569F4400605D03 /* cosmic.mp3 */,
 				A2F996A727569F4400605D03 /* crystals.mp3 */,
-				A2F996B527569F4400605D03 /* hillside.mp3 */,
 				A2F996A927569F4400605D03 /* illuminate.mp3 */,
 				A2F996BE27569F4400605D03 /* night owl.mp3 */,
 				A2F996A827569F4400605D03 /* opening.mp3 */,
@@ -947,7 +935,7 @@
 			isa = PBXGroup;
 			children = (
 				A2AB7CCF285817AE00851FF2 /* StoreKit.framework */,
-				A73DA2CFECD46DAD3542FD59 /* Pods_Hound.framework */,
+				C6BA7C2F91F8CB1DF213275F /* libPods-Hound.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -965,7 +953,6 @@
 				A2E66C9425534A880068CCA6 /* Frameworks */,
 				A2E66C9525534A880068CCA6 /* Resources */,
 				A2999D0526740C6500EC627D /* Set Build Number */,
-				68E356C2674A2D0CCC4508E2 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1019,10 +1006,8 @@
 				A26CFCE927545EF9001C92D8 /* night owl30.wav in Resources */,
 				A2F996CA27569F4400605D03 /* waves.mp3 in Resources */,
 				A26CFCED27545EF9001C92D8 /* ripples30.wav in Resources */,
-				A26CFCE327545EF9001C92D8 /* cosmic30.wav in Resources */,
 				A2F996C627569F4400605D03 /* illuminate.mp3 in Resources */,
 				A23F6B6F2870FCC100D08841 /* DropDownLogFilterTableViewCell.xib in Resources */,
-				A2F996D227569F4400605D03 /* hillside.mp3 in Resources */,
 				A2F996D727569F4400605D03 /* twinkle.mp3 in Resources */,
 				A2E66CA925534A8A0068CCA6 /* LaunchScreen.storyboard in Resources */,
 				A26CFCE727545EF9001C92D8 /* sencha30.wav in Resources */,
@@ -1056,9 +1041,7 @@
 				A26CFCE627545EF9001C92D8 /* chimes30.wav in Resources */,
 				A26CFCE127545EF9001C92D8 /* radar30.wav in Resources */,
 				A26CFCEA27545EF9001C92D8 /* apex30.wav in Resources */,
-				A2F996DA27569F4400605D03 /* cosmic.mp3 in Resources */,
 				A2F996C227569F4400605D03 /* constellation.mp3 in Resources */,
-				A26CFCEF27545EF9001C92D8 /* hillside30.wav in Resources */,
 				A26CFCF227545EF9001C92D8 /* constellation30.wav in Resources */,
 				A2F996D827569F4400605D03 /* stargaze.mp3 in Resources */,
 				A2F996C927569F4400605D03 /* sencha.mp3 in Resources */,
@@ -1072,23 +1055,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		68E356C2674A2D0CCC4508E2 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Hound/Pods-Hound-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Hound/Pods-Hound-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Hound/Pods-Hound-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		99414AFF6FEB31A40F58549F /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1211,7 +1177,7 @@
 				A2AA5CD727FE47F500FD0134 /* Dog.swift in Sources */,
 				A2B00F9C27FA376000C6126E /* ServerFamilyVC.swift in Sources */,
 				A2AA5CC327FE447D00FD0134 /* DogError.swift in Sources */,
-				A249619127E3A642006CFDCC /* FamilyIntroductionVC.swift in Sources */,
+				A249619127E3A642006CFDCC /* HoundIntroductionVC.swift in Sources */,
 				A2BAA07227D6EDA20041F3C5 /* LocalConfiguration.swift in Sources */,
 				A24F1326264064D70023BB84 /* BorderedUILabel.swift in Sources */,
 				A2AA5CEF27FE487200FD0134 /* DogDisplayTVC.swift in Sources */,

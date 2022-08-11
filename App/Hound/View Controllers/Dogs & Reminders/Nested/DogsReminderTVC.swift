@@ -20,7 +20,7 @@ final class DogsReminderTableViewCell: UITableViewCell {
     @IBOutlet private weak var reminderLabel: ScaledUILabel!
     @IBOutlet private weak var reminderIsEnabledSwitch: UISwitch!
 
-    @IBAction func didToggleReminderIsEnabled(_ sender: Any) {
+    @IBAction private func didToggleReminderIsEnabled(_ sender: Any) {
         delegate.didUpdateReminderIsEnabled(sender: Sender(origin: self, localized: self), reminderId: reminderId, reminderIsEnabled: reminderIsEnabledSwitch.isOn)
     }
 
@@ -44,21 +44,38 @@ final class DogsReminderTableViewCell: UITableViewCell {
         reminderLabel.text = ""
 
         if reminder.reminderType == .oneTime {
-            self.reminderLabel.text? = " \(String.convertToReadable(fromDate: reminder.oneTimeComponents.oneTimeDate))"
+            setupOneTimeReminder()
         }
         else if reminder.reminderType == .countdown {
-            self.reminderLabel.text?.append(" Every \(String.convertToReadable(fromTimeInterval: reminder.countdownComponents.executionInterval))")
+            setupCountdownReminder()
         }
         else if reminder.reminderType == .monthly {
-
-                let monthlyDay: Int! = reminder.monthlyComponents.day
-                reminderLabel.text?.append(" Every Month on \(monthlyDay!)")
-
-                reminderLabel.text?.append(String.monthlyDaySuffix(day: monthlyDay))
-
+            setupMonthlyReminder()
         }
         else if reminder.reminderType == .weekly {
+            setupWeeklyReminder()
+        }
 
+        reminderLabel.attributedText = reminderLabel.text?.addingFontToBeginning(text: reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true) + " -", font: UIFont.systemFont(ofSize: reminderLabel.font.pointSize, weight: .medium))
+
+        reminderIsEnabledSwitch.isOn = reminder.reminderIsEnabled
+        
+        func setupOneTimeReminder() {
+            self.reminderLabel.text? = " \(String.convertToReadable(fromDate: reminder.oneTimeComponents.oneTimeDate))"
+        }
+        
+        func setupCountdownReminder() {
+            self.reminderLabel.text?.append(" Every \(String.convertToReadable(fromTimeInterval: reminder.countdownComponents.executionInterval))")
+        }
+        
+        func setupMonthlyReminder() {
+            let monthlyDay: Int! = reminder.monthlyComponents.day
+            reminderLabel.text?.append(" Every Month on \(monthlyDay!)")
+
+            reminderLabel.text?.append(String.monthlyDaySuffix(day: monthlyDay))
+        }
+        
+        func setupWeeklyReminder() {
             reminderLabel.text?.append(" \(String.convertToReadable(fromHour: reminder.weeklyComponents.hour, fromMinute: reminder.weeklyComponents.minute))")
 
             // weekdays
@@ -73,48 +90,25 @@ final class DogsReminderTableViewCell: UITableViewCell {
             }
             else {
                 reminderLabel.text?.append(" on")
-                if reminder.weeklyComponents.weekdays.count == 1 {
-                    for weekdayInt in reminder.weeklyComponents.weekdays {
-                        switch weekdayInt {
-                        case 1:
-                            reminderLabel.text?.append(" Sunday")
-                        case 2:
-                            reminderLabel.text?.append(" Monday")
-                        case 3:
-                            reminderLabel.text?.append(" Tuesday")
-                        case 4:
-                            reminderLabel.text?.append(" Wednesday")
-                        case 5:
-                            reminderLabel.text?.append(" Thursday")
-                        case 6:
-                            reminderLabel.text?.append(" Friday")
-                        case 7:
-                            reminderLabel.text?.append(" Saturday")
-                        default:
-                            reminderLabel.text?.append(VisualConstant.TextConstant.unknownText)
-                        }
-                    }
-                }
-                else {
-                    for weekdayInt in reminder.weeklyComponents.weekdays {
-                        switch weekdayInt {
-                        case 1:
-                            reminderLabel.text?.append(" Su,")
-                        case 2:
-                            reminderLabel.text?.append(" M,")
-                        case 3:
-                            reminderLabel.text?.append(" Tu,")
-                        case 4:
-                            reminderLabel.text?.append(" W,")
-                        case 5:
-                            reminderLabel.text?.append(" Th,")
-                        case 6:
-                            reminderLabel.text?.append(" F,")
-                        case 7:
-                            reminderLabel.text?.append(" Sa,")
-                        default:
-                            reminderLabel.text?.append(VisualConstant.TextConstant.unknownText)
-                        }
+                let shouldAbreviateWeekday = reminder.weeklyComponents.weekdays.count > 1
+                for weekdayInt in reminder.weeklyComponents.weekdays {
+                    switch weekdayInt {
+                    case 1:
+                        reminderLabel.text?.append(shouldAbreviateWeekday ? " Su," : " Sunday")
+                    case 2:
+                        reminderLabel.text?.append(shouldAbreviateWeekday ? " M," : " Monday")
+                    case 3:
+                        reminderLabel.text?.append(shouldAbreviateWeekday ? " Tu," : " Tuesday")
+                    case 4:
+                        reminderLabel.text?.append(shouldAbreviateWeekday ? " W," : " Wednesday")
+                    case 5:
+                        reminderLabel.text?.append(shouldAbreviateWeekday ? " Th," : " Thursday")
+                    case 6:
+                        reminderLabel.text?.append(shouldAbreviateWeekday ? " F," : " Friday")
+                    case 7:
+                        reminderLabel.text?.append(shouldAbreviateWeekday ? " Sa," : " Saturday")
+                    default:
+                        reminderLabel.text?.append(VisualConstant.TextConstant.unknownText)
                     }
                 }
                 // checks if extra comma, then removes
@@ -123,10 +117,6 @@ final class DogsReminderTableViewCell: UITableViewCell {
                 }
             }
         }
-
-        reminderLabel.attributedText = reminderLabel.text?.addingFontToBeginning(text: reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true) + " -", font: UIFont.systemFont(ofSize: reminderLabel.font.pointSize, weight: .medium))
-
-        reminderIsEnabledSwitch.isOn = reminder.reminderIsEnabled
 
     }
 

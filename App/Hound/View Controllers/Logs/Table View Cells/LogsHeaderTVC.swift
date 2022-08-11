@@ -17,7 +17,7 @@ final class LogsHeaderTableViewCell: UITableViewCell {
     @IBOutlet private weak var headerBottomConstraint: NSLayoutConstraint!
     @IBOutlet private weak var headerHeightConstraint: NSLayoutConstraint!
     
-    @IBOutlet weak var filterImageView: UIImageView!
+    @IBOutlet private weak var filterImageView: UIImageView!
     
     // MARK: - Main
     
@@ -61,7 +61,7 @@ final class LogsHeaderTableViewCell: UITableViewCell {
         
         let sizeRatio = UserConfiguration.logsInterfaceScale.currentScaleFactor
         
-        headerLabel.font =  headerLabel.font.withSize(20.0 * sizeRatio)
+        headerLabel.font = headerLabel.font.withSize(20.0 * sizeRatio)
         headerTopConstraint.constant = 5.0 * sizeRatio
         headerBottomConstraint.constant = 5.0 * sizeRatio
         headerHeightConstraint.constant = 30.0 * sizeRatio

@@ -19,7 +19,7 @@ final class DogsNestedReminderViewController: UIViewController {
 
     // MARK: - IB
 
-    @IBOutlet weak var pageNavigationBar: UINavigationItem!
+    @IBOutlet private weak var pageNavigationBar: UINavigationItem!
 
     @IBOutlet private weak var saveButton: UIBarButtonItem!
     // Takes all fields (configured or not), checks if their parameters are valid, and then if it passes all tests calls on the delegate to pass the configured reminder back to table view.
@@ -52,8 +52,8 @@ final class DogsNestedReminderViewController: UIViewController {
         self.navigationController?.popViewController(animated: true)
         }
 
-    @IBOutlet weak var reminderRemoveButton: UIBarButtonItem!
-    @IBAction func willRemoveReminder(_ sender: Any) {
+    @IBOutlet private weak var reminderRemoveButton: UIBarButtonItem!
+    @IBAction private func willRemoveReminder(_ sender: Any) {
         
         guard targetReminder != nil else {
             reminderRemoveButton.isEnabled = false
@@ -111,8 +111,8 @@ final class DogsNestedReminderViewController: UIViewController {
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "dogsReminderManagerViewController"{
-            dogsReminderManagerViewController = segue.destination as! DogsReminderManagerViewController
+        if let dogsReminderManagerViewController = segue.destination as? DogsReminderManagerViewController {
+            self.dogsReminderManagerViewController = dogsReminderManagerViewController
             dogsReminderManagerViewController.targetReminder = targetReminder
         }
     }

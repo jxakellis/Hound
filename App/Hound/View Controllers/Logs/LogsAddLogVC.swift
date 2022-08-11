@@ -55,8 +55,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     // MARK: - DropDownUIViewDataSource
     
     func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, dropDownUIViewIdentifier: String) {
-        if dropDownUIViewIdentifier == "dropDownParentDog"{
-            let customCell = cell as! DropDownTableViewCell
+        if dropDownUIViewIdentifier == "DropDownParentDog", let customCell = cell as? DropDownTableViewCell {
             customCell.adjustLeadingTrailing(newConstant: DropDownUIView.insetForBorderedUILabel)
             
             if selectedParentDogIndexPath == indexPath {
@@ -68,8 +67,8 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             
             customCell.label.text = dogManager.dogs[indexPath.row].dogName
         }
-        else if dropDownUIViewIdentifier == "dropDownLogAction"{
-            let customCell = cell as! DropDownTableViewCell
+        else if dropDownUIViewIdentifier == "DropDownLogAction", let customCell = cell as? DropDownTableViewCell {
+            
             customCell.adjustLeadingTrailing(newConstant: DropDownUIView.insetForBorderedUILabel)
             
             if selectedLogActionIndexPath == indexPath {
@@ -97,10 +96,10 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     }
     
     func numberOfRows(forSection: Int, dropDownUIViewIdentifier: String) -> Int {
-        if dropDownUIViewIdentifier == "dropDownParentDog"{
+        if dropDownUIViewIdentifier == "DropDownParentDog"{
             return dogManager.dogs.count
         }
-        else if dropDownUIViewIdentifier == "dropDownLogAction"{
+        else if dropDownUIViewIdentifier == "DropDownLogAction"{
             return LogAction.allCases.count + LocalConfiguration.logCustomActionNames.count
         }
         else {
@@ -113,8 +112,8 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     }
     
     func selectItemInDropDown(indexPath: IndexPath, dropDownUIViewIdentifier: String) {
-        if dropDownUIViewIdentifier == "dropDownParentDog"{
-            let selectedCell = dropDownParentDog.dropDownTableView!.cellForRow(at: indexPath) as! DropDownTableViewCell
+        if dropDownUIViewIdentifier == "DropDownParentDog", let selectedCell = dropDownParentDog.dropDownTableView?.cellForRow(at: indexPath) as? DropDownTableViewCell {
+           
             selectedCell.willToggleDropDownSelection(forSelected: true)
             
             selectedParentDogIndexPath = indexPath
@@ -123,9 +122,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             parentDogLabel.tag = dogManager.dogs[indexPath.row].dogId
             dropDownParentDog.hideDropDown()
         }
-        else if dropDownUIViewIdentifier == "dropDownLogAction"{
-            
-            let selectedCell = dropDownLogAction.dropDownTableView!.cellForRow(at: indexPath) as! DropDownTableViewCell
+        else if dropDownUIViewIdentifier == "DropDownLogAction", let selectedCell = dropDownLogAction.dropDownTableView?.cellForRow(at: indexPath) as? DropDownTableViewCell {
             selectedCell.willToggleDropDownSelection(forSelected: true)
             selectedLogActionIndexPath = indexPath
             
@@ -373,12 +370,13 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        AlertManager.globalPresenter = self
         view.addSubview(logNoteTextView)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        AlertManager.globalPresenter = self
+        
         repeatableSetup()
     }
     
@@ -403,9 +401,10 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 
                 familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: logToUpdate.userId)?.displayFullName ?? VisualConstant.TextConstant.unknownText
                 
-                let dog = try! dogManager.findDog(forDogId: parentDogIdToUpdate)
-                parentDogLabel.text = dog.dogName
-                parentDogLabel.tag = dog.dogId
+                 if let dog = try? dogManager.findDog(forDogId: parentDogIdToUpdate) {
+                     parentDogLabel.text = dog.dogName
+                     parentDogLabel.tag = dog.dogId
+                 }
                 
                 selectedLogActionIndexPath = IndexPath(row: LogAction.allCases.firstIndex(of: logToUpdate.logAction)!, section: 0)
                 
@@ -503,16 +502,16 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     private func repeatableSetup() {
         setupDropDowns()
         func setupDropDowns() {
-            dropDownParentDog.dropDownUIViewIdentifier = "dropDownParentDog"
-            dropDownParentDog.cellReusableIdentifier = "dropDownCell"
+            dropDownParentDog.dropDownUIViewIdentifier = "DropDownParentDog"
+            dropDownParentDog.cellReusableIdentifier = "DropDownCell"
             dropDownParentDog.dataSource = self
             dropDownParentDog.setupDropDown(viewPositionReference: parentDogLabel.frame, offset: 2.0)
             dropDownParentDog.nib = UINib(nibName: "DropDownTableViewCell", bundle: nil)
             dropDownParentDog.setRowHeight(height: DropDownUIView.rowHeightForBorderedUILabel)
             view.addSubview(dropDownParentDog)
             
-            dropDownLogAction.dropDownUIViewIdentifier = "dropDownLogAction"
-            dropDownLogAction.cellReusableIdentifier = "dropDownCell"
+            dropDownLogAction.dropDownUIViewIdentifier = "DropDownLogAction"
+            dropDownLogAction.cellReusableIdentifier = "DropDownCell"
             dropDownLogAction.dataSource = self
             dropDownLogAction.setupDropDown(viewPositionReference: logActionLabel.frame, offset: 2.0)
             dropDownLogAction.nib = UINib(nibName: "DropDownTableViewCell", bundle: nil)

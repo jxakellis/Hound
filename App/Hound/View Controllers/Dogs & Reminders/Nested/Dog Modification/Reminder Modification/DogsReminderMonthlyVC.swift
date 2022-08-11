@@ -21,7 +21,7 @@ final class DogsReminderMonthlyViewController: UIViewController, UIGestureRecogn
     }
 
     // MARK: - IB
-    @IBOutlet weak var timeOfDayDatePicker: UIDatePicker!
+    @IBOutlet weak var timeOfDayDatePicker: UIDatePicker! // swiftlint:disable:this private_outlet
 
     @IBAction private func didUpdateTimeOfDay(_ sender: Any) {
         delegate.willDismissKeyboard()

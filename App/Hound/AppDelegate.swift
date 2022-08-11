@@ -12,12 +12,12 @@ import os.log
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
-
+    
     static var generalLogger = Logger(subsystem: "com.example.Pupotty", category: "General")
     static var lifeCycleLogger = Logger(subsystem: "com.example.Pupotty", category: "Life Cycle")
     static var APIRequestLogger = Logger(subsystem: "com.example.Pupotty", category: "API Request")
     static var APIResponseLogger = Logger(subsystem: "com.example.Pupotty", category: "API Response")
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         AppDelegate.lifeCycleLogger.notice("Application Did Finish Launching with Options")
@@ -28,9 +28,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
         
         return true
     }
-
+    
     // MARK: UISceneSession Lifecycle
-
+    
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         // Called when a new scene session is being created.
         // Use this method to select a configuration to create the new scene with.
@@ -44,7 +44,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
     func applicationDidEnterBackground(_ application: UIApplication) {
         AppDelegate.lifeCycleLogger.notice("Application Did Enter Background")
     }
-
+    
     func applicationWillTerminate(_ application: UIApplication) {
         AppDelegate.lifeCycleLogger.notice("Application Will Terminate")
         PersistenceManager.didEnterBackground(isTerminating: true)
@@ -83,33 +83,41 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
             return
         }
         
-        // TO DO NOW when a log / reminder come through, trigger an indicator that the dogmanager must be refreshed in order to show the change
-
+        // Always refresh the dog manager when we recieve a log notification, as that means another user logged something.
+        // If we invoke on 'ALERT_CATEGORY_REMINDER' as well, then everytime a reminder triggers its alarm and a notification comes thru, it will cause a refresh. This will cause a weird interaction as we will be simultaneously showing an alert in app
+        
+        // TO DO NOW remove 'log' and 'reminder' after updating server to reflect naming change
+        if category == "ALERT_CATEGORY_LOG" || category == "log" {
+            print("recieved log, setting should refresh to true")
+            MainTabBarViewController.mainTabBarViewController?.shouldRefreshDogManager = true
+            completionHandler(.newData)
+        }
         // if the notification is a reminder, then check to see if loud notification can be played
-        guard category == "reminder" else {
-            completionHandler(.noData)
-            return
-        }
-        
-        // check to see if we have a reminderLastModified available to us
-        if let reminderLastModifiedString = userInfo["reminderLastModified"] as? String, let reminderLastModified = ResponseUtils.dateFormatter(fromISO8601String: reminderLastModifiedString), LocalConfiguration.lastDogManagerSynchronization.distance(to: reminderLastModified) > 0 {
-            // If the reminder was modified after the last time we synced our whole dogManager, then that means our local reminder is out of date.
-            // This makes our local reminder untrustworthy. The server reminder could have been deleted (and we don't know), the server reminder could have been created (and we don't have it locally), or the server reminder could have had its timing changes (and our locally timing will be inaccurate).
-            // Therefore, we should refresh the dogManager to make sure we are up to date on important features of the reminder's state: create, delete, timing.
-            // Once everything is synced again, the alarm will be shown as expected.
+        else if category == "ALERT_CATEGORY_REMINDER" || category == "reminder" {
             
-            // Note: we also individually fetch a reminder before immediately constructing its alertController for its alarm. This ensure, even if the user has notifications turned off (meaning this piece of code right here won't be executed), that the reminder they are being show is up to date.
-            RequestUtils.getFamilyGetDog(invokeErrorManager: false, dogManager: MainTabBarViewController.staticDogManager) { newDogManager, _ in
-                guard let newDogManager = newDogManager else {
-                    return
+            // check to see if we have a reminderLastModified available to us
+            if let reminderLastModifiedString = userInfo["reminderLastModified"] as? String, let reminderLastModified = ResponseUtils.dateFormatter(fromISO8601String: reminderLastModifiedString), LocalConfiguration.lastDogManagerSynchronization.distance(to: reminderLastModified) > 0 {
+                // If the reminder was modified after the last time we synced our whole dogManager, then that means our local reminder is out of date.
+                // This makes our local reminder untrustworthy. The server reminder could have been deleted (and we don't know), the server reminder could have been created (and we don't have it locally), or the server reminder could have had its timing changes (and our locally timing will be inaccurate).
+                // Therefore, we should refresh the dogManager to make sure we are up to date on important features of the reminder's state: create, delete, timing.
+                // Once everything is synced again, the alarm will be shown as expected.
+                
+                // Note: we also individually fetch a reminder before immediately constructing its alertController for its alarm. This ensure, even if the user has notifications turned off (meaning this piece of code right here won't be executed), that the reminder they are being show is up to date.
+                RequestUtils.getFamilyGetDog(invokeErrorManager: false, dogManager: MainTabBarViewController.staticDogManager) { newDogManager, _ in
+                    guard let newDogManager = newDogManager else {
+                        return
+                    }
+                    MainTabBarViewController.mainTabBarViewController?.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
                 }
-                MainTabBarViewController.mainTabBarViewController?.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
             }
+            
+            AudioManager.playLoudNotification()
+            
+            completionHandler(.newData)
         }
-        
-        AudioManager.playLoudNotification()
-        
-        completionHandler(.newData)
+        else {
+            completionHandler(.noData)
+        }
     }
     
 }

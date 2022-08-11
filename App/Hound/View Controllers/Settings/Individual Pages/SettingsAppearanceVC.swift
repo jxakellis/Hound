@@ -41,7 +41,7 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
         maximumNumberOfLogsDisplayedPickerView.delegate = self
         maximumNumberOfLogsDisplayedPickerView.dataSource = self
         
-        if let maximumNumberOfLogsDisplayedRowSelected =  UserConfiguration.maximumNumberOfLogsDisplayedOptions.firstIndex(of: UserConfiguration.maximumNumberOfLogsDisplayed) {
+        if let maximumNumberOfLogsDisplayedRowSelected = UserConfiguration.maximumNumberOfLogsDisplayedOptions.firstIndex(of: UserConfiguration.maximumNumberOfLogsDisplayed) {
             self.maximumNumberOfLogsDisplayedPickerView.selectRow(
                 maximumNumberOfLogsDisplayedRowSelected,
                 inComponent: 0,
@@ -51,7 +51,6 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        AlertManager.globalPresenter = self
 
         // DARK MODE
         switch UserConfiguration.interfaceStyle.rawValue {
@@ -67,6 +66,11 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
         default:
             interfaceStyleSegmentedControl.selectedSegmentIndex = 2
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AlertManager.globalPresenter = self
     }
 
     // MARK: - Individual Settings
@@ -151,7 +155,7 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
                 // error, revert to previous
                 UserConfiguration.maximumNumberOfLogsDisplayed = beforeUpdateMaximumNumberOfLogsDisplayed
                 
-                if let beforeUpdateMaximumNumberOfLogsDisplayedRowSelected =  UserConfiguration.maximumNumberOfLogsDisplayedOptions.firstIndex(of: beforeUpdateMaximumNumberOfLogsDisplayed) {
+                if let beforeUpdateMaximumNumberOfLogsDisplayedRowSelected = UserConfiguration.maximumNumberOfLogsDisplayedOptions.firstIndex(of: beforeUpdateMaximumNumberOfLogsDisplayed) {
                     self.maximumNumberOfLogsDisplayedPickerView.selectRow(
                         beforeUpdateMaximumNumberOfLogsDisplayedRowSelected,
                         inComponent: component,

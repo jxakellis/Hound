@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import StoreKit
 
 /// Configuration that is local to the app only. If the app is reinstalled then this data should be fresh
 enum LocalConfiguration {
@@ -119,9 +120,11 @@ enum LocalConfiguration {
     
     /// Keeps track of what Hound versions the release notes have been shown for. For example, if we show the release notes for Hound 2.0.0 Build 4000, then we will store 4000 in the array. This makes sure the release notes are only shown once for a given update
     static var appBuildsWithReleaseNotesShown: [Int] = []
+    /// Keeps track of what Hound versions the release notes have been shown for. For example, if we show the release notes for Hound 2.0.0 Build 4000, then we will store 2.0.0 in the array. This makes sure the release notes are only shown once for a given update
+    static var appVersionsWithReleaseNotesShown: [String] = []
     
     /// Keeps track of if the user has viewed AND completed the family introduction view controller (which helps the user setup their first dog)
-    static var hasLoadedFamilyIntroductionViewControllerBefore: Bool = false
+    static var hasLoadedHoundIntroductionViewControllerBefore: Bool = false
     
     /// Keeps track of if the user has viewed AND completed the reminders introduction view controller (which helps the user setup their first reminders)
     static var hasLoadedRemindersIntroductionViewControllerBefore: Bool = false
@@ -144,8 +147,8 @@ extension LocalConfiguration {
         
         // MARK: Local Configuration
         
-        LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = false
-        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedFamilyIntroductionViewControllerBefore.rawValue)
+        LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore = false
+        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedHoundIntroductionViewControllerBefore.rawValue)
         
         LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue)

@@ -28,11 +28,13 @@ extension UIApplication {
         return UIApplication.shared.connectedScenes.first as? UIWindowScene
     }
     
-    static var previousAppBuild: Int?
+    static var previousAppVersion: String?
     
-    static var appVersion: String? {
-        return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+    static var appVersion: String {
+        return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "2.0.0"
     }
+    
+    static var previousAppBuild: Int?
     
     static var appBuild: Int {
         

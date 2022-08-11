@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1240"
+   LastUpgradeVersion = "1340"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7F8A33E015E1BDA12E1AE7D1F414378E"
-               BuildableName = "Pods_Hound.framework"
+               BuildableName = "libPods-Hound.a"
                BlueprintName = "Pods-Hound"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>

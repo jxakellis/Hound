@@ -38,7 +38,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
             }
             
             // update the data to reflect what was retrieved from the server
-            self.performSpinningCheckmarkAnimation()
+            AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.refreshFamilyTitle, forSubtitle: VisualConstant.BannerTextConstant.refreshFamilySubtitle, forStyle: .success)
             self.repeatableSetup()
             self.tableView.reloadData()
             // its possible that the familymembers table changed its constraint for height, so re layout
@@ -47,10 +47,32 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         }
     }
     
-    // TO DO NOW change copy family code to share. Have a sentence about what hound is/how it helps. Have a sentence about joining the family and include the family code. Then, provide a link to Hound at the very bottom. NOTE: add disclaimer to the user if they are trying to share a locked family
-    @IBAction func didClickCopyFamilyCode(_ sender: Any) {
-        UIPasteboard.general.string = familyCode
-        self.performSpinningCheckmarkAnimation()
+    @IBAction private func didClickCopyFamilyCode(_ sender: Any) {
+        guard FamilyConfiguration.isLocked == false else {
+            AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.invalidFamilyShareTitle, forSubtitle: VisualConstant.BannerTextConstant.invalidFamilyShareSubtitle, forStyle: .danger)
+            return
+        }
+        
+        let shareHoundText = "Download Hound to help our family stay on track with caring for our pets! Never forget to lend a helping hand with Hound's reminders, and never question when your pets were last helped with logs of care. Join my Hound family today by using the following code: \(familyCode)\n\nhttps://apps.apple.com/us/app/hound-dog-schedule-organizer/id1564604025"
+        
+        let textToShare = [ shareHoundText ]
+        let activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
+        // Configure so that iPads won't crash
+        activityViewController.popoverPresentationController?.sourceView = self.view
+        
+        // exclude some activity types from the list (optional)
+        activityViewController.excludedActivityTypes =
+        [ UIActivity.ActivityType.addToReadingList,
+          UIActivity.ActivityType.assignToContact,
+          UIActivity.ActivityType.markupAsPDF,
+          UIActivity.ActivityType.openInIBooks ]
+        
+        if #available(iOS 15.4, *) {
+            activityViewController.excludedActivityTypes?.append(UIActivity.ActivityType.sharePlay)
+        }
+        
+        // present the view controller
+        self.present(activityViewController, animated: true, completion: nil)
     }
     
     // MARK: - Properties
@@ -77,9 +99,13 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        AlertManager.globalPresenter = self
         
         repeatableSetup()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AlertManager.globalPresenter = self
     }
     
     // MARK: - Dog Manager
@@ -126,13 +152,13 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         
         func dismissViewControllersUntilServerSyncViewController() {
             // Dismiss anything that the main tab bar vc is currently presenting
-            if let presentedViewController = MainTabBarViewController.mainTabBarViewController.presentedViewController {
+            if let presentedViewController = MainTabBarViewController.mainTabBarViewController?.presentedViewController {
                 presentedViewController.dismiss(animated: false)
             }
             
-            // Store presentingViewController. MainTabBarViewController.mainTabBarViewController.presentingViewController will turn to nil once mainTabBarViewController is dismissed (as mainTabBarViewController is no longer presented)
-            let presentingViewController = MainTabBarViewController.mainTabBarViewController.presentingViewController
-            MainTabBarViewController.mainTabBarViewController.dismiss(animated: true) {
+            // Store presentingViewController. MainTabBarViewController.mainTabBarViewController?.presentingViewController will turn to nil once mainTabBarViewController is dismissed (as mainTabBarViewController is no longer presented)
+            let presentingViewController = MainTabBarViewController.mainTabBarViewController?.presentingViewController
+            MainTabBarViewController.mainTabBarViewController?.dismiss(animated: true) {
                 // If the view controller that is one level above the main vc isn't the server sync vc, we want to dismiss that view controller directly so we get to the server sync vc
                 if (presentingViewController is ServerSyncViewController) == false {
                     // leave this step as animated, otherwise the user can see a jump
@@ -307,17 +333,18 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         
         let familyMember = FamilyConfiguration.familyMembers[indexPath.row]
         // family members is sorted to have the family head as its first element
-        if indexPath.row == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "settingsFamilyHeadTableViewCell", for: indexPath) as! SettingsFamilyHeadTableViewCell
+        if indexPath.row == 0, let cell = tableView.dequeueReusableCell(withIdentifier: "settingsFamilyHeadTableViewCell", for: indexPath) as? SettingsFamilyHeadTableViewCell {
+            cell.setup(forDisplayFullName: familyMember.displayFullName, userId: familyMember.userId)
+            
+            return cell
+        }
+        else if let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsFamilyMemberTableViewCell", for: indexPath) as? SettingsFamilyMemberTableViewCell {
             cell.setup(forDisplayFullName: familyMember.displayFullName, userId: familyMember.userId)
             
             return cell
         }
         else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "settingsFamilyMemberTableViewCell", for: indexPath) as! SettingsFamilyMemberTableViewCell
-            cell.setup(forDisplayFullName: familyMember.displayFullName, userId: familyMember.userId)
-            
-            return cell
+            return UITableViewCell()
         }
     }
     
@@ -336,7 +363,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
                 FamilyRequest.delete(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
                     RequestUtils.endRequestIndictator {
                         if requestWasSuccessful == true {
-                            // invoke the @IBAction function to refresh this page
+                            // invoke the @IBAction private function to refresh this page
                             self.willRefresh(0)
                         }
                     }

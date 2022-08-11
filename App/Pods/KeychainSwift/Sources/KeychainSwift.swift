@@ -22,6 +22,7 @@ open class KeychainSwift {
   */
   open var accessGroup: String?
   
+  
   /**
    
   Specifies whether the items can be synchronized with other devices through iCloud. Setting this property to true will
@@ -33,6 +34,7 @@ open class KeychainSwift {
   open var synchronizable: Bool = false
 
   private let lock = NSLock()
+
   
   /// Instantiate a KeychainSwift object
   public init() { }
@@ -58,7 +60,8 @@ open class KeychainSwift {
 
   */
   @discardableResult
-  open func set(_ value: String, forKey key: String, withAccess access: KeychainSwiftAccessOptions? = nil) -> Bool {
+  open func set(_ value: String, forKey key: String,
+                  withAccess access: KeychainSwiftAccessOptions? = nil) -> Bool {
     
     if let value = value.data(using: String.Encoding.utf8) {
       return set(value, forKey: key, withAccess: access)
@@ -79,7 +82,8 @@ open class KeychainSwift {
   
   */
   @discardableResult
-  open func set(_ value: Data, forKey key: String, withAccess access: KeychainSwiftAccessOptions? = nil) -> Bool {
+  open func set(_ value: Data, forKey key: String,
+    withAccess access: KeychainSwiftAccessOptions? = nil) -> Bool {
     
     // The lock prevents the code to be run simultaneously
     // from multiple threads which may result in crashing
@@ -92,11 +96,11 @@ open class KeychainSwift {
       
     let prefixedKey = keyWithPrefix(key)
       
-    var query: [String: Any] = [
-      KeychainSwiftConstants.klass: kSecClassGenericPassword,
-      KeychainSwiftConstants.attrAccount: prefixedKey,
-      KeychainSwiftConstants.valueData: value,
-      KeychainSwiftConstants.accessible: accessible
+    var query: [String : Any] = [
+      KeychainSwiftConstants.klass       : kSecClassGenericPassword,
+      KeychainSwiftConstants.attrAccount : prefixedKey,
+      KeychainSwiftConstants.valueData   : value,
+      KeychainSwiftConstants.accessible  : accessible
     ]
       
     query = addAccessGroupWhenPresent(query)
@@ -120,7 +124,8 @@ open class KeychainSwift {
 
   */
   @discardableResult
-  open func set(_ value: Bool, forKey key: String, withAccess access: KeychainSwiftAccessOptions? = nil) -> Bool {
+  open func set(_ value: Bool, forKey key: String,
+    withAccess access: KeychainSwiftAccessOptions? = nil) -> Bool {
   
     let bytes: [UInt8] = value ? [1] : [0]
     let data = Data(bytes)
@@ -167,15 +172,14 @@ open class KeychainSwift {
     let prefixedKey = keyWithPrefix(key)
     
     var query: [String: Any] = [
-      KeychainSwiftConstants.klass: kSecClassGenericPassword,
-      KeychainSwiftConstants.attrAccount: prefixedKey,
-      KeychainSwiftConstants.matchLimit: kSecMatchLimitOne
+      KeychainSwiftConstants.klass       : kSecClassGenericPassword,
+      KeychainSwiftConstants.attrAccount : prefixedKey,
+      KeychainSwiftConstants.matchLimit  : kSecMatchLimitOne
     ]
     
     if asReference {
       query[KeychainSwiftConstants.returnReference] = kCFBooleanTrue
-    }
-    else {
+    } else {
       query[KeychainSwiftConstants.returnData] =  kCFBooleanTrue
     }
     
@@ -236,8 +240,8 @@ open class KeychainSwift {
   */
   public var allKeys: [String] {
     var query: [String: Any] = [
-      KeychainSwiftConstants.klass: kSecClassGenericPassword,
-      KeychainSwiftConstants.returnData: true,
+      KeychainSwiftConstants.klass : kSecClassGenericPassword,
+      KeychainSwiftConstants.returnData : true,
       KeychainSwiftConstants.returnAttributes: true,
       KeychainSwiftConstants.returnReference: true,
       KeychainSwiftConstants.matchLimit: KeychainSwiftConstants.secMatchLimitAll
@@ -273,8 +277,8 @@ open class KeychainSwift {
     let prefixedKey = keyWithPrefix(key)
     
     var query: [String: Any] = [
-      KeychainSwiftConstants.klass: kSecClassGenericPassword,
-      KeychainSwiftConstants.attrAccount: prefixedKey
+      KeychainSwiftConstants.klass       : kSecClassGenericPassword,
+      KeychainSwiftConstants.attrAccount : prefixedKey
     ]
     
     query = addAccessGroupWhenPresent(query)
@@ -300,7 +304,7 @@ open class KeychainSwift {
     lock.lock()
     defer { lock.unlock() }
     
-    var query: [String: Any] = [ kSecClass as String: kSecClassGenericPassword ]
+    var query: [String: Any] = [ kSecClass as String : kSecClassGenericPassword ]
     query = addAccessGroupWhenPresent(query)
     query = addSynchronizableIfRequired(query, addingItems: false)
     lastQueryParameters = query

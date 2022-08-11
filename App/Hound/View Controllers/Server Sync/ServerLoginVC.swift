@@ -124,18 +124,21 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
     override func viewWillAppear(_ animated: Bool) {
         // Called before the view is added to the windows’ view hierarchy
         super.viewWillAppear(animated)
-        // Make this view the presenter if the app has to present any alert.
-        AlertManager.globalPresenter = self
 
         // make sure the view has the correct interfaceStyle
         UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AlertManager.globalPresenter = self
     }
     
     // MARK: Setup
     
     private func oneTimeSetup() {
         // we want the user to have a fresh login experience, so we reset the introduction pages
-        LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = false
+        LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore = false
         LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = false
         
         // all other information tracks something important and shouldn't be modified, we simply do this so the user is greeted
@@ -202,8 +205,8 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
             
             let constraints = [
                 signInWithAppleDisclaimer.topAnchor.constraint(equalTo: signInWithApple.bottomAnchor, constant: 12.5),
-                signInWithAppleDisclaimer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10.0 + (signInWithApple.frame.height/2)),
-                signInWithAppleDisclaimer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10 - (signInWithApple.frame.height/2))]
+                signInWithAppleDisclaimer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10.0 + (signInWithApple.frame.height / 2)),
+                signInWithAppleDisclaimer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10 - (signInWithApple.frame.height / 2))]
             NSLayoutConstraint.activate(constraints)
         }
     }
@@ -251,8 +254,7 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
     }
     
     private func signInUser() {
-        // start query indictator, if there is already one present then its fine as alertmanager will throw away the duplicate. we remove the query indicator when we finish interpreting our response
-        RequestUtils.beginRequestIndictator()
+        // Don't begin RequestUtils.beginRequestIndictator() as we already have one from signUpUser
         _ = UserRequest.get(invokeErrorManager: true) { userId, _, _ in
             // the user config is already automatically setup with this function
             RequestUtils.endRequestIndictator {

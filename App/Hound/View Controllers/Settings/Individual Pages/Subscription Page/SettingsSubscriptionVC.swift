@@ -41,7 +41,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
             }
             
             if refreshWasInvokedByUser {
-                self.performSpinningCheckmarkAnimation()
+                AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.refreshSubscriptionTitle, forSubtitle: VisualConstant.BannerTextConstant.refreshSubscriptionSubtitle, forStyle: .success)
             }
             
             self.reloadTableAndLabels()
@@ -52,7 +52,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     @IBAction private func didClickRestoreTransactions(_ sender: Any) {
         // The user doesn't have permission to perform this action
         guard FamilyConfiguration.isFamilyHead else {
-            AlertManager.enqueueAlertForPresentation(familyPermissionAlertController)
+            AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.invalidFamilyPermissionTitle, forSubtitle: VisualConstant.BannerTextConstant.invalidFamilyPermissionSubtitle, forStyle: .danger)
             return
         }
         
@@ -66,7 +66,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
                     return
                 }
                 
-                self.performSpinningCheckmarkAnimation()
+                AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.restoreTransactionsTitle, forSubtitle: VisualConstant.BannerTextConstant.restoreTransactionsSubtitle, forStyle: .success)
             }
         }
     }
@@ -74,8 +74,6 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     // MARK: Properties
     
     var subscriptionProducts: [SKProduct] = []
-    
-    let familyPermissionAlertController = GeneralUIAlertController(title: "You don't have permission to perform this action", message: "Only the family head can modify your family's subscription. Please contact the family head and have them complete this action. If this issue persists, please contact Hound support.", preferredStyle: .alert)
     
     // MARK: - Main
 
@@ -89,9 +87,13 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        AlertManager.globalPresenter = self
         
         repeatableSetup()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AlertManager.globalPresenter = self
     }
     
     // MARK: - Functions
@@ -107,9 +109,6 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
         tableView.separatorInset = .zero
         
         restoreTransactionsButton.layer.cornerRadius = VisualConstant.SizeConstant.largeRectangularButtonCornerRadious
-        
-        familyPermissionAlertController.addAction(UIAlertAction(title: "OK", style: .cancel))
-        
     }
     
     /// These properties can be reassigned. Does not reload anything, rather just configures.
@@ -165,7 +164,9 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "settingsSubscriptionTierTableViewCell", for: indexPath) as! SettingsSubscriptionTierTableViewCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsSubscriptionTierTableViewCell", for: indexPath) as? SettingsSubscriptionTierTableViewCell else {
+            return UITableViewCell()
+        }
         
         if indexPath.row == 0 {
             // necessary to make sure defaults are properly used for "Single" tier
@@ -185,7 +186,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
         
         // The user doesn't have permission to perform this action
         guard FamilyConfiguration.isFamilyHead else {
-            AlertManager.enqueueAlertForPresentation(familyPermissionAlertController)
+            AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.invalidFamilyPermissionTitle, forSubtitle: VisualConstant.BannerTextConstant.invalidFamilyPermissionSubtitle, forStyle: .danger)
             return
         }
         
@@ -206,7 +207,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
         guard indexOfSelectedRow > indexOfActiveSubscription else {
             // The user is downgrading their subscription, show a disclaimer
             let downgradeSubscriptionDisclaimer = GeneralUIAlertController(title: "Are you sure you want to downgrade your Hound subscription?", message: "If you exceed your new family member or dog limit, you won't be able to add or update any dogs, reminders, or logs. This means you might have to delete family members or dogs to restore functionality.", preferredStyle: .alert)
-            downgradeSubscriptionDisclaimer.addAction(UIAlertAction(title: "Yes, I understand", style: .default, handler: { _ in
+            downgradeSubscriptionDisclaimer.addAction(UIAlertAction(title: "Yes, I'm sure", style: .default, handler: { _ in
                 purchaseSelectedProduct()
             }))
             downgradeSubscriptionDisclaimer.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -244,22 +245,12 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
                         return
                     }
                     
-                    self.performSpinningCheckmarkAnimation()
+                    AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.purchasedSubscriptionTitle, forSubtitle: VisualConstant.BannerTextConstant.purchasedSubscriptionSubtitle, forStyle: .success)
                     
                     self.reloadTableAndLabels()
                 }
             }
         }
     }
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

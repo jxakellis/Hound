@@ -49,7 +49,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
     
     func didRemoveReminder(reminderId: Int) {
         shouldPromptSaveWarning = true
-        try! modifiableDogReminders.removeReminder(forReminderId: reminderId)
+        try? modifiableDogReminders.removeReminder(forReminderId: reminderId)
     }
     
     // MARK: - UITextFieldDelegate
@@ -77,9 +77,9 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
     
     @IBOutlet private weak var dogName: BorderedUITextField!
     
-    @IBOutlet weak var dogIcon: ScaledUIButton!
+    @IBOutlet private weak var dogIcon: ScaledUIButton!
     
-    @IBAction func didClickIcon(_ sender: Any) {
+    @IBAction private func didClickIcon(_ sender: Any) {
         AlertManager.enqueueActionSheetForPresentation(imagePickMethodAlertController, sourceView: dogIcon, permittedArrowDirections: [.up, .down])
     }
     
@@ -123,7 +123,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
             // add updated reminders as they already have their reminderId
             dog.dogReminders.updateReminders(forReminders: updatedReminders)
             for deletedReminder in deletedReminders {
-                try! dog.dogReminders.removeReminder(forReminderId: deletedReminder.reminderId)
+                try? dog.dogReminders.removeReminder(forReminderId: deletedReminder.reminderId)
             }
             addDogButton.beginQuerying()
             addDogButtonBackground.beginQuerying(isBackgroundButton: true)
@@ -256,9 +256,9 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         }
     }
     
-    @IBOutlet weak var dogRemoveButton: UIBarButtonItem!
+    @IBOutlet private weak var dogRemoveButton: UIBarButtonItem!
     
-    @IBAction func willRemoveDog(_ sender: Any) {
+    @IBAction private func willRemoveDog(_ sender: Any) {
         // button should only be able to be clicked if targetDog != nil but always good to double check
         guard let dogToUpdate = dogToUpdate else {
             return
@@ -354,13 +354,9 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         oneTimeSetup()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        AlertManager.globalPresenter = self
-    }
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        AlertManager.globalPresenter = self
     }
     
     /// Called to initalize all data, if a dog is passed then it uses that, otherwise uses default
@@ -378,7 +374,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         
         // buttons
         dogIcon.layer.masksToBounds = true
-        dogIcon.layer.cornerRadius = dogIcon.frame.width/2
+        dogIcon.layer.cornerRadius = dogIcon.frame.width / 2
         
         if let dogToUpdate = dogToUpdate {
             // Updating a dog
@@ -393,8 +389,13 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
                 dogIcon.setImage(dogToUpdate.dogIcon, for: .normal)
             }
             // has to copy reminders so changed that arent saved don't use reference data property to make actual modification
-            modifiableDogReminders = dogToUpdate.dogReminders.copy() as? ReminderManager
-            dogsReminderNavigationViewController.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: modifiableDogReminders.copy() as! ReminderManager)
+            if let modifiableDogReminders = dogToUpdate.dogReminders.copy() as? ReminderManager {
+                self.modifiableDogReminders = modifiableDogReminders
+                if let copyOfModifiableDogReminders = modifiableDogReminders.copy() as? ReminderManager {
+                    dogsReminderNavigationViewController.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: copyOfModifiableDogReminders)
+                }
+                
+            }
         }
         else {
             // New dog
@@ -404,8 +405,9 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
             dogName.text = ""
             dogIcon.setImage(ClassConstant.DogConstant.chooseImageForDog, for: .normal)
             modifiableDogReminders = ReminderManager(initReminders: ClassConstant.ReminderConstant.defaultReminders)
-            dogsReminderNavigationViewController.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: modifiableDogReminders.copy() as! ReminderManager)
-            // no need to pass reminders to dogsReminderNavigationViewController as reminders are empty
+            if let copyOfModifiableDogReminders = modifiableDogReminders.copy() as? ReminderManager {
+                dogsReminderNavigationViewController.didPassReminders(sender: Sender(origin: self, localized: self), passedReminders: copyOfModifiableDogReminders)
+            }
         }
         
         initalDogName = dogName.text
@@ -429,8 +431,8 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "dogReminderNavigationController"{
-            dogsReminderNavigationViewController = segue.destination as? DogsReminderNavigationViewController
+        if let dogsReminderNavigationViewController = segue.destination as? DogsReminderNavigationViewController {
+            self.dogsReminderNavigationViewController = dogsReminderNavigationViewController
             dogsReminderNavigationViewController.passThroughDelegate = self
         }
         

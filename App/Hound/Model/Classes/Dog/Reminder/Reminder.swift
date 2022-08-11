@@ -111,11 +111,11 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         copy.reminderAction = self.reminderAction
         copy.reminderCustomActionName = self.reminderCustomActionName
         
-        copy.countdownComponents = self.countdownComponents.copy() as! CountdownComponents
-        copy.weeklyComponents = self.weeklyComponents.copy() as! WeeklyComponents
-        copy.monthlyComponents = self.monthlyComponents.copy() as! MonthlyComponents
-        copy.oneTimeComponents = self.oneTimeComponents.copy() as! OneTimeComponents
-        copy.snoozeComponents = self.snoozeComponents.copy() as! SnoozeComponents
+        copy.countdownComponents = self.countdownComponents.copy() as? CountdownComponents ?? CountdownComponents()
+        copy.weeklyComponents = self.weeklyComponents.copy() as? WeeklyComponents ?? WeeklyComponents()
+        copy.monthlyComponents = self.monthlyComponents.copy() as? MonthlyComponents ?? MonthlyComponents()
+        copy.oneTimeComponents = self.oneTimeComponents.copy() as? OneTimeComponents ?? OneTimeComponents()
+        copy.snoozeComponents = self.snoozeComponents.copy() as? SnoozeComponents ?? SnoozeComponents()
         copy.storedReminderType = self.reminderType
         
         copy.hasAlarmPresentationHandled = self.hasAlarmPresentationHandled
@@ -557,68 +557,67 @@ extension Reminder {
         else if reminderType != reminder.reminderType {
             return false
         }
-        else {
-            // known at this point that the reminderTypes are the same
-            switch reminderType {
-            case .countdown:
-                if countdownComponents.executionInterval != reminder.countdownComponents.executionInterval {
-                    return false
-                }
-                else if countdownComponents.intervalElapsed != reminder.countdownComponents.intervalElapsed {
-                    return false
-                }
-                else {
-                    // everything the same!
-                    return true
-                }
-            case .weekly:
-                if weeklyComponents.hour != reminder.weeklyComponents.hour {
-                    return false
-                }
-                else if weeklyComponents.minute != reminder.weeklyComponents.minute {
-                    return false
-                }
-                else if weeklyComponents.weekdays != reminder.weeklyComponents.weekdays {
-                    return false
-                }
-                else if weeklyComponents.isSkipping != reminder.weeklyComponents.isSkipping {
-                    return false
-                }
-                else if weeklyComponents.isSkippingDate != reminder.weeklyComponents.isSkippingDate {
-                    return false
-                }
-                else {
-                    // all the same!
-                    return true
-                }
-            case .monthly:
-                if monthlyComponents.hour != reminder.monthlyComponents.hour {
-                    return false
-                }
-                else if monthlyComponents.minute != reminder.monthlyComponents.minute {
-                    return false
-                }
-                else if monthlyComponents.day != reminder.monthlyComponents.day {
-                    return false
-                }
-                else if monthlyComponents.isSkipping != reminder.monthlyComponents.isSkipping {
-                    return false
-                }
-                else if monthlyComponents.isSkippingDate != reminder.monthlyComponents.isSkippingDate {
-                    return false
-                }
-                else {
-                    // all the same!
-                    return true
-                }
-            case .oneTime:
-                if oneTimeComponents.oneTimeDate != reminder.oneTimeComponents.oneTimeDate {
-                    return false
-                }
-                else {
-                    // all the same!
-                    return true
-                }
+        
+        // known at this point that the reminderTypes are the same
+        switch reminderType {
+        case .countdown:
+            if countdownComponents.executionInterval != reminder.countdownComponents.executionInterval {
+                return false
+            }
+            else if countdownComponents.intervalElapsed != reminder.countdownComponents.intervalElapsed {
+                return false
+            }
+            else {
+                // everything the same!
+                return true
+            }
+        case .weekly:
+            if weeklyComponents.hour != reminder.weeklyComponents.hour {
+                return false
+            }
+            else if weeklyComponents.minute != reminder.weeklyComponents.minute {
+                return false
+            }
+            else if weeklyComponents.weekdays != reminder.weeklyComponents.weekdays {
+                return false
+            }
+            else if weeklyComponents.isSkipping != reminder.weeklyComponents.isSkipping {
+                return false
+            }
+            else if weeklyComponents.isSkippingDate != reminder.weeklyComponents.isSkippingDate {
+                return false
+            }
+            else {
+                // all the same!
+                return true
+            }
+        case .monthly:
+            if monthlyComponents.hour != reminder.monthlyComponents.hour {
+                return false
+            }
+            else if monthlyComponents.minute != reminder.monthlyComponents.minute {
+                return false
+            }
+            else if monthlyComponents.day != reminder.monthlyComponents.day {
+                return false
+            }
+            else if monthlyComponents.isSkipping != reminder.monthlyComponents.isSkipping {
+                return false
+            }
+            else if monthlyComponents.isSkippingDate != reminder.monthlyComponents.isSkippingDate {
+                return false
+            }
+            else {
+                // all the same!
+                return true
+            }
+        case .oneTime:
+            if oneTimeComponents.oneTimeDate != reminder.oneTimeComponents.oneTimeDate {
+                return false
+            }
+            else {
+                // all the same!
+                return true
             }
         }
     }

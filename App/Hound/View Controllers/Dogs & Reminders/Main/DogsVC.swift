@@ -55,7 +55,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     func willOpenDogMenu(forDogId dogId: Int?) {
         
         if dogId == nil {
-            self.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsAddDogViewController")
+            self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsAddDogViewController")
         }
         else {
             if let currentDog = try? dogManager.findDog(forDogId: dogId!) {
@@ -66,7 +66,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
                     guard newDog != nil else {
                         return
                     }
-                    self.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsAddDogViewController")
+                    self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsAddDogViewController")
                     self.dogsAddDogViewController.dogToUpdate = newDog
                 }
             }
@@ -81,7 +81,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
         // creating new
         if reminderId == nil {
             // no need to query as nothing in server since creating
-            self.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsIndependentReminderViewController")
+            self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsIndependentReminderViewController")
             dogsIndependentReminderViewController.parentDogId = parentDogId
         }
         // updating
@@ -91,7 +91,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
             RemindersRequest.get(invokeErrorManager: true, forDogId: parentDogId, forReminderId: reminderId!) { reminder, _ in
                 RequestUtils.endRequestIndictator {
                     if reminder != nil {
-                        self.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsIndependentReminderViewController")
+                        self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsIndependentReminderViewController")
                         self.dogsIndependentReminderViewController.parentDogId = parentDogId
                         self.dogsIndependentReminderViewController.targetReminder = reminder
                     }
@@ -173,7 +173,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
                 return
             }
             
-            self.performSpinningCheckmarkAnimation()
+            AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.refreshRemindersTitle, forSubtitle: VisualConstant.BannerTextConstant.refreshRemindersSubtitle, forStyle: .success)
             self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
         }
         
@@ -221,8 +221,8 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
         self.changeAddStatus(newAddStatus: false)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
     }
     
@@ -262,7 +262,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
         /// Toggles to adding
         if newAddStatus == true {
             // Slight correction with last () as even with the correct corrindates for aligned trailing for some reason the the new subbuttons slightly bluge out when they should be conceiled by the WillAddButton.
-            let originXWithAlignedTrailing: CGFloat = (willAddButton.frame.origin.x+willAddButton.frame.width)-subButtonSize-(willAddButton.frame.size.width*0.035)
+            let originXWithAlignedTrailing: CGFloat = (willAddButton.frame.origin.x + willAddButton.frame.width) - subButtonSize - (willAddButton.frame.size.width * 0.035)
             
             // Creates the "add new dog" button to click
             let willAddDogButton = ScaledUIButton(frame: CGRect(origin: CGPoint(x: originXWithAlignedTrailing, y: willAddButton.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
@@ -318,7 +318,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
                 let buttonOrigin = button.frame.origin
                 let buttonLabelOrigin = buttonLabel.frame.origin
                 
-                let originYWithAlignedMiddle = willAddButton.frame.midY - (button.frame.height/2)
+                let originYWithAlignedMiddle = willAddButton.frame.midY - (button.frame.height / 2)
                 
                 button.frame.origin.y = originYWithAlignedMiddle
                 buttonBackground.frame.origin.y = originYWithAlignedMiddle
@@ -332,8 +332,8 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
                 view.addSubview(button)
                 
                 UIView.animate(withDuration: VisualConstant.AnimationConstant.largeButtonShow) {
-                    self.willAddButton.transform = CGAffineTransform(rotationAngle: -.pi/4)
-                    self.willAddButtonBackground.transform = CGAffineTransform(rotationAngle: -.pi/4)
+                    self.willAddButton.transform = CGAffineTransform(rotationAngle: -.pi / 4)
+                    self.willAddButtonBackground.transform = CGAffineTransform(rotationAngle: -.pi / 4)
                     self.willAddButton.tintColor = .systemRed
                     
                     button.frame.origin = buttonOrigin
@@ -342,8 +342,8 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
                     buttonLabelBackground.frame.origin = buttonLabelOrigin
                     
                     self.dimScreenView.alpha = 0.66
-                    MainTabBarViewController.mainTabBarViewController.tabBar.alpha = 0.06
-                    MainTabBarViewController.mainTabBarViewController.dogsNavigationViewController.navigationBar.alpha = 0.06
+                    MainTabBarViewController.mainTabBarViewController?.tabBar.alpha = 0.06
+                    MainTabBarViewController.mainTabBarViewController?.dogsNavigationViewController?.navigationBar.alpha = 0.06
                     
                 }
                 
@@ -362,7 +362,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
                 let buttonLabel = addButtonsLabel[buttonIndex]
                 let buttonLabelBackground = addButtonsLabelBackground[buttonIndex]
                 
-                let originYWithAlignedMiddle = willAddButton.frame.midY - (button.frame.height/2)
+                let originYWithAlignedMiddle = willAddButton.frame.midY - (button.frame.height / 2)
                 
                 UIView.animate(withDuration: VisualConstant.AnimationConstant.largeButtonShow) {
                     self.willAddButton.transform = .identity
@@ -376,8 +376,8 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
                     buttonLabelBackground.frame.origin.x = self.view.safeAreaLayoutGuide.layoutFrame.maxX
                     
                     self.dimScreenView.alpha = 0
-                    MainTabBarViewController.mainTabBarViewController.tabBar.alpha = 1
-                    MainTabBarViewController.mainTabBarViewController.dogsNavigationViewController.navigationBar.alpha = 1
+                    MainTabBarViewController.mainTabBarViewController?.tabBar.alpha = 1
+                    MainTabBarViewController.mainTabBarViewController?.dogsNavigationViewController?.navigationBar.alpha = 1
                     
                 } completion: { (_) in
                     DispatchQueue.main.asyncAfter(deadline: .now() + VisualConstant.AnimationConstant.largeButtonHide) {
@@ -407,7 +407,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     private func createAddButtonLabel(_ button: ScaledUIButton, text: String) -> ScaledUILabel {
         let buttonLabelFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
         let buttonLabelSize = text.bounding(font: buttonLabelFont)
-        let buttonLabel = ScaledUILabel(frame: CGRect(origin: CGPoint(x: button.frame.origin.x - buttonLabelSize.width, y: button.frame.midY - (buttonLabelSize.height/2)), size: buttonLabelSize ))
+        let buttonLabel = ScaledUILabel(frame: CGRect(origin: CGPoint(x: button.frame.origin.x - buttonLabelSize.width, y: button.frame.midY - (buttonLabelSize.height / 2)), size: buttonLabelSize ))
         buttonLabel.minimumScaleFactor = 1.0
         
         if buttonLabel.frame.origin.x < 10 {
@@ -475,16 +475,16 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "dogsAddDogViewController"{
-            dogsAddDogViewController = segue.destination as! DogsAddDogViewController
+        if let dogsAddDogViewController = segue.destination as? DogsAddDogViewController {
+            self.dogsAddDogViewController = dogsAddDogViewController
             dogsAddDogViewController.delegate = self
         }
-        else if segue.identifier == "dogsTableViewController" {
-            dogsMainScreenTableViewController = segue.destination as! DogsTableViewController
+        else if let dogsMainScreenTableViewController = segue.destination as? DogsTableViewController {
+            self.dogsMainScreenTableViewController = dogsMainScreenTableViewController
             dogsMainScreenTableViewController.delegate = self
         }
-        else if segue.identifier == "dogsIndependentReminderViewController" {
-            dogsIndependentReminderViewController = segue.destination as! DogsIndependentReminderViewController
+        else if let dogsIndependentReminderViewController = segue.destination as? DogsIndependentReminderViewController {
+            self.dogsIndependentReminderViewController = dogsIndependentReminderViewController
             dogsIndependentReminderViewController.delegate = self
         }
     }

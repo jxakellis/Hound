@@ -23,7 +23,7 @@ enum NotificationSound: String, CaseIterable {
     case radar = "Radar"
     case apex = "Apex"
     case beacon = "Beacon"
-    case bulletin  = "Bulletin"
+    case bulletin = "Bulletin"
     case byTheSeaside = "By The Seaside"
     case chimes  = "Chimes"
     case circuit = "Circuit"

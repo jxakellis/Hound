@@ -100,48 +100,25 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
             }
             else {
                 reminderIntervalLabel.text?.append(" on")
-                if reminder.weeklyComponents.weekdays.count == 1 {
-                    for weekdayInt in reminder.weeklyComponents.weekdays {
-                        switch weekdayInt {
-                        case 1:
-                            reminderIntervalLabel.text?.append(" Sunday")
-                        case 2:
-                            reminderIntervalLabel.text?.append(" Monday")
-                        case 3:
-                            reminderIntervalLabel.text?.append(" Tuesday")
-                        case 4:
-                            reminderIntervalLabel.text?.append(" Wednesday")
-                        case 5:
-                            reminderIntervalLabel.text?.append(" Thursday")
-                        case 6:
-                            reminderIntervalLabel.text?.append(" Friday")
-                        case 7:
-                            reminderIntervalLabel.text?.append(" Saturday")
-                        default:
-                            reminderIntervalLabel.text?.append(VisualConstant.TextConstant.unknownText)
-                        }
-                    }
-                }
-                else {
-                    for weekdayInt in reminder.weeklyComponents.weekdays {
-                        switch weekdayInt {
-                        case 1:
-                            reminderIntervalLabel.text?.append(" Su,")
-                        case 2:
-                            reminderIntervalLabel.text?.append(" M,")
-                        case 3:
-                            reminderIntervalLabel.text?.append(" Tu,")
-                        case 4:
-                            reminderIntervalLabel.text?.append(" W,")
-                        case 5:
-                            reminderIntervalLabel.text?.append(" Th,")
-                        case 6:
-                            reminderIntervalLabel.text?.append(" F,")
-                        case 7:
-                            reminderIntervalLabel.text?.append(" Sa,")
-                        default:
-                            reminderIntervalLabel.text?.append(VisualConstant.TextConstant.unknownText)
-                        }
+                let shouldAbreviateWeekday = reminder.weeklyComponents.weekdays.count > 1
+                for weekdayInt in reminder.weeklyComponents.weekdays {
+                    switch weekdayInt {
+                    case 1:
+                        reminderIntervalLabel.text?.append(shouldAbreviateWeekday ? " Su," : " Sunday")
+                    case 2:
+                        reminderIntervalLabel.text?.append(shouldAbreviateWeekday ? " M," : " Monday")
+                    case 3:
+                        reminderIntervalLabel.text?.append(shouldAbreviateWeekday ? " Tu," : " Tuesday")
+                    case 4:
+                        reminderIntervalLabel.text?.append(shouldAbreviateWeekday ? " W," : " Wednesday")
+                    case 5:
+                        reminderIntervalLabel.text?.append(shouldAbreviateWeekday ? " Th," : " Thursday")
+                    case 6:
+                        reminderIntervalLabel.text?.append(shouldAbreviateWeekday ? " F," : " Friday")
+                    case 7:
+                        reminderIntervalLabel.text?.append(shouldAbreviateWeekday ? " Sa," : " Saturday")
+                    default:
+                        reminderIntervalLabel.text?.append(VisualConstant.TextConstant.unknownText)
                     }
                 }
                 // checks if extra comma, then removes

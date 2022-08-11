@@ -19,10 +19,11 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
     // MARK: - Dogs Reminder Table View Cell
     
     func didUpdateReminderIsEnabled(sender: Sender, reminderId: Int, reminderIsEnabled: Bool) {
-        let sudoReminderManager = getReminderManager()
-        let reminder = try! sudoReminderManager.findReminder(forReminderId: reminderId)
+        guard let reminder = try? getReminderManager().findReminder(forReminderId: reminderId) else {
+            return
+        }
         reminder.reminderIsEnabled = reminderIsEnabled
-        setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
+        setReminderManager(sender: sender, newReminderManager: getReminderManager())
         delegate.didUpdateReminder(forReminder: reminder)
     }
 
@@ -50,7 +51,7 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
 
     func didRemoveReminder(sender: Sender, reminderId: Int) {
         let sudoReminderManager = getReminderManager()
-        try! sudoReminderManager.removeReminder(forReminderId: reminderId)
+        try? sudoReminderManager.removeReminder(forReminderId: reminderId)
         setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
 
         delegate.didRemoveReminder(reminderId: reminderId)
@@ -112,12 +113,12 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
             self.tableView.allowsSelection = true
         }
 
-        MainTabBarViewController.mainTabBarViewController.dogsViewController.dogsAddDogViewController.willHideButtons(isHidden: false)
+        MainTabBarViewController.mainTabBarViewController?.dogsViewController?.dogsAddDogViewController.willHideButtons(isHidden: false)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        MainTabBarViewController.mainTabBarViewController.dogsViewController.dogsAddDogViewController.willHideButtons(isHidden: true)
+        MainTabBarViewController.mainTabBarViewController?.dogsViewController?.dogsAddDogViewController.willHideButtons(isHidden: true)
     }
     // MARK: Table View Management
 
@@ -139,11 +140,12 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
     /// Configures cells at the given index path, pulls from reminder manager reminders to get configuration parameters for each cell, corrosponding cell goes to corrosponding index of reminder manager reminder e.g. cell 1 at [0]
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        let cell = tableView.dequeueReusableCell(withIdentifier: "dogsReminderTableViewCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "DogsReminderTableViewCell", for: indexPath)
 
-        let castCell = cell as! DogsReminderTableViewCell
-        castCell.delegate = self
-        castCell.setup(forReminder: getReminderManager().reminders[indexPath.row])
+        if let castCell = cell as? DogsReminderTableViewCell {
+            castCell.delegate = self
+            castCell.setup(forReminder: getReminderManager().reminders[indexPath.row])
+        }
 
         return cell
     }
@@ -164,7 +166,7 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         selectedReminder = getReminderManager().reminders[indexPath.row]
-        self.performSegueOnceInWindowHierarchy(segueIdentifier: "dogsNestedReminderViewController")
+        self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsNestedReminderViewController")
 
     }
 
@@ -205,8 +207,8 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Links delegate to NestedReminder
-        if segue.identifier == "dogsNestedReminderViewController" {
-            dogsNestedReminderViewController = segue.destination as! DogsNestedReminderViewController
+        if let dogsNestedReminderViewController = segue.destination as? DogsNestedReminderViewController {
+            self.dogsNestedReminderViewController = dogsNestedReminderViewController
             dogsNestedReminderViewController.delegate = self
             
             dogsNestedReminderViewController.targetReminder = selectedReminder

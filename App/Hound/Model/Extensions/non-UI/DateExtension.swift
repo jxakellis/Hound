@@ -24,7 +24,7 @@ extension Date {
             if currentDate.distance(to: pastDate).isLessThanOrEqualTo(5.0) {
                 return 1
             }
-            return Int((timeElapsedSincePast/interval).rounded())
+            return Int((timeElapsedSincePast / interval).rounded())
         }
         
         return Date(timeInterval: (Double(timesIntervalNeedsAdded) * interval), since: pastDate)

@@ -43,7 +43,7 @@ final class DogsReminderNavigationViewController: UINavigationController, DogsRe
         super.viewDidLoad()
 
         // Sets DogsReminderTableViewController delegate to self, this is required to pass through the data to DogsAddDogViewController as this navigation controller is in the way.
-        dogsReminderTableViewController = self.viewControllers[self.viewControllers.count-1] as? DogsReminderTableViewController
+        dogsReminderTableViewController = self.viewControllers[self.viewControllers.count - 1] as? DogsReminderTableViewController
         dogsReminderTableViewController.delegate = self
     }
 

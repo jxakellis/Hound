@@ -22,7 +22,7 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
 
     // MARK: - IB
     
-    @IBOutlet var interDayOfWeekConstraints: [NSLayoutConstraint]!
+    @IBOutlet private var interDayOfWeekConstraints: [NSLayoutConstraint]!
     
     @IBOutlet private weak var sundayButton: ScaledUIButton!
     @IBOutlet private weak var mondayButton: ScaledUIButton!
@@ -32,12 +32,14 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
     @IBOutlet private weak var fridayButton: ScaledUIButton!
     @IBOutlet private weak var saturdayButton: ScaledUIButton!
 
-    @IBOutlet var dayOfWeekBackgrounds: [ScaledUIButton]!
+    @IBOutlet private var dayOfWeekBackgrounds: [ScaledUIButton]!
     
     @IBAction private func didToggleWeekdayButton(_ sender: Any) {
         delegate.willDismissKeyboard()
 
-        let senderButton = sender as! ScaledUIButton
+        guard let senderButton = sender as? ScaledUIButton else {
+            return
+        }
         var targetColor: UIColor!
 
         if senderButton.tag == VisualConstant.ViewTagConstant.weekdayEnabled {
@@ -58,7 +60,7 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
 
     }
 
-    @IBOutlet weak var timeOfDayDatePicker: UIDatePicker!
+    @IBOutlet weak var timeOfDayDatePicker: UIDatePicker! // swiftlint:disable:this private_outlet
 
     @IBAction private func didUpdateTimeOfDay(_ sender: Any) {
         delegate.willDismissKeyboard()
@@ -87,7 +89,7 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        synchronizeWeekdays()
+        setupWeekdays()
         
         timeOfDayDatePicker.minuteInterval = EnumConstant.DevelopmentConstant.reminderMinuteInterval
 
@@ -116,49 +118,55 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
         }
     }
 
-    private func synchronizeWeekdays() {
-        let dayOfWeekButtons = [sundayButton, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton]
-
-        for dayOfWeekButton in dayOfWeekButtons {
-            guard let dayOfWeekButton = dayOfWeekButton else {
-                continue
+    private func setupWeekdays() {
+        disableAllWeekdays()
+        enableSelectedWeekDays()
+        
+        func disableAllWeekdays() {
+            let dayOfWeekButtons = [sundayButton, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton]
+            
+            for dayOfWeekButton in dayOfWeekButtons {
+                guard let dayOfWeekButton = dayOfWeekButton else {
+                    continue
+                }
+                dayOfWeekButton.tintColor = UIColor.systemGray4
+                dayOfWeekButton.tag = VisualConstant.ViewTagConstant.weekdayDisabled
             }
-            dayOfWeekButton.tintColor = UIColor.systemGray4
-            dayOfWeekButton.tag = VisualConstant.ViewTagConstant.weekdayDisabled
         }
         
-        guard let passedWeekDays = passedWeekDays else {
-            return
-        }
+        func enableSelectedWeekDays() {
+            guard let passedWeekDays = passedWeekDays else {
+                return
+            }
 
-        for dayOfWeek in passedWeekDays {
-            switch dayOfWeek {
-            case 1:
-                sundayButton.tintColor = .systemBlue
-                sundayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
-            case 2:
-                mondayButton.tintColor = .systemBlue
-                mondayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
-            case 3:
-                tuesdayButton.tintColor = .systemBlue
-                tuesdayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
-            case 4:
-                wednesdayButton.tintColor = .systemBlue
-                wednesdayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
-            case 5:
-                thursdayButton.tintColor = .systemBlue
-                thursdayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
-            case 6:
-                fridayButton.tintColor = .systemBlue
-                fridayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
-            case 7:
-                saturdayButton.tintColor = .systemBlue
-                saturdayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
-            default:
-                break
+            for dayOfWeek in passedWeekDays {
+                switch dayOfWeek {
+                case 1:
+                    sundayButton.tintColor = .systemBlue
+                    sundayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
+                case 2:
+                    mondayButton.tintColor = .systemBlue
+                    mondayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
+                case 3:
+                    tuesdayButton.tintColor = .systemBlue
+                    tuesdayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
+                case 4:
+                    wednesdayButton.tintColor = .systemBlue
+                    wednesdayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
+                case 5:
+                    thursdayButton.tintColor = .systemBlue
+                    thursdayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
+                case 6:
+                    fridayButton.tintColor = .systemBlue
+                    fridayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
+                case 7:
+                    saturdayButton.tintColor = .systemBlue
+                    saturdayButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
+                default:
+                    break
+                }
             }
         }
-
     }
 
     /// Converts enabled buttons to an array of day of weeks according to CalendarComponents.weekdays, 1 being sunday and 7 being saturday
@@ -167,7 +175,7 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
             let dayOfWeekButtons = [sundayButton, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton]
 
             for dayOfWeekIndex in 0..<dayOfWeekButtons.count where dayOfWeekButtons[dayOfWeekIndex]?.tag == VisualConstant.ViewTagConstant.weekdayEnabled {
-                days.append(dayOfWeekIndex+1)
+                days.append(dayOfWeekIndex + 1)
             }
 
             if days.isEmpty == true {
@@ -188,7 +196,7 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
 
         for constraint in interDayOfWeekConstraints {
             // the distance between week day buttons should be 8 points on a 414 point screen, so this adjusts that ratio to fit any width of screen
-            constraint.constant = (8.0/414.0)*self.view.safeAreaLayoutGuide.layoutFrame.width
+            constraint.constant = (8.0 / 414.0) * self.view.safeAreaLayoutGuide.layoutFrame.width
         }
 
     }

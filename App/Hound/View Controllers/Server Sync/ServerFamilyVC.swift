@@ -89,17 +89,21 @@ final class ServerFamilyViewController: UIViewController {
     }
     
     override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
         repeatableSetup()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         // Called before the view is added to the windows’ view hierarchy
         super.viewWillAppear(animated)
-        // Make this view the presenter if the app has to present any alert.
-        AlertManager.globalPresenter = self
         
         // make sure the view has the correct interfaceStyle
         UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AlertManager.globalPresenter = self
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -118,7 +122,7 @@ final class ServerFamilyViewController: UIViewController {
         setupJoinFamily()
         func setupCreateFamily() {
             // set to made to have fully rounded corners
-            createFamilyButton.layer.cornerRadius = createFamilyButton.frame.height/2
+            createFamilyButton.layer.cornerRadius = createFamilyButton.frame.height / 2
             createFamilyButton.layer.masksToBounds = true
             createFamilyButton.layer.borderWidth = 1
             createFamilyButton.layer.borderColor = UIColor.black.cgColor
@@ -127,13 +131,13 @@ final class ServerFamilyViewController: UIViewController {
         func setupCreateFamilyDisclaimer() {
             createFamilyDisclaimerLabel.translatesAutoresizingMaskIntoConstraints = false
             
-            createFamilyDisclaimerLeadingConstraint.constant += (createFamilyButton.frame.height/6)
-            createFamilyDisclaimerTrailingConstraint.constant += (createFamilyButton.frame.height/6)
+            createFamilyDisclaimerLeadingConstraint.constant += (createFamilyButton.frame.height / 6)
+            createFamilyDisclaimerTrailingConstraint.constant += (createFamilyButton.frame.height / 6)
         }
         
         func setupJoinFamily() {
             // set to made to have fully rounded corners
-            joinFamilyButton.layer.cornerRadius = joinFamilyButton.frame.height/2
+            joinFamilyButton.layer.cornerRadius = joinFamilyButton.frame.height / 2
             joinFamilyButton.layer.masksToBounds = true
             joinFamilyButton.layer.borderWidth = 1
             joinFamilyButton.layer.borderColor = UIColor.black.cgColor

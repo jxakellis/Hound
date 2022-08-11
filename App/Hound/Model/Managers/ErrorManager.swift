@@ -11,20 +11,11 @@ import UIKit
 enum ErrorManager {
     
     /// Alerts for an unspecified error. Title is default with a parameter specified message
-    static func alert(forMessage message: String, hasOKAlertAction: Bool = true, serverRelated: Bool = false) {
+    static func alert(forMessage message: String) {
         
-        AlertManager.willShowAlert(title: "Uh oh! There seems to be an issue.", message: message, hasOKAlertAction: hasOKAlertAction, serverRelated: serverRelated)
+        AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.alertForErrorTitle, forSubtitle: message, forStyle: .danger)
         
-        AppDelegate.generalLogger.error("Known error: \(message)")
-        
-    }
-    
-    /// Alerts for a unspecified error from a specified location. Title is extracted from sender with a parameter specified message
-    static private func alertForUnknown(error: Error) {
-        
-        AlertManager.willShowAlert(title: "Bizzare, there seems to be an unknown issue occuring!", message: "Please restart and/or reinstall Hound if issues persist. Issue description: \(error.localizedDescription)")
-        
-        AppDelegate.generalLogger.error("\(VisualConstant.TextConstant.unknownText) error: \(error.localizedDescription)")
+        AppDelegate.generalLogger.error("Alerted user for error: \(message)")
         
     }
     
@@ -51,16 +42,15 @@ enum ErrorManager {
         // Response Related
         else if let castError = error as? GeneralResponseError {
             guard castError != .appBuildOutdated else {
-                ErrorManager.alert(
-                    forMessage: createErrorMessage(forErrorRawValue: castError.rawValue),
-                    hasOKAlertAction: false,
-                    serverRelated: true)
+                // Create an alert controller that blocks everything, as it has no alert actions to dismiss
+                let outdatedAppVersionAlertController = GeneralUIAlertController(title: VisualConstant.BannerTextConstant.alertForErrorTitle, message: castError.rawValue, preferredStyle: .alert)
+                AlertManager.enqueueAlertForPresentation(outdatedAppVersionAlertController)
                 return
             }
-            ErrorManager.alert(forMessage: createErrorMessage(forErrorRawValue: castError.rawValue), serverRelated: true)
+            ErrorManager.alert(forMessage: createErrorMessage(forErrorRawValue: castError.rawValue))
         }
         else if let castError = error as? FamilyResponseError {
-            ErrorManager.alert(forMessage: createErrorMessage(forErrorRawValue: castError.rawValue), serverRelated: true)
+            ErrorManager.alert(forMessage: createErrorMessage(forErrorRawValue: castError.rawValue))
         }
         // Dog Object Related
         else if let castError = error as? DogManagerError {
@@ -100,7 +90,7 @@ enum ErrorManager {
             ErrorManager.alert(forMessage: castError.rawValue)
         }
         else {
-            alertForUnknown(error: error)
+            ErrorManager.alert(forMessage: error.localizedDescription)
         }
     }
     

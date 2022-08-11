@@ -82,7 +82,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
     func didSelectLog(parentDogId: Int, log: Log) {
         selectedLog = log
         parentDogIdOfSelectedLog = parentDogId
-        self.performSegueOnceInWindowHierarchy(segueIdentifier: "logsAddLogViewController")
+        self.performSegueOnceInWindowHierarchy(segueIdentifier: "LogsAddLogViewController")
         selectedLog = nil
         parentDogIdOfSelectedLog = nil
     }
@@ -93,22 +93,30 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
 
     func setDogManager(sender: Sender, forDogManager: DogManager) {
          dogManager = forDogManager
-
-        // we dont want to update LogsTableViewController if its the one providing the update
+        
+        if (sender.localized is LogsTableViewController) == true {
+            // If LogsTableViewController deleted the last log of all the dog(s), then clear the filter and disable the logsFilter button
+            if familyHasAtLeastOneLog == false {
+                logsFilter = [:]
+                logsTableViewController?.logsFilter = logsFilter
+                filterButton.isEnabled = false
+            }
+        }
         if (sender.localized is LogsTableViewController) == false {
-            // need to update table view
             logsTableViewController?.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
             
-            // logs modified have been added so we need to reset the filter. Note: setting the dogManager of logsTableViewController automatically clears the logsFilter, so don't invoke the log filter method
+            // Since a VC that isn't LogsTableViewController made the change, we should clear the filter as external changes (e.g. add logs, update log...) could have made filter invalid.
             logsFilter = [:]
-        }
-        // we dont want to update MainTabBarViewController with the delegate if its the one providing the update
-        if (sender.localized is MainTabBarViewController) == false {
-            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
+            logsTableViewController?.logsFilter = logsFilter
+            filterButton.isEnabled = familyHasAtLeastOneLog
         }
         if (sender.localized is MainTabBarViewController) == true {
             // pop add log vc as the dog it could have been adding to is now deleted
             logsAddLogViewController?.navigationController?.popViewController(animated: false)
+        }
+        // we dont want to update MainTabBarViewController with the delegate if its the one providing the update
+        if (sender.localized is MainTabBarViewController) == false {
+            delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
         }
     }
 
@@ -116,7 +124,6 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
 
     @IBOutlet private weak var containerView: UIView!
     
-    // TO DO NOW disable filter button if there is no logs to filter by
     @IBOutlet private weak var filterButton: UIBarButtonItem!
 
     @IBOutlet private weak var refreshButton: UIBarButtonItem!
@@ -133,7 +140,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
                 return
             }
             
-            self.performSpinningCheckmarkAnimation()
+            AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.refreshLogsTitle, forSubtitle: VisualConstant.BannerTextConstant.refreshLogsSubtitle, forStyle: .success)
             self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
         }
         
@@ -179,6 +186,12 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
 
     // Dictionary literal the currently applied logsFilter. [ "currentDogId" : ["filterByAction1","filterByAction2"]]. Filters by selected actions under selected dogs. Note: if the dictionary literal is empty, then shows all
     private var logsFilter: [Int: [LogAction]] = [:]
+    
+    private var familyHasAtLeastOneLog: Bool {
+        return dogManager.dogs.contains { dog in
+            return dog.dogLogs.logs.isEmpty == false
+        }
+    }
 
     var logsTableViewController: LogsTableViewController! = nil
 
@@ -203,15 +216,15 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        AlertManager.globalPresenter = self
-
-        filterButton.isEnabled = !dogManager.dogs.isEmpty
+        filterButton.isEnabled = familyHasAtLeastOneLog
         willAddLog?.isHidden = dogManager.dogs.isEmpty
         willAddLogBackground?.isHidden = dogManager.dogs.isEmpty
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        AlertManager.globalPresenter = self
+        
         setupDropDown()
     }
 
@@ -282,7 +295,9 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
     
     func setupCellForDropDown(cell: UITableViewCell, indexPath: IndexPath, dropDownUIViewIdentifier: String) {
         
-        let customCell = cell as! DropDownLogFilterTableViewCell
+        guard let customCell = cell as? DropDownLogFilterTableViewCell else {
+            return
+        }
         
         // clear filter
         if indexPath.section == dogManager.dogs.count {
@@ -296,7 +311,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
             }
             // dog log filter
             else {
-                customCell.setup(forDog: dog, forLogAction: dog.dogLogs.uniqueLogActions[indexPath.row-1])
+                customCell.setup(forDog: dog, forLogAction: dog.dogLogs.uniqueLogActions[indexPath.row - 1])
             }
         }
         
@@ -350,9 +365,13 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
     }
     
     func selectItemInDropDown(indexPath: IndexPath, dropDownUIViewIdentifier: String) {
-        let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as! DropDownLogFilterTableViewCell
+        guard let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as? DropDownLogFilterTableViewCell else {
+            return
+        }
         // flip isSelectedInDropDown status
         selectedCell.willToggleDropDownSelection(forSelected: !selectedCell.isSelectedInDropDown)
+        
+        logsTableViewController.logsFilter = logsFilter
         
         // dog log filter was selected
         if selectedCell.dogId != nil && selectedCell.logAction != nil {
@@ -369,8 +388,9 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
                 // Check to see if we just added the first logAction filter for a certain dog
                 if existingLogActionFilters.count == 1 {
                     // this is the first logAction selected under the dog. Therefore, the dog cell won't be selected. Therefore, we have to select the dog cell
-                    let dogCell = dropDown.dropDownTableView!.cellForRow(at: IndexPath(row: 0, section: indexPath.section)) as! DropDownLogFilterTableViewCell
-                    dogCell.willToggleDropDownSelection(forSelected: true)
+                    if let dogCell = dropDown.dropDownTableView?.cellForRow(at: IndexPath(row: 0, section: indexPath.section)) as? DropDownLogFilterTableViewCell {
+                        dogCell.willToggleDropDownSelection(forSelected: true)
+                    }
                 }
             }
             // cell is now unselected, remove logAction from logsFilter array
@@ -390,8 +410,9 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
                 if existingLogActionFilters.count == 0 {
                     // We removed the last logAction for a dog. Remove the logsFilter key and unselect the dog
                     logsFilter[selectedCell.dogId!] = nil
-                    let dogCell = dropDown.dropDownTableView!.cellForRow(at: IndexPath(row: 0, section: indexPath.section)) as! DropDownLogFilterTableViewCell
-                    dogCell.willToggleDropDownSelection(forSelected: false)
+                    if let dogCell = dropDown.dropDownTableView?.cellForRow(at: IndexPath(row: 0, section: indexPath.section)) as? DropDownLogFilterTableViewCell {
+                        dogCell.willToggleDropDownSelection(forSelected: false)
+                    }
                 }
             }
         }
@@ -413,8 +434,9 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
                 let numberOfLogActionRows = numberOfRows(forSection: indexPath.section, dropDownUIViewIdentifier: "") - 1
                 for logActionRow in 0..<numberOfLogActionRows {
                     // shift logActionRow by 1, as first row cell is a dogCell so we select the proper cell
-                    let logActionCell = dropDown.dropDownTableView!.cellForRow(at: IndexPath(row: logActionRow + 1, section: indexPath.section)) as! DropDownLogFilterTableViewCell
-                    logActionCell.willToggleDropDownSelection(forSelected: true)
+                    if let logActionCell = dropDown.dropDownTableView?.cellForRow(at: IndexPath(row: logActionRow + 1, section: indexPath.section)) as? DropDownLogFilterTableViewCell {
+                        logActionCell.willToggleDropDownSelection(forSelected: true)
+                    }
                 }
             }
             // the dog filter is now unselected, make sure every logAction under it is also unselcted
@@ -426,8 +448,9 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
                 let numberOfLogActionRows = numberOfRows(forSection: indexPath.section, dropDownUIViewIdentifier: "") - 1
                 for logActionRow in 0..<numberOfLogActionRows {
                     // shift logActionRow by 1, as first row cell is a dogCell so we select the proper cell
-                    let logActionCell = dropDown.dropDownTableView!.cellForRow(at: IndexPath(row: logActionRow + 1, section: indexPath.section)) as! DropDownLogFilterTableViewCell
-                    logActionCell.willToggleDropDownSelection(forSelected: false)
+                    if let logActionCell = dropDown.dropDownTableView?.cellForRow(at: IndexPath(row: logActionRow + 1, section: indexPath.section)) as? DropDownLogFilterTableViewCell {
+                        logActionCell.willToggleDropDownSelection(forSelected: false)
+                    }
                 }
             }
         }
@@ -443,33 +466,32 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
                 
                 // for each dog section, go through both the dog and logAction cells
                 for cellRow in 0..<numberOfRows {
-                    let cell = dropDown.dropDownTableView!.cellForRow(at: IndexPath(row: cellRow, section: dogSection)) as! DropDownLogFilterTableViewCell
-                    cell.willToggleDropDownSelection(forSelected: false)
+                    if let cell = dropDown.dropDownTableView?.cellForRow(at: IndexPath(row: cellRow, section: dogSection)) as? DropDownLogFilterTableViewCell {
+                        cell.willToggleDropDownSelection(forSelected: false)
+                    }
                 }
             }
             
             dropDown.hideDropDown()
         }
-        
-        logsTableViewController.willApplyFiltering(forLogsFilter: logsFilter)
     }
 
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "logsTableViewController"{
-            logsTableViewController = segue.destination as? LogsTableViewController
+        if let logsTableViewController = segue.destination as? LogsTableViewController {
+            self.logsTableViewController = logsTableViewController
             logsTableViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
             logsTableViewController.delegate = self
         }
-        else if segue.identifier == "logsAddLogViewController"{
-            logsAddLogViewController = segue.destination as? LogsAddLogViewController
+        else if let logsAddLogViewController = segue.destination as? LogsAddLogViewController {
+            self.logsAddLogViewController = logsAddLogViewController
 
-            logsAddLogViewController!.parentDogIdToUpdate = parentDogIdOfSelectedLog
-            logsAddLogViewController!.logToUpdate = selectedLog
-            logsAddLogViewController!.dogManager = dogManager
-            logsAddLogViewController!.delegate = self
+            logsAddLogViewController.parentDogIdToUpdate = parentDogIdOfSelectedLog
+            logsAddLogViewController.logToUpdate = selectedLog
+            logsAddLogViewController.dogManager = dogManager
+            logsAddLogViewController.delegate = self
         }
     }
 

@@ -42,9 +42,9 @@ final class LogsBodyWithIconTableViewCell: UITableViewCell {
         logDateBottomConstraint.constant = 5.0 * sizeRatio
         logDateHeightConstraint.constant = 25.0 * sizeRatio
         
-        logActionLabel.font =  logActionLabel.font.withSize(fontSize * sizeRatio)
-        logDateLabel.font =  logDateLabel.font.withSize(fontSize * sizeRatio)
-        logNoteLabel.font =  logNoteLabel.font.withSize(fontSize * sizeRatio)
+        logActionLabel.font = logActionLabel.font.withSize(fontSize * sizeRatio)
+        logDateLabel.font = logDateLabel.font.withSize(fontSize * sizeRatio)
+        logNoteLabel.font = logNoteLabel.font.withSize(fontSize * sizeRatio)
         
         // setup the icon afterwards otherwise the cornerRadius could be wrong since its dependent on the sizeRatio code above
         let cellHeight = logDateTopConstraint.constant + logDateBottomConstraint.constant + logDateHeightConstraint.constant
@@ -52,7 +52,7 @@ final class LogsBodyWithIconTableViewCell: UITableViewCell {
         dogIconImageView.image = parentDogIcon
         dogIconImageView.layer.masksToBounds = true
         // we can't use dogIconImageView.frame.height/2 because if isCompactView is changed and this cell is reloaded, then dogIconImageView.frame is still the same as its old value at this point. That means the corner radius will be incorrect (large corner radius for compact cell and compact corner radius for large cell)
-        dogIconImageView.layer.cornerRadius = dogIconImageViewHeight/2
+        dogIconImageView.layer.cornerRadius = dogIconImageViewHeight / 2
         
         self.logActionLabel.text = log.logAction.displayActionName(logCustomActionName: log.logCustomActionName, isShowingAbreviatedCustomActionName: true)
         

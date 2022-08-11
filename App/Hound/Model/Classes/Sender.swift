@@ -14,15 +14,16 @@ final class Sender {
     var localized: AnyObject?
     
     init(origin: AnyObject, localized: AnyObject) {
-        if origin is Sender {
-            let castedSender = origin as! Sender
-            self.origin = castedSender.origin
+        if let sender = origin as? Sender {
+            self.origin = sender.origin
         }
         else {
             self.origin = origin
         }
-        if localized is Sender {
-            fatalError("localized cannot be sender")
+        
+        // localized cannot be sender, however we can let it pass
+        if let sender = localized as? Sender {
+            self.localized = sender.localized
         }
         else {
             self.localized = localized

@@ -33,9 +33,13 @@ class SettingsFamilyIntroductionViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        AlertManager.globalPresenter = self
         
         repeatableSetup()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AlertManager.globalPresenter = self
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -89,15 +93,5 @@ class SettingsFamilyIntroductionViewController: UIViewController {
         
         upgradeFamilyWithSubscriptionLabel.attributedText = message
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

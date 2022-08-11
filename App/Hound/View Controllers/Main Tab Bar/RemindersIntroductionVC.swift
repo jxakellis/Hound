@@ -34,7 +34,8 @@ final class RemindersIntroductionViewController: UIViewController {
         NotificationManager.requestNotificationAuthorization(shouldAdviseUserBeforeRequestingNotifications: true) {
             // wait the user to select an grant or deny notification permission (and for the server to response if situation requires the use of it) before continuing
             
-            guard self.remindersToggleSwitch.isOn == true else {
+            // The reminders toggle switch could have been programically removed and deleted
+            guard let remindersToggleSwitch = self.remindersToggleSwitch, remindersToggleSwitch.isOn == true else {
                 // the user has chosen to not add default reminders (or was blocked because their family already created reminders for some dog)
                 self.continueButton.isEnabled = true
                 LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = true
@@ -99,8 +100,8 @@ final class RemindersIntroductionViewController: UIViewController {
         continueButton.layer.cornerRadius = VisualConstant.SizeConstant.largeRectangularButtonCornerRadious
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
     }
 

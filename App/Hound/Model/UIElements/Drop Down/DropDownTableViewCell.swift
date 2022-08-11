@@ -13,7 +13,7 @@ class DropDownTableViewCell: UITableViewCell {
     
     // MARK: IB
     
-    @IBOutlet weak var label: ScaledUILabel!
+    @IBOutlet weak var label: ScaledUILabel! // swiftlint:disable:this private_outlet
     
     @IBOutlet private weak var leading: NSLayoutConstraint!
     

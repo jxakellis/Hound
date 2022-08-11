@@ -35,15 +35,15 @@ final class LogsBodyWithoutIconTableViewCell: UITableViewCell {
         let fontSize = VisualConstant.FontConstant.logCellFontSize
         let sizeRatio = UserConfiguration.logsInterfaceScale.currentScaleFactor
         
-        dogNameLabel.font =  dogNameLabel.font.withSize(fontSize * sizeRatio)
+        dogNameLabel.font = dogNameLabel.font.withSize(fontSize * sizeRatio)
         dogNameTopConstraint.constant = 5.0 * sizeRatio
         dogNameBottomConstraint.constant = 5.0 * sizeRatio
         dogNameHeightConstraint.constant = 25.0 * sizeRatio
         
         familyMemberNameLabel.font = familyMemberNameLabel.font.withSize(fontSize * sizeRatio)
-        logActionLabel.font =  logActionLabel.font.withSize(fontSize * sizeRatio)
-        logDateLabel.font =  logDateLabel.font.withSize(fontSize * sizeRatio)
-        logNoteLabel.font =  logNoteLabel.font.withSize(fontSize * sizeRatio)
+        logActionLabel.font = logActionLabel.font.withSize(fontSize * sizeRatio)
+        logDateLabel.font = logDateLabel.font.withSize(fontSize * sizeRatio)
+        logNoteLabel.font = logNoteLabel.font.withSize(fontSize * sizeRatio)
         
         familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: log.userId)?.displayFirstName ?? VisualConstant.TextConstant.unknownText
         

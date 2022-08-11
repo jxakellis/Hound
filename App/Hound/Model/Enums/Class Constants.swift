@@ -72,7 +72,7 @@ enum ClassConstant {
             let reminder = Reminder()
             reminder.reminderAction = .feed
             reminder.reminderType = .weekly
-            try? reminder.weeklyComponents.changeHour(forHour: 5+12)
+            try? reminder.weeklyComponents.changeHour(forHour: 5 + 12)
             try? reminder.weeklyComponents.changeMinute(forMinute: 0)
             return reminder
         }

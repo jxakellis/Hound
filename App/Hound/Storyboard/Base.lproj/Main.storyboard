@@ -20,7 +20,7 @@
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xpx-kk-0ei">
                                 <rect key="frame" x="0.0" y="88" width="414" height="537"/>
                                 <connections>
-                                    <segue destination="ngF-4H-kgO" kind="embed" identifier="dogsReminderManagerViewController" id="1g9-zQ-LRF"/>
+                                    <segue destination="ngF-4H-kgO" kind="embed" identifier="DogsReminderManagerViewController" id="1g9-zQ-LRF"/>
                                 </connections>
                             </containerView>
                         </subviews>
@@ -74,7 +74,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="dogsReminderTableViewCell" id="79O-Ma-zM6" customClass="DogsReminderTableViewCell" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="DogsReminderTableViewCell" id="79O-Ma-zM6" customClass="DogsReminderTableViewCell" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="44.5" width="414" height="65.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="79O-Ma-zM6" id="uZD-xf-ZPI">
@@ -134,7 +134,7 @@
                             <color key="tintColor" systemColor="systemBlueColor"/>
                             <connections>
                                 <action selector="addButton:" destination="Tmz-g7-lDw" id="NVj-fE-tGY"/>
-                                <segue destination="uJe-nq-2qo" kind="show" identifier="dogsNestedReminderViewController" id="bee-G5-zdc"/>
+                                <segue destination="uJe-nq-2qo" kind="show" identifier="DogsNestedReminderViewController" id="bee-G5-zdc"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -172,11 +172,11 @@
             <objects>
                 <viewController title="Dog Reminder Count Down" id="gRX-vW-PrI" customClass="DogsReminderCountdownViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1dJ-c5-zaj">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="531"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="343"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="748" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" countDownDuration="5400" minuteInterval="5" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nvt-ES-U6h">
-                                <rect key="frame" x="0.0" y="90" width="414" height="441"/>
+                                <rect key="frame" x="0.0" y="90" width="414" height="253"/>
                                 <connections>
                                     <action selector="willUpdateCountdown:" destination="gRX-vW-PrI" eventType="editingChanged" id="Qt9-8F-KfP"/>
                                     <action selector="willUpdateCountdown:" destination="gRX-vW-PrI" eventType="valueChanged" id="xZo-V2-zDP"/>
@@ -214,16 +214,16 @@
             <objects>
                 <viewController title="Dog Reminder Editor" id="ngF-4H-kgO" customClass="DogsReminderManagerViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wCA-tV-nak">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="725"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="537"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8KF-Nk-KXG" userLabel="Container">
-                                <rect key="frame" x="0.0" y="44" width="414" height="681"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="493"/>
                                 <subviews>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3lK-XC-aXM">
-                                        <rect key="frame" x="0.0" y="150" width="414" height="531"/>
+                                        <rect key="frame" x="0.0" y="150" width="414" height="343"/>
                                         <connections>
-                                            <segue destination="Kec-u3-YCz" kind="embed" identifier="dogsReminderOneTimeViewController" id="1Lf-u6-k6g"/>
+                                            <segue destination="Kec-u3-YCz" kind="embed" identifier="DogsReminderOneTimeViewController" id="1Lf-u6-k6g"/>
                                         </connections>
                                     </containerView>
                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="je1-CJ-DNf">
@@ -247,21 +247,21 @@
                                         </connections>
                                     </segmentedControl>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MhX-Hm-1r1">
-                                        <rect key="frame" x="0.0" y="150" width="414" height="531"/>
+                                        <rect key="frame" x="0.0" y="150" width="414" height="343"/>
                                         <connections>
-                                            <segue destination="gRX-vW-PrI" kind="embed" identifier="dogsReminderCountdownViewController" id="wbe-5J-4CA"/>
+                                            <segue destination="gRX-vW-PrI" kind="embed" identifier="DogsReminderCountdownViewController" id="wbe-5J-4CA"/>
                                         </connections>
                                     </containerView>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XhW-xN-8L1">
-                                        <rect key="frame" x="0.0" y="150" width="414" height="531"/>
+                                        <rect key="frame" x="0.0" y="150" width="414" height="343"/>
                                         <connections>
-                                            <segue destination="Zjt-y9-htp" kind="embed" identifier="dogsReminderWeeklyViewController" id="FIA-mJ-bsf"/>
+                                            <segue destination="Zjt-y9-htp" kind="embed" identifier="DogsReminderWeeklyViewController" id="FIA-mJ-bsf"/>
                                         </connections>
                                     </containerView>
                                     <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="o5c-qK-6d7">
-                                        <rect key="frame" x="0.0" y="150" width="414" height="531"/>
+                                        <rect key="frame" x="0.0" y="150" width="414" height="343"/>
                                         <connections>
-                                            <segue destination="Xze-9B-CGF" kind="embed" identifier="dogsReminderMonthlyViewController" id="eqG-zf-IyY"/>
+                                            <segue destination="Xze-9B-CGF" kind="embed" identifier="DogsReminderMonthlyViewController" id="eqG-zf-IyY"/>
                                         </connections>
                                     </containerView>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" clearsOnBeginEditing="YES" minimumFontSize="15" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="WfV-Xu-CGv" customClass="BorderedUITextField" customModule="Hound" customModuleProvider="target">
@@ -389,7 +389,7 @@
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6MT-az-4bi">
                                 <rect key="frame" x="0.0" y="188" width="414" height="625"/>
                                 <connections>
-                                    <segue destination="eFt-4z-qcU" kind="embed" identifier="dogReminderNavigationController" id="E3d-ML-4L4"/>
+                                    <segue destination="eFt-4z-qcU" kind="embed" identifier="DogReminderNavigationController" id="E3d-ML-4L4"/>
                                 </connections>
                             </containerView>
                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iWI-X8-QFy" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
@@ -604,7 +604,7 @@
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yIK-7w-b7P">
                                 <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <connections>
-                                    <segue destination="AEi-KZ-cSf" kind="embed" identifier="dogsTableViewController" id="Sf7-Qi-QCS"/>
+                                    <segue destination="AEi-KZ-cSf" kind="embed" identifier="DogsTableViewController" id="Sf7-Qi-QCS"/>
                                 </connections>
                             </containerView>
                             <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vhe-hX-gRw" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
@@ -642,8 +642,8 @@
                         <outlet property="refreshButton" destination="754-FX-0Lh" id="QFJ-3C-wnd"/>
                         <outlet property="willAddButton" destination="8b5-pw-vvl" id="Wv6-nC-Pwc"/>
                         <outlet property="willAddButtonBackground" destination="vhe-hX-gRw" id="hfX-Dv-kK8"/>
-                        <segue destination="ihm-KQ-9ZO" kind="show" identifier="dogsIndependentReminderViewController" id="aHQ-Vp-kOd"/>
-                        <segue destination="yj4-3A-FdI" kind="show" identifier="dogsAddDogViewController" id="ZXp-P8-izA"/>
+                        <segue destination="ihm-KQ-9ZO" kind="show" identifier="DogsIndependentReminderViewController" id="aHQ-Vp-kOd"/>
+                        <segue destination="yj4-3A-FdI" kind="show" identifier="DogsAddDogViewController" id="ZXp-P8-izA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Nw-L8-lE0" sceneMemberID="firstResponder"/>
@@ -661,7 +661,7 @@
                         <viewLayoutGuide key="contentLayoutGuide" id="kT8-53-Cu8"/>
                         <viewLayoutGuide key="frameLayoutGuide" id="dO0-k2-qcN"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="16" reuseIdentifier="dogsDogDisplayTableViewCell" id="tHZ-ho-5tn" customClass="DogsDogDisplayTableViewCell" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="16" reuseIdentifier="DogsDogDisplayTableViewCell" id="tHZ-ho-5tn" customClass="DogsDogDisplayTableViewCell" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="44.5" width="414" height="85.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" tableViewCell="tHZ-ho-5tn" id="G9A-nQ-CAR">
@@ -732,7 +732,7 @@
                                     <outlet property="rightChevronWidthConstraint" destination="ieF-kk-hdN" id="k8R-68-Naq"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="dogsReminderDisplayTableViewCell" id="Lai-xI-ipQ" customClass="DogsReminderDisplayTableViewCell" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="DogsReminderDisplayTableViewCell" id="Lai-xI-ipQ" customClass="DogsReminderDisplayTableViewCell" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="130" width="414" height="80.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" tableViewCell="Lai-xI-ipQ" id="g9N-na-X20">
@@ -851,7 +851,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsHeaderTableViewCell" id="tUb-6f-NwU" customClass="LogsHeaderTableViewCell" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LogsHeaderTableViewCell" id="tUb-6f-NwU" customClass="LogsHeaderTableViewCell" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="44.5" width="414" height="40.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="tUb-6f-NwU" id="bMw-jC-JqT">
@@ -897,7 +897,7 @@
                                     <outlet property="headerTopConstraint" destination="6oI-1A-cAk" id="hhw-xJ-MUB"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsBodyWithoutIconTableViewCell" id="d7b-Lq-gDR" customClass="LogsBodyWithoutIconTableViewCell" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LogsBodyWithoutIconTableViewCell" id="d7b-Lq-gDR" customClass="LogsBodyWithoutIconTableViewCell" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="85" width="414" height="35.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="d7b-Lq-gDR" id="yjP-uX-5gd">
@@ -976,7 +976,7 @@
                                     <outlet property="logNoteLabel" destination="2TH-Kb-17i" id="0OQ-md-B5f"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logsBodyWithIconTableViewCell" id="vFK-E5-puQ" customClass="LogsBodyWithIconTableViewCell" customModule="Hound" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LogsBodyWithIconTableViewCell" id="vFK-E5-puQ" customClass="LogsBodyWithIconTableViewCell" customModule="Hound" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="120.5" width="414" height="35.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vFK-E5-puQ" id="3L0-6w-EHw">
@@ -1080,7 +1080,7 @@
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2c1-46-nyx">
                                 <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <connections>
-                                    <segue destination="Vb4-XU-h1N" kind="embed" identifier="logsTableViewController" id="f4s-dd-Si4"/>
+                                    <segue destination="Vb4-XU-h1N" kind="embed" identifier="LogsTableViewController" id="f4s-dd-Si4"/>
                                 </connections>
                             </containerView>
                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yMB-b6-Ja9" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
@@ -1098,7 +1098,7 @@
                                 </state>
                                 <connections>
                                     <action selector="willAddButton:" destination="8rJ-Kc-sve" eventType="touchUpInside" id="jyA-re-Kv4"/>
-                                    <segue destination="SZm-Ec-oLW" kind="show" identifier="logsAddLogViewController" id="yhi-NW-dKs"/>
+                                    <segue destination="SZm-Ec-oLW" kind="show" identifier="LogsAddLogViewController" id="yhi-NW-dKs"/>
                                 </connections>
                             </button>
                             <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M9H-R5-vFI" customClass="ScaledUIButton" customModule="Hound" customModuleProvider="target">
@@ -1381,7 +1381,7 @@
                         <segue destination="3Gc-35-HHr" kind="relationship" relationship="viewControllers" id="rPh-NH-iWm"/>
                         <segue destination="c3p-F3-kMn" kind="relationship" relationship="viewControllers" id="lzU-1b-eKA"/>
                         <segue destination="t9t-B7-eVe" kind="relationship" relationship="viewControllers" id="CeX-iU-V0j"/>
-                        <segue destination="RBT-bM-2BD" kind="presentation" identifier="remindersIntroductionViewController" modalPresentationStyle="fullScreen" id="cWf-yg-dvP"/>
+                        <segue destination="RBT-bM-2BD" kind="presentation" identifier="RemindersIntroductionViewController" modalPresentationStyle="fullScreen" id="cWf-yg-dvP"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
@@ -1521,10 +1521,10 @@
             </objects>
             <point key="canvasLocation" x="4103" y="19"/>
         </scene>
-        <!--Family Introduction View Controller-->
+        <!--Hound Introduction View Controller-->
         <scene sceneID="DrI-KL-fmy">
             <objects>
-                <viewController id="w3D-Ib-MEE" customClass="FamilyIntroductionViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="w3D-Ib-MEE" customClass="HoundIntroductionViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="diK-x9-88a">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1653,7 +1653,7 @@
                         <outlet property="dogNameHeader" destination="RY9-6G-ybY" id="jA8-Gn-jt8"/>
                         <outlet property="dogsTitle" destination="esp-x0-Cun" id="ieG-LU-Fkf"/>
                         <outlet property="interfaceStyleSegmentedControl" destination="5cO-UW-ieo" id="E0j-oM-LFF"/>
-                        <segue destination="49e-Tb-3d3" kind="presentation" identifier="mainTabBarViewController" modalPresentationStyle="fullScreen" id="nsH-qM-K4m"/>
+                        <segue destination="49e-Tb-3d3" kind="presentation" identifier="MainTabBarViewController" modalPresentationStyle="fullScreen" id="nsH-qM-K4m"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ig9-EO-oHv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -1722,7 +1722,7 @@
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="M3d-rJ-te8">
                                 <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <connections>
-                                    <segue destination="ngF-4H-kgO" kind="embed" identifier="dogsReminderManagerViewController" id="GZX-3R-sVV"/>
+                                    <segue destination="ngF-4H-kgO" kind="embed" identifier="DogsReminderManagerViewController" id="GZX-3R-sVV"/>
                                 </connections>
                             </containerView>
                         </subviews>
@@ -1778,11 +1778,11 @@
             <objects>
                 <viewController title="Dog Reminder Weekly" id="Zjt-y9-htp" customClass="DogsReminderWeeklyViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="87k-Ug-zEc">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="531"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="343"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="5" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="KE9-sW-ERX">
-                                <rect key="frame" x="0.0" y="113.5" width="414" height="417.5"/>
+                                <rect key="frame" x="0.0" y="113.5" width="414" height="229.5"/>
                                 <connections>
                                     <action selector="didUpdateTimeOfDay:" destination="Zjt-y9-htp" eventType="valueChanged" id="wg8-nh-bSt"/>
                                 </connections>
@@ -2091,11 +2091,11 @@
             <objects>
                 <viewController title="Dog Reminder Monthly" id="Xze-9B-CGF" customClass="DogsReminderMonthlyViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="kVk-E3-URR">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="531"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="343"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="5" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="9v0-8g-D5f">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="531"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="343"/>
                                 <connections>
                                     <action selector="didUpdateTimeOfDay:" destination="Xze-9B-CGF" eventType="valueChanged" id="CMn-st-pM3"/>
                                 </connections>
@@ -2123,11 +2123,11 @@
             <objects>
                 <viewController id="Kec-u3-YCz" customClass="DogsReminderOneTimeViewController" customModule="Hound" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Vi5-vu-bH5">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="531"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="343"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="5" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="zll-Bn-jIA">
-                                <rect key="frame" x="0.0" y="90" width="414" height="441"/>
+                                <rect key="frame" x="0.0" y="90" width="414" height="253"/>
                                 <connections>
                                     <action selector="didUpdateDatePicker:" destination="Kec-u3-YCz" eventType="valueChanged" id="QTg-ax-iEK"/>
                                 </connections>
@@ -2175,41 +2175,51 @@
                                 </constraints>
                                 <imageReference key="image" image="whitePawWithHands" symbolScale="large"/>
                             </imageView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="775" verticalHuggingPriority="775" horizontalCompressionResistancePriority="775" verticalCompressionResistancePriority="775" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="ffm-7i-C0x">
-                                <rect key="frame" x="189.5" y="558" width="35" height="35"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="35" id="b2e-ld-e62"/>
-                                    <constraint firstAttribute="height" constant="35" id="rs2-1a-Up1"/>
-                                </constraints>
-                                <color key="color" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </activityIndicatorView>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H4Q-f7-mxG">
-                                <rect key="frame" x="10" y="628" width="394" height="5"/>
+                                <rect key="frame" x="10" y="558" width="394" height="5"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="5" id="1cT-rC-46S"/>
                                 </constraints>
                                 <color key="progressTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="trackTintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </progressView>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tgc-BH-SgI">
+                                <rect key="frame" x="10" y="598" width="394" height="63"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="tgc-BH-SgI" secondAttribute="height" multiplier="1:0.16" id="enG-ml-wZ4"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="30"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="Go to Login Page">
+                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="didClickTroubleshootLogin:" destination="fvG-Uo-RvE" eventType="touchUpInside" id="xHW-kD-mhH"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="TR9-Eu-OqZ"/>
                         <color key="backgroundColor" systemColor="systemBlueColor"/>
                         <constraints>
                             <constraint firstItem="TR9-Eu-OqZ" firstAttribute="trailing" secondItem="H4Q-f7-mxG" secondAttribute="trailing" constant="10" id="1J5-6R-e4n"/>
+                            <constraint firstItem="H4Q-f7-mxG" firstAttribute="top" secondItem="3dG-2F-DxQ" secondAttribute="bottom" constant="35" id="E63-77-gXi"/>
                             <constraint firstItem="H4Q-f7-mxG" firstAttribute="leading" secondItem="TR9-Eu-OqZ" secondAttribute="leading" constant="10" id="FWt-Zs-YtK"/>
-                            <constraint firstItem="ffm-7i-C0x" firstAttribute="top" secondItem="3dG-2F-DxQ" secondAttribute="bottom" priority="900" constant="35" id="Y1h-kD-kDf"/>
+                            <constraint firstItem="TR9-Eu-OqZ" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="tgc-BH-SgI" secondAttribute="bottom" constant="10" id="a8M-qm-C5b"/>
+                            <constraint firstItem="tgc-BH-SgI" firstAttribute="leading" secondItem="TR9-Eu-OqZ" secondAttribute="leading" constant="10" id="bEK-vK-yuU"/>
                             <constraint firstItem="3dG-2F-DxQ" firstAttribute="centerY" secondItem="5oC-hS-dcf" secondAttribute="centerY" id="cOg-Uk-4IL"/>
-                            <constraint firstItem="ffm-7i-C0x" firstAttribute="centerX" secondItem="5oC-hS-dcf" secondAttribute="centerX" id="hMx-GJ-sg9"/>
+                            <constraint firstItem="tgc-BH-SgI" firstAttribute="top" secondItem="H4Q-f7-mxG" secondAttribute="bottom" constant="35" id="iYO-jU-97I"/>
                             <constraint firstItem="3dG-2F-DxQ" firstAttribute="centerX" secondItem="5oC-hS-dcf" secondAttribute="centerX" id="uXo-B9-3xV"/>
-                            <constraint firstItem="H4Q-f7-mxG" firstAttribute="top" secondItem="ffm-7i-C0x" secondAttribute="bottom" constant="35" id="zRZ-21-ECl"/>
+                            <constraint firstItem="TR9-Eu-OqZ" firstAttribute="trailing" secondItem="tgc-BH-SgI" secondAttribute="trailing" constant="10" id="y4u-Au-erT"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="getRequestsProgressView" destination="H4Q-f7-mxG" id="QFe-hL-RUW"/>
-                        <segue destination="49e-Tb-3d3" kind="presentation" identifier="mainTabBarViewController" modalPresentationStyle="fullScreen" id="Jqw-FR-46g"/>
-                        <segue destination="w3D-Ib-MEE" kind="presentation" identifier="familyIntroductionViewController" modalPresentationStyle="fullScreen" id="3AW-Zf-Dxq"/>
-                        <segue destination="58r-r7-NND" kind="presentation" identifier="serverLoginViewController" modalPresentationStyle="fullScreen" id="bqE-nO-Ztf"/>
-                        <segue destination="5hN-fO-nij" kind="presentation" identifier="serverFamilyViewController" modalPresentationStyle="fullScreen" id="glJ-wS-tog"/>
+                        <outlet property="troubleshootLoginButton" destination="tgc-BH-SgI" id="cWR-XY-bUE"/>
+                        <segue destination="49e-Tb-3d3" kind="presentation" identifier="MainTabBarViewController" modalPresentationStyle="fullScreen" id="Jqw-FR-46g"/>
+                        <segue destination="w3D-Ib-MEE" kind="presentation" identifier="HoundIntroductionViewController" modalPresentationStyle="fullScreen" id="3AW-Zf-Dxq"/>
+                        <segue destination="58r-r7-NND" kind="presentation" identifier="ServerLoginViewController" modalPresentationStyle="fullScreen" id="bqE-nO-Ztf"/>
+                        <segue destination="5hN-fO-nij" kind="presentation" identifier="ServerFamilyViewController" modalPresentationStyle="fullScreen" id="glJ-wS-tog"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="f1n-Oj-Vw4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -2372,13 +2382,13 @@
                                 <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mFd-Uq-gKl" userLabel="containerView">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="736.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="789"/>
                                         <subviews>
                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" placeholderIntrinsicWidth="414" placeholderIntrinsicHeight="300" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="fq8-z6-5RR" customClass="AdjustedHeightUITableView" customModule="Hound" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="281.5" width="414" height="300"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <prototypes>
-                                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="settingsSubscriptionTierTableViewCell" id="iND-ir-ytS" customClass="SettingsSubscriptionTierTableViewCell" customModule="Hound" customModuleProvider="target">
+                                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="SettingsSubscriptionTierTableViewCell" id="iND-ir-ytS" customClass="SettingsSubscriptionTierTableViewCell" customModule="Hound" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="44.5" width="414" height="212"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="iND-ir-ytS" id="z6n-Lo-dIT">
@@ -2485,7 +2495,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hSQ-LR-IrS">
-                                                <rect key="frame" x="10" y="626.5" width="394" height="50"/>
+                                                <rect key="frame" x="10" y="679" width="394" height="50"/>
                                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="50" id="Gwp-T3-QfC"/>
@@ -2500,8 +2510,15 @@
                                                 </connections>
                                             </button>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kz4-Qh-Lak" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="684" width="394" height="45"/>
+                                                <rect key="frame" x="10" y="736.5" width="394" height="45"/>
                                                 <string key="text">Contacts Apple's servers to retrieve all Hound subscription purchases you've made with your Apple Id. Any transaction that's missing from Hound's database is added.</string>
+                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
+                                                <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a4l-0Y-Tid" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
+                                                <rect key="frame" x="18" y="589" width="378" height="45"/>
+                                                <string key="text">Free trials are only valid for your first subscription purchase. They do not reset if you switch to a different tier or create a new family.</string>
                                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="12.5"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                 <nil key="highlightedColor"/>
@@ -2516,10 +2533,11 @@
                                             <constraint firstItem="Wom-35-V3o" firstAttribute="top" secondItem="u2l-Wx-qrP" secondAttribute="bottom" constant="10" id="CPL-Nz-OdY"/>
                                             <constraint firstItem="u2l-Wx-qrP" firstAttribute="leading" secondItem="mFd-Uq-gKl" secondAttribute="leading" constant="10" id="FgB-vp-P9w"/>
                                             <constraint firstItem="kz4-Qh-Lak" firstAttribute="top" secondItem="hSQ-LR-IrS" secondAttribute="bottom" constant="7.5" id="INh-8t-AQb"/>
-                                            <constraint firstItem="hSQ-LR-IrS" firstAttribute="top" secondItem="fq8-z6-5RR" secondAttribute="bottom" constant="45" id="SH3-Ke-j8J"/>
+                                            <constraint firstItem="hSQ-LR-IrS" firstAttribute="top" secondItem="a4l-0Y-Tid" secondAttribute="bottom" constant="45" id="MW6-ko-sBD"/>
                                             <constraint firstAttribute="trailing" secondItem="u2l-Wx-qrP" secondAttribute="trailing" constant="10" id="Xl8-U9-DKQ"/>
                                             <constraint firstItem="Kyp-fu-QN0" firstAttribute="top" secondItem="S4d-o9-m3l" secondAttribute="bottom" constant="45" id="bHV-f9-SN6"/>
                                             <constraint firstAttribute="bottom" secondItem="kz4-Qh-Lak" secondAttribute="bottom" constant="7.5" id="dEl-FB-N4L"/>
+                                            <constraint firstItem="a4l-0Y-Tid" firstAttribute="top" secondItem="fq8-z6-5RR" secondAttribute="bottom" constant="7.5" id="dYQ-hu-UR8"/>
                                             <constraint firstItem="kz4-Qh-Lak" firstAttribute="trailing" secondItem="u2l-Wx-qrP" secondAttribute="trailing" id="eRq-1I-kJb"/>
                                             <constraint firstItem="Wom-35-V3o" firstAttribute="trailing" secondItem="u2l-Wx-qrP" secondAttribute="trailing" id="eag-la-8rd"/>
                                             <constraint firstItem="hSQ-LR-IrS" firstAttribute="leading" secondItem="u2l-Wx-qrP" secondAttribute="leading" id="g8z-iK-H0w"/>
@@ -2534,9 +2552,11 @@
                                             <constraint firstItem="S4d-o9-m3l" firstAttribute="leading" secondItem="u2l-Wx-qrP" secondAttribute="leading" id="pKG-Dr-HYd"/>
                                             <constraint firstItem="hSQ-LR-IrS" firstAttribute="trailing" secondItem="u2l-Wx-qrP" secondAttribute="trailing" id="q5F-cu-M8O"/>
                                             <constraint firstItem="S4d-o9-m3l" firstAttribute="trailing" secondItem="u2l-Wx-qrP" secondAttribute="trailing" id="rcR-Zu-tNJ"/>
+                                            <constraint firstAttribute="trailingMargin" secondItem="a4l-0Y-Tid" secondAttribute="trailing" constant="10" id="u7g-pE-H1z"/>
                                             <constraint firstItem="TOR-cL-txL" firstAttribute="top" secondItem="mFd-Uq-gKl" secondAttribute="top" id="xhE-rQ-GSG"/>
                                             <constraint firstItem="kz4-Qh-Lak" firstAttribute="leading" secondItem="u2l-Wx-qrP" secondAttribute="leading" id="xiZ-j7-g5K"/>
                                             <constraint firstItem="fq8-z6-5RR" firstAttribute="top" secondItem="Kyp-fu-QN0" secondAttribute="bottom" constant="2.5" id="xmD-Y6-coK"/>
+                                            <constraint firstItem="a4l-0Y-Tid" firstAttribute="leading" secondItem="mFd-Uq-gKl" secondAttribute="leadingMargin" constant="10" id="ys0-Gk-ac7"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -2593,7 +2613,7 @@
                                 <rect key="frame" x="0.0" y="88" width="414" height="725"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="spaceCellWithoutSeparator" id="X57-Ra-Kaa">
+                                    <tableViewCell hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="SpaceCellWithoutSeparatorTableViewCell" id="X57-Ra-Kaa">
                                         <rect key="frame" x="0.0" y="44.5" width="414" height="10.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="X57-Ra-Kaa" id="YEr-cA-bCc">
@@ -2615,7 +2635,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="settingsPersonalInformationViewController" id="Ezj-bA-5A8">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="SettingsPersonalInformationViewController" id="Ezj-bA-5A8">
                                         <rect key="frame" x="0.0" y="55" width="414" height="45.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Ezj-bA-5A8" id="xao-fa-lDC">
@@ -2662,7 +2682,7 @@
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" systemColor="systemBlueColor"/>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="settingsFamilyViewController" id="WSY-kv-Emh">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="SettingsFamilyViewController" id="WSY-kv-Emh">
                                         <rect key="frame" x="0.0" y="100.5" width="414" height="45.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="WSY-kv-Emh" id="5bJ-vN-jKf">
@@ -2709,7 +2729,7 @@
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" systemColor="systemBlueColor"/>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="settingsSubscriptionViewController" id="UgG-jE-3kn">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="SettingsSubscriptionViewController" id="UgG-jE-3kn">
                                         <rect key="frame" x="0.0" y="146" width="414" height="45.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="UgG-jE-3kn" id="hma-Y5-om2">
@@ -2756,7 +2776,7 @@
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" systemColor="systemBlueColor"/>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="settingsAppearanceViewController" id="Res-LM-YnK">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="SettingsAppearanceViewController" id="Res-LM-YnK">
                                         <rect key="frame" x="0.0" y="191.5" width="414" height="45.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Res-LM-YnK" id="AKS-XB-f9a">
@@ -2803,7 +2823,7 @@
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" systemColor="systemBlueColor"/>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="settingsNotificationsViewController" id="jaM-AL-YUC">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="SettingsNotificationsViewController" id="jaM-AL-YUC">
                                         <rect key="frame" x="0.0" y="237" width="414" height="45.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jaM-AL-YUC" id="BqV-uh-Wcp">
@@ -2850,7 +2870,7 @@
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" systemColor="systemBlueColor"/>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="spaceCellWithSeparator" id="hGc-1m-YyT">
+                                    <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="SpaceCellWithSeparatorTableViewCell" id="hGc-1m-YyT">
                                         <rect key="frame" x="0.0" y="282.5" width="414" height="12.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="hGc-1m-YyT" id="UTA-NN-fUD">
@@ -2872,7 +2892,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="settingsAboutViewController" id="nm9-7t-3eh">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="SettingsAboutViewController" id="nm9-7t-3eh">
                                         <rect key="frame" x="0.0" y="295" width="414" height="45.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nm9-7t-3eh" id="R21-dA-xxH">
@@ -2934,12 +2954,12 @@
                     <navigationItem key="navigationItem" title="Settings" id="SgC-m1-Scd"/>
                     <connections>
                         <outlet property="settingsPagesTableView" destination="P1u-Bt-7kx" id="5yE-Mb-jlQ"/>
-                        <segue destination="X8m-uQ-MZX" kind="show" identifier="settingsPersonalInformationViewController" id="jim-qT-xUl"/>
-                        <segue destination="bp1-Kg-aZ6" kind="show" identifier="settingsFamilyViewController" id="zKe-3a-UkM"/>
-                        <segue destination="Xot-sN-Sis" kind="show" identifier="settingsAppearanceViewController" id="9ko-vU-mmy"/>
-                        <segue destination="Vgb-2Y-U49" kind="show" identifier="settingsNotificationsViewController" id="u56-g4-HgI"/>
-                        <segue destination="EVm-tc-L7L" kind="show" identifier="settingsAboutViewController" id="EN1-r9-yDy"/>
-                        <segue destination="iJe-Tc-W3d" kind="show" identifier="settingsSubscriptionViewController" id="HQs-PF-7Hv"/>
+                        <segue destination="X8m-uQ-MZX" kind="show" identifier="SettingsPersonalInformationViewController" id="jim-qT-xUl"/>
+                        <segue destination="bp1-Kg-aZ6" kind="show" identifier="SettingsFamilyViewController" id="zKe-3a-UkM"/>
+                        <segue destination="Xot-sN-Sis" kind="show" identifier="SettingsAppearanceViewController" id="9ko-vU-mmy"/>
+                        <segue destination="Vgb-2Y-U49" kind="show" identifier="SettingsNotificationsViewController" id="u56-g4-HgI"/>
+                        <segue destination="EVm-tc-L7L" kind="show" identifier="SettingsAboutViewController" id="EN1-r9-yDy"/>
+                        <segue destination="iJe-Tc-W3d" kind="show" identifier="SettingsSubscriptionViewController" id="HQs-PF-7Hv"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ojr-2W-fri" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -3212,7 +3232,7 @@
                                                             <outlet property="fullNameLabel" destination="o6R-JO-Mp1" id="ubf-GE-W7j"/>
                                                         </connections>
                                                     </tableViewCell>
-                                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="settingsFamilyMemberTableViewCell" id="bep-XC-qfM" customClass="SettingsFamilyMemberTableViewCell" customModule="Hound" customModuleProvider="target">
+                                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="SettingsFamilyMemberTableViewCell" id="bep-XC-qfM" customClass="SettingsFamilyMemberTableViewCell" customModule="Hound" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="110" width="414" height="55.5"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="bep-XC-qfM" id="7vu-bF-Cak">
@@ -3335,7 +3355,7 @@
                                                     <constraint firstAttribute="width" secondItem="BpV-Kx-gbN" secondAttribute="height" multiplier="1:1" id="HNP-Lt-1bL"/>
                                                 </constraints>
                                                 <state key="normal" title="Button"/>
-                                                <buttonConfiguration key="configuration" style="plain" image="doc.on.doc" catalog="system">
+                                                <buttonConfiguration key="configuration" style="plain" image="square.and.arrow.up" catalog="system">
                                                     <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage"/>
                                                 </buttonConfiguration>
                                                 <connections>
@@ -3831,8 +3851,8 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Jqw-FR-46g"/>
-        <segue reference="GZX-3R-sVV"/>
+        <segue reference="nsH-qM-K4m"/>
+        <segue reference="1g9-zQ-LRF"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="alarm" catalog="system" width="124" height="128"/>
@@ -3847,7 +3867,6 @@
         <image name="chooseImageForDog" width="150" height="150"/>
         <image name="circle.fill" catalog="system" width="128" height="121"/>
         <image name="creditcard" catalog="system" width="128" height="88"/>
-        <image name="doc.on.doc" catalog="system" width="116" height="128"/>
         <image name="f.circle.fill" catalog="system" width="128" height="121"/>
         <image name="gearshape" catalog="system" width="128" height="121"/>
         <image name="iphone.radiowaves.left.and.right" catalog="system" width="128" height="85"/>
@@ -3862,6 +3881,7 @@
         <image name="plus.circle.fill" catalog="system" width="128" height="121"/>
         <image name="questionmark.circle" catalog="system" width="128" height="121"/>
         <image name="s.circle.fill" catalog="system" width="128" height="121"/>
+        <image name="square.and.arrow.up" catalog="system" width="115" height="128"/>
         <image name="t.circle.fill" catalog="system" width="128" height="121"/>
         <image name="trash" catalog="system" width="121" height="128"/>
         <image name="w.circle.fill" catalog="system" width="128" height="121"/>

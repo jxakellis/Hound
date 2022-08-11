@@ -52,9 +52,7 @@ enum ImageManager {
                 viewController.present(imagePicker, animated: true, completion: nil)
             }
             else {
-                let warningAlert  = GeneralUIAlertController(title: "Warning", message: "You don't have camera", preferredStyle: .alert)
-                warningAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                AlertManager.enqueueAlertForPresentation(warningAlert)
+                AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.noCameraTitle, forSubtitle: nil, forStyle: .danger)
             }
         }))
         

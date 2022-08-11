@@ -13,8 +13,10 @@ final class DogManager: NSObject, NSCopying, NSCoding {
     // MARK: - NSCopying
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = DogManager()
-        for i in 0..<dogs.count {
-            copy.dogs.append(dogs[i].copy() as! Dog)
+        for dog in dogs {
+            if let dogCopy = dog.copy() as? Dog {
+                copy.dogs.append(dogCopy)
+            }
         }
         return copy
     }

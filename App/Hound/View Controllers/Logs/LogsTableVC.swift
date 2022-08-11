@@ -22,21 +22,10 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
     func setDogManager(sender: Sender, forDogManager: DogManager) {
         dogManager = forDogManager
         
-        if !(sender.localized is LogsTableViewController) {
-            // if something external made changes (i.e. not having a user swipe on the table view), we should clear the filter as external changes could have made filter invalid
-            // If the view is currently visible, then we instantly reload the data. If it isn't then we indicate that the data should be reloaded next time the view appears
-            if isViewLoaded && view.window != nil {
-                willApplyFiltering(forLogsFilter: [:])
-            }
-            else {
-                tableViewDataSourceHasBeenUpdated = true
-            }
-        }
-        else {
+        if (sender.localized is LogsTableViewController) == true {
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
             self.reloadTableDataSource()
         }
-        
     }
     
     // MARK: - Properties
@@ -44,7 +33,24 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
     /// Array of tuples [(uniqueDay, uniqueMonth, uniqueYear, [(parentDogId, log)])]. This array has all of the logs for all of the dogs grouped what unique day/month/year they occured on, first element is furthest in the future and last element is the oldest. Optionally filters by the dogId and logAction provides IMPORTANT IMPORTANT IMPORTANT to store this value so we don't recompute more than needed
     private var groupedLogsByUniqueDate: [(Int, Int, Int, [(Int, Log)])] = []
     
-    private var logsFilter: [Int: [LogAction]] = [:]
+    private var storedLogsFilter: [Int: [LogAction]] = [:]
+    // Dictionary Literal of Dog IDs and their corresponding log actions. This indicates which dog(s) to filter by and what log actions of theirs to also filter by. [:] indicates no filter and all items are shown
+    var logsFilter: [Int: [LogAction]] {
+        get {
+            return storedLogsFilter
+        }
+        set (newLogsFilter) {
+            self.storedLogsFilter = newLogsFilter
+            
+            // If the view isn't currently visible, then we don't reload the data. We only reload the data once necessary, otherwise it's unnecessary processing to reload data that isn't in use. Without this change, for example, we could reloadTable() multiple times while a user is just modify reminders on the reminders page.
+            guard isViewLoaded && view.window != nil else {
+                tableViewDataSourceHasBeenUpdated = true
+                return
+            }
+            
+            reloadTable()
+        }
+    }
     
     /// used for determining if logs interface scale was changed and if the table view needs reloaded
     private var storedLogsInterfaceScale: LogsInterfaceScale = UserConfiguration.logsInterfaceScale
@@ -73,21 +79,16 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
         super.viewWillAppear(animated)
         
         if tableViewDataSourceHasBeenUpdated {
-            // Clears filter and reloads the table
             tableViewDataSourceHasBeenUpdated = false
-            willApplyFiltering(forLogsFilter: [:])
         }
-        else if storedLogsInterfaceScale != UserConfiguration.logsInterfaceScale {
+        if storedLogsInterfaceScale != UserConfiguration.logsInterfaceScale {
             storedLogsInterfaceScale = UserConfiguration.logsInterfaceScale
-            // Leaves filter alone and reloads table
-            reloadTable()
         }
-        else if storedMaximumNumberOfLogsDisplayed != UserConfiguration.maximumNumberOfLogsDisplayed {
+        if storedMaximumNumberOfLogsDisplayed != UserConfiguration.maximumNumberOfLogsDisplayed {
             storedMaximumNumberOfLogsDisplayed = UserConfiguration.maximumNumberOfLogsDisplayed
-            // Leaves filter alone and reloads table
-            reloadTable()
         }
         
+        reloadTable()
     }
     /// Makes a query to the server to retrieve new information then refreshed the tableView
     @objc private func refreshTable() {
@@ -126,14 +127,6 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
         }
     }
     
-    /// Will apply a filtering scheme dependent on indexPath, nil means going to no filtering.
-    func willApplyFiltering(forLogsFilter logsFilter: [Int: [LogAction]]) {
-        
-        self.logsFilter = logsFilter
-        
-        reloadTable()
-    }
-    
     // MARK: - Table View Data Source
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -168,58 +161,62 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
             }
         }
         
-        // no logs present
-        if groupedLogsByUniqueDate.count == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "logsHeaderTableViewCell", for: indexPath)
+        guard groupedLogsByUniqueDate.count > 0 else {
+            // no logs present
+            let cell = tableView.dequeueReusableCell(withIdentifier: "LogsHeaderTableViewCell", for: indexPath)
             
-            let customCell = cell as! LogsHeaderTableViewCell
-            customCell.setup(fromDate: nil, shouldShowFilterIndictator: shouldShowFilterIndicator)
+            if let customCell = cell as? LogsHeaderTableViewCell {
+                customCell.setup(fromDate: nil, shouldShowFilterIndictator: shouldShowFilterIndicator)
+            }
             
             return cell
         }
-        // logs are present and need a header (row being zero indicates that the cell is a header)
-        else if indexPath.row == 0 {
-            
+        
+        guard indexPath.row > 0 else {
+            // logs are present and need a header (row being zero indicates that the cell is a header)
             let nestedLogsArray: [(Int, Log)] = groupedLogsByUniqueDate[indexPath.section].3
             
             // For the given parent array, we will take the first log in the nested array. The header will extract the date information from that log. It doesn't matter which log we take as all logs will have the same day, month, and year since they were already sorted to be in that array.
             
-            let cell = tableView.dequeueReusableCell(withIdentifier: "logsHeaderTableViewCell", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: "LogsHeaderTableViewCell", for: indexPath)
             
-            let customCell = cell as! LogsHeaderTableViewCell
-            customCell.setup(fromDate: nestedLogsArray[0].1.logDate, shouldShowFilterIndictator: shouldShowFilterIndicator)
+            if let customCell = cell as? LogsHeaderTableViewCell {
+                customCell.setup(fromDate: nestedLogsArray[0].1.logDate, shouldShowFilterIndictator: shouldShowFilterIndicator)
+            }
             
             return cell
         }
+        
         // log
-        else {
+        let nestedLogsArray: [(Int, Log)] = groupedLogsByUniqueDate[indexPath.section].3
+        
+        // indexPath.row -1 corrects for the first row in the section being the header
+        let targetTuple = nestedLogsArray[indexPath.row - 1]
+        
+        guard let dog = try? dogManager.findDog(forDogId: targetTuple.0) else {
+            return UITableViewCell()
+        }
+        let log = targetTuple.1
+        
+        // has dogIcon
+        if dog.dogIcon.isEqualToImage(image: ClassConstant.DogConstant.defaultDogIcon) == false {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "LogsBodyWithIconTableViewCell", for: indexPath)
             
-            let nestedLogsArray: [(Int, Log)] =  groupedLogsByUniqueDate[indexPath.section].3
-            
-            // indexPath.row -1 corrects for the first row in the section being the header
-            let targetTuple = nestedLogsArray[indexPath.row-1]
-            let dog = try! dogManager.findDog(forDogId: targetTuple.0)
-            let log = targetTuple.1
-            
-            // has dogIcon
-            if dog.dogIcon.isEqualToImage(image: ClassConstant.DogConstant.defaultDogIcon) == false {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsBodyWithIconTableViewCell", for: indexPath)
-                
-                let customCell = cell as! LogsBodyWithIconTableViewCell
+            if let customCell = cell as? LogsBodyWithIconTableViewCell {
                 customCell.setup(forParentDogIcon: dog.dogIcon, forLog: log)
-                
-                return cell
-            }
-            // no dogIcon
-            else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "logsBodyWithoutIconTableViewCell", for: indexPath)
-                
-                let customCell = cell as! LogsBodyWithoutIconTableViewCell
-                customCell.setup(forParentDogName: dog.dogName, forLog: log)
-                
-                return cell
             }
             
+            return cell
+        }
+        // no dogIcon
+        else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "LogsBodyWithoutIconTableViewCell", for: indexPath)
+            
+            if let customCell = cell as? LogsBodyWithoutIconTableViewCell {
+                customCell.setup(forParentDogName: dog.dogName, forLog: log)
+            }
+            
+            return cell
         }
     }
     
@@ -245,8 +242,8 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
         // let originalNumberOfSections = groupedLogsByUniqueDate.count
         
         let nestedLogsArray = groupedLogsByUniqueDate[indexPath.section].3
-        let parentDogId = nestedLogsArray[indexPath.row-1].0
-        let logId = nestedLogsArray[indexPath.row-1].1.logId
+        let parentDogId = nestedLogsArray[indexPath.row - 1].0
+        let logId = nestedLogsArray[indexPath.row - 1].1.logId
         
         LogsRequest.delete(invokeErrorManager: true, forDogId: parentDogId, forLogId: logId) { requestWasSuccessful, _ in
             guard requestWasSuccessful, let dog = try? self.dogManager.findDog(forDogId: parentDogId) else {
@@ -308,8 +305,8 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let nestedLogsArray = groupedLogsByUniqueDate[indexPath.section].3
-        let dogId = nestedLogsArray[indexPath.row-1].0
-        let logId = nestedLogsArray[indexPath.row-1].1.logId
+        let dogId = nestedLogsArray[indexPath.row - 1].0
+        let logId = nestedLogsArray[indexPath.row - 1].1.logId
         
         RequestUtils.beginRequestIndictator()
         LogsRequest.get(invokeErrorManager: true, forDogId: dogId, forLogId: logId) { log, _ in

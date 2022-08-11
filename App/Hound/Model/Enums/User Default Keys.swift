@@ -31,13 +31,15 @@ enum UserDefaultsKeys: String {
     case writeReviewRequestedDates
     
     case shouldShowReleaseNotes
+    case appVersionsWithReleaseNotesShown
     case appBuildsWithReleaseNotesShown
     
-    case hasLoadedFamilyIntroductionViewControllerBefore
+    case hasLoadedHoundIntroductionViewControllerBefore
     case hasLoadedRemindersIntroductionViewControllerBefore
     case hasLoadedSettingsFamilyIntroductionViewControllerBefore
     
     // MARK: Other
     case hasDoneFirstTimeSetup
+    case appVersion
     case appBuild
 }

@@ -89,7 +89,7 @@ enum InternalRequestUtils {
                         ErrorManager.alert(forError: responseError, forErrorCode: nil)
                     }
                     
-                    completionHandler(responseBody, .failureResponse)
+                    completionHandler(responseBody, .noResponse)
                 }
                 
                 return

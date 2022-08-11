@@ -20,7 +20,8 @@ enum VisualConstant {
         static let weekdayEnabled = 1000000004
         static let weekdayDisabled = 1000000005
         static let contactingServerAlertController = 1000000006
-        static let serverRelatedViewController = 1000000008
+        static let serverSyncViewControllerRetryLogin = 1000000009
+        static let serverSyncViewControllerGoToLoginPage = 1000000010
     }
     
     enum FontConstant {
@@ -33,6 +34,46 @@ enum VisualConstant {
     
     enum SizeConstant {
         static let largeRectangularButtonCornerRadious = 10.0
+    }
+    
+    enum BannerTextConstant {
+        // MARK: - .success
+        static let purchasedSubscriptionTitle = "Sucessfully Purchased Your Subscription!"
+        static let purchasedSubscriptionSubtitle = "Enjoy your Hound family experience"
+        
+        static let restoreTransactionsTitle = "Sucessfully Restored Transactions!"
+        static let restoreTransactionsSubtitle = "Any Hound purchase you have previously made with your Apple ID is recovered"
+        
+        static let redownloadDataTitle = "Redownload Data Successful!"
+        static let redownloadDataSubtitle = "Your dogs, reminders, and logs have been redownloaded from the Hound server and are up-to-date"
+        
+        static let refreshRemindersTitle = "Reminders Refresh Successful!"
+        static let refreshRemindersSubtitle = "Your dogs, reminders, and logs are now up-to-date"
+        
+        static let refreshLogsTitle = "Logs of Care Refresh Successful!"
+        static let refreshLogsSubtitle = refreshRemindersSubtitle
+        
+        static let refreshFamilyTitle = "Family Refresh Successful!"
+        static let refreshFamilySubtitle = "Your family is now up-to-date"
+        
+        static let refreshSubscriptionTitle = "Subscriptions Refresh Successful!"
+        static let refreshSubscriptionSubtitle = "Your subscriptions are now up-to-date"
+        
+        // MARK: - .info
+        
+        // MARK: - .danger
+        static let noCameraTitle = "You Don't Have a Camera!"
+        
+        static let alertForErrorTitle = "Uh oh! There seems to be an issue"
+        
+        static let notificationsDisabledTitle = "Notifications Disabled"
+        static let notificationsDisabledSubtitle = "To enable notifications go to the Settings App -> Notifications -> Hound and enable \"Allow Notifications\""
+        
+        static let invalidFamilyShareTitle = "Unable to share your Hound family!"
+        static let invalidFamilyShareSubtitle = "Currently, your Hound family is locked, preventing new users from joining. In order to share your family, please unlock it and retry."
+        
+        static let invalidFamilyPermissionTitle = "You don't have permission to perform this action!"
+        static let invalidFamilyPermissionSubtitle = "Only the family head can modify your family's subscription. Please contact the family head and have them complete this action."
     }
     
     enum TextConstant {

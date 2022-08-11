@@ -13,7 +13,9 @@ final class Dog: NSObject, NSCoding, NSCopying {
     // MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
-        let copy = try! Dog(dogName: self.dogName)
+        guard let copy = try? Dog(dogName: self.dogName) else {
+            return Dog()
+        }
         copy.dogId = self.dogId
         copy.dogName = self.dogName
         copy.dogIcon = self.dogIcon
@@ -42,15 +44,18 @@ final class Dog: NSObject, NSCoding, NSCopying {
     
     // MARK: - Main
     
-    init(dogName: String?) throws {
+    override init() {
         super.init()
-        try changeDogName(forDogName: dogName)
     }
     
-    convenience init(dogId: Int = ClassConstant.DogConstant.defaultDogId, dogName: String?, dogIcon: UIImage = ClassConstant.DogConstant.defaultDogIcon) throws {
-        try self.init(dogName: dogName)
+    convenience init(
+        dogId: Int = ClassConstant.DogConstant.defaultDogId,
+        dogName: String? = ClassConstant.DogConstant.defaultDogName,
+        dogIcon: UIImage = ClassConstant.DogConstant.defaultDogIcon) throws {
+        self.init()
         
         self.dogId = dogId
+        try changeDogName(forDogName: dogName)
         self.dogIcon = dogIcon
     }
     
@@ -65,7 +70,12 @@ final class Dog: NSObject, NSCoding, NSCopying {
         let dogId = body[ServerDefaultKeys.dogId.rawValue] as? Int ?? ClassConstant.DogConstant.defaultDogId
         let dogName = body[ServerDefaultKeys.dogName.rawValue] as? String ?? ClassConstant.DogConstant.defaultDogName
         
-        try! self.init(dogId: dogId, dogName: dogName, dogIcon: LocalDogIcon.getIcon(forDogId: dogId) ?? ClassConstant.DogConstant.defaultDogIcon)
+        do {
+            try self.init(dogId: dogId, dogName: dogName, dogIcon: LocalDogIcon.getIcon(forDogId: dogId) ?? ClassConstant.DogConstant.defaultDogIcon)
+        }
+        catch {
+            try! self.init(dogId: dogId, dogIcon: LocalDogIcon.getIcon(forDogId: dogId) ?? ClassConstant.DogConstant.defaultDogIcon) // swiftlint:disable:this force_try
+        }
         
         dogIsDeleted = body[ServerDefaultKeys.dogIsDeleted.rawValue] as? Bool ?? false
         

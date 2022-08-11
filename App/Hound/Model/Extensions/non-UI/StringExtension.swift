@@ -14,12 +14,12 @@ extension String {
     static func convertToReadable(fromTimeInterval timeInterval: TimeInterval, capitalizeLetters: Bool = true) -> String {
         let intTime = abs(Int(timeInterval.rounded()))
         
-        let numWeeks = Int((intTime / (86400))/7)
-        let numDaysUnderAWeek = Int((intTime / (86400))%7)
+        let numWeeks = Int((intTime / (86400)) / 7)
+        let numDaysUnderAWeek = Int((intTime / (86400)) % 7)
         let numDays = Int(intTime / (86400))
-        let numHours = Int((intTime % (86400))/(3600))
-        let numMinutes = Int((intTime % 3600)/60)
-        let numSeconds = Int((intTime % 3600)%60)
+        let numHours = Int((intTime % (86400)) / (3600))
+        let numMinutes = Int((intTime % 3600) / 60)
+        let numSeconds = Int((intTime % 3600) % 60)
         
         var readableString = ""
         

@@ -8,6 +8,7 @@
 
 import UIKit
 import KeychainSwift
+import StoreKit
 
 enum PersistenceManager {
     /// Called by App or Scene Delegate when setting up in didFinishLaunchingWithOptions, can be either the first time setup or a recurring setup (i.e. not the app isnt being opened for the first time)
@@ -19,8 +20,10 @@ enum PersistenceManager {
         
         // MARK: Save Certain Values
         
+        UIApplication.previousAppVersion = UserDefaults.standard.object(forKey: UserDefaultsKeys.appVersion.rawValue) as? String
         UIApplication.previousAppBuild = UserDefaults.standard.object(forKey: UserDefaultsKeys.appBuild.rawValue) as? Int
         
+        UserDefaults.standard.setValue(UIApplication.appVersion, forKey: UserDefaultsKeys.appVersion.rawValue)
         UserDefaults.standard.setValue(UIApplication.appBuild, forKey: UserDefaultsKeys.appBuild.rawValue)
         
         UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
@@ -53,8 +56,8 @@ enum PersistenceManager {
             LocalConfiguration.dogIcons = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? [LocalDogIcon] ?? LocalConfiguration.dogIcons
         }
         
-        // if the user had a dogManager from pre Hound 2.0 (build 4000), then we must clear it. It will be incompatible and cause issues. Must start from scratch.
-        if UIApplication.previousAppBuild ?? 4000 < 4000 {
+        // if the user had a dogManager from pre Hound 2.0.0, then we must clear it. It will be incompatible and cause issues. Must start from scratch.
+        if UIApplication.previousAppBuild ?? 3810 <= 3810 {
             UserDefaults.standard.removeObject(forKey: ServerDefaultKeys.dogManager.rawValue)
         }
         
@@ -89,9 +92,12 @@ enum PersistenceManager {
         LocalConfiguration.writeReviewRequestedDates = UserDefaults.standard.value(forKey: UserDefaultsKeys.writeReviewRequestedDates.rawValue) as? [Date] ?? LocalConfiguration.writeReviewRequestedDates
         
         LocalConfiguration.shouldShowReleaseNotes = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue) as? Bool ?? LocalConfiguration.shouldShowReleaseNotes
+        
+        LocalConfiguration.appVersionsWithReleaseNotesShown = UserDefaults.standard.value(forKey: UserDefaultsKeys.appVersionsWithReleaseNotesShown.rawValue) as? [String] ?? LocalConfiguration.appVersionsWithReleaseNotesShown
+        
         LocalConfiguration.appBuildsWithReleaseNotesShown = UserDefaults.standard.value(forKey: UserDefaultsKeys.appBuildsWithReleaseNotesShown.rawValue) as? [Int] ?? LocalConfiguration.appBuildsWithReleaseNotesShown
         
-        LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedFamilyIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore
+        LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedHoundIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore
         LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore
         LocalConfiguration.hasLoadedSettingsFamilyIntroductionViewControllerBefore = UserDefaults.standard.value(forKey: UserDefaultsKeys.hasLoadedSettingsFamilyIntroductionViewControllerBefore.rawValue) as? Bool ?? LocalConfiguration.hasLoadedSettingsFamilyIntroductionViewControllerBefore
         
@@ -100,7 +106,7 @@ enum PersistenceManager {
         // For family Hound, always put the user on the logs of care page first. This is most likely the most pertinant information. There isn't much reason to visit the dogs/reminders page unless updating a dog/reminder (or logging a reminder early).
         MainTabBarViewController.selectedEntryIndex = 0
         // If the user hasn't completed the dogs and reminders introduction page, then we put them on the logs page (index 0). Otherwise, if they have configured their first dog and reminder, then they get put on the dogs page (index 1)
-       //  MainTabBarViewController.selectedEntryIndex = (LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore && LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore) ? 1 : 0
+       //  MainTabBarViewController.selectedEntryIndex = (LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore && LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore) ? 1 : 0
     
     }
     
@@ -159,9 +165,10 @@ enum PersistenceManager {
         UserDefaults.standard.setValue(LocalConfiguration.writeReviewRequestedDates, forKeyPath: UserDefaultsKeys.writeReviewRequestedDates.rawValue)
         
         UserDefaults.standard.setValue(LocalConfiguration.shouldShowReleaseNotes, forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.appVersionsWithReleaseNotesShown, forKey: UserDefaultsKeys.appVersionsWithReleaseNotesShown.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.appBuildsWithReleaseNotesShown, forKey: UserDefaultsKeys.appBuildsWithReleaseNotesShown.rawValue)
         
-        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedFamilyIntroductionViewControllerBefore.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedHoundIntroductionViewControllerBefore.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedRemindersIntroductionViewControllerBefore.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedSettingsFamilyIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedSettingsFamilyIntroductionViewControllerBefore.rawValue)
     }

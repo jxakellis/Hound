@@ -24,6 +24,9 @@ const server = {
   CONSOLE_LOGGING_ENABLED: !IS_PRODUCTION_DATABASE,
   // App builds of the iOS Hound app that work properly with the server.
   // A version would be depreciated if an endpoint path is changed or endpoint data return format is changed
+
+  // TO DO NOW split versions based on development databse or production database. 
+  // Allows for testing of new versions in development but leave production alone
   COMPATIBLE_IOS_APP_BUILDS: [5500],
   // How often each of the database connections are tested as being connected (in milliseconds)
   DATABASE_CONNECTION_TEST_INTERVAL: 1000 * 60 * 5,
@@ -62,13 +65,13 @@ const apn = {
   },
   category: {
     // for APN about reminder's alarms
-    REMINDER: 'reminder',
+    REMINDER: 'ALERT_CATEGORY_REMINDER',
     // for APN telling the user that they terminated the Hound app accidentally (disabling their loud notifications)
-    TERMINATE: 'terminate',
+    TERMINATE: 'ALERT_CATEGORY_TERMINATE',
     // for APN telling family that a user logged a certain reminder (i.e. took care of something for a dog)
-    LOG: 'log',
+    LOG: 'ALERT_CATEGORY_LOG',
     // for APN just some generic alert, e.g. someone joined/left the family
-    GENERAL: 'general',
+    GENERAL: 'ALERT_CATEGORY_GENERAL',
   },
 };
 

@@ -10,7 +10,7 @@ import CallKit
 import StoreKit
 
 enum CheckManager {
-
+    
     /// Checks to see if the user is eligible for a notification to asking them to review Hound and if so presents the notification
     static func checkForReview() {
         // slight delay so it pops once some things are done
@@ -36,6 +36,7 @@ enum CheckManager {
                 LocalConfiguration.writeReviewRequestedDates.append(Date())
             }
             
+            // TO DO NOW convert to banner where user can tap to rate Hound
             func askUserToReview() {
                 let requestReviewController = GeneralUIAlertController(title: "Are you enjoying Hound?", message: "Your feedback helps support future development and improvements!", preferredStyle: .alert)
                 
@@ -118,46 +119,37 @@ enum CheckManager {
         guard LocalConfiguration.shouldShowReleaseNotes == true else {
             return
         }
-        // make sure the app had been opened before, we don't want to show the user release notes on their first launch
-        guard UIApplication.previousAppBuild != nil else {
-            return
-        }
-        
-        // make sure the previousAppBuild and current appBuild are equal, indicating that the app was updated
-        guard UIApplication.previousAppBuild! != UIApplication.appBuild else {
+        // Check that the app was opened before, as we don't want to show the user release notes on their first launch
+        // Then, check that the current version doesn't match the previous version, meaning an upgrade or downgrade. The latter shouldnt be possible
+        guard let previousAppVersion = UIApplication.previousAppVersion, previousAppVersion != UIApplication.appVersion else {
             return
         }
         
         // make sure we haven't shown the release notes for this version before. To do this, we check to see if our array of app builds that we showed release notes for contains the app build of the current version. If the array does not contain the current app build, then we haven't shown release notes for this new version and we are ok to proceed.
-        guard LocalConfiguration.appBuildsWithReleaseNotesShown.contains(UIApplication.appBuild) == false else {
+        guard LocalConfiguration.appVersionsWithReleaseNotesShown.contains(UIApplication.appVersion) == false && LocalConfiguration.appBuildsWithReleaseNotesShown.contains(UIApplication.appBuild) == false else {
             return
         }
         
-       AppDelegate.generalLogger.notice("Showing Release Notes")
-            var message: String?
-            
-            switch UIApplication.appBuild {
-            case 4000:
-                message = "-- Cloud storage! Create your Hound account with the 'Sign In with Apple' feature and have all of your information saved to the Hound server.\n-- Family sharing! Create your own Hound family and have other users join it, allowing your logs, reminders, and notifications to all sync.\n-- Refined UI. Enjoy a smoother, more fleshed out UI experience with quality of life tweaks.\n-- Settings Revamp. Utilize the redesigned settings page to view more options in a cleaner way."
-            default:
-                message = nil
-            }
-            
-            guard let message = message else {
-                return
-            }
-            
-            let updateAlertController = GeneralUIAlertController(title: "Release Notes For Hound \(UIApplication.appVersion ?? String(UIApplication.appBuild))", message: message, preferredStyle: .alert)
-            let understandAlertAction = UIAlertAction(title: "Ok, sounds great!", style: .default, handler: nil)
-            let stopAlertAction = UIAlertAction(title: "Don't show release notes again", style: .default) { _ in
-                LocalConfiguration.shouldShowReleaseNotes = false
-            }
-            
-            updateAlertController.addAction(understandAlertAction)
-            updateAlertController.addAction(stopAlertAction)
-            AlertManager.enqueueAlertForPresentation(updateAlertController)
-            // we successfully showed the message, so store the build we showed it for
-            LocalConfiguration.appBuildsWithReleaseNotesShown.append(UIApplication.appBuild)
+        // TO DO NOW convert to banner where user can tap to see release notes
+        AppDelegate.generalLogger.notice("Showing Release Notes")
+        guard UIApplication.appVersion == "2.0.0" else {
+            return
+        }
+        
+        let message = "-- Cloud storage! Create your Hound account with the 'Sign In with Apple' feature and have all of your information saved to the Hound server.\n-- Family sharing! Create your own Hound family and have other users join it, allowing your logs, reminders, and notifications to all sync.\n-- Refined UI. Enjoy a smoother, more fleshed out UI experience with quality of life tweaks.\n-- Settings Revamp. Utilize the redesigned settings page to view more options in a cleaner way."
+        
+        let updateAlertController = GeneralUIAlertController(title: "Release Notes For Hound \(UIApplication.appVersion)", message: message, preferredStyle: .alert)
+        let understandAlertAction = UIAlertAction(title: "Ok, sounds great!", style: .default, handler: nil)
+        let stopAlertAction = UIAlertAction(title: "Don't show release notes again", style: .default) { _ in
+            LocalConfiguration.shouldShowReleaseNotes = false
+        }
+        
+        updateAlertController.addAction(understandAlertAction)
+        updateAlertController.addAction(stopAlertAction)
+        AlertManager.enqueueAlertForPresentation(updateAlertController)
+        // we successfully showed the message, so store the build we showed it for
+        LocalConfiguration.appVersionsWithReleaseNotesShown.append(UIApplication.appVersion)
+        LocalConfiguration.appBuildsWithReleaseNotesShown.append(UIApplication.appBuild)
     }
     
 }

@@ -16,7 +16,7 @@ final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
     @IBOutlet private weak var subscriptionTierTitleLabel: ScaledUILabel!
     @IBOutlet private weak var subscriptionTierDescriptionLabel: ScaledUILabel!
     
-    @IBOutlet weak var subscriptionTierPricingTitleLabel: ScaledUILabel!
+    @IBOutlet private weak var subscriptionTierPricingTitleLabel: ScaledUILabel!
     @IBOutlet private weak var subscriptionTierPricingDescriptionLabel: ScaledUILabel!
     
     // MARK: - Properties
@@ -41,9 +41,7 @@ final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
     
     func setup(forProduct product: SKProduct?) {
         
-        // TO DO NOW if a user has already used their free trial, don't tell them that they get a free trial in subscriptionTierPricingDescriptionLabel. Have to figure out way to check if a user has used the free trial for a giving in app purchase group
         self.product = product
-        
         let activeFamilySubscriptionProduct = FamilyConfiguration.activeFamilySubscription.product
         
         guard let product: SKProduct = product, product.subscriptionPeriod != nil else {
@@ -51,7 +49,7 @@ final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
             
             changeCellColors(isProductActiveSubscription: activeFamilySubscriptionProduct == InAppPurchaseProduct.default)
             subscriptionTierTitleLabel.text = InAppPurchaseProduct.localizedTitleExpanded(forInAppPurchaseProduct: InAppPurchaseProduct.default)
-            subscriptionTierDescriptionLabel.text =  InAppPurchaseProduct.localizedDescriptionExpanded(forInAppPurchaseProduct: InAppPurchaseProduct.default)
+            subscriptionTierDescriptionLabel.text = InAppPurchaseProduct.localizedDescriptionExpanded(forInAppPurchaseProduct: InAppPurchaseProduct.default)
             subscriptionTierPricingDescriptionLabel.text = "Completely and always free! You get to benefit from the same features as paid subscribers. The only difference is family member and dog limits."
             return
         }
@@ -75,8 +73,13 @@ final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
         let subscriptionPriceWithSymbol = "\(product.priceLocale.currencySymbol ?? "")\(product.price)"
         let subscriptionPeriod = convertSubscriptionPeriodUnits(forUnit: product.subscriptionPeriod!.unit, forNumberOfUnits: product.subscriptionPeriod!.numberOfUnits, isFreeTrialText: false)
         
-        // no free trial
-        if product.introductoryPrice == nil || product.introductoryPrice!.paymentMode != .freeTrial {
+        // Check to see if the family has bought a subscription
+        let hasBoughtSubscriptionBefore: Bool = FamilyConfiguration.familySubscriptions.contains { subscription in
+            return subscription.transactionId != nil
+        }
+        // no free trial or the family has used up their subscription
+        if product.introductoryPrice == nil || product.introductoryPrice!.paymentMode != .freeTrial || hasBoughtSubscriptionBefore {
+            // TO DO BUG if a user deletes their family and creates a new one, they will still be ineligible for a new free trial however this text will display that they get a free trial still. In addition, other family members that haven't used their free trial will be shown they don't have a free trial when they actually do
             subscriptionTierPricingDescriptionLabel.text = "Enjoy all \(product.localizedTitle) has to offer for \(subscriptionPriceWithSymbol) per \(subscriptionPeriod)"
         }
         // tier offers a free trial

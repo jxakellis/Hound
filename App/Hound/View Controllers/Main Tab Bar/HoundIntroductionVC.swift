@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class FamilyIntroductionViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
+final class HoundIntroductionViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
     
     // MARK: - UIGestureRecognizerDelegate
     
@@ -51,7 +51,7 @@ final class FamilyIntroductionViewController: UIViewController, UITextFieldDeleg
     
     @IBOutlet private weak var interfaceStyleSegmentedControl: UISegmentedControl!
     @IBAction private func didUpdateInterfaceStyle(_ sender: Any) {
-        (sender as! UISegmentedControl).updateInterfaceStyle()
+        (sender as? UISegmentedControl)?.updateInterfaceStyle()
     }
     
     @IBOutlet private weak var continueButton: UIButton!
@@ -82,10 +82,9 @@ final class FamilyIntroductionViewController: UIViewController, UITextFieldDeleg
         }
         
         // no dogs so we create a new one for the user
-        if dogManager.hasCreatedDog == false {
+        if dogManager.hasCreatedDog == false, let dog = try? Dog(dogName: dogName ?? ClassConstant.DogConstant.defaultDogName, dogIcon: dogIcon ?? ClassConstant.DogConstant.defaultDogIcon) {
             // can only fail if dogName == "", but already checked for that and corrected if there was a problem
-            let dog = try! Dog(dogName: dogName ?? ClassConstant.DogConstant.defaultDogName, dogIcon: dogIcon ?? ClassConstant.DogConstant.defaultDogIcon)
-            
+        
             // contact server to make their dog
             DogsRequest.create(invokeErrorManager: true, forDog: dog) { dogId, _ in
                 self.continueButton.isEnabled = true
@@ -96,20 +95,20 @@ final class FamilyIntroductionViewController: UIViewController, UITextFieldDeleg
                 // go to next page if dog good
                 dog.dogId = dogId
                 self.dogManager.addDog(forDog: dog)
-                LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = true
-                self.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController")
+                LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore = true
+                self.performSegueOnceInWindowHierarchy(segueIdentifier: "MainTabBarViewController")
             }
         }
         // updating the icon of an existing dog
-        else {
+        else if dogManager.hasCreatedDog == true {
             // if the user chose a dogIcon, then we apply
             if let icon = dogIcon {
                 dogManager.dogs[0].dogIcon = icon
                 LocalDogIcon.addIcon(forDogId: dogManager.dogs[0].dogId, forDogIcon: icon)
             }
             // close page because updated
-            LocalConfiguration.hasLoadedFamilyIntroductionViewControllerBefore = true
-            self.performSegueOnceInWindowHierarchy(segueIdentifier: "mainTabBarViewController")
+            LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore = true
+            self.performSegueOnceInWindowHierarchy(segueIdentifier: "MainTabBarViewController")
             continueButton.isEnabled = true
         }
         
@@ -148,7 +147,7 @@ final class FamilyIntroductionViewController: UIViewController, UITextFieldDeleg
         
         dogIcon.setImage(ClassConstant.DogConstant.chooseImageForDog, for: .normal)
         dogIcon.imageView!.layer.masksToBounds = true
-        dogIcon.imageView!.layer.cornerRadius = dogIcon.frame.width/2
+        dogIcon.imageView!.layer.cornerRadius = dogIcon.frame.width / 2
         
         // Setup AlertController for dogIcon button now, increases responsiveness
         let (picker, viewController) = ImageManager.setupDogIconImagePicker(forViewController: self)
@@ -168,8 +167,8 @@ final class FamilyIntroductionViewController: UIViewController, UITextFieldDeleg
         continueButton.layer.cornerRadius = VisualConstant.SizeConstant.largeRectangularButtonCornerRadious
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
     }
     
@@ -177,8 +176,7 @@ final class FamilyIntroductionViewController: UIViewController, UITextFieldDeleg
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "mainTabBarViewController"{
-            let mainTabBarViewController: MainTabBarViewController = segue.destination as! MainTabBarViewController
+        if let mainTabBarViewController: MainTabBarViewController = segue.destination as? MainTabBarViewController {
             mainTabBarViewController.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
         }
     }

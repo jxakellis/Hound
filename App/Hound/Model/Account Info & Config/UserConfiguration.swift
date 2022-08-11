@@ -57,7 +57,7 @@ enum UserConfiguration {
     
     // MARK: - Alarm Timing Related
     
-    static var snoozeLength: TimeInterval = TimeInterval(60*5)
+    static var snoozeLength: TimeInterval = TimeInterval(60 * 5)
     
     // MARK: - iOS Notification Related
     

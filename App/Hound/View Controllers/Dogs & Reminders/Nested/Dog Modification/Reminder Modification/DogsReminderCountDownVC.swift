@@ -22,9 +22,9 @@ final class DogsReminderCountdownViewController: UIViewController, UIGestureReco
 
     // MARK: - IB
 
-    @IBOutlet weak var countdown: UIDatePicker!
+    @IBOutlet weak var countdown: UIDatePicker! // swiftlint:disable:this private_outlet
 
-    @IBAction func willUpdateCountdown(_ sender: Any) {
+    @IBAction private func willUpdateCountdown(_ sender: Any) {
         delegate.willDismissKeyboard()
     }
 

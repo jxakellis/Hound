@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol TimingManagerDelegate {
+protocol TimingManagerDelegate: AnyObject {
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager)
 }
 
@@ -88,7 +88,6 @@ final class TimingManager {
     
     /// Invalidates all timers so it's fresh when time to reinitalize
     static func invalidateAll(forDogManager dogManager: DogManager) {
-        
         for dog in dogManager.dogs {
             for reminder in dog.dogReminders.reminders {
                 reminder.timer?.invalidate()
@@ -101,7 +100,6 @@ final class TimingManager {
         }
         
         isSkippingDisablingTimers.removeAll()
-        
     }
     
     // MARK: - Timer Actions
@@ -129,14 +127,13 @@ final class TimingManager {
     
     /// If a reminder is skipping the next time of day alarm, at some point it will go from 1+ day away to 23 hours and 59 minutes. When that happens then the timer should be changed from isSkipping to normal mode because it just skipped that alarm that should have happened
     @objc private static func willUpdateIsSkipping(sender: Timer) {
-        guard let parsedDictionary = sender.userInfo as? [String: Any]
-        else {
+        guard let parsedDictionary = sender.userInfo as? [String: Any],
+              let dogId: Int = parsedDictionary[ServerDefaultKeys.dogId.rawValue] as? Int,
+              let passedReminderId: Int = parsedDictionary[ServerDefaultKeys.reminderId.rawValue] as? Int else {
             ErrorManager.alert(forError: TimingManagerError.parseSenderInfoFailed)
             return
         }
         
-        let dogId: Int = parsedDictionary[ServerDefaultKeys.dogId.rawValue]! as! Int
-        let passedReminderId: Int = parsedDictionary[ServerDefaultKeys.reminderId.rawValue]! as! Int
         let dogManager = MainTabBarViewController.staticDogManager
         
         let dog = try? dogManager.findDog(forDogId: dogId)
