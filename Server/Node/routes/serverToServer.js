@@ -3,7 +3,9 @@ const express = require('express');
 const serverToServerRouter = express.Router({ mergeParams: true });
 
 serverToServerRouter.post('/', (req, res) => {
-  console.log(req.params, req.body, req.query);
+  const data = req.body;
+  const plain = Buffer.from(data, 'base64').toString('utf8');
+  console.log(plain);
   return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);
 });
 

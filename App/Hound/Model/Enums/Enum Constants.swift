@@ -13,7 +13,7 @@ enum EnumConstant {
         /// True if the server we are contacting is our Ubuntu AWS instance, false if we are local hosting off personal computer
         static let isProductionServer: Bool = true
         /// True if we are contacting the production environment side of our server, false if we are contacting the development side
-        static let isProductionDatabase: Bool = true
+        static let isProductionDatabase: Bool = false
         /// Only the production server supports HTTPS
         private static let urlScheme: String = isProductionServer ? "https" : "http"
         /// The production server is attached to a real domain name, whereas our development server is off the local network
