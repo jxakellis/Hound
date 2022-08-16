@@ -4,7 +4,7 @@ const { parseFormData, parseJSON } = require('../tools/general/parseBody');
 const { logRequest } = require('../tools/logging/logRequest');
 const { configureRequestForResponse } = require('../tools/general/configureRequestAndResponse');
 const { validateAppBuild } = require('../tools/format/validateId');
-const { appStoreServerNotificationRouter } = require('../../routes/appStoreServerNotifications');
+const { appStoreServerNotificationsRouter } = require('../../routes/appStoreServerNotifications');
 const { userRouter } = require('../../routes/user');
 const { GeneralError } = require('../tools/general/errors');
 
@@ -22,12 +22,12 @@ function configureAppForRequests(app) {
   app.use(express.urlencoded({ extended: false }));
   app.use(parseJSON);
 
-  // Check to see if the request is a server to server communication from Apple
-  app.use(serverToServerPath, appStoreServerNotificationRouter);
-
   // Log request and setup logging for response
 
-  app.use(userPath, logRequest);
+  app.use('*', logRequest);
+
+  // Check to see if the request is a server to server communication from Apple
+  app.use(serverToServerPath, appStoreServerNotificationsRouter);
 
   // Make sure the user is on an updated version
 

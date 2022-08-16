@@ -178,7 +178,7 @@ function formatBase64EncodedString(forString) {
   return string;
 }
 
-function formatString(string) {
+function formatString(string, length) {
   if (areAllDefined(string) === false) {
     return undefined;
   }
@@ -187,7 +187,11 @@ function formatString(string) {
     return undefined;
   }
 
-  return string;
+  if (areAllDefined(length) === false) {
+    return string;
+  }
+
+  return string.substring(0, length);
 }
 
 module.exports = {

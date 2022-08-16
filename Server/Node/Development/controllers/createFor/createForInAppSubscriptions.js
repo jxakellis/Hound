@@ -13,7 +13,7 @@ const { getFamilyHeadUserIdForFamilyId } = require('../getFor/getForFamily');
  *  If the query is successful, then returns the active subscription for the family.
  *  If a problem is encountered, creates and throws custom error
  */
-async function createInAppSubscriptionForUserIdFamilyIdRecieptId(databaseConnection, userId, familyId, forBase64EncodedAppStoreReceiptURL) {
+async function createInAppSubscriptionsForUserIdFamilyIdRecieptId(databaseConnection, userId, familyId, forBase64EncodedAppStoreReceiptURL) {
   // Takes a base64 encoded appStoreReceiptURL from a user
   const base64EncodedAppStoreReceiptURL = formatBase64EncodedString(forBase64EncodedAppStoreReceiptURL);
 
@@ -60,6 +60,8 @@ async function createInAppSubscriptionForUserIdFamilyIdRecieptId(databaseConnect
     throw new ValidationError("Unable to parse the responseBody from Apple's iTunes servers", global.constant.error.value.MISSING);
   }
 
+  // TO DO NOW extract more information from the reciept to better match app store server notification data
+
   // check to see .latest_receipt_info array exists
   const receipts = formatArray(resultBody.latest_receipt_info);
   if (areAllDefined(receipts) === false) {
@@ -95,7 +97,7 @@ async function updateReceiptRecords(databaseConnection, userId, familyId, forRec
     if (areAllDefined(correspondingSubscription) === false) {
       // a correspondingSubscription doesn't exist, remove the receipt from the array as incompatible
       receipts.splice(i, 1);
-      // de iterate i so we don't skip an item
+      // de-iterate i so we don't skip an item
       i -= 1;
     }
 
@@ -109,7 +111,7 @@ async function updateReceiptRecords(databaseConnection, userId, familyId, forRec
 
   const storedTransactions = await databaseQuery(
     databaseConnection,
-    'SELECT transactionId FROM subscriptions WHERE userId = ? LIMIT 18446744073709551615',
+    'SELECT transactionId FROM transactions WHERE userId = ? LIMIT 18446744073709551615',
     [userId],
   );
 
@@ -117,6 +119,8 @@ async function updateReceiptRecords(databaseConnection, userId, familyId, forRec
   const promises = [];
   for (let i = 0; i < receipts.length; i += 1) {
     const receipt = receipts[i];
+    console.log('individual reciept');
+    console.log(receipt);
     const transactionId = formatNumber(receipt.transaction_id);
 
     // check to see if we have that receipt stored in the database
@@ -135,4 +139,4 @@ async function updateReceiptRecords(databaseConnection, userId, familyId, forRec
   // now all of the receipts returned by apple (who's productId's match one that is known to us) are stored in our database
 }
 
-module.exports = { createInAppSubscriptionForUserIdFamilyIdRecieptId };
+module.exports = { createInAppSubscriptionsForUserIdFamilyIdRecieptId };

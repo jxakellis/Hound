@@ -1,9 +1,10 @@
 const { ValidationError } = require('../../main/tools/general/errors');
 const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
+const { formatNumber } = require('../../main/tools/format/formatObject');
 
-// transactionId, familyId, and subscriptionLastModified omitted
-const subscriptionColumns = 'transactionId, productId, userId, subscriptionPurchaseDate, subscriptionExpiration, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs';
+// familyId, and subscriptionLastModified omitted
+const transactionsColumns = 'transactionId, productId, userId, subscriptionPurchaseDate, subscriptionExpiration, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs';
 
 /**
  *  If the query is successful, returns the most recent subscription for the familyId (if no most recent subscription, fills in default subscription details).
@@ -25,7 +26,7 @@ async function getActiveInAppSubscriptionForFamilyId(databaseConnection, familyI
 
   let familySubscription = await databaseQuery(
     databaseConnection,
-    `SELECT ${subscriptionColumns} FROM subscriptions WHERE familyId = ? AND subscriptionExpiration >= ? ORDER BY subscriptionExpiration DESC, subscriptionPurchaseDate DESC LIMIT 1`,
+    `SELECT ${transactionsColumns} FROM transactions WHERE familyId = ? AND subscriptionExpiration >= ? ORDER BY subscriptionExpiration DESC, subscriptionPurchaseDate DESC LIMIT 1`,
     [familyId, currentDate],
   );
 
@@ -57,21 +58,40 @@ async function getAllInAppSubscriptionsForFamilyId(databaseConnection, familyId)
   }
 
   // find all of the family's subscriptions
-  const subscriptionHistory = await databaseQuery(
+  const transactionsHistory = await databaseQuery(
     databaseConnection,
-    `SELECT ${subscriptionColumns} FROM subscriptions WHERE familyId = ? ORDER BY subscriptionExpiration DESC, subscriptionPurchaseDate DESC LIMIT 18446744073709551615`,
+    `SELECT ${transactionsColumns} FROM transactions WHERE familyId = ? ORDER BY subscriptionExpiration DESC, subscriptionPurchaseDate DESC LIMIT 18446744073709551615`,
     [familyId],
   );
 
   // Don't use .activeSubscription property: Want to make sure this function always returns the most updated/accurate information
-  const subscriptionActive = await getActiveInAppSubscriptionForFamilyId(databaseConnection, familyId);
+  const activeSubscription = await getActiveInAppSubscriptionForFamilyId(databaseConnection, familyId);
 
-  for (let i = 0; i < subscriptionHistory.length; i += 1) {
-    const subscription = subscriptionHistory[i];
-    subscription.subscriptionIsActive = subscription.transactionId === subscriptionActive.transactionId;
+  for (let i = 0; i < transactionsHistory.length; i += 1) {
+    const subscription = transactionsHistory[i];
+    subscription.subscriptionIsActive = subscription.transactionId === activeSubscription.transactionId;
   }
 
-  return subscriptionHistory;
+  return transactionsHistory;
 }
 
-module.exports = { getActiveInAppSubscriptionForFamilyId, getAllInAppSubscriptionsForFamilyId };
+/**
+ *  If the query is successful, returns the transaction for the transactionId.
+ *  If a problem is encountered, creates and throws custom error
+ */
+async function getInAppSubscriptionForTransactionId(databaseConnection, forTransactionId) {
+  const transactionId = formatNumber(forTransactionId);
+  if (areAllDefined(databaseConnection, transactionId) === false) {
+    throw new ValidationError('databaseConnection or transactionId missing', global.constant.error.value.MISSING);
+  }
+
+  const transactionsHistory = await databaseQuery(
+    databaseConnection,
+    `SELECT ${transactionsColumns} FROM transactions WHERE transactionId = ? LIMIT 1`,
+    [transactionId],
+  );
+
+  return transactionsHistory[0];
+}
+
+module.exports = { getActiveInAppSubscriptionForFamilyId, getAllInAppSubscriptionsForFamilyId, getInAppSubscriptionForTransactionId };

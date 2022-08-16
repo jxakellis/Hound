@@ -11,8 +11,8 @@ chmod -R a+rwx /home/jxakellis/Documents
 
 echo "Installing updated node_modules"
 # Use NPM to install node_modules in target folder (one with package.json)
-npm --prefix /home/jxakellis/Documents/Hound/Server/Development/Node install
-npm --prefix /home/jxakellis/Documents/Hound/Server/Production/Node install
+npm --prefix /home/jxakellis/Documents/Hound/Server/Node/Development i
+npm --prefix /home/jxakellis/Documents/Hound/Server/Node/Production i
 
 # echo "CANNOT copy secrets folder, please do so manually"
 # Copy 'secrets' folder from that shared RDP drive to new Hound GitHub repo clone

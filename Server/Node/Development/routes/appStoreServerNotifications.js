@@ -1,11 +1,11 @@
 const express = require('express');
 
-const appStoreServerNotificationRouter = express.Router({ mergeParams: true });
+const appStoreServerNotificationsRouter = express.Router({ mergeParams: true });
 
 const {
   createAppStoreServerNotification,
 } = require('../controllers/controllerRoutes/appStoreServerNotifications');
 
-appStoreServerNotificationRouter.post('/', createAppStoreServerNotification);
+appStoreServerNotificationsRouter.post('/', createAppStoreServerNotification);
 
-module.exports = { appStoreServerNotificationRouter };
+module.exports = { appStoreServerNotificationsRouter };

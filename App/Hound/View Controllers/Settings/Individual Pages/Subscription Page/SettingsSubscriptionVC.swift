@@ -81,6 +81,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
         super.viewDidLoad()
         
         // TO DO FUTURE add subscription history
+        // TO DO NOW add disclaimer that a user's subscriptions are linked to their family, if they delete their family before their subscription expired, then they forfit the rest of their subscription. Add this disclaimer to the delete family button (once you click it) AND to little gray text below the subscriptions table view
         
         oneTimeSetup()
     }
