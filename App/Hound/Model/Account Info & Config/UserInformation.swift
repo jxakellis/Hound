@@ -15,6 +15,9 @@ enum UserInformation {
         if let userId = body[ServerDefaultKeys.userId.rawValue] as? String {
             self.userId = userId
         }
+        if let userApplicationUsername = body[ServerDefaultKeys.userApplicationUsername.rawValue] as? String {
+            self.userApplicationUsername = userApplicationUsername
+        }
         if let userNotificationToken = body[ServerDefaultKeys.userNotificationToken.rawValue] as? String {
             self.userNotificationToken = userNotificationToken
         }
@@ -35,6 +38,8 @@ enum UserInformation {
     static var userId: String?
     
     static var userIdentifier: String?
+    
+    static var userApplicationUsername: String?
     
     static var userNotificationToken: String?
     

@@ -109,7 +109,7 @@ async function sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(family
       createSecondaryAlarmNotificationForUser(
         users[i].userId,
         reminder.reminderId,
-        new Date(formatDate(reminder.reminderExecutionDate).getTime() + (users[i].followUpDelay * 1000)),
+        formatDate(formatDate(reminder.reminderExecutionDate).getTime() + (users[i].followUpDelay * 1000)),
       );
     }
   }

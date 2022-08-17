@@ -4,7 +4,7 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { houndSharedSecret } = require('../../main/secrets/houndSharedSecret');
 const {
-  formatBase64EncodedString, formatArray, formatNumber, formatString,
+  formatDate, formatBase64EncodedString, formatArray, formatNumber, formatString,
 } = require('../../main/tools/format/formatObject');
 const { getActiveInAppSubscriptionForFamilyId } = require('../getFor/getForInAppSubscriptions');
 const { getFamilyHeadUserIdForFamilyId } = require('../getFor/getForFamily');
@@ -128,10 +128,10 @@ async function updateReceiptRecords(databaseConnection, userId, familyId, forRec
       const originalTransactionid = formatNumber(receipt.original_transaction_id);
       // familyId
       // userId
-      const productId = formatString(receipt.productId, 60);
+      const productId = formatString(receipt.product_id, 60);
       const subscriptionGroupIdentifier = formatNumber(receipt.subscription_group_identifier);
-      const purchaseDate = new Date(formatNumber(receipt.purchase_date_ms));
-      const expirationDate = new Date(formatNumber(receipt.expires_date_ms));
+      const purchaseDate = formatDate(formatNumber(receipt.purchase_date_ms));
+      const expirationDate = formatDate(formatNumber(receipt.expires_date_ms));
       const numberOfFamilyMembers = formatNumber(receipt.numberOfFamilyMembers);
       const numberOfDogs = formatNumber(receipt.numberOfDogs);
       const quantity = formatNumber(receipt.quantity);
@@ -139,7 +139,7 @@ async function updateReceiptRecords(databaseConnection, userId, familyId, forRec
       const inAppOwnershipType = formatString(receipt.in_app_ownership_type, 13);
       promises.push(databaseQuery(
         databaseConnection,
-        'INSERT INTO transactions(transactionId, originalTransactionId, userId, familyId, productId, subscriptionGroupIdentifier, purchaseDate, expirationDate, numberOfFamilyMembers, numberOfDogs, quantity, webOrderLineItemId, inAppOwnershipTypes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        'INSERT INTO transactions(transactionId, originalTransactionId, userId, familyId, productId, subscriptionGroupIdentifier, purchaseDate, expirationDate, numberOfFamilyMembers, numberOfDogs, quantity, webOrderLineItemId, inAppOwnershipType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
         [
           transactionId,
           originalTransactionid,
@@ -184,7 +184,7 @@ async function createInAppSubscriptionForUserIdFamilyIdTransactionInfo(databaseC
 
   await databaseQuery(
     databaseConnection,
-    'INSERT INTO transactions(transactionId, originalTransactionId, userId, familyId, productId, subscriptionGroupIdentifier, purchaseDate, expirationDate, numberOfFamilyMembers, numberOfDogs, quantity, webOrderLineItemId, inAppOwnershipTypes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    'INSERT INTO transactions(transactionId, originalTransactionId, userId, familyId, productId, subscriptionGroupIdentifier, purchaseDate, expirationDate, numberOfFamilyMembers, numberOfDogs, quantity, webOrderLineItemId, inAppOwnershipType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     [
       transactionId,
       originalTransactionId,

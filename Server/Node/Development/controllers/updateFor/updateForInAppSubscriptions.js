@@ -8,20 +8,14 @@ const { getFamilyHeadUserIdForFamilyId } = require('../getFor/getForFamily');
 const { getInAppSubscriptionForTransactionId } = require('../getFor/getForInAppSubscriptions');
 
 async function updateInAppSubscriptionForUserIdFamilyIdTransactionInfo(databaseConnection, transactionId, userId, familyId, autoRenewStatus, revocationReason) {
-  console.log('updateInAppSubscriptionForUserIdFamilyIdTransactionInfo');
   if (areAllDefined(databaseConnection, transactionId, userId, familyId) === false) {
     throw new ValidationError('databaseConnection, transactionId, userId, or familyId missing', global.constant.error.value.MISSING);
   }
 
   let isAutoRenewing = formatBoolean(autoRenewStatus);
-  console.log('provided renewing');
-  console.log(isAutoRenewing);
-  console.log(autoRenewStatus);
-  // If revocation reason is defined, then that means the transaction was revoked for a given reason (which we don't care about)
-  let isRevoked = areAllDefined(revocationReason);
-  console.log('provided revoked');
-  console.log(isRevoked);
-  console.log(revocationReason);
+  // If revocation reason is defined, then that means the transaction was revoked
+  // Otherwise, if revocationReason is undefined then leave isRevoked as undefined so it doesn't overwrite the pre existing isRevoked
+  let isRevoked = areAllDefined(revocationReason) ? true : undefined;
 
   if (atLeastOneDefined(isAutoRenewing, isRevoked) === false) {
     throw new ValidationError('isAutoRenewing or isRevoked missing', global.constant.error.value.MISSING);
@@ -42,10 +36,6 @@ async function updateInAppSubscriptionForUserIdFamilyIdTransactionInfo(databaseC
   // Let the new values take precident over the stored values, but if no new value then use the pre-existing value
   isAutoRenewing = areAllDefined(isAutoRenewing) ? isAutoRenewing : transaction.isAutoRenewing;
   isRevoked = areAllDefined(isRevoked) ? isRevoked : transaction.isRevoked;
-
-  console.log('precident');
-  console.log(isAutoRenewing);
-  console.log(isRevoked);
 
   /*
   Once a transaction is performed, certain values shouldn't be changed

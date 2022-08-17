@@ -1,7 +1,7 @@
 const { ValidationError } = require('../../main/tools/general/errors');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const {
-  formatNumber, formatBoolean, formatString,
+  formatDate, formatNumber, formatBoolean, formatString,
 } = require('../../main/tools/format/formatObject');
 
 const { getUserForUserId, getUserForUserApplicationUsername } = require('../getFor/getForUser');
@@ -15,7 +15,6 @@ const { updateInAppSubscriptionForUserIdFamilyIdTransactionInfo } = require('../
 const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 
 async function createAppStoreServerNotificationForSignedPayload(databaseConnection, signedPayload) {
-  console.log('createAppStoreServerNotificationForSignedPayload');
   if (areAllDefined(databaseConnection, signedPayload) === false) {
     throw new ValidationError('databaseConnection or signedPayload missing', global.constant.error.value.MISSING);
   }
@@ -60,16 +59,11 @@ async function createAppStoreServerNotificationForSignedPayload(databaseConnecti
 
   // Check if we have logged this notification before
   if (areAllDefined(storedNotification)) {
-    console.log('Notification has been logged into database, return');
     // Notification has been logged into database, return
     return;
   }
 
-  console.log('Notification hasnt been logged before');
-
   await createAppStoreServerNotificationForNotification(databaseConnection, notification, data, renewalInfo, transactionInfo);
-
-  console.log('Logged notification');
 
   // Check if the notification type indicates we need to create or update an entry for transactions table
   if (notificationType === 'CONSUMPTION_REQUEST' || notificationType === 'DID_FAIL_TO_RENEW' || notificationType === 'EXPIRED' || notificationType === 'GRACE_PERIOD_EXPIRED' || notificationType === 'PRICE_INCREASE' || notificationType === 'REFUND_DECLINED' || notificationType === 'RENEWAL_EXTENDED' || notificationType === 'TEST') {
@@ -82,8 +76,6 @@ async function createAppStoreServerNotificationForSignedPayload(databaseConnecti
   if (areAllDefined(transactionId) === false) {
     throw new ValidationError('transactionId missing', global.constant.error.value.MISSING);
   }
-
-  console.log('transactionId exists');
 
   // Attempt to find a corresponding userId
   let userId;
@@ -103,7 +95,7 @@ async function createAppStoreServerNotificationForSignedPayload(databaseConnecti
     // attempt to find userId with most recent transaction. Use originalTransactionId to link to potential transactions
     let transaction = await databaseQuery(
       databaseConnection,
-      'SELECT userId FROM transactions WHERE transactionId = ? OR originalTransationId = ? ORDER BY purchaseDate DESC LIMIT 1',
+      'SELECT userId FROM transactions WHERE transactionId = ? OR originalTransactionId = ? ORDER BY purchaseDate DESC LIMIT 1',
       [transactionId, originalTransactionId],
     );
     [transaction] = transaction;
@@ -121,8 +113,8 @@ async function createAppStoreServerNotificationForSignedPayload(databaseConnecti
   const { familyId } = user;
   const productId = formatString(transactionInfo.productId, 60);
   const subscriptionGroupIdentifier = formatNumber(transactionInfo.subscriptionGroupIdentifier);
-  const purchaseDate = new Date(formatNumber(transactionInfo.purchaseDate));
-  const expirationDate = new Date(formatNumber(transactionInfo.expiresDate));
+  const purchaseDate = formatDate(formatNumber(transactionInfo.purchaseDate));
+  const expirationDate = formatDate(formatNumber(transactionInfo.expiresDate));
   const quantity = formatNumber(transactionInfo.quantity);
   const webOrderLineItemId = formatNumber(transactionInfo.webOrderLineItemId);
   const inAppOwnershipType = formatString(transactionInfo.inAppOwnershipType, 13);
@@ -181,7 +173,7 @@ async function createAppStoreServerNotificationForNotification(databaseConnectio
   // A string that indicates the App Store Server Notification version number.
   const version = formatString(notification.version, 3);
   // The UNIX time, in milliseconds, that the App Store signed the JSON Web Signature data.
-  const signedDate = new Date(formatNumber(notification.signedDate));
+  const signedDate = formatDate(formatNumber(notification.signedDate));
 
   // https://developer.apple.com/documentation/appstoreservernotifications/data
   // The unique identifier of the app that the notification applies to. This property is available for apps that are downloaded from the App Store; it isn’t present in the sandbox environment.
@@ -203,7 +195,10 @@ async function createAppStoreServerNotificationForNotification(databaseConnectio
   // The reason a subscription expired.
   const renewalInfoExpirationIntent = formatNumber(renewalInfo.expirationIntent);
   // The time when the billing grace period for subscription renewals expires.
-  const renewalInfoGracePeriodExpiresDate = new Date(formatNumber(renewalInfo.gracePeriodExpiresDate));
+  const renewalInfoGracePeriodExpiresDate = formatDate(formatNumber(renewalInfo.gracePeriodExpiresDate));
+  console.log(renewalInfo.gracePeriodExpiresDate);
+  console.log(formatNumber(renewalInfo.gracePeriodExpiresDate));
+  console.log(renewalInfoGracePeriodExpiresDate);
   // The Boolean value that indicates whether the App Store is attempting to automatically renew an expired subscription.
   const renewalInfoIsInBillingRetryPeriod = formatBoolean(renewalInfo.isInBillingRetryPeriod);
   // The offer code or the promotional offer identifier.
@@ -216,10 +211,10 @@ async function createAppStoreServerNotificationForNotification(databaseConnectio
   const renewalInfoPriceIncreaseStatus = formatBoolean(renewalInfo.priceIncreaseStatus);
   // The product identifier of the in-app purchase.
   const renewalInfoProductId = formatString(renewalInfo.productId, 60);
-  // The earliest start date of an auto-renewable subscription in a series of subscription purchases that ignores all lapses of paid service that are 60 days or less.
-  const renewalInfoRecentSubscriptionStartDate = new Date(formatNumber(renewalInfo.recentSubscriptionStartDate));
+  // The recent subscription start date is in UNIX time, in milliseconds. The earliest start date of an auto-renewable subscription in a series of subscription purchases that ignores all lapses of paid service that are 60 days or less.
+  const renewalInfoRecentSubscriptionStartDate = formatDate(formatNumber(renewalInfo.recentSubscriptionStartDate));
   // The UNIX time, in milliseconds, that the App Store signed the JSON Web Signature data.
-  const renewalInfoSignedDate = new Date(formatNumber(renewalInfo.signedDate));
+  const renewalInfoSignedDate = formatDate(formatNumber(renewalInfo.signedDate));
 
   // https://developer.apple.com/documentation/appstoreservernotifications/jwstransactiondecodedpayload
   // A UUID that associates the transaction with a user on your own service. If your app doesn’t provide an appAccountToken, this string is empty. For more information, see appAccountToken(_:).
@@ -229,7 +224,7 @@ async function createAppStoreServerNotificationForNotification(databaseConnectio
   // The server environment, either sandbox or production.
   const transactionInfoEnvironment = formatString(transactionInfo.environment, 10);
   // The UNIX time, in milliseconds, the subscription expires or renews.
-  const transactionInfoExpiresDate = new Date(formatNumber(transactionInfo.expiresDate));
+  const transactionInfoExpiresDate = formatDate(formatNumber(transactionInfo.expiresDate));
   // A string that describes whether the transaction was purchased by the user, or is available to them through Family Sharing.
   const transactionInfoInAppOwnershipType = formatString(transactionInfo.inAppOwnershipType, 13);
   // A Boolean value that indicates whether the user upgraded to another subscription.
@@ -239,21 +234,21 @@ async function createAppStoreServerNotificationForNotification(databaseConnectio
   // A value that represents the promotional offer type.
   const transactionInfoOfferType = formatNumber(transactionInfo.offerType);
   // The UNIX time, in milliseconds, that represents the purchase date of the original transaction identifier.
-  const transactionInfoOriginalPurchaseDate = new Date(formatNumber(transactionInfo.originalPurchaseDate));
+  const transactionInfoOriginalPurchaseDate = formatDate(formatNumber(transactionInfo.originalPurchaseDate));
   // The transaction identifier of the original purchase.
   const transactionInfoOriginalTransactionId = formatNumber(transactionInfo.originalTransactionId);
   // The product identifier of the in-app purchase.
   const transactionInfoProductId = formatString(transactionInfo.productId, 60);
   // The UNIX time, in milliseconds, that the App Store charged the user’s account for a purchase, restored product, subscription, or subscription renewal after a lapse.
-  const transactionInfoPurchaseDate = new Date(formatNumber(transactionInfo.purchaseDate));
+  const transactionInfoPurchaseDate = formatDate(formatNumber(transactionInfo.purchaseDate));
   // The number of consumable products the user purchased.
   const transactionInfoQuantity = formatNumber(transactionInfo.quantity);
   // The UNIX time, in milliseconds, that the App Store refunded the transaction or revoked it from Family Sharing.
-  const transactionInfoRevocationDate = new Date(formatNumber(transactionInfo.revocationDate));
+  const transactionInfoRevocationDate = formatDate(formatNumber(transactionInfo.revocationDate));
   // The reason that the App Store refunded the transaction or revoked it from Family Sharing.
   const transactionInfoRevocationReason = formatNumber(transactionInfo.revocationReason);
   // The UNIX time, in milliseconds, that the App Store signed the JSON Web Signature (JWS) data.
-  const transactionInfoSignedDate = new Date(formatNumber(transactionInfo.signedDate));
+  const transactionInfoSignedDate = formatDate(formatNumber(transactionInfo.signedDate));
   // The identifier of the subscription group the subscription belongs to.
   const transactionInfoSubscriptionGroupIdentifier = formatNumber(transactionInfo.subscriptionGroupIdentifier);
   // The unique identifier of the transaction.
@@ -263,7 +258,6 @@ async function createAppStoreServerNotificationForNotification(databaseConnectio
   // The unique identifier of subscription purchase events across devices, including subscription renewals.
   const transactionInfoWebOrderLineItemId = formatNumber(transactionInfo.webOrderLineItemId);
 
-  console.log('Insert appStoreServerNotifications with values:');
   console.log(
     notificationType,
     subtype,

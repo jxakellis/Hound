@@ -42,7 +42,7 @@ async function getActiveInAppSubscriptionForFamilyId(databaseConnection, familyI
     [familySubscription] = familySubscription;
   }
 
-  familySubscription.subscriptionIsActive = true;
+  familySubscription.isActive = true;
 
   return familySubscription;
 }
@@ -69,7 +69,7 @@ async function getAllInAppSubscriptionsForFamilyId(databaseConnection, familyId)
 
   for (let i = 0; i < transactionsHistory.length; i += 1) {
     const subscription = transactionsHistory[i];
-    subscription.subscriptionIsActive = subscription.transactionId === activeSubscription.transactionId;
+    subscription.isActive = subscription.transactionId === activeSubscription.transactionId;
   }
 
   return transactionsHistory;

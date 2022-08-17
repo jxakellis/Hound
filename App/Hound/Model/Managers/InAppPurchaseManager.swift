@@ -201,6 +201,7 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
         // Don't test for SKPaymentQueue.default().transactions. This could lock the code from ever executing. E.g. the user goes to buy something (so its in the payment queue) but they stop mid way (maybe leaving the transaction as .purchasing or .deferred). Then the background async processing isn't invoked to start (or it simply can't process whats in the queue) so we are left with transactions in the queue that are stuck and are locking
         productPurchaseCompletionHandler = completionHandler
         let payment = SKPayment(product: product)
+        payment.applicationUsername = UserInformation.userApplicationUsername
         SKPaymentQueue.default().add(payment)
     }
     
@@ -213,7 +214,6 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
         
         // If either of these are nil, there is not an ongoing manual request by a user (as there is no callback to provide information to). Therefore, we are dealing with asyncronously bought transactions (e.g. renewals, phone died while purchasing, etc.) that should be processed in the background.
         guard productPurchaseCompletionHandler != nil || productRestoreCompletionHandler != nil else {
-            
             backgroundPurchaseInProgress = true
             
             // These are transactions that we know have completely failed. Clear them.

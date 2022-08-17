@@ -68,7 +68,7 @@ async function refreshSecondaryAlarmNotificationsForUserId(userId, forIsFollowUp
       createSecondaryAlarmNotificationForUser(
         userId,
         remindersWithInfo[i].reminderId,
-        new Date(formattedReminderExecutionDate.getTime() + (followUpDelay * 1000)),
+        formatDate(formattedReminderExecutionDate.getTime() + (followUpDelay * 1000)),
       );
     }
   }
