@@ -77,7 +77,7 @@ enum FamilyResponseError: String, Error {
     
     // MARK: Leave
     case leaveInvalid = "You are unable to leave your current family. This is likely due to you being the family head and your family containing multiple family members. Please remove all existing family members before attempting to leave. If this issue persists, please contact Hound support."
-    case leaveSubscriptionActive = "You are unable to delete your current family due having an active subscription. Please cancel your existing subscription and let it expire before attempting to leave. If this issue persists, please contact Hound support."
+    case leaveSubscriptionActive = "You are unable to delete your current family due having an active, auto-renewing subscription. Please cancel your subscription before attempting to leave. If this issue persists, please contact Hound support."
     
     // MARK: Permission
     case permissionInvalid = "You are attempting to perform an action that only the family head can perform. Please contact the family head and have them complete this action. If this issue persists, please contact Hound support."

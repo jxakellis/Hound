@@ -30,7 +30,7 @@ enum RequestUtils {
     /// Dismisses the custom made contactingHoundServerAlertController. Allow the app to resume normal execution once the completion handler is called (as that indicates the contactingHoundServerAlertController was dismissed and new things can be presented/segued to).
     static func endRequestIndictator(completionHandler: @escaping () -> Void) {
         let alertController = AlertManager.shared.contactingServerAlertController
-        guard alertController.isBeingPresented && alertController.isBeingDismissed == false else {
+        guard alertController.isBeingDismissed == false else {
             completionHandler()
             return
         }

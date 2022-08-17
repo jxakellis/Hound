@@ -1,7 +1,7 @@
 const { ValidationError } = require('../../main/tools/general/errors');
 const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
-const { formatNumber } = require('../../main/tools/format/formatObject');
+const { formatNumber, formatBoolean } = require('../../main/tools/format/formatObject');
 
 // Omitted columns: originalTransactionId, userId, familyId, subscriptionGroupIdentifier, quantity, webOrderLineItemId, inAppOwnershipType
 const transactionsColumns = 'transactionId, productId, purchaseDate, expirationDate, numberOfFamilyMembers, numberOfDogs, isAutoRenewing, isRevoked';
@@ -36,6 +36,8 @@ async function getActiveInAppSubscriptionForFamilyId(databaseConnection, familyI
     familySubscription.userId = undefined;
     familySubscription.purchaseDate = undefined;
     familySubscription.expirationDate = undefined;
+    familySubscription.isAutoRenewing = true;
+    familySubscription.isRevoked = false;
   }
   else {
     // we found a subscription, so get rid of the one entry array
@@ -43,6 +45,8 @@ async function getActiveInAppSubscriptionForFamilyId(databaseConnection, familyI
   }
 
   familySubscription.isActive = true;
+  familySubscription.isAutoRenewing = formatBoolean(familySubscription.isAutoRenewing);
+  familySubscription.isRevoked = formatBoolean(familySubscription.isRevoked);
 
   return familySubscription;
 }

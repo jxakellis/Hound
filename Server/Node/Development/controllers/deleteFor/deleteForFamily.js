@@ -66,25 +66,22 @@ async function deleteFamily(databaseConnection, userId, familyId, activeSubscrip
       throw new ValidationError('Family still contains multiple members', global.constant.error.family.leave.INVALID);
     }
 
-    // if the active subscription's isn't the default subscription, that means the family has an active subscription
-    if (activeSubscription.productId !== global.constant.subscription.DEFAULT_SUBSCRIPTION_PRODUCT_ID) {
-      // TO DO NOW check for autoRenewStatus instead of just an active subscription
+    /*
+      If the active subscription's productId isn't DEFAULT_SUBSCRIPTION_PRODUCT_ID, that means the family has an active subscription
+      If the active subscription is auto-renewal status is true or undefined, then we can't let the user delete their family.
+      This is because the subscription could auto-renew after the user left their existing family.
+      This would cause problems, as if they are in a new family as a non-family head or are in no family, as the subscription cannot attach anywhere.
 
-      // If undefined, check if the user has a existing subscription.
-      // If they have an active subscription, then ValidationError; else, let user delete their family.
-      //    If auto renewal preference is unknown, we have to force subscription to expire to find out.
-      //    If subscription non-renewing, then expires and let the user delete the family; else, subscription is renewing and prevent user from deleting family.
-
-      // If true, then ValidationError.
-      //    Don't want user's subscription to renew unless we know they are the head of a family
-      //    If they leave the family, the subscription could renew when they have no family or are family member, causing problems
-
-      // If false, then let the user delete their family.
-      //    This means the user manually stopped the subscription from renewing.
-      //    They will forfit the rest of their active subscription by deleting their family.
-      //    However, they are safe from an accidential renewal
-      throw new ValidationError('Family still has an active subscription', global.constant.error.family.leave.SUBSCRIPTION_ACTIVE);
+      Only accept if there is no active subscription or the active subscription isn't auto-renewing
+    */
+    if (activeSubscription.productId !== global.constant.subscription.DEFAULT_SUBSCRIPTION_PRODUCT_ID
+      && (areAllDefined(activeSubscription.isAutoRenewing) === false || activeSubscription.isAutoRenewing === true)) {
+      throw new ValidationError('Family still has an auto-renewing, active subscription', global.constant.error.family.leave.SUBSCRIPTION_ACTIVE);
     }
+
+    //  The user has no active subscription or manually stopped their subscription from renewing
+    //  They will forfit the rest of their active subscription (if it exists) by deleting their family.
+    //   However, they are safe from an accidential renewal
 
     // There is only one user left in the family, which is the API requester
     const leftUserFullName = await getUserFirstNameLastNameForUserId(databaseConnection, userId);

@@ -4,12 +4,14 @@ const { parseFormData, parseJSON } = require('../tools/general/parseBody');
 const { logRequest } = require('../tools/logging/logRequest');
 const { configureRequestForResponse } = require('../tools/general/configureRequestAndResponse');
 const { validateAppBuild } = require('../tools/format/validateId');
+const { watchdogRouter } = require('../../routes/watchdog');
 const { appStoreServerNotificationsRouter } = require('../../routes/appStoreServerNotifications');
 const { userRouter } = require('../../routes/user');
 const { GeneralError } = require('../tools/general/errors');
 
 const databasePath = global.constant.server.IS_PRODUCTION_DATABASE ? 'prod' : 'dev';
 const serverToServerPath = `/${databasePath}/appStoreServerNotifications`;
+const watchdogPath = `/${databasePath}/watchdog`;
 const userPath = `/${databasePath}/app/:appBuild`;
 
 function configureAppForRequests(app) {
@@ -25,6 +27,8 @@ function configureAppForRequests(app) {
   // Log request and setup logging for response
 
   app.use('*', logRequest);
+
+  app.use(watchdogPath, watchdogRouter);
 
   // Check to see if the request is a server to server communication from Apple
   app.use(serverToServerPath, appStoreServerNotificationsRouter);

@@ -25,8 +25,6 @@ const { serverLogger } = require('../tools/logging/loggers');
 //
 //
 
-// TO DO NOW add watchdog to Hound Server to make sure node is running and can touch database
-
 // Create a NodeJS HTTPS listener on port that points to the Express app
 // We can only create an HTTPS server on the AWS instance. Otherwise we create a HTTP server.
 const HTTPOrHTTPSServer = global.constant.server.IS_PRODUCTION_SERVER
