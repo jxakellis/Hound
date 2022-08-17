@@ -46,27 +46,33 @@ cp -R /home/jxakellis/Documents/productionSecrets/secrets /home/jxakellis/Docume
 echo "Deleting stored production secrets"
 rm -rf /home/jxakellis/Production/productionSecrets/secrets 
 
+echo "Copying new cloneGitHubRepo script"
+cp -rf /home/jxakellis/Documents/Hound/Server/Node/cloneGitHubRepo.sh /home/jxakellis/Documents/cloneGitHubRepo.sh
+
 echo
 echo "PM2"
 echo
 
-echo "Stopping All PM2 Processes"
+echo "Stopping all PM2 processes"
 pm2 stop all
 
-echo "Deleting All PM2 Processes"
+echo "Deleting all PM2 processes"
 pm2 delete all
 
-echo "Starting Development PM2"
+echo "Starting development PM2"
 pm2 start /home/jxakellis/Documents/Hound/Server/Node/development.config.js
 
-echo "Starting Production PM2"
+echo "Starting production PM2"
 pm2 start /home/jxakellis/Documents/Hound/Server/Node/production.config.js
 
-echo "Saving PM2 Processes"
+echo "Saving PM2 processes"
 pm2 save --force
 
-echo "Listing PM2 Processes"
+echo "Listing PM2 processes"
 pm2 list
+
+echo "Waiting 5 seconds to list PM2 processes again"
+sleep 5
 
 echo
 echo "COMPLETE"
