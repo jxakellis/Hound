@@ -11,9 +11,29 @@ import Foundation
 enum EnumConstant {
     enum DevelopmentConstant {
         /// True if the server we are contacting is our Ubuntu AWS instance, false if we are local hosting off personal computer
-        static let isProductionServer: Bool = true
+        static let isProductionServer: Bool = {
+#if DEBUG
+            AppDelegate.generalLogger.info("DEBUG Build Configuration for server")
+            // Can return true or false. Can have prod or dev server for DEBUG
+            return true
+#else
+            AppDelegate.generalLogger.info("RELEASE Build Configuration for server")
+            // ALWAYS RETURN TRUE, WANT PROD SERVER FOR RELEASE
+            return true
+#endif
+        }()
         /// True if we are contacting the production environment side of our server, false if we are contacting the development side
-        static let isProductionDatabase: Bool = false
+        static let isProductionDatabase: Bool = {
+#if DEBUG
+            AppDelegate.generalLogger.info("DEBUG Build Configuration for database")
+            // ALWAYS RETURN FALSE, WANT DEV DATABASE FOR DEBUG
+            return false
+#else
+            AppDelegate.generalLogger.info("RELEASE Build Configuration for database")
+            // ALWAYS RETURN TRUE, WANT PROD DATABASE FOR RELEASE
+            return true
+#endif
+        }()
         /// Only the production server supports HTTPS
         private static let urlScheme: String = isProductionServer ? "https" : "http"
         /// The production server is attached to a real domain name, whereas our development server is off the local network
