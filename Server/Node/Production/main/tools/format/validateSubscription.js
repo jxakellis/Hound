@@ -36,10 +36,10 @@ async function attachActiveSubscription(req, res, next) {
 async function validateSubscription(req, res, next) {
   try {
     const { userId, familyId } = req.params;
-    const { subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs } = req.activeSubscription;
+    const { numberOfFamilyMembers, numberOfDogs } = req.activeSubscription;
 
-    if (areAllDefined(userId, familyId, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs) === false) {
-      throw new ValidationError('userId, familyId, subscriptionNumberOfFamilyMembers, or subscriptionNumberOfDogs missing', global.constant.error.value.MISSING);
+    if (areAllDefined(userId, familyId, numberOfFamilyMembers, numberOfDogs) === false) {
+      throw new ValidationError('userId, familyId, numberOfFamilyMembers, or numberOfDogs missing', global.constant.error.value.MISSING);
     }
 
     // a subscription doesn't matter for GET or DELETE requests. We can allow retrieving/deleting of information even if expired
@@ -50,19 +50,19 @@ async function validateSubscription(req, res, next) {
 
     const familyMembers = await getAllFamilyMembersForFamilyId(req.databaseConnection, familyId);
 
-    if (familyMembers.length > subscriptionNumberOfFamilyMembers) {
-      throw new ValidationError(`Family member limit of ${subscriptionNumberOfFamilyMembers} exceeded`, global.constant.error.family.limit.FAMILY_MEMBER_EXCEEDED);
+    if (familyMembers.length > numberOfFamilyMembers) {
+      throw new ValidationError(`Family member limit of ${numberOfFamilyMembers} exceeded`, global.constant.error.family.limit.FAMILY_MEMBER_EXCEEDED);
     }
 
     // only retrieve enough not deleted dogs that would exceed the limit
     const dogs = await databaseQuery(
       req.databaseConnection,
       'SELECT dogId FROM dogs WHERE dogIsDeleted = 0 AND familyId = ? LIMIT ?',
-      [familyId, subscriptionNumberOfDogs],
+      [familyId, numberOfDogs],
     );
 
-    if (dogs.length > subscriptionNumberOfDogs) {
-      throw new ValidationError(`Dog limit of ${subscriptionNumberOfDogs} exceeded`, global.constant.error.family.limit.DOG_EXCEEDED);
+    if (dogs.length > numberOfDogs) {
+      throw new ValidationError(`Dog limit of ${numberOfDogs} exceeded`, global.constant.error.family.limit.DOG_EXCEEDED);
     }
 
     return next();

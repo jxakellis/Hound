@@ -3,7 +3,9 @@ const { GeneralError, ValidationError } = require('../../main/tools/general/erro
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { houndSharedSecret } = require('../../main/secrets/houndSharedSecret');
-const { formatBase64EncodedString, formatArray, formatNumber } = require('../../main/tools/format/formatObject');
+const {
+  formatDate, formatBase64EncodedString, formatArray, formatNumber, formatString,
+} = require('../../main/tools/format/formatObject');
 const { getActiveInAppSubscriptionForFamilyId } = require('../getFor/getForInAppSubscriptions');
 const { getFamilyHeadUserIdForFamilyId } = require('../getFor/getForFamily');
 
@@ -80,7 +82,6 @@ async function createInAppSubscriptionForUserIdFamilyIdRecieptId(databaseConnect
  */
 async function updateReceiptRecords(databaseConnection, userId, familyId, forReceipts) {
   const receipts = formatArray(forReceipts);
-  const subscriptionLastModified = new Date();
 
   if (areAllDefined(databaseConnection, userId, familyId, receipts) === false) {
     throw new ValidationError('databaseConnection, userId, familyId, or receipts missing', global.constant.error.value.MISSING);
@@ -95,13 +96,13 @@ async function updateReceiptRecords(databaseConnection, userId, familyId, forRec
     if (areAllDefined(correspondingSubscription) === false) {
       // a correspondingSubscription doesn't exist, remove the receipt from the array as incompatible
       receipts.splice(i, 1);
-      // de iterate i so we don't skip an item
+      // de-iterate i so we don't skip an item
       i -= 1;
     }
 
     // we found a corresponding subscription, assign the correst values to the receipt
-    receipt.subscriptionNumberOfFamilyMembers = correspondingSubscription.subscriptionNumberOfFamilyMembers;
-    receipt.subscriptionNumberOfDogs = correspondingSubscription.subscriptionNumberOfDogs;
+    receipt.numberOfFamilyMembers = correspondingSubscription.numberOfFamilyMembers;
+    receipt.numberOfDogs = correspondingSubscription.numberOfDogs;
   }
 
   // find all of our currently stored transactions for the user
@@ -109,7 +110,7 @@ async function updateReceiptRecords(databaseConnection, userId, familyId, forRec
 
   const storedTransactions = await databaseQuery(
     databaseConnection,
-    'SELECT transactionId FROM subscriptions WHERE userId = ? LIMIT 18446744073709551615',
+    'SELECT transactionId FROM transactions WHERE userId = ? LIMIT 18446744073709551615',
     [userId],
   );
 
@@ -122,10 +123,38 @@ async function updateReceiptRecords(databaseConnection, userId, familyId, forRec
     // check to see if we have that receipt stored in the database
     if (storedTransactions.some((storedTransaction) => formatNumber(storedTransaction.transactionId) === transactionId) === false) {
       // we don't have that receipt stored, insert it into the database
+
+      // transactionid
+      const originalTransactionid = formatNumber(receipt.original_transaction_id);
+      // familyId
+      // userId
+      const productId = formatString(receipt.product_id, 60);
+      const subscriptionGroupIdentifier = formatNumber(receipt.subscription_group_identifier);
+      const purchaseDate = formatDate(formatNumber(receipt.purchase_date_ms));
+      const expirationDate = formatDate(formatNumber(receipt.expires_date_ms));
+      const numberOfFamilyMembers = formatNumber(receipt.numberOfFamilyMembers);
+      const numberOfDogs = formatNumber(receipt.numberOfDogs);
+      const quantity = formatNumber(receipt.quantity);
+      const webOrderLineItemId = formatNumber(receipt.web_order_line_item_id);
+      const inAppOwnershipType = formatString(receipt.in_app_ownership_type, 13);
       promises.push(databaseQuery(
         databaseConnection,
-        'INSERT INTO subscriptions(transactionId, productId, familyId, userId, subscriptionPurchaseDate, subscriptionLastModified, subscriptionExpiration, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs) VALUES (?,?,?,?,?,?,?,?,?)',
-        [transactionId, receipt.product_id, familyId, userId, new Date(formatNumber(receipt.purchase_date_ms)), subscriptionLastModified, new Date(formatNumber(receipt.expires_date_ms)), receipt.subscriptionNumberOfDogs, receipt.subscriptionNumberOfFamilyMembers],
+        'INSERT INTO transactions(transactionId, originalTransactionId, userId, familyId, productId, subscriptionGroupIdentifier, purchaseDate, expirationDate, numberOfFamilyMembers, numberOfDogs, quantity, webOrderLineItemId, inAppOwnershipType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [
+          transactionId,
+          originalTransactionid,
+          userId,
+          familyId,
+          productId,
+          subscriptionGroupIdentifier,
+          purchaseDate,
+          expirationDate,
+          numberOfFamilyMembers,
+          numberOfDogs,
+          quantity,
+          webOrderLineItemId,
+          inAppOwnershipType,
+        ],
       ));
     }
   }
@@ -135,4 +164,43 @@ async function updateReceiptRecords(databaseConnection, userId, familyId, forRec
   // now all of the receipts returned by apple (who's productId's match one that is known to us) are stored in our database
 }
 
-module.exports = { createInAppSubscriptionForUserIdFamilyIdRecieptId };
+/**
+ *  If the query is successful, then returns
+ *  If a problem is encountered, creates and throws custom error
+ */
+async function createInAppSubscriptionForUserIdFamilyIdTransactionInfo(databaseConnection, transactionId, originalTransactionId, userId, familyId, productId, subscriptionGroupIdentifier, purchaseDate, expirationDate, quantity, webOrderLineItemId, inAppOwnershipType) {
+  if (areAllDefined(databaseConnection, transactionId, userId, familyId, productId, purchaseDate, expirationDate) === false) {
+    throw new ValidationError('databaseConnection, transactionId, userId, familyId, productId, purchaseDate, or expirationDate missing', global.constant.error.value.MISSING);
+  }
+
+  const familyHeadUserId = await getFamilyHeadUserIdForFamilyId(databaseConnection, familyId);
+
+  if (familyHeadUserId !== userId) {
+    throw new ValidationError('You are not the family head. Only the family head can modify the family subscription', global.constant.error.family.permission.INVALID);
+  }
+
+  const correspondingProduct = global.constant.subscription.SUBSCRIPTIONS.find((subscription) => subscription.productId === productId);
+  const { numberOfFamilyMembers, numberOfDogs } = correspondingProduct;
+
+  await databaseQuery(
+    databaseConnection,
+    'INSERT INTO transactions(transactionId, originalTransactionId, userId, familyId, productId, subscriptionGroupIdentifier, purchaseDate, expirationDate, numberOfFamilyMembers, numberOfDogs, quantity, webOrderLineItemId, inAppOwnershipType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [
+      transactionId,
+      originalTransactionId,
+      userId,
+      familyId,
+      productId,
+      subscriptionGroupIdentifier,
+      purchaseDate,
+      expirationDate,
+      numberOfFamilyMembers,
+      numberOfDogs,
+      quantity,
+      webOrderLineItemId,
+      inAppOwnershipType,
+    ],
+  );
+}
+
+module.exports = { createInAppSubscriptionForUserIdFamilyIdRecieptId, createInAppSubscriptionForUserIdFamilyIdTransactionInfo };

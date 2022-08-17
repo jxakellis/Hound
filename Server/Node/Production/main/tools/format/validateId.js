@@ -84,7 +84,7 @@ async function validateFamilyId(req, res, next) {
     // queries the database to find familyIds associated with the userId
     const result = await databaseQuery(
       req.databaseConnection,
-      'SELECT familyId, userId FROM familyMembers WHERE userId = ? AND familyId = ? LIMIT 1',
+      'SELECT familyId FROM familyMembers WHERE userId = ? AND familyId = ? LIMIT 1',
       [userId, familyId],
     );
 

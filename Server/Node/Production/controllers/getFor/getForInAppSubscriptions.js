@@ -1,9 +1,10 @@
 const { ValidationError } = require('../../main/tools/general/errors');
 const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
+const { formatNumber, formatBoolean } = require('../../main/tools/format/formatObject');
 
-// transactionId, familyId, and subscriptionLastModified omitted
-const subscriptionColumns = 'transactionId, productId, userId, subscriptionPurchaseDate, subscriptionExpiration, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs';
+// Omitted columns: originalTransactionId, userId, familyId, subscriptionGroupIdentifier, quantity, webOrderLineItemId, inAppOwnershipType
+const transactionsColumns = 'transactionId, productId, purchaseDate, expirationDate, numberOfFamilyMembers, numberOfDogs, isAutoRenewing, isRevoked';
 
 /**
  *  If the query is successful, returns the most recent subscription for the familyId (if no most recent subscription, fills in default subscription details).
@@ -19,13 +20,13 @@ async function getActiveInAppSubscriptionForFamilyId(databaseConnection, familyI
 
   const currentDate = new Date();
   // If we subtract the SUBSCRIPTION_GRACE_PERIOD from currentDate, we get a date that is that amount of time in the past. E.g. currentDate: 6:00 PM, gracePeriod: 1:00 -> currentDate: 5:00PM
-  // Therefore when currentDate is compared to subscriptionExpiration, we allow for the subscriptionExpiration to be SUBSCRIPTION_GRACE_PERIOD amount of time expired.
-  // This effect could also be achieved by adding SUBSCRIPTION_GRACE_PERIOD to subscriptionExpiration, making it appear to expire later than it actually does.
+  // Therefore when currentDate is compared to expirationDate, we allow for the expirationDate to be SUBSCRIPTION_GRACE_PERIOD amount of time expired.
+  // This effect could also be achieved by adding SUBSCRIPTION_GRACE_PERIOD to expirationDate, making it appear to expire later than it actually does.
   currentDate.setTime(currentDate.getTime() - global.constant.subscription.SUBSCRIPTION_GRACE_PERIOD);
 
   let familySubscription = await databaseQuery(
     databaseConnection,
-    `SELECT ${subscriptionColumns} FROM subscriptions WHERE familyId = ? AND subscriptionExpiration >= ? ORDER BY subscriptionExpiration DESC, subscriptionPurchaseDate DESC LIMIT 1`,
+    `SELECT ${transactionsColumns} FROM transactions WHERE familyId = ? AND expirationDate >= ? AND isRevoked = 0 ORDER BY expirationDate DESC, purchaseDate DESC, transactionId DESC LIMIT 1`,
     [familyId, currentDate],
   );
 
@@ -33,15 +34,19 @@ async function getActiveInAppSubscriptionForFamilyId(databaseConnection, familyI
   if (familySubscription.length === 0) {
     familySubscription = global.constant.subscription.SUBSCRIPTIONS.find((subscription) => subscription.productId === global.constant.subscription.DEFAULT_SUBSCRIPTION_PRODUCT_ID);
     familySubscription.userId = undefined;
-    familySubscription.subscriptionPurchaseDate = undefined;
-    familySubscription.subscriptionExpiration = undefined;
+    familySubscription.purchaseDate = undefined;
+    familySubscription.expirationDate = undefined;
+    familySubscription.isAutoRenewing = true;
+    familySubscription.isRevoked = false;
   }
   else {
     // we found a subscription, so get rid of the one entry array
     [familySubscription] = familySubscription;
   }
 
-  familySubscription.subscriptionIsActive = true;
+  familySubscription.isActive = true;
+  familySubscription.isAutoRenewing = formatBoolean(familySubscription.isAutoRenewing);
+  familySubscription.isRevoked = formatBoolean(familySubscription.isRevoked);
 
   return familySubscription;
 }
@@ -57,21 +62,42 @@ async function getAllInAppSubscriptionsForFamilyId(databaseConnection, familyId)
   }
 
   // find all of the family's subscriptions
-  const subscriptionHistory = await databaseQuery(
+  const transactionsHistory = await databaseQuery(
     databaseConnection,
-    `SELECT ${subscriptionColumns} FROM subscriptions WHERE familyId = ? ORDER BY subscriptionExpiration DESC, subscriptionPurchaseDate DESC LIMIT 18446744073709551615`,
+    `SELECT ${transactionsColumns} FROM transactions WHERE familyId = ? ORDER BY expirationDate DESC, purchaseDate DESC LIMIT 18446744073709551615`,
     [familyId],
   );
 
   // Don't use .activeSubscription property: Want to make sure this function always returns the most updated/accurate information
-  const subscriptionActive = await getActiveInAppSubscriptionForFamilyId(databaseConnection, familyId);
+  const activeSubscription = await getActiveInAppSubscriptionForFamilyId(databaseConnection, familyId);
 
-  for (let i = 0; i < subscriptionHistory.length; i += 1) {
-    const subscription = subscriptionHistory[i];
-    subscription.subscriptionIsActive = subscription.transactionId === subscriptionActive.transactionId;
+  for (let i = 0; i < transactionsHistory.length; i += 1) {
+    const subscription = transactionsHistory[i];
+    subscription.isActive = subscription.transactionId === activeSubscription.transactionId;
   }
 
-  return subscriptionHistory;
+  return transactionsHistory;
 }
 
-module.exports = { getActiveInAppSubscriptionForFamilyId, getAllInAppSubscriptionsForFamilyId };
+/**
+ *  If the query is successful, returns the transaction for the transactionId.
+ *  If a problem is encountered, creates and throws custom error
+ */
+async function getInAppSubscriptionForTransactionId(databaseConnection, forTransactionId) {
+  const transactionId = formatNumber(forTransactionId);
+  if (areAllDefined(databaseConnection, transactionId) === false) {
+    throw new ValidationError('databaseConnection or transactionId missing', global.constant.error.value.MISSING);
+  }
+
+  const transactionsHistory = await databaseQuery(
+    databaseConnection,
+    `SELECT ${transactionsColumns} FROM transactions WHERE transactionId = ? LIMIT 1`,
+    [transactionId],
+  );
+
+  return transactionsHistory[0];
+}
+
+module.exports = {
+  getActiveInAppSubscriptionForFamilyId, getAllInAppSubscriptionsForFamilyId, getInAppSubscriptionForTransactionId,
+};

@@ -56,7 +56,6 @@ async function createReminderForDogIdReminder(databaseConnection, dogId, reminde
   // one time components
   const oneTimeDate = formatDate(reminder.oneTimeDate); // required
 
-  console.log(reminderAction, reminderType, reminderIsEnabled, reminder.reminderExecutionBasis, reminderExecutionBasis);
   // check to see that necessary generic reminder components are present
   if (areAllDefined(reminderAction, reminderType, reminderIsEnabled, reminderExecutionBasis) === false) {
     throw new ValidationError('reminderAction, reminderType, reminderIsEnabled, or reminderExecutionBasis missing', global.constant.error.value.MISSING);

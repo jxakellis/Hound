@@ -20,9 +20,9 @@ const { dogsRouter } = require('./dogs');
 familyRouter.use('/:familyId/dogs', dogsRouter);
 
 // route to subscription related things
-const { subscriptionRouter } = require('./inAppSubscriptions');
+const { subscriptionsRouter } = require('./inAppSubscriptions');
 
-familyRouter.use('/:familyId/subscription', subscriptionRouter);
+familyRouter.use('/:familyId/subscriptions', subscriptionsRouter);
 
 // gets family with familyId then return information from families and familyMembers table
 familyRouter.get('/:familyId', getFamily);

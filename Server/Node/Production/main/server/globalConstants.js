@@ -26,7 +26,7 @@ const server = {
   // A version would be depreciated if an endpoint path is changed or endpoint data return format is changed
 
   // Allows for testing of new versions in development but leave production alone
-  COMPATIBLE_IOS_APP_BUILDS: IS_PRODUCTION_DATABASE ? [5500, 6000] : [6000],
+  COMPATIBLE_IOS_APP_BUILDS: IS_PRODUCTION_DATABASE ? [6500] : [6500],
   // How often each of the database connections are tested as being connected (in milliseconds)
   DATABASE_CONNECTION_TEST_INTERVAL: 1000 * 60 * 5,
 };
@@ -88,28 +88,28 @@ const subscription = {
   SUBSCRIPTIONS: [
     {
       productId: DEFAULT_SUBSCRIPTION_PRODUCT_ID,
-      subscriptionNumberOfFamilyMembers: DEFAULT_SUBSCRIPTION_NUMBER_OF_FAMILY_MEMBERS,
-      subscriptionNumberOfDogs: DEFAULT_SUBSCRIPTION_NUMBER_OF_DOGS,
+      numberOfFamilyMembers: DEFAULT_SUBSCRIPTION_NUMBER_OF_FAMILY_MEMBERS,
+      numberOfDogs: DEFAULT_SUBSCRIPTION_NUMBER_OF_DOGS,
     },
     {
       productId: 'com.jonathanxakellis.hound.twofamilymemberstwodogs.monthly',
-      subscriptionNumberOfFamilyMembers: 2,
-      subscriptionNumberOfDogs: 2,
+      numberOfFamilyMembers: 2,
+      numberOfDogs: 2,
     },
     {
       productId: 'com.jonathanxakellis.hound.fourfamilymembersfourdogs.monthly',
-      subscriptionNumberOfFamilyMembers: 4,
-      subscriptionNumberOfDogs: 4,
+      numberOfFamilyMembers: 4,
+      numberOfDogs: 4,
     },
     {
       productId: 'com.jonathanxakellis.hound.sixfamilymemberssixdogs.monthly',
-      subscriptionNumberOfFamilyMembers: 6,
-      subscriptionNumberOfDogs: 6,
+      numberOfFamilyMembers: 6,
+      numberOfDogs: 6,
     },
     {
       productId: 'com.jonathanxakellis.hound.tenfamilymemberstendogs.monthly',
-      subscriptionNumberOfFamilyMembers: 10,
-      subscriptionNumberOfDogs: 10,
+      numberOfFamilyMembers: 10,
+      numberOfDogs: 10,
     },
   ],
 };

@@ -1,18 +1,18 @@
 const express = require('express');
 
-const subscriptionRouter = express.Router({ mergeParams: true });
+const subscriptionsRouter = express.Router({ mergeParams: true });
 
 const {
-  getInAppSubscriptions, createInAppSubscription,
+  getInAppSubscriptions, createInAppSubscriptions,
 } = require('../controllers/controllerRoutes/inAppSubscriptions');
 
 //
-subscriptionRouter.get('/', getInAppSubscriptions);
+subscriptionsRouter.get('/', getInAppSubscriptions);
 // no body
 
 //
-subscriptionRouter.post('/', createInAppSubscription);
+subscriptionsRouter.post('/', createInAppSubscriptions);
 /* BODY:
 */
 
-module.exports = { subscriptionRouter };
+module.exports = { subscriptionsRouter };

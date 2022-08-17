@@ -15,8 +15,8 @@ const { apn, productionAPNProvider, developmentAPNProvider } = require('./apnPro
  */
 // (token, category, sound, alertTitle, alertBody)
 function sendAPN(token, category, sound, forAlertTitle, forAlertBody, customPayload) {
-  let alertTitle = formatString(forAlertTitle);
-  let alertBody = formatString(forAlertBody);
+  const alertTitle = formatString(forAlertTitle, global.constant.apn.length.ALERT_TITLE);
+  const alertBody = formatString(forAlertBody, global.constant.apn.length.ALERT_BODY);
 
   apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${alertTitle}, ${alertBody}`);
 
@@ -24,9 +24,6 @@ function sendAPN(token, category, sound, forAlertTitle, forAlertBody, customPayl
   if (areAllDefined(token, category, alertTitle, alertBody, customPayload) === false) {
     return;
   }
-
-  alertTitle = alertTitle.substring(0, global.constant.apn.length.ALERT_TITLE);
-  alertBody = alertBody.substring(0, global.constant.apn.length.ALERT_BODY);
 
   // the tokens array is defined and has at least one element
 

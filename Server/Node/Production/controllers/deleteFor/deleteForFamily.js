@@ -25,7 +25,7 @@ async function deleteFamilyForUserIdFamilyId(databaseConnection, userId, familyI
     throw new ValidationError('databaseConnection, userId, or familyId missing', global.constant.error.value.MISSING);
   }
 
-  // This will only store the familyId, userId, userFirstName, and userLastName of any one in the family that has left / been kicked
+  // This will only store the userId, familyId, userFirstName, and userLastName of any one in the family that has left / been kicked
   // Therefore, when trying to see who created a log (even if they have left the family), you can still see a corresponding name.
   if (areAllDefined(kickUserId)) {
     await kickFamilyMember(databaseConnection, userId, familyId, kickUserId);
@@ -47,8 +47,8 @@ async function deleteFamily(databaseConnection, userId, familyId, activeSubscrip
   // find out if the user is the family head
   let family = databaseQuery(
     databaseConnection,
-    'SELECT userId FROM families WHERE familyId = ? AND userId = ? LIMIT 18446744073709551615',
-    [familyId, userId],
+    'SELECT userId FROM families WHERE userId = ? AND familyId = ? LIMIT 18446744073709551615',
+    [userId, familyId],
   );
   // find the amount of family members in the family
   let familyMembers = databaseQuery(
@@ -66,13 +66,22 @@ async function deleteFamily(databaseConnection, userId, familyId, activeSubscrip
       throw new ValidationError('Family still contains multiple members', global.constant.error.family.leave.INVALID);
     }
 
-    // if the active subscription's isn't the default subscription, that means the family has an active subscription
-    if (activeSubscription.productId !== global.constant.subscription.DEFAULT_SUBSCRIPTION_PRODUCT_ID) {
-      throw new ValidationError('Family still has an active subscription', global.constant.error.family.leave.SUBSCRIPTION_ACTIVE);
+    /*
+      If the active subscription's productId isn't DEFAULT_SUBSCRIPTION_PRODUCT_ID, that means the family has an active subscription
+      If the active subscription is auto-renewal status is true or undefined, then we can't let the user delete their family.
+      This is because the subscription could auto-renew after the user left their existing family.
+      This would cause problems, as if they are in a new family as a non-family head or are in no family, as the subscription cannot attach anywhere.
+
+      Only accept if there is no active subscription or the active subscription isn't auto-renewing
+    */
+    if (activeSubscription.productId !== global.constant.subscription.DEFAULT_SUBSCRIPTION_PRODUCT_ID
+      && (areAllDefined(activeSubscription.isAutoRenewing) === false || activeSubscription.isAutoRenewing === true)) {
+      throw new ValidationError('Family still has an auto-renewing, active subscription', global.constant.error.family.leave.SUBSCRIPTION_ACTIVE);
     }
 
-    // TO DO FUTURE check if the user's subscription is renewing. If it is non-renewing / is going to expire, we can let them delete their family
-    // We just don't want a user with a renewing subscription to delete their family as then their subscription is paying for nothing
+    //  The user has no active subscription or manually stopped their subscription from renewing
+    //  They will forfit the rest of their active subscription (if it exists) by deleting their family.
+    //   However, they are safe from an accidential renewal
 
     // There is only one user left in the family, which is the API requester
     const leftUserFullName = await getUserFirstNameLastNameForUserId(databaseConnection, userId);
@@ -96,8 +105,8 @@ async function deleteFamily(databaseConnection, userId, familyId, activeSubscrip
       // keep record of family being delted
       databaseQuery(
         databaseConnection,
-        'INSERT INTO previousFamilies(familyId, userId, familyAccountCreationDate, familyAccountDeletionDate) VALUES (?,?,?,?)',
-        [familyId, userId, familyAccountCreationDate, new Date()],
+        'INSERT INTO previousFamilies(userId, familyId, familyAccountCreationDate, familyAccountDeletionDate) VALUES (?,?,?,?)',
+        [userId, familyId, familyAccountCreationDate, new Date()],
       ),
       // deletes all users from the family (should only be one)
       databaseQuery(
@@ -108,8 +117,8 @@ async function deleteFamily(databaseConnection, userId, familyId, activeSubscrip
       // keep record of user leaving
       databaseQuery(
         databaseConnection,
-        'INSERT INTO previousFamilyMembers(familyId, userId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
-        [familyId, userId, leftUserFullName.userFirstName, leftUserFullName.userLastName, new Date(), 'familyDeleted'],
+        'INSERT INTO previousFamilyMembers(userId, familyId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
+        [userId, familyId, leftUserFullName.userFirstName, leftUserFullName.userLastName, new Date(), 'familyDeleted'],
       ),
       // delete all the corresponding dog, reminder, and log data
       databaseQuery(
@@ -137,8 +146,8 @@ async function deleteFamily(databaseConnection, userId, familyId, activeSubscrip
       // keep record of user leaving
       databaseQuery(
         databaseConnection,
-        'INSERT INTO previousFamilyMembers(familyId, userId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
-        [familyId, userId, leftUserFullName.userFirstName, leftUserFullName.userLastName, new Date(), 'userLeft'],
+        'INSERT INTO previousFamilyMembers(userId, familyId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
+        [userId, familyId, leftUserFullName.userFirstName, leftUserFullName.userLastName, new Date(), 'userLeft'],
       ),
     ];
 
@@ -186,8 +195,8 @@ async function kickFamilyMember(databaseConnection, userId, familyId, forKickUse
     // keep a record of user kicked
     databaseQuery(
       databaseConnection,
-      'INSERT INTO previousFamilyMembers(familyId, userId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
-      [familyId, kickUserId, userFirstName, userLastName, new Date(), 'userKicked'],
+      'INSERT INTO previousFamilyMembers(userId, familyId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
+      [kickUserId, familyId, userFirstName, userLastName, new Date(), 'userKicked'],
     ),
   ];
 

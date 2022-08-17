@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const { ValidationError } = require('../../main/tools/general/errors');
 const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const {
@@ -34,6 +35,7 @@ async function createUserForUserIdentifier(
 
   const userAccountCreationDate = new Date();
   const userId = hash(userIdentifier, userAccountCreationDate.toISOString());
+  const userApplicationUsername = crypto.randomUUID();
 
   const userEmail = formatEmail(forUserEmail);
   const isNotificationEnabled = formatBoolean(forIsNotificationEnabled);
@@ -65,8 +67,8 @@ async function createUserForUserIdentifier(
   const promises = [
     databaseQuery(
       databaseConnection,
-      'INSERT INTO users(userId, userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate) VALUES (?,?,?,?,?,?,?)',
-      [userId, userIdentifier, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate],
+      'INSERT INTO users(userId, userIdentifier, userApplicationUsername, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate) VALUES (?,?,?,?,?,?,?,?)',
+      [userId, userIdentifier, userApplicationUsername, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate],
     ),
     databaseQuery(
       databaseConnection,

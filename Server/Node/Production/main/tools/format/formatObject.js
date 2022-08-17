@@ -43,7 +43,7 @@ function formatDate(forDate) {
     return undefined;
   }
   // parameter is a string, try to convert into a date
-  if (typeof forDate === 'string') {
+  if (typeof forDate === 'string' || typeof forDate === 'number') {
     const date = new Date(forDate);
     // if not a date object or the date object is an invalid date (e.g. Date('nonDateFoo')), then we return undefined
     if (Object.prototype.toString.call(date) !== '[object Date]' || Number.isNaN(date) === true) {
@@ -178,7 +178,7 @@ function formatBase64EncodedString(forString) {
   return string;
 }
 
-function formatString(string) {
+function formatString(string, length) {
   if (areAllDefined(string) === false) {
     return undefined;
   }
@@ -187,7 +187,11 @@ function formatString(string) {
     return undefined;
   }
 
-  return string;
+  if (areAllDefined(length) === false) {
+    return string;
+  }
+
+  return string.substring(0, length);
 }
 
 module.exports = {

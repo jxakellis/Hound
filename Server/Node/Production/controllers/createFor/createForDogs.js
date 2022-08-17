@@ -9,7 +9,7 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
 async function createDogForFamilyId(databaseConnection, familyId, activeSubscription, dogName) {
   const dogLastModified = new Date();
 
-  if (areAllDefined(databaseConnection, familyId, activeSubscription, activeSubscription.subscriptionNumberOfDogs, dogName) === false) {
+  if (areAllDefined(databaseConnection, familyId, activeSubscription, activeSubscription.numberOfDogs, dogName) === false) {
     throw new ValidationError('databaseConnection, familyId, activeSubscription, or dogName missing', global.constant.error.value.MISSING);
   }
 
@@ -17,7 +17,7 @@ async function createDogForFamilyId(databaseConnection, familyId, activeSubscrip
   const dogs = await databaseQuery(
     databaseConnection,
     'SELECT dogId FROM dogs WHERE dogIsDeleted = 0 AND familyId = ? LIMIT ?',
-    [familyId, activeSubscription.subscriptionNumberOfDogs],
+    [familyId, activeSubscription.numberOfDogs],
   );
 
   if (areAllDefined(activeSubscription, dogs) === false) {
@@ -25,8 +25,8 @@ async function createDogForFamilyId(databaseConnection, familyId, activeSubscrip
   }
 
   // Creating a new dog would exceed the limit
-  if (dogs.length >= activeSubscription.subscriptionNumberOfDogs) {
-    throw new ValidationError(`Dog limit of ${activeSubscription.subscriptionNumberOfDogs} exceeded`, global.constant.error.family.limit.DOG_TOO_LOW);
+  if (dogs.length >= activeSubscription.numberOfDogs) {
+    throw new ValidationError(`Dog limit of ${activeSubscription.numberOfDogs} exceeded`, global.constant.error.family.limit.DOG_TOO_LOW);
   }
 
   const result = await databaseQuery(

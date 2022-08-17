@@ -39,7 +39,6 @@ async function createReminder(req, res) {
     const { familyId, dogId } = req.params;
     const reminder = req.body;
     const reminders = formatArray(req.body.reminders);
-    console.log(reminder);
     const result = areAllDefined(reminders) ? await createRemindersForDogIdReminders(req.databaseConnection, dogId, reminders) : [await createReminderForDogIdReminder(req.databaseConnection, dogId, reminder)];
 
     // create was successful, so we can create all the alarm notifications

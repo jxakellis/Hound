@@ -77,8 +77,6 @@ sleep 5
 echo "Listing PM2 processes"
 pm2 list
 
-echo "test new!!!"
-
 echo
 echo "COMPLETE"
 echo

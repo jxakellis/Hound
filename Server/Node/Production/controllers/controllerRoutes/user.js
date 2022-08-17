@@ -27,6 +27,10 @@ async function getUser(req, res) {
     // user provided userIdentifier so we find them using that way
       : await getUserForUserIdentifier(req.databaseConnection, userIdentifier);
 
+    if (areAllDefined(result) === false) {
+      throw new ValidationError('No user found or invalid permissions', global.constant.error.value.INVALID);
+    }
+
     return res.sendResponseForStatusJSONError(200, { result }, undefined);
   }
   catch (error) {

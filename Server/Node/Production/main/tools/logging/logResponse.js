@@ -3,7 +3,6 @@ const { logServerError } = require('./logServerError');
 const { databaseConnectionForLogging } = require('../database/establishDatabaseConnections');
 const { databaseQuery } = require('../database/databaseQuery');
 const { formatBoolean, formatString, formatNumber } = require('../format/formatObject');
-const { areAllDefined } = require('../format/validateDefined');
 
 // Outputs response to the console and logs to database
 function logResponse(req, res, body) {
@@ -13,17 +12,13 @@ function logResponse(req, res, body) {
   appBuild = formatNumber(appBuild);
   appBuild = appBuild > 65535 ? 65535 : appBuild;
 
-  ip = formatString(ip);
-  ip = areAllDefined(ip) ? ip.substring(0, 32) : ip;
+  ip = formatString(ip, 32);
 
-  method = formatString(method);
-  method = areAllDefined(method) ? method.substring(0, 6) : method;
+  method = formatString(method, 6);
 
-  let requestOriginalUrl = formatString(req.originalUrl);
-  requestOriginalUrl = areAllDefined(requestOriginalUrl) ? requestOriginalUrl.substring(0, 500) : requestOriginalUrl;
+  const requestOriginalUrl = formatString(req.originalUrl, 500);
 
-  let responseBody = JSON.stringify(body);
-  responseBody = responseBody.substring(0, 500);
+  const responseBody = formatString(JSON.stringify(body), 500);
 
   const requestDate = new Date();
 

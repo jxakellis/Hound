@@ -87,16 +87,16 @@ async function addFamilyMember(databaseConnection, userId, forFamilyCode) {
   const familyMembers = await getAllFamilyMembersForFamilyId(databaseConnection, familyId);
 
   // the family is either at the limit of family members is exceeds the limit, therefore no new users can join
-  if (familyMembers.length >= activeSubscription.subscriptionNumberOfFamilyMembers) {
-    throw new ValidationError(`Family member limit of ${activeSubscription.subscriptionNumberOfFamilyMembers} exceeded`, global.constant.error.family.limit.FAMILY_MEMBER_TOO_LOW);
+  if (familyMembers.length >= activeSubscription.numberOfFamilyMembers) {
+    throw new ValidationError(`Family member limit of ${activeSubscription.numberOfFamilyMembers} exceeded`, global.constant.error.family.limit.FAMILY_MEMBER_TOO_LOW);
   }
 
   // familyCode validated and user is not a family member in any family
   // insert the user into the family as a family member.
   await databaseQuery(
     databaseConnection,
-    'INSERT INTO familyMembers(familyId, userId) VALUES (?, ?)',
-    [familyId, userId],
+    'INSERT INTO familyMembers(userId, familyId) VALUES (?, ?)',
+    [userId, familyId],
   );
 
   createFamilyMemberJoinNotification(userId, family.familyId);
