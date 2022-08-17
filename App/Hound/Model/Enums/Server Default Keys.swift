@@ -65,6 +65,7 @@ enum ServerDefaultKeys: String {
     case numberOfFamilyMembers
     case numberOfDogs
     case isActive
+    case isAutoRenewing
     
     // MARK: - Special Local Configuration
     

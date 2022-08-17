@@ -64,7 +64,8 @@ final class Subscription: NSObject {
         expirationDate: Date?,
         numberOfFamilyMembers: Int,
         numberOfDogs: Int,
-        isActive: Bool
+        isActive: Bool,
+        isAutoRenewing: Bool?
     ) {
         self.transactionId = transactionId
         self.product = product
@@ -73,6 +74,7 @@ final class Subscription: NSObject {
         self.numberOfFamilyMembers = numberOfFamilyMembers
         self.numberOfDogs = numberOfDogs
         self.isActive = isActive
+        self.isAutoRenewing = isAutoRenewing
         super.init()
     }
     
@@ -97,6 +99,8 @@ final class Subscription: NSObject {
         let numberOfDogs = body[ServerDefaultKeys.numberOfDogs.rawValue] as? Int ?? ClassConstant.SubscriptionConstant.defaultSubscriptionNumberOfDogs
         
         let isActive = body[ServerDefaultKeys.isActive.rawValue] as? Bool ?? false
+        
+        let isAutoRenewing = body[ServerDefaultKeys.isAutoRenewing.rawValue] as? Bool
 
         self.init(
             transactionId: transactionId,
@@ -105,7 +109,8 @@ final class Subscription: NSObject {
             expirationDate: expirationDate,
             numberOfFamilyMembers: numberOfFamilyMembers,
             numberOfDogs: numberOfDogs,
-            isActive: isActive
+            isActive: isActive,
+            isAutoRenewing: isAutoRenewing
         )
     }
     
@@ -131,5 +136,8 @@ final class Subscription: NSObject {
     
     /// Indicates whether or not this subscription is the one thats active for the family
     var isActive: Bool
+    
+    /// Indicates whether or not this subscription will renew itself when it expires
+    private(set) var isAutoRenewing: Bool?
     
 }

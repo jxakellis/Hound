@@ -202,7 +202,11 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
             
             leaveFamilyButton.setTitle("Delete Family", for: .normal)
             
-            leaveFamilyAlertController.title = "Are you sure you want to delete your family?"
+            let familyHasPurchasedSubscription = FamilyConfiguration.activeFamilySubscription.product != ClassConstant.SubscriptionConstant.defaultSubscriptionProduct
+            // If the user has an active subscription, then let them know they will lose the rest of its duration
+            let forfitSubscriptionDisclaimer: String = familyHasPurchasedSubscription ? " If you delete your family, the remaining duration of your active subscription will be forfitted." : ""
+            
+            leaveFamilyAlertController.title = "Are you sure you want to delete your family? \(forfitSubscriptionDisclaimer)"
             let deleteAlertAction = UIAlertAction(title: "Delete Family", style: .destructive) { _ in
                 FamilyRequest.delete(invokeErrorManager: true) { requestWasSuccessful, _ in
                     if requestWasSuccessful == true {
@@ -382,6 +386,13 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     @IBOutlet private weak var leaveFamilyButton: UIButton!
     
     @IBAction private func didClickLeaveFamily(_ sender: Any) {
+        
+        let activeSubscription = FamilyConfiguration.activeFamilySubscription
+        // Check to make sure either the family has the default free subsription or they have an active subscription that isn't auto-renewing. So that if they leave the family, they won't be charged for subscription that isn't attached to anything
+        guard activeSubscription.product == ClassConstant.SubscriptionConstant.defaultSubscriptionProduct || (activeSubscription.product != ClassConstant.SubscriptionConstant.defaultSubscriptionProduct && activeSubscription.isAutoRenewing == false) else {
+            ErrorManager.alert(forError: FamilyResponseError.leaveSubscriptionActive)
+            return
+        }
         
         // User could have only clicked this button if they were eligible to leave the family
         
