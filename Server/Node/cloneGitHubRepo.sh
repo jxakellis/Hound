@@ -74,6 +74,8 @@ pm2 list
 echo "Waiting 5 seconds to list PM2 processes again"
 sleep 5
 
+echo "test new!!!"
+
 echo
 echo "COMPLETE"
 echo
