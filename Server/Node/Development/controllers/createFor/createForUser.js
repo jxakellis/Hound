@@ -67,7 +67,7 @@ async function createUserForUserIdentifier(
   const promises = [
     databaseQuery(
       databaseConnection,
-      'INSERT INTO users(userId, userIdentifier, userApplicationUsername, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate) VALUES (?,?,?,?,?,?,?)',
+      'INSERT INTO users(userId, userIdentifier, userApplicationUsername, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate) VALUES (?,?,?,?,?,?,?,?)',
       [userId, userIdentifier, userApplicationUsername, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate],
     ),
     databaseQuery(

@@ -14,6 +14,8 @@ const { updateInAppSubscriptionForUserIdFamilyIdTransactionInfo } = require('../
 
 const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 
+const { requestLogger } = require('../../main/tools/logging/loggers');
+
 async function createAppStoreServerNotificationForSignedPayload(databaseConnection, signedPayload) {
   if (areAllDefined(databaseConnection, signedPayload) === false) {
     throw new ValidationError('databaseConnection or signedPayload missing', global.constant.error.value.MISSING);
@@ -60,6 +62,7 @@ async function createAppStoreServerNotificationForSignedPayload(databaseConnecti
   // Check if we have logged this notification before
   if (areAllDefined(storedNotification)) {
     // Notification has been logged into database, return
+    requestLogger.info('App Store Server Notification has been logged before');
     return;
   }
 
@@ -82,15 +85,12 @@ async function createAppStoreServerNotificationForSignedPayload(databaseConnecti
 
   const applicationUsername = transactionInfo.appAccountToken;
   if (areAllDefined(applicationUsername)) {
-    console.log('looking for userId through applicationUsername');
     const user = await getUserForUserApplicationUsername(databaseConnection, applicationUsername);
     userId = areAllDefined(user) ? user.userId : undefined;
-    console.log(userId);
   }
 
   // Couldn't find user because applicationUsername was undefined or because no user had that applicationUsername
   if (areAllDefined(userId) === false) {
-    console.log('looking for userId through previous transactions');
     const originalTransactionId = formatNumber(transactionInfo.originalTransactionId);
     // attempt to find userId with most recent transaction. Use originalTransactionId to link to potential transactions
     let transaction = await databaseQuery(
@@ -100,7 +100,6 @@ async function createAppStoreServerNotificationForSignedPayload(databaseConnecti
     );
     [transaction] = transaction;
     userId = areAllDefined(transaction) ? transaction.userId : undefined;
-    console.log(userId);
   }
 
   if (areAllDefined(userId) === false) {
@@ -158,7 +157,6 @@ const appStoreServerNotificationsValues = '?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
  *  If a problem is encountered, creates and throws custom error
  */
 async function createAppStoreServerNotificationForNotification(databaseConnection, notification, data, renewalInfo, transactionInfo) {
-  console.log('createAppStoreServerNotificationForNotification');
   if (areAllDefined(databaseConnection, notification, data, renewalInfo, transactionInfo) === false) {
     throw new ValidationError('databaseConnection or notification missing', global.constant.error.value.MISSING);
   }
@@ -196,9 +194,6 @@ async function createAppStoreServerNotificationForNotification(databaseConnectio
   const renewalInfoExpirationIntent = formatNumber(renewalInfo.expirationIntent);
   // The time when the billing grace period for subscription renewals expires.
   const renewalInfoGracePeriodExpiresDate = formatDate(formatNumber(renewalInfo.gracePeriodExpiresDate));
-  console.log(renewalInfo.gracePeriodExpiresDate);
-  console.log(formatNumber(renewalInfo.gracePeriodExpiresDate));
-  console.log(renewalInfoGracePeriodExpiresDate);
   // The Boolean value that indicates whether the App Store is attempting to automatically renew an expired subscription.
   const renewalInfoIsInBillingRetryPeriod = formatBoolean(renewalInfo.isInBillingRetryPeriod);
   // The offer code or the promotional offer identifier.
@@ -258,50 +253,92 @@ async function createAppStoreServerNotificationForNotification(databaseConnectio
   // The unique identifier of subscription purchase events across devices, including subscription renewals.
   const transactionInfoWebOrderLineItemId = formatNumber(transactionInfo.webOrderLineItemId);
 
-  console.log(
-    notificationType,
-    subtype,
-    notificationUUID,
-    version,
-    signedDate,
-    dataAppAppleId,
-    dataBundleId,
-    dataBundleVersion,
-    dataEnvironment,
-    renewalInfoAutoRenewProductId,
-    renewalInfoAutoRenewStatus,
-    renewalInfoEnvironment,
-    renewalInfoExpirationIntent,
-    renewalInfoGracePeriodExpiresDate,
-    renewalInfoIsInBillingRetryPeriod,
-    renewalInfoOfferIdentifier,
-    renewalInfoOfferType,
-    renewalInfoOriginalTransactionId,
-    renewalInfoPriceIncreaseStatus,
-    renewalInfoProductId,
-    renewalInfoRecentSubscriptionStartDate,
-    renewalInfoSignedDate,
-    transactionInfoAppAccountToken,
-    transactionInfoBundleId,
-    transactionInfoEnvironment,
-    transactionInfoExpiresDate,
-    transactionInfoInAppOwnershipType,
-    transactionInfoIsUpgraded,
-    transactionInfoOfferIdentifier,
-    transactionInfoOfferType,
-    transactionInfoOriginalPurchaseDate,
-    transactionInfoOriginalTransactionId,
-    transactionInfoProductId,
-    transactionInfoPurchaseDate,
-    transactionInfoQuantity,
-    transactionInfoRevocationDate,
-    transactionInfoRevocationReason,
-    transactionInfoSignedDate,
-    transactionInfoSubscriptionGroupIdentifier,
-    transactionInfoTransactionId,
-    transactionInfoType,
-    transactionInfoWebOrderLineItemId,
-  );
+  requestLogger.debug('notificationType');
+  requestLogger.debug(notificationType);
+  requestLogger.debug('subtype');
+  requestLogger.debug(subtype);
+  requestLogger.debug('notificationUUID');
+  requestLogger.debug(notificationUUID);
+  requestLogger.debug('version');
+  requestLogger.debug(version);
+  requestLogger.debug('signedDate');
+  requestLogger.debug(signedDate);
+  requestLogger.debug('dataAppAppleId');
+  requestLogger.debug(dataAppAppleId);
+  requestLogger.debug('dataBundleId');
+  requestLogger.debug(dataBundleId);
+  requestLogger.debug('dataBundleVersion');
+  requestLogger.debug(dataBundleVersion);
+  requestLogger.debug('dataEnvironment');
+  requestLogger.debug(dataEnvironment);
+  requestLogger.debug('renewalInfoAutoRenewProductId');
+  requestLogger.debug(renewalInfoAutoRenewProductId);
+  requestLogger.debug('renewalInfoAutoRenewStatus');
+  requestLogger.debug(renewalInfoAutoRenewStatus);
+  requestLogger.debug('renewalInfoEnvironment');
+  requestLogger.debug(renewalInfoEnvironment);
+  requestLogger.debug('renewalInfoExpirationIntent');
+  requestLogger.debug(renewalInfoExpirationIntent);
+  requestLogger.debug('renewalInfoGracePeriodExpiresDate');
+  requestLogger.debug(renewalInfo.gracePeriodExpiresDate);
+  requestLogger.debug(formatNumber(renewalInfo.gracePeriodExpiresDate));
+  requestLogger.debug(renewalInfoGracePeriodExpiresDate);
+  requestLogger.debug('renewalInfoIsInBillingRetryPeriod');
+  requestLogger.debug(renewalInfoIsInBillingRetryPeriod);
+  requestLogger.debug('renewalInfoOfferIdentifier');
+  requestLogger.debug(renewalInfoOfferIdentifier);
+  requestLogger.debug('renewalInfoOfferType');
+  requestLogger.debug(renewalInfoOfferType);
+  requestLogger.debug('renewalInfoOriginalTransactionId');
+  requestLogger.debug(renewalInfoOriginalTransactionId);
+  requestLogger.debug('renewalInfoPriceIncreaseStatus');
+  requestLogger.debug(renewalInfoPriceIncreaseStatus);
+  requestLogger.debug('renewalInfoProductId');
+  requestLogger.debug(renewalInfoProductId);
+  requestLogger.debug('renewalInfoRecentSubscriptionStartDate');
+  requestLogger.debug(renewalInfoRecentSubscriptionStartDate);
+  requestLogger.debug('renewalInfoSignedDate');
+  requestLogger.debug(renewalInfoSignedDate);
+  requestLogger.debug('transactionInfoAppAccountToken');
+  requestLogger.debug(transactionInfoAppAccountToken);
+  requestLogger.debug('transactionInfoBundleId');
+  requestLogger.debug(transactionInfoBundleId);
+  requestLogger.debug('transactionInfoEnvironment');
+  requestLogger.debug(transactionInfoEnvironment);
+  requestLogger.debug('transactionInfoExpiresDate');
+  requestLogger.debug(transactionInfoExpiresDate);
+  requestLogger.debug('transactionInfoInAppOwnershipType');
+  requestLogger.debug(transactionInfoInAppOwnershipType);
+  requestLogger.debug('transactionInfoIsUpgraded');
+  requestLogger.debug(transactionInfoIsUpgraded);
+  requestLogger.debug('transactionInfoOfferIdentifier');
+  requestLogger.debug(transactionInfoOfferIdentifier);
+  requestLogger.debug('transactionInfoOfferType');
+  requestLogger.debug(transactionInfoOfferType);
+  requestLogger.debug('transactionInfoOriginalPurchaseDate');
+  requestLogger.debug(transactionInfoOriginalPurchaseDate);
+  requestLogger.debug('transactionInfoOriginalTransactionId');
+  requestLogger.debug(transactionInfoOriginalTransactionId);
+  requestLogger.debug('transactionInfoProductId');
+  requestLogger.debug(transactionInfoProductId);
+  requestLogger.debug('transactionInfoPurchaseDate');
+  requestLogger.debug(transactionInfoPurchaseDate);
+  requestLogger.debug('transactionInfoQuantity');
+  requestLogger.debug(transactionInfoQuantity);
+  requestLogger.debug('transactionInfoRevocationDate');
+  requestLogger.debug(transactionInfoRevocationDate);
+  requestLogger.debug('transactionInfoRevocationReason');
+  requestLogger.debug(transactionInfoRevocationReason);
+  requestLogger.debug('transactionInfoSignedDate');
+  requestLogger.debug(transactionInfoSignedDate);
+  requestLogger.debug('transactionInfoSubscriptionGroupIdentifier');
+  requestLogger.debug(transactionInfoSubscriptionGroupIdentifier);
+  requestLogger.debug('transactionInfoTransactionId');
+  requestLogger.debug(transactionInfoTransactionId);
+  requestLogger.debug('transactionInfoType');
+  requestLogger.debug(transactionInfoType);
+  requestLogger.debug('transactionInfoWebOrderLineItemId');
+  requestLogger.debug(transactionInfoWebOrderLineItemId);
 
   await databaseQuery(
     databaseConnection,
