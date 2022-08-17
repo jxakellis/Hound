@@ -50,9 +50,6 @@ echo
 echo "PM2"
 echo
 
-echo "Listing PM2 Processes"
-pm2 list
-
 echo "Stopping All PM2 Processes"
 pm2 stop all
 

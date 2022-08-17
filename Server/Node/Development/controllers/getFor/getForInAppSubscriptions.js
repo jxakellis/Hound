@@ -26,7 +26,7 @@ async function getActiveInAppSubscriptionForFamilyId(databaseConnection, familyI
 
   let familySubscription = await databaseQuery(
     databaseConnection,
-    `SELECT ${transactionsColumns} FROM transactions WHERE familyId = ? AND expirationDate >= ? AND isRevoked == 0 ORDER BY expirationDate DESC, purchaseDate DESC, transactionId DESC LIMIT 1`,
+    `SELECT ${transactionsColumns} FROM transactions WHERE familyId = ? AND expirationDate >= ? AND isRevoked = 0 ORDER BY expirationDate DESC, purchaseDate DESC, transactionId DESC LIMIT 1`,
     [familyId, currentDate],
   );
 
