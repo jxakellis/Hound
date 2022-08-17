@@ -97,7 +97,7 @@ extension SubscriptionRequest {
                     let activeSubscription = Subscription(fromBody: result)
                     FamilyConfiguration.addFamilySubscription(forSubscription: activeSubscription)
                     
-                    // subscriptionPurchaseDate
+                    // purchaseDate
                     completionHandler(true, responseStatus)
                 }
                 else {

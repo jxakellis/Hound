@@ -60,15 +60,15 @@ class SettingsFamilyIntroductionViewController: UIViewController {
         formatter.numberStyle = .spellOut
         let activeSubscription = FamilyConfiguration.activeFamilySubscription
         
-        let spelledOutNumberOfFamilyMembers = formatter.string(from: activeSubscription.subscriptionNumberOfFamilyMembers as NSNumber) ?? ClassConstant.SubscriptionConstant.defaultSubscriptionSpelledOutNumberOfFamilyMembers
-        let familyMembersPlurality = activeSubscription.subscriptionNumberOfFamilyMembers == 1
+        let spelledOutNumberOfFamilyMembers = formatter.string(from: activeSubscription.numberOfFamilyMembers as NSNumber) ?? ClassConstant.SubscriptionConstant.defaultSubscriptionSpelledOutNumberOfFamilyMembers
+        let familyMembersPlurality = activeSubscription.numberOfFamilyMembers == 1
         ? "family member"
         : "family members"
         // "one family member " "two family members "
         let attributedFamilyMembersText = NSAttributedString(string: "\(spelledOutNumberOfFamilyMembers) \(familyMembersPlurality) ", attributes: [.font: VisualConstant.FontConstant.regularLabelEmphaziedTextFont])
         
-        let spelledOutNumberOfDogs = formatter.string(from: activeSubscription.subscriptionNumberOfDogs as NSNumber) ?? ClassConstant.SubscriptionConstant.defaultSubscriptionSpelledOutNumberOfDogs
-        let dogsPlurality = activeSubscription.subscriptionNumberOfDogs == 1
+        let spelledOutNumberOfDogs = formatter.string(from: activeSubscription.numberOfDogs as NSNumber) ?? ClassConstant.SubscriptionConstant.defaultSubscriptionSpelledOutNumberOfDogs
+        let dogsPlurality = activeSubscription.numberOfDogs == 1
         ? "dog"
         : "dogs"
         // "one dog. " "two dogs. "

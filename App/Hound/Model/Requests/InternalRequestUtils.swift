@@ -14,8 +14,8 @@ enum InternalRequestUtils {
     
     private static var sessionConfig: URLSessionConfiguration {
         let sessionConfig = URLSessionConfiguration.default
-        sessionConfig.timeoutIntervalForRequest = 7.5
-        sessionConfig.timeoutIntervalForResource = 15.0
+        sessionConfig.timeoutIntervalForRequest = 15.0
+        sessionConfig.timeoutIntervalForResource = 30.0
         sessionConfig.waitsForConnectivity = false
         return sessionConfig
     }

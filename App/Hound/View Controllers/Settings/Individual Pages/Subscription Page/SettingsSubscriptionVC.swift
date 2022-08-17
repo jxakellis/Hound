@@ -125,23 +125,23 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
         activeSubscriptionDescriptionLabel.text = InAppPurchaseProduct.localizedDescriptionExpanded(forInAppPurchaseProduct: activeSubscription.product)
         
         var purchaseDateString: String {
-            guard let subscriptionPurchaseDate = activeSubscription.subscriptionPurchaseDate else {
+            guard let purchaseDate = activeSubscription.purchaseDate else {
                 return "Never"
             }
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEE, MMMM d, yyyy", options: 0, locale: Calendar.current.locale)
-            return dateFormatter.string(from: subscriptionPurchaseDate)
+            dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEE, MMMM d, h:mm a", options: 0, locale: Calendar.current.locale)
+            return dateFormatter.string(from: purchaseDate)
         }
         
         activeSubscriptionPurchaseDateLabel.text = "Purchased: \(purchaseDateString)"
         
         var expirationDateString: String {
-            guard let subscriptionExpiration = activeSubscription.subscriptionExpiration else {
+            guard let expirationDate = activeSubscription.expirationDate else {
                 return "Never"
             }
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEE, MMMM d, yyyy", options: 0, locale: Calendar.current.locale)
-            return dateFormatter.string(from: subscriptionExpiration)
+            dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEE, MMMM d, h:mm a", options: 0, locale: Calendar.current.locale)
+            return dateFormatter.string(from: expirationDate)
         }
         
         activeSubscriptionExpirationLabel.text = "Expires: \(expirationDateString)"

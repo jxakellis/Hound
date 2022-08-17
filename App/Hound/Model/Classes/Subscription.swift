@@ -60,21 +60,19 @@ final class Subscription: NSObject {
     init(
         transactionId: Int?,
         product: InAppPurchaseProduct,
-        userId: String?,
-        subscriptionPurchaseDate: Date?,
-        subscriptionExpiration: Date?,
-        subscriptionNumberOfFamilyMembers: Int,
-        subscriptionNumberOfDogs: Int,
-        subscriptionIsActive: Bool
+        purchaseDate: Date?,
+        expirationDate: Date?,
+        numberOfFamilyMembers: Int,
+        numberOfDogs: Int,
+        isActive: Bool
     ) {
         self.transactionId = transactionId
         self.product = product
-        self.userId = userId
-        self.subscriptionPurchaseDate = subscriptionPurchaseDate
-        self.subscriptionExpiration = subscriptionExpiration
-        self.subscriptionNumberOfFamilyMembers = subscriptionNumberOfFamilyMembers
-        self.subscriptionNumberOfDogs = subscriptionNumberOfDogs
-        self.subscriptionIsActive = subscriptionIsActive
+        self.purchaseDate = purchaseDate
+        self.expirationDate = expirationDate
+        self.numberOfFamilyMembers = numberOfFamilyMembers
+        self.numberOfDogs = numberOfDogs
+        self.isActive = isActive
         super.init()
     }
     
@@ -84,33 +82,30 @@ final class Subscription: NSObject {
         
         let product = InAppPurchaseProduct(rawValue: body[ServerDefaultKeys.productId.rawValue] as? String ?? InAppPurchaseProduct.unknown.rawValue) ?? ClassConstant.SubscriptionConstant.defaultSubscriptionProduct
         
-        let userId = body[ServerDefaultKeys.userId.rawValue] as? String
-        
-        var subscriptionPurchaseDate: Date?
-        if let subscriptionPurchaseDateString = body[ServerDefaultKeys.subscriptionPurchaseDate.rawValue] as? String {
-            subscriptionPurchaseDate = ResponseUtils.dateFormatter(fromISO8601String: subscriptionPurchaseDateString)
+        var purchaseDate: Date?
+        if let purchaseDateString = body[ServerDefaultKeys.purchaseDate.rawValue] as? String {
+            purchaseDate = ResponseUtils.dateFormatter(fromISO8601String: purchaseDateString)
         }
         
-        var subscriptionExpiration: Date?
-        if let subscriptionExpirationString = body[ServerDefaultKeys.subscriptionExpiration.rawValue] as? String {
-            subscriptionExpiration = ResponseUtils.dateFormatter(fromISO8601String: subscriptionExpirationString)
+        var expirationDate: Date?
+        if let expirationDateString = body[ServerDefaultKeys.expirationDate.rawValue] as? String {
+            expirationDate = ResponseUtils.dateFormatter(fromISO8601String: expirationDateString)
         }
         
-        let subscriptionNumberOfFamilyMembers = body[ServerDefaultKeys.subscriptionNumberOfFamilyMembers.rawValue] as? Int ?? ClassConstant.SubscriptionConstant.defaultSubscriptionNumberOfFamilyMembers
+        let numberOfFamilyMembers = body[ServerDefaultKeys.numberOfFamilyMembers.rawValue] as? Int ?? ClassConstant.SubscriptionConstant.defaultSubscriptionNumberOfFamilyMembers
         
-        let subscriptionNumberOfDogs = body[ServerDefaultKeys.subscriptionNumberOfDogs.rawValue] as? Int ?? ClassConstant.SubscriptionConstant.defaultSubscriptionNumberOfDogs
+        let numberOfDogs = body[ServerDefaultKeys.numberOfDogs.rawValue] as? Int ?? ClassConstant.SubscriptionConstant.defaultSubscriptionNumberOfDogs
         
-        let subscriptionIsActive = body[ServerDefaultKeys.subscriptionIsActive.rawValue] as? Bool ?? false
+        let isActive = body[ServerDefaultKeys.isActive.rawValue] as? Bool ?? false
 
         self.init(
             transactionId: transactionId,
             product: product,
-            userId: userId,
-            subscriptionPurchaseDate: subscriptionPurchaseDate,
-            subscriptionExpiration: subscriptionExpiration,
-            subscriptionNumberOfFamilyMembers: subscriptionNumberOfFamilyMembers,
-            subscriptionNumberOfDogs: subscriptionNumberOfDogs,
-            subscriptionIsActive: subscriptionIsActive
+            purchaseDate: purchaseDate,
+            expirationDate: expirationDate,
+            numberOfFamilyMembers: numberOfFamilyMembers,
+            numberOfDogs: numberOfDogs,
+            isActive: isActive
         )
     }
     
@@ -122,22 +117,19 @@ final class Subscription: NSObject {
     /// Product Id that the subscription purchase was for
     private(set) var product: InAppPurchaseProduct
     
-    /// User Id of the user that purchased the subscription
-    private(set) var userId: String?
-    
     /// Date at which the subscription was purchased and completed processing on Hound's server
-    private(set) var subscriptionPurchaseDate: Date?
+    private(set) var purchaseDate: Date?
     
     /// Date at which the subscription will expire
-    private(set) var subscriptionExpiration: Date?
+    private(set) var expirationDate: Date?
     
     /// How many family members the subscription allows into the family
-    private(set) var subscriptionNumberOfFamilyMembers: Int
+    private(set) var numberOfFamilyMembers: Int
     
     /// How many dogs the subscription allows into the family
-    private(set) var subscriptionNumberOfDogs: Int
+    private(set) var numberOfDogs: Int
     
     /// Indicates whether or not this subscription is the one thats active for the family
-    var subscriptionIsActive: Bool
+    var isActive: Bool
     
 }

@@ -85,17 +85,18 @@ async function getFamilyHeadUserIdForFamilyId(databaseConnection, familyId) {
     throw new ValidationError('databaseConnection or familyId missing', global.constant.error.value.MISSING);
   }
 
-  const result = await databaseQuery(
+  let result = await databaseQuery(
     databaseConnection,
     'SELECT userId FROM families WHERE familyId = ? LIMIT 1',
     [familyId],
   );
 
-  if (result.length === 0) {
+  [result] = result;
+  if (areAllDefined(result) === false) {
     return undefined;
   }
 
-  return formatSHA256Hash(result[0].userId);
+  return formatSHA256Hash(result.userId);
 }
 
 module.exports = {

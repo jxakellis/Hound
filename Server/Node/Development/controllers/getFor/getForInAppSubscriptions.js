@@ -3,8 +3,8 @@ const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { formatNumber } = require('../../main/tools/format/formatObject');
 
-// familyId, and subscriptionLastModified omitted
-const transactionsColumns = 'transactionId, productId, userId, subscriptionPurchaseDate, subscriptionExpiration, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs';
+// Omitted columns: originalTransactionId, userId, familyId, subscriptionGroupIdentifier, quantity, webOrderLineItemId, inAppOwnershipType
+const transactionsColumns = 'transactionId, productId, purchaseDate, expirationDate, numberOfFamilyMembers, numberOfDogs, isAutoRenewing, isRevoked';
 
 /**
  *  If the query is successful, returns the most recent subscription for the familyId (if no most recent subscription, fills in default subscription details).
@@ -20,13 +20,13 @@ async function getActiveInAppSubscriptionForFamilyId(databaseConnection, familyI
 
   const currentDate = new Date();
   // If we subtract the SUBSCRIPTION_GRACE_PERIOD from currentDate, we get a date that is that amount of time in the past. E.g. currentDate: 6:00 PM, gracePeriod: 1:00 -> currentDate: 5:00PM
-  // Therefore when currentDate is compared to subscriptionExpiration, we allow for the subscriptionExpiration to be SUBSCRIPTION_GRACE_PERIOD amount of time expired.
-  // This effect could also be achieved by adding SUBSCRIPTION_GRACE_PERIOD to subscriptionExpiration, making it appear to expire later than it actually does.
+  // Therefore when currentDate is compared to expirationDate, we allow for the expirationDate to be SUBSCRIPTION_GRACE_PERIOD amount of time expired.
+  // This effect could also be achieved by adding SUBSCRIPTION_GRACE_PERIOD to expirationDate, making it appear to expire later than it actually does.
   currentDate.setTime(currentDate.getTime() - global.constant.subscription.SUBSCRIPTION_GRACE_PERIOD);
 
   let familySubscription = await databaseQuery(
     databaseConnection,
-    `SELECT ${transactionsColumns} FROM transactions WHERE familyId = ? AND subscriptionExpiration >= ? ORDER BY subscriptionExpiration DESC, subscriptionPurchaseDate DESC LIMIT 1`,
+    `SELECT ${transactionsColumns} FROM transactions WHERE familyId = ? AND expirationDate >= ? AND isRevoked == 0 ORDER BY expirationDate DESC, purchaseDate DESC, transactionId DESC LIMIT 1`,
     [familyId, currentDate],
   );
 
@@ -34,8 +34,8 @@ async function getActiveInAppSubscriptionForFamilyId(databaseConnection, familyI
   if (familySubscription.length === 0) {
     familySubscription = global.constant.subscription.SUBSCRIPTIONS.find((subscription) => subscription.productId === global.constant.subscription.DEFAULT_SUBSCRIPTION_PRODUCT_ID);
     familySubscription.userId = undefined;
-    familySubscription.subscriptionPurchaseDate = undefined;
-    familySubscription.subscriptionExpiration = undefined;
+    familySubscription.purchaseDate = undefined;
+    familySubscription.expirationDate = undefined;
   }
   else {
     // we found a subscription, so get rid of the one entry array
@@ -60,7 +60,7 @@ async function getAllInAppSubscriptionsForFamilyId(databaseConnection, familyId)
   // find all of the family's subscriptions
   const transactionsHistory = await databaseQuery(
     databaseConnection,
-    `SELECT ${transactionsColumns} FROM transactions WHERE familyId = ? ORDER BY subscriptionExpiration DESC, subscriptionPurchaseDate DESC LIMIT 18446744073709551615`,
+    `SELECT ${transactionsColumns} FROM transactions WHERE familyId = ? ORDER BY expirationDate DESC, purchaseDate DESC LIMIT 18446744073709551615`,
     [familyId],
   );
 
@@ -94,4 +94,6 @@ async function getInAppSubscriptionForTransactionId(databaseConnection, forTrans
   return transactionsHistory[0];
 }
 
-module.exports = { getActiveInAppSubscriptionForFamilyId, getAllInAppSubscriptionsForFamilyId, getInAppSubscriptionForTransactionId };
+module.exports = {
+  getActiveInAppSubscriptionForFamilyId, getAllInAppSubscriptionsForFamilyId, getInAppSubscriptionForTransactionId,
+};

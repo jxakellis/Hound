@@ -34,13 +34,13 @@ async function createFamilyForUserId(databaseConnection, userId) {
   const familyCode = await generateVerifiedFamilyCode(databaseConnection);
   await databaseQuery(
     databaseConnection,
-    'INSERT INTO families(familyId, userId, familyCode, isLocked, isPaused, familyAccountCreationDate) VALUES (?, ?, ?, ?, ?, ?)',
-    [familyId, userId, familyCode, false, false, familyAccountCreationDate],
+    'INSERT INTO families(userId, familyId, familyCode, isLocked, isPaused, familyAccountCreationDate) VALUES (?, ?, ?, ?, ?, ?)',
+    [userId, familyId, familyCode, false, false, familyAccountCreationDate],
   );
   await databaseQuery(
     databaseConnection,
-    'INSERT INTO familyMembers(familyId, userId) VALUES (?, ?)',
-    [familyId, userId],
+    'INSERT INTO familyMembers(userId, familyId) VALUES (?, ?)',
+    [userId, familyId],
   );
 
   return familyId;

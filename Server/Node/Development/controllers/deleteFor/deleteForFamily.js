@@ -25,7 +25,7 @@ async function deleteFamilyForUserIdFamilyId(databaseConnection, userId, familyI
     throw new ValidationError('databaseConnection, userId, or familyId missing', global.constant.error.value.MISSING);
   }
 
-  // This will only store the familyId, userId, userFirstName, and userLastName of any one in the family that has left / been kicked
+  // This will only store the userId, familyId, userFirstName, and userLastName of any one in the family that has left / been kicked
   // Therefore, when trying to see who created a log (even if they have left the family), you can still see a corresponding name.
   if (areAllDefined(kickUserId)) {
     await kickFamilyMember(databaseConnection, userId, familyId, kickUserId);
@@ -47,8 +47,8 @@ async function deleteFamily(databaseConnection, userId, familyId, activeSubscrip
   // find out if the user is the family head
   let family = databaseQuery(
     databaseConnection,
-    'SELECT userId FROM families WHERE familyId = ? AND userId = ? LIMIT 18446744073709551615',
-    [familyId, userId],
+    'SELECT userId FROM families WHERE userId = ? AND familyId = ? LIMIT 18446744073709551615',
+    [userId, familyId],
   );
   // find the amount of family members in the family
   let familyMembers = databaseQuery(
@@ -108,8 +108,8 @@ async function deleteFamily(databaseConnection, userId, familyId, activeSubscrip
       // keep record of family being delted
       databaseQuery(
         databaseConnection,
-        'INSERT INTO previousFamilies(familyId, userId, familyAccountCreationDate, familyAccountDeletionDate) VALUES (?,?,?,?)',
-        [familyId, userId, familyAccountCreationDate, new Date()],
+        'INSERT INTO previousFamilies(userId, familyId, familyAccountCreationDate, familyAccountDeletionDate) VALUES (?,?,?,?)',
+        [userId, familyId, familyAccountCreationDate, new Date()],
       ),
       // deletes all users from the family (should only be one)
       databaseQuery(
@@ -120,8 +120,8 @@ async function deleteFamily(databaseConnection, userId, familyId, activeSubscrip
       // keep record of user leaving
       databaseQuery(
         databaseConnection,
-        'INSERT INTO previousFamilyMembers(familyId, userId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
-        [familyId, userId, leftUserFullName.userFirstName, leftUserFullName.userLastName, new Date(), 'familyDeleted'],
+        'INSERT INTO previousFamilyMembers(userId, familyId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
+        [userId, familyId, leftUserFullName.userFirstName, leftUserFullName.userLastName, new Date(), 'familyDeleted'],
       ),
       // delete all the corresponding dog, reminder, and log data
       databaseQuery(
@@ -149,8 +149,8 @@ async function deleteFamily(databaseConnection, userId, familyId, activeSubscrip
       // keep record of user leaving
       databaseQuery(
         databaseConnection,
-        'INSERT INTO previousFamilyMembers(familyId, userId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
-        [familyId, userId, leftUserFullName.userFirstName, leftUserFullName.userLastName, new Date(), 'userLeft'],
+        'INSERT INTO previousFamilyMembers(userId, familyId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
+        [userId, familyId, leftUserFullName.userFirstName, leftUserFullName.userLastName, new Date(), 'userLeft'],
       ),
     ];
 
@@ -198,8 +198,8 @@ async function kickFamilyMember(databaseConnection, userId, familyId, forKickUse
     // keep a record of user kicked
     databaseQuery(
       databaseConnection,
-      'INSERT INTO previousFamilyMembers(familyId, userId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
-      [familyId, kickUserId, userFirstName, userLastName, new Date(), 'userKicked'],
+      'INSERT INTO previousFamilyMembers(userId, familyId, userFirstName, userLastName, familyLeaveDate, familyLeaveReason) VALUES (?,?,?,?,?,?)',
+      [kickUserId, familyId, userFirstName, userLastName, new Date(), 'userKicked'],
     ),
   ];
 

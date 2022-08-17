@@ -88,28 +88,28 @@ const subscription = {
   SUBSCRIPTIONS: [
     {
       productId: DEFAULT_SUBSCRIPTION_PRODUCT_ID,
-      subscriptionNumberOfFamilyMembers: DEFAULT_SUBSCRIPTION_NUMBER_OF_FAMILY_MEMBERS,
-      subscriptionNumberOfDogs: DEFAULT_SUBSCRIPTION_NUMBER_OF_DOGS,
+      numberOfFamilyMembers: DEFAULT_SUBSCRIPTION_NUMBER_OF_FAMILY_MEMBERS,
+      numberOfDogs: DEFAULT_SUBSCRIPTION_NUMBER_OF_DOGS,
     },
     {
       productId: 'com.jonathanxakellis.hound.twofamilymemberstwodogs.monthly',
-      subscriptionNumberOfFamilyMembers: 2,
-      subscriptionNumberOfDogs: 2,
+      numberOfFamilyMembers: 2,
+      numberOfDogs: 2,
     },
     {
       productId: 'com.jonathanxakellis.hound.fourfamilymembersfourdogs.monthly',
-      subscriptionNumberOfFamilyMembers: 4,
-      subscriptionNumberOfDogs: 4,
+      numberOfFamilyMembers: 4,
+      numberOfDogs: 4,
     },
     {
       productId: 'com.jonathanxakellis.hound.sixfamilymemberssixdogs.monthly',
-      subscriptionNumberOfFamilyMembers: 6,
-      subscriptionNumberOfDogs: 6,
+      numberOfFamilyMembers: 6,
+      numberOfDogs: 6,
     },
     {
       productId: 'com.jonathanxakellis.hound.tenfamilymemberstendogs.monthly',
-      subscriptionNumberOfFamilyMembers: 10,
-      subscriptionNumberOfDogs: 10,
+      numberOfFamilyMembers: 10,
+      numberOfDogs: 10,
     },
   ],
 };

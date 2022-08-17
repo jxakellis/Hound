@@ -56,8 +56,8 @@ async function getOtherFamilyMemberTokens(userId, familyId) {
   // retrieve userNotificationToken that fit the criteria
   const result = await databaseQuery(
     databaseConnectionForGeneral,
-    `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userId != ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
-    [familyId, userId],
+    `SELECT users.userNotificationToken FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE users.userId != ? AND familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
+    [userId, familyId],
   );
 
   return parseNotificatonTokenQuery(result);

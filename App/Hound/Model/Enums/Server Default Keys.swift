@@ -59,11 +59,11 @@ enum ServerDefaultKeys: String {
     
     case transactionId
     case productId
-    case subscriptionPurchaseDate
-    case subscriptionExpiration
-    case subscriptionNumberOfFamilyMembers
-    case subscriptionNumberOfDogs
-    case subscriptionIsActive
+    case purchaseDate
+    case expirationDate
+    case numberOfFamilyMembers
+    case numberOfDogs
+    case isActive
     
     // MARK: - Special Local Configuration
     

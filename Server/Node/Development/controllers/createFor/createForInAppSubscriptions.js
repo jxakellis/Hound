@@ -3,7 +3,9 @@ const { GeneralError, ValidationError } = require('../../main/tools/general/erro
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { houndSharedSecret } = require('../../main/secrets/houndSharedSecret');
-const { formatBase64EncodedString, formatArray, formatNumber } = require('../../main/tools/format/formatObject');
+const {
+  formatBase64EncodedString, formatArray, formatNumber, formatString,
+} = require('../../main/tools/format/formatObject');
 const { getActiveInAppSubscriptionForFamilyId } = require('../getFor/getForInAppSubscriptions');
 const { getFamilyHeadUserIdForFamilyId } = require('../getFor/getForFamily');
 
@@ -13,7 +15,7 @@ const { getFamilyHeadUserIdForFamilyId } = require('../getFor/getForFamily');
  *  If the query is successful, then returns the active subscription for the family.
  *  If a problem is encountered, creates and throws custom error
  */
-async function createInAppSubscriptionsForUserIdFamilyIdRecieptId(databaseConnection, userId, familyId, forBase64EncodedAppStoreReceiptURL) {
+async function createInAppSubscriptionForUserIdFamilyIdRecieptId(databaseConnection, userId, familyId, forBase64EncodedAppStoreReceiptURL) {
   // Takes a base64 encoded appStoreReceiptURL from a user
   const base64EncodedAppStoreReceiptURL = formatBase64EncodedString(forBase64EncodedAppStoreReceiptURL);
 
@@ -60,8 +62,6 @@ async function createInAppSubscriptionsForUserIdFamilyIdRecieptId(databaseConnec
     throw new ValidationError("Unable to parse the responseBody from Apple's iTunes servers", global.constant.error.value.MISSING);
   }
 
-  // TO DO NOW extract more information from the reciept to better match app store server notification data
-
   // check to see .latest_receipt_info array exists
   const receipts = formatArray(resultBody.latest_receipt_info);
   if (areAllDefined(receipts) === false) {
@@ -82,7 +82,6 @@ async function createInAppSubscriptionsForUserIdFamilyIdRecieptId(databaseConnec
  */
 async function updateReceiptRecords(databaseConnection, userId, familyId, forReceipts) {
   const receipts = formatArray(forReceipts);
-  const subscriptionLastModified = new Date();
 
   if (areAllDefined(databaseConnection, userId, familyId, receipts) === false) {
     throw new ValidationError('databaseConnection, userId, familyId, or receipts missing', global.constant.error.value.MISSING);
@@ -102,8 +101,8 @@ async function updateReceiptRecords(databaseConnection, userId, familyId, forRec
     }
 
     // we found a corresponding subscription, assign the correst values to the receipt
-    receipt.subscriptionNumberOfFamilyMembers = correspondingSubscription.subscriptionNumberOfFamilyMembers;
-    receipt.subscriptionNumberOfDogs = correspondingSubscription.subscriptionNumberOfDogs;
+    receipt.numberOfFamilyMembers = correspondingSubscription.numberOfFamilyMembers;
+    receipt.numberOfDogs = correspondingSubscription.numberOfDogs;
   }
 
   // find all of our currently stored transactions for the user
@@ -119,17 +118,43 @@ async function updateReceiptRecords(databaseConnection, userId, familyId, forRec
   const promises = [];
   for (let i = 0; i < receipts.length; i += 1) {
     const receipt = receipts[i];
-    console.log('individual reciept');
-    console.log(receipt);
     const transactionId = formatNumber(receipt.transaction_id);
 
     // check to see if we have that receipt stored in the database
     if (storedTransactions.some((storedTransaction) => formatNumber(storedTransaction.transactionId) === transactionId) === false) {
       // we don't have that receipt stored, insert it into the database
+
+      // transactionid
+      const originalTransactionid = formatNumber(receipt.original_transaction_id);
+      // familyId
+      // userId
+      const productId = formatString(receipt.productId, 60);
+      const subscriptionGroupIdentifier = formatNumber(receipt.subscription_group_identifier);
+      const purchaseDate = new Date(formatNumber(receipt.purchase_date_ms));
+      const expirationDate = new Date(formatNumber(receipt.expires_date_ms));
+      const numberOfFamilyMembers = formatNumber(receipt.numberOfFamilyMembers);
+      const numberOfDogs = formatNumber(receipt.numberOfDogs);
+      const quantity = formatNumber(receipt.quantity);
+      const webOrderLineItemId = formatNumber(receipt.web_order_line_item_id);
+      const inAppOwnershipType = formatString(receipt.in_app_ownership_type, 13);
       promises.push(databaseQuery(
         databaseConnection,
-        'INSERT INTO subscriptions(transactionId, productId, familyId, userId, subscriptionPurchaseDate, subscriptionLastModified, subscriptionExpiration, subscriptionNumberOfFamilyMembers, subscriptionNumberOfDogs) VALUES (?,?,?,?,?,?,?,?,?)',
-        [transactionId, receipt.product_id, familyId, userId, new Date(formatNumber(receipt.purchase_date_ms)), subscriptionLastModified, new Date(formatNumber(receipt.expires_date_ms)), receipt.subscriptionNumberOfDogs, receipt.subscriptionNumberOfFamilyMembers],
+        'INSERT INTO transactions(transactionId, originalTransactionId, userId, familyId, productId, subscriptionGroupIdentifier, purchaseDate, expirationDate, numberOfFamilyMembers, numberOfDogs, quantity, webOrderLineItemId, inAppOwnershipTypes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [
+          transactionId,
+          originalTransactionid,
+          userId,
+          familyId,
+          productId,
+          subscriptionGroupIdentifier,
+          purchaseDate,
+          expirationDate,
+          numberOfFamilyMembers,
+          numberOfDogs,
+          quantity,
+          webOrderLineItemId,
+          inAppOwnershipType,
+        ],
       ));
     }
   }
@@ -139,4 +164,43 @@ async function updateReceiptRecords(databaseConnection, userId, familyId, forRec
   // now all of the receipts returned by apple (who's productId's match one that is known to us) are stored in our database
 }
 
-module.exports = { createInAppSubscriptionsForUserIdFamilyIdRecieptId };
+/**
+ *  If the query is successful, then returns
+ *  If a problem is encountered, creates and throws custom error
+ */
+async function createInAppSubscriptionForUserIdFamilyIdTransactionInfo(databaseConnection, transactionId, originalTransactionId, userId, familyId, productId, subscriptionGroupIdentifier, purchaseDate, expirationDate, quantity, webOrderLineItemId, inAppOwnershipType) {
+  if (areAllDefined(databaseConnection, transactionId, userId, familyId, productId, purchaseDate, expirationDate) === false) {
+    throw new ValidationError('databaseConnection, transactionId, userId, familyId, productId, purchaseDate, or expirationDate missing', global.constant.error.value.MISSING);
+  }
+
+  const familyHeadUserId = await getFamilyHeadUserIdForFamilyId(databaseConnection, familyId);
+
+  if (familyHeadUserId !== userId) {
+    throw new ValidationError('You are not the family head. Only the family head can modify the family subscription', global.constant.error.family.permission.INVALID);
+  }
+
+  const correspondingProduct = global.constant.subscription.SUBSCRIPTIONS.find((subscription) => subscription.productId === productId);
+  const { numberOfFamilyMembers, numberOfDogs } = correspondingProduct;
+
+  await databaseQuery(
+    databaseConnection,
+    'INSERT INTO transactions(transactionId, originalTransactionId, userId, familyId, productId, subscriptionGroupIdentifier, purchaseDate, expirationDate, numberOfFamilyMembers, numberOfDogs, quantity, webOrderLineItemId, inAppOwnershipTypes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [
+      transactionId,
+      originalTransactionId,
+      userId,
+      familyId,
+      productId,
+      subscriptionGroupIdentifier,
+      purchaseDate,
+      expirationDate,
+      numberOfFamilyMembers,
+      numberOfDogs,
+      quantity,
+      webOrderLineItemId,
+      inAppOwnershipType,
+    ],
+  );
+}
+
+module.exports = { createInAppSubscriptionForUserIdFamilyIdRecieptId, createInAppSubscriptionForUserIdFamilyIdTransactionInfo };

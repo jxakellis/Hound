@@ -26,7 +26,7 @@ final class SettingsAboutViewController: UIViewController {
         // 1. new support@houndorganizer.com address
         // 2. Hound is a family, cloud-connected app
         // 3. Hound is a student project
-         self.version.text = "Version \(UIApplication.appVersion ?? "nil")"
+         self.version.text = "Version \(UIApplication.appVersion)"
         self.build.text = "Build \(UIApplication.appBuild)"
         self.copyright.text = "© \(Calendar.current.component(.year, from: Date())) Jonathan Xakellis"
     }

@@ -85,10 +85,10 @@ enum FamilyConfiguration {
             return existingSubscription.transactionId == subscription.transactionId
         }
         
-        if subscription.subscriptionIsActive {
+        if subscription.isActive {
             // There can only be one active subscription, so remove tag from others
             familySubscriptions.forEach { existingSubscription in
-                existingSubscription.subscriptionIsActive = false
+                existingSubscription.isActive = false
             }
             // Active subscription goes at the beginning
             familySubscriptions.insert(subscription, at: 0)
@@ -105,7 +105,7 @@ enum FamilyConfiguration {
     
     static var activeFamilySubscription: Subscription {
         let potentialSubscription = familySubscriptions.first { subscription in
-            return subscription.subscriptionIsActive
+            return subscription.isActive
         }
         
         return potentialSubscription ?? ClassConstant.SubscriptionConstant.defaultSubscription
