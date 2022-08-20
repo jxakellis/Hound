@@ -33,6 +33,7 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
     // MARK: - Main
     override func viewDidLoad() {
         super.viewDidLoad()
+        // TO DO NOW add red text overlay if not prod server & prod database. Say what server and what database is in use,
     }
     
     override func viewWillLayoutSubviews() {

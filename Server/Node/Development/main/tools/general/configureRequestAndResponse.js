@@ -11,8 +11,8 @@ async function configureRequestForResponse(req, res, next) {
   res.hasSentResponse = false;
   req.hasActiveDatabaseConnection = false;
   req.hasActiveDatabaseTransaction = false;
-  req.hasBeenLogged = false;
-  res.hasBeenLogged = false;
+  req.requestId = undefined;
+  res.responseId = undefined;
   configureResponse(req, res);
 
   const hasActiveDatabaseConnection = formatBoolean(req.hasActiveDatabaseConnection);
@@ -83,7 +83,7 @@ function configureResponse(req, res) {
       ? convertErrorToJSON(error)
       : json;
 
-    logResponse(req, res, body);
+    await logResponse(req, res, body);
 
     res.hasSentResponse = true;
     res.status(status).json(body);

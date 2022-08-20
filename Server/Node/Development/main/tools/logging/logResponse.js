@@ -2,42 +2,32 @@ const { responseLogger } = require('./loggers');
 const { logServerError } = require('./logServerError');
 const { databaseConnectionForLogging } = require('../database/establishDatabaseConnections');
 const { databaseQuery } = require('../database/databaseQuery');
-const { formatBoolean, formatString, formatNumber } = require('../format/formatObject');
+const { areAllDefined } = require('../format/validateDefined');
+const { formatString, formatNumber } = require('../format/formatObject');
 
 // Outputs response to the console and logs to database
-function logResponse(req, res, body) {
-  let { appBuild } = req.params;
-  let { ip, method } = req;
+async function logResponse(req, res, body) {
+  const date = new Date();
 
-  appBuild = formatNumber(appBuild);
-  appBuild = appBuild > 65535 ? 65535 : appBuild;
-
-  ip = formatString(ip, 32);
-
-  method = formatString(method, 6);
-
-  const requestOriginalUrl = formatString(req.originalUrl, 500);
+  const originalUrl = formatString(req.originalUrl, 500);
 
   const responseBody = formatString(JSON.stringify(body), 500);
 
-  const requestDate = new Date();
+  responseLogger.info(`Response for ${req.method} ${originalUrl}\n With body: ${JSON.stringify(responseBody)}`);
 
-  responseLogger.info(`Response for ${req.method} ${requestOriginalUrl}\n With body: ${JSON.stringify(responseBody)}`);
-
-  const hasBeenLogged = formatBoolean(res.hasBeenLogged);
-
-  if (hasBeenLogged === false) {
-    res.hasBeenLogged = true;
-
-    databaseQuery(
-      databaseConnectionForLogging,
-      'INSERT INTO previousResponses(appBuild, requestIP, requestDate, requestMethod, requestOriginalURL, responseBody) VALUES (?,?,?,?,?,?)',
-      [appBuild, ip, requestDate, method, requestOriginalUrl, responseBody],
-    ).catch(
-      (error) => {
-        logServerError('logResponse', error);
-      },
-    );
+  if (areAllDefined(res.responseId) === false) {
+    try {
+      const result = await databaseQuery(
+        databaseConnectionForLogging,
+        'INSERT INTO previousResponses(requestId, responseDate, responseBody) VALUES (?,?,?)',
+        [req.requestId, date, responseBody],
+      );
+      const responseId = formatNumber(result.insertId);
+      res.responseId = responseId;
+    }
+    catch (error) {
+      logServerError('logResponse', error);
+    }
   }
 }
 

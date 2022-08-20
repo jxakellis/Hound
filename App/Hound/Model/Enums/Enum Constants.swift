@@ -15,7 +15,7 @@ enum EnumConstant {
 #if DEBUG
             AppDelegate.generalLogger.info("DEBUG Build Configuration for server")
             // Can return true or false. Can have prod or dev server for DEBUG
-            return true
+            return false
 #else
             AppDelegate.generalLogger.info("RELEASE Build Configuration for server")
             // ALWAYS RETURN TRUE, WANT PROD SERVER FOR RELEASE
@@ -48,6 +48,8 @@ enum EnumConstant {
         static let url: String = urlScheme + urlDomainName + urlPort + urlBasePath + urlAppPath
         /// The interval at which the date picker should display minutes. Use this property to set the interval displayed by the minutes wheel (for example, 15 minutes). The interval value must be evenly divided into 60; if it is not, the default value is used. The default and minimum values are 1; the maximum value is 30.
         static let reminderMinuteInterval = isProductionDatabase ? 5 : 1
+        /// If a subscription is bought on the production database / server, then we display the purchase/expiration date as the format: Thursday, August 18th, 2022. If it's not the production database, then we display it as Thursday, August 18th, 11:00 AM, 2022
+        static let subscriptionDateFormatTemplate = isProductionDatabase ? "EEEE, MMMM d, yyyy" : "EEEE, MMMM d yyyy, h:mm a"
     }
     enum HashConstant {
         static let defaultSHA256Hash: String = Hash.sha256Hash(forString: "-1")

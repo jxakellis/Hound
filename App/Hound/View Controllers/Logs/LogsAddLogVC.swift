@@ -363,6 +363,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // TO DO NOW fix scaling of add log page. on small phones, like dads iPhone 8, the date of event date picker is smushed while the add notes field is very large. change compression priority and add minimum size for date picker
         view.addSubview(logNoteTextView)
         
         oneTimeSetup()

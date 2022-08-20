@@ -9,7 +9,6 @@
 import Foundation
 
 enum NotificationSound: String, CaseIterable {
-    // ENUM('Radar','Apex','Beacon','Bulletin','By The Seaside','Chimes','Circuit','Constellation','Cosmic','Crystals','Hillside','Illuminate','Night Owl','Opening','Presto','Reflection','Ripplies','Sencha','Signal','Silk','Stargaze','Twinkle','Waves')
     init?(rawValue: String) {
         for sound in NotificationSound.allCases where sound.rawValue == rawValue {
             self = sound

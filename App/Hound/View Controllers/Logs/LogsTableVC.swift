@@ -100,6 +100,7 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
                 return
             }
 
+            AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.refreshLogsTitle, forSubtitle: VisualConstant.BannerTextConstant.refreshLogsSubtitle, forStyle: .success)
             self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
             // manually reload table as the self sender doesn't do that
             self.tableView.reloadData()

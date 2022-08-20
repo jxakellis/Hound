@@ -142,7 +142,7 @@ final class AlertManager: NSObject {
             case .success:
                 bannerDuration = successDuration
             case .info:
-                bannerDuration = 1.75
+                bannerDuration = 4.5
             case .danger:
                 bannerDuration = 2.25
             default:

@@ -118,6 +118,8 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
             guard let newDogManager = newDogManager else {
                 return
             }
+            
+            AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.refreshRemindersTitle, forSubtitle: VisualConstant.BannerTextConstant.refreshRemindersSubtitle, forStyle: .success)
             self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
             // manually reload table as the self sernder doesn't do that
             self.reloadTable()
@@ -221,6 +223,8 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
         guard let dog = try? dogManager.findDog(forDogId: cell.parentDogId) else {
             return
         }
+        
+        // TO DO NOW still show 'Log 'foo'' even if the reminder is disabled. the log pop up is a nice flow for a user to log a certain reminder action for a certain dog.
         
         let reminder: Reminder = cell.reminder
         

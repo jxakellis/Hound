@@ -60,6 +60,8 @@ enum FamilyConfiguration {
     
     // MARK: - Main
     
+    // TO DO NOW interpret previousFamilyMembers array. Use this to display the first and last name of users (e.g. for logs) who have already left the family.
+    
     /// Saves state isPaused, self.isPaused can be modified by SettingsViewController but this is only when there are no active timers and pause is automatically set to unpaused
     static var isPaused: Bool = false
     

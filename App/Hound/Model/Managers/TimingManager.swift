@@ -40,6 +40,16 @@ final class TimingManager {
             // goes through all reminders in a dog
             for reminder in dog.dogReminders.reminders {
                 
+                /*
+                 TO DO NOW if there are multiple reminders with the SAME parent dog and reminder action (or are .Custom with same custom reminder action), don't show queue muliple of the same pop ups.
+                 
+                 For example: Penny Potty at 5:00 pm and every 30 minutes. If reminder A goes off then some amount of time later reminder B goes off, this will present the user with two back to back alerts. These alerts will be IDENTICAl.
+                 Therefore, keep both alerts in the queue (as they go off at different times) BUT if they both get presented at once only show one.
+                 Then, make the action tapped, e.g. Log 'Potty: Pee', apply to all identical reminders.
+                 Therefore, instead of having the user click Log 'Potty: Pee' 2+ times for Penny, they click it once and 'Potty: Pee' is logged for all reminders (e.g. reminders A, B, C...) that have gone off and queued an alert.
+                 This reduces the number of taps that the user has to do and makes it less annoying as a lot of pop ups are obnoxious
+                 */
+                
                 // makes sure a reminder is enabled and its presentation is not being handled
                 guard reminder.reminderIsEnabled == true && reminder.hasAlarmPresentationHandled == false
                 else {
