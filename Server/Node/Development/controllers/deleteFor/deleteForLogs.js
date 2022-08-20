@@ -26,6 +26,7 @@ async function deleteLogForLogId(databaseConnection, dogId, logId) {
       'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
       [dogLastModified, dogId],
     )];
+
   await Promise.all(promises);
 }
 
@@ -54,6 +55,7 @@ async function deleteAllLogsForDogId(databaseConnection, dogId) {
       [dogLastModified, dogId],
     ),
   ];
+
   await Promise.all(promises);
 }
 

@@ -67,12 +67,12 @@ async function sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(family
   try {
     // get the dogName, reminderAction, and reminderCustomActionName for the given reminderId
     // the reminderId has to exist to search and we check to make sure the dogId isn't null (to make sure the dog still exists too)
-    const reminderWithInfo = await databaseQuery(
+    let reminder = await databaseQuery(
       databaseConnectionForAlarms,
       'SELECT dogs.dogName, dogReminders.reminderId, dogReminders.reminderExecutionDate, dogReminders.reminderAction, dogReminders.reminderCustomActionName, dogReminders.reminderLastModified FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
       [reminderId],
     );
-    const reminder = reminderWithInfo[0];
+    [reminder] = reminder;
 
     // Check to make sure the required information of the reminder exists
     if (areAllDefined(reminder, reminder.dogName, reminder.reminderId, reminder.reminderAction) === false) {
@@ -170,12 +170,12 @@ async function sendSecondaryAPNForUser(userId, reminderId) {
   try {
     // get the dogName, reminderAction, and reminderCustomActionName for the given reminderId
     // the reminderId has to exist to search and we check to make sure the dogId isn't null (to make sure the dog still exists too)
-    const reminderWithInfo = await databaseQuery(
+    let reminder = await databaseQuery(
       databaseConnectionForAlarms,
       'SELECT dogs.dogName, dogReminders.reminderId, dogReminders.reminderAction, dogReminders.reminderCustomActionName, dogReminders.reminderLastModified FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
       [reminderId],
     );
-    const reminder = reminderWithInfo[0];
+    [reminder] = reminder;
 
     // check for the reminder and needed properties existance
     if (areAllDefined(reminder, reminder.dogName, reminder.reminderAction) === false) {

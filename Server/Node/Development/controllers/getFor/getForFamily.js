@@ -23,19 +23,19 @@ async function getAllFamilyInformationForFamilyId(databaseConnection, familyId, 
   }
   // family id is validated, therefore we know familyMembers is >= 1 for familyId
   // find which family member is the head
-  let family = databaseQuery(
-    databaseConnection,
-    `SELECT ${familiesColumns} FROM families WHERE familyId = ? LIMIT 1`,
-    [familyId],
-  );
-  // get family members
-  let familyMembers = getAllFamilyMembersForFamilyId(databaseConnection, familyId);
+  const promises = [
+    databaseQuery(
+      databaseConnection,
+      `SELECT ${familiesColumns} FROM families WHERE familyId = ? LIMIT 1`,
+      [familyId],
+    ),
+    // get family members
+    getAllFamilyMembersForFamilyId(databaseConnection, familyId),
+    getAllPreviousFamilyMembersForFamilyId(databaseConnection, familyId),
+  ];
 
-  let previousFamilyMembers = getAllPreviousFamilyMembersForFamilyId(databaseConnection, familyId);
+  const [[family], familyMembers, previousFamilyMembers] = await Promise.all(promises);
 
-  [family, familyMembers, previousFamilyMembers] = await Promise.all([family, familyMembers, previousFamilyMembers]);
-
-  [family] = family;
   const result = {
     ...family,
     familyMembers,

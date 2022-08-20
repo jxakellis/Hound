@@ -20,7 +20,7 @@ async function createLogForUserIdDogId(databaseConnection, userId, dogId, forLog
   // only retrieve enough not deleted logs that would exceed the limit
   const logs = await databaseQuery(
     databaseConnection,
-    'SELECT logId FROM dogLogs WHERE logIsDeleted = 0 AND dogId = ? LIMIT ?',
+    'SELECT 1 FROM dogLogs WHERE logIsDeleted = 0 AND dogId = ? LIMIT ?',
     [dogId, global.constant.limit.NUMBER_OF_LOGS_PER_DOG],
   );
 
@@ -29,18 +29,21 @@ async function createLogForUserIdDogId(databaseConnection, userId, dogId, forLog
     throw new ValidationError(`Dog log limit of ${global.constant.limit.NUMBER_OF_LOGS_PER_DOG} exceeded`, global.constant.error.family.limit.LOG_TOO_LOW);
   }
 
-  const result = await databaseQuery(
-    databaseConnection,
-    'INSERT INTO dogLogs(userId, dogId, logDate, logNote, logAction, logCustomActionName, logLastModified) VALUES (?, ?, ?, ?, ?, ?, ?)',
-    [userId, dogId, logDate, logNote, logAction, logCustomActionName, logLastModified],
-  );
+  const promises = [
+    databaseQuery(
+      databaseConnection,
+      'INSERT INTO dogLogs(userId, dogId, logDate, logNote, logAction, logCustomActionName, logLastModified) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [userId, dogId, logDate, logNote, logAction, logCustomActionName, logLastModified],
+    ),
+    // update the dog last modified since one of its compoents was updated
+    databaseQuery(
+      databaseConnection,
+      'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
+      [dogLastModified, dogId],
+    ),
+  ];
 
-  // update the dog last modified since one of its compoents was updated
-  await databaseQuery(
-    databaseConnection,
-    'UPDATE dogs SET dogLastModified = ? WHERE dogId = ?',
-    [dogLastModified, dogId],
-  );
+  const [result] = await Promise.all(promises);
 
   return result.insertId;
 }

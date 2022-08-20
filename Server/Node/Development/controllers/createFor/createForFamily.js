@@ -32,16 +32,21 @@ async function createFamilyForUserId(databaseConnection, userId) {
 
   // create a family code for the new family
   const familyCode = await generateVerifiedFamilyCode(databaseConnection);
-  await databaseQuery(
-    databaseConnection,
-    'INSERT INTO families(userId, familyId, familyCode, isLocked, isPaused, familyAccountCreationDate) VALUES (?, ?, ?, ?, ?, ?)',
-    [userId, familyId, familyCode, false, false, familyAccountCreationDate],
-  );
-  await databaseQuery(
-    databaseConnection,
-    'INSERT INTO familyMembers(userId, familyId) VALUES (?, ?)',
-    [userId, familyId],
-  );
+
+  const promises = [
+    databaseQuery(
+      databaseConnection,
+      'INSERT INTO families(userId, familyId, familyCode, isLocked, isPaused, familyAccountCreationDate) VALUES (?, ?, ?, ?, ?, ?)',
+      [userId, familyId, familyCode, false, false, familyAccountCreationDate],
+    ),
+    databaseQuery(
+      databaseConnection,
+      'INSERT INTO familyMembers(userId, familyId) VALUES (?, ?)',
+      [userId, familyId],
+    ),
+  ];
+
+  await Promise.all(promises);
 
   return familyId;
 }

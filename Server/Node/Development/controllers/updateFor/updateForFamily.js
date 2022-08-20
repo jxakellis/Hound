@@ -134,20 +134,21 @@ async function updateIsPaused(databaseConnection, userId, familyId, forIsPaused)
   }
 
   // find out the family's current pause status
-  const familyConfiguration = await databaseQuery(
+  let familyConfiguration = await databaseQuery(
     databaseConnection,
     'SELECT isPaused, lastPause, lastUnpause FROM families WHERE familyId = ? LIMIT 1',
     [familyId],
   );
+  [familyConfiguration] = familyConfiguration;
 
   // if we got a result for the family configuration and if the new pause status is different from the current one, then continue
-  if (familyConfiguration.length === 0 || isPaused === formatBoolean(familyConfiguration[0].isPaused)) {
+  if (areAllDefined(familyConfiguration) === false || isPaused === formatBoolean(familyConfiguration.isPaused)) {
     return;
   }
 
   // toggling everything to paused from unpaused
   if (isPaused) {
-    await pause(databaseConnection, familyId, familyConfiguration[0].lastUnpause);
+    await pause(databaseConnection, familyId, familyConfiguration.lastUnpause);
   }
   // toggling everything to unpaused from paused
   else {
@@ -233,16 +234,18 @@ async function pause(databaseConnection, familyId, forLastUnpause) {
     }
   }
 
-  await Promise.all(promises);
-
-  // none of the reminders will be going off since their paused, meaning their executionDates will be null.
-  // Update the reminderExecutionDates to NULL for all of the family's reminders
-  // update both the dogLastModified and reminderLastModified
-  await databaseQuery(
-    databaseConnection,
-    'UPDATE dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId SET dogs.dogLastModified = ?, dogReminders.reminderExecutionDate = ?, dogReminders.reminderLastModified = ? WHERE dogs.familyId = ?',
-    [dogLastModified, undefined, reminderLastModified, familyId],
+  promises.push(
+    // none of the reminders will be going off since their paused, meaning their executionDates will be null.
+    // Update the reminderExecutionDates to NULL for all of the family's reminders
+    // update both the dogLastModified and reminderLastModified
+    databaseQuery(
+      databaseConnection,
+      'UPDATE dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId SET dogs.dogLastModified = ?, dogReminders.reminderExecutionDate = ?, dogReminders.reminderLastModified = ? WHERE dogs.familyId = ?',
+      [dogLastModified, undefined, reminderLastModified, familyId],
+    ),
   );
+
+  await Promise.all(promises);
 
   // remove any alarm notifications that may be scheduled since everything is now paused and no need for alarms.
   deleteAlarmNotificationsForFamily(familyId);

@@ -30,7 +30,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
             ActivityIndicator.shared.beginAnimating(title: navigationItem.title ?? "", view: self.view, navigationItem: navigationItem)
         }
         
-        SubscriptionRequest.getAll(invokeErrorManager: refreshWasInvokedByUser) { requestWasSuccessful, _ in
+        SubscriptionRequest.get(invokeErrorManager: refreshWasInvokedByUser) { requestWasSuccessful, _ in
             self.refreshButton.isEnabled = true
             if refreshWasInvokedByUser {
                 ActivityIndicator.shared.stopAnimating(navigationItem: self.navigationItem)

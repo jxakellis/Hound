@@ -9,13 +9,14 @@ async function getAppStoreServerNotificationForNotificationUUID(databaseConnecti
     throw new ValidationError('databaseConnection or notificationUUID missing', global.constant.error.value.MISSING);
   }
 
-  const notification = await databaseQuery(
+  let notification = await databaseQuery(
     databaseConnection,
     `SELECT ${appStoreServerNotificationsColumns} FROM appStoreServerNotifications WHERE notificationUUID = ? LIMIT 1`,
     [notificationUUID],
   );
+  [notification] = notification;
 
-  return notification[0];
+  return notification;
 }
 
 module.exports = { getAppStoreServerNotificationForNotificationUUID };

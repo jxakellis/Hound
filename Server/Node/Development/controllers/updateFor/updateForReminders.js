@@ -113,7 +113,7 @@ async function updateReminderForDogIdReminder(databaseConnection, dogId, reminde
     [dogLastModified, dogId],
   );
 
-  return [reminder];
+  return reminder;
 }
 
 /**

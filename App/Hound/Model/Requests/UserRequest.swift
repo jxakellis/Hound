@@ -75,7 +75,7 @@ extension UserRequest {
             switch responseStatus {
             case .successResponse:
                 // attempt to extract body and userId
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], let userId = result[ServerDefaultKeys.userId.rawValue] as? String, result.isEmpty == false {
+                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], let userId = result[ServerDefaultKeys.userId.rawValue] as? String {
                     
                     // set all local configuration equal to whats in the server
                     UserInformation.setup(fromBody: result)

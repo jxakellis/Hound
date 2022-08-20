@@ -15,18 +15,20 @@ async function deleteDogForFamilyIdDogId(databaseConnection, familyId, dogId) {
     throw new ValidationError('databaseConnection, familyId, or dogId missing', global.constant.error.value.MISSING);
   }
 
-  // delete all reminders
-  await deleteAllRemindersForFamilyIdDogId(databaseConnection, familyId, dogId);
+  const promises = [
+    // delete all reminders
+    deleteAllRemindersForFamilyIdDogId(databaseConnection, familyId, dogId),
+    // deletes all logs
+    deleteAllLogsForDogId(databaseConnection, dogId),
+    // deletes dog
+    databaseQuery(
+      databaseConnection,
+      'UPDATE dogs SET dogIsDeleted = 1, dogLastModified = ? WHERE dogId = ?',
+      [dogLastModified, dogId],
+    ),
+  ];
 
-  // deletes all logs
-  await deleteAllLogsForDogId(databaseConnection, dogId);
-
-  // deletes dog
-  await databaseQuery(
-    databaseConnection,
-    'UPDATE dogs SET dogIsDeleted = 1, dogLastModified = ? WHERE dogId = ?',
-    [dogLastModified, dogId],
-  );
+  await Promise.all(promises);
 }
 
 /**
@@ -50,6 +52,7 @@ async function deleteAllDogsForFamilyId(databaseConnection, familyId) {
   for (let i = 0; i < dogIds.length; i += 1) {
     promises.push(deleteDogForFamilyIdDogId(databaseConnection, familyId, dogIds[i].dogId));
   }
+
   await Promise.all(promises);
 }
 

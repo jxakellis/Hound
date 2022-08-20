@@ -89,13 +89,14 @@ async function getInAppSubscriptionForTransactionId(databaseConnection, forTrans
     throw new ValidationError('databaseConnection or transactionId missing', global.constant.error.value.MISSING);
   }
 
-  const transactionsHistory = await databaseQuery(
+  let transactionsHistory = await databaseQuery(
     databaseConnection,
     `SELECT ${transactionsColumns} FROM transactions WHERE transactionId = ? LIMIT 1`,
     [transactionId],
   );
+  [transactionsHistory] = transactionsHistory;
 
-  return transactionsHistory[0];
+  return transactionsHistory;
 }
 
 module.exports = {

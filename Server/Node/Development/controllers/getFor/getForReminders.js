@@ -18,7 +18,7 @@ async function getReminderForReminderId(databaseConnection, reminderId, forLastD
 
   const lastDogManagerSynchronization = formatDate(forLastDogManagerSynchronization);
 
-  const result = areAllDefined(lastDogManagerSynchronization)
+  let result = areAllDefined(lastDogManagerSynchronization)
     ? await databaseQuery(
       databaseConnection,
       `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderLastModified >= ? AND reminderId = ? LIMIT 1`,
@@ -29,6 +29,7 @@ async function getReminderForReminderId(databaseConnection, reminderId, forLastD
       `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderId = ? LIMIT 1`,
       [reminderId],
     );
+  [result] = result;
 
   // don't trim 'unnecessary' components (e.g. if weekly only send back weekly components)
   // its unnecessary processing and its easier for the reminders to remember their old states

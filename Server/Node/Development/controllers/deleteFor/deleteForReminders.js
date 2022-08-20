@@ -48,15 +48,12 @@ async function deleteAllRemindersForFamilyIdDogId(databaseConnection, familyId, 
     throw new ValidationError('databaseConnection, familyId, or dogId missing', global.constant.error.value.MISSING);
   }
 
-  // find all the reminderIds
-  const reminders = await databaseQuery(
-    databaseConnection,
-    'SELECT reminderId FROM dogReminders WHERE reminderIsDeleted = 0 AND dogId = ? LIMIT 18446744073709551615',
-    [dogId],
-  );
-
   const promises = [
-    reminders,
+    databaseQuery(
+      databaseConnection,
+      'SELECT reminderId FROM dogReminders WHERE reminderIsDeleted = 0 AND dogId = ? LIMIT 18446744073709551615',
+      [dogId],
+    ),
     // deletes reminders
     databaseQuery(
       databaseConnection,
@@ -71,7 +68,7 @@ async function deleteAllRemindersForFamilyIdDogId(databaseConnection, familyId, 
     ),
   ];
 
-  await Promise.all(promises);
+  const [reminders] = await Promise.all(promises);
 
   // iterate through all reminders provided to update them all
   // if there is a problem, then we return that problem (function that invokes this will roll back requests)

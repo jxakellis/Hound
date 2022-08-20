@@ -101,17 +101,17 @@ extension DogsRequest {
         _ = DogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: currentDog.dogId) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                // Array of log JSON [{dog1:'foo'},{dog2:'bar'}]
-                if let newDogBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
+                // dog JSON {dog1:'foo'}
+                if let newDogBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any] {
                     
-                    guard newDogBody.count != 0 else {
+                    guard newDogBody.isEmpty == true else {
                         // the dog wasn't updated since last opened
                         completionHandler(currentDog, responseStatus)
                         return
                     }
                     
                     // the dog was updated since last opened
-                    let newDog = Dog(fromBody: newDogBody[0])
+                    let newDog = Dog(fromBody: newDogBody)
                     
                     guard newDog.dogIsDeleted == false else {
                         completionHandler(nil, responseStatus)

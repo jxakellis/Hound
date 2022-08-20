@@ -97,8 +97,8 @@ extension LogsRequest {
         _ = LogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: logId) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
-                    completionHandler(Log(fromBody: result[0]), responseStatus)
+                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], result.isEmpty == false {
+                    completionHandler(Log(fromBody: result), responseStatus)
                 }
                 else {
                     completionHandler(nil, responseStatus)
@@ -115,7 +115,7 @@ extension LogsRequest {
      completionHandler returns a possible array of logs and the ResponseStatus.
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func getAll(invokeErrorManager: Bool, forDogId dogId: Int, completionHandler: @escaping ([Log]?, ResponseStatus) -> Void) {
+    static func get(invokeErrorManager: Bool, forDogId dogId: Int, completionHandler: @escaping ([Log]?, ResponseStatus) -> Void) {
         
         _ = LogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: nil) { responseBody, responseStatus in
             switch responseStatus {

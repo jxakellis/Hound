@@ -62,6 +62,21 @@ enum RemindersRequest: RequestProtocol {
     }
     
     /**
+     completionHandler returns response data: created reminder with reminderId and the ResponseStatus
+     */
+    private static func internalCreate(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
+        
+        let URLWithParams: URL = baseURLWithoutParams.appendingPathComponent("/\(dogId)/reminders/")
+        
+        let body = reminder.createBody()
+        
+        return InternalRequestUtils.genericPostRequest(invokeErrorManager: invokeErrorManager, forURL: URLWithParams, forBody: body) { responseBody, responseStatus in
+            completionHandler(responseBody, responseStatus)
+        }
+        
+    }
+    
+    /**
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
     private static func internalUpdate(invokeErrorManager: Bool, forDogId dogId: Int, forReminders reminders: [Reminder], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
@@ -114,8 +129,8 @@ extension RemindersRequest {
         _ = RemindersRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminderId: reminderId) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
-                    completionHandler(Reminder(fromBody: result[0]), responseStatus)
+                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], result.isEmpty == false {
+                    completionHandler(Reminder(fromBody: result), responseStatus)
                 }
                 else {
                     completionHandler(nil, responseStatus)
@@ -162,11 +177,11 @@ extension RemindersRequest {
      */
     static func create(invokeErrorManager: Bool, forDogId dogId: Int, forReminder reminder: Reminder, completionHandler: @escaping (Reminder?, ResponseStatus) -> Void) {
         
-        _ = RemindersRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminders: [reminder]) { responseBody, responseStatus in
+        _ = RemindersRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminder: reminder) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let remindersBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]] {
-                    completionHandler(Reminder(fromBody: remindersBody[0]), responseStatus)
+                if let reminderBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], reminderBody.isEmpty == false  {
+                    completionHandler(Reminder(fromBody: reminderBody), responseStatus)
                 }
                 else {
                     completionHandler(nil, responseStatus)

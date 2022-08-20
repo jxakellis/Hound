@@ -44,20 +44,22 @@ async function deleteFamily(databaseConnection, userId, familyId, activeSubscrip
     throw new ValidationError('databaseConnection, userId, familyId, or activeSubscription missing', global.constant.error.value.MISSING);
   }
 
-  // find out if the user is the family head
-  let family = databaseQuery(
-    databaseConnection,
-    'SELECT userId FROM families WHERE userId = ? AND familyId = ? LIMIT 18446744073709551615',
-    [userId, familyId],
-  );
-  // find the amount of family members in the family
-  let familyMembers = databaseQuery(
-    databaseConnection,
-    'SELECT userId FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
-    [familyId],
-  );
+  let promises = [
+    // find out if the user is the family head
+    databaseQuery(
+      databaseConnection,
+      'SELECT 1 FROM families WHERE userId = ? AND familyId = ? LIMIT 18446744073709551615',
+      [userId, familyId],
+    ),
+    // find the amount of family members in the family
+    databaseQuery(
+      databaseConnection,
+      'SELECT 1 FROM familyMembers WHERE familyId = ? LIMIT 18446744073709551615',
+      [familyId],
+    ),
+  ];
 
-  [family, familyMembers] = await Promise.all([family, familyMembers]);
+  const [family, familyMembers] = await Promise.all(promises);
 
   // User is the head of the family, so has obligation to it.
   if (family.length === 1) {
@@ -84,19 +86,23 @@ async function deleteFamily(databaseConnection, userId, familyId, activeSubscrip
     //   However, they are safe from an accidential renewal
 
     // There is only one user left in the family, which is the API requester
-    const leftUserFullName = await getUserFirstNameLastNameForUserId(databaseConnection, userId);
-    let familyAccountCreationDate = await databaseQuery(
-      databaseConnection,
-      'SELECT familyAccountCreationDate FROM families WHERE familyId = ? LIMIT 1',
-      [familyId],
-    );
-    // only one element
-    [familyAccountCreationDate] = familyAccountCreationDate;
-    // take familyAccountCreationDate JSON
-    familyAccountCreationDate = familyAccountCreationDate.familyAccountCreationDate;
+    promises = [
+      getUserFirstNameLastNameForUserId(databaseConnection, userId),
+      databaseQuery(
+        databaseConnection,
+        'SELECT familyAccountCreationDate FROM families WHERE familyId = ? LIMIT 1',
+        [familyId],
+      ),
+    ];
+
+    const [leftUserFullName, [familyAccountCreationDate]] = await Promise.all(promises);
+
+    if (areAllDefined(familyAccountCreationDate) === false) {
+      throw new ValidationError('familyAccountCreationDate missing', global.constant.error.value.MISSING);
+    }
 
     // Destroy the family now that it is ok to do so
-    const promises = [
+    promises = [
       databaseQuery(
         databaseConnection,
         'DELETE FROM families WHERE familyId = ?',
@@ -106,7 +112,7 @@ async function deleteFamily(databaseConnection, userId, familyId, activeSubscrip
       databaseQuery(
         databaseConnection,
         'INSERT INTO previousFamilies(userId, familyId, familyAccountCreationDate, familyAccountDeletionDate) VALUES (?,?,?,?)',
-        [userId, familyId, familyAccountCreationDate, new Date()],
+        [userId, familyId, familyAccountCreationDate.familyAccountCreationDate, new Date()],
       ),
       // deletes all users from the family (should only be one)
       databaseQuery(
@@ -135,7 +141,7 @@ async function deleteFamily(databaseConnection, userId, familyId, activeSubscrip
   else {
     const leftUserFullName = await getUserFirstNameLastNameForUserId(databaseConnection, userId);
 
-    const promises = [
+    promises = [
       // can leave the family
       // deletes user from family
       databaseQuery(

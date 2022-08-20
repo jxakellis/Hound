@@ -18,7 +18,7 @@ async function getLogForLogId(databaseConnection, logId, forLastDogManagerSynchr
 
   const lastDogManagerSynchronization = formatDate(forLastDogManagerSynchronization);
 
-  const result = areAllDefined(lastDogManagerSynchronization)
+  let result = areAllDefined(lastDogManagerSynchronization)
     ? await databaseQuery(
       databaseConnection,
       `SELECT ${dogLogsColumns} FROM dogLogs WHERE logLastModified >= ? AND logId = ? LIMIT 1`,
@@ -29,6 +29,7 @@ async function getLogForLogId(databaseConnection, logId, forLastDogManagerSynchr
       `SELECT ${dogLogsColumns} FROM dogLogs WHERE logId = ? LIMIT 1`,
       [logId],
     );
+  [result] = result;
 
   return result;
 }

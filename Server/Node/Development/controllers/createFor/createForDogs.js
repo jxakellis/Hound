@@ -16,7 +16,7 @@ async function createDogForFamilyId(databaseConnection, familyId, activeSubscrip
   // only retrieve enough not deleted dogs that would exceed the limit
   const dogs = await databaseQuery(
     databaseConnection,
-    'SELECT dogId FROM dogs WHERE dogIsDeleted = 0 AND familyId = ? LIMIT ?',
+    'SELECT 1 FROM dogs WHERE dogIsDeleted = 0 AND familyId = ? LIMIT ?',
     [familyId, activeSubscription.numberOfDogs],
   );
 

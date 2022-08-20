@@ -57,7 +57,7 @@ extension SubscriptionRequest {
      completionHandler returns a Bool and the ResponseStatus, indicating whether or not the request was successful
      If invokeErrorManager is true, then will send an error to ErrorManager that alerts the user.
      */
-    static func getAll(invokeErrorManager: Bool, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
+    static func get(invokeErrorManager: Bool, completionHandler: @escaping (Bool, ResponseStatus) -> Void) {
         
         _ = SubscriptionRequest.internalGet(invokeErrorManager: invokeErrorManager) { responseBody, responseStatus in
             switch responseStatus {
