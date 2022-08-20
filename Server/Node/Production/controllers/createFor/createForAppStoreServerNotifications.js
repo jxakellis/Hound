@@ -57,6 +57,16 @@ async function createAppStoreServerNotificationForSignedPayload(databaseConnecti
   const signedTransactionInfoBuffer = Buffer.from(signedTransactionInfo.split('.')[1], 'base64');
   const transactionInfo = JSON.parse(signedTransactionInfoBuffer.toString());
 
+  const dataEnvironment = formatString(data.environment, 10);
+  const renewalInfoEnvironment = formatString(renewalInfo.environment, 10);
+  const transactionInfoEnvironment = formatString(transactionInfo.environment, 10);
+
+  const currentDatabaseEnvironment = global.constant.server.IS_PRODUCTION_DATABASE ? 'Production' : 'Sandbox';
+
+  if (dataEnvironment !== currentDatabaseEnvironment || renewalInfoEnvironment !== currentDatabaseEnvironment || transactionInfoEnvironment !== currentDatabaseEnvironment) {
+    throw new ValidationError(`Current database environment is ${currentDatabaseEnvironment}. You submitted data: ${dataEnvironment}, renewalInfo: ${renewalInfoEnvironment}, transactionInfo: ${transactionInfoEnvironment}`, global.constant.error.general.ENVIRONMENT_INVALID);
+  }
+
   const storedNotification = await getAppStoreServerNotificationForNotificationUUID(databaseConnection, notificationUUID);
 
   // Check if we have logged this notification before
