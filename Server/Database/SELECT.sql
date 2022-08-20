@@ -3,7 +3,8 @@ SELECT * FROM userConfiguration;
 
 SELECT * FROM families;
 SELECT * FROM familyMembers;
-SELECT * FROM subscriptions;
+SELECT * FROM transactions;
+SELECT * FROM appStoreServerNotifications;
 
 SELECT * FROM dogs;
 SELECT * FROM dogLogs;
