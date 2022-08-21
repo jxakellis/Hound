@@ -19,11 +19,12 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
     // MARK: - Dogs Reminder Table View Cell
     
     func didUpdateReminderIsEnabled(sender: Sender, reminderId: Int, reminderIsEnabled: Bool) {
-        guard let reminder = try? getReminderManager().findReminder(forReminderId: reminderId) else {
+        guard let reminder = reminderManager.findReminder(forReminderId: reminderId) else {
             return
         }
+        
         reminder.reminderIsEnabled = reminderIsEnabled
-        setReminderManager(sender: sender, newReminderManager: getReminderManager())
+        setReminderManager(sender: sender, newReminderManager: reminderManager)
         delegate.didUpdateReminder(forReminder: reminder)
     }
 
@@ -33,26 +34,26 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
     
     /// When this function is called through a delegate, it adds the information to the list of reminders and updates the cells to display it
     func didAddReminder(sender: Sender, forReminder reminder: Reminder) {
-        let sudoReminderManager = getReminderManager()
-        sudoReminderManager.addReminder(forReminder: reminder)
-        setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
+        reminderManager.addReminder(forReminder: reminder)
+        
+        setReminderManager(sender: sender, newReminderManager: reminderManager)
         
         delegate.didAddReminder(forReminder: reminder)
     }
     
     /// When this function is called through a delegate, it adds the information to the list of reminders and updates the cells to display it
     func didUpdateReminder(sender: Sender, forReminder reminder: Reminder) {
-        let sudoReminderManager = getReminderManager()
-        sudoReminderManager.updateReminder(forReminder: reminder)
-        setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
+        reminderManager.updateReminder(forReminder: reminder)
+        
+        setReminderManager(sender: sender, newReminderManager: reminderManager)
         
         delegate.didUpdateReminder(forReminder: reminder)
     }
 
     func didRemoveReminder(sender: Sender, reminderId: Int) {
-        let sudoReminderManager = getReminderManager()
-        try? sudoReminderManager.removeReminder(forReminderId: reminderId)
-        setReminderManager(sender: sender, newReminderManager: sudoReminderManager)
+        reminderManager.removeReminder(forReminderId: reminderId)
+        
+        setReminderManager(sender: sender, newReminderManager: reminderManager)
 
         delegate.didRemoveReminder(reminderId: reminderId)
     }
@@ -60,10 +61,6 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
     // MARK: - Reminder Manager Control Flow Protocol
 
     private var reminderManager = ReminderManager()
-
-    func getReminderManager() -> ReminderManager {
-        return reminderManager
-    }
 
     func setReminderManager(sender: Sender, newReminderManager: ReminderManager) {
         reminderManager = newReminderManager
@@ -77,7 +74,7 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
     }
 
     private func reloadTableConstraints() {
-        if getReminderManager().reminders.count > 0 {
+        if reminderManager.reminders.count > 0 {
             self.tableView.rowHeight = -1
         }
         else {
@@ -106,7 +103,7 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if self.getReminderManager().reminders.count == 0 {
+        if self.reminderManager.reminders.count == 0 {
             self.tableView.allowsSelection = false
         }
         else {
@@ -131,10 +128,10 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
     /// Returns the number of cells present in section (currently only 1 section)
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        // if getReminderManager().reminders.count == 0{
+        // if reminderManager.reminders.count == 0{
         //    return 1
         // }
-        return getReminderManager().reminders.count
+        return reminderManager.reminders.count
     }
 
     /// Configures cells at the given index path, pulls from reminder manager reminders to get configuration parameters for each cell, corrosponding cell goes to corrosponding index of reminder manager reminder e.g. cell 1 at [0]
@@ -144,7 +141,7 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
 
         if let castCell = cell as? DogsReminderTableViewCell {
             castCell.delegate = self
-            castCell.setup(forReminder: getReminderManager().reminders[indexPath.row])
+            castCell.setup(forReminder: reminderManager.reminders[indexPath.row])
         }
 
         return cell
@@ -153,7 +150,7 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
     /// Reloads table data when it is updated, if you change the data w/o calling this, the data display to the user will not be updated
     private func reloadTable() {
 
-        if self.getReminderManager().reminders.count == 0 {
+        if self.reminderManager.reminders.count == 0 {
             self.tableView.allowsSelection = false
         }
         else {
@@ -165,24 +162,23 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        selectedReminder = getReminderManager().reminders[indexPath.row]
+        selectedReminder = reminderManager.reminders[indexPath.row]
         self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsNestedReminderViewController")
 
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        let sudoReminderManager = self.getReminderManager()
-        let reminderId = sudoReminderManager.reminders[indexPath.row].reminderId
+        let reminderId = reminderManager.reminders[indexPath.row].reminderId
         
-        if editingStyle == .delete && sudoReminderManager.reminders.count > 0 {
-            let reminder = sudoReminderManager.reminders[indexPath.row]
+        if editingStyle == .delete && reminderManager.reminders.count > 0 {
+            let reminder = reminderManager.reminders[indexPath.row]
             
             let removeReminderConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))?", message: nil, preferredStyle: .alert)
 
             let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
 
-                sudoReminderManager.removeReminder(forIndex: indexPath.row)
-                self.setReminderManager(sender: Sender(origin: self, localized: self), newReminderManager: sudoReminderManager)
+                self.reminderManager.removeReminder(forIndex: indexPath.row)
+                self.setReminderManager(sender: Sender(origin: self, localized: self), newReminderManager: self.reminderManager)
                 
                 self.delegate.didRemoveReminder(reminderId: reminderId)
                 self.tableView.deleteRows(at: [indexPath], with: .automatic)
@@ -195,7 +191,7 @@ final class DogsReminderTableViewController: UITableViewController, ReminderMana
     }
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        if self.getReminderManager().reminders.count == 0 {
+        if self.reminderManager.reminders.count == 0 {
             return false
         }
         else {

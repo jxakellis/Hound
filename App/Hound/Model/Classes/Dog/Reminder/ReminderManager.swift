@@ -256,36 +256,28 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
     // MARK: Remove Reminders
     
     /// Tries to find a reminder with the matching reminderId, if found then it removes the reminder, if not found then throws error
-    func removeReminder(forReminderId reminderId: Int) throws {
-        var reminderNotPresent = true
+    func removeReminder(forReminderId reminderId: Int) {
+        // finds index of given reminder (through reminder name), returns nil if not found
         
-        // goes through reminders to see if the given reminder name (aka reminder name) is in the array of reminders
-        for reminder in reminders where reminder.reminderId == reminderId {
-            reminderNotPresent = false
-            break
-        }
-        
-        // if provided reminder is not present, throws error
-        
-        if reminderNotPresent == true {
-            throw ReminderManagerError.reminderIdNotPresent
-        }
-        // if provided reminder is present, proceeds
-        else {
-            // finds index of given reminder (through reminder name), returns nil if not found but it should be if code is written correctly, code should not be not be able to reach this point if reminder name was not present
-            var indexOfRemovalTarget: Int? {
-                for index in 0...Int(reminders.count) where reminders[index].reminderId == reminderId {
-                    return index
-                }
-                return nil
-            }
+        let removedReminderIndex: Int? = reminders.firstIndex { reminder in
+            return reminder.reminderId == reminderId
             
-            reminders[indexOfRemovalTarget ?? ClassConstant.ReminderConstant.defaultReminderId].timer?.invalidate()
-            reminders.remove(at: indexOfRemovalTarget ?? -1)
         }
+        
+        guard let removedReminderIndex = removedReminderIndex else {
+            return
+        }
+        
+        reminders[removedReminderIndex].timer?.invalidate()
+        reminders.remove(at: removedReminderIndex)
     }
     
     func removeReminder(forIndex index: Int) {
+        // Make sure the index is valid
+        guard reminders.count > index else {
+            return
+        }
+        
         reminders[index].timer?.invalidate()
         reminders.remove(at: index)
     }
@@ -297,20 +289,22 @@ extension ReminderManager {
     // MARK: Locate
     
     /// finds and returns the reference of a reminder matching the given reminderId
-    func findReminder(forReminderId reminderId: Int) throws -> Reminder {
+    func findReminder(forReminderId reminderId: Int) -> Reminder? {
         
-        for r in 0..<reminders.count where reminders[r].reminderId == reminderId {
-            return reminders[r]
+        for reminder in reminders where reminder.reminderId == reminderId {
+            return reminder
         }
-        throw ReminderManagerError.reminderIdNotPresent
+        
+        return nil
     }
     
     /// finds and returns the index of a reminder with a reminderId in terms of the reminder: [Reminder] array
-    func findIndex(forReminderId reminderId: Int) throws -> Int {
+    func findIndex(forReminderId reminderId: Int) -> Int? {
         for r in 0..<reminders.count where reminders[r].reminderId == reminderId {
             return r
         }
-        throw ReminderManagerError.reminderIdNotPresent
+        
+        return nil
     }
     
     // MARK: Information
@@ -394,9 +388,6 @@ extension ReminderManager {
 }
 
 protocol ReminderManagerControlFlowProtocol {
-    
-    /// Returns a copy of ReminderManager used to avoid accidental changes (due to reference type) by classes which get their dog manager from here
-    func getReminderManager() -> ReminderManager
     
     /// Sets reminderManager equal to newReminderManager, depending on sender will also call methods to propogate change.
     func setReminderManager(sender: Sender, newReminderManager: ReminderManager)

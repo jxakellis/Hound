@@ -34,6 +34,7 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
     @IBOutlet private weak var nextAlarmBottomConstraint: NSLayoutConstraint!
     @IBOutlet private weak var nextAlarmHeightConstraint: NSLayoutConstraint!
     
+    /*
     @IBOutlet private weak var reminderIsEnabledSwitch: UISwitch!
     @IBAction private func didToggleReminderIsEnabled(_ sender: Any) {
         let beforeUpdateIsEnabled = reminder.reminderIsEnabled
@@ -49,6 +50,7 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
             }
         }
     }
+     */
     
     @IBOutlet private weak var rightChevronWidthConstraint: NSLayoutConstraint!
     // MARK: - Properties
@@ -63,6 +65,7 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        // TO DO NOW if a reminder is disabled, put a diagonal line or x thru the reminder's icon. Provides a more visual way for the users to tell a reminder is disabled
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -164,7 +167,7 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
         
         // Reminder Is Enabled Switch Configuration
         
-        self.reminderIsEnabledSwitch.isOn = reminder.reminderIsEnabled
+        // self.reminderIsEnabledSwitch.isOn = reminder.reminderIsEnabled
         
         // Reminder Icon Configuration
         let dogIconLeadingAndWidth = 5.0 + (60.0 * sizeRatio)

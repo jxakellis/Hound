@@ -13,7 +13,7 @@ alertRouter.post('/:alertType', async (req, res) => {
     return res.sendResponseForStatusJSONError(400, undefined, new ValidationError('No alert type provided', global.constant.error.value.INVALID));
   }
   // the user has terminated the app
-  if (alertType === global.constant.apn.category.TERMINATE) {
+  if (alertType === global.constant.notification.category.user.TERMINATE) {
     createTerminateNotification(req.params.userId);
   }
   return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);

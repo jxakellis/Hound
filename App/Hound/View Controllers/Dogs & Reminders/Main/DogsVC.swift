@@ -24,7 +24,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     
     func didAddReminder(sender: Sender, parentDogId: Int, forReminder reminder: Reminder) {
         
-        try? dogManager.findDog(forDogId: parentDogId).dogReminders.addReminder(forReminder: reminder)
+        dogManager.findDog(forDogId: parentDogId)?.dogReminders.addReminder(forReminder: reminder)
         
         setDogManager(sender: sender, forDogManager: dogManager)
         
@@ -33,7 +33,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     
     func didUpdateReminder(sender: Sender, parentDogId: Int, forReminder reminder: Reminder) {
         
-        try? dogManager.findDog(forDogId: parentDogId).dogReminders.updateReminder(forReminder: reminder)
+        dogManager.findDog(forDogId: parentDogId)?.dogReminders.updateReminder(forReminder: reminder)
         
         setDogManager(sender: sender, forDogManager: dogManager)
         
@@ -42,7 +42,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     
     func didRemoveReminder(sender: Sender, parentDogId: Int, reminderId: Int) {
         
-        try? dogManager.findDog(forDogId: parentDogId).dogReminders.removeReminder(forReminderId: reminderId)
+        dogManager.findDog(forDogId: parentDogId)?.dogReminders.removeReminder(forReminderId: reminderId)
         
         setDogManager(sender: sender, forDogManager: dogManager)
         
@@ -54,23 +54,20 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     /// If a dog in DogsTableViewController or Add Dog were clicked, invokes this function. Opens up the same page but changes between creating new and editing existing mode.
     func willOpenDogMenu(forDogId dogId: Int?) {
         
-        if dogId == nil {
+        guard let dogId = dogId, let currentDog = dogManager.findDog(forDogId: dogId) else {
             self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsAddDogViewController")
+            return
         }
-        else {
-            if let currentDog = try? dogManager.findDog(forDogId: dogId!) {
-            RequestUtils.beginRequestIndictator()
-            
-            DogsRequest.get(invokeErrorManager: true, dog: currentDog) { newDog, _ in
-                RequestUtils.endRequestIndictator {
-                    guard newDog != nil else {
-                        return
-                    }
-                    self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsAddDogViewController")
-                    self.dogsAddDogViewController.dogToUpdate = newDog
+        
+        RequestUtils.beginRequestIndictator()
+        
+        DogsRequest.get(invokeErrorManager: true, dog: currentDog) { newDog, _ in
+            RequestUtils.endRequestIndictator {
+                guard newDog != nil else {
+                    return
                 }
-            }
-                
+                self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsAddDogViewController")
+                self.dogsAddDogViewController.dogToUpdate = newDog
             }
         }
     }
@@ -132,7 +129,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     
     func didRemoveDog(sender: Sender, dogId: Int) {
         
-        try? dogManager.removeDog(forDogId: dogId)
+        dogManager.removeDog(forDogId: dogId)
         setDogManager(sender: sender, forDogManager: dogManager)
     }
     

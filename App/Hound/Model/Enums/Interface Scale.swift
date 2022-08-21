@@ -26,11 +26,11 @@ enum LogsInterfaceScale: String, CaseIterable {
     var currentScaleFactor: Double {
         switch self {
         case .small:
-            return 1.0
+            return 0.85
         case .medium:
-            return 1.2
+            return 1.15
         case .large:
-            return 1.4
+            return 1.45
         }
     }
 }
@@ -53,11 +53,11 @@ enum RemindersInterfaceScale: String, CaseIterable {
     var currentScaleFactor: Double {
         switch self {
         case .small:
-            return 1.0
+            return 0.85
         case .medium:
-            return 1.2
+            return 1.15
         case .large:
-            return 1.4
+            return 1.45
         }
     }
 }

@@ -16,9 +16,9 @@ async function updateUserForUserId(
   forIsLoudNotification,
   forIsFollowUpEnabled,
   forFollowUpDelay,
+  forInterfaceStyle,
   forSnoozeLength,
   notificationSound,
-  forInterfaceStyle,
   logsInterfaceScale,
   remindersInterfaceScale,
   forMaximumNumberOfLogsDisplayed,
@@ -26,13 +26,15 @@ async function updateUserForUserId(
   if (areAllDefined(databaseConnection, userId) === false) {
     throw new ValidationError('databaseConnection or userId missing', global.constant.error.value.MISSING);
   }
-
   const isNotificationEnabled = formatBoolean(forIsNotificationEnabled);
   const isLoudNotification = formatBoolean(forIsLoudNotification);
   const isFollowUpEnabled = formatBoolean(forIsFollowUpEnabled);
   const followUpDelay = formatNumber(forFollowUpDelay);
-  const snoozeLength = formatNumber(forSnoozeLength);
   const interfaceStyle = formatNumber(forInterfaceStyle);
+  const snoozeLength = formatNumber(forSnoozeLength);
+  // notificationSound
+  // logsInterfaceScale
+  // remindersInterfaceScale
   const maximumNumberOfDisplayedLogs = formatNumber(forMaximumNumberOfLogsDisplayed);
 
   // checks to see that all needed components are provided
@@ -42,14 +44,14 @@ async function updateUserForUserId(
     isLoudNotification,
     isFollowUpEnabled,
     followUpDelay,
+    interfaceStyle,
     snoozeLength,
     notificationSound,
     logsInterfaceScale,
     remindersInterfaceScale,
-    interfaceStyle,
     maximumNumberOfDisplayedLogs,
   ) === false) {
-    throw new ValidationError('No userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, snoozeLength, notificationSound, interfaceStyle, logsInterfaceScale, remindersInterfaceScale, or maximumNumberOfLogsDisplayed provided', global.constant.error.value.MISSING);
+    throw new ValidationError('No userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, interfaceStyle, snoozeLength, notificationSound, logsInterfaceScale, remindersInterfaceScale, or maximumNumberOfLogsDisplayed provided', global.constant.error.value.MISSING);
   }
 
   const promises = [];
@@ -90,6 +92,13 @@ async function updateUserForUserId(
       [followUpDelay, userId],
     ));
   }
+  if (areAllDefined(interfaceStyle)) {
+    promises.push(databaseQuery(
+      databaseConnection,
+      'UPDATE userConfiguration SET interfaceStyle = ? WHERE userId = ?',
+      [interfaceStyle, userId],
+    ));
+  }
   if (areAllDefined(snoozeLength)) {
     promises.push(databaseQuery(
       databaseConnection,
@@ -102,13 +111,6 @@ async function updateUserForUserId(
       databaseConnection,
       'UPDATE userConfiguration SET notificationSound = ? WHERE userId = ?',
       [notificationSound, userId],
-    ));
-  }
-  if (areAllDefined(interfaceStyle)) {
-    promises.push(databaseQuery(
-      databaseConnection,
-      'UPDATE userConfiguration SET interfaceStyle = ? WHERE userId = ?',
-      [interfaceStyle, userId],
     ));
   }
   if (areAllDefined(logsInterfaceScale)) {

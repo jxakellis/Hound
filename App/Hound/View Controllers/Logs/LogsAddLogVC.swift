@@ -364,6 +364,8 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         super.viewDidLoad()
         
         // TO DO NOW fix scaling of add log page. on small phones, like dads iPhone 8, the date of event date picker is smushed while the add notes field is very large. change compression priority and add minimum size for date picker
+        
+        // TO DO NOW add an 'All' option to the dogs drop down (if number of dogs > 1). Make this the default. Therefore, if a user creates a certain log for all dogs, then we query the server x number of times to make the log for all those dogs.
         view.addSubview(logNoteTextView)
         
         oneTimeSetup()
@@ -402,7 +404,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 
                 familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: logToUpdate.userId)?.displayFullName ?? VisualConstant.TextConstant.unknownText
                 
-                 if let dog = try? dogManager.findDog(forDogId: parentDogIdToUpdate) {
+                 if let dog = dogManager.findDog(forDogId: parentDogIdToUpdate) {
                      parentDogLabel.text = dog.dogName
                      parentDogLabel.tag = dog.dogId
                  }

@@ -18,8 +18,9 @@ final class DogsReminderTableViewCell: UITableViewCell {
     // MARK: - IB
 
     @IBOutlet private weak var reminderLabel: ScaledUILabel!
-    @IBOutlet private weak var reminderIsEnabledSwitch: UISwitch!
 
+    @IBOutlet private weak var reminderIsEnabledSwitch: UISwitch!
+    
     @IBAction private func didToggleReminderIsEnabled(_ sender: Any) {
         delegate.didUpdateReminderIsEnabled(sender: Sender(origin: self, localized: self), reminderId: reminderId, reminderIsEnabled: reminderIsEnabledSwitch.isOn)
     }
@@ -36,6 +37,7 @@ final class DogsReminderTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         reminderLabel.adjustsFontSizeToFitWidth = true
+        // TO DO NOW if a reminder is disabled, put a diagonal line or x thru the reminder's icon. Provides a more visual way for the users to tell a reminder is disabled
     }
 
     func setup(forReminder reminder: Reminder) {

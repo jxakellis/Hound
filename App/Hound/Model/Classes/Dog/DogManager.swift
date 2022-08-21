@@ -65,13 +65,9 @@ final class DogManager: NSObject, NSCopying, NSCoding {
     
     /// Helper function allows us to use the same logic for addDog and addDogs and allows us to only sort at the end. Without this function, addDogs would invoke addDog repeadly and sortDogs() with each call.
     func addDogWithoutSorting(forDog: Dog) {
-        // If we discover a newDog has the same dogId as an existing dog, we replace that existing dog with the new dog BUT we first add the existing reminders and logs to the new dog's reminders and logs.
-        for (dogIndex, dog) in dogs.enumerated().reversed() where dog.dogId == forDog.dogId {
-            // we should combine the currentDog's reminders/logs into the new dog
-            forDog.combine(withOldDog: dog)
-            forDog.dogIcon = dog.dogIcon
-            dogs.remove(at: dogIndex)
-            break
+        // If we discover a newDog has the same dogId as an existing dog, we remove
+        dogs.removeAll { dog in
+            return dog.dogId == forDog.dogId
         }
         
         dogs.append(forDog)
@@ -102,33 +98,32 @@ final class DogManager: NSObject, NSCopying, NSCoding {
     }
     
     /// Removes a dog with the given dogId
-    func removeDog(forDogId dogId: Int) throws {
-        var matchingDogIndex: Int?
+    func removeDog(forDogId dogId: Int) {
+        guard let matchingDogIndex = dogs.firstIndex(where: { dog in
+            return dog.dogId == dogId
+        }) else {
+            return
+        }
         
-        for (index, dog) in dogs.enumerated() where dog.dogId == dogId {
-            matchingDogIndex = index
-            // make sure we invalidate all the timers associated. this isn't technically necessary but its easier to tie up lose ends here
+        // make sure we invalidate all the timers associated. this isn't technically necessary but its easier to tie up lose ends here
+        if let dog = findDog(forDogId: dogId) {
             for reminder in dog.dogReminders.reminders {
                 reminder.timer?.invalidate()
             }
-            break
         }
         
-        if matchingDogIndex == nil {
-            throw DogManagerError.dogIdNotPresent
-        }
-        else {
-            dogs.remove(at: matchingDogIndex!)
-        }
+        dogs.remove(at: matchingDogIndex)
     }
     
     /// Removes a dog at the given index
     func removeDog(forIndex index: Int) {
-        // unsafe function
-        let dog = dogs[index]
+        // Make sure the index is valid
+        guard dogs.count > index else {
+            return
+        }
         
         // make sure we invalidate all the timers associated. this isn't technically necessary but its easier to tie up lose ends here
-        for reminder in dog.dogReminders.reminders {
+        for reminder in dogs[index].dogReminders.reminders {
             reminder.timer?.invalidate()
         }
         
@@ -142,28 +137,28 @@ extension DogManager {
     // MARK: Locate
     
     /// Returns reference of a dog with the given dogId
-    func findDog(forDogId dogId: Int) throws -> Dog {
-        for d in 0..<dogs.count where dogs[d].dogId == dogId {
-            return dogs[d]
+    func findDog(forDogId dogId: Int) -> Dog? {
+        for dog in dogs where dog.dogId == dogId {
+            return dog
         }
         
-        throw DogManagerError.dogIdNotPresent
+        return nil
     }
     
     /// Returns the index of a dog with the given dogId
-    func findIndex(forDogId dogId: Int) throws -> Int {
+    func findIndex(forDogId dogId: Int) -> Int? {
         for d in 0..<dogs.count where dogs[d].dogId == dogId {
             return d
         }
         
-        throw DogManagerError.dogIdNotPresent
+        return nil
     }
     
     // MARK: Information
     
     /// Returns true if ANY the dogs present has at least 1 CREATED reminder
     var hasCreatedReminder: Bool {
-        for dog in 0..<dogs.count where dogs[dog].dogReminders.reminders.count > 0 {
+        for dog in dogs where dog.dogReminders.reminders.count > 0 {
             return true
         }
         return false
@@ -192,10 +187,10 @@ extension DogManager {
     /// Returns number of reminders that are enabled and therefore have a timer. Does not factor in isPaused.
     var enabledTimersCount: Int {
         var count = 0
-        for d in 0..<MainTabBarViewController.staticDogManager.dogs.count {
+        for dog in MainTabBarViewController.staticDogManager.dogs {
             
-            for r in 0..<MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders.count {
-                guard MainTabBarViewController.staticDogManager.dogs[d].dogReminders.reminders[r].reminderIsEnabled == true else {
+            for reminder in dog.dogReminders.reminders {
+                guard reminder.reminderIsEnabled == true else {
                     continue
                 }
                 

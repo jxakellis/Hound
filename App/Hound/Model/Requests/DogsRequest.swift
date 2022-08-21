@@ -125,11 +125,11 @@ extension DogsRequest {
                     
                     // delete any newReminder with the marker that they should be deleted
                     for newReminder in newDog.dogReminders.reminders where newReminder.reminderIsDeleted == true {
-                        try? newDog.dogReminders.removeReminder(forReminderId: newReminder.reminderId)
+                        newDog.dogReminders.removeReminder(forReminderId: newReminder.reminderId)
                     }
                     // delere any newLog with the marker that they should be deleted
                     for newLog in newDog.dogLogs.logs where newLog.logIsDeleted == true {
-                        try? newDog.dogLogs.removeLog(forLogId: newLog.logId)
+                        newDog.dogLogs.removeLog(forLogId: newLog.logId)
                     }
                     
                     completionHandler(newDog, responseStatus)
@@ -169,17 +169,17 @@ extension DogsRequest {
                     for newDog in newDogManager.dogs {
                         // find any newDogs with the marker that they should be deleted, if they need to be, then no point to iterating through their logs/reminders
                         if newDog.dogIsDeleted == true {
-                            try? newDogManager.removeDog(forDogId: newDog.dogId)
+                            newDogManager.removeDog(forDogId: newDog.dogId)
                         }
                         // dog shouldn't be deleted, so verify its reminders/logs
                         else {
                             // delete any newReminder with the marker that they should be deleted
                             for newReminder in newDog.dogReminders.reminders where newReminder.reminderIsDeleted == true {
-                                try? newDog.dogReminders.removeReminder(forReminderId: newReminder.reminderId)
+                                newDog.dogReminders.removeReminder(forReminderId: newReminder.reminderId)
                             }
                             // delere any newLog with the marker that they should be deleted
                             for newLog in newDog.dogLogs.logs where newLog.logIsDeleted == true {
-                                try? newDog.dogLogs.removeLog(forLogId: newLog.logId)
+                                newDog.dogLogs.removeLog(forLogId: newLog.logId)
                             }
                         }
                     }

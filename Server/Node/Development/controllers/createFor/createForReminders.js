@@ -1,7 +1,7 @@
 const { ValidationError } = require('../../main/tools/general/errors');
 const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const {
-  formatNumber, formatDate, formatBoolean, formatArray,
+  formatNumber, formatDate, formatBoolean, formatArray, formatString,
 } = require('../../main/tools/format/formatObject');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
@@ -27,7 +27,8 @@ async function createReminderForDogIdReminder(databaseConnection, dogId, reminde
   }
 
   // general reminder components
-  const { reminderAction, reminderCustomActionName, reminderType } = reminder; // required
+  const { reminderAction, reminderType } = reminder; // required
+  const reminderCustomActionName = formatString(reminder.reminderCustomActionName, 32); // optional
   const reminderIsEnabled = formatBoolean(reminder.reminderIsEnabled); // required
   const reminderExecutionBasis = formatDate(reminder.reminderExecutionBasis); // required
   const reminderExecutionDate = formatDate(reminder.reminderExecutionDate); // optional

@@ -6,7 +6,7 @@ const { areAllDefined } = require('./validateDefined');
 function formatEmail(string) {
   // eslint-disable-next-line no-useless-escape
   const emailRegex = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
-  const userEmail = formatString(string);
+  const userEmail = formatString(string, 320);
   if (areAllDefined(userEmail) === false) {
     return undefined;
   }

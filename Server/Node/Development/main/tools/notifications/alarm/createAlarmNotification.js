@@ -88,8 +88,7 @@ async function sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(family
 
     // send immediate APN notification for family
     const customPayload = { reminderId: reminder.reminderId, reminderLastModified: reminder.reminderLastModified };
-    sendNotificationForFamily(familyId, global.constant.apn.category.REMINDER, alertTitle, alertBody, customPayload);
-
+    sendNotificationForFamily(familyId, global.constant.notification.category.reminder.PRIMARY, alertTitle, alertBody, customPayload);
     // createSecondaryAlarmNotificationForFamily, handles the secondary alarm notifications
     // If the reminderExecutionDate is in the past, sends APN notification asap. Otherwise, schedule job to send at reminderExecutionDate.
     // If a job with that name from reminderId already exists, then we cancel and replace that job
@@ -190,7 +189,7 @@ async function sendSecondaryAPNForUser(userId, reminderId) {
     const alertBody = `It's been a bit, remember to give your dog a helping hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
 
     const customPayload = { reminderId: reminder.reminderId, reminderLastModified: reminder.reminderLastModified };
-    sendNotificationForUser(userId, global.constant.apn.category.REMINDER, alertTitle, alertBody, customPayload);
+    sendNotificationForUser(userId, global.constant.notification.category.reminder.SECONDARY, alertTitle, alertBody, customPayload);
   }
   catch (error) {
     logServerError('sendNotificationForUser', error);

@@ -25,13 +25,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
     func didAddLog(sender: Sender, parentDogId: Int, newLog: Log) {
         
         if dogManager.dogs.isEmpty == false {
-            do {
-                try dogManager.findDog(forDogId: parentDogId).dogLogs.addLog(forLog: newLog)
-            }
-            catch {
-                ErrorManager.alert(forError: error)
-            }
-
+            dogManager.findDog(forDogId: parentDogId)?.dogLogs.addLog(forLog: newLog)
         }
         setDogManager(sender: sender, forDogManager: dogManager)
 
@@ -40,7 +34,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
 
     func didUpdateLog(sender: Sender, parentDogId: Int, updatedLog: Log) {
 
-        if dogManager.dogs.isEmpty == false, let dog = try? dogManager.findDog(forDogId: parentDogId) {
+        if dogManager.dogs.isEmpty == false, let dog = dogManager.findDog(forDogId: parentDogId) {
                 
              dog.dogLogs.addLog(forLog: updatedLog)
 
@@ -54,13 +48,11 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
 
     func didRemoveLog(sender: Sender, parentDogId: Int, logId: Int) {
         
-        guard let dog = try? dogManager.findDog(forDogId: parentDogId) else {
-            return
-        }
-
-        for dogLogIndex in 0..<dog.dogLogs.logs.count where dog.dogLogs.logs[dogLogIndex].logId == logId {
-            dog.dogLogs.removeLog(forIndex: dogLogIndex)
-            break
+        if let dog = dogManager.findDog(forDogId: parentDogId) {
+            for dogLogIndex in 0..<dog.dogLogs.logs.count where dog.dogLogs.logs[dogLogIndex].logId == logId {
+                dog.dogLogs.removeLog(forIndex: dogLogIndex)
+                break
+            }
         }
 
         setDogManager(sender: sender, forDogManager: dogManager)
@@ -417,10 +409,9 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
             }
         }
         // dog fitler was selected
-        else if selectedCell.dogId != nil {
-            let dog = try? dogManager.findDog(forDogId: selectedCell.dogId!)
+        else if let dogId = selectedCell.dogId {
             
-            guard let dog = dog else {
+            guard let dog = dogManager.findDog(forDogId: dogId) else {
                 return
             }
             

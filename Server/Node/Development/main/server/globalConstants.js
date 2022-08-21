@@ -41,7 +41,7 @@ const limit = {
   NUMBER_OF_REMINDERS_PER_DOG: 10,
 };
 
-const apn = {
+const notification = {
   length: {
     /*
       Tested different title & body length APN to see how much of the notification was displayed
@@ -63,14 +63,34 @@ const apn = {
     ALERT_BODY: 128,
   },
   category: {
-    // for APN about reminder's alarms
-    REMINDER: 'ALERT_CATEGORY_REMINDER',
-    // for APN telling the user that they terminated the Hound app accidentally (disabling their loud notifications)
-    TERMINATE: 'ALERT_CATEGORY_TERMINATE',
-    // for APN telling family that a user logged a certain reminder (i.e. took care of something for a dog)
-    LOG: 'ALERT_CATEGORY_LOG',
-    // for APN just some generic alert, e.g. someone joined/left the family
-    GENERAL: 'ALERT_CATEGORY_GENERAL',
+    // for notifications about reminder's alarms
+    reminder: {
+      PRIMARY: 'NOTIFICATION_CATEGORY_REMINDER_PRIMARY',
+      SECONDARY: 'NOTIFICATION_CATEGORY_REMINDER_SECONDARY',
+    },
+    // for notifications about a family's status
+    family: {
+      // Family member joined the family
+      JOIN: 'NOTIFICATION_CATEGORY_FAMILY_JOIN',
+      // Family member left the family
+      LEAVE: 'NOTIFICATION_CATEGORY_FAMILY_LEAVE',
+      // Family member paused reminders for the family
+      PAUSE: 'NOTIFICATION_CATEGORY_FAMILY_PAUSE',
+      // Family member locked the family
+      LOCK: 'NOTIFICATION_CATEGORY_FAMILY_LOCK',
+      // Family member created a log of care
+      LOG: 'NOTIFICATION_CATEGORY_FAMILY_LOG',
+    },
+    user: {
+      // user terminated the Hound app (disabling their loud notifications)
+      TERMINATE: 'NOTIFICATION_CATEGORY_USER_TERMINATE',
+      // user was kicked from their family
+      KICKED: 'NOTIFICATION_CATEGORY_USER_KICKED',
+    },
+    general: {
+      // unknown future notifications
+      GENERAL: 'NOTIFICATION_CATEGORY_GENERAL_GENERAL',
+    },
   },
 };
 
@@ -186,7 +206,7 @@ ER_FAMILY_PERMISSION_INVALID                (ER_FAMILY_PERMISSION_INVALID)
 global.constant = {
   server,
   limit,
-  apn,
+  notification,
   subscription,
   error,
 };

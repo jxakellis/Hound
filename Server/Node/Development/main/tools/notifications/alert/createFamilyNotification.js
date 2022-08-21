@@ -31,14 +31,14 @@ async function createFamilyMemberJoinNotification(userId, familyId) {
     const alertTitle = 'A new family member has joined!';
 
     let alertBody = `Welcome ${''} into your Hound family`;
-    const maximumLengthForAbreviatedFullName = global.constant.apn.length.ALERT_BODY - alertBody.length;
+    const maximumLengthForAbreviatedFullName = global.constant.notification.length.ALERT_BODY - alertBody.length;
     abreviatedFullName.substring(0, maximumLengthForAbreviatedFullName);
 
     // Maxmium possible length: 31 (raw) + 34 (variable) = 65
     alertBody = `Welcome ${abreviatedFullName} into your Hound family`;
 
     // we now have the messages and can send our APN
-    sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
+    sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.notification.category.family.JOIN, alertTitle, alertBody, {});
   }
   catch (error) {
     logServerError('createFamilyMemberJoinNotification', error);
@@ -68,14 +68,14 @@ async function createFamilyMemberLeaveNotification(userId, familyId) {
     const alertTitle = 'A family member has left!';
 
     let alertBody = `${''} has parted ways with your Hound family`;
-    const maximumLengthForAbreviatedFullName = global.constant.apn.length.ALERT_BODY - alertBody.length;
+    const maximumLengthForAbreviatedFullName = global.constant.notification.length.ALERT_BODY - alertBody.length;
     abreviatedFullName.substring(0, maximumLengthForAbreviatedFullName);
 
     // Maxmium possible length: 39 (raw) + 34 (variable) = 73
     alertBody = `${abreviatedFullName} has parted ways with your Hound family`;
 
     // we now have the messages and can send our APN
-    sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
+    sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.notification.category.family.LEAVE, alertTitle, alertBody, {});
   }
   catch (error) {
     logServerError('createFamilyMemberLeaveNotification', error);
@@ -110,7 +110,7 @@ async function createFamilyLockedNotification(userId, familyId, newIsLocked) {
     let alertBody = isLocked
       ? `${''}'s updated your family settings to prevent new users from joining`
       : `${''}'s updated your family settings to allow new users to join`;
-    const maximumLengthForAbreviatedFullName = global.constant.apn.length.ALERT_BODY - alertBody.length;
+    const maximumLengthForAbreviatedFullName = global.constant.notification.length.ALERT_BODY - alertBody.length;
     abreviatedFullName.substring(0, maximumLengthForAbreviatedFullName);
 
     // Maxmium possible length: 65/58 (raw) + 34 (variable) = 99/92
@@ -119,7 +119,7 @@ async function createFamilyLockedNotification(userId, familyId, newIsLocked) {
       : `${abreviatedFullName}'s updated your family settings to allow new users to join`;
 
     // we now have the messages and can send our APN
-    sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
+    sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.notification.category.family.LOCK, alertTitle, alertBody, {});
   }
   catch (error) {
     logServerError('createFamilyLockedNotification', error);
@@ -154,7 +154,7 @@ async function createFamilyPausedNotification(userId, familyId, newIsPaused) {
     let alertBody = isPaused
       ? `${''}'s updated your family settings to halt all your alarms`
       : `${''}'s updated your family settings to resume all your alarms`;
-    const maximumLengthForAbreviatedFullName = global.constant.apn.length.ALERT_BODY - alertBody.length;
+    const maximumLengthForAbreviatedFullName = global.constant.notification.length.ALERT_BODY - alertBody.length;
     abreviatedFullName.substring(0, maximumLengthForAbreviatedFullName);
 
     // Maxmium possible length: 55/57 (raw) + 34 (variable) = 89/91
@@ -163,7 +163,7 @@ async function createFamilyPausedNotification(userId, familyId, newIsPaused) {
       : `${abreviatedFullName}'s updated your family settings to resume all your alarms`;
 
     // we now have the messages and can send our APN
-    sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.apn.category.GENERAL, alertTitle, alertBody, {});
+    sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.notification.category.family.PAUSE, alertTitle, alertBody, {});
   }
   catch (error) {
     logServerError('createFamilyPausedNotification', error);

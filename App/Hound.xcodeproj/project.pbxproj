@@ -100,16 +100,12 @@
 		A2A45CCF2644914A0050E5A1 /* RemindersIntroductionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A45CCE2644914A0050E5A1 /* RemindersIntroductionVC.swift */; };
 		A2AA5CBD27FE391400FD0134 /* ResponseUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CBC27FE391400FD0134 /* ResponseUtils.swift */; };
 		A2AA5CBF27FE421B00FD0134 /* InternalRequestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CBE27FE421B00FD0134 /* InternalRequestUtils.swift */; };
-		A2AA5CC127FE446700FD0134 /* DogManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CC027FE446700FD0134 /* DogManagerError.swift */; };
 		A2AA5CC327FE447D00FD0134 /* DogError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CC227FE447D00FD0134 /* DogError.swift */; };
-		A2AA5CC527FE449100FD0134 /* LogManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CC427FE449100FD0134 /* LogManagerError.swift */; };
 		A2AA5CC727FE44B400FD0134 /* ReminderActionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CC627FE44B400FD0134 /* ReminderActionError.swift */; };
 		A2AA5CC927FE44C300FD0134 /* LogActionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CC827FE44C300FD0134 /* LogActionError.swift */; };
-		A2AA5CCB27FE451E00FD0134 /* ReminderManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CCA27FE451E00FD0134 /* ReminderManagerError.swift */; };
 		A2AA5CCD27FE453400FD0134 /* WeeklyComponentsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CCC27FE453400FD0134 /* WeeklyComponentsError.swift */; };
 		A2AA5CCF27FE454D00FD0134 /* MonthlyComponentsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CCE27FE454D00FD0134 /* MonthlyComponentsError.swift */; };
 		A2AA5CD127FE456400FD0134 /* FamilyRequestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CD027FE456400FD0134 /* FamilyRequestError.swift */; };
-		A2AA5CD327FE459200FD0134 /* TimingManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CD227FE459200FD0134 /* TimingManagerError.swift */; };
 		A2AA5CD727FE47F500FD0134 /* Dog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CD627FE47F500FD0134 /* Dog.swift */; };
 		A2AA5CD927FE480000FD0134 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CD827FE480000FD0134 /* Log.swift */; };
 		A2AA5CDB27FE481C00FD0134 /* DropDownUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AA5CDA27FE481C00FD0134 /* DropDownUIView.swift */; };
@@ -284,16 +280,12 @@
 		A2A45CCE2644914A0050E5A1 /* RemindersIntroductionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersIntroductionVC.swift; sourceTree = "<group>"; };
 		A2AA5CBC27FE391400FD0134 /* ResponseUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseUtils.swift; sourceTree = "<group>"; };
 		A2AA5CBE27FE421B00FD0134 /* InternalRequestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalRequestUtils.swift; sourceTree = "<group>"; };
-		A2AA5CC027FE446700FD0134 /* DogManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogManagerError.swift; sourceTree = "<group>"; };
 		A2AA5CC227FE447D00FD0134 /* DogError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogError.swift; sourceTree = "<group>"; };
-		A2AA5CC427FE449100FD0134 /* LogManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogManagerError.swift; sourceTree = "<group>"; };
 		A2AA5CC627FE44B400FD0134 /* ReminderActionError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderActionError.swift; sourceTree = "<group>"; };
 		A2AA5CC827FE44C300FD0134 /* LogActionError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogActionError.swift; sourceTree = "<group>"; };
-		A2AA5CCA27FE451E00FD0134 /* ReminderManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderManagerError.swift; sourceTree = "<group>"; };
 		A2AA5CCC27FE453400FD0134 /* WeeklyComponentsError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyComponentsError.swift; sourceTree = "<group>"; };
 		A2AA5CCE27FE454D00FD0134 /* MonthlyComponentsError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyComponentsError.swift; sourceTree = "<group>"; };
 		A2AA5CD027FE456400FD0134 /* FamilyRequestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyRequestError.swift; sourceTree = "<group>"; };
-		A2AA5CD227FE459200FD0134 /* TimingManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimingManagerError.swift; sourceTree = "<group>"; };
 		A2AA5CD627FE47F500FD0134 /* Dog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dog.swift; sourceTree = "<group>"; };
 		A2AA5CD827FE480000FD0134 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		A2AA5CDA27FE481C00FD0134 /* DropDownUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropDownUIView.swift; sourceTree = "<group>"; };
@@ -493,15 +485,11 @@
 				A2A29D4C287A8AF400770993 /* RequestError.swift */,
 				A2AA5CD027FE456400FD0134 /* FamilyRequestError.swift */,
 				A2A91115282C181B0078B857 /* Response */,
-				A2AA5CC027FE446700FD0134 /* DogManagerError.swift */,
 				A2AA5CC227FE447D00FD0134 /* DogError.swift */,
-				A2AA5CC427FE449100FD0134 /* LogManagerError.swift */,
 				A2AA5CC827FE44C300FD0134 /* LogActionError.swift */,
-				A2AA5CCA27FE451E00FD0134 /* ReminderManagerError.swift */,
 				A2AA5CC627FE44B400FD0134 /* ReminderActionError.swift */,
 				A2AA5CCC27FE453400FD0134 /* WeeklyComponentsError.swift */,
 				A2AA5CCE27FE454D00FD0134 /* MonthlyComponentsError.swift */,
-				A2AA5CD227FE459200FD0134 /* TimingManagerError.swift */,
 				A247236C27F63456005DF848 /* SignInWithAppleError.swift */,
 				A2AB7CCD28580C5300851FF2 /* InAppPurchaseError.swift */,
 			);
@@ -1151,7 +1139,6 @@
 				A28A0B4C25B923BA0057BEC7 /* DogsReminderNavigationVC.swift in Sources */,
 				A249619027E3A642006CFDCC /* MainTabBarVC.swift in Sources */,
 				A27C3D8B25B781B4005F46BA /* DogsAddDogVC.swift in Sources */,
-				A2AA5CC127FE446700FD0134 /* DogManagerError.swift in Sources */,
 				A2AC1D30285D1275000F2CD0 /* AdjustedHeightUITableView.swift in Sources */,
 				A2AB7CCE28580C5300851FF2 /* InAppPurchaseError.swift in Sources */,
 				A26AF36E25807887005D5DAB /* DateExtension.swift in Sources */,
@@ -1165,7 +1152,6 @@
 				A2AA5CDD27FE482800FD0134 /* GeneralUIAlertController.swift in Sources */,
 				A23F6B6B2864B72300D08841 /* SubscriptionRequest.swift in Sources */,
 				A2AA5CCF27FE454D00FD0134 /* MonthlyComponentsError.swift in Sources */,
-				A2AA5CD327FE459200FD0134 /* TimingManagerError.swift in Sources */,
 				A2DC23A8264D822F00EB287A /* DogsReminderMonthlyVC.swift in Sources */,
 				A2B565F627E825690091CA25 /* AlarmManager.swift in Sources */,
 				A2BAA06C27D6C5520041F3C5 /* ServerLoginVC.swift in Sources */,
@@ -1208,7 +1194,6 @@
 				A2AC89F627D2778900115831 /* CountdownComponents.swift in Sources */,
 				A2EAF17D25C9D45E0022BBDD /* ReminderDisplayTVC.swift in Sources */,
 				A2581B7627FDDF350099AFB8 /* Notification Sound.swift in Sources */,
-				A2AA5CCB27FE451E00FD0134 /* ReminderManagerError.swift in Sources */,
 				A2B9DAE9262B2DFA00A47D57 /* LogsNavigationVC.swift in Sources */,
 				A2AC8A0227D2D9B500115831 /* LogManager.swift in Sources */,
 				A2AC8A0027D2782C00115831 /* SnoozeComponents.swift in Sources */,
@@ -1231,7 +1216,6 @@
 				A2A29D4B287A893A00770993 /* NetworkManager.swift in Sources */,
 				A20C99972568671F00E2C9C8 /* ReminderManager.swift in Sources */,
 				A278ED882610FF05000575FC /* DogsReminderManagerVC.swift in Sources */,
-				A2AA5CC527FE449100FD0134 /* LogManagerError.swift in Sources */,
 				A2E66C9D25534A880068CCA6 /* SceneDelegate.swift in Sources */,
 				A29C985227CE6D8E00B9C8E4 /* LogsRequest.swift in Sources */,
 				A20D64A42880E0CD001BDC9B /* Subscription.swift in Sources */,

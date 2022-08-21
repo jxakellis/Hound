@@ -49,7 +49,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
     
     func didRemoveReminder(reminderId: Int) {
         shouldPromptSaveWarning = true
-        try? modifiableDogReminders.removeReminder(forReminderId: reminderId)
+        modifiableDogReminders.removeReminder(forReminderId: reminderId)
     }
     
     // MARK: - UITextFieldDelegate
@@ -123,7 +123,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
             // add updated reminders as they already have their reminderId
             dog.dogReminders.updateReminders(forReminders: updatedReminders)
             for deletedReminder in deletedReminders {
-                try? dog.dogReminders.removeReminder(forReminderId: deletedReminder.reminderId)
+                dog.dogReminders.removeReminder(forReminderId: deletedReminder.reminderId)
             }
             addDogButton.beginQuerying()
             addDogButtonBackground.beginQuerying(isBackgroundButton: true)

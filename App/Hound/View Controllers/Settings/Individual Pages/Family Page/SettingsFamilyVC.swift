@@ -236,6 +236,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     
     /// If the pause all timers switch it triggered, calls thing function
     @IBAction private func didToggleIsPaused(_ sender: Any) {
+        // TO DO NOW remove UI to toggle a family's pause status. niche functionality that user's won't know exists if they need it AND it provides a way for 1 user to mess with the whole family (which is bad).
         let dogManager = MainTabBarViewController.staticDogManager
         let isPaused = isPausedSwitch.isOn
         

@@ -15,7 +15,7 @@ enum EnumConstant {
 #if DEBUG
             AppDelegate.generalLogger.info("DEBUG Build Configuration for server")
             // Can return true or false. Can have prod or dev server for DEBUG
-            return false
+            return true
 #else
             AppDelegate.generalLogger.info("RELEASE Build Configuration for server")
             // ALWAYS RETURN TRUE, WANT PROD SERVER FOR RELEASE

@@ -1,13 +1,15 @@
 const { ValidationError } = require('../../main/tools/general/errors');
 const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
+const { formatString } = require('../../main/tools/format/formatObject');
 
 /**
  *  Queries the database to create a dog. If the query is successful, then returns the dogId.
  *  If a problem is encountered, creates and throws custom error
  */
-async function createDogForFamilyId(databaseConnection, familyId, activeSubscription, dogName) {
+async function createDogForFamilyId(databaseConnection, familyId, activeSubscription, forDogName) {
   const dogLastModified = new Date();
+  const dogName = formatString(forDogName, 32);
 
   if (areAllDefined(databaseConnection, familyId, activeSubscription, activeSubscription.numberOfDogs, dogName) === false) {
     throw new ValidationError('databaseConnection, familyId, activeSubscription, or dogName missing', global.constant.error.value.MISSING);

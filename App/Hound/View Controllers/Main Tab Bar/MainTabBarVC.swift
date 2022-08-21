@@ -39,29 +39,29 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
     
     func didAddLog(sender: Sender, forDogId dogId: Int, forLog log: Log) {
         
-        let dog = try? dogManager.findDog(forDogId: dogId)
-        dog?.dogLogs.addLog(forLog: log)
+        dogManager.findDog(forDogId: dogId)?.dogLogs.addLog(forLog: log)
+        
         setDogManager(sender: sender, forDogManager: dogManager)
     }
     
     func didRemoveLog(sender: Sender, forDogId dogId: Int, forLogId logId: Int) {
         
-        let dog = try? dogManager.findDog(forDogId: dogId)
-        try? dog?.dogLogs.removeLog(forLogId: logId)
+        dogManager.findDog(forDogId: dogId)?.dogLogs.removeLog(forLogId: logId)
+        
         setDogManager(sender: sender, forDogManager: dogManager)
     }
     
     func didUpdateReminder(sender: Sender, forDogId dogId: Int, forReminder reminder: Reminder) {
         
-        let dog = try? dogManager.findDog(forDogId: dogId)
-        dog?.dogReminders.updateReminder(forReminder: reminder)
+        dogManager.findDog(forDogId: dogId)?.dogReminders.updateReminder(forReminder: reminder)
+        
         setDogManager(sender: sender, forDogManager: dogManager)
     }
     
     func didRemoveReminder(sender: Sender, forDogId dogId: Int, forReminderId reminderId: Int) {
         
-        let dog = try? dogManager.findDog(forDogId: dogId)
-        try? dog?.dogReminders.removeReminder(forReminderId: reminderId)
+        dogManager.findDog(forDogId: dogId)?.dogReminders.removeReminder(forReminderId: reminderId)
+        
         setDogManager(sender: sender, forDogManager: dogManager)
     }
 

@@ -194,6 +194,7 @@ final class Log: NSObject, NSCoding, NSCopying {
     
     var logDate: Date = ClassConstant.LogConstant.defaultLogDate
     
+    // TO DO NOW limit logNote length to the
     var logNote: String = ClassConstant.LogConstant.defaultLogNote
     
 }

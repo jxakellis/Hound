@@ -61,12 +61,11 @@ final class LogManager: NSObject, NSCoding, NSCopying {
     
     /// Helper function allows us to use the same logic for addLog and addLogs and allows us to only sort at the end. Without this function, addLogs would invoke addLog repeadly and sortLogs() with each call.
     private func addLogWithoutSorting(forLog: Log) {
-        // removes any existing logs that have the same logId as they would cause problems. .reversed() is needed to make it work, without it there will be an index of out bounds error.
-        for (logIndex, log) in logs.enumerated().reversed() where log.logId == forLog.logId {
-            // replace the log
-            logs.remove(at: logIndex)
-            break
+        // removes any existing logs that have the same logId as they would cause problems.
+        logs.removeAll { log in
+            return forLog.logId == log.logId
         }
+        
         logs.append(forLog)
         
         uniqueLogActionsResult = nil
@@ -102,22 +101,26 @@ final class LogManager: NSObject, NSCoding, NSCopying {
         }
     }
     
-    func removeLog(forLogId logId: Int) throws {
+    func removeLog(forLogId logId: Int) {
         // check to find the index of targetted log
         let logIndex: Int? = logs.firstIndex { log in
             return log.logId == logId
         }
         
-        if logIndex == nil {
-            throw LogManagerError.logIdNotPresent
+        guard let logIndex = logIndex else {
+            return
         }
-        else {
-            logs.remove(at: logIndex ?? ClassConstant.LogConstant.defaultLogId)
-            uniqueLogActionsResult = nil
-        }
+
+        logs.remove(at: logIndex)
+        uniqueLogActionsResult = nil
     }
     
     func removeLog(forIndex index: Int) {
+        // Make sure the index is valid
+        guard logs.count > index else {
+            return
+        }
+        
         logs.remove(at: index)
         uniqueLogActionsResult = nil
     }

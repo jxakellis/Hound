@@ -27,6 +27,8 @@ final class LogsBodyWithIconTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        
+        // TO DO NOW if a log has a note, then make the table view cell "two lines", so that there is adequte space to display one line (probably 5-10 words) of a note
     }
     
     func setup(forParentDogIcon parentDogIcon: UIImage, forLog log: Log) {

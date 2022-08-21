@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const { ValidationError } = require('../../main/tools/general/errors');
 const { databaseQuery } = require('../../main/tools/database/databaseQuery');
 const {
-  formatNumber, formatEmail, formatBoolean,
+  formatNumber, formatEmail, formatBoolean, formatString,
 } = require('../../main/tools/format/formatObject');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 const { hash } = require('../../main/tools/format/hash');
@@ -13,62 +13,76 @@ const { hash } = require('../../main/tools/format/hash');
  */
 async function createUserForUserIdentifier(
   databaseConnection,
+  // userId,
   userIdentifier,
+  // userApplicationUsername,
   forUserEmail,
-  userFirstName,
-  userLastName,
-  userNotificationToken,
+  forUserFirstName,
+  forUserLastName,
+  forUserNotificationToken,
+  // userAccountCreationDate,
   forIsNotificationEnabled,
   forIsLoudNotification,
   forIsFollowUpEnabled,
   forFollowUpDelay,
+  forInterfaceStyle,
   forSnoozeLength,
   notificationSound,
-  forInterfaceStyle,
   logsInterfaceScale,
   remindersInterfaceScale,
   forMaximumNumberOfLogsDisplayed,
+  // lastDogManagerSynchronization,
 ) {
   if (areAllDefined(databaseConnection, userIdentifier) === false) {
     throw new ValidationError('databaseConnection or userIdentifier missing', global.constant.error.value.MISSING);
   }
-
   const userAccountCreationDate = new Date();
   const userId = hash(userIdentifier, userAccountCreationDate.toISOString());
-  const userApplicationUsername = crypto.randomUUID();
-
+  // userIdentifier
+  const userApplicationUsername = formatString(crypto.randomUUID(), 36);
   const userEmail = formatEmail(forUserEmail);
+  const userFirstName = formatString(forUserFirstName, 32);
+  const userLastName = formatString(forUserLastName, 32);
+  const userNotificationToken = formatString(forUserNotificationToken, 100);
+
   const isNotificationEnabled = formatBoolean(forIsNotificationEnabled);
   const isLoudNotification = formatBoolean(forIsLoudNotification);
   const isFollowUpEnabled = formatBoolean(forIsFollowUpEnabled);
   const followUpDelay = formatNumber(forFollowUpDelay);
-  const snoozeLength = formatNumber(forSnoozeLength);
   const interfaceStyle = formatNumber(forInterfaceStyle);
+  const snoozeLength = formatNumber(forSnoozeLength);
+  // notificationSound
+  // logsInterfaceScale
+  // remindersInterfaceScale
   const maximumNumberOfLogsDisplayed = formatNumber(forMaximumNumberOfLogsDisplayed);
-
-  // userNotificationToken OPTIONAL
   if (areAllDefined(
     userId,
+    userIdentifier,
+    // userApplicationUsername
     userEmail,
+    // userFirstName
+    // userLastName
+    // userNotificationToken
+    userAccountCreationDate,
     isNotificationEnabled,
     isLoudNotification,
     isFollowUpEnabled,
     followUpDelay,
+    interfaceStyle,
     snoozeLength,
     notificationSound,
     logsInterfaceScale,
     remindersInterfaceScale,
-    interfaceStyle,
     maximumNumberOfLogsDisplayed,
   ) === false) {
-    throw new ValidationError('userId, userEmail, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, snoozeLength, notificationSound, interfaceStyle, logsInterfaceScale, remindersInterfaceScale, or maximumNumberOfLogsDisplayed missing', global.constant.error.value.MISSING);
+    throw new ValidationError('userId, userIdentifier, userEmail, userAccountCreationDate, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, interfaceStyle, snoozeLength, notificationSound, logsInterfaceScale, remindersInterfaceScale, or maximumNumberOfLogsDisplayed missing', global.constant.error.value.MISSING);
   }
 
   const promises = [
     databaseQuery(
       databaseConnection,
-      'INSERT INTO users(userId, userIdentifier, userApplicationUsername, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate) VALUES (?,?,?,?,?,?,?,?)',
-      [userId, userIdentifier, userApplicationUsername, userNotificationToken, userEmail, userFirstName, userLastName, userAccountCreationDate],
+      'INSERT INTO users(userId, userIdentifier, userApplicationUsername, userEmail, userFirstName, userLastName, userNotificationToken, userAccountCreationDate) VALUES (?,?,?,?,?,?,?,?)',
+      [userId, userIdentifier, userApplicationUsername, userEmail, userFirstName, userLastName, userNotificationToken, userAccountCreationDate],
     ),
     databaseQuery(
       databaseConnection,

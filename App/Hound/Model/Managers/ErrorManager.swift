@@ -53,23 +53,14 @@ enum ErrorManager {
             ErrorManager.alert(forMessage: createErrorMessage(forErrorRawValue: castError.rawValue))
         }
         // Dog Object Related
-        else if let castError = error as? DogManagerError {
-            ErrorManager.alert(forMessage: castError.rawValue)
-        }
         else if let castError = error as? DogError {
             ErrorManager.alert(forMessage: castError.rawValue)
         }
         // Log Object Related
-        else if let castError = error as? LogManagerError {
-            ErrorManager.alert(forMessage: castError.rawValue)
-        }
         else if let castError = error as? LogError {
             ErrorManager.alert(forMessage: castError.rawValue)
         }
         // Reminder Object Related
-        else if let castError = error as? ReminderManagerError {
-            ErrorManager.alert(forMessage: castError.rawValue)
-        }
         else if let castError = error as? ReminderError {
             ErrorManager.alert(forMessage: castError.rawValue)
         }
@@ -80,9 +71,6 @@ enum ErrorManager {
             ErrorManager.alert(forMessage: castError.rawValue)
         }
         // Other
-        else if let castError = error as? TimingManagerError {
-            ErrorManager.alert(forMessage: castError.rawValue)
-        }
         else if let castError = error as? SignInWithAppleError {
             ErrorManager.alert(forMessage: castError.rawValue)
         }

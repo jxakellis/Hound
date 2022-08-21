@@ -23,7 +23,7 @@ final class AlarmManager {
     static func willShowAlarm(forDogManager dogManager: DogManager, forDogId dogId: Int, forReminderId reminderId: Int) {
         
         // See if we can find a corresponding dog for the dogId. If we can't, then no point to go any further
-        guard let dog = try? dogManager.findDog(forDogId: dogId) else {
+        guard let dog = dogManager.findDog(forDogId: dogId) else {
             return
         }
         
@@ -42,6 +42,10 @@ final class AlarmManager {
                     guard let newDogManager = newDogManager else {
                         return
                     }
+                    
+                    // RequestUtils.getFamilyGetDog was invoked because the reminder from RemindersRequest.get was missing. If for some reason the reminder actually exists, it would cause an infinite loop (as RemindersRequest.get would return missing again and then RequestUtils.getFamilyGetDog would be invoked again). Therefore, any reminder that has the same reminder id to prevent this from happening.
+                    // Don't persist change to server, as this is a bandaid fix of the local client being messed up.
+                    newDogManager.findDog(forDogId: dogId)?.dogReminders.removeReminder(forReminderId: reminderId)
                     
                     delegate.didUpdateDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
                 }

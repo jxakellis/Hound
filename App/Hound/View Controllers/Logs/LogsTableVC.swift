@@ -194,7 +194,7 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
         // indexPath.row -1 corrects for the first row in the section being the header
         let targetTuple = nestedLogsArray[indexPath.row - 1]
         
-        guard let dog = try? dogManager.findDog(forDogId: targetTuple.0) else {
+        guard let dog = dogManager.findDog(forDogId: targetTuple.0) else {
             return UITableViewCell()
         }
         let log = targetTuple.1
@@ -247,7 +247,7 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
         let logId = nestedLogsArray[indexPath.row - 1].1.logId
         
         LogsRequest.delete(invokeErrorManager: true, forDogId: parentDogId, forLogId: logId) { requestWasSuccessful, _ in
-            guard requestWasSuccessful, let dog = try? self.dogManager.findDog(forDogId: parentDogId) else {
+            guard requestWasSuccessful, let dog = self.dogManager.findDog(forDogId: parentDogId) else {
                 return
             }
             
