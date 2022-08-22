@@ -28,9 +28,9 @@ enum LogsInterfaceScale: String, CaseIterable {
         case .small:
             return 0.85
         case .medium:
-            return 1.15
+            return 1.2
         case .large:
-            return 1.45
+            return 1.55
         }
     }
 }
@@ -55,9 +55,9 @@ enum RemindersInterfaceScale: String, CaseIterable {
         case .small:
             return 0.85
         case .medium:
-            return 1.15
+            return 1.2
         case .large:
-            return 1.45
+            return 1.55
         }
     }
 }

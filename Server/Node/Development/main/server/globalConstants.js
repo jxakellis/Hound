@@ -68,6 +68,11 @@ const notification = {
       PRIMARY: 'NOTIFICATION_CATEGORY_REMINDER_PRIMARY',
       SECONDARY: 'NOTIFICATION_CATEGORY_REMINDER_SECONDARY',
     },
+    // for notifications about logs
+    log: {
+      // Family member created a log of care
+      CREATED: 'NOTIFICATION_CATEGORY_LOG_CREATED',
+    },
     // for notifications about a family's status
     family: {
       // Family member joined the family
@@ -78,8 +83,6 @@ const notification = {
       PAUSE: 'NOTIFICATION_CATEGORY_FAMILY_PAUSE',
       // Family member locked the family
       LOCK: 'NOTIFICATION_CATEGORY_FAMILY_LOCK',
-      // Family member created a log of care
-      LOG: 'NOTIFICATION_CATEGORY_FAMILY_LOG',
     },
     user: {
       // user terminated the Hound app (disabling their loud notifications)

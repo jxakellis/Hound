@@ -47,7 +47,12 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         }
     }
     
-    @IBAction private func didClickCopyFamilyCode(_ sender: Any) {
+    @IBAction private func didClickShareFamily(_ sender: Any) {
+        
+        guard FamilyConfiguration.familyMembers.count <= FamilyConfiguration.activeFamilySubscription.numberOfFamilyMembers else {
+            // TO DO NOW show banner that tells the user they need to upgrade their subscription
+            return
+        }
         guard FamilyConfiguration.isLocked == false else {
             AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.invalidFamilyShareTitle, forSubtitle: VisualConstant.BannerTextConstant.invalidFamilyShareSubtitle, forStyle: .danger)
             return

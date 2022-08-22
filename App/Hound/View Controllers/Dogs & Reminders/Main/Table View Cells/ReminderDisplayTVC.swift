@@ -19,7 +19,14 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
     
     @IBOutlet private weak var reminderIconImageView: UIImageView!
     @IBOutlet private weak var reminderIconLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var reminderIconTrailingConstraint: NSLayoutConstraint!
     @IBOutlet private weak var reminderIconWidthConstraint: NSLayoutConstraint!
+    
+    @IBOutlet private weak var reminderXMarkImageView: UIImageView!
+    @IBOutlet private weak var reminderXMarkLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var reminderXMarkTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var reminderXMarkTopConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var reminderXMarkBottomConstraint: NSLayoutConstraint!
     
     @IBOutlet private weak var reminderActionLabel: ScaledUILabel!
     @IBOutlet private weak var reminderActionTopConstraint: NSLayoutConstraint!
@@ -34,25 +41,10 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
     @IBOutlet private weak var nextAlarmBottomConstraint: NSLayoutConstraint!
     @IBOutlet private weak var nextAlarmHeightConstraint: NSLayoutConstraint!
     
-    /*
-    @IBOutlet private weak var reminderIsEnabledSwitch: UISwitch!
-    @IBAction private func didToggleReminderIsEnabled(_ sender: Any) {
-        let beforeUpdateIsEnabled = reminder.reminderIsEnabled
-        reminder.reminderIsEnabled = reminderIsEnabledSwitch.isOn
-        delegate.didUpdateReminderEnable(sender: Sender(origin: self, localized: self), parentDogId: parentDogId, reminder: reminder)
-        
-        RemindersRequest.update(invokeErrorManager: true, forDogId: parentDogId, forReminder: reminder) { requestWasSuccessful, _ in
-            if requestWasSuccessful == false {
-                // revert to previous values
-                self.reminderIsEnabledSwitch.setOn(beforeUpdateIsEnabled, animated: true)
-                self.reminder.reminderIsEnabled = beforeUpdateIsEnabled
-                self.delegate.didUpdateReminderEnable(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogId, reminder: self.reminder)
-            }
-        }
-    }
-     */
-    
+    @IBOutlet private weak var rightChevronLeadingConstraint: UIView!
+    @IBOutlet private weak var rightChevronTrailingConstraint: NSLayoutConstraint!
     @IBOutlet private weak var rightChevronWidthConstraint: NSLayoutConstraint!
+
     // MARK: - Properties
     
     var reminder: Reminder!
@@ -65,7 +57,6 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // TO DO NOW if a reminder is disabled, put a diagonal line or x thru the reminder's icon. Provides a more visual way for the users to tell a reminder is disabled
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -150,8 +141,8 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
         // Reminder Action Label Configuration
         reminderActionLabel.font = reminderActionLabel.font.withSize(25.0 * sizeRatio)
         reminderActionTopConstraint.constant = 7.5 * sizeRatio
-        reminderActionHeightConstraint.constant = 30.0 * sizeRatio
         reminderActionBottomConstraint.constant = 2.5 * sizeRatio
+        reminderActionHeightConstraint.constant = 30.0 * sizeRatio
         
         // Reminder Interval Label Configuration
         
@@ -162,20 +153,23 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
         // Next Alarm Label Configuration
         
         nextAlarmLabel.font = nextAlarmLabel.font.withSize(12.5 * sizeRatio)
-        nextAlarmHeightConstraint.constant = 15.0 * sizeRatio
         nextAlarmBottomConstraint.constant = 7.5 * sizeRatio
-        
-        // Reminder Is Enabled Switch Configuration
-        
-        // self.reminderIsEnabledSwitch.isOn = reminder.reminderIsEnabled
+        nextAlarmHeightConstraint.constant = 15.0 * sizeRatio
         
         // Reminder Icon Configuration
-        let dogIconLeadingAndWidth = 5.0 + (60.0 * sizeRatio)
-        let reminderIconWidth = 35.0 * sizeRatio
-        // the extra -5 to the constant makes trailing off by 5 on purpose. the dogIcon only has 5 points between the end of it and the start of the text while the reminderIcon has 10 points. So this -5 adjusts for that to make the text line up
-        let reminderIconLeading = dogIconLeadingAndWidth - reminderIconWidth - (5 * sizeRatio)
-        reminderIconLeadingConstraint.constant = reminderIconLeading
-        reminderIconWidthConstraint.constant = reminderIconWidth
+        
+        reminderIconImageView.layer.masksToBounds = true
+        reminderIconLeadingConstraint.constant = 20.0 * sizeRatio
+        reminderIconTrailingConstraint.constant = 10.0 * sizeRatio
+        reminderIconWidthConstraint.constant = 35.0 * sizeRatio
+        
+        // Reminder X Mark Configuration
+        
+        reminderXMarkImageView.isHidden = reminder.reminderIsEnabled
+        reminderXMarkLeadingConstraint.constant = 7.5 * sizeRatio
+        reminderXMarkTrailingConstraint.constant = 7.5 * sizeRatio
+        reminderXMarkTopConstraint.constant = 7.5 * sizeRatio
+        reminderXMarkBottomConstraint.constant = 7.5 * sizeRatio
         
         // put this reload after the sizeRatio otherwise the .font sizeRatio adjustment will change the whole text label to the same font (we want some bold and some not bold)
         reloadNextAlarmText()

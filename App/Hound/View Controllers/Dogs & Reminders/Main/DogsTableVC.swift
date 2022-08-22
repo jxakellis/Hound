@@ -149,10 +149,7 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
     
     private func reloadVisibleCellsTimeLeftLabel() {
         for cell in tableView.visibleCells {
-            if let sudoCell = cell as? DogsDogDisplayTableViewCell {
-                sudoCell.reloadNextAlarmText()
-            }
-            else if let sudoCell = cell as? DogsReminderDisplayTableViewCell {
+            if let sudoCell = cell as? DogsReminderDisplayTableViewCell {
                 sudoCell.reloadNextAlarmText()
             }
         }

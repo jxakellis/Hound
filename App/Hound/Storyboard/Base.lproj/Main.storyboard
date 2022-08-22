@@ -662,14 +662,14 @@
                         <viewLayoutGuide key="frameLayoutGuide" id="dO0-k2-qcN"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="16" reuseIdentifier="DogsDogDisplayTableViewCell" id="tHZ-ho-5tn" customClass="DogsDogDisplayTableViewCell" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="44.5" width="414" height="85.5"/>
+                                <rect key="frame" x="0.0" y="44.5" width="414" height="75.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" tableViewCell="tHZ-ho-5tn" id="G9A-nQ-CAR">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="85.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="75.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="280" verticalHuggingPriority="280" horizontalCompressionResistancePriority="780" verticalCompressionResistancePriority="780" text="Bella" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8pH-6H-VGW" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                            <rect key="frame" x="70" y="7.5" width="304" height="45.5"/>
+                                            <rect key="frame" x="65" y="15.5" width="309" height="45"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="45" id="FFb-3B-q8F"/>
                                             </constraints>
@@ -678,69 +678,59 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="300" verticalHuggingPriority="300" horizontalCompressionResistancePriority="800" verticalCompressionResistancePriority="800" translatesAutoresizingMaskIntoConstraints="NO" id="Tcd-Tf-WCx">
-                                            <rect key="frame" x="5" y="13" width="60" height="60"/>
+                                            <rect key="frame" x="5" y="10" width="55" height="55.5"/>
                                             <color key="tintColor" systemColor="labelColor"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" secondItem="Tcd-Tf-WCx" secondAttribute="height" multiplier="1:1" id="HRV-em-G6b"/>
-                                                <constraint firstAttribute="width" constant="60" id="xab-po-KLh"/>
+                                                <constraint firstAttribute="width" constant="55" id="xab-po-KLh"/>
                                             </constraints>
                                             <imageReference key="image" image="whitePawWithHands" symbolScale="large"/>
                                         </imageView>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.75" contentMode="scaleAspectFit" horizontalHuggingPriority="290" verticalHuggingPriority="290" horizontalCompressionResistancePriority="790" verticalCompressionResistancePriority="790" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="2Cv-gS-fE5">
-                                            <rect key="frame" x="384" y="30" width="20" height="26.5"/>
+                                            <rect key="frame" x="384" y="25" width="20" height="26.5"/>
                                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" secondItem="2Cv-gS-fE5" secondAttribute="height" multiplier="1:1.5" id="ZR9-p4-xpa"/>
                                                 <constraint firstAttribute="width" constant="20" id="ieF-kk-hdN"/>
                                             </constraints>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="280" verticalHuggingPriority="280" horizontalCompressionResistancePriority="780" verticalCompressionResistancePriority="780" text="Next Reminder In: 5 minutes" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.34999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="E6i-Fi-bHd" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                            <rect key="frame" x="70" y="58" width="304" height="20"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="i9K-No-B69"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
                                     </subviews>
                                     <color key="backgroundColor" systemColor="systemBlueColor"/>
                                     <constraints>
                                         <constraint firstItem="2Cv-gS-fE5" firstAttribute="leading" secondItem="8pH-6H-VGW" secondAttribute="trailing" constant="10" id="168-Fy-05G"/>
-                                        <constraint firstItem="8pH-6H-VGW" firstAttribute="top" secondItem="G9A-nQ-CAR" secondAttribute="top" constant="7.5" id="HeK-g9-SYl"/>
-                                        <constraint firstAttribute="bottom" secondItem="E6i-Fi-bHd" secondAttribute="bottom" constant="7.5" id="IpW-Os-EvP"/>
+                                        <constraint firstItem="Tcd-Tf-WCx" firstAttribute="top" secondItem="G9A-nQ-CAR" secondAttribute="top" constant="10" id="6y6-fL-JZ3"/>
+                                        <constraint firstAttribute="bottom" secondItem="Tcd-Tf-WCx" secondAttribute="bottom" constant="10" id="NXp-jd-yyF"/>
                                         <constraint firstItem="Tcd-Tf-WCx" firstAttribute="centerY" secondItem="G9A-nQ-CAR" secondAttribute="centerY" id="RGq-JV-nwj"/>
                                         <constraint firstItem="2Cv-gS-fE5" firstAttribute="centerY" secondItem="G9A-nQ-CAR" secondAttribute="centerY" id="RsH-L2-z5S"/>
                                         <constraint firstAttribute="trailing" secondItem="2Cv-gS-fE5" secondAttribute="trailing" constant="10" id="UAz-Jd-oDz"/>
-                                        <constraint firstItem="E6i-Fi-bHd" firstAttribute="top" secondItem="8pH-6H-VGW" secondAttribute="bottom" constant="5" id="WFl-Gk-cqH"/>
-                                        <constraint firstItem="E6i-Fi-bHd" firstAttribute="leading" secondItem="8pH-6H-VGW" secondAttribute="leading" id="XPJ-bO-sfc"/>
-                                        <constraint firstItem="E6i-Fi-bHd" firstAttribute="trailing" secondItem="8pH-6H-VGW" secondAttribute="trailing" id="cHT-Jg-k5q"/>
                                         <constraint firstItem="8pH-6H-VGW" firstAttribute="leading" secondItem="Tcd-Tf-WCx" secondAttribute="trailing" constant="5" id="iOf-YR-uxm"/>
                                         <constraint firstItem="Tcd-Tf-WCx" firstAttribute="leading" secondItem="G9A-nQ-CAR" secondAttribute="leading" constant="5" id="n2M-EQ-Fk6"/>
+                                        <constraint firstItem="8pH-6H-VGW" firstAttribute="centerY" secondItem="Tcd-Tf-WCx" secondAttribute="centerY" id="xma-7T-ER0"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
+                                    <outlet property="dogIconBottomConstraint" destination="NXp-jd-yyF" id="gEp-Pd-kCF"/>
                                     <outlet property="dogIconImageView" destination="Tcd-Tf-WCx" id="J1g-fT-c0Y"/>
+                                    <outlet property="dogIconLeadingConstraint" destination="n2M-EQ-Fk6" id="eko-T2-lKc"/>
+                                    <outlet property="dogIconTopConstraint" destination="6y6-fL-JZ3" id="aho-fR-TJi"/>
+                                    <outlet property="dogIconTrailingConstraint" destination="iOf-YR-uxm" id="GRD-Dl-ccI"/>
                                     <outlet property="dogIconWidthConstraint" destination="xab-po-KLh" id="AD5-DX-Mtm"/>
-                                    <outlet property="dogNameBottomConstraint" destination="WFl-Gk-cqH" id="1JC-fo-mBz"/>
                                     <outlet property="dogNameHeightConstraint" destination="FFb-3B-q8F" id="q9d-sr-afZ"/>
                                     <outlet property="dogNameLabel" destination="8pH-6H-VGW" id="ecJ-6P-STr"/>
-                                    <outlet property="dogNameTopConstraint" destination="HeK-g9-SYl" id="dnn-FO-tN6"/>
-                                    <outlet property="nextAlarmBottomConstraint" destination="IpW-Os-EvP" id="g1F-W2-uvn"/>
-                                    <outlet property="nextAlarmHeightConstraint" destination="i9K-No-B69" id="17i-xk-Zef"/>
-                                    <outlet property="nextAlarmLabel" destination="E6i-Fi-bHd" id="11d-q3-dZO"/>
+                                    <outlet property="rightChevronLeadingConstraint" destination="168-Fy-05G" id="TKA-31-8fi"/>
+                                    <outlet property="rightChevronTrailingConstraint" destination="UAz-Jd-oDz" id="CZj-4y-5UQ"/>
                                     <outlet property="rightChevronWidthConstraint" destination="ieF-kk-hdN" id="k8R-68-Naq"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="DogsReminderDisplayTableViewCell" id="Lai-xI-ipQ" customClass="DogsReminderDisplayTableViewCell" customModule="Hound" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="130" width="414" height="80.5"/>
+                                <rect key="frame" x="0.0" y="120" width="414" height="80.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" tableViewCell="Lai-xI-ipQ" id="g9N-na-X20">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="80.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="270" verticalHuggingPriority="270" horizontalCompressionResistancePriority="770" verticalCompressionResistancePriority="770" text="Potty" textAlignment="natural" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Re-8c-KHz" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                            <rect key="frame" x="70" y="7.5" width="304" height="30.5"/>
+                                            <rect key="frame" x="65" y="7.5" width="309" height="30.5"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="30" id="3Ro-r0-kbC"/>
                                             </constraints>
@@ -749,7 +739,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" text="Every 30 Minutes" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.34999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="bK9-8i-YGQ" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                            <rect key="frame" x="70" y="40.5" width="304" height="15"/>
+                                            <rect key="frame" x="65" y="40.5" width="309" height="15"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="15" id="fL5-n7-OUt"/>
                                             </constraints>
@@ -758,7 +748,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="300" verticalHuggingPriority="300" horizontalCompressionResistancePriority="800" verticalCompressionResistancePriority="800" translatesAutoresizingMaskIntoConstraints="NO" id="WQo-kb-4po">
-                                            <rect key="frame" x="25" y="18.5" width="35" height="41.5"/>
+                                            <rect key="frame" x="20" y="18.5" width="35" height="41.5"/>
                                             <color key="tintColor" systemColor="labelColor"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" secondItem="WQo-kb-4po" secondAttribute="height" multiplier="1:1" id="mXP-9s-gEM"/>
@@ -775,7 +765,7 @@
                                             </constraints>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Remind In: 5 Minutes" textAlignment="natural" lineBreakMode="tailTruncation" minimumScaleFactor="0.34999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="PDj-HF-Z40" customClass="ScaledUILabel" customModule="Hound" customModuleProvider="target">
-                                            <rect key="frame" x="70" y="58" width="304" height="15"/>
+                                            <rect key="frame" x="65" y="58" width="309" height="15"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="15" id="PfR-w2-cTb"/>
                                             </constraints>
@@ -783,22 +773,31 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="300" verticalHuggingPriority="300" horizontalCompressionResistancePriority="800" verticalCompressionResistancePriority="800" translatesAutoresizingMaskIntoConstraints="NO" id="KZ0-sd-E0k">
+                                            <rect key="frame" x="12.5" y="15" width="50" height="51"/>
+                                            <color key="tintColor" systemColor="systemGray4Color"/>
+                                            <imageReference key="image" image="xmark" catalog="system" symbolScale="large"/>
+                                        </imageView>
                                     </subviews>
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="vrP-ae-kTK" secondAttribute="trailing" constant="10" id="4xW-Wn-ZLn"/>
                                         <constraint firstItem="WQo-kb-4po" firstAttribute="centerY" secondItem="g9N-na-X20" secondAttribute="centerY" id="5vY-Co-PN1"/>
+                                        <constraint firstItem="WQo-kb-4po" firstAttribute="top" secondItem="KZ0-sd-E0k" secondAttribute="top" constant="7.5" id="6mB-CR-dgO"/>
                                         <constraint firstItem="vrP-ae-kTK" firstAttribute="centerY" secondItem="g9N-na-X20" secondAttribute="centerY" id="8mM-74-Mxn"/>
-                                        <constraint firstItem="WQo-kb-4po" firstAttribute="leading" secondItem="g9N-na-X20" secondAttribute="leading" constant="25" id="B2y-0L-YES"/>
+                                        <constraint firstItem="WQo-kb-4po" firstAttribute="leading" secondItem="g9N-na-X20" secondAttribute="leading" constant="20" id="B2y-0L-YES"/>
                                         <constraint firstAttribute="bottom" secondItem="PDj-HF-Z40" secondAttribute="bottom" constant="7.5" id="DrA-33-Ok3"/>
                                         <constraint firstItem="bK9-8i-YGQ" firstAttribute="top" secondItem="9Re-8c-KHz" secondAttribute="bottom" constant="2.5" id="LU0-Ze-RAN"/>
-                                        <constraint firstItem="vrP-ae-kTK" firstAttribute="leading" secondItem="bK9-8i-YGQ" secondAttribute="trailing" constant="10" id="PBG-gV-aqt"/>
+                                        <constraint firstItem="WQo-kb-4po" firstAttribute="leading" secondItem="KZ0-sd-E0k" secondAttribute="leading" constant="7.5" id="OWr-oR-qK0"/>
                                         <constraint firstItem="bK9-8i-YGQ" firstAttribute="trailing" secondItem="9Re-8c-KHz" secondAttribute="trailing" id="X4p-DW-9pr"/>
                                         <constraint firstItem="PDj-HF-Z40" firstAttribute="leading" secondItem="bK9-8i-YGQ" secondAttribute="leading" id="YfX-xE-6Y7"/>
                                         <constraint firstItem="9Re-8c-KHz" firstAttribute="top" secondItem="g9N-na-X20" secondAttribute="top" constant="7.5" id="cty-tb-Ppp"/>
                                         <constraint firstItem="PDj-HF-Z40" firstAttribute="trailing" secondItem="bK9-8i-YGQ" secondAttribute="trailing" id="dOt-f9-It2"/>
                                         <constraint firstItem="9Re-8c-KHz" firstAttribute="leading" secondItem="WQo-kb-4po" secondAttribute="trailing" constant="10" id="gNd-aG-j2I"/>
+                                        <constraint firstItem="KZ0-sd-E0k" firstAttribute="trailing" secondItem="WQo-kb-4po" secondAttribute="trailing" constant="7.5" id="mw3-bl-fFm"/>
                                         <constraint firstItem="PDj-HF-Z40" firstAttribute="top" secondItem="bK9-8i-YGQ" secondAttribute="bottom" constant="2.5" id="piV-5e-qmO"/>
                                         <constraint firstItem="bK9-8i-YGQ" firstAttribute="leading" secondItem="9Re-8c-KHz" secondAttribute="leading" id="r6H-6J-hYu"/>
+                                        <constraint firstItem="KZ0-sd-E0k" firstAttribute="bottom" secondItem="WQo-kb-4po" secondAttribute="bottom" constant="7.5" id="rFP-dn-ABG"/>
+                                        <constraint firstItem="vrP-ae-kTK" firstAttribute="leading" secondItem="9Re-8c-KHz" secondAttribute="trailing" constant="10" id="tWg-Rq-98A"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
@@ -811,10 +810,18 @@
                                     <outlet property="reminderActionTopConstraint" destination="cty-tb-Ppp" id="fej-g5-cXD"/>
                                     <outlet property="reminderIconImageView" destination="WQo-kb-4po" id="eJL-66-czL"/>
                                     <outlet property="reminderIconLeadingConstraint" destination="B2y-0L-YES" id="KzI-R8-cf9"/>
+                                    <outlet property="reminderIconTrailingConstraint" destination="gNd-aG-j2I" id="IhA-tx-e53"/>
                                     <outlet property="reminderIconWidthConstraint" destination="t8V-dD-8Lm" id="gII-hP-Be0"/>
                                     <outlet property="reminderIntervalBottomConstraint" destination="piV-5e-qmO" id="CQI-5L-fNn"/>
                                     <outlet property="reminderIntervalHeightConstraint" destination="fL5-n7-OUt" id="JI7-QP-uFt"/>
                                     <outlet property="reminderIntervalLabel" destination="bK9-8i-YGQ" id="Is5-dq-yIy"/>
+                                    <outlet property="reminderXMarkBottomConstraint" destination="rFP-dn-ABG" id="FXo-5f-8sA"/>
+                                    <outlet property="reminderXMarkImageView" destination="KZ0-sd-E0k" id="R2H-Ua-Fjl"/>
+                                    <outlet property="reminderXMarkLeadingConstraint" destination="OWr-oR-qK0" id="5ke-ow-vWD"/>
+                                    <outlet property="reminderXMarkTopConstraint" destination="6mB-CR-dgO" id="d7X-si-gbI"/>
+                                    <outlet property="reminderXMarkTrailingConstraint" destination="mw3-bl-fFm" id="d4k-8i-NrO"/>
+                                    <outlet property="rightChevronLeadingConstraint" destination="tWg-Rq-98A" id="aJV-bx-o1C"/>
+                                    <outlet property="rightChevronTrailingConstraint" destination="4xW-Wn-ZLn" id="2vu-Wt-bdR"/>
                                     <outlet property="rightChevronWidthConstraint" destination="6wB-Uo-VKK" id="LYj-UO-iyf"/>
                                 </connections>
                             </tableViewCell>
@@ -3320,7 +3327,7 @@
                                                     <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage"/>
                                                 </buttonConfiguration>
                                                 <connections>
-                                                    <action selector="didClickCopyFamilyCode:" destination="bp1-Kg-aZ6" eventType="touchUpInside" id="jrW-y6-KXw"/>
+                                                    <action selector="didClickShareFamily:" destination="bp1-Kg-aZ6" eventType="touchUpInside" id="afv-cp-BLL"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -3847,6 +3854,7 @@
         <image name="trash" catalog="system" width="121" height="128"/>
         <image name="w.circle.fill" catalog="system" width="128" height="121"/>
         <image name="whitePawWithHands" width="622" height="621.5"/>
+        <image name="xmark" catalog="system" width="128" height="113"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
