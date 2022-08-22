@@ -21,7 +21,7 @@ async function getLogs(req, res) {
     // query for multiple logs
       : await getAllLogsForDogId(req.databaseConnection, dogId, lastDogManagerSynchronization);
 
-    return res.sendResponseForStatusJSONError(200, { result }, undefined);
+    return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }
   catch (error) {
     return res.sendResponseForStatusJSONError(400, undefined, error);
@@ -42,7 +42,8 @@ async function createLog(req, res) {
       logAction,
       logCustomActionName,
     );
-    return res.sendResponseForStatusJSONError(200, { result }, undefined);
+
+    return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }
   catch (error) {
     return res.sendResponseForStatusJSONError(400, undefined, error);

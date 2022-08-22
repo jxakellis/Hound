@@ -13,22 +13,34 @@ final class LogsBodyWithIconTableViewCell: UITableViewCell {
     // MARK: - IB
     
     @IBOutlet private weak var dogIconImageView: UIImageView!
+    @IBOutlet private weak var dogIconLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var dogIconTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var dogIconHeightConstraint: NSLayoutConstraint!
     
     @IBOutlet private weak var logDateLabel: ScaledUILabel!
     @IBOutlet private weak var logDateTopConstraint: NSLayoutConstraint!
     @IBOutlet private weak var logDateBottomConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var logDateTrailingConstraint: NSLayoutConstraint!
     @IBOutlet private weak var logDateHeightConstraint: NSLayoutConstraint!
     
     @IBOutlet private weak var logActionLabel: ScaledUILabel!
+    @IBOutlet private weak var logActionTrailingConstraint: NSLayoutConstraint!
+    
     @IBOutlet private weak var familyMemberNameLabel: ScaledUILabel!
+    @IBOutlet private weak var familyMemberTrailingConstraint: NSLayoutConstraint!
+    
     @IBOutlet private weak var logNoteLabel: ScaledUILabel!
+    @IBOutlet private weak var logNoteBottomConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var logNoteHeightConstraint: NSLayoutConstraint!
+    
+    @IBOutlet private weak var rightChevronImageView: UIImageView!
+    @IBOutlet private weak var rightChevronTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var rightChevronWidthConstraint: NSLayoutConstraint!
     
     // MARK: - Main
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
-        // TO DO NOW if a log has a note, then make the table view cell "two lines", so that there is adequte space to display one line (probably 5-10 words) of a note
     }
     
     func setup(forParentDogIcon parentDogIcon: UIImage, forLog log: Log) {
@@ -39,31 +51,50 @@ final class LogsBodyWithIconTableViewCell: UITableViewCell {
         let fontSize = VisualConstant.FontConstant.logCellFontSize
         let sizeRatio = UserConfiguration.logsInterfaceScale.currentScaleFactor
         
-        familyMemberNameLabel.font = familyMemberNameLabel.font.withSize(fontSize * sizeRatio)
-        logDateTopConstraint.constant = 5.0 * sizeRatio
-        logDateBottomConstraint.constant = 5.0 * sizeRatio
-        logDateHeightConstraint.constant = 25.0 * sizeRatio
-        
-        logActionLabel.font = logActionLabel.font.withSize(fontSize * sizeRatio)
-        logDateLabel.font = logDateLabel.font.withSize(fontSize * sizeRatio)
-        logNoteLabel.font = logNoteLabel.font.withSize(fontSize * sizeRatio)
-        
-        // setup the icon afterwards otherwise the cornerRadius could be wrong since its dependent on the sizeRatio code above
-        let cellHeight = logDateTopConstraint.constant + logDateBottomConstraint.constant + logDateHeightConstraint.constant
-        let dogIconImageViewHeight = cellHeight - 2.5 - 2.5
+        // Dog Icon
         dogIconImageView.image = parentDogIcon
+        let dogIconImageViewHeight = 30.0 * sizeRatio
         dogIconImageView.layer.masksToBounds = true
-        // we can't use dogIconImageView.frame.height/2 because if isCompactView is changed and this cell is reloaded, then dogIconImageView.frame is still the same as its old value at this point. That means the corner radius will be incorrect (large corner radius for compact cell and compact corner radius for large cell)
         dogIconImageView.layer.cornerRadius = dogIconImageViewHeight / 2
+        // Dog Icon Constant
+        dogIconLeadingConstraint.constant = 2.5 * sizeRatio
+        dogIconTrailingConstraint.constant = 2.5 * sizeRatio
+        dogIconHeightConstraint.constant = dogIconImageViewHeight
         
-        self.logActionLabel.text = log.logAction.displayActionName(logCustomActionName: log.logCustomActionName, isShowingAbreviatedCustomActionName: true)
-        
+        // Log Date
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)
         logDateLabel.text = dateFormatter.string(from: log.logDate)
+        logDateLabel.font = logDateLabel.font.withSize(fontSize * sizeRatio)
+        // Log Date Constant
+        logDateTopConstraint.constant = 5.0 * sizeRatio
+        logDateBottomConstraint.constant = 2.5 * sizeRatio
+        logDateTrailingConstraint.constant = 10.0 * sizeRatio
+        logDateHeightConstraint.constant = 25.0 * sizeRatio
         
+        // Log Action
+        logActionLabel.text = log.logAction.displayActionName(logCustomActionName: log.logCustomActionName, isShowingAbreviatedCustomActionName: true)
+        logActionLabel.font = logActionLabel.font.withSize(fontSize * sizeRatio)
+        // Log Action Constant
+        logActionTrailingConstraint.constant = 10.0 * sizeRatio
+        
+        // Family Member
+        familyMemberNameLabel.font = familyMemberNameLabel.font.withSize(fontSize * sizeRatio)
+        // Family Member Constant
+        familyMemberTrailingConstraint.constant = 10.0 * sizeRatio
+        
+        // Log Note
+        let shouldHideLogNote = log.logNote.trimmingCharacters(in: .whitespacesAndNewlines) == ""
         logNoteLabel.text = log.logNote
+        logNoteLabel.isHidden = shouldHideLogNote
+        logNoteLabel.font = logNoteLabel.font.withSize(fontSize * sizeRatio)
+        // Log Note Constant
+        logNoteBottomConstraint.constant = shouldHideLogNote ? 0.0 : 5.0 * sizeRatio
+        logNoteHeightConstraint.constant = shouldHideLogNote ? 0.0 : 20.0 * sizeRatio
         
+        // Right Chevron Constant
+        rightChevronTrailingConstraint.constant = 10.0 * sizeRatio
+        rightChevronWidthConstraint.constant = 15.0 * sizeRatio
     }
     
 }

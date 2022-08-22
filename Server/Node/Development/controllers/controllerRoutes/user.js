@@ -31,7 +31,7 @@ async function getUser(req, res) {
       throw new ValidationError('No user found or invalid permissions', global.constant.error.value.INVALID);
     }
 
-    return res.sendResponseForStatusJSONError(200, { result }, undefined);
+    return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }
   catch (error) {
     return res.sendResponseForStatusJSONError(400, undefined, error);
@@ -84,7 +84,7 @@ async function createUser(req, res) {
 
     refreshSecondaryAlarmNotificationsForUserId(result, isFollowUpEnabled, followUpDelay);
 
-    return res.sendResponseForStatusJSONError(200, { result }, undefined);
+    return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }
   catch (error) {
     return res.sendResponseForStatusJSONError(400, undefined, error);

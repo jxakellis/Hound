@@ -27,7 +27,7 @@ async function getReminders(req, res) {
     // look for multiple reminders
       : await getAllRemindersForDogId(req.databaseConnection, dogId, lastDogManagerSynchronization);
 
-    return res.sendResponseForStatusJSONError(200, { result }, undefined);
+    return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }
   catch (error) {
     return res.sendResponseForStatusJSONError(400, undefined, error);
@@ -51,7 +51,8 @@ async function createReminder(req, res) {
         result[i].reminderExecutionDate,
       );
     }
-    return res.sendResponseForStatusJSONError(200, { result }, undefined);
+
+    return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }
   catch (error) {
     return res.sendResponseForStatusJSONError(400, undefined, error);

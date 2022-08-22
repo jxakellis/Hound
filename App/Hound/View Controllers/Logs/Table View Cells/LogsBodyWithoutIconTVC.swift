@@ -15,48 +15,80 @@ final class LogsBodyWithoutIconTableViewCell: UITableViewCell {
     @IBOutlet private weak var dogNameLabel: ScaledUILabel!
     @IBOutlet private weak var dogNameTopConstraint: NSLayoutConstraint!
     @IBOutlet private weak var dogNameBottomConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var dogNameLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var dogNameTrailingConstraint: NSLayoutConstraint!
     @IBOutlet private weak var dogNameHeightConstraint: NSLayoutConstraint!
     
-    @IBOutlet private weak var familyMemberNameLabel: ScaledUILabel!
-    @IBOutlet private weak var logActionLabel: ScaledUILabel!
     @IBOutlet private weak var logDateLabel: ScaledUILabel!
+    @IBOutlet private weak var logDateTrailingConstraint: NSLayoutConstraint!
+    
+    @IBOutlet private weak var logActionLabel: ScaledUILabel!
+    @IBOutlet private weak var logActionTrailingConstraint: NSLayoutConstraint!
+    
+    @IBOutlet private weak var familyMemberNameLabel: ScaledUILabel!
+    @IBOutlet private weak var familyMemberTrailingConstraint: NSLayoutConstraint!
+    
     @IBOutlet private weak var logNoteLabel: ScaledUILabel!
+    @IBOutlet private weak var logNoteBottomConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var logNoteHeightConstraint: NSLayoutConstraint!
+    
+    @IBOutlet private weak var rightChevronImageView: UIImageView!
+    @IBOutlet private weak var rightChevronTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var rightChevronWidthConstraint: NSLayoutConstraint!
     
     // MARK: - Main
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
-        // TO DO NOW if a log has a note, then make the table view cell "two lines", so that there is adequte space to display one line (probably 5-10 words) of a note
     }
     
     func setup(forParentDogName dogName: String, forLog log: Log) {
         
-        self.dogNameLabel.text = dogName
-        
         let fontSize = VisualConstant.FontConstant.logCellFontSize
         let sizeRatio = UserConfiguration.logsInterfaceScale.currentScaleFactor
         
+        // Dog Name
+        dogNameLabel.text = dogName
         dogNameLabel.font = dogNameLabel.font.withSize(fontSize * sizeRatio)
+        // Dog Name Constant
         dogNameTopConstraint.constant = 5.0 * sizeRatio
-        dogNameBottomConstraint.constant = 5.0 * sizeRatio
+        dogNameBottomConstraint.constant = 2.5 * sizeRatio
+        dogNameLeadingConstraint.constant = 10.0 * sizeRatio
+        dogNameTrailingConstraint.constant = 10.0 * sizeRatio
         dogNameHeightConstraint.constant = 25.0 * sizeRatio
         
-        familyMemberNameLabel.font = familyMemberNameLabel.font.withSize(fontSize * sizeRatio)
-        logActionLabel.font = logActionLabel.font.withSize(fontSize * sizeRatio)
-        logDateLabel.font = logDateLabel.font.withSize(fontSize * sizeRatio)
-        logNoteLabel.font = logNoteLabel.font.withSize(fontSize * sizeRatio)
-        
-        familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: log.userId)?.displayFirstName ?? VisualConstant.TextConstant.unknownText
-        
-        self.logActionLabel.text = log.logAction.displayActionName(logCustomActionName: log.logCustomActionName, isShowingAbreviatedCustomActionName: true)
-        
+        // Log Date
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)
         logDateLabel.text = dateFormatter.string(from: log.logDate)
+        logDateLabel.font = logDateLabel.font.withSize(fontSize * sizeRatio)
+        // Log Date Constant
+        logDateTrailingConstraint.constant = 10.0 * sizeRatio
         
+        // Log Action
+        logActionLabel.text = log.logAction.displayActionName(logCustomActionName: log.logCustomActionName, isShowingAbreviatedCustomActionName: true)
+        logActionLabel.font = logActionLabel.font.withSize(fontSize * sizeRatio)
+        // Log Action Constant
+        logActionTrailingConstraint.constant = 10.0 * sizeRatio
+        
+        // Family Member
+        familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: log.userId)?.displayFirstName ?? VisualConstant.TextConstant.unknownText
+        familyMemberNameLabel.font = familyMemberNameLabel.font.withSize(fontSize * sizeRatio)
+        // Family Member Constant
+        familyMemberTrailingConstraint.constant = 10.0 * sizeRatio
+        
+        // Log Note
+        let shouldHideLogNote = log.logNote.trimmingCharacters(in: .whitespacesAndNewlines) == ""
         logNoteLabel.text = log.logNote
+        logNoteLabel.isHidden = shouldHideLogNote
+        logNoteLabel.font = logNoteLabel.font.withSize(fontSize * sizeRatio)
+        // Log Note Constant
+        logNoteBottomConstraint.constant = shouldHideLogNote ? 0.0 : 5.0 * sizeRatio
+        logNoteHeightConstraint.constant = shouldHideLogNote ? 0.0 : 20.0 * sizeRatio
         
+        // Right Chevron Constant
+        rightChevronTrailingConstraint.constant = 10.0 * sizeRatio
+        rightChevronWidthConstraint.constant = 15.0 * sizeRatio
     }
     
 }

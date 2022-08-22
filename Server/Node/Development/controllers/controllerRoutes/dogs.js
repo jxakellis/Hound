@@ -18,7 +18,7 @@ async function getDogs(req, res) {
       ? await getDogForDogId(req.databaseConnection, dogId, lastDogManagerSynchronization, isRetrievingReminders, isRetrievingLogs)
       : await getAllDogsForUserIdFamilyId(req.databaseConnection, userId, familyId, lastDogManagerSynchronization, isRetrievingReminders, isRetrievingLogs);
 
-    return res.sendResponseForStatusJSONError(200, { result }, undefined);
+    return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }
   catch (error) {
     return res.sendResponseForStatusJSONError(400, undefined, error);
@@ -31,7 +31,8 @@ async function createDog(req, res) {
     const { dogName } = req.body;
     const { activeSubscription } = req;
     const result = await createDogForFamilyId(req.databaseConnection, familyId, activeSubscription, dogName);
-    return res.sendResponseForStatusJSONError(200, { result }, undefined);
+
+    return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }
   catch (error) {
     return res.sendResponseForStatusJSONError(400, undefined, error);

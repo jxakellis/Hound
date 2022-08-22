@@ -40,7 +40,7 @@ async function getDogForDogId(databaseConnection, dogId, forLastDogManagerSynchr
 
   // no need to do anything else as there are no dogs
   if (areAllDefined(dog) === false) {
-    return {};
+    return dog;
   }
 
   const isRetrievingReminders = formatBoolean(forIsRetrievingReminders);
