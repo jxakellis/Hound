@@ -32,8 +32,8 @@ async function createFamily(req, res) {
 async function updateFamily(req, res) {
   try {
     const { userId, familyId } = req.params;
-    const { familyCode, isLocked, isPaused } = req.body;
-    await updateFamilyForUserIdFamilyId(req.databaseConnection, userId, familyId, familyCode, isLocked, isPaused);
+    const { familyCode, isLocked } = req.body;
+    await updateFamilyForUserIdFamilyId(req.databaseConnection, userId, familyId, familyCode, isLocked);
     return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);
   }
   catch (error) {

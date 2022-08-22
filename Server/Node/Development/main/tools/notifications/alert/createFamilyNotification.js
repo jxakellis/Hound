@@ -127,50 +127,6 @@ async function createFamilyLockedNotification(userId, familyId, newIsLocked) {
 }
 
 /**
- * Sends an alert to all of the family members that one of them has left
- */
-async function createFamilyPausedNotification(userId, familyId, newIsPaused) {
-  try {
-    alertLogger.debug(`createFamilyPausedNotification ${userId}, ${familyId}, ${newIsPaused}`);
-
-    const isPaused = formatBoolean(newIsPaused);
-    // make sure all params are defined
-    if (areAllDefined(userId, familyId, isPaused) === false) {
-      return;
-    }
-
-    const abreviatedFullName = await abreviatedFullNameForUserId(userId);
-
-    if (areAllDefined(abreviatedFullName) === false) {
-      return;
-    }
-
-    // now we can construct the messages
-    // Maxmium possible length: 30/32 (raw) + 0 (variable) = 30/32
-    const alertTitle = isPaused
-      ? 'All reminders have been paused'
-      : 'All reminders have been unpaused';
-
-    let alertBody = isPaused
-      ? `${''}'s updated your family settings to halt all your alarms`
-      : `${''}'s updated your family settings to resume all your alarms`;
-    const maximumLengthForAbreviatedFullName = global.constant.notification.length.ALERT_BODY - alertBody.length;
-    abreviatedFullName.substring(0, maximumLengthForAbreviatedFullName);
-
-    // Maxmium possible length: 55/57 (raw) + 34 (variable) = 89/91
-    alertBody = isPaused
-      ? `${abreviatedFullName}'s updated your family settings to halt all your alarms`
-      : `${abreviatedFullName}'s updated your family settings to resume all your alarms`;
-
-    // we now have the messages and can send our APN
-    sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.notification.category.family.PAUSE, alertTitle, alertBody, {});
-  }
-  catch (error) {
-    logServerError('createFamilyPausedNotification', error);
-  }
-}
-
-/**
  * Helper function for createFamilyMemberJoinNotification, createFamilyMemberLeaveNotification, createFamilyLockedNotification, and createFamilyPausedNotification
  */
 async function abreviatedFullNameForUserId(userId) {
@@ -190,5 +146,7 @@ async function abreviatedFullNameForUserId(userId) {
 }
 
 module.exports = {
-  createFamilyMemberJoinNotification, createFamilyMemberLeaveNotification, createFamilyLockedNotification, createFamilyPausedNotification,
+  createFamilyMemberJoinNotification,
+  createFamilyMemberLeaveNotification,
+  createFamilyLockedNotification,
 };

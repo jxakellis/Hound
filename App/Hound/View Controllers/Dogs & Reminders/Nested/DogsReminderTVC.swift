@@ -37,7 +37,6 @@ final class DogsReminderTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         reminderLabel.adjustsFontSizeToFitWidth = true
-        // TO DO NOW if a reminder is disabled, put a diagonal line or x thru the reminder's icon. Provides a more visual way for the users to tell a reminder is disabled
     }
 
     func setup(forReminder reminder: Reminder) {

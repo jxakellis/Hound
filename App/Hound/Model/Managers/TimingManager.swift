@@ -28,11 +28,6 @@ final class TimingManager {
         
         /// Takes a DogManager and potentially a Bool of if all timers were unpaused, goes through the dog manager and finds all enabled reminders under all enabled dogs and sets a timer to fire.
         
-        // Makes sure isPaused is false, don't want to instantiate timers when they should be paused
-        guard FamilyConfiguration.isPaused == false else {
-            return
-        }
-        
         // goes through all dogs
         for dog in dogManager.dogs {
             // makes sure current dog is enabled, as if it isn't then all of its timers arent either

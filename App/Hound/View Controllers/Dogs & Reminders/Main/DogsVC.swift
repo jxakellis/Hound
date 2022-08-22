@@ -162,7 +162,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     @IBAction private func willRefresh(_ sender: Any) {
         self.refreshButton.isEnabled = false
         ActivityIndicator.shared.beginAnimating(title: navigationItem.title ?? "", view: self.view, navigationItem: navigationItem)
-        RequestUtils.getFamilyGetDog(invokeErrorManager: true, dogManager: dogManager) { newDogManager, _ in
+        _ = DogsRequest.get(invokeErrorManager: true, dogManager: dogManager) { newDogManager, _ in
             self.refreshButton.isEnabled = true
             ActivityIndicator.shared.stopAnimating(navigationItem: self.navigationItem)
             

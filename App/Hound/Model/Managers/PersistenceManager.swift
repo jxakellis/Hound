@@ -116,7 +116,7 @@ enum PersistenceManager {
         // MARK: Loud Notifications and Silent Audio
         
         // Check to see if the user is eligible for loud notifications
-        // Don't check for enabled reminders/isPaused, as client could be out of sync with server
+        // Don't check for enabled reminders, as client could be out of sync with server
         if UserConfiguration.isNotificationEnabled && UserConfiguration.isLoudNotification {
             if isTerminating == true {
                 // Send notification to user that their loud notifications won't work

@@ -184,7 +184,7 @@ extension DogManager {
         return false
     }
     
-    /// Returns number of reminders that are enabled and therefore have a timer. Does not factor in isPaused.
+    /// Returns number of reminders that are enabled and therefore have a timer.
     var enabledTimersCount: Int {
         var count = 0
         for dog in MainTabBarViewController.staticDogManager.dogs {

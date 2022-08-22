@@ -101,7 +101,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
                 // Once everything is synced again, the alarm will be shown as expected.
                 
                 // Note: we also individually fetch a reminder before immediately constructing its alertController for its alarm. This ensure, even if the user has notifications turned off (meaning this piece of code right here won't be executed), that the reminder they are being show is up to date.
-                RequestUtils.getFamilyGetDog(invokeErrorManager: false, dogManager: MainTabBarViewController.staticDogManager) { newDogManager, _ in
+                _ = DogsRequest.get(invokeErrorManager: false, dogManager: MainTabBarViewController.staticDogManager) { newDogManager, _ in
                     guard let newDogManager = newDogManager else {
                         return
                     }

@@ -10,10 +10,10 @@ const usersColumns = 'users.userId, users.userFirstName, users.userLastName';
 const previousFamilyMembersColumns = 'previousFamilyMembers.userId, previousFamilyMembers.userFirstName, previousFamilyMembers.userLastName';
 // Select every column except for familyId, lastPause, and lastUnpause (by not transmitting, increases network efficiency)
 // familyId is already known, lastPause + lastUnpause + familyAccountCreationDate have no use client-side
-const familiesColumns = 'userId, familyCode, isLocked, isPaused';
+const familiesColumns = 'userId, familyCode, isLocked';
 
 /**
- *  If the query is successful, returns the userId, familyCode, isLocked, isPaused, and familyMembers for the familyId.
+ *  If the query is successful, returns the userId, familyCode, isLocked, and familyMembers for the familyId.
  *  If a problem is encountered, creates and throws custom error
  */
 async function getAllFamilyInformationForFamilyId(databaseConnection, familyId, activeSubscription) {

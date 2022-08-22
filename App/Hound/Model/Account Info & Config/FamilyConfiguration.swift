@@ -21,9 +21,6 @@ enum FamilyConfiguration {
         if let familyCode = body[ServerDefaultKeys.familyCode.rawValue] as? String {
             self.familyCode = familyCode
         }
-        if let isPaused = body[ServerDefaultKeys.isPaused.rawValue] as? Bool {
-            self.isPaused = isPaused
-        }
         if let familyMembersBody = body[ServerDefaultKeys.familyMembers.rawValue] as? [[String: Any]] {
             familyMembers.removeAll()
             let familyHeadUserId = body[ServerDefaultKeys.userId.rawValue] as? String
@@ -61,9 +58,6 @@ enum FamilyConfiguration {
     // MARK: - Main
     
     // TO DO NOW interpret previousFamilyMembers array. Use this to display the first and last name of users (e.g. for logs) who have already left the family.
-    
-    /// Saves state isPaused, self.isPaused can be modified by SettingsViewController but this is only when there are no active timers and pause is automatically set to unpaused
-    static var isPaused: Bool = false
     
     /// The code used by new users to join the family
     static private(set) var familyCode: String = ""

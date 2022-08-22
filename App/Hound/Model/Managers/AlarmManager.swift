@@ -38,7 +38,7 @@ final class AlarmManager {
             guard let reminder = reminder else {
                 // We weren't able to retrieve the reminder. The reminder might have been deleted, the dog might have been deleted, or some other error with the query
                 // We can attempt to refresh the dog manager. If the reminder or dog were deleted, then this will update our local storage to remove them. If the query failed for other reasons, then this dogManager query will fail as well
-                RequestUtils.getFamilyGetDog(invokeErrorManager: false, dogManager: dogManager) { newDogManager, _ in
+                _ = DogsRequest.get(invokeErrorManager: false, dogManager: dogManager) { newDogManager, _ in
                     guard let newDogManager = newDogManager else {
                         return
                     }

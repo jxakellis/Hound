@@ -137,9 +137,6 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     
     /// These properties can be reassigned. Does not reload anything, rather just configures.
     private func repeatableSetup() {
-        // MARK: Pause All Reminders
-        
-        isPausedSwitch.isOn = FamilyConfiguration.isPaused
         
         // MARK: Family Code
         familyCodeLabel.text = "Code: \(familyCode)"
@@ -234,61 +231,6 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     }
     
     // MARK: - Individual Settings
-    
-    // MARK: Pause All Reminders
-    /// Switch for pause all timers
-    @IBOutlet private weak var isPausedSwitch: UISwitch!
-    
-    /// If the pause all timers switch it triggered, calls thing function
-    @IBAction private func didToggleIsPaused(_ sender: Any) {
-        // TO DO NOW remove UI to toggle a family's pause status. niche functionality that user's won't know exists if they need it AND it provides a way for 1 user to mess with the whole family (which is bad).
-        let dogManager = MainTabBarViewController.staticDogManager
-        let isPaused = isPausedSwitch.isOn
-        
-        guard isPaused != FamilyConfiguration.isPaused else {
-            return
-        }
-        
-        let body: [String: Any] = [
-            ServerDefaultKeys.isPaused.rawValue: isPaused
-        ]
-        
-        FamilyRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
-            
-            guard requestWasSuccessful else {
-                self.isPausedSwitch.setOn(!isPaused, animated: true)
-                return
-            }
-            // update the local information to reflect the server change
-            FamilyConfiguration.isPaused = isPaused
-            
-            guard isPaused == false else {
-                // reminders are now paused, so remove the timers
-                TimingManager.invalidateAll(forDogManager: dogManager)
-                return
-            }
-            // Reminders are now unpaused, we must update the server with the new executionDates (can't calculate them itself).
-            // Don't use the getFamilyGetDogs function. In this case, only the isPaused variable would apply. However, we just updated isPaused so there is no point to retrieve it again since we know its updated value.
-            _ = DogsRequest.get(invokeErrorManager: true, dogManager: self.dogManager) { newDogManager, _ in
-                guard let newDogManager = newDogManager else {
-                    return
-                }
-                
-                for dog in newDogManager.dogs {
-                    // The Hound server can't calculate reminderExecutionDates itself. Therefore, create an array of enabled reminders that have a non-nil reminderExecutionDate. We then send this to the Hound server to provide it with the now-unpaused reminderExecutionDates so it can have the correct values stored
-                    let remindersToUpdate = dog.dogReminders.reminders.filter({ reminder in
-                        return reminder.reminderIsEnabled && reminder.reminderExecutionDate != nil
-                    })
-                    RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: remindersToUpdate) { requestWasSuccessful, _ in
-                        if requestWasSuccessful == true {
-                            // the call to update the server on the reminder unpause was successful, now send to delegate
-                            self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
-                        }
-                    }
-                }
-            }
-        }
-    }
     
     // MARK: Family Code
     @IBOutlet private weak var familyCodeLabel: ScaledUILabel!

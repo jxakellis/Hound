@@ -180,11 +180,7 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
         let nextAlarmHeaderFont = UIFont.systemFont(ofSize: nextAlarmLabel.font.pointSize, weight: .semibold)
         let nextAlarmBodyFont = UIFont.systemFont(ofSize: nextAlarmLabel.font.pointSize, weight: .regular)
         
-        if FamilyConfiguration.isPaused == true {
-            nextAlarmLabel.attributedText = NSAttributedString(string: "Paused", attributes: [NSAttributedString.Key.font: nextAlarmHeaderFont])
-            
-        }
-        else if reminder.reminderIsEnabled == false {
+        if reminder.reminderIsEnabled == false {
             nextAlarmLabel.attributedText = NSAttributedString(string: "Disabled", attributes: [NSAttributedString.Key.font: nextAlarmHeaderFont])
         }
         else {

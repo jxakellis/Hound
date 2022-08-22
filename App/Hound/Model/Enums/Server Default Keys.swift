@@ -26,7 +26,6 @@ enum ServerDefaultKeys: String {
     
     case familyCode
     case isLocked
-    case isPaused
     case kickUserId
     case activeSubscription
     
