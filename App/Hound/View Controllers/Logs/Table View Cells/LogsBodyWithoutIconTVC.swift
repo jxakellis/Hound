@@ -46,16 +46,17 @@ final class LogsBodyWithoutIconTableViewCell: UITableViewCell {
         
         let fontSize = VisualConstant.FontConstant.logCellFontSize
         let sizeRatio = UserConfiguration.logsInterfaceScale.currentScaleFactor
+        let shouldHideLogNote = log.logNote.trimmingCharacters(in: .whitespacesAndNewlines) == ""
         
         // Dog Name
         dogNameLabel.text = dogName
         dogNameLabel.font = dogNameLabel.font.withSize(fontSize * sizeRatio)
         // Dog Name Constant
         dogNameTopConstraint.constant = 5.0 * sizeRatio
-        dogNameBottomConstraint.constant = 2.5 * sizeRatio
+        dogNameBottomConstraint.constant = shouldHideLogNote ? 0.0 : 0.0 * sizeRatio
         dogNameLeadingConstraint.constant = 10.0 * sizeRatio
         dogNameTrailingConstraint.constant = 10.0 * sizeRatio
-        dogNameHeightConstraint.constant = 25.0 * sizeRatio
+        dogNameHeightConstraint.constant = 20.0 * sizeRatio
         
         // Log Date
         let dateFormatter = DateFormatter()
@@ -78,13 +79,12 @@ final class LogsBodyWithoutIconTableViewCell: UITableViewCell {
         familyMemberTrailingConstraint.constant = 10.0 * sizeRatio
         
         // Log Note
-        let shouldHideLogNote = log.logNote.trimmingCharacters(in: .whitespacesAndNewlines) == ""
         logNoteLabel.text = log.logNote
         logNoteLabel.isHidden = shouldHideLogNote
         logNoteLabel.font = logNoteLabel.font.withSize(fontSize * sizeRatio)
         // Log Note Constant
-        logNoteBottomConstraint.constant = shouldHideLogNote ? 0.0 : 5.0 * sizeRatio
-        logNoteHeightConstraint.constant = shouldHideLogNote ? 0.0 : 20.0 * sizeRatio
+        logNoteBottomConstraint.constant = 5.0 * sizeRatio
+        logNoteHeightConstraint.constant = shouldHideLogNote ? 0.0 : 15.0 * sizeRatio
         
         // Right Chevron Constant
         rightChevronTrailingConstraint.constant = 10.0 * sizeRatio

@@ -67,7 +67,14 @@ final class DogManager: NSObject, NSCopying, NSCoding {
     func addDogWithoutSorting(forDog: Dog) {
         // If we discover a newDog has the same dogId as an existing dog, we remove
         dogs.removeAll { dog in
-            return dog.dogId == forDog.dogId
+            guard dog.dogId == forDog.dogId else {
+                return false
+            }
+            // we should combine the currentDog's reminders/logs into the new dog
+            forDog.combine(withOldDog: dog)
+            forDog.dogIcon = dog.dogIcon
+            
+            return true
         }
         
         dogs.append(forDog)

@@ -97,7 +97,7 @@ extension LogsRequest {
         _ = LogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forLogId: logId) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], result.isEmpty == false {
+                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any] {
                     completionHandler(Log(fromBody: result), responseStatus)
                 }
                 else {

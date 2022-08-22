@@ -102,13 +102,7 @@ extension DogsRequest {
             switch responseStatus {
             case .successResponse:
                 // dog JSON {dog1:'foo'}
-                if let newDogBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any] {
-                    
-                    guard newDogBody.isEmpty == true else {
-                        // the dog wasn't updated since last opened
-                        completionHandler(currentDog, responseStatus)
-                        return
-                    }
+                if let newDogBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], newDogBody.isEmpty == false {
                     
                     // the dog was updated since last opened
                     let newDog = Dog(fromBody: newDogBody)
@@ -135,7 +129,8 @@ extension DogsRequest {
                     completionHandler(newDog, responseStatus)
                 }
                 else {
-                    completionHandler(nil, responseStatus)
+                    // Don't return nil. This is because we pass through lastDogManagerSynchronization. That means a successful result could be completely blank (and fail the above if statement), indicating that the user is fully up to date.
+                    completionHandler(currentDog, responseStatus)
                 }
             case .failureResponse:
                 completionHandler(nil, responseStatus)
@@ -158,7 +153,7 @@ extension DogsRequest {
         return DogsRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: nil) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let newDogManagerBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]], let newDogManager = DogManager(fromBody: newDogManagerBody) {
+                if let newDogManagerBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [[String: Any]], newDogManagerBody.isEmpty == false, let newDogManager = DogManager(fromBody: newDogManagerBody) {
                     // successful sync, so we can update value
                     LocalConfiguration.lastDogManagerSynchronization = lastDogManagerSynchronization
                     
@@ -189,7 +184,8 @@ extension DogsRequest {
                     completionHandler(newDogManager, responseStatus)
                 }
                 else {
-                    completionHandler(nil, responseStatus)
+                    // Don't return nil. This is because we pass through lastDogManagerSynchronization. That means a successful result could be completely blank (and fail the above if statement), indicating that the user is fully up to date.
+                    completionHandler(currentDogManager, responseStatus)
                 }
             case .failureResponse:
                 completionHandler(nil, responseStatus)

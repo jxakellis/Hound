@@ -310,12 +310,12 @@ final class LogsTableViewController: UITableViewController, DogManagerControlFlo
         let logId = nestedLogsArray[indexPath.row - 1].1.logId
         
         RequestUtils.beginRequestIndictator()
-        LogsRequest.get(invokeErrorManager: true, forDogId: dogId, forLogId: logId) { log, _ in
+        LogsRequest.get(invokeErrorManager: true, forDogId: dogId, forLogId: logId) { newLog, _ in
             RequestUtils.endRequestIndictator {
                 self.tableView.deselectRow(at: indexPath, animated: true)
                 
-                if let log = log {
-                    self.delegate.didSelectLog(parentDogId: dogId, log: log)
+                if let newLog = newLog {
+                    self.delegate.didSelectLog(parentDogId: dogId, log: newLog)
                 }
             }
         }

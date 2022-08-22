@@ -25,7 +25,7 @@ enum VisualConstant {
     }
     
     enum FontConstant {
-        static let logCellFontSize = 13.0
+        static let logCellFontSize = 15.0
         static let filterByDogFont = UIFont.systemFont(ofSize: 20, weight: .semibold)
         static let filterByLogFont = UIFont.systemFont(ofSize: 15, weight: .regular)
         static let regularLabelRegularTextFont = UIFont.systemFont(ofSize: 20, weight: .regular)

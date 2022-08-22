@@ -125,7 +125,7 @@ final class AlarmManager {
                 alertController.addAction(alertActionDismiss)
                 
                 // we have successfully constructed our alert
-                reminder.hasAlarmPresentationHandled = true
+            reminder.hasAlarmPresentationHandled = true
             delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminder: reminder)
             
                 AlertManager.enqueueAlertForPresentation(alertController)

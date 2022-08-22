@@ -91,6 +91,7 @@ enum ServerDefaultKeys: String {
     
     // MARK: Reminders
     
+    case reminder
     case reminders
     
     // MARK: Reminder

@@ -129,7 +129,7 @@ extension RemindersRequest {
         _ = RemindersRequest.internalGet(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminderId: reminderId) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], result.isEmpty == false {
+                if let result = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any] {
                     completionHandler(Reminder(fromBody: result), responseStatus)
                 }
                 else {
@@ -180,7 +180,7 @@ extension RemindersRequest {
         _ = RemindersRequest.internalCreate(invokeErrorManager: invokeErrorManager, forDogId: dogId, forReminder: reminder) { responseBody, responseStatus in
             switch responseStatus {
             case .successResponse:
-                if let reminderBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any], reminderBody.isEmpty == false {
+                if let reminderBody = responseBody?[ServerDefaultKeys.result.rawValue] as? [String: Any] {
                     completionHandler(Reminder(fromBody: reminderBody), responseStatus)
                 }
                 else {

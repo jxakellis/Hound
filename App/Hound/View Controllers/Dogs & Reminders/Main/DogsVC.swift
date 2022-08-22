@@ -75,26 +75,25 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     /// If a reminder in DogsTableViewController or Add Reminder were clicked, invokes this function. Opens up the same page but changes between creating new and editing existing mode.
     func willOpenReminderMenu(parentDogId: Int, forReminderId reminderId: Int? = nil) {
         
-        // creating new
-        if reminderId == nil {
-            // no need to query as nothing in server since creating
-            self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsIndependentReminderViewController")
-            dogsIndependentReminderViewController.parentDogId = parentDogId
-        }
-        // updating
-        else {
+        if let reminderId = reminderId {
+            // updating
             RequestUtils.beginRequestIndictator()
             // query for existing
-            RemindersRequest.get(invokeErrorManager: true, forDogId: parentDogId, forReminderId: reminderId!) { reminder, _ in
+            RemindersRequest.get(invokeErrorManager: true, forDogId: parentDogId, forReminderId: reminderId) { newReminder, _ in
                 RequestUtils.endRequestIndictator {
-                    if reminder != nil {
+                    if newReminder != nil {
                         self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsIndependentReminderViewController")
                         self.dogsIndependentReminderViewController.parentDogId = parentDogId
-                        self.dogsIndependentReminderViewController.targetReminder = reminder
+                        self.dogsIndependentReminderViewController.targetReminder = newReminder
                     }
                 }
             }
-            
+        }
+        else {
+            // creating new
+            // no need to query as nothing in server since creating
+            self.performSegueOnceInWindowHierarchy(segueIdentifier: "DogsIndependentReminderViewController")
+            dogsIndependentReminderViewController.parentDogId = parentDogId
         }
     }
     

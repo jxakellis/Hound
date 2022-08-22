@@ -75,7 +75,8 @@ final class TimingManager {
                                   userInfo: [
                                     ServerDefaultKeys.dogManager.rawValue: dogManager,
                                     ServerDefaultKeys.dogId.rawValue: dog.dogId,
-                                    ServerDefaultKeys.reminderId.rawValue: reminder.reminderId],
+                                    ServerDefaultKeys.reminderId.rawValue: reminder.reminderId
+                                  ],
                                   repeats: false)
                 RunLoop.main.add(timer, forMode: .common)
                 

@@ -146,7 +146,6 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         AppDelegate.generalLogger.notice("Application build is \(UIApplication.appBuild)")
 
         self.selectedIndex = MainTabBarViewController.selectedEntryIndex

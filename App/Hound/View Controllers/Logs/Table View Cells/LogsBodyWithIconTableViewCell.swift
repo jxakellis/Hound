@@ -50,6 +50,7 @@ final class LogsBodyWithIconTableViewCell: UITableViewCell {
         
         let fontSize = VisualConstant.FontConstant.logCellFontSize
         let sizeRatio = UserConfiguration.logsInterfaceScale.currentScaleFactor
+        let shouldHideLogNote = log.logNote.trimmingCharacters(in: .whitespacesAndNewlines) == ""
         
         // Dog Icon
         dogIconImageView.image = parentDogIcon
@@ -68,9 +69,9 @@ final class LogsBodyWithIconTableViewCell: UITableViewCell {
         logDateLabel.font = logDateLabel.font.withSize(fontSize * sizeRatio)
         // Log Date Constant
         logDateTopConstraint.constant = 5.0 * sizeRatio
-        logDateBottomConstraint.constant = 2.5 * sizeRatio
+        logDateBottomConstraint.constant = shouldHideLogNote ? 0.0 : 0.0 * sizeRatio
         logDateTrailingConstraint.constant = 10.0 * sizeRatio
-        logDateHeightConstraint.constant = 25.0 * sizeRatio
+        logDateHeightConstraint.constant = 20.0 * sizeRatio
         
         // Log Action
         logActionLabel.text = log.logAction.displayActionName(logCustomActionName: log.logCustomActionName, isShowingAbreviatedCustomActionName: true)
@@ -84,17 +85,25 @@ final class LogsBodyWithIconTableViewCell: UITableViewCell {
         familyMemberTrailingConstraint.constant = 10.0 * sizeRatio
         
         // Log Note
-        let shouldHideLogNote = log.logNote.trimmingCharacters(in: .whitespacesAndNewlines) == ""
         logNoteLabel.text = log.logNote
         logNoteLabel.isHidden = shouldHideLogNote
         logNoteLabel.font = logNoteLabel.font.withSize(fontSize * sizeRatio)
         // Log Note Constant
-        logNoteBottomConstraint.constant = shouldHideLogNote ? 0.0 : 5.0 * sizeRatio
-        logNoteHeightConstraint.constant = shouldHideLogNote ? 0.0 : 20.0 * sizeRatio
+        logNoteBottomConstraint.constant = 5.0 * sizeRatio
+        logNoteHeightConstraint.constant = shouldHideLogNote ? 0.0 : 15.0 * sizeRatio
         
         // Right Chevron Constant
         rightChevronTrailingConstraint.constant = 10.0 * sizeRatio
         rightChevronWidthConstraint.constant = 15.0 * sizeRatio
+        
+        // The leading constrant for the dogIcon should be the same regardless of whether its on top or on bottom. Therefore, we can use dogIconLeadingConstraint.constant as the expected constant on the top and bottom of dogIcon.
+        let neededDogIconHeight = dogIconLeadingConstraint.constant + dogIconLeadingConstraint.constant + dogIconHeightConstraint.constant
+        let actualCellHeight = logDateTopConstraint.constant + logDateHeightConstraint.constant + logDateBottomConstraint.constant + logNoteHeightConstraint.constant + logNoteBottomConstraint.constant
+        if neededDogIconHeight > actualCellHeight {
+            let extraHeightNeeded = neededDogIconHeight - actualCellHeight
+            logDateTopConstraint.constant += (extraHeightNeeded / 2)
+            logNoteBottomConstraint.constant += (extraHeightNeeded / 2)
+        }
     }
     
 }
