@@ -64,14 +64,14 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
     // MARK: - Consent To Subscription Price Increase
     
     func paymentQueueShouldShowPriceConsent(_ paymentQueue: SKPaymentQueue) -> Bool {
-            // Check to make sure that mainTabBarViewController exists and is loaded.
+        // Check to make sure that mainTabBarViewController exists and is loaded.
         guard MainTabBarViewController.mainTabBarViewController != nil else {
-                // The mainTabBarViewController doesn't exist yet and/or isn't loaded. Therefore we should defer until its loaded. mainTabBarViewController will call showPriceConsentIfNeeded once it loads and take care of the deferrment
-                return false
-            }
-            
-            // mainTabBarViewController exists and is loaded, so lets show the price consent
-            return true
+            // The mainTabBarViewController doesn't exist yet and/or isn't loaded. Therefore we should defer until its loaded. mainTabBarViewController will call showPriceConsentIfNeeded once it loads and take care of the deferrment
+            return false
+        }
+        
+        // mainTabBarViewController exists and is loaded, so lets show the price consent
+        return true
     }
     
     /// When you increase the price of a subscription, the system asks your delegate’s function paymentQueueShouldShowPriceConsent() whether to immediately display the price consent sheet, or to delay displaying the sheet until later. For example, you may want to delay showing the sheet if it would interrupt a multistep user interaction, such as setting up a user account. Return false in paymentQueueShouldShowPriceConsent() to prevent the dialog from displaying immediately. To show the price consent sheet after a delay, call showPriceConsentIfNeeded(), which shows the sheet only if the user hasn’t responded to the price increase notifications.
@@ -105,9 +105,9 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
         let products = response.products.sorted(by: { product1, product2 in
             // The product with a product identifier that is closer to index 0 of the InAppPurchase enum allCases should come first. If a product identifier is unknown, the known one comes first. If both product identiifers are known, we have the <= productIdentifer come first.
             
-            let indexOfProduct1: Int = InAppPurchaseProduct.allCases.firstIndex(of: InAppPurchaseProduct(rawValue: product1.productIdentifier) ?? InAppPurchaseProduct.unknown)!
-            let indexOfProduct2: Int = InAppPurchaseProduct.allCases.firstIndex(of: InAppPurchaseProduct(rawValue: product2.productIdentifier) ?? InAppPurchaseProduct.unknown)!
-            let indexOfUnknown: Int = InAppPurchaseProduct.allCases.firstIndex(of: InAppPurchaseProduct.unknown)!
+            guard let indexOfProduct1: Int = InAppPurchaseProduct.allCases.firstIndex(of: InAppPurchaseProduct(rawValue: product1.productIdentifier) ?? InAppPurchaseProduct.unknown), let indexOfProduct2: Int = InAppPurchaseProduct.allCases.firstIndex(of: InAppPurchaseProduct(rawValue: product2.productIdentifier) ?? InAppPurchaseProduct.unknown), let indexOfUnknown: Int = InAppPurchaseProduct.allCases.firstIndex(of: InAppPurchaseProduct.unknown) else {
+                return product1.productIdentifier <= product2.productIdentifier
+            }
             
             // the product identifiers aren't known to us. Therefore we should sort based upon the product identifier strings themselves
             if indexOfProduct1 == indexOfUnknown && indexOfProduct2 == indexOfUnknown {
@@ -207,7 +207,7 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
     
     // Observe a transaction state
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-    // Only the family head can perform in-app purchases. This guard statement is here to stop background purchases from attempting to process. They will always fail if the user isn't the family head so no reason to even attempt them.
+        // Only the family head can perform in-app purchases. This guard statement is here to stop background purchases from attempting to process. They will always fail if the user isn't the family head so no reason to even attempt them.
         guard FamilyConfiguration.isFamilyHead else {
             return
         }
@@ -261,7 +261,7 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
             guard let productRestoreCompletionHandler = productRestoreCompletionHandler else {
                 return
             }
-           
+            
             let restoredTransactionsInQueue = transactions.filter { transaction in
                 return transaction.transactionState == .restored
             }

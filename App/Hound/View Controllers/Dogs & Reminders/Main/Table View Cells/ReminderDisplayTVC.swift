@@ -44,7 +44,7 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
     @IBOutlet private weak var rightChevronLeadingConstraint: UIView!
     @IBOutlet private weak var rightChevronTrailingConstraint: NSLayoutConstraint!
     @IBOutlet private weak var rightChevronWidthConstraint: NSLayoutConstraint!
-
+    
     // MARK: - Properties
     
     var reminder: Reminder!
@@ -180,38 +180,33 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
         let nextAlarmHeaderFont = UIFont.systemFont(ofSize: nextAlarmLabel.font.pointSize, weight: .semibold)
         let nextAlarmBodyFont = UIFont.systemFont(ofSize: nextAlarmLabel.font.pointSize, weight: .regular)
         
-        if reminder.reminderIsEnabled == false {
+        guard reminder.reminderIsEnabled == true, let executionDate = reminder.reminderExecutionDate else {
             nextAlarmLabel.attributedText = NSAttributedString(string: "Disabled", attributes: [NSAttributedString.Key.font: nextAlarmHeaderFont])
+            return
+        }
+        
+        if Date().distance(to: executionDate) <= 0 {
+            nextAlarmLabel.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font: nextAlarmHeaderFont])
+        }
+        else if reminder.snoozeComponents.snoozeIsEnabled == true {
+            // special message for snoozing time
+            let timeLeftText = String.convertToReadable(fromTimeInterval: Date().distance(to: executionDate))
+            
+            nextAlarmLabel.font = nextAlarmBodyFont
+            
+            nextAlarmLabel.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font: nextAlarmBodyFont])
+            
+            nextAlarmLabel.attributedText = nextAlarmLabel.text?.addingFontToBeginning(text: "Done Snoozing In: ", font: nextAlarmHeaderFont)
         }
         else {
-            let executionDate: Date? = reminder.reminderExecutionDate
+            // regular message for regular time
+            let timeLeftText = String.convertToReadable(fromTimeInterval: Date().distance(to: executionDate))
             
-            if executionDate == nil {
-                nextAlarmLabel.attributedText = NSAttributedString(string: "Disabled", attributes: [NSAttributedString.Key.font: nextAlarmHeaderFont])
-            }
-            else if Date().distance(to: executionDate!) <= 0 {
-                nextAlarmLabel.attributedText = NSAttributedString(string: "No More Time Left", attributes: [NSAttributedString.Key.font: nextAlarmHeaderFont])
-            }
-            else if reminder.snoozeComponents.snoozeIsEnabled == true {
-                // special message for snoozing time
-                let timeLeftText = String.convertToReadable(fromTimeInterval: Date().distance(to: executionDate!))
-                
-                nextAlarmLabel.font = nextAlarmBodyFont
-                
-                nextAlarmLabel.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font: nextAlarmBodyFont])
-                
-                nextAlarmLabel.attributedText = nextAlarmLabel.text!.addingFontToBeginning(text: "Done Snoozing In: ", font: nextAlarmHeaderFont)
-            }
-            else {
-                // regular message for regular time
-                let timeLeftText = String.convertToReadable(fromTimeInterval: Date().distance(to: executionDate!))
-                
-                nextAlarmLabel.font = nextAlarmBodyFont
-                
-                nextAlarmLabel.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font: nextAlarmBodyFont])
-                
-                nextAlarmLabel.attributedText = nextAlarmLabel.text!.addingFontToBeginning(text: "Remind In: ", font: nextAlarmHeaderFont)
-            }
+            nextAlarmLabel.font = nextAlarmBodyFont
+            
+            nextAlarmLabel.attributedText = NSAttributedString(string: timeLeftText, attributes: [NSAttributedString.Key.font: nextAlarmBodyFont])
+            
+            nextAlarmLabel.attributedText = nextAlarmLabel.text?.addingFontToBeginning(text: "Remind In: ", font: nextAlarmHeaderFont)
         }
     }
 }

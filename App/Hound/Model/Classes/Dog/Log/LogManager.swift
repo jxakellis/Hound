@@ -25,8 +25,8 @@ final class LogManager: NSObject, NSCoding, NSCopying {
         // Map back into uniqueLogActionsResult from strings
         uniqueLogActionsResult = convertedUniqueLogActionsResult?
             .map({ string in
-            return LogAction(rawValue: string)
-        }) as? [LogAction] ?? nil
+                return LogAction(rawValue: string)
+            }) as? [LogAction] ?? nil
     }
     
     func encode(with aCoder: NSCoder) {
@@ -110,7 +110,7 @@ final class LogManager: NSObject, NSCoding, NSCopying {
         guard let logIndex = logIndex else {
             return
         }
-
+        
         logs.remove(at: logIndex)
         uniqueLogActionsResult = nil
     }
@@ -130,8 +130,8 @@ final class LogManager: NSObject, NSCoding, NSCopying {
     /// Returns an array of known log actions. Each known log action has an array of logs attached to it. This means you can find every log for a given log action
     var uniqueLogActions: [LogAction] {
         // If we have the output of this calculated property stored, return it. Increases efficency by not doing calculation multiple times. Stored property is set to nil if any logs change, so in that case we would recalculate
-        guard uniqueLogActionsResult == nil else {
-            return uniqueLogActionsResult!
+        if let uniqueLogActionsResult = uniqueLogActionsResult {
+            return uniqueLogActionsResult
         }
         
         var logActions: [LogAction] = []

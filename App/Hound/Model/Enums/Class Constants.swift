@@ -22,9 +22,9 @@ enum ClassConstant {
     
     enum DogConstant {
         static let defaultDogName: String = "Bella"
-        static let defaultDogIcon: UIImage = UIImage.init(named: "whitePawWithHands")!
+        static let defaultDogIcon: UIImage = UIImage.init(named: "whitePawWithHands") ?? UIImage()
         static let defaultDogId: Int = -1
-        static let chooseImageForDog: UIImage = UIImage.init(named: "chooseImageForDog")!
+        static let chooseImageForDog: UIImage = UIImage.init(named: "chooseImageForDog") ?? UIImage()
         static let dogNameCharacterLimit: Int = 32
     }
     
@@ -89,5 +89,9 @@ enum ClassConstant {
     
     enum ReminderComponentConstant {
         static let defaultCountdownExecutionInterval: TimeInterval = 1800
+    }
+    
+    enum DateConstant {
+        static let default1970Date = Date(timeIntervalSince1970: 0.0)
     }
 }

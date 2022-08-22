@@ -14,36 +14,36 @@ protocol DogsReminderTableViewCellDelegate: AnyObject {
 }
 
 final class DogsReminderTableViewCell: UITableViewCell {
-
+    
     // MARK: - IB
-
+    
     @IBOutlet private weak var reminderLabel: ScaledUILabel!
-
+    
     @IBOutlet private weak var reminderIsEnabledSwitch: UISwitch!
     
     @IBAction private func didToggleReminderIsEnabled(_ sender: Any) {
         delegate.didUpdateReminderIsEnabled(sender: Sender(origin: self, localized: self), reminderId: reminderId, reminderIsEnabled: reminderIsEnabledSwitch.isOn)
     }
-
+    
     // MARK: - Properties
     
     private var reminderId: Int!
-
+    
     weak var delegate: DogsReminderTableViewCellDelegate! = nil
-
+    
     // MARK: - Main
-
+    
     // when cell is awoken / init, this is executed
     override func awakeFromNib() {
         super.awakeFromNib()
         reminderLabel.adjustsFontSizeToFitWidth = true
     }
-
+    
     func setup(forReminder reminder: Reminder) {
         reminderId = reminder.reminderId
-
+        
         reminderLabel.text = ""
-
+        
         if reminder.reminderType == .oneTime {
             setupOneTimeReminder()
         }
@@ -56,9 +56,9 @@ final class DogsReminderTableViewCell: UITableViewCell {
         else if reminder.reminderType == .weekly {
             setupWeeklyReminder()
         }
-
+        
         reminderLabel.attributedText = reminderLabel.text?.addingFontToBeginning(text: reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true) + " -", font: UIFont.systemFont(ofSize: reminderLabel.font.pointSize, weight: .medium))
-
+        
         reminderIsEnabledSwitch.isOn = reminder.reminderIsEnabled
         
         func setupOneTimeReminder() {
@@ -70,15 +70,15 @@ final class DogsReminderTableViewCell: UITableViewCell {
         }
         
         func setupMonthlyReminder() {
-            let monthlyDay: Int! = reminder.monthlyComponents.day
-            reminderLabel.text?.append(" Every Month on \(monthlyDay!)")
-
+            let monthlyDay = reminder.monthlyComponents.day
+            reminderLabel.text?.append(" Every Month on \(monthlyDay)")
+            
             reminderLabel.text?.append(String.monthlyDaySuffix(day: monthlyDay))
         }
         
         func setupWeeklyReminder() {
             reminderLabel.text?.append(" \(String.convertToReadable(fromHour: reminder.weeklyComponents.hour, fromMinute: reminder.weeklyComponents.minute))")
-
+            
             // weekdays
             if reminder.weeklyComponents.weekdays == [1, 2, 3, 4, 5, 6, 7] {
                 reminderLabel.text?.append(" Everyday")
@@ -118,7 +118,7 @@ final class DogsReminderTableViewCell: UITableViewCell {
                 }
             }
         }
-
+        
     }
-
+    
 }

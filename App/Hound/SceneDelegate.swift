@@ -9,9 +9,9 @@
 import UIKit
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
+    
     var window: UIWindow?
-
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         AppDelegate.lifeCycleLogger.notice("Scene Will Connect To Session")
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -19,7 +19,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard (scene as? UIWindowScene) != nil else { return }
     }
-
+    
     func sceneDidDisconnect(_ scene: UIScene) {
         AppDelegate.lifeCycleLogger.notice("Scene Did Disconnect")
         // Called as the scene is being released by the system.
@@ -27,13 +27,13 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Release any resources associated with this scene that can be re-created the next time the scene connects.
         // The scene may re-connect later, as its session was not neccessarily discarded (see `application:didDiscardSceneSessions` instead).
     }
-
+    
     func sceneDidBecomeActive(_ scene: UIScene) {
         AppDelegate.lifeCycleLogger.notice("Scene Did Become Active")
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
     }
-
+    
     func sceneWillResignActive(_ scene: UIScene) {
         AppDelegate.lifeCycleLogger.notice("Scene Will Resign Active")
         // Called when the scene will move from an active state to an inactive state.

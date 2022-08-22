@@ -63,7 +63,7 @@ final class DogsIndependentReminderViewController: UIViewController {
                 guard let createdReminder = createdReminder else {
                     return
                 }
-
+                
                 // the query was successful so we should now persist the reminderCustomActionName to LocalConfiguration if there was one
                 if let reminderCustomActionName = reminder.reminderCustomActionName, reminderCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
                     LocalConfiguration.addReminderCustomAction(forName: reminderCustomActionName)
@@ -159,11 +159,11 @@ final class DogsIndependentReminderViewController: UIViewController {
         
         if isUpdating == true {
             pageNavigationBar.title = "Edit Reminder"
-            pageNavigationBar.rightBarButtonItem!.isEnabled = true
+            pageNavigationBar.rightBarButtonItem?.isEnabled = true
         }
         else {
             pageNavigationBar.title = "Create Reminder"
-            pageNavigationBar.rightBarButtonItem!.isEnabled = false
+            pageNavigationBar.rightBarButtonItem?.isEnabled = false
         }
         
         self.view.bringSubviewToFront(saveReminderButtonBackground)

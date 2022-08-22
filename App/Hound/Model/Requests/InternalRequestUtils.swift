@@ -10,7 +10,7 @@ import UIKit
 
 /// abstractions used by other endpoint classes to make their request to the server, not used anywhere else in hound so therefore internal to endpoints and api requests.
 enum InternalRequestUtils {
-    static var baseURLWithoutParams: URL { return URL(string: EnumConstant.DevelopmentConstant.url + "/\(UIApplication.appBuild)")! }
+    static var baseURLWithoutParams: URL { return URL(string: EnumConstant.DevelopmentConstant.url + "/\(UIApplication.appBuild)") ?? URL(fileURLWithPath: "foo") }
     
     private static var sessionConfig: URLSessionConfiguration {
         let sessionConfig = URLSessionConfiguration.default
@@ -38,12 +38,14 @@ enum InternalRequestUtils {
         var modifiedRequest = request
         
         // append userIdentifier if we have it, need it to perform requests
-        if UserInformation.userIdentifier != nil {
+        if let userIdentifier = UserInformation.userIdentifier, let url = request.url {
             // deconstruct request slightly
-            var deconstructedURLComponents = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)
+            var deconstructedURLComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
             // if we try to append to nil, then it fails. so if the array is nil, we just make it an empty array
-            deconstructedURLComponents!.queryItems = deconstructedURLComponents!.queryItems ?? []
-            deconstructedURLComponents!.queryItems!.append(URLQueryItem(name: ServerDefaultKeys.userIdentifier.rawValue, value: UserInformation.userIdentifier!))
+            if deconstructedURLComponents?.queryItems == nil {
+                deconstructedURLComponents?.queryItems = []
+            }
+            deconstructedURLComponents?.queryItems?.append(URLQueryItem(name: ServerDefaultKeys.userIdentifier.rawValue, value: userIdentifier))
             modifiedRequest.url = deconstructedURLComponents?.url ?? request.url
         }
         
@@ -100,40 +102,43 @@ enum InternalRequestUtils {
                 AppDelegate.APIResponseLogger.warning(
                     "Failure \(request.httpMethod ?? VisualConstant.TextConstant.unknownText) Response for \(request.url?.description ?? VisualConstant.TextConstant.unknownText)\n Message: \(responseBody[ServerDefaultKeys.message.rawValue] as? String ?? VisualConstant.TextConstant.unknownText)\n Code: \(responseBody[ServerDefaultKeys.code.rawValue] as? String ?? VisualConstant.TextConstant.unknownText)\n Type:\(responseBody[ServerDefaultKeys.name.rawValue] as? String ?? VisualConstant.TextConstant.unknownText)")
                 
-                var responseError: Error?
                 let responseErrorCode: String? = responseBody[ServerDefaultKeys.code.rawValue] as? String
                 
-                if let responseErrorCode = responseErrorCode {
-                    responseError = GeneralResponseError(rawValue: responseErrorCode) ?? FamilyResponseError(rawValue: responseErrorCode)
-                }
-                
-                // If response error was unable to be cast to an error type from the response error code, assign a default general error
-                if responseError == nil {
+                let responseError: Error = {
+                    if let responseErrorCode = responseErrorCode {
+                        if let error = GeneralResponseError(rawValue: responseErrorCode) {
+                            return error
+                        }
+                        else if let error = FamilyResponseError(rawValue: responseErrorCode) {
+                            return error
+                        }
+                    }
+                    
                     switch request.httpMethod {
                     case "GET":
-                        responseError = GeneralResponseError.getFailureResponse
+                        return GeneralResponseError.getFailureResponse
                     case "POST":
-                        responseError = GeneralResponseError.postFailureResponse
+                        return GeneralResponseError.postFailureResponse
                     case "PUT":
-                        responseError = GeneralResponseError.putFailureResponse
+                        return GeneralResponseError.putFailureResponse
                     case "DELETE":
-                        responseError = GeneralResponseError.deleteFailureResponse
+                        return GeneralResponseError.deleteFailureResponse
                     default:
-                        responseError = GeneralResponseError.getFailureResponse
+                        return GeneralResponseError.getFailureResponse
                     }
-                }
+                }()
                 
                 guard (responseError as? GeneralResponseError) != .appBuildOutdated else {
                     // If we experience an app build response error, that means the user's local app is outdated. If this is the case, then nothing will work until the user updates their app. Therefore we stop everything and do not return a completion handler. This might break something but we don't care.
                     DispatchQueue.main.async {
-                        ErrorManager.alert(forError: responseError!, forErrorCode: responseErrorCode)
+                        ErrorManager.alert(forError: responseError, forErrorCode: responseErrorCode)
                     }
                     return
                 }
                 
                 DispatchQueue.main.async {
                     if invokeErrorManager == true {
-                        ErrorManager.alert(forError: responseError!, forErrorCode: responseErrorCode)
+                        ErrorManager.alert(forError: responseError, forErrorCode: responseErrorCode)
                     }
                     
                     completionHandler(responseBody, .failureResponse)

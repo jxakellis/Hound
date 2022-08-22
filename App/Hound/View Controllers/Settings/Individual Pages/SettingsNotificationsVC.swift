@@ -284,8 +284,8 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     @IBOutlet private weak var notificationSoundLabel: BorderedUILabel!
     
     @objc private func willShowNotificationSoundDropDown(_ sender: Any) {
-        if dropDown.isDown == false {
-            self.dropDown.showDropDown(numberOfRowsToShow: 6.5, selectedIndexPath: IndexPath(row: NotificationSound.allCases.firstIndex(of: UserConfiguration.notificationSound)!, section: 1))
+        if dropDown.isDown == false, let notificationSoundIndexPath = NotificationSound.allCases.firstIndex(of: UserConfiguration.notificationSound) {
+            self.dropDown.showDropDown(numberOfRowsToShow: 6.5, selectedIndexPath: IndexPath(row: notificationSoundIndexPath, section: 1))
         }
         else {
             self.hideDropDown()
@@ -332,9 +332,16 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
         // do actions based on a cell selected at a indexPath given a dropDownUIViewIdentifier
         // want to hide the drop down after something is selected
         
+        guard let dropDownTableView = dropDown.dropDownTableView else {
+            return
+        }
+        
         let selectedNotificationSound = NotificationSound.allCases[indexPath.row]
         
-        guard selectedNotificationSound != UserConfiguration.notificationSound, let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as? DropDownTableViewCell else {
+        guard selectedNotificationSound != UserConfiguration.notificationSound,
+              let selectedCell = dropDownTableView.cellForRow(at: indexPath) as? DropDownTableViewCell,
+              let notificationSound = NotificationSound.allCases.firstIndex(of: UserConfiguration.notificationSound)
+        else {
             // cell selected is the same as the current sound saved
             AudioManager.stopAudio()
             self.dropDown.hideDropDown()
@@ -344,8 +351,8 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
         let beforeUpdateNotificationSound = UserConfiguration.notificationSound
         
         // the new cell selected is different that the current sound saved
-        let unselectedCellIndexPath: IndexPath! = IndexPath(row: NotificationSound.allCases.firstIndex(of: UserConfiguration.notificationSound)!, section: 0)
-        let unselectedCell = self.dropDown.dropDownTableView!.cellForRow(at: unselectedCellIndexPath) as? DropDownTableViewCell
+        let unselectedCellIndexPath = IndexPath(row: notificationSound, section: 0)
+        let unselectedCell = dropDownTableView.cellForRow(at: unselectedCellIndexPath) as? DropDownTableViewCell
         unselectedCell?.willToggleDropDownSelection(forSelected: false)
         
         selectedCell.willToggleDropDownSelection(forSelected: true)
@@ -355,7 +362,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
         AudioManager.playAudio(forAudioPath: "\(UserConfiguration.notificationSound.rawValue.lowercased())")
         
         let body = [ServerDefaultKeys.notificationSound.rawValue: UserConfiguration.notificationSound.rawValue]
-    UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
+        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // error, revert to previous
                 UserConfiguration.notificationSound = beforeUpdateNotificationSound

@@ -57,24 +57,24 @@ extension UserInformation {
     
     /// The users member's full name. Handles cases where the first name and/or last name may be ""
     static var displayFullName: String {
-        let trimmedFirstName = userFirstName?.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedLastName = userLastName?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedFirstName = userFirstName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let trimmedLastName = userLastName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         
         // check to see if anything is blank
-        if (trimmedFirstName == nil || trimmedFirstName == "") && (trimmedLastName == nil || trimmedLastName == "") {
+        if trimmedFirstName == "" && trimmedLastName == "" {
             return "No Name"
         }
         // we know one of OR both of the trimmedFirstName and trimmedLast name are != nil && != ""
-        else if trimmedFirstName == nil && trimmedFirstName == "" {
+        else if trimmedFirstName == "" {
             // no first name but has last name
-            return trimmedLastName!
+            return trimmedLastName
         }
-        else if trimmedLastName == nil && trimmedLastName == "" {
+        else if trimmedLastName == "" {
             // no last name but has first name
-            return trimmedFirstName!
+            return trimmedFirstName
         }
         else {
-            return "\(trimmedFirstName!) \(trimmedLastName!)"
+            return "\(trimmedFirstName) \(trimmedLastName)"
         }
     }
     

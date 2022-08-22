@@ -1186,7 +1186,7 @@
                                     <datePicker contentMode="scaleToFill" horizontalHuggingPriority="260" verticalHuggingPriority="260" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" style="wheels" translatesAutoresizingMaskIntoConstraints="NO" id="0FN-6L-oEu">
                                         <rect key="frame" x="0.0" y="365" width="414" height="360"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" relation="lessThanOrEqual" secondItem="0FN-6L-oEu" secondAttribute="height" multiplier="1.15:1" id="zAB-HL-rCS"/>
+                                            <constraint firstAttribute="height" secondItem="0FN-6L-oEu" secondAttribute="width" multiplier="1:1.15" id="zAB-HL-rCS"/>
                                         </constraints>
                                         <connections>
                                             <action selector="didUpdateLogDate:" destination="SZm-Ec-oLW" eventType="valueChanged" id="dme-jh-ryL"/>

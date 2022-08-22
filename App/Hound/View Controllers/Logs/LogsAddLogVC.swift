@@ -113,12 +113,12 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     
     func selectItemInDropDown(indexPath: IndexPath, dropDownUIViewIdentifier: String) {
         if dropDownUIViewIdentifier == "DropDownParentDog", let selectedCell = dropDownParentDog.dropDownTableView?.cellForRow(at: indexPath) as? DropDownTableViewCell {
-           
+            
             selectedCell.willToggleDropDownSelection(forSelected: true)
             
             selectedParentDogIndexPath = indexPath
             
-             parentDogLabel.text = dogManager.dogs[indexPath.row].dogName
+            parentDogLabel.text = dogManager.dogs[indexPath.row].dogName
             parentDogLabel.tag = dogManager.dogs[indexPath.row].dogId
             dropDownParentDog.hideDropDown()
         }
@@ -219,9 +219,9 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             logToUpdate.logNote = logNoteTextView.text ?? ClassConstant.LogConstant.defaultLogNote
             logToUpdate.logAction = selectedLogAction
             try logToUpdate.changeLogCustomActionName(forLogCustomActionName:
-                                                    selectedLogAction == LogAction.custom
-                                                  ? logCustomActionNameTextField.text
-                                                  : nil)
+                                                        selectedLogAction == LogAction.custom
+                                                      ? logCustomActionNameTextField.text
+                                                      : nil)
             
             addLogButton.beginQuerying()
             addLogButtonBackground.beginQuerying(isBackgroundButton: true)
@@ -257,13 +257,13 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             
             // the user decided to delete so we must query server
             LogsRequest.delete(invokeErrorManager: true, forDogId: parentDogIdToUpdate, forLogId: logToUpdate.logId) { requestWasSuccessful, _ in
-                    if requestWasSuccessful == true {
-                        self.delegate.didRemoveLog(sender: Sender(origin: self, localized: self),
-                                                   parentDogId: parentDogIdToUpdate,
-                                                   logId: logToUpdate.logId)
-                        self.navigationController?.popViewController(animated: true)
-                    }
+                if requestWasSuccessful == true {
+                    self.delegate.didRemoveLog(sender: Sender(origin: self, localized: self),
+                                               parentDogId: parentDogIdToUpdate,
+                                               logId: logToUpdate.logId)
+                    self.navigationController?.popViewController(animated: true)
                 }
+            }
             
         }
         
@@ -363,8 +363,6 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TO DO NOW fix scaling of add log page. on small phones, like dads iPhone 8, the date of event date picker is smushed while the add notes field is very large. change compression priority and add minimum size for date picker
-        
         // TO DO NOW add an 'All' option to the dogs drop down (if number of dogs > 1). Make this the default. Therefore, if a user creates a certain log for all dogs, then we query the server x number of times to make the log for all those dogs.
         view.addSubview(logNoteTextView)
         
@@ -398,24 +396,29 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         
         /// Requires log information to be present. Sets up the values of different variables that is found out from information passed
         func setupValues() {
-             if let parentDogIdToUpdate = parentDogIdToUpdate, let logToUpdate = logToUpdate {
-                pageTitle!.title = "Edit Log"
+            if let parentDogIdToUpdate = parentDogIdToUpdate, let logToUpdate = logToUpdate {
+                pageTitle?.title = "Edit Log"
                 removeLogBarButton.isEnabled = true
                 
                 familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: logToUpdate.userId)?.displayFullName ?? VisualConstant.TextConstant.unknownText
                 
-                 if let dog = dogManager.findDog(forDogId: parentDogIdToUpdate) {
-                     parentDogLabel.text = dog.dogName
-                     parentDogLabel.tag = dog.dogId
-                 }
+                if let dog = dogManager.findDog(forDogId: parentDogIdToUpdate) {
+                    parentDogLabel.text = dog.dogName
+                    parentDogLabel.tag = dog.dogId
+                }
                 
-                selectedLogActionIndexPath = IndexPath(row: LogAction.allCases.firstIndex(of: logToUpdate.logAction)!, section: 0)
+                if let logActionIndexPath = LogAction.allCases.firstIndex(of: logToUpdate.logAction) {
+                    selectedLogActionIndexPath = IndexPath(row: logActionIndexPath, section: 0)
+                }
+                else {
+                    selectedLogActionIndexPath = nil
+                }
                 
                 familyMemberNameLabel.isUserInteractionEnabled = false
                 familyMemberNameLabel.isEnabled = false
             }
             else {
-                pageTitle!.title = "Create Log"
+                pageTitle?.title = "Create Log"
                 removeLogBarButton.isEnabled = false
                 
                 familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: UserInformation.userId)?.displayFullName ?? VisualConstant.TextConstant.unknownText

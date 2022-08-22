@@ -19,7 +19,7 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
     // MARK: - UIImagePickerControllerDelegate
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-       
+        
         if let dogIcon = ImageManager.processImage(forDogIcon: dogIcon, forInfo: info) {
             self.dogIcon.setImage(dogIcon, for: .normal)
         }
@@ -72,8 +72,8 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
         }
         
         var dogIcon: UIImage? {
-            if self.dogIcon.imageView!.image != ClassConstant.DogConstant.chooseImageForDog {
-                return self.dogIcon.imageView!.image
+            if let image = self.dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseImageForDog {
+                return image
             }
             else {
                 return nil
@@ -84,7 +84,7 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
         // no dogs so we create a new one for the user
         if dogManager.hasCreatedDog == false, let dog = try? Dog(dogName: dogName ?? ClassConstant.DogConstant.defaultDogName, dogIcon: dogIcon ?? ClassConstant.DogConstant.defaultDogIcon) {
             // can only fail if dogName == "", but already checked for that and corrected if there was a problem
-        
+            
             // contact server to make their dog
             DogsRequest.create(invokeErrorManager: true, forDog: dog) { dogId, _ in
                 self.continueButton.isEnabled = true
@@ -146,8 +146,8 @@ final class HoundIntroductionViewController: UIViewController, UITextFieldDelega
         // Dog Icon
         
         dogIcon.setImage(ClassConstant.DogConstant.chooseImageForDog, for: .normal)
-        dogIcon.imageView!.layer.masksToBounds = true
-        dogIcon.imageView!.layer.cornerRadius = dogIcon.frame.width / 2
+        dogIcon.imageView?.layer.masksToBounds = true
+        dogIcon.imageView?.layer.cornerRadius = dogIcon.frame.width / 2
         
         // Setup AlertController for dogIcon button now, increases responsiveness
         let (picker, viewController) = ImageManager.setupDogIconImagePicker(forViewController: self)

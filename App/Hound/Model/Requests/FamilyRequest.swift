@@ -21,7 +21,7 @@ enum FamilyRequest: RequestProtocol {
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
     private static func internalGet(invokeErrorManager: Bool, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
-       
+        
         return InternalRequestUtils.genericGetRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithFamilyId) { responseBody, responseStatus in
             completionHandler(responseBody, responseStatus)
         }
@@ -43,7 +43,7 @@ enum FamilyRequest: RequestProtocol {
      completionHandler returns response data: dictionary of the body and the ResponseStatus
      */
     private static func internalUpdate(invokeErrorManager: Bool, body: [String: Any], completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
-       
+        
         // the user is trying to join a family with the family code, so omit familyId (as we don't have one)
         if body[ServerDefaultKeys.familyCode.rawValue] != nil {
             return InternalRequestUtils.genericPutRequest(invokeErrorManager: invokeErrorManager, forURL: baseURLWithoutParams, forBody: body) { responseBody, responseStatus in

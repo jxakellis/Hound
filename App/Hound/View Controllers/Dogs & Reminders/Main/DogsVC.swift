@@ -116,6 +116,8 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
         
         dogManager.addDog(forDog: newDog)
         setDogManager(sender: sender, forDogManager: dogManager)
+        
+        CheckManager.checkForReview()
     }
     
     /// If a dog was updated, its former name (as its name could have been changed) and new dog instance is passed here, matching old dog is found and replaced with new
@@ -124,12 +126,16 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
         // this function both can add new dogs or override old ones
         dogManager.addDog(forDog: updatedDog)
         setDogManager(sender: sender, forDogManager: dogManager)
+        
+        CheckManager.checkForReview()
     }
     
     func didRemoveDog(sender: Sender, dogId: Int) {
         
         dogManager.removeDog(forDogId: dogId)
         setDogManager(sender: sender, forDogManager: dogManager)
+        
+        CheckManager.checkForReview()
     }
     
     // MARK: - DogManagerControlFlowProtocol
@@ -262,7 +268,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
             
             // Creates the "add new dog" button to click
             let willAddDogButton = ScaledUIButton(frame: CGRect(origin: CGPoint(x: originXWithAlignedTrailing, y: willAddButton.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
-            willAddDogButton.setImage(UIImage(systemName: "plus.circle")!, for: .normal)
+            willAddDogButton.setImage(UIImage(systemName: "plus.circle"), for: .normal)
             willAddDogButton.tintColor = .systemBlue
             willAddDogButton.tag = -1
             willAddDogButton.addTarget(self, action: #selector(willCreateNew(sender:)), for: .touchUpInside)
@@ -285,21 +291,24 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
                 }
                 
                 // creates clickable button with a position that it relative to the subbutton below it
-                let willAddReminderButton = ScaledUIButton(frame: CGRect(origin: CGPoint(x: addButtons.last!.frame.origin.x, y: addButtons.last!.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
-                willAddReminderButton.setImage(UIImage(systemName: "plus.circle")!, for: .normal)
-                willAddReminderButton.tintColor = .systemBlue
-                willAddReminderButton.tag = dog.dogId
-                willAddReminderButton.addTarget(self, action: #selector(willCreateNew(sender:)), for: .touchUpInside)
-                
-                let willAddReminderButtonBackground = createAddButtonBackground(willAddReminderButton)
-                
-                let willAddReminderButtonLabel = createAddButtonLabel(willAddReminderButton, text: "Create New Reminder For \(dog.dogName)")
-                let willAddReminderButtonLabelBackground = createAddButtonLabelBackground(willAddReminderButtonLabel)
-                
-                addButtons.append(willAddReminderButton)
-                addButtonsBackground.append(willAddReminderButtonBackground)
-                addButtonsLabel.append(willAddReminderButtonLabel)
-                addButtonsLabelBackground.append(willAddReminderButtonLabelBackground)
+                // We use the last add button in the add buttons array as a position reference for all the buttons. This makes it so the position reference for all the buttons is based off the previous add button
+                if let addButtonsLast = addButtons.last {
+                    let willAddReminderButton = ScaledUIButton(frame: CGRect(origin: CGPoint(x: addButtonsLast.frame.origin.x, y: addButtonsLast.frame.origin.y - 10 - subButtonSize), size: CGSize(width: subButtonSize, height: subButtonSize)))
+                    willAddReminderButton.setImage(UIImage(systemName: "plus.circle"), for: .normal)
+                    willAddReminderButton.tintColor = .systemBlue
+                    willAddReminderButton.tag = dog.dogId
+                    willAddReminderButton.addTarget(self, action: #selector(willCreateNew(sender:)), for: .touchUpInside)
+                    
+                    let willAddReminderButtonBackground = createAddButtonBackground(willAddReminderButton)
+                    
+                    let willAddReminderButtonLabel = createAddButtonLabel(willAddReminderButton, text: "Create New Reminder For \(dog.dogName)")
+                    let willAddReminderButtonLabelBackground = createAddButtonLabelBackground(willAddReminderButtonLabel)
+                    
+                    addButtons.append(willAddReminderButton)
+                    addButtonsBackground.append(willAddReminderButtonBackground)
+                    addButtonsLabel.append(willAddReminderButtonLabel)
+                    addButtonsLabelBackground.append(willAddReminderButtonLabelBackground)
+                }
             }
             // goes through all buttons, labels, and their background and animates them to their correct position
             for buttonIndex in 0..<addButtons.count {

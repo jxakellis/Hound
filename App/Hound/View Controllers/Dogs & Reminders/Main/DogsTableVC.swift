@@ -52,7 +52,9 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
             }
             loopTimer = Timer(fireAt: Date(), interval: 1.0, target: self, selector: #selector(self.loopReload), userInfo: nil, repeats: true)
             
-            RunLoop.main.add(loopTimer!, forMode: .default)
+            if let loopTimer = loopTimer {
+                RunLoop.main.add(loopTimer, forMode: .default)
+            }
         }
         
         reloadTableConstraints()
@@ -104,7 +106,9 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
         if dogManager.hasEnabledReminder {
             loopTimer = Timer(fireAt: Date(), interval: 1.0, target: self, selector: #selector(self.loopReload), userInfo: nil, repeats: true)
             
-            RunLoop.main.add(loopTimer!, forMode: .default)
+            if let loopTimer = loopTimer {
+                RunLoop.main.add(loopTimer, forMode: .default)
+            }
         }
         
     }
@@ -297,28 +301,18 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
             alertActionsForLog.append(alertActionLog)
         }
         else {
-            switch reminder.reminderAction {
-            case .potty:
-                let pottyKnownTypes: [LogAction] = [.pee, .poo, .both, .neither, .accident]
-                for pottyKnownType in pottyKnownTypes {
-                    let alertActionLog = UIAlertAction(
-                        title: "Log \(pottyKnownType.displayActionName(logCustomActionName: nil, isShowingAbreviatedCustomActionName: true))",
-                        style: .default,
-                        handler: { (_)  in
-                            // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                            AlarmManager.willSkipReminder(forDogId: dog.dogId, forReminder: reminder, forLogAction: pottyKnownType)
-                            AlertManager.enqueueBannerForPresentation(forTitle: "Logged \(pottyKnownType.displayActionName(logCustomActionName: nil, isShowingAbreviatedCustomActionName: true))", forSubtitle: nil, forStyle: .success)
-                        })
-                    alertActionsForLog.append(alertActionLog)
-                }
-            default:
+            // Cant convert a reminderAction of potty directly to logAction, as it has serveral possible outcomes. Otherwise, logAction and reminderAction 1:1
+            let logActions: [LogAction] = reminder.reminderAction == .potty ? [.pee, .poo, .both, .neither, .accident] : [LogAction(rawValue: reminder.reminderAction.rawValue) ?? ClassConstant.LogConstant.defaultLogAction]
+            
+            for logAction in logActions {
+                let displayActionName = logAction.displayActionName(logCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true)
                 let alertActionLog = UIAlertAction(
-                    title: "Log \(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))",
+                    title: "Log \(displayActionName)",
                     style: .default,
                     handler: { (_)  in
                         // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                        AlarmManager.willSkipReminder(forDogId: dog.dogId, forReminder: reminder, forLogAction: LogAction(rawValue: reminder.reminderAction.rawValue)!)
-                        AlertManager.enqueueBannerForPresentation(forTitle: "Logged \(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))", forSubtitle: nil, forStyle: .success)
+                        AlarmManager.willSkipReminder(forDogId: dog.dogId, forReminder: reminder, forLogAction: logAction)
+                        AlertManager.enqueueBannerForPresentation(forTitle: "Logged \(displayActionName)", forSubtitle: nil, forStyle: .success)
                     })
                 alertActionsForLog.append(alertActionLog)
             }
@@ -408,27 +402,27 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
         
         // delete dog
         if indexPath.row == 0, let dogCell = tableView.cellForRow(at: indexPath) as?  DogsDogDisplayTableViewCell {
-                // cell in question
-                
-                let dogId: Int = dogCell.dog.dogId
-                
-                removeConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogCell.dog.dogName)?", message: nil, preferredStyle: .alert)
-                
-                let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
-                    DogsRequest.delete(invokeErrorManager: true, forDogId: dogId) { requestWasSuccessful, _ in
-                        if requestWasSuccessful == true {
-                            self.dogManager.removeDog(forDogId: dogId)
-                            self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
-                            self.tableView.deleteSections([indexPath.section], with: .automatic)
-                        }
-                        
+            // cell in question
+            
+            let dogId: Int = dogCell.dog.dogId
+            
+            removeConfirmation = GeneralUIAlertController(title: "Are you sure you want to delete \(dogCell.dog.dogName)?", message: nil, preferredStyle: .alert)
+            
+            let alertActionRemove = UIAlertAction(title: "Delete", style: .destructive) { _ in
+                DogsRequest.delete(invokeErrorManager: true, forDogId: dogId) { requestWasSuccessful, _ in
+                    if requestWasSuccessful == true {
+                        self.dogManager.removeDog(forDogId: dogId)
+                        self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
+                        self.tableView.deleteSections([indexPath.section], with: .automatic)
                     }
                     
                 }
-                let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-                removeConfirmation?.addAction(alertActionRemove)
-                removeConfirmation?.addAction(alertActionCancel)
+                
             }
+            let alertActionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            removeConfirmation?.addAction(alertActionRemove)
+            removeConfirmation?.addAction(alertActionCancel)
+        }
         // delete reminder
         if indexPath.row > 0, let reminderCell = tableView.cellForRow(at: indexPath) as? DogsReminderDisplayTableViewCell, let dog: Dog = dogManager.findDog(forDogId: reminderCell.parentDogId) {
             let reminder: Reminder = reminderCell.reminder

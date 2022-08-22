@@ -8,17 +8,17 @@
 import Foundation
 
 /*
-final class ResponseInformation {
-    var status: ResponseStatus
-    var errorCode: String?
-    var error: Error?
-    
-    init (forStatus status: ResponseStatus, forErrorCode errorCode: String?, forError error: Error?) {
-        self.status = status
-        self.errorCode = errorCode
-        self.error = error
-    }
-}
+ final class ResponseInformation {
+ var status: ResponseStatus
+ var errorCode: String?
+ var error: Error?
+ 
+ init (forStatus status: ResponseStatus, forErrorCode errorCode: String?, forError error: Error?) {
+ self.status = status
+ self.errorCode = errorCode
+ self.error = error
+ }
+ }
  */
 
 enum ResponseStatus {

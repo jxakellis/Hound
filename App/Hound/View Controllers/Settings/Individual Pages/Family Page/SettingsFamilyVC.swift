@@ -260,11 +260,11 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         isLockedLabel.text = "Lock: "
         if FamilyConfiguration.isLocked == true {
             // locked emoji
-            isLockedLabel.text!.append("🔐")
+            isLockedLabel.text?.append("🔐")
         }
         else {
             // unlocked emoji
-            isLockedLabel.text!.append("🔓")
+            isLockedLabel.text?.append("🔓")
         }
     }
     

@@ -9,7 +9,7 @@
 import UIKit
 
 final class SettingsFamilyMemberTableViewCell: UITableViewCell {
-
+    
     // MARK: - IB
     
     @IBOutlet private weak var fullNameLabel: ScaledUILabel!
@@ -54,9 +54,9 @@ final class SettingsFamilyMemberTableViewCell: UITableViewCell {
                 // upon cell reload, the rightChevronAspectRatio can be nil if deactived already
                 NSLayoutConstraint.deactivate([rightChevronAspectRatio])
             }
-           
+            
             NSLayoutConstraint.activate([ rightChevronImageView.widthAnchor.constraint(equalToConstant: 0.0)])
         }
     }
-
+    
 }

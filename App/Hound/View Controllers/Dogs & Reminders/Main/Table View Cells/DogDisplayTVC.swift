@@ -9,11 +9,11 @@
 import UIKit
 
 final class DogsDogDisplayTableViewCell: UITableViewCell {
-
+    
     // MARK: - IB
-
+    
     @IBOutlet private weak var dogIconImageView: UIImageView!
-
+    
     @IBOutlet private weak var dogIconLeadingConstraint: NSLayoutConstraint!
     @IBOutlet private weak var dogIconTrailingConstraint: NSLayoutConstraint!
     @IBOutlet private weak var dogIconTopConstraint: NSLayoutConstraint!
@@ -28,25 +28,25 @@ final class DogsDogDisplayTableViewCell: UITableViewCell {
     @IBOutlet private weak var rightChevronTrailingConstraint: NSLayoutConstraint!
     @IBOutlet private weak var rightChevronWidthConstraint: NSLayoutConstraint!
     // MARK: - Properties
-
+    
     var dog: Dog! = nil
-
+    
     // MARK: - Main
-
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         self.dogNameLabel.adjustsFontSizeToFitWidth = true
         // Initialization code
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
     
     // MARK: - Setup
-
+    
     // Function used externally to setup dog
     func setup(forDog dogPassed: Dog) {
         dog = dogPassed
@@ -66,7 +66,7 @@ final class DogsDogDisplayTableViewCell: UITableViewCell {
         rightChevronWidthConstraint.constant = 20.0 * sizeRatio
         
         // Dog Icon Configuration
-
+        
         dogIconImageView.image = dogPassed.dogIcon
         dogIconImageView.layer.masksToBounds = true
         let dogIconWidth = 55.0 * sizeRatio
@@ -76,7 +76,7 @@ final class DogsDogDisplayTableViewCell: UITableViewCell {
         dogIconTrailingConstraint.constant = 5.0 * sizeRatio
         dogIconTopConstraint.constant = 10.0 * sizeRatio
         dogIconBottomConstraint.constant = 10.0 * sizeRatio
-
+        
         if dogIconImageView.image?.isEqualToImage(image: ClassConstant.DogConstant.defaultDogIcon) == false {
             dogIconImageView.layer.cornerRadius = dogIconWidth / 2
         }
@@ -84,5 +84,5 @@ final class DogsDogDisplayTableViewCell: UITableViewCell {
             dogIconImageView.layer.cornerRadius = 0.0
         }
     }
-
+    
 }

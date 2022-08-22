@@ -42,7 +42,7 @@ final class SnoozeComponents: NSObject, NSCoding, NSCopying {
     
     convenience init(snoozeIsEnabled: Bool?, executionInterval: TimeInterval?, intervalElapsed: TimeInterval?) {
         self.init()
-
+        
         self.snoozeIsEnabled = snoozeIsEnabled ?? self.snoozeIsEnabled
         self.executionInterval = executionInterval ?? self.executionInterval
         self.intervalElapsed = intervalElapsed ?? self.intervalElapsed

@@ -15,7 +15,7 @@ protocol ServerFamilyViewControllerDelegate: AnyObject {
 final class ServerFamilyViewController: UIViewController {
     
     // MARK: IB
-
+    
     @IBOutlet private weak var createFamilyButton: UIButton!
     
     @IBAction private func willCreateFamily(_ sender: Any) {
@@ -35,7 +35,7 @@ final class ServerFamilyViewController: UIViewController {
     @IBOutlet private weak var joinFamilyButton: ScaledUILabel!
     
     @IBAction private func willJoinFamily(_ sender: Any) {
-       
+        
         let familyCodeAlertController = GeneralUIAlertController(title: "Join a Family", message: "The code is case-insensitive", preferredStyle: .alert)
         familyCodeAlertController.addTextField { textField in
             textField.placeholder = "Enter Family Code..."
@@ -76,7 +76,7 @@ final class ServerFamilyViewController: UIViewController {
         familyCodeAlertController.addAction(alertActionJoin)
         familyCodeAlertController.addAction(alertActionCancel)
         AlertManager.enqueueAlertForPresentation(familyCodeAlertController)
-       
+        
     }
     // MARK: Properties
     
@@ -143,5 +143,5 @@ final class ServerFamilyViewController: UIViewController {
             joinFamilyButton.layer.borderColor = UIColor.black.cgColor
         }
     }
-
+    
 }

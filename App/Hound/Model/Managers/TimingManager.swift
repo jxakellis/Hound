@@ -46,7 +46,7 @@ final class TimingManager {
                  */
                 
                 // makes sure a reminder is enabled and its presentation is not being handled
-                guard reminder.reminderIsEnabled == true && reminder.hasAlarmPresentationHandled == false
+                guard reminder.reminderIsEnabled == true && reminder.hasAlarmPresentationHandled == false, let reminderExecutionDate = reminder.reminderExecutionDate
                 else {
                     continue
                 }
@@ -68,7 +68,7 @@ final class TimingManager {
                     RunLoop.main.add(isSkippingDisabler, forMode: .common)
                 }
                 
-                let timer = Timer(fireAt: reminder.reminderExecutionDate!,
+                let timer = Timer(fireAt: reminderExecutionDate,
                                   interval: -1,
                                   target: self,
                                   selector: #selector(self.didExecuteTimer(sender:)),
@@ -147,11 +147,9 @@ final class TimingManager {
         }
         
         if reminder.reminderType == .weekly {
-            reminder.weeklyComponents.isSkipping = false
             reminder.weeklyComponents.isSkippingDate = nil
         }
         else if reminder.reminderType == .monthly {
-            reminder.monthlyComponents.isSkipping = false
             reminder.monthlyComponents.isSkippingDate = nil
         }
         reminder.reminderExecutionBasis = Date()

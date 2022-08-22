@@ -13,39 +13,39 @@ protocol LogsViewControllerDelegate: AnyObject {
 }
 
 final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, DogManagerControlFlowProtocol, LogsTableViewControllerDelegate, DropDownUIViewDataSource, LogsAddLogViewControllerDelegate {
-
+    
     // MARK: - UIGestureRecognizerDelegate
-
+    
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
-
+    
     // MARK: - LogsAddLogViewControllerDelegate
-
+    
     func didAddLog(sender: Sender, parentDogId: Int, newLog: Log) {
         
         if dogManager.dogs.isEmpty == false {
             dogManager.findDog(forDogId: parentDogId)?.dogLogs.addLog(forLog: newLog)
         }
         setDogManager(sender: sender, forDogManager: dogManager)
-
+        
         CheckManager.checkForReview()
     }
-
+    
     func didUpdateLog(sender: Sender, parentDogId: Int, updatedLog: Log) {
-
+        
         if dogManager.dogs.isEmpty == false, let dog = dogManager.findDog(forDogId: parentDogId) {
-                
-             dog.dogLogs.addLog(forLog: updatedLog)
-
-         }
-
-         setDogManager(sender: sender, forDogManager: dogManager)
-
+            
+            dog.dogLogs.addLog(forLog: updatedLog)
+            
+        }
+        
+        setDogManager(sender: sender, forDogManager: dogManager)
+        
         CheckManager.checkForReview()
-
+        
     }
-
+    
     func didRemoveLog(sender: Sender, parentDogId: Int, logId: Int) {
         
         if let dog = dogManager.findDog(forDogId: parentDogId) {
@@ -54,23 +54,23 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
                 break
             }
         }
-
+        
         setDogManager(sender: sender, forDogManager: dogManager)
-
+        
         CheckManager.checkForReview()
     }
-
+    
     // MARK: - LogsTableViewControllerDelegate
-
+    
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager) {
         setDogManager(sender: sender, forDogManager: forDogManager)
     }
-
+    
     /// Log selected in the main table view of the logs of care page. This log object has JUST been retrieved and constructed from data from the server.
     private var selectedLog: Log?
     /// Parent dog id of the log selected in the main table view of the logs of care page.
     private var parentDogIdOfSelectedLog: Int?
-
+    
     func didSelectLog(parentDogId: Int, log: Log) {
         selectedLog = log
         parentDogIdOfSelectedLog = parentDogId
@@ -78,13 +78,13 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
         selectedLog = nil
         parentDogIdOfSelectedLog = nil
     }
-
+    
     // MARK: - DogManagerControlFlowProtocol
-
+    
     private var dogManager: DogManager = DogManager()
-
+    
     func setDogManager(sender: Sender, forDogManager: DogManager) {
-         dogManager = forDogManager
+        dogManager = forDogManager
         
         if (sender.localized is LogsTableViewController) == true {
             // If LogsTableViewController deleted the last log of all the dog(s), then clear the filter and disable the logsFilter button
@@ -111,13 +111,13 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
             delegate.didUpdateDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
         }
     }
-
+    
     // MARK: - IB
-
+    
     @IBOutlet private weak var containerView: UIView!
     
     @IBOutlet private weak var filterButton: UIBarButtonItem!
-
+    
     @IBOutlet private weak var refreshButton: UIBarButtonItem!
     
     @IBAction private func willRefresh(_ sender: Any) {
@@ -139,43 +139,43 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
     }
     @IBOutlet private weak var willAddLog: ScaledUIButton!
     @IBOutlet private weak var willAddLogBackground: ScaledUIButton!
-
+    
     @IBAction private func willShowFilter(_ sender: Any) {
-
+        
         var numRowsDisplayed: Int {
-
+            
             // finds the total count of rows needed
             var totalCount: Int {
                 var count = 0
                 for dog in dogManager.dogs {
                     count += dog.dogLogs.uniqueLogActions.count + 1
                 }
-
+                
                 if count == 0 {
                     return 1
                 }
                 return count + 1
             }
-
+            
             // finds the total number of rows that can be displayed and makes sure that the needed does not exceed that
             let maximumHeight = self.view.safeAreaLayoutGuide.layoutFrame.size.height
             let neededHeight = DropDownUIView.rowHeightForLogFilter * CGFloat(totalCount)
-
+            
             if neededHeight < maximumHeight {
                 return totalCount
             }
             else {
                 return Int((maximumHeight / DropDownUIView.rowHeightForLogFilter).rounded(.down))
             }
-
+            
         }
         dropDown.showDropDown(numberOfRowsToShow: CGFloat(numRowsDisplayed))
     }
-
+    
     // MARK: - Properties
-
+    
     private let dropDown = DropDownUIView()
-
+    
     // Dictionary literal the currently applied logsFilter. [ "currentDogId" : ["filterByAction1","filterByAction2"]]. Filters by selected actions under selected dogs. Note: if the dictionary literal is empty, then shows all
     private var logsFilter: [Int: [LogAction]] = [:]
     
@@ -184,81 +184,81 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
             return dog.dogLogs.logs.isEmpty == false
         }
     }
-
+    
     var logsTableViewController: LogsTableViewController! = nil
-
+    
     var logsAddLogViewController: LogsAddLogViewController?
-
+    
     weak var delegate: LogsViewControllerDelegate! = nil
-
+    
     // MARK: - Main
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.bringSubviewToFront(willAddLog)
         
         // TO DO FUTURE add export logs button 
-
+        
         let tap = UITapGestureRecognizer(target: self, action: #selector(hideDropDown))
         tap.delegate = self
         tap.cancelsTouchesInView = false
         containerView.addGestureRecognizer(tap)
-
+        
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         filterButton.isEnabled = familyHasAtLeastOneLog
         willAddLog?.isHidden = dogManager.dogs.isEmpty
         willAddLogBackground?.isHidden = dogManager.dogs.isEmpty
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
         
         setupDropDown()
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         dropDown.hideDropDown(removeFromSuperview: true)
     }
-
+    
     // MARK: - Drop Down Functions
-
+    
     private func setupDropDown() {
-
+        
         /// Finds the widthNeeded by the largest label, has a minimum and maximum possible along with subtracting the space taken by leading and trailing constraints.
         var neededWidthForLabel: CGFloat {
             let maximumWidth: CGFloat = view.safeAreaLayoutGuide.layoutFrame.width - 24.0
             let minimumWidth: CGFloat = 100.0 - 24.0
-
+            
             /// Finds the largestWidth taken up by any label, later compared to constraint sizes of min and max. Leading and trailing constraints not considered here, that will be adjusted later
             var largestLabelWidth: CGFloat {
-
+                
                 var largest: CGFloat = "Clear Filter".boundingFrom(font: VisualConstant.FontConstant.filterByDogFont, height: DropDownUIView.rowHeightForLogFilter).width
-
+                
                 for dog in dogManager.dogs {
                     let dogNameWidth = dog.dogName.boundingFrom(font: VisualConstant.FontConstant.filterByDogFont, height: DropDownUIView.rowHeightForLogFilter).width
-
+                    
                     if dogNameWidth > largest {
                         largest = dogNameWidth
                     }
-
+                    
                     for uniqueLogAction in dog.dogLogs.uniqueLogActions {
                         let logActionWidth = uniqueLogAction.rawValue.boundingFrom(font: VisualConstant.FontConstant.filterByLogFont, height: DropDownUIView.rowHeightForLogFilter).width
-
+                        
                         if logActionWidth > largest {
                             largest = logActionWidth
                         }
-
+                        
                     }
                 }
-
+                
                 return largest
             }
-
+            
             switch largestLabelWidth {
             case 0..<minimumWidth:
                 return minimumWidth
@@ -268,7 +268,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
                 return maximumWidth
             }
         }
-
+        
         /// only one dropdown used on the dropdown instance so no identifier needed
         dropDown.dropDownUIViewIdentifier = ""
         dropDown.cellReusableIdentifier = "dropDownCell"
@@ -278,7 +278,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
         dropDown.setRowHeight(height: DropDownUIView.rowHeightForLogFilter)
         self.view.addSubview(dropDown)
     }
-
+    
     @objc private func hideDropDown() {
         dropDown.hideDropDown()
     }
@@ -321,12 +321,12 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
             }
             
             // the cell has a logAction, check to see if that logAction is in the filter dictionary. if it is, then we select the cell and return
-            let logActions = logsFilter[dogId]!
-            
-            for logAction in logActions where logAction == customCell.logAction {
-                // the cell has a dogId and a logAction that match the filter dictionary, therefore we can select the cell
-                customCell.willToggleDropDownSelection(forSelected: true)
-                return
+            if let logActions = logsFilter[dogId] {
+                for logAction in logActions where logAction == customCell.logAction {
+                    // the cell has a dogId and a logAction that match the filter dictionary, therefore we can select the cell
+                    customCell.willToggleDropDownSelection(forSelected: true)
+                    return
+                }
             }
         }
         
@@ -352,12 +352,12 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
     }
     
     func numberOfSections(dropDownUIViewIdentifier: String) -> Int {
-         // We add an extra section for the "Clear Filter" text at the end
+        // We add an extra section for the "Clear Filter" text at the end
         return dogManager.dogs.count + 1
     }
     
     func selectItemInDropDown(indexPath: IndexPath, dropDownUIViewIdentifier: String) {
-        guard let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as? DropDownLogFilterTableViewCell else {
+        guard let dropDownTableView = dropDown.dropDownTableView, let selectedCell = dropDownTableView.cellForRow(at: indexPath) as? DropDownLogFilterTableViewCell else {
             return
         }
         // flip isSelectedInDropDown status
@@ -366,16 +366,16 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
         logsTableViewController.logsFilter = logsFilter
         
         // dog log filter was selected
-        if selectedCell.dogId != nil && selectedCell.logAction != nil {
+        if let dogId = selectedCell.dogId, let logAction = selectedCell.logAction {
             // find any preexisting logActions that we are filtering by
-            var existingLogActionFilters: [LogAction] = logsFilter[selectedCell.dogId!] ?? []
+            var existingLogActionFilters: [LogAction] = logsFilter[dogId] ?? []
             
             // the cell is now selected, add logAction to logsFilter array
             if selectedCell.isSelectedInDropDown {
                 // add additional logAction to filter by
-                existingLogActionFilters.append(selectedCell.logAction!)
+                existingLogActionFilters.append(logAction)
                 // assign array to dogId
-                logsFilter[selectedCell.dogId!] = existingLogActionFilters
+                logsFilter[dogId] = existingLogActionFilters
                 
                 // Check to see if we just added the first logAction filter for a certain dog
                 if existingLogActionFilters.count == 1 {
@@ -388,7 +388,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
             // cell is now unselected, remove logAction from logsFilter array
             else {
                 // find index of logAction to remove from logsFilter array
-                let indexToRemove = existingLogActionFilters.firstIndex(of: selectedCell.logAction!)
+                let indexToRemove = existingLogActionFilters.firstIndex(of: logAction)
                 
                 guard let indexToRemove = indexToRemove else {
                     return
@@ -396,12 +396,12 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
                 // remove logAction from logsFilter array
                 existingLogActionFilters.remove(at: indexToRemove)
                 // assign array to dogId
-                logsFilter[selectedCell.dogId!] = existingLogActionFilters
+                logsFilter[dogId] = existingLogActionFilters
                 
                 // check to see if we removed the the last logAction.
                 if existingLogActionFilters.count == 0 {
                     // We removed the last logAction for a dog. Remove the logsFilter key and unselect the dog
-                    logsFilter[selectedCell.dogId!] = nil
+                    logsFilter[dogId] = nil
                     if let dogCell = dropDown.dropDownTableView?.cellForRow(at: IndexPath(row: 0, section: indexPath.section)) as? DropDownLogFilterTableViewCell {
                         dogCell.willToggleDropDownSelection(forSelected: false)
                     }
@@ -419,7 +419,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
             if selectedCell.isSelectedInDropDown {
                 // make array of logActions to filter by
                 // assign array to dogId, so logsFilter array is updated
-                logsFilter[selectedCell.dogId!] = dog.dogLogs.uniqueLogActions
+                logsFilter[dogId] = dog.dogLogs.uniqueLogActions
                 
                 // now select all the logAction cells (we have 1 dogCell and x logAction rows, so subtract 1 to correct the count)
                 let numberOfLogActionRows = numberOfRows(forSection: indexPath.section, dropDownUIViewIdentifier: "") - 1
@@ -433,7 +433,7 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
             // the dog filter is now unselected, make sure every logAction under it is also unselcted
             else {
                 // clear logsFilter array
-                logsFilter[selectedCell.dogId!] = nil
+                logsFilter[dogId] = nil
                 
                 // deselect all the logAction cells (we have 1 dogCell and x logAction rows, so subtract 1 to correct the count)
                 let numberOfLogActionRows = numberOfRows(forSection: indexPath.section, dropDownUIViewIdentifier: "") - 1
@@ -466,9 +466,9 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
             dropDown.hideDropDown()
         }
     }
-
+    
     // MARK: - Navigation
-
+    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let logsTableViewController = segue.destination as? LogsTableViewController {
@@ -478,12 +478,12 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
         }
         else if let logsAddLogViewController = segue.destination as? LogsAddLogViewController {
             self.logsAddLogViewController = logsAddLogViewController
-
+            
             logsAddLogViewController.parentDogIdToUpdate = parentDogIdOfSelectedLog
             logsAddLogViewController.logToUpdate = selectedLog
             logsAddLogViewController.dogManager = dogManager
             logsAddLogViewController.delegate = self
         }
     }
-
+    
 }

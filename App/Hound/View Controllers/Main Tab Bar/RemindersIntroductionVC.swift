@@ -13,9 +13,9 @@ protocol RemindersIntroductionViewControllerDelegate: AnyObject {
 }
 
 final class RemindersIntroductionViewController: UIViewController {
-
+    
     // MARK: - IB
-
+    
     @IBOutlet private weak var remindersTitle: ScaledUILabel!
     
     @IBOutlet private weak var remindersTitleDescription: ScaledUILabel!
@@ -62,7 +62,7 @@ final class RemindersIntroductionViewController: UIViewController {
                 guard let reminders = reminders else {
                     return
                 }
-
+                
                 // if we were able to add the reminders, then append to the dogManager
                 self.dogManager.dogs[0].dogReminders.addReminders(forReminders: reminders)
                 self.delegate.didComplete(sender: Sender(origin: self, localized: self), forDogManager: self.dogManager)
@@ -71,17 +71,17 @@ final class RemindersIntroductionViewController: UIViewController {
             }
             
         }
-            
+        
     }
     
     // MARK: - Properties
-
+    
     weak var delegate: RemindersIntroductionViewControllerDelegate! = nil
     
     var dogManager: DogManager!
-
+    
     // MARK: - Main
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -104,5 +104,5 @@ final class RemindersIntroductionViewController: UIViewController {
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
     }
-
+    
 }

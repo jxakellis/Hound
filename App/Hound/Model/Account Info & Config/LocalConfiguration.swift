@@ -15,11 +15,7 @@ enum LocalConfiguration {
     // MARK: Sync Related
     
     // For our first every dogManager sync, we want to retrieve ever dog, reminder, and log (which can be a LOT of data as accounts accumlate logs over the years). To get everything the family has ever added, we set our last sync as far back in time as it will go. This will retrieve everything
-    static var lastDogManagerSynchronization: Date = LocalConfiguration.defaultLastDogManagerSynchronization
-    
-    static var defaultLastDogManagerSynchronization: Date {
-        return Date(timeIntervalSince1970: 1234567890)
-    }
+    static var lastDogManagerSynchronization: Date = ClassConstant.DateConstant.default1970Date
     
     // MARK: Dog Related
     
@@ -156,7 +152,7 @@ extension LocalConfiguration {
         LocalConfiguration.hasLoadedSettingsFamilyIntroductionViewControllerBefore = false
         UserDefaults.standard.setValue(LocalConfiguration.hasLoadedSettingsFamilyIntroductionViewControllerBefore, forKey: UserDefaultsKeys.hasLoadedSettingsFamilyIntroductionViewControllerBefore.rawValue)
         
-        LocalConfiguration.lastDogManagerSynchronization = LocalConfiguration.defaultLastDogManagerSynchronization
+        LocalConfiguration.lastDogManagerSynchronization = ClassConstant.DateConstant.default1970Date
         UserDefaults.standard.set(LocalConfiguration.lastDogManagerSynchronization, forKey: ServerDefaultKeys.lastDogManagerSynchronization.rawValue)
         
         LocalConfiguration.dogIcons = []

@@ -87,7 +87,7 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
     
     func selectItemInDropDown(indexPath: IndexPath, dropDownUIViewIdentifier: String) {
         
-        if let selectedCell = dropDown.dropDownTableView!.cellForRow(at: indexPath) as? DropDownTableViewCell {
+        if let dropDownTableView = dropDown.dropDownTableView, let selectedCell = dropDownTableView.cellForRow(at: indexPath) as? DropDownTableViewCell {
             selectedCell.willToggleDropDownSelection(forSelected: true)
         }
         selectedIndexPath = indexPath
@@ -223,8 +223,8 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
         /// Sets up the values of different variables that is found out from information passed
         func setupValues() {
             
-            if let targetReminder = targetReminder {
-                selectedIndexPath = IndexPath(row: ReminderAction.allCases.firstIndex(of: targetReminder.reminderAction)!, section: 0)
+            if let targetReminder = targetReminder, let reminderActionIndex = ReminderAction.allCases.firstIndex(of: targetReminder.reminderAction) {
+                selectedIndexPath = IndexPath(row: reminderActionIndex, section: 0)
                 // this is for the label for the reminderAction dropdown, so we only want the names to be the defaults. I.e. if our reminder is "Custom" with "someCustomActionName", the reminderActionLabel should only show "Custom" and then the logCustomActionNameTextField should be "someCustomActionName".
                 reminderActionLabel.text = targetReminder.reminderAction.displayActionName(reminderCustomActionName: nil, isShowingAbreviatedCustomActionName: false)
             }
@@ -272,30 +272,26 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
             weeklyContainerView.isHidden = true
             monthlyContainerView.isHidden = true
             
-            // creating new
-            if targetReminder == nil {
-                reminderTypeSegmentedControl.selectedSegmentIndex = 1
-                countdownContainerView.isHidden = false
-            }
             // editing current
-            else {
-                if targetReminder!.reminderType == .oneTime {
+            if let targetReminder = targetReminder {
+                switch targetReminder.reminderType {
+                case .oneTime:
                     reminderTypeSegmentedControl.selectedSegmentIndex = 0
                     onceContainerView.isHidden = false
-                }
-                // Segmented control setup
-                else if targetReminder!.reminderType == .countdown {
+                case .countdown:
                     reminderTypeSegmentedControl.selectedSegmentIndex = 1
                     countdownContainerView.isHidden = false
-                }
-                else if targetReminder!.reminderType == .weekly {
+                case .weekly:
                     reminderTypeSegmentedControl.selectedSegmentIndex = 2
                     weeklyContainerView.isHidden = false
-                }
-                else {
+                case .monthly:
                     reminderTypeSegmentedControl.selectedSegmentIndex = 3
                     monthlyContainerView.isHidden = false
                 }
+            }
+            else {
+                reminderTypeSegmentedControl.selectedSegmentIndex = 1
+                countdownContainerView.isHidden = false
             }
             
             // assign value to inital parameter
@@ -323,7 +319,7 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
     func applyReminderSettings() -> Reminder? {
         do {
             guard let selectedReminderAction = selectedReminderAction else {
-               throw ReminderError.reminderActionBlank
+                throw ReminderError.reminderActionBlank
             }
             
             guard let reminder: Reminder = targetReminder != nil ? targetReminder?.copy() as? Reminder : Reminder() else {
@@ -354,7 +350,7 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
                 guard let weekdays = weekdays else {
                     throw WeeklyComponentsError.weekdayArrayInvalid
                 }
-
+                
                 reminder.reminderType = .weekly
                 
                 try reminder.weeklyComponents.changeWeekdays(forWeekdays: weekdays)
@@ -376,30 +372,30 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
             
             // Updating an existing reminder
             
-                // Checks for differences in time of day, execution interval, weekdays, or time of month. If one is detected then we reset the reminder's whole timing to default
-                // If you were 5 minutes in to a 1 hour countdown but then change it to 30 minutes, you would want to be 0 minutes into the new timer and not 5 minutes in like previously.
-                
-                switch reminder.reminderType {
-                case .oneTime:
-                    // execution date changed
-                    if reminder.oneTimeComponents.oneTimeDate != targetReminder.oneTimeComponents.oneTimeDate {
-                        reminder.prepareForNextAlarm()
-                    }
-                case .countdown:
-                    // execution interval changed
-                    if reminder.countdownComponents.executionInterval != targetReminder.countdownComponents.executionInterval {
-                        reminder.prepareForNextAlarm()
-                    }
-                case .weekly:
-                    // time of day or weekdays changed
-                    if reminder.weeklyComponents.weekdays != targetReminder.weeklyComponents.weekdays || reminder.weeklyComponents.hour != targetReminder.weeklyComponents.hour || reminder.weeklyComponents.minute != targetReminder.weeklyComponents.minute {
-                        reminder.prepareForNextAlarm()
-                    }
-                case .monthly:
-                    // time of day or day of month changed
-                    if reminder.monthlyComponents.day != targetReminder.monthlyComponents.day || reminder.monthlyComponents.hour != targetReminder.monthlyComponents.hour || reminder.monthlyComponents.minute != targetReminder.monthlyComponents.minute {
-                        reminder.prepareForNextAlarm()
-                    }
+            // Checks for differences in time of day, execution interval, weekdays, or time of month. If one is detected then we reset the reminder's whole timing to default
+            // If you were 5 minutes in to a 1 hour countdown but then change it to 30 minutes, you would want to be 0 minutes into the new timer and not 5 minutes in like previously.
+            
+            switch reminder.reminderType {
+            case .oneTime:
+                // execution date changed
+                if reminder.oneTimeComponents.oneTimeDate != targetReminder.oneTimeComponents.oneTimeDate {
+                    reminder.prepareForNextAlarm()
+                }
+            case .countdown:
+                // execution interval changed
+                if reminder.countdownComponents.executionInterval != targetReminder.countdownComponents.executionInterval {
+                    reminder.prepareForNextAlarm()
+                }
+            case .weekly:
+                // time of day or weekdays changed
+                if reminder.weeklyComponents.weekdays != targetReminder.weeklyComponents.weekdays || reminder.weeklyComponents.hour != targetReminder.weeklyComponents.hour || reminder.weeklyComponents.minute != targetReminder.weeklyComponents.minute {
+                    reminder.prepareForNextAlarm()
+                }
+            case .monthly:
+                // time of day or day of month changed
+                if reminder.monthlyComponents.day != targetReminder.monthlyComponents.day || reminder.monthlyComponents.hour != targetReminder.monthlyComponents.hour || reminder.monthlyComponents.minute != targetReminder.monthlyComponents.minute {
+                    reminder.prepareForNextAlarm()
+                }
             }
             
             return reminder
@@ -471,14 +467,14 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
             guard let targetReminder = targetReminder, targetReminder.reminderType == .weekly else {
                 return
             }
-                dogsReminderWeeklyViewController.passedTimeOfDay = targetReminder.weeklyComponents.notSkippingExecutionDate(forReminderExecutionBasis: targetReminder.reminderExecutionBasis)
-                dogsReminderWeeklyViewController.passedWeekDays = targetReminder.weeklyComponents.weekdays
+            dogsReminderWeeklyViewController.passedTimeOfDay = targetReminder.weeklyComponents.notSkippingExecutionDate(forReminderExecutionBasis: targetReminder.reminderExecutionBasis)
+            dogsReminderWeeklyViewController.passedWeekDays = targetReminder.weeklyComponents.weekdays
             
         }
         else if let dogsReminderMonthlyViewController = segue.destination as? DogsReminderMonthlyViewController {
             self.dogsReminderMonthlyViewController = dogsReminderMonthlyViewController
             dogsReminderMonthlyViewController.delegate = self
-           
+            
             guard let targetReminder = targetReminder, targetReminder.reminderType == .monthly else {
                 return
             }

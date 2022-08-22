@@ -81,7 +81,7 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
             if lowestReminderId < 0 {
                 forReminder.reminderId = lowestReminderId - 1
             }
-           
+            
         }
         
         reminders.append(forReminder)

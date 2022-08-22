@@ -17,7 +17,6 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         copy.weekdays = self.weekdays
         copy.hour = self.hour
         copy.minute = self.minute
-        copy.isSkipping = self.isSkipping
         copy.isSkippingDate = self.isSkippingDate
         
         return copy
@@ -29,7 +28,6 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         weekdays = aDecoder.decodeObject(forKey: "weekdays") as? [Int] ?? weekdays
         hour = aDecoder.decodeInteger(forKey: "hour")
         minute = aDecoder.decodeInteger(forKey: "minute")
-        isSkipping = aDecoder.decodeBool(forKey: "isSkipping")
         isSkippingDate = aDecoder.decodeObject(forKey: "isSkippingDate") as? Date
         
     }
@@ -38,7 +36,6 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         aCoder.encode(weekdays, forKey: "weekdays")
         aCoder.encode(hour, forKey: "hour")
         aCoder.encode(minute, forKey: "minute")
-        aCoder.encode(isSkipping, forKey: "isSkipping")
         aCoder.encode(isSkippingDate, forKey: "isSkippingDate")
         
     }
@@ -49,11 +46,10 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         super.init()
     }
     
-    convenience init(hour: Int?, minute: Int?, isSkipping: Bool?, isSkippingDate: Date?, sunday: Bool?, monday: Bool?, tuesday: Bool?, wednesday: Bool?, thursday: Bool?, friday: Bool?, saturday: Bool?) {
+    convenience init(hour: Int?, minute: Int?, isSkippingDate: Date?, sunday: Bool?, monday: Bool?, tuesday: Bool?, wednesday: Bool?, thursday: Bool?, friday: Bool?, saturday: Bool?) {
         self.init()
         self.hour = hour ?? self.hour
         self.minute = minute ?? self.minute
-        self.isSkipping = isSkipping ?? self.isSkipping
         self.isSkippingDate = isSkippingDate
         
         var weekdays: [Int] = []
@@ -123,7 +119,9 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     }
     
     /// Whether or not the next alarm will be skipped
-    var isSkipping: Bool = false
+    var isSkipping: Bool {
+        return isSkippingDate != nil
+    }
     
     /// The date at which the user changed the isSkipping to true.  If is skipping is true, then a certain log date was appended. If unskipped, then we have to remove that previously added log. Slight caveat: if the skip log was modified (by the user changing its date) we don't remove it.
     var isSkippingDate: Date?
@@ -136,7 +134,7 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         let calculatedDates = futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis)
         
         // want to start with the date furthest away in time
-        var soonestCalculatedDate: Date = calculatedDates.last!
+        var soonestCalculatedDate: Date = calculatedDates.last ?? ClassConstant.DateConstant.default1970Date
         
         // iterate through all of the future execution dates to find the one that after the execution basis but is also closet to the execution basis
         for calculatedDate in calculatedDates {
@@ -160,12 +158,12 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
             
             // Subtracts a week from all futureExecutionDates
             for futureExecutionDateIndex in 0..<preceedingExecutionDates.count {
-                let preceedingExecutionDate: Date = Calendar.current.date(byAdding: .day, value: -7, to: preceedingExecutionDates[futureExecutionDateIndex])!
+                let preceedingExecutionDate: Date = Calendar.current.date(byAdding: .day, value: -7, to: preceedingExecutionDates[futureExecutionDateIndex]) ?? ClassConstant.DateConstant.default1970Date
                 preceedingExecutionDates[futureExecutionDateIndex] = preceedingExecutionDate
             }
             
             // choose most extreme
-            var closestCalculatedDate: Date = preceedingExecutionDates.first!
+            var closestCalculatedDate: Date = preceedingExecutionDates.first ?? ClassConstant.DateConstant.default1970Date
             
             // Looks for a date that is both before the nextTimeOfDay but closet in time to
             for preceedingExecutionDate in preceedingExecutionDates {
@@ -180,7 +178,7 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         }
         // only 1 day of week so all you have to do is subtract a week
         else {
-            return Calendar.current.date(byAdding: .day, value: -7, to: traditionalNextTOD)!
+            return Calendar.current.date(byAdding: .day, value: -7, to: traditionalNextTOD) ?? ClassConstant.DateConstant.default1970Date
         }
         
     }
@@ -208,13 +206,13 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
             // set calculated date to the last time the reminder went off
             var calculatedDate = reminderExecutionBasis
             // iterate the calculated day forward until it is the correct weekday
-            calculatedDate = Calendar.current.date(bySetting: .weekday, value: weekday, of: calculatedDate)!
+            calculatedDate = Calendar.current.date(bySetting: .weekday, value: weekday, of: calculatedDate) ?? ClassConstant.DateConstant.default1970Date
             // iterate the time of day forward until the first result is found
-            calculatedDate = Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)!
+            calculatedDate = Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward) ?? ClassConstant.DateConstant.default1970Date
             
             // Correction for setting components to the same day. e.g. if its 11:00Am friday and you apply 8:30AM Friday to the current date, then it is in the past, this gets around this by making it 8:30AM Next Friday
             if reminderExecutionBasis.distance(to: calculatedDate) < 0 {
-                calculatedDate = Calendar.current.date(byAdding: .day, value: 7, to: calculatedDate)!
+                calculatedDate = Calendar.current.date(byAdding: .day, value: 7, to: calculatedDate) ?? ClassConstant.DateConstant.default1970Date
             }
             
             calculatedDates.append(calculatedDate)
@@ -226,13 +224,13 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         // should have at least two dates
         else if calculatedDates.count == 1 {
             // in this situation, only one weekday is active, we take the execution date for that single weekday and add a duplicate, but a week in the future
-            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 7, to: calculatedDates[0])!)
+            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 7, to: calculatedDates[0]) ?? ClassConstant.DateConstant.default1970Date)
         }
         else {
             AppDelegate.generalLogger.warning("Calculated Dates For futureExecutionDates Empty")
             // calculated dates should never be zero, this means there are somehow zero weekdays selected. Handle this weird case by just appending future dates (one 1 week ahead and the other 2 weeks ahead)
-            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 7, to: reminderExecutionBasis)!)
-            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 14, to: reminderExecutionBasis)!)
+            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 7, to: reminderExecutionBasis) ?? ClassConstant.DateConstant.default1970Date)
+            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 14, to: reminderExecutionBasis) ?? ClassConstant.DateConstant.default1970Date)
         }
         
         return calculatedDates
@@ -246,7 +244,7 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         // If there are multiple dates to be sorted through to find the date that is closer in time to traditionalNextTimeOfDay but still in the future
         if weekdays.count > 1 {
             let calculatedDates = futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis)
-            var nextSoonestCalculatedDate: Date = calculatedDates.last!
+            var nextSoonestCalculatedDate: Date = calculatedDates.last ?? ClassConstant.DateConstant.default1970Date
             
             for calculatedDate in calculatedDates {
                 // If the calculated date is greater in time (future) that the normal non skipping time and the calculatedDate is closer in time to the trad date, then sets nextSoonest to calculatedDate
@@ -259,7 +257,7 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         }
         // If only 1 day of week selected then all you have to do is add 1 week.
         else {
-            return Calendar.current.date(byAdding: .day, value: 7, to: traditionalNextTOD)!
+            return Calendar.current.date(byAdding: .day, value: 7, to: traditionalNextTOD) ?? ClassConstant.DateConstant.default1970Date
         }
         
     }

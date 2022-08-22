@@ -51,10 +51,10 @@ final class DogManager: NSObject, NSCopying, NSCoding {
         // Array of dog JSON [{dog1:'foo'},{dog2:'bar'}]
         for dogBody in dogBodies {
             let dog = Dog(fromBody: dogBody)
-                // If we have an image stored locally for a dog, then we apply the icon.
-                // If the dog has no icon (because someone else in the family made it and the user hasn't selected their own icon OR because the user made it and never added an icon) then the dog just gets the defaultDogIcon
-                dog.dogIcon = LocalDogIcon.getIcon(forDogId: dog.dogId) ?? ClassConstant.DogConstant.defaultDogIcon
-                dogArray.append(dog)
+            // If we have an image stored locally for a dog, then we apply the icon.
+            // If the dog has no icon (because someone else in the family made it and the user hasn't selected their own icon OR because the user made it and never added an icon) then the dog just gets the defaultDogIcon
+            dog.dogIcon = LocalDogIcon.getIcon(forDogId: dog.dogId) ?? ClassConstant.DogConstant.defaultDogIcon
+            dogArray.append(dog)
         }
         
         self.init(forDogs: dogArray)
@@ -232,7 +232,7 @@ extension DogManager {
                     }
                     
                     // the filter had the dogId stored, specifiying this dog, and had the logAction stored, specifying all logs of this logAction type. This means we can append the log
-                    guard logsFilter[dog.dogId]!.contains(log.logAction) else {
+                    guard let logsFilter = logsFilter[dog.dogId], logsFilter.contains(log.logAction) else {
                         continue
                     }
                     
@@ -329,20 +329,20 @@ extension DogManager {
         }
         
         /*
-        let groupedLogsByUniqueDateSorted = Date()
-        
-        let dogIdLogsTuplesCompiledMSElapsed = (startDate.distance(to: dogIdLogsTuplesCompiled) * 1000)
-        let dogIdLogsTuplesSortedMSElapsed = dogIdLogsTuplesCompiled.distance(to: dogIdLogsTuplesSorted) * 1000
-        let groupedLogsByUniqueDateCompiledMSElapsed = dogIdLogsTuplesSorted.distance(to: groupedLogsByUniqueDateCompiled) * 1000
-        let groupedLogsByUniqueDateSortedMSElapsed = groupedLogsByUniqueDateCompiled.distance(to: groupedLogsByUniqueDateSorted) * 1000
-        let totalMSElapsed = startDate.distance(to: groupedLogsByUniqueDateSorted) * 1000
-        
-        var debugString = "\ngroupedLogsByUniqueDate with \(dogIdLogsTuples.count) dogIdLogsTuples \n"
-        debugString.append("\(dogIdLogsTuplesCompiledMSElapsed)\n")
-        debugString.append("\(dogIdLogsTuplesSortedMSElapsed)\n")
-        debugString.append("\(groupedLogsByUniqueDateCompiledMSElapsed)\n")
-        debugString.append("\(groupedLogsByUniqueDateSortedMSElapsed) \n")
-        debugString.append("\(totalMSElapsed)\n")
+         let groupedLogsByUniqueDateSorted = Date()
+         
+         let dogIdLogsTuplesCompiledMSElapsed = (startDate.distance(to: dogIdLogsTuplesCompiled) * 1000)
+         let dogIdLogsTuplesSortedMSElapsed = dogIdLogsTuplesCompiled.distance(to: dogIdLogsTuplesSorted) * 1000
+         let groupedLogsByUniqueDateCompiledMSElapsed = dogIdLogsTuplesSorted.distance(to: groupedLogsByUniqueDateCompiled) * 1000
+         let groupedLogsByUniqueDateSortedMSElapsed = groupedLogsByUniqueDateCompiled.distance(to: groupedLogsByUniqueDateSorted) * 1000
+         let totalMSElapsed = startDate.distance(to: groupedLogsByUniqueDateSorted) * 1000
+         
+         var debugString = "\ngroupedLogsByUniqueDate with \(dogIdLogsTuples.count) dogIdLogsTuples \n"
+         debugString.append("\(dogIdLogsTuplesCompiledMSElapsed)\n")
+         debugString.append("\(dogIdLogsTuplesSortedMSElapsed)\n")
+         debugString.append("\(groupedLogsByUniqueDateCompiledMSElapsed)\n")
+         debugString.append("\(groupedLogsByUniqueDateSortedMSElapsed) \n")
+         debugString.append("\(totalMSElapsed)\n")
          */
         
         return groupedLogsByUniqueDate

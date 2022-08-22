@@ -23,7 +23,7 @@ enum RequestUtils {
         case .apple:
             AlertManager.shared.contactingServerAlertController.title = "Contacting Apple's Server..."
         }
-
+        
         AlertManager.enqueueAlertForPresentation(AlertManager.shared.contactingServerAlertController)
     }
     

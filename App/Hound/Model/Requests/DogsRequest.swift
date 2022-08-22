@@ -9,7 +9,7 @@
 import Foundation
 
 enum DogsRequest: RequestProtocol {
-
+    
     static var baseURLWithoutParams: URL { return FamilyRequest.baseURLWithFamilyId.appendingPathComponent("/dogs") }
     
     // MARK: - Private Functions
@@ -19,15 +19,18 @@ enum DogsRequest: RequestProtocol {
      */
     private static func internalGet(invokeErrorManager: Bool, forDogId dogId: Int?, completionHandler: @escaping ([String: Any]?, ResponseStatus) -> Void) -> Progress? {
         
-        let URLWithParams: URL
-        var urlComponents: URLComponents!
+        var urlComponents: URLComponents = {
+            if let dogId = dogId, let component = URLComponents(url: baseURLWithoutParams.appendingPathComponent("/\(dogId)"), resolvingAgainstBaseURL: false) {
+                return component
+            }
+            else if let component = URLComponents(url: baseURLWithoutParams.appendingPathComponent(""), resolvingAgainstBaseURL: false) {
+                return component
+            }
+            else {
+                return URLComponents()
+            }
+        }()
         // special case where we append the query parameter of all. Its value doesn't matter but it just tells the server that we want the logs and reminders of the dog too.
-        if let dogId = dogId {
-            urlComponents = URLComponents(url: baseURLWithoutParams.appendingPathComponent("/\(dogId)"), resolvingAgainstBaseURL: false)!
-        }
-        else {
-            urlComponents = URLComponents(url: baseURLWithoutParams.appendingPathComponent(""), resolvingAgainstBaseURL: false)!
-        }
         
         // if we are querying about a dog, we always want its reminders and logs
         urlComponents.queryItems = [
@@ -36,7 +39,10 @@ enum DogsRequest: RequestProtocol {
             URLQueryItem(name: "lastDogManagerSynchronization", value: LocalConfiguration.lastDogManagerSynchronization.ISO8601FormatWithFractionalSeconds())
         ]
         
-        URLWithParams = urlComponents.url!
+        guard let URLWithParams = urlComponents.url else {
+            completionHandler(nil, .noResponse)
+            return nil
+        }
         
         // make get request
         return InternalRequestUtils.genericGetRequest(invokeErrorManager: invokeErrorManager, forURL: URLWithParams) { responseBody, responseStatus in

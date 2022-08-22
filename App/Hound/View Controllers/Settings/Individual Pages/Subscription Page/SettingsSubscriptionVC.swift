@@ -76,7 +76,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     var subscriptionProducts: [SKProduct] = []
     
     // MARK: - Main
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -175,7 +175,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
         else {
             // index path 0 is the first row and that is the default subscription
             cell.setup(forProduct: subscriptionProducts[indexPath.row - 1])
-
+            
         }
         
         return cell
@@ -222,7 +222,10 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
             // If the cell has no SKProduct, that means it's the default subscription cell
             guard let product = cell.product else {
                 guard let windowScene = UIApplication.windowScene else {
-                    UIApplication.shared.open(URL(string: "https://apps.apple.com/account/subscriptions")!)
+                    guard let url = URL(string: "https://apps.apple.com/account/subscriptions") else {
+                        return
+                    }
+                    UIApplication.shared.open(url)
                     return
                 }
                 
@@ -231,7 +234,10 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
                         try await AppStore.showManageSubscriptions(in: windowScene)
                     }
                     catch {
-                        await UIApplication.shared.open(URL(string: "https://apps.apple.com/account/subscriptions")!)
+                        guard let url = URL(string: "https://apps.apple.com/account/subscriptions") else {
+                            return
+                        }
+                        await UIApplication.shared.open(url)
                     }
                 }
                 return
@@ -252,5 +258,5 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
             }
         }
     }
-
+    
 }

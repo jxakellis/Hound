@@ -52,12 +52,12 @@ final class Dog: NSObject, NSCoding, NSCopying {
         dogId: Int = ClassConstant.DogConstant.defaultDogId,
         dogName: String? = ClassConstant.DogConstant.defaultDogName,
         dogIcon: UIImage = ClassConstant.DogConstant.defaultDogIcon) throws {
-        self.init()
-        
-        self.dogId = dogId
-        try changeDogName(forDogName: dogName)
-        self.dogIcon = dogIcon
-    }
+            self.init()
+            
+            self.dogId = dogId
+            try changeDogName(forDogName: dogName)
+            self.dogIcon = dogIcon
+        }
     
     /// Assume array of dog properties
     convenience init(fromBody body: [String: Any]) {
@@ -110,7 +110,7 @@ final class Dog: NSObject, NSCoding, NSCopying {
         guard let forDogName = forDogName else {
             throw DogError.dogNameNil
         }
-
+        
         guard forDogName.trimmingCharacters(in: .whitespacesAndNewlines) != "" else {
             throw DogError.dogNameBlank
         }
@@ -118,7 +118,7 @@ final class Dog: NSObject, NSCoding, NSCopying {
         guard forDogName.count <= ClassConstant.DogConstant.dogNameCharacterLimit else {
             throw DogError.dogNameCharacterLimitExceeded
         }
-                
+        
         dogName = forDogName
     }
     

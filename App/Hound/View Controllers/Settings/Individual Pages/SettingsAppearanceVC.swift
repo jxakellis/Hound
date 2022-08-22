@@ -11,31 +11,31 @@ import UIKit
 final class SettingsAppearanceViewController: UIViewController, UIGestureRecognizerDelegate, UIPickerViewDataSource, UIPickerViewDelegate {
     
     // MARK: - UIGestureRecognizerDelegate
-
+    
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
-
+    
     // MARK: - Main
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Dark Mode
         interfaceStyleSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 15), .foregroundColor: UIColor.white], for: .normal)
         interfaceStyleSegmentedControl.backgroundColor = .systemGray4
-
+        
         // Logs Interface Scale
         logsInterfaceScaleSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 15), .foregroundColor: UIColor.white], for: .normal)
         logsInterfaceScaleSegmentedControl.backgroundColor = .systemGray4
-
-        logsInterfaceScaleSegmentedControl.selectedSegmentIndex = LogsInterfaceScale.allCases.firstIndex(of: UserConfiguration.logsInterfaceScale)!
+        
+        logsInterfaceScaleSegmentedControl.selectedSegmentIndex = LogsInterfaceScale.allCases.firstIndex(of: UserConfiguration.logsInterfaceScale) ?? logsInterfaceScaleSegmentedControl.selectedSegmentIndex
         
         // Reminders Interface Scale
         remindersInterfaceScaleSegmentedControl.setTitleTextAttributes([.font: UIFont.boldSystemFont(ofSize: 15), .foregroundColor: UIColor.white], for: .normal)
         remindersInterfaceScaleSegmentedControl.backgroundColor = .systemGray4
         
-        remindersInterfaceScaleSegmentedControl.selectedSegmentIndex = RemindersInterfaceScale.allCases.firstIndex(of: UserConfiguration.remindersInterfaceScale)!
+        remindersInterfaceScaleSegmentedControl.selectedSegmentIndex = RemindersInterfaceScale.allCases.firstIndex(of: UserConfiguration.remindersInterfaceScale) ?? remindersInterfaceScaleSegmentedControl.selectedSegmentIndex
         
         // Maximum Number Of Displayed Logs
         maximumNumberOfLogsDisplayedPickerView.delegate = self
@@ -48,10 +48,10 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
                 animated: false)
         }
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        
         // DARK MODE
         switch UserConfiguration.interfaceStyle.rawValue {
             // system/unspecified
@@ -72,27 +72,27 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
     }
-
+    
     // MARK: - Individual Settings
-
+    
     // MARK: Interface Style
-
+    
     @IBOutlet private weak var interfaceStyleSegmentedControl: UISegmentedControl!
-
+    
     @IBAction private func didUpdateInterfaceStyle(_ sender: Any) {
         if let sender = sender as? UISegmentedControl {
             sender.updateInterfaceStyle()
         }
     }
-
+    
     // MARK: Logs Interface Scale
-
+    
     @IBOutlet private weak var logsInterfaceScaleSegmentedControl: UISegmentedControl!
-
+    
     @IBAction private func didUpdateLogsInterfaceScale(_ sender: Any) {
-
+        
         let beforeUpdateLogsInterfaceScale = UserConfiguration.logsInterfaceScale
-
+        
         // selected segement index is in the same order as all cases
         UserConfiguration.logsInterfaceScale = LogsInterfaceScale.allCases[logsInterfaceScaleSegmentedControl.selectedSegmentIndex]
         
@@ -100,8 +100,8 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
         UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // error, revert to previous
-               UserConfiguration.logsInterfaceScale = beforeUpdateLogsInterfaceScale
-                self.logsInterfaceScaleSegmentedControl.selectedSegmentIndex = LogsInterfaceScale.allCases.firstIndex(of: UserConfiguration.logsInterfaceScale)!
+                UserConfiguration.logsInterfaceScale = beforeUpdateLogsInterfaceScale
+                self.logsInterfaceScaleSegmentedControl.selectedSegmentIndex = LogsInterfaceScale.allCases.firstIndex(of: UserConfiguration.logsInterfaceScale) ?? self.logsInterfaceScaleSegmentedControl.selectedSegmentIndex
             }
         }
     }
@@ -122,7 +122,7 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
             if requestWasSuccessful == false {
                 // error, revert to previous
                 UserConfiguration.remindersInterfaceScale = beforeUpdateRemindersInterfaceScale
-                self.remindersInterfaceScaleSegmentedControl.selectedSegmentIndex = RemindersInterfaceScale.allCases.firstIndex(of: UserConfiguration.remindersInterfaceScale)!
+                self.remindersInterfaceScaleSegmentedControl.selectedSegmentIndex = RemindersInterfaceScale.allCases.firstIndex(of: UserConfiguration.remindersInterfaceScale) ?? self.remindersInterfaceScaleSegmentedControl.selectedSegmentIndex
             }
         }
     }
@@ -161,7 +161,7 @@ final class SettingsAppearanceViewController: UIViewController, UIGestureRecogni
                         inComponent: component,
                         animated: true)
                 }
-               
+                
                 return
             }
         }

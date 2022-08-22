@@ -14,32 +14,32 @@ protocol DogsNavigationViewControllerDelegate: AnyObject {
 }
 
 final class DogsNavigationViewController: UINavigationController, DogsViewControllerDelegate {
-
+    
     // MARK: - DogsViewControllerDelegate
-
+    
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager) {
         passThroughDelegate.didUpdateDogManager(sender: sender, forDogManager: forDogManager)
     }
-
+    
     // MARK: - Properties
-
+    
     weak var passThroughDelegate: DogsNavigationViewControllerDelegate! = nil
-
+    
     var dogsViewController: DogsViewController!
-
+    
     // MARK: - Main
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         dogsViewController = self.viewControllers[0] as? DogsViewController
         dogsViewController.delegate = self
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        
         passThroughDelegate.checkForRemindersIntroductionPage()
         
     }
-
+    
 }

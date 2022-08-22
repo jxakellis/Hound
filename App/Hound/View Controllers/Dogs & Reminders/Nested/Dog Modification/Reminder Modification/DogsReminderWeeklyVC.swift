@@ -13,13 +13,13 @@ protocol DogsReminderWeeklyViewControllerDelegate: AnyObject {
 }
 
 final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecognizerDelegate {
-
+    
     // MARK: - UIGestureRecognizerDelegate
-
+    
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
-
+    
     // MARK: - IB
     
     @IBOutlet private var interDayOfWeekConstraints: [NSLayoutConstraint]!
@@ -31,17 +31,17 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
     @IBOutlet private weak var thursdayButton: ScaledUIButton!
     @IBOutlet private weak var fridayButton: ScaledUIButton!
     @IBOutlet private weak var saturdayButton: ScaledUIButton!
-
+    
     @IBOutlet private var dayOfWeekBackgrounds: [ScaledUIButton]!
     
     @IBAction private func didToggleWeekdayButton(_ sender: Any) {
         delegate.willDismissKeyboard()
-
+        
         guard let senderButton = sender as? ScaledUIButton else {
             return
         }
         var targetColor: UIColor!
-
+        
         if senderButton.tag == VisualConstant.ViewTagConstant.weekdayEnabled {
             targetColor = UIColor.systemGray4
             senderButton.tag = VisualConstant.ViewTagConstant.weekdayDisabled
@@ -50,30 +50,30 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
             targetColor = UIColor.systemBlue
             senderButton.tag = VisualConstant.ViewTagConstant.weekdayEnabled
         }
-
+        
         senderButton.isUserInteractionEnabled = false
         UIView.animate(withDuration: VisualConstant.AnimationConstant.weekdayButton) {
             senderButton.tintColor = targetColor
         } completion: { (_) in
             senderButton.isUserInteractionEnabled = true
         }
-
+        
     }
-
+    
     @IBOutlet weak var timeOfDayDatePicker: UIDatePicker! // swiftlint:disable:this private_outlet
-
+    
     @IBAction private func didUpdateTimeOfDay(_ sender: Any) {
         delegate.willDismissKeyboard()
     }
-
+    
     // MARK: - Properties
-
+    
     weak var delegate: DogsReminderWeeklyViewControllerDelegate! = nil
-
+    
     var passedTimeOfDay: Date?
-
+    
     var passedWeekDays: [Int]? = [1, 2, 3, 4, 5, 6, 7]
-
+    
     var initalValuesChanged: Bool {
         if weekdays != passedWeekDays {
             return true
@@ -83,16 +83,16 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
         }
         return false
     }
-
+    
     // MARK: - Main
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setupWeekdays()
         
         timeOfDayDatePicker.minuteInterval = EnumConstant.DevelopmentConstant.reminderMinuteInterval
-
+        
         // keep duplicate as without it the user can see the .asyncafter visual scroll, but this duplicate stops a value changed not being called on first value change bug
         if let passedTimeOfDay = passedTimeOfDay {
             self.timeOfDayDatePicker.date = passedTimeOfDay
@@ -101,12 +101,12 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
             self.timeOfDayDatePicker.date = Date.roundDate(targetDate: Date(), roundingInterval: TimeInterval(60 * timeOfDayDatePicker.minuteInterval), roundingMethod: .up)
             passedTimeOfDay = timeOfDayDatePicker.date
         }
-
+        
         // fix bug with datePicker value changed not triggering on first go
         DispatchQueue.main.asyncAfter(deadline: .now()) {
             self.timeOfDayDatePicker.date = self.timeOfDayDatePicker.date
         }
-
+        
         dayOfWeekBackgrounds.forEach { background in
             self.view.insertSubview(background, belowSubview: saturdayButton)
             self.view.insertSubview(background, belowSubview: mondayButton)
@@ -117,7 +117,7 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
             self.view.insertSubview(background, belowSubview: sundayButton)
         }
     }
-
+    
     private func setupWeekdays() {
         disableAllWeekdays()
         enableSelectedWeekDays()
@@ -138,7 +138,7 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
             guard let passedWeekDays = passedWeekDays else {
                 return
             }
-
+            
             for dayOfWeek in passedWeekDays {
                 switch dayOfWeek {
                 case 1:
@@ -168,37 +168,37 @@ final class DogsReminderWeeklyViewController: UIViewController, UIGestureRecogni
             }
         }
     }
-
+    
     /// Converts enabled buttons to an array of day of weeks according to CalendarComponents.weekdays, 1 being sunday and 7 being saturday
     var weekdays: [Int]? {
-            var days: [Int] = []
-            let dayOfWeekButtons = [sundayButton, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton]
-
-            for dayOfWeekIndex in 0..<dayOfWeekButtons.count where dayOfWeekButtons[dayOfWeekIndex]?.tag == VisualConstant.ViewTagConstant.weekdayEnabled {
-                days.append(dayOfWeekIndex + 1)
-            }
-
-            if days.isEmpty == true {
-                return nil
-            }
-            else {
-                return days
-            }
-
+        var days: [Int] = []
+        let dayOfWeekButtons = [sundayButton, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton]
+        
+        for dayOfWeekIndex in 0..<dayOfWeekButtons.count where dayOfWeekButtons[dayOfWeekIndex]?.tag == VisualConstant.ViewTagConstant.weekdayEnabled {
+            days.append(dayOfWeekIndex + 1)
+        }
+        
+        if days.isEmpty == true {
+            return nil
+        }
+        else {
+            return days
+        }
+        
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        
         for constraint in interDayOfWeekConstraints {
             // the distance between week day buttons should be 8 points on a 414 point screen, so this adjusts that ratio to fit any width of screen
             constraint.constant = (8.0 / 414.0) * self.view.safeAreaLayoutGuide.layoutFrame.width
         }
-
+        
     }
-
+    
 }

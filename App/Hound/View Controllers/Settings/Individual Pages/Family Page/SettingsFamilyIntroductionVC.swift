@@ -93,5 +93,5 @@ class SettingsFamilyIntroductionViewController: UIViewController {
         
         upgradeFamilyWithSubscriptionLabel.attributedText = message
     }
-
+    
 }

@@ -13,9 +13,9 @@ protocol SettingsPersonalInformationViewControllerDelegate: AnyObject {
 }
 
 final class SettingsPersonalInformationViewController: UIViewController, UIGestureRecognizerDelegate, DogManagerControlFlowProtocol {
-
+    
     // MARK: - UIGestureRecognizerDelegate
-
+    
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
@@ -36,7 +36,7 @@ final class SettingsPersonalInformationViewController: UIViewController, UIGestu
         // store the date of our old sync if the request fails (as we will be overriding the typical way of doing it)
         let currentLastDogManagerSynchronization = LocalConfiguration.lastDogManagerSynchronization
         // manually set lastDogManagerSynchronization to default value so we will retrieve everything from the server
-        LocalConfiguration.lastDogManagerSynchronization = LocalConfiguration.defaultLastDogManagerSynchronization
+        LocalConfiguration.lastDogManagerSynchronization = ClassConstant.DateConstant.default1970Date
         
         _ = DogsRequest.get(invokeErrorManager: true, dogManager: DogManager()) { newDogManager, _ in
             RequestUtils.endRequestIndictator {
@@ -60,13 +60,13 @@ final class SettingsPersonalInformationViewController: UIViewController, UIGestu
     weak var delegate: SettingsPersonalInformationViewControllerDelegate!
     
     // MARK: - Main
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         oneTimeSetup()
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self

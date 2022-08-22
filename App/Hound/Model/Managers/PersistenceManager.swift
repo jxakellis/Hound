@@ -71,14 +71,14 @@ enum PersistenceManager {
                 // if nil, then decode failed or there was an issue. therefore, set the interval back to past so we can refetch from the server
                 AppDelegate.generalLogger.error("Failed to decode dogManager with unarchiver")
                 ServerSyncViewController.dogManager = DogManager()
-                LocalConfiguration.lastDogManagerSynchronization = LocalConfiguration.defaultLastDogManagerSynchronization
+                LocalConfiguration.lastDogManagerSynchronization = ClassConstant.DateConstant.default1970Date
             }
         }
         else {
             // if nil, then decode failed or there was an issue. therefore, set the interval back to past so we can refetch from the server
             AppDelegate.generalLogger.error("Failed to construct dataDogManager or construct unarchiver for dogManager")
             ServerSyncViewController.dogManager = DogManager()
-            LocalConfiguration.lastDogManagerSynchronization = LocalConfiguration.defaultLastDogManagerSynchronization
+            LocalConfiguration.lastDogManagerSynchronization = ClassConstant.DateConstant.default1970Date
         }
         
         LocalConfiguration.logCustomActionNames = UserDefaults.standard.value(forKey: UserDefaultsKeys.logCustomActionNames.rawValue) as? [String] ?? LocalConfiguration.logCustomActionNames
@@ -106,8 +106,8 @@ enum PersistenceManager {
         // For family Hound, always put the user on the logs of care page first. This is most likely the most pertinant information. There isn't much reason to visit the dogs/reminders page unless updating a dog/reminder (or logging a reminder early).
         MainTabBarViewController.selectedEntryIndex = 0
         // If the user hasn't completed the dogs and reminders introduction page, then we put them on the logs page (index 0). Otherwise, if they have configured their first dog and reminder, then they get put on the dogs page (index 1)
-       //  MainTabBarViewController.selectedEntryIndex = (LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore && LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore) ? 1 : 0
-    
+        //  MainTabBarViewController.selectedEntryIndex = (LocalConfiguration.hasLoadedHoundIntroductionViewControllerBefore && LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore) ? 1 : 0
+        
     }
     
     /// Called by App or Scene Delegate when entering the background, used to save information, can be called when terminating for a slightly modifed case.
@@ -151,9 +151,9 @@ enum PersistenceManager {
         if let dataDogIcons = try? NSKeyedArchiver.archivedData(withRootObject: LocalConfiguration.dogIcons, requiringSecureCoding: false) {
             UserDefaults.standard.set(dataDogIcons, forKey: UserDefaultsKeys.dogIcons.rawValue)
         }
-         if let dataDogManager = try? NSKeyedArchiver.archivedData(withRootObject: MainTabBarViewController.staticDogManager, requiringSecureCoding: false) {
+        if let dataDogManager = try? NSKeyedArchiver.archivedData(withRootObject: MainTabBarViewController.staticDogManager, requiringSecureCoding: false) {
             UserDefaults.standard.set(dataDogManager, forKey: ServerDefaultKeys.dogManager.rawValue)
-       }
+        }
         
         UserDefaults.standard.set(LocalConfiguration.logCustomActionNames, forKey: UserDefaultsKeys.logCustomActionNames.rawValue)
         UserDefaults.standard.set(LocalConfiguration.reminderCustomActionNames, forKey: UserDefaultsKeys.reminderCustomActionNames.rawValue)

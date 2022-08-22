@@ -50,8 +50,8 @@ extension UITextView {
                 placeholderLabel.text = newValue
                 placeholderLabel.sizeToFit()
             }
-            else {
-                self.addPlaceholder(newValue!)
+            else if let newValue = newValue {
+                self.addPlaceholder(newValue)
             }
         }
     }
@@ -61,7 +61,7 @@ extension UITextView {
     /// - Parameter textView: The UITextView that got updated
     @objc public func textViewDidChange(_ sender: NSNotification) {
         if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForUITextView) as? ScaledUILabel {
-            placeholderLabel.isHidden = !self.text.isEmpty
+            togglePlaceholderLabelIsHidden(forPlaceholderLabel: placeholderLabel)
         }
     }
     
@@ -88,11 +88,25 @@ extension UITextView {
         placeholderLabel.textColor = UIColor.systemGray3
         placeholderLabel.tag = VisualConstant.ViewTagConstant.placeholderForUITextView
         
-        placeholderLabel.isHidden = !self.text.isEmpty
+        togglePlaceholderLabelIsHidden(forPlaceholderLabel: placeholderLabel)
         
         self.addSubview(placeholderLabel)
         self.resizePlaceholder()
         NotificationCenter.default.addObserver(self, selector: #selector(textViewDidChange), name: UITextView.textDidChangeNotification, object: nil)
+    }
+    
+    /// Changes the isHidden status of the placeholderLabel passed, based upon the presence and contents of self.text
+    private func togglePlaceholderLabelIsHidden(forPlaceholderLabel placeholderLabel: UILabel) {
+        if let labelText = self.text {
+            // If the text of the ui label exists, then we want to hide the placeholder label (if the ui label text contains actual characters)
+            // "anyText" != "" -> true -> hide the placeholder label
+            // "" != "" -> false -> show the placeholder label
+            placeholderLabel.isHidden = labelText.trimmingCharacters(in: .whitespacesAndNewlines) != ""
+        }
+        // If the primary text of UILabel is nil, then show the placeholder label!
+        else {
+            placeholderLabel.isHidden = false
+        }
     }
     
 }

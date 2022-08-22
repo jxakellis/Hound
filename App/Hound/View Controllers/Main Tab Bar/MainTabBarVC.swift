@@ -9,8 +9,8 @@ import UIKit
 
 final class MainTabBarViewController: UITabBarController, DogManagerControlFlowProtocol, DogsNavigationViewControllerDelegate, TimingManagerDelegate, LogsNavigationViewControllerDelegate, RemindersIntroductionViewControllerDelegate, AlarmManagerDelegate, SettingsNavigationViewControllerDelegate {
     
-     // MARK: - DogsNavigationViewControllerDelegate
-
+    // MARK: - DogsNavigationViewControllerDelegate
+    
     func checkForRemindersIntroductionPage() {
         // figure out where to go next, if the user is new and has no reminders for their dog (aka probably no family yet either) then we help them make their first reminder
         
@@ -22,15 +22,15 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
             self.performSegueOnceInWindowHierarchy(segueIdentifier: "RemindersIntroductionViewController")
         }
     }
-
+    
     // MARK: - RemindersIntroductionViewControllerDelegate
-
+    
     func didComplete(sender: Sender, forDogManager dogManager: DogManager) {
         setDogManager(sender: sender, forDogManager: dogManager)
     }
-
+    
     // MARK: - TimingManagerDelegate && DogsViewControllerDelegate && SettingsNavigationViewControllerDelegate
-
+    
     func didUpdateDogManager(sender: Sender, forDogManager: DogManager) {
         setDogManager(sender: sender, forDogManager: forDogManager)
     }
@@ -64,13 +64,13 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         
         setDogManager(sender: sender, forDogManager: dogManager)
     }
-
+    
     // MARK: - DogManagerControlFlowProtocol + ParentDogManager
-
+    
     private var dogManager: DogManager = DogManager()
-
+    
     static var staticDogManager: DogManager = DogManager()
-
+    
     // Sets dog manager, when the value of dog manager is changed it not only changes the variable but calls other needed functions to reflect the change
     func setDogManager(sender: Sender, forDogManager: DogManager) {
         
@@ -78,7 +78,7 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         if (sender.localized is ServerSyncViewController) == false {
             TimingManager.willReinitalize(forOldDogManager: dogManager, forNewDogManager: forDogManager)
         }
-
+        
         dogManager = forDogManager
         MainTabBarViewController.staticDogManager = forDogManager
         
@@ -91,17 +91,17 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         if (sender.localized is SettingsViewController) == false {
             settingsViewController?.setDogManager(sender: Sender(origin: sender, localized: self), forDogManager: dogManager)
         }
-
+        
     }
-
+    
     // MARK: - Properties
-
+    
     var logsNavigationViewController: LogsNavigationViewController?
     var logsViewController: LogsViewController?
-
+    
     var dogsNavigationViewController: DogsNavigationViewController?
     var dogsViewController: DogsViewController?
-
+    
     var settingsNavigationViewController: SettingsNavigationViewController?
     var settingsViewController: SettingsViewController?
     
@@ -136,45 +136,45 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
             }
         }
     }
-
+    
     static var mainTabBarViewController: MainTabBarViewController?
-
+    
     /// The tab on the tab bar that the app should open to, if its the first time openning the app then go the the second tab (setup dogs) which is index 1 as index starts at 0
     static var selectedEntryIndex: Int = 0
-
+    
     // MARK: - Main
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         AppDelegate.generalLogger.notice("Application build is \(UIApplication.appBuild)")
-
+        
         self.selectedIndex = MainTabBarViewController.selectedEntryIndex
-
-        logsNavigationViewController = self.viewControllers![0] as? LogsNavigationViewController
+        
+        logsNavigationViewController = self.viewControllers?[0] as? LogsNavigationViewController
         logsNavigationViewController?.passThroughDelegate = self
         logsViewController = logsNavigationViewController?.viewControllers[0] as? LogsViewController
         logsViewController?.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
-
-        dogsNavigationViewController = self.viewControllers![1] as? DogsNavigationViewController
+        
+        dogsNavigationViewController = self.viewControllers?[1] as? DogsNavigationViewController
         dogsNavigationViewController?.passThroughDelegate = self
         dogsViewController = dogsNavigationViewController?.viewControllers[0] as? DogsViewController
         dogsViewController?.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
-
-        settingsNavigationViewController = self.viewControllers![2] as? SettingsNavigationViewController
+        
+        settingsNavigationViewController = self.viewControllers?[2] as? SettingsNavigationViewController
         settingsNavigationViewController?.passThroughDelegate = self
         settingsViewController = settingsNavigationViewController?.viewControllers[0] as? SettingsViewController
         settingsViewController?.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: dogManager)
-
+        
         MainTabBarViewController.mainTabBarViewController = self
-
+        
         TimingManager.delegate = self
         AlarmManager.delegate = self
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         // Called before the view is added to the windows’ view hierarchy
         super.viewWillAppear(animated)
-
+        
         UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
         
         if shouldRefreshDogManager == true {
@@ -188,12 +188,12 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
             }
         }
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         // Called after the view is added to the view hierarchy
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
-
+        
         if FamilyConfiguration.isFamilyHead {
             InAppPurchaseManager.initalizeInAppPurchaseManager()
             InAppPurchaseManager.showPriceConsentIfNeeded()
@@ -205,23 +205,23 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         NotificationManager.synchronizeNotificationAuthorization()
         TimingManager.willInitalize(forDogManager: dogManager)
     }
-
+    
     override public var shouldAutorotate: Bool {
         return false
     }
-
+    
     override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .portrait
     }
     
-     // MARK: - Navigation
-
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    // MARK: - Navigation
+    
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let remindersIntroductionViewController: RemindersIntroductionViewController = segue.destination as? RemindersIntroductionViewController {
             remindersIntroductionViewController.delegate = self
             remindersIntroductionViewController.dogManager = dogManager
         }
-     }
-
+    }
+    
 }

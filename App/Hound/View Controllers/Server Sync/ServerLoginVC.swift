@@ -15,7 +15,11 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
     // MARK: - ASAuthorizationControllerPresentationContextProviding
     
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        return self.view.window!
+        guard let window = self.view.window else {
+            return ASPresentationAnchor()
+        }
+        
+        return window
     }
     
     // MARK: - ASAuthorizationControllerDelegate
@@ -23,22 +27,22 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
             /*
-            guard let appleIDToken = appleIDCredential.identityToken else {
-                AppDelegate.generalLogger.error("ASAuthorizationController encounterd an error after didCompleteWithAuthorization: Unable to fetch identity token")
-                ErrorManager.alert(forError: SignInWithAppleError.other)
-                return
-            }
-            
-            guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
-                AppDelegate.generalLogger.error("ASAuthorizationController encounterd an error after didCompleteWithAuthorization: Unable to serialize token string from data: \(appleIDToken.debugDescription)")
-                return
-            }
+             guard let appleIDToken = appleIDCredential.identityToken else {
+             AppDelegate.generalLogger.error("ASAuthorizationController encounterd an error after didCompleteWithAuthorization: Unable to fetch identity token")
+             ErrorManager.alert(forError: SignInWithAppleError.other)
+             return
+             }
+             
+             guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+             AppDelegate.generalLogger.error("ASAuthorizationController encounterd an error after didCompleteWithAuthorization: Unable to serialize token string from data: \(appleIDToken.debugDescription)")
+             return
+             }
              */
             
             let keychain = KeychainSwift()
             
             let userIdentifier = Hash.sha256Hash(forString: appleIDCredential.user)
-           
+            
             UserInformation.userIdentifier = userIdentifier
             
             keychain.set(userIdentifier, forKey: ServerDefaultKeys.userIdentifier.rawValue)
@@ -105,7 +109,7 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
     @IBOutlet private weak var welcome: ScaledUILabel!
     
     @IBOutlet private weak var welcomeMessage: ScaledUILabel!
-
+    
     // MARK: - Properties
     
     private var signInWithApple: ASAuthorizationAppleIDButton!
@@ -124,7 +128,7 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
     override func viewWillAppear(_ animated: Bool) {
         // Called before the view is added to the windows’ view hierarchy
         super.viewWillAppear(animated)
-
+        
         // make sure the view has the correct interfaceStyle
         UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
     }

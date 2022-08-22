@@ -16,6 +16,7 @@ opt_in_rules:
  - toggle_bool
  - private_action
  - private_outlet
+ - force_unwrapping
 
 statement_position:
   statement_mode: uncuddled_else

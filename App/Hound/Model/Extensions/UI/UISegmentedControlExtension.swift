@@ -12,24 +12,25 @@ extension UISegmentedControl {
     /// Assumes the segmented control is configured for interfaceStyle selection (0: light, 1: dark, 2: unspecified). Using the selectedSegmentIndex, queries the server to update the interfaceStyle UserConfiguration. If successful, then changes UI to new interface style and saves new UserConfiguration value. If unsuccessful, reverts the selectedSegmentIndex to the position before the change, doesn't change the UI interface style, and doesn't save the new UserConfiguration value
     func updateInterfaceStyle() {
         
-        var convertedInterfaceStyleRawValue: Int?
         let beforeUpdateInterfaceStyle = UserConfiguration.interfaceStyle
         
-        switch self.selectedSegmentIndex {
-        case 0:
-            convertedInterfaceStyleRawValue = 1
-            UserConfiguration.interfaceStyle = .light
-        case 1:
-            convertedInterfaceStyleRawValue = 2
-            UserConfiguration.interfaceStyle = .dark
-        default:
-            convertedInterfaceStyleRawValue = 0
-            UserConfiguration.interfaceStyle = .unspecified
-        }
+        let convertedInterfaceStyleRawValue: Int = {
+            switch self.selectedSegmentIndex {
+            case 0:
+                UserConfiguration.interfaceStyle = .light
+                return 1
+            case 1:
+                UserConfiguration.interfaceStyle = .dark
+                return 2
+            default:
+                UserConfiguration.interfaceStyle = .unspecified
+                return 0
+            }
+        }()
         
         UIApplication.keyWindow?.overrideUserInterfaceStyle = UserConfiguration.interfaceStyle
         
-        let body = [ServerDefaultKeys.interfaceStyle.rawValue: convertedInterfaceStyleRawValue!]
+        let body = [ServerDefaultKeys.interfaceStyle.rawValue: convertedInterfaceStyleRawValue]
         UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
             if requestWasSuccessful == false {
                 // error, revert to previous

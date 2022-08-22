@@ -34,17 +34,18 @@ class ScaledUILabel: UILabel {
     /// When the UILabel did change, show or hide the label based on if the UITextView is empty or not
     override var text: String? {
         didSet {
-            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForScaledUILabel) as? UILabel {
-                guard placeholderLabel.text?.isEmpty == false else {
-                    return
-                }
-                if self.text == nil {
-                    placeholderLabel.isHidden = false
-                }
-                else {
-                    placeholderLabel.isHidden = !self.text!.isEmpty
-                }
+            // Ensure the placeholderLabel exists
+            guard let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForScaledUILabel) as? UILabel else {
+                return
             }
+            
+            // Ensure placeholderLabel text exists and isn't ""
+            guard let placeholderLabelText = placeholderLabel.text, placeholderLabelText.trimmingCharacters(in: .whitespacesAndNewlines) != "" else {
+                placeholderLabel.isHidden = true
+                return
+            }
+            
+            togglePlaceholderLabelIsHidden(forPlaceholderLabel: placeholderLabel)
         }
     }
     
@@ -71,8 +72,8 @@ class ScaledUILabel: UILabel {
                 placeholderLabel.text = newValue
                 placeholderLabel.sizeToFit()
             }
-            else {
-                self.addPlaceholder(newValue!)
+            else if let newValue = newValue {
+                self.addPlaceholder(newValue)
             }
         }
     }
@@ -80,12 +81,6 @@ class ScaledUILabel: UILabel {
     /// Resize the placeholder UILabel to make sure it's in the same position as the UILabel text
     private func resizePlaceholder() {
         if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForScaledUILabel) as? UILabel {
-            // let labelX = self.frame.minX
-            // let labelY = self.frame.minY
-            // let labelWidth = self.frame.width - (labelX * 2)
-            //  let labelHeight = placeholderLabel.frame.height
-            
-            // placeholderLabel.frame = CGRect(x: labelX, y: labelY, width: labelWidth, height: labelHeight)
             placeholderLabel.frame = self.bounds
         }
     }
@@ -101,15 +96,24 @@ class ScaledUILabel: UILabel {
         placeholderLabel.textColor = UIColor.systemGray3
         placeholderLabel.tag = VisualConstant.ViewTagConstant.placeholderForScaledUILabel
         
-        if self.text == nil {
-            placeholderLabel.isHidden = false
-        }
-        else {
-            placeholderLabel.isHidden = !self.text!.isEmpty
-        }
+        togglePlaceholderLabelIsHidden(forPlaceholderLabel: placeholderLabel)
         
         self.addSubview(placeholderLabel)
         self.resizePlaceholder()
+    }
+    
+    /// Changes the isHidden status of the placeholderLabel passed, based upon the presence and contents of self.text
+    private func togglePlaceholderLabelIsHidden(forPlaceholderLabel placeholderLabel: UILabel) {
+        if let labelText = self.text {
+            // If the text of the ui label exists, then we want to hide the placeholder label (if the ui label text contains actual characters)
+            // "anyText" != "" -> true -> hide the placeholder label
+            // "" != "" -> false -> show the placeholder label
+            placeholderLabel.isHidden = labelText.trimmingCharacters(in: .whitespacesAndNewlines) != ""
+        }
+        // If the primary text of UILabel is nil, then show the placeholder label!
+        else {
+            placeholderLabel.isHidden = false
+        }
     }
     
 }

@@ -101,7 +101,7 @@ final class Subscription: NSObject {
         let isActive = body[ServerDefaultKeys.isActive.rawValue] as? Bool ?? false
         
         let isAutoRenewing = body[ServerDefaultKeys.isAutoRenewing.rawValue] as? Bool
-
+        
         self.init(
             transactionId: transactionId,
             product: product,

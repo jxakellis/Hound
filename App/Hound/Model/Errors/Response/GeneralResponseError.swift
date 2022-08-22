@@ -15,18 +15,18 @@ enum GeneralResponseError: String, Error {
             self = .appBuildOutdated
         }
         /*
-        else if rawValue == "ER_GENERAL_PARSE_FORM_DATA_FAILED" {
-            self = .parseFormDataFailed
-        }
-        else if rawValue == "ER_GENERAL_PARSE_JSON_FAILED" {
-            self = .parseJSONFailed
-        }
-        else if rawValue == "ER_GENERAL_POOL_CONNECTION_FAILED" {
-            self = .poolConnectionFailed
-        }
-        else if rawValue == "ER_GENERAL_POOL_TRANSACTION_FAILED" {
-            self = .poolTransactionFailed
-        }
+         else if rawValue == "ER_GENERAL_PARSE_FORM_DATA_FAILED" {
+         self = .parseFormDataFailed
+         }
+         else if rawValue == "ER_GENERAL_PARSE_JSON_FAILED" {
+         self = .parseJSONFailed
+         }
+         else if rawValue == "ER_GENERAL_POOL_CONNECTION_FAILED" {
+         self = .poolConnectionFailed
+         }
+         else if rawValue == "ER_GENERAL_POOL_TRANSACTION_FAILED" {
+         self = .poolTransactionFailed
+         }
          */
         else if rawValue == "ER_GENERAL_APPLE_SERVER_FAILED" {
             self = .appleServerFailed

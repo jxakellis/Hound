@@ -16,6 +16,9 @@ Known:
 - (if appliciable to controller) reminders is an array with reminderId that are formatted correctly and request has sufficient permissions to use
 */
 
+// TO DO NOW delete isSkipping from database. isSkipping can be calculated from isSkippingDate instead.
+// rename isSkippingDate to skippedDate
+
 async function getReminders(req, res) {
   try {
     const { dogId, reminderId } = req.params;

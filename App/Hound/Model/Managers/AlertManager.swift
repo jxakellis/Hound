@@ -237,7 +237,7 @@ final class AlertManager: NSObject {
     }
     
     private func enqueue(_ alertController: GeneralUIAlertController) {
-         // if this is a server related alert and there is already a server related alert, we don't want to add a second one. no need to barrage the user with server failure messages.
+        // if this is a server related alert and there is already a server related alert, we don't want to add a second one. no need to barrage the user with server failure messages.
         if alertController.view.tag == VisualConstant.ViewTagConstant.contactingServerAlertController && containsContactingServerAlertController == true {
             return
         }
@@ -278,7 +278,7 @@ final class AlertManager: NSObject {
             return
         }
         
-       globalPresenter.present(currentAlertPresented, animated: true)
+        globalPresenter.present(currentAlertPresented, animated: true)
         
     }
     

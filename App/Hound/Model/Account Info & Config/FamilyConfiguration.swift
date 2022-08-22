@@ -69,7 +69,11 @@ enum FamilyConfiguration {
     
     /// Returns whether or not the user is the head of the family. This changes whether or not they can kick family members, delete the family, etc.
     static var isFamilyHead: Bool {
-        let familyMember = FamilyMember.findFamilyMember(forUserId: UserInformation.userId!)
+        guard let userId = UserInformation.userId else {
+            return false
+        }
+        
+        let familyMember = FamilyMember.findFamilyMember(forUserId: userId)
         return familyMember?.isFamilyHead ?? false
     }
     
@@ -106,5 +110,5 @@ enum FamilyConfiguration {
         
         return potentialSubscription ?? ClassConstant.SubscriptionConstant.defaultSubscription
     }
-   
+    
 }

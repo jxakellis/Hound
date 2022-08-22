@@ -16,10 +16,13 @@ enum AudioManager {
     static var sharedPlayer: AVAudioPlayer?
     
     // MARK: - General Audio
-
+    
     static func playAudio(forAudioPath audioPath: String) {
         DispatchQueue.global().async {
-            let path = Bundle.main.path(forResource: audioPath, ofType: "mp3")!
+            guard let path = Bundle.main.path(forResource: audioPath, ofType: "mp3") else {
+                return
+            }
+            
             let url = URL(fileURLWithPath: path)
             
             do {
@@ -51,9 +54,11 @@ enum AudioManager {
     // MARK: - Silent Audio
     
     static func playSilenceAudio() {
-        
         DispatchQueue.global().async {
-            let path = Bundle.main.path(forResource: "silence", ofType: "mp3")!
+            guard let path = Bundle.main.path(forResource: "silence", ofType: "mp3") else {
+                return
+            }
+            
             let url = URL(fileURLWithPath: path)
             
             do {
@@ -97,7 +102,7 @@ enum AudioManager {
             if shouldVibrate == true {
                 AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)) {
                     DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-                       loopVibrate()
+                        loopVibrate()
                     }
                 }
             }
@@ -105,7 +110,9 @@ enum AudioManager {
         
         // make the device play the loud notification sound
         DispatchQueue.global().async {
-            let path = Bundle.main.path(forResource: "\(UserConfiguration.notificationSound.rawValue.lowercased())", ofType: "mp3")!
+            guard let path = Bundle.main.path(forResource: "\(UserConfiguration.notificationSound.rawValue.lowercased())", ofType: "mp3") else {
+                return
+            }
             let url = URL(fileURLWithPath: path)
             
             do {

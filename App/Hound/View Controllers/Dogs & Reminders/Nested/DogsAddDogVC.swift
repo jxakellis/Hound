@@ -93,8 +93,8 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
             // try to initalize from a passed dog, if non exists, then we make a new one
             dog = try dogToUpdate ?? Dog(dogName: dogName.text)
             try dog.changeDogName(forDogName: dogName.text)
-            if dogIcon.imageView?.image != nil && dogIcon.imageView!.image != ClassConstant.DogConstant.chooseImageForDog {
-                dog.dogIcon = dogIcon.imageView!.image!
+            if let image = dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseImageForDog {
+                dog.dogIcon = image
             }
         }
         catch {
@@ -331,7 +331,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         if dogName.text != initalDogName {
             return true
         }
-        else if dogIcon.imageView!.image != ClassConstant.DogConstant.chooseImageForDog && dogIcon.imageView!.image != initalDogIcon {
+        else if let image = dogIcon.imageView?.image, image != ClassConstant.DogConstant.chooseImageForDog && image != initalDogIcon {
             return true
         }
         else if shouldPromptSaveWarning == true {
@@ -411,7 +411,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
         }
         
         initalDogName = dogName.text
-        initalDogIcon = dogIcon.imageView!.image
+        initalDogIcon = dogIcon.imageView?.image
         
         // Setup AlertController for dogIcon button now, increases responsiveness
         let (picker, viewController) = ImageManager.setupDogIconImagePicker(forViewController: self)

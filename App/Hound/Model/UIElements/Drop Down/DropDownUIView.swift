@@ -77,29 +77,33 @@ final class DropDownUIView: UIView {
         dropDownTableView?.allowsSelection = true
         dropDownTableView?.isUserInteractionEnabled = true
         dropDownTableView?.tableFooterView = UIView()
-        self.addSubview(dropDownTableView!)
-        
+        if let dropDownTableView = dropDownTableView {
+            self.addSubview(dropDownTableView)
+        }
     }
     
     /// Shows Drop Down Menu, hides it if already present. The height of the dropdown shown will be equal to the rowHeight of the individual dropdown cells multiplied by the numberOfRowsToShow
     func showDropDown(numberOfRowsToShow numRows: CGFloat, selectedIndexPath: IndexPath? = nil) {
-        
-        if isDropDownPresent == true {
+        guard isDropDownPresent == false else {
             self.hideDropDown()
+            return
         }
-        else {
-            let height = numRows * dropDownTableView!.rowHeight
-            reloadDropDownData()
-            reloadBorderShadowColor()
-            isDropDownPresent = true
-            self.frame = CGRect(x: (self.viewPositionRef?.minX)!, y: (self.viewPositionRef?.maxY)! + self.offset, width: width, height: 0)
-            self.dropDownTableView?.frame = CGRect(x: 0, y: 0, width: width, height: 0)
-            
-            UIView.animate(withDuration: 0.7, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.05, options: .curveLinear, animations: {
-                self.frame.size = CGSize(width: self.width, height: height)
-                self.dropDownTableView?.frame.size = CGSize(width: self.width, height: height)
-            })
+        
+        guard let dropDownTableView = dropDownTableView, let viewPositionRef = viewPositionRef else {
+            return
         }
+        
+        let height = numRows * dropDownTableView.rowHeight
+        reloadDropDownData()
+        reloadBorderShadowColor()
+        isDropDownPresent = true
+        self.frame = CGRect(x: viewPositionRef.minX, y: viewPositionRef.maxY + self.offset, width: width, height: 0)
+        dropDownTableView.frame = CGRect(x: 0, y: 0, width: width, height: 0)
+        
+        UIView.animate(withDuration: 0.7, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.05, options: .curveLinear, animations: {
+            self.frame.size = CGSize(width: self.width, height: height)
+            dropDownTableView.frame.size = CGSize(width: self.width, height: height)
+        })
         
     }
     

@@ -36,9 +36,9 @@ enum ReminderMode {
 enum ReminderAction: String, CaseIterable {
     
     init?(rawValue: String) {
-       for action in ReminderAction.allCases where action.rawValue.lowercased() == rawValue.lowercased() {
-           self = action
-           return
+        for action in ReminderAction.allCases where action.rawValue.lowercased() == rawValue.lowercased() {
+            self = action
+            return
         }
         
         self = ReminderAction.feed
@@ -133,7 +133,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         super.init()
         
         self.reminderId = aDecoder.decodeInteger(forKey: "reminderId")
-        self.reminderAction = ReminderAction(rawValue: aDecoder.decodeObject(forKey: "reminderAction") as? String ?? ClassConstant.ReminderConstant.defaultReminderAction.rawValue)!
+        self.reminderAction = ReminderAction(rawValue: aDecoder.decodeObject(forKey: "reminderAction") as? String ?? ClassConstant.ReminderConstant.defaultReminderAction.rawValue) ?? ClassConstant.ReminderConstant.defaultReminderAction
         
         self.reminderCustomActionName = aDecoder.decodeObject(forKey: "reminderCustomActionName") as? String
         
@@ -143,7 +143,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         self.oneTimeComponents = aDecoder.decodeObject(forKey: "oneTimeComponents") as? OneTimeComponents ?? OneTimeComponents()
         self.snoozeComponents = aDecoder.decodeObject(forKey: "snoozeComponents") as? SnoozeComponents ?? SnoozeComponents()
         
-        self.storedReminderType = ReminderType(rawValue: aDecoder.decodeObject(forKey: "reminderType") as? String ?? ReminderType.countdown.rawValue)!
+        self.storedReminderType = ReminderType(rawValue: aDecoder.decodeObject(forKey: "reminderType") as? String ?? ClassConstant.ReminderConstant.defaultReminderType.rawValue) ?? ClassConstant.ReminderConstant.defaultReminderType
         
         self.storedReminderExecutionBasis = aDecoder.decodeObject(forKey: "reminderExecutionBasis") as? Date ?? Date()
         
@@ -188,7 +188,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             self.storedReminderType = reminderType
             self.storedReminderExecutionBasis = reminderExecutionBasis
             self.reminderIsEnabled = reminderIsEnabled
-    }
+        }
     
     convenience init(fromBody body: [String: Any]) {
         
@@ -218,7 +218,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         countdownComponents = CountdownComponents(
             executionInterval: body[ServerDefaultKeys.countdownExecutionInterval.rawValue] as? TimeInterval,
             intervalElapsed: body[ServerDefaultKeys.countdownIntervalElapsed.rawValue] as? TimeInterval)
-            
+        
         // weekly
         var weeklyIsSkippingDate = Date()
         if let weeklyIsSkippingDateString = body[ServerDefaultKeys.weeklyIsSkippingDate.rawValue] as? String {
@@ -227,7 +227,6 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         weeklyComponents = WeeklyComponents(
             hour: body[ServerDefaultKeys.weeklyHour.rawValue] as? Int,
             minute: body[ServerDefaultKeys.weeklyMinute.rawValue] as? Int,
-            isSkipping: body[ServerDefaultKeys.weeklyIsSkipping.rawValue] as? Bool,
             isSkippingDate: weeklyIsSkippingDate,
             sunday: body[ServerDefaultKeys.weeklySunday.rawValue] as? Bool,
             monday: body[ServerDefaultKeys.weeklyMonday.rawValue] as? Bool,
@@ -236,7 +235,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             thursday: body[ServerDefaultKeys.weeklyThursday.rawValue] as? Bool,
             friday: body[ServerDefaultKeys.weeklyFriday.rawValue] as? Bool,
             saturday: body[ServerDefaultKeys.weeklySaturday.rawValue] as? Bool)
-            
+        
         // monthly
         var monthlyIsSkippingDate = Date()
         if let monthlyIsSkippingDateString = body[ServerDefaultKeys.monthlyIsSkippingDate.rawValue] as? String {
@@ -246,10 +245,9 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             day: body[ServerDefaultKeys.monthlyDay.rawValue] as? Int,
             hour: body[ServerDefaultKeys.monthlyHour.rawValue] as? Int,
             minute: body[ServerDefaultKeys.monthlyMinute.rawValue] as? Int,
-            isSkipping: body[ServerDefaultKeys.monthlyIsSkipping.rawValue] as? Bool,
             isSkippingDate: monthlyIsSkippingDate
         )
-            
+        
         // one time
         var oneTimeDate = Date()
         if let oneTimeDateString = body[ServerDefaultKeys.oneTimeDate.rawValue] as? String {
@@ -282,11 +280,11 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     
     // Timing
     
-     var storedReminderType: ReminderType = ClassConstant.ReminderConstant.defaultReminderType
+    var storedReminderType: ReminderType = ClassConstant.ReminderConstant.defaultReminderType
     /// Tells the reminder what components to use to make sure its in the correct timing style. Changing this changes between countdown, weekly, monthly, and oneTime mode.
     var reminderType: ReminderType {
         get {
-        return storedReminderType
+            return storedReminderType
         }
         set (newReminderType) {
             guard newReminderType != storedReminderType else {
@@ -388,7 +386,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             }
         case .monthly:
             if self.reminderExecutionBasis.distance(to:
-                                                self.monthlyComponents.previousExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis)) > 0 {
+                                                        self.monthlyComponents.previousExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis)) > 0 {
                 return nil
             }
             else {
@@ -406,29 +404,22 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             return nil
         }
         
+        guard let intervalRemaining = intervalRemaining else {
+            // If the intervalRemaining is nil than means there is no time left
+            return Date()
+        }
+        
         switch currentReminderMode {
         case .oneTime:
             return oneTimeComponents.oneTimeDate
         case .countdown:
-            return Date.reminderExecutionDate(lastExecution: reminderExecutionBasis, interval: intervalRemaining!)
+            return Date.reminderExecutionDate(lastExecution: reminderExecutionBasis, interval: intervalRemaining)
         case .weekly:
-            // If the intervalRemaining is nil than means there is no time left
-            if intervalRemaining == nil {
-                return Date()
-            }
-            else {
-                return weeklyComponents.nextExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis)
-            }
+            return weeklyComponents.nextExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis)
         case .monthly:
-            // If the intervalRemaining is nil than means there is no time left
-            if intervalRemaining == nil {
-                return Date()
-            }
-            else {
-                return monthlyComponents.nextExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis)
-            }
+            return monthlyComponents.nextExecutionDate(forReminderExecutionBasis: self.reminderExecutionBasis)
         case .snooze:
-            return Date.reminderExecutionDate(lastExecution: reminderExecutionBasis, interval: intervalRemaining!)
+            return Date.reminderExecutionDate(lastExecution: reminderExecutionBasis, interval: intervalRemaining)
         }
     }
     
@@ -450,11 +441,9 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         }
         else if reminderType == .weekly {
             weeklyComponents.isSkippingDate = nil
-            weeklyComponents.isSkipping = false
         }
         else if reminderType == .monthly {
             monthlyComponents.isSkippingDate = nil
-            monthlyComponents.isSkipping = false
         }
         
     }
@@ -489,33 +478,29 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             guard isSkipping != weeklyComponents.isSkipping else {
                 break
             }
-            // store new state
-            weeklyComponents.isSkipping = isSkipping
             
-            if isSkipping == true {
-                // skipping
-                weeklyComponents.isSkippingDate = Date()
+            if let isSkippingDate = weeklyComponents.isSkippingDate {
+                // since we are unskipping, we want to revert to the previous reminderExecutionBasis, which happens to be isSkippingDate
+                reminderExecutionBasis = isSkippingDate
+                weeklyComponents.isSkippingDate = nil
             }
             else {
-                // since we are unskipping, we want to revert to the previous reminderExecutionBasis, which happens to be isSkippingDate
-                reminderExecutionBasis = weeklyComponents.isSkippingDate!
-                weeklyComponents.isSkippingDate = nil
+                // skipping
+                weeklyComponents.isSkippingDate = Date()
             }
         case .monthly:
             guard isSkipping != monthlyComponents.isSkipping else {
                 return
             }
-            // store new state
-            monthlyComponents.isSkipping = isSkipping
             
-            if isSkipping == true {
-                // skipping
-                monthlyComponents.isSkippingDate = Date()
+            if let isSkippingDate = monthlyComponents.isSkippingDate {
+                // since we are unskipping, we want to revert to the previous reminderExecutionBasis, which happens to be isSkippingDate
+                reminderExecutionBasis = isSkippingDate
+                monthlyComponents.isSkippingDate = nil
             }
             else {
-                // since we are unskipping, we want to revert to the previous reminderExecutionBasis, which happens to be isSkippingDate
-                reminderExecutionBasis = monthlyComponents.isSkippingDate!
-                monthlyComponents.isSkippingDate = nil
+                // skipping
+                monthlyComponents.isSkippingDate = Date()
             }
         }
     }

@@ -68,7 +68,7 @@ enum FamilyResponseError: String, Error {
     case limitDogExceeded = "Your family has exceeded it's dog limit and is unable to have data added or updated. This is likely due to your family's subscription being downgraded or expiring. Please remove existing dogs or have the family head upgrade your family's subscription to restore functionality."
     
     // MARK: Join
-   /// Family code was valid but was not linked to any family
+    /// Family code was valid but was not linked to any family
     case joinFamilyCodeInvalid = "Your family code isn't linked to any family. Please enter a valid code and retry."
     /// Family code was valid and linked to a family but the family was locked
     case joinFamilyLocked = "The family you are trying to join is locked, preventing any new family members from joining. Please have an existing family member unlock it and retry."

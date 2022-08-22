@@ -17,7 +17,6 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
         copy.day = self.day
         copy.hour = self.hour
         copy.minute = self.minute
-        copy.isSkipping = self.isSkipping
         copy.isSkippingDate = self.isSkippingDate
         return copy
     }
@@ -28,7 +27,6 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
         day = aDecoder.decodeInteger(forKey: "day")
         hour = aDecoder.decodeInteger(forKey: "hour")
         minute = aDecoder.decodeInteger(forKey: "minute")
-        isSkipping = aDecoder.decodeBool(forKey: "isSkipping")
         isSkippingDate = aDecoder.decodeObject(forKey: "isSkippingDate") as? Date
     }
     
@@ -36,7 +34,6 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
         aCoder.encode(day, forKey: "day")
         aCoder.encode(hour, forKey: "hour")
         aCoder.encode(minute, forKey: "minute")
-        aCoder.encode(isSkipping, forKey: "isSkipping")
         aCoder.encode(isSkippingDate, forKey: "isSkippingDate")
     }
     
@@ -46,12 +43,11 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
         super.init()
     }
     
-    convenience init(day: Int?, hour: Int?, minute: Int?, isSkipping: Bool?, isSkippingDate: Date?) {
+    convenience init(day: Int?, hour: Int?, minute: Int?, isSkippingDate: Date?) {
         self.init()
         self.day = day ?? self.day
         self.hour = hour ?? self.hour
         self.minute = minute ?? self.minute
-        self.isSkipping = isSkipping ?? self.isSkipping
         self.isSkippingDate = isSkippingDate
         
     }
@@ -94,7 +90,9 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
     }
     
     /// Whether or not the next alarm will be skipped
-    var isSkipping: Bool = false
+    var isSkipping: Bool {
+        return isSkippingDate != nil
+    }
     
     /// The date at which the user changed the isSkipping to true.  If is skipping is true, then a certain log date was appended. If unskipped, then we have to remove that previously added log. Slight caveat: if the skip log was modified (by the user changing its date) we don't remove it.
     var isSkippingDate: Date?
@@ -105,7 +103,7 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
     func notSkippingExecutionDate(forReminderExecutionBasis reminderExecutionBasis: Date) -> Date {
         
         // there will only be two future executions dates for a day, so we take the first one is the one.
-        return futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis).first!
+        return futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis).first ?? ClassConstant.DateConstant.default1970Date
     }
     
     func previousExecutionDate(forReminderExecutionBasis reminderExecutionBasis: Date) -> Date {
@@ -113,7 +111,7 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
         // use non skipping version
         let nextTimeOfDay = notSkippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
         
-        var preceedingExecutionDate: Date = Calendar.current.date(byAdding: .month, value: -1, to: nextTimeOfDay)!
+        var preceedingExecutionDate: Date = Calendar.current.date(byAdding: .month, value: -1, to: nextTimeOfDay) ?? ClassConstant.DateConstant.default1970Date
         preceedingExecutionDate = fallShortCorrection(forDate: preceedingExecutionDate)
         return preceedingExecutionDate
     }
@@ -139,7 +137,9 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
             // We need to find the maximum possible day to set the date to without having it accidentially roll into the next month.
             var calculatedDay: Int {
                 let neededDay = day
-                let maximumDay = Calendar.current.range(of: .day, in: .month, for: date)!.count
+                guard let maximumDay = Calendar.current.range(of: .day, in: .month, for: date)?.count else {
+                    return neededDay
+                }
                 if neededDay <= maximumDay {
                     return neededDay
                 }
@@ -149,7 +149,7 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
             }
             
             // We have the correct day to set the date to, now we can change it.
-            return Calendar.current.date(bySetting: .day, value: calculatedDay, of: date)!
+            return Calendar.current.date(bySetting: .day, value: calculatedDay, of: date) ?? ClassConstant.DateConstant.default1970Date
         }
         // when adding a month, the day did not fall short of what was needed
         else {
@@ -166,24 +166,26 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
         var calculatedDate = reminderExecutionBasis
         
         // finds number of days in the calculated date's month, used for roll over calculations
-        let numDaysInMonth = Calendar.current.range(of: .day, in: .month, for: calculatedDate)!.count
+        guard let numDaysInMonth = Calendar.current.range(of: .day, in: .month, for: calculatedDate)?.count else {
+            return [ClassConstant.DateConstant.default1970Date, ClassConstant.DateConstant.default1970Date]
+        }
         
         // the day of month is greater than the number of days in the target month, so we just use the last possible day of month to get as close as possible without rolling over into the next month.
         if day > numDaysInMonth {
-            calculatedDate = Calendar.current.date(bySetting: .day, value: numDaysInMonth, of: calculatedDate)!
+            calculatedDate = Calendar.current.date(bySetting: .day, value: numDaysInMonth, of: calculatedDate) ?? ClassConstant.DateConstant.default1970Date
             // sets time of day
-            calculatedDate = Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)!
+            calculatedDate = Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward) ?? ClassConstant.DateConstant.default1970Date
         }
         // day of month is less than days available in the current month, so no roll over correction needed and traditional method
         else {
-            calculatedDate = Calendar.current.date(bySetting: .day, value: day, of: calculatedDate)!
+            calculatedDate = Calendar.current.date(bySetting: .day, value: day, of: calculatedDate) ?? ClassConstant.DateConstant.default1970Date
             // sets time of day
-            calculatedDate = Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)!
+            calculatedDate = Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward) ?? ClassConstant.DateConstant.default1970Date
         }
         
         // We are looking for future dates, not past. If the calculated date is in the past, we correct to make it in the future.
         if reminderExecutionBasis.distance(to: calculatedDate) < 0 {
-            calculatedDate = Calendar.current.date(byAdding: .month, value: 1, to: calculatedDate)!
+            calculatedDate = Calendar.current.date(byAdding: .month, value: 1, to: calculatedDate) ?? ClassConstant.DateConstant.default1970Date
             calculatedDate = fallShortCorrection(forDate: calculatedDate)
             
         }
@@ -194,7 +196,7 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
         }
         // should have at least two dates
         else if calculatedDates.count == 1 {
-            var appendedDate = Calendar.current.date(byAdding: .month, value: 1, to: calculatedDates[0])!
+            var appendedDate = Calendar.current.date(byAdding: .month, value: 1, to: calculatedDates[0]) ?? ClassConstant.DateConstant.default1970Date
             appendedDate = fallShortCorrection(forDate: appendedDate)
             
             calculatedDates.append(appendedDate)
@@ -202,8 +204,8 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
         else {
             AppDelegate.generalLogger.warning("Calculated Dates For futureExecutionDates Empty")
             // calculated dates should never be zero, this means there are somehow zero weekdays selected. Handle this weird case by just appending future dates (one 1 week ahead and the other 2 weeks ahead)
-            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 7, to: reminderExecutionBasis)!)
-            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 14, to: reminderExecutionBasis)!)
+            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 7, to: reminderExecutionBasis) ?? ClassConstant.DateConstant.default1970Date)
+            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 14, to: reminderExecutionBasis) ?? ClassConstant.DateConstant.default1970Date)
         }
         
         return calculatedDates
@@ -212,7 +214,7 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
     /// If a reminder is skipping, then we must find the next soonest reminderExecutionDate. We have to find the execution date that takes place after the skipped execution date (but before any other execution date).
     private func skippingExecutionDate(forReminderExecutionBasis reminderExecutionBasis: Date) -> Date {
         // there will only be two future executions dates for a day, so we take the second one. The first one is the one used for a not skipping
-        return futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis).last!
+        return futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis).last ?? ClassConstant.DateConstant.default1970Date
         
     }
     

@@ -21,18 +21,18 @@ final class SettingsNavigationViewController: UINavigationController, SettingsVi
     }
     
     // MARK: - Properties
-
+    
     var settingsViewController: SettingsViewController! = nil
     
     weak var passThroughDelegate: SettingsNavigationViewControllerDelegate!
-
+    
     // MARK: - Main
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         settingsViewController = self.viewControllers[0] as? SettingsViewController
         settingsViewController.delegate = self
     }
-
+    
 }
