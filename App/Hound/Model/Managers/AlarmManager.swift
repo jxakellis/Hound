@@ -67,17 +67,22 @@ final class AlarmManager {
             // the dogId and reminderId exist if we got a reminder back
             let title = "\(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true)) - \(dog.dogName)"
             
-            let alertController = GeneralUIAlertController(
+            // TO DO NOW TEST that AlarmUIAlertController works with queue and logging
+            let alarmAlertController = AlarmUIAlertController(
                 title: title,
                 message: nil,
                 preferredStyle: .alert)
+            alarmAlertController.setup(forDogId: dogId, forReminder: reminder)
             
             let alertActionDismiss = UIAlertAction(
                 title: "Dismiss",
                 style: .cancel,
                 handler: { (_: UIAlertAction!)  in
-                    // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                    AlarmManager.willDismissAlarm(forDogId: dogId, forReminder: reminder)
+                    // Make sure to use alarmAlertController.referenceAlarmAlertController as at the time of execution, original alarmAlertController could have been combined with something else
+                    print("Dismiss: \(alarmAlertController.referenceAlarmAlertController.reminders.count)")
+                    for alarmReminder in alarmAlertController.referenceAlarmAlertController.reminders {
+                        AlarmManager.willDismissAlarm(forDogId: dogId, forReminder: alarmReminder)
+                    }
                     CheckManager.checkForReview()
                 })
             
@@ -85,14 +90,17 @@ final class AlarmManager {
             
             // Cant convert a reminderAction of potty directly to logAction, as it has serveral possible outcomes. Otherwise, logAction and reminderAction 1:1
             let logActions: [LogAction] = reminder.reminderAction == .potty ? [.pee, .poo, .both, .neither, .accident] : [LogAction(rawValue: reminder.reminderAction.rawValue) ?? ClassConstant.LogConstant.defaultLogAction]
-            
+        
             for logAction in logActions {
                 let alertActionLog = UIAlertAction(
                     title: "Log \(logAction.displayActionName(logCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true))",
                     style: .default,
                     handler: { (_)  in
-                        // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                        AlarmManager.willLogAlarm(forDogId: dogId, forReminder: reminder, forLogAction: logAction)
+                        // Make sure to use alarmAlertController.referenceAlarmAlertController as at the time of execution, original alarmAlertController could have been combined with something else
+                        print("Log: \(alarmAlertController.referenceAlarmAlertController.reminders.count)")
+                        for alarmReminder in alarmAlertController.referenceAlarmAlertController.reminders {
+                            AlarmManager.willLogAlarm(forDogId: dogId, forReminder: alarmReminder, forLogAction: logAction)
+                        }
                         CheckManager.checkForReview()
                     })
                 alertActionsForLog.append(alertActionLog)
@@ -102,22 +110,25 @@ final class AlarmManager {
                 title: "Snooze",
                 style: .default,
                 handler: { (_: UIAlertAction!)  in
-                    // Do not provide dogManager as in the case of multiple queued alerts, if one alert is handled the next one will have an outdated dogManager and when that alert is then handled it pushes its outdated dogManager which completely messes up the first alert and overrides any choices made about it; leaving a un initalized but completed timer.
-                    AlarmManager.willSnoozeAlarm(forDogId: dogId, forReminder: reminder)
+                    // Make sure to use alarmAlertController.referenceAlarmAlertController as at the time of execution, original alarmAlertController could have been combined with something else
+                    print("Snooze: \(alarmAlertController.referenceAlarmAlertController.reminders.count)")
+                    for alarmReminder in alarmAlertController.referenceAlarmAlertController.reminders {
+                        AlarmManager.willSnoozeAlarm(forDogId: dogId, forReminder: alarmReminder)
+                    }
                     CheckManager.checkForReview()
                 })
             
             for alertActionLog in alertActionsForLog {
-                alertController.addAction(alertActionLog)
+                alarmAlertController.addAction(alertActionLog)
             }
-            alertController.addAction(alertActionSnooze)
-            alertController.addAction(alertActionDismiss)
+            alarmAlertController.addAction(alertActionSnooze)
+            alarmAlertController.addAction(alertActionDismiss)
             
             // we have successfully constructed our alert
             reminder.hasAlarmPresentationHandled = true
             delegate.didUpdateReminder(sender: Sender(origin: self, localized: self), forDogId: dogId, forReminder: reminder)
             
-            AlertManager.enqueueAlertForPresentation(alertController)
+            AlertManager.enqueueAlertForPresentation(alarmAlertController)
             
         }
     }

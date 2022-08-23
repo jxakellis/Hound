@@ -60,13 +60,13 @@ final class LogManager: NSObject, NSCoding, NSCopying {
     private var uniqueLogActionsResult: [LogAction]?
     
     /// Helper function allows us to use the same logic for addLog and addLogs and allows us to only sort at the end. Without this function, addLogs would invoke addLog repeadly and sortLogs() with each call.
-    private func addLogWithoutSorting(forLog: Log) {
+    private func addLogWithoutSorting(forLog newLog: Log) {
         // removes any existing logs that have the same logId as they would cause problems.
-        logs.removeAll { log in
-            return forLog.logId == log.logId
+        logs.removeAll { oldLog in
+            return newLog.logId == oldLog.logId
         }
         
-        logs.append(forLog)
+        logs.append(newLog)
         
         uniqueLogActionsResult = nil
     }

@@ -27,7 +27,7 @@ enum InternalRequestUtils {
         guard NetworkManager.shared.isConnected else {
             DispatchQueue.main.async {
                 if invokeErrorManager == true {
-                    ErrorManager.alert(forError: RequestError.noInternetConnection)
+                    ErrorConstant.GeneralRequestError.noInternetConnection.alert()
                 }
                 
                 completionHandler(nil, .noResponse)
@@ -71,24 +71,24 @@ enum InternalRequestUtils {
                 AppDelegate.APIResponseLogger.warning(
                     "No \(request.httpMethod ?? VisualConstant.TextConstant.unknownText) Response for \(request.url?.description ?? VisualConstant.TextConstant.unknownText)\nData Task Error: \(error?.localizedDescription ?? VisualConstant.TextConstant.unknownText)")
                 
-                var responseError: GeneralResponseError = .getNoResponse
+                var responseError = ErrorConstant.GeneralResponseError.getNoResponse
                 
                 switch request.httpMethod {
                 case "GET":
-                    responseError = .getNoResponse
+                    responseError = ErrorConstant.GeneralResponseError.getNoResponse
                 case "POST":
-                    responseError = .postNoResponse
+                    responseError = ErrorConstant.GeneralResponseError.postNoResponse
                 case "PUT":
-                    responseError = .putNoResponse
+                    responseError = ErrorConstant.GeneralResponseError.putNoResponse
                 case "DELETE":
-                    responseError = .deleteNoResponse
+                    responseError = ErrorConstant.GeneralResponseError.deleteNoResponse
                 default:
                     break
                 }
                 
                 DispatchQueue.main.async {
                     if invokeErrorManager == true {
-                        ErrorManager.alert(forError: responseError, forErrorCode: nil)
+                        responseError.alert()
                     }
                     
                     completionHandler(responseBody, .noResponse)
@@ -104,41 +104,41 @@ enum InternalRequestUtils {
                 
                 let responseErrorCode: String? = responseBody[ServerDefaultKeys.code.rawValue] as? String
                 
-                let responseError: Error = {
+                let responseError: HoundError = {
                     if let responseErrorCode = responseErrorCode {
-                        if let error = GeneralResponseError(rawValue: responseErrorCode) {
+                        if let error = ErrorConstant.serverError(forErrorCode: responseErrorCode) {
                             return error
                         }
-                        else if let error = FamilyResponseError(rawValue: responseErrorCode) {
+                        else if let error = ErrorConstant.serverError(forErrorCode: responseErrorCode) {
                             return error
                         }
                     }
                     
                     switch request.httpMethod {
                     case "GET":
-                        return GeneralResponseError.getFailureResponse
+                        return ErrorConstant.GeneralResponseError.getFailureResponse
                     case "POST":
-                        return GeneralResponseError.postFailureResponse
+                        return ErrorConstant.GeneralResponseError.postFailureResponse
                     case "PUT":
-                        return GeneralResponseError.putFailureResponse
+                        return ErrorConstant.GeneralResponseError.putFailureResponse
                     case "DELETE":
-                        return GeneralResponseError.deleteFailureResponse
+                        return ErrorConstant.GeneralResponseError.deleteFailureResponse
                     default:
-                        return GeneralResponseError.getFailureResponse
+                        return ErrorConstant.GeneralResponseError.getFailureResponse
                     }
                 }()
                 
-                guard (responseError as? GeneralResponseError) != .appBuildOutdated else {
+                guard responseError.name != ErrorConstant.GeneralResponseError.appBuildOutdatedName else {
                     // If we experience an app build response error, that means the user's local app is outdated. If this is the case, then nothing will work until the user updates their app. Therefore we stop everything and do not return a completion handler. This might break something but we don't care.
                     DispatchQueue.main.async {
-                        ErrorManager.alert(forError: responseError, forErrorCode: responseErrorCode)
+                        responseError.alert()
                     }
                     return
                 }
                 
                 DispatchQueue.main.async {
                     if invokeErrorManager == true {
-                        ErrorManager.alert(forError: responseError, forErrorCode: responseErrorCode)
+                        responseError.alert()
                     }
                     
                     completionHandler(responseBody, .failureResponse)

@@ -31,7 +31,6 @@ final class AlertManager: NSObject {
         activityIndicator.bottomAnchor.constraint(equalTo: contactingServerAlertController.view.bottomAnchor, constant: -20).isActive = true
         
         contactingServerAlertController.view.addSubview(activityIndicator)
-        contactingServerAlertController.view.tag = VisualConstant.ViewTagConstant.contactingServerAlertController
         
     }
     
@@ -221,28 +220,48 @@ final class AlertManager: NSObject {
     
     private var alertQueue: [GeneralUIAlertController] = []
     
-    /// Checks to see if the queue has any loading view controllers
-    private var containsContactingServerAlertController: Bool {
-        // check queue for loading view controller
-        for alert in alertQueue where alert.view.tag == VisualConstant.ViewTagConstant.contactingServerAlertController {
-            return true
-        }
-        // check current presentation
-        if currentAlertPresented?.view.tag == VisualConstant.ViewTagConstant.contactingServerAlertController {
-            return true
-        }
-        else {
-            return false
-        }
-    }
-    
-    private func enqueue(_ alertController: GeneralUIAlertController) {
-        // if this is a server related alert and there is already a server related alert, we don't want to add a second one. no need to barrage the user with server failure messages.
-        if alertController.view.tag == VisualConstant.ViewTagConstant.contactingServerAlertController && containsContactingServerAlertController == true {
+    private func enqueue(_ forAlertController: GeneralUIAlertController) {
+        // Make sure that the alertController that is being queued isn't already presented or in the queue
+        guard currentAlertPresented != forAlertController && alertQueue.contains(forAlertController) == false else {
+            print("enqueue: forAlertController already contained")
             return
         }
         
-        alertQueue.append(alertController)
+        guard let forAlarmAlertController = forAlertController as? AlarmUIAlertController else {
+            // Not dealing with an forAlarmAlertController, can append alertController to queue
+            print("enqueue: forAlertController isn't an AlarmUIAlertController")
+            alertQueue.append(forAlertController)
+            return
+        }
+        
+        // User attempted to pass an alert controller that hasn't been setup and is therefore invalid
+        guard forAlarmAlertController.hasBeenSetup else {
+            print("enqueue: forAlarmAlertController hasn't been setup")
+            return
+        }
+        
+        // If we are dealing with an forAlarmAlertController, them attempt to combine its reminderIds with an existing forAlarmAlertController
+        if let currentAlertPresented = (currentAlertPresented as? AlarmUIAlertController), currentAlertPresented.combine(withAlarmUIAlertController: forAlarmAlertController) {
+            // currentAlertPresented is an AlarmUIAlertController and we were able to combine forAlarmAlertController into it. Therefore, discard forAlarmAlertController as its reminderIds have been passed on
+            print("enqueue: combined forAlarmAlertController into currentAlertPresented")
+            return
+        }
+        
+        // forAlarmAlertController couldn't be combined with currentAlertPresented, therefore try everything in the queue.
+        for alertInQueue in alertQueue where alertInQueue is AlarmUIAlertController {
+            guard let alertInQueue = alertInQueue as? AlarmUIAlertController, alertInQueue.combine(withAlarmUIAlertController: forAlarmAlertController) == true else {
+                // Item in queue isn't an AlarmUIAlertController or it is but wasn't able to be combined with forAlarmAlertController
+                continue
+            }
+            
+            // combined forAlarmAlertController with alertInQueue. Therefore, discard forAlarmAlertController as its reminderIds have been passed on alertInQueue
+            print("enqueue: combined forAlarmAlertController into alertInQueue")
+            return
+        }
+        
+        // Couldn't combine forAlarmAlertController with anything, therefore append it to queue
+        print("enqueue: added forAlarmAlertController to alertQueue")
+        alertQueue.append(forAlarmAlertController)
     }
     
     // MARK: - Alert Queue Management

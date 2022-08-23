@@ -19,9 +19,8 @@ enum VisualConstant {
         static let placeholderForUITextView = 1000000003
         static let weekdayEnabled = 1000000004
         static let weekdayDisabled = 1000000005
-        static let contactingServerAlertController = 1000000006
-        static let serverSyncViewControllerRetryLogin = 1000000009
-        static let serverSyncViewControllerGoToLoginPage = 1000000010
+        static let serverSyncViewControllerRetryLogin = 1000000006
+        static let serverSyncViewControllerGoToLoginPage = 1000000007
     }
     
     enum FontConstant {
@@ -69,8 +68,14 @@ enum VisualConstant {
         static let notificationsDisabledTitle = "Notifications Disabled"
         static let notificationsDisabledSubtitle = "To enable notifications go to the Settings App -> Notifications -> Hound and enable \"Allow Notifications\""
         
-        static let invalidFamilyShareTitle = "Unable to share your Hound family!"
-        static let invalidFamilyShareSubtitle = "Currently, your Hound family is locked, preventing new users from joining. In order to share your family, please unlock it and retry."
+        static let invalidLockedFamilyShareTitle = "Unable to share your Hound family!"
+        static let invalidLockedFamilyShareSubtitle = "Currently, your Hound family is locked, preventing new users from joining. In order to share your family, please unlock it and retry."
+        
+        static let invalidSubscriptionFamilyShareTitle = "Unable to share your Hound family! "
+        static var invalidSubscriptionFamilyShareSubtitle: String {
+            let familyMembers = FamilyConfiguration.activeFamilySubscription.numberOfFamilyMembers
+            return "Currently, your Hound family is limited to \(familyMembers) family member\(familyMembers == 1 ? "" : "s") and doesn't have space for more members. To increase this limit, please visit the Subscriptions page and upgrade your family."
+        }
         
         static let invalidFamilyPermissionTitle = "You don't have permission to perform this action!"
         static let invalidFamilyPermissionSubtitle = "Only the family head can modify your family's subscription. Please contact the family head and have them complete this action."

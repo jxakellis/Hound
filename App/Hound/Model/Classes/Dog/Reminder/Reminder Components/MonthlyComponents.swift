@@ -59,7 +59,7 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
     /// Throws if not within the range of [1,31]
     func changeDay(forDay: Int) throws {
         guard forDay >= 1 && forDay <= 31 else {
-            throw MonthlyComponentsError.dayInvalid
+            throw ErrorConstant.MonthlyComponentsError.dayInvalid
         }
         day = forDay
         
@@ -71,11 +71,13 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
     ///  Throws if not within the range of [0,24]
     func changeHour(forHour: Int) throws {
         guard forHour >= 0 && forHour <= 24 else {
-            throw MonthlyComponentsError.hourInvalid
+            throw ErrorConstant.MonthlyComponentsError.hourInvalid
         }
         
         hour = forHour
     }
+    
+    // TO DO NOW rework this feature so it works across time zones. Should produce same result anywhere in the world. to figure this out, store secondsFromGMT (-12 hrs to +14 hrs) whenever minutes or hours is updated, therefore the minutes or hours have a relation to a timezone. then use these secondsFromGMT when calculating any date so it might say a different time of day (e.g. 4:00 PM cali, 6:00PM chic) but it always references the same exact point in time. 
     
     /// Minute of the hour that the reminder will fire
     private(set) var minute: Int = 0
@@ -83,7 +85,7 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
     /// Throws if not within the range of [0,60]
     func changeMinute(forMinute: Int) throws {
         guard forMinute >= 0 && forMinute <= 60 else {
-            throw MonthlyComponentsError.minuteInvalid
+            throw ErrorConstant.MonthlyComponentsError.minuteInvalid
         }
         
         minute = forMinute

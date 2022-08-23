@@ -29,7 +29,7 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
             /*
              guard let appleIDToken = appleIDCredential.identityToken else {
              AppDelegate.generalLogger.error("ASAuthorizationController encounterd an error after didCompleteWithAuthorization: Unable to fetch identity token")
-             ErrorManager.alert(forError: SignInWithAppleError.other)
+             ErrorConstant.SignInWithAppleError.other.alert()
              return
              }
              
@@ -95,12 +95,12 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
         switch error.code {
         case .canceled:
             // user hit cancel on the 'Data and privacy information screen'
-            ErrorManager.alert(forError: SignInWithAppleError.canceled)
+            ErrorConstant.SignInWithAppleError.canceled.alert()
         case .unknown:
             // user not signed into apple id
-            ErrorManager.alert(forError: SignInWithAppleError.notSignedIn)
+            ErrorConstant.SignInWithAppleError.notSignedIn.alert()
         default:
-            ErrorManager.alert(forError: SignInWithAppleError.other)
+            ErrorConstant.SignInWithAppleError.other.alert()
         }
     }
     
@@ -251,7 +251,7 @@ final class ServerLoginViewController: UIViewController, ASAuthorizationControll
                 self.signInUser()
             case .noResponse:
                 RequestUtils.endRequestIndictator {
-                    ErrorManager.alert(forError: GeneralResponseError.postNoResponse)
+                    ErrorConstant.GeneralResponseError.postNoResponse.alert()
                 }
             }
         }

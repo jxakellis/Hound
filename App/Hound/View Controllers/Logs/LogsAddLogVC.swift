@@ -175,6 +175,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     @IBOutlet private weak var logCustomActionNameHeightConstraint: NSLayoutConstraint!
     @IBOutlet private weak var logCustomActionNameBottomConstraint: NSLayoutConstraint!
     
+    // TO DO NOW make logNoteTextField limit itself to whatever the maximum length for logNote it
     @IBOutlet private weak var logNoteTextView: BorderedUITextView!
     
     @IBOutlet private weak var addLogButton: ScaledUIButton!
@@ -184,7 +185,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         
         do {
             guard let selectedLogAction = selectedLogAction else {
-                throw LogError.logActionBlank
+                throw ErrorConstant.LogError.logActionBlank
             }
             
             // Check to see if we are updating or adding a log
@@ -216,12 +217,12 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             
             // Updating a log
             logToUpdate.logDate = logDateDatePicker.date
-            logToUpdate.logNote = logNoteTextView.text ?? ClassConstant.LogConstant.defaultLogNote
             logToUpdate.logAction = selectedLogAction
             try logToUpdate.changeLogCustomActionName(forLogCustomActionName:
                                                         selectedLogAction == LogAction.custom
                                                       ? logCustomActionNameTextField.text
                                                       : nil)
+            try logToUpdate.changeLogNote(forLogNote: logNoteTextView.text ?? ClassConstant.LogConstant.defaultLogNote)
             
             addLogButton.beginQuerying()
             addLogButtonBackground.beginQuerying(isBackgroundButton: true)
@@ -240,7 +241,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             }
         }
         catch {
-            ErrorManager.alert(forError: error)
+            (error as? HoundError)?.alert() ?? ErrorConstant.UnknownError.unknown.alert()
         }
     }
     

@@ -319,7 +319,7 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
     func applyReminderSettings() -> Reminder? {
         do {
             guard let selectedReminderAction = selectedReminderAction else {
-                throw ReminderError.reminderActionBlank
+                throw ErrorConstant.ReminderError.reminderActionBlank
             }
             
             guard let reminder: Reminder = targetReminder != nil ? targetReminder?.copy() as? Reminder : Reminder() else {
@@ -348,7 +348,7 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
             case 2:
                 let weekdays = dogsReminderWeeklyViewController.weekdays
                 guard let weekdays = weekdays else {
-                    throw WeeklyComponentsError.weekdayArrayInvalid
+                    throw ErrorConstant.WeeklyComponentsError.weekdayArrayInvalid
                 }
                 
                 reminder.reminderType = .weekly
@@ -401,7 +401,7 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
             return reminder
         }
         catch {
-            ErrorManager.alert(forError: error)
+            (error as? HoundError)?.alert() ?? ErrorConstant.UnknownError.unknown.alert()
             return nil
         }
     }

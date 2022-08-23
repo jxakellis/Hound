@@ -87,7 +87,7 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     /// Changes the weekdays, if empty throws an error due to the fact that there needs to be at least one time of week.
     func changeWeekdays(forWeekdays: [Int]) throws {
         if forWeekdays.isEmpty {
-            throw WeeklyComponentsError.weekdayArrayInvalid
+            throw ErrorConstant.WeeklyComponentsError.weekdayArrayInvalid
         }
         else if weekdays != forWeekdays {
             weekdays = forWeekdays
@@ -100,11 +100,13 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     ///  Throws if not within the range of [0,24]
     func changeHour(forHour: Int) throws {
         guard forHour >= 0 && forHour <= 24 else {
-            throw WeeklyComponentsError.hourInvalid
+            throw ErrorConstant.WeeklyComponentsError.hourInvalid
         }
         
         hour = forHour
     }
+    
+    // TO DO NOW rework this feature so it works across time zones. Should produce same result anywhere in the world. to figure this out, store secondsFromGMT (-12 hrs to +14 hrs) whenever minutes or hours is updated, therefore the minutes or hours have a relation to a timezone. then use these secondsFromGMT when calculating any date so it might say a different time of day (e.g. 4:00 PM cali, 6:00PM chic) but it always references the same exact point in time.
     
     /// Minute of the hour that the reminder will fire
     private(set) var minute: Int = 0
@@ -112,7 +114,7 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     /// Throws if not within the range of [0,60]
     func changeMinute(forMinute: Int) throws {
         guard forMinute >= 0 && forMinute <= 60 else {
-            throw WeeklyComponentsError.minuteInvalid
+            throw ErrorConstant.WeeklyComponentsError.minuteInvalid
         }
         
         minute = forMinute

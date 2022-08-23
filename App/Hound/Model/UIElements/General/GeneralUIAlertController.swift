@@ -6,10 +6,9 @@
 //  Copyright © 2021 Jonathan Xakellis. All rights reserved.
 //
 
-import MediaPlayer
 import UIKit
 
-final class GeneralUIAlertController: UIAlertController {
+class GeneralUIAlertController: UIAlertController {
     
     override func viewDidDisappear(_ animated: Bool) {
         AlertManager.shared.alertDidComplete()

@@ -186,7 +186,7 @@ final class Log: NSObject, NSCoding, NSCopying {
     private(set) var logCustomActionName: String? = ClassConstant.LogConstant.defaultLogCustomActionName
     func changeLogCustomActionName(forLogCustomActionName: String?) throws {
         guard forLogCustomActionName?.count ?? 0 <= ClassConstant.LogConstant.logCustomActionNameCharacterLimit else {
-            throw LogError.logCustomActionNameCharacterLimitExceeded
+            throw ErrorConstant.LogError.logCustomActionNameCharacterLimitExceeded
         }
         
         logCustomActionName = forLogCustomActionName
@@ -194,8 +194,14 @@ final class Log: NSObject, NSCoding, NSCopying {
     
     var logDate: Date = ClassConstant.LogConstant.defaultLogDate
     
-    // TO DO NOW limit logNote length to the
-    var logNote: String = ClassConstant.LogConstant.defaultLogNote
+    private(set) var logNote: String = ClassConstant.LogConstant.defaultLogNote
+    func changeLogNote(forLogNote: String) throws {
+        guard forLogNote.count <= ClassConstant.LogConstant.logNoteCharacterLimit else {
+            throw ErrorConstant.LogError.logNoteCharacterLimitExceeded
+        }
+        
+        logNote = forLogNote
+    }
     
 }
 

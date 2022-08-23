@@ -98,7 +98,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
             }
         }
         catch {
-            ErrorManager.alert(forError: error)
+            (error as? HoundError)?.alert() ?? ErrorConstant.UnknownError.unknown.alert()
             return
         }
         

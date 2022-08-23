@@ -225,8 +225,6 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
             return
         }
         
-        // TO DO NOW still show 'Log 'foo'' even if the reminder is disabled. the log pop up is a nice flow for a user to log a certain reminder action for a certain dog.
-        
         let reminder: Reminder = cell.reminder
         
         let selectedReminderAlertController = GeneralUIAlertController(title: "You Selected: \(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true)) for \(dog.dogName)", message: nil, preferredStyle: .actionSheet)
@@ -265,23 +263,24 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
         }
         
         // DETERMINES IF ITS A LOG BUTTON OR UNDO LOG BUTTON
-        var shouldUndoLog: Bool {
+        var shouldUndoLog: Bool = {
+            guard reminder.reminderIsEnabled == true else {
+                return false
+            }
             // Yes I know these if statements are redundent and terrible coding but it's whatever, used to do something different but has to modify
             if reminder.currentReminderMode == .snooze || reminder.currentReminderMode == .countdown {
                 return false
             }
-            else {
-                if reminder.reminderType == .weekly && reminder.weeklyComponents.isSkipping == true {
-                    return true
-                }
-                else if reminder.reminderType == .monthly && reminder.monthlyComponents.isSkipping == true {
-                    return true
-                }
-                else {
-                    return false
-                }
+            else if reminder.reminderType == .weekly && reminder.weeklyComponents.isSkipping == true {
+                return true
             }
-        }
+            else if reminder.reminderType == .monthly && reminder.monthlyComponents.isSkipping == true {
+                return true
+            }
+            else {
+                return false
+            }
+        }()
         
         // STORES LOG BUTTON(S)
         var alertActionsForLog: [UIAlertAction] = []
@@ -318,10 +317,8 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
             }
         }
         
-        if reminder.reminderIsEnabled == true {
-            for alertActionLog in alertActionsForLog {
-                selectedReminderAlertController.addAction(alertActionLog)
-            }
+        for alertActionLog in alertActionsForLog {
+            selectedReminderAlertController.addAction(alertActionLog)
         }
         
         selectedReminderAlertController.addAction(alertActionEdit)

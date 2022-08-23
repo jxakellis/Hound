@@ -49,12 +49,15 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     
     @IBAction private func didClickShareFamily(_ sender: Any) {
         
-        guard FamilyConfiguration.familyMembers.count <= FamilyConfiguration.activeFamilySubscription.numberOfFamilyMembers else {
-            // TO DO NOW show banner that tells the user they need to upgrade their subscription
+        // Check that the family has space for at least one new member, otherwise block them from sharing the family.
+        guard FamilyConfiguration.familyMembers.count < FamilyConfiguration.activeFamilySubscription.numberOfFamilyMembers else {
+            AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.invalidSubscriptionFamilyShareTitle, forSubtitle: VisualConstant.BannerTextConstant.invalidSubscriptionFamilyShareSubtitle, forStyle: .danger)
             return
         }
+        
+        // Make sure that the family is unlocked so new 
         guard FamilyConfiguration.isLocked == false else {
-            AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.invalidFamilyShareTitle, forSubtitle: VisualConstant.BannerTextConstant.invalidFamilyShareSubtitle, forStyle: .danger)
+            AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.invalidLockedFamilyShareTitle, forSubtitle: VisualConstant.BannerTextConstant.invalidLockedFamilyShareSubtitle, forStyle: .danger)
             return
         }
         
@@ -338,7 +341,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         let activeSubscription = FamilyConfiguration.activeFamilySubscription
         // Check to make sure either the family has the default free subsription or they have an active subscription that isn't auto-renewing. So that if they leave the family, they won't be charged for subscription that isn't attached to anything
         guard activeSubscription.product == ClassConstant.SubscriptionConstant.defaultSubscriptionProduct || (activeSubscription.product != ClassConstant.SubscriptionConstant.defaultSubscriptionProduct && activeSubscription.isAutoRenewing == false) else {
-            ErrorManager.alert(forError: FamilyResponseError.leaveSubscriptionActive)
+            ErrorConstant.FamilyResponseError.leaveSubscriptionActive.alert()
             return
         }
         

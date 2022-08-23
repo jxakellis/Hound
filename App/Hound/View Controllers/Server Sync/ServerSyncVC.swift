@@ -33,8 +33,6 @@ final class ServerSyncViewController: UIViewController, ServerFamilyViewControll
     // MARK: - Main
     override func viewDidLoad() {
         super.viewDidLoad()
-        // TO DO NOW add red text overlay if not prod server & prod database. Say what server and what database is in use
-        
         // TO DO NOW if a user has used pre Hound 2.0.0, then add a special flag. Then, after they sign in and CREATE a family, prompt a special page for them. Ask them if they want to import their old information. If they do, then send queries off to server to 1. create dogs 2. create reminder 3. create logs. Note: add a create logs (plural) endpoint. This allows us to create all the logs for one dog in a single query instead of sending 100 or 1000s of queries.
     }
     

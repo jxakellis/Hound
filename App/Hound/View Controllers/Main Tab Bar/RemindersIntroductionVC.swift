@@ -34,20 +34,9 @@ final class RemindersIntroductionViewController: UIViewController {
         NotificationManager.requestNotificationAuthorization(shouldAdviseUserBeforeRequestingNotifications: true) {
             // wait the user to select an grant or deny notification permission (and for the server to response if situation requires the use of it) before continuing
             
-            // The reminders toggle switch could have been programically removed and deleted
-            guard let remindersToggleSwitch = self.remindersToggleSwitch, remindersToggleSwitch.isOn == true else {
+            // Recheck to verify that the user is still eligible for default reminders, then check if reminders toggle switch could have been programically removed and deleted
+            guard self.dogManager.hasCreatedDog == true, self.dogManager.hasCreatedReminder == false, let remindersToggleSwitch = self.remindersToggleSwitch, remindersToggleSwitch.isOn == true else {
                 // the user has chosen to not add default reminders (or was blocked because their family already created reminders for some dog)
-                self.continueButton.isEnabled = true
-                LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = true
-                self.dismiss(animated: true, completion: nil)
-                return
-            }
-            
-            // the user has no reminders so they are therefore able to add default reminders AND they chose to add default reminders
-            guard self.dogManager.hasCreatedDog == true else {
-                // the user has no dog to add the default reminders too
-                ErrorManager.alert(forMessage: "Your pre-created dog is missing and we're unable to add your default reminders. Please use the blue plus button on the Reminder page to create a dog.")
-                // have to segment so we can wait for async server call
                 self.continueButton.isEnabled = true
                 LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = true
                 self.dismiss(animated: true, completion: nil)

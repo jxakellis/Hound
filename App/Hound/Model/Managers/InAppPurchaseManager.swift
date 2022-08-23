@@ -88,7 +88,7 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
         
         guard productsRequestCompletionHandler == nil else {
             // If another request is initated while there is currently an on going request, we want to reject that request
-            ErrorManager.alert(forError: InAppPurchaseError.productRequestInProgress)
+            ErrorConstant.InAppPurchaseError.productRequestInProgress.alert()
             completionHandler(nil)
             return
         }
@@ -136,7 +136,7 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
             }
             else {
                 if self.productsRequestCompletionHandler != nil {
-                    ErrorManager.alert(forError: InAppPurchaseError.productRequestNotFound)
+                    ErrorConstant.InAppPurchaseError.productRequestNotFound.alert()
                 }
                 self.productsRequestCompletionHandler?(nil)
             }
@@ -150,7 +150,7 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
         // return to completion handler then reset for next products request
         DispatchQueue.main.async {
             if self.productsRequestCompletionHandler != nil {
-                ErrorManager.alert(forError: InAppPurchaseError.productRequestFailed)
+                ErrorConstant.InAppPurchaseError.productRequestFailed.alert()
             }
             self.productsRequestCompletionHandler?(nil)
             self.productsRequestCompletionHandler = nil
@@ -165,35 +165,35 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
     func purchase(forProduct product: SKProduct, completionHandler: @escaping ((String?) -> Void)) {
         // Make sure the user has the Hound permissions to perform such a request
         guard FamilyConfiguration.isFamilyHead else {
-            ErrorManager.alert(forError: InAppPurchaseError.purchasePermission)
+            ErrorConstant.InAppPurchaseError.purchasePermission.alert()
             completionHandler(nil)
             return
         }
         
         // Make sure that the user has the correct Apple permissions to perform such a request
         guard SKPaymentQueue.canMakePayments() else {
-            ErrorManager.alert(forError: InAppPurchaseError.purchaseRestricted)
+            ErrorConstant.InAppPurchaseError.purchaseRestricted.alert()
             completionHandler(nil)
             return
         }
         
         // Make sure there isn't a purchase transaction in process
         guard productPurchaseCompletionHandler == nil else {
-            ErrorManager.alert(forError: InAppPurchaseError.purchaseInProgress)
+            ErrorConstant.InAppPurchaseError.purchaseInProgress.alert()
             completionHandler(nil)
             return
         }
         
         // Make sure there isn't a restore request in process
         guard InternalInAppPurchaseManager.shared.productRestoreCompletionHandler == nil else {
-            ErrorManager.alert(forError: InAppPurchaseError.restoreInProgress)
+            ErrorConstant.InAppPurchaseError.restoreInProgress.alert()
             completionHandler(nil)
             return
         }
         
         // Make sure the system isn't doing anything async in the background
         guard backgroundPurchaseInProgress == false else {
-            ErrorManager.alert(forError: InAppPurchaseError.backgroundPurchaseInProgress)
+            ErrorConstant.InAppPurchaseError.backgroundPurchaseInProgress.alert()
             completionHandler(nil)
             return
         }
@@ -320,7 +320,7 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
                     // A failed transaction.
                     // Check the error property to determine what happened.
                     
-                    ErrorManager.alert(forError: InAppPurchaseError.purchaseFailed)
+                    ErrorConstant.InAppPurchaseError.purchaseFailed.alert()
                     productPurchaseCompletionHandler(nil)
                     self.productPurchaseCompletionHandler = nil
                     SKPaymentQueue.default().finishTransaction(transaction)
@@ -344,12 +344,12 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
                     // A transaction that is in the queue, but its final status is pending external action such as Ask to Buy
                     // Update your UI to show the deferred state, and wait for another callback that indicates the final status.
                     
-                    ErrorManager.alert(forError: InAppPurchaseError.purchaseDeferred)
+                    ErrorConstant.InAppPurchaseError.purchaseDeferred.alert()
                     productPurchaseCompletionHandler(nil)
                     self.productPurchaseCompletionHandler = nil
                     //  Don't finish transaction, it is still in a processing state
                 @unknown default:
-                    ErrorManager.alert(forError: InAppPurchaseError.purchaseUnknown)
+                    ErrorConstant.InAppPurchaseError.purchaseUnknown.alert()
                     productPurchaseCompletionHandler(nil)
                     self.productPurchaseCompletionHandler = nil
                     // Don't finish transaction, we can't confirm if it succeeded or failed
@@ -373,7 +373,7 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
     func restorePurchases(completionHandler: @escaping (Bool) -> Void) {
         // Make sure the user has the permissions to perform such a request
         guard FamilyConfiguration.isFamilyHead else {
-            ErrorManager.alert(forError: InAppPurchaseError.restorePermission)
+            ErrorConstant.InAppPurchaseError.restorePermission.alert()
             completionHandler(false)
             return
         }
@@ -382,21 +382,21 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
         
         // Make sure there isn't a restore request in process
         guard InternalInAppPurchaseManager.shared.productRestoreCompletionHandler == nil else {
-            ErrorManager.alert(forError: InAppPurchaseError.restoreInProgress)
+            ErrorConstant.InAppPurchaseError.restoreInProgress.alert()
             completionHandler(false)
             return
         }
         
         // Make sure there is no purchase request ongoing
         guard productPurchaseCompletionHandler == nil else {
-            ErrorManager.alert(forError: InAppPurchaseError.purchaseInProgress)
+            ErrorConstant.InAppPurchaseError.purchaseInProgress.alert()
             completionHandler(false)
             return
         }
         
         // Make sure the system isn't doing anything async in the background
         guard backgroundPurchaseInProgress == false else {
-            ErrorManager.alert(forError: InAppPurchaseError.backgroundPurchaseInProgress)
+            ErrorConstant.InAppPurchaseError.backgroundPurchaseInProgress.alert()
             completionHandler(false)
             return
         }
@@ -410,7 +410,7 @@ private final class InternalInAppPurchaseManager: NSObject, SKProductsRequestDel
     func paymentQueue(_ queue: SKPaymentQueue, restoreCompletedTransactionsFailedWithError error: Error) {
         DispatchQueue.main.async {
             if self.productRestoreCompletionHandler != nil {
-                ErrorManager.alert(forError: InAppPurchaseError.restoreFailed)
+                ErrorConstant.InAppPurchaseError.restoreFailed.alert()
             }
             self.productRestoreCompletionHandler?(false)
             self.productRestoreCompletionHandler = nil

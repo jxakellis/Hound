@@ -272,7 +272,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     private(set) var reminderCustomActionName: String? = ClassConstant.ReminderConstant.defaultReminderCustomActionName
     func changeReminderCustomActionName(forReminderCustomActionName: String?) throws {
         guard forReminderCustomActionName?.count ?? 0 <= ClassConstant.ReminderConstant.reminderCustomActionNameCharacterLimit else {
-            throw ReminderError.reminderCustomActionNameCharacterLimitExceeded
+            throw ErrorConstant.ReminderError.reminderCustomActionNameCharacterLimitExceeded
         }
         
         reminderCustomActionName = forReminderCustomActionName
@@ -463,6 +463,10 @@ final class Reminder: NSObject, NSCoding, NSCopying {
     
     /// Call this function when a user driven action directly intends to change the skip status of the weekly or monthy components. This function only timing related data, no logs are added or removed. Additioanlly, if oneTime is getting skipped, it must be deleted externally.
     func changeIsSkipping(forIsSkipping isSkipping: Bool) {
+        // can't change is skipping on a disabled reminder. nothing to skip.
+        guard reminderIsEnabled == true else {
+            return
+        }
         switch reminderType {
         case .oneTime: break
             // can only skip, can't unskip

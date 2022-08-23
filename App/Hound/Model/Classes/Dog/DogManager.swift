@@ -8,6 +8,8 @@
 
 import UIKit
 
+// TO DO BUG reminders and logs disappearing. Happens primarily when involved with other users / when sourced from other users. Typically disppears with lifecycle, e.g. goes to background then opens later and its missing.
+// For example: the new log/reminder is synced to the device, so the server won't return it anymore. Then it appears the new log/reminder isn't persisted so when the user opens the app again, the new log/reminder is missing. The issue can be solved by hitting Redownload Data
 final class DogManager: NSObject, NSCopying, NSCoding {
     
     // MARK: - NSCopying
@@ -64,20 +66,20 @@ final class DogManager: NSObject, NSCopying, NSCoding {
     private(set) var dogs: [Dog] = []
     
     /// Helper function allows us to use the same logic for addDog and addDogs and allows us to only sort at the end. Without this function, addDogs would invoke addDog repeadly and sortDogs() with each call.
-    func addDogWithoutSorting(forDog: Dog) {
+    func addDogWithoutSorting(forDog newDog: Dog) {
         // If we discover a newDog has the same dogId as an existing dog, we remove
-        dogs.removeAll { dog in
-            guard dog.dogId == forDog.dogId else {
+        dogs.removeAll { oldDog in
+            guard oldDog.dogId == newDog.dogId else {
                 return false
             }
             // we should combine the currentDog's reminders/logs into the new dog
-            forDog.combine(withOldDog: dog)
-            forDog.dogIcon = dog.dogIcon
+            newDog.combine(withOldDog: oldDog)
+            newDog.dogIcon = oldDog.dogIcon
             
             return true
         }
         
-        dogs.append(forDog)
+        dogs.append(newDog)
     }
     
     /// Adds a dog to dogs, checks to see if the dog itself is valid, e.g. its dogId is unique. Currently override other dog with the same dogId
@@ -355,7 +357,7 @@ extension DogManager {
         // the addDogs function overwrites the dog info (e.g. dogName) but combines the reminders / logs in the event that the oldDogManager and the newDogManager both contain a dog with the same dogId. Therefore, we must add the dogs to the oldDogManager (allowing the newDogManager to overwrite the oldDogManager dogs if there is an overlap)
         oldDogManager.addDogs(forDogs: self.dogs)
         // now that the oldDogManager contains its original dogs, our new dogs, and has had its old dogs overwritten (in the case old & new both had a dog with same dogId), we have an updated array.
-        self.dogs = oldDogManager.dogs
+        dogs = oldDogManager.dogs
         sortDogs()
     }
     

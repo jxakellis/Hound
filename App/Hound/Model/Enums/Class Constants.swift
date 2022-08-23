@@ -40,6 +40,7 @@ enum ClassConstant {
         /// when looking to unskip a reminder, we look for a log that has its time unmodified. if its logDate within a certain percision of the skipdate, then we assume that log is from that reminder skipping.
         static let logRemovalPrecision: Double = 0.025
         static let logCustomActionNameCharacterLimit: Int = 32
+        static let logNoteCharacterLimit: Int = 500
     }
     
     enum ReminderConstant {

@@ -51,11 +51,11 @@ final class ServerFamilyViewController: UIViewController {
             let familyCode = (textFields[0].text ?? "").uppercased().replacingOccurrences(of: "-", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
             // code is empty
             if familyCode == "" {
-                ErrorManager.alert(forError: FamilyRequestError.familyCodeBlank)
+                ErrorConstant.FamilyRequestError.familyCodeBlank.alert()
             }
             // code isn't long enough
             else if familyCode.count != 8 {
-                ErrorManager.alert(forError: FamilyRequestError.familyCodeInvalid)
+                ErrorConstant.FamilyRequestError.familyCodeInvalid.alert()
             }
             // client side the code is okay
             else {
