@@ -37,8 +37,8 @@ async function updateReminderForDogIdReminder(databaseConnection, dogId, reminde
   const countdownIntervalElapsed = formatNumber(reminder.countdownIntervalElapsed);
 
   // weekly components
-  const weeklyHour = formatNumber(reminder.weeklyHour);
-  const weeklyMinute = formatNumber(reminder.weeklyMinute);
+  const weeklyUTCHour = formatNumber(reminder.weeklyUTCHour);
+  const weeklyUTCMinute = formatNumber(reminder.weeklyUTCMinute);
   const weeklySunday = formatBoolean(reminder.weeklySunday);
   const weeklyMonday = formatBoolean(reminder.weeklyMonday);
   const weeklyTuesday = formatBoolean(reminder.weeklyTuesday);
@@ -46,15 +46,13 @@ async function updateReminderForDogIdReminder(databaseConnection, dogId, reminde
   const weeklyThursday = formatBoolean(reminder.weeklyThursday);
   const weeklyFriday = formatBoolean(reminder.weeklyFriday);
   const weeklySaturday = formatBoolean(reminder.weeklySaturday);
-  const weeklyIsSkipping = formatBoolean(reminder.weeklyIsSkipping);
-  const weeklyIsSkippingDate = formatDate(reminder.weeklyIsSkippingDate);
+  const weeklySkippedDate = formatDate(reminder.weeklySkippedDate);
 
   // monthly components
-  const monthlyDay = formatNumber(reminder.monthlyDay);
-  const monthlyHour = formatNumber(reminder.monthlyHour);
-  const monthlyMinute = formatNumber(reminder.monthlyMinute);
-  const monthlyIsSkipping = formatBoolean(reminder.monthlyIsSkipping);
-  const monthlyIsSkippingDate = formatDate(reminder.monthlyIsSkippingDate);
+  const monthlyUTCDay = formatNumber(reminder.monthlyUTCDay);
+  const monthlyUTCHour = formatNumber(reminder.monthlyUTCHour);
+  const monthlyUTCMinute = formatNumber(reminder.monthlyUTCMinute);
+  const monthlySkippedDate = formatDate(reminder.monthlySkippedDate);
 
   // one time components
   const oneTimeDate = formatDate(reminder.oneTimeDate);
@@ -75,18 +73,12 @@ async function updateReminderForDogIdReminder(databaseConnection, dogId, reminde
     throw new ValidationError('countdownExecutionInterval or countdownIntervalElapsed missing', global.constant.error.value.MISSING);
   }
   // weekly
-  else if (areAllDefined(weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklyIsSkipping) === false) {
-    throw new ValidationError('weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, or weeklyIsSkipping missing', global.constant.error.value.MISSING);
-  }
-  else if (weeklyIsSkipping === true && areAllDefined(weeklyIsSkippingDate) === false) {
-    throw new ValidationError('weeklyIsSkippingDate missing', global.constant.error.value.MISSING);
+  else if (areAllDefined(weeklyUTCHour, weeklyUTCMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday) === false) {
+    throw new ValidationError('weeklyUTCHour, weeklyUTCMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, or weeklySaturday missing', global.constant.error.value.MISSING);
   }
   // monthly
-  else if (areAllDefined(monthlyDay, monthlyHour, monthlyMinute, monthlyIsSkipping) === false) {
-    throw new ValidationError('monthlyDay, monthlyHour, monthlyMinute, or monthlyIsSkipping missing', global.constant.error.value.MISSING);
-  }
-  else if (monthlyIsSkipping === true && areAllDefined(monthlyIsSkippingDate) === false) {
-    throw new ValidationError('monthlyIsSkippingDate missing', global.constant.error.value.MISSING);
+  else if (areAllDefined(monthlyUTCDay, monthlyUTCHour, monthlyUTCMinute) === false) {
+    throw new ValidationError('monthlyUTCDay, monthlyUTCHour, or monthlyUTCMinute missing', global.constant.error.value.MISSING);
   }
   // oneTime
   else if (areAllDefined(oneTimeDate) === false) {
@@ -95,13 +87,13 @@ async function updateReminderForDogIdReminder(databaseConnection, dogId, reminde
 
   await databaseQuery(
     databaseConnection,
-    'UPDATE dogReminders SET reminderAction = ?, reminderCustomActionName = ?, reminderType = ?, reminderIsEnabled = ?, reminderExecutionBasis = ?, reminderExecutionDate = ?, reminderLastModified = ?, snoozeIsEnabled = ?, snoozeExecutionInterval = ?, snoozeIntervalElapsed = ?, countdownExecutionInterval = ?, countdownIntervalElapsed = ?, weeklyHour = ?, weeklyMinute = ?, weeklySunday = ?, weeklyMonday = ?, weeklyTuesday = ?, weeklyWednesday = ?, weeklyThursday = ?, weeklyFriday = ?, weeklySaturday = ?, weeklyIsSkipping = ?, weeklyIsSkippingDate = ?, monthlyDay = ?, monthlyHour = ?, monthlyMinute = ?, monthlyIsSkipping = ?, monthlyIsSkippingDate = ?, oneTimeDate = ? WHERE reminderId = ?',
+    'UPDATE dogReminders SET reminderAction = ?, reminderCustomActionName = ?, reminderType = ?, reminderIsEnabled = ?, reminderExecutionBasis = ?, reminderExecutionDate = ?, reminderLastModified = ?, snoozeIsEnabled = ?, snoozeExecutionInterval = ?, snoozeIntervalElapsed = ?, countdownExecutionInterval = ?, countdownIntervalElapsed = ?, weeklyUTCHour = ?, weeklyUTCMinute = ?, weeklySunday = ?, weeklyMonday = ?, weeklyTuesday = ?, weeklyWednesday = ?, weeklyThursday = ?, weeklyFriday = ?, weeklySaturday = ?, weeklySkippedDate = ?, monthlyUTCDay = ?, monthlyUTCHour = ?, monthlyUTCMinute = ?, monthlySkippedDate = ?, oneTimeDate = ? WHERE reminderId = ?',
     [
       reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderExecutionDate, reminderLastModified,
       snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed,
       countdownExecutionInterval, countdownIntervalElapsed,
-      weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklyIsSkipping, weeklyIsSkippingDate,
-      monthlyDay, monthlyHour, monthlyMinute, monthlyIsSkipping, monthlyIsSkippingDate,
+      weeklyUTCHour, weeklyUTCMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklySkippedDate,
+      monthlyUTCDay, monthlyUTCHour, monthlyUTCMinute, monthlySkippedDate,
       oneTimeDate,
       reminderId,
     ],

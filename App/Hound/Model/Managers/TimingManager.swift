@@ -147,10 +147,10 @@ final class TimingManager {
         }
         
         if reminder.reminderType == .weekly {
-            reminder.weeklyComponents.isSkippingDate = nil
+            reminder.weeklyComponents.skippedDate = nil
         }
         else if reminder.reminderType == .monthly {
-            reminder.monthlyComponents.isSkippingDate = nil
+            reminder.monthlyComponents.skippedDate = nil
         }
         reminder.reminderExecutionBasis = Date()
         

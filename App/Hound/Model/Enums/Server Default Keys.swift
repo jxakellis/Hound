@@ -128,7 +128,7 @@ enum ServerDefaultKeys: String {
     case weeklyFriday
     case weeklySaturday
     case weeklyIsSkipping
-    case weeklyIsSkippingDate
+    case weeklySkippedDate
     
     // MARK: Monthly Components
     
@@ -136,7 +136,7 @@ enum ServerDefaultKeys: String {
     case monthlyHour
     case monthlyMinute
     case monthlyIsSkipping
-    case monthlyIsSkippingDate
+    case monthlySkippedDate
     
     // MARK: One Time Components
     

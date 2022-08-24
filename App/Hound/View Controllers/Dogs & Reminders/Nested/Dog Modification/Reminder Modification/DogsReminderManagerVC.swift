@@ -354,13 +354,15 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
                 reminder.reminderType = .weekly
                 
                 try reminder.weeklyComponents.changeWeekdays(forWeekdays: weekdays)
-                try reminder.weeklyComponents.changeHour(forHour: Calendar.current.component(.hour, from: dogsReminderWeeklyViewController.timeOfDayDatePicker.date))
-                try reminder.weeklyComponents.changeMinute(forMinute: Calendar.current.component(.minute, from: dogsReminderWeeklyViewController.timeOfDayDatePicker.date))
+                let date = dogsReminderWeeklyViewController.timeOfDayDatePicker.date
+                reminder.weeklyComponents.changeUTCHour(forDate: date)
+                reminder.weeklyComponents.changeUTCMinute(forDate: date)
             case 3:
                 reminder.reminderType = .monthly
-                try reminder.monthlyComponents.changeDay(forDay: Calendar.current.component(.day, from: dogsReminderMonthlyViewController.timeOfDayDatePicker.date))
-                try reminder.monthlyComponents.changeHour(forHour: Calendar.current.component(.hour, from: dogsReminderMonthlyViewController.timeOfDayDatePicker.date))
-                try reminder.monthlyComponents.changeMinute(forMinute: Calendar.current.component(.minute, from: dogsReminderMonthlyViewController.timeOfDayDatePicker.date))
+                let date = dogsReminderMonthlyViewController.timeOfDayDatePicker.date
+                reminder.monthlyComponents.changeUTCDay(forDate: date)
+                reminder.monthlyComponents.changeUTCHour(forDate: date)
+                reminder.monthlyComponents.changeUTCMinute(forDate: date)
             default: break
             }
             
@@ -388,12 +390,12 @@ final class DogsReminderManagerViewController: UIViewController, UITextFieldDele
                 }
             case .weekly:
                 // time of day or weekdays changed
-                if reminder.weeklyComponents.weekdays != targetReminder.weeklyComponents.weekdays || reminder.weeklyComponents.hour != targetReminder.weeklyComponents.hour || reminder.weeklyComponents.minute != targetReminder.weeklyComponents.minute {
+                if reminder.weeklyComponents.weekdays != targetReminder.weeklyComponents.weekdays || reminder.weeklyComponents.UTCHour != targetReminder.weeklyComponents.UTCHour || reminder.weeklyComponents.UTCMinute != targetReminder.weeklyComponents.UTCMinute {
                     reminder.prepareForNextAlarm()
                 }
             case .monthly:
                 // time of day or day of month changed
-                if reminder.monthlyComponents.day != targetReminder.monthlyComponents.day || reminder.monthlyComponents.hour != targetReminder.monthlyComponents.hour || reminder.monthlyComponents.minute != targetReminder.monthlyComponents.minute {
+                if reminder.monthlyComponents.UTCDay != targetReminder.monthlyComponents.UTCDay || reminder.monthlyComponents.UTCHour != targetReminder.monthlyComponents.UTCHour || reminder.monthlyComponents.UTCMinute != targetReminder.monthlyComponents.UTCMinute {
                     reminder.prepareForNextAlarm()
                 }
             }

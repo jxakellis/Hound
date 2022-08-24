@@ -285,10 +285,10 @@ final class AlarmManager {
         // this is the time that the reminder's next alarm was skipped. at this same moment, a log was added. If this log is still there, with it's date unmodified by the user, then we remove it.
         let dateOfLogToRemove: Date = {
             if reminder.reminderType == .weekly {
-                return reminder.weeklyComponents.isSkippingDate ?? ClassConstant.DateConstant.default1970Date
+                return reminder.weeklyComponents.skippedDate ?? ClassConstant.DateConstant.default1970Date
             }
             else if reminder.reminderType == .monthly {
-                return reminder.monthlyComponents.isSkippingDate ?? ClassConstant.DateConstant.default1970Date
+                return reminder.monthlyComponents.skippedDate ?? ClassConstant.DateConstant.default1970Date
             }
             else {
                 return ClassConstant.DateConstant.default1970Date

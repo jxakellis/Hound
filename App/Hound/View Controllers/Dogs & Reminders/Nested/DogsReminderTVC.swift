@@ -70,14 +70,14 @@ final class DogsReminderTableViewCell: UITableViewCell {
         }
         
         func setupMonthlyReminder() {
-            let monthlyDay = reminder.monthlyComponents.day
+            let monthlyDay = reminder.monthlyComponents.UTCDay
             reminderLabel.text?.append(" Every Month on \(monthlyDay)")
             
-            reminderLabel.text?.append(String.monthlyDaySuffix(day: monthlyDay))
+            reminderLabel.text?.append(String.daySuffix(day: monthlyDay))
         }
         
         func setupWeeklyReminder() {
-            reminderLabel.text?.append(" \(String.convertToReadable(fromHour: reminder.weeklyComponents.hour, fromMinute: reminder.weeklyComponents.minute))")
+            reminderLabel.text?.append(" \(String.convertToReadable(fromHour: reminder.weeklyComponents.UTCHour, fromMinute: reminder.weeklyComponents.UTCMinute))")
             
             // weekdays
             if reminder.weeklyComponents.weekdays == [1, 2, 3, 4, 5, 6, 7] {

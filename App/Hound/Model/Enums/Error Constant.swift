@@ -279,18 +279,6 @@ enum ErrorConstant {
         }
     }
     
-    enum MonthlyComponentsError {
-        static var dayInvalid: HoundError {
-            return HoundError(forName: "MonthlyComponentsError.dayInvalid", forDescription: "Please select a day of month for your reminder.", forType: .monthlyComponentsError)
-        }
-        static var hourInvalid: HoundError {
-            return HoundError(forName: "MonthlyComponentsError.hourInvalid", forDescription: "Please select a time of day for your reminder.", forType: .monthlyComponentsError)
-        }
-        static var minuteInvalid: HoundError {
-            return HoundError(forName: "MonthlyComponentsError.minuteInvalid", forDescription: "Please select a time of day for your reminder. ", forType: .monthlyComponentsError)
-        }
-    }
-    
     enum ReminderError {
         static var reminderActionBlank: HoundError {
             return HoundError(forName: "ReminderError.reminderActionBlank", forDescription: "Your reminder has no action, try selecting one!", forType: .reminderError)
@@ -321,12 +309,6 @@ enum ErrorConstant {
     enum WeeklyComponentsError {
         static var weekdayArrayInvalid: HoundError {
             return HoundError(forName: "WeeklyComponentsError.weekdayArrayInvalid", forDescription: "Please select at least one day of the week for your reminder. You can do this by clicking on the S, M, T, W, T, F, or S. A blue letter means that your reminder's alarm will sound that day and grey means it won't.", forType: .weeklyComponentsError)
-        }
-        static var hourInvalid: HoundError {
-            return HoundError(forName: "WeeklyComponentsError.hourInvalid", forDescription: "Please select a time of day for your reminder.", forType: .weeklyComponentsError)
-        }
-        static var minuteInvalid: HoundError {
-            return HoundError(forName: "WeeklyComponentsError.minuteInvalid", forDescription: "Please select a time of day for your reminder. ", forType: .weeklyComponentsError)
         }
     }
     

@@ -139,13 +139,13 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
             // both weekly
             else if reminder1.reminderType == .weekly && reminder2.reminderType == .weekly {
                 // earlier in the day is listed first
-                let reminder1Hour = reminder1.weeklyComponents.hour
-                let reminder2Hour = reminder2.weeklyComponents.hour
+                let reminder1Hour = reminder1.weeklyComponents.UTCHour
+                let reminder2Hour = reminder2.weeklyComponents.UTCHour
                 
                 guard reminder1Hour != reminder2Hour else {
                     // hours are equal
-                    let reminder1Minute = reminder1.weeklyComponents.minute
-                    let reminder2Minute = reminder2.weeklyComponents.minute
+                    let reminder1Minute = reminder1.weeklyComponents.UTCMinute
+                    let reminder2Minute = reminder2.weeklyComponents.UTCMinute
                     
                     guard reminder1Minute != reminder2Minute else {
                         // if equal, then smaller reminderId comes first
@@ -161,18 +161,18 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
             }
             // both monthly
             else if reminder1.reminderType == .monthly && reminder2.reminderType == .monthly {
-                let reminder1Day = reminder1.monthlyComponents.day
-                let reminder2Day = reminder2.monthlyComponents.day
+                let reminder1Day = reminder1.monthlyComponents.UTCDay
+                let reminder2Day = reminder2.monthlyComponents.UTCDay
                 
                 guard reminder1Day != reminder2Day else {
                     // earliest in day comes first if same days
-                    let reminder1Hour = reminder1.monthlyComponents.hour
-                    let reminder2Hour = reminder2.monthlyComponents.hour
+                    let reminder1Hour = reminder1.monthlyComponents.UTCHour
+                    let reminder2Hour = reminder2.monthlyComponents.UTCHour
                     
                     guard reminder1Hour != reminder2Hour else {
                         // earliest in hour comes first if same hour
-                        let reminder1Minute = reminder1.monthlyComponents.minute
-                        let reminder2Minute = reminder2.monthlyComponents.minute
+                        let reminder1Minute = reminder1.monthlyComponents.UTCMinute
+                        let reminder2Minute = reminder2.monthlyComponents.UTCMinute
                         
                         guard reminder1Minute != reminder2Minute else {
                             // smaller remidnerId comes first

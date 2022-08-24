@@ -263,7 +263,7 @@ final class DogsTableViewController: UITableViewController, DogManagerControlFlo
         }
         
         // DETERMINES IF ITS A LOG BUTTON OR UNDO LOG BUTTON
-        var shouldUndoLog: Bool = {
+        let shouldUndoLog: Bool = {
             guard reminder.reminderIsEnabled == true else {
                 return false
             }

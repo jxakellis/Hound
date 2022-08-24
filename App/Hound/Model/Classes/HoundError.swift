@@ -16,7 +16,6 @@ enum HoundErrorType {
     case dogError
     case inAppPurchaseError
     case logError
-    case monthlyComponentsError
     case reminderError
     case signInWithAppleError
     case unknownError

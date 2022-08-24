@@ -10,14 +10,16 @@ import Foundation
 
 final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     
+    // TO DO NOW test new timing
+    
     // MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = WeeklyComponents()
         copy.weekdays = self.weekdays
-        copy.hour = self.hour
-        copy.minute = self.minute
-        copy.isSkippingDate = self.isSkippingDate
+        copy.UTCHour = self.UTCHour
+        copy.UTCHour = self.UTCHour
+        copy.skippedDate = self.skippedDate
         
         return copy
     }
@@ -26,18 +28,17 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     
     required init?(coder aDecoder: NSCoder) {
         weekdays = aDecoder.decodeObject(forKey: "weekdays") as? [Int] ?? weekdays
-        hour = aDecoder.decodeInteger(forKey: "hour")
-        minute = aDecoder.decodeInteger(forKey: "minute")
-        isSkippingDate = aDecoder.decodeObject(forKey: "isSkippingDate") as? Date
+        UTCHour = aDecoder.decodeInteger(forKey: "UTCHour")
+        UTCMinute = aDecoder.decodeInteger(forKey: "UTCMinute")
+        skippedDate = aDecoder.decodeObject(forKey: "skippedDate") as? Date
         
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(weekdays, forKey: "weekdays")
-        aCoder.encode(hour, forKey: "hour")
-        aCoder.encode(minute, forKey: "minute")
-        aCoder.encode(isSkippingDate, forKey: "isSkippingDate")
-        
+        aCoder.encode(UTCHour, forKey: "UTCHour")
+        aCoder.encode(UTCMinute, forKey: "UTCMinute")
+        aCoder.encode(skippedDate, forKey: "skippedDate")
     }
     
     // MARK: Main
@@ -46,11 +47,11 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         super.init()
     }
     
-    convenience init(hour: Int?, minute: Int?, isSkippingDate: Date?, sunday: Bool?, monday: Bool?, tuesday: Bool?, wednesday: Bool?, thursday: Bool?, friday: Bool?, saturday: Bool?) {
+    convenience init(UTCHour: Int?, UTCMinute: Int?, skippedDate: Date?, sunday: Bool?, monday: Bool?, tuesday: Bool?, wednesday: Bool?, thursday: Bool?, friday: Bool?, saturday: Bool?) {
         self.init()
-        self.hour = hour ?? self.hour
-        self.minute = minute ?? self.minute
-        self.isSkippingDate = isSkippingDate
+        self.UTCHour = UTCHour ?? self.UTCHour
+        self.UTCMinute = UTCMinute ?? self.UTCMinute
+        self.skippedDate = skippedDate
         
         var weekdays: [Int] = []
         if sunday == true {
@@ -82,6 +83,16 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     
     // MARK: - Properties
     
+    /// Calendar object with it's time zone set to GMT+0000
+    private var UTCCalendar: Calendar {
+        var UTCCalendar = Calendar.current
+        UTCCalendar.timeZone = TimeZone(secondsFromGMT: 0) ?? UTCCalendar.timeZone
+        return UTCCalendar
+    }
+    private var localCalendar: Calendar {
+        return Calendar.current
+    }
+    
     /// The weekdays on which the reminder should fire. 1 - 7, where 1 is sunday and 7 is saturday.
     private(set) var weekdays: [Int] = [1, 2, 3, 4, 5, 6, 7]
     /// Changes the weekdays, if empty throws an error due to the fact that there needs to be at least one time of week.
@@ -94,105 +105,114 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         }
     }
     
-    /// Hour of the day that the reminder will fire
-    private(set) var hour: Int = 7
-    
-    ///  Throws if not within the range of [0,24]
-    func changeHour(forHour: Int) throws {
-        guard forHour >= 0 && forHour <= 24 else {
-            throw ErrorConstant.WeeklyComponentsError.hourInvalid
+    /// Hour of the day that that the reminder should fire in GMT+0000. [0, 23]
+    private(set) var UTCHour: Int = 12
+    /// Hour of the day that that the reminder should fire in local time zone. [0, 23]
+    var localHour: Int {
+        let hoursFromUTC = Int(localCalendar.timeZone.secondsFromGMT() / 3600)
+        var localHour = UTCHour + hoursFromUTC
+        // Verify localHour >= 0
+        if localHour < 0 {
+            localHour += 24
         }
         
-        hour = forHour
+        // Verify localHour <= 23
+        if localHour > 23 {
+            localHour = localHour % 24
+        }
+        
+        return localHour
+    }
+    /// Takes a given date and extracts the UTC Hour (GMT+0000) from it.
+    func changeUTCHour(forDate: Date) {
+        UTCHour = UTCCalendar.component(.hour, from: forDate)
     }
     
-    // TO DO NOW rework this feature so it works across time zones. Should produce same result anywhere in the world. to figure this out, store secondsFromGMT (-12 hrs to +14 hrs) whenever minutes or hours is updated, therefore the minutes or hours have a relation to a timezone. then use these secondsFromGMT when calculating any date so it might say a different time of day (e.g. 4:00 PM cali, 6:00PM chic) but it always references the same exact point in time.
-    
-    /// Minute of the hour that the reminder will fire
-    private(set) var minute: Int = 0
-    
-    /// Throws if not within the range of [0,60]
-    func changeMinute(forMinute: Int) throws {
-        guard forMinute >= 0 && forMinute <= 60 else {
-            throw ErrorConstant.WeeklyComponentsError.minuteInvalid
+    /// Minute of the day that that the reminder should fire in GMT+0000. [0, 59]
+    private(set) var UTCMinute: Int = 0
+    /// Minute of the day that that the reminder should fire in local time zone. [0, 59]
+    var localMinute: Int {
+        let minutesFromUTC = Int((localCalendar.timeZone.secondsFromGMT() % 3600) / 60 )
+        var localMinute = UTCMinute + minutesFromUTC
+        // Verify localMinute >= 0
+        if localMinute < 0 {
+            localMinute += 60
         }
         
-        minute = forMinute
+        // Verify localMinute <= 59
+        if localMinute > 59 {
+            localMinute = localMinute % 60
+        }
+        
+        return localMinute
+    }
+    /// Takes a given date and extracts the UTC minute (GMT+0000) from it.
+    func changeUTCMinute(forDate: Date) {
+        UTCMinute = UTCCalendar.component(.minute, from: forDate)
     }
     
     /// Whether or not the next alarm will be skipped
     var isSkipping: Bool {
-        return isSkippingDate != nil
+        return skippedDate != nil
     }
     
     /// The date at which the user changed the isSkipping to true.  If is skipping is true, then a certain log date was appended. If unskipped, then we have to remove that previously added log. Slight caveat: if the skip log was modified (by the user changing its date) we don't remove it.
-    var isSkippingDate: Date?
+    var skippedDate: Date?
     
     // MARK: - Functions
     
     /// This find the next execution date that takes place after the reminderExecutionBasis. It purposelly not factoring in isSkipping.
     func notSkippingExecutionDate(forReminderExecutionBasis reminderExecutionBasis: Date) -> Date {
         
-        let calculatedDates = futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis)
+        let futureExecutionDates = futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis)
         
-        // want to start with the date furthest away in time
-        var soonestCalculatedDate: Date = calculatedDates.last ?? ClassConstant.DateConstant.default1970Date
+        // Default to the first item in the array, as it is most likely the closest to the present
+        var soonestFutureExecutionDate: Date = futureExecutionDates.first ?? ClassConstant.DateConstant.default1970Date
         
-        // iterate through all of the future execution dates to find the one that after the execution basis but is also closet to the execution basis
-        for calculatedDate in calculatedDates {
-            // if calculated date is in the future (as trad should be) and if its closer to the present that the soonestCalculatedDate, then sets soonest to calculated
-            if reminderExecutionBasis.distance(to: calculatedDate) > 0 && reminderExecutionBasis.distance(to: calculatedDate) < reminderExecutionBasis.distance(to: soonestCalculatedDate) {
-                soonestCalculatedDate = calculatedDate
-            }
+        // Find any dates that are closer to the present that the current soonestFutureExecutionDate. If a date is closer to the present that soonestFutureExecutionDate, set soonestFutureExecutionDate to its value
+        for futureExecutionDate in futureExecutionDates where reminderExecutionBasis.distance(to: futureExecutionDate) < reminderExecutionBasis.distance(to: soonestFutureExecutionDate) {
+            soonestFutureExecutionDate = futureExecutionDate
         }
         
-        return soonestCalculatedDate
+        return soonestFutureExecutionDate
     }
     
     /// Returns the date that the reminder should have last sounded an alarm at. This helps in finding alarms that might have been missed
     func previousExecutionDate(forReminderExecutionBasis reminderExecutionBasis: Date) -> Date {
         
-        let traditionalNextTOD = notSkippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
+        let nextExecutionDate = notSkippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
         
-        // multiple days of week so need to do math to figure out correct
-        if weekdays.count > 1 {
-            var preceedingExecutionDates = futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis)
-            
-            // Subtracts a week from all futureExecutionDates
-            for futureExecutionDateIndex in 0..<preceedingExecutionDates.count {
-                let preceedingExecutionDate: Date = Calendar.current.date(byAdding: .day, value: -7, to: preceedingExecutionDates[futureExecutionDateIndex]) ?? ClassConstant.DateConstant.default1970Date
-                preceedingExecutionDates[futureExecutionDateIndex] = preceedingExecutionDate
-            }
-            
-            // choose most extreme
-            var closestCalculatedDate: Date = preceedingExecutionDates.first ?? ClassConstant.DateConstant.default1970Date
-            
-            // Looks for a date that is both before the nextTimeOfDay but closet in time to
-            for preceedingExecutionDate in preceedingExecutionDates {
-                
-                // for the two .distance comparisions after the &&, the distances are going to be negative because it is going in reverse time. This means that the > is in the right direction. Write it out if it doesn't make sense
-                if traditionalNextTOD.distance(to: preceedingExecutionDate) < 0 && traditionalNextTOD.distance(to: preceedingExecutionDate) > traditionalNextTOD.distance(to: closestCalculatedDate) {
-                    closestCalculatedDate = preceedingExecutionDate
-                }
-            }
-            
-            return closestCalculatedDate
-        }
-        // only 1 day of week so all you have to do is subtract a week
-        else {
-            return Calendar.current.date(byAdding: .day, value: -7, to: traditionalNextTOD) ?? ClassConstant.DateConstant.default1970Date
+        guard weekdays.count > 1 else {
+            // only 1 day of week so all you have to do is subtract a week
+            return UTCCalendar.date(byAdding: .day, value: -7, to: nextExecutionDate) ?? ClassConstant.DateConstant.default1970Date
         }
         
+        let futureExecutionDates = futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis)
+        
+        var pastExecutionDates: [Date] = []
+        
+        // Take every date and shift it back a week
+        for futureExecutionDate in futureExecutionDates {
+            pastExecutionDates.append(UTCCalendar.date(byAdding: .day, value: -7, to: futureExecutionDate) ?? ClassConstant.DateConstant.default1970Date)
+        }
+        
+        // Choose date that is likely to be the closest to the present
+        var soonestExecutionDate: Date = pastExecutionDates.first ?? ClassConstant.DateConstant.default1970Date
+            
+        // Find date that are before the nextExecutionDate while also being closer to nextExecutionDate that soonestExecutionDate
+        for pastExecutionDate in pastExecutionDates where
+        nextExecutionDate.distance(to: pastExecutionDate) < 0
+        && nextExecutionDate.distance(to: pastExecutionDate) > nextExecutionDate.distance(to: soonestExecutionDate) {
+            // pastExecutionDate comes before nextExecutionDate while being closer to nextExecutionDate than soonestExecutionDate
+            soonestExecutionDate = pastExecutionDate
+        }
+            
+        return soonestExecutionDate
     }
     
     /// Factors in isSkipping to figure out the next time of day
     func nextExecutionDate(forReminderExecutionBasis reminderExecutionBasis: Date) -> Date {
-        if isSkipping == true {
-            return skippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
-        }
-        else {
-            return notSkippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
-        }
+        return isSkipping ? skippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis) : notSkippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
     }
     
     // MARK: - Private Helper Functions
@@ -201,66 +221,67 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     private func futureExecutionDates(forReminderExecutionBasis reminderExecutionBasis: Date) -> [Date] {
         
         // the dates calculated to be reminderExecutionDates
-        var calculatedDates: [Date] = []
-        
-        // iterate throguh all weekdays
-        for weekday in weekdays {
-            // set calculated date to the last time the reminder went off
-            var calculatedDate = reminderExecutionBasis
-            // iterate the calculated day forward until it is the correct weekday
-            calculatedDate = Calendar.current.date(bySetting: .weekday, value: weekday, of: calculatedDate) ?? ClassConstant.DateConstant.default1970Date
-            // iterate the time of day forward until the first result is found
-            calculatedDate = Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: calculatedDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward) ?? ClassConstant.DateConstant.default1970Date
+        var futureExecutionDates: [Date] = {
+            var futureExecutionDates: [Date] = []
             
-            // Correction for setting components to the same day. e.g. if its 11:00Am friday and you apply 8:30AM Friday to the current date, then it is in the past, this gets around this by making it 8:30AM Next Friday
-            if reminderExecutionBasis.distance(to: calculatedDate) < 0 {
-                calculatedDate = Calendar.current.date(byAdding: .day, value: 7, to: calculatedDate) ?? ClassConstant.DateConstant.default1970Date
+            // iterate throguh all weekdays
+            for weekday in weekdays {
+                // Add the target weekday to reminderExecutionBasis
+                var futureExecutionDate = UTCCalendar.date(bySetting: .weekday, value: weekday, of: reminderExecutionBasis) ?? ClassConstant.DateConstant.default1970Date
+                
+                // Iterate the futureExecutionDate forward until the first result that matches UTCHour and UTCMinute is found
+                futureExecutionDate = UTCCalendar.date(bySettingHour: UTCHour, minute: UTCMinute, second: 0, of: futureExecutionDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward) ?? ClassConstant.DateConstant.default1970Date
+                
+                // Make sure futureExecutionDate is after reminderExecutionBasis
+                // Correction for setting components to the same day. e.g. if its 11:00Am friday and you apply 8:30AM Friday to the current date, then it is in the past, this gets around this by making it 8:30AM Next Friday
+                if reminderExecutionBasis.distance(to: futureExecutionDate) < 0 {
+                    futureExecutionDate = UTCCalendar.date(byAdding: .day, value: 7, to: futureExecutionDate) ?? ClassConstant.DateConstant.default1970Date
+                }
+                
+                futureExecutionDates.append(futureExecutionDate)
             }
-            
-            calculatedDates.append(calculatedDate)
+            return futureExecutionDates
+        }()
+        
+        // futureExecutionDates should have at least two dates
+        if futureExecutionDates.count <= 1 {
+            if let futureExecutionDate = futureExecutionDates.first {
+                // Only one weekday is active. Take the execution date for that single weekday and add a duplicate, but a week in the future
+                futureExecutionDates.append(UTCCalendar.date(byAdding: .day, value: 7, to: futureExecutionDate) ?? ClassConstant.DateConstant.default1970Date)
+            }
+            else {
+                // No weekdays active. Shouldn't happen. Handle by adding 1 week and 2 weeks to reminderExecutionBasis
+                futureExecutionDates.append(UTCCalendar.date(byAdding: .day, value: 7, to: reminderExecutionBasis) ?? ClassConstant.DateConstant.default1970Date)
+                futureExecutionDates.append(UTCCalendar.date(byAdding: .day, value: 14, to: reminderExecutionBasis) ?? ClassConstant.DateConstant.default1970Date)
+            }
         }
         
-        if calculatedDates.count > 1 {
-            calculatedDates.sort()
-        }
-        // should have at least two dates
-        else if calculatedDates.count == 1 {
-            // in this situation, only one weekday is active, we take the execution date for that single weekday and add a duplicate, but a week in the future
-            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 7, to: calculatedDates[0]) ?? ClassConstant.DateConstant.default1970Date)
-        }
-        else {
-            AppDelegate.generalLogger.warning("Calculated Dates For futureExecutionDates Empty")
-            // calculated dates should never be zero, this means there are somehow zero weekdays selected. Handle this weird case by just appending future dates (one 1 week ahead and the other 2 weeks ahead)
-            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 7, to: reminderExecutionBasis) ?? ClassConstant.DateConstant.default1970Date)
-            calculatedDates.append(Calendar.current.date(byAdding: .day, value: 14, to: reminderExecutionBasis) ?? ClassConstant.DateConstant.default1970Date)
-        }
+        futureExecutionDates.sort()
         
-        return calculatedDates
+        return futureExecutionDates
     }
     
     /// If a reminder is skipping, then we must find the next soonest reminderExecutionDate. We have to find the execution date that takes place after the skipped execution date (but before any other execution date).
     private func skippingExecutionDate(forReminderExecutionBasis reminderExecutionBasis: Date) -> Date {
         
-        let traditionalNextTOD = notSkippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
+        let nextExecutionDate = notSkippingExecutionDate(forReminderExecutionBasis: reminderExecutionBasis)
+        
+        guard weekdays.count > 1 else {
+            // If only 1 day of week selected then all you have to do is add 1 week.
+            return UTCCalendar.date(byAdding: .day, value: 7, to: nextExecutionDate) ?? ClassConstant.DateConstant.default1970Date
+        }
         
         // If there are multiple dates to be sorted through to find the date that is closer in time to traditionalNextTimeOfDay but still in the future
-        if weekdays.count > 1 {
-            let calculatedDates = futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis)
-            var nextSoonestCalculatedDate: Date = calculatedDates.last ?? ClassConstant.DateConstant.default1970Date
-            
-            for calculatedDate in calculatedDates {
-                // If the calculated date is greater in time (future) that the normal non skipping time and the calculatedDate is closer in time to the trad date, then sets nextSoonest to calculatedDate
-                if traditionalNextTOD.distance(to: calculatedDate) > 0 && traditionalNextTOD.distance(to: calculatedDate) < traditionalNextTOD.distance(to: nextSoonestCalculatedDate) {
-                    nextSoonestCalculatedDate = calculatedDate
-                }
-            }
-            
-            return nextSoonestCalculatedDate
-        }
-        // If only 1 day of week selected then all you have to do is add 1 week.
-        else {
-            return Calendar.current.date(byAdding: .day, value: 7, to: traditionalNextTOD) ?? ClassConstant.DateConstant.default1970Date
+        let futureExecutionDates = futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis)
+        var soonestFutureExecutionDate: Date = futureExecutionDates.first ?? ClassConstant.DateConstant.default1970Date
+        
+        // Attempt to find futureExecutionDates that are further in the future than nextExecutionDate while being closer to nextExecutionDate than soonestFutureExecutionDate
+        for futureExecutionDate in futureExecutionDates where
+        nextExecutionDate.distance(to: futureExecutionDate) > 0
+        && nextExecutionDate.distance(to: futureExecutionDate) < nextExecutionDate.distance(to: soonestFutureExecutionDate) {
+            soonestFutureExecutionDate = futureExecutionDate
         }
         
+        return soonestFutureExecutionDate
     }
 }
