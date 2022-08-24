@@ -282,9 +282,9 @@ extension DogManager {
         
         // we will be going from oldest logs to newest logs (by logDate)
         for element in dogIdLogsTuples {
-            let logDay = Calendar.current.component(.day, from: element.1.logDate)
-            let logMonth = Calendar.current.component(.month, from: element.1.logDate)
-            let logYear = Calendar.current.component(.year, from: element.1.logDate)
+            let logDay = Calendar.localCalendar.component(.day, from: element.1.logDate)
+            let logMonth = Calendar.localCalendar.component(.month, from: element.1.logDate)
+            let logYear = Calendar.localCalendar.component(.year, from: element.1.logDate)
             
             let containsDateCombination = groupedLogsByUniqueDate.contains { day, month, year, _ in
                 // check to see if that day, month, year comboination is already present

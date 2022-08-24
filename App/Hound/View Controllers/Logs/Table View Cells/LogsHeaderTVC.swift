@@ -37,30 +37,30 @@ final class LogsHeaderTableViewCell: UITableViewCell {
         filterImageView.isHidden = !shouldShowFilterIndictator
         
         if let date = date {
-            let currentYear = Calendar.current.component(.year, from: Date())
-            let dateYear = Calendar.current.component(.year, from: date)
+            let currentYear = Calendar.localCalendar.component(.year, from: Date())
+            let dateYear = Calendar.localCalendar.component(.year, from: date)
             
             // today
-            if Calendar.current.isDateInToday(date) {
+            if Calendar.localCalendar.isDateInToday(date) {
                 headerLabel.text = "Today"
             }
             // yesterday
-            else if Calendar.current.isDateInYesterday(date) {
+            else if Calendar.localCalendar.isDateInYesterday(date) {
                 headerLabel.text = "Yesterday"
             }
-            else if Calendar.current.isDateInTomorrow(date) {
+            else if Calendar.localCalendar.isDateInTomorrow(date) {
                 headerLabel.text = "Tomorrow"
             }
             // this year
             else if currentYear == dateYear {
                 let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEE, MMMM d", options: 0, locale: Calendar.current.locale)
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEE, MMMM d", options: 0, locale: Calendar.localCalendar.locale)
                 headerLabel.text = dateFormatter.string(from: date)
             }
             // previous year or even older
             else {
                 let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEE, MMMM d, yyyy", options: 0, locale: Calendar.current.locale)
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEE, MMMM d, yyyy", options: 0, locale: Calendar.localCalendar.locale)
                 headerLabel.text = dateFormatter.string(from: date)
             }
         }

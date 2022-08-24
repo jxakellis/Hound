@@ -80,7 +80,7 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
             reminderIntervalLabel.text = ("Every \(String.convertToReadable(fromTimeInterval: reminder.countdownComponents.executionInterval))")
         case .weekly:
             reminderIconImageView.image = UIImage.init(systemName: "alarm")
-            reminderIntervalLabel.text = ("\(String.convertToReadable(fromHour: reminder.weeklyComponents.UTCHour, fromMinute: reminder.weeklyComponents.UTCMinute))")
+            reminderIntervalLabel.text = ("\(String.convertToReadable(fromUTCHour: reminder.weeklyComponents.UTCHour, fromUTCMinute: reminder.weeklyComponents.UTCMinute))")
             
             // weekdays
             if reminder.weeklyComponents.weekdays == [1, 2, 3, 4, 5, 6, 7] {
@@ -122,13 +122,13 @@ final class DogsReminderDisplayTableViewCell: UITableViewCell {
             }
         case .monthly:
             reminderIconImageView.image = UIImage.init(systemName: "calendar")
-            reminderIntervalLabel.text = ("\(String.convertToReadable(fromHour: reminder.monthlyComponents.UTCHour, fromMinute: reminder.monthlyComponents.UTCMinute))")
+            reminderIntervalLabel.text = ("\(String.convertToReadable(fromUTCHour: reminder.monthlyComponents.UTCHour, fromUTCMinute: reminder.monthlyComponents.UTCMinute))")
             
             // day of month
-            let monthlyDay: Int = reminder.monthlyComponents.UTCDay
-            reminderIntervalLabel.text?.append(" Every Month on \(monthlyDay)")
+            let monthlyUTCDay: Int = reminder.monthlyComponents.UTCDay
+            reminderIntervalLabel.text?.append(" Every Month on \(monthlyUTCDay)")
             
-            reminderIntervalLabel.text?.append(String.daySuffix(day: monthlyDay))
+            reminderIntervalLabel.text?.append(String.daySuffix(day: monthlyUTCDay))
         case .oneTime:
             reminderIconImageView.image = UIImage.init(systemName: "calendar")
             reminderIntervalLabel.text = String.convertToReadable(fromDate: reminder.oneTimeComponents.oneTimeDate)

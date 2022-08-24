@@ -225,8 +225,8 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             weeklySkippedDate = ResponseUtils.dateFormatter(fromISO8601String: weeklySkippedDateString) ?? Date()
         }
         weeklyComponents = WeeklyComponents(
-            UTCHour: body[ServerDefaultKeys.weeklyHour.rawValue] as? Int,
-            UTCMinute: body[ServerDefaultKeys.weeklyMinute.rawValue] as? Int,
+            UTCHour: body[ServerDefaultKeys.weeklyUTCHour.rawValue] as? Int,
+            UTCMinute: body[ServerDefaultKeys.weeklyUTCMinute.rawValue] as? Int,
             skippedDate: weeklySkippedDate,
             sunday: body[ServerDefaultKeys.weeklySunday.rawValue] as? Bool,
             monday: body[ServerDefaultKeys.weeklyMonday.rawValue] as? Bool,
@@ -242,9 +242,9 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             monthlySkippedDate = ResponseUtils.dateFormatter(fromISO8601String: monthlySkippedDateString) ?? Date()
         }
         monthlyComponents = MonthlyComponents(
-            UTCDay: body[ServerDefaultKeys.monthlyDay.rawValue] as? Int,
-            UTCHour: body[ServerDefaultKeys.monthlyHour.rawValue] as? Int,
-            UTCMinute: body[ServerDefaultKeys.monthlyMinute.rawValue] as? Int,
+            UTCDay: body[ServerDefaultKeys.monthlyUTCDay.rawValue] as? Int,
+            UTCHour: body[ServerDefaultKeys.monthlyUTCHour.rawValue] as? Int,
+            UTCMinute: body[ServerDefaultKeys.monthlyUTCMinute.rawValue] as? Int,
             skippedDate: monthlySkippedDate
         )
         
@@ -634,9 +634,8 @@ extension Reminder {
         body[ServerDefaultKeys.countdownIntervalElapsed.rawValue] = countdownComponents.intervalElapsed
         
         // weekly
-        body[ServerDefaultKeys.weeklyHour.rawValue] = weeklyComponents.UTCHour
-        body[ServerDefaultKeys.weeklyMinute.rawValue] = weeklyComponents.UTCMinute
-        body[ServerDefaultKeys.weeklyIsSkipping.rawValue] = weeklyComponents.isSkipping
+        body[ServerDefaultKeys.weeklyUTCHour.rawValue] = weeklyComponents.UTCHour
+        body[ServerDefaultKeys.weeklyUTCMinute.rawValue] = weeklyComponents.UTCMinute
         body[ServerDefaultKeys.weeklySkippedDate.rawValue] = weeklyComponents.skippedDate?.ISO8601FormatWithFractionalSeconds()
         
         body[ServerDefaultKeys.weeklySunday.rawValue] = false
@@ -669,10 +668,9 @@ extension Reminder {
         }
         
         // monthly
-        body[ServerDefaultKeys.monthlyDay.rawValue] = monthlyComponents.UTCDay
-        body[ServerDefaultKeys.monthlyHour.rawValue] = monthlyComponents.UTCHour
-        body[ServerDefaultKeys.monthlyMinute.rawValue] = monthlyComponents.UTCMinute
-        body[ServerDefaultKeys.monthlyIsSkipping.rawValue] = monthlyComponents.isSkipping
+        body[ServerDefaultKeys.monthlyUTCDay.rawValue] = monthlyComponents.UTCDay
+        body[ServerDefaultKeys.monthlyUTCHour.rawValue] = monthlyComponents.UTCHour
+        body[ServerDefaultKeys.monthlyUTCMinute.rawValue] = monthlyComponents.UTCMinute
         body[ServerDefaultKeys.monthlySkippedDate.rawValue] = monthlyComponents.skippedDate?.ISO8601FormatWithFractionalSeconds()
         
         // one time

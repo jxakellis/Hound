@@ -10,8 +10,6 @@ import Foundation
 
 final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     
-    // TO DO NOW test new timing
-    
     // MARK: - NSCopying
     
     func copy(with zone: NSZone? = nil) -> Any {
@@ -83,16 +81,6 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     
     // MARK: - Properties
     
-    /// Calendar object with it's time zone set to GMT+0000
-    private var UTCCalendar: Calendar {
-        var UTCCalendar = Calendar.current
-        UTCCalendar.timeZone = TimeZone(secondsFromGMT: 0) ?? UTCCalendar.timeZone
-        return UTCCalendar
-    }
-    private var localCalendar: Calendar {
-        return Calendar.current
-    }
-    
     /// The weekdays on which the reminder should fire. 1 - 7, where 1 is sunday and 7 is saturday.
     private(set) var weekdays: [Int] = [1, 2, 3, 4, 5, 6, 7]
     /// Changes the weekdays, if empty throws an error due to the fact that there needs to be at least one time of week.
@@ -106,49 +94,17 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
     }
     
     /// Hour of the day that that the reminder should fire in GMT+0000. [0, 23]
-    private(set) var UTCHour: Int = 12
-    /// Hour of the day that that the reminder should fire in local time zone. [0, 23]
-    var localHour: Int {
-        let hoursFromUTC = Int(localCalendar.timeZone.secondsFromGMT() / 3600)
-        var localHour = UTCHour + hoursFromUTC
-        // Verify localHour >= 0
-        if localHour < 0 {
-            localHour += 24
-        }
-        
-        // Verify localHour <= 23
-        if localHour > 23 {
-            localHour = localHour % 24
-        }
-        
-        return localHour
-    }
+    private(set) var UTCHour: Int = ClassConstant.ReminderComponentConstant.defaultUTCHour
     /// Takes a given date and extracts the UTC Hour (GMT+0000) from it.
     func changeUTCHour(forDate: Date) {
-        UTCHour = UTCCalendar.component(.hour, from: forDate)
+        UTCHour = Calendar.UTCCalendar.component(.hour, from: forDate)
     }
     
     /// Minute of the day that that the reminder should fire in GMT+0000. [0, 59]
-    private(set) var UTCMinute: Int = 0
-    /// Minute of the day that that the reminder should fire in local time zone. [0, 59]
-    var localMinute: Int {
-        let minutesFromUTC = Int((localCalendar.timeZone.secondsFromGMT() % 3600) / 60 )
-        var localMinute = UTCMinute + minutesFromUTC
-        // Verify localMinute >= 0
-        if localMinute < 0 {
-            localMinute += 60
-        }
-        
-        // Verify localMinute <= 59
-        if localMinute > 59 {
-            localMinute = localMinute % 60
-        }
-        
-        return localMinute
-    }
+    private(set) var UTCMinute: Int = ClassConstant.ReminderComponentConstant.defaultUTCMinute
     /// Takes a given date and extracts the UTC minute (GMT+0000) from it.
     func changeUTCMinute(forDate: Date) {
-        UTCMinute = UTCCalendar.component(.minute, from: forDate)
+        UTCMinute = Calendar.UTCCalendar.component(.minute, from: forDate)
     }
     
     /// Whether or not the next alarm will be skipped
@@ -184,7 +140,7 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         
         guard weekdays.count > 1 else {
             // only 1 day of week so all you have to do is subtract a week
-            return UTCCalendar.date(byAdding: .day, value: -7, to: nextExecutionDate) ?? ClassConstant.DateConstant.default1970Date
+            return Calendar.UTCCalendar.date(byAdding: .day, value: -7, to: nextExecutionDate) ?? ClassConstant.DateConstant.default1970Date
         }
         
         let futureExecutionDates = futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis)
@@ -193,7 +149,7 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         
         // Take every date and shift it back a week
         for futureExecutionDate in futureExecutionDates {
-            pastExecutionDates.append(UTCCalendar.date(byAdding: .day, value: -7, to: futureExecutionDate) ?? ClassConstant.DateConstant.default1970Date)
+            pastExecutionDates.append(Calendar.UTCCalendar.date(byAdding: .day, value: -7, to: futureExecutionDate) ?? ClassConstant.DateConstant.default1970Date)
         }
         
         // Choose date that is likely to be the closest to the present
@@ -227,15 +183,15 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
             // iterate throguh all weekdays
             for weekday in weekdays {
                 // Add the target weekday to reminderExecutionBasis
-                var futureExecutionDate = UTCCalendar.date(bySetting: .weekday, value: weekday, of: reminderExecutionBasis) ?? ClassConstant.DateConstant.default1970Date
+                var futureExecutionDate = Calendar.UTCCalendar.date(bySetting: .weekday, value: weekday, of: reminderExecutionBasis) ?? ClassConstant.DateConstant.default1970Date
                 
                 // Iterate the futureExecutionDate forward until the first result that matches UTCHour and UTCMinute is found
-                futureExecutionDate = UTCCalendar.date(bySettingHour: UTCHour, minute: UTCMinute, second: 0, of: futureExecutionDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward) ?? ClassConstant.DateConstant.default1970Date
+                futureExecutionDate = Calendar.UTCCalendar.date(bySettingHour: UTCHour, minute: UTCMinute, second: 0, of: futureExecutionDate, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward) ?? ClassConstant.DateConstant.default1970Date
                 
                 // Make sure futureExecutionDate is after reminderExecutionBasis
                 // Correction for setting components to the same day. e.g. if its 11:00Am friday and you apply 8:30AM Friday to the current date, then it is in the past, this gets around this by making it 8:30AM Next Friday
                 if reminderExecutionBasis.distance(to: futureExecutionDate) < 0 {
-                    futureExecutionDate = UTCCalendar.date(byAdding: .day, value: 7, to: futureExecutionDate) ?? ClassConstant.DateConstant.default1970Date
+                    futureExecutionDate = Calendar.UTCCalendar.date(byAdding: .day, value: 7, to: futureExecutionDate) ?? ClassConstant.DateConstant.default1970Date
                 }
                 
                 futureExecutionDates.append(futureExecutionDate)
@@ -247,12 +203,12 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         if futureExecutionDates.count <= 1 {
             if let futureExecutionDate = futureExecutionDates.first {
                 // Only one weekday is active. Take the execution date for that single weekday and add a duplicate, but a week in the future
-                futureExecutionDates.append(UTCCalendar.date(byAdding: .day, value: 7, to: futureExecutionDate) ?? ClassConstant.DateConstant.default1970Date)
+                futureExecutionDates.append(Calendar.UTCCalendar.date(byAdding: .day, value: 7, to: futureExecutionDate) ?? ClassConstant.DateConstant.default1970Date)
             }
             else {
                 // No weekdays active. Shouldn't happen. Handle by adding 1 week and 2 weeks to reminderExecutionBasis
-                futureExecutionDates.append(UTCCalendar.date(byAdding: .day, value: 7, to: reminderExecutionBasis) ?? ClassConstant.DateConstant.default1970Date)
-                futureExecutionDates.append(UTCCalendar.date(byAdding: .day, value: 14, to: reminderExecutionBasis) ?? ClassConstant.DateConstant.default1970Date)
+                futureExecutionDates.append(Calendar.UTCCalendar.date(byAdding: .day, value: 7, to: reminderExecutionBasis) ?? ClassConstant.DateConstant.default1970Date)
+                futureExecutionDates.append(Calendar.UTCCalendar.date(byAdding: .day, value: 14, to: reminderExecutionBasis) ?? ClassConstant.DateConstant.default1970Date)
             }
         }
         
@@ -268,12 +224,15 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         
         guard weekdays.count > 1 else {
             // If only 1 day of week selected then all you have to do is add 1 week.
-            return UTCCalendar.date(byAdding: .day, value: 7, to: nextExecutionDate) ?? ClassConstant.DateConstant.default1970Date
+            return Calendar.UTCCalendar.date(byAdding: .day, value: 7, to: nextExecutionDate) ?? ClassConstant.DateConstant.default1970Date
         }
         
         // If there are multiple dates to be sorted through to find the date that is closer in time to traditionalNextTimeOfDay but still in the future
         let futureExecutionDates = futureExecutionDates(forReminderExecutionBasis: reminderExecutionBasis)
-        var soonestFutureExecutionDate: Date = futureExecutionDates.first ?? ClassConstant.DateConstant.default1970Date
+        
+        var soonestFutureExecutionDate: Date = futureExecutionDates.first(where: { futureExecutionDate in
+            return nextExecutionDate.distance(to: futureExecutionDate) > 0
+        }) ?? ClassConstant.DateConstant.default1970Date
         
         // Attempt to find futureExecutionDates that are further in the future than nextExecutionDate while being closer to nextExecutionDate than soonestFutureExecutionDate
         for futureExecutionDate in futureExecutionDates where

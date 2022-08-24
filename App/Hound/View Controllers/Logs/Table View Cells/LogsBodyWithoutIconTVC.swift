@@ -60,7 +60,7 @@ final class LogsBodyWithoutIconTableViewCell: UITableViewCell {
         
         // Log Date
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)
+        dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.localCalendar.locale)
         logDateLabel.text = dateFormatter.string(from: log.logDate)
         logDateLabel.font = logDateLabel.font.withSize(fontSize * sizeRatio)
         // Log Date Constant

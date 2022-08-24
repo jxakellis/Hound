@@ -28,7 +28,7 @@ final class SettingsAboutViewController: UIViewController {
         // 3. Hound is a student project
         self.version.text = "Version \(UIApplication.appVersion)"
         self.build.text = "Build \(UIApplication.appBuild)"
-        self.copyright.text = "© \(Calendar.current.component(.year, from: Date())) Jonathan Xakellis"
+        self.copyright.text = "© \(Calendar.localCalendar.component(.year, from: Date())) Jonathan Xakellis"
     }
     
     override func viewDidAppear(_ animated: Bool) {

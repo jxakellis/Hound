@@ -34,6 +34,8 @@ enum PersistenceManager {
         let keychain = KeychainSwift()
         
         UserInformation.userIdentifier = keychain.get(ServerDefaultKeys.userIdentifier.rawValue)
+        // TO DO NOW TEMPORARY
+        UserInformation.userIdentifier = "1f66dbb1e7df20e51a8cd88c2334f5e4def79a2ebc1444f6766ff4160ea6927a"
         UserInformation.userEmail = keychain.get(ServerDefaultKeys.userEmail.rawValue) ?? UserInformation.userEmail
         UserInformation.userFirstName = keychain.get(ServerDefaultKeys.userFirstName.rawValue) ?? UserInformation.userFirstName
         UserInformation.userLastName = keychain.get(ServerDefaultKeys.userLastName.rawValue) ?? UserInformation.userLastName
@@ -41,6 +43,7 @@ enum PersistenceManager {
         // MARK: Load Stored User Information
         
         UserInformation.userId = UserDefaults.standard.value(forKey: ServerDefaultKeys.userId.rawValue) as? String ?? UserInformation.userId
+        UserInformation.userId = "015a892b03411e9515989ce2178862a5890f58de1e8af60af4cd6dee45ab8569"
         UserInformation.familyId = UserDefaults.standard.value(forKey: ServerDefaultKeys.familyId.rawValue) as? String ?? UserInformation.familyId
         
         // MARK: Load Stored User Configuration

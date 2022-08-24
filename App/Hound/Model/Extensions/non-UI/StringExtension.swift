@@ -52,31 +52,59 @@ extension String {
     }
     
     /// Converts dateComponents with .hour and .minute to a readable string, e.g. 8:56AM or 2:23 PM
-    static func convertToReadable(fromHour hour: Int, fromMinute minute: Int) -> String {
+    static func convertToReadable(fromUTCHour UTCHour: Int, fromUTCMinute UTCMinute: Int) -> String {
         
-        var amOrPM: String {
-            if hour < 12 {
+        var localHour: Int = {
+            let hoursFromUTC = Int(Calendar.localCalendar.timeZone.secondsFromGMT() / 3600)
+            var localHour = UTCHour + hoursFromUTC
+            // Verify localHour >= 0
+            if localHour < 0 {
+                localHour += 24
+            }
+            
+            // Verify localHour <= 23
+            if localHour > 23 {
+                localHour = localHour % 24
+            }
+            
+            return localHour
+        }()
+        
+        let localMinute: Int = {
+            let minutesFromUTC = Int((Calendar.localCalendar.timeZone.secondsFromGMT() % 3600) / 60 )
+            var localMinute = UTCMinute + minutesFromUTC
+            // Verify localMinute >= 0
+            if localMinute < 0 {
+                localMinute += 60
+            }
+            
+            // Verify localMinute <= 59
+            if localMinute > 59 {
+                localMinute = localMinute % 60
+            }
+            
+            return localMinute
+        }()
+        
+        let amOrPM: String = {
+            if localHour < 12 {
                 return "AM"
             }
             else {
                 return "PM"
             }
+        }()
+        
+        // convert localHour to non-military time
+        if localHour > 12 {
+            localHour -= 12
+        }
+        else if localHour == 0 {
+            localHour = 12
         }
         
-        var adjustedHour = hour
-        if adjustedHour > 12 {
-            adjustedHour -= 12
-        }
-        else if adjustedHour == 0 {
-            adjustedHour = 12
-        }
-        
-        if minute < 10 {
-            return "\(adjustedHour):0\(minute) \(amOrPM)"
-        }
-        else {
-            return "\(adjustedHour):\(minute) \(amOrPM)"
-        }
+        // 7:00 PM, 7:10 AM
+        return "\(localHour):\(localMinute < 10 ? "0" : "")\(localMinute) \(amOrPM)"
     }
     
     /// Converts a date into a readable string. The year is only added if its different from the current. e.g. 8:58 PM March 7, 2021
@@ -85,17 +113,17 @@ extension String {
         var dateString = ""
         let dateFormatter = DateFormatter()
         
-        dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.current.locale)
+        dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "h:mm a", options: 0, locale: Calendar.localCalendar.locale)
         dateString = dateFormatter.string(from: date)
         
-        dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "MMMM d", options: 0, locale: Calendar.current.locale)
+        dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "MMMM d", options: 0, locale: Calendar.localCalendar.locale)
         dateString.append(" \(dateFormatter.string(from: date))")
         
-        let day = Calendar.current.component(.day, from: date)
+        let day = Calendar.localCalendar.component(.day, from: date)
         dateString.append(String.daySuffix(day: day))
         
-        let year = Calendar.current.component(.year, from: date)
-        if year != Calendar.current.component(.year, from: Date()) {
+        let year = Calendar.localCalendar.component(.year, from: date)
+        if year != Calendar.localCalendar.component(.year, from: Date()) {
             dateString.append(", \(year)")
         }
         
