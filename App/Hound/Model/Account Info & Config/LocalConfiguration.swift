@@ -103,13 +103,10 @@ enum LocalConfiguration {
     // MARK: Alert Related
     
     /// Used to track when the user was last asked to review the app. We add a Date() to the array by default to signify when the app was installed (or the update for this feature was installed)
-    static var userAskedToReviewHoundDates: [Date] = [Date()]
+    static var datesUserShownBannerToReviewHound: [Date] = [Date()]
     
     /// Used to track when the user was shown Apple's request review pop-up that allows the user to one to five star Hound
-    static var rateReviewRequestedDates: [Date] = []
-    
-    /// Used to track when the user was shown a URL page pop-up  that allows the user to write a review on HoundHound
-    static var writeReviewRequestedDates: [Date] = []
+    static var datesUserReviewRequested: [Date] = []
     
     /// Determines where or not the app should display an message when the app is first opened after an update
     static var shouldShowReleaseNotes: Bool = true

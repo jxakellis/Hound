@@ -60,6 +60,11 @@ enum VisualConstant {
         
         // MARK: - .info
         
+        static var houndUpdatedTitle: String {
+            return "Hound updated to version \(UIApplication.appVersion)"
+        }
+        static var houndUpdatedSubtitle = "Tap to show release notes"
+        
         // MARK: - .danger
         static let noCameraTitle = "You Don't Have a Camera!"
         

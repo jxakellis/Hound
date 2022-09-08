@@ -64,6 +64,16 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
     
     /// Hour of the day that that the reminder should fire in GMT+0000. [0, 23]
     private(set) var UTCHour: Int = ClassConstant.ReminderComponentConstant.defaultUTCHour
+    /// UTCHour but converted to the hour in the user's timezone
+    var localHour: Int {
+        let hoursFromUTC = Calendar.localCalendar.timeZone.secondsFromGMT() / 3600
+        var localHour = UTCHour + hoursFromUTC
+        // localHour could be negative, so roll over into positive
+        localHour += 24
+        // Make sure localHour [0, 23]
+        localHour = localHour % 24
+        return localHour
+    }
     /// Takes a given date and extracts the UTC Hour (GMT+0000) from it.
     func changeUTCHour(forDate: Date) {
         UTCHour = Calendar.UTCCalendar.component(.hour, from: forDate)
@@ -71,6 +81,16 @@ final class MonthlyComponents: NSObject, NSCoding, NSCopying {
     
     /// Minute of the day that that the reminder should fire in GMT+0000. [0, 59]
     private(set) var UTCMinute: Int = ClassConstant.ReminderComponentConstant.defaultUTCMinute
+    /// UTCMinute but converted to the minute in the user's timezone
+    var localMinute: Int {
+        let minutesFromUTC = (Calendar.localCalendar.timeZone.secondsFromGMT() % 3600) / 60
+        var localMinute = UTCMinute + minutesFromUTC
+        // localMinute could be negative, so roll over into positive
+        localMinute += 60
+        // Make sure localMinute [0, 59]
+        localMinute = localMinute % 60
+        return localMinute
+    }
     /// Takes a given date and extracts the UTC minute (GMT+0000) from it.
     func changeUTCMinute(forDate: Date) {
         UTCMinute = Calendar.UTCCalendar.component(.minute, from: forDate)

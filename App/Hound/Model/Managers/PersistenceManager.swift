@@ -43,6 +43,7 @@ enum PersistenceManager {
         // MARK: Load Stored User Information
         
         UserInformation.userId = UserDefaults.standard.value(forKey: ServerDefaultKeys.userId.rawValue) as? String ?? UserInformation.userId
+        // TO DO NOW TEMPORARY
         UserInformation.userId = "015a892b03411e9515989ce2178862a5890f58de1e8af60af4cd6dee45ab8569"
         UserInformation.familyId = UserDefaults.standard.value(forKey: ServerDefaultKeys.familyId.rawValue) as? String ?? UserInformation.familyId
         
@@ -89,10 +90,11 @@ enum PersistenceManager {
         
         LocalConfiguration.isNotificationAuthorized = UserDefaults.standard.value(forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue) as? Bool ?? LocalConfiguration.isNotificationAuthorized
         
-        LocalConfiguration.userAskedToReviewHoundDates = UserDefaults.standard.value(forKey: UserDefaultsKeys.userAskedToReviewHoundDates.rawValue) as? [Date] ?? LocalConfiguration.userAskedToReviewHoundDates
-        // reviewRequestDates depreciated as of Hound 2.0
-        LocalConfiguration.rateReviewRequestedDates = UserDefaults.standard.value(forKey: UserDefaultsKeys.rateReviewRequestedDates.rawValue) as? [Date] ?? UserDefaults.standard.value(forKey: "reviewRequestDates") as? [Date] ?? LocalConfiguration.rateReviewRequestedDates
-        LocalConfiguration.writeReviewRequestedDates = UserDefaults.standard.value(forKey: UserDefaultsKeys.writeReviewRequestedDates.rawValue) as? [Date] ?? LocalConfiguration.writeReviewRequestedDates
+        // userAskedToReviewHoundDates depreciated >= build 6500
+        LocalConfiguration.datesUserShownBannerToReviewHound = UserDefaults.standard.value(forKey: UserDefaultsKeys.datesUserShownBannerToReviewHound.rawValue) as? [Date] ?? UserDefaults.standard.value(forKey: "userAskedToReviewHoundDates") as? [Date] ?? LocalConfiguration.datesUserShownBannerToReviewHound
+        
+        // reviewRequestDates depreciated >= build 6000; rateReviewRequestedDates depreciated >= build 6500
+        LocalConfiguration.datesUserReviewRequested = UserDefaults.standard.value(forKey: UserDefaultsKeys.datesUserReviewRequested.rawValue) as? [Date] ?? UserDefaults.standard.value(forKey: "reviewRequestDates") as? [Date] ?? UserDefaults.standard.value(forKey: "rateReviewRequestedDates") as? [Date] ?? LocalConfiguration.datesUserReviewRequested
         
         LocalConfiguration.shouldShowReleaseNotes = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue) as? Bool ?? LocalConfiguration.shouldShowReleaseNotes
         
@@ -163,9 +165,8 @@ enum PersistenceManager {
         
         UserDefaults.standard.setValue(LocalConfiguration.isNotificationAuthorized, forKey: UserDefaultsKeys.isNotificationAuthorized.rawValue)
         
-        UserDefaults.standard.setValue(LocalConfiguration.userAskedToReviewHoundDates, forKeyPath: UserDefaultsKeys.userAskedToReviewHoundDates.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.datesUserShownBannerToReviewHound, forKeyPath: UserDefaultsKeys.datesUserShownBannerToReviewHound.rawValue)
         PersistenceManager.persistRateReviewRequestedDates()
-        UserDefaults.standard.setValue(LocalConfiguration.writeReviewRequestedDates, forKeyPath: UserDefaultsKeys.writeReviewRequestedDates.rawValue)
         
         UserDefaults.standard.setValue(LocalConfiguration.shouldShowReleaseNotes, forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.appVersionsWithReleaseNotesShown, forKey: UserDefaultsKeys.appVersionsWithReleaseNotesShown.rawValue)
@@ -190,9 +191,9 @@ enum PersistenceManager {
         
     }
     
-    /// It is important to persist this value to memory immediately. Apple keeps track of when we ask the user for a rate review and we must keep accurate track. But, if Hound crashes before we can save an updated value of rateReviewRequestedDates, then our value and Apple's true value is mismatched.
+    /// It is important to persist this value to memory immediately. Apple keeps track of when we ask the user for a rate review and we must keep accurate track. But, if Hound crashes before we can save an updated value of datesUserReviewRequested, then our value and Apple's true value is mismatched.
     static func persistRateReviewRequestedDates() {
-        UserDefaults.standard.setValue(LocalConfiguration.rateReviewRequestedDates, forKeyPath: UserDefaultsKeys.rateReviewRequestedDates.rawValue)
+        UserDefaults.standard.setValue(LocalConfiguration.datesUserReviewRequested, forKeyPath: UserDefaultsKeys.datesUserReviewRequested.rawValue)
     }
     
 }

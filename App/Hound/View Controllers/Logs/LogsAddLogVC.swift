@@ -14,7 +14,7 @@ protocol LogsAddLogViewControllerDelegate: AnyObject {
     func didUpdateLog(sender: Sender, parentDogId: Int, updatedLog: Log)
 }
 
-final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, DropDownUIViewDataSource {
+final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, DropDownUIViewDataSource, UITextViewDelegate {
     
     // MARK: - UITextFieldDelegate
     
@@ -175,8 +175,23 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     @IBOutlet private weak var logCustomActionNameHeightConstraint: NSLayoutConstraint!
     @IBOutlet private weak var logCustomActionNameBottomConstraint: NSLayoutConstraint!
     
-    // TO DO NOW make logNoteTextField limit itself to whatever the maximum length for logNote it
+    
     @IBOutlet private weak var logNoteTextView: BorderedUITextView!
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        // TO DO NOW TEST logNoteCharacterLimit limits logNoteTextView to 500 characters
+        
+        // get the current text, or use an empty string if that failed
+        let currentText = textView.text ?? ""
+        
+        // attempt to read the range they are trying to change, or exit if we can't
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        
+        // add their new text to the existing text
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: text)
+        
+        // make sure the result is under logNoteCharacterLimit
+        return updatedText.count <= ClassConstant.LogConstant.logNoteCharacterLimit
+    }
     
     @IBOutlet private weak var addLogButton: ScaledUIButton!
     @IBOutlet private weak var addLogButtonBackground: ScaledUIButton!

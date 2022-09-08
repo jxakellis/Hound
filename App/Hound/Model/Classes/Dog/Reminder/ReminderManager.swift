@@ -123,7 +123,7 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
                 return reminderId1 > 0
             }
         }
-        // TO DO NOW go based off localDay/Hour/Minute for sorting. Otherwise, sort will be UTC correct but be incorrect for an end user once you shift UTC to local. Go through all uses of UTCDay/Hour/Minute and fix. Do this by reimplementing localDay/Hour/Minute.
+        // TO DO NOW TEST that sort correctly works based off localHour/localMinute. Originally, sort will be UTC correct but be incorrect for an end user once you shift UTC to local
         reminders.sort { (reminder1, reminder2) -> Bool in
             // both countdown
             if reminder1.reminderType == .countdown && reminder2.reminderType == .countdown {
@@ -140,13 +140,13 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
             // both weekly
             else if reminder1.reminderType == .weekly && reminder2.reminderType == .weekly {
                 // earlier in the day is listed first
-                let reminder1Hour = reminder1.weeklyComponents.UTCHour
-                let reminder2Hour = reminder2.weeklyComponents.UTCHour
+                let reminder1Hour = reminder1.weeklyComponents.localHour
+                let reminder2Hour = reminder2.weeklyComponents.localHour
                 
                 guard reminder1Hour != reminder2Hour else {
                     // hours are equal
-                    let reminder1Minute = reminder1.weeklyComponents.UTCMinute
-                    let reminder2Minute = reminder2.weeklyComponents.UTCMinute
+                    let reminder1Minute = reminder1.weeklyComponents.localMinute
+                    let reminder2Minute = reminder2.weeklyComponents.localMinute
                     
                     guard reminder1Minute != reminder2Minute else {
                         // if equal, then smaller reminderId comes first
@@ -167,13 +167,13 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
                 
                 guard reminder1Day != reminder2Day else {
                     // earliest in day comes first if same days
-                    let reminder1Hour = reminder1.monthlyComponents.UTCHour
-                    let reminder2Hour = reminder2.monthlyComponents.UTCHour
+                    let reminder1Hour = reminder1.monthlyComponents.localHour
+                    let reminder2Hour = reminder2.monthlyComponents.localHour
                     
                     guard reminder1Hour != reminder2Hour else {
                         // earliest in hour comes first if same hour
-                        let reminder1Minute = reminder1.monthlyComponents.UTCMinute
-                        let reminder2Minute = reminder2.monthlyComponents.UTCMinute
+                        let reminder1Minute = reminder1.monthlyComponents.localMinute
+                        let reminder2Minute = reminder2.monthlyComponents.localMinute
                         
                         guard reminder1Minute != reminder2Minute else {
                             // smaller remidnerId comes first

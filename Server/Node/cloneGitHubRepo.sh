@@ -22,6 +22,7 @@ echo
 
 echo "Retrieving updated Hound GitHub repo clone"
 git -C /home/jxakellis/Documents clone git@github.com:jxakellis/Hound.git
+git -C /Users/jonathanxakellis/Documents/GitHub/COMP-110 clone git@github.com:jxakellis/Hound.git
 
 echo "Granting read/write privileges on /home/jxakellis/Documents for jxakellis"
 chmod -R a+rwx /home/jxakellis/Documents

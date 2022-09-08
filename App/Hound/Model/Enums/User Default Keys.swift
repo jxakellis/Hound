@@ -26,9 +26,8 @@ enum UserDefaultsKeys: String {
     
     case isNotificationAuthorized
     
-    case userAskedToReviewHoundDates
-    case rateReviewRequestedDates
-    case writeReviewRequestedDates
+    case datesUserShownBannerToReviewHound
+    case datesUserReviewRequested
     
     case shouldShowReleaseNotes
     case appVersionsWithReleaseNotesShown
