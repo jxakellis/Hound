@@ -151,7 +151,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         
         // MARK: Family Members
         
-        tableView.allowsSelection = FamilyConfiguration.isFamilyHead
+        tableView.allowsSelection = FamilyConfiguration.isUserFamilyHead
         
         // MARK: Leave Family Button
         
@@ -175,7 +175,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
         leaveFamilyAlertController = GeneralUIAlertController(title: "placeholder", message: nil, preferredStyle: .alert)
         
         // user is not the head of the family, so the button is enabled for them
-        if FamilyConfiguration.isFamilyHead == false {
+        if FamilyConfiguration.isUserFamilyHead == false {
             leaveFamilyButton.isEnabled = true
             
             leaveFamilyButton.setTitle("Leave Family", for: .normal)

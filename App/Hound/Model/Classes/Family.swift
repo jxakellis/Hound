@@ -12,11 +12,11 @@ final class FamilyMember: NSObject {
     
     // MARK: - Main
     
-    init(userId: String, firstName: String?, lastName: String?, isFamilyHead: Bool) {
+    init(userId: String, firstName: String?, lastName: String?, isUserFamilyHead: Bool) {
         self.userId = userId
         self.firstName = firstName
         self.lastName = lastName
-        self.isFamilyHead = isFamilyHead
+        self.isUserFamilyHead = isUserFamilyHead
         super.init()
     }
     
@@ -25,7 +25,7 @@ final class FamilyMember: NSObject {
         let userId = body[ServerDefaultKeys.userId.rawValue] as? String ?? EnumConstant.HashConstant.defaultSHA256Hash
         let firstName = body[ServerDefaultKeys.userFirstName.rawValue] as? String
         let lastName = body[ServerDefaultKeys.userLastName.rawValue] as? String
-        self.init(userId: userId, firstName: firstName, lastName: lastName, isFamilyHead: familyHeadUserId == userId)
+        self.init(userId: userId, firstName: firstName, lastName: lastName, isUserFamilyHead: familyHeadUserId == userId)
     }
     
     // MARK: - Properties
@@ -40,7 +40,7 @@ final class FamilyMember: NSObject {
     private(set) var userId: String
     
     /// Indicates where or not this user is the head of the family
-    private(set) var isFamilyHead: Bool = false
+    private(set) var isUserFamilyHead: Bool = false
     
 }
 

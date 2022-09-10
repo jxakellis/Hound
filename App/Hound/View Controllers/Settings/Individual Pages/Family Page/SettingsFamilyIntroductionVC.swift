@@ -87,7 +87,7 @@ class SettingsFamilyIntroductionViewController: UIViewController {
         // "Your family is currently limited to one family member and two dogs. If you would like to increase these limits, have your family head visit the Subscriptions page to upgrade your subscription. The first week of any subscription tier is free!"
         message.append(NSAttributedString(
             string:
-                "If you would like to increase these limits, \(FamilyConfiguration.isFamilyHead == false ? "have your family head" : "") visit the Subscriptions page to upgrade your family. The first week of any subscription tier is free!",
+                "If you would like to increase these limits, \(FamilyConfiguration.isUserFamilyHead == false ? "have your family head" : "") visit the Subscriptions page to upgrade your family. The first week of any subscription tier is free!",
             attributes: [.font: VisualConstant.FontConstant.regularLabelRegularTextFont]
         ))
         

@@ -194,7 +194,7 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         super.viewDidAppear(animated)
         AlertManager.globalPresenter = self
         
-        if FamilyConfiguration.isFamilyHead {
+        if FamilyConfiguration.isUserFamilyHead {
             InAppPurchaseManager.initalizeInAppPurchaseManager()
             InAppPurchaseManager.showPriceConsentIfNeeded()
         }

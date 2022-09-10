@@ -51,7 +51,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     @IBOutlet private weak var restoreTransactionsButton: UIButton!
     @IBAction private func didClickRestoreTransactions(_ sender: Any) {
         // The user doesn't have permission to perform this action
-        guard FamilyConfiguration.isFamilyHead else {
+        guard FamilyConfiguration.isUserFamilyHead else {
             AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.invalidFamilyPermissionTitle, forSubtitle: VisualConstant.BannerTextConstant.invalidFamilyPermissionSubtitle, forStyle: .danger)
             return
         }
@@ -185,7 +185,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
         tableView.deselectRow(at: indexPath, animated: true)
         
         // The user doesn't have permission to perform this action
-        guard FamilyConfiguration.isFamilyHead else {
+        guard FamilyConfiguration.isUserFamilyHead else {
             AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.invalidFamilyPermissionTitle, forSubtitle: VisualConstant.BannerTextConstant.invalidFamilyPermissionSubtitle, forStyle: .danger)
             return
         }

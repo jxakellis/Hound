@@ -33,11 +33,11 @@ enum FamilyConfiguration {
             // sort so family head is first then users in ascending userid order
             familyMembers.sort { familyMember1, familyMember2 in
                 // the family head should always be first
-                if familyMember1.isFamilyHead == true {
+                if familyMember1.isUserFamilyHead == true {
                     // 1st element is head so should come before therefore return true
                     return true
                 }
-                else if familyMember2.isFamilyHead == true {
+                else if familyMember2.isUserFamilyHead == true {
                     // 2nd element is head so should come before therefore return false
                     return false
                 }
@@ -65,16 +65,20 @@ enum FamilyConfiguration {
     /// If a family is locked, then no new members can join. Only the family head can lock and unlock the family.
     static var isLocked: Bool = false
     
+    /// Users that used to be in the family
+    static var previousFamilyMembers: [FamilyMember] = []
+    
+    /// Users that are currently in the family
     static var familyMembers: [FamilyMember] = []
     
     /// Returns whether or not the user is the head of the family. This changes whether or not they can kick family members, delete the family, etc.
-    static var isFamilyHead: Bool {
+    static var isUserFamilyHead: Bool {
         guard let userId = UserInformation.userId else {
             return false
         }
         
         let familyMember = FamilyMember.findFamilyMember(forUserId: userId)
-        return familyMember?.isFamilyHead ?? false
+        return familyMember?.isUserFamilyHead ?? false
     }
     
     static private(set) var familySubscriptions: [Subscription] = []

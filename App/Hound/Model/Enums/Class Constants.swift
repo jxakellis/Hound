@@ -71,10 +71,6 @@ enum ClassConstant {
             
             reminder.weeklyComponents.changeUTCHour(forDate: date)
             reminder.weeklyComponents.changeUTCMinute(forDate: date)
-            print("defaultReminderTwo")
-            print(Date())
-            print(date)
-            print(reminder.reminderExecutionDate)
             return reminder
         }
         private static var defaultReminderThree: Reminder {
@@ -89,10 +85,6 @@ enum ClassConstant {
             
             reminder.weeklyComponents.changeUTCHour(forDate: date)
             reminder.weeklyComponents.changeUTCMinute(forDate: date)
-            print("defaultReminderThree")
-            print(Date())
-            print(date)
-            print(reminder.reminderExecutionDate)
             return reminder
         }
         private static var defaultReminderFour: Reminder {
@@ -109,10 +101,6 @@ enum ClassConstant {
             reminder.monthlyComponents.changeUTCDay(forDate: date)
             reminder.monthlyComponents.changeUTCHour(forDate: date)
             reminder.monthlyComponents.changeUTCMinute(forDate: date)
-            print("defaultReminderFour")
-            print(Date())
-            print(date)
-            print(reminder.reminderExecutionDate)
             return reminder
         }
     }

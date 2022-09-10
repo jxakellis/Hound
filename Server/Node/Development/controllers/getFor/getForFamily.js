@@ -69,6 +69,8 @@ async function getAllPreviousFamilyMembersForFamilyId(databaseConnection, family
   }
 
   // get family members
+  // TO DO NOW if there are multiple entries for the same userId & familyId previousFamilyMembers, take the most recent entry.
+  // to achieve this: GROUP BY userId ORDER BY leaveDate DESC
   const result = await databaseQuery(
     databaseConnection,
     `SELECT ${previousFamilyMembersColumns} FROM previousFamilyMembers WHERE familyId = ? LIMIT 18446744073709551615`,

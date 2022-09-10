@@ -14,7 +14,7 @@ protocol LogsAddLogViewControllerDelegate: AnyObject {
     func didUpdateLog(sender: Sender, parentDogId: Int, updatedLog: Log)
 }
 
-final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, DropDownUIViewDataSource, UITextViewDelegate {
+final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, DropDownUIViewDataSource {
     
     // MARK: - UITextFieldDelegate
     
@@ -174,7 +174,6 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     @IBOutlet private weak var logCustomActionNameTextField: BorderedUITextField!
     @IBOutlet private weak var logCustomActionNameHeightConstraint: NSLayoutConstraint!
     @IBOutlet private weak var logCustomActionNameBottomConstraint: NSLayoutConstraint!
-    
     
     @IBOutlet private weak var logNoteTextView: BorderedUITextView!
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {

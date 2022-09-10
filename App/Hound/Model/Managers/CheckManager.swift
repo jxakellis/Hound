@@ -43,6 +43,7 @@ enum CheckManager {
             let timeWaitedSinceLastAsk = lastUserAskedToReviewHoundDate.distance(to: Date())
             let timeNeededToWaitForNextAsk = numberOfDaysToWaitForNextReview * 24 * 60 * 60
             
+            askUserToReview()
             if timeWaitedSinceLastAsk > timeNeededToWaitForNextAsk {
                 askUserToReview()
             }
@@ -116,7 +117,7 @@ enum CheckManager {
             return
         }
         
-        // TO DO TEST release notes banner
+        // TO DO NOW TEST release notes banner
         AppDelegate.generalLogger.notice("Showing Release Notes")
         
         AlertManager.enqueueBannerForPresentation(forTitle: "Hound Updated to Version \(UIApplication.appVersion)", forSubtitle: "Tap to show release notes", forStyle: .info) {

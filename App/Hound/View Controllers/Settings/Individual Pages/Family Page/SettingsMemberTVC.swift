@@ -41,14 +41,14 @@ final class SettingsFamilyMemberTableViewCell: UITableViewCell {
         
         fullNameLabel.text = displayFullName
         
-        let isFamilyHead = FamilyConfiguration.isFamilyHead
+        let isUserFamilyHead = FamilyConfiguration.isUserFamilyHead
         // if the user is not the family head, that means the cell should not be selectable nor should we show the chevron that indicates selectability
-        isUserInteractionEnabled = isFamilyHead
-        rightChevronImageView.isHidden = !isFamilyHead
+        isUserInteractionEnabled = isUserFamilyHead
+        rightChevronImageView.isHidden = !isUserFamilyHead
         
-        rightChevronLeadingConstraint.constant = isFamilyHead ? 10.0 : 0.0
+        rightChevronLeadingConstraint.constant = isUserFamilyHead ? 10.0 : 0.0
         
-        if isFamilyHead == false {
+        if isUserFamilyHead == false {
             
             if let rightChevronAspectRatio = rightChevronAspectRatio {
                 // upon cell reload, the rightChevronAspectRatio can be nil if deactived already
