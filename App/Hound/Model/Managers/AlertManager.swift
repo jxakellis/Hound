@@ -214,7 +214,6 @@ final class AlertManager: NSObject {
     
     let contactingServerAlertController = GeneralUIAlertController(title: "Contacting _____'s Server...", message: nil, preferredStyle: .alert)
     
-    private var locked = false
     private var currentAlertPresented: GeneralUIAlertController?
     
     // MARK: - Queue
@@ -224,27 +223,23 @@ final class AlertManager: NSObject {
     private func enqueue(_ forAlertController: GeneralUIAlertController) {
         // Make sure that the alertController that is being queued isn't already presented or in the queue
         guard currentAlertPresented != forAlertController && alertQueue.contains(forAlertController) == false else {
-            print("enqueue: forAlertController already contained")
             return
         }
         
         guard let forAlarmAlertController = forAlertController as? AlarmUIAlertController else {
             // Not dealing with an forAlarmAlertController, can append alertController to queue
-            print("enqueue: forAlertController isn't an AlarmUIAlertController")
             alertQueue.append(forAlertController)
             return
         }
         
         // User attempted to pass an alert controller that hasn't been setup and is therefore invalid
         guard forAlarmAlertController.hasBeenSetup else {
-            print("enqueue: forAlarmAlertController hasn't been setup")
             return
         }
         
         // If we are dealing with an forAlarmAlertController, them attempt to combine its reminderIds with an existing forAlarmAlertController
         if let currentAlertPresented = (currentAlertPresented as? AlarmUIAlertController), currentAlertPresented.combine(withAlarmUIAlertController: forAlarmAlertController) {
             // currentAlertPresented is an AlarmUIAlertController and we were able to combine forAlarmAlertController into it. Therefore, discard forAlarmAlertController as its reminderIds have been passed on
-            print("enqueue: combined forAlarmAlertController into currentAlertPresented")
             return
         }
         
@@ -256,12 +251,10 @@ final class AlertManager: NSObject {
             }
             
             // combined forAlarmAlertController with alertInQueue. Therefore, discard forAlarmAlertController as its reminderIds have been passed on alertInQueue
-            print("enqueue: combined forAlarmAlertController into alertInQueue")
             return
         }
         
         // Couldn't combine forAlarmAlertController with anything, therefore append it to queue
-        print("enqueue: added forAlarmAlertController to alertQueue")
         alertQueue.append(forAlarmAlertController)
     }
     
@@ -281,30 +274,28 @@ final class AlertManager: NSObject {
             
         }
         
+        // Make sure we are eligible to present another alert, in terms of AlertManager. This means we have another alert in the queue to present and we aren't actively presenting an alert
+        guard alertQueue.isEmpty == false && currentAlertPresented == nil else {
+            return
+        }
+        
+        // Make sure the globalPresenter can handle another alert. If it can't then enter a waitloop to repeatedly retry
         guard let globalPresenter = AlertManager.globalPresenter, globalPresenter.isBeingDismissed == false, globalPresenter.presentedViewController == nil else {
             waitLoop()
             return
         }
         
-        guard alertQueue.isEmpty == false && locked == false else {
-            return
-        }
-        
-        locked = true
         currentAlertPresented = alertQueue.removeFirst()
         
         guard let currentAlertPresented = currentAlertPresented else {
-            locked = false
             return
         }
         
         globalPresenter.present(currentAlertPresented, animated: true)
-        
     }
     
     /// Invoke when the alert has finished being presented and a new alert is able to take its place
     func alertDidComplete() {
-        locked = false
         currentAlertPresented = nil
         showNextAlert()
     }

@@ -137,6 +137,33 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
         }
     }
     
+    private var storedShouldRefreshFamily: Bool = false
+    /// This boolean is toggled to true when Hound recieves a 'family' notification
+    var shouldRefreshFamily: Bool {
+        get {
+            return storedShouldRefreshFamily
+        }
+        set (newShouldRefreshFamily) {
+            
+            guard newShouldRefreshFamily == true else {
+                storedShouldRefreshFamily = false
+                return
+            }
+            
+            guard self.isViewLoaded == true && self.view.window != nil else {
+                // MainTabBarViewController isn't currently in the view hierarchy, therefore indicate that once it enters the view hierarchy it needs to refresh
+                storedShouldRefreshFamily = true
+                return
+            }
+            
+            // MainTabBarViewController is in the hierarchy so have it refresh
+            _ = FamilyRequest.get(invokeErrorManager: false, completionHandler: { requestWasSuccessful, _ in
+                self.storedShouldRefreshFamily = false
+            })
+            
+        }
+    }
+    
     static var mainTabBarViewController: MainTabBarViewController?
     
     /// The tab on the tab bar that the app should open to, if its the first time openning the app then go the the second tab (setup dogs) which is index 1 as index starts at 0
@@ -186,6 +213,11 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
                 }
                 self.setDogManager(sender: Sender(origin: self, localized: self), forDogManager: newDogManager)
             }
+        }
+        if shouldRefreshFamily == true {
+            _ = FamilyRequest.get(invokeErrorManager: false, completionHandler: { requestWasSuccessful, _ in
+                self.storedShouldRefreshFamily = false
+            })
         }
     }
     

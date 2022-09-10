@@ -65,7 +65,20 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 customCell.willToggleDropDownSelection(forSelected: false)
             }
             
-            customCell.label.text = dogManager.dogs[indexPath.row].dogName
+            if dogManager.dogs.count > 1 {
+                // Need to include "All" option
+                if indexPath.row == 0 {
+                    customCell.label.text = nameForAllParentDogs
+                }
+                else {
+                    customCell.label.text = dogManager.dogs[indexPath.row - 1].dogName
+                }
+            }
+            else {
+                // No "All" option
+                customCell.label.text = dogManager.dogs[indexPath.row].dogName
+            }
+            
         }
         else if dropDownUIViewIdentifier == "DropDownLogAction", let customCell = cell as? DropDownTableViewCell {
             
@@ -97,7 +110,10 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     
     func numberOfRows(forSection: Int, dropDownUIViewIdentifier: String) -> Int {
         if dropDownUIViewIdentifier == "DropDownParentDog"{
-            return dogManager.dogs.count
+            // If > 1 dog, then make default index 0 option "All", that applies the log for all the animals
+            // 1 dog: "dogName"
+            // >=2 dogs: "All", "dogName1", "dogName2"...
+            return dogManager.dogs.count > 1 ? 1 + dogManager.dogs.count : dogManager.dogs.count
         }
         else if dropDownUIViewIdentifier == "DropDownLogAction"{
             return LogAction.allCases.count + LocalConfiguration.logCustomActionNames.count
@@ -118,8 +134,23 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             
             selectedParentDogIndexPath = indexPath
             
-            parentDogLabel.text = dogManager.dogs[indexPath.row].dogName
-            parentDogLabel.tag = dogManager.dogs[indexPath.row].dogId
+            if dogManager.dogs.count > 1 {
+                // Need to include "All" option
+                if indexPath.row == 0 {
+                    parentDogLabel.text = nameForAllParentDogs
+                    parentDogLabel.tag = tagForAllParentDogs
+                }
+                else {
+                    parentDogLabel.text = dogManager.dogs[indexPath.row - 1].dogName
+                    parentDogLabel.tag = dogManager.dogs[indexPath.row - 1].dogId
+                }
+            }
+            else {
+                // No "All" option
+                parentDogLabel.text = dogManager.dogs[indexPath.row].dogName
+                parentDogLabel.tag = dogManager.dogs[indexPath.row].dogId
+            }
+            
             dropDownParentDog.hideDropDown()
         }
         else if dropDownUIViewIdentifier == "DropDownLogAction", let selectedCell = dropDownLogAction.dropDownTableView?.cellForRow(at: indexPath) as? DropDownTableViewCell {
@@ -177,8 +208,6 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     
     @IBOutlet private weak var logNoteTextView: BorderedUITextView!
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        // TO DO NOW TEST logNoteCharacterLimit limits logNoteTextView to 500 characters
-        
         // get the current text, or use an empty string if that failed
         let currentText = textView.text ?? ""
         
@@ -209,23 +238,35 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 
                 addLogButton.beginQuerying()
                 addLogButtonBackground.beginQuerying(isBackgroundButton: true)
-                LogsRequest.create(invokeErrorManager: true, forDogId: parentDogLabel.tag, forLog: newLog) { logId, _ in
-                    self.addLogButton.endQuerying()
-                    self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
-                    
-                    guard let logId = logId else {
-                        return
-                    }
-                    
-                    // request was successful so we can now add the new logCustomActionName (if present)
-                    if let logCustomActionName = newLog.logCustomActionName, logCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-                        LocalConfiguration.addLogCustomAction(forName: logCustomActionName)
-                    }
-                    newLog.logId = logId
-                    
-                    self.delegate.didAddLog(sender: Sender(origin: self, localized: self), parentDogId: self.parentDogLabel.tag, newLog: newLog)
-                    self.navigationController?.popViewController(animated: true)
+                
+                // If the parentDogLabel's tag is equal to tagForAllParentDogs, that means the user selected the "All" option for their log, meaning the log applies to all of their dogs.
+                let dogIds = parentDogLabel.tag == tagForAllParentDogs
+                ? dogManager.dogs.map { dog in
+                    return dog.dogId
                 }
+                : [parentDogLabel.tag]
+                
+                dogIds.forEach { dogId in
+                    LogsRequest.create(invokeErrorManager: true, forDogId: dogId, forLog: newLog) { logId, _ in
+                        self.addLogButton.endQuerying()
+                        self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
+                        
+                        guard let logId = logId else {
+                            return
+                        }
+                        
+                        // request was successful so we can now add the new logCustomActionName (if present)
+                        if let logCustomActionName = newLog.logCustomActionName, logCustomActionName.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                            LocalConfiguration.addLogCustomAction(forName: logCustomActionName)
+                        }
+                        newLog.logId = logId
+                        
+                        self.delegate.didAddLog(sender: Sender(origin: self, localized: self), parentDogId: dogId, newLog: newLog)
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                    
+                }
+                
                 return
             }
             
@@ -325,6 +366,9 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     
     var dogManager: DogManager! = nil
     
+    private let tagForAllParentDogs = -1
+    private let nameForAllParentDogs = "All"
+    
     /// This is the parentDogId of a log if the user is updating an existing log instead of creating a new one
     var parentDogIdToUpdate: Int?
     /// This is the information of a log if the user is updating an existing log instead of creating a new one
@@ -378,7 +422,6 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TO DO NOW add an 'All' option to the dogs drop down (if number of dogs > 1). Make this the default. Therefore, if a user creates a certain log for all dogs, then we query the server x number of times to make the log for all those dogs.
         view.addSubview(logNoteTextView)
         
         oneTimeSetup()
@@ -415,7 +458,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 pageTitle?.title = "Edit Log"
                 removeLogBarButton.isEnabled = true
                 
-                familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: logToUpdate.userId)?.displayFullName ?? VisualConstant.TextConstant.unknownText
+                familyMemberNameLabel.text = FamilyConfiguration.findFamilyMember(forUserId: logToUpdate.userId)?.displayFullName ?? VisualConstant.TextConstant.unknownText
                 
                 if let dog = dogManager.findDog(forDogId: parentDogIdToUpdate) {
                     parentDogLabel.text = dog.dogName
@@ -436,10 +479,16 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 pageTitle?.title = "Create Log"
                 removeLogBarButton.isEnabled = false
                 
-                familyMemberNameLabel.text = FamilyMember.findFamilyMember(forUserId: UserInformation.userId)?.displayFullName ?? VisualConstant.TextConstant.unknownText
+                familyMemberNameLabel.text = FamilyConfiguration.findFamilyMember(forUserId: UserInformation.userId)?.displayFullName ?? VisualConstant.TextConstant.unknownText
                 
-                parentDogLabel.text = dogManager.dogs[0].dogName
-                parentDogLabel.tag = dogManager.dogs[0].dogId
+                if dogManager.dogs.count > 1 {
+                    parentDogLabel.text = nameForAllParentDogs
+                    parentDogLabel.tag = tagForAllParentDogs
+                }
+                else {
+                    parentDogLabel.text = dogManager.dogs[0].dogName
+                    parentDogLabel.tag = dogManager.dogs[0].dogId
+                }
                 
                 selectedLogActionIndexPath = nil
                 
@@ -576,11 +625,12 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         dropDownLogAction.hideDropDown()
         
         var numDogToShow: CGFloat {
-            if dogManager.dogs.count > 5 {
+            let numberOfRows = dogManager.dogs.count > 1 ? dogManager.dogs.count + 1 : dogManager.dogs.count
+            if numberOfRows > 5 {
                 return 5.5
             }
             else {
-                return CGFloat(dogManager.dogs.count)
+                return CGFloat(numberOfRows)
             }
         }
         dropDownParentDog.showDropDown(numberOfRowsToShow: CGFloat(numDogToShow))

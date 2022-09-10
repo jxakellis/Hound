@@ -125,6 +125,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
             for deletedReminder in deletedReminders {
                 dog.dogReminders.removeReminder(forReminderId: deletedReminder.reminderId)
             }
+            
             addDogButton.beginQuerying()
             addDogButtonBackground.beginQuerying(isBackgroundButton: true)
             // first query to update the dog itself (independent of any reminders)
@@ -348,6 +349,7 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
     
     // MARK: - Main
     
+    // TO DO BUG after deleting reminders in the dogs page, they still appear in the data. only disappears after refreshing from server
     override func viewDidLoad() {
         super.viewDidLoad()
         

@@ -44,8 +44,9 @@ final class BorderedUILabel: ScaledUILabel {
                 super.text = nil
             }
             
+            self.viewWithTag(VisualConstant.ViewTagConstant.placeholderLabelForBorderedUILabel)
             // Ensure the placeholderLabel exists
-            guard let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForScaledUILabel) as? UILabel else {
+            guard let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderLabelForBorderedUILabel) as? UILabel else {
                 return
             }
             
@@ -71,7 +72,7 @@ final class BorderedUILabel: ScaledUILabel {
         get {
             var placeholderText: String?
             
-            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForBorderedUILabel) as? ScaledUILabel {
+            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderLabelForBorderedUILabel) as? ScaledUILabel {
                 var withRemovedPadding = placeholderLabel.text
                 withRemovedPadding?.removeFirst(2)
                 placeholderText = withRemovedPadding
@@ -80,7 +81,7 @@ final class BorderedUILabel: ScaledUILabel {
             return placeholderText
         }
         set {
-            guard let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForBorderedUILabel) as? ScaledUILabel else {
+            guard let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderLabelForBorderedUILabel) as? ScaledUILabel else {
                 // need to make placeholder label
                 if let newValue = newValue {
                     self.addPlaceholder("  ".appending(newValue))
@@ -102,7 +103,7 @@ final class BorderedUILabel: ScaledUILabel {
     
     /// Resize the placeholder ScaledUILabel to make sure it's in the same position as the ScaledUILabel text
     private func resizePlaceholder() {
-        if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForBorderedUILabel) as? ScaledUILabel {
+        if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderLabelForBorderedUILabel) as? ScaledUILabel {
             placeholderLabel.frame = self.bounds
         }
     }
@@ -116,7 +117,7 @@ final class BorderedUILabel: ScaledUILabel {
         
         placeholderLabel.font = self.font
         placeholderLabel.textColor = UIColor.systemGray3
-        placeholderLabel.tag = VisualConstant.ViewTagConstant.placeholderForBorderedUILabel
+        placeholderLabel.tag = VisualConstant.ViewTagConstant.placeholderLabelForBorderedUILabel
         
         togglePlaceholderLabelIsHidden(forPlaceholderLabel: placeholderLabel)
         

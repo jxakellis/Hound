@@ -39,14 +39,14 @@ extension UITextView {
         get {
             var placeholderText: String?
             
-            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForUITextView) as? ScaledUILabel {
+            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderLabelForUITextView) as? ScaledUILabel {
                 placeholderText = placeholderLabel.text
             }
             
             return placeholderText
         }
         set {
-            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForUITextView) as? ScaledUILabel {
+            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderLabelForUITextView) as? ScaledUILabel {
                 placeholderLabel.text = newValue
                 placeholderLabel.sizeToFit()
             }
@@ -60,14 +60,14 @@ extension UITextView {
     ///
     /// - Parameter textView: The UITextView that got updated
     @objc public func textViewDidChange(_ sender: NSNotification) {
-        if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForUITextView) as? ScaledUILabel {
+        if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderLabelForUITextView) as? ScaledUILabel {
             togglePlaceholderLabelIsHidden(forPlaceholderLabel: placeholderLabel)
         }
     }
     
     /// Resize the placeholder ScaledUILabel to make sure it's in the same position as the UITextView text
     private func resizePlaceholder() {
-        if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForUITextView) as? ScaledUILabel {
+        if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderLabelForUITextView) as? ScaledUILabel {
             let labelX = self.textContainer.lineFragmentPadding
             let labelY = self.textContainerInset.top - 2
             let labelWidth = self.frame.width - (labelX * 2)
@@ -86,7 +86,7 @@ extension UITextView {
         
         placeholderLabel.font = self.font
         placeholderLabel.textColor = UIColor.systemGray3
-        placeholderLabel.tag = VisualConstant.ViewTagConstant.placeholderForUITextView
+        placeholderLabel.tag = VisualConstant.ViewTagConstant.placeholderLabelForUITextView
         
         togglePlaceholderLabelIsHidden(forPlaceholderLabel: placeholderLabel)
         

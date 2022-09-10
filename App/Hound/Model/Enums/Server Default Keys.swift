@@ -20,6 +20,7 @@ enum ServerDefaultKeys: String {
     // MARK: Family Information & Members
     
     case familyMembers
+    case previousFamilyMembers
     case isUserFamilyHead
     
     case dogManager

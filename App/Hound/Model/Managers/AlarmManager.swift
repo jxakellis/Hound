@@ -27,8 +27,14 @@ final class AlarmManager {
             return
         }
         
+        // Add temporary and informal hasAlarmPresentationHandled to the reminder. We do this so willShowAlarm isn't invoked again for a reminder while a fraction of a second earlier call is still waiting for a result from RemindersRequest.get
+        dog.dogReminders.findReminder(forReminderId: reminderId)?.hasAlarmPresentationHandled = true
+        
         // before presenting alarm, make sure we are up to date locally
         RemindersRequest.get(invokeErrorManager: false, forDogId: dogId, forReminderId: reminderId) { reminder, responseStatus in
+            
+            // Remove temporary and informal presentation handled indicator. The formal hasAlarmPresentationHandled marker will be adjusted below
+            dog.dogReminders.findReminder(forReminderId: reminderId)?.hasAlarmPresentationHandled = false
             
             // If we got no response, then halt here as we were unable to retrieve the updated reminder
             guard responseStatus != .noResponse else {
@@ -67,7 +73,6 @@ final class AlarmManager {
             // the dogId and reminderId exist if we got a reminder back
             let title = "\(reminder.reminderAction.displayActionName(reminderCustomActionName: reminder.reminderCustomActionName, isShowingAbreviatedCustomActionName: true)) - \(dog.dogName)"
             
-            // TO DO NOW TEST that AlarmUIAlertController works with queue and logging
             let alarmAlertController = AlarmUIAlertController(
                 title: title,
                 message: nil,
@@ -79,8 +84,11 @@ final class AlarmManager {
                 style: .cancel,
                 handler: { (_: UIAlertAction!)  in
                     // Make sure to use alarmAlertController.referenceAlarmAlertController as at the time of execution, original alarmAlertController could have been combined with something else
-                    print("Dismiss: \(alarmAlertController.referenceAlarmAlertController.reminders.count)")
-                    for alarmReminder in alarmAlertController.referenceAlarmAlertController.reminders {
+                    guard let referenceAlarmAlertController = alarmAlertController.referenceAlarmAlertController else {
+                        return
+                    }
+                    
+                    for alarmReminder in referenceAlarmAlertController.reminders {
                         AlarmManager.willDismissAlarm(forDogId: dogId, forReminder: alarmReminder)
                     }
                     CheckManager.checkForReview()
@@ -97,8 +105,11 @@ final class AlarmManager {
                     style: .default,
                     handler: { (_)  in
                         // Make sure to use alarmAlertController.referenceAlarmAlertController as at the time of execution, original alarmAlertController could have been combined with something else
-                        print("Log: \(alarmAlertController.referenceAlarmAlertController.reminders.count)")
-                        for alarmReminder in alarmAlertController.referenceAlarmAlertController.reminders {
+                        guard let referenceAlarmAlertController = alarmAlertController.referenceAlarmAlertController else {
+                            return
+                        }
+                        
+                        for alarmReminder in referenceAlarmAlertController.reminders {
                             AlarmManager.willLogAlarm(forDogId: dogId, forReminder: alarmReminder, forLogAction: logAction)
                         }
                         CheckManager.checkForReview()
@@ -111,8 +122,11 @@ final class AlarmManager {
                 style: .default,
                 handler: { (_: UIAlertAction!)  in
                     // Make sure to use alarmAlertController.referenceAlarmAlertController as at the time of execution, original alarmAlertController could have been combined with something else
-                    print("Snooze: \(alarmAlertController.referenceAlarmAlertController.reminders.count)")
-                    for alarmReminder in alarmAlertController.referenceAlarmAlertController.reminders {
+                    guard let referenceAlarmAlertController = alarmAlertController.referenceAlarmAlertController else {
+                        return
+                    }
+                    
+                    for alarmReminder in referenceAlarmAlertController.reminders {
                         AlarmManager.willSnoozeAlarm(forDogId: dogId, forReminder: alarmReminder)
                     }
                     CheckManager.checkForReview()

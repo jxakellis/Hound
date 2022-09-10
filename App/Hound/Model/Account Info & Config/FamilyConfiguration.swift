@@ -49,15 +49,32 @@ enum FamilyConfiguration {
                 }
             }
         }
+        if let previousFamilyMembersBody = body[ServerDefaultKeys.previousFamilyMembers.rawValue] as? [[String: Any]] {
+            previousFamilyMembers.removeAll()
+            
+            // get individual bodies for previous family members
+            for previousFamilyMemberBody in previousFamilyMembersBody {
+                // convert body into family member; a previousFamilyMember can't be a family head so pass nil
+                previousFamilyMembers.append(FamilyMember(fromBody: previousFamilyMemberBody, familyHeadUserId: nil))
+            }
+            
+            previousFamilyMembers.sort { previousFamilyMember1, previousFamilyMember2 in
+                // the user with the lower userId should come before the higher id
+                // if familyMember1 has a smaller userId then comparison returns true and then true is returned again, bringing familyMember1 to be first
+                // if familyMember2 has a smaller userId then comparison returns false and then false is returned, bringing familyMember2 to be first
+                return previousFamilyMember1.userId < previousFamilyMember2.userId
+            }
+            
+        }
         if let activeSubscriptionBody = body[ServerDefaultKeys.activeSubscription.rawValue] as? [String: Any] {
             let activeSubscription = Subscription(fromBody: activeSubscriptionBody)
             addFamilySubscription(forSubscription: activeSubscription)
         }
+        
+        print(familyMembers.count, previousFamilyMembers.count)
     }
     
     // MARK: - Main
-    
-    // TO DO NOW interpret previousFamilyMembers array. Use this to display the first and last name of users (e.g. for logs) who have already left the family.
     
     /// The code used by new users to join the family
     static private(set) var familyCode: String = ""
@@ -66,19 +83,30 @@ enum FamilyConfiguration {
     static var isLocked: Bool = false
     
     /// Users that used to be in the family
-    static var previousFamilyMembers: [FamilyMember] = []
+    static private var previousFamilyMembers: [FamilyMember] = []
     
     /// Users that are currently in the family
     static var familyMembers: [FamilyMember] = []
     
     /// Returns whether or not the user is the head of the family. This changes whether or not they can kick family members, delete the family, etc.
     static var isUserFamilyHead: Bool {
-        guard let userId = UserInformation.userId else {
-            return false
+        let familyMember = findFamilyMember(forUserId: UserInformation.userId)
+        
+        return familyMember?.isUserFamilyHead ?? false
+    }
+    
+    static func findFamilyMember(forUserId userId: String?) -> FamilyMember? {
+        guard let userId = userId else {
+            return nil
         }
         
-        let familyMember = FamilyMember.findFamilyMember(forUserId: userId)
-        return familyMember?.isUserFamilyHead ?? false
+        let matchingFamilyMember: FamilyMember? = FamilyConfiguration.familyMembers.first { familyMember in
+            return familyMember.userId == userId
+        } ?? FamilyConfiguration.previousFamilyMembers.first(where: { previousFamilyMember in
+            return previousFamilyMember.userId == userId
+        })
+        
+        return matchingFamilyMember
     }
     
     static private(set) var familySubscriptions: [Subscription] = []

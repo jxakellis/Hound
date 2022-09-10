@@ -108,9 +108,6 @@ enum LocalConfiguration {
     /// Used to track when the user was shown Apple's request review pop-up that allows the user to one to five star Hound
     static var datesUserReviewRequested: [Date] = []
     
-    /// Determines where or not the app should display an message when the app is first opened after an update
-    static var shouldShowReleaseNotes: Bool = true
-    
     /// Keeps track of what Hound versions the release notes have been shown for. For example, if we show the release notes for Hound 2.0.0 Build 4000, then we will store 4000 in the array. This makes sure the release notes are only shown once for a given update
     static var appBuildsWithReleaseNotesShown: [Int] = []
     /// Keeps track of what Hound versions the release notes have been shown for. For example, if we show the release notes for Hound 2.0.0 Build 4000, then we will store 2.0.0 in the array. This makes sure the release notes are only shown once for a given update

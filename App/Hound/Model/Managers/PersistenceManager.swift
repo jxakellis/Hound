@@ -34,8 +34,11 @@ enum PersistenceManager {
         let keychain = KeychainSwift()
         
         UserInformation.userIdentifier = keychain.get(ServerDefaultKeys.userIdentifier.rawValue)
-        // TO DO NOW TEMPORARY
-        UserInformation.userIdentifier = "1f66dbb1e7df20e51a8cd88c2334f5e4def79a2ebc1444f6766ff4160ea6927a"
+        
+        if EnumConstant.DevelopmentConstant.isProductionDatabase == false {
+            UserInformation.userIdentifier = "18a324da0aea90d36451962667b664aeb168c8cee5033a5ff9e806342cdc54d0"
+        }
+        
         UserInformation.userEmail = keychain.get(ServerDefaultKeys.userEmail.rawValue) ?? UserInformation.userEmail
         UserInformation.userFirstName = keychain.get(ServerDefaultKeys.userFirstName.rawValue) ?? UserInformation.userFirstName
         UserInformation.userLastName = keychain.get(ServerDefaultKeys.userLastName.rawValue) ?? UserInformation.userLastName
@@ -43,8 +46,11 @@ enum PersistenceManager {
         // MARK: Load Stored User Information
         
         UserInformation.userId = UserDefaults.standard.value(forKey: ServerDefaultKeys.userId.rawValue) as? String ?? UserInformation.userId
-        // TO DO NOW TEMPORARY
-        UserInformation.userId = "015a892b03411e9515989ce2178862a5890f58de1e8af60af4cd6dee45ab8569"
+        
+        if EnumConstant.DevelopmentConstant.isProductionDatabase == false {
+            UserInformation.userId = "c461dda5297129dfcd92a69b47ba850fd573a656800930fd3e7fe0c940eeca1b"
+        }
+       
         UserInformation.familyId = UserDefaults.standard.value(forKey: ServerDefaultKeys.familyId.rawValue) as? String ?? UserInformation.familyId
         
         // MARK: Load Stored User Configuration
@@ -95,8 +101,6 @@ enum PersistenceManager {
         
         // reviewRequestDates depreciated >= build 6000; rateReviewRequestedDates depreciated >= build 6500
         LocalConfiguration.datesUserReviewRequested = UserDefaults.standard.value(forKey: UserDefaultsKeys.datesUserReviewRequested.rawValue) as? [Date] ?? UserDefaults.standard.value(forKey: "reviewRequestDates") as? [Date] ?? UserDefaults.standard.value(forKey: "rateReviewRequestedDates") as? [Date] ?? LocalConfiguration.datesUserReviewRequested
-        
-        LocalConfiguration.shouldShowReleaseNotes = UserDefaults.standard.value(forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue) as? Bool ?? LocalConfiguration.shouldShowReleaseNotes
         
         LocalConfiguration.appVersionsWithReleaseNotesShown = UserDefaults.standard.value(forKey: UserDefaultsKeys.appVersionsWithReleaseNotesShown.rawValue) as? [String] ?? LocalConfiguration.appVersionsWithReleaseNotesShown
         
@@ -167,8 +171,7 @@ enum PersistenceManager {
         
         UserDefaults.standard.setValue(LocalConfiguration.datesUserShownBannerToReviewHound, forKeyPath: UserDefaultsKeys.datesUserShownBannerToReviewHound.rawValue)
         PersistenceManager.persistRateReviewRequestedDates()
-        
-        UserDefaults.standard.setValue(LocalConfiguration.shouldShowReleaseNotes, forKey: UserDefaultsKeys.shouldShowReleaseNotes.rawValue)
+    
         UserDefaults.standard.setValue(LocalConfiguration.appVersionsWithReleaseNotesShown, forKey: UserDefaultsKeys.appVersionsWithReleaseNotesShown.rawValue)
         UserDefaults.standard.setValue(LocalConfiguration.appBuildsWithReleaseNotesShown, forKey: UserDefaultsKeys.appBuildsWithReleaseNotesShown.rawValue)
         

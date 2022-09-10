@@ -338,7 +338,14 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     
     @IBAction private func didClickLeaveFamily(_ sender: Any) {
         
+        guard FamilyConfiguration.isUserFamilyHead else {
+            // The user isn't the family head, so we don't need to check for the status of the family subscription
+            AlertManager.enqueueAlertForPresentation(leaveFamilyAlertController)
+            return
+        }
+        
         let activeSubscription = FamilyConfiguration.activeFamilySubscription
+        
         // Check to make sure either the family has the default free subsription or they have an active subscription that isn't auto-renewing. So that if they leave the family, they won't be charged for subscription that isn't attached to anything
         guard activeSubscription.product == ClassConstant.SubscriptionConstant.defaultSubscriptionProduct || (activeSubscription.product != ClassConstant.SubscriptionConstant.defaultSubscriptionProduct && activeSubscription.isAutoRenewing == false) else {
             ErrorConstant.FamilyResponseError.leaveSubscriptionActive.alert()

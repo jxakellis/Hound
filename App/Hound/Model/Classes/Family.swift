@@ -111,21 +111,4 @@ extension FamilyMember {
             return trimmedFirstName
         }
     }
-    
-    static func findFamilyMember(forUserId userId: String?) -> FamilyMember? {
-        guard userId != nil else {
-            return nil
-        }
-        
-        let matchingFamilyMember: FamilyMember? = FamilyConfiguration.familyMembers.first { familyMember in
-            if familyMember.userId == userId {
-                return true
-            }
-            else {
-                return false
-            }
-        }
-        
-        return matchingFamilyMember
-    }
 }

@@ -83,16 +83,19 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
             return
         }
         
+        // Something about the family was updated so we should refresh the family
+        if category.contains("NOTIFICATION_CATEGORY_FAMILY") {
+            MainTabBarViewController.mainTabBarViewController?.shouldRefreshFamily = true
+            completionHandler(.newData)
+        }
         // Always refresh the dog manager when we recieve a log notification, as that means another user logged something.
         // If we invoke on 'NOTIFICATION_CATEGORY_REMINDER' as well, then everytime a reminder triggers its alarm and a notification comes thru, it will cause a refresh. This will cause a weird interaction as we will be simultaneously showing an alert in app
-        
-        if category.contains("NOTIFICATION_CATEGORY_LOG") {
+        else if category.contains("NOTIFICATION_CATEGORY_LOG") {
             MainTabBarViewController.mainTabBarViewController?.shouldRefreshDogManager = true
             completionHandler(.newData)
         }
         // if the notification is a reminder, then check to see if loud notification can be played
         else if category.contains("NOTIFICATION_CATEGORY_REMINDER") {
-            
             // check to see if we have a reminderLastModified available to us
             if let reminderLastModifiedString = userInfo["reminderLastModified"] as? String, let reminderLastModified = ResponseUtils.dateFormatter(fromISO8601String: reminderLastModifiedString), LocalConfiguration.lastDogManagerSynchronization.distance(to: reminderLastModified) > 0 {
                 // If the reminder was modified after the last time we synced our whole dogManager, then that means our local reminder is out of date.

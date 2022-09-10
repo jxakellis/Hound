@@ -30,7 +30,7 @@ final class AlarmUIAlertController: GeneralUIAlertController {
     private(set) var hasBeenSetup = false
     
     /// Reference to the alert controller that the this alertcontroller has been combined with. Self if not combined
-    private(set) var referenceAlarmAlertController: AlarmUIAlertController = AlarmUIAlertController()
+    private(set) var referenceAlarmAlertController: AlarmUIAlertController?
     
     /// The dogId that the AlarmUIAlertController is alerting about
     private(set) var dogId: Int?
@@ -48,6 +48,7 @@ final class AlarmUIAlertController: GeneralUIAlertController {
         }
         
         // Both AlarmUIAlertController have been setup therefore reminders.count >= 1. Note: all reminders in array should have same reminderAction and reminderCustomActionName
+        
         let selfReminder = reminders[0]
         let withReminder = withAlarmUIAlertController.reminders[0]
         

@@ -35,7 +35,7 @@ class ScaledUILabel: UILabel {
     override var text: String? {
         didSet {
             // Ensure the placeholderLabel exists
-            guard let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForScaledUILabel) as? UILabel else {
+            guard let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderLabelForScaledUILabel) as? UILabel else {
                 return
             }
             
@@ -61,14 +61,14 @@ class ScaledUILabel: UILabel {
         get {
             var placeholderText: String?
             
-            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForScaledUILabel) as? UILabel {
+            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderLabelForScaledUILabel) as? UILabel {
                 placeholderText = placeholderLabel.text
             }
             
             return placeholderText
         }
         set {
-            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForScaledUILabel) as? UILabel {
+            if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderLabelForScaledUILabel) as? UILabel {
                 placeholderLabel.text = newValue
                 placeholderLabel.sizeToFit()
             }
@@ -80,7 +80,7 @@ class ScaledUILabel: UILabel {
     
     /// Resize the placeholder UILabel to make sure it's in the same position as the UILabel text
     private func resizePlaceholder() {
-        if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderForScaledUILabel) as? UILabel {
+        if let placeholderLabel = self.viewWithTag(VisualConstant.ViewTagConstant.placeholderLabelForScaledUILabel) as? UILabel {
             placeholderLabel.frame = self.bounds
         }
     }
@@ -94,7 +94,7 @@ class ScaledUILabel: UILabel {
         
         placeholderLabel.font = self.font
         placeholderLabel.textColor = UIColor.systemGray3
-        placeholderLabel.tag = VisualConstant.ViewTagConstant.placeholderForScaledUILabel
+        placeholderLabel.tag = VisualConstant.ViewTagConstant.placeholderLabelForScaledUILabel
         
         togglePlaceholderLabelIsHidden(forPlaceholderLabel: placeholderLabel)
         

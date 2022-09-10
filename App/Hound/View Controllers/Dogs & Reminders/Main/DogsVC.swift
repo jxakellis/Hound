@@ -124,7 +124,7 @@ final class DogsViewController: UIViewController, DogManagerControlFlowProtocol,
     func didUpdateDog(sender: Sender, updatedDog: Dog) {
         
         // this function both can add new dogs or override old ones
-        dogManager.addDog(forDog: updatedDog)
+        dogManager.updateDog(forDog: updatedDog)
         setDogManager(sender: sender, forDogManager: dogManager)
         
         CheckManager.checkForReview()

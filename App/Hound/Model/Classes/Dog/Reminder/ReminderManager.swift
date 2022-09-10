@@ -123,7 +123,6 @@ final class ReminderManager: NSObject, NSCoding, NSCopying {
                 return reminderId1 > 0
             }
         }
-        // TO DO NOW TEST that sort correctly works based off localHour/localMinute. Originally, sort will be UTC correct but be incorrect for an end user once you shift UTC to local
         reminders.sort { (reminder1, reminder2) -> Bool in
             // both countdown
             if reminder1.reminderType == .countdown && reminder2.reminderType == .countdown {

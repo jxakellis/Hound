@@ -43,12 +43,10 @@ enum CheckManager {
             let timeWaitedSinceLastAsk = lastUserAskedToReviewHoundDate.distance(to: Date())
             let timeNeededToWaitForNextAsk = numberOfDaysToWaitForNextReview * 24 * 60 * 60
             
-            askUserToReview()
             if timeWaitedSinceLastAsk > timeNeededToWaitForNextAsk {
                 askUserToReview()
             }
             
-            // TO DO NOW TEST rate hound banner works
             func askUserToReview() {
                 let isEligibleForRateReviewRequest: Bool = {
                     // You can request a maximum of three reviews through StoreKit a year. If < 3, then the user is eligible to be asked.
@@ -98,10 +96,6 @@ enum CheckManager {
     
     /// Displays release notes about a new version to the user if they have that setting enabled and the app was updated to that new version
     static func checkForReleaseNotes() {
-        // make sure this feature is enabled
-        guard LocalConfiguration.shouldShowReleaseNotes == true else {
-            return
-        }
         // Check that the app was opened before, as we don't want to show the user release notes on their first launch
         // Then, check that the current version doesn't match the previous version, meaning an upgrade or downgrade. The latter shouldnt be possible
         guard let previousAppVersion = UIApplication.previousAppVersion, previousAppVersion != UIApplication.appVersion else {
@@ -117,7 +111,6 @@ enum CheckManager {
             return
         }
         
-        // TO DO NOW TEST release notes banner
         AppDelegate.generalLogger.notice("Showing Release Notes")
         
         AlertManager.enqueueBannerForPresentation(forTitle: "Hound Updated to Version \(UIApplication.appVersion)", forSubtitle: "Tap to show release notes", forStyle: .info) {

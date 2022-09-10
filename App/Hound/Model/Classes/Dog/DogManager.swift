@@ -82,7 +82,7 @@ final class DogManager: NSObject, NSCopying, NSCoding {
         dogs.append(newDog)
     }
     
-    /// Adds a dog to dogs, checks to see if the dog itself is valid, e.g. its dogId is unique. Currently override other dog with the same dogId
+    /// Adds a dog to dogs. If a dog with the same dogId already exists, combines that dog into newDog, then replaces dog with newDog.
     func addDog(forDog dog: Dog) {
         
         addDogWithoutSorting(forDog: dog)
@@ -97,6 +97,20 @@ final class DogManager: NSObject, NSCopying, NSCoding {
         }
         
         sortDogs()
+    }
+    
+    /// Adds or updates a dog to dogs. If a dog with the same dogId already exists, doesn't combine that dog into newDog, simply just replaces dog with newDog.
+    func updateDog(forDog updatedDog: Dog) {
+        dogs.removeAll { oldDog in
+            guard oldDog.dogId == updatedDog.dogId else {
+                return false
+            }
+            // Don't combine oldDog into newDog, we are replacing for updateDog
+            
+            return true
+        }
+        
+        dogs.append(updatedDog)
     }
     
     /// Sorts the dogs based upon their dogId

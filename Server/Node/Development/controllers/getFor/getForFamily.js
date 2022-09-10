@@ -69,13 +69,26 @@ async function getAllPreviousFamilyMembersForFamilyId(databaseConnection, family
   }
 
   // get family members
-  // TO DO NOW if there are multiple entries for the same userId & familyId previousFamilyMembers, take the most recent entry.
-  // to achieve this: GROUP BY userId ORDER BY leaveDate DESC
   const result = await databaseQuery(
     databaseConnection,
-    `SELECT ${previousFamilyMembersColumns} FROM previousFamilyMembers WHERE familyId = ? LIMIT 18446744073709551615`,
+    `SELECT ${previousFamilyMembersColumns} FROM previousFamilyMembers WHERE familyId = ? ORDER BY familyLeaveDate DESC LIMIT 18446744073709551615`,
     [familyId],
   );
+
+  const userIds = [];
+  // Only return one instance for each userId. I.e. if a user left a family multiple times, return the previousFamilyMember object for the most recent leave
+  for (let i = 0; i < result.length; i += 1) {
+    if (userIds.includes(result[i].userId)) {
+      // We have a more recent family leave recorded for this userId, therefore remove the entry
+      result.splice(i, 1);
+      // de-iterate i so we don't skip an item
+      i -= 1;
+    }
+    else {
+      // Don't have userId recorded
+      userIds.push(result[i].userId);
+    }
+  }
 
   return result;
 }

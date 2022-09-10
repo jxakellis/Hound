@@ -15,7 +15,7 @@ enum EnumConstant {
 #if DEBUG
             AppDelegate.generalLogger.info("DEBUG Build Configuration for server")
             // Can return true or false. Can have prod or dev server for DEBUG
-            return true
+            return false
 #else
             AppDelegate.generalLogger.info("RELEASE Build Configuration for server")
             // ALWAYS RETURN TRUE, WANT PROD SERVER FOR RELEASE
@@ -37,7 +37,7 @@ enum EnumConstant {
         /// Only the production server supports HTTPS
         private static let urlScheme: String = isProductionServer ? "https" : "http"
         /// The production server is attached to a real domain name, whereas our development server is off the local network
-        private static let urlDomainName: String = isProductionServer ? "://api.houndorganizer.com" : "://10.0.0.108"
+        private static let urlDomainName: String = isProductionServer ? "://api.houndorganizer.com" : "://172.17.77.142"
         /// The production server uses https on port 443 for the production database and 8443 for the development database. The development server always uses http on port 80.
         private static let urlPort: String = isProductionServer ? isProductionDatabase ? ":443" : ":8443" : ":80"
         /// The production environment goes off the prod path, whereas development goes off the dev path

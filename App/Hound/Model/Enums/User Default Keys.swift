@@ -29,7 +29,6 @@ enum UserDefaultsKeys: String {
     case datesUserShownBannerToReviewHound
     case datesUserReviewRequested
     
-    case shouldShowReleaseNotes
     case appVersionsWithReleaseNotesShown
     case appBuildsWithReleaseNotesShown
     
