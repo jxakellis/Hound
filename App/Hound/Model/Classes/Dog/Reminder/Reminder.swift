@@ -220,9 +220,9 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             intervalElapsed: body[ServerDefaultKeys.countdownIntervalElapsed.rawValue] as? TimeInterval)
         
         // weekly
-        var weeklySkippedDate = Date()
+        var weeklySkippedDate: Date?
         if let weeklySkippedDateString = body[ServerDefaultKeys.weeklySkippedDate.rawValue] as? String {
-            weeklySkippedDate = ResponseUtils.dateFormatter(fromISO8601String: weeklySkippedDateString) ?? Date()
+            weeklySkippedDate = ResponseUtils.dateFormatter(fromISO8601String: weeklySkippedDateString)
         }
         weeklyComponents = WeeklyComponents(
             UTCHour: body[ServerDefaultKeys.weeklyUTCHour.rawValue] as? Int,
@@ -237,10 +237,11 @@ final class Reminder: NSObject, NSCoding, NSCopying {
             saturday: body[ServerDefaultKeys.weeklySaturday.rawValue] as? Bool)
         
         // monthly
-        var monthlySkippedDate = Date()
+        var monthlySkippedDate: Date?
         if let monthlySkippedDateString = body[ServerDefaultKeys.monthlySkippedDate.rawValue] as? String {
-            monthlySkippedDate = ResponseUtils.dateFormatter(fromISO8601String: monthlySkippedDateString) ?? Date()
+            monthlySkippedDate = ResponseUtils.dateFormatter(fromISO8601String: monthlySkippedDateString)
         }
+        
         monthlyComponents = MonthlyComponents(
             UTCDay: body[ServerDefaultKeys.monthlyUTCDay.rawValue] as? Int,
             UTCHour: body[ServerDefaultKeys.monthlyUTCHour.rawValue] as? Int,

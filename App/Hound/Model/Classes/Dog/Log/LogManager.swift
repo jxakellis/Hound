@@ -80,7 +80,6 @@ final class LogManager: NSObject, NSCoding, NSCopying {
     }
     
     func addLogs(forLogs logs: [Log]) {
-        
         for log in logs {
             addLogWithoutSorting(forLog: log)
         }
@@ -172,6 +171,5 @@ extension LogManager {
         // now that the oldLogManager contains its original logs, our new logs, and has had its old logs overwritten (in the case old & new both had a log with same logId), we have an updated array.
         logs = oldLogManager.logs
         uniqueLogActionsResult = nil
-        sortLogs()
     }
 }

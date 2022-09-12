@@ -70,8 +70,6 @@ enum FamilyConfiguration {
             let activeSubscription = Subscription(fromBody: activeSubscriptionBody)
             addFamilySubscription(forSubscription: activeSubscription)
         }
-        
-        print(familyMembers.count, previousFamilyMembers.count)
     }
     
     // MARK: - Main

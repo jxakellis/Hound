@@ -23,7 +23,6 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
     // MARK: - LogsAddLogViewControllerDelegate
     
     func didAddLog(sender: Sender, parentDogId: Int, newLog: Log) {
-        
         if dogManager.dogs.isEmpty == false {
             dogManager.findDog(forDogId: parentDogId)?.dogLogs.addLog(forLog: newLog)
         }
@@ -33,7 +32,6 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
     }
     
     func didUpdateLog(sender: Sender, parentDogId: Int, updatedLog: Log) {
-        
         if dogManager.dogs.isEmpty == false, let dog = dogManager.findDog(forDogId: parentDogId) {
             
             dog.dogLogs.addLog(forLog: updatedLog)

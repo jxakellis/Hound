@@ -15,10 +15,10 @@ enum EnumConstant {
 #if DEBUG
             AppDelegate.generalLogger.info("DEBUG Build Configuration for server")
             // Can return true or false. Can have prod or dev server for DEBUG
-            return false
+            return true
 #else
             AppDelegate.generalLogger.info("RELEASE Build Configuration for server")
-            // ALWAYS RETURN TRUE, WANT PROD SERVER FOR RELEASE
+            // MARK: ALWAYS RETURN TRUE, WANT PROD SERVER FOR RELEASE
             return true
 #endif
         }()
@@ -26,11 +26,11 @@ enum EnumConstant {
         static let isProductionDatabase: Bool = {
 #if DEBUG
             AppDelegate.generalLogger.info("DEBUG Build Configuration for database")
-            // ALWAYS RETURN FALSE, WANT DEV DATABASE FOR DEBUG
+            // MARK: ALWAYS RETURN FALSE, WANT DEV DATABASE FOR DEBUG
             return false
 #else
             AppDelegate.generalLogger.info("RELEASE Build Configuration for database")
-            // ALWAYS RETURN TRUE, WANT PROD DATABASE FOR RELEASE
+            // MARK: ALWAYS RETURN TRUE, WANT PROD DATABASE FOR RELEASE
             return true
 #endif
         }()

@@ -16,7 +16,7 @@ final class WeeklyComponents: NSObject, NSCoding, NSCopying {
         let copy = WeeklyComponents()
         copy.weekdays = self.weekdays
         copy.UTCHour = self.UTCHour
-        copy.UTCHour = self.UTCHour
+        copy.UTCMinute = self.UTCMinute
         copy.skippedDate = self.skippedDate
         
         return copy

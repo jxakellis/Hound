@@ -234,8 +234,6 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             // Check to see if we are updating or adding a log
             guard let parentDogIdToUpdate = parentDogIdToUpdate, let logToUpdate = logToUpdate else {
                 // Adding a log
-                let newLog = Log(logAction: selectedLogAction, logCustomActionName: logCustomActionNameTextField.text, logDate: logDateDatePicker.date, logNote: logNoteTextView.text ?? ClassConstant.LogConstant.defaultLogNote)
-                
                 addLogButton.beginQuerying()
                 addLogButtonBackground.beginQuerying(isBackgroundButton: true)
                 
@@ -247,6 +245,9 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 : [parentDogLabel.tag]
                 
                 dogIds.forEach { dogId in
+                    // Each dog needs it's own newLog object.
+                    let newLog = Log(logAction: selectedLogAction, logCustomActionName: logCustomActionNameTextField.text, logDate: logDateDatePicker.date, logNote: logNoteTextView.text ?? ClassConstant.LogConstant.defaultLogNote)
+                    
                     LogsRequest.create(invokeErrorManager: true, forDogId: dogId, forLog: newLog) { logId, _ in
                         self.addLogButton.endQuerying()
                         self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
