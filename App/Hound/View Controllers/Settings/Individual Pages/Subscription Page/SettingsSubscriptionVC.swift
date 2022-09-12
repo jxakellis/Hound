@@ -80,8 +80,6 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TO DO FUTURE add subscription history
-        
         oneTimeSetup()
     }
     

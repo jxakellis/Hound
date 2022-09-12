@@ -349,7 +349,6 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
     
     // MARK: - Main
     
-    // TO DO BUG after deleting reminders in the dogs page, they still appear in the data. only disappears after refreshing from server
     override func viewDidLoad() {
         super.viewDidLoad()
         

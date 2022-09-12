@@ -157,7 +157,7 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
             }
             
             // MainTabBarViewController is in the hierarchy so have it refresh
-            _ = FamilyRequest.get(invokeErrorManager: false, completionHandler: { requestWasSuccessful, _ in
+            _ = FamilyRequest.get(invokeErrorManager: false, completionHandler: { _, _ in
                 self.storedShouldRefreshFamily = false
             })
             
@@ -215,7 +215,7 @@ final class MainTabBarViewController: UITabBarController, DogManagerControlFlowP
             }
         }
         if shouldRefreshFamily == true {
-            _ = FamilyRequest.get(invokeErrorManager: false, completionHandler: { requestWasSuccessful, _ in
+            _ = FamilyRequest.get(invokeErrorManager: false, completionHandler: { _, _ in
                 self.storedShouldRefreshFamily = false
             })
         }

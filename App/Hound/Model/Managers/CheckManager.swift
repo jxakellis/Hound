@@ -17,78 +17,81 @@ enum CheckManager {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
             
             guard let lastUserAskedToReviewHoundDate = LocalConfiguration.datesUserShownBannerToReviewHound.last else {
+                LocalConfiguration.datesUserShownBannerToReviewHound.append(Date())
                 return
             }
             
-            // We want to ask the user in increasing intervals of time for a review on Hound. The function below increases the number of days between reviews and help ensure that reviews get asked at different times of day.
-            var numberOfDaysToWaitForNextReview: Double {
-                let count = LocalConfiguration.datesUserShownBannerToReviewHound.count
-                guard count >= 5 else {
-                    // Count == 1: Been asked zero times before (first Date() is a placeholder). We ask 9.2 days after the inital install.
-                    // Count == 2: asked one time; 18.4 days since last ask; 27.6 days since beginning
-                    // Count == 3: asked two times; 27.6 days since last ask; 55.2 since beginning
-                    // Count == 4: asked three times; 36.8 days since last ask; 92.0 since beginning
-                    return Double(count) * 9.2
-                }
-                
-                // Count == 5: asked four times; 45.0 days since last ask; 182.2 since beginning
-                // Count == 6: asked five times; 45.0 days; 182.2
-                // Count == 7: asked six times; 45.0 days; 227.6
-                // Count == 8: asked seven times; 45.0 days; 273.2
-                // Count == 9: asked eight times; 45.0 days; 319.0
-                // Count == 10: asked nine times; 45.0 days; 364.0
-                return Double(45.0 + Double(count % 5) * 0.2)
-            }
-            
-            let timeWaitedSinceLastAsk = lastUserAskedToReviewHoundDate.distance(to: Date())
-            let timeNeededToWaitForNextAsk = numberOfDaysToWaitForNextReview * 24 * 60 * 60
-            
-            if timeWaitedSinceLastAsk > timeNeededToWaitForNextAsk {
-                askUserToReview()
-            }
-            
-            func askUserToReview() {
-                let isEligibleForRateReviewRequest: Bool = {
-                    // You can request a maximum of three reviews through StoreKit a year. If < 3, then the user is eligible to be asked.
-                    guard LocalConfiguration.datesUserReviewRequested.count >= 3 else {
-                        return true
+            let isEligibleForBannerToReviewHound: Bool = {
+                // We want to ask the user in increasing intervals of time for a review on Hound. The function below increases the number of days between reviews and help ensure that reviews get asked at different times of day.
+                let numberOfDaysToWaitForNextReview: Double = {
+                    let count = LocalConfiguration.datesUserShownBannerToReviewHound.count
+                    guard count >= 5 else {
+                        // Count == 1: Been asked zero times before (first Date() is a placeholder). We ask 9.2 days after the inital install.
+                        // Count == 2: asked one time; 18.4 days since last ask; 27.6 days since beginning
+                        // Count == 3: asked two times; 27.6 days since last ask; 55.2 since beginning
+                        // Count == 4: asked three times; 36.8 days since last ask; 92.0 since beginning
+                        return Double(count) * 9.2
                     }
                     
-                    // User has been asked >= 3 times through StoreKit for review
-                    // Must cast array slice to array. Doesn't give compile error if you don't but [0] will crash below if slicing an array that isn't equal to suffix value
-                    let lastThreeDates = Array(LocalConfiguration.datesUserReviewRequested.suffix(3))
-                    
-                    // If the first element in this array (of the last three items) is > 1 year ago, then we can give the option to use the built in app review method. This is because we aren't exceeding our 3 a year limit anymore
-                    let timeWaitedSinceLastRate = lastThreeDates[0].distance(to: Date())
-                    let timeNeededToWaitForNextRate = 367.0 * 24 * 60 * 60
-                    
-                    if  timeWaitedSinceLastRate > timeNeededToWaitForNextRate {
-                        return true
-                    }
-                    else {
-                        return false
-                    }
+                    // Count == 5: asked four times; 45.0 days since last ask; 182.2 since beginning
+                    // Count == 6: asked five times; 45.0 days; 182.2
+                    // Count == 7: asked six times; 45.0 days; 227.6
+                    // Count == 8: asked seven times; 45.0 days; 273.2
+                    // Count == 9: asked eight times; 45.0 days; 319.0
+                    // Count == 10: asked nine times; 45.0 days; 364.0
+                    return Double(45.0 + Double(count % 5) * 0.2)
                 }()
                 
-                guard isEligibleForRateReviewRequest == true else {
+                let timeWaitedSinceLastAsk = lastUserAskedToReviewHoundDate.distance(to: Date())
+                let timeNeededToWaitForNextAsk = numberOfDaysToWaitForNextReview * 24 * 60 * 60
+                
+                return timeWaitedSinceLastAsk > timeNeededToWaitForNextAsk
+            }()
+            
+            guard isEligibleForBannerToReviewHound == true else {
+                return
+            }
+            
+            let isEligibleForReviewRequest: Bool = {
+                // You can request a maximum of three reviews through StoreKit a year. If < 3, then the user is eligible to be asked.
+                guard LocalConfiguration.datesUserReviewRequested.count >= 3 else {
+                    return true
+                }
+                
+                // User has been asked >= 3 times through StoreKit for review
+                // Must cast array slice to array. Doesn't give compile error if you don't but [0] will crash below if slicing an array that isn't equal to suffix value
+                let lastThreeDates = Array(LocalConfiguration.datesUserReviewRequested.suffix(3))
+                
+                // If the first element in this array (of the last three items) is > 1 year ago, then we can give the option to use the built in app review method. This is because we aren't exceeding our 3 a year limit anymore
+                let timeWaitedSinceLastRate = lastThreeDates[0].distance(to: Date())
+                let timeNeededToWaitForNextRate = 367.0 * 24 * 60 * 60
+                
+                if  timeWaitedSinceLastRate > timeNeededToWaitForNextRate {
+                    return true
+                }
+                else {
+                    return false
+                }
+            }()
+            
+            guard isEligibleForReviewRequest == true else {
+                return
+            }
+            
+            AlertManager.enqueueBannerForPresentation(forTitle: "Are you enjoying Hound?", forSubtitle: "Tap this banner to rate Hound. Your feedback helps support future development and improvements!", forStyle: .info) {
+                // Open Apple's built in review page. Simple a pop-up that allows user to select number of starts and submit
+                guard let window = UIApplication.keyWindow?.windowScene else {
+                    AppDelegate.generalLogger.error("checkForReview unable to fire, window not established")
                     return
                 }
                 
-                AlertManager.enqueueBannerForPresentation(forTitle: "Are you enjoying Hound?", forSubtitle: "Tap this banner to rate Hound. Your feedback helps support future development and improvements!", forStyle: .info) {
-                    // Open Apple's built in review page. Simple a pop-up that allows user to select number of starts and submit
-                    guard let window = UIApplication.keyWindow?.windowScene else {
-                        AppDelegate.generalLogger.error("checkForReview unable to fire, window not established")
-                        return
-                    }
-                    
-                    AppDelegate.generalLogger.notice("Asking user to rate Hound")
-                    SKStoreReviewController.requestReview(in: window)
-                    LocalConfiguration.datesUserReviewRequested.append(Date())
-                    PersistenceManager.persistRateReviewRequestedDates()
-                }
-                
-                LocalConfiguration.datesUserShownBannerToReviewHound.append(Date())
+                AppDelegate.generalLogger.notice("Asking user to rate Hound")
+                SKStoreReviewController.requestReview(in: window)
+                LocalConfiguration.datesUserReviewRequested.append(Date())
+                PersistenceManager.persistRateReviewRequestedDates()
             }
+            
+            LocalConfiguration.datesUserShownBannerToReviewHound.append(Date())
             
         })
         
