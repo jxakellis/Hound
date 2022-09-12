@@ -68,6 +68,7 @@ async function createInAppSubscriptionForUserIdFamilyIdRecieptId(databaseConnect
     throw new ValidationError("Unable to parse the responseBody from Apple's iTunes servers", global.constant.error.value.MISSING);
   }
 
+  // CANT PROMISE.ALL BECAUSE updateReceiptRecords CHANGES RESULT OF getActiveInAppSubscriptionForFamilyId
   // update the records stored for all receipts returned
   await updateReceiptRecords(databaseConnection, userId, familyId, receipts);
 

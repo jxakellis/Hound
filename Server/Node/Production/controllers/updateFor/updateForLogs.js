@@ -1,17 +1,19 @@
 const { ValidationError } = require('../../main/tools/general/errors');
 
 const { databaseQuery } = require('../../main/tools/database/databaseQuery');
-const { formatDate } = require('../../main/tools/format/formatObject');
+const { formatDate, formatString } = require('../../main/tools/format/formatObject');
 const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 /**
  *  Queries the database to update a log. If the query is successful, then returns
  *  If a problem is encountered, creates and throws custom error
  */
-async function updateLogForDogIdLogId(databaseConnection, dogId, logId, forLogDate, logAction, logCustomActionName, logNote) {
+async function updateLogForDogIdLogId(databaseConnection, dogId, logId, forLogDate, logAction, forLogCustomActionName, forLogNote) {
   const logDate = formatDate(forLogDate);
   const dogLastModified = new Date();
-  const logLastModified = dogLastModified; // manual
+  const logLastModified = dogLastModified;
+  const logCustomActionName = formatString(forLogCustomActionName, 32);
+  const logNote = formatString(forLogNote, 500);
 
   // logCustomActionName optional
   if (areAllDefined(databaseConnection, dogId, logId, logDate, logAction, logNote) === false) {

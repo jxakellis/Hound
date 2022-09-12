@@ -15,8 +15,8 @@ const { apn, productionAPNProvider, developmentAPNProvider } = require('./apnPro
  */
 // (token, category, sound, alertTitle, alertBody)
 function sendAPN(token, category, sound, forAlertTitle, forAlertBody, customPayload) {
-  const alertTitle = formatString(forAlertTitle, global.constant.apn.length.ALERT_TITLE);
-  const alertBody = formatString(forAlertBody, global.constant.apn.length.ALERT_BODY);
+  const alertTitle = formatString(forAlertTitle, global.constant.notification.length.ALERT_TITLE);
+  const alertBody = formatString(forAlertBody, global.constant.notification.length.ALERT_BODY);
 
   apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${alertTitle}, ${alertBody}`);
 
@@ -74,7 +74,10 @@ function sendAPN(token, category, sound, forAlertTitle, forAlertBody, customPayl
   };
 
   // if there is a sound for the reminder alarm alert, then we add it to the rawPayload
-  if (category === global.constant.apn.category.REMINDER && areAllDefined(sound, notification, notification.rawPayload, notification.rawPayload.aps)) {
+  if (
+    (category === global.constant.notification.category.reminder.PRIMARY
+      || category === global.constant.notification.category.reminder.SECONDARY)
+  && areAllDefined(sound, notification, notification.rawPayload, notification.rawPayload.aps)) {
     notification.rawPayload.aps.sound = `${sound}30.wav`;
   }
 

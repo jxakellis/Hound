@@ -31,7 +31,7 @@ async function getUser(req, res) {
       throw new ValidationError('No user found or invalid permissions', global.constant.error.value.INVALID);
     }
 
-    return res.sendResponseForStatusJSONError(200, { result }, undefined);
+    return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }
   catch (error) {
     return res.sendResponseForStatusJSONError(400, undefined, error);
@@ -52,35 +52,39 @@ async function createUser(req, res) {
       isLoudNotification,
       isFollowUpEnabled,
       followUpDelay,
+      interfaceStyle,
       snoozeLength,
       notificationSound,
-      interfaceStyle,
       logsInterfaceScale,
       remindersInterfaceScale,
       maximumNumberOfLogsDisplayed,
     } = req.body;
     const result = await createUserForUserIdentifier(
       req.databaseConnection,
+      // userId,
       userIdentifier,
+      // userApplicationUsername,
       userEmail,
       userFirstName,
       userLastName,
       userNotificationToken,
+      // userAccountCreationDate,
       isNotificationEnabled,
       isLoudNotification,
       isFollowUpEnabled,
       followUpDelay,
+      interfaceStyle,
       snoozeLength,
       notificationSound,
-      interfaceStyle,
       logsInterfaceScale,
       remindersInterfaceScale,
       maximumNumberOfLogsDisplayed,
+      // lastDogManagerSynchronization,
     );
 
     refreshSecondaryAlarmNotificationsForUserId(result, isFollowUpEnabled, followUpDelay);
 
-    return res.sendResponseForStatusJSONError(200, { result }, undefined);
+    return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }
   catch (error) {
     return res.sendResponseForStatusJSONError(400, undefined, error);
@@ -96,9 +100,9 @@ async function updateUser(req, res) {
       isLoudNotification,
       isFollowUpEnabled,
       followUpDelay,
+      interfaceStyle,
       snoozeLength,
       notificationSound,
-      interfaceStyle,
       logsInterfaceScale,
       remindersInterfaceScale,
       maximumNumberOfLogsDisplayed,
@@ -111,9 +115,9 @@ async function updateUser(req, res) {
       isLoudNotification,
       isFollowUpEnabled,
       followUpDelay,
+      interfaceStyle,
       snoozeLength,
       notificationSound,
-      interfaceStyle,
       logsInterfaceScale,
       remindersInterfaceScale,
       maximumNumberOfLogsDisplayed,

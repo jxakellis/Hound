@@ -17,13 +17,14 @@ async function getUserForUserId(databaseConnection, userId) {
 
   // have to specifically reference the columns, otherwise familyMembers.userId will override users.userId.
   // Therefore setting userId to null (if there is no family member) even though the userId isn't null.
-  const userInformation = await databaseQuery(
+  let userInformation = await databaseQuery(
     databaseConnection,
     `SELECT ${userColumns}, familyMembers.familyId, ${userConfigurationColumns} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userId = ? LIMIT 1`,
     [userId],
   );
+  [userInformation] = userInformation;
 
-  return userInformation[0];
+  return userInformation;
 }
 
 /**
@@ -38,14 +39,15 @@ async function getUserForUserIdentifier(databaseConnection, userIdentifier) {
   // userIdentifier method of finding corresponding user(s)
   // have to specifically reference the columns, otherwise familyMembers.userId will override users.userId.
   // Therefore setting userId to null (if there is no family member) even though the userId isn't null.
-  const userInformation = await databaseQuery(
+  let userInformation = await databaseQuery(
     databaseConnection,
     `SELECT ${userColumns}, familyMembers.familyId, ${userConfigurationColumns} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userIdentifier = ? LIMIT 1`,
     [userIdentifier],
   );
+  [userInformation] = userInformation;
 
   // array has item(s), meaning there was a user found, successful!
-  return userInformation[0];
+  return userInformation;
 }
 
 /**
@@ -59,13 +61,14 @@ async function getUserForUserApplicationUsername(databaseConnection, userApplica
 
   // have to specifically reference the columns, otherwise familyMembers.userId will override users.userId.
   // Therefore setting userId to null (if there is no family member) even though the userId isn't null.
-  const userInformation = await databaseQuery(
+  let userInformation = await databaseQuery(
     databaseConnection,
     `SELECT ${userColumns}, familyMembers.familyId, ${userConfigurationColumns} FROM users JOIN userConfiguration ON users.userId = userConfiguration.userId LEFT JOIN familyMembers ON users.userId = familyMembers.userId WHERE users.userApplicationUsername = ? LIMIT 1`,
     [userApplicationUsername],
   );
+  [userInformation] = userInformation;
 
-  return userInformation[0];
+  return userInformation;
 }
 
 async function getUserFirstNameLastNameForUserId(databaseConnection, userId) {
@@ -73,13 +76,14 @@ async function getUserFirstNameLastNameForUserId(databaseConnection, userId) {
     throw new ValidationError('databaseConnection or userId missing', global.constant.error.value.MISSING);
   }
 
-  const userInformation = await databaseQuery(
+  let userInformation = await databaseQuery(
     databaseConnection,
     `SELECT ${userNameColumns} FROM users WHERE users.userId = ? LIMIT 1`,
     [userId],
   );
+  [userInformation] = userInformation;
 
-  return userInformation[0];
+  return userInformation;
 }
 
 module.exports = {

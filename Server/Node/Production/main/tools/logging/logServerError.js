@@ -18,7 +18,7 @@ async function logServerError(forFunction, forError) {
   // Attempt to get the .stack. If the stack is undefined, then we just simply get the error
   const errorStack = formatString((forError && forError.stack) || forError, 2500);
 
-  printServerError(errorName, errorFunction, errorMessage, errorCode, errorStack);
+  printServerError(forFunction, forError);
 
   await databaseQuery(
     databaseConnectionForLogging,
@@ -42,4 +42,4 @@ function printServerError(forFunction, forError) {
   serverLogger.error(`UNCAUGHT '${errorName}' FROM FUNCTION: ${errorFunction}\n MESSAGE: ${errorMessage}\n CODE: ${errorCode}\n STACK: ${errorStack}`);
 }
 
-module.exports = { logServerError, printServerError };
+module.exports = { logServerError };

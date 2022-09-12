@@ -3,7 +3,7 @@ const { databaseQuery } = require('./databaseQuery');
 const { serverLogger } = require('../logging/loggers');
 const { formatArray } = require('../format/formatObject');
 
-const databaseConnectionPingQuery = 'SELECT userId FROM users LIMIT 1';
+const databaseConnectionPingQuery = 'SELECT 1 FROM users LIMIT 1';
 
 /// Performs basic query on user table to establish if the databaseConnection is valid
 async function testDatabaseConnection(databaseConnection) {

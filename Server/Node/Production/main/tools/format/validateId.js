@@ -45,7 +45,7 @@ async function validateUserId(req, res, next) {
     // queries the database to find if the users table contains a user with the provided ID
     const result = await databaseQuery(
       req.databaseConnection,
-      'SELECT userId FROM users WHERE userId = ? AND userIdentifier = ? LIMIT 1',
+      'SELECT 1 FROM users WHERE userId = ? AND userIdentifier = ? LIMIT 1',
       [userId, userIdentifier],
     );
 
@@ -84,7 +84,7 @@ async function validateFamilyId(req, res, next) {
     // queries the database to find familyIds associated with the userId
     const result = await databaseQuery(
       req.databaseConnection,
-      'SELECT familyId FROM familyMembers WHERE userId = ? AND familyId = ? LIMIT 1',
+      'SELECT 1 FROM familyMembers WHERE userId = ? AND familyId = ? LIMIT 1',
       [userId, familyId],
     );
 
@@ -124,7 +124,7 @@ async function validateDogId(req, res, next) {
     // JOIN families as dog must have a family attached to it
     const dog = await databaseQuery(
       req.databaseConnection,
-      'SELECT dogs.dogId FROM dogs JOIN families ON dogs.familyId = families.familyId WHERE dogs.dogIsDeleted = 0 AND dogs.familyId = ? AND dogs.dogId = ? LIMIT 1',
+      'SELECT 1 FROM dogs JOIN families ON dogs.familyId = families.familyId WHERE dogs.dogIsDeleted = 0 AND dogs.familyId = ? AND dogs.dogId = ? LIMIT 1',
       [familyId, dogId],
     );
 
@@ -165,7 +165,7 @@ async function validateLogId(req, res, next) {
     // JOIN dogs as log has to have dog still attached to it
     const log = await databaseQuery(
       req.databaseConnection,
-      'SELECT dogLogs.logId FROM dogLogs JOIN dogs ON dogLogs.dogId = dogs.dogId WHERE dogLogs.logIsDeleted = 0 AND dogLogs.dogId = ? AND dogLogs.logId = ? LIMIT 1',
+      'SELECT 1 FROM dogLogs JOIN dogs ON dogLogs.dogId = dogs.dogId WHERE dogLogs.logIsDeleted = 0 AND dogLogs.dogId = ? AND dogLogs.logId = ? LIMIT 1',
       [dogId, logId],
     );
 
@@ -206,7 +206,7 @@ async function validateParamsReminderId(req, res, next) {
     // JOIN dogs as reminder must have dog attached to it
     const reminder = await databaseQuery(
       req.databaseConnection,
-      'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
+      'SELECT 1 FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
       [dogId, reminderId],
     );
 
@@ -248,7 +248,7 @@ async function validateBodyReminderId(req, res, next) {
       // Attempt to locate a reminder. It must match the reminderId provided while being attached to a dog that the user has permission to use
       reminderPromises.push(databaseQuery(
         req.databaseConnection,
-        'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
+        'SELECT 1 FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
         [dogId, reminderId],
       ));
     }
@@ -280,7 +280,7 @@ async function validateBodyReminderId(req, res, next) {
       // JOIN dogs as reminder must have dog attached to it
       const reminder = await databaseQuery(
         req.databaseConnection,
-        'SELECT dogReminders.reminderId FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
+        'SELECT 1 FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.dogId = ? AND dogReminders.reminderId = ? LIMIT 1',
         [dogId, singleReminderId],
       );
 

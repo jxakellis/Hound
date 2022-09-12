@@ -10,10 +10,10 @@ const usersColumns = 'users.userId, users.userFirstName, users.userLastName';
 const previousFamilyMembersColumns = 'previousFamilyMembers.userId, previousFamilyMembers.userFirstName, previousFamilyMembers.userLastName';
 // Select every column except for familyId, lastPause, and lastUnpause (by not transmitting, increases network efficiency)
 // familyId is already known, lastPause + lastUnpause + familyAccountCreationDate have no use client-side
-const familiesColumns = 'userId, familyCode, isLocked, isPaused';
+const familiesColumns = 'userId, familyCode, isLocked';
 
 /**
- *  If the query is successful, returns the userId, familyCode, isLocked, isPaused, and familyMembers for the familyId.
+ *  If the query is successful, returns the userId, familyCode, isLocked, and familyMembers for the familyId.
  *  If a problem is encountered, creates and throws custom error
  */
 async function getAllFamilyInformationForFamilyId(databaseConnection, familyId, activeSubscription) {
@@ -23,19 +23,19 @@ async function getAllFamilyInformationForFamilyId(databaseConnection, familyId, 
   }
   // family id is validated, therefore we know familyMembers is >= 1 for familyId
   // find which family member is the head
-  let family = databaseQuery(
-    databaseConnection,
-    `SELECT ${familiesColumns} FROM families WHERE familyId = ? LIMIT 1`,
-    [familyId],
-  );
-  // get family members
-  let familyMembers = getAllFamilyMembersForFamilyId(databaseConnection, familyId);
+  const promises = [
+    databaseQuery(
+      databaseConnection,
+      `SELECT ${familiesColumns} FROM families WHERE familyId = ? LIMIT 1`,
+      [familyId],
+    ),
+    // get family members
+    getAllFamilyMembersForFamilyId(databaseConnection, familyId),
+    getAllPreviousFamilyMembersForFamilyId(databaseConnection, familyId),
+  ];
 
-  let previousFamilyMembers = getAllPreviousFamilyMembersForFamilyId(databaseConnection, familyId);
+  const [[family], familyMembers, previousFamilyMembers] = await Promise.all(promises);
 
-  [family, familyMembers, previousFamilyMembers] = await Promise.all([family, familyMembers, previousFamilyMembers]);
-
-  [family] = family;
   const result = {
     ...family,
     familyMembers,
@@ -71,9 +71,24 @@ async function getAllPreviousFamilyMembersForFamilyId(databaseConnection, family
   // get family members
   const result = await databaseQuery(
     databaseConnection,
-    `SELECT ${previousFamilyMembersColumns} FROM previousFamilyMembers WHERE familyId = ? LIMIT 18446744073709551615`,
+    `SELECT ${previousFamilyMembersColumns} FROM previousFamilyMembers WHERE familyId = ? ORDER BY familyLeaveDate DESC LIMIT 18446744073709551615`,
     [familyId],
   );
+
+  const userIds = [];
+  // Only return one instance for each userId. I.e. if a user left a family multiple times, return the previousFamilyMember object for the most recent leave
+  for (let i = 0; i < result.length; i += 1) {
+    if (userIds.includes(result[i].userId)) {
+      // We have a more recent family leave recorded for this userId, therefore remove the entry
+      result.splice(i, 1);
+      // de-iterate i so we don't skip an item
+      i -= 1;
+    }
+    else {
+      // Don't have userId recorded
+      userIds.push(result[i].userId);
+    }
+  }
 
   return result;
 }

@@ -13,11 +13,7 @@ async function getDatabaseStatusForWatchdog(databaseConnection) {
   }
 
   const tablesToCheck = [
-    'appStoreServerNotifications',
     'dogs',
-    'previousRequests',
-    'previousResponses',
-    'previousServerErrors',
     'transactions',
     'users',
   ];

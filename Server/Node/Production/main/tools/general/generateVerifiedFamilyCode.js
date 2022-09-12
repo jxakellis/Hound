@@ -33,7 +33,7 @@ async function generateVerifiedFamilyCode(databaseConnection) {
     // eslint-disable-next-line no-await-in-loop
     const result = await databaseQuery(
       databaseConnection,
-      'SELECT familyCode FROM families WHERE familyCode = ? LIMIT 1',
+      'SELECT 1 FROM families WHERE familyCode = ? LIMIT 1',
       [potentialFamilyCode],
     );
     // if the result's length is zero, that means there wasn't a match for the family code and the code is unique

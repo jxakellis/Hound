@@ -20,6 +20,7 @@ async function createAppStoreServerNotificationForSignedPayload(databaseConnecti
   if (areAllDefined(databaseConnection, signedPayload) === false) {
     throw new ValidationError('databaseConnection or signedPayload missing', global.constant.error.value.MISSING);
   }
+  // TO DO NOW verify Apple signature
   const signedPayloadBuffer = Buffer.from(signedPayload.split('.')[1], 'base64');
   const notification = JSON.parse(signedPayloadBuffer.toString());
 
@@ -51,9 +52,11 @@ async function createAppStoreServerNotificationForSignedPayload(databaseConnecti
     throw new ValidationError('signedRenewalInfo or signedTransactionInfo missing', global.constant.error.value.MISSING);
   }
 
+  // TO DO NOW verify Apple signature
   const signedRenewalInfoBuffer = Buffer.from(signedRenewalInfo.split('.')[1], 'base64');
   const renewalInfo = JSON.parse(signedRenewalInfoBuffer.toString());
 
+  // TO DO NOW verify Apple signature
   const signedTransactionInfoBuffer = Buffer.from(signedTransactionInfo.split('.')[1], 'base64');
   const transactionInfo = JSON.parse(signedTransactionInfoBuffer.toString());
 

@@ -5,7 +5,7 @@ const { areAllDefined } = require('../../main/tools/format/validateDefined');
 
 // Select every column except for dogId, reminderExecutionDate, and reminderLastModified (by not transmitting, increases network efficiency)
 // dogId is already known, reminderExecutionDate is calculated client-side and server-side is only used for notification sending, and reminderLastModified has no use client-side
-const dogRemindersColumns = 'reminderId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderIsDeleted, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed, countdownExecutionInterval, countdownIntervalElapsed, weeklyHour, weeklyMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklyIsSkipping, weeklyIsSkippingDate, monthlyDay, monthlyHour, monthlyMinute, monthlyIsSkipping, monthlyIsSkippingDate, oneTimeDate';
+const dogRemindersColumns = 'reminderId, reminderAction, reminderCustomActionName, reminderType, reminderIsEnabled, reminderExecutionBasis, reminderIsDeleted, snoozeIsEnabled, snoozeExecutionInterval, snoozeIntervalElapsed, countdownExecutionInterval, countdownIntervalElapsed, weeklyUTCHour, weeklyUTCMinute, weeklySunday, weeklyMonday, weeklyTuesday, weeklyWednesday, weeklyThursday, weeklyFriday, weeklySaturday, weeklySkippedDate, monthlyUTCDay, monthlyUTCHour, monthlyUTCMinute, monthlySkippedDate, oneTimeDate';
 
 /**
  *  If the query is successful, returns the reminder for the reminderId.
@@ -18,7 +18,7 @@ async function getReminderForReminderId(databaseConnection, reminderId, forLastD
 
   const lastDogManagerSynchronization = formatDate(forLastDogManagerSynchronization);
 
-  const result = areAllDefined(lastDogManagerSynchronization)
+  let result = areAllDefined(lastDogManagerSynchronization)
     ? await databaseQuery(
       databaseConnection,
       `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderLastModified >= ? AND reminderId = ? LIMIT 1`,
@@ -29,6 +29,7 @@ async function getReminderForReminderId(databaseConnection, reminderId, forLastD
       `SELECT ${dogRemindersColumns} FROM dogReminders WHERE reminderId = ? LIMIT 1`,
       [reminderId],
     );
+  [result] = result;
 
   // don't trim 'unnecessary' components (e.g. if weekly only send back weekly components)
   // its unnecessary processing and its easier for the reminders to remember their old states

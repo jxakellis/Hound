@@ -27,7 +27,7 @@ async function getReminders(req, res) {
     // look for multiple reminders
       : await getAllRemindersForDogId(req.databaseConnection, dogId, lastDogManagerSynchronization);
 
-    return res.sendResponseForStatusJSONError(200, { result }, undefined);
+    return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }
   catch (error) {
     return res.sendResponseForStatusJSONError(400, undefined, error);
@@ -39,7 +39,9 @@ async function createReminder(req, res) {
     const { familyId, dogId } = req.params;
     const reminder = req.body;
     const reminders = formatArray(req.body.reminders);
-    const result = areAllDefined(reminders) ? await createRemindersForDogIdReminders(req.databaseConnection, dogId, reminders) : [await createReminderForDogIdReminder(req.databaseConnection, dogId, reminder)];
+    const result = areAllDefined(reminders)
+      ? await createRemindersForDogIdReminders(req.databaseConnection, dogId, reminders)
+      : await createReminderForDogIdReminder(req.databaseConnection, dogId, reminder);
 
     // create was successful, so we can create all the alarm notifications
     for (let i = 0; i < result.length; i += 1) {
@@ -49,7 +51,8 @@ async function createReminder(req, res) {
         result[i].reminderExecutionDate,
       );
     }
-    return res.sendResponseForStatusJSONError(200, { result }, undefined);
+
+    return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }
   catch (error) {
     return res.sendResponseForStatusJSONError(400, undefined, error);

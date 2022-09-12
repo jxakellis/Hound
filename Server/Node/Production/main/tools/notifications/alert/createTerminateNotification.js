@@ -10,7 +10,7 @@ function createTerminateNotification(userId) {
   const alertTitle = 'Oops, you terminated Hound!';
   // Maxmium possible length: 64 (raw) + 0 (variable) = 64
   const alertBody = "Your upcoming alarms won't ring properly if Hound isn't running.";
-  sendNotificationForUser(userId, global.constant.apn.category.TERMINATE, alertTitle, alertBody, {});
+  sendNotificationForUser(userId, global.constant.notification.category.user.TERMINATE, alertTitle, alertBody, {});
 }
 
 module.exports = { createTerminateNotification };

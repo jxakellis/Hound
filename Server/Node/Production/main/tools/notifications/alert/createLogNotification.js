@@ -21,10 +21,11 @@ async function createLogNotification(userId, familyId, dogId, logAction, logCust
       return;
     }
 
-    const user = await getUserFirstNameLastNameForUserId(databaseConnectionForGeneral, userId);
-
-    let dog = await getDogForDogId(databaseConnectionForGeneral, dogId, undefined, undefined, undefined);
-    [dog] = dog;
+    const promises = [
+      getUserFirstNameLastNameForUserId(databaseConnectionForGeneral, userId),
+      getDogForDogId(databaseConnectionForGeneral, dogId, undefined, undefined, undefined),
+    ];
+    const [user, dog] = await Promise.all(promises);
 
     // check to see if we were able to retrieve the properties of the user who logged the event and the dog that the log was under
     if (areAllDefined(user, user.userFirstName, user.userLastName, dog, dog.dogName) === false) {
@@ -40,18 +41,18 @@ async function createLogNotification(userId, familyId, dogId, logAction, logCust
 
     // Maxmium possible length: 28 (raw) + 34 (variable) + 32 (variable) = 94
     let alertBody = `${''} lent a helping hand with '${''}'`;
-    const maximumLengthForFormattedLogAction = global.constant.apn.length.ALERT_BODY - alertBody.length;
+    const maximumLengthForFormattedLogAction = global.constant.notification.length.ALERT_BODY - alertBody.length;
     formattedLogAction.substring(0, maximumLengthForFormattedLogAction);
 
     alertBody = `${''} lent a helping hand with '${formattedLogAction}'`;
 
-    const maximumLengthForAbreviatedFullName = global.constant.apn.length.ALERT_BODY - alertBody.length;
+    const maximumLengthForAbreviatedFullName = global.constant.notification.length.ALERT_BODY - alertBody.length;
     abreviatedFullName.substring(0, maximumLengthForAbreviatedFullName);
 
     alertBody = `${abreviatedFullName} lent a helping hand with '${formattedLogAction}'`;
 
     // we now have the messages and can send our APN
-    sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.apn.category.LOG, alertTitle, alertBody, {});
+    sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.notification.category.log.CREATED, alertTitle, alertBody, {});
   }
   catch (error) {
     logServerError('createLogNotification', error);
