@@ -195,8 +195,6 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
         super.viewDidLoad()
         self.view.bringSubviewToFront(willAddLog)
         
-        // TO DO FUTURE add export logs button 
-        
         let tap = UITapGestureRecognizer(target: self, action: #selector(hideDropDown))
         tap.delegate = self
         tap.cancelsTouchesInView = false
@@ -361,8 +359,6 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
         // flip isSelectedInDropDown status
         selectedCell.willToggleDropDownSelection(forSelected: !selectedCell.isSelectedInDropDown)
         
-        logsTableViewController.logsFilter = logsFilter
-        
         // dog log filter was selected
         if let dogId = selectedCell.dogId, let logAction = selectedCell.logAction {
             // find any preexisting logActions that we are filtering by
@@ -463,6 +459,9 @@ final class LogsViewController: UIViewController, UIGestureRecognizerDelegate, D
             
             dropDown.hideDropDown()
         }
+        
+        // logsFilter is configured, now apply it to the table view controller
+        logsTableViewController.logsFilter = logsFilter
     }
     
     // MARK: - Navigation

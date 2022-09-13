@@ -48,39 +48,7 @@ final class SettingsFamilyViewController: UIViewController, UIGestureRecognizerD
     }
     
     @IBAction private func didClickShareFamily(_ sender: Any) {
-        
-        // Check that the family has space for at least one new member, otherwise block them from sharing the family.
-        guard FamilyConfiguration.familyMembers.count < FamilyConfiguration.activeFamilySubscription.numberOfFamilyMembers else {
-            AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.invalidSubscriptionFamilyShareTitle, forSubtitle: VisualConstant.BannerTextConstant.invalidSubscriptionFamilyShareSubtitle, forStyle: .danger)
-            return
-        }
-        
-        // Make sure that the family is unlocked so new 
-        guard FamilyConfiguration.isLocked == false else {
-            AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.invalidLockedFamilyShareTitle, forSubtitle: VisualConstant.BannerTextConstant.invalidLockedFamilyShareSubtitle, forStyle: .danger)
-            return
-        }
-        
-        let shareHoundText = "Download Hound to help our family stay on track with caring for our pets! Never forget to lend a helping hand with Hound's reminders, and never question when your pets were last helped with logs of care. Join my Hound family today by using the following code: \(familyCode)\n\nhttps://apps.apple.com/us/app/hound-dog-schedule-organizer/id1564604025"
-        
-        let textToShare = [ shareHoundText ]
-        let activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
-        // Configure so that iPads won't crash
-        activityViewController.popoverPresentationController?.sourceView = self.view
-        
-        // exclude some activity types from the list (optional)
-        activityViewController.excludedActivityTypes =
-        [ UIActivity.ActivityType.addToReadingList,
-          UIActivity.ActivityType.assignToContact,
-          UIActivity.ActivityType.markupAsPDF,
-          UIActivity.ActivityType.openInIBooks ]
-        
-        if #available(iOS 15.4, *) {
-            activityViewController.excludedActivityTypes?.append(UIActivity.ActivityType.sharePlay)
-        }
-        
-        // present the view controller
-        self.present(activityViewController, animated: true, completion: nil)
+        ExportManager.shareFamilyCode(forViewController: self, forFamilyCode: familyCode)
     }
     
     // MARK: - Properties

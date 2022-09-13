@@ -15,8 +15,8 @@ const { apn, productionAPNProvider, developmentAPNProvider } = require('./apnPro
  */
 // (token, category, sound, alertTitle, alertBody)
 function sendAPN(token, category, sound, forAlertTitle, forAlertBody, customPayload) {
-  const alertTitle = formatString(forAlertTitle, global.constant.notification.length.ALERT_TITLE);
-  const alertBody = formatString(forAlertBody, global.constant.notification.length.ALERT_BODY);
+  const alertTitle = formatString(forAlertTitle, global.constant.notification.length.ALERT_TITLE_LIMIT);
+  const alertBody = formatString(forAlertBody, global.constant.notification.length.ALERT_BODY_LIMIT);
 
   apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${alertTitle}, ${alertBody}`);
 

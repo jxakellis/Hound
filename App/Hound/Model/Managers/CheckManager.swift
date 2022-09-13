@@ -33,11 +33,11 @@ enum CheckManager {
                         return Double(count) * 9.2
                     }
                     
-                    // Count == 5: asked four times; 45.0 days since last ask; 182.2 since beginning
-                    // Count == 6: asked five times; 45.0 days; 182.2
-                    // Count == 7: asked six times; 45.0 days; 227.6
-                    // Count == 8: asked seven times; 45.0 days; 273.2
-                    // Count == 9: asked eight times; 45.0 days; 319.0
+                    // Count == 5: asked four times; 45.0 days since last ask; 137.0 since beginning
+                    // Count == 6: asked five times; 45.2 days; 182.2
+                    // Count == 7: asked six times; 45.4 days; 227.6
+                    // Count == 8: asked seven times; 45.6 days; 273.2
+                    // Count == 9: asked eight times; 45.8 days; 319.0
                     // Count == 10: asked nine times; 45.0 days; 364.0
                     return Double(45.0 + Double(count % 5) * 0.2)
                 }()

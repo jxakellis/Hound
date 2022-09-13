@@ -79,6 +79,7 @@ final class AlarmManager {
                 preferredStyle: .alert)
             alarmAlertController.setup(forDogId: dogId, forReminder: reminder)
             
+            // TO DO NOW if there are multiple reminders in the queue, add "Dismiss All" button.
             let alertActionDismiss = UIAlertAction(
                 title: "Dismiss",
                 style: .cancel,

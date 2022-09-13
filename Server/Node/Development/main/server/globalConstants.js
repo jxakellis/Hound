@@ -59,8 +59,8 @@ const notification = {
       NOTE: If the notification changes from showing 'now' next to it and shows '1m ago' (or similar),
       this increased text length (indicating time since notification arrived) can cause the title to be shortened (the time text expands)
       */
-    ALERT_TITLE: 32,
-    ALERT_BODY: 128,
+    ALERT_TITLE_LIMIT: 32,
+    ALERT_BODY_LIMIT: 128,
   },
   category: {
     // for notifications about reminder's alarms

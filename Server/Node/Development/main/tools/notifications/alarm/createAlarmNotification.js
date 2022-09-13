@@ -65,6 +65,7 @@ async function createAlarmNotificationForFamily(familyId, reminderId, reminderEx
  */
 async function sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(familyId, reminderId) {
   try {
+    // TO DO NOW check to see if reminder is snoozing. if it is, then modify the message displayed to show that it finished snoozing.
     // get the dogName, reminderAction, and reminderCustomActionName for the given reminderId
     // the reminderId has to exist to search and we check to make sure the dogId isn't null (to make sure the dog still exists too)
     let reminder = await databaseQuery(
@@ -79,11 +80,26 @@ async function sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(family
       return;
     }
 
-    // make information for notification
-    // Maxmium possible length: 13 (raw) + 32 (variable) = 45
-    const alertTitle = `Reminder for ${reminder.dogName}`;
+    /*
+    // TO DO NOW review possible message formats
+    Reminder for Penny
+    Give your dog a helping hand with 'Potty'
 
-    // Maxmium possible length: 36 (raw) + 32 (variable) = 68
+    Penny
+    Give your dog a helping hand with 'Potty'
+
+    Reminder for Potty
+    Give Penny a helping hand
+
+    Potty
+    Give Penny a helping hand
+    */
+    // make information for notification
+    // Maximum possible length of message: 32 (variable) = 32 (<= ALERT_TITLE_LIMIT)
+    const alertTitle = `${reminder.dogName}`;
+    // `Reminder for ${reminder.dogName}`;
+
+    // Maximum possible length of message: 36 (raw) + 32 (variable) = 68 (<= ALERT_BODY_LIMIT)
     const alertBody = `Give your dog a helping hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
 
     // send immediate APN notification for family
@@ -182,10 +198,10 @@ async function sendSecondaryAPNForUser(userId, reminderId) {
     }
 
     // form secondary alert title and body for secondary notification
-    // Maxmium possible length: 23 (raw) + 32 (variable) = 55
+    // Maximum possible length of message: 23 (raw) + 32 (variable) = 55 (> ALERT_TITLE_LIMIT)
     const alertTitle = `Follow up reminder for ${reminder.dogName}`;
 
-    // Maxmium possible length: 65 (raw) + 32 (variable) = 97
+    // Maximum possible length of message: 65 (raw) + 32 (variable) = 97 (<= ALERT_BODY_LIMIT)
     const alertBody = `It's been a bit, remember to give your dog a helping hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
 
     const customPayload = { reminderId: reminder.reminderId, reminderLastModified: reminder.reminderLastModified };
