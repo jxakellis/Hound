@@ -84,7 +84,7 @@ final class SettingsSubscriptionTierTableViewCell: UITableViewCell {
         }
         // no free trial or the family has used up their subscription
         else {
-            // TO DO BUG if a user deletes their family and creates a new one, they will still be ineligible for a new free trial however this text will display that they get a free trial still. In addition, other family members that haven't used their free trial will be shown they don't have a free trial when they actually do
+            // TO DO BUG PRIO: LOW if a user deletes their family and creates a new one, they will still be ineligible for a new free trial however this text will display that they get a free trial still. In addition, other family members that haven't used their free trial will be shown they don't have a free trial when they actually do
             subscriptionTierPricingDescriptionLabel.text = "Enjoy all \(product.localizedTitle) has to offer for \(subscriptionPriceWithSymbol) per \(subscriptionPeriodString)"
         }
     }

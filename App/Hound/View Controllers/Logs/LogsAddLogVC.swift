@@ -368,7 +368,8 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     var dogManager: DogManager! = nil
     
     private let tagForAllParentDogs = -1
-    // TO DO NOW instead of having an all option, allow selection of multiple dogs/animals. Additionally, modify this drop down and filter drop down so if there is only one option, then close drop down after pressed. Only leave drop down open if there are multiple options available to be clicked. Would be beneficial if this was partially implemented into the DropDown class.
+    // TO DO NOW instead of having an all option, allow selection of multiple dogs/animals. By default, have all the dogs selected. If there is only one dog total, simply display the dog name & select the dog, then don't let the user open the drop down. If there is more than one dog, then select all of the dogs by default and display ("All" or "Multiple"). Make this drop down selection work like the filter drop down, where the drop down doesn't close after an option is picked and only closes when the user clicks outside the dropdown.
+    // Would be beneficial if this was partially implemented into the DropDown class.
     private let nameForAllParentDogs = "All"
     
     /// This is the parentDogId of a log if the user is updating an existing log instead of creating a new one

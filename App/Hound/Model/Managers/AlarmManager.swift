@@ -21,6 +21,8 @@ final class AlarmManager {
     
     /// Creates AlarmUIAlertController to show the user about their alarm going off. We query the server with the information provided first to make sure it is up to date. 
     static func willShowAlarm(forDogManager dogManager: DogManager, forDogId dogId: Int, forReminderId reminderId: Int) {
+        // TO DO NOW add check to willShowAlarm that doesn't execute any of the below code until the app is in the foreground (view loaded and window isnt nil). This is because if we run this in the background, pulling data and showing an alarm, this alarm could sit idle for an hour or two while the app is closed. Then, when the user opens the app they will have the outdated alarm waiting for them. Therefore, we only want to retrieve the updated information and show the alarm when the app is opened.
+        // To do this, add a queue of alarms to show when the globalPresenter is ineligible to present (view not loaded and window nil). Once the app is brought the foreground, trigger something to make this queue to be processed and presented.
         
         // See if we can find a corresponding dog for the dogId. If we can't, then no point to go any further
         guard let dog = dogManager.findDog(forDogId: dogId) else {
