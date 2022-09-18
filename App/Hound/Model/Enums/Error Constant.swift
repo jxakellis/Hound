@@ -268,8 +268,11 @@ enum ErrorConstant {
     }
     
     enum LogError {
+        static var parentDogNotSelected: HoundError {
+            return HoundError(forName: "LogError.parentDogNotSelected", forDescription: "Your log needs a corresponding dog, please try selecting at least one!", forType: .logError)
+        }
         static var logActionBlank: HoundError {
-            return HoundError(forName: "LogError.logActionBlank", forDescription: "Your log has no action, try selecting one!", forType: .logError)
+            return HoundError(forName: "LogError.logActionBlank", forDescription: "Your log has no action, please try selecting one!", forType: .logError)
         }
         static var logCustomActionNameCharacterLimitExceeded: HoundError {
             return HoundError(forName: "LogError.logCustomActionNameCharacterLimitExceeded", forDescription: "Your log's custom name is too long, please try a shorter one.", forType: .logError)

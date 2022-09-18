@@ -128,86 +128,76 @@ final class DogsAddDogViewController: UIViewController, DogsReminderNavigationVi
             
             addDogButton.beginQuerying()
             addDogButtonBackground.beginQuerying(isBackgroundButton: true)
+            
+            // dog + created reminders + updated reminders + deleted reminders
+            let numberOfTasks = {
+                // first task is dog update
+                var numberOfTasks = 1
+                if createdReminders.count >= 1 {
+                    numberOfTasks += 1
+                }
+                if updatedReminders.count >= 1 {
+                    numberOfTasks += 1
+                }
+                if deletedReminders.count >= 1 {
+                    numberOfTasks += 1
+                }
+                return numberOfTasks
+            }()
+            
+            let completionTracker = CompletionTracker(numberOfTasks: numberOfTasks) {
+                // all tasks completed successfully
+                self.addDogButton.endQuerying()
+                self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
+                self.delegate.didUpdateDog(sender: Sender(origin: self, localized: self), updatedDog: dog)
+                self.navigationController?.popViewController(animated: true)
+            } failureCompletionHandler: {
+                // something failed
+                self.addDogButton.endQuerying()
+                self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
+            }
+            
             // first query to update the dog itself (independent of any reminders)
             DogsRequest.update(invokeErrorManager: true, forDog: dog) { requestWasSuccessful1, _ in
                 guard requestWasSuccessful1 else {
-                    self.addDogButton.endQuerying()
-                    self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
+                    completionTracker.failedTask()
                     return
                 }
-                // the dog was successfully updated, so we attempt to take actions for the reminders
-                var queryFailure = false
-                var queriedCreatedReminders = false
-                var queriedUpdatedReminders = false
-                var queriedDeletedReminders = false
                 
-                // check to see if we need to create any reminders on the server
-                if createdReminders.count > 0 {
-                    // we have reminders created that need to be created on the server
+                // Updated dog
+                completionTracker.completedTask()
+                
+                if createdReminders.count >= 1 {
                     RemindersRequest.create(invokeErrorManager: true, forDogId: dog.dogId, forReminders: createdReminders) { reminders, _ in
                         if let reminders = reminders {
                             dog.dogReminders.addReminders(forReminders: reminders)
-                            queriedCreatedReminders = true
+                            completionTracker.completedTask()
                         }
                         else {
-                            queryFailure = true
+                            completionTracker.failedTask()
                         }
-                        checkForCompletion()
                     }
-                }
-                // no reminders to be created on the server
-                else {
-                    queriedCreatedReminders = true
-                    checkForCompletion()
-                }
-                // check to see if we need to update any reminders on the server
-                if updatedReminders.count > 0 {
-                    RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: updatedReminders) { requestWasSuccessful2, _ in
-                        if requestWasSuccessful2 == true {
-                            queriedUpdatedReminders = true
-                        }
-                        else {
-                            queryFailure = true
-                        }
-                        checkForCompletion()
-                    }
-                }
-                // no reminders to be updated on the server
-                else {
-                    queriedUpdatedReminders = true
-                    checkForCompletion()
-                }
-                // check to see if we need to delete any reminders on the server
-                if deletedReminders.count > 0 {
-                    
-                    RemindersRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forReminders: deletedReminders) { requestWasSuccessful2, _ in
-                        if requestWasSuccessful2 == true {
-                            queriedDeletedReminders = true
-                        }
-                        else {
-                            queryFailure = true
-                        }
-                        checkForCompletion()
-                    }
-                }
-                // no reminders to be deleted on the server
-                else {
-                    queriedDeletedReminders = true
-                    checkForCompletion()
                 }
                 
-                // we want to send a message about updating the dog if everything compelted
-                func checkForCompletion() {
-                    guard queryFailure == false else {
-                        self.addDogButton.endQuerying()
-                        self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
-                        return
+                if updatedReminders.count >= 1 {
+                    RemindersRequest.update(invokeErrorManager: true, forDogId: dog.dogId, forReminders: updatedReminders) { requestWasSuccessful2, _ in
+                        if requestWasSuccessful2 == true {
+                            completionTracker.completedTask()
+                        }
+                        else {
+                            completionTracker.failedTask()
+                        }
                     }
-                    if queriedCreatedReminders == true && queriedUpdatedReminders == true && queriedDeletedReminders == true {
-                        self.addDogButton.endQuerying()
-                        self.addDogButtonBackground.endQuerying(isBackgroundButton: true)
-                        self.delegate.didUpdateDog(sender: Sender(origin: self, localized: self), updatedDog: dog)
-                        self.navigationController?.popViewController(animated: true)
+                }
+                
+                if deletedReminders.count >= 1 {
+                    RemindersRequest.delete(invokeErrorManager: true, forDogId: dog.dogId, forReminders: deletedReminders) { requestWasSuccessful2, _ in
+                        if requestWasSuccessful2 == true {
+                            completionTracker.completedTask()
+                        }
+                        else {
+                            completionTracker.failedTask()
+                        }
                     }
                 }
                 

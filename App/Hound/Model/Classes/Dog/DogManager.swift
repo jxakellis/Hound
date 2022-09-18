@@ -111,6 +111,7 @@ final class DogManager: NSObject, NSCopying, NSCoding {
         }
         
         dogs.append(updatedDog)
+        sortDogs()
     }
     
     /// Sorts the dogs based upon their dogId

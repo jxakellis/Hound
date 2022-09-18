@@ -56,6 +56,17 @@ open class NotificationBannerQueue: NSObject {
         bannerPosition: BannerPosition,
         queuePosition: QueuePosition
     ) {
+        
+        // If the banners queue contains an existing banner with the same errorType as banner that is attempting to be added, we do not add that new banner. If we did, that would mean we would end up displaying 2+ banners with the same content
+        guard banners.contains(where: { existingBanner in
+            guard let bannerErrorType = banner.errorType, let existingBannerErrorType = existingBanner.errorType else {
+                return false
+            }
+            
+            return bannerErrorType == existingBannerErrorType
+        }) == false else {
+            return
+        }
 
         if queuePosition == .back {
             banners.append(banner)

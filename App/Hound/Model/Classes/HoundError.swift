@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum HoundErrorType {
+enum HoundErrorType: String {
     case familyRequestError
     case generalRequestError
     case familyResponseError
@@ -46,6 +46,6 @@ class HoundError: Error {
             return
         }
         
-        AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.alertForErrorTitle, forSubtitle: description, forStyle: .danger)
+        AlertManager.enqueueBannerForPresentation(forTitle: VisualConstant.BannerTextConstant.alertForErrorTitle, forSubtitle: description, forStyle: .danger, forErrorType: self.type.rawValue)
     }
 }

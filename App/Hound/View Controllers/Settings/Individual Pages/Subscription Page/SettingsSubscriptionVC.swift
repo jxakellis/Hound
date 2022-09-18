@@ -235,7 +235,7 @@ final class SettingsSubscriptionViewController: UIViewController, UITableViewDel
                         guard let url = URL(string: "https://apps.apple.com/account/subscriptions") else {
                             return
                         }
-                        await UIApplication.shared.open(url)
+                        _ = await UIApplication.shared.open(url)
                     }
                 }
                 return
