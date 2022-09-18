@@ -78,7 +78,7 @@ final class AlertManager: NSObject {
     
     // MARK: - Static Functions
     
-    static func enqueueBannerForPresentation(forTitle title: String, forSubtitle subtitle: String?, forStyle: BannerStyle, forErrorType errorType: String? = nil, onTap: (() -> Void)? = nil) {
+    static func enqueueBannerForPresentation(forTitle title: String, forSubtitle subtitle: String?, forStyle: BannerStyle, onTap: (() -> Void)? = nil) {
         // Reduce the availble styles into a smaller 3 tier group
         // Success
         // Info
@@ -118,7 +118,6 @@ final class AlertManager: NSObject {
         let banner = GrowingNotificationBanner(title: title, subtitle: subtitle, leftView: leftViewImage, style: style)
         banner.contentMode = .scaleAspectFit
         banner.onTap = onTap
-        banner.errorType = errorType
         
         // Select a haptic feedback that corresponds to the style. A more important style requires a heavier haptic
         banner.haptic = {

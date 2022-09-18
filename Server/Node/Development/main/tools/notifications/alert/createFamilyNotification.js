@@ -27,8 +27,8 @@ async function createFamilyMemberJoinNotification(userId, familyId) {
     }
 
     // now we can construct the messages
-    // Maximum possible length of message: 31 (raw) + 0 (variable) = 31 ( <= ALERT_TITLE_LIMIT )
-    const alertTitle = 'A new family member has joined!';
+    // Maximum possible length of message: 30 (raw) + 0 (variable) = 30 ( <= ALERT_TITLE_LIMIT )
+    const alertTitle = '🧍 A family member has joined!';
 
     // Maximum possible length of message: 31 (raw) + 34 (variable) = 65 ( <= ALERT_BODY_LIMIT )
     const alertBody = `Welcome ${abreviatedFullName} into your Hound family`;
@@ -60,8 +60,8 @@ async function createFamilyMemberLeaveNotification(userId, familyId) {
     }
 
     // now we can construct the messages
-    // Maximum possible length of message: 25 (raw) + 0 (variable) = 25 ( <= ALERT_TITLE_LIMIT )
-    const alertTitle = 'A family member has left!';
+    // Maximum possible length of message: 28 (raw) + 0 (variable) = 28 ( <= ALERT_TITLE_LIMIT )
+    const alertTitle = '🧍 A family member has left!';
 
     // Maximum possible length of message: 39 (raw) + 34 (variable) = 73 ( <= ALERT_BODY_LIMIT )
     const alertBody = `${abreviatedFullName} has parted ways with your Hound family`;
@@ -94,10 +94,10 @@ async function createFamilyLockedNotification(userId, familyId, newIsLocked) {
     }
 
     // now we can construct the messages
-    // Maximum possible length of message: 27/29 (raw) + 0 (variable) = 27/29 ( <= ALERT_TITLE_LIMIT )
+    // Maximum possible length of message: 30/32 (raw) + 0 (variable) = 30/32 ( <= ALERT_TITLE_LIMIT )
     const alertTitle = isLocked
-      ? 'Your family has been locked'
-      : 'Your family has been unlocked';
+      ? '🧍 Your family has been locked'
+      : '🧍 Your family has been unlocked';
 
     // Maximum possible length of message: 65/58 (raw) + 34 (variable) = 99/92 ( <= ALERT_BODY_LIMIT )
     const alertBody = isLocked

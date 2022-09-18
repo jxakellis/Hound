@@ -19,10 +19,16 @@ protocol AlarmManagerDelegate: AnyObject {
 final class AlarmManager {
     static var delegate: AlarmManagerDelegate! = nil
     
+    /// If the globalPresenter is not loaded, indicating that the app is in the background, we store all willShowAlarm calls in this alarmQueue. This ensures that once the app is opened, the alarm queue is executed so that it fetches the most current information from the server.
+    static private var alarmQueue: [(DogManager, Int, Int)] = []
+    
     /// Creates AlarmUIAlertController to show the user about their alarm going off. We query the server with the information provided first to make sure it is up to date. 
     static func willShowAlarm(forDogManager dogManager: DogManager, forDogId dogId: Int, forReminderId reminderId: Int) {
-        // TO DO NOW add check to willShowAlarm that doesn't execute any of the below code until the app is in the foreground (view loaded and window isnt nil). This is because if we run this in the background, pulling data and showing an alarm, this alarm could sit idle for an hour or two while the app is closed. Then, when the user opens the app they will have the outdated alarm waiting for them. Therefore, we only want to retrieve the updated information and show the alarm when the app is opened.
-        // To do this, add a queue of alarms to show when the globalPresenter is ineligible to present (view not loaded and window nil). Once the app is brought the foreground, trigger something to make this queue to be processed and presented.
+        // If the app is in the background, add the willShowAlarm to the queue. Once the app is brought to the foreground, executes synchronizeAlarmQueue to attempt to reshow all of these alarms. This ensures that when the alarms are presented, the app is open. Otherwise, we could fetch the information for an alarm and present it, only for it to sit in the background for an hour while the app is closed, making the alarm outdated.
+        guard UIApplication.shared.applicationState != .background else {
+            alarmQueue.append((dogManager, dogId, reminderId))
+            return
+        }
         
         // See if we can find a corresponding dog for the dogId. If we can't, then no point to go any further
         guard let dog = dogManager.findDog(forDogId: dogId) else {
@@ -81,7 +87,6 @@ final class AlarmManager {
                 preferredStyle: .alert)
             alarmAlertController.setup(forDogId: dogId, forReminder: reminder)
             
-            // TO DO NOW if there are multiple reminders in the queue, add "Dismiss All" button.
             let alertActionDismiss = UIAlertAction(
                 title: "Dismiss",
                 style: .cancel,
@@ -150,6 +155,27 @@ final class AlarmManager {
         }
     }
     
+    /// Once the app is brought back into the foreground, meaning the alarms in the alarm queue can be presented, call this function to iterate through and present any alarms in the alarm queue
+    static func synchronizeAlarmQueue() {
+        
+        // Only attempt to show the alarms if the app isn't in the background
+        guard UIApplication.shared.applicationState != .background else {
+            return
+        }
+        
+        let copiedAlarmQueue = alarmQueue
+        alarmQueue = []
+        
+        // We can't iterate over alarmQueue as willShowAlarm could potentially add items to alarmQueue. That means we need to empty alarmQueue before iterating over to avoid mixing.
+        for (index, alarm) in copiedAlarmQueue.enumerated() {
+            // First alarm (at front of queue... should come first): execute queries right now
+            // Second alarm: execute queries after 25 ms to help ensure it comes second
+            // Thirds alarm: execute queries after 50 ms to help ensure it comes third
+            DispatchQueue.main.asyncAfter(deadline: .now() + (0.025 * Double(index)), execute: {
+                willShowAlarm(forDogManager: alarm.0, forDogId: alarm.1, forReminderId: alarm.2)
+            })
+        }
+    }
     /// User responded to the reminder's alarm that popped up on their screen. They selected to 'Snooze' the reminder. Therefore we modify the timing data so the reminder turns into .snooze mode, alerting them again soon. We don't add a log
     private static func willSnoozeAlarm(forDogId dogId: Int, forReminder reminder: Reminder) {
         // update information

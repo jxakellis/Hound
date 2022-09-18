@@ -124,9 +124,6 @@ open class BaseNotificationBanner: UIView {
     /// Whether or not to post the default accessibility notification.
     public var shouldPostAccessibilityNotification: Bool = true
     
-    /// If the banner is presenting a message about an error, this value tracks an identifier for what type of error it is. This prevents multiple banners from being presented in a row that are alerting for the same error.
-    public var errorType: String?
-
     /// The view that the notification layout is presented on. The constraints/frame of this should not be changed
     internal var contentView: UIView!
 

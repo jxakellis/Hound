@@ -4,7 +4,7 @@ const { databaseQuery } = require('../../database/databaseQuery');
 
 const { schedule } = require('./schedules');
 
-const { formatDate } = require('../../format/formatObject');
+const { formatDate, formatBoolean } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 const { sendNotificationForFamily, sendNotificationForUser } = require('../apn/sendNotification');
 
@@ -65,12 +65,11 @@ async function createAlarmNotificationForFamily(familyId, reminderId, reminderEx
  */
 async function sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(familyId, reminderId) {
   try {
-    // TO DO NOW check to see if reminder is snoozing. if it is, then modify the message displayed to show that it finished snoozing.
     // get the dogName, reminderAction, and reminderCustomActionName for the given reminderId
     // the reminderId has to exist to search and we check to make sure the dogId isn't null (to make sure the dog still exists too)
     let reminder = await databaseQuery(
       databaseConnectionForAlarms,
-      'SELECT dogs.dogName, dogReminders.reminderId, dogReminders.reminderExecutionDate, dogReminders.reminderAction, dogReminders.reminderCustomActionName, dogReminders.reminderLastModified FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
+      'SELECT dogs.dogName, dogReminders.reminderId, dogReminders.reminderExecutionDate, dogReminders.reminderAction, dogReminders.reminderCustomActionName, dogReminders.reminderLastModified, dogReminders.snoozeIsEnabled FROM dogReminders JOIN dogs ON dogReminders.dogId = dogs.dogId WHERE dogs.dogIsDeleted = 0 AND dogReminders.reminderIsDeleted = 0 AND dogReminders.reminderId = ? AND dogReminders.reminderExecutionDate IS NOT NULL AND dogs.dogId IS NOT NULL LIMIT 18446744073709551615',
       [reminderId],
     );
     [reminder] = reminder;
@@ -80,27 +79,18 @@ async function sendPrimaryAPNAndCreateSecondaryAlarmNotificationForFamily(family
       return;
     }
 
-    /*
-    // TO DO NOW review possible message formats
-    Reminder for Penny
-    Give your dog a helping hand with 'Potty'
-
-    Penny
-    Give your dog a helping hand with 'Potty'
-
-    Reminder for Potty
-    Give Penny a helping hand
-
-    Potty
-    Give Penny a helping hand
-    */
-    // make information for notification
-    // Maximum possible length of message: 32 (variable) = 32 (<= ALERT_TITLE_LIMIT)
-    const alertTitle = `${reminder.dogName}`;
+    // Maximum possible length of message: 2 (raw) + 32 (variable) = 34 (> ALERT_TITLE_LIMIT)
+    const alertTitle = `⏱ ${reminder.dogName}`;
     // `Reminder for ${reminder.dogName}`;
 
-    // Maximum possible length of message: 36 (raw) + 32 (variable) = 68 (<= ALERT_BODY_LIMIT)
-    const alertBody = `Give your dog a helping hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
+    // Maximum possible length of message: 19 (raw) + 32 (variable) = 51 (<= ALERT_BODY_LIMIT)
+    let alertBody = `Lend a hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
+
+    const snoozeIsEnabled = formatBoolean(reminder.snoozeIsEnabled);
+    if (areAllDefined(snoozeIsEnabled) === true && snoozeIsEnabled === true) {
+      // Maximum possible length of message: 47 (raw) + 32 (variable) = 79 (<= ALERT_BODY_LIMIT)
+      alertBody = `It's been a bit, remember to lend a hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
+    }
 
     // send immediate APN notification for family
     const customPayload = { reminderId: reminder.reminderId, reminderLastModified: reminder.reminderLastModified };
@@ -198,11 +188,11 @@ async function sendSecondaryAPNForUser(userId, reminderId) {
     }
 
     // form secondary alert title and body for secondary notification
-    // Maximum possible length of message: 23 (raw) + 32 (variable) = 55 (> ALERT_TITLE_LIMIT)
-    const alertTitle = `Follow up reminder for ${reminder.dogName}`;
+    // Maximum possible length of message: 2 (raw) + 32 (variable) = 34 (> ALERT_TITLE_LIMIT)
+    const alertTitle = `⏱ ${reminder.dogName}`;
 
-    // Maximum possible length of message: 65 (raw) + 32 (variable) = 97 (<= ALERT_BODY_LIMIT)
-    const alertBody = `It's been a bit, remember to give your dog a helping hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
+    // Maximum possible length of message: 47 (raw) + 32 (variable) = 79 (<= ALERT_BODY_LIMIT)
+    const alertBody = `It's been a bit, remember to lend a hand with '${formatReminderAction(reminder.reminderAction, reminder.reminderCustomActionName)}'`;
 
     const customPayload = { reminderId: reminder.reminderId, reminderLastModified: reminder.reminderLastModified };
     sendNotificationForUser(userId, global.constant.notification.category.reminder.SECONDARY, alertTitle, alertBody, customPayload);

@@ -57,13 +57,39 @@ open class NotificationBannerQueue: NSObject {
         queuePosition: QueuePosition
     ) {
         
-        // If the banners queue contains an existing banner with the same errorType as banner that is attempting to be added, we do not add that new banner. If we did, that would mean we would end up displaying 2+ banners with the same content
+        // If the banners queue contains an existing banner with the same title and subtitle as banner that is attempting to be added, we do not add that new banner. If we did, that would mean we would end up displaying 2+ banners with the same content
         guard banners.contains(where: { existingBanner in
-            guard let bannerErrorType = banner.errorType, let existingBannerErrorType = existingBanner.errorType else {
+            // First make sure title labels are equal before trying to compare subtitles. If title labels aren't equal then the banners can't contain the same content, so return false
+            guard banner.titleLabel?.text == existingBanner.titleLabel?.text else {
                 return false
             }
             
-            return bannerErrorType == existingBannerErrorType
+            let bannerSubtitle: String? = {
+                if let banner = banner as? GrowingNotificationBanner {
+                    return banner.subtitleLabel?.text
+                }
+                else if let banner = banner as? FloatingNotificationBanner {
+                    return banner.subtitleLabel?.text
+                }
+                else {
+                    return nil
+                }
+            }()
+            
+            let existingBannerSubtitle: String? = {
+                if let existingBanner = existingBanner as? GrowingNotificationBanner {
+                    return existingBanner.subtitleLabel?.text
+                }
+                else if let existingBanner = existingBanner as? FloatingNotificationBanner {
+                    return existingBanner.subtitleLabel?.text
+                }
+                else {
+                    return nil
+                }
+            }()
+            
+            // The title labels are verified as the same, therefore, now check if the subtitles are the same. If they are the same, then the two labels contain the same content
+            return bannerSubtitle == existingBannerSubtitle
         }) == false else {
             return
         }

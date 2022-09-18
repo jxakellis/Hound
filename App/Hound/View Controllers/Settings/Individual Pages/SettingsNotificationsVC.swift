@@ -29,7 +29,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TO DO FUTURE add do not disturb hours. This setting will have a start hour and an end hour. E.g. 2:00 AM to 5:00 AM OR 10:00 PM to 5:00 AM. During this time period, no notifications will be pushed to the individual user. However, rest of family and reminders unaffected.
+        // TO DO NOW add do not disturb hours. This setting will have a start hour and an end hour. E.g. 2:00 AM to 5:00 AM OR 10:00 PM to 5:00 AM. During this time period, no notifications will be pushed to the individual user. However, rest of family and reminders unaffected.
         // Implement this in sendAPN. When we get the user's token, we also get their UTC dnd start and end hours. If the server's time is inside that UTC time range, then don't send that individual notification
         // This will leave alarm timing intact. We don't cancel any scheduled jobs. Therefore, when the time changes to not be inside dnd hours or dnd settings are changed, we don't have to reconfigure schedule a user's jobs (or build a sendAPNForFamily function that can exclude users).
         

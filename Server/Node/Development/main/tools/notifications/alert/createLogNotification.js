@@ -35,18 +35,9 @@ async function createLogNotification(userId, familyId, dogId, logAction, logCust
     const abreviatedFullName = formatIntoAbreviatedFullName(user.userFirstName, user.userLastName);
     const formattedLogAction = formatLogAction(logAction, logCustomActionName);
 
-    /*
-    // TO DO NOW review possible message formats
-    Log for Penny
-    Michael X lent a helping hand with Potty
-
-    Penny
-    Michael X logged Potty
-    */
-
     // now we can construct the messages
-    // Maximum possible length of message: 32 (variable) = 32 ( <= ALERT_TITLE_LIMIT )
-    const alertTitle = `${dog.dogName}`;
+    // Maximum possible length of message: 3 (raw) + 32 (variable) = 35 ( > ALERT_TITLE_LIMIT )
+    const alertTitle = `📝 ${dog.dogName}`;
 
     // Maximum possible length of message: 10 (raw) + 34 (variable) + 32 (variable) = 76 ( <= ALERT_BODY_LIMIT )
     const alertBody = `${abreviatedFullName} logged '${formattedLogAction}'`;
