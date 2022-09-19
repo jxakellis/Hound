@@ -14,8 +14,6 @@ async function updateUserForUserId(
   userNotificationToken,
   forIsNotificationEnabled,
   forIsLoudNotification,
-  forIsFollowUpEnabled,
-  forFollowUpDelay,
   forInterfaceStyle,
   forSnoozeLength,
   notificationSound,
@@ -33,8 +31,6 @@ async function updateUserForUserId(
   }
   const isNotificationEnabled = formatBoolean(forIsNotificationEnabled);
   const isLoudNotification = formatBoolean(forIsLoudNotification);
-  const isFollowUpEnabled = formatBoolean(forIsFollowUpEnabled);
-  const followUpDelay = formatNumber(forFollowUpDelay);
   const interfaceStyle = formatNumber(forInterfaceStyle);
   const snoozeLength = formatNumber(forSnoozeLength);
   // notificationSound
@@ -52,8 +48,6 @@ async function updateUserForUserId(
     userNotificationToken,
     isNotificationEnabled,
     isLoudNotification,
-    isFollowUpEnabled,
-    followUpDelay,
     interfaceStyle,
     snoozeLength,
     notificationSound,
@@ -66,7 +60,7 @@ async function updateUserForUserId(
     silentModeStartUTCMinute,
     silentModeEndUTCMinute,
   ) === false) {
-    throw new ValidationError('No userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, interfaceStyle, snoozeLength, notificationSound, logsInterfaceScale, remindersInterfaceScale, maximumNumberOfLogsDisplayed, silentModeIsEnabled, silentModeStartUTCHour, silentModeEndUTCHour, silentModeStartUTCMinute, or silentModeEndUTCMinute, provided', global.constant.error.value.MISSING);
+    throw new ValidationError('No userNotificationToken, isNotificationEnabled, isLoudNotification, interfaceStyle, snoozeLength, notificationSound, logsInterfaceScale, remindersInterfaceScale, maximumNumberOfLogsDisplayed, silentModeIsEnabled, silentModeStartUTCHour, silentModeEndUTCHour, silentModeStartUTCMinute, or silentModeEndUTCMinute, provided', global.constant.error.value.MISSING);
   }
 
   const promises = [];
@@ -89,22 +83,6 @@ async function updateUserForUserId(
       databaseConnection,
       'UPDATE userConfiguration SET isLoudNotification = ? WHERE userId = ?',
       [isLoudNotification, userId],
-    ));
-  }
-  // don't refresh secondary jobs here, it will be handled by the main controller
-  if (areAllDefined(isFollowUpEnabled)) {
-    promises.push(databaseQuery(
-      databaseConnection,
-      'UPDATE userConfiguration SET isFollowUpEnabled = ? WHERE userId = ?',
-      [isFollowUpEnabled, userId],
-    ));
-  }
-  // don't refresh secondary jobs here, it will be handled by the main controller
-  if (areAllDefined(followUpDelay)) {
-    promises.push(databaseQuery(
-      databaseConnection,
-      'UPDATE userConfiguration SET followUpDelay = ? WHERE userId = ?',
-      [followUpDelay, userId],
     ));
   }
   if (areAllDefined(interfaceStyle)) {

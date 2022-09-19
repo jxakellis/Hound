@@ -52,12 +52,10 @@ enum NotificationManager {
         func performNotificationAuthorizationRequest() {
             let beforeUpdateIsNotificationEnabled = UserConfiguration.isNotificationEnabled
             let beforeUpdateIsLoudNotification = UserConfiguration.isLoudNotification
-            let beforeUpdateIsFollowUpEnabled = UserConfiguration.isFollowUpEnabled
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (isGranted, _) in
                 LocalConfiguration.isNotificationAuthorized = isGranted
                 UserConfiguration.isNotificationEnabled = isGranted
                 UserConfiguration.isLoudNotification = isGranted
-                UserConfiguration.isFollowUpEnabled = isGranted
                 
                 if LocalConfiguration.isNotificationAuthorized == true {
                     DispatchQueue.main.async {
@@ -67,13 +65,12 @@ enum NotificationManager {
                 
                 // Contact the server about the updated values and, if there is no response or a bad response, revert the values to their previous values. isNotificationAuthorized purposefully excluded as server doesn't need to know that and its value cant exactly just be flipped (as tied to apple notif auth status)
                 let body: [String: Any] = [
-                    ServerDefaultKeys.isNotificationEnabled.rawValue: UserConfiguration.isNotificationEnabled, ServerDefaultKeys.isLoudNotification.rawValue: UserConfiguration.isLoudNotification, ServerDefaultKeys.isFollowUpEnabled.rawValue: UserConfiguration.isFollowUpEnabled
+                    ServerDefaultKeys.isNotificationEnabled.rawValue: UserConfiguration.isNotificationEnabled, ServerDefaultKeys.isLoudNotification.rawValue: UserConfiguration.isLoudNotification
                 ]
                 UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
                     if requestWasSuccessful == false {
                         UserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
                         UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
-                        UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
                     }
                     completionHandler()
                 }
@@ -86,7 +83,6 @@ enum NotificationManager {
     static func synchronizeNotificationAuthorization() {
         let beforeUpdateIsNotificationEnabled = UserConfiguration.isNotificationEnabled
         let beforeUpdateIsLoudNotification = UserConfiguration.isLoudNotification
-        let beforeUpdateIsFollowUpEnabled = UserConfiguration.isFollowUpEnabled
         
         UNUserNotificationCenter.current().getNotificationSettings { (permission) in
             switch permission.authorizationStatus {
@@ -120,13 +116,12 @@ enum NotificationManager {
             LocalConfiguration.isNotificationAuthorized = false
             
             // The user isn't authorized for notifications, therefore all of those settings should be false. If any of those settings aren't false, representing an imbalance, then we should fix this imbalance and update the Hound server
-            guard UserConfiguration.isNotificationEnabled == true || UserConfiguration.isFollowUpEnabled == true || UserConfiguration.isLoudNotification == true else {
+            guard UserConfiguration.isNotificationEnabled == true || UserConfiguration.isLoudNotification == true else {
                 return
             }
             
             UserConfiguration.isNotificationEnabled = false
             UserConfiguration.isLoudNotification = false
-            UserConfiguration.isFollowUpEnabled = false
             // Updates switch to reflect change, if the last view open was the settings page then the app is exitted and property changed in the settings app then this app is reopened, VWL will not be called as the settings page was already opened, weird edge case.
             DispatchQueue.main.async {
                 MainTabBarViewController.mainTabBarViewController?.settingsViewController?.settingsNotificationsViewController?.synchronizeAllNotificationSwitches(animated: false)
@@ -139,9 +134,6 @@ enum NotificationManager {
             if UserConfiguration.isLoudNotification != beforeUpdateIsLoudNotification {
                 body[ServerDefaultKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
             }
-            if UserConfiguration.isFollowUpEnabled != beforeUpdateIsFollowUpEnabled {
-                body[ServerDefaultKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
-            }
             
             guard body.keys.isEmpty == false else {
                 return
@@ -153,7 +145,6 @@ enum NotificationManager {
                 // error, revert to previous
                 UserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
                 UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
-                UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
                 
                 MainTabBarViewController.mainTabBarViewController?.settingsViewController?.settingsNotificationsViewController?.synchronizeAllNotificationSwitches(animated: false)
             }

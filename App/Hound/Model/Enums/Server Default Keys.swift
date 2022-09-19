@@ -51,8 +51,6 @@ enum ServerDefaultKeys: String {
     case isNotificationAuthorized
     case isNotificationEnabled
     case isLoudNotification
-    case isFollowUpEnabled
-    case followUpDelay
     case notificationSound
     case silentModeIsEnabled
     case silentModeStartUTCHour

@@ -8,7 +8,7 @@ const { databaseQuery } = require('../../database/databaseQuery');
 
 /**
  * Assumes an empty schedule
- * Restores all of the notifications for the primarySchedule and secondarySchedule
+ * Restores all of the notifications for the schedule
  * Use if the schedule gets destroyed (e.g. server crashes/restarts)
  */
 async function restoreAlarmNotificationsForAllFamilies() {
@@ -32,8 +32,8 @@ async function restoreAlarmNotificationsForAllFamilies() {
       serverLogger.debug(`Recreating notification ${JSON.stringify(remindersWithInfo[i])}`);
       // get individual information for a family
       const alarmNotificationInformation = remindersWithInfo[i];
-      // restore generic alarm for family for given reminder , this function will also restore the follow up notifications for all users
-      // no need to await, let it go
+      // restore generic alarm for family for given reminder
+      // don't use await here as that will significantly slow down process
       createAlarmNotificationForFamily(
         alarmNotificationInformation.familyId,
         alarmNotificationInformation.reminderId,

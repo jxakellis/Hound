@@ -29,18 +29,6 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TO DO NOW add do not disturb hours. This setting will have a start hour and an end hour. E.g. 2:00 AM to 5:00 AM OR 10:00 PM to 5:00 AM. During this time period, no notifications will be pushed to the individual user. However, rest of family and reminders unaffected.
-        // Implement this in sendAPN. When we get the user's token, we also get their UTC dnd start and end hours. If the server's time is inside that UTC time range, then don't send that individual notification
-        // This will leave alarm timing intact. We don't cancel any scheduled jobs. Therefore, when the time changes to not be inside dnd hours or dnd settings are changed, we don't have to reconfigure schedule a user's jobs (or build a sendAPNForFamily function that can exclude users).
-        
-        // Follow Up Delay
-        followUpDelayDatePicker.countDownDuration = UserConfiguration.followUpDelay
-        
-        // fixes issue with first time datepicker updates not triggering function
-        DispatchQueue.main.asyncAfter(deadline: .now()) {
-            self.followUpDelayDatePicker.countDownDuration = UserConfiguration.followUpDelay
-        }
-        
         // Notification Sound
         notificationSoundLabel.text = UserConfiguration.notificationSound.rawValue
         
@@ -94,7 +82,6 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
         self.hideDropDown()
         let beforeUpdateIsNotificationEnabled = UserConfiguration.isNotificationEnabled
         let beforeUpdateIsLoudNotification = UserConfiguration.isLoudNotification
-        let beforeUpdateIsFollowUpEnabled = UserConfiguration.isFollowUpEnabled
         
         UNUserNotificationCenter.current().getNotificationSettings { (permission) in
             switch permission.authorizationStatus {
@@ -159,15 +146,11 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
             if UserConfiguration.isLoudNotification != beforeUpdateIsLoudNotification {
                 body[ServerDefaultKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
             }
-            if UserConfiguration.isFollowUpEnabled != beforeUpdateIsFollowUpEnabled {
-                body[ServerDefaultKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
-            }
             if body.keys.isEmpty == false {
                 UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
                     if requestWasSuccessful == false {
                         // error, revert to previousUserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
                         UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
-                        UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
                         
                         self.synchronizeAllNotificationSwitches(animated: true)
                     }
@@ -188,37 +171,6 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     
     // MARK: Follow Up Notification
     
-    @IBOutlet private weak var isFollowUpEnabledSwitch: UISwitch!
-    
-    @IBAction private func didToggleIsFollowUpEnabled(_ sender: Any) {
-        self.hideDropDown()
-        
-        let beforeUpdateIsFollowUpEnabled = UserConfiguration.isFollowUpEnabled
-        UserConfiguration.isFollowUpEnabled = isFollowUpEnabledSwitch.isOn
-        
-        if isFollowUpEnabledSwitch.isOn == true {
-            followUpDelayDatePicker.isEnabled = true
-        }
-        else {
-            followUpDelayDatePicker.isEnabled = false
-        }
-        
-        let body = [ServerDefaultKeys.isFollowUpEnabled.rawValue: UserConfiguration.isFollowUpEnabled]
-        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
-            if requestWasSuccessful == false {
-                // error, revert to previous
-                UserConfiguration.isFollowUpEnabled = beforeUpdateIsFollowUpEnabled
-                self.isFollowUpEnabledSwitch.setOn(UserConfiguration.isFollowUpEnabled, animated: true)
-                if UserConfiguration.isFollowUpEnabled {
-                    self.followUpDelayDatePicker.isEnabled = true
-                }
-                else {
-                    self.followUpDelayDatePicker.isEnabled = false
-                }
-            }
-        }
-    }
-    
     private func synchronizeNotificationsComponents(animated: Bool) {
         // notifications are enabled
         if UserConfiguration.isNotificationEnabled == true {
@@ -228,16 +180,6 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
             
             isLoudNotificationSwitch.isEnabled = true
             isLoudNotificationSwitch.setOn(UserConfiguration.isLoudNotification, animated: animated)
-            
-            isFollowUpEnabledSwitch.isEnabled = true
-            isFollowUpEnabledSwitch.setOn(UserConfiguration.isFollowUpEnabled, animated: animated)
-            
-            if isFollowUpEnabledSwitch.isOn == true {
-                followUpDelayDatePicker.isEnabled = true
-            }
-            else {
-                followUpDelayDatePicker.isEnabled = false
-            }
         }
         // notifications are disabled
         else {
@@ -250,34 +192,10 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
             isLoudNotificationSwitch.isEnabled = false
             isLoudNotificationSwitch.setOn(false, animated: animated)
             UserConfiguration.isLoudNotification = false
-            
-            isFollowUpEnabledSwitch.isEnabled = false
-            isFollowUpEnabledSwitch.setOn(false, animated: animated)
-            UserConfiguration.isFollowUpEnabled = false
-            
-            followUpDelayDatePicker.isEnabled = false
         }
     }
     
     // MARK: Follow Up Delay
-    
-    @IBOutlet private weak var followUpDelayDatePicker: UIDatePicker!
-    
-    @IBAction private func didUpdateFollowUpDelay(_ sender: Any) {
-        self.hideDropDown()
-        
-        let beforeUpdateFollowUpDelay = UserConfiguration.followUpDelay
-        UserConfiguration.followUpDelay = followUpDelayDatePicker.countDownDuration
-        
-        let body = [ServerDefaultKeys.followUpDelay.rawValue: UserConfiguration.followUpDelay]
-        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
-            if requestWasSuccessful == false {
-                // error, revert to previous
-                UserConfiguration.followUpDelay = beforeUpdateFollowUpDelay
-                self.followUpDelayDatePicker.countDownDuration = UserConfiguration.followUpDelay
-            }
-        }
-    }
     
     // MARK: Notification Sound
     

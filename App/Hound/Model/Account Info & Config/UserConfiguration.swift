@@ -33,12 +33,6 @@ enum UserConfiguration {
         if let isLoudNotification = body[ServerDefaultKeys.isLoudNotification.rawValue] as? Bool {
             self.isLoudNotification = isLoudNotification
         }
-        if let isFollowUpEnabled = body[ServerDefaultKeys.isFollowUpEnabled.rawValue] as? Bool {
-            self.isFollowUpEnabled = isFollowUpEnabled
-        }
-        if let followUpDelay = body[ServerDefaultKeys.followUpDelay.rawValue] as? TimeInterval {
-            self.followUpDelay = followUpDelay
-        }
         if let notificationSoundString = body[ServerDefaultKeys.notificationSound.rawValue] as? String, let notificationSound = NotificationSound(rawValue: notificationSoundString) {
             self.notificationSound = notificationSound
         }
@@ -81,12 +75,6 @@ enum UserConfiguration {
     
     /// Determines if the app should send the user loud notifications. Loud notification bypass most iPhone settings to play at max volume (Do Not Disturb, ringer off, volume off...)
     static var isLoudNotification: Bool = false
-    
-    /// Sends a secondary, follow up notification if the first, primary notification about a reminder's alarm is not addressed.
-    static var isFollowUpEnabled: Bool = false
-    
-    /// The delay between the inital, primary notification of a reminder and a seconary, followup notification of a reminder.
-    static var followUpDelay: TimeInterval = 5.0 * 60.0
     
     /// Sound a notification will play
     static var notificationSound: NotificationSound = NotificationSound.radar
@@ -161,8 +149,6 @@ extension UserConfiguration {
         body[ServerDefaultKeys.snoozeLength.rawValue] = UserConfiguration.snoozeLength
         body[ServerDefaultKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
         body[ServerDefaultKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
-        body[ServerDefaultKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
-        body[ServerDefaultKeys.followUpDelay.rawValue] = UserConfiguration.followUpDelay
         body[ServerDefaultKeys.notificationSound.rawValue] = UserConfiguration.notificationSound.rawValue
         
         body[ServerDefaultKeys.silentModeIsEnabled.rawValue] = UserConfiguration.silentModeIsEnabled

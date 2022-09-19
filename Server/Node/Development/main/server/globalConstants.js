@@ -66,7 +66,6 @@ const notification = {
     // for notifications about reminder's alarms
     reminder: {
       PRIMARY: 'NOTIFICATION_CATEGORY_REMINDER_PRIMARY',
-      SECONDARY: 'NOTIFICATION_CATEGORY_REMINDER_SECONDARY',
     },
     // for notifications about logs
     log: {
