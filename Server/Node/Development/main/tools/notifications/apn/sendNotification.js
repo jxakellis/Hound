@@ -20,15 +20,15 @@ async function sendNotificationForUser(userId, category, alertTitle, alertBody, 
 
   try {
     // get tokens of all qualifying family members that aren't the user
-    const tokenAndSounds = formatArray(await getUserToken(userId));
+    const userNotificationConfiguration = formatArray(await getUserToken(userId));
 
-    if (areAllDefined(tokenAndSounds, category, alertTitle, alertBody, customPayload) === false || tokenAndSounds.length === 0) {
+    if (areAllDefined(userNotificationConfiguration, category, alertTitle, alertBody, customPayload) === false || userNotificationConfiguration.length === 0) {
       return;
     }
 
     // sendAPN if there are > 0 user notification tokens
-    for (let i = 0; i < tokenAndSounds.length; i += 1) {
-      sendAPN(tokenAndSounds[i].userNotificationToken, category, tokenAndSounds[i].notificationSound, alertTitle, alertBody, customPayload);
+    for (let i = 0; i < userNotificationConfiguration.length; i += 1) {
+      sendAPN(userNotificationConfiguration[i], category, alertTitle, alertBody, customPayload);
     }
   }
   catch (error) {
@@ -45,15 +45,15 @@ async function sendNotificationForFamily(familyId, category, alertTitle, alertBo
 
   try {
     // get notification tokens of all qualifying family members
-    const tokenAndSounds = formatArray(await getAllFamilyMemberTokens(familyId));
+    const userNotificationConfiguration = formatArray(await getAllFamilyMemberTokens(familyId));
 
-    if (areAllDefined(tokenAndSounds, category, alertTitle, alertBody, customPayload) === false || tokenAndSounds.length === 0) {
+    if (areAllDefined(userNotificationConfiguration, category, alertTitle, alertBody, customPayload) === false || userNotificationConfiguration.length === 0) {
       return;
     }
 
     // sendAPN if there are > 0 user notification tokens
-    for (let i = 0; i < tokenAndSounds.length; i += 1) {
-      sendAPN(tokenAndSounds[i].userNotificationToken, category, tokenAndSounds[i].notificationSound, alertTitle, alertBody, customPayload);
+    for (let i = 0; i < userNotificationConfiguration.length; i += 1) {
+      sendAPN(userNotificationConfiguration[i], category, alertTitle, alertBody, customPayload);
     }
   }
   catch (error) {
@@ -70,15 +70,15 @@ async function sendNotificationForFamilyExcludingUser(userId, familyId, category
 
   try {
     // get tokens of all qualifying family members that aren't the user
-    const tokenAndSounds = formatArray(await getOtherFamilyMemberTokens(userId, familyId));
+    const userNotificationConfiguration = formatArray(await getOtherFamilyMemberTokens(userId, familyId));
 
-    if (areAllDefined(tokenAndSounds, category, alertTitle, alertBody, customPayload) === false || tokenAndSounds.length === 0) {
+    if (areAllDefined(userNotificationConfiguration, category, alertTitle, alertBody, customPayload) === false || userNotificationConfiguration.length === 0) {
       return;
     }
 
     // sendAPN if there are > 0 user notification tokens
-    for (let i = 0; i < tokenAndSounds.length; i += 1) {
-      sendAPN(tokenAndSounds[i].userNotificationToken, category, tokenAndSounds[i].notificationSound, alertTitle, alertBody, customPayload);
+    for (let i = 0; i < userNotificationConfiguration.length; i += 1) {
+      sendAPN(userNotificationConfiguration[i], category, alertTitle, alertBody, customPayload);
     }
   }
   catch (error) {

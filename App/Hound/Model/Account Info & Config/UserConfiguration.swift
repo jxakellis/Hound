@@ -42,6 +42,21 @@ enum UserConfiguration {
         if let notificationSoundString = body[ServerDefaultKeys.notificationSound.rawValue] as? String, let notificationSound = NotificationSound(rawValue: notificationSoundString) {
             self.notificationSound = notificationSound
         }
+        if let silentModeIsEnabled = body[ServerDefaultKeys.silentModeIsEnabled.rawValue] as? Bool {
+            self.silentModeIsEnabled = silentModeIsEnabled
+        }
+        if let silentModeStartUTCHour = body[ServerDefaultKeys.silentModeStartUTCHour.rawValue] as? Int {
+            self.silentModeStartUTCHour = silentModeStartUTCHour
+        }
+        if let silentModeEndUTCHour = body[ServerDefaultKeys.silentModeEndUTCHour.rawValue] as? Int {
+            self.silentModeEndUTCHour = silentModeEndUTCHour
+        }
+        if let silentModeStartUTCMinute = body[ServerDefaultKeys.silentModeStartUTCMinute.rawValue] as? Int {
+            self.silentModeStartUTCMinute = silentModeStartUTCMinute
+        }
+        if let silentModeEndUTCMinute = body[ServerDefaultKeys.silentModeEndUTCMinute.rawValue] as? Int {
+            self.silentModeEndUTCMinute = silentModeEndUTCMinute
+        }
     }
     
     // MARK: - In-App Appearance Related
@@ -76,6 +91,61 @@ enum UserConfiguration {
     /// Sound a notification will play
     static var notificationSound: NotificationSound = NotificationSound.radar
     
+    static var silentModeIsEnabled: Bool = false
+    
+    /// Hour of the day, in UTC, that silent mode will start. During silent mode, no notifications will be sent to the user
+    static var silentModeStartUTCHour: Int = {
+        // We want hour 22 of the day in the users local timezone (10:__ PM)
+        let defaultUTCHour = 22
+        let hoursFromUTC = Calendar.localCalendar.timeZone.secondsFromGMT() / 3600
+        var localHour = defaultUTCHour + hoursFromUTC
+        // localHour could be negative, so roll over into positive
+        localHour += 24
+        // Make sure localHour [0, 23]
+        localHour = localHour % 24
+        
+        return localHour
+    }()
+    
+    /// Hour of the day, in UTC, that silent mode will end. During silent mode, no notifications will be sent to the user
+    static var silentModeEndUTCHour: Int = {
+        // We want hour 5 of the day in the users local timezone (5:__ AM)
+        let defaultUTCHour = 5
+        let hoursFromUTC = Calendar.localCalendar.timeZone.secondsFromGMT() / 3600
+        var localHour = defaultUTCHour + hoursFromUTC
+        // localHour could be negative, so roll over into positive
+        localHour += 24
+        // Make sure localHour [0, 23]
+        localHour = localHour % 24
+        
+        return localHour
+    }()
+    
+    static var silentModeStartUTCMinute: Int = {
+        // We want minute 0 of the day in the users local timezone (_:?? AM)
+        let defaultUTCMinute = 0
+        let minutesFromUTC = (Calendar.localCalendar.timeZone.secondsFromGMT() % 3600) / 60
+        var localMinute = defaultUTCMinute + minutesFromUTC
+        // localMinute could be negative, so roll over into positive
+        localMinute += 60
+        // Make sure localMinute [0, 59]
+        localMinute = localMinute % 60
+        
+        return localMinute
+    }()
+    
+    static var silentModeEndUTCMinute: Int = {
+        // We want minute 0 of the day in the users local timezone (_:?? AM)
+        let defaultUTCMinute = 0
+        let minutesFromUTC = (Calendar.localCalendar.timeZone.secondsFromGMT() % 3600) / 60
+        var localMinute = defaultUTCMinute + minutesFromUTC
+        // localMinute could be negative, so roll over into positive
+        localMinute += 60
+        // Make sure localMinute [0, 59]
+        localMinute = localMinute % 60
+        
+        return localMinute
+    }()
 }
 
 extension UserConfiguration {
@@ -94,6 +164,12 @@ extension UserConfiguration {
         body[ServerDefaultKeys.isFollowUpEnabled.rawValue] = UserConfiguration.isFollowUpEnabled
         body[ServerDefaultKeys.followUpDelay.rawValue] = UserConfiguration.followUpDelay
         body[ServerDefaultKeys.notificationSound.rawValue] = UserConfiguration.notificationSound.rawValue
+        
+        body[ServerDefaultKeys.silentModeIsEnabled.rawValue] = UserConfiguration.silentModeIsEnabled
+        body[ServerDefaultKeys.silentModeStartUTCHour.rawValue] = UserConfiguration.silentModeStartUTCHour
+        body[ServerDefaultKeys.silentModeEndUTCHour.rawValue] = UserConfiguration.silentModeEndUTCHour
+        body[ServerDefaultKeys.silentModeStartUTCMinute.rawValue] = UserConfiguration.silentModeStartUTCMinute
+        body[ServerDefaultKeys.silentModeEndUTCMinute.rawValue] = UserConfiguration.silentModeEndUTCMinute
         return body
     }
 }

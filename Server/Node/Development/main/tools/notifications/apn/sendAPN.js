@@ -1,7 +1,7 @@
 const { apnLogger } = require('../../logging/loggers');
 
 const { logServerError } = require('../../logging/logServerError');
-const { formatString } = require('../../format/formatObject');
+const { formatString, formatBoolean, formatNumber } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 
 const { apn, productionAPNProvider, developmentAPNProvider } = require('./apnProvider');
@@ -14,15 +14,49 @@ const { apn, productionAPNProvider, developmentAPNProvider } = require('./apnPro
  * Takes a string that will be the body of the notification
  */
 // (token, category, sound, alertTitle, alertBody)
-function sendAPN(token, category, sound, forAlertTitle, forAlertBody, customPayload) {
+function sendAPN(userNotificationConfiguration, category, forAlertTitle, forAlertBody, customPayload) {
+  if (areAllDefined(userNotificationConfiguration) === false) {
+    return;
+  }
+
+  const userNotificationToken = formatString(userNotificationConfiguration.userNotificationToken);
+  const notificationSound = formatString(userNotificationConfiguration.notificationSound);
+  const silentModeIsEnabled = formatBoolean(userNotificationConfiguration.silentModeIsEnabled);
+  const silentModeStartUTCHour = formatNumber(userNotificationConfiguration.silentModeStartUTCHour);
+  const silentModeEndUTCHour = formatNumber(userNotificationConfiguration.silentModeEndUTCHour);
+  const silentModeStartUTCMinute = formatNumber(userNotificationConfiguration.silentModeStartUTCMinute);
+  const silentModeEndUTCMinute = formatNumber(userNotificationConfiguration.silentModeEndUTCMinute);
   const alertTitle = formatString(forAlertTitle, global.constant.notification.length.ALERT_TITLE_LIMIT);
   const alertBody = formatString(forAlertBody, global.constant.notification.length.ALERT_BODY_LIMIT);
 
-  apnLogger.debug(`sendAPN ${token}, ${category}, ${sound}, ${alertTitle}, ${alertBody}`);
+  apnLogger.debug(`sendAPN ${userNotificationConfiguration}, ${category}, ${alertTitle}, ${alertBody}`);
 
-  // sound doesn't have to be defined, its optional
-  if (areAllDefined(token, category, alertTitle, alertBody, customPayload) === false) {
+  // notificationSound optional, depends on isLoudNotification
+  if (areAllDefined(userNotificationToken, notificationSound, silentModeIsEnabled, silentModeStartUTCHour, silentModeEndUTCHour, silentModeStartUTCMinute, silentModeEndUTCMinute, category, alertTitle, alertBody, customPayload) === false) {
     return;
+  }
+
+  // Check that we aren't inside of silentMode hours. If we are inside the silent mode hours, then return as we don't want to send notifications during silent mode
+  if (silentModeIsEnabled === true) {
+    const date = new Date();
+    // 2:30:45 PM -> 14.5125
+    const currentUTCHour = date.getUTCHours() + (date.getUTCMinutes() / 60) + (date.getUTCSeconds() / 3600);
+    const silentModeStart = silentModeStartUTCHour + (silentModeStartUTCMinute / 60);
+    const silentModeEnd = silentModeEndUTCHour + (silentModeEndUTCMinute / 60);
+
+    // Two ways the silent mode start and end could be setup:
+    // One the same day: 8.5 -> 20.5 (silent mode during day time)
+    if (silentModeStart <= silentModeEnd && (currentUTCHour >= silentModeStart && currentUTCHour <= silentModeEnd)) {
+      // WOULD RETURN: silent mode start 8.5 -> 20.5 AND currentUTCHour 14.5125
+      // WOULDN'T RETURN: silent mode start 8.5 -> 20.5 AND currentUTCHour 6.0
+      return;
+    }
+    // Overlapping two days: 20.5 -> 8.5 (silent mode during night time)
+    if (silentModeStart >= silentModeEnd && (currentUTCHour >= silentModeStart || currentUTCHour <= silentModeEnd)) {
+      // WOULD RETURN: silent mode start 20.5 -> 8.5 AND currentUTCHour 6.0
+      // WOULDN'T RETURN: silent mode start 20.5 -> 8.5 AND currentUTCHour 14.5125
+      return;
+    }
   }
 
   // the tokens array is defined and has at least one element
@@ -77,8 +111,8 @@ function sendAPN(token, category, sound, forAlertTitle, forAlertBody, customPayl
   if (
     (category === global.constant.notification.category.reminder.PRIMARY
       || category === global.constant.notification.category.reminder.SECONDARY)
-  && areAllDefined(sound, notification, notification.rawPayload, notification.rawPayload.aps)) {
-    notification.rawPayload.aps.sound = `${sound}30.wav`;
+  && areAllDefined(notificationSound, notification, notification.rawPayload, notification.rawPayload.aps)) {
+    notification.rawPayload.aps.sound = `${notificationSound}30.wav`;
   }
 
   // add customPayload into rawPayload
@@ -96,7 +130,7 @@ function sendAPN(token, category, sound, forAlertTitle, forAlertBody, customPayl
   // sound Dictionary Keys
   // https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2990112
 
-  sendProductionAPN(notification, token);
+  sendProductionAPN(notification, userNotificationToken);
 }
 
 /**

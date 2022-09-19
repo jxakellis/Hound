@@ -22,6 +22,11 @@ async function updateUserForUserId(
   logsInterfaceScale,
   remindersInterfaceScale,
   forMaximumNumberOfLogsDisplayed,
+  forSilentModeIsEnabled,
+  forSilentModeStartUTCHour,
+  forSilentModeEndUTCHour,
+  forSilentModeStartUTCMinute,
+  forSilentModeEndUTCMinute,
 ) {
   if (areAllDefined(databaseConnection, userId) === false) {
     throw new ValidationError('databaseConnection or userId missing', global.constant.error.value.MISSING);
@@ -35,7 +40,12 @@ async function updateUserForUserId(
   // notificationSound
   // logsInterfaceScale
   // remindersInterfaceScale
-  const maximumNumberOfDisplayedLogs = formatNumber(forMaximumNumberOfLogsDisplayed);
+  const maximumNumberOfLogsDisplayed = formatNumber(forMaximumNumberOfLogsDisplayed);
+  const silentModeIsEnabled = formatBoolean(forSilentModeIsEnabled);
+  const silentModeStartUTCHour = formatNumber(forSilentModeStartUTCHour);
+  const silentModeEndUTCHour = formatNumber(forSilentModeEndUTCHour);
+  const silentModeStartUTCMinute = formatNumber(forSilentModeStartUTCMinute);
+  const silentModeEndUTCMinute = formatNumber(forSilentModeEndUTCMinute);
 
   // checks to see that all needed components are provided
   if (atLeastOneDefined(
@@ -49,9 +59,14 @@ async function updateUserForUserId(
     notificationSound,
     logsInterfaceScale,
     remindersInterfaceScale,
-    maximumNumberOfDisplayedLogs,
+    maximumNumberOfLogsDisplayed,
+    silentModeIsEnabled,
+    silentModeStartUTCHour,
+    silentModeEndUTCHour,
+    silentModeStartUTCMinute,
+    silentModeEndUTCMinute,
   ) === false) {
-    throw new ValidationError('No userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, interfaceStyle, snoozeLength, notificationSound, logsInterfaceScale, remindersInterfaceScale, or maximumNumberOfLogsDisplayed provided', global.constant.error.value.MISSING);
+    throw new ValidationError('No userNotificationToken, isNotificationEnabled, isLoudNotification, isFollowUpEnabled, followUpDelay, interfaceStyle, snoozeLength, notificationSound, logsInterfaceScale, remindersInterfaceScale, maximumNumberOfLogsDisplayed, silentModeIsEnabled, silentModeStartUTCHour, silentModeEndUTCHour, silentModeStartUTCMinute, or silentModeEndUTCMinute, provided', global.constant.error.value.MISSING);
   }
 
   const promises = [];
@@ -127,11 +142,46 @@ async function updateUserForUserId(
       [remindersInterfaceScale, userId],
     ));
   }
-  if (areAllDefined(maximumNumberOfDisplayedLogs)) {
+  if (areAllDefined(maximumNumberOfLogsDisplayed)) {
     promises.push(databaseQuery(
       databaseConnection,
       'UPDATE userConfiguration SET maximumNumberOfLogsDisplayed = ? WHERE userId = ?',
-      [maximumNumberOfDisplayedLogs, userId],
+      [maximumNumberOfLogsDisplayed, userId],
+    ));
+  }
+  if (areAllDefined(silentModeIsEnabled)) {
+    promises.push(databaseQuery(
+      databaseConnection,
+      'UPDATE userConfiguration SET silentModeIsEnabled = ? WHERE userId = ?',
+      [silentModeIsEnabled, userId],
+    ));
+  }
+  if (areAllDefined(silentModeStartUTCHour)) {
+    promises.push(databaseQuery(
+      databaseConnection,
+      'UPDATE userConfiguration SET silentModeStartUTCHour = ? WHERE userId = ?',
+      [silentModeStartUTCHour, userId],
+    ));
+  }
+  if (areAllDefined(silentModeEndUTCHour)) {
+    promises.push(databaseQuery(
+      databaseConnection,
+      'UPDATE userConfiguration SET silentModeEndUTCHour = ? WHERE userId = ?',
+      [silentModeEndUTCHour, userId],
+    ));
+  }
+  if (areAllDefined(silentModeStartUTCMinute)) {
+    promises.push(databaseQuery(
+      databaseConnection,
+      'UPDATE userConfiguration SET silentModeStartUTCMinute = ? WHERE userId = ?',
+      [silentModeStartUTCMinute, userId],
+    ));
+  }
+  if (areAllDefined(silentModeEndUTCMinute)) {
+    promises.push(databaseQuery(
+      databaseConnection,
+      'UPDATE userConfiguration SET silentModeEndUTCMinute = ? WHERE userId = ?',
+      [silentModeEndUTCMinute, userId],
     ));
   }
 

@@ -110,9 +110,32 @@ enum ClassConstant {
         
         static let defaultUTCDay: Int = 1
         
-        static let defaultUTCHour: Int = 7
+        /// Hour 7 of the day in the user's local time zone, but adjusted so that hour 7 is in UTC hours (e.g. UTC-5 so localHour is 7 and UTCHour is 12)
+        static var defaultUTCHour: Int {
+            // We want hour 7 of the day in the users local timezone
+            let defaultUTCHour = 7
+            let hoursFromUTC = Calendar.localCalendar.timeZone.secondsFromGMT() / 3600
+            var localHour = defaultUTCHour + hoursFromUTC
+            // localHour could be negative, so roll over into positive
+            localHour += 24
+            // Make sure localHour [0, 23]
+            localHour = localHour % 24
+            
+            return localHour
+        }
         
-        static let defaultUTCMinute: Int = 0
+        /// Minute 0 of the hour in the user's local time zone, but adjusted so that minute 0  is in UTC hours (e.g. UTC-0:30 so localMinute is 0 and UTCMinute is 30)
+        static var defaultUTCMinute: Int {
+            let defaultUTCMinute = 0
+            let minutesFromUTC = (Calendar.localCalendar.timeZone.secondsFromGMT() % 3600) / 60
+            var localMinute = defaultUTCMinute + minutesFromUTC
+            // localMinute could be negative, so roll over into positive
+            localMinute += 60
+            // Make sure localMinute [0, 59]
+            localMinute = localMinute % 60
+            
+            return localMinute
+        }
     }
     
     enum DateConstant {

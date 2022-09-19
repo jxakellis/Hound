@@ -58,6 +58,11 @@ async function createUser(req, res) {
       logsInterfaceScale,
       remindersInterfaceScale,
       maximumNumberOfLogsDisplayed,
+      silentModeIsEnabled,
+      silentModeStartUTCHour,
+      silentModeEndUTCHour,
+      silentModeStartUTCMinute,
+      silentModeEndUTCMinute,
     } = req.body;
     const result = await createUserForUserIdentifier(
       req.databaseConnection,
@@ -80,6 +85,11 @@ async function createUser(req, res) {
       remindersInterfaceScale,
       maximumNumberOfLogsDisplayed,
       // lastDogManagerSynchronization,
+      silentModeIsEnabled,
+      silentModeStartUTCHour,
+      silentModeEndUTCHour,
+      silentModeStartUTCMinute,
+      silentModeEndUTCMinute,
     );
 
     refreshSecondaryAlarmNotificationsForUserId(result, isFollowUpEnabled, followUpDelay);
@@ -106,6 +116,11 @@ async function updateUser(req, res) {
       logsInterfaceScale,
       remindersInterfaceScale,
       maximumNumberOfLogsDisplayed,
+      silentModeIsEnabled,
+      silentModeStartUTCHour,
+      silentModeEndUTCHour,
+      silentModeStartUTCMinute,
+      silentModeEndUTCMinute,
     } = req.body;
     await updateUserForUserId(
       req.databaseConnection,
@@ -121,6 +136,11 @@ async function updateUser(req, res) {
       logsInterfaceScale,
       remindersInterfaceScale,
       maximumNumberOfLogsDisplayed,
+      silentModeIsEnabled,
+      silentModeStartUTCHour,
+      silentModeEndUTCHour,
+      silentModeStartUTCMinute,
+      silentModeEndUTCMinute,
     );
 
     refreshSecondaryAlarmNotificationsForUserId(userId, isFollowUpEnabled, followUpDelay);

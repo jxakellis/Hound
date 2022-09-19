@@ -46,6 +46,6 @@ enum ExportManager {
     }
     
     static func shareLogs(forViewController viewController: UIViewController) {
-        // TO DO NOW add export logs button
+        // TO DO FUTURE add export logs button
     }
 }

@@ -54,6 +54,11 @@ enum ServerDefaultKeys: String {
     case isFollowUpEnabled
     case followUpDelay
     case notificationSound
+    case silentModeIsEnabled
+    case silentModeStartUTCHour
+    case silentModeEndUTCHour
+    case silentModeStartUTCMinute
+    case silentModeEndUTCMinute
     
     // MARK: Purchase
     case base64EncodedAppStoreReceiptURL
