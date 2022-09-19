@@ -125,18 +125,20 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             selectedCell.willToggleDropDownSelection(forSelected: !isAlreadySelected)
             
             parentDogLabel.text = {
-                if parentDogIdsSelected.count == dogManager.dogs.count {
-                    return nameForAllParentDogs
-                }
-                else if parentDogIdsSelected.count > 1 {
-                    return nameForMultipleParentDogs
+                if parentDogIdsSelected.count == 0 {
+                    // If no parentDogIdsSelected.count == 0, we leave the text blank so that the placeholder text will display
+                    return nil
                 }
                 // dogSelected is the dog clicked and now that dog is removed, we need to find the name of the remaining dog
                 else if parentDogIdsSelected.count == 1, let singularRemainingDog = dogManager.findDog(forDogId: parentDogIdsSelected[0]) {
                     return singularRemainingDog.dogName
                 }
+                // parentDogIdsSelected.count >= 2
+                else if parentDogIdsSelected.count == dogManager.dogs.count {
+                    return nameForAllParentDogs
+                }
                 else {
-                    return "None"
+                    return nameForMultipleParentDogs
                 }
             }()
             
@@ -417,6 +419,8 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         
         view.addSubview(logNoteTextView)
         
+        // TO DO NOW. if a user is creating a log that where one of the dogs selected has a reminders that matches the currently selected reminder action, make a switch appear. if enabled, this switch will, once the user creates the log, reset the timing for the associated reminders. E.g. Creating a Potty: Pee reminder for Penny and Ginger (Ginger has no reminders and Penny has a Potty reminder). When I select a reminder or dog that produces a match (in this case it would be selecting Penny when Potty is selected or selecting Potty when Penny is selected), it makes a switch appear. If this switch is enabled when I create the logs, then the reminder for Penny will be reset (it's countdown restarted or next TOD alarm skipped).
+        
         oneTimeSetup()
     }
     
@@ -481,14 +485,19 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 }()
                 
                 parentDogLabel.text = {
-                    if parentDogIdsSelected.count == dogManager.dogs.count {
+                    if parentDogIdsSelected.count == 0 {
+                        // If no parentDogIdsSelected.count == 0, we leave the text blank so that the placeholder text will display
+                        return nil
+                    }
+                    else if parentDogIdsSelected.count == 1, let singularRemainingDog = dogManager.findDog(forDogId: parentDogIdsSelected[0]) {
+                        return singularRemainingDog.dogName
+                    }
+                    // parentDogIdsSelected.count >= 2
+                    else if parentDogIdsSelected.count == dogManager.dogs.count {
                         return nameForAllParentDogs
                     }
-                    else if parentDogIdsSelected.count > 1 {
-                        return nameForMultipleParentDogs
-                    }
                     else {
-                        return dogManager.dogs[0].dogName
+                        return nameForMultipleParentDogs
                     }
                 }()
                 

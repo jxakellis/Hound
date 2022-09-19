@@ -3,6 +3,7 @@ const { databaseQuery } = require('../../database/databaseQuery');
 const { formatBoolean, formatArray } = require('../../format/formatObject');
 const { areAllDefined } = require('../../format/validateDefined');
 
+const userConfigurationColumns = 'userConfiguration.notificationSound, userConfiguration.isLoudNotification, userConfiguration.silentModeIsEnabled, userConfiguration.silentModeStartUTCHour, userConfiguration.silentModeEndUTCHour, userConfiguration.silentModeStartUTCMinute, userConfiguration.silentModeEndUTCMinute';
 const userConfigurationJoin = 'JOIN userConfiguration ON users.userId = userConfiguration.userId';
 const familyMembersJoin = 'JOIN familyMembers ON users.userId = familyMembers.userId';
 
@@ -18,7 +19,7 @@ async function getUserToken(userId) {
   // retrieve userNotificationToken, notificationSound, and isLoudNotificaiton of a user with the userId, non-null userNotificationToken, and isNotificationEnabled
   const result = await databaseQuery(
     databaseConnectionForGeneral,
-    `SELECT users.userNotificationToken, userConfiguration.notificationSound, userConfiguration.isLoudNotification FROM users ${userConfigurationJoin} WHERE users.userId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 1`,
+    `SELECT users.userNotificationToken, ${userConfigurationColumns} FROM users ${userConfigurationJoin} WHERE users.userId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 1`,
     [userId],
   );
 
@@ -37,7 +38,7 @@ async function getAllFamilyMemberTokens(familyId) {
   // retrieve userNotificationToken that fit the criteria
   const result = await databaseQuery(
     databaseConnectionForGeneral,
-    `SELECT users.userNotificationToken, userConfiguration.notificationSound, userConfiguration.isLoudNotification FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
+    `SELECT users.userNotificationToken, ${userConfigurationColumns} FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
     [familyId],
   );
 
@@ -56,7 +57,7 @@ async function getOtherFamilyMemberTokens(userId, familyId) {
   // retrieve userNotificationToken that fit the criteria
   const result = await databaseQuery(
     databaseConnectionForGeneral,
-    `SELECT users.userNotificationToken, users.silentModeIsEnabled, users.silentModeStartUTCHour, users.silentModeEndUTCHour, users.silentModeStartUTCMinute, users.silentModeEndUTCMinute FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE users.userId != ? AND familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
+    `SELECT users.userNotificationToken, ${userConfigurationColumns} FROM users ${userConfigurationJoin} ${familyMembersJoin} WHERE users.userId != ? AND familyMembers.familyId = ? AND users.userNotificationToken IS NOT NULL AND userConfiguration.isNotificationEnabled = 1 LIMIT 18446744073709551615`,
     [userId, familyId],
   );
 

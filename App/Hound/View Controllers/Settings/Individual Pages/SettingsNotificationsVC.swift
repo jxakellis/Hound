@@ -55,7 +55,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        synchronizeAllNotificationSwitches(animated: false)
+        synchronizeNotificationsValues(animated: false)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -79,9 +79,9 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
     @IBOutlet private weak var isNotificationEnabledSwitch: UISwitch!
     
     @IBAction private func didToggleIsNotificationEnabled(_ sender: Any) {
-        self.hideDropDown()
         let beforeUpdateIsNotificationEnabled = UserConfiguration.isNotificationEnabled
-        let beforeUpdateIsLoudNotification = UserConfiguration.isLoudNotification
+        
+        synchronizeNotificationsIsEnabled()
         
         UNUserNotificationCenter.current().getNotificationSettings { (permission) in
             switch permission.authorizationStatus {
@@ -97,9 +97,17 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
                     else {
                         UserConfiguration.isNotificationEnabled = true
                     }
-                    self.synchronizeNotificationsComponents(animated: true)
                     
-                    updateServerUserConfiguration()
+                    self.synchronizeNotificationsValues(animated: true)
+                    
+                    let body = [ServerDefaultKeys.isNotificationEnabled.rawValue: UserConfiguration.isNotificationEnabled]
+                    
+                    UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
+                        if requestWasSuccessful == false {
+                            UserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
+                            self.synchronizeNotificationsValues(animated: true)
+                        }
+                    }
                 }
             case .denied:
                 // needed as  UNUserNotificationCenter.current().getNotificationSettings on other thread
@@ -108,7 +116,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
                     
                     // Permission is denied, so we want to flip the switch back to its proper off position
                     let switchDisableTimer = Timer(fire: Date().addingTimeInterval(0.22), interval: -1, repeats: false) { _ in
-                        self.synchronizeAllNotificationSwitches(animated: true)
+                        self.synchronizeNotificationsValues(animated: true)
                     }
                     
                     RunLoop.main.add(switchDisableTimer, forMode: .common)
@@ -125,7 +133,7 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
             case .notDetermined:
                 // don't advise the user if they want to turn on notifications. we already know that the user wants to turn on notification because they just toggle a switch to do so
                 NotificationManager.requestNotificationAuthorization(shouldAdviseUserBeforeRequestingNotifications: false) {
-                    self.synchronizeAllNotificationSwitches(animated: true)
+                    self.synchronizeNotificationsValues(animated: true)
                 }
             case .provisional:
                 AppDelegate.generalLogger.fault(".provisional")
@@ -136,66 +144,107 @@ final class SettingsNotificationsViewController: UIViewController, UIGestureReco
             }
         }
         
-        /// Contact the server about the updated values and, if there is no response or a bad response, revert the values to their previous values. isNotificationAuthorized purposefully excluded as server doesn't need to know that and its value cant exactly just be flipped (as tied to apple notif auth status)
-        func updateServerUserConfiguration() {
-            var body: [String: Any] = [:]
-            // check for if values were changed, if there were then tell the server
-            if UserConfiguration.isNotificationEnabled != beforeUpdateIsNotificationEnabled {
-                body[ServerDefaultKeys.isNotificationEnabled.rawValue] = UserConfiguration.isNotificationEnabled
-            }
-            if UserConfiguration.isLoudNotification != beforeUpdateIsLoudNotification {
-                body[ServerDefaultKeys.isLoudNotification.rawValue] = UserConfiguration.isLoudNotification
-            }
-            if body.keys.isEmpty == false {
-                UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
-                    if requestWasSuccessful == false {
-                        // error, revert to previousUserConfiguration.isNotificationEnabled = beforeUpdateIsNotificationEnabled
-                        UserConfiguration.isLoudNotification = beforeUpdateIsLoudNotification
-                        
-                        self.synchronizeAllNotificationSwitches(animated: true)
-                    }
-                }
-            }
-            
-        }
+    }
+    
+    /// Updates the UI's values and isEnabled states to reflect the values stored.
+    func synchronizeNotificationsValues(animated: Bool) {
+        synchronizeNotificationsIsEnabled()
         
-    }
-    /// If disconnect between stored and displayed
-    func synchronizeAllNotificationSwitches(animated: Bool) {
-        // If disconnect between stored and displayed
-        if isNotificationEnabledSwitch.isOn != UserConfiguration.isNotificationEnabled {
-            isNotificationEnabledSwitch.setOn(UserConfiguration.isNotificationEnabled, animated: animated)
-        }
-        self.synchronizeNotificationsComponents(animated: animated)
-    }
-    
-    // MARK: Follow Up Notification
-    
-    private func synchronizeNotificationsComponents(animated: Bool) {
-        // notifications are enabled
-        if UserConfiguration.isNotificationEnabled == true {
-            
-            notificationSoundLabel.isUserInteractionEnabled = true
-            notificationSoundLabel.isEnabled = true
-            
-            isLoudNotificationSwitch.isEnabled = true
-            isLoudNotificationSwitch.setOn(UserConfiguration.isLoudNotification, animated: animated)
-        }
-        // notifications are disabled
-        else {
-            
-            notificationSoundLabel.isUserInteractionEnabled = false
-            notificationSoundLabel.isEnabled = false
-            
-            self.hideDropDown()
-            
-            isLoudNotificationSwitch.isEnabled = false
-            isLoudNotificationSwitch.setOn(false, animated: animated)
-            UserConfiguration.isLoudNotification = false
-        }
+        isNotificationEnabledSwitch.setOn(UserConfiguration.isNotificationEnabled, animated: animated)
+        
+        silentModeIsEnabledSwitch.setOn(UserConfiguration.silentModeIsEnabled, animated: animated)
+        
+        silentModeStartHoursDatePicker.setDate(
+            Calendar.UTCCalendar.date(bySettingHour: UserConfiguration.silentModeStartUTCHour, minute: UserConfiguration.silentModeStartUTCMinute, second: 0, of: Date()) ?? Date(),
+            animated: animated)
+        
+        silentModeEndHoursDatePicker.setDate(
+            Calendar.UTCCalendar.date(bySettingHour: UserConfiguration.silentModeEndUTCHour, minute: UserConfiguration.silentModeEndUTCMinute, second: 0, of: Date()) ?? Date(),
+            animated: animated)
+        
+        isLoudNotificationSwitch.setOn(UserConfiguration.isLoudNotification, animated: animated)
     }
     
-    // MARK: Follow Up Delay
+    /// Updates the UI's isEnabled states to reflect the values stored
+    private func synchronizeNotificationsIsEnabled() {
+        hideDropDown()
+        
+        silentModeIsEnabledSwitch.isEnabled = UserConfiguration.isNotificationEnabled
+        
+        silentModeStartHoursDatePicker.isEnabled = UserConfiguration.isNotificationEnabled && UserConfiguration.silentModeIsEnabled
+        
+        silentModeEndHoursDatePicker.isEnabled = UserConfiguration.isNotificationEnabled && UserConfiguration.silentModeIsEnabled
+        
+        notificationSoundLabel.isEnabled = UserConfiguration.isNotificationEnabled
+        
+        isLoudNotificationSwitch.isEnabled = UserConfiguration.isNotificationEnabled
+    }
+    
+    // MARK: Silent Hours
+    
+    @IBOutlet private weak var silentModeIsEnabledSwitch: UISwitch!
+    
+    @IBAction private func didToggleSilentModeIsEnabled(_ sender: Any) {
+        let beforeUpdateSilentModeIsEnabled = UserConfiguration.silentModeIsEnabled
+        
+        UserConfiguration.silentModeIsEnabled = silentModeIsEnabledSwitch.isOn
+        
+        synchronizeNotificationsIsEnabled()
+        
+        let body = [ServerDefaultKeys.silentModeIsEnabled.rawValue: UserConfiguration.silentModeIsEnabled]
+        
+        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
+            if requestWasSuccessful == false {
+                // error, revert to previous
+                UserConfiguration.silentModeIsEnabled = beforeUpdateSilentModeIsEnabled
+                self.synchronizeNotificationsValues(animated: true)
+            }
+        }
+    }
+    
+    @IBOutlet private weak var silentModeStartHoursDatePicker: UIDatePicker!
+    
+    @IBAction private func didUpdateSilentModeStartHours(_ sender: Any) {
+        let beforeUpdateSilentModeStartUTCHour = UserConfiguration.silentModeStartUTCHour
+        let beforeUpdateSilentModeStartUTCMinute = UserConfiguration.silentModeStartUTCMinute
+        
+        UserConfiguration.silentModeStartUTCHour = Calendar.UTCCalendar.component(.hour, from: silentModeStartHoursDatePicker.date)
+        UserConfiguration.silentModeStartUTCMinute = Calendar.UTCCalendar.component(.minute, from: silentModeStartHoursDatePicker.date)
+        
+        let body = [ServerDefaultKeys.silentModeStartUTCHour.rawValue: UserConfiguration.silentModeStartUTCHour,
+                    ServerDefaultKeys.silentModeStartUTCMinute.rawValue: UserConfiguration.silentModeStartUTCMinute]
+        
+        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
+            if requestWasSuccessful == false {
+                // error, revert to previous
+                UserConfiguration.silentModeStartUTCHour = beforeUpdateSilentModeStartUTCHour
+                UserConfiguration.silentModeStartUTCMinute = beforeUpdateSilentModeStartUTCMinute
+                self.synchronizeNotificationsValues(animated: true)
+            }
+        }
+    }
+    
+    @IBOutlet private weak var silentModeEndHoursDatePicker: UIDatePicker!
+    
+    @IBAction private func didUpdateSilentModeEndHours(_ sender: Any) {
+        let beforeUpdateSilentModeEndUTCHour = UserConfiguration.silentModeEndUTCHour
+        let beforeUpdateSilentModeEndUTCMinute = UserConfiguration.silentModeEndUTCMinute
+        
+        UserConfiguration.silentModeEndUTCHour = Calendar.UTCCalendar.component(.hour, from: silentModeEndHoursDatePicker.date)
+        UserConfiguration.silentModeEndUTCMinute = Calendar.UTCCalendar.component(.minute, from: silentModeEndHoursDatePicker.date)
+        
+        let body = [ServerDefaultKeys.silentModeEndUTCHour.rawValue: UserConfiguration.silentModeEndUTCHour,
+                    ServerDefaultKeys.silentModeEndUTCMinute.rawValue: UserConfiguration.silentModeEndUTCMinute]
+        
+        UserRequest.update(invokeErrorManager: true, body: body) { requestWasSuccessful, _ in
+            if requestWasSuccessful == false {
+                // error, revert to previous
+                UserConfiguration.silentModeEndUTCHour = beforeUpdateSilentModeEndUTCHour
+                UserConfiguration.silentModeEndUTCMinute = beforeUpdateSilentModeEndUTCMinute
+                self.synchronizeNotificationsValues(animated: true)
+            }
+        }
+    }
     
     // MARK: Notification Sound
     

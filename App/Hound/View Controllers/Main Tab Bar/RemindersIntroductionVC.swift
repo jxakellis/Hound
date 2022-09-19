@@ -31,7 +31,17 @@ final class RemindersIntroductionViewController: UIViewController {
         
         continueButton.isEnabled = false
         
-        NotificationManager.requestNotificationAuthorization(shouldAdviseUserBeforeRequestingNotifications: true) {
+        // If the user has notifications authorized and turned on, then there is no need to pop a request to the user
+        if LocalConfiguration.isNotificationAuthorized == true && UserConfiguration.isNotificationEnabled == true {
+            completeRemindersIntroductionPage()
+        }
+        else {
+            NotificationManager.requestNotificationAuthorization(shouldAdviseUserBeforeRequestingNotifications: true) {
+                completeRemindersIntroductionPage()
+            }
+        }
+        
+        func completeRemindersIntroductionPage() {
             // wait the user to select an grant or deny notification permission (and for the server to response if situation requires the use of it) before continuing
             
             // Recheck to verify that the user is still eligible for default reminders, then check if reminders toggle switch could have been programically removed and deleted
@@ -58,7 +68,6 @@ final class RemindersIntroductionViewController: UIViewController {
                 LocalConfiguration.hasLoadedRemindersIntroductionViewControllerBefore = true
                 self.dismiss(animated: true, completion: nil)
             }
-            
         }
         
     }
