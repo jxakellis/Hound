@@ -24,6 +24,7 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
         // get the current text, or use an empty string if that failed
         let currentText = textField.text ?? ""
         
@@ -170,15 +171,10 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             
             dropDownLogAction.hideDropDown()
             
-            // "Custom" is the last item in LogAction
-            if indexPath.row < LogAction.allCases.count - 1 {
-                toggleLogCustomActionNameTextField(isHidden: true)
-            }
-            else {
-                // if log type is custom, then it doesn't hide the special input fields.
-                toggleLogCustomActionNameTextField(isHidden: false)
-            }
+            checkLogCustomActionNameTextField()
         }
+        
+        checkResetCorrespondingReminders()
     }
     
     // MARK: - IB
@@ -196,6 +192,14 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     @IBOutlet private weak var logCustomActionNameTextField: BorderedUITextField!
     @IBOutlet private weak var logCustomActionNameHeightConstraint: NSLayoutConstraint!
     @IBOutlet private weak var logCustomActionNameBottomConstraint: NSLayoutConstraint!
+    @IBAction private func didUpdateLogCustomActionName(_ sender: Any) {
+        checkResetCorrespondingReminders()
+    }
+    
+    @IBOutlet private weak var resetCorrespondingRemindersLabel: BorderedUILabel!
+    @IBOutlet private weak var resetCorrespondingRemindersSwitch: UISwitch!
+    @IBOutlet private weak var resetCorrespondingRemindersHeightConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var resetCorrespondingRemindersBottomConstraint: NSLayoutConstraint!
     
     @IBOutlet private weak var logNoteTextView: BorderedUITextView!
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
@@ -231,13 +235,29 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
                 addLogButton.beginQuerying()
                 addLogButtonBackground.beginQuerying(isBackgroundButton: true)
                 
-                let completionTracker = CompletionTracker(numberOfTasks: parentDogIdsSelected.count) {
+                // Only retrieve correspondingReminders if switch is on. The switch can only be on if the correspondingReminders array isn't empty and the user turned it on themselves. The switch is hidden when correspondingReminders.count == 0.
+                let correspondingReminders = resetCorrespondingRemindersSwitch.isOn ? self.correspondingReminders : []
+                
+                let completionTracker = CompletionTracker(numberOfTasks: parentDogIdsSelected.count + correspondingReminders.count) {
                     self.addLogButton.endQuerying()
                     self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
                     self.navigationController?.popViewController(animated: true)
                 } failureCompletionHandler: {
                     self.addLogButton.endQuerying()
                     self.addLogButtonBackground.endQuerying(isBackgroundButton: true)
+                }
+                
+                correspondingReminders.forEach { (dogId, reminder) in
+                    reminder.changeIsSkipping(forIsSkipping: true)
+                    
+                    RemindersRequest.update(invokeErrorManager: true, forDogId: dogId, forReminder: reminder) { requestWasSuccessful, _ in
+                        if requestWasSuccessful {
+                            completionTracker.completedTask()
+                        }
+                        else {
+                            completionTracker.failedTask()
+                        }
+                    }
                 }
 
                 parentDogIdsSelected.forEach { dogId in
@@ -370,6 +390,8 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     
     weak var delegate: LogsAddLogViewControllerDelegate! = nil
     
+    // MARK: INITAL VALUE TRACKING
+    
     private var initalParentDogIdsSelected: [Int]!
     private var initalLogAction: LogAction?
     private var initalLogCustomActionName: String?
@@ -397,12 +419,18 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
         }
     }
     
+    // MARK: DROP DOWN
+    
     /// drop down for changing the parent dog name
     private let dropDownParentDog = DropDownUIView()
+    
+    // MARK: PARENT DOG DROP DOWN
     
     private var parentDogIdsSelected: [Int] = []
     private let nameForMultipleParentDogs = "Multiple"
     private let nameForAllParentDogs = "All"
+    
+    // MARK: LOG ACTION DROP DOWN
     
     /// drop down for changing the log type
     private let dropDownLogAction = DropDownUIView()
@@ -412,14 +440,70 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     /// the name of the selected log action in drop down
     private var selectedLogAction: LogAction?
     
+    // MARK: OTHER
+    
+    /// Iterates through all of the dogs currently selected in the create logs page. Returns any of those dogs' reminders where the reminder's reminderAction and reminderCustomActionName match the selectedLogAction and logCustomActionNameTextField.text. This means that the log the user wants to create has a corresponding reminder of the same type under one of the dogs selected.
+    private var correspondingReminders: [(Int, Reminder)] {
+        var correspondingReminders: [(Int, Reminder)] = []
+        guard logToUpdate == nil else {
+            // Only eligible to reset corresponding reminders if creating a log
+            return correspondingReminders
+        }
+        
+        guard let selectedLogAction = selectedLogAction else {
+            // Can't find a corresponding reminder if no logAction selected
+            return correspondingReminders
+        }
+        
+        // Attempt to translate logAction back into a reminderAction
+        guard let selectedReminderAction = {
+            for reminderAction in ReminderAction.allCases where selectedLogAction.rawValue.contains(reminderAction.rawValue) {
+                return reminderAction
+            }
+            return nil
+        }() else {
+            // couldn't translate logAction into reminderAction
+            return correspondingReminders
+        }
+        
+        // logAction could successfully be translated back into a reminder action (some logAction types, like treat, can't be a reminder action)
+        
+        // Find the dogs that are currently selected
+        let selectedDogs = dogManager.dogs.filter { dog in
+            return parentDogIdsSelected.contains(dog.dogId)
+        }
+        
+        // Search through all of the dogs currently selected. For each dog, find any reminders where the reminderAction and reminderCustomActionName match the logAction and logCustomActionName currently selected on the create log page.
+        for selectedDog in selectedDogs {
+            correspondingReminders += selectedDog.dogReminders.reminders.filter { selectedDogReminder in
+                guard selectedDogReminder.reminderIsEnabled == true else {
+                    // Reminder needs to be enabled to be considered
+                    return false
+                }
+                
+                guard selectedDogReminder.reminderAction == selectedReminderAction else {
+                    // Both reminderActions need to match
+                    return false
+                }
+                
+                // If the reminderAction is .custom, then the customActionName need to also match.
+                return (selectedDogReminder.reminderAction != .custom)
+                || (selectedDogReminder.reminderAction == .custom && selectedDogReminder.reminderCustomActionName == logCustomActionNameTextField.text)
+            }
+            .map { selectedDogCorrespondingReminder in
+                return (selectedDog.dogId, selectedDogCorrespondingReminder)
+            }
+        }
+        
+        return correspondingReminders
+    }
+    
     // MARK: - Main
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.addSubview(logNoteTextView)
-        
-        // TO DO NOW. if a user is creating a log that where one of the dogs selected has a reminders that matches the currently selected reminder action, make a switch appear. if enabled, this switch will, once the user creates the log, reset the timing for the associated reminders. E.g. Creating a Potty: Pee reminder for Penny and Ginger (Ginger has no reminders and Penny has a Potty reminder). When I select a reminder or dog that produces a match (in this case it would be selecting Penny when Potty is selected or selecting Potty when Penny is selected), it makes a switch appear. If this switch is enabled when I create the logs, then the reminder for Penny will be reset (it's countdown restarted or next TOD alarm skipped).
         
         oneTimeSetup()
     }
@@ -518,15 +602,19 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
             logActionLabel.placeholder = "Select an action..."
             
             logCustomActionNameTextField.text = logToUpdate?.logCustomActionName
+            checkResetCorrespondingReminders()
+            
             // Only make the logCustomActionName input visible for custom log actions
-            // If logToUpdate is nil or logToUpdate.logAction is not custom, then the expression is false. The ! equates that to true, which means it inputs (isHidden: true).
-            toggleLogCustomActionNameTextField(isHidden: !(logToUpdate?.logAction == .custom))
+            checkLogCustomActionNameTextField()
             // spaces to align with bordered label
             logCustomActionNameTextField.placeholder = " Enter a custom action name..."
             
             logNoteTextView.text = logToUpdate?.logNote
             // spaces to align with bordered label
             logNoteTextView.placeholder = " Enter a note..."
+            
+            // Have to set text property manually for bordered label space adjustment to work properly
+            resetCorrespondingRemindersLabel.text = "Reset Corresponding Reminders"
             
             logDateDatePicker.date = logToUpdate?.logDate ?? Date()
             
@@ -609,21 +697,34 @@ final class LogsAddLogViewController: UIViewController, UITextFieldDelegate, UIT
     // MARK: - Functions
     
     /// Toggles visability of optional custom log type components, used for a custom name for it
-    private func toggleLogCustomActionNameTextField(isHidden: Bool) {
-        if isHidden == false {
-            logCustomActionNameTextField.isHidden = false
-            logCustomActionNameHeightConstraint.constant = 40.0
-            logCustomActionNameBottomConstraint.constant = 10.0
-            containerForAll.setNeedsLayout()
-            containerForAll.layoutIfNeeded()
+    private func checkLogCustomActionNameTextField() {
+        
+        let isHidden = selectedLogAction != .custom
+        
+        logCustomActionNameTextField.isHidden = isHidden
+        logCustomActionNameHeightConstraint.constant = isHidden ? 0.0 : 35.0
+        logCustomActionNameBottomConstraint.constant = isHidden ? 0.0 : 10.0
+        
+        containerForAll.setNeedsLayout()
+        containerForAll.layoutIfNeeded()
+    }
+    
+    /// If correspondingReminders.count == 0, hides the label and switch for reset corresponding remiders should be hidden
+    private func checkResetCorrespondingReminders() {
+        let shouldHideResetCorrespondingReminders = correspondingReminders.count == 0
+        
+        // Check to make sure that the values have changed and need updated
+        guard resetCorrespondingRemindersLabel.isHidden != shouldHideResetCorrespondingReminders || resetCorrespondingRemindersSwitch.isHidden != shouldHideResetCorrespondingReminders else {
+            return
         }
-        else {
-            logCustomActionNameTextField.isHidden = true
-            logCustomActionNameHeightConstraint.constant = 0.0
-            logCustomActionNameBottomConstraint.constant = 0.0
-            containerForAll.setNeedsLayout()
-            containerForAll.layoutIfNeeded()
-        }
+        
+        resetCorrespondingRemindersLabel.isHidden = shouldHideResetCorrespondingReminders
+        resetCorrespondingRemindersSwitch.isHidden = shouldHideResetCorrespondingReminders
+        resetCorrespondingRemindersHeightConstraint.constant = shouldHideResetCorrespondingReminders ? 0.0 : 35.0
+        resetCorrespondingRemindersBottomConstraint.constant = shouldHideResetCorrespondingReminders ? 0.0 : 10.0
+        
+        containerForAll.setNeedsLayout()
+        containerForAll.layoutIfNeeded()
     }
     
     // MARK: @objc

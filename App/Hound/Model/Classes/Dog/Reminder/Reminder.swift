@@ -468,18 +468,19 @@ final class Reminder: NSObject, NSCoding, NSCopying {
         guard reminderIsEnabled == true else {
             return
         }
+        
         switch reminderType {
         case .oneTime: break
-            // can only skip, can't unskip
+            // can't skip and can't unskip
             // do nothing inside the reminder, this is handled externally
         case .countdown:
-            // can only skip, can't unskip
+            // can skip and can't unskip
             if isSkipping == true {
-                // skipped, reset to now so the reminder will start counting down all over again
-                reminderExecutionBasis = Date()
+                // only way to skip a countdown reminder is to reset it to restart its countdown
+                prepareForNextAlarm()
             }
         case .weekly:
-            // weekly can skip and unskip
+            // can skip and can unskip
             guard isSkipping != weeklyComponents.isSkipping else {
                 break
             }
@@ -494,6 +495,7 @@ final class Reminder: NSObject, NSCoding, NSCopying {
                 weeklyComponents.skippedDate = Date()
             }
         case .monthly:
+            // can skip and can unskip
             guard isSkipping != monthlyComponents.isSkipping else {
                 return
             }
