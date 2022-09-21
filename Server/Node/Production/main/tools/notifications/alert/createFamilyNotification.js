@@ -27,15 +27,11 @@ async function createFamilyMemberJoinNotification(userId, familyId) {
     }
 
     // now we can construct the messages
-    // Maxmium possible length: 31 (raw) + 0 (variable) = 31
-    const alertTitle = 'A new family member has joined!';
+    // Maximum possible length of message: 30 (raw) + 0 (variable) = 30 ( <= ALERT_TITLE_LIMIT )
+    const alertTitle = '🧍 A family member has joined!';
 
-    let alertBody = `Welcome ${''} into your Hound family`;
-    const maximumLengthForAbreviatedFullName = global.constant.notification.length.ALERT_BODY - alertBody.length;
-    abreviatedFullName.substring(0, maximumLengthForAbreviatedFullName);
-
-    // Maxmium possible length: 31 (raw) + 34 (variable) = 65
-    alertBody = `Welcome ${abreviatedFullName} into your Hound family`;
+    // Maximum possible length of message: 31 (raw) + 34 (variable) = 65 ( <= ALERT_BODY_LIMIT )
+    const alertBody = `Welcome ${abreviatedFullName} into your Hound family`;
 
     // we now have the messages and can send our APN
     sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.notification.category.family.JOIN, alertTitle, alertBody, {});
@@ -64,15 +60,11 @@ async function createFamilyMemberLeaveNotification(userId, familyId) {
     }
 
     // now we can construct the messages
-    // Maxmium possible length: 25 (raw) + 0 (variable) = 25
-    const alertTitle = 'A family member has left!';
+    // Maximum possible length of message: 28 (raw) + 0 (variable) = 28 ( <= ALERT_TITLE_LIMIT )
+    const alertTitle = '🧍 A family member has left!';
 
-    let alertBody = `${''} has parted ways with your Hound family`;
-    const maximumLengthForAbreviatedFullName = global.constant.notification.length.ALERT_BODY - alertBody.length;
-    abreviatedFullName.substring(0, maximumLengthForAbreviatedFullName);
-
-    // Maxmium possible length: 39 (raw) + 34 (variable) = 73
-    alertBody = `${abreviatedFullName} has parted ways with your Hound family`;
+    // Maximum possible length of message: 39 (raw) + 34 (variable) = 73 ( <= ALERT_BODY_LIMIT )
+    const alertBody = `${abreviatedFullName} has parted ways with your Hound family`;
 
     // we now have the messages and can send our APN
     sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.notification.category.family.LEAVE, alertTitle, alertBody, {});
@@ -102,19 +94,13 @@ async function createFamilyLockedNotification(userId, familyId, newIsLocked) {
     }
 
     // now we can construct the messages
-    // Maxmium possible length: 27/29 (raw) + 0 (variable) = 27/29
+    // Maximum possible length of message: 30/32 (raw) + 0 (variable) = 30/32 ( <= ALERT_TITLE_LIMIT )
     const alertTitle = isLocked
-      ? 'Your family has been locked'
-      : 'Your family has been unlocked';
+      ? '🧍 Your family has been locked'
+      : '🧍 Your family has been unlocked';
 
-    let alertBody = isLocked
-      ? `${''}'s updated your family settings to prevent new users from joining`
-      : `${''}'s updated your family settings to allow new users to join`;
-    const maximumLengthForAbreviatedFullName = global.constant.notification.length.ALERT_BODY - alertBody.length;
-    abreviatedFullName.substring(0, maximumLengthForAbreviatedFullName);
-
-    // Maxmium possible length: 65/58 (raw) + 34 (variable) = 99/92
-    alertBody = isLocked
+    // Maximum possible length of message: 65/58 (raw) + 34 (variable) = 99/92 ( <= ALERT_BODY_LIMIT )
+    const alertBody = isLocked
       ? `${abreviatedFullName}'s updated your family settings to prevent new users from joining`
       : `${abreviatedFullName}'s updated your family settings to allow new users to join`;
 

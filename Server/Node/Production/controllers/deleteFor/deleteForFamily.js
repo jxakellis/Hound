@@ -10,7 +10,6 @@ const { getFamilyHeadUserIdForFamilyId } = require('../getFor/getForFamily');
 
 const { createUserKickedNotification } = require('../../main/tools/notifications/alert/createUserKickedNotification');
 const { createFamilyMemberLeaveNotification } = require('../../main/tools/notifications/alert/createFamilyNotification');
-const { deleteSecondaryAlarmNotificationsForUser } = require('../../main/tools/notifications/alarm/deleteAlarmNotification');
 
 /**
  *  Queries the database to either remove the user from their current family (familyMember) or delete the family and everything nested under it (families).
@@ -208,9 +207,7 @@ async function kickFamilyMember(databaseConnection, userId, familyId, forKickUse
 
   await Promise.all(promises);
 
-  // remove any pending secondary alarm notifications they have queued
-  // The primary alarm notifications retrieve the notification tokens of familyMembers right as they fire, so the user will not be included
-  deleteSecondaryAlarmNotificationsForUser(kickUserId);
+  // The alarm notifications retrieve the notification tokens of familyMembers right as they fire, so the user will not be included
   createFamilyMemberLeaveNotification(kickUserId, familyId);
   createUserKickedNotification(kickUserId);
 }

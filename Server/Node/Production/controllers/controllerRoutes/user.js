@@ -38,8 +38,6 @@ async function getUser(req, res) {
   }
 }
 
-const { refreshSecondaryAlarmNotificationsForUserId } = require('../../main/tools/notifications/alarm/refreshAlarmNotification');
-
 async function createUser(req, res) {
   try {
     const {
@@ -50,14 +48,17 @@ async function createUser(req, res) {
       userNotificationToken,
       isNotificationEnabled,
       isLoudNotification,
-      isFollowUpEnabled,
-      followUpDelay,
       interfaceStyle,
       snoozeLength,
       notificationSound,
       logsInterfaceScale,
       remindersInterfaceScale,
       maximumNumberOfLogsDisplayed,
+      silentModeIsEnabled,
+      silentModeStartUTCHour,
+      silentModeEndUTCHour,
+      silentModeStartUTCMinute,
+      silentModeEndUTCMinute,
     } = req.body;
     const result = await createUserForUserIdentifier(
       req.databaseConnection,
@@ -71,8 +72,6 @@ async function createUser(req, res) {
       // userAccountCreationDate,
       isNotificationEnabled,
       isLoudNotification,
-      isFollowUpEnabled,
-      followUpDelay,
       interfaceStyle,
       snoozeLength,
       notificationSound,
@@ -80,9 +79,12 @@ async function createUser(req, res) {
       remindersInterfaceScale,
       maximumNumberOfLogsDisplayed,
       // lastDogManagerSynchronization,
+      silentModeIsEnabled,
+      silentModeStartUTCHour,
+      silentModeEndUTCHour,
+      silentModeStartUTCMinute,
+      silentModeEndUTCMinute,
     );
-
-    refreshSecondaryAlarmNotificationsForUserId(result, isFollowUpEnabled, followUpDelay);
 
     return res.sendResponseForStatusJSONError(200, { result: areAllDefined(result) ? result : '' }, undefined);
   }
@@ -98,14 +100,17 @@ async function updateUser(req, res) {
       userNotificationToken,
       isNotificationEnabled,
       isLoudNotification,
-      isFollowUpEnabled,
-      followUpDelay,
       interfaceStyle,
       snoozeLength,
       notificationSound,
       logsInterfaceScale,
       remindersInterfaceScale,
       maximumNumberOfLogsDisplayed,
+      silentModeIsEnabled,
+      silentModeStartUTCHour,
+      silentModeEndUTCHour,
+      silentModeStartUTCMinute,
+      silentModeEndUTCMinute,
     } = req.body;
     await updateUserForUserId(
       req.databaseConnection,
@@ -113,17 +118,18 @@ async function updateUser(req, res) {
       userNotificationToken,
       isNotificationEnabled,
       isLoudNotification,
-      isFollowUpEnabled,
-      followUpDelay,
       interfaceStyle,
       snoozeLength,
       notificationSound,
       logsInterfaceScale,
       remindersInterfaceScale,
       maximumNumberOfLogsDisplayed,
+      silentModeIsEnabled,
+      silentModeStartUTCHour,
+      silentModeEndUTCHour,
+      silentModeStartUTCMinute,
+      silentModeEndUTCMinute,
     );
-
-    refreshSecondaryAlarmNotificationsForUserId(userId, isFollowUpEnabled, followUpDelay);
 
     return res.sendResponseForStatusJSONError(200, { result: '' }, undefined);
   }

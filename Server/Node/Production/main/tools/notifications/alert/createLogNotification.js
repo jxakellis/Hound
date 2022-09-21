@@ -36,20 +36,11 @@ async function createLogNotification(userId, familyId, dogId, logAction, logCust
     const formattedLogAction = formatLogAction(logAction, logCustomActionName);
 
     // now we can construct the messages
-    // Maxmium possible length: 8 (raw) + 32 (variable) = 40
-    const alertTitle = `Log for ${dog.dogName}`;
+    // Maximum possible length of message: 3 (raw) + 32 (variable) = 35 ( > ALERT_TITLE_LIMIT )
+    const alertTitle = `📝 ${dog.dogName}`;
 
-    // Maxmium possible length: 28 (raw) + 34 (variable) + 32 (variable) = 94
-    let alertBody = `${''} lent a helping hand with '${''}'`;
-    const maximumLengthForFormattedLogAction = global.constant.notification.length.ALERT_BODY - alertBody.length;
-    formattedLogAction.substring(0, maximumLengthForFormattedLogAction);
-
-    alertBody = `${''} lent a helping hand with '${formattedLogAction}'`;
-
-    const maximumLengthForAbreviatedFullName = global.constant.notification.length.ALERT_BODY - alertBody.length;
-    abreviatedFullName.substring(0, maximumLengthForAbreviatedFullName);
-
-    alertBody = `${abreviatedFullName} lent a helping hand with '${formattedLogAction}'`;
+    // Maximum possible length of message: 10 (raw) + 34 (variable) + 32 (variable) = 76 ( <= ALERT_BODY_LIMIT )
+    const alertBody = `${abreviatedFullName} logged '${formattedLogAction}'`;
 
     // we now have the messages and can send our APN
     sendNotificationForFamilyExcludingUser(userId, familyId, global.constant.notification.category.log.CREATED, alertTitle, alertBody, {});

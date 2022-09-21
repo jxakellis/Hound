@@ -6,10 +6,10 @@ function createTerminateNotification(userId) {
     return;
   }
   // don't perform any checks as there are too many. we would have to make sure the user has notifications on, has loud notifications on, has an enabled/upcoming reminder, etc.
-  // Maxmium possible length: 27 (raw) + 0 (variable) = 27
-  const alertTitle = 'Oops, you terminated Hound!';
-  // Maxmium possible length: 64 (raw) + 0 (variable) = 64
-  const alertBody = "Your upcoming alarms won't ring properly if Hound isn't running.";
+  // Maximum possible length of message: 30 (raw) + 0 (variable) = 30 (<= ALERT_TITLE_LIMIT)
+  const alertTitle = '⚠️ Oops, you terminated Hound!';
+  // Maximum possible length of message: 63 (raw) + 0 (variable) = 63 (<= ALERT_BODY_LIMIT)
+  const alertBody = "Your upcoming alarms won't ring properly if Hound isn't running";
   sendNotificationForUser(userId, global.constant.notification.category.user.TERMINATE, alertTitle, alertBody, {});
 }
 

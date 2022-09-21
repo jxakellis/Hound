@@ -26,7 +26,7 @@ const server = {
   // A version would be depreciated if an endpoint path is changed or endpoint data return format is changed
 
   // Allows for testing of new versions in development but leave production alone
-  COMPATIBLE_IOS_APP_BUILDS: IS_PRODUCTION_DATABASE ? [7500, 8000, 8500, 9000, 9500, 10000] : [7500, 8000, 8500, 9000, 9500, 10000],
+  COMPATIBLE_IOS_APP_BUILDS: IS_PRODUCTION_DATABASE ? [8000, 8500, 9000, 9500, 10000] : [8000, 8500, 9000, 9500, 10000],
   // How often each of the database connections are tested as being connected (in milliseconds)
   DATABASE_CONNECTION_TEST_INTERVAL: 1000 * 60 * 5,
 };
@@ -59,14 +59,13 @@ const notification = {
       NOTE: If the notification changes from showing 'now' next to it and shows '1m ago' (or similar),
       this increased text length (indicating time since notification arrived) can cause the title to be shortened (the time text expands)
       */
-    ALERT_TITLE: 32,
-    ALERT_BODY: 128,
+    ALERT_TITLE_LIMIT: 32,
+    ALERT_BODY_LIMIT: 128,
   },
   category: {
     // for notifications about reminder's alarms
     reminder: {
       PRIMARY: 'NOTIFICATION_CATEGORY_REMINDER_PRIMARY',
-      SECONDARY: 'NOTIFICATION_CATEGORY_REMINDER_SECONDARY',
     },
     // for notifications about logs
     log: {
